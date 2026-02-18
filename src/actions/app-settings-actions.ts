@@ -24,17 +24,22 @@ export async function getPlatformSecrets(): Promise<{
             stripe_secret_key: process.env.STRIPE_SECRET_KEY || null
         }
     }
-    const { data: rawData } = await admin
+    const { data } = await admin
         .from('app_settings')
         .select('gemini_api_key, stripe_secret_key')
         .eq('id', 1)
         .single()
 
-    const data = rawData as { gemini_api_key: string | null; stripe_secret_key: string | null } | null
+    type AppSettings = {
+        gemini_api_key: string | null;
+        stripe_secret_key: string | null;
+    } | null
+
+    const settings = data as AppSettings
 
     return {
-        gemini_api_key: data?.gemini_api_key || process.env.GEMINI_API_KEY || null,
-        stripe_secret_key: data?.stripe_secret_key || process.env.STRIPE_SECRET_KEY || null
+        gemini_api_key: settings?.gemini_api_key || process.env.GEMINI_API_KEY || null,
+        stripe_secret_key: settings?.stripe_secret_key || process.env.STRIPE_SECRET_KEY || null
     }
 }
 
