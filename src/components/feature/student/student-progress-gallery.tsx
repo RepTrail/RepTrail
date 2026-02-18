@@ -95,7 +95,7 @@ export function StudentProgressGallery({ photos }: StudentProgressGalleryProps) 
                                     <div
                                         key={`${set.id}-${photo.key}`}
                                         className="relative aspect-[3/4] bg-zinc-950 rounded-xl overflow-hidden border border-zinc-800 cursor-pointer group/item"
-                                        onClick={() => setSelectedPhoto(photo.url)}
+                                        onClick={() => setSelectedPhoto(photo.url || null)}
                                     >
                                         <img
                                             src={photo.url}
