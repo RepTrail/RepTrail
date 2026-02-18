@@ -11,6 +11,7 @@ interface MobileHeaderProps {
     role: 'student' | 'trainer'
     hasTrainer?: boolean // for students
     steroidUse?: boolean
+    hideImportPdf?: boolean // for trainers
 }
 
 export function MobileHeader({ role, hasTrainer, steroidUse, hideImportPdf }: MobileHeaderProps) {
