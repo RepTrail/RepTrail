@@ -53,11 +53,13 @@ export default async function StudentProgressPage() {
 
     const history = await getStudentWorkoutHistory(user.id)
 
-    const { data: progressPhotos = [] } = await supabase
+    const { data: progressPhotosData } = await supabase
         .from('progress_photos')
         .select('id, front_url, back_url, side_right_url, side_left_url, created_at')
         .eq('student_id', user.id)
         .order('created_at', { ascending: false })
+    
+    const progressPhotos = progressPhotosData || []
 
     return (
         <div className="space-y-10 max-w-7xl mx-auto">
