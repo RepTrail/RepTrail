@@ -236,8 +236,8 @@ function TrainerCard({ trainer }: any) {
                 </div>
             )}
 
-            <CardContent className="p-10 space-y-8">
-                <div className="flex gap-8">
+            <CardContent className="p-10 space-y-6">
+                <div className="flex flex-col items-center text-center gap-4">
                     <div className="relative group/avatar shrink-0">
                         <div className="absolute -inset-1 bg-orange-500 rounded-[2.5rem] blur opacity-0 group-hover/avatar:opacity-20 transition duration-500" />
                         <Avatar className="h-24 w-24 rounded-[2rem] border-2 border-zinc-800 relative z-10 transition-transform duration-500 group-hover:scale-105">
@@ -248,18 +248,18 @@ function TrainerCard({ trainer }: any) {
                         </Avatar>
                     </div>
 
-                    <div className="space-y-2 py-2 flex-1 min-w-0">
+                    <div className="space-y-2 w-full min-w-0">
                         <h3 className="text-2xl font-black text-white italic uppercase group-hover:text-orange-500 transition-colors duration-500 leading-tight truncate">
                             {trainer.full_name}
                         </h3>
-                        <div className="flex items-center gap-2 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] bg-zinc-950/50 w-fit px-3 py-1 rounded-lg border border-zinc-800/50">
+                        <div className="flex items-center justify-center gap-2 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] bg-zinc-950/50 w-fit px-3 py-1 rounded-lg border border-zinc-800/50 mx-auto">
                             <MapPin className="w-3 h-3 text-orange-500" />
                             {trainer.region || 'Brasil'}
                         </div>
                     </div>
                 </div>
 
-                <div className="flex flex-wrap gap-2 pt-2">
+                <div className="flex flex-wrap gap-2">
                     {trainer.specialty && (
                         <Badge variant="outline" className="px-4 py-1.5 bg-zinc-950 border-zinc-800 text-[9px] font-black text-zinc-400 uppercase tracking-widest italic rounded-xl">
                             {trainer.specialty}
@@ -277,7 +277,7 @@ function TrainerCard({ trainer }: any) {
                     </p>
                 </div>
 
-                <div className="pt-8 border-t border-zinc-800/50 flex items-center justify-between">
+                <div className="pt-6 border-t border-zinc-800/50 flex flex-col gap-6">
                     <div className="space-y-1">
                         <span className="text-[9px] font-black text-zinc-600 uppercase tracking-[0.3em] block mb-1">Início a partir de</span>
                         <div className="flex items-baseline gap-1">
@@ -289,14 +289,14 @@ function TrainerCard({ trainer }: any) {
                         </div>
                     </div>
                     {trainer.trainer_code ? (
-                        <Link href={`/personal/${trainer.trainer_code.toUpperCase().trim()}`}>
-                            <Button className="h-16 px-8 rounded-2xl bg-white hover:bg-orange-500 hover:text-zinc-950 text-zinc-950 font-black uppercase italic tracking-wide transition-all group/btn shadow-xl active:scale-95 border-none">
+                        <Link href={`/personal/${trainer.trainer_code.toUpperCase().trim()}`} className="block w-full">
+                            <Button className="w-full h-16 rounded-2xl bg-white hover:bg-orange-500 hover:text-zinc-950 text-zinc-950 font-black uppercase italic tracking-wide transition-all group/btn shadow-xl active:scale-95 border-none">
                                 Contratar
                                 <ArrowRight className="w-5 h-5 ml-2 group-hover/btn:translate-x-1 transition-transform" />
                             </Button>
                         </Link>
                     ) : (
-                        <Button disabled className="h-16 px-8 rounded-2xl bg-zinc-800 text-zinc-600 font-black uppercase italic tracking-wide cursor-not-allowed">
+                        <Button disabled className="w-full h-16 rounded-2xl bg-zinc-800 text-zinc-600 font-black uppercase italic tracking-wide cursor-not-allowed">
                             Sem código
                         </Button>
                     )}

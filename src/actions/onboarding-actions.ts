@@ -31,17 +31,18 @@ export async function submitOnboarding(prevState: OnboardingState, formData: For
         return { message: 'Unauthorized' }
     }
 
-    // Parse Data
+    // Parse Data (empty string -> undefined para campos opcionais)
+    const get = (k: string) => (formData.get(k) as string | null) || undefined
     const rawData = {
-        birthDate: formData.get('birthDate'),
-        height: formData.get('height'),
-        startingWeight: formData.get('startingWeight'),
-        activityLevel: formData.get('activityLevel'),
-        goal: formData.get('goal'),
+        birthDate: get('birthDate'),
+        height: get('height'),
+        startingWeight: get('startingWeight'),
+        activityLevel: get('activityLevel') || 'moderate', // fallback se hidden input falhar
+        goal: get('goal'),
         steroidUse: formData.get('steroidUse') === 'on',
-        observations: formData.get('observations'),
-        trainerCode: formData.get('trainerCode'),
-        imageAuth: formData.get('imageAuth') === 'true',
+        observations: get('observations'),
+        trainerCode: get('trainerCode'),
+        imageAuth: get('imageAuth') === 'true',
     }
 
     const validatedFields = onboardingSchema.safeParse(rawData)

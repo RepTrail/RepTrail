@@ -2,7 +2,8 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Dumbbell, Utensils, Activity, User, Home, ShoppingBag, Trophy, Search, UserCheck, Sparkles } from 'lucide-react'
+import { Dumbbell, Utensils, Activity, User, Home, ShoppingBag, Trophy, Search, UserCheck, Sparkles, LogOut } from 'lucide-react'
+import { signOutAction } from '@/actions/auth-actions'
 
 interface StudentNavProps {
     hasTrainer: boolean
@@ -64,35 +65,57 @@ export function StudentNav({ hasTrainer, steroidUse }: StudentNavProps) {
 export function MobileStudentNav({ hasTrainer, steroidUse }: StudentNavProps) {
     const pathname = usePathname()
 
-    const allLinks = [
-        { href: '/dashboard/student', icon: <Home className="w-5 h-5" />, requiresTrainer: false },
-        { href: '/dashboard/student/workouts', icon: <Dumbbell className="w-5 h-5" />, requiresTrainer: true },
-        { href: '/dashboard/student/diet', icon: <Utensils className="w-5 h-5" />, requiresTrainer: true },
-        { href: '/dashboard/student/progress', icon: <Activity className="w-5 h-5" />, requiresTrainer: true },
-        { href: '/dashboard/student/ergogenics', icon: <Sparkles className="w-5 h-5" />, requiresTrainer: true, showOnlyIfSteroidUse: true },
-    ]
-
-    const links = allLinks.filter(link => {
-        const item = link as any
-        if (item.showOnlyIfSteroidUse && !steroidUse) return false
-        return !item.requiresTrainer || hasTrainer
-    })
-
+    // Mobile: Home, Loja, Ranking, Encontre/Meu Personal, Perfil, Logout
     return (
-        <nav className="bg-zinc-900/80 backdrop-blur-xl border border-zinc-800/50 p-2 rounded-2xl flex items-center justify-around shadow-2xl">
-            {links.map((link) => {
-                const isActive = pathname === link.href
-
-                return (
-                    <Link
-                        key={link.href}
-                        href={link.href}
-                        className={`p-3 rounded-xl transition-all ${isActive ? 'bg-emerald-500 text-zinc-950 shadow-lg shadow-emerald-500/20' : 'text-zinc-500 hover:text-zinc-300'}`}
-                    >
-                        {link.icon}
-                    </Link>
-                )
-            })}
+        <nav className="bg-zinc-900/80 backdrop-blur-xl border border-zinc-800/50 p-1.5 rounded-2xl flex items-center justify-around shadow-2xl gap-1">
+            <Link
+                href="/dashboard/student"
+                className={`p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student' ? 'bg-emerald-500 text-zinc-950 shadow-lg shadow-emerald-500/20' : 'text-zinc-500 hover:text-zinc-300'}`}
+            >
+                <Home className="w-5 h-5" />
+            </Link>
+            <Link
+                href="/dashboard/student/loja"
+                className={`p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student/loja' ? 'bg-emerald-500 text-zinc-950 shadow-lg shadow-emerald-500/20' : 'text-zinc-500 hover:text-zinc-300'}`}
+            >
+                <ShoppingBag className="w-5 h-5" />
+            </Link>
+            <Link
+                href="/dashboard/student/ranking"
+                className={`p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student/ranking' ? 'bg-emerald-500 text-zinc-950 shadow-lg shadow-emerald-500/20' : 'text-zinc-500 hover:text-zinc-300'}`}
+            >
+                <Trophy className="w-5 h-5" />
+            </Link>
+            {hasTrainer ? (
+                <Link
+                    href="/dashboard/student/meu-personal"
+                    className={`p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student/meu-personal' ? 'bg-emerald-500 text-zinc-950 shadow-lg shadow-emerald-500/20' : 'text-zinc-500 hover:text-zinc-300'}`}
+                >
+                    <UserCheck className="w-5 h-5" />
+                </Link>
+            ) : (
+                <Link
+                    href="/buscar-personal"
+                    className={`p-2.5 rounded-xl transition-all ${pathname === '/buscar-personal' ? 'bg-emerald-500 text-zinc-950 shadow-lg shadow-emerald-500/20' : 'text-zinc-500 hover:text-zinc-300'}`}
+                >
+                    <Search className="w-5 h-5" />
+                </Link>
+            )}
+            <Link
+                href="/dashboard/student/profile"
+                className={`p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student/profile' ? 'bg-emerald-500 text-zinc-950 shadow-lg shadow-emerald-500/20' : 'text-zinc-500 hover:text-zinc-300'}`}
+            >
+                <User className="w-5 h-5" />
+            </Link>
+            <form action={signOutAction} className="flex">
+                <button
+                    type="submit"
+                    className="p-2.5 rounded-xl transition-all text-zinc-500 hover:text-red-400 hover:bg-red-400/10"
+                    aria-label="Sair da conta"
+                >
+                    <LogOut className="w-5 h-5" />
+                </button>
+            </form>
         </nav>
     )
 }

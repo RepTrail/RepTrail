@@ -1,6 +1,7 @@
 'use client'
 
-import { useFormState } from 'react-dom'
+import { useActionState } from 'react'
+import { useFormStatus } from 'react-dom'
 import { submitOnboarding } from '@/actions/onboarding-actions'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -28,9 +29,52 @@ const initialState = {
     errors: {}
 }
 
+function SteroidUseField() {
+    const [checked, setChecked] = useState(false)
+    return (
+        <>
+            {checked && <input type="hidden" name="steroidUse" value="on" />}
+            <Checkbox
+                id="steroidUse"
+                checked={checked}
+                onCheckedChange={(v) => setChecked(!!v)}
+                className="border-zinc-800 data-[state=checked]:bg-emerald-500 data-[state=checked]:text-zinc-950"
+            />
+        </>
+    )
+}
+
+function SubmitButton() {
+    const { pending } = useFormStatus()
+    return (
+        <Button
+            type="submit"
+            disabled={pending}
+            className="w-full sm:flex-1 order-1 sm:order-2 bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-black italic uppercase tracking-tight rounded-xl h-12 px-4 sm:px-8 shadow-xl shadow-emerald-500/30 group transition-all disabled:opacity-70 disabled:cursor-not-allowed min-w-0"
+        >
+            {pending ? (
+                <>
+                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-zinc-950 border-t-transparent" />
+                    Finalizando...
+                </>
+            ) : (
+                <>
+                    <ShieldCheck className="mr-2 h-5 w-5 shrink-0" /> Finalizar Cadastro
+                </>
+            )}
+        </Button>
+    )
+}
+
 export function OnboardingForm() {
-    const [state, formAction] = useFormState(submitOnboarding, initialState)
+    const [state, formAction] = useActionState(submitOnboarding, initialState)
     const [step, setStep] = useState(1)
+    const [activityLevel, setActivityLevel] = useState('moderate')
+    const [imageAuth, setImageAuth] = useState('false')
+    const [height, setHeight] = useState('')
+    const [startingWeight, setStartingWeight] = useState('')
+    const [birthDate, setBirthDate] = useState('')
+    const [goal, setGoal] = useState('')
 
     // Simple multi-step logic
     const nextStep = () => setStep(s => s + 1)
@@ -61,13 +105,27 @@ export function OnboardingForm() {
                     Personalize sua experiência no RepTrail
                 </CardDescription>
             </CardHeader>
-            <CardContent className="p-8">
+            <CardContent className="p-4 sm:p-8 overflow-x-hidden">
                 <StepProgress current={step} />
 
-                <form action={formAction} className="space-y-8">
+                <form action={formAction} method="POST" noValidate className="space-y-8">
+                    {/* Hidden inputs no topo do form (sempre enviados - inputs em divs ocultas podem ser excluídos) */}
+                    <input type="hidden" name="height" value={height} />
+                    <input type="hidden" name="startingWeight" value={startingWeight} />
+                    <input type="hidden" name="birthDate" value={birthDate} />
+                    <input type="hidden" name="goal" value={goal} />
+                    <input type="hidden" name="activityLevel" value={activityLevel} />
+                    <input type="hidden" name="imageAuth" value={imageAuth} />
                     {state?.message && (
-                        <div className="p-4 bg-red-500/10 border border-red-500/20 text-red-500 text-xs font-bold uppercase tracking-widest rounded-xl text-center">
-                            {state.message}
+                        <div className="p-4 bg-red-500/10 border border-red-500/20 text-red-500 text-xs font-bold uppercase tracking-widest rounded-xl text-center space-y-2">
+                            <div>{state.message}</div>
+                            {state.errors && Object.keys(state.errors).length > 0 && (
+                                <div className="space-y-1 text-[10px] normal-case">
+                                    {Object.entries(state.errors).map(([field, msgs]) => (
+                                        <div key={field}><strong>{field}:</strong> {msgs?.join(', ')}</div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     )}
 
@@ -84,10 +142,10 @@ export function OnboardingForm() {
                                     <Label htmlFor="height" className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Altura (cm)</Label>
                                     <Input
                                         id="height"
-                                        name="height"
                                         type="number"
                                         placeholder="175"
-                                        required
+                                        value={height}
+                                        onChange={(e) => setHeight(e.target.value)}
                                         className="bg-zinc-950 border-zinc-800 text-white rounded-xl h-14 font-bold focus:ring-emerald-500/20"
                                     />
                                 </div>
@@ -95,11 +153,11 @@ export function OnboardingForm() {
                                     <Label htmlFor="startingWeight" className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Peso Atual (kg)</Label>
                                     <Input
                                         id="startingWeight"
-                                        name="startingWeight"
                                         type="number"
                                         step="0.1"
                                         placeholder="70.5"
-                                        required
+                                        value={startingWeight}
+                                        onChange={(e) => setStartingWeight(e.target.value)}
                                         className="bg-zinc-950 border-zinc-800 text-white rounded-xl h-14 font-bold focus:ring-emerald-500/20"
                                     />
                                 </div>
@@ -108,9 +166,9 @@ export function OnboardingForm() {
                                 <Label htmlFor="birthDate" className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Data de Nascimento</Label>
                                 <Input
                                     id="birthDate"
-                                    name="birthDate"
                                     type="date"
-                                    required
+                                    value={birthDate}
+                                    onChange={(e) => setBirthDate(e.target.value)}
                                     className="bg-zinc-950 border-zinc-800 text-white rounded-xl h-14 font-bold focus:ring-emerald-500/20"
                                 />
                             </div>
@@ -119,7 +177,8 @@ export function OnboardingForm() {
                             <Button
                                 type="button"
                                 onClick={nextStep}
-                                className="bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-black italic uppercase tracking-tight rounded-xl h-12 px-8 shadow-lg shadow-emerald-500/20 group transition-all"
+                                disabled={!height || !startingWeight || !birthDate}
+                                className="bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-black italic uppercase tracking-tight rounded-xl h-12 px-8 shadow-lg shadow-emerald-500/20 group transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 Próximo <ChevronRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                             </Button>
@@ -134,7 +193,7 @@ export function OnboardingForm() {
                                 <h3 className="text-xs font-black text-white uppercase tracking-widest">Nível de Atividade</h3>
                             </div>
 
-                            <RadioGroup defaultValue="moderate" name="activityLevel" className="grid gap-3">
+                            <RadioGroup value={activityLevel} onValueChange={setActivityLevel} className="grid gap-3">
                                 {[
                                     { id: 'sedentary', label: 'Sedentário', sub: 'Pouco ou nenhum exercício' },
                                     { id: 'light', label: 'Leve', sub: '1-3 dias por semana' },
@@ -159,28 +218,29 @@ export function OnboardingForm() {
                                 <Label htmlFor="goal" className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Objetivo Principal</Label>
                                 <Input
                                     id="goal"
-                                    name="goal"
                                     placeholder="Ex: Hipertrofia, Emagrecimento..."
-                                    required
+                                    value={goal}
+                                    onChange={(e) => setGoal(e.target.value)}
                                     className="bg-zinc-950 border-zinc-800 text-white rounded-xl h-14 font-bold focus:ring-emerald-500/20"
                                 />
                             </div>
                         </div>
-                        <div className="flex justify-between pt-4 gap-4">
+                        <div className="flex flex-col-reverse sm:flex-row sm:justify-between pt-4 gap-3 sm:gap-4">
                             <Button
                                 type="button"
                                 variant="outline"
                                 onClick={prevStep}
-                                className="border-zinc-800 bg-zinc-950 text-zinc-400 hover:text-white rounded-xl h-12 px-8 font-bold uppercase tracking-widest text-[10px]"
+                                className="w-full sm:w-auto order-2 sm:order-1 border-zinc-800 bg-zinc-950 text-zinc-400 hover:text-white rounded-xl h-12 px-6 sm:px-8 font-bold uppercase tracking-widest text-[10px]"
                             >
-                                <ChevronLeft className="mr-2 h-4 w-4" /> Voltar
+                                <ChevronLeft className="mr-2 h-4 w-4 shrink-0" /> Voltar
                             </Button>
                             <Button
                                 type="button"
                                 onClick={nextStep}
-                                className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-black italic uppercase tracking-tight rounded-xl h-12 shadow-lg shadow-emerald-500/20 group transition-all"
+                                disabled={!goal || goal.trim().length < 3}
+                                className="w-full sm:flex-1 order-1 sm:order-2 bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-black italic uppercase tracking-tight rounded-xl h-12 px-4 sm:px-8 shadow-lg shadow-emerald-500/20 group transition-all min-w-0 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                Próximo <ChevronRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                                Próximo <ChevronRight className="ml-2 h-4 w-4 shrink-0 group-hover:translate-x-1 transition-transform" />
                             </Button>
                         </div>
                     </div>
@@ -190,7 +250,7 @@ export function OnboardingForm() {
                         <div className="space-y-6">
                             <div className="p-5 rounded-2xl bg-zinc-950 border border-emerald-500/20 space-y-4">
                                 <div className="flex items-center gap-3">
-                                    <Checkbox id="steroidUse" name="steroidUse" className="border-zinc-800 data-[state=checked]:bg-emerald-500 data-[state=checked]:text-zinc-950" />
+                                    <SteroidUseField />
                                     <div className="space-y-1">
                                         <Label htmlFor="steroidUse" className="text-xs font-black text-white italic uppercase tracking-tight cursor-pointer">Uso de recursos ergogênicos?</Label>
                                         <p className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest leading-relaxed">Informação confidencial para ajuste de volume.</p>
@@ -221,7 +281,7 @@ export function OnboardingForm() {
                                 <p className="text-[11px] text-zinc-400 font-medium leading-relaxed">
                                     Você autoriza o personal a divulgar suas imagens para fins profissionais (antes/depois, redes sociais, site, etc.)?
                                 </p>
-                                <RadioGroup defaultValue="false" name="imageAuth" className="grid grid-cols-2 gap-3" required>
+                                <RadioGroup value={imageAuth} onValueChange={setImageAuth} className="grid grid-cols-2 gap-3">
                                     <Label
                                         htmlFor="auth-yes"
                                         className="flex items-center justify-between p-3 rounded-xl bg-zinc-950 border border-zinc-800 cursor-pointer hover:border-emerald-500/30 transition-all group"
@@ -255,21 +315,16 @@ export function OnboardingForm() {
                                 </div>
                             </div>
                         </div>
-                        <div className="flex justify-between pt-4 gap-4">
+                        <div className="flex flex-col-reverse sm:flex-row sm:justify-between pt-4 gap-3 sm:gap-4">
                             <Button
                                 type="button"
                                 variant="outline"
                                 onClick={prevStep}
-                                className="border-zinc-800 bg-zinc-950 text-zinc-400 hover:text-white rounded-xl h-12 px-8 font-bold uppercase tracking-widest text-[10px]"
+                                className="w-full sm:w-auto order-2 sm:order-1 border-zinc-800 bg-zinc-950 text-zinc-400 hover:text-white rounded-xl h-12 px-6 sm:px-8 font-bold uppercase tracking-widest text-[10px]"
                             >
-                                <ChevronLeft className="mr-2 h-4 w-4" /> Voltar
+                                <ChevronLeft className="mr-2 h-4 w-4 shrink-0" /> Voltar
                             </Button>
-                            <Button
-                                type="submit"
-                                className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-black italic uppercase tracking-tight rounded-xl h-12 shadow-xl shadow-emerald-500/30 group transition-all"
-                            >
-                                <ShieldCheck className="mr-2 h-5 w-5" /> Finalizar Cadastro
-                            </Button>
+                            <SubmitButton />
                         </div>
                     </div>
 
