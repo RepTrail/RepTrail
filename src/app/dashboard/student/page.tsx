@@ -4,10 +4,11 @@ import { getTodayWorkout } from '@/actions/workout-actions'
 import { getStudentDailyDiet } from '@/actions/diet-actions'
 import { getStudentTrainer } from '@/actions/student-actions'
 import { getTrainerRanking } from '@/actions/trainer-actions'
+import { getStudentErgogenics } from '@/actions/ergogenics-actions'
 import { CardioPlayer } from '@/components/feature/student/cardio-player'
 import { DietAdherence } from '@/components/feature/student/diet-adherence'
 import { PaymentWarning } from '@/components/feature/student/payment-warning'
-import { Flame, Activity, Clock, Utensils, Dumbbell, Star, Search, ShieldCheck, Trophy, ArrowRight, Zap, Target, LogOut } from 'lucide-react'
+import { Flame, Activity, Clock, Utensils, Dumbbell, Star, Search, ShieldCheck, Trophy, ArrowRight, Zap, Target, LogOut, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -24,7 +25,16 @@ export default async function StudentDashboard() {
     // 1. Check Personal Relationship
     const trainerRel = await getStudentTrainer(user.id)
 
-    // 2. Fetch Daily Data
+    // 2. Details for steroid check
+    const { data: details } = await supabase
+        .from('student_details')
+        .select('steroid_use')
+        .eq('id', user.id)
+        .single()
+
+    const steroidUse = !!details?.steroid_use
+
+    // 3. Fetch Daily Data
     const rawCardios = await getStudentCardioAssignments(user.id)
     const today = new Date().getDay()
     const cardios = rawCardios.filter((a: any) =>
@@ -32,6 +42,17 @@ export default async function StudentDashboard() {
     )
     const workout = await getTodayWorkout(user.id)
     const diet = await getStudentDailyDiet(user.id)
+
+    // Ergogenics
+    let todaysErgogenics: any[] = []
+    if (steroidUse) {
+        const { data: ergogenics } = await getStudentErgogenics(user.id)
+        if (ergogenics) {
+            todaysErgogenics = ergogenics.filter((e: any) =>
+                e.application_days && Array.isArray(e.application_days) && e.application_days.includes(today)
+            )
+        }
+    }
 
     // UI for students without personal
     if (!trainerRel) {
@@ -95,39 +116,39 @@ export default async function StudentDashboard() {
                     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                         {topTrainers.map((trainer: any, index: number) => (
                             trainer.trainer_code ? (
-                            <Link key={trainer.id} href={`/personal/${trainer.trainer_code.toUpperCase().trim()}`}>
-                                <Card className="group bg-zinc-900 shadow-2xl rounded-[2.5rem] border-zinc-800/80 hover:border-amber-500/30 transition-all duration-500 p-8 space-y-6 overflow-hidden relative h-full">
-                                    <div className="absolute top-0 right-0 p-6 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity">
-                                        <Trophy className="w-32 h-32 text-amber-500" />
-                                    </div>
-                                    <div className="flex items-center gap-4 relative z-10">
-                                        <Avatar className="h-16 w-16 border-2 border-zinc-800 group-hover:scale-105 transition-transform">
-                                            <AvatarImage src={trainer.avatar_url} className="object-cover" />
-                                            <AvatarFallback className="bg-zinc-800 text-zinc-500 font-bold uppercase">
-                                                {trainer.full_name?.substring(0, 2)}
-                                            </AvatarFallback>
-                                        </Avatar>
-                                        <div className="space-y-0.5">
-                                            <h3 className="text-xl font-black text-white italic uppercase line-clamp-1 group-hover:text-amber-500 transition-colors">
-                                                {trainer.full_name}
-                                            </h3>
-                                            <div className="flex items-center gap-1.5">
-                                                <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
-                                                <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">{trainer.rating} Rating</span>
+                                <Link key={trainer.id} href={`/personal/${trainer.trainer_code.toUpperCase().trim()}`}>
+                                    <Card className="group bg-zinc-900 shadow-2xl rounded-[2.5rem] border-zinc-800/80 hover:border-amber-500/30 transition-all duration-500 p-8 space-y-6 overflow-hidden relative h-full">
+                                        <div className="absolute top-0 right-0 p-6 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity">
+                                            <Trophy className="w-32 h-32 text-amber-500" />
+                                        </div>
+                                        <div className="flex items-center gap-4 relative z-10">
+                                            <Avatar className="h-16 w-16 border-2 border-zinc-800 group-hover:scale-105 transition-transform">
+                                                <AvatarImage src={trainer.avatar_url} className="object-cover" />
+                                                <AvatarFallback className="bg-zinc-800 text-zinc-500 font-bold uppercase">
+                                                    {trainer.full_name?.substring(0, 2)}
+                                                </AvatarFallback>
+                                            </Avatar>
+                                            <div className="space-y-0.5">
+                                                <h3 className="text-xl font-black text-white italic uppercase line-clamp-1 group-hover:text-amber-500 transition-colors">
+                                                    {trainer.full_name}
+                                                </h3>
+                                                <div className="flex items-center gap-1.5">
+                                                    <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
+                                                    <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">{trainer.rating} Rating</span>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div className="pt-6 border-t border-zinc-800/50 flex items-center justify-between relative z-10">
-                                        <div className="space-y-1">
-                                            <span className="text-[9px] font-black text-zinc-600 uppercase tracking-widest block leading-none">Foco</span>
-                                            <span className="text-xs font-black text-zinc-300 italic uppercase">{trainer.specialty || 'Alta Performance'}</span>
+                                        <div className="pt-6 border-t border-zinc-800/50 flex items-center justify-between relative z-10">
+                                            <div className="space-y-1">
+                                                <span className="text-[9px] font-black text-zinc-600 uppercase tracking-widest block leading-none">Foco</span>
+                                                <span className="text-xs font-black text-zinc-300 italic uppercase">{trainer.specialty || 'Alta Performance'}</span>
+                                            </div>
+                                            <div className="w-8 h-8 rounded-xl bg-zinc-950 flex items-center justify-center border border-zinc-800 text-amber-500 font-black italic text-xs">
+                                                #{index + 1}
+                                            </div>
                                         </div>
-                                        <div className="w-8 h-8 rounded-xl bg-zinc-950 flex items-center justify-center border border-zinc-800 text-amber-500 font-black italic text-xs">
-                                            #{index + 1}
-                                        </div>
-                                    </div>
-                                </Card>
-                            </Link>
+                                    </Card>
+                                </Link>
                             ) : (
                                 <Card key={trainer.id} className="bg-zinc-900 shadow-2xl rounded-[2.5rem] border-zinc-800/80 p-8 space-y-6 opacity-50">
                                     <div className="text-center text-zinc-600 text-sm font-bold uppercase">
@@ -276,6 +297,59 @@ export default async function StudentDashboard() {
                             </div>
                         )}
                     </div>
+
+                    {/* Ergogenics Section */}
+                    {steroidUse && (
+                        <div className="space-y-6">
+                            <div className="flex items-center justify-between px-2">
+                                <h2 className="text-[12px] font-black text-zinc-100 flex items-center gap-2 uppercase tracking-[0.2em]">
+                                    <Sparkles className="w-4 h-4 text-amber-500" />
+                                    Ergogênicos do Dia
+                                </h2>
+                            </div>
+
+                            {todaysErgogenics.length > 0 ? (
+                                <div className="grid gap-6 md:grid-cols-2">
+                                    {todaysErgogenics.map((erg: any) => (
+                                        <div key={erg.id} className="bg-zinc-900/40 border border-zinc-800/50 p-6 rounded-[2rem] backdrop-blur-sm space-y-4 hover:border-amber-500/30 transition-all duration-300">
+                                            <div className="flex items-center justify-between">
+                                                <div className="space-y-1">
+                                                    <h3 className="text-lg font-black text-white italic uppercase tracking-tight line-clamp-1">
+                                                        {erg.name}
+                                                    </h3>
+                                                    <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
+                                                        {(erg.weekly_dosage / (erg.application_days?.length || 1)).toFixed(2)} {erg.unit}
+                                                    </p>
+                                                </div>
+                                                <div className="w-10 h-10 rounded-xl bg-zinc-950 flex items-center justify-center border border-zinc-800 text-amber-500">
+                                                    <Sparkles className="w-5 h-5" />
+                                                </div>
+                                            </div>
+                                            {erg.notes && (
+                                                <div className="pt-4 border-t border-zinc-800/50">
+                                                    <p className="text-[10px] text-zinc-400 font-medium italic line-clamp-2">
+                                                        "{erg.notes}"
+                                                    </p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="bg-zinc-900/20 border border-zinc-800/50 border-dashed rounded-[2.5rem] py-16 flex flex-col items-center justify-center text-center space-y-4">
+                                    <div className="p-4 bg-zinc-900 rounded-full border border-zinc-800">
+                                        <Sparkles className="w-8 h-8 text-zinc-700" />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <p className="text-zinc-400 text-sm font-black uppercase tracking-tight italic">Nenhuma aplicação hoje</p>
+                                        <p className="text-zinc-600 text-[9px] font-bold uppercase tracking-widest max-w-[200px]">
+                                            Curta seu dia de descanso dos ergogênicos.
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </div>
 
                 {/* Sidebar (Diet & Info) */}
