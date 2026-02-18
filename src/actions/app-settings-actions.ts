@@ -24,11 +24,13 @@ export async function getPlatformSecrets(): Promise<{
             stripe_secret_key: process.env.STRIPE_SECRET_KEY || null
         }
     }
-    const { data } = await admin
+    const { data: rawData } = await admin
         .from('app_settings')
         .select('gemini_api_key, stripe_secret_key')
         .eq('id', 1)
         .single()
+
+    const data = rawData as { gemini_api_key: string | null; stripe_secret_key: string | null } | null
 
     return {
         gemini_api_key: data?.gemini_api_key || process.env.GEMINI_API_KEY || null,
@@ -62,11 +64,17 @@ export async function getAppSettings() {
 
     if (!profile?.is_admin) return null
 
-    const { data } = await supabase
+    const { data: rawData } = await supabase
         .from('app_settings')
         .select('beta_tester_mode, gemini_api_key, stripe_secret_key')
         .eq('id', 1)
         .single()
+
+    const data = rawData as {
+        beta_tester_mode: boolean;
+        gemini_api_key: string | null;
+        stripe_secret_key: string | null
+    } | null
 
     if (!data) return null
     return {
