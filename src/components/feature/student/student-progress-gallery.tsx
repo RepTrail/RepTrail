@@ -59,7 +59,7 @@ export function StudentProgressGallery({ photos }: StudentProgressGalleryProps) 
                         { url: set.back_url, label: 'Costas', key: 'back' },
                         { url: set.side_right_url, label: 'Lado Dir.', key: 'side_right' },
                         { url: set.side_left_url, label: 'Lado Esq.', key: 'side_left' },
-                    ].filter(p => p.url)
+                    ].filter((p): p is { url: string; label: string; key: string } => !!p.url)
 
                     if (photosInSet.length === 0) return null
 
@@ -95,7 +95,7 @@ export function StudentProgressGallery({ photos }: StudentProgressGalleryProps) 
                                     <div
                                         key={`${set.id}-${photo.key}`}
                                         className="relative aspect-[3/4] bg-zinc-950 rounded-xl overflow-hidden border border-zinc-800 cursor-pointer group/item"
-                                        onClick={() => setSelectedPhoto(photo.url || null)}
+                                        onClick={() => setSelectedPhoto(photo.url ?? null)}
                                     >
                                         <img
                                             src={photo.url}
