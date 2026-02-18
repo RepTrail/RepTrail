@@ -1,0 +1,12 @@
+name = "reptrail"
+compatibility_date = "2024-09-23"
+pages_build_output_dir = ".open-next"
+
+# Node.js compatibility for Next.js
+compatibility_flags = ["nodejs_compat"]
+
+[env.production]
+routes = [
+  { pattern = "reptrail.com", zone_name = "reptrail.com" },
+  { pattern = "www.reptrail.com", zone_name = "reptrail.com" }
+]

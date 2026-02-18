@@ -1,0 +1,632 @@
+
+import { createClient } from '@/lib/supabase/server'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import {
+    Users,
+    ChevronLeft,
+    Calendar,
+    Activity,
+    Dumbbell,
+    Utensils,
+    ArrowUpRight,
+    MessageSquare,
+    Settings,
+    Wallet,
+    Plus,
+    Eye,
+    Clock,
+    Camera,
+    Image as ImageIcon,
+    AlertCircle,
+    CheckCircle,
+    DollarSign,
+    TrendingUp,
+    Sparkles,
+    FlaskConical
+} from 'lucide-react'
+import { Badge } from "@/components/ui/badge"
+import Link from 'next/link'
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { EditStudentDialog } from '@/components/feature/trainer/edit-student-dialog'
+import { StudentGalleryDialog } from '@/components/feature/trainer/student-gallery-dialog'
+import { MarkPaidButton } from '@/components/feature/trainer/mark-paid-button'
+import { UnassignButton } from '@/components/feature/trainer/unassign-button'
+import { StudentWorkoutHistory } from '@/components/feature/trainer/student-workout-history'
+import { getStudentWorkoutHistory, getStudentLastActivity } from '@/actions/log-actions'
+import { getStudentMetricsHistory, getStudentChartData } from '@/actions/metrics-actions'
+import { StudentMetricsChart } from '@/components/feature/trainer/student-metrics-chart'
+import { CardioAssignmentSection } from '@/components/feature/trainer/cardio-assignment-section'
+
+export default async function StudentDetailPage({ params }: { params: { id: string } }) {
+    const { id } = await params
+    const supabase = await createClient()
+
+    const { data: relationship } = await supabase
+        .from('trainer_students')
+        .select(`
+            *,
+            student:profiles!student_id(
+                *,
+                details:student_details(*),
+                progress_photos(*),
+                assigned_workouts(
+                    active,
+                    workout:workouts(id, name)
+                ),
+                assigned_diets(
+                    active,
+                    diet:diets(id, name)
+                )
+            )
+        `)
+        .eq('id', id)
+        .single()
+
+    if (!relationship) {
+        return <div className="p-10 text-center text-zinc-500 font-bold uppercase tracking-widest text-xs">Aluno não encontrado.</div>
+    }
+
+    // Fetch trainer's own profile for tier check
+    const { data: trainerProfile } = await supabase
+        .from('profiles')
+        .select('plan_tier')
+        .eq('id', relationship.trainer_id)
+        .single()
+
+    const trainerTier = trainerProfile?.plan_tier || 'start'
+
+    // Fetch Metrics & History
+    const history = await getStudentWorkoutHistory(relationship.student_id)
+    const metricsHistory = await getStudentMetricsHistory(relationship.student_id)
+    const chartData = await getStudentChartData(relationship.student_id)
+    const lastActivity = await getStudentLastActivity(relationship.student_id)
+
+    const { student } = relationship
+    const details = student?.details
+
+    // Get assignments (only active ones)
+    const assignedWorkouts = student?.assigned_workouts?.filter((aw: any) => aw.active) || []
+    const activeDiet = student?.assigned_diets?.find((ad: any) => ad.active)?.diet
+
+    // Calculate age
+    const age = details?.birth_date
+        ? Math.floor((new Date().getTime() - new Date(details.birth_date).getTime()) / (365.25 * 24 * 60 * 60 * 1000))
+        : '--'
+
+    const today = new Date().getDate()
+    const paymentDay = relationship.payment_day
+    const lastPayment = relationship.last_payment_date
+    const isPaidThisMonth = lastPayment &&
+        new Date(lastPayment).getMonth() === new Date().getMonth() &&
+        new Date(lastPayment).getFullYear() === new Date().getFullYear()
+
+    let paymentStatus = null
+
+    if (paymentDay && !isPaidThisMonth) {
+        if (today === paymentDay) {
+            paymentStatus = 'due_today'
+        } else if (today > paymentDay) {
+            paymentStatus = 'overdue'
+        }
+    }
+
+    const formatWhatsAppUrl = (phone: string | null | undefined, message: string) => {
+        if (!phone) return '#';
+        const cleaned = phone.replace(/\D/g, '');
+        const formatted = cleaned.startsWith('55') ? cleaned : `55${cleaned}`;
+        return `https://wa.me/${formatted}?text=${encodeURIComponent(message)}`;
+    };
+
+    const studentFirstName = student?.full_name?.split(' ')[0] || 'aluno(a)';
+
+    return (
+        <div className="space-y-10 pb-10">
+            {/* Header Section */}
+            <div className="flex flex-col gap-6 pb-2 border-b border-zinc-800/50">
+                <Link
+                    href="/dashboard/trainer/students"
+                    className="flex items-center gap-2 text-zinc-500 hover:text-white transition-colors text-[10px] font-bold uppercase tracking-widest"
+                >
+                    <ChevronLeft className="w-3 h-3" />
+                    Voltar para Lista
+                </Link>
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                    <div className="flex items-center gap-4">
+                        <Avatar className="h-14 w-14 md:h-16 md:w-16 border-2 border-zinc-800 shadow-2xl shrink-0">
+                            <AvatarImage src={student?.avatar_url} />
+                            <AvatarFallback className="bg-zinc-900 text-zinc-400 font-black text-lg md:text-xl italic uppercase">
+                                {student?.full_name?.substring(0, 2) || 'AL'}
+                            </AvatarFallback>
+                        </Avatar>
+                        <div className="space-y-1 min-w-0">
+                            <h1 className="text-2xl md:text-4xl font-black tracking-tight text-white font-sans italic uppercase truncate">
+                                {student?.full_name}
+                            </h1>
+                            <div className="flex flex-wrap items-center gap-2 md:gap-3">
+                                <span className="text-zinc-500 text-[10px] md:text-xs font-medium flex items-center gap-1.5 shrink-0">
+                                    <Calendar className="w-3 h-3" />
+                                    Desde {new Date(relationship.created_at).toLocaleDateString('pt-BR')}
+                                </span>
+                                <div className={`
+                                    inline-flex items-center px-2 py-0.5 rounded-full text-[9px] md:text-[10px] font-black uppercase tracking-widest border
+                                    ${relationship.active
+                                        ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'
+                                        : 'bg-zinc-800 text-zinc-500 border-zinc-700/50'}
+                                `}>
+                                    {relationship.active ? 'Ativo' : 'Inativo'}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Compact payment status for mobile header */}
+                    {(isPaidThisMonth || paymentStatus) && (
+                        <div className="flex flex-wrap gap-2 lg:hidden">
+                            {isPaidThisMonth && (
+                                <Badge variant="outline" className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full flex gap-1 items-center">
+                                    <CheckCircle className="w-3 h-3" /> Pago
+                                </Badge>
+                            )}
+                            {paymentStatus === 'due_today' && (
+                                <Badge variant="outline" className="bg-amber-500/10 text-amber-500 border-amber-500/20 text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full flex gap-1 items-center">
+                                    <AlertCircle className="w-3 h-3" /> Vence Hoje
+                                </Badge>
+                            )}
+                            {paymentStatus === 'overdue' && (
+                                <Badge variant="outline" className="bg-red-500/10 text-red-500 border-red-500/20 text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full flex gap-1 items-center">
+                                    <AlertCircle className="w-3 h-3" /> Atrasado
+                                </Badge>
+                            )}
+                        </div>
+                    )}
+
+                    <div className="hidden lg:flex items-center gap-3">
+                        {isPaidThisMonth && (
+                            <Badge variant="outline" className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full flex gap-1 items-center">
+                                <CheckCircle className="w-3 h-3" /> Pago • TAXA ZERO
+                            </Badge>
+                        )}
+                        {paymentStatus === 'due_today' && (
+                            <div className="flex items-center gap-2">
+                                <Badge variant="outline" className="bg-amber-500/10 text-amber-500 border-amber-500/20 text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full flex gap-1 items-center">
+                                    <AlertCircle className="w-3 h-3" /> Hoje: R$ {relationship.monthly_fee}
+                                </Badge>
+                                <MarkPaidButton studentId={student.id} trainerId={relationship.trainer_id} />
+                            </div>
+                        )}
+                        {paymentStatus === 'overdue' && (
+                            <div className="flex items-center gap-2">
+                                <Badge variant="outline" className="bg-red-500/10 text-red-500 border-red-500/20 text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full flex gap-1 items-center animate-pulse">
+                                    <AlertCircle className="w-3 h-3" /> Atrasado: R$ {relationship.monthly_fee}
+                                </Badge>
+                                <MarkPaidButton studentId={student.id} trainerId={relationship.trainer_id} />
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* Mobile Action Bar */}
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                    {student?.whatsapp ? (
+                        <Button asChild variant="outline" className="flex-1 sm:flex-none border-zinc-800 bg-zinc-900/50 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-xl font-bold h-10 px-4 text-xs gap-2 transition-all">
+                            <a href={formatWhatsAppUrl(student.whatsapp, `Olá ${studentFirstName}, tudo bem? Gostaria de conversar sobre seu planejamento.`)} target="_blank" rel="noopener noreferrer">
+                                <MessageSquare className="w-4 h-4" /> WhatsApp
+                            </a>
+                        </Button>
+                    ) : (
+                        <Button variant="outline" disabled className="flex-1 sm:flex-none border-zinc-800 bg-zinc-900/50 text-zinc-700 rounded-xl font-bold h-10 px-4 text-xs gap-2 transition-all">
+                            <MessageSquare className="w-4 h-4" /> Sem WhatsApp
+                        </Button>
+                    )}
+
+                    <EditStudentDialog
+                        relationshipId={id}
+                        studentId={student.id}
+                        trainerId={relationship.trainer_id}
+                        initialData={{
+                            weight: details?.starting_weight,
+                            body_fat: details?.body_fat,
+                            monthly_fee: relationship.monthly_fee,
+                            payment_day: relationship.payment_day,
+                            steroid_use: details?.steroid_use,
+                            whatsapp: student?.whatsapp
+                        }}
+                    >
+                        <Button className="flex-1 sm:flex-none bg-white text-zinc-950 hover:bg-zinc-200 rounded-xl font-bold h-10 px-6 text-xs shadow-xl active:scale-95 transition-all">
+                            Editar
+                        </Button>
+                    </EditStudentDialog>
+
+                    <Button variant="outline" className="w-full sm:w-auto border-red-500/20 bg-red-500/5 text-red-500 hover:bg-red-500 hover:text-white rounded-xl font-bold h-10 px-4 text-xs gap-2 transition-all">
+                        {relationship.active ? 'Desativar Aluno' : 'Reativar Aluno'}
+                    </Button>
+                </div>
+            </div>
+
+            {/* Content Grid */}
+            <div className="grid gap-6 md:grid-cols-3">
+
+                {/* Profile Info */}
+                <Card className="md:col-span-1 bg-zinc-900/40 border-zinc-800/50 shadow-2xl rounded-3xl overflow-hidden backdrop-blur-sm">
+                    <CardHeader className="bg-zinc-900/60 border-b border-zinc-800/50 py-5">
+                        <CardTitle className="text-[10px] font-black text-emerald-500 flex items-center gap-2 uppercase tracking-[0.2em]">
+                            <Users className="w-3.5 h-3.5" />
+                            Dados Físicos
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-7 space-y-8">
+                        <div className="grid grid-cols-2 gap-y-6 gap-x-4">
+                            <InfoField label="Peso" value={details?.starting_weight || '--'} sub="kg" />
+                            <InfoField label="Altura" value={details?.height || '--'} sub="cm" />
+                            <InfoField label="BF Est." value={details?.body_fat || '--'} sub="%" />
+                            <InfoField label="Idade" value={age} sub="anos" />
+                            <InfoField label="Ergogênicos" value={details?.steroid_use ? 'Sim' : 'Não'} />
+                        </div>
+
+                        <div className="pt-8 border-t border-zinc-800/50 space-y-5">
+                            <div className="flex items-center justify-between">
+                                <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Financeiro</p>
+                                <Wallet className="w-3 h-3 text-zinc-700" />
+                            </div>
+
+                            <div className="space-y-3">
+                                <div className="flex items-center justify-between p-3 rounded-2xl bg-zinc-900/50 border border-zinc-800/50">
+                                    <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Mensalidade</span>
+                                    <span className="text-base font-black text-white italic">R$ {Number(relationship.monthly_fee).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+                                </div>
+                                <div className="flex items-center justify-between p-3 rounded-2xl bg-zinc-900/50 border border-zinc-800/50">
+                                    <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Vencimento</span>
+                                    <span className="text-base font-black text-zinc-100 italic">Dia {relationship.payment_day || '--'}</span>
+                                </div>
+                            </div>
+
+                            {isPaidThisMonth && (
+                                <div className="p-4 rounded-2xl bg-emerald-500/5 border border-emerald-500/10 flex flex-col gap-2">
+                                    <div className="flex items-center gap-2 text-emerald-500 text-[10px] font-black uppercase tracking-widest">
+                                        <CheckCircle className="w-3 h-3" /> Pago • Taxa Zero
+                                    </div>
+                                    <p className="text-[9px] text-zinc-500 font-bold uppercase tracking-widest leading-tight">
+                                        Estatus de pagamento verificado
+                                    </p>
+                                </div>
+                            )}
+
+                            {paymentStatus === 'due_today' && (
+                                <div className="p-4 rounded-2xl bg-amber-500/5 border border-amber-500/10 flex flex-col gap-3">
+                                    <div className="flex items-center gap-2 text-amber-500 text-[10px] font-black uppercase tracking-widest">
+                                        <AlertCircle className="w-3 h-3" /> Vence Hoje
+                                    </div>
+                                    <div className="flex gap-2">
+                                        {student.whatsapp && (
+                                            <Button asChild size="sm" className="flex-1 bg-amber-500 text-black hover:bg-amber-400 font-black rounded-xl h-9 text-[9px] uppercase tracking-widest italic">
+                                                <a href={formatWhatsAppUrl(student.whatsapp, `Olá ${studentFirstName}, tudo bem? Passando para lembrar que sua mensalidade da consultoria vence hoje. Qualquer dúvida, estou à disposição!`)} target="_blank" rel="noopener noreferrer">
+                                                    Cobrar
+                                                </a>
+                                            </Button>
+                                        )}
+                                        <MarkPaidButton studentId={student.id} trainerId={relationship.trainer_id} className="flex-1" />
+                                    </div>
+                                </div>
+                            )}
+
+                            {paymentStatus === 'overdue' && (
+                                <div className="p-4 rounded-2xl bg-red-500/5 border border-red-500/10 flex flex-col gap-3">
+                                    <div className="flex items-center gap-2 text-red-500 text-[10px] font-black uppercase tracking-widest animate-pulse">
+                                        <AlertCircle className="w-3 h-3" /> Pagamento Atrasado
+                                    </div>
+                                    <div className="flex gap-2">
+                                        {student.whatsapp && (
+                                            <Button asChild size="sm" className="flex-1 bg-red-500 text-white hover:bg-red-400 font-black rounded-xl h-9 text-[9px] uppercase tracking-widest italic">
+                                                <a href={formatWhatsAppUrl(student.whatsapp, `Olá ${studentFirstName}, tudo bem? Notei que sua mensalidade da consultoria está em aberto. Poderia verificar por gentileza? Qualquer dúvida, sigo à disposição.`)} target="_blank" rel="noopener noreferrer">
+                                                    Cobrar WhatsApp
+                                                </a>
+                                            </Button>
+                                        )}
+                                        <MarkPaidButton studentId={student.id} trainerId={relationship.trainer_id} className="flex-1" />
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </CardContent>
+                </Card>
+
+                {/* Assigned Content */}
+                <div className="md:col-span-2 space-y-10">
+                    <div className="space-y-10">
+                        <div className="grid gap-8 lg:grid-cols-2">
+                            {/* Workouts Section */}
+                            <div className="space-y-5">
+                                <div className="flex items-center justify-between px-2">
+                                    <h3 className="text-[10px] font-black text-zinc-100 flex items-center gap-2 uppercase tracking-[0.2em]">
+                                        <Dumbbell className="w-3.5 h-3.5 text-blue-500" />
+                                        Treinos Ativos
+                                    </h3>
+                                    {assignedWorkouts.length === 0 && (
+                                        <Button asChild variant="ghost" size="sm" className="text-zinc-500 hover:text-white text-[9px] uppercase font-black tracking-widest gap-2 bg-zinc-900/50 rounded-lg h-7">
+                                            <Link href="/dashboard/trainer/workouts">
+                                                Novo <Plus className="w-3 h-3" />
+                                            </Link>
+                                        </Button>
+                                    )}
+                                </div>
+
+                                {assignedWorkouts.length > 0 ? (
+                                    <div className="space-y-4">
+                                        {assignedWorkouts.map((aw: any) => (
+                                            <ContentCard
+                                                key={aw.workout.id}
+                                                icon={<Dumbbell className="w-4 h-4 text-blue-500" />}
+                                                label={aw.workout.name}
+                                                actionLabel="Editar"
+                                                href={`/dashboard/trainer/workouts/${aw.workout.id}`}
+                                                unassignProps={{
+                                                    type: 'workout',
+                                                    contentId: aw.workout.id,
+                                                    studentId: student.id
+                                                }}
+                                            />
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="bg-zinc-900/30 border border-zinc-800/50 border-dashed rounded-3xl py-12 flex flex-col items-center justify-center text-center space-y-4">
+                                        <p className="text-zinc-600 text-[10px] font-black uppercase tracking-widest italic">Nenhum treino assinado</p>
+                                        <Button asChild variant="outline" size="sm" className="border-zinc-800 bg-zinc-900/50 text-zinc-400 hover:text-white rounded-xl h-9 px-6 text-[9px] font-black uppercase tracking-widest italic">
+                                            <Link href="/dashboard/trainer/workouts">Ir para Treinos</Link>
+                                        </Button>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Diet Section */}
+                            <div className="space-y-5">
+                                <h3 className="text-[10px] font-black text-zinc-100 flex items-center gap-2 uppercase tracking-[0.2em] px-2">
+                                    <Utensils className="w-3.5 h-3.5 text-emerald-500" />
+                                    Dieta Atual
+                                </h3>
+                                {activeDiet ? (
+                                    <ContentCard
+                                        icon={<Utensils className="w-4 h-4 text-emerald-500" />}
+                                        label={activeDiet.name}
+                                        actionLabel="Editar"
+                                        href={`/dashboard/trainer/diets/${activeDiet.id}`}
+                                        unassignProps={{
+                                            type: 'diet',
+                                            contentId: activeDiet.id,
+                                            studentId: student.id
+                                        }}
+                                    />
+                                ) : (
+                                    <div className="bg-zinc-900/30 border border-zinc-800/50 border-dashed rounded-3xl py-12 flex flex-col items-center justify-center text-center space-y-4">
+                                        <p className="text-zinc-600 text-[10px] font-black uppercase tracking-widest italic">Nenhuma dieta assinada</p>
+                                        <Button asChild variant="outline" size="sm" className="border-zinc-800 bg-zinc-900/50 text-zinc-400 hover:text-white rounded-xl h-9 px-6 text-[9px] font-black uppercase tracking-widest italic">
+                                            <Link href="/dashboard/trainer/diets">Configurar Dieta</Link>
+                                        </Button>
+                                    </div>
+                                )}
+                                {details?.steroid_use && (
+                                    <div className="space-y-5 lg:col-span-2 pt-6">
+                                        <h3 className="text-[10px] font-black text-zinc-100 flex items-center gap-2 uppercase tracking-[0.2em] px-2 leading-none">
+                                            <Sparkles className="w-3.5 h-3.5 text-emerald-500" />
+                                            Protocolo Ergogênico
+                                        </h3>
+                                        <ContentCard
+                                            icon={<FlaskConical className="w-4 h-4 text-emerald-500" />}
+                                            label="Gerenciar Protocolo Farmacológico"
+                                            actionLabel="Gerenciar"
+                                            href={`/dashboard/trainer/students/${id}/ergogenics`}
+                                        />
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Cardio Section - Full Width */}
+                        <div className="w-full">
+                            <CardioAssignmentSection
+                                studentId={student.id}
+                                relationshipId={id}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="grid gap-8 md:grid-cols-2">
+                        {/* Last Activity Card */}
+                        <Card className="bg-zinc-900/40 border-zinc-800/50 shadow-2xl rounded-3xl overflow-hidden backdrop-blur-sm">
+                            <CardHeader className="bg-zinc-900/60 border-b border-zinc-800/50 py-5">
+                                <CardTitle className="text-[10px] font-black text-amber-500 flex items-center gap-2 uppercase tracking-[0.2em]">
+                                    <Clock className="w-3.5 h-3.5" />
+                                    Última Atividade
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="p-7">
+                                {lastActivity ? (
+                                    <div className="space-y-4">
+                                        <div className="flex items-center gap-5">
+                                            <div className="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center border border-amber-500/20 shadow-[0_0_20px_rgba(245,158,11,0.05)]">
+                                                {lastActivity.type === 'workout' && <Dumbbell className="w-6 h-6 text-amber-500" />}
+                                                {lastActivity.type === 'meal' && <Utensils className="w-6 h-6 text-amber-500" />}
+                                                {lastActivity.type === 'cardio' && <Activity className="w-6 h-6 text-amber-500" />}
+                                                {lastActivity.type === 'weight' && <TrendingUp className="w-6 h-6 text-amber-500" />}
+                                                {lastActivity.type === 'photo' && <Camera className="w-6 h-6 text-amber-500" />}
+                                                {!['workout', 'meal', 'cardio', 'weight', 'photo'].includes(lastActivity.type) && <Eye className="w-6 h-6 text-amber-500" />}
+                                            </div>
+                                            <div className="flex-1 space-y-1 min-w-0">
+                                                <p className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Última atividade</p>
+                                                <p className="text-sm font-black text-white italic uppercase tracking-tight truncate">
+                                                    {lastActivity.name}
+                                                </p>
+                                                <p className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest">
+                                                    {lastActivity.relativeTime}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div className="pt-3 border-t border-zinc-800/50">
+                                            <p className="text-[9px] font-bold text-zinc-600 uppercase tracking-widest">
+                                                {lastActivity.formattedDate}
+                                            </p>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="flex items-center gap-5">
+                                        <div className="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center border border-amber-500/20 shadow-[0_0_20px_rgba(245,158,11,0.05)]">
+                                            <Eye className="w-6 h-6 text-amber-500" />
+                                        </div>
+                                        <div className="space-y-1">
+                                            <p className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Visto por último</p>
+                                            <p className="text-sm font-black text-white italic uppercase tracking-tight">
+                                                {student?.last_seen_at
+                                                    ? new Date(student.last_seen_at).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })
+                                                    : 'Ainda não acessou'
+                                                }
+                                            </p>
+                                        </div>
+                                    </div>
+                                )}
+                            </CardContent>
+                        </Card>
+
+                        {/* Photo History Card */}
+                        <Card className="bg-zinc-900/40 border-zinc-800/50 shadow-2xl rounded-3xl overflow-hidden backdrop-blur-sm">
+                            <CardHeader className="bg-zinc-900/60 border-b border-zinc-800/50 py-5 flex flex-row items-center justify-between gap-4">
+                                <CardTitle className="text-[10px] font-black text-purple-500 flex items-center gap-2 uppercase tracking-[0.2em]">
+                                    <Camera className="w-3.5 h-3.5" />
+                                    Fotos Evolução
+                                </CardTitle>
+                                <StudentGalleryDialog photos={student?.progress_photos || []} studentName={student.full_name}>
+                                    <Button variant="ghost" size="sm" className="h-7 text-zinc-500 hover:text-white text-[9px] uppercase font-black tracking-widest px-3 bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800/50 rounded-xl transition-all">
+                                        Galeria
+                                    </Button>
+                                </StudentGalleryDialog>
+                            </CardHeader>
+                            <CardContent className="p-7">
+                                {student?.progress_photos?.length > 0 ? (
+                                    <StudentGalleryDialog photos={student.progress_photos} studentName={student.full_name}>
+                                        <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide cursor-pointer group">
+                                            {student.progress_photos.slice(0, 3).map((photo: any) => (
+                                                <div key={photo.id} className="relative aspect-[3/4] w-20 flex-shrink-0 rounded-2xl overflow-hidden border-2 border-zinc-800 bg-zinc-900 group-hover:border-purple-500/40 transition-all shadow-xl">
+                                                    <img
+                                                        src={photo.front_url || photo.back_url || photo.side_right_url || photo.side_left_url}
+                                                        alt="Progresso"
+                                                        className="w-full h-full object-cover grayscale brightness-75 group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-500"
+                                                    />
+                                                    <div className="absolute inset-0 bg-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                                </div>
+                                            ))}
+                                            {student.progress_photos.length > 3 && (
+                                                <div className="w-20 aspect-[3/4] rounded-2xl border-2 border-dashed border-zinc-800 flex items-center justify-center text-[11px] font-black text-zinc-600 uppercase italic group-hover:bg-zinc-800/50 group-hover:border-zinc-700 transition-all">
+                                                    +{student.progress_photos.length - 3}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </StudentGalleryDialog>
+                                ) : (
+                                    <StudentGalleryDialog photos={[]} studentName={student.full_name}>
+                                        <div className="flex items-center gap-5 text-zinc-500 cursor-pointer group hover:bg-zinc-900/50 p-3 rounded-2xl transition-all border border-transparent hover:border-zinc-800/50">
+                                            <div className="w-12 h-12 rounded-2xl bg-zinc-900 flex items-center justify-center border border-zinc-800 group-hover:border-purple-500/30 group-hover:shadow-[0_0_20px_rgba(168,85,247,0.1)] transition-all">
+                                                <Camera className="w-6 h-6 group-hover:text-purple-500 transition-colors" />
+                                            </div>
+                                            <div className="space-y-1">
+                                                <p className="text-[10px] font-black uppercase tracking-widest italic group-hover:text-zinc-300">Nova Galeria</p>
+                                                <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-700">Sem fotos registradas</p>
+                                            </div>
+                                        </div>
+                                    </StudentGalleryDialog>
+                                )}
+                            </CardContent>
+                        </Card>
+                    </div>
+
+                    {/* Workout History Section */}
+                    <div className="space-y-5">
+                        <h3 className="text-[10px] font-black text-emerald-500 flex items-center gap-2 uppercase tracking-[0.2em] px-2 leading-none">
+                            <Activity className="w-3.5 h-3.5" />
+                            Histórico de Performance
+                        </h3>
+                        <StudentWorkoutHistory
+                            history={history}
+                            isBlocked={trainerTier === 'start'}
+                        />
+                    </div>
+                </div>
+            </div>
+
+            {/* Metrics Chart Card - Bottom of the page */}
+            <Card className="w-full bg-zinc-950 border-zinc-800 shadow-2xl rounded-2xl overflow-hidden border-t-zinc-700/10 mt-10">
+                <CardHeader className="bg-zinc-900/10 border-b border-zinc-900/50 py-4 flex flex-row items-center justify-between">
+                    <CardTitle className="text-sm font-bold text-zinc-100 flex items-center gap-2 uppercase tracking-widest">
+                        <Activity className="w-4 h-4 text-emerald-500" />
+                        Evolução das Métricas
+                    </CardTitle>
+                    <Badge variant="outline" className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full">
+                        Pro / Elite
+                    </Badge>
+                </CardHeader>
+                <CardContent className="p-8 space-y-10">
+                    {trainerTier === 'start' ? (
+                        <div className="flex flex-col items-center justify-center py-10 text-center space-y-4">
+                            <div className="p-4 bg-zinc-900 rounded-full border border-zinc-800">
+                                <TrendingUp className="w-8 h-8 text-zinc-700" />
+                            </div>
+                            <div className="space-y-1">
+                                <h3 className="text-lg font-black text-white italic uppercase tracking-tight">Gráficos de Evolução</h3>
+                                <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest max-w-[250px]">
+                                    Disponível apenas para treinadores <span className="text-emerald-500">PRO e ELITE</span>.
+                                </p>
+                            </div>
+                            <Button asChild size="sm" className="bg-emerald-500 text-zinc-950 hover:bg-emerald-600 font-black italic uppercase text-[10px] tracking-widest rounded-xl px-6 h-9">
+                                <Link href="/dashboard/trainer/profile">Fazer Upgrade</Link>
+                            </Button>
+                        </div>
+                    ) : (
+                        <>
+                            <StudentMetricsChart
+                                weights={chartData.weights}
+                                bfs={chartData.bfs}
+                                frequency={chartData.frequency}
+                            />
+                        </>
+                    )}
+                </CardContent>
+            </Card>
+        </div>
+    )
+}
+
+function InfoField({ label, value, sub }: any) {
+    return (
+        <div className="space-y-2">
+            <p className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">{label}</p>
+            <div className="flex items-baseline gap-1.5">
+                <span className="text-2xl font-black text-zinc-100 italic uppercase tracking-tighter leading-none">{value}</span>
+                {sub && <span className="text-[10px] font-black text-zinc-600 uppercase italic">{sub}</span>}
+            </div>
+        </div>
+    )
+}
+
+function ContentCard({ icon, label, actionLabel, href, unassignProps }: any) {
+    return (
+        <div className="bg-zinc-900/40 border border-zinc-800/50 shadow-xl rounded-3xl overflow-hidden backdrop-blur-sm group/card hover:border-zinc-700/50 transition-all duration-300">
+            <div className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+                <div className="flex items-center gap-4">
+                    <div className="w-11 h-11 rounded-2xl bg-zinc-900 flex items-center justify-center border border-zinc-800 group-hover/card:border-zinc-700 group-hover/card:shadow-[0_0_20px_rgba(255,255,255,0.02)] transition-all">
+                        {icon}
+                    </div>
+                    <p className="text-zinc-100 text-sm font-black uppercase italic tracking-wide truncate max-w-[150px]">{label}</p>
+                </div>
+                <div className="flex items-center gap-3">
+                    {unassignProps && (
+                        <UnassignButton {...unassignProps} />
+                    )}
+                    <Button asChild variant="ghost" className="text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-white hover:bg-zinc-800 h-10 rounded-2xl gap-2 border border-zinc-800/50 px-5 group-hover/card:border-zinc-700/80 transition-all flex-1 sm:flex-none italic">
+                        <Link href={href}>
+                            {actionLabel}
+                            <ArrowUpRight className="h-3.5 w-3.5 text-zinc-500" />
+                        </Link>
+                    </Button>
+                </div>
+            </div>
+        </div>
+    )
+}

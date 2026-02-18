@@ -1,0 +1,93 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import { AlertCircle, MessageCircle, X } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Logo } from '@/components/ui/logo'
+
+interface TrialWarningPopupProps {
+    eliteUntil: string | null
+}
+
+export function TrialWarningPopup({ eliteUntil }: TrialWarningPopupProps) {
+    const [isOpen, setIsOpen] = useState(false)
+
+    useEffect(() => {
+        if (!eliteUntil) return
+
+        const expiryDate = new Date(eliteUntil)
+        const now = new Date()
+        const diffMs = expiryDate.getTime() - now.getTime()
+        const diffHours = diffMs / (1000 * 60 * 60)
+
+        // Show popup if trial expires in less than 24 hours AND more than 0
+        if (diffHours > 0 && diffHours <= 24) {
+            setIsOpen(true)
+        }
+    }, [eliteUntil])
+
+    if (!isOpen) return null
+
+    const whatsappNumber = "5511999999999" // TODO: Verify with user if they have a specific number
+    const message = encodeURIComponent("Olá! Estou usando o plano Elite do RepTrail e gostaria de falar sobre minha experiência e interesse em continuar usando a plataforma.")
+    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${message}`
+
+    return (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+            <div className="bg-zinc-900 border border-emerald-500/30 rounded-[2.5rem] p-8 max-w-md w-full relative overflow-hidden shadow-2xl shadow-emerald-500/10">
+                {/* Decoration */}
+                <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 blur-3xl -mr-16 -mt-16" />
+
+                <button
+                    onClick={() => setIsOpen(false)}
+                    className="absolute top-6 right-6 p-2 text-zinc-500 hover:text-white transition-colors"
+                >
+                    <X className="w-5 h-5" />
+                </button>
+
+                <div className="space-y-6 text-center relative z-10">
+                    <div className="flex justify-center mb-2">
+                        <Logo size="md" color="emerald" />
+                    </div>
+
+                    <div className="space-y-2">
+                        <h3 className="text-2xl font-black text-white italic uppercase tracking-tighter flex items-center justify-center gap-3">
+                            <AlertCircle className="w-6 h-6 text-amber-500" />
+                            Atenção, Coach!
+                        </h3>
+                        <p className="text-zinc-400 font-bold uppercase tracking-widest text-[10px]">Seu período de teste está chegando ao fim</p>
+                    </div>
+
+                    <p className="text-zinc-300 text-sm leading-relaxed">
+                        Seu acesso ao <span className="text-emerald-500 font-black italic uppercase">Plano Elite</span> expira em menos de 24 horas.
+                        Esperamos que esteja aproveitando a experiência!
+                    </p>
+
+                    <div className="pt-4 space-y-4">
+                        <p className="text-zinc-500 text-[9px] font-black uppercase tracking-widest">
+                            Como foi sua experiência? Adoraríamos saber sua opinião e falar sobre o próximo passo.
+                        </p>
+
+                        <a
+                            href={whatsappUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="w-full h-14 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 rounded-2xl flex items-center justify-center gap-3 font-black uppercase italic tracking-wide transition-all shadow-xl shadow-emerald-500/20 active:scale-95 group"
+                        >
+                            <MessageCircle className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                            Falar no WhatsApp
+                        </a>
+
+                        <Button
+                            variant="ghost"
+                            onClick={() => setIsOpen(false)}
+                            className="w-full text-zinc-500 hover:text-zinc-300 text-[10px] font-black uppercase tracking-widest"
+                        >
+                            Ver planos depois
+                        </Button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}

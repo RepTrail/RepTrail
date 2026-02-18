@@ -1,0 +1,120 @@
+'use client'
+
+import { useState } from 'react'
+import { Button } from "@/components/ui/button"
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { UserPlus, Plus, Loader2, Mail, DollarSign } from "lucide-react"
+import { createStudent } from '@/actions/trainer-actions'
+import { useToast } from "@/hooks/use-toast"
+
+export function AddStudentDialog() {
+    const [open, setOpen] = useState(false)
+    const [loading, setLoading] = useState(false)
+    const { toast } = useToast()
+
+    async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+        event.preventDefault()
+        setLoading(true)
+        const formData = new FormData(event.currentTarget)
+
+        const result = await createStudent(null, formData)
+        setLoading(false)
+
+        if (result.success) {
+            setOpen(false)
+            toast({
+                title: "Aluno vinculado!",
+                description: "O aluno foi adicionado à sua lista com sucesso.",
+            })
+        } else {
+            toast({
+                variant: "destructive",
+                title: "Erro ao vincular",
+                description: result.message,
+            })
+        }
+    }
+
+    return (
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+                <Button className="border-emerald-500/20 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/30 hover:border-emerald-500/50 hover:text-emerald-400 rounded-xl font-bold h-11 px-6 gap-2 transition-all duration-200 border">
+                    <Plus className="w-4 h-4" /> Vincular Aluno
+                </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px] bg-zinc-950 border-zinc-800 shadow-2xl rounded-2xl border-t-zinc-700/50">
+                <DialogHeader className="space-y-3">
+                    <div className="p-3 bg-zinc-900 rounded-2xl border border-zinc-800 w-fit">
+                        <UserPlus className="w-5 h-5 text-emerald-500" />
+                    </div>
+                    <div>
+                        <DialogTitle className="text-xl font-black text-white italic uppercase tracking-tight">
+                            Vincular Novo Aluno
+                        </DialogTitle>
+                        <DialogDescription className="text-zinc-500 text-xs font-medium">
+                            O aluno deve possuir uma conta no RepTrail. Insira o email abaixo.
+                        </DialogDescription>
+                    </div>
+                </DialogHeader>
+
+                <form onSubmit={onSubmit} className="space-y-6 pt-4">
+                    <div className="space-y-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="email" className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-2">
+                                <Mail className="w-3 h-3" />
+                                Email da Conta
+                            </Label>
+                            <Input
+                                id="email"
+                                name="email"
+                                type="email"
+                                placeholder="ex: aluno@email.com"
+                                className="bg-zinc-900 border-zinc-800 h-11 text-white rounded-xl focus:ring-zinc-700 placeholder:text-zinc-600"
+                                required
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="monthlyFee" className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-2">
+                                <DollarSign className="w-3 h-3" />
+                                Valor da Mensalidade (R$)
+                            </Label>
+                            <Input
+                                id="monthlyFee"
+                                name="monthlyFee"
+                                type="number"
+                                placeholder="0.00"
+                                className="bg-zinc-900 border-zinc-800 h-11 text-white rounded-xl focus:ring-zinc-700 placeholder:text-zinc-600 font-mono"
+                                defaultValue="0"
+                            />
+                        </div>
+                    </div>
+
+                    <DialogFooter className="pt-2">
+                        <Button
+                            type="submit"
+                            disabled={loading}
+                            className="w-full bg-zinc-100 text-zinc-950 hover:bg-zinc-200 rounded-xl font-bold h-12 shadow-lg transition-all active:scale-95"
+                        >
+                            {loading ? (
+                                <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Vinculando...</>
+                            ) : (
+                                'Finalizar Vínculo'
+                            )}
+                        </Button>
+                    </DialogFooter>
+                </form>
+            </DialogContent>
+        </Dialog>
+    )
+}
