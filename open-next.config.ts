@@ -5,5 +5,5 @@ export default defineCloudflareConfig({
   converter: "aws-apigw-v2",
   incrementalCache: "dummy",
   tagCache: "dummy",
-  queue: "sqs-lite",
+  queue: "direct",
 });
