@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "build:cf": "opennext build",
+    "build:cf": "next build && opennext build",
     "start": "next start",
     "lint": "eslint",
     "preview": "wrangler pages dev .open-next"

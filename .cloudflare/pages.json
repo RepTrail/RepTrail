@@ -1,0 +1,5 @@
+{
+  "buildCommand": "npm run build:cf",
+  "buildOutputDir": ".open-next",
+  "rootDir": "."
+}

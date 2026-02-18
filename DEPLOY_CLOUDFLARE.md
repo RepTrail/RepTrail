@@ -43,10 +43,12 @@ STRIPE_SECRET_KEY=sua-stripe-key-aqui (se usar Stripe)
 No Cloudflare Pages, configure:
 
 - **Framework preset**: `None` (OpenNext não está na lista de presets)
-- **Build command**: `npm run build:cf` (ou `npm run build && npm run build:cf` se necessário)
+- **Build command**: `npm run build:cf` (este comando executa `next build && opennext build`)
 - **Build output directory**: `.open-next`
 - **Root directory**: `web` (se o projeto estiver em uma subpasta)
 - **Node version**: `18` ou superior
+
+**IMPORTANTE**: O arquivo `.cloudflare/pages.json` já está configurado com os comandos corretos. Se o Cloudflare não detectar automaticamente, configure manualmente no dashboard.
 
 ## Passo 4: Deploy via Git (Recomendado)
 
