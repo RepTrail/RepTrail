@@ -1,4 +1,3 @@
-
 import { createClient } from '@supabase/supabase-js'
 import dotenv from 'dotenv'
 
@@ -43,10 +42,10 @@ async function diagnostic() {
             console.log("  No diet assignments found.")
         } else {
             for (const ass of assignments) {
-                console.log(`  Assignment ID: ${ass.id} | Diet: ${ass.diet?.name} | Active: ${ass.active}`)
-                console.log(`  Meals found: ${ass.diet?.meals?.length || 0}`)
-                if (ass.diet?.meals) {
-                    for (const meal of ass.diet.meals) {
+                console.log(`  Assignment ID: ${ass.id} | Diet: ${ass.diet?.[0]?.name} | Active: ${ass.active}`)
+                console.log(`  Meals found: ${ass.diet?.[0]?.meals?.length || 0}`)
+                if (ass.diet?.[0]?.meals) {
+                    for (const meal of ass.diet?.[0]?.meals || []) {
                         console.log(`    - Meal: ${meal.name} (${meal.meal_items?.length || 0} items)`)
                     }
                 }
