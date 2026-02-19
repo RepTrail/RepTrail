@@ -4,35 +4,41 @@ import { useState, useEffect, useTransition } from 'react'
 import {
     getAdminOverview, getAllTrainers, getAllUsers,
     updateUserPlanTier, toggleEliteStatus, grantEliteTrial,
-    getAllStoreProducts, toggleProductStatus, addStoreProduct,
+    getAllStoreProducts, toggleProductStatus, addStoreProduct, updateStoreProduct, deleteStoreProduct, fetchProductFromUrl,
     getAdminLogs, getTopProductsByClicks, getRecentStudentActivity,
-    getPlanPricing, updatePlanPricing, deleteUser
+    getPlanPricing, updatePlanPricing, deleteUser,
+    getOperationalCosts
 } from '@/actions/admin-actions'
+import { getAdminAffiliates } from '@/actions/admin-affiliate-actions'
+import { AffiliatesManagement } from '@/components/feature/admin/affiliates-management'
 import { getAppSettings, updateAppSettings } from '@/actions/app-settings-actions'
 import {
     BarChart3, Users, CreditCard, ShoppingBag, TrendingUp,
     ArrowUpRight, Users2, Settings, Package, Trophy,
     Shield, Star, Eye, EyeOff, Plus, ChevronDown,
     Activity, Zap, Crown, AlertCircle, Check, X,
-    Search, Filter, RefreshCw, ExternalLink, Clock, Layers, Pencil, Save, Wrench, Key, Trash2
+    Search, Filter, RefreshCw, ExternalLink, Clock, Layers, Pencil, Save, Wrench, Key, Trash2, HeartHandshake
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { useToast } from '@/hooks/use-toast'
 import { Logo } from '@/components/ui/logo'
+import { OperationalCosts } from '@/components/feature/admin/operational-costs'
 
-type Tab = 'overview' | 'trainers' | 'students' | 'store' | 'plans' | 'logs' | 'settings'
+type Tab = 'overview' | 'trainers' | 'students' | 'affiliates' | 'store' | 'plans' | 'logs' | 'settings'
 
 export default function AdminDashboardPage() {
     const [tab, setTab] = useState<Tab>('overview')
     const [stats, setStats] = useState<any>(null)
     const [trainers, setTrainers] = useState<any[]>([])
     const [students, setStudents] = useState<any[]>([])
+    const [affiliates, setAffiliates] = useState<any[]>([])
     const [products, setProducts] = useState<any[]>([])
     const [logs, setLogs] = useState<any[]>([])
     const [topProducts, setTopProducts] = useState<any[]>([])
     const [activityFeed, setActivityFeed] = useState<any[]>([])
+    const [operationalCosts, setOperationalCosts] = useState<any[]>([])
     const [planPricing, setPlanPricing] = useState<Record<string, {
         monthly: number;
         quarterly_discount: number;
@@ -44,6 +50,8 @@ export default function AdminDashboardPage() {
     const [appSettings, setAppSettings] = useState<{ beta_tester_mode: boolean; gemini_api_key: string; stripe_secret_key: string } | null>(null)
     const [loading, setLoading] = useState(true)
     const [search, setSearch] = useState('')
+    const [productModalOpen, setProductModalOpen] = useState(false)
+    const [editingProduct, setEditingProduct] = useState<any>(null)
     const [isPending, startTransition] = useTransition()
     const { toast } = useToast()
 
@@ -51,26 +59,30 @@ export default function AdminDashboardPage() {
 
     async function loadAll() {
         setLoading(true)
-        const [s, t, u, p, l, tp, af, pp, as] = await Promise.all([
+        const [s, t, u, aff, p, l, tp, af, pp, as, costs] = await Promise.all([
             getAdminOverview(),
             getAllTrainers(),
-            getAllUsers('student'),
+            getAllUsers(),
+            getAdminAffiliates(),
             getAllStoreProducts(),
             getAdminLogs(),
             getTopProductsByClicks(),
             getRecentStudentActivity(),
             getPlanPricing(),
             getAppSettings(),
+            getOperationalCosts(),
         ])
         setStats(s)
         setTrainers(t)
         setStudents(u)
+        setAffiliates(aff.data || [])
         setProducts(p)
         setLogs(l)
         setTopProducts(tp)
         setActivityFeed(af)
         setPlanPricing(pp)
         setAppSettings(as ? { beta_tester_mode: as.beta_tester_mode, gemini_api_key: as.gemini_api_key, stripe_secret_key: as.stripe_secret_key } : null)
+        setOperationalCosts(costs)
         setLoading(false)
     }
 
@@ -146,10 +158,24 @@ export default function AdminDashboardPage() {
         })
     }
 
+    async function handleDeleteProduct(productId: string) {
+        if (!confirm('Tem certeza que deseja remover este produto? A ação é irreversível.')) return false
+        startTransition(async () => {
+            const res = await deleteStoreProduct(productId)
+            if (res.error) toast({ title: 'Erro ao deletar', description: res.error, variant: 'destructive' })
+            else {
+                toast({ title: 'Produto removido com sucesso!', className: 'bg-emerald-500 border-none text-white' })
+                loadAll()
+            }
+        })
+        return true
+    }
+
     const tabs: { id: Tab; label: string; icon: any }[] = [
         { id: 'overview', label: 'Visão Geral', icon: BarChart3 },
         { id: 'trainers', label: 'Personais', icon: Users2 },
         { id: 'students', label: 'Alunos', icon: Users },
+        { id: 'affiliates', label: 'Afiliados', icon: HeartHandshake },
         { id: 'store', label: 'Loja', icon: ShoppingBag },
         { id: 'plans', label: 'Planos', icon: Layers },
         { id: 'settings', label: 'Credenciais', icon: Key },
@@ -223,12 +249,66 @@ export default function AdminDashboardPage() {
                     {tab === 'overview' && (
                         <div className="space-y-8">
                             {/* Stats Grid */}
-                            <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
-                                <StatCard label="Receita Total" value={`R$ ${stats?.revenue?.toFixed(2) || '0'}`} sub={`Taxa plataforma: R$ ${stats?.tax?.toFixed(2) || '0'}`} icon={CreditCard} color="text-emerald-500" bg="bg-emerald-500/10" />
-                                <StatCard label="Personais" value={stats?.trainers || 0} sub={`${stats?.recentSignups || 0} novos esta semana`} icon={Users2} color="text-orange-500" bg="bg-orange-500/10" />
-                                <StatCard label="Alunos" value={stats?.students || 0} sub={`${stats?.relationships || 0} com personal ativo`} icon={Users} color="text-blue-500" bg="bg-blue-500/10" />
-                                <StatCard label="Cliques na Loja" value={stats?.productClicks || 0} sub={`${stats?.totalProducts || 0} produtos ativos`} icon={ShoppingBag} color="text-amber-500" bg="bg-amber-500/10" />
+                            {/* Stats Grid */}
+                            <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+                                {/* PLATFORM REVENUE */}
+                                <StatCard
+                                    label="Lucro Líquido (Plataforma)"
+                                    value={`R$ ${Number(stats?.monthlyPlatformProfit || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
+                                    sub={`Bruto: R$ ${Number(stats?.monthlyGrossRevenue || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} | Custos: R$ ${Number(stats?.monthlyOperationalCosts || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
+                                    icon={TrendingUp} color="text-emerald-500" bg="bg-emerald-500/10"
+                                />
+                                <StatCard
+                                    label="Faturamento Personais"
+                                    value={`R$ ${Number(stats?.monthlyTrainerVolume || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
+                                    sub={`Médio: R$ ${Number(stats?.trainerAverageTicket || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} / personal`}
+                                    icon={CreditCard} color="text-blue-500" bg="bg-blue-500/10"
+                                />
+                                <StatCard
+                                    label="Ticket Médio (RepTrail)"
+                                    value={`R$ ${Number(stats?.platformTicketPerTrainer || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
+                                    sub="por personal cadastrado"
+                                    icon={Activity} color="text-amber-500" bg="bg-amber-500/10"
+                                />
+                                <StatCard
+                                    label="Comissões Pendentes"
+                                    value={`R$ ${Number(stats?.pendingCommissions || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
+                                    sub={`Este mês: R$ ${Number(stats?.commissionsThisMonth || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
+                                    icon={AlertCircle} color="text-red-500" bg="bg-red-500/10"
+                                />
+
+                                {/* COUNTS & AFFILIATES */}
+                                <StatCard
+                                    label="Afiliados"
+                                    value={stats?.affiliatesCount || 0}
+                                    sub={`Lucro Total: R$ ${Number(stats?.affiliateTotalEarnings || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
+                                    icon={HeartHandshake} color="text-purple-500" bg="bg-purple-500/10"
+                                />
+                                <StatCard
+                                    label="Personais"
+                                    value={stats?.trainers || 0}
+                                    sub={`${stats?.trialTrainers || 0} em período de teste`}
+                                    icon={Users2} color="text-indigo-500" bg="bg-indigo-500/10"
+                                />
+                                <StatCard
+                                    label="Alunos"
+                                    value={stats?.students || 0}
+                                    sub={`${stats?.recentSignups || 0} novos | ${stats?.studentsInTrial || 0} em trial`}
+                                    icon={Users} color="text-cyan-500" bg="bg-cyan-500/10"
+                                />
+                                <StatCard
+                                    label="Produtos Loja"
+                                    value={stats?.totalProducts || 0}
+                                    sub={`${stats?.productClicks || 0} cliques totais`}
+                                    icon={ShoppingBag} color="text-pink-500" bg="bg-pink-500/10"
+                                />
                             </div>
+
+                            <OperationalCosts
+                                initialCosts={operationalCosts}
+                                totalMonthly={stats?.monthlyOperationalCosts || 0}
+                                totalAllTime={stats?.totalOperationalCosts || 0}
+                            />
 
                             {/* Two columns */}
                             <div className="grid lg:grid-cols-2 gap-8">
@@ -332,12 +412,23 @@ export default function AdminDashboardPage() {
                         </div>
                     )}
 
+                    {/* AFFILIATES TAB */}
+                    {tab === 'affiliates' && (
+                        <div className="space-y-6">
+                            <p className="text-[10px] font-black text-zinc-600 uppercase tracking-widest">
+                                Gerencie comissões individualizadas e atribuições de alunos.
+                            </p>
+                            <AffiliatesManagement initialAffiliates={affiliates} allUsers={students} />
+                        </div>
+                    )}
+
                     {/* STUDENTS TAB */}
                     {tab === 'students' && (
                         <div className="space-y-6">
                             <SearchBar value={search} onChange={setSearch} placeholder="Buscar aluno..." />
                             <div className="space-y-3">
                                 {students
+                                    .filter(s => s.role === 'student')
                                     .filter(s => !search || s.full_name?.toLowerCase().includes(search.toLowerCase()) || s.email?.toLowerCase().includes(search.toLowerCase()))
                                     .map(student => (
                                         <StudentRow
@@ -355,15 +446,17 @@ export default function AdminDashboardPage() {
                     {/* STORE TAB */}
                     {tab === 'store' && (
                         <div className="space-y-6">
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center justify-between gap-4">
                                 <SearchBar value={search} onChange={setSearch} placeholder="Buscar produto..." />
-                                <AddProductButton onAdd={async (data) => {
-                                    const res = await addStoreProduct(data)
-                                    if (res.error) toast({ variant: 'destructive', title: 'Erro', description: res.error })
-                                    else { toast({ title: 'Produto adicionado!' }); loadAll() }
-                                }} />
+                                <Button
+                                    onClick={() => { setEditingProduct(null); setProductModalOpen(true) }}
+                                    className="h-12 px-6 rounded-2xl bg-white hover:bg-zinc-200 text-zinc-950 font-black uppercase italic tracking-wide shrink-0"
+                                >
+                                    <Plus className="w-4 h-4 sm:mr-2" />
+                                    <span className="hidden sm:inline">Novo Produto</span>
+                                </Button>
                             </div>
-                            <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                                 {products
                                     .filter(p => !search || p.name?.toLowerCase().includes(search.toLowerCase()))
                                     .map(product => (
@@ -371,11 +464,39 @@ export default function AdminDashboardPage() {
                                             key={product.id}
                                             product={product}
                                             onToggle={() => handleProductToggle(product.id, product.is_active)}
+                                            onEdit={() => { setEditingProduct(product); setProductModalOpen(true) }}
+                                            onDelete={() => handleDeleteProduct(product.id)}
                                             isPending={isPending}
                                         />
                                     ))}
-                                {products.length === 0 && <div className="col-span-3"><EmptyState label="Nenhum produto na loja" /></div>}
+                                {products.length === 0 && <div className="col-span-full"><EmptyState label="Nenhum produto na loja" /></div>}
                             </div>
+
+                            <ProductEditorModal
+                                isOpen={productModalOpen}
+                                onClose={() => setProductModalOpen(false)}
+                                product={editingProduct}
+                                onImport={fetchProductFromUrl}
+                                onDelete={async () => {
+                                    if (editingProduct && await handleDeleteProduct(editingProduct.id)) {
+                                        setProductModalOpen(false)
+                                    }
+                                }}
+                                onSave={async (data: any) => {
+                                    startTransition(async () => {
+                                        const res = editingProduct
+                                            ? await updateStoreProduct(editingProduct.id, data)
+                                            : await addStoreProduct(data)
+
+                                        if (res.error) toast({ variant: 'destructive', title: 'Erro', description: (res as any).error })
+                                        else {
+                                            toast({ title: editingProduct ? 'Produto atualizado!' : 'Produto adicionado!' })
+                                            loadAll()
+                                            setProductModalOpen(false)
+                                        }
+                                    })
+                                }}
+                            />
                         </div>
                     )}
 
@@ -587,6 +708,17 @@ function TrainerRow({ trainer, onPlanChange, onEliteToggle, onEliteTrial, onDele
                     </div>
                     <p className="text-[10px] font-bold text-zinc-600 truncate">{trainer.email}</p>
                 </div>
+
+                <div className="hidden xl:flex items-center gap-4 px-4 border-l border-zinc-800/50">
+                    <div className="text-right">
+                        <span className="block text-[8px] font-black uppercase text-zinc-600 tracking-wide">Mensal</span>
+                        <span className="block text-xs font-black text-emerald-500 tabular-nums">R$ {Number(trainer.monthly_revenue || 0).toFixed(2)}</span>
+                    </div>
+                    <div className="text-right">
+                        <span className="block text-[8px] font-black uppercase text-zinc-600 tracking-wide">Total Est.</span>
+                        <span className="block text-xs font-black text-zinc-400 tabular-nums">R$ {Number(trainer.total_revenue || 0).toFixed(2)}</span>
+                    </div>
+                </div>
             </div>
             <div className="flex items-center gap-2 shrink-0">
                 {/* Plan selector */}
@@ -672,19 +804,29 @@ function StudentRow({ student, onDelete, isPending }: any) {
     )
 }
 
-function ProductCard({ product, onToggle, isPending }: any) {
+function ProductCard({ product, onToggle, onEdit, onDelete, isPending }: any) {
     return (
-        <Card className={`border rounded-3xl overflow-hidden transition-all ${product.is_active ? 'bg-zinc-900/40 border-zinc-800/50' : 'bg-zinc-950 border-zinc-900 opacity-60'}`}>
+        <Card className={`border rounded-3xl overflow-hidden transition-all group ${product.is_active ? 'bg-zinc-900/40 border-zinc-800/50 hover:border-zinc-700' : 'bg-zinc-950 border-zinc-900 opacity-60'}`}>
             <CardContent className="p-0">
-                {product.image_url && (
-                    <div className="h-40 overflow-hidden">
-                        <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
+                <div className="h-48 overflow-hidden relative bg-zinc-950">
+                    {product.image_url ? (
+                        <img src={product.image_url} alt={product.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                    ) : (
+                        <div className="w-full h-full flex items-center justify-center text-zinc-800"><ShoppingBag className="w-8 h-8" /></div>
+                    )}
+                    <div className="absolute top-3 right-3 flex gap-2 opacity-100 transition-opacity">
+                        <button onClick={onEdit} disabled={isPending} className="h-8 w-8 flex items-center justify-center bg-black/60 backdrop-blur text-white hover:bg-black/80 rounded-lg transition-all">
+                            <Pencil className="w-3.5 h-3.5" />
+                        </button>
+                        <button onClick={onDelete} disabled={isPending} className="h-8 w-8 flex items-center justify-center bg-red-500/80 backdrop-blur text-white hover:bg-red-600 rounded-lg transition-all">
+                            <Trash2 className="w-3.5 h-3.5" />
+                        </button>
                     </div>
-                )}
+                </div>
                 <div className="p-5 space-y-3">
                     <div>
                         <p className="text-[9px] font-black text-zinc-600 uppercase tracking-widest">{product.category}</p>
-                        <h3 className="text-sm font-black text-white italic uppercase leading-tight">{product.name}</h3>
+                        <h3 className="text-sm font-black text-white italic uppercase leading-tight line-clamp-1">{product.name}</h3>
                     </div>
                     {product.official_price && (
                         <p className="text-lg font-black text-emerald-500 italic">R$ {Number(product.official_price).toFixed(2)}</p>
@@ -713,26 +855,72 @@ function ProductCard({ product, onToggle, isPending }: any) {
     )
 }
 
-function AddProductButton({ onAdd }: { onAdd: (data: any) => void }) {
-    const [open, setOpen] = useState(false)
-    const [form, setForm] = useState({ name: '', description: '', image_url: '', official_price: 0, link_url: '', category: 'supplement' })
+function ProductEditorModal({ isOpen, onClose, product, onSave, onImport, onDelete }: any) {
+    const [form, setForm] = useState({ name: '', description: '', image_url: '', official_price: 0, link_url: '', category: 'supplement', rating: 0, reviews_count: 0 })
+    const [importUrl, setImportUrl] = useState('')
+    const [importing, setImporting] = useState(false)
 
-    if (!open) return (
-        <Button onClick={() => setOpen(true)} className="h-12 px-4 sm:px-6 rounded-2xl bg-white hover:bg-zinc-200 text-zinc-950 font-black uppercase italic tracking-wide shrink-0">
-            <Plus className="w-4 h-4 sm:mr-2" />
-            <span className="hidden sm:inline">Novo Produto</span>
-        </Button>
-    )
+    useEffect(() => {
+        if (product) setForm({ ...product })
+        else setForm({ name: '', description: '', image_url: '', official_price: 0, link_url: '', category: 'supplement', rating: 0, reviews_count: 0 })
+        setImportUrl('')
+    }, [product, isOpen])
+
+    if (!isOpen) return null
+
+    const handleImport = async () => {
+        if (!importUrl) return
+        setImporting(true)
+        try {
+            const data = await onImport(importUrl)
+            if (data.error) throw new Error(data.error)
+            setForm(prev => ({
+                ...prev,
+                name: data.title || prev.name,
+                description: data.description || prev.description,
+                image_url: data.image || prev.image_url,
+                official_price: data.price || prev.official_price,
+                link_url: importUrl,
+                rating: data.rating || prev.rating || 0,
+                reviews_count: data.reviews_count || prev.reviews_count || 0
+            }))
+        } catch (e: any) {
+            alert('Erro ao importar: ' + e.message)
+        } finally {
+            setImporting(false)
+        }
+    }
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-            <div className="bg-zinc-900 border border-zinc-800 rounded-[2rem] p-6 sm:p-8 w-full max-w-lg space-y-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+            <div className="bg-zinc-900 border border-zinc-800 rounded-[2rem] p-6 sm:p-8 w-full max-w-lg space-y-6 max-h-[90vh] overflow-y-auto">
                 <div className="flex items-center justify-between">
-                    <h3 className="text-xl font-black text-white italic uppercase">Novo Produto</h3>
-                    <button onClick={() => setOpen(false)} className="p-2 hover:bg-zinc-800 rounded-xl transition-all">
+                    <h3 className="text-xl font-black text-white italic uppercase">{product ? 'Editar Produto' : 'Novo Produto'}</h3>
+                    <button onClick={onClose} className="p-2 hover:bg-zinc-800 rounded-xl transition-all">
                         <X className="w-4 h-4 text-zinc-500" />
                     </button>
                 </div>
+
+                {!product && (
+                    <div className="p-4 bg-zinc-950 rounded-2xl border border-zinc-800 space-y-3">
+                        <div className="flex items-center gap-2 text-zinc-400">
+                            <TrendingUp className="w-4 h-4 text-emerald-500" />
+                            <span className="text-[10px] font-black uppercase tracking-widest">Importar de Link (Beta)</span>
+                        </div>
+                        <div className="flex gap-2">
+                            <input
+                                placeholder="Cole a URL do produto..."
+                                value={importUrl}
+                                onChange={e => setImportUrl(e.target.value)}
+                                className="flex-1 h-9 px-3 bg-zinc-900 border border-zinc-800 rounded-lg text-xs text-white focus:outline-none focus:border-zinc-600"
+                            />
+                            <Button onClick={handleImport} disabled={importing || !importUrl} size="sm" className="h-9 bg-emerald-600 hover:bg-emerald-500 text-white font-bold uppercase text-[9px] tracking-widest shrink-0 w-24">
+                                {importing ? <RefreshCw className="w-3 h-3 animate-spin" /> : 'Carregar'}
+                            </Button>
+                        </div>
+                    </div>
+                )}
+
                 <div className="space-y-4">
                     {[
                         { key: 'name', label: 'Nome', type: 'text' },
@@ -740,6 +928,8 @@ function AddProductButton({ onAdd }: { onAdd: (data: any) => void }) {
                         { key: 'image_url', label: 'URL da Imagem', type: 'text' },
                         { key: 'link_url', label: 'Link do Produto', type: 'text' },
                         { key: 'official_price', label: 'Preço (R$)', type: 'number' },
+                        { key: 'rating', label: 'Nota (0-5)', type: 'number' },
+                        { key: 'reviews_count', label: 'Avaliações', type: 'number' },
                     ].map(field => (
                         <div key={field.key} className="space-y-1">
                             <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">{field.label}</label>
@@ -766,13 +956,18 @@ function AddProductButton({ onAdd }: { onAdd: (data: any) => void }) {
                     </div>
                 </div>
                 <div className="flex gap-3">
-                    <Button onClick={() => setOpen(false)} variant="ghost" className="flex-1 h-12 rounded-2xl text-zinc-500">Cancelar</Button>
+                    {product && onDelete && (
+                        <Button onClick={onDelete} variant="destructive" className="h-12 w-12 rounded-2xl p-0 flex items-center justify-center shrink-0">
+                            <Trash2 className="w-5 h-5" />
+                        </Button>
+                    )}
+                    <Button onClick={onClose} variant="ghost" className="flex-1 h-12 rounded-2xl text-zinc-500">Cancelar</Button>
                     <Button
-                        onClick={() => { onAdd(form); setOpen(false) }}
+                        onClick={() => onSave(form)}
                         className="flex-1 h-12 rounded-2xl bg-white hover:bg-zinc-200 text-zinc-950 font-black uppercase italic"
                     >
-                        <Check className="w-4 h-4 mr-2" />
-                        Adicionar
+                        <Save className="w-4 h-4 mr-2" />
+                        Salvar
                     </Button>
                 </div>
             </div>

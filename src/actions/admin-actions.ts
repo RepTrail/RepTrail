@@ -21,26 +21,175 @@ export async function getAdminOverview() {
         const { count: totalStudents } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'student')
         const { count: totalRelationships } = await supabase.from('trainer_students').select('*', { count: 'exact', head: true })
 
-        const { data: revenueData } = await supabase.from('trainer_students').select('monthly_fee')
-        const totalRevenue = revenueData?.reduce((acc, curr) => acc + (Number(curr.monthly_fee) || 0), 0) || 0
-        const platformTax = totalRevenue * 0.05
+        const { count: countAffiliates } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('is_affiliate', true)
+
+        const { data: affiliateBalances } = await supabase.from('profiles').select('affiliate_balance').eq('is_affiliate', true)
+        const affiliateDebt = affiliateBalances?.reduce((acc, curr) => acc + (Number(curr.affiliate_balance) || 0), 0) || 0
+
+        // Trainers Subs Revenue
+        // Fetch all trainers to check their plans
+        // Fetch all trainers to check their plans
+        const { data: trainers } = await supabase.from('profiles').select('id, plan_tier, created_at, elite_until').eq('role', 'trainer')
+
+        // Fetch all active students mapped to trainers to calculate usage
+        const { data: activeStudents } = await supabase.from('trainer_students').select('trainer_id').eq('active', true)
+
+        const trainerStudentCounts: Record<string, number> = {}
+        activeStudents?.forEach(s => {
+            if (s.trainer_id) trainerStudentCounts[s.trainer_id] = (trainerStudentCounts[s.trainer_id] || 0) + 1
+        })
+
+        const prices: any = { start: 49.90, pro: 149.90, elite: 299.90, on_demand: 0 }
+        const usageRules: any = { on_demand: { limit: 5, price_per_extra: 20 } } // Default logic
+
+        let monthlySubsRevenue = 0
+        let totalSubsRevenue = 0
+        let trialCount = 0
+        let studentsInTrial = 0
+
+        console.log('--- Admin Revenue Calc ---')
+
+        trainers?.forEach(t => {
+            // Check for active trial
+            const isTrialActive = t.elite_until && new Date(t.elite_until) > new Date()
+
+            console.log(`Trainer ${t.id} (${t.plan_tier}) | EliteUntil: ${t.elite_until} | Trial: ${isTrialActive}`)
+
+            // If trial is active, subscription revenue is 0
+            if (isTrialActive) {
+                trialCount++
+                studentsInTrial += (trainerStudentCounts[t.id] || 0)
+                return
+            }
+
+            const p = t.plan_tier || 'on_demand' // Default is On Demand (Free fixed cost)
+            const fixedPrice = prices[p] || 0
+
+            let revenue = fixedPrice
+
+            // If On Demand, add usage fee
+            if (p === 'on_demand') {
+                const count = trainerStudentCounts[t.id] || 0
+                const { limit, price_per_extra } = usageRules.on_demand
+                if (count > limit) {
+                    revenue += (count - limit) * price_per_extra
+                }
+            }
+
+            monthlySubsRevenue += revenue
+
+            // Estimate lifetime subs (rough estimate assuming current plan was always the plan)
+            const start = new Date(t.created_at)
+            const now = new Date()
+            const months = Math.max(1, (now.getFullYear() - start.getFullYear()) * 12 + (now.getMonth() - start.getMonth()) + 1)
+            totalSubsRevenue += (revenue * months)
+        })
+
+        // Trainer Volume (Students paying Trainers) - Just purely volume, no tax taken
+        const { data: studentsData } = await supabase.from('trainer_students').select('monthly_fee, active, created_at')
+
+        const monthlyTrainerVolume = studentsData?.reduce((acc, curr) => {
+            return curr.active ? acc + (Number(curr.monthly_fee) || 0) : acc
+        }, 0) || 0
+
+        const totalTrainerVolume = studentsData?.reduce((acc, curr) => {
+            if (!curr.active) return acc
+            const start = new Date(curr.created_at)
+            const now = new Date()
+            const months = Math.max(1, (now.getFullYear() - start.getFullYear()) * 12 + (now.getMonth() - start.getMonth()) + 1)
+            return acc + ((Number(curr.monthly_fee) || 0) * months)
+        }, 0) || 0
+
+
+        // Affiliate Metrics (Calculated early for Net Profit)
+        const { data: allCommissions } = await supabase.from('affiliate_commissions').select('amount, created_at, status')
+        const affiliateTotalEarnings = allCommissions?.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0) || 0
+        const currentMonthStart = new Date()
+        currentMonthStart.setDate(1)
+        currentMonthStart.setHours(0, 0, 0, 0)
+        const commissionsThisMonth = allCommissions?.reduce((acc, curr) => {
+            const date = new Date(curr.created_at)
+            if (date >= currentMonthStart && curr.status !== 'cancelled') {
+                return acc + (Number(curr.amount) || 0)
+            }
+            return acc
+        }, 0) || 0
+        const pendingCommissions = allCommissions?.reduce((acc, curr) => {
+            if (curr.status === 'pending' || curr.status === 'confirmed') {
+                return acc + (Number(curr.amount) || 0)
+            }
+            return acc
+        }, 0) || 0
+
+        // Platform Gross Revenue (Only Subs/Usage Revenue)
+        const monthlyGrossRevenue = monthlySubsRevenue
+        const totalGrossRevenue = totalSubsRevenue
+
+        // Operational Costs
+        const { data: allCosts } = await supabase.from('operational_costs').select('amount, type, created_at')
+
+        const totalOperationalCosts = allCosts?.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0) || 0
+
+        const monthlyOperationalCosts = allCosts?.reduce((acc, curr) => {
+            const date = new Date(curr.created_at)
+            if (date >= currentMonthStart) return acc + (Number(curr.amount) || 0)
+            return acc
+        }, 0) || 0
+
+        // Net Profit Calculation
+        // Net = Gross Revenue - Affiliate Commissions - Operational Costs
+        const monthlyNetProfit = monthlyGrossRevenue - commissionsThisMonth - monthlyOperationalCosts
+        const totalNetProfit = totalGrossRevenue - affiliateTotalEarnings - totalOperationalCosts
 
         const { count: productClicks } = await supabase.from('product_click_logs').select('*', { count: 'exact', head: true })
         const { count: totalProducts } = await supabase.from('store_products').select('*', { count: 'exact', head: true }).eq('is_active', true)
 
-        // Recent signups (last 7 days)
         const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
-        const { count: recentSignups } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).gte('created_at', sevenDaysAgo)
+        const { count: recentSignups } = await supabase.from('profiles').select('*', { count: 'exact', head: true })
+            .eq('role', 'student')
+            .gte('created_at', sevenDaysAgo)
+
+        // Metrics Calculation
+        const totalActiveUsers = (totalTrainers || 0) + (totalStudents || 0)
+        const activeTrainersCount = totalTrainers || 0
+
+        // Ticket Médio (Nós) -> Quanto ganhamos por personal cadastrado
+        const platformTicketPerTrainer = activeTrainersCount > 0 ? (monthlyNetProfit / activeTrainersCount) : 0
+
+        // Ticket Médio (Personal) -> Quanto o personal ganha em média
+        const trainerAverageTicket = activeTrainersCount > 0 ? (monthlyTrainerVolume / activeTrainersCount) : 0
+
 
         return {
             trainers: totalTrainers || 0,
+            trialTrainers: trialCount,
+            studentsInTrial,
             students: totalStudents || 0,
             relationships: totalRelationships || 0,
-            revenue: totalRevenue,
-            tax: platformTax,
+
+            monthlyTrainerVolume,
+            totalTrainerVolume,
+
+            monthlyPlatformProfit: monthlyNetProfit, // Now Net Profit
+            totalPlatformProfit: totalNetProfit,     // Now Net Profit
+
+            monthlyGrossRevenue,
+            totalGrossRevenue,
+
+            monthlyOperationalCosts,
+            totalOperationalCosts,
+
+            affiliatesCount: countAffiliates || 0,
+            affiliateDebt: affiliateDebt,
             productClicks: productClicks || 0,
             totalProducts: totalProducts || 0,
             recentSignups: recentSignups || 0,
+
+            affiliateTotalEarnings,
+            commissionsThisMonth,
+            pendingCommissions,
+            platformTicketPerTrainer,
+            trainerAverageTicket
         }
     } catch (e) {
         console.error('Admin overview error:', e)
@@ -60,10 +209,41 @@ export async function getAllTrainers() {
     const { supabase } = await checkAdmin()
     const { data } = await supabase
         .from('profiles')
-        .select('id, full_name, email, plan_tier, average_rating, total_reviews, is_elite, created_at, avatar_url, trainer_code, specialty, region')
+        .select(`
+            id, full_name, email, plan_tier, average_rating, total_reviews, is_elite, created_at, avatar_url, trainer_code, specialty, region,
+            students:trainer_students!trainer_id(monthly_fee, active, created_at)
+        `)
         .eq('role', 'trainer')
         .order('created_at', { ascending: false })
-    return data || []
+
+    return (data || []).map((t: any) => {
+        const students = t.students || []
+
+        // Monthly Recurring Revenue
+        const monthlyRevenue = students.reduce((sum: number, s: any) => {
+            return s.active ? sum + (Number(s.monthly_fee) || 0) : sum
+        }, 0)
+
+        // Estimated Total Revenue (Active Students * Months Active)
+        // Note: Does not account for past inactive students fully without historical logs.
+        const totalRevenue = students.reduce((sum: number, s: any) => {
+            if (!s.active) return sum // Ignore inactive for total as we don't know duration
+
+            const start = new Date(s.created_at)
+            const now = new Date()
+            const diffMonths = (now.getFullYear() - start.getFullYear()) * 12 + (now.getMonth() - start.getMonth())
+            // Include partial month as 1
+            const months = Math.max(1, diffMonths + 1)
+
+            return sum + ((Number(s.monthly_fee) || 0) * months)
+        }, 0)
+
+        return {
+            ...t,
+            monthly_revenue: monthlyRevenue,
+            total_revenue: totalRevenue
+        }
+    })
 }
 
 export async function updateUserPlanTier(userId: string, planTier: string) {
@@ -140,6 +320,8 @@ export async function addStoreProduct(data: {
     official_price: number
     link_url: string
     category: string
+    rating?: number
+    reviews_count?: number
 }) {
     const { supabase, userId: adminId } = await checkAdmin()
     const { error } = await supabase.from('store_products').insert({ ...data, is_active: true })
@@ -401,4 +583,137 @@ export async function deleteUser(userId: string) {
         console.error('Erro ao deletar usuário:', e)
         return { error: e.message || 'Erro desconhecido ao deletar usuário' }
     }
+}
+
+export async function updateStoreProduct(id: string, data: any) {
+    const { supabase, userId: adminId } = await checkAdmin()
+    const { error } = await supabase.from('store_products').update(data).eq('id', id)
+    if (error) return { error: 400 } // using generic error for now
+    await supabase.from('admin_logs').insert({ admin_id: adminId, action: 'update_product', target_id: id, details: data })
+    revalidatePath('/admin')
+    return { success: true }
+}
+
+export async function deleteStoreProduct(productId: string) {
+    const { supabase, userId: adminId } = await checkAdmin()
+    const { error } = await supabase.from('store_products').delete().eq('id', productId)
+    if (error) return { error: error.message }
+    await supabase.from('admin_logs').insert({ admin_id: adminId, action: 'delete_product', target_id: productId })
+    revalidatePath('/admin')
+    return { success: true }
+}
+
+export async function fetchProductFromUrl(url: string) {
+    try {
+        const res = await fetch(url, {
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+            }
+        })
+        if (!res.ok) throw new Error('Failed to load URL')
+        const html = await res.text()
+
+        const getMeta = (prop: string) => {
+            const match = html.match(new RegExp(`<meta property="${prop}" content="([^"]*)"`, 'i'))
+                || html.match(new RegExp(`<meta name="${prop}" content="([^"]*)"`, 'i'))
+            return match ? match[1] : null
+        }
+
+        let title = getMeta('og:title') || (html.match(/<title>([^<]*)<\/title>/i)?.[1]) || ''
+        const description = getMeta('og:description') || getMeta('description') || ''
+        const image = getMeta('og:image') || ''
+        let priceStr = getMeta('product:price:amount') || getMeta('price')
+
+        // Handle price in title (common in Mercado Livre: "Product Name - R$ 50,00")
+        const priceRegex = /R\$\s*([\d.,]+)/i
+        const match = title.match(priceRegex)
+
+        if (match) {
+            // If no meta price, use the one from title
+            if (!priceStr) {
+                priceStr = match[1]
+            }
+            // Remove price from title for cleaner name
+            title = title.replace(match[0], '').trim()
+            if (title.endsWith('-')) title = title.substring(0, title.length - 1).trim()
+        }
+
+        let price = 0
+        if (priceStr) {
+            let clean = priceStr.replace(/[^\d.,]/g, '')
+            if (clean.includes(',')) {
+                // Assume 1.000,00 format
+                clean = clean.replace(/\./g, '').replace(',', '.')
+            }
+            price = parseFloat(clean)
+        }
+
+        // Rating extraction
+        let rating = 0
+        let reviews = 0
+
+        // Try to find JSON-LD
+        const jsonLdMatch = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/i)
+        if (jsonLdMatch) {
+            try {
+                const inner = jsonLdMatch[1].trim()
+                const json = JSON.parse(inner)
+                // It might be an array or object
+                const product = Array.isArray(json) ? json.find(i => i['@type'] === 'Product') : (json['@type'] === 'Product' ? json : null)
+
+                if (product?.aggregateRating) {
+                    rating = parseFloat(product.aggregateRating.ratingValue || 0)
+                    reviews = parseInt(product.aggregateRating.reviewCount || 0)
+                }
+            } catch (e) {
+                // ignore json parse error
+            }
+        }
+
+        // Fallback 
+        if (!rating) {
+            const ratingMatch = html.match(/"ratingValue":"([\d.]+)"/i) || html.match(/itemprop="ratingValue" content="([\d.]+)"/i)
+            if (ratingMatch) rating = parseFloat(ratingMatch[1])
+
+            const reviewMatch = html.match(/"reviewCount":"(\d+)"/i) || html.match(/itemprop="reviewCount" content="(\d+)"/i)
+            if (reviewMatch) reviews = parseInt(reviewMatch[1])
+        }
+
+        return {
+            title: title || '',
+            description: description || '',
+            image: image || '',
+            price: price || 0,
+            rating: rating || 0,
+            reviews_count: reviews || 0
+        }
+    } catch (e) {
+        console.error('Fetch error:', e)
+        return { error: 'Falha ao buscar dados. Verifique o link e tente novamente.' }
+    }
+}
+
+// Operational Costs Actions
+export async function addOperationalCost(data: { description: string; amount: number; type: 'fixed' | 'variable' }) {
+    const { supabase, userId: adminId } = await checkAdmin()
+    const { error } = await supabase.from('operational_costs').insert({ ...data, admin_id: adminId })
+    if (error) return { error: error.message }
+    await supabase.from('admin_logs').insert({ admin_id: adminId, action: 'add_cost', details: data })
+    revalidatePath('/admin')
+    return { success: true }
+}
+
+export async function deleteOperationalCost(id: string) {
+    const { supabase, userId: adminId } = await checkAdmin()
+    const { error } = await supabase.from('operational_costs').delete().eq('id', id)
+    if (error) return { error: error.message }
+    await supabase.from('admin_logs').insert({ admin_id: adminId, action: 'delete_cost', target_id: id })
+    revalidatePath('/admin')
+    return { success: true }
+}
+
+export async function getOperationalCosts() {
+    const { supabase } = await checkAdmin()
+    const { data } = await supabase.from('operational_costs').select('*').order('created_at', { ascending: false })
+    return data || []
 }
