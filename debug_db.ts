@@ -5,6 +5,11 @@ import { createAdminClient } from './src/lib/supabase/admin'
 async function debug() {
     const supabase = createAdminClient()
 
+    if (!supabase) {
+        console.error('Supabase admin client could not be initialized. Check SUPABASE_SERVICE_ROLE_KEY.')
+        return
+    }
+
     console.log('--- Checking plan_features table ---')
     const { data: tableInfo, error: tableError } = await supabase
         .from('plan_features')
