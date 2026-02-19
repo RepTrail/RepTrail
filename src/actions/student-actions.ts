@@ -384,12 +384,12 @@ export async function uploadAvatar(formData: FormData) {
 }
 
 export async function uploadProgressPhotos(formData: FormData) {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-
-    if (!user) return { success: false, error: 'Unauthorized' }
-
     try {
+        const supabase = await createClient()
+        const { data: { user } } = await supabase.auth.getUser()
+
+        if (!user) return { success: false, error: 'Usuário não autenticado' }
+
         const photos = {
             front: formData.get('front') as File,
             back: formData.get('back') as File,
@@ -397,29 +397,44 @@ export async function uploadProgressPhotos(formData: FormData) {
             side_right: formData.get('side_right') as File,
         }
 
-        const urls: any = {}
+        console.log(`Uploading progress photos for student ${user.id}...`)
+
+        const urls: Record<string, string> = {}
+        const timestamp = Date.now()
 
         for (const [key, file] of Object.entries(photos)) {
-            if (file) {
-                const fileExt = file.name.split('.').pop()
-                const fileName = `${user.id}-${key}-${Date.now()}.${fileExt}`
+            if (file && file.size > 0) {
+                const originalName = file.name || `${key}.jpg`
+                const fileExt = originalName.split('.').pop() || 'jpg'
+                const fileName = `${user.id}/${timestamp}-${key}.${fileExt}`
                 const filePath = `progress-photos/${fileName}`
 
                 const { error: uploadError } = await supabase.storage
                     .from('progress-photos')
-                    .upload(filePath, file)
+                    .upload(filePath, file, {
+                        cacheControl: '3600',
+                        upsert: true
+                    })
 
-                if (uploadError) throw uploadError
+                if (uploadError) {
+                    console.error(`Error uploading ${key}:`, uploadError)
+                    throw new Error(`Erro ao enviar foto (${key}): ${uploadError.message}`)
+                }
 
-                const { data: { publicUrl } = { publicUrl: '' } } = supabase.storage
+                const { data } = supabase.storage
                     .from('progress-photos')
                     .getPublicUrl(filePath)
 
-                urls[`${key}_url`] = publicUrl
+                if (!data?.publicUrl) {
+                    throw new Error(`Erro ao gerar URL para ${key}`)
+                }
+
+                urls[`${key}_url`] = data.publicUrl
             }
         }
 
         const allowPublic = formData.get('allow_public') !== 'false'
+
         const { error: dbError } = await supabase
             .from('progress_photos')
             .insert({
@@ -429,23 +444,27 @@ export async function uploadProgressPhotos(formData: FormData) {
                 created_at: new Date().toISOString()
             })
 
-        if (dbError) throw dbError
+        if (dbError) {
+            console.error('Database error inserting progress photos:', dbError)
+            throw new Error(`Erro ao salvar no banco: ${dbError.message}`)
+        }
 
+        console.log('Progress photos uploaded successfully.')
         revalidatePath('/dashboard/student/progress')
         return { success: true }
     } catch (e: any) {
-        console.error('Error uploading progress photos:', e)
-        return { success: false, error: e.message }
+        console.error('Unexpected error in uploadProgressPhotos:', e)
+        return { success: false, error: e.message || 'Erro inesperado no processamento das fotos.' }
     }
 }
 
 export async function deleteProgressPhoto(photoId: string) {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-
-    if (!user) return { success: false, error: 'Unauthorized' }
-
     try {
+        const supabase = await createClient()
+        const { data: { user } } = await supabase.auth.getUser()
+
+        if (!user) return { success: false, error: 'Não autorizado' }
+
         // First, get the photo record to delete the files from storage
         const { data: photo, error: fetchError } = await supabase
             .from('progress_photos')
@@ -463,8 +482,10 @@ export async function deleteProgressPhoto(photoId: string) {
             .filter(Boolean) as string[]
 
         for (const url of urls) {
-            const path = url.split('/progress-photos/')[1]
-            if (path) {
+            // Extract path after /progress-photos/
+            const parts = url.split('/progress-photos/')
+            if (parts.length > 1) {
+                const path = parts[1]
                 await supabase.storage
                     .from('progress-photos')
                     .remove([path])
@@ -478,13 +499,16 @@ export async function deleteProgressPhoto(photoId: string) {
             .eq('id', photoId)
             .eq('student_id', user.id)
 
-        if (deleteError) throw deleteError
+        if (deleteError) {
+            console.error('Database error deleting progress photo:', deleteError)
+            throw new Error(`Erro ao remover do banco: ${deleteError.message}`)
+        }
 
         revalidatePath('/dashboard/student/progress')
         return { success: true }
     } catch (e: any) {
-        console.error('Error deleting progress photo:', e)
-        return { success: false, error: e.message }
+        console.error('Unexpected error in deleteProgressPhoto:', e)
+        return { success: false, error: e.message || 'Erro inesperado ao excluir foto.' }
     }
 }
 
