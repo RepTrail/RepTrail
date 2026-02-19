@@ -166,7 +166,8 @@ export async function getTrainerRanking() {
                 trainer_code,
                 avatar_url,
                 plan_tier,
-                average_rating
+                average_rating,
+                specialties
             `)
             .eq('role', 'trainer')
 
@@ -214,6 +215,7 @@ export async function getTrainerRanking() {
                 avatar_url: t.avatar_url,
                 plan_tier: tier,
                 rating: isNaN(rating) ? 0 : rating,
+                specialties: t.specialties || [],
                 studentCount,
                 score: isNaN(score) ? 0 : score,
                 trainer_code: t.trainer_code ? String(t.trainer_code).trim().toUpperCase() : null
