@@ -1,13 +1,14 @@
 import { getTrainerWorkouts } from "@/actions/workout-actions"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Dumbbell, UserPlus, ChevronRight } from "lucide-react"
+import { Dumbbell, ChevronRight } from "lucide-react"
 import Link from "next/link"
 import { DeleteWorkoutButton } from "@/components/feature/trainer/delete-workout-button"
 import { CreateWorkoutDialog } from "@/components/feature/trainer/create-workout-dialog"
 import { AssignWorkoutDialog } from "@/components/feature/trainer/assign-workout-dialog"
 import { getTrainerStudents } from "@/actions/trainer-actions"
 import { getBetaTesterMode } from "@/actions/app-settings-actions"
+import { DuplicateButton } from "@/components/feature/trainer/duplicate-button"
 
 export default async function TrainerWorkoutsPage() {
     const [workouts, students, betaTesterMode] = await Promise.all([
@@ -42,6 +43,7 @@ export default async function TrainerWorkoutsPage() {
                                         <Dumbbell className="w-5 h-5" />
                                     </div>
                                     <div className="flex gap-2">
+                                        <DuplicateButton id={workout.id} type="workout" />
                                         <DeleteWorkoutButton workoutId={workout.id} />
                                     </div>
                                 </div>

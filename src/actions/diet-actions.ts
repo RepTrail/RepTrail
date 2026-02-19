@@ -93,6 +93,79 @@ export async function deleteDiet(dietId: string) {
     }
 }
 
+export async function updateDietMeta(dietId: string, name: string) {
+    const supabase = await createClient()
+
+    try {
+        const { error } = await supabase
+            .from('diets')
+            .update({ name: name.trim() })
+            .eq('id', dietId)
+
+        if (error) throw error
+
+        revalidatePath('/dashboard/trainer/diets')
+        revalidatePath(`/dashboard/trainer/diets/${dietId}`)
+        return { success: true }
+    } catch (e: any) {
+        return { error: e.message }
+    }
+}
+
+export async function duplicateDiet(dietId: string) {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return { error: 'Unauthorized' }
+
+    try {
+        // 1. Fetch original diet with all meals and items
+        const { data: original, error: fetchErr } = await supabase
+            .from('diets')
+            .select(`*, meals(*, meal_items(*))`)
+            .eq('id', dietId)
+            .single()
+        if (fetchErr || !original) throw fetchErr || new Error('Diet not found')
+
+        // 2. Create copy of diet
+        const { data: newDiet, error: dietErr } = await supabase
+            .from('diets')
+            .insert({ trainer_id: user.id, name: `${original.name} (cópia)` })
+            .select('id')
+            .single()
+        if (dietErr || !newDiet) throw dietErr || new Error('Failed to create diet copy')
+
+        // 3. Copy each meal and its items
+        const meals: any[] = original.meals || []
+        for (const meal of meals) {
+            const { data: newMeal, error: mealErr } = await supabase
+                .from('meals')
+                .insert({
+                    diet_id: newDiet.id,
+                    name: meal.name,
+                    time_of_day: meal.time_of_day,
+                    order_index: meal.order_index,
+                    notes: meal.notes
+                })
+                .select('id')
+                .single()
+            if (mealErr || !newMeal) continue
+
+            if (meal.meal_items && meal.meal_items.length > 0) {
+                const newItems = meal.meal_items.map(({ id, meal_id, ...rest }: any) => ({
+                    ...rest,
+                    meal_id: newMeal.id
+                }))
+                await supabase.from('meal_items').insert(newItems)
+            }
+        }
+
+        revalidatePath('/dashboard/trainer/diets')
+        return { success: true, newId: newDiet.id }
+    } catch (e: any) {
+        return { error: e.message }
+    }
+}
+
 export async function assignDiet(dietId: string, studentId: string) {
     const supabase = await createClient()
 

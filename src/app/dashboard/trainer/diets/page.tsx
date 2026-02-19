@@ -1,13 +1,14 @@
 import { getTrainerDiets } from "@/actions/diet-actions"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Utensils, UserPlus, ChevronRight } from "lucide-react"
+import { Utensils, ChevronRight } from "lucide-react"
 import Link from "next/link"
 import { DeleteDietButton } from "@/components/feature/trainer/delete-diet-button"
 import { CreateDietDialog } from "@/components/feature/trainer/create-diet-dialog"
 import { AssignDietDialog } from "@/components/feature/trainer/assign-diet-dialog"
 import { getTrainerStudents } from "@/actions/trainer-actions"
 import { getBetaTesterMode } from "@/actions/app-settings-actions"
+import { DuplicateButton } from "@/components/feature/trainer/duplicate-button"
 
 export default async function TrainerDietsPage() {
     const [diets, students, betaTesterMode] = await Promise.all([
@@ -40,6 +41,7 @@ export default async function TrainerDietsPage() {
                                         <Utensils className="w-5 h-5" />
                                     </div>
                                     <div className="flex gap-2">
+                                        <DuplicateButton id={diet.id} type="diet" />
                                         <DeleteDietButton dietId={diet.id} />
                                     </div>
                                 </div>

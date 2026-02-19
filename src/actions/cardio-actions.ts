@@ -46,6 +46,33 @@ export async function createCardio(name: string, description?: string) {
     }
 }
 
+export async function duplicateCardio(cardioId: string) {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return { error: 'Unauthorized' }
+
+    try {
+        const { data: original, error: fetchErr } = await supabase
+            .from('cardios')
+            .select('*')
+            .eq('id', cardioId)
+            .single()
+        if (fetchErr || !original) throw fetchErr || new Error('Cardio not found')
+
+        const { id, created_at, ...rest } = original
+        const { error: insertErr } = await supabase
+            .from('cardios')
+            .insert({ ...rest, trainer_id: user.id, name: `${original.name} (cópia)` })
+
+        if (insertErr) throw insertErr
+
+        revalidatePath('/dashboard/trainer/cardio')
+        return { success: true }
+    } catch (e: any) {
+        return { error: e.message }
+    }
+}
+
 export async function assignCardio(data: {
     studentId: string,
     cardioId: string,

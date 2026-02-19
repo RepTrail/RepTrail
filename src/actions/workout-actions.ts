@@ -89,6 +89,56 @@ export async function updateWorkoutMeta(workoutId: string, name: string, descrip
     }
 }
 
+export async function duplicateWorkout(workoutId: string) {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return { error: 'Unauthorized' }
+
+    try {
+        // 1. Fetch original workout
+        const { data: original, error: fetchErr } = await supabase
+            .from('workouts')
+            .select('*')
+            .eq('id', workoutId)
+            .single()
+        if (fetchErr || !original) throw fetchErr || new Error('Workout not found')
+
+        // 2. Create the copy
+        const { data: copy, error: insertErr } = await supabase
+            .from('workouts')
+            .insert({
+                trainer_id: user.id,
+                name: `${original.name} (cópia)`,
+                description: original.description
+            })
+            .select('id')
+            .single()
+        if (insertErr || !copy) throw insertErr || new Error('Failed to create copy')
+
+        // 3. Fetch all exercises from original
+        const { data: exercises } = await supabase
+            .from('workout_exercises')
+            .select('*')
+            .eq('workout_id', workoutId)
+            .order('order_index', { ascending: true })
+
+        // 4. Insert exercises into copy
+        if (exercises && exercises.length > 0) {
+            const newExercises = exercises.map(({ id, workout_id, ...rest }: any) => ({
+                ...rest,
+                workout_id: copy.id
+            }))
+            const { error: exErr } = await supabase.from('workout_exercises').insert(newExercises)
+            if (exErr) throw exErr
+        }
+
+        revalidatePath('/dashboard/trainer/workouts')
+        return { success: true, newId: copy.id }
+    } catch (e: any) {
+        return { error: e.message }
+    }
+}
+
 export async function assignWorkout(workoutId: string, studentId: string, dayOfWeek: number) {
     const supabase = await createClient()
 

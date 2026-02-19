@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -10,13 +10,13 @@ import {
     Plus,
     Trash2,
     Utensils,
-    Clock,
     PlusCircle,
     Loader2,
-    ChevronDown,
-    ChevronUp,
     ArrowLeft,
-    Sparkles
+    Sparkles,
+    Pencil,
+    Check,
+    X
 } from "lucide-react"
 import {
     addMealToDiet,
@@ -24,7 +24,8 @@ import {
     updateMealItem,
     removeMealItem,
     removeMeal,
-    estimateMacros
+    estimateMacros,
+    updateDietMeta
 } from "@/actions/diet-actions"
 
 interface MealItem {
@@ -59,6 +60,29 @@ export function DietBuilder({ diet }: DietBuilderProps) {
     const [loadingMap, setLoadingMap] = useState<Record<string, boolean>>({})
     const [newMealName, setNewMealName] = useState('')
     const [newMealTime, setNewMealTime] = useState('')
+
+    // Inline name editing
+    const [isEditingName, setIsEditingName] = useState(false)
+    const [editName, setEditName] = useState(diet.name)
+    const [isSavingName, setIsSavingName] = useState(false)
+    const nameInputRef = useRef<HTMLInputElement>(null)
+
+    useEffect(() => {
+        if (isEditingName) nameInputRef.current?.focus()
+    }, [isEditingName])
+
+    async function handleSaveName() {
+        if (!editName.trim()) return
+        setIsSavingName(true)
+        const res = await updateDietMeta(diet.id, editName)
+        setIsSavingName(false)
+        if (res.success) setIsEditingName(false)
+    }
+
+    function handleCancelName() {
+        setEditName(diet.name)
+        setIsEditingName(false)
+    }
 
     // Macro Calculations
     const totals = diet.meals?.reduce((acc, meal) => {
@@ -133,8 +157,52 @@ export function DietBuilder({ diet }: DietBuilderProps) {
         <div className="space-y-8">
             {/* Header / Totals */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                <div className="space-y-2">
-                    <h1 className="text-3xl font-bold text-white font-sans">{diet.name}</h1>
+                <div className="space-y-2 flex-1">
+                    {isEditingName ? (
+                        <div className="animate-in fade-in slide-in-from-top-2 duration-200 bg-zinc-900/60 border border-zinc-700/60 rounded-2xl p-5 space-y-3 shadow-xl">
+                            <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Nome da Dieta</label>
+                            <Input
+                                ref={nameInputRef}
+                                value={editName}
+                                onChange={e => setEditName(e.target.value)}
+                                onKeyDown={e => { if (e.key === 'Enter') handleSaveName(); if (e.key === 'Escape') handleCancelName() }}
+                                className="bg-zinc-950 border-zinc-700 text-white text-lg font-black h-12 rounded-xl focus-visible:ring-green-500/30 focus-visible:border-green-500/50"
+                                placeholder="Nome da dieta..."
+                            />
+                            <div className="flex items-center gap-2 pt-1">
+                                <Button
+                                    onClick={handleSaveName}
+                                    disabled={isSavingName || !editName.trim()}
+                                    className="h-9 px-4 bg-green-600 hover:bg-green-500 text-white font-black uppercase tracking-widest text-[10px] rounded-xl transition-all shadow-lg shadow-green-500/20 active:scale-95"
+                                >
+                                    {isSavingName ? <Loader2 className="w-3 h-3 animate-spin" /> : <><Check className="w-3 h-3 mr-1.5" />Salvar</>}
+                                </Button>
+                                <Button
+                                    onClick={handleCancelName}
+                                    disabled={isSavingName}
+                                    variant="ghost"
+                                    className="h-9 px-4 bg-zinc-800/60 hover:bg-zinc-700/60 text-zinc-400 hover:text-white font-black uppercase tracking-widest text-[10px] rounded-xl transition-all border border-zinc-700/50 hover:border-zinc-600"
+                                >
+                                    <X className="w-3 h-3 mr-1.5" />Cancelar
+                                </Button>
+                            </div>
+                        </div>
+                    ) : (
+                        <div
+                            className="group flex items-center gap-3 cursor-pointer w-fit"
+                            onClick={() => setIsEditingName(true)}
+                        >
+                            <h1 className="text-3xl font-bold text-white font-sans group-hover:text-green-400 transition-colors duration-200 border-b border-transparent group-hover:border-green-400/40 pb-0.5">
+                                {editName}
+                            </h1>
+                            <button
+                                className="p-2 rounded-xl text-zinc-600 hover:text-green-400 hover:bg-green-400/10 transition-all border border-transparent hover:border-green-400/20 active:scale-90"
+                                title="Editar nome da dieta"
+                            >
+                                <Pencil className="w-4 h-4" />
+                            </button>
+                        </div>
+                    )}
                     <p className="text-zinc-500 uppercase tracking-widest text-[10px] font-bold">Resumo Nutricional do Plano</p>
                 </div>
 

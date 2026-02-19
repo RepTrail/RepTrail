@@ -1,12 +1,13 @@
 import { getCardioLibrary } from '@/actions/cardio-actions'
 import { getTrainerStudents } from '@/actions/trainer-actions'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Activity, Plus, Search, Trash2, Timer, UserPlus, ChevronRight } from 'lucide-react'
+import { Activity, ChevronRight, Timer } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { Input } from '@/components/ui/input'
 import { CreateCardioDialog } from '@/components/feature/trainer/create-cardio-dialog'
 import { AssignCardioDialog } from '@/components/feature/trainer/assign-cardio-dialog'
+import { DuplicateButton } from '@/components/feature/trainer/duplicate-button'
 
 export default async function TrainerCardioPage() {
     const cardios = await getCardioLibrary()
@@ -52,6 +53,7 @@ export default async function TrainerCardioPage() {
 
                                 <div className="flex gap-2">
                                     <AssignCardioDialog cardioId={cardio.id} students={students} />
+                                    <DuplicateButton id={cardio.id} type="cardio" />
                                 </div>
                             </CardContent>
                         </Card>
