@@ -90,15 +90,19 @@ export function DietAdherence({ diet }: DietAdherenceProps) {
                                             <span className="text-xs font-black text-zinc-100 uppercase italic tracking-wide">
                                                 {meal.name}
                                             </span>
-                                            {meal.time_of_day && (
-                                                <span className="text-[8px] font-black text-zinc-600 uppercase tracking-widest px-2 py-0.5 bg-zinc-900 rounded-full border border-zinc-800">
-                                                    {meal.time_of_day.substring(0, 5)}
-                                                </span>
+                                        </div>
+                                        <div className="flex flex-col gap-0.5 pt-1">
+                                            {meal.meal_items?.length > 0 ? (
+                                                meal.meal_items.map((item: any, idx: number) => (
+                                                    <p key={idx} className="text-[10px] text-zinc-500 font-medium">
+                                                        <span className="text-zinc-300 font-bold">{item.quantity}</span> {item.food_name}
+                                                        {item.approx_measure && <span className="text-zinc-600 ml-1">({item.approx_measure})</span>}
+                                                    </p>
+                                                ))
+                                            ) : (
+                                                <p className="text-[10px] text-zinc-500 font-medium">Sem itens cadastrados</p>
                                             )}
                                         </div>
-                                        <p className="text-[10px] text-zinc-500 font-medium">
-                                            {meal.meal_items?.map((i: any) => i.food_name).join(', ') || 'Sem itens cadastrados'}
-                                        </p>
                                     </div>
                                 </div>
 

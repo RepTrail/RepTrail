@@ -149,17 +149,17 @@ export function ProgressPhotoUpload({ studentId }: ProgressPhotoUploadProps) {
             <Button
                 onClick={handleSubmit}
                 disabled={uploading || !photos.front || !photos.back || !photos.side_left || !photos.side_right}
-                className="w-full h-auto py-4 bg-white text-zinc-950 hover:bg-zinc-200 rounded-2xl font-black uppercase italic tracking-widest shadow-xl shadow-white/5 active:scale-[0.98] transition-all disabled:opacity-50 text-xs whitespace-normal"
+                className="w-full h-auto min-h-[4rem] py-4 bg-white text-zinc-950 hover:bg-zinc-200 rounded-2xl font-black uppercase italic tracking-widest shadow-xl shadow-white/5 active:scale-[0.98] transition-all disabled:opacity-50 whitespace-normal text-center text-xs md:text-sm"
             >
                 {uploading ? (
-                    <div className="flex items-center gap-3">
-                        <Loader2 className="w-5 h-5 animate-spin" />
+                    <div className="flex items-center justify-center gap-3">
+                        <Loader2 className="w-5 h-5 animate-spin shrink-0" />
                         Enviando...
                     </div>
                 ) : (
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center justify-center gap-2 flex-wrap">
                         Enviar Novas Fotos de Progresso
-                        <ChevronRight className="w-5 h-5" />
+                        <ChevronRight className="w-5 h-5 shrink-0" />
                     </div>
                 )}
             </Button>
