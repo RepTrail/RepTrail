@@ -37,6 +37,8 @@ import { getStudentWorkoutHistory, getStudentLastActivity } from '@/actions/log-
 import { getStudentMetricsHistory, getStudentChartData } from '@/actions/metrics-actions'
 import { StudentMetricsChart } from '@/components/feature/trainer/student-metrics-chart'
 import { CardioAssignmentSection } from '@/components/feature/trainer/cardio-assignment-section'
+import { getStudentAdherenceHistory } from '@/actions/tracking-actions'
+import { AdherenceChart } from '@/components/feature/student/adherence-chart'
 
 export default async function StudentDetailPage({ params }: { params: { id: string } }) {
     const { id } = await params
@@ -81,6 +83,7 @@ export default async function StudentDetailPage({ params }: { params: { id: stri
     const metricsHistory = await getStudentMetricsHistory(relationship.student_id)
     const chartData = await getStudentChartData(relationship.student_id)
     const lastActivity = await getStudentLastActivity(relationship.student_id)
+    const adherenceHistory = await getStudentAdherenceHistory(relationship.student_id, 30)
 
     const { student } = relationship
     const details = student?.details
@@ -552,6 +555,9 @@ export default async function StudentDetailPage({ params }: { params: { id: stri
             </div>
 
             {/* Metrics Chart Card - Bottom of the page */}
+            {/* Adherence Chart — 30 days, available for all tiers */}
+            <AdherenceChart history={adherenceHistory} />
+
             <Card className="w-full bg-zinc-950 border-zinc-800 shadow-2xl rounded-2xl overflow-hidden border-t-zinc-700/10 mt-10">
                 <CardHeader className="bg-zinc-900/10 border-b border-zinc-900/50 py-4 flex flex-row items-center justify-between">
                     <CardTitle className="text-sm font-bold text-zinc-100 flex items-center gap-2 uppercase tracking-widest">

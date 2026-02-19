@@ -199,3 +199,38 @@ export async function getAdherenceHistory(days: number = 30) {
 
     return history
 }
+
+// Trainer-side version: fetch adherence history for any student by ID
+export async function getStudentAdherenceHistory(studentId: string, days: number = 30) {
+    const supabase = await createClient()
+
+    const endDate = new Date()
+    const startDate = new Date()
+    startDate.setDate(startDate.getDate() - days + 1)
+
+    const { data: tracking } = await supabase
+        .from('daily_tracking')
+        .select('*')
+        .eq('user_id', studentId)
+        .gte('date', startDate.toISOString().split('T')[0])
+        .lte('date', endDate.toISOString().split('T')[0])
+        .order('date', { ascending: true })
+
+    const history = []
+    for (let i = 0; i < days; i++) {
+        const d = new Date(startDate)
+        d.setDate(d.getDate() + i)
+        const dateStr = d.toISOString().split('T')[0]
+
+        const found = tracking?.find((t: any) => t.date === dateStr)
+        history.push(found || {
+            date: dateStr,
+            diet_percentage: 0,
+            workout_status: 'none',
+            cardio_status: 'none',
+            ergogenics_status: 'none'
+        })
+    }
+
+    return history
+}
