@@ -20,95 +20,43 @@ export default async function TrainerPublicProfile({ params }: { params: Promise
         notFound()
     }
 
-    // Direct query to avoid Server Action overhead/context issues
-    const { data: trainer, error } = await supabase
-        .from('profiles')
-        .select('id, full_name, trainer_code, avatar_url, bio, specialty, location, cref, average_rating, total_reviews, is_elite, whatsapp, instagram')
-        .eq('role', 'trainer')
-        .ilike('trainer_code', normalizedSlug)
-        .maybeSingle()
 
-    if (error) {
-        console.error('Error fetching trainer:', error)
+    // Use the RPC to fetch all data at once securely
+    const { data: publicData, error: rpcError } = await supabase
+        .rpc('get_trainer_public_profile', { trainer_slug: normalizedSlug })
+
+    if (rpcError || !publicData) {
+        console.error('Error fetching public profile via RPC:', rpcError)
         notFound()
     }
+
+    const { trainer, reviews, photos } = publicData
 
     if (!trainer || !trainer.trainer_code) {
         notFound()
     }
 
-    // Fetch reviews with student info
-    const { data: reviews } = await supabase
-        .from('trainer_reviews')
-        .select(`
-            id,
-            rating,
-            comment,
-            created_at,
-            student:profiles!student_id(
-                full_name,
-                avatar_url
-            )
-        `)
-        .eq('trainer_id', trainer.id)
-        .order('rating', { ascending: false })
-        .order('created_at', { ascending: false })
-        .limit(6)
-
-    // Fetch student IDs for this trainer
-    const { data: trainerStudents } = await supabase
-        .from('trainer_students')
-        .select('student_id')
-        .eq('trainer_id', trainer.id)
-        .eq('active', true)
-
-    const studentIds = trainerStudents?.map(ts => ts.student_id) || []
-
-    // Fetch progress photos: pares (mais antiga + mais recente) por aluno, só quem autorizou divulgação
+    // Process photo pairs from the flattened list of photos
     let photoPairs: { studentName: string; oldest: any; newest: any }[] = []
-    if (studentIds.length > 0) {
-        const { data: photos, error: photosError } = await supabase
-            .from('progress_photos')
-            .select(`
-                id,
-                front_url,
-                back_url,
-                side_right_url,
-                side_left_url,
-                created_at,
-                student_id,
-                student:profiles!student_id(
-                    full_name,
-                    avatar_url,
-                    allow_image_disclosure
-                )
-            `)
-            .in('student_id', studentIds)
-            .eq('is_private', false)
-            .order('created_at', { ascending: true })
-
-        if (!photosError && photos && photos.length > 0) {
-            const byStudent = new Map<string, any[]>()
-            for (const p of photos) {
-                const allow = (p.student as any)?.allow_image_disclosure
-                if (allow === false) continue
-                const sid = p.student_id
-                if (!byStudent.has(sid)) byStudent.set(sid, [])
-                byStudent.get(sid)!.push(p)
-            }
-            photoPairs = Array.from(byStudent.entries())
-                .filter(([, arr]) => arr.length > 0)
-                .map(([, arr]) => {
-                    const first = arr[0]
-                    const last = arr[arr.length - 1]
-                    const studentName = (first.student as any)?.full_name || 'Aluno'
-                    return {
-                        studentName,
-                        oldest: first,
-                        newest: last
-                    }
-                })
+    if (photos && photos.length > 0) {
+        const byStudent = new Map<string, any[]>()
+        for (const p of photos) {
+            const sid = p.student_id
+            if (!byStudent.has(sid)) byStudent.set(sid, [])
+            byStudent.get(sid)!.push(p)
         }
+        photoPairs = Array.from(byStudent.entries())
+            .filter(([, arr]) => arr.length >= 2)
+            .map(([studentId, arr]) => {
+                const first = arr[0]
+                const last = arr[arr.length - 1]
+                const studentName = first.student_name || 'Aluno'
+                return {
+                    studentName,
+                    oldest: first,
+                    newest: last
+                }
+            })
     }
 
     return (

@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Users, DollarSign, Activity, TrendingUp, Plus, FileUp, Sparkles, UserPlus, ArrowUpRight, Zap, Crown, Dumbbell, Utensils, Clock, CheckCircle2, Scale, Camera } from "lucide-react"
 import { TrainerCodeCard } from '@/components/feature/trainer/trainer-code-card'
 import { EditProfileDialog } from '@/components/feature/trainer/edit-profile-dialog'
+import { CodeAutoGenerator } from '@/components/feature/trainer/code-auto-generator'
 import Link from 'next/link'
 import { Button } from "@/components/ui/button"
 import { LockedFeature } from '@/components/ui/locked-feature'
@@ -58,7 +59,9 @@ export default async function TrainerDashboard() {
 
     const betaTesterMode = await getBetaTesterMode()
 
-    const tierName = profile?.plan_tier ? profile.plan_tier.charAt(0).toUpperCase() + profile.plan_tier.slice(1) : 'Start'
+    const tierName = profile?.plan_tier
+        ? profile.plan_tier.split('_').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
+        : 'On Demand'
     const tierTrend = profile?.plan_tier === 'elite' ? 'Nível Máximo' : 'Upgrade Disponível'
 
     // Ranking Logic
@@ -96,6 +99,7 @@ export default async function TrainerDashboard() {
 
     return (
         <div className="space-y-10 pb-10">
+            <CodeAutoGenerator hasCode={!!profile?.trainer_code} />
             {/* Hero Section */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-2 border-b border-zinc-800/50">
                 <div className="space-y-1">
@@ -272,12 +276,13 @@ export default async function TrainerDashboard() {
                                 full_name: profile?.full_name,
                                 bio: profile?.bio,
                                 specialties: profile?.specialties,
-                                whatsapp: profile?.whatsapp
+                                whatsapp: profile?.whatsapp,
+                                trainer_code: profile?.trainer_code
                             }} />
 
                             {profile?.trainer_code ? (
                                 <Button asChild variant="ghost" className="w-full text-zinc-500 hover:text-zinc-300 hover:bg-zinc-900/50 text-[10px] uppercase font-bold tracking-widest mt-2 h-9 transition-all duration-200">
-                                    <Link href={`/personal/${profile.trainer_code.toUpperCase().trim()}`} target="_blank">
+                                    <Link href={`/personal/${profile.trainer_code.trim()}`} target="_blank">
                                         Ver Meu Perfil Público
                                         <ArrowUpRight className="w-3 h-3 ml-2" />
                                     </Link>

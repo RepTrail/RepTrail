@@ -214,79 +214,49 @@ export async function getTrainerRanking() {
     const supabase = await createClient()
 
     try {
-        // Use direct query like getStudentTrainer to ensure trainer_code is properly fetched
         const { data: trainers, error } = await supabase
-            .from('profiles')
-            .select(`
-                id,
-                full_name,
-                trainer_code,
-                avatar_url,
-                plan_tier,
-                average_rating,
-                specialties
-            `)
-            .eq('role', 'trainer')
+            .rpc('get_trainer_ranking_stats')
 
         if (error) {
-            console.error('Error fetching trainers:', error)
+            console.error('Error fetching trainer ranking via RPC:', error)
             return []
         }
 
         if (!trainers) return []
 
-        // Get student counts for each trainer
-        const trainerIds = trainers.map(t => t.id)
-        const { data: studentCounts } = await supabase
-            .from('trainer_students')
-            .select('trainer_id')
-            .in('trainer_id', trainerIds)
-            .eq('active', true)
-
-        // Create a map of trainer_id -> student_count
-        const studentCountMap = new Map<string, number>()
-        studentCounts?.forEach(sc => {
-            const current = studentCountMap.get(sc.trainer_id) || 0
-            studentCountMap.set(sc.trainer_id, current + 1)
-        })
-
         // Calculate scores
         const tierPoints: Record<string, number> = {
+            'none': 0,
             'start': 0,
-            'on_demand': 50, // On Demand gives baseline 50 points
+            'on_demand': 50,
             'pro': 100,
             'elite': 500
         }
 
         const ranking = trainers.map((t: any) => {
-            const studentCount = studentCountMap.get(t.id) || 0
-            const rating = Number(t.average_rating || 0)
+            const studentCount = Number(t.student_count || 0)
+            const rating = Number(t.rating || 0)
             let tier = (t.plan_tier || 'on_demand').toLowerCase()
 
-            // Dynamic Tier Logic for On Demand
             if (tier === 'on_demand' && studentCount >= 50) {
-                tier = 'elite' // Grant Elite status visually and for score if they hit 50 students
+                tier = 'elite'
             }
 
             const tierPt = tierPoints[tier] || 0
-
-            // Ensure score is always a number
             const score = tierPt + (studentCount * 5) + (rating * 20)
 
             return {
-                id: t.id,
+                id: t.trainer_id,
                 full_name: t.full_name || 'Treinador sem nome',
                 avatar_url: t.avatar_url,
                 plan_tier: tier,
                 rating: isNaN(rating) ? 0 : rating,
-                specialties: t.specialties || [],
                 studentCount,
                 score: isNaN(score) ? 0 : score,
-                trainer_code: t.trainer_code ? String(t.trainer_code).trim().toUpperCase() : null
+                trainer_code: t.trainer_code ? String(t.trainer_code).trim() : null
             }
         })
 
-        // Sort by score and limit to 500
         return ranking
             .sort((a: any, b: any) => b.score - a.score)
             .slice(0, 500)
@@ -373,14 +343,14 @@ export async function getTrainerActivityFeed(): Promise<ActivityItem[]> {
 
     try {
         // 1. Get trainer's student IDs
-        const { data: students } = await supabase
+        const { data: trainerStudents } = await supabase
             .from('trainer_students')
             .select('student_id')
             .eq('trainer_id', user.id)
-            .eq('active', true)
+            .neq('active', false)
 
-        if (!students || students.length === 0) return []
-        const studentIds = students.map(s => s.student_id)
+        if (!trainerStudents || trainerStudents.length === 0) return []
+        const studentIds = trainerStudents.map(s => s.student_id)
 
         // 2. Fetch latest logs from all sources
         const [workoutsRes, mealsRes, cardiosRes, weightRes, photosRes] = await Promise.all([

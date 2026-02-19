@@ -24,6 +24,7 @@ interface EditProfileDialogProps {
         bio: string | null
         specialties: string[] | null
         whatsapp: string | null
+        trainer_code?: string | null
     }
 }
 
@@ -34,6 +35,7 @@ export function EditProfileDialog({ profile }: EditProfileDialogProps) {
         full_name: profile.full_name || '',
         bio: profile.bio || '',
         whatsapp: profile.whatsapp || '',
+        trainer_code: profile.trainer_code || '',
     })
     const [specialties, setSpecialties] = useState<string[]>(profile.specialties || [])
     const [newSpecialty, setNewSpecialty] = useState('')
@@ -127,6 +129,21 @@ export function EditProfileDialog({ profile }: EditProfileDialogProps) {
                                 placeholder="55 11 99999-9999"
                             />
                         </div>
+
+                        {!profile.trainer_code && (
+                            <div className="space-y-2">
+                                <Label htmlFor="trainer_code" className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Código da Equipe (Obrigatório)</Label>
+                                <Input
+                                    id="trainer_code"
+                                    value={formData.trainer_code}
+                                    onChange={(e) => setFormData({ ...formData, trainer_code: e.target.value.toUpperCase().trim() })}
+                                    className="bg-zinc-900/50 border-emerald-500/30 focus:border-emerald-500 rounded-xl h-12 font-mono tracking-widest"
+                                    placeholder="EX: REPTRAIL-24"
+                                    required
+                                />
+                                <p className="text-[9px] text-zinc-600 font-bold uppercase">Este código é único e será usado pelos seus alunos para se vincularem a você.</p>
+                            </div>
+                        )}
 
                         <div className="space-y-2">
                             <Label htmlFor="bio" className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Bio / Descritivo</Label>

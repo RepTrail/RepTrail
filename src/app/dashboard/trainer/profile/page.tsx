@@ -1,6 +1,6 @@
 import { getTrainerProfile } from "@/actions/trainer-actions"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Award, User, CreditCard, Sparkles, Zap, Crown } from "lucide-react"
+import { Award, User, CreditCard, Sparkles, Zap, Crown, Activity } from "lucide-react"
 import { createClient } from '@/lib/supabase/server'
 import { ClientProfileForm } from "@/components/feature/trainer/client-profile-form"
 
@@ -15,27 +15,30 @@ export default async function TrainerProfilePage() {
         .eq('trainer_id', profile?.id)
         .eq('active', true)
 
-    const currentTier = (profile?.plan_tier as 'start' | 'pro' | 'elite') || 'start'
+    const currentTier = (profile?.plan_tier as 'on_demand' | 'start' | 'pro' | 'elite') || 'on_demand'
 
     const tierColors = {
+        on_demand: 'text-zinc-500',
         start: 'text-blue-500',
         pro: 'text-emerald-500',
         elite: 'text-amber-500'
     }
     const tierBgColors = {
+        on_demand: 'bg-zinc-500/5 border-b border-zinc-500/10',
         start: 'bg-blue-500/5 border-b border-blue-500/10',
         pro: 'bg-emerald-500/5 border-b border-emerald-500/10',
         elite: 'bg-amber-500/5 border-b border-amber-500/10'
     }
     const tierIcons = {
+        on_demand: Activity,
         start: Zap,
         pro: Sparkles,
         elite: Crown
     }
 
-    const TierIcon = tierIcons[currentTier]
-    const tierColor = tierColors[currentTier]
-    const tierBg = tierBgColors[currentTier]
+    const TierIcon = tierIcons[currentTier] || Activity
+    const tierColor = tierColors[currentTier] || 'text-zinc-500'
+    const tierBg = tierBgColors[currentTier] || 'bg-zinc-500/5 border-b border-zinc-500/10'
 
     return (
         <div className="space-y-10 pb-10">

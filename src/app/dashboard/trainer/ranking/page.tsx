@@ -73,9 +73,10 @@ function PodiumCard({ trainer, rank }: { trainer: any, rank: number }) {
     ]
 
     const tierColors: Record<string, string> = {
-        'elite': 'bg-purple-500/10 text-purple-500 border-purple-500/20',
+        'elite': 'bg-amber-500/10 text-amber-500 border-amber-500/20 shadow-[0_0_15px_rgba(245,158,11,0.1)]',
         'pro': 'bg-blue-500/10 text-blue-500 border-blue-500/20',
-        'start': 'bg-zinc-500/10 text-zinc-500 border-zinc-500/20'
+        'start': 'bg-zinc-500/10 text-zinc-500 border-zinc-500/20',
+        'on_demand': 'bg-gradient-to-r from-orange-500/10 to-amber-500/10 text-orange-500 border-orange-500/20'
     }
 
     return (
@@ -100,11 +101,11 @@ function PodiumCard({ trainer, rank }: { trainer: any, rank: number }) {
 
                 <div className="space-y-2">
                     <h3 className="text-xl font-black text-white italic uppercase tracking-tight line-clamp-1">
-                        {trainer.full_name}
+                        {trainer.full_name || 'Treinador sem nome'}
                     </h3>
                     <div className="flex items-center justify-center gap-2">
-                        <Badge variant="outline" className={`${tierColors[trainer.plan_tier]} text-[9px] font-black uppercase tracking-widest px-2 py-0`}>
-                            {trainer.plan_tier}
+                        <Badge variant="outline" className={`${tierColors[trainer.plan_tier] || 'bg-zinc-800 text-zinc-400 border-zinc-700'} text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full`}>
+                            {trainer.plan_tier === 'on_demand' ? 'On Demand' : trainer.plan_tier}
                         </Badge>
                         <div className="flex items-center gap-1">
                             <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
@@ -145,9 +146,10 @@ function PodiumCard({ trainer, rank }: { trainer: any, rank: number }) {
 
 function RankingRow({ trainer, rank }: { trainer: any, rank: number }) {
     const tierColors: Record<string, string> = {
-        'elite': 'text-purple-500',
+        'elite': 'text-amber-500',
         'pro': 'text-blue-500',
-        'start': 'text-zinc-500'
+        'start': 'text-zinc-500',
+        'on_demand': 'text-orange-500'
     }
 
     return (
@@ -168,8 +170,8 @@ function RankingRow({ trainer, rank }: { trainer: any, rank: number }) {
                         {trainer.full_name}
                     </p>
                     <div className="flex items-center gap-3">
-                        <span className={`text-[9px] font-black uppercase tracking-widest ${tierColors[trainer.plan_tier]}`}>
-                            {trainer.plan_tier}
+                        <span className={`text-[9px] font-black uppercase tracking-widest ${tierColors[trainer.plan_tier] || 'text-zinc-500'}`}>
+                            {trainer.plan_tier === 'on_demand' ? 'On Demand' : trainer.plan_tier}
                         </span>
                         <div className="flex items-center gap-1">
                             <Star className="w-2.5 h-2.5 text-amber-500/50 fill-amber-500/50" />

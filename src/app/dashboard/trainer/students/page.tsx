@@ -29,28 +29,32 @@ export default async function StudentsPage() {
         .single()
 
     // Tier Limits
-    const currentTier = (profile?.plan_tier as 'start' | 'pro' | 'elite') || 'start'
+    // Tier Limits
+    const currentTier = (profile?.plan_tier as 'on_demand' | 'start' | 'pro' | 'elite') || 'on_demand'
     const TIER_LIMITS = {
+        on_demand: 5, // Based on your previous DB seeds or business logic
         start: 10,
         pro: 50,
         elite: Infinity
     }
-    const limit = TIER_LIMITS[currentTier]
+    const limit = TIER_LIMITS[currentTier] || 5
     const limitDisplay = limit === Infinity ? '∞' : limit
 
     // Tier Badge Styling
     const tierColors = {
+        on_demand: 'text-zinc-500',
         start: 'text-blue-500',
         pro: 'text-emerald-500',
         elite: 'text-amber-500'
     }
     const tierIcons = {
+        on_demand: Activity,
         start: Zap,
         pro: Sparkles,
         elite: Crown
     }
-    const TierIcon = tierIcons[currentTier]
-    const tierColor = tierColors[currentTier]
+    const TierIcon = tierIcons[currentTier] || Activity
+    const tierColor = tierColors[currentTier] || 'text-zinc-500'
 
     // Ranking Logic
     const fullRanking = await getTrainerRanking()

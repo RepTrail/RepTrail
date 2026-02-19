@@ -41,6 +41,10 @@ create policy "Student can link themselves to trainer"
 on trainer_students for insert
 with check (auth.uid() = student_id);
 
+create policy "Public can view student links"
+on trainer_students for select
+using (true);
+
 -- ====================================================
 -- 3. INVITES
 -- ====================================================
@@ -208,6 +212,7 @@ create policy "Trainer views student weight history" on weight_history for selec
 
 create policy "Student manages own photos" on progress_photos for all using (auth.uid() = student_id);
 create policy "Trainer views student photos" on progress_photos for select using (is_trainer_of(student_id));
+create policy "Public can view non-private progress photos" on progress_photos for select using (is_private = false);
 
 create policy "Student manages own meal logs" on meal_logs for all using (auth.uid() = student_id);
 create policy "Trainer views student meal logs" on meal_logs for select using (is_trainer_of(student_id));

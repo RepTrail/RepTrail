@@ -8,6 +8,7 @@ export async function updateTrainerProfile(data: {
     bio?: string
     specialties?: string[]
     whatsapp?: string
+    trainer_code?: string
 }) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
@@ -24,6 +25,7 @@ export async function updateTrainerProfile(data: {
                 bio: data.bio,
                 specialties: data.specialties,
                 whatsapp: data.whatsapp,
+                trainer_code: data.trainer_code,
             })
             .eq('id', user.id)
 
