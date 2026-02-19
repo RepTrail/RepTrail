@@ -70,6 +70,25 @@ export async function deleteWorkout(workoutId: string) {
     }
 }
 
+export async function updateWorkoutMeta(workoutId: string, name: string, description?: string) {
+    const supabase = await createClient()
+
+    try {
+        const { error } = await supabase
+            .from('workouts')
+            .update({ name: name.trim(), description: description?.trim() ?? null })
+            .eq('id', workoutId)
+
+        if (error) throw error
+
+        revalidatePath('/dashboard/trainer/workouts')
+        revalidatePath(`/dashboard/trainer/workouts/${workoutId}`)
+        return { success: true }
+    } catch (e: any) {
+        return { error: e.message }
+    }
+}
+
 export async function assignWorkout(workoutId: string, studentId: string, dayOfWeek: number) {
     const supabase = await createClient()
 

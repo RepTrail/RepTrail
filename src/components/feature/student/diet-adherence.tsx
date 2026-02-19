@@ -221,17 +221,17 @@ export function DietAdherence({ diet }: DietAdherenceProps) {
 
                                                 <Button
                                                     size="sm"
-                                                    variant={isFullyComplete ? "outline" : "default"}
+                                                    variant="ghost"
                                                     className={cn(
-                                                        "text-xs font-bold uppercase tracking-widest",
+                                                        "text-[10px] font-black uppercase tracking-widest transition-all border",
                                                         isFullyComplete
-                                                            ? "border-zinc-700 text-zinc-400 hover:text-white"
-                                                            : "bg-emerald-500 text-zinc-950 hover:bg-emerald-400"
+                                                            ? "bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20 hover:text-red-300 hover:border-red-500/50"
+                                                            : "bg-emerald-500/10 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20 hover:text-emerald-300 hover:border-emerald-500/50"
                                                     )}
                                                     onClick={() => handleMealToggle(meal.id, !isFullyComplete)}
                                                     disabled={loadingMap[`meal-${meal.id}`]}
                                                 >
-                                                    {isFullyComplete ? 'Desmarcar Todos' : 'Marcar Todos'}
+                                                    {isFullyComplete ? '✕ Desmarcar Todos' : '✓ Marcar Todos'}
                                                 </Button>
                                             </div>
                                         </div>
