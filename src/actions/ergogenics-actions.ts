@@ -96,6 +96,12 @@ export async function logErgogenicIntake(data: {
         .single()
 
     if (error) return { error: error.message }
+
+    // Update Adherence
+    await import('./tracking-actions').then(mod =>
+        mod.upsertDailyTracking(data.student_id, { ergogenics_status: 'completed' })
+    )
+
     revalidatePath('/dashboard/student/ergogenics')
     return { success: true, data: log }
 }

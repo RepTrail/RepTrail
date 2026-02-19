@@ -577,3 +577,32 @@ export async function submitTrainerReview(data: {
         return { success: false, error: e.message }
     }
 }
+
+export async function updateProgressPhotoDate(photoId: string, newDate: string) {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) {
+        return { success: false, error: 'Unauthorized' }
+    }
+
+    try {
+        const { error } = await supabase
+            .from('progress_photos')
+            .update({ created_at: newDate })
+            .eq('id', photoId)
+            .eq('student_id', user.id)
+
+        if (error) {
+            console.error('Database error in updateProgressPhotoDate:', error)
+            throw new Error(`Erro ao atualizar data: ${error.message}`)
+        }
+
+        revalidatePath('/dashboard/student/progress')
+        return { success: true }
+    } catch (e: any) {
+        console.error('Unexpected error in updateProgressPhotoDate:', e)
+        return { success: false, error: e.message || 'Erro inesperado ao atualizar data.' }
+    }
+}
+

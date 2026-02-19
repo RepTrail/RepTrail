@@ -10,6 +10,7 @@ import { createClient } from '@/lib/supabase/server'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { getBetaTesterMode } from '@/actions/app-settings-actions'
+import { BecomeAffiliateCard } from '@/components/feature/affiliate/become-affiliate-card'
 
 export default async function TrainerDashboard() {
     const supabase = await createClient()
@@ -17,7 +18,7 @@ export default async function TrainerDashboard() {
 
     const { data: profile } = await supabase
         .from('profiles')
-        .select('trainer_code, full_name, plan_tier, bio, specialties, whatsapp')
+        .select('trainer_code, full_name, plan_tier, bio, specialties, whatsapp, is_affiliate')
         .eq('id', user?.id)
         .single()
 
@@ -41,11 +42,19 @@ export default async function TrainerDashboard() {
 
     const { data: studentsData } = await supabase
         .from('trainer_students')
-        .select('monthly_fee')
+        .select('monthly_fee, created_at')
         .eq('trainer_id', user?.id)
         .eq('active', true)
 
     const monthlyRevenue = studentsData?.reduce((acc, curr) => acc + (Number(curr.monthly_fee) || 0), 0) || 0
+
+    // Estimated Total Revenue
+    const totalRevenue = studentsData?.reduce((acc, curr) => {
+        const start = new Date(curr.created_at)
+        const now = new Date()
+        const months = Math.max(1, (now.getFullYear() - start.getFullYear()) * 12 + (now.getMonth() - start.getMonth()) + 1)
+        return acc + ((Number(curr.monthly_fee) || 0) * months)
+    }, 0) || 0
 
     const betaTesterMode = await getBetaTesterMode()
 
@@ -121,7 +130,7 @@ export default async function TrainerDashboard() {
                     title="Receita Mensal"
                     value={`R$ ${monthlyRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} `}
                     icon={<DollarSign className="w-5 h-5" />}
-                    description="Seu lucro total"
+                    description={`Total Est.: R$ ${totalRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
                     accentColor="text-emerald-500"
                     trend="TAXA ZERO 🔥"
                 />
@@ -247,6 +256,16 @@ export default async function TrainerDashboard() {
                 <div className="lg:col-span-4 space-y-6">
                     <div className="rounded-2xl overflow-hidden shadow-2xl space-y-4">
                         <TrainerCodeCard initialCode={profile?.trainer_code} />
+
+                        {profile?.is_affiliate ? (
+                            <Button asChild variant="ghost" className="w-full text-amber-500/70 hover:text-amber-400 hover:bg-amber-500/5 text-[10px] uppercase font-bold tracking-widest h-9 transition-all duration-200 border border-amber-500/10 rounded-xl">
+                                <Link href="/dashboard/affiliate">
+                                    ⭐ Meu Painel de Afiliado
+                                </Link>
+                            </Button>
+                        ) : (
+                            <BecomeAffiliateCard />
+                        )}
 
                         <div className="p-1">
                             <EditProfileDialog profile={{

@@ -65,6 +65,8 @@ export async function recordSetLoad(data: {
 export async function finishWorkoutLog(id: string, feedback?: string, perceivedEffort?: number) {
     const supabase = await createClient()
 
+    const { data: { user } } = await supabase.auth.getUser()
+
     try {
         const { error } = await supabase
             .from('workout_logs')
@@ -77,6 +79,14 @@ export async function finishWorkoutLog(id: string, feedback?: string, perceivedE
             .eq('id', id)
 
         if (error) throw error
+
+        // Update Adherence
+        if (user) {
+            await import('./tracking-actions').then(mod =>
+                mod.upsertDailyTracking(user.id, { workout_status: 'completed' })
+            )
+        }
+
         return { success: true }
     } catch (e: any) {
         return { error: e.message }
@@ -234,7 +244,7 @@ export async function getStudentLastActivity(studentId: string) {
         // Return the most recent activity
         if (activities.length === 0) return null
 
-        const latest = activities.sort((a, b) => 
+        const latest = activities.sort((a, b) =>
             new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
         )[0]
 
@@ -242,9 +252,9 @@ export async function getStudentLastActivity(studentId: string) {
             type: latest.type,
             name: latest.name,
             timestamp: latest.timestamp,
-            formattedDate: new Date(latest.timestamp).toLocaleString('pt-BR', { 
-                dateStyle: 'short', 
-                timeStyle: 'short' 
+            formattedDate: new Date(latest.timestamp).toLocaleString('pt-BR', {
+                dateStyle: 'short',
+                timeStyle: 'short'
             }),
             relativeTime: getRelativeTime(new Date(latest.timestamp))
         }

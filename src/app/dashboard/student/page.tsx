@@ -211,6 +211,8 @@ export default async function StudentDashboard() {
                 </div>
             </div>
 
+
+
             <div className="grid gap-8 lg:grid-cols-12">
                 {/* Main Content (Workout & Cardio) */}
                 <div className="lg:col-span-8 space-y-10">

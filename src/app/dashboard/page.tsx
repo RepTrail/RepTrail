@@ -10,13 +10,23 @@ export default async function DashboardPage() {
         redirect('/auth/login')
     }
 
-    // Check Role in Metadata (fastest check)
-    const role = user.user_metadata.role
+    // Read from profiles to get is_affiliate (not available in user_metadata for existing users)
+    const { data: profile } = await supabase
+        .from('profiles')
+        .select('role, is_affiliate')
+        .eq('id', user.id)
+        .single()
 
-    if (role === 'trainer') {
-        redirect('/dashboard/trainer')
-    } else {
-        // Default to student
-        redirect('/dashboard/student')
+    // Redirect based on role
+    // Affiliates should access their dashboard via sidebar link, not forced redirect
+
+    if (profile?.role === 'admin') {
+        redirect('/admin/dashboard')
     }
+
+    if (profile?.role === 'trainer') {
+        redirect('/dashboard/trainer')
+    }
+
+    redirect('/dashboard/student')
 }

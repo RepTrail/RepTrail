@@ -1,12 +1,14 @@
+
 'use client'
 
 import { useState } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Progress } from "@/components/ui/progress"
-import { CheckCircle2, Circle, Utensils, Info } from 'lucide-react'
+import { CheckCircle2, Circle, Utensils, Info, ChevronDown, Check, ChevronUp } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { logMealCheck } from '@/actions/diet-actions'
+import { toggleMealItem, toggleMealGroup } from '@/actions/tracking-actions'
 import { useToast } from '@/hooks/use-toast'
+import { cn } from '@/lib/utils'
 
 interface DietAdherenceProps {
     diet: any
@@ -14,34 +16,83 @@ interface DietAdherenceProps {
 
 export function DietAdherence({ diet }: DietAdherenceProps) {
     const { toast } = useToast()
-    const [loading, setLoading] = useState<string | null>(null)
+    const [meals, setMeals] = useState<any[]>(diet.meals || [])
+    const [loadingMap, setLoadingMap] = useState<Record<string, boolean>>({})
+    const [openMeals, setOpenMeals] = useState<Record<string, boolean>>({})
 
-    const meals = diet.meals || []
-    const completedCount = meals.filter((m: any) => m.is_checked).length
-    const totalCount = meals.length
-    const percentage = totalCount > 0 ? (completedCount / totalCount) * 100 : 0
+    // Calculate daily progress
+    const allItems = meals.flatMap(m => m.meal_items || [])
+    const totalItems = allItems.length
+    const completedItems = allItems.filter(i => i.is_checked).length
+    const dailyPercentage = totalItems > 0 ? (completedItems / totalItems) * 100 : 0
 
-    async function handleToggle(mealId: string, currentStatus: boolean) {
-        setLoading(mealId)
-        const res = await logMealCheck(mealId, !currentStatus)
-        if (res.success) {
-            toast({
-                title: !currentStatus ? 'Refeição concluída!' : 'Refeição desmarcada',
-                description: !currentStatus ? 'Bom trabalho mantendo a dieta!' : 'Status atualizado.'
-            })
-        } else {
-            toast({
-                variant: 'destructive',
-                title: 'Erro',
-                description: 'Erro ao atualizar status da refeição.'
-            })
+    const toggleMealAccordion = (mealId: string) => {
+        setOpenMeals(prev => ({ ...prev, [mealId]: !prev[mealId] }))
+    }
+
+    async function handleItemToggle(itemId: string, currentStatus: boolean, mealId: string) {
+        // Optimistic update
+        setMeals(prev => prev.map(m => {
+            if (m.id !== mealId) return m
+            return {
+                ...m,
+                meal_items: m.meal_items.map((i: any) => i.id === itemId ? { ...i, is_checked: !currentStatus } : i),
+                // Recalculate meal checked status based on items? Optional visual cue
+            }
+        }))
+
+        setLoadingMap(prev => ({ ...prev, [itemId]: true }))
+
+        try {
+            const res = await toggleMealItem(itemId, !currentStatus)
+            if (!res.success) throw new Error(res.error)
+        } catch (e) {
+            // Revert
+            setMeals(prev => prev.map(m => {
+                if (m.id !== mealId) return m
+                return {
+                    ...m,
+                    meal_items: m.meal_items.map((i: any) => i.id === itemId ? { ...i, is_checked: currentStatus } : i)
+                }
+            }))
+            toast({ variant: 'destructive', title: 'Erro ao atualizar', description: 'Tente novamente.' })
+        } finally {
+            setLoadingMap(prev => ({ ...prev, [itemId]: false }))
         }
-        setLoading(null)
+    }
+
+    async function handleMealToggle(mealId: string, markAll: boolean) {
+        // Optimistic update all items in meal
+        setMeals(prev => prev.map(m => {
+            if (m.id !== mealId) return m
+            return {
+                ...m,
+                meal_items: m.meal_items.map((i: any) => ({ ...i, is_checked: markAll }))
+            }
+        }))
+
+        setLoadingMap(prev => ({ ...prev, [`meal-${mealId}`]: true }))
+
+        try {
+            const res = await toggleMealGroup(mealId, markAll)
+            if (!res.success) throw new Error(res.error)
+
+            toast({
+                title: markAll ? 'Refeição Completada!' : 'Refeição Reiniciada',
+                description: markAll ? 'Todos os itens foram marcados.' : 'Itens desmarcados.'
+            })
+        } catch (e) {
+            // Revert logic would be complex here, so we just reload or show error
+            toast({ variant: 'destructive', title: 'Erro', description: 'Erro ao atualizar refeição.' })
+        } finally {
+            setLoadingMap(prev => ({ ...prev, [`meal-${mealId}`]: false }))
+        }
     }
 
     return (
         <Card className="bg-zinc-900/40 border-zinc-800/50 shadow-2xl rounded-[2.5rem] overflow-hidden backdrop-blur-sm border-t-zinc-700/10">
             <CardContent className="p-8 space-y-8">
+                {/* Header */}
                 <div className="flex items-center justify-between">
                     <div className="space-y-1">
                         <div className="flex items-center gap-2">
@@ -49,89 +100,157 @@ export function DietAdherence({ diet }: DietAdherenceProps) {
                             <h3 className="text-xl font-black text-white italic uppercase">{diet.name}</h3>
                         </div>
                         <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
-                            Refeições do Dia • {completedCount}/{totalCount} Concluídas
+                            Progresso Diário • {completedItems}/{totalItems} Itens
                         </p>
                     </div>
                     <div className="flex flex-col items-end gap-1">
-                        <span className="text-2xl font-black text-emerald-500 italic">{Math.round(percentage)}%</span>
-                        <Progress value={percentage} className="h-1.5 w-24 bg-zinc-800" indicatorClassName="bg-emerald-500" />
+                        <span className="text-2xl font-black text-emerald-500 italic">{Math.round(dailyPercentage)}%</span>
+                        <Progress value={dailyPercentage} className="h-1.5 w-24 bg-zinc-800" indicatorClassName="bg-emerald-500" />
                     </div>
                 </div>
 
+                {/* Meals List */}
                 <div className="space-y-4">
-                    {meals.map((meal: any) => (
-                        <div
-                            key={meal.id}
-                            className={`
-                                group relative p-5 rounded-3xl border transition-all duration-300
-                                ${meal.is_checked
-                                    ? 'bg-emerald-500/5 border-emerald-500/20'
-                                    : 'bg-zinc-950/20 border-zinc-900 hover:border-zinc-800'}
-                            `}
-                        >
-                            <div className="flex items-center justify-between gap-4">
-                                <div className="flex items-center gap-4">
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        disabled={loading === meal.id}
-                                        onClick={() => handleToggle(meal.id, meal.is_checked)}
-                                        className={`
-                                            w-10 h-10 rounded-2xl border transition-all
-                                            ${meal.is_checked
-                                                ? 'bg-emerald-500 text-zinc-950 border-emerald-400'
-                                                : 'bg-zinc-900 text-zinc-600 border-zinc-800 hover:text-emerald-500 hover:border-emerald-500/50'}
-                                        `}
-                                    >
-                                        {meal.is_checked ? <CheckCircle2 className="w-6 h-6" /> : <Circle className="w-6 h-6" />}
-                                    </Button>
-                                    <div className="space-y-0.5">
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-xs font-black text-zinc-100 uppercase italic tracking-wide">
+                    {meals.map((meal: any) => {
+                        const mealTotal = meal.meal_items?.length || 0
+                        const mealCompleted = meal.meal_items?.filter((i: any) => i.is_checked).length || 0
+                        const isFullyComplete = mealTotal > 0 && mealCompleted === mealTotal
+                        const isOpen = openMeals[meal.id]
+
+                        return (
+                            <div
+                                key={meal.id}
+                                className={cn(
+                                    "group relative rounded-3xl border transition-all duration-300 overflow-hidden",
+                                    isFullyComplete
+                                        ? 'bg-emerald-500/5 border-emerald-500/20'
+                                        : 'bg-zinc-950/20 border-zinc-900 hover:border-zinc-800'
+                                )}
+                            >
+                                {/* Accordion Header */}
+                                <div
+                                    className="p-5 flex items-center justify-between cursor-pointer select-none"
+                                    onClick={() => toggleMealAccordion(meal.id)}
+                                >
+                                    <div className="flex items-center gap-4">
+                                        <div className={cn(
+                                            "w-10 h-10 rounded-2xl flex items-center justify-center transition-colors",
+                                            isFullyComplete ? "bg-emerald-500 text-zinc-950" : "bg-zinc-900 text-zinc-600"
+                                        )}>
+                                            {isFullyComplete ? <CheckCircle2 className="w-6 h-6" /> : <Circle className="w-6 h-6" />}
+                                        </div>
+                                        <div>
+                                            <h4 className="text-sm font-black text-zinc-100 uppercase italic tracking-wide">
                                                 {meal.name}
-                                            </span>
+                                            </h4>
+                                            <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-0.5">
+                                                {meal.time_of_day} • {mealCompleted}/{mealTotal} Itens
+                                            </p>
                                         </div>
-                                        <div className="flex flex-col gap-0.5 pt-1">
-                                            {meal.meal_items?.length > 0 ? (
-                                                meal.meal_items.map((item: any, idx: number) => (
-                                                    <p key={idx} className="text-[10px] text-zinc-500 font-medium">
-                                                        <span className="text-zinc-300 font-bold">{item.quantity}</span> {item.food_name}
-                                                        {item.approx_measure && <span className="text-zinc-600 ml-1">({item.approx_measure})</span>}
-                                                    </p>
-                                                ))
-                                            ) : (
-                                                <p className="text-[10px] text-zinc-500 font-medium">Sem itens cadastrados</p>
-                                            )}
-                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                        {/* Macros Summary (Visible when collapsed) */}
+                                        {!isOpen && (
+                                            <div className="hidden sm:flex gap-3 mr-2 opacity-60">
+                                                <MacroMini label="P" value={meal.meal_items?.reduce((acc: any, i: any) => acc + (i.protein || 0), 0)} />
+                                                <MacroMini label="C" value={meal.meal_items?.reduce((acc: any, i: any) => acc + (i.carbs || 0), 0)} />
+                                                <MacroMini label="G" value={meal.meal_items?.reduce((acc: any, i: any) => acc + (i.fat || 0), 0)} />
+                                            </div>
+                                        )}
+                                        <ChevronDown className={cn("w-5 h-5 text-zinc-600 transition-transform duration-300", isOpen && "rotate-180")} />
                                     </div>
                                 </div>
 
-                                <Button variant="ghost" size="icon" className="text-zinc-700 hover:text-zinc-300">
-                                    <Info className="w-4 h-4" />
-                                </Button>
-                            </div>
+                                {/* Accordion Content */}
+                                <div className={cn(
+                                    "grid transition-all duration-300 ease-in-out",
+                                    isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+                                )}>
+                                    <div className="overflow-hidden">
+                                        <div className="p-5 pt-0 space-y-3">
+                                            {/* Divider */}
+                                            <div className="h-px w-full bg-zinc-800/50 mb-4" />
 
-                            {/* Nutrition Summary (Mini) */}
-                            {meal.is_checked && (
-                                <div className="mt-4 pt-4 border-t border-emerald-500/10 flex gap-6">
-                                    <MacroMini label="P" value={meal.meal_items?.reduce((acc: any, i: any) => acc + (i.protein || 0), 0)} unit="g" />
-                                    <MacroMini label="C" value={meal.meal_items?.reduce((acc: any, i: any) => acc + (i.carbs || 0), 0)} unit="g" />
-                                    <MacroMini label="F" value={meal.meal_items?.reduce((acc: any, i: any) => acc + (i.fat || 0), 0)} unit="g" />
+                                            {/* Items List */}
+                                            {meal.meal_items?.length > 0 ? (
+                                                meal.meal_items.map((item: any) => (
+                                                    <div key={item.id} className="flex items-center justify-between p-3 rounded-xl bg-zinc-900/30 border border-zinc-800/50 hover:bg-zinc-900/50 transition-colors">
+                                                        <div className="flex items-center gap-3">
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                className={cn(
+                                                                    "w-6 h-6 rounded-lg border flex-shrink-0 transition-colors",
+                                                                    item.is_checked
+                                                                        ? "bg-emerald-500 border-emerald-500 text-zinc-950 hover:bg-emerald-600 hover:text-white"
+                                                                        : "bg-transparent border-zinc-700 text-transparent hover:border-zinc-500"
+                                                                )}
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation()
+                                                                    handleItemToggle(item.id, item.is_checked, meal.id)
+                                                                }}
+                                                                disabled={loadingMap[item.id]}
+                                                            >
+                                                                <Check className="w-3 h-3" strokeWidth={4} />
+                                                            </Button>
+                                                            <div className="text-xs">
+                                                                <span className="font-bold text-white mr-1.5">{item.quantity}</span>
+                                                                <span className="text-zinc-300">{item.food_name}</span>
+                                                                {item.approx_measure && <span className="text-zinc-500 ml-1">({item.approx_measure})</span>}
+                                                            </div>
+                                                        </div>
+                                                        {/* Item Macros */}
+                                                        <div className="flex gap-2 text-[9px] font-bold text-zinc-600 uppercase">
+                                                            <span>P: {Math.round(item.protein || 0)}</span>
+                                                            <span>C: {Math.round(item.carbs || 0)}</span>
+                                                            <span>G: {Math.round(item.fat || 0)}</span>
+                                                        </div>
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <p className="text-xs text-zinc-500 text-center py-2">Sem itens cadastrados nesta refeição.</p>
+                                            )}
+
+                                            {/* Actions Footer */}
+                                            <div className="pt-4 flex items-center justify-between">
+                                                <div className="flex gap-4">
+                                                    <MacroMini label="P" value={meal.meal_items?.reduce((acc: any, i: any) => acc + (i.protein || 0), 0)} unit="g" />
+                                                    <MacroMini label="C" value={meal.meal_items?.reduce((acc: any, i: any) => acc + (i.carbs || 0), 0)} unit="g" />
+                                                    <MacroMini label="G" value={meal.meal_items?.reduce((acc: any, i: any) => acc + (i.fat || 0), 0)} unit="g" />
+                                                </div>
+
+                                                <Button
+                                                    size="sm"
+                                                    variant={isFullyComplete ? "outline" : "default"}
+                                                    className={cn(
+                                                        "text-xs font-bold uppercase tracking-widest",
+                                                        isFullyComplete
+                                                            ? "border-zinc-700 text-zinc-400 hover:text-white"
+                                                            : "bg-emerald-500 text-zinc-950 hover:bg-emerald-400"
+                                                    )}
+                                                    onClick={() => handleMealToggle(meal.id, !isFullyComplete)}
+                                                    disabled={loadingMap[`meal-${meal.id}`]}
+                                                >
+                                                    {isFullyComplete ? 'Desmarcar Todos' : 'Marcar Todos'}
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                            )}
-                        </div>
-                    ))}
+                            </div>
+                        )
+                    })}
                 </div>
             </CardContent>
         </Card>
     )
 }
 
-function MacroMini({ label, value, unit }: any) {
+function MacroMini({ label, value, unit = '' }: any) {
     return (
-        <div className="flex items-baseline gap-1">
-            <span className="text-[8px] font-black text-zinc-600 uppercase tracking-widest">{label}:</span>
-            <span className="text-[10px] font-black text-emerald-500 italic">{Math.round(value)}{unit}</span>
+        <div className="flex items-baseline gap-0.5">
+            <span className="text-[9px] font-black text-zinc-600 uppercase">{label}</span>
+            <span className="text-[10px] font-bold text-zinc-300">{Math.round(value)}{unit}</span>
         </div>
     )
 }

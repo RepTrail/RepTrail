@@ -108,67 +108,72 @@ export default function StudentStorePage() {
                         <div key={i} className="h-[450px] bg-zinc-900/40 border border-zinc-800/50 rounded-[2.5rem] animate-pulse" />
                     ))
                 ) : filteredProducts.map(product => (
-                    <Card key={product.id} className="group flex flex-col bg-zinc-900/30 border-zinc-800/30 hover:border-orange-500/40 transition-all duration-700 rounded-[2.5rem] overflow-hidden backdrop-blur-sm hover:shadow-[0_20px_40px_-15px_rgba(249,115,22,0.15)] relative">
-                        {/* Status/Category Badge */}
-                        <div className="absolute top-6 left-6 z-20">
-                            <Badge variant="outline" className="bg-zinc-950/80 border-zinc-800/80 text-[8px] font-black uppercase tracking-widest px-3 py-1">
-                                {product.category || 'Suplemento'}
-                            </Badge>
+                    <Card key={product.id} className="group relative flex flex-col bg-zinc-950 border border-zinc-800 hover:border-orange-500/50 transition-all duration-500 rounded-3xl overflow-hidden hover:shadow-[0_0_40px_-5px_rgba(249,115,22,0.15)]">
+                        {/* High Contrast Badge */}
+                        <div className="absolute top-4 left-4 z-20">
+                            <div className="bg-orange-600/90 backdrop-blur-sm text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-md shadow-lg shadow-orange-900/20 transform -skew-x-12 border border-orange-500/20">
+                                <span className="block skew-x-12">{product.category || 'OFERTA'}</span>
+                            </div>
                         </div>
 
-                        {/* Image Container */}
-                        <div className="relative h-64 bg-zinc-950/20 flex items-center justify-center p-12 overflow-hidden">
-                            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(249,115,22,0.05),transparent_70%)] group-hover:scale-150 transition-transform duration-1000" />
+                        {/* Image Area - Subtle gradient backdrop */}
+                        <div className="relative h-72 bg-zinc-900/50 p-6 flex items-center justify-center overflow-hidden border-b border-zinc-800/50 group-hover:bg-zinc-900/80 transition-colors">
+                            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.03),transparent_70%)]" />
                             <img
                                 src={product.image_url || 'https://via.placeholder.com/200'}
                                 alt={product.name}
-                                className="w-full h-full object-contain relative z-10 group-hover:scale-110 transition-transform duration-700"
+                                className="w-full h-full object-contain relative z-10 group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-500 drop-shadow-2xl"
                             />
                         </div>
 
-                        <CardContent className="p-8 space-y-6 flex-1 flex flex-col relative z-20">
-                            <div className="space-y-2 flex-1">
-                                <h3 className="text-xl font-black text-white italic uppercase line-clamp-2 leading-tight group-hover:text-orange-500 transition-colors duration-500">
+                        <CardContent className="p-6 flex-1 flex flex-col gap-5 bg-gradient-to-b from-zinc-950 to-zinc-900/50">
+                            {/* Title & Desc */}
+                            <div className="space-y-2">
+                                <h3 className="text-xl font-black text-white italic uppercase leading-none line-clamp-2 group-hover:text-orange-500 transition-colors duration-300">
                                     {product.name}
                                 </h3>
-                                <p className="text-zinc-500 text-[11px] font-medium leading-relaxed line-clamp-3">
+                                <p className="text-xs font-bold text-zinc-500 line-clamp-2 uppercase tracking-wide">
                                     {product.description}
                                 </p>
                             </div>
 
-                            <div className="space-y-4 pt-6 mt-auto">
-                                <div className="flex items-end justify-between border-t border-zinc-800/50 pt-6">
-                                    <div className="space-y-0.5">
-                                        <div className="flex items-center gap-1.5 opacity-50 mb-1">
-                                            <ShieldCheck className="w-3 h-3 text-emerald-500" />
-                                            <span className="text-[8px] font-black text-zinc-400 uppercase tracking-widest">Produto Original</span>
-                                        </div>
-                                        <div className="flex items-baseline gap-1">
-                                            <span className="text-sm font-black text-zinc-500 italic">R$</span>
-                                            <span className="text-3xl font-black text-white italic tracking-tighter">
-                                                {product.official_price?.toFixed(0)}
-                                                <span className="text-sm opacity-50">,{(product.official_price % 1).toFixed(2).split('.')[1]}</span>
-                                            </span>
+                            {/* Price Section */}
+                            <div className="mt-auto pt-4 border-t border-zinc-800/50 flex items-center justify-between">
+                                <div>
+                                    <div className="flex items-center gap-1.5 mb-2">
+                                        <div className="flex items-center gap-1 text-emerald-500">
+                                            <ShieldCheck className="w-3 h-3" />
+                                            <span className="text-[9px] font-black uppercase tracking-widest">Original & Lacrado</span>
                                         </div>
                                     </div>
-                                    <div className="flex flex-col items-center gap-1">
-                                        <div className="flex items-center gap-0.5">
-                                            {[1, 2, 3, 4, 5].map(s => (
-                                                <Star key={s} className="w-2.5 h-2.5 text-amber-500 fill-amber-500" />
-                                            ))}
-                                        </div>
-                                        <span className="text-[8px] font-black text-zinc-600 uppercase tracking-widest">5.0 (400+)</span>
+                                    <div className="flex items-baseline gap-0.5 text-white">
+                                        <span className="text-xs font-bold text-zinc-500 mr-1">R$</span>
+                                        <span className="text-4xl font-black italic tracking-tighter">
+                                            {Math.floor(product.official_price || 0)}
+                                        </span>
+                                        <span className="text-sm font-bold text-zinc-500 mb-auto ml-0.5">
+                                            ,{(product.official_price % 1 || 0).toFixed(2).split('.')[1]}
+                                        </span>
                                     </div>
                                 </div>
 
-                                <Button
-                                    onClick={() => handleBuy(product)}
-                                    className="w-full h-14 rounded-2xl bg-white hover:bg-orange-500 hover:text-zinc-950 text-zinc-950 font-black uppercase italic tracking-wide transition-all shadow-xl active:scale-95 flex items-center justify-center gap-2 border-none"
-                                >
-                                    Comprar Agora
-                                    <ExternalLink className="w-4 h-4 opacity-70 group-hover:rotate-12 transition-transform" />
-                                </Button>
+                                <div className="text-right space-y-1">
+                                    <div className="flex gap-0.5 justify-end">
+                                        {[1, 2, 3, 4, 5].map(i => <Star key={i} className="w-3 h-3 text-orange-500 fill-orange-500" />)}
+                                    </div>
+                                    <p className="text-[9px] font-black text-zinc-600 uppercase tracking-widest">4.9/5.0</p>
+                                </div>
                             </div>
+
+                            {/* Button */}
+                            <Button
+                                onClick={() => handleBuy(product)}
+                                className="w-full h-14 bg-white hover:bg-orange-500 text-black hover:text-white font-black uppercase italic tracking-widest rounded-xl transition-all shadow-[0_4px_0_0_#27272a] hover:shadow-[0_2px_0_0_#9a3412] active:shadow-none translate-y-0 active:translate-y-1 text-sm border-none ring-0 focus:ring-0"
+                            >
+                                <span className="flex items-center gap-2">
+                                    Comprar Agora <ExternalLink className="w-4 h-4 ml-1" />
+                                </span>
+                            </Button>
                         </CardContent>
                     </Card>
                 ))}

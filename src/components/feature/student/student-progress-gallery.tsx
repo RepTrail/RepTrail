@@ -1,9 +1,10 @@
 'use client'
 
-import { useState } from 'react'
-import { Camera, Calendar, X, Maximize2 } from 'lucide-react'
+import { useState, useTransition } from 'react'
+import { Camera, Calendar, X, Maximize2, Pencil, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { deleteProgressPhoto } from '@/actions/student-actions'
+import { Input } from '@/components/ui/input'
+import { deleteProgressPhoto, updateProgressPhotoDate } from '@/actions/student-actions'
 import { useToast } from '@/hooks/use-toast'
 
 interface PhotoSet {
@@ -22,6 +23,9 @@ interface StudentProgressGalleryProps {
 export function StudentProgressGallery({ photos }: StudentProgressGalleryProps) {
     const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null)
     const [hoveredId, setHoveredId] = useState<string | null>(null)
+    const [editingId, setEditingId] = useState<string | null>(null)
+    const [editDate, setEditDate] = useState('')
+    const [isPending, startTransition] = useTransition()
     const { toast } = useToast()
 
     const sortedPhotos = [...photos].sort((a, b) =>
@@ -40,6 +44,32 @@ export function StudentProgressGallery({ photos }: StudentProgressGalleryProps) 
             toast({ variant: "destructive", title: "Erro", description: res.error })
         }
     }
+
+    async function handleDateSave(photoId: string) {
+        if (!editDate) return
+
+        startTransition(async () => {
+            const res = await updateProgressPhotoDate(photoId, new Date(editDate).toISOString())
+            if (res.success) {
+                toast({ title: "Data atualizada!" })
+                setEditingId(null)
+                // window.location.reload() // Next.js revalidatePath handle this? Usually yes if server component re-renders. But this is client component receiving props.
+                // We might need to full reload or router.refresh() if revalidatePath doesn't work on client component props update instantly
+                // Actually revalidatePath works on next fetch. But props are passed from server component.
+                // So we need to refresh the router.
+                window.location.reload()
+            } else {
+                toast({ variant: "destructive", title: "Erro", description: res.error })
+            }
+        })
+    }
+
+    function startEditing(id: string, currentDate: string) {
+        setEditingId(id)
+        // Format to YYYY-MM-DD for input date
+        setEditDate(new Date(currentDate).toISOString().split('T')[0])
+    }
+
 
     if (sortedPhotos.length === 0) {
         return (
@@ -72,13 +102,41 @@ export function StudentProgressGallery({ photos }: StudentProgressGalleryProps) 
                         >
                             <div className="p-4 border-b border-zinc-800 bg-zinc-900/50">
                                 <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex items-center gap-2 group/date">
                                         <Calendar className="w-4 h-4 text-purple-500" />
-                                        <span className="text-xs font-black text-white uppercase tracking-tight">
-                                            {new Date(set.created_at).toLocaleDateString('pt-BR')}
-                                        </span>
+
+                                        {editingId === set.id ? (
+                                            <div className="flex items-center gap-1 animate-in fade-in zoom-in duration-300">
+                                                <Input
+                                                    type="date"
+                                                    value={editDate}
+                                                    onChange={(e) => setEditDate(e.target.value)}
+                                                    className="h-6 w-32 px-2 text-[10px] bg-zinc-950 border-zinc-700 focus:ring-purple-500/50 text-white [color-scheme:dark]"
+                                                />
+                                                <Button size="sm" variant="ghost" onClick={() => handleDateSave(set.id)} disabled={isPending} className="h-6 w-6 p-0 hover:bg-emerald-500/20 text-emerald-500">
+                                                    <Check className="w-3 h-3" />
+                                                </Button>
+                                                <Button size="sm" variant="ghost" onClick={() => setEditingId(null)} disabled={isPending} className="h-6 w-6 p-0 hover:bg-red-500/20 text-red-500">
+                                                    <X className="w-3 h-3" />
+                                                </Button>
+                                            </div>
+                                        ) : (
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-xs font-black text-white uppercase tracking-tight">
+                                                    {new Date(set.created_at).toLocaleDateString('pt-BR')}
+                                                </span>
+                                                <Button
+                                                    size="sm"
+                                                    variant="ghost"
+                                                    onClick={() => startEditing(set.id, set.created_at)}
+                                                    className="h-6 w-6 p-0 opacity-0 group-hover/date:opacity-100 transition-opacity hover:bg-white/10 text-zinc-500 hover:text-white rounded-full"
+                                                >
+                                                    <Pencil className="w-3 h-3" />
+                                                </Button>
+                                            </div>
+                                        )}
                                     </div>
-                                    {hoveredId === set.id && (
+                                    {hoveredId === set.id && !editingId && (
                                         <Button
                                             variant="ghost"
                                             size="sm"

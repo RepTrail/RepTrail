@@ -6,23 +6,23 @@ import { revalidatePath } from 'next/cache'
 function getTodayRangeBrazil() {
     // Get current UTC time
     const now = new Date()
-    
+
     // Brazil is UTC-3, so add 3 hours to get Brazil time
     const brazilOffsetMs = 3 * 60 * 60 * 1000 // +3 hours in milliseconds
     const brazilNow = new Date(now.getTime() + brazilOffsetMs)
-    
+
     // Get start of day in Brazil (00:00:00 Brazil time)
     const startBrazil = new Date(brazilNow)
     startBrazil.setUTCHours(0, 0, 0, 0)
-    
+
     // Get end of day in Brazil (23:59:59.999 Brazil time)
     const endBrazil = new Date(brazilNow)
     endBrazil.setUTCHours(23, 59, 59, 999)
-    
+
     // Convert back to UTC (subtract the offset we added)
     const startUTC = new Date(startBrazil.getTime() - brazilOffsetMs)
     const endUTC = new Date(endBrazil.getTime() - brazilOffsetMs)
-    
+
     return {
         start: startUTC.toISOString(),
         end: endUTC.toISOString()
@@ -393,14 +393,36 @@ export async function getStudentDailyDiet(studentId: string) {
             .gte('consumed_at', start)
             .lt('consumed_at', end)
 
+        // Fetch detailed item logs
+        const { data: itemLogs } = await supabase
+            .from('meal_item_logs')
+            .select('meal_item_id')
+            .eq('user_id', studentId)
+            .gte('consumed_at', start)
+            .lt('consumed_at', end)
+
         const loggedMealIds = new Set(logs?.map(l => l.meal_id) || [])
+        const loggedItemIds = new Set(itemLogs?.map(l => l.meal_item_id) || [])
 
         if (diet.meals) {
             diet.meals.sort((a: any, b: any) => a.order_index - b.order_index)
-            diet.meals = diet.meals.map((meal: any) => ({
-                ...meal,
-                is_checked: loggedMealIds.has(meal.id)
-            }))
+            diet.meals = diet.meals.map((meal: any) => {
+                // Check items first
+                const itemsWithStatus = meal.meal_items?.map((item: any) => ({
+                    ...item,
+                    is_checked: loggedItemIds.has(item.id)
+                })) || []
+
+                // Meal is fully checked if all items are checked OR if explicitly logged (legacy)
+                const allItemsChecked = itemsWithStatus.length > 0 && itemsWithStatus.every((i: any) => i.is_checked)
+                const isMealChecked = loggedMealIds.has(meal.id) || allItemsChecked
+
+                return {
+                    ...meal,
+                    is_checked: isMealChecked,
+                    meal_items: itemsWithStatus
+                }
+            })
         }
 
         return diet

@@ -162,6 +162,8 @@ export async function updateCardioSession(logId: string, seconds: number, runnin
 export async function finishCardioSession(logId: string, feedback?: string, intensity?: string) {
     const supabase = await createClient()
 
+    const { data: { user } } = await supabase.auth.getUser()
+
     try {
         const { error } = await supabase
             .from('cardio_logs')
@@ -175,6 +177,14 @@ export async function finishCardioSession(logId: string, feedback?: string, inte
             .eq('id', logId)
 
         if (error) throw error
+
+        // Update Adherence
+        if (user) {
+            await import('./tracking-actions').then(mod =>
+                mod.upsertDailyTracking(user.id, { cardio_status: 'completed' })
+            )
+        }
+
         revalidatePath('/dashboard/student', 'page')
         return { success: true }
     } catch (e: any) {

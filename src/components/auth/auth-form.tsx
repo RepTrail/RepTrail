@@ -10,8 +10,10 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import Link from 'next/link'
-import { ShieldCheck, ArrowRight, User, Users } from 'lucide-react'
+import { ShieldCheck, ArrowRight, User, Users, Megaphone } from 'lucide-react'
 import { Logo } from '@/components/ui/logo'
+import { useSearchParams } from 'next/navigation'
+import { useEffect } from 'react'
 
 interface AuthFormProps {
     view: 'login' | 'signup'
@@ -23,10 +25,32 @@ export function AuthForm({ view }: AuthFormProps) {
     const [fullName, setFullName] = useState('')
     const [whatsapp, setWhatsapp] = useState('')
     const [role, setRole] = useState<'trainer' | 'student'>('student')
+    const [isAffiliate, setIsAffiliate] = useState(false)
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const router = useRouter()
+    const searchParams = useSearchParams()
     const supabase = createClient()
+
+    useEffect(() => {
+        if (view === 'signup' && searchParams.get('affiliate') === 'true') {
+            setIsAffiliate(true)
+        }
+    }, [view, searchParams])
+
+    const getAffiliateCookie = () => {
+        const match = document.cookie.match(/rt_affiliate_token=([^;]+)/)
+        return match ? match[1] : null
+    }
+
+    const getAffiliateIdFromToken = async (token: string) => {
+        const { data } = await supabase
+            .from('profiles')
+            .select('id')
+            .eq('affiliate_token', token)
+            .single()
+        return data?.id ?? null
+    }
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -35,6 +59,13 @@ export function AuthForm({ view }: AuthFormProps) {
 
         try {
             if (view === 'signup') {
+                // Read referral cookie
+                const affiliateToken = getAffiliateCookie()
+                let referredById: string | null = null
+                if (affiliateToken) {
+                    referredById = await getAffiliateIdFromToken(affiliateToken)
+                }
+
                 const { error } = await supabase.auth.signUp({
                     email,
                     password,
@@ -43,10 +74,18 @@ export function AuthForm({ view }: AuthFormProps) {
                             full_name: fullName,
                             whatsapp: whatsapp,
                             role: role,
+                            is_affiliate: isAffiliate,
+                            ...(referredById ? { referred_by_id: referredById } : {}),
                         },
                     },
                 })
                 if (error) throw error
+
+                // Clear affiliate cookie after successful registration
+                if (affiliateToken) {
+                    document.cookie = 'rt_affiliate_token=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;'
+                }
+
                 alert('Cadastro realizado! Verifique seu email ou faça login.')
                 router.push('/auth/login')
             } else {
@@ -60,7 +99,7 @@ export function AuthForm({ view }: AuthFormProps) {
                 if (user) {
                     const { data: profile } = await supabase
                         .from('profiles')
-                        .select('role')
+                        .select('role, is_affiliate')
                         .eq('id', user.id)
                         .single()
 
@@ -179,6 +218,26 @@ export function AuthForm({ view }: AuthFormProps) {
                                         </button>
                                     </div>
                                 </div>
+
+                                {/* Affiliate option */}
+                                <button
+                                    type="button"
+                                    onClick={() => setIsAffiliate(!isAffiliate)}
+                                    className={`w-full flex items-center justify-between h-12 rounded-xl border px-4 transition-all ${isAffiliate ? 'bg-amber-500/10 border-amber-500/50 text-amber-400' : 'bg-zinc-950 border-zinc-800 text-zinc-500 hover:border-zinc-700'}`}
+                                >
+                                    <span className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest">
+                                        <Megaphone className="w-4 h-4" />
+                                        Quero ser afiliado
+                                    </span>
+                                    <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md ${isAffiliate ? 'bg-amber-500 text-zinc-950' : 'bg-zinc-800 text-zinc-500'}`}>
+                                        {isAffiliate ? 'Ativo' : 'Opcional'}
+                                    </span>
+                                </button>
+                                {isAffiliate && (
+                                    <p className="text-[10px] text-amber-500/70 text-center font-medium px-2">
+                                        Ganhe 10% de comissão por cada personal que você indicar 🚀
+                                    </p>
+                                )}
                             </>
                         )}
 

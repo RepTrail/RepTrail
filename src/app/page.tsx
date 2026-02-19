@@ -10,6 +10,7 @@ import { Logo } from '@/components/ui/logo'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { getTrainerRanking } from '@/actions/trainer-actions'
+import { AffiliateTracker } from '@/components/landing/affiliate-tracker'
 
 export const dynamic = 'force-dynamic'
 
@@ -18,6 +19,7 @@ export default async function LandingPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-zinc-950 text-white font-sans selection:bg-emerald-500/30 overflow-x-hidden">
+      <AffiliateTracker />
       {/* Header */}
       <header className="h-20 flex items-center border-b border-zinc-900/50 backdrop-blur-md sticky top-0 z-50 bg-zinc-950/80 supports-[backdrop-filter]:bg-zinc-950/60">
         <div className="container mx-auto px-4 flex items-center justify-between">
@@ -67,6 +69,8 @@ export default async function LandingPage() {
             © 2026 RepTrail Inc. Todos os direitos reservados.
           </p>
           <div className="flex gap-4">
+            <Link href="/afiliados/login" className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest hover:text-zinc-400 transition-colors">Sou afiliado</Link>
+            <Link href="/afiliados" className="text-[10px] font-bold text-amber-500/60 uppercase tracking-widest hover:text-amber-500 transition-colors">Quero me tornar afiliado</Link>
             <Link href="#" className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest hover:text-zinc-400 transition-colors">Termos</Link>
             <Link href="#" className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest hover:text-zinc-400 transition-colors">Privacidade</Link>
           </div>

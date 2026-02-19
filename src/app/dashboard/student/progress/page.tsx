@@ -7,6 +7,8 @@ import { StudentMetricsChart } from '@/components/feature/trainer/student-metric
 import { StudentWorkoutHistory } from '@/components/feature/trainer/student-workout-history'
 import { ProgressPhotoUpload } from '@/components/feature/student/progress-photo-upload'
 import { StudentProgressGallery } from '@/components/feature/student/student-progress-gallery'
+import { getAdherenceHistory } from '@/actions/tracking-actions'
+import { AdherenceChart } from '@/components/feature/student/adherence-chart'
 import Link from 'next/link'
 
 export default async function StudentProgressPage() {
@@ -52,13 +54,14 @@ export default async function StudentProgressPage() {
     const weeklyAvg = metricsHistory.weights.length > 0 ? "Ativo" : "Sem dados"
 
     const history = await getStudentWorkoutHistory(user.id)
+    const adherenceHistory = await getAdherenceHistory(30)
 
     const { data: progressPhotosData } = await supabase
         .from('progress_photos')
         .select('id, front_url, back_url, side_right_url, side_left_url, created_at')
         .eq('student_id', user.id)
         .order('created_at', { ascending: false })
-    
+
     const progressPhotos = progressPhotosData || []
 
     return (
@@ -193,6 +196,11 @@ export default async function StudentProgressPage() {
                     )}
                 </CardContent>
             </Card>
+
+            {/* Adherence Chart */}
+            <div className="animate-in slide-in-from-bottom-4 duration-700 delay-100">
+                <AdherenceChart history={adherenceHistory} />
+            </div>
 
         </div>
     )

@@ -7,7 +7,7 @@ interface LogoProps {
     iconContainerClassName?: string
     iconClassName?: string
     size?: 'sm' | 'md' | 'lg' | 'xl'
-    color?: 'orange' | 'emerald'
+    color?: 'orange' | 'emerald' | 'amber'
 }
 
 export function Logo({
@@ -49,6 +49,10 @@ export function Logo({
         emerald: {
             bg: 'bg-emerald-500 shadow-emerald-500/20',
             text: 'text-emerald-500'
+        },
+        amber: {
+            bg: 'bg-amber-500 shadow-amber-500/20',
+            text: 'text-amber-500'
         }
     }
 
