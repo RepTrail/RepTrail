@@ -562,26 +562,28 @@ export async function deleteUser(userId: string) {
 
         // Deletar o usuário do auth (requer admin client)
         if (!admin) {
-            console.warn('SUPABASE_SERVICE_ROLE_KEY não configurada. Dados deletados, mas usuário ainda existe no auth.')
-            revalidatePath('/admin')
+            console.error('DELETE_USER_ERROR: SUPABASE_SERVICE_ROLE_KEY is missing or admin client failed to initialize.')
             return {
                 success: true,
-                warning: 'Dados deletados com sucesso, mas o usuário ainda existe no auth. Configure SUPABASE_SERVICE_ROLE_KEY no .env.local para deletar completamente.'
+                warning: 'Dados coletados e removidos do banco, mas a conta de LOGIN ainda existe. Motivo: Chave de Admin não encontrada no servidor.'
             }
         }
 
         const { error: authError } = await admin.auth.admin.deleteUser(userId)
 
         if (authError) {
-            console.error('Erro ao deletar usuário do auth:', authError)
-            return { error: `Erro ao deletar autenticação: ${authError.message}` }
+            console.error('DELETE_USER_AUTH_ERROR:', authError)
+            return {
+                success: true,
+                warning: `Dados do perfil apagados, mas houve erro no login: ${authError.message}`
+            }
         }
 
         revalidatePath('/admin')
         return { success: true }
     } catch (e: any) {
-        console.error('Erro ao deletar usuário:', e)
-        return { error: e.message || 'Erro desconhecido ao deletar usuário' }
+        console.error('DELETE_USER_CRITICAL_ERROR:', e)
+        return { error: `Erro inesperado: ${e.message || 'Consulte os logs do servidor'}` }
     }
 }
 
