@@ -591,3 +591,32 @@ export async function getPublicPlanPricing() {
 
     return result
 }
+
+export async function processExpiredTrial(userId: string) {
+    const supabase = await createClient()
+
+    // First verify it's actually expired to avoid race conditions or malicious calls
+    const { data: profile } = await supabase
+        .from('profiles')
+        .select('plan_tier, elite_until')
+        .eq('id', userId)
+        .single()
+
+    const now = new Date()
+    const isEliteTrial = profile?.plan_tier === 'elite' && !!profile?.elite_until
+    const isTrialExpired = isEliteTrial && new Date(profile.elite_until) <= now
+
+    if (isTrialExpired) {
+        console.log(`Trial expired for user ${userId}. Downgrading to on_demand...`)
+        await supabase
+            .from('profiles')
+            .update({
+                plan_tier: 'on_demand',
+                // We keep elite_until for history and display
+            })
+            .eq('id', userId)
+
+        revalidatePath('/dashboard', 'layout')
+        revalidatePath('/dashboard/trainer', 'layout')
+    }
+}

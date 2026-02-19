@@ -48,6 +48,13 @@ export default async function TrainerLayout({
     const now = new Date()
     const isEliteTrial = profile?.plan_tier === 'elite' && !!profile?.elite_until
     const isTrialExpired = isEliteTrial && new Date(profile.elite_until) <= now
+
+    if (isTrialExpired) {
+        const { processExpiredTrial } = await import('@/actions/trainer-actions')
+        await processExpiredTrial(user.id)
+        redirect(pathname)
+    }
+
     const hasPlan = !!profile?.plan_tier && profile.plan_tier !== 'none' && !isTrialExpired
 
     if (!hasPlan && !pathname.includes('/plans')) {

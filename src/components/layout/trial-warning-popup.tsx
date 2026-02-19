@@ -20,15 +20,15 @@ export function TrialWarningPopup({ eliteUntil }: TrialWarningPopupProps) {
         const diffMs = expiryDate.getTime() - now.getTime()
         const diffHours = diffMs / (1000 * 60 * 60)
 
-        // Show popup if trial expires in less than 24 hours AND more than 0
-        if (diffHours > 0 && diffHours <= 24) {
+        // Show popup if trial expires in less than 24 hours
+        if (diffHours <= 24) {
             setIsOpen(true)
         }
     }, [eliteUntil])
 
     if (!isOpen) return null
 
-    const whatsappNumber = "5511999999999" // TODO: Verify with user if they have a specific number
+    const whatsappNumber = "5541998364028"
     const message = encodeURIComponent("Olá! Estou usando o plano Elite do RepTrail e gostaria de falar sobre minha experiência e interesse em continuar usando a plataforma.")
     const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${message}`
 
