@@ -65,30 +65,40 @@ export function ProgressPhotoUpload({ studentId }: ProgressPhotoUploadProps) {
         }
 
         setUploading(true)
-        const formData = new FormData()
-        formData.append('front', photos.front)
-        formData.append('back', photos.back)
-        formData.append('side_left', photos.side_left)
-        formData.append('side_right', photos.side_right)
-        formData.append('allow_public', String(allowPublic))
+        try {
+            const formData = new FormData()
+            formData.append('front', photos.front)
+            formData.append('back', photos.back)
+            formData.append('side_left', photos.side_left)
+            formData.append('side_right', photos.side_right)
+            formData.append('allow_public', String(allowPublic))
 
-        const result = await uploadProgressPhotos(formData)
+            const result = await uploadProgressPhotos(formData)
 
-        if (result.success) {
+            if (result.success) {
+                toast({
+                    title: 'Sucesso!',
+                    description: 'Suas fotos de progresso foram enviadas.',
+                })
+                setPhotos({ front: null, back: null, side_left: null, side_right: null })
+                setPreviews({ front: null, back: null, side_left: null, side_right: null })
+            } else {
+                toast({
+                    title: 'Erro no envio',
+                    description: result.error,
+                    variant: 'destructive'
+                })
+            }
+        } catch (error: any) {
+            console.error('Submit error:', error)
             toast({
-                title: 'Sucesso!',
-                description: 'Suas fotos de progresso foram enviadas.',
-            })
-            setPhotos({ front: null, back: null, side_left: null, side_right: null })
-            setPreviews({ front: null, back: null, side_left: null, side_right: null })
-        } else {
-            toast({
-                title: 'Erro no envio',
-                description: result.error,
+                title: 'Erro inesperado',
+                description: 'Ocorreu uma falha na comunicação com o servidor.',
                 variant: 'destructive'
             })
+        } finally {
+            setUploading(false)
         }
-        setUploading(false)
     }
 
     return (
