@@ -108,7 +108,7 @@ export function OnboardingForm() {
             <CardContent className="p-4 sm:p-8 overflow-x-hidden">
                 <StepProgress current={step} />
 
-                <form action={formAction} method="POST" noValidate className="space-y-8">
+                <form action={formAction} noValidate className="space-y-8">
                     {/* Hidden inputs no topo do form (sempre enviados - inputs em divs ocultas podem ser excluídos) */}
                     <input type="hidden" name="height" value={height} />
                     <input type="hidden" name="startingWeight" value={startingWeight} />

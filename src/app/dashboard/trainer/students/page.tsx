@@ -2,7 +2,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Users, Search, Mail, Wallet, Activity, ArrowUpRight, AlertCircle, CheckCircle, Zap, Sparkles, Crown } from 'lucide-react'
+import { Users, Search, Mail, Wallet, Activity, ArrowUpRight, AlertCircle, CheckCircle, Zap, Sparkles, Crown, BedDouble } from 'lucide-react'
 import { Badge } from "@/components/ui/badge"
 import {
     Table,
@@ -73,6 +73,34 @@ export default async function StudentsPage() {
     const totalStudents = students?.length || 0
     const activeStudents = students?.filter(s => s.active).length || 0
     const totalRevenue = students?.filter(s => s.active).reduce((acc, curr) => acc + (Number(curr.monthly_fee) || 0), 0) || 0
+
+    // Fetch last activity date for each student (for lazy badge)
+    const studentIds = students?.map(s => s.student_id).filter(Boolean) || []
+    let lastActivityMap: Record<string, string> = {}
+    if (studentIds.length > 0) {
+        const { data: activityData } = await supabase
+            .from('daily_tracking')
+            .select('user_id, date')
+            .in('user_id', studentIds)
+            .order('date', { ascending: false })
+        // Build map: first occurrence of each user_id is the most recent date
+        activityData?.forEach((row: any) => {
+            if (!lastActivityMap[row.user_id]) lastActivityMap[row.user_id] = row.date
+        })
+    }
+
+    function getDaysSinceActivity(studentId: string): number | null {
+        const lastDate = lastActivityMap[studentId]
+        if (!lastDate) return null
+        const diffMs = Date.now() - new Date(lastDate).getTime()
+        return Math.floor(diffMs / (1000 * 60 * 60 * 24))
+    }
+
+    function isLazyStudent(studentId: string): boolean {
+        const days = getDaysSinceActivity(studentId)
+        // null = never active at all — also lazy if they've been enrolled > 7 days
+        return days === null || days >= 7
+    }
 
     return (
         <div className="space-y-10 pb-10">
@@ -223,6 +251,12 @@ export default async function StudentsPage() {
                                                             }
                                                             return null
                                                         })()}
+                                                        {/* Lazy badge desktop */}
+                                                        {item.active && item.student_id && isLazyStudent(item.student_id) && (
+                                                            <Badge variant="outline" className="bg-orange-500/10 text-orange-400 border-orange-500/20 text-[9px] font-black uppercase tracking-widest px-1.5 py-0 rounded-full flex gap-1 items-center w-fit" title={`Sem atividade há ${getDaysSinceActivity(item.student_id) ?? '7+'} dias`}>
+                                                                <BedDouble className="w-2.5 h-2.5" /> Preguiçoso
+                                                            </Badge>
+                                                        )}
                                                     </div>
                                                 </TableCell>
                                                 <TableCell className="py-4 text-right">
@@ -299,6 +333,12 @@ export default async function StudentsPage() {
                                                                 <AlertCircle className="w-2 h-2" /> Hoje
                                                             </Badge>
                                                         ) : null}
+                                                        {/* Lazy badge mobile */}
+                                                        {item.active && item.student_id && isLazyStudent(item.student_id) && (
+                                                            <Badge variant="outline" className="bg-orange-500/10 text-orange-400 border-orange-500/20 text-[8px] font-black uppercase tracking-widest px-1.5 py-0 rounded-full flex gap-1 items-center">
+                                                                <BedDouble className="w-2 h-2" /> Preguiçoso
+                                                            </Badge>
+                                                        )}
                                                     </div>
                                                 </div>
                                             </div>
