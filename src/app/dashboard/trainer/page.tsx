@@ -80,7 +80,7 @@ export default async function TrainerDashboard() {
         on_demand: 9999,
         start: 10,
         pro: 50,
-        elite: Infinity
+        elite: 120
     }
     const limit = TIER_LIMITS[currentTier] || 9999
     const displayValue = limit === Infinity ? `${activeStudents || 0} / ∞` : `${activeStudents || 0} / ${limit}`

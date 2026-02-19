@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Camera, Loader2, Upload } from 'lucide-react'
-import { AvatarFallback } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { toast } from '@/hooks/use-toast'
 
 interface AvatarUploadWithCropProps {
@@ -141,9 +141,11 @@ export function AvatarUploadWithCrop({
                     {currentImageUrl ? (
                         <img src={currentImageUrl} alt="" className="w-full h-full object-cover" />
                     ) : (
-                        <AvatarFallback className="bg-zinc-900 text-zinc-600 text-2xl font-black uppercase">
-                            {userName?.substring(0, 2) || 'RT'}
-                        </AvatarFallback>
+                        <Avatar className="w-full h-full rounded-none">
+                            <AvatarFallback className="bg-zinc-900 text-zinc-600 text-2xl font-black uppercase">
+                                {userName?.substring(0, 2) || 'RT'}
+                            </AvatarFallback>
+                        </Avatar>
                     )}
 
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity z-10">
