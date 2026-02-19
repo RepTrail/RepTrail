@@ -149,7 +149,7 @@ export function ProgressPhotoUpload({ studentId }: ProgressPhotoUploadProps) {
             <Button
                 onClick={handleSubmit}
                 disabled={uploading || !photos.front || !photos.back || !photos.side_left || !photos.side_right}
-                className="w-full h-16 bg-white text-zinc-950 hover:bg-zinc-200 rounded-2xl font-black uppercase italic tracking-widest shadow-xl shadow-white/5 active:scale-[0.98] transition-all disabled:opacity-50"
+                className="w-full h-auto py-4 bg-white text-zinc-950 hover:bg-zinc-200 rounded-2xl font-black uppercase italic tracking-widest shadow-xl shadow-white/5 active:scale-[0.98] transition-all disabled:opacity-50 text-xs whitespace-normal"
             >
                 {uploading ? (
                     <div className="flex items-center gap-3">

@@ -15,7 +15,7 @@ export default async function TrainerPublicProfile({ params }: { params: Promise
 
     // Normalize slug - remove null, undefined, or empty strings
     const normalizedSlug = slug?.trim().toUpperCase() || ''
-    
+
     if (!normalizedSlug || normalizedSlug === 'NULL' || normalizedSlug === 'UNDEFINED') {
         notFound()
     }
@@ -199,16 +199,26 @@ export default async function TrainerPublicProfile({ params }: { params: Promise
                                 </div>
 
                                 <div className="pt-4 flex flex-col sm:flex-row gap-4 justify-center md:justify-start items-center">
+                                    {/* Action Buttons: Contact (Requires Auth) & Instagram */}
                                     {trainer.whatsapp ? (
-                                        <Link
-                                            href={`https://wa.me/${trainer.whatsapp?.replace(/\D/g, '')}?text=Olá ${trainer.full_name}, vi seu perfil no RepTrail e gostaria de saber mais sobre sua consultoria!`}
-                                            target="_blank"
-                                        >
-                                            <Button className="h-14 px-8 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase italic tracking-wide w-full sm:w-auto shadow-lg shadow-emerald-500/20 text-lg">
-                                                <MessageCircle className="w-5 h-5 mr-2" />
-                                                Contratar Agora
-                                            </Button>
-                                        </Link>
+                                        user ? (
+                                            <Link
+                                                href={`https://wa.me/${trainer.whatsapp?.replace(/\D/g, '')}?text=Olá ${trainer.full_name}, vi seu perfil no RepTrail e gostaria de saber mais sobre sua consultoria!`}
+                                                target="_blank"
+                                            >
+                                                <Button className="h-14 px-8 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase italic tracking-wide w-full sm:w-auto shadow-lg shadow-emerald-500/20 text-lg">
+                                                    <MessageCircle className="w-5 h-5 mr-2" />
+                                                    Contratar Agora
+                                                </Button>
+                                            </Link>
+                                        ) : (
+                                            <Link href={`/auth/signup?next=/personal/${normalizedSlug}`}>
+                                                <Button className="h-14 px-8 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase italic tracking-wide w-full sm:w-auto shadow-lg shadow-emerald-500/20 text-lg">
+                                                    <User className="w-5 h-5 mr-2" />
+                                                    Crie sua conta para contratar
+                                                </Button>
+                                            </Link>
+                                        )
                                     ) : (
                                         <Button disabled className="h-14 px-8 rounded-2xl bg-zinc-800 text-zinc-500 font-black uppercase italic tracking-wide w-full sm:w-auto cursor-not-allowed">
                                             Agenda Fechada

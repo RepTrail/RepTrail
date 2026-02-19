@@ -4,6 +4,8 @@ import { ArrowRight, Dumbbell, User, Users, Check, Star, Zap, Shield, TrendingUp
 import { Card, CardContent } from "@/components/ui/card"
 import { Logo } from "@/components/ui/logo"
 
+import { TrainerSearch } from "@/components/feature/landing/trainer-search"
+
 export default function LandingPage() {
   return (
     <div className="flex flex-col min-h-screen bg-zinc-950 text-zinc-100 font-sans selection:bg-emerald-500/30 overflow-x-hidden">
@@ -18,9 +20,9 @@ export default function LandingPage() {
             <Link className="text-sm font-medium text-zinc-400 hover:text-emerald-400 transition-colors" href="/auth/login">
               Entrar
             </Link>
-            <Link href="/auth/signup">
+            <Link href="/auth/signup?role=trainer">
               <Button className="bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-bold rounded-full px-6 text-sm">
-                Começar Agora
+                Sou Treinador
               </Button>
             </Link>
           </nav>
@@ -45,18 +47,25 @@ export default function LandingPage() {
                   A plataforma definitiva para Personal Trainers de elite e alunos que buscam resultados reais.
                 </p>
               </div>
+
+              <div className="w-full max-w-4xl mx-auto pt-8 pb-12 relative z-20">
+                <TrainerSearch />
+              </div>
+
               <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">
-                <Link href="/auth/signup">
-                  <Button className="h-14 px-8 text-lg bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-bold rounded-xl w-full sm:w-auto shadow-lg shadow-emerald-500/20 transition-all hover:scale-105">
-                    Criar Conta Grátis <ArrowRight className="ml-2 h-5 w-5" />
+                <Link href="/auth/signup?role=trainer">
+                  <Button variant="outline" className="h-12 px-8 text-base border-zinc-800 bg-zinc-900/50 text-emerald-400 hover:bg-zinc-800 hover:text-emerald-300 font-bold rounded-xl w-full sm:w-auto backdrop-blur-sm">
+                    Sou Treinador: Criar Conta
                   </Button>
                 </Link>
                 <Link href="/auth/login">
-                  <Button variant="outline" className="h-14 px-8 text-lg border-zinc-800 bg-zinc-900/50 text-white hover:bg-zinc-800 hover:text-white font-bold rounded-xl w-full sm:w-auto backdrop-blur-sm">
+                  <Button variant="ghost" className="h-12 px-8 text-base text-zinc-500 hover:text-white font-bold rounded-xl w-full sm:w-auto">
                     Já sou membro
                   </Button>
                 </Link>
               </div>
+
+              {/* Trust/Social Proof */}
 
               {/* Trust/Social Proof */}
               <div className="pt-12 flex flex-col items-center gap-3 opacity-60 hover:opacity-100 grayscale hover:grayscale-0 transition-all duration-500">
@@ -184,6 +193,6 @@ export default function LandingPage() {
           </nav>
         </div>
       </footer>
-    </div>
+    </div >
   )
 }
