@@ -141,7 +141,7 @@ export async function getAdminOverview() {
         const monthlyNetProfit = monthlyGrossRevenue - commissionsThisMonth - monthlyOperationalCosts
         const totalNetProfit = totalGrossRevenue - affiliateTotalEarnings - totalOperationalCosts
 
-        const { count: productClicks } = await supabase.from('product_click_logs').select('*', { count: 'exact', head: true })
+        const { count: productClicks } = await supabase.from('product_clicks').select('*', { count: 'exact', head: true })
         const { count: totalProducts } = await supabase.from('store_products').select('*', { count: 'exact', head: true }).eq('is_active', true)
 
         const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
@@ -344,7 +344,7 @@ export async function getAdminLogs() {
 export async function getTopProductsByClicks() {
     const { supabase } = await checkAdmin()
     const { data } = await supabase
-        .from('product_click_logs')
+        .from('product_clicks')
         .select('product_id, store_products(name, image_url, category)')
         .limit(100)
 

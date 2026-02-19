@@ -27,9 +27,9 @@ export async function logProductClick(productId: string) {
 
     try {
         const { error } = await supabase
-            .from('product_click_logs')
+            .from('product_clicks')
             .insert({
-                student_id: user?.id,
+                user_id: user?.id,
                 product_id: productId
             })
 
