@@ -1,6 +1,4 @@
-'use client'
-
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { getStudentProfile, updateStudentFullProfile, uploadAvatar } from '@/actions/student-actions'
 import {
     User,
@@ -12,12 +10,7 @@ import {
     Activity,
     FileText,
     Save,
-    MapPin,
     ShieldCheck,
-    CheckCircle2,
-    ChevronRight,
-    Camera,
-    Loader2,
     LogOut
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -26,6 +19,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { toast } from '@/hooks/use-toast'
 import { Checkbox } from '@/components/ui/checkbox'
+import { AvatarUploadWithCrop } from '@/components/feature/avatar-upload-with-crop'
 
 export default function StudentProfilePage() {
     const [loading, setLoading] = useState(true)
@@ -42,37 +36,9 @@ export default function StudentProfilePage() {
         whatsapp: ''
     })
 
-    const fileInputRef = useRef<HTMLInputElement>(null)
-    const [uploading, setUploading] = useState(false)
-
     useEffect(() => {
         loadProfile()
     }, [])
-
-    async function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
-        const file = e.target.files?.[0]
-        if (!file) return
-
-        setUploading(true)
-        const formData = new FormData()
-        formData.append('file', file)
-
-        const result = await uploadAvatar(formData)
-        if (result.success) {
-            setProfile((prev: any) => ({ ...prev, avatar_url: result.url }))
-            toast({
-                title: 'Foto Atualizada',
-                description: 'Sua foto de perfil foi alterada com sucesso.',
-            })
-        } else {
-            toast({
-                title: 'Erro no upload',
-                description: result.error,
-                variant: 'destructive'
-            })
-        }
-        setUploading(false)
-    }
 
     async function loadProfile() {
         setLoading(true)
@@ -150,34 +116,13 @@ export default function StudentProfilePage() {
                 <div className="lg:col-span-4 space-y-8">
                     <Card className="bg-zinc-900/40 border-zinc-800/50 rounded-[3rem] overflow-hidden backdrop-blur-sm shadow-2xl">
                         <CardContent className="p-10 text-center space-y-6">
-                            <div className="relative inline-block">
-                                <input
-                                    type="file"
-                                    ref={fileInputRef}
-                                    onChange={handleAvatarChange}
-                                    accept="image/*"
-                                    className="hidden"
-                                />
-                                <div
-                                    onClick={() => fileInputRef.current?.click()}
-                                    className="w-32 h-32 rounded-[2.5rem] bg-zinc-800 border-4 border-zinc-700/50 flex items-center justify-center overflow-hidden mx-auto shadow-2xl group cursor-pointer hover:border-orange-500/50 transition-all duration-500 relative"
-                                >
-                                    {uploading ? (
-                                        <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-10 backdrop-blur-sm">
-                                            <Loader2 className="w-8 h-8 text-orange-500 animate-spin" />
-                                        </div>
-                                    ) : null}
-
-                                    {profile?.avatar_url ? (
-                                        <img src={profile.avatar_url} alt="" className="w-full h-full object-cover" />
-                                    ) : (
-                                        <User className="w-12 h-12 text-zinc-600 group-hover:text-orange-500 transition-colors" />
-                                    )}
-                                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                                        <Camera className="w-8 h-8 text-white" />
-                                    </div>
-                                </div>
-                            </div>
+                            <AvatarUploadWithCrop
+                                currentImageUrl={profile?.avatar_url}
+                                userName={profile?.full_name}
+                                onUploadSuccess={(url) => setProfile((prev: any) => ({ ...prev, avatar_url: url }))}
+                                uploadAction={uploadAvatar}
+                                accentColor="orange"
+                            />
 
                             <div className="space-y-1">
                                 <h2 className="text-2xl font-black text-white italic uppercase">{profile?.full_name}</h2>

@@ -1,8 +1,11 @@
-import { getTrainerTier } from '@/actions/trainer-actions'
+import { getTrainerTier, getPublicPlanPricing, getTrainerStudents } from '@/actions/trainer-actions'
 import { PlansClient } from '@/components/feature/trainer/plans-client'
 
 export default async function TrainerPlansPage() {
-    const currentTier = await getTrainerTier()
+    const currentTier = await getTrainerTier() as any
+    const pricing = await getPublicPlanPricing()
+    const students = await getTrainerStudents()
+    const studentCount = students?.length || 0
 
     return (
         <div className="space-y-10 pb-10">
@@ -18,7 +21,7 @@ export default async function TrainerPlansPage() {
                 </div>
             </div>
 
-            <PlansClient currentTier={currentTier} />
+            <PlansClient currentTier={currentTier} pricing={pricing} studentCount={studentCount} />
         </div>
     )
 }

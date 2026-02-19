@@ -3,93 +3,142 @@
 import { useState } from 'react'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Check, Sparkles, Crown, Zap, X } from 'lucide-react'
+import { Check, Sparkles, Crown, Zap, X, Activity } from 'lucide-react'
 import { updateTrainerPlan } from "@/actions/trainer-actions"
 import { createCheckoutSession } from "@/actions/stripe-actions"
 import { useToast } from "@/hooks/use-toast"
 
 interface PlansClientProps {
-    currentTier: 'none' | 'start' | 'pro' | 'elite'
+    currentTier: 'none' | 'on_demand' | 'start' | 'pro' | 'elite'
+    pricing: Record<string, {
+        monthly: number;
+        quarterly_discount: number;
+        annual_discount: number;
+        student_limit: number;
+        photo_updates_limit: number;
+        price_per_student?: number;
+        free_students_limit?: number;
+        pro_features_threshold?: number;
+    }>
+    studentCount: number
 }
 
 type BillingPeriod = 'monthly' | 'quarterly' | 'annual'
 
-const tiers = [
-    {
-        id: 'start' as const,
-        name: 'Start',
-        tagline: 'Para começar',
-        icon: Zap,
-        gradient: 'from-blue-500 via-blue-600 to-cyan-600',
-        accentColor: 'bg-blue-500',
-        monthlyPrice: 49.90,
-        features: [
-            'Até 10 alunos',
-            'Atualizações de fotos 2x/mês',
-            'Gestão básica de treinos',
-            'Gestão básica de dietas',
-            'Presença no ranking',
-        ],
-        blocked: [
-            'Anotação de cargas',
-            'Importação de PDF',
-            'IA para macros',
-            'Gráficos de evolução',
-        ]
-    },
-    {
-        id: 'pro' as const,
-        name: 'Pro',
-        tagline: 'Mais popular',
-        icon: Sparkles,
-        gradient: 'from-emerald-500 via-teal-600 to-cyan-600',
-        accentColor: 'bg-emerald-500',
-        monthlyPrice: 149.90,
-        popular: true,
-        features: [
-            'Até 50 alunos',
-            'Atualizações de fotos 4x/mês',
-            'Anotação de cargas',
-            'Importação de PDF',
-            'IA para cálculo de macros',
-            'Badge PRO no ranking',
-            'Gráficos de evolução',
-        ],
-        blocked: []
-    },
-    {
-        id: 'elite' as const,
-        name: 'Elite',
-        tagline: 'Poder máximo',
-        icon: Crown,
-        gradient: 'from-amber-500 via-orange-600 to-red-600',
-        accentColor: 'bg-amber-500',
-        monthlyPrice: 299.90,
-        features: [
-            'Alunos ilimitados',
-            'Atualizações ilimitadas',
-            'Tudo do plano PRO',
-            'Prioridade no ranking',
-            'Badge ELITE de destaque',
-            'Suporte prioritário',
-        ],
-        blocked: []
-    }
-]
-
-export function PlansClient({ currentTier }: PlansClientProps) {
+export function PlansClient({ currentTier, pricing, studentCount }: PlansClientProps) {
     const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>('monthly')
     const [loading, setLoading] = useState<string | null>(null)
     const { toast } = useToast()
 
-    const getDiscount = (period: BillingPeriod) => {
-        if (period === 'quarterly') return 0.15
-        if (period === 'annual') return 0.20
+    const tiers = [
+        {
+            id: 'on_demand' as const,
+            name: 'On Demand',
+            tagline: studentCount >= (pricing.on_demand.pro_features_threshold || 8)
+                ? '⚡ SEU CRESCIMENTO É ILIMITADO'
+                : `Gestão sem limites de alunos`,
+            icon: Activity,
+            gradient: 'from-zinc-500 via-slate-600 to-zinc-700',
+            accentColor: 'bg-zinc-500',
+            monthlyPrice: studentCount >= (pricing.on_demand.free_students_limit || 5) + 1
+                ? studentCount * (pricing.on_demand.price_per_student || 20)
+                : 0,
+            features: studentCount >= (pricing.on_demand.pro_features_threshold || 8) ? [
+                'CRESCIMENTO ILIMITADO 🚀',
+                'Recursos PRO Liberados ⚡',
+                studentCount >= 50 ? 'Badge ELITE de destaque 🏆' : '50+ alunos: Ganha Badge ELITE',
+                'Sem limite de alunos',
+                'Anotação de cargas',
+                'Importação de PDF',
+                'IA para cálculo de macros',
+                'Gráficos de evolução',
+            ] : [
+                'CRESCIMENTO ILIMITADO 🚀',
+                `Grátis até ${pricing.on_demand.free_students_limit || 5} alunos`,
+                `R$ ${pricing.on_demand.price_per_student || 20}/mês por aluno extra`,
+                `8+ alunos: Libera tudo do PRO`,
+                `50+ alunos: Ganha Badge ELITE`,
+                'Sem limite de alunos',
+                'Presença no ranking',
+            ],
+            blocked: studentCount >= (pricing.on_demand.pro_features_threshold || 8) ? [] : [
+                'Anotação de cargas',
+                'Importação de PDF',
+                'IA para macros',
+                'Gráficos de evolução',
+            ],
+            isDynamic: true
+        },
+        {
+            id: 'start' as const,
+            name: 'Start',
+            tagline: 'O essencial',
+            icon: Zap,
+            gradient: 'from-blue-500 via-indigo-600 to-blue-700',
+            accentColor: 'bg-blue-500',
+            monthlyPrice: pricing.start.monthly,
+            features: [
+                'Até 10 alunos ativos',
+                'Gestão básica de treinos',
+                'Gestão básica de dietas',
+                'Presença no ranking',
+            ],
+            blocked: [
+                'Anotação de cargas',
+                'Importação de PDF',
+                'IA para macros',
+                'Gráficos de evolução',
+            ]
+        },
+        {
+            id: 'pro' as const,
+            name: 'Pro',
+            tagline: 'Alta performance',
+            icon: Sparkles,
+            gradient: 'from-emerald-500 via-teal-600 to-emerald-700',
+            accentColor: 'bg-emerald-500',
+            monthlyPrice: pricing.pro.monthly,
+            popular: true,
+            features: [
+                'Até 50 alunos ativos',
+                'Atualizações ilimitadas',
+                'Anotação de cargas',
+                'Importação de PDF',
+                'IA para cálculo de macros',
+                'Gráficos de evolução',
+            ],
+            blocked: []
+        },
+        {
+            id: 'elite' as const,
+            name: 'Elite',
+            tagline: 'Poder máximo',
+            icon: Crown,
+            gradient: 'from-amber-500 via-orange-600 to-red-600',
+            accentColor: 'bg-amber-500',
+            monthlyPrice: pricing.elite.monthly,
+            features: [
+                'Até 120 alunos ativos',
+                'Atualizações ilimitadas',
+                'Tudo do plano PRO',
+                'Prioridade no ranking',
+                'Badge ELITE de destaque',
+                'Suporte prioritário',
+            ],
+            blocked: []
+        }
+    ]
+
+    const getDiscount = (period: BillingPeriod, tier: string) => {
+        const p = pricing[tier] || pricing.start
+        if (period === 'quarterly') return p.quarterly_discount / 100
+        if (period === 'annual') return p.annual_discount / 100
         return 0
     }
 
-    const calculatePrice = (monthlyPrice: number, period: BillingPeriod) => {
-        const discount = getDiscount(period)
+    const calculatePrice = (monthlyPrice: number, period: BillingPeriod, tier: string) => {
+        if (tier === 'on_demand') return monthlyPrice // No discount for on_demand per-student billing?
+        const discount = getDiscount(period, tier)
         const multiplier = period === 'quarterly' ? 3 : period === 'annual' ? 12 : 1
         const total = monthlyPrice * multiplier * (1 - discount)
         return total
@@ -99,7 +148,7 @@ export function PlansClient({ currentTier }: PlansClientProps) {
         return price.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
     }
 
-    const handleSelectPlan = async (tier: 'start' | 'pro' | 'elite') => {
+    const handleSelectPlan = async (tier: 'on_demand' | 'start' | 'pro' | 'elite') => {
         if (tier === currentTier) return
 
         setLoading(tier)
@@ -110,7 +159,7 @@ export function PlansClient({ currentTier }: PlansClientProps) {
             description: "Redirecionando para o ambiente seguro de pagamento...",
         })
 
-        const res = await createCheckoutSession(tier, billingPeriod)
+        const res = await createCheckoutSession(tier as any, billingPeriod)
 
         setLoading(null)
 
@@ -119,17 +168,6 @@ export function PlansClient({ currentTier }: PlansClientProps) {
                 title: "Mock: Checkout Iniciado",
                 description: "Nesta etapa, o usuário seria redirecionado para a Stripe. Como você é Admin, pode liberar o acesso via painel /admin.",
             })
-
-            // For now, if it's a mock, we can still allow the update if we want to keep it "working" 
-            // but the user said "even if locked", so let's keep it as redirect only.
-            // If the user wants to keep the direct update for testing, I'll comment it out below.
-
-            /* 
-            const result = await updateTrainerPlan(tier)
-            if (result.success) {
-                toast({ title: '✓ Plano Atualizado (Modo Teste)' })
-            }
-            */
         } else {
             toast({
                 variant: 'destructive',
@@ -162,7 +200,7 @@ export function PlansClient({ currentTier }: PlansClientProps) {
                     >
                         Trimestral
                         <span className="absolute -top-1 -right-1 bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow-lg">
-                            -15%
+                            -{pricing.start.quarterly_discount}%
                         </span>
                     </button>
                     <button
@@ -174,7 +212,7 @@ export function PlansClient({ currentTier }: PlansClientProps) {
                     >
                         Anual
                         <span className="absolute -top-1 -right-1 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow-lg">
-                            -20%
+                            -{pricing.start.annual_discount}%
                         </span>
                     </button>
                 </div>
@@ -184,7 +222,7 @@ export function PlansClient({ currentTier }: PlansClientProps) {
             <div className="grid gap-8 md:grid-cols-3">
                 {tiers.map((tier) => {
                     const Icon = tier.icon
-                    const price = calculatePrice(tier.monthlyPrice, billingPeriod)
+                    const price = calculatePrice(tier.monthlyPrice, billingPeriod, tier.id)
                     const isCurrentTier = tier.id === currentTier
                     const savings = billingPeriod !== 'monthly'
                         ? tier.monthlyPrice * (billingPeriod === 'quarterly' ? 3 : 12) - price
@@ -236,17 +274,25 @@ export function PlansClient({ currentTier }: PlansClientProps) {
                                     {/* Pricing */}
                                     <div className="space-y-2">
                                         <div className="flex items-baseline gap-2">
-                                            <span className="text-5xl font-black text-white">
-                                                {formatPrice(price).split(',')[0]}
-                                            </span>
-                                            <div className="flex flex-col">
-                                                <span className="text-2xl font-black text-white">
-                                                    ,{formatPrice(price).split(',')[1]}
+                                            {tier.id === 'on_demand' && price === 0 ? (
+                                                <span className="text-5xl font-black text-emerald-500 uppercase italic">
+                                                    Grátis
                                                 </span>
-                                                <span className="text-xs text-zinc-600 font-bold uppercase">
-                                                    /{billingPeriod === 'monthly' ? 'mês' : billingPeriod === 'quarterly' ? 'trimestre' : 'ano'}
-                                                </span>
-                                            </div>
+                                            ) : (
+                                                <>
+                                                    <span className="text-5xl font-black text-white">
+                                                        {formatPrice(price).split(',')[0]}
+                                                    </span>
+                                                    <div className="flex flex-col">
+                                                        <span className="text-2xl font-black text-white">
+                                                            ,{formatPrice(price).split(',')[1]}
+                                                        </span>
+                                                        <span className="text-xs text-zinc-600 font-bold uppercase">
+                                                            /{billingPeriod === 'monthly' ? 'mês' : billingPeriod === 'quarterly' ? 'trimestre' : 'ano'}
+                                                        </span>
+                                                    </div>
+                                                </>
+                                            )}
                                         </div>
 
                                         {savings > 0 && (
@@ -291,6 +337,24 @@ export function PlansClient({ currentTier }: PlansClientProps) {
                                                 </div>
                                             ))}
                                         </>
+                                    )}
+
+                                    {tier.id === 'on_demand' && studentCount < (pricing.on_demand.pro_features_threshold || 8) && (
+                                        <div className="mt-8 p-4 bg-zinc-900/50 rounded-2xl border border-zinc-800/50 space-y-3">
+                                            <div className="flex justify-between items-center">
+                                                <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Progresso PRO</span>
+                                                <span className="text-[10px] font-black text-emerald-500">{studentCount} / {pricing.on_demand.pro_features_threshold || 8}</span>
+                                            </div>
+                                            <div className="h-1.5 w-full bg-zinc-800 rounded-full overflow-hidden">
+                                                <div
+                                                    className="h-full bg-emerald-500 transition-all duration-1000 shadow-[0_0_10px_rgba(16,185,129,0.5)]"
+                                                    style={{ width: `${Math.min(100, (studentCount / (pricing.on_demand.pro_features_threshold || 8)) * 100)}%` }}
+                                                />
+                                            </div>
+                                            <p className="text-[9px] text-zinc-600 font-bold leading-tight">
+                                                Faltam {(pricing.on_demand.pro_features_threshold || 8) - studentCount} alunos para você desbloquear recursos avançados.
+                                            </p>
+                                        </div>
                                     )}
                                 </div>
 

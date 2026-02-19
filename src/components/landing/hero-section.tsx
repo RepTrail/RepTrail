@@ -28,31 +28,30 @@ export function HeroSection() {
                 </div>
 
                 <div className="space-y-6 max-w-5xl">
-                    <h1 className="text-5xl font-black tracking-tighter sm:text-7xl md:text-8xl lg:text-9xl bg-clip-text text-transparent bg-gradient-to-b from-white via-zinc-200 to-zinc-600 pb-2 leading-[0.9]">
-                        Sua Consultoria <br className="hidden md:block" />
-                        <span className="text-emerald-500">Em Outro Nível.</span>
+                    <h1 className="text-6xl font-black tracking-tighter sm:text-7xl md:text-8xl lg:text-[10rem] bg-clip-text text-transparent bg-gradient-to-b from-white via-zinc-200 to-zinc-600 pb-2 leading-[0.85] uppercase italic">
+                        Domine a <br className="hidden md:block" />
+                        <span className="text-emerald-500">Consultoria.</span>
                     </h1>
-                    <p className="mx-auto max-w-2xl text-zinc-400 md:text-xl font-medium leading-relaxed">
-                        A plataforma completa para gerenciar, prescrever e escalar seu negócio fitness.
-                        Do <span className="text-white font-bold">iniciante</span> ao <span className="text-emerald-400 font-bold">Elite</span>.
+                    <p className="mx-auto max-w-3xl text-zinc-400 md:text-xl font-medium leading-relaxed">
+                        A infraestrutura definitiva para prescrever, gerenciar e <span className="text-white font-bold">escalar seu negócio fitness</span>. Do amador ao <span className="text-emerald-400 font-bold">Elite</span>, a plataforma que os campeões usam.
                     </p>
                 </div>
 
-                <div className="flex flex-col items-center gap-4 w-full pt-8">
-                    <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">
+                <div className="flex flex-col items-center gap-6 w-full pt-8">
+                    <div className="flex flex-col md:flex-row gap-4 w-full justify-center px-4 md:px-0">
                         <Button
                             asChild
-                            className="h-16 px-10 text-lg bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase italic tracking-wide rounded-2xl shadow-xl shadow-emerald-500/10 hover:shadow-emerald-500/20 transition-all hover:-translate-y-1"
+                            variant="outline"
+                            className="w-full md:w-auto h-16 px-10 text-lg border-zinc-800 bg-zinc-900/50 text-zinc-400 hover:bg-zinc-800 hover:text-white hover:border-zinc-700 font-black uppercase italic tracking-widest rounded-2xl backdrop-blur-sm transition-all hover:-translate-y-1 shadow-2xl"
                         >
                             <a href="#marketplace">
                                 <Search className="mr-2 h-5 w-5" />
-                                Encontrar Personal
+                                Buscar Personal
                             </a>
                         </Button>
                         <Button
                             asChild
-                            variant="outline"
-                            className="h-16 px-10 text-lg border-zinc-800 bg-zinc-900/50 text-zinc-400 hover:bg-zinc-800 hover:text-white hover:border-zinc-700 font-black uppercase italic tracking-widest rounded-2xl backdrop-blur-sm transition-all hover:-translate-y-1 shadow-2xl"
+                            className="w-full md:w-auto h-16 px-10 text-lg bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase italic tracking-wide rounded-2xl shadow-xl shadow-emerald-500/20 hover:shadow-emerald-500/40 transition-all hover:-translate-y-1 hover:scale-105"
                         >
                             <Link href="/auth/signup">
                                 Sou Personal Trainer
@@ -60,9 +59,11 @@ export function HeroSection() {
                             </Link>
                         </Button>
                     </div>
-                    <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest opacity-80">
-                        Usado por treinadores e atletas de alta performance.
-                    </p>
+                    <div className="flex items-center gap-2 text-[10px] text-zinc-500 font-black uppercase tracking-[0.2em] opacity-80">
+                        <div className="w-8 h-[1px] bg-zinc-800" />
+                        A escolha de +500 treinadores de alta performance
+                        <div className="w-8 h-[1px] bg-zinc-800" />
+                    </div>
                 </div>
 
                 {/* Metrics Preview */}

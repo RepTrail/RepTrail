@@ -24,10 +24,10 @@ export function CTASection() {
                 </p>
 
                 <div className="flex flex-col items-center gap-6 pt-8 w-full max-w-xl mx-auto">
-                    <div className="flex flex-col sm:flex-row gap-6 w-full justify-center">
+                    <div className="flex flex-col md:flex-row gap-6 w-full justify-center px-4 md:px-0">
                         <Button
                             asChild
-                            className="h-16 px-10 text-lg bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase italic tracking-wide rounded-2xl shadow-xl shadow-emerald-500/10 hover:shadow-emerald-500/20 transition-all hover:-translate-y-1"
+                            className="w-full md:w-auto h-16 px-10 text-lg bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase italic tracking-wide rounded-2xl shadow-xl shadow-emerald-500/10 hover:shadow-emerald-500/20 transition-all hover:-translate-y-1"
                         >
                             <Link href="/auth/signup">
                                 Começar Agora
@@ -37,7 +37,7 @@ export function CTASection() {
                         <Button
                             asChild
                             variant="outline"
-                            className="h-16 px-10 text-lg border-zinc-800 bg-zinc-900/50 text-zinc-400 hover:bg-zinc-800 hover:text-white hover:border-zinc-700 font-black uppercase italic tracking-widest rounded-2xl transition-all hover:-translate-y-1 shadow-2xl backdrop-blur-sm"
+                            className="w-full md:w-auto h-16 px-10 text-lg border-zinc-800 bg-zinc-900/50 text-zinc-400 hover:bg-zinc-800 hover:text-white hover:border-zinc-700 font-black uppercase italic tracking-widest rounded-2xl transition-all hover:-translate-y-1 shadow-2xl backdrop-blur-sm"
                         >
                             <a href="#marketplace">
                                 <Search className="mr-2 h-5 w-5" />

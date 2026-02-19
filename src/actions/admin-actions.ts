@@ -211,9 +211,24 @@ export async function getPlanPricing() {
     const { data } = await supabase
         .from('plan_features')
         .select('plan_tier, feature_key, limit_value')
-        .in('feature_key', ['monthly_price_cents', 'quarterly_discount_pct', 'annual_discount_pct'])
+        .in('feature_key', [
+            'monthly_price_cents',
+            'quarterly_discount_pct',
+            'annual_discount_pct',
+            'price_per_student_cents',
+            'free_students_limit',
+            'pro_features_threshold'
+        ])
 
-    const result: Record<string, { monthly: number; quarterly_discount: number; annual_discount: number }> = {
+    const result: Record<string, {
+        monthly: number;
+        quarterly_discount: number;
+        annual_discount: number;
+        price_per_student?: number;
+        free_students_limit?: number;
+        pro_features_threshold?: number;
+    }> = {
+        on_demand: { monthly: 0, quarterly_discount: 0, annual_discount: 0, price_per_student: 20, free_students_limit: 5, pro_features_threshold: 8 },
         start: { ...DEFAULT_PRICES.start },
         pro: { ...DEFAULT_PRICES.pro },
         elite: { ...DEFAULT_PRICES.elite },
@@ -222,8 +237,11 @@ export async function getPlanPricing() {
     for (const row of data || []) {
         if (!result[row.plan_tier]) continue
         if (row.feature_key === 'monthly_price_cents') result[row.plan_tier].monthly = (row.limit_value || 0) / 100
-        if (row.feature_key === 'quarterly_discount_pct') result[row.plan_tier].quarterly_discount = row.limit_value || 15
-        if (row.feature_key === 'annual_discount_pct') result[row.plan_tier].annual_discount = row.limit_value || 20
+        if (row.feature_key === 'quarterly_discount_pct') result[row.plan_tier].quarterly_discount = row.limit_value || 0
+        if (row.feature_key === 'annual_discount_pct') result[row.plan_tier].annual_discount = row.limit_value || 0
+        if (row.feature_key === 'price_per_student_cents') result[row.plan_tier].price_per_student = (row.limit_value || 0) / 100
+        if (row.feature_key === 'free_students_limit') result[row.plan_tier].free_students_limit = row.limit_value || 0
+        if (row.feature_key === 'pro_features_threshold') result[row.plan_tier].pro_features_threshold = row.limit_value || 0
     }
 
     return result
@@ -233,7 +251,12 @@ export async function updatePlanPricing(
     tier: string,
     monthly: number,
     quarterlyDiscount: number,
-    annualDiscount: number
+    annualDiscount: number,
+    extras?: {
+        price_per_student?: number;
+        free_students_limit?: number;
+        pro_features_threshold?: number;
+    }
 ) {
     const { supabase, userId: adminId } = await checkAdmin()
 
@@ -243,14 +266,23 @@ export async function updatePlanPricing(
         { plan_tier: tier, feature_key: 'annual_discount_pct', limit_value: annualDiscount },
     ]
 
-    for (const row of upserts) {
-        await supabase.from('plan_features').upsert(row, { onConflict: 'plan_tier,feature_key' })
+    if (tier === 'on_demand' && extras) {
+        if (extras.price_per_student !== undefined) upserts.push({ plan_tier: tier, feature_key: 'price_per_student_cents', limit_value: Math.round(extras.price_per_student * 100) });
+        if (extras.free_students_limit !== undefined) upserts.push({ plan_tier: tier, feature_key: 'free_students_limit', limit_value: extras.free_students_limit });
+        if (extras.pro_features_threshold !== undefined) upserts.push({ plan_tier: tier, feature_key: 'pro_features_threshold', limit_value: extras.pro_features_threshold });
+    }
+
+    const { error } = await supabase.from('plan_features').upsert(upserts, { onConflict: 'plan_tier,feature_key' })
+
+    if (error) {
+        console.error('Error updating plan pricing:', error)
+        return { success: false, error: error.message }
     }
 
     await supabase.from('admin_logs').insert({
         admin_id: adminId,
         action: 'update_plan_pricing',
-        details: { tier, monthly, quarterlyDiscount, annualDiscount }
+        details: { tier, monthly, quarterlyDiscount, annualDiscount, extras }
     })
 
     revalidatePath('/admin')
@@ -350,9 +382,9 @@ export async function deleteUser(userId: string) {
         if (!admin) {
             console.warn('SUPABASE_SERVICE_ROLE_KEY não configurada. Dados deletados, mas usuário ainda existe no auth.')
             revalidatePath('/admin')
-            return { 
-                success: true, 
-                warning: 'Dados deletados com sucesso, mas o usuário ainda existe no auth. Configure SUPABASE_SERVICE_ROLE_KEY no .env.local para deletar completamente.' 
+            return {
+                success: true,
+                warning: 'Dados deletados com sucesso, mas o usuário ainda existe no auth. Configure SUPABASE_SERVICE_ROLE_KEY no .env.local para deletar completamente.'
             }
         }
 

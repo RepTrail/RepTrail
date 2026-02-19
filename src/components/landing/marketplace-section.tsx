@@ -45,16 +45,17 @@ export function MarketplaceSection({ initialTrainers }: MarketplaceSectionProps)
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-zinc-800/10 via-zinc-950 to-zinc-950" />
 
             <div className="container mx-auto relative z-10 space-y-12">
-                <div className="text-center space-y-4 max-w-3xl mx-auto">
-                    <div className="inline-flex items-center rounded-full border border-zinc-800 bg-zinc-900/50 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-emerald-400">
-                        <Users className="w-3 h-3 mr-2" />
-                        Marketplace Oficial
+                <div className="text-center space-y-6 max-w-4xl mx-auto">
+                    <div className="inline-flex items-center rounded-full border border-emerald-500/20 bg-emerald-500/5 px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.1)]">
+                        <Users className="w-3.5 h-3.5 mr-2" />
+                        Marketplace Oficial RepTrail
                     </div>
-                    <h2 className="text-3xl md:text-5xl font-black text-white italic uppercase tracking-tighter">
-                        Encontre seu <span className="text-emerald-500">Parceiro de Treino.</span>
+                    <h2 className="text-4xl md:text-6xl font-black text-white italic uppercase tracking-tighter leading-none">
+                        Treine com os <br className="hidden md:block" />
+                        <span className="text-emerald-500 text-glow">Melhores do Mercado.</span>
                     </h2>
-                    <p className="text-zinc-400 text-lg">
-                        Conecte-se com os melhores profissionais do mercado. Busque por nome, especialidade ou ranking.
+                    <p className="text-zinc-500 text-lg md:text-xl font-medium max-w-2xl mx-auto">
+                        Acesso exclusivo aos treinadores que estão moldando o futuro do fitness de alta performance.
                     </p>
                 </div>
 

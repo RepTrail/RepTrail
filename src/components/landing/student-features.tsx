@@ -119,7 +119,7 @@ export function StudentFeatures() {
                     <div className="pt-8 flex justify-center lg:justify-start">
                         <Button
                             asChild
-                            className="h-14 px-8 bg-orange-500 hover:bg-orange-400 text-zinc-950 font-black uppercase italic tracking-wide rounded-xl shadow-xl shadow-orange-500/10 transition-all hover:-translate-y-1 hover:shadow-orange-500/20"
+                            className="w-full sm:w-auto h-14 px-8 bg-orange-500 hover:bg-orange-400 text-zinc-950 font-black uppercase italic tracking-wide rounded-xl shadow-xl shadow-orange-500/10 transition-all hover:-translate-y-1 hover:shadow-orange-500/20"
                         >
                             <a href="#marketplace">
                                 Encontrar meu Treinador

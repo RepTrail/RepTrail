@@ -25,7 +25,7 @@ export function SocialProofSection() {
                                 {[1, 2, 3, 4, 5].map((s) => <Star key={s} className="w-4 h-4 fill-current" />)}
                             </div>
                             <p className="text-zinc-300 italic text-sm leading-relaxed">
-                                "Antes eu gerenciava tudo em planilhas e perdia horas. Com o RepTrail, escalei para <span className="text-white font-bold">120 alunos ativos</span> sem contratar assistente."
+                                "Antes eu gerenciava tudo em planilhas e perdia horas no WhatsApp. Com o RepTrail, <span className="text-white font-bold">dobrei minha base para 120 alunos ativos</span> mantendo a mesma qualidade no suporte."
                             </p>
                         </div>
 
@@ -36,7 +36,7 @@ export function SocialProofSection() {
                                 </Avatar>
                                 <div>
                                     <p className="text-white font-bold uppercase text-[10px]">Rafael M.</p>
-                                    <p className="text-zinc-500 text-[8px] uppercase font-bold tracking-widest">Treinador Elite</p>
+                                    <p className="text-zinc-500 text-[8px] uppercase font-bold tracking-widest">Treinador Elite • São Paulo</p>
                                 </div>
                             </div>
                             <div className="bg-emerald-500/10 px-2 py-1 rounded border border-emerald-500/20 flex items-center gap-1.5">
@@ -48,29 +48,29 @@ export function SocialProofSection() {
 
                     {/* Testimonial 2 - Revenue (Highlighted) */}
                     <div className="bg-gradient-to-b from-zinc-900 to-zinc-950 border border-zinc-800 p-8 rounded-3xl space-y-6 hover:border-emerald-500/30 transition-all shadow-2xl shadow-emerald-900/10 transform md:-translate-y-4 flex flex-col justify-between relative">
-                        <div className="absolute top-0 right-0 -mr-2 -mt-2 bg-emerald-500 text-zinc-950 text-[10px] font-black px-2 py-1 rounded uppercase tracking-widest transform rotate-3">Destaque</div>
-                        <div className="space-y-4">
+                        <div className="absolute top-0 right-0 -mr-2 -mt-2 bg-emerald-500 text-zinc-950 text-[10px] font-black px-2 py-1 rounded uppercase tracking-widest transform rotate-3 z-20">Destaque</div>
+                        <div className="space-y-4 relative z-10">
                             <div className="flex gap-1 text-yellow-500">
                                 {[1, 2, 3, 4, 5].map((s) => <Star key={s} className="w-5 h-5 fill-current" />)}
                             </div>
                             <p className="text-white font-medium italic text-base leading-relaxed">
-                                "O marketplace mudou meu jogo. Minha página pública virou uma máquina de vendas. Hoje faturo <span className="text-emerald-400 font-bold">R$ 15k/mês</span> só pela plataforma."
+                                "O marketplace é um divisor de águas. Minha página pública virou minha principal vitrine. Hoje <span className="text-emerald-400 font-bold">faturamos R$ 22k/mês</span> escalando com as ferramentas de automatização."
                             </p>
                         </div>
 
-                        <div className="pt-4 border-t border-zinc-800/50 flex items-center justify-between">
+                        <div className="pt-4 border-t border-zinc-800/50 flex items-center justify-between relative z-10">
                             <div className="flex items-center gap-3">
                                 <Avatar className="h-12 w-12 border-2 border-emerald-500/30">
                                     <AvatarFallback className="bg-zinc-800 text-zinc-500 font-bold uppercase text-[10px]">JP</AvatarFallback>
                                 </Avatar>
                                 <div>
                                     <p className="text-white font-bold uppercase text-xs">Júlia P.</p>
-                                    <p className="text-zinc-500 text-[9px] uppercase font-bold tracking-widest">Consultora Online</p>
+                                    <p className="text-zinc-500 text-[9px] uppercase font-bold tracking-widest">Consultora • Rio de Janeiro</p>
                                 </div>
                             </div>
                             <div className="bg-emerald-500 px-2.5 py-1 rounded border border-emerald-400 flex items-center gap-1.5 shadow-[0_0_10px_rgba(16,185,129,0.3)]">
                                 <Wallet className="w-3 h-3 text-zinc-950" />
-                                <span className="text-[9px] font-black text-zinc-950 uppercase tracking-wide">R$ 15k/mês</span>
+                                <span className="text-[9px] font-black text-zinc-950 uppercase tracking-wide">R$ 22k/mês</span>
                             </div>
                         </div>
                     </div>
@@ -82,7 +82,7 @@ export function SocialProofSection() {
                                 {[1, 2, 3, 4, 5].map((s) => <Star key={s} className="w-4 h-4 fill-current" />)}
                             </div>
                             <p className="text-zinc-300 italic text-sm leading-relaxed">
-                                "A gamificação e o ranking fizeram meus alunos viciarem no treino. Minha taxa de cancelamento (churn) <span className="text-white font-bold">caiu 35%</span> em três meses."
+                                "A gamificação e o ranking do app viciaram meus alunos. O engajamento aumentou tanto que minha <span className="text-white font-bold">taxa de cancelamento caiu para quase zero</span> neste semestre."
                             </p>
                         </div>
 
@@ -93,12 +93,12 @@ export function SocialProofSection() {
                                 </Avatar>
                                 <div>
                                     <p className="text-white font-bold uppercase text-[10px]">Marcelo C.</p>
-                                    <p className="text-zinc-500 text-[8px] uppercase font-bold tracking-widest">Coach Bodybuilding</p>
+                                    <p className="text-zinc-500 text-[8px] uppercase font-bold tracking-widest">Coach • Curitiba</p>
                                 </div>
                             </div>
                             <div className="bg-blue-500/10 px-2 py-1 rounded border border-blue-500/20 flex items-center gap-1.5">
                                 <TrendingUp className="w-3 h-3 text-blue-500" />
-                                <span className="text-[9px] font-black text-blue-500 uppercase tracking-wide">-35% Churn</span>
+                                <span className="text-[9px] font-black text-blue-500 uppercase tracking-wide">Churn quase 0</span>
                             </div>
                         </div>
                     </div>

@@ -32,7 +32,7 @@ export type TrainerStudent = {
     monthly_fee: number;
     active: boolean;
     billing_source: 'marketplace' | 'external' | 'manual';
-    plan_tier: 'start' | 'pro' | 'elite';
+    plan_tier: 'none' | 'on_demand' | 'start' | 'pro' | 'elite';
     student?: Profile;
 };
 

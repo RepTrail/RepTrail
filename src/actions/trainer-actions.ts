@@ -65,6 +65,47 @@ export async function updateTrainerProfile(formData: FormData) {
     }
 }
 
+export async function uploadTrainerAvatar(formData: FormData) {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) return { success: false, error: 'Unauthorized' }
+
+    try {
+        const file = formData.get('file') as File
+        if (!file) throw new Error('No file provided')
+
+        const fileExt = file.name.split('.').pop()
+        const fileName = `${user.id}/${Date.now()}.${fileExt}`
+        const filePath = `avatars/${fileName}`
+
+        const { error: uploadError } = await supabase.storage
+            .from('avatars')
+            .upload(filePath, file)
+
+        if (uploadError) throw uploadError
+
+        const { data: { publicUrl } } = supabase.storage
+            .from('avatars')
+            .getPublicUrl(filePath)
+
+        const { error: profileError } = await supabase
+            .from('profiles')
+            .update({ avatar_url: publicUrl })
+            .eq('id', user.id)
+
+        if (profileError) throw profileError
+
+        revalidatePath('/dashboard/trainer/profile')
+        revalidatePath('/dashboard', 'layout')
+
+        return { success: true, url: publicUrl }
+    } catch (e: any) {
+        console.error('Error uploading trainer avatar:', e)
+        return { success: false, error: e.message }
+    }
+}
+
 export async function getTrainerProfile() {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
@@ -196,6 +237,7 @@ export async function getTrainerRanking() {
         // Calculate scores
         const tierPoints: Record<string, number> = {
             'start': 0,
+            'on_demand': 50, // On Demand gives baseline 50 points
             'pro': 100,
             'elite': 500
         }
@@ -203,7 +245,13 @@ export async function getTrainerRanking() {
         const ranking = trainers.map((t: any) => {
             const studentCount = studentCountMap.get(t.id) || 0
             const rating = Number(t.average_rating || 0)
-            const tier = (t.plan_tier || 'start').toLowerCase()
+            let tier = (t.plan_tier || 'on_demand').toLowerCase()
+
+            // Dynamic Tier Logic for On Demand
+            if (tier === 'on_demand' && studentCount >= 50) {
+                tier = 'elite' // Grant Elite status visually and for score if they hit 50 students
+            }
+
             const tierPt = tierPoints[tier] || 0
 
             // Ensure score is always a number
@@ -260,7 +308,7 @@ export async function updateTrainerPlan(tier: 'start' | 'pro' | 'elite') {
     }
 }
 
-export async function getTrainerTier(): Promise<'none' | 'start' | 'pro' | 'elite'> {
+export async function getTrainerTier(): Promise<'none' | 'start' | 'on_demand' | 'pro' | 'elite'> {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
@@ -272,7 +320,33 @@ export async function getTrainerTier(): Promise<'none' | 'start' | 'pro' | 'elit
         .eq('id', user.id)
         .single()
 
-    return (data?.plan_tier as 'none' | 'start' | 'pro' | 'elite') || 'none'
+    return (data?.plan_tier as 'none' | 'on_demand' | 'start' | 'pro' | 'elite') || 'on_demand'
+}
+
+export async function getEffectiveTier(): Promise<'none' | 'start' | 'on_demand' | 'pro' | 'elite'> {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return 'none'
+
+    const { data: profile } = await supabase
+        .from('profiles')
+        .select('plan_tier')
+        .eq('id', user.id)
+        .single()
+
+    const tier = (profile?.plan_tier as 'none' | 'on_demand' | 'start' | 'pro' | 'elite') || 'on_demand'
+
+    if (tier === 'on_demand') {
+        const { count } = await supabase
+            .from('trainer_students')
+            .select('*', { count: 'exact', head: true })
+            .eq('trainer_id', user.id)
+            .eq('active', true)
+
+        if ((count || 0) >= 8) return 'pro'
+    }
+
+    return tier
 }
 
 export async function getTrainerActivityFeed(): Promise<ActivityItem[]> {
@@ -453,4 +527,51 @@ export async function getTrainerActivityFeed(): Promise<ActivityItem[]> {
         console.error('Error fetching activity feed:', e)
         return []
     }
+}
+export async function getPublicPlanPricing() {
+    const supabase = await createClient()
+    const { data } = await supabase
+        .from('plan_features')
+        .select('plan_tier, feature_key, limit_value')
+        .in('feature_key', [
+            'monthly_price_cents',
+            'quarterly_discount_pct',
+            'annual_discount_pct',
+            'student_limit',
+            'photo_updates_limit',
+            'price_per_student_cents',
+            'free_students_limit',
+            'pro_features_threshold'
+        ])
+
+    // Default prices (fallback if not in DB)
+    const result: Record<string, {
+        monthly: number;
+        quarterly_discount: number;
+        annual_discount: number;
+        student_limit: number;
+        photo_updates_limit: number;
+        price_per_student?: number;
+        free_students_limit?: number;
+        pro_features_threshold?: number;
+    }> = {
+        on_demand: { monthly: 0, quarterly_discount: 0, annual_discount: 0, student_limit: 9999, photo_updates_limit: 2, price_per_student: 20, free_students_limit: 5, pro_features_threshold: 8 },
+        start: { monthly: 49.90, quarterly_discount: 15, annual_discount: 20, student_limit: 10, photo_updates_limit: 2 },
+        pro: { monthly: 149.90, quarterly_discount: 15, annual_discount: 20, student_limit: 50, photo_updates_limit: 4 },
+        elite: { monthly: 299.90, quarterly_discount: 15, annual_discount: 20, student_limit: 120, photo_updates_limit: 9999 },
+    }
+
+    for (const row of data || []) {
+        if (!result[row.plan_tier]) continue
+        if (row.feature_key === 'monthly_price_cents') result[row.plan_tier].monthly = (row.limit_value || 0) / 100
+        if (row.feature_key === 'quarterly_discount_pct') result[row.plan_tier].quarterly_discount = row.limit_value || 15
+        if (row.feature_key === 'annual_discount_pct') result[row.plan_tier].annual_discount = row.limit_value || 20
+        if (row.feature_key === 'student_limit') result[row.plan_tier].student_limit = row.limit_value || 0
+        if (row.feature_key === 'photo_updates_limit') result[row.plan_tier].photo_updates_limit = row.limit_value || 0
+        if (row.feature_key === 'price_per_student_cents') result[row.plan_tier].price_per_student = (row.limit_value || 0) / 100
+        if (row.feature_key === 'free_students_limit') result[row.plan_tier].free_students_limit = row.limit_value || 0
+        if (row.feature_key === 'pro_features_threshold') result[row.plan_tier].pro_features_threshold = row.limit_value || 0
+    }
+
+    return result
 }

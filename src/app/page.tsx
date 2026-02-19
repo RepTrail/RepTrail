@@ -37,6 +37,13 @@ export default async function LandingPage() {
               </Button>
             </Link>
           </nav>
+
+          {/* Mobile Login Link */}
+          <div className="md:hidden flex items-center">
+            <Link href="/auth/login" className="text-[10px] font-black text-zinc-400 hover:text-emerald-500 uppercase tracking-[0.2em] transition-colors bg-zinc-900 px-4 py-2 rounded-xl border border-zinc-800 select-none active:scale-95 transition-all">
+              Login
+            </Link>
+          </div>
         </div>
       </header>
 

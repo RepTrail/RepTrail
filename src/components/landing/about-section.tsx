@@ -3,27 +3,27 @@ import { Zap, Layers, BarChart, ShoppingBag, Check } from "lucide-react";
 const features = [
     {
         icon: Layers,
-        title: "Gestão Centralizada",
-        description: "Abandone planilhas e WhatsApp. Controle alunos ativos, pagamentos e renovações em um único painel.",
-        bullets: ["Dashboard Financeiro", "Controle de Vencimentos", "Chat Integrado"]
+        title: "Gestão de Back-Office",
+        description: "Elimine a confusão das planilhas. Gerencie pagamentos, renovações automáticas e CRM de alunos em um único painel de comando.",
+        bullets: ["Faturamento Mensal", "Lembretes Automáticos", "Pipeline de Vendas"]
     },
     {
         icon: Zap,
-        title: "Prescrição Ágil",
-        description: "Crie treinos e dietas em segundos usando nossa biblioteca inteligente ou seus próprios templates.",
-        bullets: ["Bibliotecas de Exercícios", "Clonar Treinos", "Calculadora de Macros"]
+        title: "Motor de Prescrição",
+        description: "Prescreva treinos complexos e dietas milimetricamente calculadas em segundos usando seus próprios templates salvos.",
+        bullets: ["Templates Personalizados", "Cálculo Nutricional", "Biblioteca 1k+ Exercícios"]
     },
     {
         icon: BarChart,
-        title: "Monitoramento Real",
-        description: "Acompanhe a evolução do aluno com dados concretos: fotos, cargas, medidas e peso.",
-        bullets: ["Gráficos de Evolução", "Comparativo de Fotos", "Histórico de Cargas"]
+        title: "Análise de Performance",
+        description: "Tome decisões baseadas em dados. Monitore a evolução real com comparativos de fotos, métricas corporais e carga progressiva.",
+        bullets: ["Dashboards de Evolução", "Relatórios Trimestrais", "Checkpoint de Resultados"]
     },
     {
         icon: ShoppingBag,
-        title: "Marketplace Oficial",
-        description: "Uma página profissional sua dentro da plataforma para atrair novos alunos automaticamente.",
-        bullets: ["Perfil Público SEO", "Captação de Leads", "Vitrine de Serviços"]
+        title: "Máquina de Vendas",
+        description: "Sua vitrine profissional dentro do nosso marketplace oficial. Capture leads e converta novos alunos organicamente.",
+        bullets: ["Página Pública Premium", "Lead Capture Modal", "SEO para Treinadores"]
     },
 ];
 
@@ -33,10 +33,10 @@ export function AboutSection() {
             <div className="container mx-auto">
                 <div className="text-center mb-16 space-y-4">
                     <h2 className="text-3xl md:text-5xl font-black text-white uppercase italic tracking-tighter">
-                        O que é o <span className="text-emerald-500">RepTrail?</span>
+                        Infraestrutura <span className="text-emerald-500">Professional.</span>
                     </h2>
-                    <p className="text-zinc-400 max-w-2xl mx-auto text-lg leading-relaxed">
-                        Muito mais que um app de treino. Somos a infraestrutura completa para escalar consultorias esportivas profissionalmente.
+                    <p className="text-zinc-400 max-w-2xl mx-auto text-lg leading-relaxed font-medium">
+                        Não somos apenas um app de treino. Entregamos o ecossistema completo para você profissionalizar sua consultoria e focar no que realmente importa: <span className="text-white">o resultado do seu aluno.</span>
                     </p>
                 </div>
 

@@ -1,4 +1,4 @@
-import { getTrainerProfile, getTrainerStudents, getTrainerTier, getTrainerRanking, getTrainerActivityFeed } from '@/actions/trainer-actions'
+import { getTrainerProfile, getTrainerStudents, getTrainerTier, getEffectiveTier, getTrainerRanking, getTrainerActivityFeed } from '@/actions/trainer-actions'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Users, DollarSign, Activity, TrendingUp, Plus, FileUp, Sparkles, UserPlus, ArrowUpRight, Zap, Crown, Dumbbell, Utensils, Clock, CheckCircle2, Scale, Camera } from "lucide-react"
 import { TrainerCodeCard } from '@/components/feature/trainer/trainer-code-card'
@@ -21,7 +21,8 @@ export default async function TrainerDashboard() {
         .eq('id', user?.id)
         .single()
 
-    const currentTier = (profile?.plan_tier as 'start' | 'pro' | 'elite') || 'start'
+    const effectiveTier = await getEffectiveTier()
+    const currentTier = profile?.plan_tier || 'on_demand'
 
     // Fetch Real Stats
     const { count: activeStudents } = await supabase
@@ -59,26 +60,29 @@ export default async function TrainerDashboard() {
     // Fetch Activity Feed
     const activities = await getTrainerActivityFeed()
 
-    const tierColors = {
+    const tierColors: Record<string, string> = {
+        on_demand: 'text-zinc-500',
         start: 'text-blue-500',
         pro: 'text-emerald-500',
         elite: 'text-amber-500'
     }
-    const tierIcons = {
+    const tierIcons: Record<string, any> = {
+        on_demand: Activity,
         start: Zap,
         pro: Sparkles,
         elite: Crown
     }
-    const TierIcon = tierIcons[currentTier]
-    const tierColor = tierColors[currentTier]
+    const TierIcon = tierIcons[currentTier] || Activity
+    const tierColor = tierColors[currentTier] || 'text-zinc-500'
 
 
-    const TIER_LIMITS = {
+    const TIER_LIMITS: Record<string, number> = {
+        on_demand: 9999,
         start: 10,
         pro: 50,
         elite: Infinity
     }
-    const limit = TIER_LIMITS[currentTier]
+    const limit = TIER_LIMITS[currentTier] || 9999
     const displayValue = limit === Infinity ? `${activeStudents || 0} / ∞` : `${activeStudents || 0} / ${limit}`
 
     return (
@@ -264,26 +268,26 @@ export default async function TrainerDashboard() {
                     </div>
 
                     {!betaTesterMode && (
-                    <LockedFeature isLocked={currentTier === 'start'} requiredTier="pro" message="Importação de PDF disponível nos planos PRO e ELITE">
-                        <Card className="bg-zinc-950 border-zinc-800 shadow-2xl rounded-2xl overflow-hidden group">
-                            <CardHeader className="bg-green-500/5 border-b border-green-500/10 py-4">
-                                <CardTitle className="text-sm font-bold text-green-500 flex items-center gap-2">
-                                    <FileUp className="w-4 h-4" />
-                                    Importação Inteligente
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent className="p-6 space-y-4">
-                                <p className="text-zinc-400 text-xs leading-relaxed">
-                                    Tem uma planilha ou PDF? Nossa IA pode ler o arquivo e criar o treino ou dieta em segundos.
-                                </p>
-                                <Button asChild className="w-full bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 text-zinc-100 rounded-xl h-11 transition-all active:scale-[0.98] group-hover:border-green-500/30">
-                                    <Link href="/dashboard/trainer/import-pdf">
-                                        Importar via PDF
-                                    </Link>
-                                </Button>
-                            </CardContent>
-                        </Card>
-                    </LockedFeature>
+                        <LockedFeature isLocked={effectiveTier === 'start' || effectiveTier === 'on_demand'} requiredTier="pro" message="Importação de PDF disponível nos planos PRO e ELITE">
+                            <Card className="bg-zinc-950 border-zinc-800 shadow-2xl rounded-2xl overflow-hidden group">
+                                <CardHeader className="bg-green-500/5 border-b border-green-500/10 py-4">
+                                    <CardTitle className="text-sm font-bold text-green-500 flex items-center gap-2">
+                                        <FileUp className="w-4 h-4" />
+                                        Importação Inteligente
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent className="p-6 space-y-4">
+                                    <p className="text-zinc-400 text-xs leading-relaxed">
+                                        Tem uma planilha ou PDF? Nossa IA pode ler o arquivo e criar o treino ou dieta em segundos.
+                                    </p>
+                                    <Button asChild className="w-full bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 text-zinc-100 rounded-xl h-11 transition-all active:scale-[0.98] group-hover:border-green-500/30">
+                                        <Link href="/dashboard/trainer/import-pdf">
+                                            Importar via PDF
+                                        </Link>
+                                    </Button>
+                                </CardContent>
+                            </Card>
+                        </LockedFeature>
                     )}
                 </div>
             </div>

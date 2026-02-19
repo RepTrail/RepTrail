@@ -5,7 +5,7 @@ import { ArrowRight } from "lucide-react";
 
 const features = [
     { label: "Gestão Escalável", desc: "Painel completo para gerenciar de 10 a 1000 alunos." },
-    { label: "Bibliotecas Prontas", desc: "Templates de treinos e dietas para prescrição relâmpago." },
+    { label: "Templates Próprios", desc: "Crie seus padrões de treinos e dietas para prescrição relâmpago." },
     { label: "Perfil de Vendas", desc: "Sua landing page própria para captar novos alunos." },
 ];
 
@@ -49,8 +49,8 @@ export function TrainerFeatures() {
                     </div>
 
                     <div className="pt-8">
-                        <Link href="/auth/signup">
-                            <Button className="h-14 px-8 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase italic tracking-wide rounded-xl shadow-lg shadow-emerald-500/10 transition-all hover:scale-105">
+                        <Link href="/auth/signup" className="block md:inline-block">
+                            <Button className="w-full md:w-auto h-14 px-8 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase italic tracking-wide rounded-xl shadow-lg shadow-emerald-500/10 transition-all hover:scale-105">
                                 Começar como Personal
                                 <ArrowRight className="ml-2 w-5 h-5" />
                             </Button>

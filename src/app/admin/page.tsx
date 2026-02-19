@@ -13,7 +13,7 @@ import {
     BarChart3, Users, CreditCard, ShoppingBag, TrendingUp,
     ArrowUpRight, Users2, Settings, Package, Trophy,
     Shield, Star, Eye, EyeOff, Plus, ChevronDown,
-    Activity, Zap, Crown,     AlertCircle, Check, X,
+    Activity, Zap, Crown, AlertCircle, Check, X,
     Search, Filter, RefreshCw, ExternalLink, Clock, Layers, Pencil, Save, Wrench, Key, Trash2
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -33,7 +33,14 @@ export default function AdminDashboardPage() {
     const [logs, setLogs] = useState<any[]>([])
     const [topProducts, setTopProducts] = useState<any[]>([])
     const [activityFeed, setActivityFeed] = useState<any[]>([])
-    const [planPricing, setPlanPricing] = useState<Record<string, { monthly: number; quarterly_discount: number; annual_discount: number }> | null>(null)
+    const [planPricing, setPlanPricing] = useState<Record<string, {
+        monthly: number;
+        quarterly_discount: number;
+        annual_discount: number;
+        price_per_student?: number;
+        free_students_limit?: number;
+        pro_features_threshold?: number;
+    }> | null>(null)
     const [appSettings, setAppSettings] = useState<{ beta_tester_mode: boolean; gemini_api_key: string; stripe_secret_key: string } | null>(null)
     const [loading, setLoading] = useState(true)
     const [search, setSearch] = useState('')
@@ -111,10 +118,10 @@ export default function AdminDashboardPage() {
                 toast({ variant: 'destructive', title: 'Erro', description: res.error })
             } else {
                 if (res.warning) {
-                    toast({ 
-                        variant: 'default', 
-                        title: 'Usuário deletado parcialmente', 
-                        description: res.warning 
+                    toast({
+                        variant: 'default',
+                        title: 'Usuário deletado parcialmente',
+                        description: res.warning
                     })
                 } else {
                     toast({ title: 'Usuário deletado com sucesso!' })
@@ -333,8 +340,8 @@ export default function AdminDashboardPage() {
                                 {students
                                     .filter(s => !search || s.full_name?.toLowerCase().includes(search.toLowerCase()) || s.email?.toLowerCase().includes(search.toLowerCase()))
                                     .map(student => (
-                                        <StudentRow 
-                                            key={student.id} 
+                                        <StudentRow
+                                            key={student.id}
                                             student={student}
                                             onDelete={() => handleDeleteUser(student.id, student.full_name || student.email, false)}
                                             isPending={isPending}
@@ -404,23 +411,60 @@ export default function AdminDashboardPage() {
                             <p className="text-[10px] font-black text-zinc-600 uppercase tracking-widest">
                                 Edite os preços mensais e descontos por período. As alterações refletem na página de planos dos personais.
                             </p>
-                            <div className="grid gap-6 md:grid-cols-3">
-                                {planPricing && (['start', 'pro', 'elite'] as const).map(tier => (
-                                    <PlanEditor
-                                        key={tier}
-                                        tier={tier}
-                                        pricing={planPricing[tier]}
-                                        onSave={async (monthly, qDiscount, aDiscount) => {
-                                            startTransition(async () => {
-                                                const res = await updatePlanPricing(tier, monthly, qDiscount, aDiscount)
-                                                if (res.success) {
-                                                    toast({ title: `Plano ${tier} atualizado!` })
-                                                    setPlanPricing(prev => prev ? { ...prev, [tier]: { monthly, quarterly_discount: qDiscount, annual_discount: aDiscount } } : prev)
-                                                }
-                                            })
-                                        }}
-                                        isPending={isPending}
-                                    />
+                            <div className="grid gap-6 md:grid-cols-4">
+                                {planPricing && (['on_demand', 'start', 'pro', 'elite'] as const).map(tier => (
+                                    tier === 'on_demand' ? (
+                                        <OnDemandEditor
+                                            key={tier}
+                                            pricing={planPricing[tier]}
+                                            onSave={async (pricePerStudent, freeLimit, proThreshold) => {
+                                                startTransition(async () => {
+                                                    const res = await updatePlanPricing(tier, 0, 0, 0, {
+                                                        price_per_student: pricePerStudent,
+                                                        free_students_limit: freeLimit,
+                                                        pro_features_threshold: proThreshold
+                                                    })
+                                                    if (res.success) {
+                                                        toast({ title: `Plano ${tier} atualizado!` })
+                                                        setPlanPricing(prev => prev ? {
+                                                            ...prev,
+                                                            [tier]: {
+                                                                ...prev[tier],
+                                                                price_per_student: pricePerStudent,
+                                                                free_students_limit: freeLimit,
+                                                                pro_features_threshold: proThreshold
+                                                            }
+                                                        } : prev)
+                                                    } else {
+                                                        toast({ variant: 'destructive', title: 'Erro ao salvar', description: res.error || 'Erro desconhecido' })
+                                                    }
+                                                })
+                                            }}
+                                            isPending={isPending}
+                                        />
+                                    ) : (
+                                        <PlanEditor
+                                            key={tier}
+                                            tier={tier}
+                                            pricing={planPricing[tier]}
+                                            onSave={async (monthly, qDiscount, aDiscount) => {
+                                                startTransition(async () => {
+                                                    const res = await updatePlanPricing(tier, monthly, qDiscount, aDiscount)
+                                                    if (res.success) {
+                                                        toast({ title: `Plano ${tier} atualizado!` })
+                                                        setPlanPricing(prev => prev ? { ...prev, [tier]: { ...prev[tier], monthly, quarterly_discount: qDiscount, annual_discount: aDiscount } } : prev)
+                                                    } else {
+                                                        toast({
+                                                            variant: 'destructive',
+                                                            title: 'Erro ao salvar',
+                                                            description: res.error || 'Erro desconhecido'
+                                                        })
+                                                    }
+                                                })
+                                            }}
+                                            isPending={isPending}
+                                        />
+                                    )
                                 ))}
                             </div>
                         </div>
@@ -877,6 +921,52 @@ function PlanEditor({ tier, pricing, onSave, isPending }: {
                     <input type="number" min="0" max="50" value={aDiscount} onChange={e => setADiscount(Number(e.target.value))}
                         className="w-full h-11 px-4 bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white focus:outline-none focus:border-zinc-600 font-mono" />
                     <p className="text-[9px] text-zinc-600 font-bold">Anual: R$ {aPrice.toFixed(2)} total - R$ {(aPrice / 12).toFixed(2)}/mes</p>
+                </div>
+            </div>
+        </div>
+    )
+}
+
+function OnDemandEditor({ pricing, onSave, isPending }: {
+    pricing: { price_per_student?: number; free_students_limit?: number; pro_features_threshold?: number }
+    onSave: (pricePerStudent: number, freeLimit: number, proThreshold: number) => void
+    isPending: boolean
+}) {
+    const [pricePerStudent, setPricePerStudent] = useState(pricing.price_per_student || 20)
+    const [freeLimit, setFreeLimit] = useState(pricing.free_students_limit || 5)
+    const [proThreshold, setProThreshold] = useState(pricing.pro_features_threshold || 8)
+
+    return (
+        <div className="p-6 border rounded-3xl space-y-5 border-zinc-800 bg-zinc-900/40">
+            <div className="flex items-center justify-between">
+                <h3 className="text-lg font-black text-white italic uppercase tracking-tight">On Demand</h3>
+                <Button
+                    onClick={() => onSave(pricePerStudent, freeLimit, proThreshold)}
+                    disabled={isPending}
+                    className="h-8 px-4 rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 text-[10px] font-black uppercase tracking-widest"
+                >
+                    <Save className="w-3 h-3 mr-1.5" />
+                    Salvar
+                </Button>
+            </div>
+            <div className="space-y-4">
+                <div className="space-y-1.5">
+                    <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Preço por Aluno (R$)</label>
+                    <input type="number" step="0.50" value={pricePerStudent} onChange={e => setPricePerStudent(Number(e.target.value))}
+                        className="w-full h-11 px-4 bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white focus:outline-none focus:border-zinc-600 font-mono" />
+                    <p className="text-[9px] text-zinc-600 font-bold">Custo por aluno ativo</p>
+                </div>
+                <div className="space-y-1.5">
+                    <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Limite Gratuito (Alunos)</label>
+                    <input type="number" min="0" value={freeLimit} onChange={e => setFreeLimit(Number(e.target.value))}
+                        className="w-full h-11 px-4 bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white focus:outline-none focus:border-zinc-600 font-mono" />
+                    <p className="text-[9px] text-zinc-600 font-bold">Até X alunos é grátis</p>
+                </div>
+                <div className="space-y-1.5">
+                    <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Gatilho Plano PRO (Alunos)</label>
+                    <input type="number" min="0" value={proThreshold} onChange={e => setProThreshold(Number(e.target.value))}
+                        className="w-full h-11 px-4 bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white focus:outline-none focus:border-zinc-600 font-mono" />
+                    <p className="text-[9px] text-zinc-600 font-bold">Libera recursos PRO com X alunos</p>
                 </div>
             </div>
         </div>
