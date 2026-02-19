@@ -66,43 +66,59 @@ export async function updateTrainerProfile(formData: FormData) {
 }
 
 export async function uploadTrainerAvatar(formData: FormData) {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-
-    if (!user) return { success: false, error: 'Unauthorized' }
-
     try {
-        const file = formData.get('file') as File
-        if (!file) throw new Error('No file provided')
+        const supabase = await createClient()
+        const { data: { user } } = await supabase.auth.getUser()
 
-        const fileExt = file.name.split('.').pop()
+        if (!user) return { success: false, error: 'Não autorizado' }
+        const file = formData.get('file') as File
+        if (!file) throw new Error('Nenhum arquivo enviado')
+
+        const fileExt = file.name?.split('.').pop() || 'jpg'
         const fileName = `${user.id}/${Date.now()}.${fileExt}`
         const filePath = `avatars/${fileName}`
 
+        console.log(`Uploading trainer avatar for ${user.id} to ${filePath}...`)
+
         const { error: uploadError } = await supabase.storage
             .from('avatars')
-            .upload(filePath, file)
+            .upload(filePath, file, {
+                cacheControl: '3600',
+                upsert: true
+            })
 
-        if (uploadError) throw uploadError
+        if (uploadError) {
+            console.error('Trainer storage upload error:', uploadError)
+            return { success: false, error: `Erro no upload: ${uploadError.message}` }
+        }
 
-        const { data: { publicUrl } } = supabase.storage
+        const { data } = supabase.storage
             .from('avatars')
             .getPublicUrl(filePath)
+
+        const publicUrl = data?.publicUrl
+
+        if (!publicUrl) {
+            throw new Error('Não foi possível gerar a URL pública da imagem')
+        }
 
         const { error: profileError } = await supabase
             .from('profiles')
             .update({ avatar_url: publicUrl })
             .eq('id', user.id)
 
-        if (profileError) throw profileError
+        if (profileError) {
+            console.error('Trainer profile update error:', profileError)
+            return { success: false, error: `Erro ao atualizar perfil: ${profileError.message}` }
+        }
 
         revalidatePath('/dashboard/trainer/profile')
-        revalidatePath('/dashboard', 'layout')
+        revalidatePath('/dashboard/trainer', 'layout')
 
         return { success: true, url: publicUrl }
     } catch (e: any) {
-        console.error('Error uploading trainer avatar:', e)
-        return { success: false, error: e.message }
+        console.error('Unexpected error in uploadTrainerAvatar:', e)
+        return { success: false, error: e.message || 'Erro inesperado' }
     }
 }
 

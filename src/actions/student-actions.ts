@@ -147,12 +147,12 @@ export async function getStudentTrainer(studentId: string) {
             .maybeSingle()
 
         if (error) throw error
-        
+
         // Validate trainer_code exists
         if (data && data.trainer && !data.trainer.trainer_code) {
             console.warn(`Trainer ${data.trainer.id} (${data.trainer.full_name}) does not have a trainer_code`)
         }
-        
+
         return data
     } catch (e) {
         console.error('Error fetching student trainer:', e)
@@ -323,42 +323,63 @@ export async function updateStudentFullProfile(data: {
 }
 
 export async function uploadAvatar(formData: FormData) {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-
-    if (!user) return { success: false, error: 'Unauthorized' }
-
     try {
-        const file = formData.get('file') as File
-        if (!file) throw new Error('No file provided')
+        const supabase = await createClient()
+        const { data: { user } } = await supabase.auth.getUser()
 
-        const fileExt = file.name.split('.').pop()
-        const fileName = `${user.id}-${Math.random()}.${fileExt}`
+        if (!user) return { success: false, error: 'Usuário não autenticado' }
+        const file = formData.get('file') as File
+        if (!file) throw new Error('Nenhum arquivo enviado')
+
+        // Safety check for file properties
+        const originalName = file.name || 'avatar.jpg'
+        const fileExt = originalName.split('.').pop() || 'jpg'
+        const fileName = `${user.id}/${Date.now()}.${fileExt}`
         const filePath = `avatars/${fileName}`
 
-        const { error: uploadError } = await supabase.storage
+        console.log(`Uploading avatar for student ${user.id} to ${filePath}...`)
+
+        const { error: uploadError, data: uploadData } = await supabase.storage
             .from('avatars')
-            .upload(filePath, file)
+            .upload(filePath, file, {
+                cacheControl: '3600',
+                upsert: true
+            })
 
-        if (uploadError) throw uploadError
+        if (uploadError) {
+            console.error('Storage upload error:', uploadError)
+            return { success: false, error: `Erro no upload: ${uploadError.message}` }
+        }
 
-        const { data: { publicUrl } = { publicUrl: '' } } = supabase.storage
+        const { data } = supabase.storage
             .from('avatars')
             .getPublicUrl(filePath)
+
+        const publicUrl = data?.publicUrl
+
+        if (!publicUrl) {
+            throw new Error('Não foi possível gerar a URL pública da imagem')
+        }
+
+        console.log(`Avatar uploaded successfully. Public URL: ${publicUrl}`)
 
         const { error: profileError } = await supabase
             .from('profiles')
             .update({ avatar_url: publicUrl })
             .eq('id', user.id)
 
-        if (profileError) throw profileError
+        if (profileError) {
+            console.error('Profile update error:', profileError)
+            return { success: false, error: `Erro ao atualizar perfil: ${profileError.message}` }
+        }
 
         revalidatePath('/dashboard/student/profile')
-        revalidatePath('/dashboard', 'layout')
+        revalidatePath('/dashboard/student', 'layout')
+
         return { success: true, url: publicUrl }
     } catch (e: any) {
-        console.error('Error uploading avatar:', e)
-        return { success: false, error: e.message }
+        console.error('Unexpected error in uploadAvatar:', e)
+        return { success: false, error: e.message || 'Ocorreu um erro inesperado no processamento.' }
     }
 }
 
