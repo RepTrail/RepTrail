@@ -4,8 +4,9 @@ import { useState, useRef } from 'react'
 import { Camera, Loader2, AlertCircle, X, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { uploadProgressPhotos } from '@/actions/student-actions'
+import { uploadProgressPhotos, saveProgressPhotosMetadata } from '@/actions/student-actions'
 import { useToast } from '@/hooks/use-toast'
+import { createClient as createBrowserClient } from '@/lib/supabase/client'
 
 interface ProgressPhotoUploadProps {
     studentId: string
@@ -66,14 +67,51 @@ export function ProgressPhotoUpload({ studentId }: ProgressPhotoUploadProps) {
 
         setUploading(true)
         try {
-            const formData = new FormData()
-            formData.append('front', photos.front)
-            formData.append('back', photos.back)
-            formData.append('side_left', photos.side_left)
-            formData.append('side_right', photos.side_right)
-            formData.append('allow_public', String(allowPublic))
+            const supabase = createBrowserClient()
+            const { data: { user } } = await supabase.auth.getUser()
 
-            const result = await uploadProgressPhotos(formData)
+            if (!user) throw new Error('Sessão expirada. Faça login novamente.')
+
+            const urls: Record<string, string> = {}
+            const timestamp = Date.now()
+            const photoEntries = Object.entries(photos) as [keyof typeof photos, File][]
+
+            // Step 1: Upload each photo directly to Supabase Storage
+            for (const [key, file] of photoEntries) {
+                if (file) {
+                    const fileExt = file.name?.split('.').pop() || 'jpg'
+                    const fileName = `${user.id}/${timestamp}-${key}.${fileExt}`
+                    const filePath = `${fileName}` // In the bucket
+
+                    const { error: uploadError } = await supabase.storage
+                        .from('progress-photos')
+                        .upload(filePath, file, {
+                            cacheControl: '3600',
+                            upsert: true
+                        })
+
+                    if (uploadError) {
+                        console.error(`Error uploading ${key}:`, uploadError)
+                        throw new Error(`Erro ao enviar foto (${key}): ${uploadError.message}`)
+                    }
+
+                    const { data } = supabase.storage
+                        .from('progress-photos')
+                        .getPublicUrl(filePath)
+
+                    if (!data?.publicUrl) {
+                        throw new Error(`Erro ao gerar URL para ${key}`)
+                    }
+
+                    urls[`${key}_url`] = data.publicUrl
+                }
+            }
+
+            // Step 2: Save metadata to DB via Server Action
+            const result = await saveProgressPhotosMetadata({
+                urls,
+                allowPublic
+            })
 
             if (result.success) {
                 toast({
@@ -84,7 +122,7 @@ export function ProgressPhotoUpload({ studentId }: ProgressPhotoUploadProps) {
                 setPreviews({ front: null, back: null, side_left: null, side_right: null })
             } else {
                 toast({
-                    title: 'Erro no envio',
+                    title: 'Erro no registro',
                     description: result.error,
                     variant: 'destructive'
                 })
@@ -92,8 +130,8 @@ export function ProgressPhotoUpload({ studentId }: ProgressPhotoUploadProps) {
         } catch (error: any) {
             console.error('Submit error:', error)
             toast({
-                title: 'Erro inesperado',
-                description: 'Ocorreu uma falha na comunicação com o servidor.',
+                title: 'Erro no processamento',
+                description: error.message || 'Ocorreu uma falha ao enviar as fotos.',
                 variant: 'destructive'
             })
         } finally {

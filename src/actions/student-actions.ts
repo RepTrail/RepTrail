@@ -383,6 +383,38 @@ export async function uploadAvatar(formData: FormData) {
     }
 }
 
+export async function saveProgressPhotosMetadata(data: {
+    urls: Record<string, string>,
+    allowPublic: boolean
+}) {
+    try {
+        const supabase = await createClient()
+        const { data: { user } } = await supabase.auth.getUser()
+
+        if (!user) return { success: false, error: 'Usuário não autenticado' }
+
+        const { error: dbError } = await supabase
+            .from('progress_photos')
+            .insert({
+                student_id: user.id,
+                ...data.urls,
+                is_private: !data.allowPublic,
+                created_at: new Date().toISOString()
+            })
+
+        if (dbError) {
+            console.error('Database error in saveProgressPhotosMetadata:', dbError)
+            throw new Error(`Erro ao salvar no banco: ${dbError.message}`)
+        }
+
+        revalidatePath('/dashboard/student/progress')
+        return { success: true }
+    } catch (e: any) {
+        console.error('Unexpected error in saveProgressPhotosMetadata:', e)
+        return { success: false, error: e.message || 'Erro ao registrar fotos.' }
+    }
+}
+
 export async function uploadProgressPhotos(formData: FormData) {
     try {
         const supabase = await createClient()
