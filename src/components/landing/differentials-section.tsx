@@ -1,25 +1,25 @@
-import { Zap, Shield, Repeat, Globe } from "lucide-react";
+import { Zap, ShieldCheck, TrendingUp, Globe2 } from "lucide-react";
 
 const differentials = [
     {
-        icon: Shield,
-        title: "Profissionalismo",
-        description: "Sua marca merece uma casa própria. Personalize seu perfil e transmita autoridade.",
+        icon: ShieldCheck,
+        title: "Sistema Operacional Completo",
+        description: "Substitua planilhas, PDFs e WhatsApp bagunçado por um único ambiente profissional que centraliza toda a gestão.",
     },
     {
-        icon: Repeat,
-        title: "Escalabilidade",
-        description: "Multiplique seus alunos sem aumentar a carga horária. Ferramentas de automação que trabalham por você.",
+        icon: TrendingUp,
+        title: "Escalabilidade Infinita",
+        description: "Estrutura pronta para gerenciar 10, 50 ou 200 alunos com o mesmo esforço e eficiência.",
     },
     {
-        icon: Globe,
-        title: "Alcance Global",
-        description: "Sem barreiras geográficas. Atenda alunos de qualquer lugar do mundo com a mesma qualidade.",
+        icon: Globe2,
+        title: "Sua Marca Global",
+        description: "Tenha uma landing page de vendas profissional dentro da plataforma para atrair alunos de qualquer lugar.",
     },
     {
         icon: Zap,
-        title: "Gamificação Real",
-        description: "Engaje seus alunos com rankings, níveis e conquistas que tornam o treino viciante.",
+        title: "Engajamento Viciante",
+        description: "Sistema de ranking e níveis que incentiva a consistência real dos seus alunos, aumentando a retenção.",
     },
 ];
 
@@ -40,8 +40,8 @@ export function DifferentialsSection() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
                     {differentials.map((item, idx) => (
-                        <div key={idx} className="flex gap-6 items-start group">
-                            <div className="w-16 h-16 rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-center shrink-0 group-hover:bg-emerald-500/10 group-hover:border-emerald-500/20 transition-all duration-300">
+                        <div key={idx} className="flex gap-6 items-start group p-6 rounded-3xl hover:bg-zinc-900/30 border border-transparent hover:border-zinc-800/50 transition-all duration-300">
+                            <div className="w-16 h-16 rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-center shrink-0 group-hover:bg-emerald-500/10 group-hover:border-emerald-500/20 transition-all duration-300 shadow-lg">
                                 <item.icon className="w-8 h-8 text-zinc-500 group-hover:text-emerald-500 transition-colors" />
                             </div>
                             <div className="space-y-2">

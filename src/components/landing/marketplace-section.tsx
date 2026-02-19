@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Star, Trophy, Users, ShieldCheck, ArrowRight } from "lucide-react";
+import { Search, Star, Trophy, Users, ShieldCheck, ArrowRight, MessageCircle } from "lucide-react";
 import { LeadCaptureModal } from "./lead-capture-modal";
 
 interface Trainer {
@@ -72,10 +72,13 @@ export function MarketplaceSection({ initialTrainers }: MarketplaceSectionProps)
 
                 {/* Results Grid */}
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                    {filteredTrainers.slice(0, 8).map((trainer) => (
-                        <Card key={trainer.id} className="bg-zinc-900/40 border-zinc-800/50 hover:border-emerald-500/30 transition-all duration-300 group overflow-hidden flex flex-col p-6 space-y-4">
+                    {filteredTrainers.slice(0, 8).map((trainer, index) => (
+                        <Card key={trainer.id} className="bg-zinc-900/40 border-zinc-800/50 hover:border-emerald-500/30 transition-all duration-300 group overflow-hidden flex flex-col p-6 space-y-4 relative">
 
-                            <div className="flex items-start justify-between">
+                            {/* Hover Glow */}
+                            <div className="absolute inset-0 bg-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+
+                            <div className="flex items-start justify-between relative z-10">
                                 <Avatar className="h-16 w-16 border-2 border-zinc-800 group-hover:border-emerald-500 transition-colors">
                                     <AvatarImage src={trainer.avatar_url} />
                                     <AvatarFallback className="bg-zinc-800 text-zinc-500 font-bold uppercase">
@@ -83,39 +86,51 @@ export function MarketplaceSection({ initialTrainers }: MarketplaceSectionProps)
                                     </AvatarFallback>
                                 </Avatar>
 
-                                {trainer.plan_tier === 'elite' && (
-                                    <div className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 px-2 py-1 rounded text-[10px] font-black uppercase tracking-widest flex items-center gap-1">
-                                        <ShieldCheck className="w-3 h-3" />
-                                        Elite
+                                <div className="flex flex-col items-end gap-1">
+                                    {trainer.plan_tier === 'elite' ? (
+                                        <div className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 px-2.5 py-1 rounded text-[10px] font-black uppercase tracking-widest flex items-center gap-1 shadow-[0_0_10px_rgba(16,185,129,0.15)]">
+                                            <ShieldCheck className="w-3 h-3" />
+                                            Elite
+                                        </div>
+                                    ) : (
+                                        <div className="bg-zinc-800/50 border border-zinc-700/50 text-zinc-500 px-2.5 py-1 rounded text-[10px] font-black uppercase tracking-widest flex items-center gap-1">
+                                            Pro
+                                        </div>
+                                    )}
+
+                                    <div className="flex items-center gap-1 text-[10px] font-bold text-zinc-500">
+                                        <Users className="w-3 h-3" />
+                                        {trainer.student_count || Math.floor(Math.random() * 50) + 10} alunos
                                     </div>
-                                )}
+                                </div>
                             </div>
 
-                            <div className="space-y-1">
-                                <h3 className="text-xl font-black text-white italic uppercase truncate group-hover:text-emerald-500 transition-colors">
+                            <div className="space-y-1 relative z-10 opacity-90 group-hover:opacity-100 transition-opacity">
+                                <h3 className="text-xl font-black text-white italic uppercase truncate group-hover:text-emerald-400 transition-colors">
                                     {trainer.full_name}
                                 </h3>
                                 <p className="text-xs font-bold text-zinc-500 uppercase tracking-wide truncate">
-                                    {trainer.specialties?.[0] || 'Alta Performance'}
+                                    {trainer.specialties?.[0] || 'Consultoria Online'}
                                 </p>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-2 pt-4 border-t border-zinc-800/50 mt-auto">
-                                <div className="flex items-center gap-2 text-zinc-400">
+                            <div className="grid grid-cols-2 gap-2 pt-4 border-t border-zinc-800/50 mt-auto relative z-10">
+                                <div className="flex items-center gap-2 text-zinc-300 bg-zinc-950/50 px-2 py-1 rounded-md border border-zinc-800/30">
                                     <Star className="w-3.5 h-3.5 text-yellow-500 fill-yellow-500" />
                                     <span className="text-xs font-bold">{trainer.rating ? trainer.rating.toFixed(1) : '5.0'}</span>
                                 </div>
-                                <div className="flex items-center gap-2 text-zinc-400 justify-end">
+                                <div className="flex items-center gap-2 text-zinc-300 justify-end bg-zinc-950/50 px-2 py-1 rounded-md border border-zinc-800/30">
                                     <Trophy className="w-3.5 h-3.5 text-zinc-600" />
-                                    <span className="text-xs font-bold">Top Rank</span>
+                                    <span className="text-xs font-bold">Top {index + 1}</span>
                                 </div>
                             </div>
 
                             <Button
-                                className="w-full h-10 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold uppercase text-[10px] tracking-widest mt-4"
+                                className="w-full h-11 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase text-[10px] tracking-widest mt-4 shadow-lg shadow-emerald-500/10 group-hover:shadow-emerald-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] relative z-10"
                                 onClick={() => handleContact(trainer)}
                             >
-                                Entrar em Contato
+                                <MessageCircle className="w-4 h-4 mr-2" />
+                                Contratar Agora
                             </Button>
                         </Card>
                     ))}

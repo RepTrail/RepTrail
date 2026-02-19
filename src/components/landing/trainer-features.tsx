@@ -1,16 +1,12 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Grid, HeartPulse, UserCheck, ShieldCheck, Trophy, Camera, Users, Sparkles } from "lucide-react";
+import { HeartPulse, UserCheck, ShieldCheck, Trophy, Camera, Users } from "lucide-react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
 const features = [
-    "Gestão de Alunos Ilimitados",
-    "Bibliotecas de Treinos e Dietas",
-    "Métricas de Evolução Detalhadas",
-    "Feed de Atividade em Tempo Real",
-    "Controle de Planos (Start / Pro / Elite)",
-    "Perfil Público Customizável",
+    { label: "Gestão Escalável", desc: "Painel completo para gerenciar de 10 a 1000 alunos." },
+    { label: "Bibliotecas Prontas", desc: "Templates de treinos e dietas para prescrição relâmpago." },
+    { label: "Perfil de Vendas", desc: "Sua landing page própria para captar novos alunos." },
 ];
 
 export function TrainerFeatures() {
@@ -34,18 +30,23 @@ export function TrainerFeatures() {
                         Abandone as planilhas e o caos do WhatsApp. Tenha controle total sobre sua consultoria com um dashboard profissional que centraliza tudo.
                     </p>
 
-                    <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
+                    <div className="space-y-6 pt-4">
                         {features.map((item, idx) => (
-                            <li key={idx} className="flex items-center gap-3 group">
-                                <div className="w-6 h-6 rounded-lg bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 group-hover:border-emerald-500/50 transition-colors">
-                                    <UserCheck className="w-3.5 h-3.5 text-emerald-500" />
+                            <div key={idx} className="flex gap-4 group">
+                                <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 group-hover:border-emerald-500/50 transition-colors shrink-0">
+                                    <UserCheck className="w-5 h-5 text-emerald-500" />
                                 </div>
-                                <span className="text-sm font-bold text-zinc-300 uppercase italic tracking-wide group-hover:text-emerald-400 transition-colors">
-                                    {item}
-                                </span>
-                            </li>
+                                <div>
+                                    <h4 className="text-base font-black text-zinc-200 uppercase italic tracking-wide group-hover:text-emerald-400 transition-colors">
+                                        {item.label}
+                                    </h4>
+                                    <p className="text-sm font-medium text-zinc-500 mt-1">
+                                        {item.desc}
+                                    </p>
+                                </div>
+                            </div>
                         ))}
-                    </ul>
+                    </div>
 
                     <div className="pt-8">
                         <Link href="/auth/signup">
@@ -59,37 +60,40 @@ export function TrainerFeatures() {
 
                 {/* Dashboard Preview / Mockup */}
                 <div className="relative group animate-in fade-in slide-in-from-right-8 duration-1000 delay-200">
-                    <div className="absolute inset-0 bg-emerald-500 blur-[100px] opacity-20 group-hover:opacity-30 transition-opacity duration-1000" />
+                    {/* Enhanced Glow Effect */}
+                    <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-[2rem] blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
 
-                    <div className="relative bg-zinc-900 border border-zinc-800 rounded-3xl p-6 shadow-2xl space-y-6 overflow-hidden">
+                    <div className="relative bg-zinc-900 border border-zinc-800 rounded-3xl p-6 shadow-2xl space-y-6 overflow-hidden ring-1 ring-white/10">
                         {/* Mock Header */}
                         <div className="flex items-center justify-between border-b border-zinc-800 pb-4">
                             <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-full bg-zinc-800 animate-pulse" />
+                                <div className="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center border border-zinc-700">
+                                    <span className="text-xs font-bold text-zinc-500">PT</span>
+                                </div>
                                 <div className="space-y-1.5">
                                     <div className="h-3 w-32 bg-zinc-800 rounded animate-pulse" />
                                     <div className="h-2 w-20 bg-zinc-800 rounded animate-pulse" />
                                 </div>
                             </div>
-                            <div className="px-3 py-1 bg-emerald-500/10 rounded-full border border-emerald-500/20 text-emerald-500 text-[10px] font-black uppercase tracking-widest">
+                            <div className="px-3 py-1 bg-emerald-500/10 rounded-full border border-emerald-500/20 text-emerald-500 text-[10px] font-black uppercase tracking-widest shadow-[0_0_10px_rgba(16,185,129,0.2)]">
                                 Elite Trainer
                             </div>
                         </div>
 
-                        {/* Mock Stats Grid */}
+                        {/* Mock Stats Grid - Brighter */}
                         <div className="grid grid-cols-2 gap-4">
                             {[
-                                { icon: Users, label: "Alunos Ativos", value: "48" },
-                                { icon: Trophy, label: "Ranking", value: "#3" },
-                                { icon: HeartPulse, label: "Treinos Hoje", value: "124" },
-                                { icon: Camera, label: "Check-ins", value: "15" },
+                                { icon: Users, label: "Alunos Ativos", value: "48", color: "text-emerald-400" },
+                                { icon: Trophy, label: "Ranking", value: "#3", color: "text-yellow-400" },
+                                { icon: HeartPulse, label: "Treinos Hoje", value: "124", color: "text-blue-400" },
+                                { icon: Camera, label: "Check-ins", value: "15", color: "text-purple-400" },
                             ].map((stat, i) => (
-                                <div key={i} className="bg-zinc-950/50 p-4 rounded-2xl border border-zinc-800 flex items-center gap-4">
-                                    <div className="p-2.5 bg-zinc-900 rounded-xl text-zinc-500">
+                                <div key={i} className="bg-zinc-950/80 p-4 rounded-2xl border border-zinc-800 flex items-center gap-4 hover:border-zinc-700 transition-colors">
+                                    <div className="p-2.5 bg-zinc-900 rounded-xl text-zinc-500 border border-zinc-800">
                                         <stat.icon className="w-5 h-5" />
                                     </div>
                                     <div>
-                                        <div className="text-xl font-black text-white italic">{stat.value}</div>
+                                        <div className={`text-xl font-black italic ${stat.color}`}>{stat.value}</div>
                                         <div className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">{stat.label}</div>
                                     </div>
                                 </div>
@@ -100,8 +104,8 @@ export function TrainerFeatures() {
                         <div className="space-y-3 pt-2">
                             <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest px-1">Atividade Recente</p>
                             {[1, 2].map((_, i) => (
-                                <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-zinc-950/30 border border-zinc-800/50">
-                                    <div className="w-8 h-8 rounded-full bg-zinc-800 shrink-0" />
+                                <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-zinc-950/50 border border-zinc-800/50 hover:bg-zinc-900 transition-colors">
+                                    <div className="w-8 h-8 rounded-full bg-zinc-800 shrink-0 border border-zinc-700" />
                                     <div className="flex-1 space-y-1">
                                         <div className="h-2 w-24 bg-zinc-800 rounded" />
                                         <div className="h-1.5 w-16 bg-zinc-800/50 rounded" />

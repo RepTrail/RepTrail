@@ -1,6 +1,7 @@
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Search, Zap } from "lucide-react";
+import { ArrowRight, Search, Zap, CheckCircle2 } from "lucide-react";
 
 export function CTASection() {
     return (
@@ -10,44 +11,51 @@ export function CTASection() {
             <div className="space-y-12 max-w-4xl mx-auto relative z-10 animate-in fade-in zoom-in-95 duration-1000">
                 <div className="inline-flex items-center rounded-full border border-emerald-500/20 bg-emerald-500/5 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-emerald-500 animate-pulse">
                     <Zap className="mr-2 h-3 w-3" />
-                    Comece Gratuitamente
+                    Última chance para Evoluir
                 </div>
 
                 <h2 className="text-4xl md:text-6xl font-black text-white uppercase italic tracking-tighter leading-tight drop-shadow-[0_0_20px_rgba(16,185,129,0.2)]">
-                    Pronto para <br className="hidden md:block" />
-                    <span className="text-emerald-500">Elevar seu Nível?</span>
+                    O Próximo Nível da <br className="hidden md:block" />
+                    <span className="text-emerald-500">Sua Consultoria.</span>
                 </h2>
 
                 <p className="text-zinc-400 text-lg md:text-xl font-medium max-w-2xl mx-auto">
-                    Não espere o ano passar. A melhor hora para começar sua transformação profissional ou física é agora.
+                    Não espere mais. Junte-se a treinadores Elite que já escalaram seus resultados com o RepTrail.
                 </p>
 
-                <div className="flex flex-col sm:flex-row gap-6 justify-center pt-8 w-full max-w-xl mx-auto">
-                    <Button
-                        asChild
-                        className="h-16 px-10 text-lg bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase italic tracking-wide rounded-2xl shadow-[0_0_30px_rgba(16,185,129,0.3)] hover:shadow-[0_0_40px_rgba(16,185,129,0.5)] transition-all hover:scale-105"
-                    >
-                        <Link href="/auth/signup">
-                            Criar Minha Conta
-                            <ArrowRight className="ml-2 h-5 w-5" />
-                        </Link>
-                    </Button>
-                    <Button
-                        asChild
-                        variant="outline"
-                        className="h-16 px-10 text-lg border-zinc-800 bg-zinc-900 hover:bg-zinc-800 text-white font-bold uppercase tracking-wide rounded-2xl hover:border-zinc-700 transition-all hover:scale-105"
-                    >
-                        <Link href="#marketplace">
-                            <Search className="mr-2 h-5 w-5" />
-                            Buscar Personal
-                        </Link>
-                    </Button>
+                <div className="flex flex-col items-center gap-6 pt-8 w-full max-w-xl mx-auto">
+                    <div className="flex flex-col sm:flex-row gap-6 w-full justify-center">
+                        <Button
+                            asChild
+                            className="h-16 px-10 text-lg bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase italic tracking-wide rounded-2xl shadow-[0_0_30px_rgba(16,185,129,0.3)] hover:shadow-[0_0_40px_rgba(16,185,129,0.5)] transition-all hover:scale-105 active:scale-95"
+                        >
+                            <Link href="/auth/signup">
+                                Começar Agora
+                                <ArrowRight className="ml-2 h-5 w-5" />
+                            </Link>
+                        </Button>
+                        <Button
+                            asChild
+                            variant="outline"
+                            className="h-16 px-10 text-lg border-zinc-800 bg-zinc-900 hover:bg-zinc-800 text-white font-bold uppercase tracking-wide rounded-2xl hover:border-zinc-700 transition-all hover:scale-105 active:scale-95"
+                        >
+                            <Link href="#marketplace">
+                                <Search className="mr-2 h-5 w-5" />
+                                Buscar Personal
+                            </Link>
+                        </Button>
+                    </div>
+
+                    <div className="flex flex-wrap items-center justify-center gap-4 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
+                        <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" /> Sem fidelidade</span>
+                        <span className="hidden sm:inline text-zinc-700">•</span>
+                        <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" /> Cancele quando quiser</span>
+                        <span className="hidden sm:inline text-zinc-700">•</span>
+                        <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" /> Setup Grátis</span>
+                    </div>
                 </div>
-
-                <p className="text-zinc-600 text-[10px] font-bold uppercase tracking-widest pt-8">
-                    Junte-se a mais de 10.000 usuários ativos hoje.
-                </p>
             </div>
         </section>
     );
 }
+
