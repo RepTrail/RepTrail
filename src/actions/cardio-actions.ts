@@ -46,6 +46,33 @@ export async function createCardio(name: string, description?: string) {
     }
 }
 
+export async function getCardioDetails(cardioId: string) {
+    const supabase = await createClient()
+    const { data, error } = await supabase
+        .from('cardios')
+        .select('*')
+        .eq('id', cardioId)
+        .single()
+    if (error) return null
+    return data
+}
+
+export async function updateCardioMeta(cardioId: string, name: string, description?: string) {
+    const supabase = await createClient()
+    try {
+        const { error } = await supabase
+            .from('cardios')
+            .update({ name: name.trim(), description: description?.trim() ?? null })
+            .eq('id', cardioId)
+        if (error) throw error
+        revalidatePath('/dashboard/trainer/cardio')
+        revalidatePath(`/dashboard/trainer/cardio/${cardioId}`)
+        return { success: true }
+    } catch (e: any) {
+        return { error: e.message }
+    }
+}
+
 export async function duplicateCardio(cardioId: string) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()

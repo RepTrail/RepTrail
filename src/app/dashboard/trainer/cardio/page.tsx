@@ -1,10 +1,9 @@
 import { getCardioLibrary } from '@/actions/cardio-actions'
 import { getTrainerStudents } from '@/actions/trainer-actions'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Activity, ChevronRight, Timer } from 'lucide-react'
+import { Activity, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { Input } from '@/components/ui/input'
 import { CreateCardioDialog } from '@/components/feature/trainer/create-cardio-dialog'
 import { AssignCardioDialog } from '@/components/feature/trainer/assign-cardio-dialog'
 import { DuplicateButton } from '@/components/feature/trainer/duplicate-button'
@@ -51,9 +50,17 @@ export default async function TrainerCardioPage() {
                                     <span>{new Date(cardio.created_at).toLocaleDateString('pt-BR')}</span>
                                 </div>
 
-                                <div className="flex gap-2">
+                                <div className="grid grid-cols-2 gap-2">
                                     <AssignCardioDialog cardioId={cardio.id} students={students} />
-                                    <DuplicateButton id={cardio.id} type="cardio" />
+                                    <div className="flex gap-2">
+                                        <Button asChild size="sm" className="flex-1 bg-zinc-100 text-zinc-900 hover:bg-white flex items-center justify-center gap-1.5 rounded-xl font-bold">
+                                            <Link href={`/dashboard/trainer/cardio/${cardio.id}`}>
+                                                Editar
+                                                <ChevronRight className="w-3.5 h-3.5" />
+                                            </Link>
+                                        </Button>
+                                        <DuplicateButton id={cardio.id} type="cardio" />
+                                    </div>
                                 </div>
                             </CardContent>
                         </Card>
