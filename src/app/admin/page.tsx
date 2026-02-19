@@ -689,8 +689,13 @@ function EmptyState({ label }: { label: string }) {
 }
 
 function TrainerRow({ trainer, onPlanChange, onEliteToggle, onEliteTrial, onDelete, isPending }: any) {
-    const plans = ['start', 'pro', 'elite']
-    const planColors: Record<string, string> = { start: 'text-zinc-400', pro: 'text-blue-400', elite: 'text-amber-400' }
+    const plans = ['on_demand', 'start', 'pro', 'elite']
+    const planColors: Record<string, string> = {
+        on_demand: 'text-orange-400',
+        start: 'text-zinc-400',
+        pro: 'text-blue-400',
+        elite: 'text-amber-400'
+    }
 
     return (
         <div className="flex flex-col sm:flex-row sm:items-center gap-3 p-4 bg-zinc-900/40 border border-zinc-800/50 rounded-2xl hover:bg-zinc-900/60 transition-all">
@@ -733,7 +738,7 @@ function TrainerRow({ trainer, onPlanChange, onEliteToggle, onEliteTrial, onDele
                                 : 'text-zinc-700 hover:text-zinc-400'
                                 }`}
                         >
-                            {p}
+                            {p === 'on_demand' ? 'O.D.' : p}
                         </button>
                     ))}
                 </div>
@@ -747,7 +752,7 @@ function TrainerRow({ trainer, onPlanChange, onEliteToggle, onEliteTrial, onDele
                         }`}
                 >
                     <Star className={`w-3 h-3 ${trainer.is_elite ? 'fill-amber-500' : ''}`} />
-                    Elite
+                    Elite {trainer.elite_until && new Date(trainer.elite_until) > new Date() ? '(TRIAL)' : ''}
                 </button>
 
                 {/* Trial Button */}
