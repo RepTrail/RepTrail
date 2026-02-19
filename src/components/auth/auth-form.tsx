@@ -66,7 +66,7 @@ export function AuthForm({ view }: AuthFormProps) {
                     referredById = await getAffiliateIdFromToken(affiliateToken)
                 }
 
-                const { error } = await supabase.auth.signUp({
+                const { error, data: signUpData } = await supabase.auth.signUp({
                     email,
                     password,
                     options: {
@@ -80,6 +80,15 @@ export function AuthForm({ view }: AuthFormProps) {
                     },
                 })
                 if (error) throw error
+
+                // Guarantee the profile has the name saved — some environments have
+                // trigger constraints that silently drop the name. This upsert ensures it.
+                if (signUpData?.user?.id) {
+                    await supabase
+                        .from('profiles')
+                        .update({ full_name: fullName, whatsapp: whatsapp })
+                        .eq('id', signUpData.user.id)
+                }
 
                 // Clear affiliate cookie after successful registration
                 if (affiliateToken) {

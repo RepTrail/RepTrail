@@ -41,11 +41,19 @@ export function LeadCaptureModal({ isOpen, onOpenChange, trainerName, trainerCod
                     data: {
                         full_name: fullName,
                         whatsapp: whatsapp,
-                        role: 'student', // Default to student for leads
+                        role: 'student',
                     },
                 },
             })
             if (signUpError) throw signUpError
+
+            // Guarantee the name is saved regardless of trigger behavior
+            if (data?.user?.id) {
+                await supabase
+                    .from('profiles')
+                    .update({ full_name: fullName, whatsapp: whatsapp })
+                    .eq('id', data.user.id)
+            }
 
             // Success state
             setSuccess(true)
