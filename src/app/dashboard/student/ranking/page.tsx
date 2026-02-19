@@ -166,7 +166,7 @@ function RankingRow({ trainer, rank }: { trainer: any, rank: number }) {
                 <Avatar className="h-16 w-16 border border-zinc-800 shrink-0 shadow-xl group-hover:scale-110 transition-transform">
                     <AvatarImage src={trainer.avatar_url} className="object-cover" />
                     <AvatarFallback className="bg-zinc-900 text-zinc-500 font-bold text-xl uppercase">
-                        {trainer.full_name?.substring(0, 2)}
+                        {trainer.full_name?.substring(0, 2) || 'TR'}
                     </AvatarFallback>
                 </Avatar>
                 <div className="overflow-hidden space-y-1">

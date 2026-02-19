@@ -124,7 +124,7 @@ export default async function StudentDashboard() {
                                         <Avatar className="h-16 w-16 border-2 border-zinc-800 group-hover:scale-105 transition-transform">
                                             <AvatarImage src={trainer.avatar_url} className="object-cover" />
                                             <AvatarFallback className="bg-zinc-800 text-zinc-500 font-bold uppercase">
-                                                {trainer.full_name?.substring(0, 2)}
+                                                {trainer.full_name?.substring(0, 2) || 'TR'}
                                             </AvatarFallback>
                                         </Avatar>
                                         <div className="space-y-0.5">
