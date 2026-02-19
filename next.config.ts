@@ -12,8 +12,7 @@ const nextConfig: NextConfig = {
     ],
   },
   reactCompiler: true,
-  // Cloudflare Pages compatibility - remove standalone for Cloudflare Pages
-  // output: 'standalone', // Remove this for Cloudflare Pages
+  serverExternalPackages: ['pdf-parse'],
 };
 
 export default nextConfig;
