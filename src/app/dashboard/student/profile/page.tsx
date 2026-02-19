@@ -1,3 +1,5 @@
+'use client'
+
 import { useState, useEffect } from 'react'
 import { getStudentProfile, updateStudentFullProfile, uploadAvatar } from '@/actions/student-actions'
 import {
