@@ -14,9 +14,10 @@ interface LeadCaptureModalProps {
     isOpen: boolean
     onOpenChange: (open: boolean) => void
     trainerName?: string
+    trainerCode?: string
 }
 
-export function LeadCaptureModal({ isOpen, onOpenChange, trainerName }: LeadCaptureModalProps) {
+export function LeadCaptureModal({ isOpen, onOpenChange, trainerName, trainerCode }: LeadCaptureModalProps) {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [fullName, setFullName] = useState('')
@@ -32,7 +33,7 @@ export function LeadCaptureModal({ isOpen, onOpenChange, trainerName }: LeadCapt
         setError(null)
 
         try {
-            const { error } = await supabase.auth.signUp({
+            const { error: signUpError, data } = await supabase.auth.signUp({
                 email,
                 password,
                 options: {
@@ -43,12 +44,17 @@ export function LeadCaptureModal({ isOpen, onOpenChange, trainerName }: LeadCapt
                     },
                 },
             })
-            if (error) throw error
+            if (signUpError) throw signUpError
 
-            // Success - Close modal and maybe redirect
+            // Success - Close modal and redirect
             onOpenChange(false)
-            alert('Conta criada com sucesso! Redirecionando para o login...')
-            router.push('/auth/login')
+
+            if (trainerCode) {
+                // If they came from a specific trainer, go to their profile
+                router.push(`/personal/${trainerCode.toUpperCase().trim()}`)
+            } else {
+                router.push('/dashboard/student')
+            }
 
         } catch (err: any) {
             setError(err.message)

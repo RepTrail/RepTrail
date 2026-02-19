@@ -1,5 +1,6 @@
+
 import { Button } from "@/components/ui/button";
-import { Check, Flame, Dumbbell, Utensils, Activity, ArrowRight, Zap, Target, Smartphone } from "lucide-react";
+import { Check, Flame, Dumbbell, Utensils, Activity, ArrowRight, Zap, Target, Smartphone, Search } from "lucide-react";
 import Link from "next/link";
 
 const features = [
@@ -118,12 +119,12 @@ export function StudentFeatures() {
                     <div className="pt-8 flex justify-center lg:justify-start">
                         <Button
                             asChild
-                            className="h-14 px-8 bg-orange-500 hover:bg-orange-400 text-zinc-950 font-black uppercase italic tracking-wide rounded-xl shadow-lg shadow-orange-500/10 transition-all hover:scale-105"
+                            className="h-14 px-8 bg-orange-500 hover:bg-orange-400 text-zinc-950 font-black uppercase italic tracking-wide rounded-xl shadow-xl shadow-orange-500/10 transition-all hover:-translate-y-1 hover:shadow-orange-500/20"
                         >
-                            <Link href="#marketplace">
+                            <a href="#marketplace">
                                 Encontrar meu Treinador
-                                <ArrowRight className="ml-2 w-5 h-5" />
-                            </Link>
+                                <Search className="ml-2 w-5 h-5" />
+                            </a>
                         </Button>
                     </div>
                 </div>
@@ -132,3 +133,4 @@ export function StudentFeatures() {
         </section>
     );
 }
+

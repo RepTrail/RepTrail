@@ -220,8 +220,8 @@ export default async function TrainerPublicProfile({ params }: { params: Promise
                                             target="_blank"
                                             rel="noopener noreferrer"
                                         >
-                                            <Button variant="outline" className="h-14 px-6 rounded-2xl border-zinc-800 hover:bg-zinc-900 text-zinc-300 hover:text-white font-bold uppercase tracking-wide w-full sm:w-auto">
-                                                <Instagram className="w-5 h-5 mr-2" />
+                                            <Button variant="outline" className="h-14 px-10 rounded-2xl border-zinc-800 bg-zinc-900/50 hover:bg-zinc-800 hover:border-zinc-700 text-zinc-300 hover:text-white font-black uppercase italic tracking-wide w-full sm:w-auto transition-all duration-300 group shadow-xl active:scale-95">
+                                                <Instagram className="w-5 h-5 mr-2 group-hover:rotate-12 transition-transform text-pink-500" />
                                                 Instagram
                                             </Button>
                                         </Link>

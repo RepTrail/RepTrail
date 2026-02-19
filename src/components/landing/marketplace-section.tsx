@@ -29,8 +29,10 @@ export function MarketplaceSection({ initialTrainers }: MarketplaceSectionProps)
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const filteredTrainers = initialTrainers.filter(trainer =>
-        trainer.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        trainer.trainer_code?.toLowerCase().includes(searchTerm.toLowerCase())
+        trainer.trainer_code && (
+            trainer.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            trainer.trainer_code?.toLowerCase().includes(searchTerm.toLowerCase())
+        )
     );
 
     const handleContact = (trainer: Trainer) => {
@@ -155,6 +157,7 @@ export function MarketplaceSection({ initialTrainers }: MarketplaceSectionProps)
                 isOpen={isModalOpen}
                 onOpenChange={setIsModalOpen}
                 trainerName={selectedTrainer?.full_name}
+                trainerCode={selectedTrainer?.trainer_code}
             />
         </section>
     );

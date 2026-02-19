@@ -76,7 +76,7 @@ export default function SearchPersonalPage() {
                             <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-600 group-focus-within:text-orange-500 transition-colors z-20" />
                             <Input
                                 placeholder="Nome do personal, cidade ou especialidade..."
-                                className="h-18 pl-14 pr-6 rounded-2xl bg-zinc-900 border-zinc-800 focus:border-orange-500/50 transition-all font-bold text-white italic placeholder:text-zinc-700 text-lg shadow-2xl relative z-10"
+                                className="h-18 pl-14 pr-6 rounded-2xl bg-zinc-900 border-zinc-800 hover:border-zinc-700 focus:border-orange-500/50 transition-all font-bold text-white italic placeholder:text-zinc-700 text-lg shadow-2xl relative z-10"
                                 value={filters.query}
                                 onChange={e => setFilters(f => ({ ...f, query: e.target.value }))}
                                 onKeyDown={e => e.key === 'Enter' && handleSearch()}
@@ -278,16 +278,6 @@ function TrainerCard({ trainer }: any) {
                 </div>
 
                 <div className="pt-6 border-t border-zinc-800/50 flex flex-col gap-6">
-                    <div className="space-y-1">
-                        <span className="text-[9px] font-black text-zinc-600 uppercase tracking-[0.3em] block mb-1">Início a partir de</span>
-                        <div className="flex items-baseline gap-1">
-                            <span className="text-sm font-black text-zinc-500 italic uppercase">R$</span>
-                            <span className="text-4xl font-black text-white italic tracking-tighter leading-none">
-                                {trainer.monthly_price?.toFixed(0) || '---'}
-                                <span className="text-sm opacity-30">,00</span>
-                            </span>
-                        </div>
-                    </div>
                     {trainer.trainer_code ? (
                         <Link href={`/personal/${trainer.trainer_code.toUpperCase().trim()}`} className="block w-full">
                             <Button className="w-full h-16 rounded-2xl bg-white hover:bg-orange-500 hover:text-zinc-950 text-zinc-950 font-black uppercase italic tracking-wide transition-all group/btn shadow-xl active:scale-95 border-none">

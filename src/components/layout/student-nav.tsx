@@ -47,8 +47,8 @@ export function StudentNav({ hasTrainer, steroidUse }: StudentNavProps) {
                         className={`
                             flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-300 group
                             ${isActive
-                                ? 'bg-zinc-900 text-emerald-500 border border-zinc-800 shadow-xl'
-                                : 'text-zinc-500 hover:bg-zinc-900/50 hover:text-zinc-300 border border-transparent hover:border-zinc-800/50'}
+                                ? 'bg-zinc-800 text-emerald-500 border border-zinc-700 shadow-[0_8px_30px_rgb(0,0,0,0.4)]'
+                                : 'text-zinc-500 hover:bg-zinc-800 hover:text-white border border-transparent hover:border-zinc-700 hover:shadow-xl'}
                         `}
                     >
                         <div className={`transition-all duration-300 ${isActive ? 'scale-110 drop-shadow-[0_0_8px_rgba(16,185,129,0.3)]' : 'group-hover:scale-110'}`}>
