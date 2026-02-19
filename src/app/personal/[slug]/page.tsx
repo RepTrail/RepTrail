@@ -152,7 +152,7 @@ export default async function TrainerPublicProfile({ params }: { params: Promise
                                     </AvatarFallback>
                                 </Avatar>
                                 {trainer.is_elite && (
-                                    <div className="absolute -bottom-2 md:bottom-2 left-1/2 md:left-auto md:right-0 -translate-x-1/2 md:translate-x-0 bg-zinc-950 border border-amber-500/50 px-3 py-1 rounded-full flex items-center gap-1.5 shadow-lg z-20 whitespace-nowrap">
+                                    <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-zinc-950 border border-amber-500/50 px-3 py-1 rounded-full flex items-center gap-1.5 shadow-lg z-20 whitespace-nowrap">
                                         <Trophy className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
                                         <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest">Elite Trainer</span>
                                     </div>
