@@ -386,6 +386,8 @@ export async function getStudentDailyDiet(studentId: string) {
         const diet = assignment.diet as any
         const { start, end } = getTodayRangeBrazil()
 
+        const todayStr = new Date().toISOString().split('T')[0]
+
         const { data: logs } = await supabase
             .from('meal_logs')
             .select('meal_id')
@@ -393,13 +395,12 @@ export async function getStudentDailyDiet(studentId: string) {
             .gte('consumed_at', start)
             .lt('consumed_at', end)
 
-        // Fetch detailed item logs
+        // Fetch detailed item logs — query by 'date' column (DATE), not consumed_at
         const { data: itemLogs } = await supabase
             .from('meal_item_logs')
             .select('meal_item_id')
             .eq('user_id', studentId)
-            .gte('consumed_at', start)
-            .lt('consumed_at', end)
+            .eq('date', todayStr)
 
         const loggedMealIds = new Set(logs?.map(l => l.meal_id) || [])
         const loggedItemIds = new Set(itemLogs?.map(l => l.meal_item_id) || [])

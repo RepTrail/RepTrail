@@ -335,15 +335,30 @@ export function WorkoutBuilder({ workout }: WorkoutBuilderProps) {
                 )}
 
                 {searchQuery.length >= 2 && !isSearching && searchResults.length === 0 && (
-                    <div className="p-4 bg-zinc-950 rounded-lg border border-zinc-800 flex items-center justify-between">
-                        <span className="text-sm text-zinc-400">"{searchQuery}" não encontrado na biblioteca.</span>
+                    <div className="p-4 bg-zinc-950 rounded-lg border border-zinc-800 flex items-center justify-between gap-4">
+                        <div className="flex flex-col gap-0.5 min-w-0">
+                            <span className="text-sm text-zinc-400 truncate">
+                                "<span className="text-white font-bold">{searchQuery}</span>" não encontrado na biblioteca.
+                            </span>
+                            <span className="text-[10px] text-zinc-600 uppercase tracking-widest font-bold">
+                                Clique para criar um novo exercício com esse nome
+                            </span>
+                        </div>
                         <Button
                             variant="outline"
                             size="sm"
                             disabled={loadingMap['custom']}
                             onClick={handleAddCustom}
+                            className="shrink-0 bg-blue-500/10 border-blue-500/30 text-blue-400 hover:bg-blue-500/20 hover:text-blue-300 hover:border-blue-500/50 font-bold uppercase tracking-wide text-[10px] whitespace-nowrap"
                         >
-                            Criar Novo: {searchQuery}
+                            {loadingMap['custom'] ? (
+                                <Loader2 className="w-3 h-3 animate-spin" />
+                            ) : (
+                                <>
+                                    <Plus className="w-3 h-3 mr-1.5" />
+                                    Criar Novo Exercício
+                                </>
+                            )}
                         </Button>
                     </div>
                 )}
