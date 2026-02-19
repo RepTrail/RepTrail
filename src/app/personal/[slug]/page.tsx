@@ -322,10 +322,6 @@ export default async function TrainerPublicProfile({ params }: { params: Promise
                                 <h2 className="text-3xl md:text-4xl font-black text-white italic uppercase tracking-tighter">
                                     Transformações
                                 </h2>
-                                <div className="flex items-center gap-2 text-zinc-500 text-sm font-bold uppercase tracking-widest">
-                                    <ImageIcon className="w-4 h-4" />
-                                    {photoPairs.length} Alunos
-                                </div>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 {photoPairs.map((pair) => {

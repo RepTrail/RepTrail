@@ -20,7 +20,7 @@ export default async function MeuPersonalPage() {
     if (!trainerRel || !trainerRel.trainer) redirect('/buscar-personal')
 
     const trainer = trainerRel.trainer
-    
+
     // Validate trainer_code exists
     if (!trainer.trainer_code) {
         console.error('Trainer code is missing for trainer:', trainer.id)
@@ -121,10 +121,10 @@ export default async function MeuPersonalPage() {
                                     Contato não disponível
                                 </Button>
                             )}
-                            
+
                             {trainer.trainer_code ? (
                                 <Link href={`/personal/${trainer.trainer_code.toUpperCase().trim()}`}>
-                                    <Button variant="outline" className="h-14 px-8 rounded-2xl border-zinc-800 bg-transparent hover:bg-zinc-800/80 hover:border-zinc-700 text-white font-black uppercase italic tracking-wide transition-all duration-200 hover:shadow-lg hover:shadow-white/5 hover:scale-[1.02] active:scale-[0.98] group/btn">
+                                    <Button variant="ghost" className="h-14 px-8 rounded-2xl border border-zinc-800 bg-transparent hover:bg-zinc-800/80 hover:border-zinc-700 text-white hover:text-white font-black uppercase italic tracking-wide transition-all duration-200 hover:shadow-lg hover:shadow-white/5 hover:scale-[1.02] active:scale-[0.98] group/btn">
                                         Ver Perfil Completo
                                         <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform duration-200" />
                                     </Button>

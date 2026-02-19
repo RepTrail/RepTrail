@@ -67,7 +67,7 @@ export function RatingModal({ trainerId, trainerName, initialRating = 0, initial
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 {trigger || (
-                    <Button variant="outline" className="h-14 px-8 rounded-2xl border-zinc-800 bg-transparent hover:bg-zinc-800/80 hover:border-zinc-700 text-white font-black uppercase italic tracking-wide transition-all duration-200 hover:shadow-lg hover:shadow-white/5 hover:scale-[1.02] active:scale-[0.98] group/btn">
+                    <Button variant="ghost" className="h-14 px-8 rounded-2xl border border-zinc-800 bg-transparent hover:bg-zinc-800/80 hover:border-zinc-700 text-white hover:text-white font-black uppercase italic tracking-wide transition-all duration-200 hover:shadow-lg hover:shadow-white/5 hover:scale-[1.02] active:scale-[0.98] group/btn">
                         Avaliar Treinador
                         <Star className="w-4 h-4 ml-2 group-hover/btn:scale-110 group-hover/btn:text-amber-500 group-hover/btn:fill-amber-500/20 transition-all duration-200" />
                     </Button>
