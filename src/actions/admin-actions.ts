@@ -154,7 +154,7 @@ export async function getAdminOverview() {
         const activeTrainersCount = totalTrainers || 0
 
         // Ticket Médio (Nós) -> Quanto ganhamos por personal cadastrado
-        const platformTicketPerTrainer = activeTrainersCount > 0 ? (monthlyNetProfit / activeTrainersCount) : 0
+        const platformTicketPerTrainer = activeTrainersCount > 0 ? (monthlyGrossRevenue / activeTrainersCount) : 0
 
         // Ticket Médio (Personal) -> Quanto o personal ganha em média
         const trainerAverageTicket = activeTrainersCount > 0 ? (monthlyTrainerVolume / activeTrainersCount) : 0
