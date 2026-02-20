@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { getTodayRangeBrazil } from '@/lib/date-utils'
+import { upsertDailyTracking } from '@/actions/tracking-actions'
 
 export async function getStudentErgogenics(studentId: string) {
     const supabase = await createClient()
@@ -88,6 +89,7 @@ export async function deleteErgogenic(id: string, studentId: string) {
 
 export async function toggleErgogenicLog(studentId: string, ergogenicId: string, status: boolean) {
     const supabase = await createClient()
+    let logData = null
 
     if (status) {
         // Log Intake
@@ -101,6 +103,7 @@ export async function toggleErgogenicLog(studentId: string, ergogenicId: string,
             .single()
 
         if (error) return { error: error.message }
+        logData = log
     } else {
         // Remove logs for today
         const { start, end } = getTodayRangeBrazil()
@@ -137,13 +140,11 @@ export async function toggleErgogenicLog(studentId: string, ergogenicId: string,
         ? (logsCount >= plannedTodayCount ? 'completed' : (logsCount > 0 ? 'partial' : 'none'))
         : 'none'
 
-    await import('./tracking-actions').then(mod =>
-        mod.upsertDailyTracking(studentId, { ergogenics_status: adherenceStatus })
-    )
+    await upsertDailyTracking(studentId, { ergogenics_status: adherenceStatus })
 
     revalidatePath('/dashboard/student')
     revalidatePath('/dashboard/student/ergogenics')
-    return { success: true }
+    return { success: true, data: logData }
 }
 
 export async function logErgogenicIntake(data: {
