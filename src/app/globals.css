@@ -120,11 +120,24 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+
   html {
     scroll-behavior: smooth;
+    height: 100%;
+    overflow-x: hidden;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    height: 100%;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: none;
+    /* Previne bounce excessivo que trava o scroll */
   }
 }
 
@@ -135,18 +148,21 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: oklch(0.145 0 0); /* zinc-950 */
+  background: oklch(0.145 0 0);
+  /* zinc-950 */
   border-radius: 6px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: oklch(0.269 0 0); /* zinc-800 */
+  background: oklch(0.269 0 0);
+  /* zinc-800 */
   border-radius: 6px;
   border: 2px solid oklch(0.145 0 0);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: oklch(0.488 0.243 264.376); /* emerald-500 */
+  background: oklch(0.488 0.243 264.376);
+  /* emerald-500 */
 }
 
 /* Firefox scrollbar */
