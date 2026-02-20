@@ -213,7 +213,7 @@ export async function updateCardioSession(logId: string, seconds: number, runnin
     }
 }
 
-export async function finishCardioSession(logId: string, feedback?: string, intensity?: string) {
+export async function finishCardioSession(logId: string, feedback?: string, intensity?: string, percentage?: number) {
     const supabase = await createClient()
 
     const { data: { user } } = await supabase.auth.getUser()
@@ -233,9 +233,16 @@ export async function finishCardioSession(logId: string, feedback?: string, inte
         if (error) throw error
 
         // Update Adherence
+        const { data: { user } } = await supabase.auth.getUser()
         if (user) {
+            const finalPercentage = percentage !== undefined ? percentage : 100
+            const status = finalPercentage >= 100 ? 'completed' : 'partial'
+
             await import('./tracking-actions').then(mod =>
-                mod.upsertDailyTracking(user.id, { cardio_status: 'completed' })
+                mod.upsertDailyTracking(user.id, {
+                    cardio_status: status,
+                    cardio_percentage: finalPercentage
+                })
             )
         }
 

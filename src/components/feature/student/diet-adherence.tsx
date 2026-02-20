@@ -212,8 +212,8 @@ export function DietAdherence({ diet }: DietAdherenceProps) {
                                             )}
 
                                             {/* Actions Footer */}
-                                            <div className="pt-4 flex items-center justify-between">
-                                                <div className="flex gap-4">
+                                            <div className="pt-4 flex flex-col gap-4">
+                                                <div className="flex gap-4 items-center">
                                                     <MacroMini label="P" value={meal.meal_items?.reduce((acc: any, i: any) => acc + (i.protein || 0), 0)} unit="g" />
                                                     <MacroMini label="C" value={meal.meal_items?.reduce((acc: any, i: any) => acc + (i.carbs || 0), 0)} unit="g" />
                                                     <MacroMini label="G" value={meal.meal_items?.reduce((acc: any, i: any) => acc + (i.fat || 0), 0)} unit="g" />
@@ -223,7 +223,7 @@ export function DietAdherence({ diet }: DietAdherenceProps) {
                                                     size="sm"
                                                     variant="ghost"
                                                     className={cn(
-                                                        "text-[10px] font-black uppercase tracking-widest transition-all border",
+                                                        "w-full text-[10px] font-black uppercase tracking-widest transition-all border",
                                                         isFullyComplete
                                                             ? "bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20 hover:text-red-300 hover:border-red-500/50"
                                                             : "bg-emerald-500/10 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20 hover:text-emerald-300 hover:border-emerald-500/50"

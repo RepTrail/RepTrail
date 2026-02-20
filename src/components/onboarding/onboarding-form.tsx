@@ -73,6 +73,7 @@ export function OnboardingForm() {
     const [imageAuth, setImageAuth] = useState('false')
     const [height, setHeight] = useState('')
     const [startingWeight, setStartingWeight] = useState('')
+    const [estimatedBf, setEstimatedBf] = useState('')
     const [birthDate, setBirthDate] = useState('')
     const [goal, setGoal] = useState('')
 
@@ -112,6 +113,7 @@ export function OnboardingForm() {
                     {/* Hidden inputs no topo do form (sempre enviados - inputs em divs ocultas podem ser excluídos) */}
                     <input type="hidden" name="height" value={height} />
                     <input type="hidden" name="startingWeight" value={startingWeight} />
+                    <input type="hidden" name="estimatedBf" value={estimatedBf} />
                     <input type="hidden" name="birthDate" value={birthDate} />
                     <input type="hidden" name="goal" value={goal} />
                     <input type="hidden" name="activityLevel" value={activityLevel} />
@@ -158,6 +160,18 @@ export function OnboardingForm() {
                                         placeholder="70.5"
                                         value={startingWeight}
                                         onChange={(e) => setStartingWeight(e.target.value)}
+                                        className="bg-zinc-950 border-zinc-800 text-white rounded-xl h-14 font-bold focus:ring-emerald-500/20"
+                                    />
+                                </div>
+                                <div className="space-y-3 col-span-2 sm:col-span-2">
+                                    <Label htmlFor="estimatedBf" className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Percentual de Gordura Estimado (Opcional)</Label>
+                                    <Input
+                                        id="estimatedBf"
+                                        type="number"
+                                        step="0.1"
+                                        placeholder="Ex: 15 (Deixe em branco se não souber)"
+                                        value={estimatedBf}
+                                        onChange={(e) => setEstimatedBf(e.target.value)}
                                         className="bg-zinc-950 border-zinc-800 text-white rounded-xl h-14 font-bold focus:ring-emerald-500/20"
                                     />
                                 </div>

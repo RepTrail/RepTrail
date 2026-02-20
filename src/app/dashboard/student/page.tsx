@@ -8,7 +8,7 @@ import { getStudentErgogenics } from '@/actions/ergogenics-actions'
 import { CardioPlayer } from '@/components/feature/student/cardio-player'
 import { DietAdherence } from '@/components/feature/student/diet-adherence'
 import { PaymentWarning } from '@/components/feature/student/payment-warning'
-import { Flame, Activity, Clock, Utensils, Dumbbell, Star, Search, ShieldCheck, Trophy, ArrowRight, Zap, Target, LogOut, Sparkles } from 'lucide-react'
+import { Flame, Activity, Clock, Utensils, Dumbbell, Star, Search, ShieldCheck, Trophy, ArrowRight, Zap, Target, LogOut, Sparkles, CheckCircle, Play } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -17,6 +17,7 @@ import Link from 'next/link'
 import { signOutAction } from '@/actions/auth-actions'
 import { getTodayRangeBrazil, getTodayStrBrazil } from '@/lib/date-utils'
 import { ErgogenicCheckButton } from '@/components/feature/student/ergogenic-check-button'
+import { NotificationRequestModal } from '@/components/feature/student/notification-request-modal'
 
 export default async function StudentDashboard() {
     const supabase = await createClient()
@@ -60,6 +61,49 @@ export default async function StudentDashboard() {
     const workout = await getTodayWorkout(user.id)
     const diet = await getStudentDailyDiet(user.id)
 
+    // Fetch Cardio Logs for Today
+    const { data: todayCardioLogs } = await supabase
+        .from('cardio_logs')
+        .select('assigned_cardio_id, status')
+        .eq('student_id', user.id)
+        .gte('started_at', todayStart)
+        .lte('started_at', todayEnd)
+
+    // Check workout status
+    let workoutStatus: 'not_started' | 'in_progress' | 'completed' = 'not_started'
+
+    if (workout) {
+        // 1. Check Completed Today
+        const { data: completed } = await supabase
+            .from('workout_logs')
+            .select('id')
+            .eq('workout_id', workout.id)
+            .eq('student_id', user.id)
+            .eq('status', 'completed')
+            .gte('completed_at', todayStart)
+            .lte('completed_at', todayEnd)
+            .maybeSingle()
+
+        if (completed) {
+            workoutStatus = 'completed'
+        } else {
+            // 2. Check In Progress (Any active log for this workout)
+            const { data: inProgress } = await supabase
+                .from('workout_logs')
+                .select('id')
+                .eq('workout_id', workout.id)
+                .eq('student_id', user.id)
+                .eq('status', 'in_progress')
+                .order('started_at', { ascending: false })
+                .limit(1)
+                .maybeSingle()
+
+            if (inProgress) {
+                workoutStatus = 'in_progress'
+            }
+        }
+    }
+
     // Ergogenics
     let todaysErgogenics: any[] = []
     if (steroidUse) {
@@ -79,8 +123,6 @@ export default async function StudentDashboard() {
         return (
             <div className="space-y-12 pb-20 animate-in fade-in duration-700">
                 <header className="space-y-8">
-
-
                     <div className="relative group overflow-hidden p-10 md:p-16 bg-zinc-900 border border-zinc-800 rounded-[3.5rem] shadow-2xl">
                         <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 via-transparent to-transparent opacity-50" />
                         <div className="relative z-10 flex flex-col md:flex-row gap-12 items-center">
@@ -198,8 +240,6 @@ export default async function StudentDashboard() {
                         </Link>
                     </div>
                 </section>
-
-
             </div>
         )
     }
@@ -244,26 +284,81 @@ export default async function StudentDashboard() {
                         </div>
 
                         {workout ? (
-                            <Link href={`/dashboard/student/workout/${workout.id}`}>
-                                <div className="group relative bg-zinc-900/40 border border-zinc-800/50 p-8 rounded-[2.5rem] backdrop-blur-sm overflow-hidden hover:border-emerald-500/30 transition-all duration-500 cursor-pointer shadow-xl">
-                                    <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
-                                        <Dumbbell className="w-32 h-32 text-white" />
+                            workoutStatus === 'completed' ? (
+                                <div className="group relative bg-emerald-950/20 border border-emerald-500/20 p-8 rounded-[2.5rem] backdrop-blur-sm overflow-hidden transition-all duration-500 cursor-default shadow-xl">
+                                    <div className="absolute top-0 right-0 p-8 opacity-10">
+                                        <CheckCircle className="w-32 h-32 text-emerald-500" />
                                     </div>
                                     <div className="relative space-y-6">
                                         <div className="space-y-1">
-                                            <h3 className="text-3xl font-black text-white italic uppercase leading-none">
-                                                {workout.name}
+                                            <h3 className="text-3xl font-black text-emerald-500 italic uppercase leading-none">
+                                                Treino Concluído!
                                             </h3>
-                                            <p className="text-zinc-500 text-xs font-bold uppercase tracking-widest">
-                                                {workout.exercises?.length || 0} Exercícios • Foco do dia
+                                            <p className="text-zinc-400 text-xs font-bold uppercase tracking-widest">
+                                                Bom descanso, guerreiro.
                                             </p>
                                         </div>
-                                        <Button className="h-12 px-6 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase italic tracking-wide">
-                                            Iniciar Treino
-                                        </Button>
+                                        <div className="flex items-center gap-3">
+                                            <div className="px-4 py-2 bg-emerald-500/10 rounded-xl border border-emerald-500/20 text-emerald-400 text-[10px] font-black uppercase tracking-wider flex items-center gap-2">
+                                                <CheckCircle className="w-3 h-3" />
+                                                Missão Cumprida
+                                            </div>
+                                            <Link href={`/dashboard/student/workout/${workout.id}`}>
+                                                <Button variant="ghost" className="h-9 px-4 rounded-xl text-zinc-500 hover:text-white text-[10px] uppercase font-black tracking-wider">
+                                                    Ver Detalhes
+                                                </Button>
+                                            </Link>
+                                        </div>
                                     </div>
                                 </div>
-                            </Link>
+                            ) : workoutStatus === 'in_progress' ? (
+                                <Link href={`/dashboard/student/workout/${workout.id}`}>
+                                    <div className="group relative bg-amber-500/10 border border-amber-500/20 p-8 rounded-[2.5rem] backdrop-blur-sm overflow-hidden hover:border-amber-500/40 transition-all duration-500 cursor-pointer shadow-xl">
+                                        <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+                                            <Dumbbell className="w-32 h-32 text-amber-500" />
+                                        </div>
+                                        <div className="relative space-y-6">
+                                            <div className="space-y-1">
+                                                <div className="flex items-center gap-2 mb-2">
+                                                    <span className="w-2 h-2 bg-amber-500 rounded-full animate-pulse" />
+                                                    <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest">Em Andamento</span>
+                                                </div>
+                                                <h3 className="text-3xl font-black text-white italic uppercase leading-none group-hover:text-amber-500 transition-colors">
+                                                    {workout.name}
+                                                </h3>
+                                                <p className="text-zinc-500 text-xs font-bold uppercase tracking-widest">
+                                                    {workout.exercises?.length || 0} Exercícios • Continue o foco
+                                                </p>
+                                            </div>
+                                            <Button className="h-12 px-8 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-black uppercase italic tracking-wide group-hover:scale-105 transition-transform shadow-lg shadow-amber-500/20">
+                                                Continuar Treino
+                                                <Play className="ml-2 w-4 h-4 fill-current" />
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </Link>
+                            ) : (
+                                <Link href={`/dashboard/student/workout/${workout.id}`}>
+                                    <div className="group relative bg-zinc-900/40 border border-zinc-800/50 p-8 rounded-[2.5rem] backdrop-blur-sm overflow-hidden hover:border-emerald-500/30 transition-all duration-500 cursor-pointer shadow-xl">
+                                        <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+                                            <Dumbbell className="w-32 h-32 text-white" />
+                                        </div>
+                                        <div className="relative space-y-6">
+                                            <div className="space-y-1">
+                                                <h3 className="text-3xl font-black text-white italic uppercase leading-none group-hover:text-emerald-500 transition-colors">
+                                                    {workout.name}
+                                                </h3>
+                                                <p className="text-zinc-500 text-xs font-bold uppercase tracking-widest">
+                                                    {workout.exercises?.length || 0} Exercícios • Foco do dia
+                                                </p>
+                                            </div>
+                                            <Button className="h-12 px-6 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase italic tracking-wide group-hover:scale-105 transition-transform shadow-lg shadow-emerald-500/20">
+                                                Iniciar Treino
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </Link>
+                            )
                         ) : (
                             <div className="bg-zinc-900/20 border border-zinc-800/50 border-dashed rounded-[2.5rem] py-16 flex flex-col items-center justify-center text-center space-y-4">
                                 <div className="p-4 bg-zinc-900 rounded-full border border-zinc-800">
@@ -290,9 +385,12 @@ export default async function StudentDashboard() {
 
                         {cardios.length > 0 ? (
                             <div className="grid gap-6">
-                                {cardios.slice(0, 1).map((assignment: any) => (
-                                    <CardioPlayer key={assignment.id} assignment={assignment} />
-                                ))}
+                                {cardios.slice(0, 1).map((assignment: any) => {
+                                    const isCompleted = todayCardioLogs?.some(
+                                        (l: any) => l.assigned_cardio_id === assignment.id && l.status === 'completed'
+                                    )
+                                    return <CardioPlayer key={assignment.id} assignment={assignment} isCompleted={isCompleted} />
+                                })}
                                 {cardios.length > 1 && (
                                     <div className="px-8 py-4 bg-zinc-900/30 border border-zinc-800/50 rounded-3xl flex items-center justify-between">
                                         <span className="text-[10px] font-black text-zinc-600 uppercase tracking-widest">
@@ -397,6 +495,7 @@ export default async function StudentDashboard() {
                     </div>
                 </div>
             </div>
+            <NotificationRequestModal />
         </div>
     )
 }

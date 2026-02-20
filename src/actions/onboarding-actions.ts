@@ -8,6 +8,7 @@ const onboardingSchema = z.object({
     birthDate: z.string().refine((val) => !isNaN(Date.parse(val)), "Data inválida"),
     height: z.coerce.number().min(50, "Altura mínima 50cm").max(300, "Altura máxima 300cm"),
     startingWeight: z.coerce.number().min(20, "Peso mínimo 20kg").max(500, "Peso máximo 500kg"),
+    estimatedBf: z.coerce.number().min(1, "BF Mínimo 1%").max(60, "BF Máximo 60%").optional(),
     activityLevel: z.enum(['sedentary', 'light', 'moderate', 'active', 'athlete']),
     goal: z.string().min(3, "Objetivo muito curto"),
     steroidUse: z.boolean().default(false),
@@ -32,11 +33,17 @@ export async function submitOnboarding(prevState: OnboardingState, formData: For
     }
 
     // Parse Data (empty string -> undefined para campos opcionais)
-    const get = (k: string) => (formData.get(k) as string | null) || undefined
+    const get = (k: string) => {
+        const val = formData.get(k) as string | null
+        if (!val || val.trim() === '') return undefined
+        return val
+    }
+
     const rawData = {
         birthDate: get('birthDate'),
         height: get('height'),
         startingWeight: get('startingWeight'),
+        estimatedBf: get('estimatedBf'),
         activityLevel: get('activityLevel') || 'moderate', // fallback se hidden input falhar
         goal: get('goal'),
         steroidUse: formData.get('steroidUse') === 'on',
@@ -64,6 +71,7 @@ export async function submitOnboarding(prevState: OnboardingState, formData: For
             birth_date: data.birthDate,
             height: data.height,
             starting_weight: data.startingWeight,
+            body_fat: data.estimatedBf, // Add BF
             activity_level: data.activityLevel,
             goal: data.goal,
             steroid_use: data.steroidUse,
@@ -80,6 +88,14 @@ export async function submitOnboarding(prevState: OnboardingState, formData: For
         student_id: user.id,
         weight_kg: data.startingWeight,
     })
+
+    // 2.1 Initial BF History (if provided)
+    if (data.estimatedBf) {
+        await supabase.from('bf_history').insert({
+            student_id: user.id,
+            bf_percentage: data.estimatedBf,
+        })
+    }
 
     // 3. Trainer Linking (if code provided)
     if (data.trainerCode) {

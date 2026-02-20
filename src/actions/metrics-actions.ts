@@ -7,7 +7,7 @@ function toDateKey(isoOrDate: string): string {
     return format(new Date(isoOrDate), 'yyyy-MM-dd')
 }
 
-/** Adherence = (diet + workout + cardio done) / (diet + workout + cardio planned) per day. Misses lower the line. */
+/** Adherence = Average of (diet, workout, cardio) progress per day. Synchronized with daily_tracking. */
 export async function getAdherenceForDates(
     studentId: string,
     dateStrings: string[]
@@ -15,101 +15,151 @@ export async function getAdherenceForDates(
     if (dateStrings.length === 0) return []
 
     const supabase = await createClient()
-    const sortedDates = [...new Set(dateStrings.map(toDateKey))].sort()
 
-    // Fetch assignments
-    const { data: aw } = await supabase
-        .from('assigned_workouts')
-        .select('day_of_week')
+    // 1. Determine Effective Start Date
+    const { data: profile } = await supabase.from('profiles').select('created_at').eq('id', studentId).single()
+    const profileCreatedStr = profile?.created_at ? new Date(profile.created_at).toISOString().split('T')[0] : '2000-01-01'
+
+    const { data: trainerLink } = await supabase
+        .from('trainer_students')
+        .select('created_at')
         .eq('student_id', studentId)
         .eq('active', true)
+        .maybeSingle()
 
-    const { data: ac } = await supabase
-        .from('assigned_cardios')
-        .select('day_of_week')
-        .eq('student_id', studentId)
-        .eq('active', true)
+    const linkDateStr = trainerLink?.created_at ? new Date(trainerLink.created_at).toISOString().split('T')[0] : '2000-01-01'
 
-    const { data: ad } = await supabase
-        .from('assigned_diets')
-        .select('id')
-        .eq('student_id', studentId)
-        .eq('active', true)
+    // Use the later of the two dates as the effective start
+    const effectiveStartStr = linkDateStr > profileCreatedStr ? linkDateStr : profileCreatedStr
 
-    const hasDiet = (ad?.length ?? 0) > 0
-    const workoutDays = new Set((aw || []).map((a: { day_of_week: number }) => a.day_of_week).filter((d: number) => d != null))
-    const cardioDays = new Set((ac || []).map((a: { day_of_week: number }) => a.day_of_week).filter((d: number) => d != null))
+    // Filter dates to only include those on or after effective start
+    const applicableDates = dateStrings.filter(d => d >= effectiveStartStr)
 
-    // Fetch completed workouts (use completed_at when available, else started_at)
+    if (applicableDates.length === 0) return []
+
+    const sortedDates = [...new Set(applicableDates.map(toDateKey))].sort()
     const minDate = sortedDates[0]
     const maxDate = sortedDates[sortedDates.length - 1]
-    const start = new Date(minDate)
-    start.setHours(0, 0, 0, 0)
-    const end = new Date(maxDate)
-    end.setHours(23, 59, 59, 999)
 
-    const { data: workoutLogs } = await supabase
-        .from('workout_logs')
-        .select('started_at, completed_at, status')
-        .eq('student_id', studentId)
-        .eq('status', 'completed')
-        .gte('started_at', start.toISOString())
-        .lte('started_at', end.toISOString())
+    // Fetch Daily Tracking
+    const { data: tracking } = await supabase
+        .from('daily_tracking')
+        .select('*')
+        .eq('user_id', studentId)
+        .gte('date', minDate)
+        .lte('date', maxDate)
 
-    const { data: cardioLogs } = await supabase
-        .from('cardio_logs')
-        .select('started_at, completed_at, status')
-        .eq('student_id', studentId)
-        .eq('status', 'completed')
-        .gte('started_at', start.toISOString())
-        .lte('started_at', end.toISOString())
+    // Fetch Assignments & Details
+    const { data: aw } = await supabase.from('assigned_workouts').select('day_of_week').eq('student_id', studentId).eq('active', true)
+    const { data: ac } = await supabase.from('assigned_cardios').select('days_of_week, day_of_week').eq('student_id', studentId).eq('active', true)
+    const { data: ad } = await supabase.from('assigned_diets').select('id').eq('student_id', studentId).eq('active', true)
 
-    const { data: mealLogs } = await supabase
-        .from('meal_logs')
-        .select('consumed_at, check_status')
-        .eq('student_id', studentId)
-        .eq('check_status', true)
-        .gte('consumed_at', start.toISOString())
-        .lte('consumed_at', end.toISOString())
+    // Ergogenics Check
+    const { data: details } = await supabase.from('student_details').select('steroid_use').eq('id', studentId).single()
+    const steroidUse = !!details?.steroid_use
 
-    const workoutDates = new Set(
-        (workoutLogs || []).map((w: { completed_at?: string; started_at: string }) => {
-            const d = w.completed_at ? new Date(w.completed_at) : new Date(w.started_at)
-            return format(d, 'yyyy-MM-dd')
+    const { data: ae } = await supabase.from('assigned_ergogenics').select('application_days').eq('student_id', studentId).eq('active', true)
+
+    // Sets for O(1) lookup
+    const workoutDays = new Set((aw || []).map((a: any) => a.day_of_week))
+
+    const cardioDays = new Set<number>()
+    if (ac) {
+        ac.forEach((a: any) => {
+            if (a.days_of_week && Array.isArray(a.days_of_week)) {
+                a.days_of_week.forEach((d: number) => cardioDays.add(d))
+            } else if (a.day_of_week !== undefined && a.day_of_week !== null) {
+                cardioDays.add(a.day_of_week)
+            }
         })
-    )
-    const cardioDates = new Set(
-        (cardioLogs || []).map((c: { completed_at?: string; started_at: string }) => {
-            const d = c.completed_at ? new Date(c.completed_at) : new Date(c.started_at)
-            return format(d, 'yyyy-MM-dd')
+    }
+
+    const ergoDays = new Set<number>()
+    if (ae) {
+        ae.forEach((a: any) => {
+            if (a.application_days && Array.isArray(a.application_days)) {
+                a.application_days.forEach((d: number) => ergoDays.add(d))
+            }
         })
-    )
-    const dietDates = new Set(
-        (mealLogs || []).map((m: { consumed_at: string }) => format(new Date(m.consumed_at), 'yyyy-MM-dd'))
-    )
+    }
+
+    const hasDiet = (ad?.length ?? 0) > 0
 
     return sortedDates.map(dateStr => {
-        const d = new Date(dateStr)
-        const dayOfWeek = d.getDay()
-        let planned = 0
-        let done = 0
+        const day = tracking?.find(t => t.date === dateStr)
+        const d = new Date(dateStr + 'T12:00:00')
+        const dow = d.getDay() // 0-6
 
-        if (workoutDays.has(dayOfWeek)) {
-            planned++
-            if (workoutDates.has(dateStr)) done++
-        }
-        if (cardioDays.has(dayOfWeek)) {
-            planned++
-            if (cardioDates.has(dateStr)) done++
-        }
+        let possible = 0
+        let points = 0
+
+        // --- RULE 2: Diet (Always Counted) ---
+        // "Deve ser contabilizada TODOS OS DIAS. Mesmo que o aluno falhe (0%), ainda entra no cálculo."
+        // Assumption: If 'hasDiet' is true (plan assigned). If no plan assigned, skipping.
         if (hasDiet) {
-            planned++
-            if (dietDates.has(dateStr)) done++
+            possible += 1
+            if (day) {
+                points += (day.diet_percentage || 0) / 100
+            } else {
+                // No record but diet assigned -> 0%
+                points += 0
+            }
         }
 
-        const adherence = planned > 0 ? Math.round((done / planned) * 100) : 100
+        // --- RULE 3: Workout (Only if scheduled) ---
+        if (workoutDays.has(dow)) {
+            possible += 1
+            if (day) {
+                if (day.workout_status === 'completed') points += 1
+                else if (day.workout_status === 'partial') points += (day.workout_percentage || 0) / 100
+                // status 'skipped', 'assigned', 'none' -> 0 points
+            } else {
+                points += 0 // Scheduled but no record executed
+            }
+        }
+
+        // --- RULE 4: Cardio (Only if scheduled) ---
+        if (cardioDays.has(dow)) {
+            possible += 1
+            if (day) {
+                if (day.cardio_status === 'completed') points += 1
+                else if (day.cardio_status === 'partial') points += (day.cardio_percentage || 0) / 100
+                // status 'skipped', 'assigned', 'none' -> 0 points
+            } else {
+                points += 0
+            }
+        }
+
+        // --- RULE 5: Ergogenics (SteroidUse=true AND Scheduled) ---
+        if (steroidUse && ergoDays.has(dow)) {
+            possible += 1
+            if (day) {
+                if (day.ergogenics_status === 'completed') points += 1
+                else if (day.ergogenics_status === 'partial') points += (day.ergogenics_percentage || 0) / 100
+                // status 'skipped', 'assigned', 'none' -> 0 points
+            } else {
+                points += 0
+            }
+        }
+
+        // --- RULE 6: Calculation ---
+        // If no tasks valid/scheduled for today, assume full adherence (nothing to fail).
+        // OR return null? The prompt says "Definir performance como null ou não plotar ponto".
+        // However, existing charts expect a number. 
+        // If possible is 0 (Rest day with no diet plan?), usually 100% or null.
+        // Given 'hasDiet' is usually true, possible is rarely 0.
+        // If possible is 0, let's return 0 or null?
+        // Let's stick to: "Se não houver nenhuma tarefa válida... Definir performance como null".
+        // But for chart continuity (since return type is number), let's perform a safety check.
+        // Since adherence is 0-100, if possible=0, it's technically N/A. 
+        // Let's default to 100 (Rest success) if day exists, or maybe just 0. 
+        // Actually, if it's a rest day (no diet, no workout, no cardio), they adhered to the plan of doing nothing. -> 100.
+
+        if (possible === 0) return null
+
+        const adherence = Math.round((points / possible) * 100)
         return { date: dateStr, adherence }
-    })
+    }).filter(Boolean) as { date: string; adherence: number }[]
 }
 
 export async function getStudentMetricsHistory(studentId: string) {
@@ -268,14 +318,35 @@ export async function getLoadProgression(studentId: string, exerciseId?: string)
 /** Chart data with real dates (weight/BF) and adherence-based frequency. */
 export async function getStudentChartData(studentId: string) {
     const { weights, bfs } = await getStudentMetricsHistory(studentId)
-    const dateKeys = [
-        ...weights.map((w: { recorded_at: string }) => toDateKey(w.recorded_at)),
-        ...bfs.map((b: { recorded_at: string }) => toDateKey(b.recorded_at))
-    ]
+
+    // 1. Determine Earliest Date
+    // Default to 60 days ago
+    let startTimestamp = new Date().getTime() - (60 * 24 * 60 * 60 * 1000)
+
+    // If history goes further back, expand the range
+    if (weights.length > 0) {
+        const firstW = new Date(weights[0].recorded_at).getTime()
+        if (firstW < startTimestamp) startTimestamp = firstW
+    }
+    if (bfs.length > 0) {
+        const firstB = new Date(bfs[0].recorded_at).getTime()
+        if (firstB < startTimestamp) startTimestamp = firstB
+    }
+
+    const startDate = new Date(startTimestamp)
+    const endDate = new Date()
+
+    // 2. Generate ALL dates in the interval Day-by-Day
+    const dateKeys = eachDayOfInterval({ start: startDate, end: endDate })
+        .map(d => toDateKey(d.toISOString()))
+
+    // 3. Calculate adherence for the full range
     const adherence = await getAdherenceForDates(studentId, dateKeys)
 
-    // Mapear cada data para o timestamp real (peso/BF) - alinha a adesão com as outras métricas no gráfico
+    // Map each date to a timestamp for the line chart
     const dateToTimestamp = new Map<string, number>()
+
+    // Priority timestamps from metrics
     for (const w of weights) {
         const key = toDateKey(w.recorded_at)
         const t = new Date(w.recorded_at).getTime()
@@ -290,24 +361,33 @@ export async function getStudentChartData(studentId: string) {
     }
 
     const frequency = adherence.map(({ date, adherence: a }) => {
-        const ts = dateToTimestamp.get(date) ?? new Date(date).getTime()
+        const ts = dateToTimestamp.get(date) ?? new Date(date + 'T12:00:00').getTime()
         return {
             week: format(new Date(ts), 'dd/MM'),
             date: new Date(ts).toISOString(),
             sessions: a
         }
     })
+
     return { weights, bfs, frequency }
 }
 
 export async function getStudentFullMetrics(studentId: string) {
+    const supabase = await createClient()
     const metrics = await getStudentMetricsHistory(studentId)
     const chartData = await getStudentChartData(studentId)
     const loadProgression = await getLoadProgression(studentId)
 
+    const { data: details } = await supabase
+        .from('student_details')
+        .select('body_fat, steroid_use')
+        .eq('id', studentId)
+        .single()
+
     return {
         ...metrics,
         frequency: chartData.frequency,
-        loadProgression
+        loadProgression,
+        details
     }
 }

@@ -65,7 +65,7 @@ export default async function StudentsPage() {
         .from('trainer_students')
         .select(`
             *,
-            student:profiles!student_id(full_name, email, avatar_url)
+            student:profiles!student_id(full_name, email, avatar_url, last_seen_at)
         `)
         .eq('trainer_id', user?.id)
         .order('created_at', { ascending: false })
@@ -74,32 +74,33 @@ export default async function StudentsPage() {
     const activeStudents = students?.filter(s => s.active).length || 0
     const totalRevenue = students?.filter(s => s.active).reduce((acc, curr) => acc + (Number(curr.monthly_fee) || 0), 0) || 0
 
-    // Fetch last activity date for each student (for lazy badge)
-    const studentIds = students?.map(s => s.student_id).filter(Boolean) || []
-    let lastActivityMap: Record<string, string> = {}
-    if (studentIds.length > 0) {
-        const { data: activityData } = await supabase
-            .from('daily_tracking')
-            .select('user_id, date')
-            .in('user_id', studentIds)
-            .order('date', { ascending: false })
-        // Build map: first occurrence of each user_id is the most recent date
-        activityData?.forEach((row: any) => {
-            if (!lastActivityMap[row.user_id]) lastActivityMap[row.user_id] = row.date
-        })
+    function getDaysSinceActivity(lastSeen: string | null): number | null {
+        if (!lastSeen) return null
+        const diffMs = Date.now() - new Date(lastSeen).getTime()
+        return Math.max(0, Math.floor(diffMs / (1000 * 60 * 60 * 24)))
     }
 
-    function getDaysSinceActivity(studentId: string): number | null {
-        const lastDate = lastActivityMap[studentId]
-        if (!lastDate) return null
-        const diffMs = Date.now() - new Date(lastDate).getTime()
-        return Math.floor(diffMs / (1000 * 60 * 60 * 24))
+    function isLazyStudent(lastSeen: string | null, joinedAt: string): boolean {
+        const days = getDaysSinceActivity(lastSeen)
+        if (days === null) {
+            const joinedDays = Math.floor((Date.now() - new Date(joinedAt).getTime()) / (1000 * 60 * 60 * 24))
+            return joinedDays >= 7
+        }
+        return days >= 7
     }
 
-    function isLazyStudent(studentId: string): boolean {
-        const days = getDaysSinceActivity(studentId)
-        // null = never active at all — also lazy if they've been enrolled > 7 days
-        return days === null || days >= 7
+    function formatLastSeen(lastSeen: string | null): string {
+        if (!lastSeen) return 'Nunca'
+        const diffMs = Date.now() - new Date(lastSeen).getTime()
+        const mins = Math.floor(diffMs / 60000)
+        const hours = Math.floor(mins / 60)
+        const days = Math.floor(hours / 24)
+
+        if (mins < 1) return 'Agora'
+        if (mins < 60) return `${mins}m atrás`
+        if (hours < 24) return `${hours}h atrás`
+        if (days < 7) return `${days}d atrás`
+        return new Date(lastSeen).toLocaleDateString('pt-BR')
     }
 
     return (
@@ -200,6 +201,9 @@ export default async function StudentsPage() {
                                                             <Mail className="w-3 h-3 text-zinc-600" />
                                                             {item.student?.email}
                                                         </span>
+                                                        <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-1">
+                                                            Visto: {formatLastSeen(item.student?.last_seen_at)}
+                                                        </span>
                                                     </div>
                                                 </TableCell>
                                                 <TableCell className="py-4">
@@ -252,8 +256,8 @@ export default async function StudentsPage() {
                                                             return null
                                                         })()}
                                                         {/* Lazy badge desktop */}
-                                                        {item.active && item.student_id && isLazyStudent(item.student_id) && (
-                                                            <Badge variant="outline" className="bg-orange-500/10 text-orange-400 border-orange-500/20 text-[9px] font-black uppercase tracking-widest px-1.5 py-0 rounded-full flex gap-1 items-center w-fit" title={`Sem atividade há ${getDaysSinceActivity(item.student_id) ?? '7+'} dias`}>
+                                                        {item.active && item.student_id && isLazyStudent(item.student?.last_seen_at, item.created_at) && (
+                                                            <Badge variant="outline" className="bg-orange-500/10 text-orange-400 border-orange-500/20 text-[9px] font-black uppercase tracking-widest px-1.5 py-0 rounded-full flex gap-1 items-center w-fit" title={`Sem atividade há ${getDaysSinceActivity(item.student?.last_seen_at) ?? '7+'} dias`}>
                                                                 <BedDouble className="w-2.5 h-2.5" /> Preguiçoso
                                                             </Badge>
                                                         )}
@@ -334,7 +338,7 @@ export default async function StudentsPage() {
                                                             </Badge>
                                                         ) : null}
                                                         {/* Lazy badge mobile */}
-                                                        {item.active && item.student_id && isLazyStudent(item.student_id) && (
+                                                        {item.active && item.student_id && isLazyStudent(item.student?.last_seen_at, item.created_at) && (
                                                             <Badge variant="outline" className="bg-orange-500/10 text-orange-400 border-orange-500/20 text-[8px] font-black uppercase tracking-widest px-1.5 py-0 rounded-full flex gap-1 items-center">
                                                                 <BedDouble className="w-2 h-2" /> Preguiçoso
                                                             </Badge>

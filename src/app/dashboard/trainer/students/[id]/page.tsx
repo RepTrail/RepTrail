@@ -39,6 +39,10 @@ import { StudentMetricsChart } from '@/components/feature/trainer/student-metric
 import { CardioAssignmentSection } from '@/components/feature/trainer/cardio-assignment-section'
 import { getStudentAdherenceHistory } from '@/actions/tracking-actions'
 import { AdherenceChart } from '@/components/feature/student/adherence-chart'
+import { ToggleStudentStatusButton } from '@/components/feature/trainer/toggle-student-status-button'
+import { StatCard } from '@/components/feature/shared/stat-card'
+import { PerformanceAnalysisSection } from '@/components/feature/shared/performance-analysis-section'
+import { Droplet, Ruler, Info } from 'lucide-react'
 
 export default async function StudentDetailPage({ params }: { params: { id: string } }) {
     const { id } = await params
@@ -53,10 +57,12 @@ export default async function StudentDetailPage({ params }: { params: { id: stri
                 details:student_details(*),
                 progress_photos(*),
                 assigned_workouts(
+                    id,
                     active,
                     workout:workouts(id, name)
                 ),
                 assigned_diets(
+                    id,
                     active,
                     diet:diets(id, name)
                 )
@@ -113,6 +119,17 @@ export default async function StudentDetailPage({ params }: { params: { id: stri
             paymentStatus = 'overdue'
         }
     }
+
+    // Trend Calculations
+    const weights = metricsHistory.weights
+    const lastWeight = weights[weights.length - 1]?.weight_kg
+    const prevWeight = weights[weights.length - 2]?.weight_kg
+    const weightTrend = prevWeight ? (lastWeight - prevWeight).toFixed(1) : null
+
+    const bfs = metricsHistory.bfs
+    const lastBF = bfs.length > 0 ? bfs[bfs.length - 1]?.bf_percentage : details?.body_fat
+    const prevBF = bfs[bfs.length - 2]?.bf_percentage
+    const bfTrend = prevBF ? (lastBF - prevBF).toFixed(1) : null
 
     const formatWhatsAppUrl = (phone: string | null | undefined, message: string) => {
         if (!phone) return '#';
@@ -241,30 +258,61 @@ export default async function StudentDetailPage({ params }: { params: { id: stri
                         </Button>
                     </EditStudentDialog>
 
-                    <Button variant="outline" className="w-full sm:w-auto border-red-500/20 bg-red-500/5 text-red-500 hover:bg-red-500 hover:text-white rounded-xl font-bold h-10 px-4 text-xs gap-2 transition-all">
-                        {relationship.active ? 'Desativar Aluno' : 'Reativar Aluno'}
-                    </Button>
+                    <ToggleStudentStatusButton
+                        relationshipId={id}
+                        isActive={relationship.active}
+                    />
                 </div>
+            </div>
+
+            {/* Metrics Cards — Matching Student Progress View */}
+            <div className="grid gap-6 md:grid-cols-3">
+                <StatCard
+                    label="Peso Atual"
+                    value={lastWeight || '--'}
+                    unit="kg"
+                    icon={<TrendingUp className="w-4 h-4" />}
+                    trend={weightTrend ? (parseFloat(weightTrend) > 0 ? 'up' : 'down') : 'none'}
+                    trendVal={weightTrend ? `${Math.abs(parseFloat(weightTrend))}kg` : '--'}
+                    trendLabel={weightTrend ? "desde a última" : "Sem histórico"}
+                />
+                <StatCard
+                    label="Percentual de Gordura"
+                    value={lastBF || '--'}
+                    unit="%"
+                    icon={<Droplet className="w-4 h-4" />}
+                    trend={bfTrend ? (parseFloat(bfTrend) > 0 ? 'up' : 'down') : 'none'}
+                    trendVal={bfTrend ? `${Math.abs(parseFloat(bfTrend))}%` : '--'}
+                    trendLabel={bfTrend ? "desde a última" : "Sem histórico"}
+                />
+                <StatCard
+                    label="Status do Plano"
+                    value={relationship.active ? 'Ativo' : 'Inativo'}
+                    unit=""
+                    icon={<Activity className="w-4 h-4" />}
+                    trend="none"
+                    trendVal=""
+                    trendLabel="Acompanhamento Direto"
+                />
             </div>
 
             {/* Content Grid */}
             <div className="grid gap-6 md:grid-cols-3">
 
-                {/* Profile Info */}
+                {/* Profile Info - Secondary Data */}
                 <Card className="md:col-span-1 bg-zinc-900/40 border-zinc-800/50 shadow-2xl rounded-3xl overflow-hidden backdrop-blur-sm">
                     <CardHeader className="bg-zinc-900/60 border-b border-zinc-800/50 py-5">
                         <CardTitle className="text-[10px] font-black text-emerald-500 flex items-center gap-2 uppercase tracking-[0.2em]">
-                            <Users className="w-3.5 h-3.5" />
-                            Dados Físicos
+                            <Info className="w-3.5 h-3.5" />
+                            Informações Complementares
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="p-7 space-y-8">
                         <div className="grid grid-cols-2 gap-y-6 gap-x-4">
-                            <InfoField label="Peso" value={details?.starting_weight || '--'} sub="kg" />
                             <InfoField label="Altura" value={details?.height || '--'} sub="cm" />
-                            <InfoField label="BF Est." value={details?.body_fat || '--'} sub="%" />
                             <InfoField label="Idade" value={age} sub="anos" />
                             <InfoField label="Ergogênicos" value={details?.steroid_use ? 'Sim' : 'Não'} />
+                            <InfoField label="Visto por último" value={student?.last_seen_at ? new Date(student.last_seen_at).toLocaleDateString() : 'N/A'} />
                         </div>
 
                         <div className="pt-8 border-t border-zinc-800/50 space-y-5">
@@ -358,7 +406,7 @@ export default async function StudentDetailPage({ params }: { params: { id: stri
                                     <div className="space-y-4">
                                         {assignedWorkouts.map((aw: any) => (
                                             <ContentCard
-                                                key={aw.workout.id}
+                                                key={aw.id}
                                                 icon={<Dumbbell className="w-4 h-4 text-blue-500" />}
                                                 label={aw.workout.name}
                                                 actionLabel="Editar"
@@ -554,47 +602,17 @@ export default async function StudentDetailPage({ params }: { params: { id: stri
                 </div>
             </div>
 
-            {/* Metrics Chart Card - Bottom of the page */}
-            {/* Adherence Chart — 30 days, available for all tiers */}
-            <AdherenceChart history={adherenceHistory} />
+            {/* Performance Charts Section — Matching Student View */}
+            <div className="space-y-10 mt-10">
+                <PerformanceAnalysisSection
+                    weights={chartData.weights}
+                    bfs={chartData.bfs}
+                    frequency={chartData.frequency}
+                    trainerTier={trainerTier}
+                />
 
-            <Card className="w-full bg-zinc-950 border-zinc-800 shadow-2xl rounded-2xl overflow-hidden border-t-zinc-700/10 mt-10">
-                <CardHeader className="bg-zinc-900/10 border-b border-zinc-900/50 py-4 flex flex-row items-center justify-between">
-                    <CardTitle className="text-sm font-bold text-zinc-100 flex items-center gap-2 uppercase tracking-widest">
-                        <Activity className="w-4 h-4 text-emerald-500" />
-                        Evolução das Métricas
-                    </CardTitle>
-                    <Badge variant="outline" className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full">
-                        Pro / Elite
-                    </Badge>
-                </CardHeader>
-                <CardContent className="p-8 space-y-10">
-                    {trainerTier === 'start' ? (
-                        <div className="flex flex-col items-center justify-center py-10 text-center space-y-4">
-                            <div className="p-4 bg-zinc-900 rounded-full border border-zinc-800">
-                                <TrendingUp className="w-8 h-8 text-zinc-700" />
-                            </div>
-                            <div className="space-y-1">
-                                <h3 className="text-lg font-black text-white italic uppercase tracking-tight">Gráficos de Evolução</h3>
-                                <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest max-w-[250px]">
-                                    Disponível apenas para treinadores <span className="text-emerald-500">PRO e ELITE</span>.
-                                </p>
-                            </div>
-                            <Button asChild size="sm" className="bg-emerald-500 text-zinc-950 hover:bg-emerald-600 font-black italic uppercase text-[10px] tracking-widest rounded-xl px-6 h-9">
-                                <Link href="/dashboard/trainer/profile">Fazer Upgrade</Link>
-                            </Button>
-                        </div>
-                    ) : (
-                        <>
-                            <StudentMetricsChart
-                                weights={chartData.weights}
-                                bfs={chartData.bfs}
-                                frequency={chartData.frequency}
-                            />
-                        </>
-                    )}
-                </CardContent>
-            </Card>
+                <AdherenceChart history={adherenceHistory} showErgogenics={!!details?.steroid_use} />
+            </div>
         </div>
     )
 }

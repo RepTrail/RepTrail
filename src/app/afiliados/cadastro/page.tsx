@@ -223,7 +223,8 @@ export default function AffiliadosCadastroPage() {
                                     </div>
                                 ) : (
                                     <>
-                                        Criar minha conta de afiliado
+                                        <span className="md:hidden">Criar Conta</span>
+                                        <span className="hidden md:inline">Criar minha conta de afiliado</span>
                                         <ArrowRight className="w-4 h-4" />
                                     </>
                                 )}

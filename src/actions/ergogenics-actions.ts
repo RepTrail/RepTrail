@@ -115,10 +115,30 @@ export async function toggleErgogenicLog(studentId: string, ergogenicId: string,
         if (error) return { error: error.message }
     }
 
-    // Update Adherence (count logs relative to planeed)
-    // For now, just trigger update
+    // Update Adherence (count logs relative to planned)
+    const { start, end } = getTodayRangeBrazil()
+    const { data: logs } = await supabase
+        .from('ergogenic_logs')
+        .select('id')
+        .eq('student_id', studentId)
+        .gte('created_at', start)
+        .lte('created_at', end)
+
+    const { data: planned } = await supabase
+        .from('ergogenics')
+        .select('id, application_days')
+        .eq('student_id', studentId)
+
+    const todayDow = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' })).getDay()
+    const plannedTodayCount = (planned || []).filter(e => e.application_days?.includes(todayDow)).length
+    const logsCount = logs?.length || 0
+
+    const adherenceStatus = plannedTodayCount > 0
+        ? (logsCount >= plannedTodayCount ? 'completed' : (logsCount > 0 ? 'partial' : 'none'))
+        : 'none'
+
     await import('./tracking-actions').then(mod =>
-        mod.upsertDailyTracking(studentId, { ergogenics_status: 'completed' })
+        mod.upsertDailyTracking(studentId, { ergogenics_status: adherenceStatus })
     )
 
     revalidatePath('/dashboard/student')

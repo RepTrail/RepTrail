@@ -23,7 +23,10 @@ export default async function StudentWorkoutsPage() {
                 id,
                 day_of_week,
                 active,
-                workout:workouts(*)
+                workout:workouts(
+                    *,
+                    exercises:workout_exercises(*)
+                )
             `)
             .eq('student_id', user.id)
             .eq('active', true)
@@ -73,7 +76,21 @@ export default async function StudentWorkoutsPage() {
                                         </div>
                                         <div className="bg-zinc-950 border border-zinc-800 px-3 py-2 rounded-2xl flex items-center gap-1.5 shadow-2xl">
                                             <Clock className="w-3.5 h-3.5 text-emerald-500" />
-                                            <span className="text-[10px] font-black text-white italic uppercase tracking-widest text-emerald-500">60 min</span>
+                                            <span className="text-[10px] font-black text-white italic uppercase tracking-widest text-emerald-500">
+                                                {(() => {
+                                                    let totalSeconds = 0;
+                                                    const exs = (workout as any).exercises || [];
+                                                    exs.forEach((ex: any) => {
+                                                        const sets = (ex.warmup_sets || 0) + (ex.feeder_sets || 0) + (ex.working_sets || 0);
+                                                        totalSeconds += sets * 120; // 2 min per set
+                                                        totalSeconds += (ex.warmup_sets || 0) * (ex.warmup_rest_seconds || 0);
+                                                        totalSeconds += (ex.feeder_sets || 0) * (ex.feeder_rest_seconds || 0);
+                                                        totalSeconds += (ex.working_sets || 0) * (ex.rest_seconds || 0);
+                                                    });
+                                                    const mins = Math.max(15, Math.ceil(totalSeconds / 60));
+                                                    return `${mins} min`;
+                                                })()}
+                                            </span>
                                         </div>
                                     </div>
                                     <div className="space-y-1">

@@ -28,7 +28,7 @@ export function HeroSection() {
                 </div>
 
                 <div className="space-y-6 max-w-5xl">
-                    <h1 className="text-6xl font-black tracking-tighter sm:text-7xl md:text-8xl lg:text-[10rem] bg-clip-text text-transparent bg-gradient-to-b from-white via-zinc-200 to-zinc-600 pb-2 leading-[0.85] uppercase italic">
+                    <h1 className="text-4xl min-[380px]:text-5xl sm:text-6xl md:text-8xl lg:text-[10rem] font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-b from-white via-zinc-200 to-zinc-600 pb-2 leading-[0.85] uppercase italic">
                         Domine a <br className="hidden md:block" />
                         <span className="text-emerald-500">Consultoria.</span>
                     </h1>

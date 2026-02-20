@@ -206,7 +206,7 @@ export function DietBuilder({ diet }: DietBuilderProps) {
                     <p className="text-zinc-500 uppercase tracking-widest text-[10px] font-bold">Resumo Nutricional do Plano</p>
                 </div>
 
-                <div className="flex gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full md:w-auto">
                     <div className="bg-zinc-900/50 border border-zinc-800 p-3 rounded-xl min-w-[80px] text-center">
                         <span className="block text-[10px] text-zinc-500 uppercase font-bold mb-1">Proteína</span>
                         <span className="text-xl font-bold text-blue-400">{Math.round(totals.p)}<small className="text-[10px] ml-0.5">g</small></span>
@@ -290,7 +290,7 @@ export function DietBuilder({ diet }: DietBuilderProps) {
                                                     className="bg-zinc-900/50 border-zinc-800 text-sm h-9 text-center text-white"
                                                 />
                                             </div>
-                                            <div className="lg:col-span-5 grid grid-cols-4 gap-2">
+                                            <div className="lg:col-span-5 grid grid-cols-2 sm:grid-cols-4 gap-2">
                                                 <div className="space-y-1.5">
                                                     <Label className="text-[10px] text-zinc-600 uppercase font-bold tracking-tight">Medida</Label>
                                                     <Input

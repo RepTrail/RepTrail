@@ -77,7 +77,7 @@ export async function recordSetLoad(data: {
     }
 }
 
-export async function finishWorkoutLog(id: string, feedback?: string, perceivedEffort?: number) {
+export async function finishWorkoutLog(id: string, feedback?: string, perceivedEffort?: number, adherenceStatus: 'success' | 'partial' | 'fail' = 'success') {
     const supabase = await createClient()
 
     const { data: { user } } = await supabase.auth.getUser()
@@ -89,7 +89,8 @@ export async function finishWorkoutLog(id: string, feedback?: string, perceivedE
                 status: 'completed',
                 completed_at: new Date().toISOString(),
                 feedback,
-                perceived_effort: perceivedEffort
+                perceived_effort: perceivedEffort,
+                adherence_status: adherenceStatus
             })
             .eq('id', id)
 
@@ -97,9 +98,26 @@ export async function finishWorkoutLog(id: string, feedback?: string, perceivedE
 
         // Update Adherence
         if (user) {
+            const statusMap: Record<string, 'completed' | 'partial' | 'skipped'> = {
+                'success': 'completed',
+                'partial': 'partial',
+                'fail': 'skipped'
+            }
+            const percentageMap: Record<string, number> = {
+                'success': 100,
+                'partial': 50,
+                'fail': 0
+            }
+
             await import('./tracking-actions').then(mod =>
-                mod.upsertDailyTracking(user.id, { workout_status: 'completed' })
+                mod.upsertDailyTracking(user.id, {
+                    workout_status: statusMap[adherenceStatus] || 'completed',
+                    workout_percentage: percentageMap[adherenceStatus] !== undefined ? percentageMap[adherenceStatus] : 100
+                })
             )
+
+            revalidatePath('/dashboard/student')
+            revalidatePath('/dashboard/student/progress')
         }
 
         return { success: true }
@@ -158,6 +176,21 @@ export async function getStudentWorkoutHistory(studentId: string) {
     } catch (e: any) {
         console.error('Error fetching history:', e)
         return []
+    }
+}
+
+export async function saveWorkoutLogState(logId: string, state: any) {
+    const supabase = await createClient()
+    try {
+        const { error } = await supabase
+            .from('workout_logs')
+            .update({ current_state: state })
+            .eq('id', logId)
+
+        if (error) throw error
+        return { success: true }
+    } catch (e: any) {
+        return { error: e.message }
     }
 }
 

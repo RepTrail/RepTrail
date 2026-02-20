@@ -25,7 +25,7 @@ export default function AffiliadosPage() {
                         <Link href="/afiliados/login" className="text-[10px] font-black text-zinc-400 hover:text-amber-400 uppercase tracking-[0.2em] transition-colors hidden md:block">
                             Já sou afiliado
                         </Link>
-                        <Link href="/afiliados/cadastro">
+                        <Link href="/afiliados/cadastro" className="hidden md:block">
                             <Button className="bg-amber-500 hover:bg-amber-400 text-zinc-950 font-black uppercase italic tracking-widest rounded-xl text-xs px-6 h-10 shadow-lg shadow-amber-500/20 transition-all hover:scale-105 active:scale-95">
                                 Começar agora
                             </Button>
@@ -66,14 +66,17 @@ export default function AffiliadosPage() {
                             <span className="text-zinc-200 font-semibold">Transforme sua rede de contatos em uma renda recorrente hoje mesmo.</span>
                         </p>
 
-                        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-                            <Link href="/afiliados/cadastro">
-                                <Button className="h-14 px-10 bg-amber-500 hover:bg-amber-400 text-zinc-950 font-black uppercase italic tracking-[0.1em] rounded-2xl shadow-2xl shadow-amber-500/30 transition-all hover:scale-105 active:scale-95 text-base gap-3">
+                        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 w-full">
+                            <Link href="/afiliados/cadastro" className="w-full sm:w-auto">
+                                <Button className="w-full sm:w-auto h-14 px-10 bg-amber-500 hover:bg-amber-400 text-zinc-950 font-black uppercase italic tracking-[0.1em] rounded-2xl shadow-2xl shadow-amber-500/30 transition-all hover:scale-105 active:scale-95 text-base gap-3">
                                     Quero me tornar afiliado
                                     <ArrowRight className="w-5 h-5" />
                                 </Button>
                             </Link>
-                            <p className="text-[11px] text-zinc-500 font-medium">
+                            <p className="text-[11px] text-zinc-500 font-medium sm:hidden">
+                                Cadastro em menos de 1 minuto · Sem custo
+                            </p>
+                            <p className="hidden sm:block text-[11px] text-zinc-500 font-medium">
                                 Cadastro em menos de 1 minuto · Sem custo · Sem burocracia
                             </p>
                         </div>
@@ -308,9 +311,10 @@ export default function AffiliadosPage() {
                         <p className="text-zinc-400 text-lg max-w-xl mx-auto">
                             Seu networking no mundo fitness tem valor. O RepTrail só precisa de <strong className="text-zinc-200">1 minuto do seu tempo</strong> para transformar isso em renda recorrente.
                         </p>
-                        <Link href="/afiliados/cadastro">
-                            <Button className="h-14 px-12 bg-amber-500 hover:bg-amber-400 text-zinc-950 font-black uppercase italic tracking-[0.1em] rounded-2xl shadow-2xl shadow-amber-500/30 transition-all hover:scale-105 active:scale-95 text-base gap-3">
-                                Criar minha conta de afiliado
+                        <Link href="/afiliados/cadastro" className="w-full md:w-auto block">
+                            <Button className="w-full md:w-auto h-14 px-8 md:px-12 bg-amber-500 hover:bg-amber-400 text-zinc-950 font-black uppercase italic tracking-[0.1em] rounded-2xl shadow-2xl shadow-amber-500/30 transition-all hover:scale-105 active:scale-95 text-sm md:text-base gap-3">
+                                <span className="md:hidden">Criar Conta</span>
+                                <span className="hidden md:inline">Criar minha conta de afiliado</span>
                                 <ArrowRight className="w-5 h-5" />
                             </Button>
                         </Link>

@@ -6,12 +6,15 @@ import { redirect } from 'next/navigation'
 
 export type ActivityItem = {
     id: string
-    type: 'workout' | 'meal' | 'cardio' | 'weight' | 'photo'
+    type: 'workout' | 'meal' | 'cardio' | 'weight' | 'photo' | 'ergogenic' | 'milestone' | 'alert'
+    subType?: 'started' | 'completed' | 'partial' | 'fail' | 'success' | 'note' | 'inactivity' | 'full_house'
     studentName: string
     studentAvatar: string | null
     contentName: string
     timestamp: string
     status: string
+    adherenceStatus?: 'success' | 'partial' | 'fail'
+    notes?: string
 }
 
 export async function updateTrainerProfile(formData: FormData) {
@@ -353,21 +356,26 @@ export async function getTrainerActivityFeed(): Promise<ActivityItem[]> {
         const studentIds = trainerStudents.map(s => s.student_id)
 
         // 2. Fetch latest logs from all sources
-        const [workoutsRes, mealsRes, cardiosRes, weightRes, photosRes] = await Promise.all([
+        const [workoutsRes, mealsRes, cardiosRes, weightRes, photosRes, ergoLogsRes, milestonesRes, alertsRes] = await Promise.all([
+            // Workouts: Started or Completed
             supabase
                 .from('workout_logs')
                 .select(`
                     id,
                     status,
+                    adherence_status,
                     completed_at,
                     started_at,
+                    notes,
                     student:profiles!student_id(full_name, avatar_url),
                     workout:workouts(name)
                 `)
                 .in('student_id', studentIds)
-                .eq('status', 'completed')
-                .order('completed_at', { ascending: false })
-                .limit(10),
+                .in('status', ['started', 'completed'])
+                .order('started_at', { ascending: false })
+                .limit(15),
+
+            // Meals
             supabase
                 .from('meal_logs')
                 .select(`
@@ -380,6 +388,8 @@ export async function getTrainerActivityFeed(): Promise<ActivityItem[]> {
                 .eq('check_status', true)
                 .order('consumed_at', { ascending: false })
                 .limit(10),
+
+            // Cardios: In Progress or Completed
             supabase
                 .from('cardio_logs')
                 .select(`
@@ -391,9 +401,11 @@ export async function getTrainerActivityFeed(): Promise<ActivityItem[]> {
                     assigned_cardio:assigned_cardios(cardio:cardios(name))
                 `)
                 .in('student_id', studentIds)
-                .eq('status', 'completed')
-                .order('completed_at', { ascending: false })
+                .in('status', ['in_progress', 'completed'])
+                .order('started_at', { ascending: false })
                 .limit(10),
+
+            // Weight
             supabase
                 .from('weight_history')
                 .select(`
@@ -404,7 +416,9 @@ export async function getTrainerActivityFeed(): Promise<ActivityItem[]> {
                 `)
                 .in('student_id', studentIds)
                 .order('recorded_at', { ascending: false })
-                .limit(10),
+                .limit(5),
+
+            // Photos
             supabase
                 .from('progress_photos')
                 .select(`
@@ -414,7 +428,48 @@ export async function getTrainerActivityFeed(): Promise<ActivityItem[]> {
                 `)
                 .in('student_id', studentIds)
                 .order('created_at', { ascending: false })
-                .limit(10)
+                .limit(5),
+
+            // Ergogenics
+            supabase
+                .from('ergogenic_logs')
+                .select(`
+                    id,
+                    created_at,
+                    student:profiles!student_id(full_name, avatar_url),
+                    ergogenic:ergogenics(name)
+                `)
+                .in('student_id', studentIds)
+                .order('created_at', { ascending: false })
+                .limit(10),
+
+            // Milestones (100% Adherence)
+            supabase
+                .from('daily_tracking')
+                .select(`
+                    id,
+                    date,
+                    diet_percentage,
+                    workout_status,
+                    cardio_status,
+                    ergogenics_status,
+                    student:profiles!user_id(full_name, avatar_url)
+                `)
+                .in('user_id', studentIds)
+                .eq('diet_percentage', 100)
+                .in('workout_status', ['completed', 'none'])
+                .in('cardio_status', ['completed', 'none'])
+                .in('ergogenics_status', ['completed', 'none'])
+                .order('date', { ascending: false })
+                .limit(10),
+
+            // Alerts (Inactivity - no login for 3+ days)
+            supabase
+                .from('profiles')
+                .select('id, full_name, avatar_url, last_seen_at')
+                .in('id', studentIds)
+                .lt('last_seen_at', new Date(Date.now() - 72 * 60 * 60 * 1000).toISOString())
+                .order('last_seen_at', { ascending: false })
         ])
 
         // 3. Normalize and Combine
@@ -425,12 +480,27 @@ export async function getTrainerActivityFeed(): Promise<ActivityItem[]> {
                 feed.push({
                     id: w.id,
                     type: 'workout',
+                    subType: w.status === 'started' ? 'started' : (w.adherence_status || 'completed'),
                     studentName: w.student?.full_name || 'Aluno',
                     studentAvatar: w.student?.avatar_url,
                     contentName: w.workout?.name || 'Treino',
-                    timestamp: w.completed_at || w.started_at,
-                    status: w.status
+                    timestamp: w.status === 'started' ? w.started_at : w.completed_at,
+                    status: w.status,
+                    adherenceStatus: w.adherence_status
                 })
+                if (w.notes) {
+                    feed.push({
+                        id: `${w.id}-note`,
+                        type: 'workout',
+                        subType: 'note',
+                        studentName: w.student?.full_name || 'Aluno',
+                        studentAvatar: w.student?.avatar_url,
+                        contentName: `Nota: ${w.notes.substring(0, 50)}${w.notes.length > 50 ? '...' : ''}`,
+                        notes: w.notes,
+                        timestamp: w.completed_at || w.started_at,
+                        status: 'completed'
+                    })
+                }
             })
         }
 
@@ -439,6 +509,7 @@ export async function getTrainerActivityFeed(): Promise<ActivityItem[]> {
                 feed.push({
                     id: m.id,
                     type: 'meal',
+                    subType: 'completed',
                     studentName: m.student?.full_name || 'Aluno',
                     studentAvatar: m.student?.avatar_url,
                     contentName: m.meal?.name || 'Refeição',
@@ -453,10 +524,11 @@ export async function getTrainerActivityFeed(): Promise<ActivityItem[]> {
                 feed.push({
                     id: c.id,
                     type: 'cardio',
+                    subType: c.status === 'in_progress' ? 'started' : 'completed',
                     studentName: c.student?.full_name || 'Aluno',
                     studentAvatar: c.student?.avatar_url,
                     contentName: (c.assigned_cardio as any)?.cardio?.name || 'Cardio',
-                    timestamp: c.completed_at || c.started_at,
+                    timestamp: c.status === 'in_progress' ? c.started_at : c.completed_at,
                     status: c.status
                 })
             })
@@ -467,6 +539,7 @@ export async function getTrainerActivityFeed(): Promise<ActivityItem[]> {
                 feed.push({
                     id: w.id,
                     type: 'weight',
+                    subType: 'completed',
                     studentName: w.student?.full_name || 'Aluno',
                     studentAvatar: w.student?.avatar_url,
                     contentName: `${w.weight_kg}kg registrados`,
@@ -481,11 +554,62 @@ export async function getTrainerActivityFeed(): Promise<ActivityItem[]> {
                 feed.push({
                     id: p.id,
                     type: 'photo',
+                    subType: 'completed',
                     studentName: p.student?.full_name || 'Aluno',
                     studentAvatar: p.student?.avatar_url,
                     contentName: 'Novas fotos de progresso',
                     timestamp: p.created_at,
                     status: 'completed'
+                })
+            })
+        }
+
+        if (ergoLogsRes.data) {
+            ergoLogsRes.data.forEach((e: any) => {
+                feed.push({
+                    id: e.id,
+                    type: 'ergogenic',
+                    subType: 'completed',
+                    studentName: e.student?.full_name || 'Aluno',
+                    studentAvatar: e.student?.avatar_url,
+                    contentName: e.ergogenic?.name || 'Ergogênico',
+                    timestamp: e.created_at,
+                    status: 'completed'
+                })
+            })
+        }
+
+        if (milestonesRes.data) {
+            milestonesRes.data.forEach((m: any) => {
+                // Only count as milestone if at least one task was completed (not just 'none' for everything)
+                const hasActivity = m.diet_percentage > 0 || m.workout_status === 'completed' || m.cardio_status === 'completed' || m.ergogenics_status === 'completed';
+
+                if (hasActivity) {
+                    feed.push({
+                        id: m.id,
+                        type: 'milestone',
+                        subType: 'full_house',
+                        studentName: m.student?.full_name || 'Aluno',
+                        studentAvatar: m.student?.avatar_url,
+                        contentName: 'METAS 100% CONCLUÍDAS! 🔥',
+                        timestamp: m.date,
+                        status: 'completed'
+                    })
+                }
+            })
+        }
+
+        if (alertsRes.data) {
+            alertsRes.data.forEach((a: any) => {
+                feed.push({
+                    id: `${a.id}-alert`,
+                    type: 'alert',
+                    subType: 'inactivity',
+                    studentName: a.full_name || 'Aluno',
+                    studentAvatar: a.avatar_url,
+                    contentName: 'Está inativo há mais de 48 horas ⚠️',
+                    timestamp: a.last_seen_at,
+                    status: 'warning'
                 })
             })
         }
@@ -500,14 +624,14 @@ export async function getTrainerActivityFeed(): Promise<ActivityItem[]> {
         const seen = new Set<string>()
 
         for (const item of sortedFeed) {
-            const key = `${item.studentName}-${item.type}-${item.contentName}`
+            const key = `${item.studentName}-${item.type}-${item.subType}-${item.contentName}`
             if (!seen.has(key)) {
                 uniqueFeed.push(item)
                 seen.add(key)
             }
         }
 
-        return uniqueFeed.slice(0, 15)
+        return uniqueFeed.slice(0, 50)
 
     } catch (e) {
         console.error('Error fetching activity feed:', e)
@@ -589,4 +713,36 @@ export async function processExpiredTrial(userId: string) {
         revalidatePath('/dashboard', 'layout')
         revalidatePath('/dashboard/trainer', 'layout')
     }
+}
+
+export async function toggleStudentStatus(relationshipId: string, isActive: boolean) {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) return { success: false, message: 'Unauthorized' }
+
+    // Verify ownership
+    const { data: rel } = await supabase
+        .from('trainer_students')
+        .select('trainer_id')
+        .eq('id', relationshipId)
+        .single()
+
+    if (!rel || rel.trainer_id !== user.id) {
+        return { success: false, message: 'Unauthorized' }
+    }
+
+    const { error } = await supabase
+        .from('trainer_students')
+        .update({ active: isActive })
+        .eq('id', relationshipId)
+
+    if (error) {
+        console.error('Error toggling student status:', error)
+        return { success: false, message: error.message }
+    }
+
+    revalidatePath(`/dashboard/trainer/students/${relationshipId}`)
+    revalidatePath('/dashboard/trainer/students')
+    return { success: true }
 }

@@ -9,6 +9,8 @@ import { ProgressPhotoUpload } from '@/components/feature/student/progress-photo
 import { StudentProgressGallery } from '@/components/feature/student/student-progress-gallery'
 import { getAdherenceHistory } from '@/actions/tracking-actions'
 import { AdherenceChart } from '@/components/feature/student/adherence-chart'
+import { StatCard } from '@/components/feature/shared/stat-card'
+import { PerformanceAnalysisSection } from '@/components/feature/shared/performance-analysis-section'
 import Link from 'next/link'
 
 export default async function StudentProgressPage() {
@@ -47,7 +49,8 @@ export default async function StudentProgressPage() {
     const weightTrend = prevWeight ? (lastWeight - prevWeight).toFixed(1) : null
 
     const bfs = metricsHistory.bfs
-    const lastBF = bfs[bfs.length - 1]?.bf_percentage
+    // Use BF from history if available, otherwise fallback to profile details
+    const lastBF = bfs.length > 0 ? bfs[bfs.length - 1]?.bf_percentage : fullMetrics.details?.body_fat
     const prevBF = bfs[bfs.length - 2]?.bf_percentage
     const bfTrend = prevBF ? (lastBF - prevBF).toFixed(1) : null
 
@@ -165,69 +168,21 @@ export default async function StudentProgressPage() {
                 </CardContent>
             </Card>
 
-            <Card className="bg-zinc-900/40 border-zinc-800/50 shadow-2xl rounded-[2.5rem] overflow-hidden backdrop-blur-sm border-t-zinc-700/10">
-                <CardHeader className="p-8 md:p-12 pb-4">
-                    <div className="flex items-center justify-between">
-                        <div className="space-y-1">
-                            <CardTitle className="text-3xl font-black text-white italic uppercase tracking-tight">Análise de Performance</CardTitle>
-                            <p className="text-emerald-500 font-black uppercase tracking-[0.2em] text-[10px]">Peso, BF e Frequência</p>
-                        </div>
-                    </div>
-                </CardHeader>
-                <CardContent className="p-8 md:p-12 pt-0">
-                    {trainerTier === 'start' ? (
-                        <div className="flex flex-col items-center justify-center py-20 text-center space-y-4 bg-zinc-950/50 rounded-3xl border border-dashed border-zinc-800">
-                            <div className="p-4 bg-zinc-900 rounded-full border border-zinc-800 shadow-2xl">
-                                <TrendingUp className="w-8 h-8 text-zinc-700" />
-                            </div>
-                            <div className="space-y-1">
-                                <h3 className="text-xl font-black text-white italic uppercase tracking-tight">Gráficos de Evolução</h3>
-                                <p className="text-zinc-500 text-[10px] font-black uppercase tracking-widest max-w-[280px]">
-                                    Esta função está disponível apenas para alunos de treinadores <span className="text-emerald-500">PRO e ELITE</span>.
-                                </p>
-                            </div>
-                        </div>
-                    ) : (
-                        <StudentMetricsChart
-                            weights={metricsHistory.weights}
-                            bfs={metricsHistory.bfs}
-                            frequency={trainingFrequency || []}
-                        />
-                    )}
-                </CardContent>
-            </Card>
+            <PerformanceAnalysisSection
+                weights={metricsHistory.weights}
+                bfs={metricsHistory.bfs}
+                frequency={trainingFrequency || []}
+                trainerTier={trainerTier}
+                isStudentView={true}
+            />
 
             {/* Adherence Chart */}
             <div className="animate-in slide-in-from-bottom-4 duration-700 delay-100">
-                <AdherenceChart history={adherenceHistory} />
+                <AdherenceChart history={adherenceHistory} showErgogenics={!!fullMetrics.details?.steroid_use} />
             </div>
 
         </div>
     )
 }
 
-function StatCard({ label, value, unit, trend, trendVal, trendLabel, icon }: any) {
-    return (
-        <Card className="bg-zinc-900/40 border-zinc-800/50 shadow-2xl rounded-[2rem] overflow-hidden group backdrop-blur-sm transition-all hover:border-zinc-700/50 relative">
-            <div className="absolute top-0 right-0 p-4 opacity-[0.03] group-hover:opacity-10 transition-opacity">
-                {icon}
-            </div>
-            <CardHeader className="p-8 relative z-10">
-                <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
-                    <span className="text-emerald-500">{icon}</span>
-                    {label}
-                </p>
-                <div className="flex items-baseline gap-2">
-                    <span className="text-5xl font-black text-white italic uppercase tracking-tighter leading-none">{value}</span>
-                    <span className="text-sm font-black text-zinc-600 uppercase italic tracking-widest">{unit}</span>
-                </div>
-                <div className="flex items-center gap-2 mt-6 bg-zinc-950/30 w-fit px-3 py-1.5 rounded-xl border border-zinc-800/50">
-                    <span className={`text-[10px] font-black uppercase tracking-widest ${trend === 'up' ? 'text-red-400' : trend === 'down' ? 'text-emerald-500' : 'text-zinc-500'}`}>
-                        {trend === 'up' ? '▲' : trend === 'down' ? '▼' : ''} {trendVal}
-                    </span>
-                    <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">{trendLabel}</span>
-                </div>
-            </CardHeader>
-        </Card>
-    )
-}
+

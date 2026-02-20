@@ -157,30 +157,30 @@ function PodiumCard({ trainer, rank }: { trainer: any, rank: number }) {
 
 function RankingRow({ trainer, rank }: { trainer: any, rank: number }) {
     return (
-        <div className="flex items-center p-8 hover:bg-zinc-800/20 transition-all group">
-            <div className="w-16 flex-shrink-0 text-zinc-700 font-black italic text-2xl group-hover:text-amber-500/50 transition-colors">
+        <div className="flex items-center p-4 md:p-8 hover:bg-zinc-800/20 transition-all group">
+            <div className="w-8 md:w-16 flex-shrink-0 text-zinc-700 font-black italic text-lg md:text-2xl group-hover:text-amber-500/50 transition-colors">
                 #{rank}
             </div>
 
-            <div className="flex-1 flex items-center gap-6 min-w-0">
-                <Avatar className="h-16 w-16 border border-zinc-800 shrink-0 shadow-xl group-hover:scale-110 transition-transform">
+            <div className="flex-1 flex items-center gap-3 md:gap-6 min-w-0">
+                <Avatar className="h-10 w-10 md:h-16 md:w-16 border border-zinc-800 shrink-0 shadow-xl group-hover:scale-110 transition-transform">
                     <AvatarImage src={trainer.avatar_url} className="object-cover" />
-                    <AvatarFallback className="bg-zinc-900 text-zinc-500 font-bold text-xl uppercase">
+                    <AvatarFallback className="bg-zinc-900 text-zinc-500 font-bold text-lg md:text-xl uppercase">
                         {trainer.full_name?.substring(0, 2) || 'TR'}
                     </AvatarFallback>
                 </Avatar>
-                <div className="overflow-hidden space-y-1">
-                    <p className="text-xl font-black text-white italic uppercase truncate group-hover:text-amber-500 transition-colors tracking-tight">
+                <div className="overflow-hidden space-y-1 min-w-0 flex-1">
+                    <p className="text-sm md:text-xl font-black text-white italic uppercase truncate group-hover:text-amber-500 transition-colors tracking-tight pr-2">
                         {trainer.full_name}
                     </p>
-                    <div className="flex items-center gap-4">
-                        <div className="flex items-center gap-1.5">
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                        <div className="flex items-center gap-1.5 flex-shrink-0">
                             <Star className="w-3 h-3 text-amber-500/50 fill-amber-500/50" />
-                            <span className="text-[11px] font-black text-zinc-500 tracking-widest uppercase">{Number(trainer.rating || 0).toFixed(1)} Rating</span>
+                            <span className="text-[9px] md:text-[11px] font-black text-zinc-500 tracking-widest uppercase">{Number(trainer.rating || 0).toFixed(1)} Rating</span>
                         </div>
-                        <div className="flex items-center gap-1.5">
+                        <div className="flex items-center gap-1.5 flex-shrink-0">
                             <ShieldCheck className="w-3 h-3 text-emerald-500/30" />
-                            <span className="text-[11px] font-black text-zinc-600 tracking-widest uppercase">{trainer.plan_tier} tier</span>
+                            <span className="text-[9px] md:text-[11px] font-black text-zinc-600 tracking-widest uppercase">{trainer.plan_tier} tier</span>
                         </div>
                     </div>
                 </div>

@@ -9,16 +9,20 @@ import { cn } from '@/lib/utils'
 interface AdherenceHistoryItem {
     date: string
     diet_percentage: number
-    workout_status: 'none' | 'assigned' | 'completed' | 'skipped'
-    cardio_status: 'none' | 'assigned' | 'completed' | 'skipped'
-    ergogenics_status: 'none' | 'assigned' | 'completed' | 'skipped'
+    workout_status: 'none' | 'assigned' | 'completed' | 'skipped' | 'partial'
+    workout_percentage?: number
+    cardio_status: 'none' | 'assigned' | 'completed' | 'skipped' | 'partial'
+    cardio_percentage?: number
+    ergogenics_status: 'none' | 'assigned' | 'completed' | 'skipped' | 'partial'
+    ergogenics_percentage?: number
 }
 
 interface AdherenceChartProps {
     history: AdherenceHistoryItem[]
+    showErgogenics?: boolean
 }
 
-export function AdherenceChart({ history }: AdherenceChartProps) {
+export function AdherenceChart({ history, showErgogenics = false }: AdherenceChartProps) {
     // Ensure chronological order
     const sortedHistory = [...history].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
 
@@ -27,20 +31,24 @@ export function AdherenceChart({ history }: AdherenceChartProps) {
         { id: 'workout', label: 'Treino', icon: Dumbbell, color: 'text-emerald-500' },
         { id: 'cardio', label: 'Cardio', icon: Flame, color: 'text-orange-500' },
         { id: 'diet', label: 'Dieta', icon: Utensils, color: 'text-blue-500' },
-        { id: 'ergo', label: 'Ergo', icon: Sparkles, color: 'text-amber-500' },
+        ...(showErgogenics ? [{ id: 'ergo', label: 'Ergo', icon: Sparkles, color: 'text-amber-500' }] : []),
     ]
 
     const getStatusColor = (status: string, percentage?: number) => {
-        if (percentage !== undefined) {
+        if (percentage !== undefined && percentage !== null && status !== 'none') {
             if (percentage >= 100) return 'bg-emerald-500'
-            if (percentage >= 50) return 'bg-emerald-500/50'
+            if (percentage >= 50) return 'bg-amber-500'
             if (percentage > 0) return 'bg-red-500/50'
+            // If percentage is 0 but it's not 'none', it's a failure
+            if (status === 'skipped') return 'bg-red-500'
             return 'bg-zinc-800'
         }
         switch (status) {
             case 'completed': return 'bg-emerald-500'
+            case 'partial': return 'bg-amber-500'
             case 'skipped': return 'bg-red-500'
             case 'assigned': return 'bg-zinc-700 border border-zinc-600' // Pending
+            case 'in_progress': return 'bg-amber-500 animate-pulse'
             case 'none': default: return 'bg-zinc-900 border border-zinc-800/50'
         }
     }
@@ -72,10 +80,25 @@ export function AdherenceChart({ history }: AdherenceChartProps) {
                                     let status = 'none'
                                     let percentage = undefined
 
-                                    if (row.id === 'workout') status = day.workout_status
-                                    if (row.id === 'cardio') status = day.cardio_status
-                                    if (row.id === 'ergo') status = day.ergogenics_status
-                                    if (row.id === 'diet') percentage = day.diet_percentage
+                                    if (row.id === 'workout') {
+                                        status = day.workout_status
+                                        percentage = day.workout_percentage
+                                    }
+                                    if (row.id === 'cardio') {
+                                        status = day.cardio_status
+                                        percentage = day.cardio_percentage
+                                    }
+                                    if (row.id === 'ergo') {
+                                        status = day.ergogenics_status
+                                        percentage = day.ergogenics_percentage
+                                    }
+                                    if (row.id === 'diet') {
+                                        percentage = day.diet_percentage
+                                        if (percentage !== undefined && percentage > 0) {
+                                            if (percentage >= 100) status = 'completed'
+                                            else status = 'partial'
+                                        }
+                                    }
 
                                     const colorClass = getStatusColor(status, percentage)
                                     const dateLabel = new Date(day.date).toLocaleDateString('pt-BR')
@@ -93,8 +116,8 @@ export function AdherenceChart({ history }: AdherenceChartProps) {
                                                     <p className="font-bold mb-1">{dateLabel}</p>
                                                     <p className="capitalize text-zinc-400">
                                                         {row.id === 'diet'
-                                                            ? `${percentage}% Concluído`
-                                                            : status === 'none' ? 'Sem atividade' : status === 'assigned' ? 'Pendente' : status === 'skipped' ? 'Falhou' : 'Concluído'}
+                                                            ? `${percentage || 0}% Concluído`
+                                                            : status === 'none' ? 'Sem atividade' : status === 'assigned' ? 'Pendente' : status === 'skipped' ? 'Falhou' : status === 'partial' ? `Parcial (${percentage || 0}%)` : 'Concluído'}
                                                     </p>
                                                 </TooltipContent>
                                             </Tooltip>
@@ -107,6 +130,7 @@ export function AdherenceChart({ history }: AdherenceChartProps) {
                 </div>
                 <div className="mt-6 flex justify-end gap-4 text-[9px] font-bold text-zinc-500 uppercase tracking-widest px-1">
                     <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-emerald-500" /> Feito</span>
+                    <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-amber-500" /> Parcial</span>
                     <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-red-500" /> Falha</span>
                     <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-zinc-800 border border-zinc-700" /> Pendente</span>
                 </div>

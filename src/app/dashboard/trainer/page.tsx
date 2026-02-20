@@ -12,6 +12,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { getBetaTesterMode } from '@/actions/app-settings-actions'
 import { BecomeAffiliateCard } from '@/components/feature/affiliate/become-affiliate-card'
+import { ActivityFeed } from '@/components/feature/trainer/activity-feed'
 
 export default async function TrainerDashboard() {
     const supabase = await createClient()
@@ -158,85 +159,7 @@ export default async function TrainerDashboard() {
             <div className="grid gap-6 lg:grid-cols-12">
                 {/* Main Content Area */}
                 <div className="lg:col-span-8 space-y-6">
-                    <Card className="bg-zinc-950 border-zinc-800 shadow-2xl overflow-hidden rounded-2xl border-t-zinc-700/50">
-                        <CardHeader className="border-b border-zinc-900/50 bg-zinc-900/10 py-4">
-                            <div className="flex items-center justify-between">
-                                <CardTitle className="text-sm font-bold text-zinc-100 flex items-center gap-2">
-                                    <Activity className="w-4 h-4 text-emerald-500" />
-                                    Atividade em Tempo Real
-                                </CardTitle>
-                                <Button variant="ghost" size="sm" className="text-zinc-500 hover:text-zinc-100 hover:bg-zinc-800/30 text-[10px] uppercase font-bold tracking-widest h-8 transition-all px-3 rounded-xl border border-transparent hover:border-zinc-800/50">
-                                    Ver Todos
-                                </Button>
-                            </div>
-                        </CardHeader>
-                        <CardContent className="p-0">
-                            {activities.length > 0 ? (
-                                <div className="divide-y divide-zinc-900">
-                                    {activities.map((activity) => (
-                                        <div key={`${activity.type}-${activity.id}`} className="p-4 flex items-center justify-between hover:bg-zinc-900/30 transition-colors group">
-                                            <div className="flex items-center gap-4">
-                                                <div className="relative">
-                                                    <Avatar className="h-10 w-10 border border-zinc-800">
-                                                        <AvatarImage src={activity.studentAvatar || undefined} />
-                                                        <AvatarFallback className="bg-zinc-900 text-zinc-400 font-bold text-xs uppercase">
-                                                            {activity.studentName.substring(0, 2)}
-                                                        </AvatarFallback>
-                                                    </Avatar>
-                                                    <div className="absolute -bottom-1 -right-1 bg-zinc-950 rounded-full p-1 border border-zinc-800 shadow-xl">
-                                                        {activity.type === 'workout' && <Dumbbell className="w-2.5 h-2.5 text-blue-500" />}
-                                                        {activity.type === 'meal' && <Utensils className="w-2.5 h-2.5 text-emerald-500" />}
-                                                        {activity.type === 'cardio' && <Zap className="w-2.5 h-2.5 text-amber-500" />}
-                                                        {activity.type === 'weight' && <Scale className="w-2.5 h-2.5 text-purple-500" />}
-                                                        {activity.type === 'photo' && <Camera className="w-2.5 h-2.5 text-orange-500" />}
-                                                    </div>
-                                                </div>
-                                                <div className="space-y-0.5">
-                                                    <p className="text-xs text-white block">
-                                                        <span className="font-bold">{activity.studentName}</span>
-                                                        <span className="text-zinc-500 ml-1">
-                                                            {activity.type === 'workout' ? 'concluiu um treino' :
-                                                                activity.type === 'meal' ? 'marcou uma refeição' :
-                                                                    activity.type === 'cardio' ? 'concluiu um cardio' :
-                                                                        activity.type === 'weight' ? 'atualizou o peso' :
-                                                                            'mandou novas fotos'}
-                                                        </span>
-                                                    </p>
-                                                    <div className="flex items-center gap-2">
-                                                        <span className="text-[10px] font-black text-zinc-400 uppercase italic tracking-tight">{activity.contentName}</span>
-                                                        <span className="text-zinc-800">•</span>
-                                                        <span className="text-[10px] text-zinc-600 font-bold flex items-center gap-1">
-                                                            <Clock className="w-2.5 h-2.5" />
-                                                            {formatTimeAgo(activity.timestamp)}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            {activity.status === 'completed' && (
-                                                <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-                                                    <Badge variant="outline" className="bg-emerald-500/5 text-emerald-500 border-emerald-500/10 text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full flex items-center gap-1">
-                                                        <CheckCircle2 className="w-2.5 h-2.5" /> Sucesso
-                                                    </Badge>
-                                                </div>
-                                            )}
-                                        </div>
-                                    ))}
-                                </div>
-                            ) : (
-                                <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
-                                    <div className="p-4 bg-zinc-900/50 rounded-full border border-zinc-800">
-                                        <Activity className="h-8 w-8 text-zinc-800 animate-pulse" />
-                                    </div>
-                                    <div className="space-y-1">
-                                        <p className="text-zinc-400 font-medium">Aguardando registros...</p>
-                                        <p className="text-zinc-600 text-xs max-w-[280px]">
-                                            Quando seus alunos concluírem treinos ou dietas, as atualizações aparecerão aqui instantaneamente.
-                                        </p>
-                                    </div>
-                                </div>
-                            )}
-                        </CardContent>
-                    </Card>
+                    <ActivityFeed activities={activities} />
 
                     <div className="grid gap-6 md:grid-cols-2">
                         <QuickActionCard

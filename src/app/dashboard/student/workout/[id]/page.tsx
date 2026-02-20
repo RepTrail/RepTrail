@@ -80,7 +80,7 @@ export default async function WorkoutPlayerPage({ params }: { params: Promise<{ 
     // 4. Check for In-Progress Workout (Resume)
     const { data: inProgressLog } = await supabase
         .from('workout_logs')
-        .select('id')
+        .select('id, current_state')
         .eq('workout_id', workout.id) // Specific workout
         .eq('student_id', user.id)
         .eq('status', 'in_progress')
@@ -90,28 +90,85 @@ export default async function WorkoutPlayerPage({ params }: { params: Promise<{ 
 
     let initialExerciseIndex = 0
     let initialLogId: string | undefined = undefined
+    let initialSet = 1
+    let initialSetType: 'WARMUP' | 'FEEDER' | 'WORKING' | undefined = undefined
+    let initialIsResting = false
+    let initialRestEndTime: number | undefined = undefined
 
     if (inProgressLog) {
         initialLogId = inProgressLog.id
-        // Find last exercise with activity
-        const { data: lastLoad } = await supabase
-            .from('load_history')
-            .select('exercise_id')
-            .eq('workout_log_id', inProgressLog.id)
-            .order('recorded_at', { ascending: false })
-            .limit(1)
-            .maybeSingle()
 
-        if (lastLoad) {
-            // Find index of this exercise in current workout list
-            // exercises is array of workout_exercise joined with exercise
-            // Each item has exercise_id (UUID of actual exercise) or id (workout_exercise id)?
-            // The table is workout_exercises. columns: workout_id, exercise_id
-            const idx = exercises.findIndex((e: any) => e.exercise_id === lastLoad.exercise_id)
-            if (idx !== -1) {
-                initialExerciseIndex = idx
+        if (inProgressLog.current_state) {
+            const state = inProgressLog.current_state as any
+            initialExerciseIndex = state.exerciseIndex || 0
+            initialSet = state.set || 1
+            initialSetType = state.type
+            initialIsResting = state.isResting || false
+            initialRestEndTime = state.restEndTime
+        } else {
+            // Find last exercise with activity (Fallback Logic)
+            const { data: lastLoad } = await supabase
+                .from('load_history')
+                .select('exercise_id')
+                .eq('workout_log_id', inProgressLog.id)
+                .order('recorded_at', { ascending: false })
+                .limit(1)
+                .maybeSingle()
+
+            if (lastLoad) {
+                const idx = exercises.findIndex((e: any) => e.exercise_id === lastLoad.exercise_id)
+                if (idx !== -1) {
+                    initialExerciseIndex = idx
+
+                    // Count how many sets done for this exercise
+                    const { count } = await supabase
+                        .from('load_history')
+                        .select('*', { count: 'exact', head: true })
+                        .eq('workout_log_id', inProgressLog.id)
+                        .eq('exercise_id', lastLoad.exercise_id)
+
+                    const setsDone = count || 0
+                    const nextSetIndex = setsDone + 1
+
+                    const ex = exercises[idx]
+                    const nWarmup = ex.warmup_sets || 0
+                    const nFeeder = ex.feeder_sets || 0
+                    const nWorking = ex.working_sets || 3
+
+                    if (nextSetIndex <= nWarmup) {
+                        initialSetType = 'WARMUP'
+                        initialSet = nextSetIndex
+                    } else if (nextSetIndex <= nWarmup + nFeeder) {
+                        initialSetType = 'FEEDER'
+                        initialSet = nextSetIndex - nWarmup
+                    } else if (nextSetIndex <= nWarmup + nFeeder + nWorking) {
+                        initialSetType = 'WORKING'
+                        initialSet = nextSetIndex - (nWarmup + nFeeder)
+                    } else {
+                        // Completed all sets for this exercise. Move to NEXT.
+                        if (idx < exercises.length - 1) {
+                            initialExerciseIndex = idx + 1
+                            initialSet = 1
+                            const nextEx = exercises[idx + 1]
+                            if ((nextEx.warmup_sets || 0) > 0) initialSetType = 'WARMUP'
+                            else if ((nextEx.feeder_sets || 0) > 0) initialSetType = 'FEEDER'
+                            else initialSetType = 'WORKING'
+                        } else {
+                            // Stay on last working set of last exercise
+                            initialSet = nWorking
+                            initialSetType = 'WORKING'
+                        }
+                    }
+                }
+            } else {
+                // Started log but no sets done yet
+                const firstEx = exercises[0]
+                if ((firstEx?.warmup_sets || 0) > 0) initialSetType = 'WARMUP'
+                else if ((firstEx?.feeder_sets || 0) > 0) initialSetType = 'FEEDER'
+                else initialSetType = 'WORKING'
             }
         }
+
     }
 
     return (
@@ -135,6 +192,10 @@ export default async function WorkoutPlayerPage({ params }: { params: Promise<{ 
                         exercises={exercises}
                         initialExerciseIndex={initialExerciseIndex}
                         initialLogId={initialLogId}
+                        initialSet={initialSet}
+                        initialSetType={initialSetType}
+                        initialIsResting={initialIsResting}
+                        initialRestEndTime={initialRestEndTime}
                     />
                 </div>
             </div>

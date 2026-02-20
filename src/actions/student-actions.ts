@@ -274,6 +274,7 @@ export async function updateStudentFullProfile(data: {
     full_name?: string
     birth_date?: string
     height?: number
+    body_fat?: number
     goal?: string
     activity_level?: string
     observations?: string
@@ -304,6 +305,7 @@ export async function updateStudentFullProfile(data: {
             .update({
                 birth_date: data.birth_date,
                 height: data.height,
+                body_fat: data.body_fat,
                 goal: data.goal,
                 activity_level: data.activity_level,
                 observations: data.observations,
@@ -313,6 +315,19 @@ export async function updateStudentFullProfile(data: {
             .eq('id', user.id)
 
         if (detailsError) throw detailsError
+
+        // Save BF History if provided
+        if (data.body_fat !== undefined) {
+            try {
+                await supabase.from('bf_history').insert({
+                    student_id: user.id,
+                    bf_percentage: data.body_fat,
+                    recorded_at: new Date().toISOString()
+                })
+            } catch (e) {
+                console.error('Error saving BF history:', e)
+            }
+        }
 
         revalidatePath('/dashboard/student/profile')
         return { success: true }

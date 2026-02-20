@@ -173,16 +173,21 @@ export function EditStudentDialog({ relationshipId, studentId, trainerId, initia
                         </div>
                     </div>
 
-                    <div className="space-y-2">
-                        <Label htmlFor="whatsapp" className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">WhatsApp (com DDD)</Label>
-                        <Input
-                            id="whatsapp"
-                            type="text"
-                            value={whatsapp}
-                            onChange={(e) => setWhatsapp(e.target.value)}
-                            className="bg-zinc-900 border-zinc-800 rounded-xl focus:ring-zinc-700 h-11 text-zinc-200"
-                            placeholder="55 11 99999-9999"
-                        />
+                    <div className="space-y-4">
+                        <Label htmlFor="whatsapp" className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 ml-1">WhatsApp (com DDD)</Label>
+                        <div className="relative group">
+                            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 group-focus-within:text-emerald-500 transition-colors">
+                                <Activity className="w-4 h-4" />
+                            </div>
+                            <Input
+                                id="whatsapp"
+                                type="text"
+                                value={whatsapp}
+                                onChange={(e) => setWhatsapp(e.target.value)}
+                                className="bg-zinc-900 border-zinc-800 rounded-xl focus:ring-zinc-700 h-11 text-zinc-200 pl-11"
+                                placeholder="55 11 99999-9999"
+                            />
+                        </div>
                     </div>
                 </div>
                 <DialogFooter>

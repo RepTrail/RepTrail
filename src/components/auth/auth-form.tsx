@@ -166,7 +166,7 @@ export function AuthForm({ view }: AuthFormProps) {
                             <div className="flex items-center justify-between px-1">
                                 <Label htmlFor="password" title="Senha" className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Senha de Acesso</Label>
                                 {view === 'login' && (
-                                    <Link href="#" className="text-[10px] font-black text-emerald-500 uppercase tracking-widest hover:text-emerald-400">
+                                    <Link href="/auth/forgot-password" className="text-[10px] font-black text-emerald-500 uppercase tracking-widest hover:text-emerald-400">
                                         Esqueci a senha
                                     </Link>
                                 )}

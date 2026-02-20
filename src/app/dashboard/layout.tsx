@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Home, Users, Dumbbell, Utensils, FileUp, User, LogOut, Trophy, CreditCard } from 'lucide-react'
 import { signOutAction } from '@/actions/auth-actions'
 import { TermsAcceptanceModal } from '@/components/feature/terms-acceptance-modal'
+import { LastSeenTracker } from '@/components/layout/last-seen-tracker'
 
 export default async function DashboardLayout({
     children,
@@ -24,6 +25,7 @@ export default async function DashboardLayout({
 
     return (
         <div className="min-h-screen w-full bg-zinc-950">
+            <LastSeenTracker />
             <TermsAcceptanceModal />
             {children}
         </div>

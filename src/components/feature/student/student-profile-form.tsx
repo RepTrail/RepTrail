@@ -32,6 +32,7 @@ export function StudentProfileForm({ profile }: StudentProfileFormProps) {
         full_name: profile?.full_name || '',
         birth_date: profile?.details?.birth_date || '',
         height: profile?.details?.height?.toString() || '',
+        body_fat: profile?.details?.body_fat?.toString() || '',
         goal: profile?.details?.goal || '',
         activity_level: profile?.details?.activity_level || 'sedentary',
         observations: profile?.details?.observations || '',
@@ -46,7 +47,8 @@ export function StudentProfileForm({ profile }: StudentProfileFormProps) {
         try {
             const result = await updateStudentFullProfile({
                 ...formData,
-                height: parseFloat(formData.height) || 0
+                height: parseFloat(formData.height) || 0,
+                body_fat: parseFloat(formData.body_fat) || 0
             })
 
             if (result.success) {
@@ -155,6 +157,21 @@ export function StudentProfileForm({ profile }: StudentProfileFormProps) {
                                         value={formData.height}
                                         onChange={e => setFormData(f => ({ ...f, height: e.target.value }))}
                                         placeholder="Ex: 180"
+                                        className="h-14 bg-zinc-950 border-zinc-800 rounded-2xl focus:border-orange-500/50 font-bold italic text-white"
+                                    />
+                                </div>
+
+                                <div className="space-y-3">
+                                    <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest flex items-center gap-2">
+                                        <Activity className="w-3.5 h-3.5" />
+                                        Percentual de Gordura (BF %)
+                                    </label>
+                                    <Input
+                                        type="number"
+                                        step="0.1"
+                                        value={formData.body_fat}
+                                        onChange={e => setFormData(f => ({ ...f, body_fat: e.target.value }))}
+                                        placeholder="Ex: 15.5"
                                         className="h-14 bg-zinc-950 border-zinc-800 rounded-2xl focus:border-orange-500/50 font-bold italic text-white"
                                     />
                                 </div>
