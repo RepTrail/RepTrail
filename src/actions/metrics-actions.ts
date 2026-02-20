@@ -139,26 +139,26 @@ export async function getAdherenceForDates(
         }
 
         // --- RULE 3: Workout (Check Logs OR Tracking) ---
-        if (workoutDays.has(dow)) {
+        const doneWorkout = workoutDates.has(dateStr) || day?.workout_status === 'completed'
+        if (workoutDays.has(dow) || doneWorkout) {
             possible += 1
-            if (workoutDates.has(dateStr)) points += 1
-            else if (day?.workout_status === 'completed') points += 1
+            if (doneWorkout) points += 1
             else if (day?.workout_status === 'partial') points += (day.workout_percentage || 0) / 100
         }
 
         // --- RULE 4: Cardio (Check Logs OR Tracking) ---
-        if (cardioDays.has(dow)) {
+        const doneCardio = cardioDates.has(dateStr) || day?.cardio_status === 'completed'
+        if (cardioDays.has(dow) || doneCardio) {
             possible += 1
-            if (cardioDates.has(dateStr)) points += 1
-            else if (day?.cardio_status === 'completed') points += 1
+            if (doneCardio) points += 1
             else if (day?.cardio_status === 'partial') points += (day.cardio_percentage || 0) / 100
         }
 
         // --- RULE 5: Ergogenics (Check Logs OR Tracking) ---
-        if (steroidUse && ergoDays.has(dow)) {
+        const doneErgo = ergoDates.has(dateStr) || day?.ergogenics_status === 'completed'
+        if ((steroidUse && ergoDays.has(dow)) || (steroidUse && doneErgo)) {
             possible += 1
-            if (ergoDates.has(dateStr)) points += 1
-            else if (day?.ergogenics_status === 'completed') points += 1
+            if (doneErgo) points += 1
             else if (day?.ergogenics_status === 'partial') points += (day.ergogenics_percentage || 0) / 100
         }
 
