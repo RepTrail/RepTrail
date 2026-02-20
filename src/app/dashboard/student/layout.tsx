@@ -8,6 +8,7 @@ import { signOutAction } from '@/actions/auth-actions'
 import { getStudentTrainer } from '@/actions/student-actions'
 import { Logo } from '@/components/ui/logo'
 import { MobileHeader } from '@/components/layout/mobile-header'
+import { SettingsModal } from '@/components/feature/student/settings-modal'
 
 export default async function StudentLayout({
     children,
@@ -96,6 +97,8 @@ export default async function StudentLayout({
             <div className="md:hidden fixed bottom-6 left-6 right-6 z-50">
                 <MobileStudentNav hasTrainer={hasTrainer} steroidUse={steroidUse} />
             </div>
+
+            <SettingsModal />
         </div>
     )
 }

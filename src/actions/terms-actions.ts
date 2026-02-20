@@ -2,22 +2,29 @@
 
 import { createClient } from '@/lib/supabase/server'
 
-export async function getTermsStatus(): Promise<{ accepted: boolean; allowImageDisclosure?: boolean } | null> {
+export async function getTermsStatus(): Promise<{ accepted: boolean; allowImageDisclosure?: boolean; imagePublicationAuthorized?: boolean } | null> {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) return null
 
-    const { data } = await supabase
+    const { data: profile } = await supabase
         .from('profiles')
         .select('terms_accepted_at, allow_image_disclosure')
         .eq('id', user.id)
         .single()
 
-    if (!data) return null
+    const { data: details } = await supabase
+        .from('student_details')
+        .select('image_publication_authorized')
+        .eq('id', user.id)
+        .single()
+
+    if (!profile) return null
     return {
-        accepted: !!data.terms_accepted_at,
-        allowImageDisclosure: data.allow_image_disclosure ?? true
+        accepted: !!profile.terms_accepted_at,
+        allowImageDisclosure: profile.allow_image_disclosure ?? true,
+        imagePublicationAuthorized: details?.image_publication_authorized ?? false
     }
 }
 
@@ -27,7 +34,8 @@ export async function acceptTerms(allowImageDisclosure: boolean) {
 
     if (!user) return { success: false, error: 'Não autenticado' }
 
-    const { error } = await supabase
+    // Update profile
+    const { error: profileError } = await supabase
         .from('profiles')
         .update({
             terms_accepted_at: new Date().toISOString(),
@@ -35,6 +43,15 @@ export async function acceptTerms(allowImageDisclosure: boolean) {
         })
         .eq('id', user.id)
 
-    if (error) return { success: false, error: error.message }
+    if (profileError) return { success: false, error: profileError.message }
+
+    // Also update student_details for consistency
+    await supabase
+        .from('student_details')
+        .update({
+            image_publication_authorized: allowImageDisclosure
+        })
+        .eq('id', user.id)
+
     return { success: true }
 }

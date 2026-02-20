@@ -22,6 +22,10 @@ export function NotificationRequestModal() {
                 return () => clearTimeout(timer)
             }
         }
+
+        const handleManualOpen = () => setIsOpen(true)
+        window.addEventListener('open-notifications-prompt', handleManualOpen)
+        return () => window.removeEventListener('open-notifications-prompt', handleManualOpen)
     }, [])
 
     const handleRequest = async () => {
@@ -33,9 +37,9 @@ export function NotificationRequestModal() {
     }
 
     return (
-        <Dialog open={isOpen}>
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogContent
-                showCloseButton={false}
+                showCloseButton={true}
                 className="bg-zinc-950 border border-zinc-800 rounded-[2rem] max-w-sm sm:max-w-md p-8"
                 onInteractOutside={(e) => {
                     e.preventDefault()

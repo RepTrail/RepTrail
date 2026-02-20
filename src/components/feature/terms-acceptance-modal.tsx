@@ -29,19 +29,27 @@ Ao prosseguir, você confirma que leu, compreendeu e aceita estes termos.
 `.trim()
 
 export function TermsAcceptanceModal() {
+    const [status, setStatus] = useState<{ accepted: boolean; allowImageDisclosure?: boolean } | null>(null)
     const [open, setOpen] = useState(false)
     const [loading, setLoading] = useState(true)
     const [accepting, setAccepting] = useState(false)
     const [allowImageDisclosure, setAllowImageDisclosure] = useState(true)
 
     useEffect(() => {
-        getTermsStatus().then((status) => {
+        getTermsStatus().then((s) => {
+            setStatus(s)
             setLoading(false)
-            if (status && !status.accepted) {
-                setAllowImageDisclosure(status.allowImageDisclosure ?? true)
+            if (s && !s.accepted) {
+                setAllowImageDisclosure(s.allowImageDisclosure ?? true)
                 setOpen(true)
             }
         })
+
+        const handleManualOpen = () => {
+            setOpen(true)
+        }
+        window.addEventListener('open-terms', handleManualOpen)
+        return () => window.removeEventListener('open-terms', handleManualOpen)
     }, [])
 
     const handleAccept = async () => {
@@ -49,6 +57,7 @@ export function TermsAcceptanceModal() {
         const result = await acceptTerms(allowImageDisclosure)
         setAccepting(false)
         if (result.success) {
+            setStatus({ accepted: true, allowImageDisclosure })
             setOpen(false)
         }
     }
@@ -56,13 +65,13 @@ export function TermsAcceptanceModal() {
     if (loading) return null
 
     return (
-        <Dialog open={open} onOpenChange={() => {}}>
+        <Dialog open={open} onOpenChange={setOpen}>
             <DialogContent
                 className="max-w-lg bg-zinc-900 border-zinc-800 text-white"
-                showCloseButton={false}
-                onPointerDownOutside={(e) => e.preventDefault()}
-                onInteractOutside={(e) => e.preventDefault()}
-                onEscapeKeyDown={(e) => e.preventDefault()}
+                showCloseButton={true}
+                onInteractOutside={(e) => {
+                    if (!status?.accepted) e.preventDefault()
+                }}
             >
                 <DialogHeader>
                     <DialogTitle className="text-xl font-black text-white uppercase tracking-tight">

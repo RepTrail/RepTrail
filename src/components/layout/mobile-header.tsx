@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Menu, X, LogOut, Dumbbell, Utensils, Activity, Home, Users, Trophy, CreditCard, FileUp, Sparkles, FlaskConical, TrendingUp, Download } from 'lucide-react'
+import { Menu, X, LogOut, Dumbbell, Utensils, Activity, Home, Users, Trophy, CreditCard, FileUp, Sparkles, FlaskConical, TrendingUp, Download, Settings } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Logo } from '@/components/ui/logo'
 import Link from 'next/link'
@@ -101,16 +101,29 @@ export function MobileHeader({ role, hasTrainer, steroidUse, hideImportPdf }: Mo
                         <div className="h-px bg-zinc-800" />
 
                         {role === 'student' && (
-                            <button
-                                onClick={() => {
-                                    window.dispatchEvent(new CustomEvent('open-pwa-prompt'))
-                                    setIsOpen(false)
-                                }}
-                                className="w-full flex items-center gap-4 p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 hover:bg-emerald-500/20 transition-all font-bold uppercase italic tracking-widest text-xs"
-                            >
-                                <Download className="w-5 h-5" />
-                                Instalar Aplicativo
-                            </button>
+                            <div className="space-y-3">
+                                <button
+                                    onClick={() => {
+                                        window.dispatchEvent(new CustomEvent('open-settings'))
+                                        setIsOpen(false)
+                                    }}
+                                    className="w-full flex items-center gap-4 p-4 rounded-2xl bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white transition-all font-bold uppercase italic tracking-widest text-xs"
+                                >
+                                    <Settings className="w-5 h-5" />
+                                    Configurações
+                                </button>
+
+                                <button
+                                    onClick={() => {
+                                        window.dispatchEvent(new CustomEvent('open-pwa-prompt'))
+                                        setIsOpen(false)
+                                    }}
+                                    className="w-full flex items-center gap-4 p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 hover:bg-emerald-500/20 transition-all font-bold uppercase italic tracking-widest text-xs"
+                                >
+                                    <Download className="w-5 h-5" />
+                                    Instalar Aplicativo
+                                </button>
+                            </div>
                         )}
 
                         <form action={signOutAction}>
