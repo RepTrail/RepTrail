@@ -3,29 +3,26 @@
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 
+// Helper para pegar a data atual no Brasil (Y-m-d)
+function getTodayStrBrazil() {
+    const d = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }))
+    const year = d.getFullYear()
+    const month = String(d.getMonth() + 1).padStart(2, '0')
+    const day = String(d.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+}
+
 function getTodayRangeBrazil() {
-    // Get current UTC time
-    const now = new Date()
+    const todayStr = getTodayStrBrazil()
 
-    // Brazil is UTC-3, so add 3 hours to get Brazil time
-    const brazilOffsetMs = 3 * 60 * 60 * 1000 // +3 hours in milliseconds
-    const brazilNow = new Date(now.getTime() + brazilOffsetMs)
-
-    // Get start of day in Brazil (00:00:00 Brazil time)
-    const startBrazil = new Date(brazilNow)
-    startBrazil.setUTCHours(0, 0, 0, 0)
-
-    // Get end of day in Brazil (23:59:59.999 Brazil time)
-    const endBrazil = new Date(brazilNow)
-    endBrazil.setUTCHours(23, 59, 59, 999)
-
-    // Convert back to UTC (subtract the offset we added)
-    const startUTC = new Date(startBrazil.getTime() - brazilOffsetMs)
-    const endUTC = new Date(endBrazil.getTime() - brazilOffsetMs)
+    // Cria data start as 00:00 BRT (UTC-3)
+    const start = new Date(`${todayStr}T00:00:00-03:00`)
+    // Cria data end as 23:59:59.999 BRT
+    const end = new Date(`${todayStr}T23:59:59.999-03:00`)
 
     return {
-        start: startUTC.toISOString(),
-        end: endUTC.toISOString()
+        start: start.toISOString(),
+        end: end.toISOString()
     }
 }
 
@@ -459,7 +456,7 @@ export async function getStudentDailyDiet(studentId: string) {
         const diet = assignment.diet as any
         const { start, end } = getTodayRangeBrazil()
 
-        const todayStr = new Date().toISOString().split('T')[0]
+        const todayStr = getTodayStrBrazil()
 
         const { data: logs } = await supabase
             .from('meal_logs')
