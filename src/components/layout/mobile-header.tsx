@@ -45,7 +45,7 @@ export function MobileHeader({ role, hasTrainer, steroidUse, hideImportPdf }: Mo
     return (
         <>
             <header className="md:hidden fixed top-0 left-0 right-0 z-50 h-20 bg-zinc-950/80 backdrop-blur-xl border-b border-zinc-900 flex items-center justify-between px-6">
-                <Link href={role === 'student' ? "/dashboard/student" : "/dashboard/trainer"}>
+                <Link href="/">
                     <Logo size="sm" color={role === 'trainer' ? 'emerald' : 'orange'} />
                 </Link>
 
@@ -71,7 +71,9 @@ export function MobileHeader({ role, hasTrainer, steroidUse, hideImportPdf }: Mo
                 <div className={`absolute top-0 right-0 w-[280px] h-full bg-zinc-950 border-l border-zinc-800 shadow-2xl transition-transform duration-300 ease-out p-8 flex flex-col justify-between ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
                     <div className="space-y-10">
                         <div className="flex items-center justify-between">
-                            <Logo size="sm" color={role === 'trainer' ? 'emerald' : 'orange'} />
+                            <Link href="/">
+                                <Logo size="sm" color={role === 'trainer' ? 'emerald' : 'orange'} />
+                            </Link>
                             <button
                                 onClick={() => setIsOpen(false)}
                                 className="p-2 text-zinc-500 hover:text-white transition-colors"

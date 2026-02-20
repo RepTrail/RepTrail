@@ -329,9 +329,9 @@ export default function AffiliadosPage() {
             {/* Footer */}
             <footer className="py-10 bg-zinc-950 border-t border-zinc-900">
                 <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-6">
-                    <div className="opacity-50 hover:opacity-100 transition-opacity">
+                    <Link href="/" className="opacity-50 hover:opacity-100 transition-opacity block">
                         <Logo size="sm" />
-                    </div>
+                    </Link>
                     <p className="text-[10px] uppercase font-bold text-zinc-600 tracking-widest text-center">
                         Comissão válida em todos os planos · Sem limite · Registrada automaticamente
                     </p>
