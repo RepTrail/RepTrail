@@ -11,11 +11,29 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { getTrainerRanking } from '@/actions/trainer-actions'
 import { AffiliateTracker } from '@/components/landing/affiliate-tracker'
+import { createClient } from '@/lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
 
 export default async function LandingPage() {
   const trainers = await getTrainerRanking()
+  const supabase = await createClient()
+
+  const { data: { user } } = await supabase.auth.getUser()
+  let role = null
+  let isAffiliate = false
+
+  if (user) {
+    const { data: userData } = await supabase.from('users').select('role').eq('id', user.id).single()
+    role = userData?.role
+
+    const { count } = await supabase.from('affiliates').select('*', { count: 'exact', head: true }).eq('user_id', user.id)
+    isAffiliate = Boolean(count && count > 0)
+  }
+
+  const dashboardUrl = role === 'admin' ? '/admin' :
+    role === 'trainer' ? '/dashboard/trainer' :
+      '/dashboard/student'
 
   return (
     <div className="flex flex-col min-h-screen bg-zinc-950 text-white font-sans selection:bg-emerald-500/30 overflow-x-hidden">
@@ -26,25 +44,73 @@ export default async function LandingPage() {
           <Link href="/" className="flex items-center gap-2 group">
             <Logo size="lg" className="group-hover:scale-105 transition-transform" />
           </Link>
-          <nav className="hidden md:flex gap-8 items-center">
+
+          <nav className="hidden md:flex gap-6 items-center">
             <Link href="#marketplace" className="text-xs font-black text-zinc-400 hover:text-emerald-500 uppercase tracking-[0.2em] transition-colors">
               Encontrar Personal
             </Link>
-            <Link href="/auth/login" className="text-xs font-black text-zinc-400 hover:text-emerald-500 uppercase tracking-[0.2em] transition-colors">
-              Login
-            </Link>
-            <Link href="/auth/signup">
-              <Button className="bg-white hover:bg-zinc-200 text-zinc-950 font-black uppercase italic tracking-widest rounded-xl text-xs px-6 h-10 shadow-lg shadow-white/5 transition-all hover:scale-105 active:scale-95">
-                Criar Conta
-              </Button>
-            </Link>
+
+            {!user ? (
+              <>
+                <Link href="/auth/login" className="text-xs font-black text-zinc-400 hover:text-emerald-500 uppercase tracking-[0.2em] transition-colors">
+                  Login
+                </Link>
+                <Link href="/auth/signup">
+                  <Button className="bg-white hover:bg-zinc-200 text-zinc-950 font-black uppercase italic tracking-widest rounded-xl text-xs px-6 h-10 shadow-lg shadow-white/5 transition-all hover:scale-105 active:scale-95">
+                    Criar Conta
+                  </Button>
+                </Link>
+              </>
+            ) : (
+              <div className="flex items-center gap-4">
+                {role === 'admin' && (
+                  <Link href="/admin">
+                    <Button variant="ghost" className="text-xs font-black text-zinc-400 hover:text-white uppercase tracking-widest hover:bg-zinc-900">
+                      Admin
+                    </Button>
+                  </Link>
+                )}
+
+                {isAffiliate && (
+                  <Link href="/afiliados/login">
+                    <Button variant="ghost" className="text-xs font-black text-amber-500/80 hover:text-amber-500 uppercase tracking-widest hover:bg-amber-500/10">
+                      Painel Afiliado
+                    </Button>
+                  </Link>
+                )}
+
+                <Link href={dashboardUrl}>
+                  <Button className="bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase italic tracking-widest rounded-xl text-xs px-6 h-10 shadow-lg shadow-emerald-500/20 transition-all hover:scale-105 active:scale-95">
+                    Acessar Dashboard
+                  </Button>
+                </Link>
+              </div>
+            )}
           </nav>
 
-          {/* Mobile Login Link */}
-          <div className="md:hidden flex items-center">
-            <Link href="/auth/login" className="text-[10px] font-black text-zinc-400 hover:text-emerald-500 uppercase tracking-[0.2em] transition-colors bg-zinc-900 px-4 py-2 rounded-xl border border-zinc-800 select-none active:scale-95 transition-all">
-              Login
-            </Link>
+          {/* Mobile Login/Dashboard Link */}
+          <div className="md:hidden flex items-center gap-3">
+            {!user ? (
+              <Link href="/auth/login" className="text-[10px] font-black text-zinc-400 hover:text-emerald-500 uppercase tracking-[0.2em] transition-colors bg-zinc-900 px-4 py-2 rounded-xl border border-zinc-800 select-none active:scale-95 transition-all">
+                Login
+              </Link>
+            ) : (
+              <>
+                {role === 'admin' && (
+                  <Link href="/admin" className="p-2 bg-zinc-900 rounded-xl border border-zinc-800 text-zinc-400">
+                    <span className="text-[10px] font-black uppercase">Adm</span>
+                  </Link>
+                )}
+                {isAffiliate && (
+                  <Link href="/afiliados/login" className="p-2 bg-amber-500/10 rounded-xl border border-amber-500/20 text-amber-500">
+                    <span className="text-[10px] font-black uppercase">Afiliado</span>
+                  </Link>
+                )}
+                <Link href={dashboardUrl} className="text-[10px] font-black text-zinc-950 bg-emerald-500 uppercase tracking-widest transition-colors px-4 py-2 rounded-xl border border-emerald-400 select-none active:scale-95 transition-all shadow-lg shadow-emerald-500/20">
+                  Dashboard
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </header>
