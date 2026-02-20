@@ -4,7 +4,13 @@ import { createClient } from '@/lib/supabase/server'
 import { startOfWeek, endOfWeek, eachDayOfInterval, format, isSameDay, subWeeks } from 'date-fns'
 
 function toDateKey(isoOrDate: string): string {
-    return format(new Date(isoOrDate), 'yyyy-MM-dd')
+    if (!isoOrDate) return ''
+    const d = new Date(isoOrDate)
+    // Adjust UTC to Brazil (approx -3h) to ensure late night workouts (that might be next day in UTC) 
+    // count for the correct day. Also handles server-side (UTC) consistency.
+    const offset = 3 * 60 * 60 * 1000
+    const adjusted = new Date(d.getTime() - offset)
+    return adjusted.toISOString().split('T')[0]
 }
 
 /** Adherence = Average of (diet, workout, cardio) progress per day. Synchronized with daily_tracking. */
@@ -41,7 +47,7 @@ export async function getAdherenceForDates(
     const minDate = sortedDates[0]
     const maxDate = sortedDates[sortedDates.length - 1]
 
-    // Fetch Daily Tracking
+    // Fetch Daily Tracking (Primary for Diet, adjustments for others)
     const { data: tracking } = await supabase
         .from('daily_tracking')
         .select('*')
@@ -49,16 +55,45 @@ export async function getAdherenceForDates(
         .gte('date', minDate)
         .lte('date', maxDate)
 
+    // Fetch Activity Logs (Source of Truth for Execution)
+    const { data: wLogs } = await supabase
+        .from('workout_logs')
+        .select('started_at, status')
+        .eq('student_id', studentId)
+        .eq('status', 'completed')
+        .gte('started_at', minDate + 'T00:00:00')
+        .lte('started_at', maxDate + 'T23:59:59')
+
+    const { data: cLogs } = await supabase
+        .from('cardio_logs')
+        .select('started_at, status, completed_at')
+        .eq('student_id', studentId)
+        .eq('status', 'completed')
+        .gte('started_at', minDate + 'T00:00:00')
+        .lte('started_at', maxDate + 'T23:59:59')
+
+    const { data: eLogs } = await supabase
+        .from('ergogenic_logs')
+        .select('taken_at, status')
+        .eq('student_id', studentId)
+        .eq('status', 'taken')
+        .gte('taken_at', minDate + 'T00:00:00')
+        .lte('taken_at', maxDate + 'T23:59:59')
+
+    // Map logs to YYYY-MM-DD keys (using consistent server time interpretation)
+    const workoutDates = new Set(wLogs?.map(l => toDateKey(l.started_at)))
+    const cardioDates = new Set(cLogs?.map(l => toDateKey(l.started_at)))
+    const ergoDates = new Set(eLogs?.map(l => toDateKey(l.taken_at)))
+
     // Fetch Assignments & Details
     const { data: aw } = await supabase.from('assigned_workouts').select('day_of_week').eq('student_id', studentId).eq('active', true)
     const { data: ac } = await supabase.from('assigned_cardios').select('days_of_week, day_of_week').eq('student_id', studentId).eq('active', true)
     const { data: ad } = await supabase.from('assigned_diets').select('id').eq('student_id', studentId).eq('active', true)
+    const { data: ae } = await supabase.from('assigned_ergogenics').select('application_days').eq('student_id', studentId).eq('active', true)
 
     // Ergogenics Check
     const { data: details } = await supabase.from('student_details').select('steroid_use').eq('id', studentId).single()
     const steroidUse = !!details?.steroid_use
-
-    const { data: ae } = await supabase.from('assigned_ergogenics').select('application_days').eq('student_id', studentId).eq('active', true)
 
     // Sets for O(1) lookup
     const workoutDays = new Set((aw || []).map((a: any) => a.day_of_week))
@@ -93,53 +128,38 @@ export async function getAdherenceForDates(
         let possible = 0
         let points = 0
 
-        // --- RULE 2: Diet (Always Counted) ---
-        // "Deve ser contabilizada TODOS OS DIAS. Mesmo que o aluno falhe (0%), ainda entra no cálculo."
-        // Assumption: If 'hasDiet' is true (plan assigned). If no plan assigned, skipping.
+        // --- RULE 2: Diet (Always Counted from Tracking) ---
         if (hasDiet) {
             possible += 1
             if (day) {
                 points += (day.diet_percentage || 0) / 100
             } else {
-                // No record but diet assigned -> 0%
                 points += 0
             }
         }
 
-        // --- RULE 3: Workout (Only if scheduled) ---
+        // --- RULE 3: Workout (Check Logs OR Tracking) ---
         if (workoutDays.has(dow)) {
             possible += 1
-            if (day) {
-                if (day.workout_status === 'completed') points += 1
-                else if (day.workout_status === 'partial') points += (day.workout_percentage || 0) / 100
-                // status 'skipped', 'assigned', 'none' -> 0 points
-            } else {
-                points += 0 // Scheduled but no record executed
-            }
+            if (workoutDates.has(dateStr)) points += 1
+            else if (day?.workout_status === 'completed') points += 1
+            else if (day?.workout_status === 'partial') points += (day.workout_percentage || 0) / 100
         }
 
-        // --- RULE 4: Cardio (Only if scheduled) ---
+        // --- RULE 4: Cardio (Check Logs OR Tracking) ---
         if (cardioDays.has(dow)) {
             possible += 1
-            if (day) {
-                if (day.cardio_status === 'completed') points += 1
-                else if (day.cardio_status === 'partial') points += (day.cardio_percentage || 0) / 100
-                // status 'skipped', 'assigned', 'none' -> 0 points
-            } else {
-                points += 0
-            }
+            if (cardioDates.has(dateStr)) points += 1
+            else if (day?.cardio_status === 'completed') points += 1
+            else if (day?.cardio_status === 'partial') points += (day.cardio_percentage || 0) / 100
         }
 
-        // --- RULE 5: Ergogenics (SteroidUse=true AND Scheduled) ---
+        // --- RULE 5: Ergogenics (Check Logs OR Tracking) ---
         if (steroidUse && ergoDays.has(dow)) {
             possible += 1
-            if (day) {
-                if (day.ergogenics_status === 'completed') points += 1
-                else if (day.ergogenics_status === 'partial') points += (day.ergogenics_percentage || 0) / 100
-                // status 'skipped', 'assigned', 'none' -> 0 points
-            } else {
-                points += 0
-            }
+            if (ergoDates.has(dateStr)) points += 1
+            else if (day?.ergogenics_status === 'completed') points += 1
+            else if (day?.ergogenics_status === 'partial') points += (day.ergogenics_percentage || 0) / 100
         }
 
         // --- RULE 6: Calculation ---

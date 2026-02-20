@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { upsertDailyTracking } from '@/actions/tracking-actions'
 
 export async function startWorkoutLog(workoutId: string) {
     const supabase = await createClient()
@@ -109,12 +110,10 @@ export async function finishWorkoutLog(id: string, feedback?: string, perceivedE
                 'fail': 0
             }
 
-            await import('./tracking-actions').then(mod =>
-                mod.upsertDailyTracking(user.id, {
-                    workout_status: statusMap[adherenceStatus] || 'completed',
-                    workout_percentage: percentageMap[adherenceStatus] !== undefined ? percentageMap[adherenceStatus] : 100
-                })
-            )
+            await upsertDailyTracking(user.id, {
+                workout_status: statusMap[adherenceStatus] || 'completed',
+                workout_percentage: percentageMap[adherenceStatus] !== undefined ? percentageMap[adherenceStatus] : 100
+            })
 
             revalidatePath('/dashboard/student')
             revalidatePath('/dashboard/student/progress')

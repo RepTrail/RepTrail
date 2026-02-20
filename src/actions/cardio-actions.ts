@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { upsertDailyTracking } from '@/actions/tracking-actions'
 
 export async function getCardioLibrary() {
     const supabase = await createClient()
@@ -238,12 +239,10 @@ export async function finishCardioSession(logId: string, feedback?: string, inte
             const finalPercentage = percentage !== undefined ? percentage : 100
             const status = finalPercentage >= 100 ? 'completed' : 'partial'
 
-            await import('./tracking-actions').then(mod =>
-                mod.upsertDailyTracking(user.id, {
-                    cardio_status: status,
-                    cardio_percentage: finalPercentage
-                })
-            )
+            await upsertDailyTracking(user.id, {
+                cardio_status: status,
+                cardio_percentage: finalPercentage
+            })
         }
 
         revalidatePath('/dashboard/student', 'page')
