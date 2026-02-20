@@ -75,7 +75,7 @@ export default async function TrainerPublicProfile({ params }: { params: Promise
                     </div>
                     {!user && (
                         <Link href="/auth/login">
-                            <Button variant="outline" className="border-zinc-800 text-zinc-300 hover:text-white hover:bg-zinc-900">
+                            <Button className="bg-white hover:bg-zinc-200 text-zinc-950 font-black uppercase italic tracking-widest rounded-xl text-xs px-6 h-10 shadow-lg shadow-white/5 transition-all hover:scale-105 active:scale-95">
                                 Entrar
                             </Button>
                         </Link>
