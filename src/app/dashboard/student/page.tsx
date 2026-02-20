@@ -15,6 +15,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Logo } from '@/components/ui/logo'
 import Link from 'next/link'
 import { signOutAction } from '@/actions/auth-actions'
+import { getTodayRangeBrazil, getTodayStrBrazil } from '@/lib/date-utils'
+import { ErgogenicCheckButton } from '@/components/feature/student/ergogenic-check-button'
 
 export default async function StudentDashboard() {
     const supabase = await createClient()
@@ -39,7 +41,19 @@ export default async function StudentDashboard() {
     // Pega a data no timezone de Brasília (evita bug de virada de dia quando UTC já avançou)
     const tzNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }))
     const today = tzNow.getDay() // 0=Dom ... 6=Sab, correto para Brasília
-    const todayStr = tzNow.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' })
+    const todayStr = getTodayStrBrazil()
+    const { start: todayStart, end: todayEnd } = getTodayRangeBrazil()
+
+    // Fetch logs for ergogenics today
+    const { data: ergoLogs } = await supabase
+        .from('ergogenic_logs')
+        .select('ergogenic_id')
+        .eq('student_id', user.id)
+        .gte('created_at', todayStart)
+        .lte('created_at', todayEnd)
+
+    const loggedErgoIds = new Set(ergoLogs?.map((l: any) => l.ergogenic_id) || [])
+
     const cardios = rawCardios.filter((a: any) =>
         !a.days_of_week || a.days_of_week.length === 0 || a.days_of_week.includes(today)
     )
@@ -208,7 +222,7 @@ export default async function StudentDashboard() {
                     <div className="px-4 py-2 bg-zinc-950 rounded-xl border border-zinc-800">
                         <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest block">Hoje</span>
                         <span className="text-xs font-black text-white italic uppercase">
-                            {todayStr}
+                            {tzNow.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' })}
                         </span>
                     </div>
                 </div>
@@ -328,8 +342,12 @@ export default async function StudentDashboard() {
                                                         {(erg.weekly_dosage / (erg.application_days?.length || 1)).toFixed(2)} {erg.unit}
                                                     </p>
                                                 </div>
-                                                <div className="w-10 h-10 rounded-xl bg-zinc-950 flex items-center justify-center border border-zinc-800 text-amber-500">
-                                                    <Sparkles className="w-5 h-5" />
+                                                <div className="flex-shrink-0">
+                                                    <ErgogenicCheckButton
+                                                        studentId={user.id}
+                                                        ergogenicId={erg.id}
+                                                        initialChecked={loggedErgoIds.has(erg.id)}
+                                                    />
                                                 </div>
                                             </div>
                                             {erg.notes && (

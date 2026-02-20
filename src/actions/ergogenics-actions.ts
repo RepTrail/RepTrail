@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { getTodayRangeBrazil } from '@/lib/date-utils'
 
 export async function getStudentErgogenics(studentId: string) {
     const supabase = await createClient()
@@ -83,27 +84,55 @@ export async function deleteErgogenic(id: string, studentId: string) {
     return { success: true }
 }
 
+
+
+export async function toggleErgogenicLog(studentId: string, ergogenicId: string, status: boolean) {
+    const supabase = await createClient()
+
+    if (status) {
+        // Log Intake
+        const { data: log, error } = await supabase
+            .from('ergogenic_logs')
+            .insert({
+                student_id: studentId,
+                ergogenic_id: ergogenicId
+            })
+            .select()
+            .single()
+
+        if (error) return { error: error.message }
+    } else {
+        // Remove logs for today
+        const { start, end } = getTodayRangeBrazil()
+        const { error } = await supabase
+            .from('ergogenic_logs')
+            .delete()
+            .eq('student_id', studentId)
+            .eq('ergogenic_id', ergogenicId)
+            .gte('created_at', start)
+            .lte('created_at', end)
+
+        if (error) return { error: error.message }
+    }
+
+    // Update Adherence (count logs relative to planeed)
+    // For now, just trigger update
+    await import('./tracking-actions').then(mod =>
+        mod.upsertDailyTracking(studentId, { ergogenics_status: 'completed' })
+    )
+
+    revalidatePath('/dashboard/student')
+    revalidatePath('/dashboard/student/ergogenics')
+    return { success: true }
+}
+
 export async function logErgogenicIntake(data: {
     student_id: string
     ergogenic_id: string
     notes?: string
 }) {
-    const supabase = await createClient()
-    const { data: log, error } = await supabase
-        .from('ergogenic_logs')
-        .insert(data)
-        .select()
-        .single()
-
-    if (error) return { error: error.message }
-
-    // Update Adherence
-    await import('./tracking-actions').then(mod =>
-        mod.upsertDailyTracking(data.student_id, { ergogenics_status: 'completed' })
-    )
-
-    revalidatePath('/dashboard/student/ergogenics')
-    return { success: true, data: log }
+    // Deprecated? Keeping for compatibility but toggle is better for UI checkbox
+    return toggleErgogenicLog(data.student_id, data.ergogenic_id, true)
 }
 
 export async function getErgogenicLogs(studentId: string) {

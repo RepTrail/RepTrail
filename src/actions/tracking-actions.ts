@@ -4,10 +4,12 @@ import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 
 function getTodayStr() {
-    // Returns YYYY-MM-DD for Brazil time roughly, or just UTC date for consistency
-    // Ideally should match the database date column format
-    const date = new Date()
-    return date.toISOString().split('T')[0]
+    // Returns YYYY-MM-DD for Brazil time
+    const d = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }))
+    const year = d.getFullYear()
+    const month = String(d.getMonth() + 1).padStart(2, '0')
+    const day = String(d.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
 }
 
 export async function upsertDailyTracking(userId: string, updates: any, dateStr?: string) {
