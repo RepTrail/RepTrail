@@ -342,7 +342,7 @@ export async function createNewExercise(name: string) {
 }
 export async function getTodayWorkout(studentId: string) {
     const supabase = await createClient()
-    const dayOfWeek = new Date().getDay() // 0-6 (Sunday-Saturday)
+    const dayOfWeek = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' })).getDay() // 0=Dom ... 6=Sab, no fuso de Brasília
 
     try {
         const { data: assignment } = await supabase

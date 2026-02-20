@@ -36,7 +36,10 @@ export default async function StudentDashboard() {
 
     // 3. Fetch Daily Data
     const rawCardios = await getStudentCardioAssignments(user.id)
-    const today = new Date().getDay()
+    // Pega a data no timezone de Brasília (evita bug de virada de dia quando UTC já avançou)
+    const tzNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }))
+    const today = tzNow.getDay() // 0=Dom ... 6=Sab, correto para Brasília
+    const todayStr = tzNow.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' })
     const cardios = rawCardios.filter((a: any) =>
         !a.days_of_week || a.days_of_week.length === 0 || a.days_of_week.includes(today)
     )
@@ -205,7 +208,7 @@ export default async function StudentDashboard() {
                     <div className="px-4 py-2 bg-zinc-950 rounded-xl border border-zinc-800">
                         <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest block">Hoje</span>
                         <span className="text-xs font-black text-white italic uppercase">
-                            {new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' })}
+                            {todayStr}
                         </span>
                     </div>
                 </div>
