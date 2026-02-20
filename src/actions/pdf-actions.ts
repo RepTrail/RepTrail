@@ -25,9 +25,10 @@ export async function parseUploadedPdf(filePath: string, type: 'workout' | 'diet
     try {
         const buffer = Buffer.from(await data.arrayBuffer())
         try {
-            const pdfParse = require('pdf-parse');
-            const pdfData = await pdfParse(buffer)
-            text = pdfData.text
+            // const pdfParse = require('pdf-parse');
+            // const pdfData = await pdfParse(buffer)
+            // text = pdfData.text
+            throw new Error("PDF Disabled");
         } catch (parseError: any) {
             console.error("PDF Parse Error (using mock):", parseError.message)
             // Fallback for Demo if PDF lib fails (common in some environments)
