@@ -2,7 +2,9 @@
 import { createClient } from '@/lib/supabase/server'
 import { WorkoutPlayer } from '@/components/feature/player/workout-player'
 import { notFound, redirect } from 'next/navigation'
-import { Dumbbell } from 'lucide-react'
+import { Dumbbell, Trophy } from 'lucide-react'
+import { getTodayRangeBrazil } from '@/lib/date-utils'
+import { MissionCompletedView } from '@/components/feature/student/mission-completed'
 
 export default async function WorkoutPlayerPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params
@@ -53,6 +55,65 @@ export default async function WorkoutPlayerPage({ params }: { params: Promise<{ 
         )
     }
 
+    // 3. Check for Completed Workout Today
+    const { start: todayStart, end: todayEnd } = getTodayRangeBrazil()
+
+    // Check if ALREADY COMPLETED today
+    const { data: completedLog } = await supabase
+        .from('workout_logs')
+        .select('id')
+        .eq('workout_id', workout.id)
+        .eq('student_id', user.id)
+        .eq('status', 'completed')
+        .gte('completed_at', todayStart) // Use completed_at for completion check
+        .lte('completed_at', todayEnd)
+        .maybeSingle()
+
+    if (completedLog) {
+        return (
+            <div className="min-h-screen bg-zinc-950 flex flex-col items-center justify-center p-4">
+                <MissionCompletedView />
+            </div>
+        )
+    }
+
+    // 4. Check for In-Progress Workout (Resume)
+    const { data: inProgressLog } = await supabase
+        .from('workout_logs')
+        .select('id')
+        .eq('workout_id', workout.id) // Specific workout
+        .eq('student_id', user.id)
+        .eq('status', 'in_progress')
+        .order('started_at', { ascending: false })
+        .limit(1)
+        .maybeSingle()
+
+    let initialExerciseIndex = 0
+    let initialLogId: string | undefined = undefined
+
+    if (inProgressLog) {
+        initialLogId = inProgressLog.id
+        // Find last exercise with activity
+        const { data: lastLoad } = await supabase
+            .from('load_history')
+            .select('exercise_id')
+            .eq('workout_log_id', inProgressLog.id)
+            .order('recorded_at', { ascending: false })
+            .limit(1)
+            .maybeSingle()
+
+        if (lastLoad) {
+            // Find index of this exercise in current workout list
+            // exercises is array of workout_exercise joined with exercise
+            // Each item has exercise_id (UUID of actual exercise) or id (workout_exercise id)?
+            // The table is workout_exercises. columns: workout_id, exercise_id
+            const idx = exercises.findIndex((e: any) => e.exercise_id === lastLoad.exercise_id)
+            if (idx !== -1) {
+                initialExerciseIndex = idx
+            }
+        }
+    }
+
     return (
         <div className="min-h-screen bg-zinc-950 flex flex-col">
             {/* Header Header */}
@@ -69,7 +130,12 @@ export default async function WorkoutPlayerPage({ params }: { params: Promise<{ 
 
             <div className="flex-1 p-4 md:p-8 flex flex-col">
                 <div className="max-w-xl mx-auto w-full flex-1">
-                    <WorkoutPlayer workout={workout} exercises={exercises} />
+                    <WorkoutPlayer
+                        workout={workout}
+                        exercises={exercises}
+                        initialExerciseIndex={initialExerciseIndex}
+                        initialLogId={initialLogId}
+                    />
                 </div>
             </div>
         </div>

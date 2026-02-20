@@ -10,6 +10,21 @@ export async function startWorkoutLog(workoutId: string) {
     if (!user) return { error: 'Unauthorized' }
 
     try {
+        // Check for existing in_progress log
+        const { data: existing } = await supabase
+            .from('workout_logs')
+            .select('id')
+            .eq('student_id', user.id)
+            .eq('workout_id', workoutId)
+            .eq('status', 'in_progress')
+            .order('started_at', { ascending: false })
+            .limit(1)
+            .maybeSingle()
+
+        if (existing) {
+            return { success: true, logId: existing.id, resumed: true }
+        }
+
         const { data, error } = await supabase
             .from('workout_logs')
             .insert({
@@ -22,7 +37,7 @@ export async function startWorkoutLog(workoutId: string) {
             .single()
 
         if (error) throw error
-        return { success: true, logId: data.id }
+        return { success: true, logId: data.id, resumed: false }
     } catch (e: any) {
         return { error: e.message }
     }

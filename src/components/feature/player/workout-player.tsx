@@ -24,8 +24,8 @@ import { useToast } from "@/hooks/use-toast"
 import { useRouter } from 'next/navigation'
 import { startWorkoutLog, recordSetLoad, finishWorkoutLog } from '@/actions/log-actions'
 
-export function WorkoutPlayer({ workout, exercises }: { workout: any, exercises: any[] }) {
-    const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0)
+export function WorkoutPlayer({ workout, exercises, initialExerciseIndex = 0, initialLogId }: { workout: any, exercises: any[], initialExerciseIndex?: number, initialLogId?: string }) {
+    const [currentExerciseIndex, setCurrentExerciseIndex] = useState(initialExerciseIndex)
     const [setType, setSetType] = useState<'WARMUP' | 'FEEDER' | 'WORKING'>('WARMUP')
     const [currentSet, setCurrentSet] = useState(1)
     const [isResting, setIsResting] = useState(false)
@@ -87,6 +87,11 @@ export function WorkoutPlayer({ workout, exercises }: { workout: any, exercises:
     // Initialize Log
     useEffect(() => {
         const initLog = async () => {
+            if (initialLogId) {
+                setLogId(initialLogId)
+                return
+            }
+
             const result = await startWorkoutLog(workout.id)
             if (result.success) {
                 setLogId(result.logId)
@@ -99,23 +104,32 @@ export function WorkoutPlayer({ workout, exercises }: { workout: any, exercises:
             }
         }
         initLog()
-    }, [workout.id])
+    }, [workout.id, initialLogId])
 
-    // Rest Timer Logic
+    // Rest Timer Logic (Correct for background/screen off)
+    const [restEndTime, setRestEndTime] = useState<number | null>(null)
+
     useEffect(() => {
-        let interval: any = null;
-        if (isResting && restTimeLeft > 0) {
-            interval = setInterval(() => {
-                setRestTimeLeft((prev) => prev - 1)
-            }, 1000)
-        } else if (restTimeLeft === 0 && isResting) {
-            handleRestEnd()
-        }
+        if (!isResting || !restEndTime) return
+
+        const interval = setInterval(() => {
+            const now = Date.now()
+            const secondsLeft = Math.ceil((restEndTime - now) / 1000)
+
+            if (secondsLeft <= 0) {
+                setRestTimeLeft(0)
+                handleRestEnd()
+            } else {
+                setRestTimeLeft(secondsLeft)
+            }
+        }, 200)
+
         return () => clearInterval(interval)
-    }, [isResting, restTimeLeft])
+    }, [isResting, restEndTime])
 
     const handleRestEnd = () => {
         setIsResting(false)
+        setRestEndTime(null)
         const ex = currentExercise
 
         if (setType === 'WARMUP') {
@@ -141,6 +155,11 @@ export function WorkoutPlayer({ workout, exercises }: { workout: any, exercises:
             } else {
                 advanceExercise()
             }
+        }
+
+        // Notification attempt (requires permission, basic implementation)
+        if ("Notification" in window && Notification.permission === "granted") {
+            new Notification("Descanso Finalizado!", { body: "Hora de voltar para a série." })
         }
     }
 
@@ -173,13 +192,23 @@ export function WorkoutPlayer({ workout, exercises }: { workout: any, exercises:
     }
 
     const handleSetComplete = async () => {
+        // Validation: Note is mandatory
+        if (!exerciseNote.trim()) {
+            toast({
+                variant: 'destructive',
+                title: 'Anotação Obrigatória',
+                description: 'Por favor, registre como foi a série antes de concluir.'
+            })
+            return
+        }
+
         if (logId) {
             setLoading(true)
             await recordSetLoad({
                 logId,
                 exerciseId: currentExercise.exercise_id,
-                weight: parseFloat(weightInput),
-                reps: parseInt(repsInput),
+                weight: parseFloat(weightInput || '0'),
+                reps: parseInt(repsInput || '0'),
                 setType,
                 notes: exerciseNote
             })
@@ -193,7 +222,13 @@ export function WorkoutPlayer({ workout, exercises }: { workout: any, exercises:
         else restTime = currentExercise.rest_seconds || 60
 
         setRestTimeLeft(restTime)
+        setRestEndTime(Date.now() + restTime * 1000)
         setIsResting(true)
+
+        // Request notification permission if needed
+        if ("Notification" in window && Notification.permission === "default") {
+            Notification.requestPermission()
+        }
     }
 
     const handleFinish = async () => {
@@ -334,7 +369,7 @@ export function WorkoutPlayer({ workout, exercises }: { workout: any, exercises:
                                     )}
                                 </div>
                                 <h2 className="text-4xl md:text-5xl font-black text-white uppercase italic tracking-tighter leading-none">
-                                    {currentExercise.exercise?.name}
+                                    {currentExercise.exercise?.name || 'Exercício'}
                                 </h2>
                             </div>
 

@@ -61,14 +61,14 @@ export default async function LandingPage() {
       </main>
 
       <footer className="py-12 bg-zinc-950 border-t border-zinc-900">
-        <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="opacity-50 hover:opacity-100 transition-opacity">
+        <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-8 md:gap-6">
+          <Link href="/" className="opacity-50 hover:opacity-100 transition-opacity block">
             <Logo size="md" />
-          </div>
-          <p className="text-[10px] uppercase font-bold text-zinc-600 tracking-widest">
+          </Link>
+          <p className="text-[10px] uppercase font-bold text-zinc-600 tracking-widest text-center order-3 md:order-2">
             © 2026 RepTrail Inc. Todos os direitos reservados.
           </p>
-          <div className="flex gap-4">
+          <div className="flex flex-wrap justify-center gap-6 order-2 md:order-3">
             <Link href="/afiliados/login" className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest hover:text-zinc-400 transition-colors">Sou afiliado</Link>
             <Link href="/afiliados" className="text-[10px] font-bold text-amber-500/60 uppercase tracking-widest hover:text-amber-500 transition-colors">Quero me tornar afiliado</Link>
             <Link href="#" className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest hover:text-zinc-400 transition-colors">Termos</Link>

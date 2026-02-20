@@ -67,16 +67,15 @@ export function CardioPlayer({ assignment }: CardioPlayerProps) {
     }
 
     function startTimer() {
+        // Define timestamp de referência para cálculo preciso mesmo em background
+        // Se já temos segundos decorridos, subtraímos para achar o "início virtual"
+        const startRef = Date.now() - (seconds * 1000)
+
         if (timerRef.current) clearInterval(timerRef.current)
         timerRef.current = setInterval(() => {
-            setSeconds(prev => {
-                if (prev >= targetSeconds) {
-                    // Auto-finish or just keep going? The user said "Timer regressivo configurável".
-                    // I'll keep it at target but allow the user to conclude.
-                    return prev + 1
-                }
-                return prev + 1
-            })
+            const now = Date.now()
+            const diff = Math.floor((now - startRef) / 1000)
+            setSeconds(diff)
         }, 1000)
     }
 
