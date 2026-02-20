@@ -103,7 +103,7 @@ export function MarketplaceSection({ initialTrainers }: MarketplaceSectionProps)
 
                                     <div className="flex items-center gap-1 text-[10px] font-bold text-zinc-500">
                                         <Users className="w-3 h-3" />
-                                        {trainer.student_count || Math.floor(Math.random() * 50) + 10} alunos
+                                        {trainer.student_count || (trainer.id.charCodeAt(0) % 50) + 10} alunos
                                     </div>
                                 </div>
                             </div>
