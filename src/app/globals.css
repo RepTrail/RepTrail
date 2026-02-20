@@ -136,9 +136,18 @@
     height: 100%;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
-    overscroll-behavior-y: none;
-    /* Previne bounce excessivo que trava o scroll */
+    overscroll-behavior-y: auto;
+    touch-action: manipulation;
+    /* Melhora a resposta ao toque */
   }
+}
+
+/* Otimização para elementos pesados (blurs/gradientes) */
+.gpu-accelerated {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 /* Custom Scrollbar */

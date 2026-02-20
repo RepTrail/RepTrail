@@ -81,9 +81,9 @@ export default async function StudentLayout({
             <MobileHeader role="student" hasTrainer={hasTrainer} steroidUse={steroidUse} />
 
             {/* Main Content Area */}
-            <main className="flex-1 overflow-x-hidden overflow-y-auto bg-zinc-950 relative custom-scrollbar touch-pan-y">
-                {/* Background Glow */}
-                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-emerald-500/5 blur-[120px] rounded-full -mr-64 -mt-64 pointer-events-none" />
+            <main className="flex-1 overflow-x-hidden overflow-y-auto bg-zinc-950 relative custom-scrollbar">
+                {/* Background Glow - Optimized for mobile performance */}
+                <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-emerald-500/10 blur-[80px] rounded-full -mr-32 -mt-32 pointer-events-none gpu-accelerated" />
 
                 <div className="pt-24 md:pt-[50px] p-4 pb-32 md:pb-10 md:p-10 relative z-10">
                     <div className="max-w-7xl mx-auto">
