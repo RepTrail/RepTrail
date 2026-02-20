@@ -1,8 +1,12 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import dynamic from "next/dynamic";
 import { Toaster } from "@/components/ui/toaster";
-import { PWAInstallPrompt } from "@/components/feature/pwa-install-prompt";
+
+const PWAInstallPrompt = dynamic(() => import("@/components/feature/pwa-install-prompt").then(mod => mod.PWAInstallPrompt), {
+  ssr: false
+});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

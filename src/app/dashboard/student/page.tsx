@@ -5,9 +5,12 @@ import { getStudentDailyDiet } from '@/actions/diet-actions'
 import { getStudentTrainer } from '@/actions/student-actions'
 import { getTrainerRanking } from '@/actions/trainer-actions'
 import { getStudentErgogenics } from '@/actions/ergogenics-actions'
-import { CardioPlayer } from '@/components/feature/student/cardio-player'
-import { DietAdherence } from '@/components/feature/student/diet-adherence'
+import dynamic from 'next/dynamic'
+const CardioPlayer = dynamic(() => import('@/components/feature/student/cardio-player').then(mod => mod.CardioPlayer), { ssr: false })
+const DietAdherence = dynamic(() => import('@/components/feature/student/diet-adherence').then(mod => mod.DietAdherence), { ssr: false })
+const NotificationRequestModal = dynamic(() => import('@/components/feature/student/notification-request-modal').then(mod => mod.NotificationRequestModal), { ssr: false })
 import { PaymentWarning } from '@/components/feature/student/payment-warning'
+
 import { Flame, Activity, Clock, Utensils, Dumbbell, Star, Search, ShieldCheck, Trophy, ArrowRight, Zap, Target, LogOut, Sparkles, CheckCircle, Play } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -17,7 +20,6 @@ import Link from 'next/link'
 import { signOutAction } from '@/actions/auth-actions'
 import { getTodayRangeBrazil, getTodayStrBrazil } from '@/lib/date-utils'
 import { ErgogenicCheckButton } from '@/components/feature/student/ergogenic-check-button'
-import { NotificationRequestModal } from '@/components/feature/student/notification-request-modal'
 
 export default async function StudentDashboard() {
     const supabase = await createClient()
