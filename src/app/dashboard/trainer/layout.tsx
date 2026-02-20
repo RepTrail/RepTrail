@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
-import { Home, Users, Dumbbell, Utensils, FileUp, User, LogOut, Trophy, CreditCard, Activity, FlaskConical } from 'lucide-react'
+import { Home, Users, Dumbbell, Utensils, FileUp, User, LogOut, Trophy, CreditCard, Activity, FlaskConical, ShoppingBag } from 'lucide-react'
 import { signOutAction } from '@/actions/auth-actions'
 import { Logo } from '@/components/ui/logo'
 import { MobileHeader } from '@/components/layout/mobile-header'
@@ -104,6 +104,7 @@ export default async function TrainerLayout({
                         <NavLink href="/dashboard/trainer/cardio" icon={<Activity className="w-5 h-5" />}>Cardio</NavLink>
                         <NavLink href="/dashboard/trainer/ergogenics" icon={<FlaskConical className="w-5 h-5" />}>Ergogênicos</NavLink>
                         {!betaTesterMode && <NavLink href="/dashboard/trainer/import-pdf" icon={<FileUp className="w-5 h-5" />}>Importar PDF</NavLink>}
+                        <NavLink href="/dashboard/trainer/loja" icon={<ShoppingBag className="w-5 h-5" />}>Loja</NavLink>
                         <NavLink href="/dashboard/trainer/plans" icon={<CreditCard className="w-5 h-5" />}>Planos & Assinatura</NavLink>
                         <NavLink href="/dashboard/trainer/ranking" icon={<Trophy className="w-5 h-5" />}>Ranking Geral</NavLink>
 
@@ -146,6 +147,7 @@ export default async function TrainerLayout({
             <nav className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[95vw] h-16 bg-zinc-900/90 backdrop-blur-xl border border-zinc-800 rounded-2xl z-50 px-2 flex items-center justify-around shadow-2xl shadow-black/50">
                 <MobileNavLink href="/dashboard/trainer" icon={<Home className="w-5 h-5" />} />
                 <MobileNavLink href="/dashboard/trainer/students" icon={<Users className="w-5 h-5" />} />
+                <MobileNavLink href="/dashboard/trainer/loja" icon={<ShoppingBag className="w-5 h-5" />} />
                 <MobileNavLink href="/dashboard/trainer/ranking" icon={<Trophy className="w-5 h-5" />} />
                 <MobileNavLink href="/dashboard/trainer/profile" icon={<User className="w-5 h-5" />} />
             </nav>
