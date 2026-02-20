@@ -43,7 +43,7 @@ export function PWAInstallPrompt() {
             setDeferredPrompt(e)
 
             // Only show if not already standalone and we haven't shown it before
-            if (!isStandaloneMode && !localStorage.getItem('pwa_prompt_shown')) {
+            if (!isStandaloneMode && !localStorage.getItem('pwa_prompt_shown_v1')) {
                 setShowPrompt(true)
             }
         }
@@ -57,7 +57,7 @@ export function PWAInstallPrompt() {
         window.addEventListener('open-pwa-prompt', handleManualTrigger)
 
         // 4. Special check for iOS (since there's no beforeinstallprompt)
-        if (ios && !isStandaloneMode && !localStorage.getItem('pwa_prompt_shown')) {
+        if (ios && !isStandaloneMode && !localStorage.getItem('pwa_prompt_shown_v1')) {
             // Show after a small delay to not annoy the user immediately
             const timer = setTimeout(() => {
                 setShowPrompt(true)
@@ -81,12 +81,12 @@ export function PWAInstallPrompt() {
             setDeferredPrompt(null)
             setShowPrompt(false)
         }
-        localStorage.setItem('pwa_prompt_shown', 'true')
+        localStorage.setItem('pwa_prompt_shown_v1', 'true')
     }
 
     const closePrompt = () => {
         setShowPrompt(false)
-        localStorage.setItem('pwa_prompt_shown', 'true')
+        localStorage.setItem('pwa_prompt_shown_v1', 'true')
     }
 
     if (!isStudentPath || isStandalone || !showPrompt) return null
