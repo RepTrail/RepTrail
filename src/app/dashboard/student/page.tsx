@@ -5,10 +5,9 @@ import { getStudentDailyDiet } from '@/actions/diet-actions'
 import { getStudentTrainer } from '@/actions/student-actions'
 import { getTrainerRanking } from '@/actions/trainer-actions'
 import { getStudentErgogenics } from '@/actions/ergogenics-actions'
-import dynamic from 'next/dynamic'
-const CardioPlayer = dynamic(() => import('@/components/feature/student/cardio-player').then(mod => mod.CardioPlayer), { ssr: false })
-const DietAdherence = dynamic(() => import('@/components/feature/student/diet-adherence').then(mod => mod.DietAdherence), { ssr: false })
-const NotificationRequestModal = dynamic(() => import('@/components/feature/student/notification-request-modal').then(mod => mod.NotificationRequestModal), { ssr: false })
+import { CardioPlayer } from '@/components/feature/student/cardio-player'
+import { DietAdherence } from '@/components/feature/student/diet-adherence'
+import { NotificationRequestModal } from '@/components/feature/student/notification-request-modal'
 import { PaymentWarning } from '@/components/feature/student/payment-warning'
 
 import { Flame, Activity, Clock, Utensils, Dumbbell, Star, Search, ShieldCheck, Trophy, ArrowRight, Zap, Target, LogOut, Sparkles, CheckCircle, Play } from 'lucide-react'
@@ -21,6 +20,10 @@ import { signOutAction } from '@/actions/auth-actions'
 import { getTodayRangeBrazil, getTodayStrBrazil } from '@/lib/date-utils'
 import { ErgogenicCheckButton } from '@/components/feature/student/ergogenic-check-button'
 
+import { AnamnesisForm } from '@/components/feature/student/anamnesis-form'
+
+import { getStudentMetricsHistory } from '@/actions/metrics-actions'
+
 export default async function StudentDashboard() {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
@@ -30,14 +33,20 @@ export default async function StudentDashboard() {
     // 1. Check Personal Relationship
     const trainerRel = await getStudentTrainer(user.id)
 
-    // 2. Details for steroid check
+    // 2. Fetch full details for anamnesis check
     const { data: details } = await supabase
         .from('student_details')
-        .select('steroid_use')
+        .select('*')
         .eq('id', user.id)
         .single()
 
     const steroidUse = !!details?.steroid_use
+    const showAnamnesis = !details?.age || !details?.height || !details?.current_weight
+
+    // New: Fetch Metrics
+    const metricsHistory = await getStudentMetricsHistory(user.id)
+    const latestWeight = metricsHistory.weights[metricsHistory.weights.length - 1]?.weight_kg
+    const latestBF = metricsHistory.bfs[metricsHistory.bfs.length - 1]?.bf_percentage || details?.body_fat
 
     // 3. Fetch Daily Data
     const rawCardios = await getStudentCardioAssignments(user.id)
@@ -247,7 +256,7 @@ export default async function StudentDashboard() {
     }
 
     return (
-        <div className="space-y-10 pb-20">
+        <div className="space-y-10 pb-20" suppressHydrationWarning>
             <PaymentWarning relationship={trainerRel} />
             {/* Welcome Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
@@ -270,7 +279,11 @@ export default async function StudentDashboard() {
                 </div>
             </div>
 
-
+            {showAnamnesis && (
+                <div className="animate-in fade-in slide-in-from-top-6 duration-1000">
+                    <AnamnesisForm initialData={details} />
+                </div>
+            )}
 
             <div className="grid gap-8 lg:grid-cols-12">
                 {/* Main Content (Workout & Cardio) */}
@@ -479,6 +492,30 @@ export default async function StudentDashboard() {
 
                 {/* Sidebar (Diet & Info) */}
                 <div className="lg:col-span-4 space-y-10">
+                    {/* Metrics Summary */}
+                    <div className="space-y-6">
+                        <h2 className="text-[12px] font-black text-zinc-100 flex items-center gap-2 uppercase tracking-[0.2em] px-2">
+                            <Activity className="w-4 h-4 text-orange-500" />
+                            Seu Progresso
+                        </h2>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="bg-zinc-900/30 border border-zinc-800/50 rounded-3xl p-5 space-y-1">
+                                <p className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Peso</p>
+                                <div className="flex items-baseline gap-1">
+                                    <span className="text-2xl font-black text-white italic">{latestWeight || '--'}</span>
+                                    <span className="text-[10px] font-bold text-zinc-600 uppercase">kg</span>
+                                </div>
+                            </div>
+                            <div className="bg-zinc-900/30 border border-zinc-800/50 rounded-3xl p-5 space-y-1">
+                                <p className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Gordura</p>
+                                <div className="flex items-baseline gap-1">
+                                    <span className="text-2xl font-black text-white italic">{latestBF || '--'}</span>
+                                    <span className="text-[10px] font-bold text-zinc-600 uppercase">%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div className="space-y-6">
                         <h2 className="text-[12px] font-black text-zinc-100 flex items-center gap-2 uppercase tracking-[0.2em] px-2">
                             <Utensils className="w-4 h-4 text-emerald-500" />

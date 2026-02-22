@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Dumbbell, Utensils, Activity, User, Home, ShoppingBag, Trophy, Search, UserCheck, Sparkles, LogOut, TrendingUp } from 'lucide-react'
+import { Dumbbell, Utensils, Activity, User, Home, ShoppingBag, Trophy, Search, UserCheck, Sparkles, LogOut, TrendingUp, ClipboardList } from 'lucide-react'
 import { signOutAction } from '@/actions/auth-actions'
 
 interface StudentNavProps {
@@ -24,6 +24,7 @@ export function StudentNav({ hasTrainer, steroidUse }: StudentNavProps) {
         { href: '/dashboard/student/ranking', icon: <Trophy className="w-4 h-4" />, label: 'Ranking', requiresTrainer: false },
         { href: '/buscar-personal', icon: <Search className="w-4 h-4" />, label: 'Buscar Personal', requiresTrainer: false, hideIfHasTrainer: true },
         { href: '/dashboard/student/meu-personal', icon: <UserCheck className="w-4 h-4" />, label: 'Meu Personal', requiresTrainer: true, showOnlyIfHasTrainer: true },
+        { href: '/dashboard/student/anamnese', icon: <ClipboardList className="w-4 h-4" />, label: 'Anamnese', requiresTrainer: false },
         { href: '/dashboard/student/profile', icon: <User className="w-4 h-4" />, label: 'Meu Perfil', requiresTrainer: false },
     ]
 
@@ -85,6 +86,12 @@ export function MobileStudentNav({ hasTrainer, steroidUse }: StudentNavProps) {
                 className={`p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student/ranking' ? 'bg-emerald-500 text-zinc-950 shadow-lg shadow-emerald-500/20' : 'text-zinc-500 hover:text-zinc-300'}`}
             >
                 <Trophy className="w-5 h-5" />
+            </Link>
+            <Link
+                href="/dashboard/student/anamnese"
+                className={`p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student/anamnese' ? 'bg-emerald-500 text-zinc-950 shadow-lg shadow-emerald-500/20' : 'text-zinc-500 hover:text-zinc-300'}`}
+            >
+                <ClipboardList className="w-5 h-5" />
             </Link>
             {hasTrainer ? (
                 <Link

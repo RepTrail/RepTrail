@@ -12,7 +12,8 @@ const nextConfig: NextConfig = {
     ],
   },
   reactCompiler: true,
-  serverExternalPackages: [],
+  serverExternalPackages: ['pdf-parse'],
+
 };
 
 export default nextConfig;

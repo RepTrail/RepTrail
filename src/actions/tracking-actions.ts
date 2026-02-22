@@ -223,7 +223,6 @@ export async function getAdherenceHistory(days: number = 30) {
 
     const workoutDays = new Set((aw || []).map((a: any) => a.day_of_week))
 
-    // Robust Cardio Days Logic
     const cardioDays = new Set<number>()
     if (ac) {
         ac.forEach((a: any) => {
@@ -244,8 +243,6 @@ export async function getAdherenceHistory(days: number = 30) {
         })
     }
 
-    const hasDiet = (ad?.length ?? 0) > 0
-
     const historyArr: any[] = []
     const dayListSlice: string[] = []
     for (let i = 0; i < days; i++) {
@@ -254,9 +251,35 @@ export async function getAdherenceHistory(days: number = 30) {
         dayListSlice.push(d.toISOString().split('T')[0])
     }
 
+    // Fetch execution logs for the period
+    const { data: wLogs } = await supabase
+        .from('workout_logs')
+        .select('started_at, status')
+        .eq('student_id', user.id)
+        .eq('status', 'completed')
+        .gte('started_at', startDateStr + 'T00:00:00')
+        .lte('started_at', endDateStr + 'T23:59:59')
+
+    const { data: cLogs } = await supabase
+        .from('cardio_logs')
+        .select('started_at, status')
+        .eq('student_id', user.id)
+        .eq('status', 'completed')
+        .gte('started_at', startDateStr + 'T00:00:00')
+        .lte('started_at', endDateStr + 'T23:59:59')
+
+    const { data: eLogs } = await supabase
+        .from('ergogenic_logs')
+        .select('created_at')
+        .eq('student_id', user.id)
+        .gte('created_at', startDateStr + 'T00:00:00')
+        .lte('created_at', endDateStr + 'T23:59:59')
+
+    const workoutDates = new Set(wLogs?.map(l => l.started_at.split('T')[0]))
+    const cardioDates = new Set(cLogs?.map(l => l.started_at.split('T')[0]))
+    const ergoDates = new Set(eLogs?.map(l => l.created_at.split('T')[0]))
+
     for (const dateStr of dayListSlice) {
-        // Rule: If date is before effective start date, do not mark as failure/skipped.
-        // But if it is BEFORE today, we mark as none.
         if (dateStr < effectiveStartStr) {
             historyArr.push({
                 date: dateStr,
@@ -272,40 +295,35 @@ export async function getAdherenceHistory(days: number = 30) {
         }
 
         const found = tracking?.find(t => t.date === dateStr)
+        const d = new Date(dateStr + 'T12:00:00')
+        const dow = d.getDay()
+        const isPast = dateStr < todayStr
 
-        if (found) {
-            historyArr.push(found)
-        } else {
-            const d = new Date(dateStr + 'T12:00:00')
-            const dow = d.getDay()
-            const isToday = dateStr === todayStr
-            const isPast = dateStr < todayStr
+        // Workout Status
+        let workoutStatus = found?.workout_status || 'none'
+        if (workoutDates.has(dateStr)) workoutStatus = 'completed'
+        else if (workoutStatus === 'none' && workoutDays.has(dow)) workoutStatus = isPast ? 'skipped' : 'assigned'
 
-            const workoutStatus = workoutDays.has(dow)
-                ? (isPast ? 'skipped' : 'assigned')
-                : 'none'
+        // Cardio Status
+        let cardioStatus = found?.cardio_status || 'none'
+        if (cardioDates.has(dateStr)) cardioStatus = 'completed'
+        else if (cardioStatus === 'none' && cardioDays.has(dow)) cardioStatus = isPast ? 'skipped' : 'assigned'
 
-            const cardioStatus = cardioDays.has(dow)
-                ? (isPast ? 'skipped' : 'assigned')
-                : 'none'
+        // Ergo Status
+        let ergoStatus = found?.ergogenics_status || 'none'
+        if (ergoDates.has(dateStr)) ergoStatus = 'completed'
+        else if (ergoStatus === 'none' && steroidUse && ergoDays.has(dow)) ergoStatus = isPast ? 'skipped' : 'assigned'
 
-            // Ergogenics Logic
-            let ergoStatus = 'none'
-            if (steroidUse && ergoDays.has(dow)) {
-                ergoStatus = isPast ? 'skipped' : 'assigned'
-            }
-
-            historyArr.push({
-                date: dateStr,
-                diet_percentage: 0,
-                workout_status: workoutStatus,
-                workout_percentage: 0,
-                cardio_status: cardioStatus,
-                cardio_percentage: 0,
-                ergogenics_status: ergoStatus,
-                ergogenics_percentage: 0,
-            })
-        }
+        historyArr.push({
+            date: dateStr,
+            diet_percentage: found?.diet_percentage || 0,
+            workout_status: workoutStatus,
+            workout_percentage: workoutStatus === 'completed' ? 100 : (found?.workout_percentage || 0),
+            cardio_status: cardioStatus,
+            cardio_percentage: cardioStatus === 'completed' ? 100 : (found?.cardio_percentage || 0),
+            ergogenics_status: ergoStatus,
+            ergogenics_percentage: ergoStatus === 'completed' ? 100 : (found?.ergogenics_percentage || 0),
+        })
     }
 
     return historyArr

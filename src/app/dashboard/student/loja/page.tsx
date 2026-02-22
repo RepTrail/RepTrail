@@ -18,8 +18,14 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Logo } from '@/components/ui/logo'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 
 export default function StudentStorePage() {
+    const pathname = usePathname()
+    const isTrainer = pathname.includes('/dashboard/trainer')
+    const explorePath = isTrainer ? '/dashboard/trainer/loja/explorar' : '/dashboard/student/loja/explorar'
+
     const [products, setProducts] = useState<any[]>([])
     const [loading, setLoading] = useState(true)
     const [search, setSearch] = useState('')
@@ -94,10 +100,12 @@ export default function StudentStorePage() {
                         </p>
                     </div>
 
-                    <Button className="w-fit h-14 px-10 rounded-2xl bg-orange-500 hover:bg-orange-400 text-zinc-950 font-black uppercase italic tracking-wide shadow-xl shadow-orange-500/20 active:scale-95 transition-all">
-                        Explorar Coleção
-                        <ArrowRight className="w-5 h-5 ml-2" />
-                    </Button>
+                    <Link href={explorePath}>
+                        <Button className="w-fit h-14 px-10 rounded-2xl bg-orange-500 hover:bg-orange-400 text-zinc-950 font-black uppercase italic tracking-wide shadow-xl shadow-orange-500/20 active:scale-95 transition-all">
+                            Explorar Coleção
+                            <ArrowRight className="w-5 h-5 ml-2" />
+                        </Button>
+                    </Link>
                 </div>
             </div>
 

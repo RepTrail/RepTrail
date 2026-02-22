@@ -19,7 +19,6 @@ export async function getAdminAffiliates() {
         return { error: 'Unauthorized' }
     }
 
-    // Get affiliates and their referrals
     const { data: affiliates, error } = await supabase
         .from('profiles')
         .select(`
@@ -29,22 +28,40 @@ export async function getAdminAffiliates() {
         .eq('is_affiliate', true)
         .order('created_at', { ascending: false })
 
-    if (error) return { error: error.message }
+    if (error) {
+        console.error('getAdminAffiliates Error:', error)
+        return { error: error.message }
+    }
+
+    if (!affiliates || affiliates.length === 0) {
+        return { data: [] }
+    }
+
+    const affiliateIds = affiliates.map((a: any) => a.id)
+
+    // Fetch the referrals separately to avoid self-join PostgREST errors
+    const { data: allReferrals } = await supabase
+        .from('profiles')
+        .select(`
+            id, role, referred_by_id,
+            trainer_students!student_id(active, monthly_fee)
+        `)
+        .in('referred_by_id', affiliateIds)
 
     // Calculate detailed stats in JS
     const formatted = affiliates.map((a: any) => {
-        const referrals = a.referrals || []
+        const referrals = allReferrals ? allReferrals.filter((r: any) => r.referred_by_id === a.id) : []
         const totalReferrals = referrals.length
 
         // Active Referrals: Students with active trainer connection
         const activeReferralsCount = referrals.filter((r: any) =>
-            r.role === 'student' && r.trainer_student && r.trainer_student.some((ts: any) => ts.active)
+            r.role === 'student' && r.trainer_students && r.trainer_students.some((ts: any) => ts.active)
         ).length
 
         // Estimated Monthly Commission
         const monthlyVolume = referrals.reduce((sum: number, r: any) => {
-            if (r.role === 'student' && r.trainer_student) {
-                const activeSub = r.trainer_student.find((ts: any) => ts.active)
+            if (r.role === 'student' && r.trainer_students) {
+                const activeSub = r.trainer_students.find((ts: any) => ts.active)
                 if (activeSub) return sum + (activeSub.monthly_fee || 0)
             }
             return sum

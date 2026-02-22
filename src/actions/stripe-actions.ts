@@ -1,31 +1,92 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
-import { revalidatePath } from 'next/cache'
+import { headers } from 'next/headers'
+import { stripe } from '@/lib/stripe'
 
-/**
- * Stripe Integration Placeholder
- * This file is prepared for future Stripe checkout session logic.
- * Even with the paywall active, administrators can manually grant tiers 
- * via the /admin panel for testers.
- */
+const FREE_STUDENTS_LIMIT = 5
+const PRICE_PER_STUDENT = 10.90 // R$ por aluno/mês acima do limite grátis
 
-export async function createCheckoutSession(tier: 'start' | 'pro' | 'elite', period: 'monthly' | 'quarterly' | 'annual') {
+export async function createCheckoutSession(
+    tier: 'on_demand',
+    period: 'monthly',
+    studentCount?: number
+) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
-
     if (!user) return { error: 'Não autorizado' }
 
-    // Mocking Stripe logic for now
-    // In production, this would return a Stripe Checkout URL
-    console.log(`[STRIPE MOCK] Creating session for ${tier} (${period}) for user ${user.id}`)
+    const priceId = process.env.STRIPE_PRICE_ON_DEMAND
 
-    // Simulate a short delay
-    await new Promise(resolve => setTimeout(resolve, 1500))
+    // Mock mode se a chave não estiver configurada
+    if (!priceId || priceId === 'price_COLE_AQUI') {
+        console.log(`[STRIPE MOCK] On Demand checkout - User: ${user.id}, Alunos: ${studentCount}`)
+        await new Promise(resolve => setTimeout(resolve, 800))
+        return {
+            success: true,
+            url: null,
+            isMock: true,
+            message: 'Configure STRIPE_PRICE_ON_DEMAND no .env.local para ativar o checkout real.'
+        }
+    }
 
-    return {
-        success: true,
-        url: null, // Would be stripe checkout url
-        isMock: true
+    const origin = (await headers()).get('origin') || 'http://localhost:3000'
+
+    try {
+        const session = await stripe.checkout.sessions.create({
+            mode: 'subscription',
+            line_items: [
+                {
+                    price: priceId,
+                    // Metered billing: não passa quantity aqui
+                },
+            ],
+            success_url: `${origin}/dashboard/trainer/plans/success?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${origin}/dashboard/trainer/plans`,
+            customer_email: user.email,
+            metadata: {
+                user_id: user.id,
+                tier: 'on_demand',
+                period: 'monthly',
+            },
+            subscription_data: {
+                metadata: {
+                    user_id: user.id,
+                    tier: 'on_demand',
+                },
+            },
+        })
+
+        return { success: true, url: session.url }
+    } catch (e: any) {
+        console.error('[STRIPE ERROR]', e.message)
+        return { error: e.message }
+    }
+}
+
+/**
+ * Reporta o uso atual de alunos ao Stripe (chamado pelo webhook invoice.upcoming).
+ * Calcula automaticamente alunos acima do limite grátis.
+ */
+export async function reportStudentUsage(
+    subscriptionItemId: string,
+    totalActiveStudents: number
+) {
+    const billableStudents = Math.max(0, totalActiveStudents - FREE_STUDENTS_LIMIT)
+
+    try {
+        // Usa a nova API de Billing Meters
+        await stripe.billing.meterEvents.create({
+            event_name: 'active_students',
+            payload: {
+                stripe_customer_id: subscriptionItemId, // será o customer ID
+                value: String(billableStudents),
+            },
+        })
+        console.log(`[STRIPE] Reported ${billableStudents} billable students (${totalActiveStudents} total - ${FREE_STUDENTS_LIMIT} free)`)
+        return { success: true, billableStudents }
+    } catch (e: any) {
+        console.error('[STRIPE] Error reporting usage:', e.message)
+        return { error: e.message }
     }
 }

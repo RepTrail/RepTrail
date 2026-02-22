@@ -166,13 +166,12 @@ export function TrainerErgogenicsView({ studentId, initialData }: TrainerErgogen
                                         <Button
                                             key={day.value}
                                             type="button"
-                                            variant="outline"
                                             onClick={() => toggleDay(day.value)}
                                             className={`
-                                                h-10 text-[9px] font-black uppercase tracking-tighter rounded-lg border-zinc-800 transition-all active:scale-90
+                                                h-11 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all active:scale-95 border-2
                                                 ${formData.application_days.includes(day.value)
-                                                    ? 'bg-emerald-500 text-zinc-950 border-emerald-300 shadow-[0_0_20px_rgba(16,185,129,0.5)] hover:bg-emerald-400 hover:border-emerald-200'
-                                                    : 'bg-zinc-900/50 text-zinc-500 hover:bg-zinc-800 hover:text-zinc-100 hover:border-emerald-500/30'}
+                                                    ? 'bg-emerald-500 text-zinc-950 border-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.4)] scale-105'
+                                                    : 'bg-zinc-900/50 text-zinc-500 border-zinc-800 hover:bg-zinc-800 hover:text-zinc-100 hover:border-emerald-500/30'}
                                             `}
                                         >
                                             {day.label}
@@ -255,9 +254,9 @@ export function TrainerErgogenicsView({ studentId, initialData }: TrainerErgogen
                                         {DAYS.map(day => (
                                             <div
                                                 key={day.value}
-                                                className={`w-8 h-8 rounded-lg flex items-center justify-center text-[9px] font-black border transition-all active:scale-90 ${e.application_days.includes(day.value)
-                                                    ? 'bg-emerald-500 border-emerald-400 text-zinc-950 shadow-lg shadow-emerald-500/20'
-                                                    : 'bg-zinc-950 border-zinc-900 text-zinc-700 hover:border-zinc-700 hover:text-zinc-300'
+                                                className={`w-9 h-9 rounded-xl flex items-center justify-center text-[10px] font-black border-2 transition-all ${e.application_days.includes(day.value)
+                                                    ? 'bg-emerald-500 border-emerald-400 text-zinc-950 shadow-lg shadow-emerald-500/20 scale-110 z-10'
+                                                    : 'bg-zinc-950 border-zinc-900 text-zinc-700'
                                                     }`}
                                             >
                                                 {day.label[0]}

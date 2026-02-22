@@ -1,12 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import dynamic from "next/dynamic";
 import { Toaster } from "@/components/ui/toaster";
-
-const PWAInstallPrompt = dynamic(() => import("@/components/feature/pwa-install-prompt").then(mod => mod.PWAInstallPrompt), {
-  ssr: false
-});
+import { PWAClient } from "@/components/layout/pwa-client";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -53,7 +49,7 @@ export default function RootLayout({
       >
         {children}
         <Toaster />
-        <PWAInstallPrompt />
+        <PWAClient />
       </body>
     </html>
   );

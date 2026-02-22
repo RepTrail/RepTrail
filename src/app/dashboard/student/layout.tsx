@@ -8,11 +8,7 @@ import { signOutAction } from '@/actions/auth-actions'
 import { getStudentTrainer } from '@/actions/student-actions'
 import { Logo } from '@/components/ui/logo'
 import { MobileHeader } from '@/components/layout/mobile-header'
-import dynamic from 'next/dynamic'
-
-const SettingsModal = dynamic(() => import('@/components/feature/student/settings-modal').then(mod => mod.SettingsModal), {
-    ssr: false
-})
+import { SettingsModal } from '@/components/feature/student/settings-modal'
 
 export default async function StudentLayout({
     children,

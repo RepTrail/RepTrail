@@ -6,7 +6,6 @@ import { EditProfileDialog } from '@/components/feature/trainer/edit-profile-dia
 import { CodeAutoGenerator } from '@/components/feature/trainer/code-auto-generator'
 import Link from 'next/link'
 import { Button } from "@/components/ui/button"
-import { LockedFeature } from '@/components/ui/locked-feature'
 import { createClient } from '@/lib/supabase/server'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
@@ -89,17 +88,10 @@ export default async function TrainerDashboard() {
     const tierColor = tierColors[currentTier] || 'text-zinc-500'
 
 
-    const TIER_LIMITS: Record<string, number> = {
-        on_demand: 9999,
-        start: 10,
-        pro: 50,
-        elite: 120
-    }
-    const limit = TIER_LIMITS[currentTier] || 9999
-    const displayValue = limit === Infinity ? `${activeStudents || 0} / ∞` : `${activeStudents || 0} / ${limit}`
+    const displayValue = `${activeStudents || 0}`
 
     return (
-        <div className="space-y-10 pb-10">
+        <div className="space-y-10 pb-10" suppressHydrationWarning>
             <CodeAutoGenerator hasCode={!!profile?.trainer_code} />
             {/* Hero Section */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-2 border-b border-zinc-800/50">
@@ -215,26 +207,24 @@ export default async function TrainerDashboard() {
                     </div>
 
                     {!betaTesterMode && (
-                        <LockedFeature isLocked={effectiveTier === 'start' || effectiveTier === 'on_demand'} requiredTier="pro" message="Importação de PDF disponível nos planos PRO e ELITE">
-                            <Card className="bg-zinc-950 border-zinc-800 shadow-2xl rounded-2xl overflow-hidden group">
-                                <CardHeader className="bg-green-500/5 border-b border-green-500/10 py-4">
-                                    <CardTitle className="text-sm font-bold text-green-500 flex items-center gap-2">
-                                        <FileUp className="w-4 h-4" />
-                                        Importação Inteligente
-                                    </CardTitle>
-                                </CardHeader>
-                                <CardContent className="p-6 space-y-4">
-                                    <p className="text-zinc-400 text-xs leading-relaxed">
-                                        Tem uma planilha ou PDF? Nossa IA pode ler o arquivo e criar o treino ou dieta em segundos.
-                                    </p>
-                                    <Button asChild className="w-full bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 text-zinc-100 rounded-xl h-11 transition-all active:scale-[0.98] group-hover:border-green-500/30">
-                                        <Link href="/dashboard/trainer/import-pdf">
-                                            Importar via PDF
-                                        </Link>
-                                    </Button>
-                                </CardContent>
-                            </Card>
-                        </LockedFeature>
+                        <Card className="bg-zinc-950 border-zinc-800 shadow-2xl rounded-2xl overflow-hidden group">
+                            <CardHeader className="bg-green-500/5 border-b border-green-500/10 py-4">
+                                <CardTitle className="text-sm font-bold text-green-500 flex items-center gap-2">
+                                    <FileUp className="w-4 h-4" />
+                                    Importação Inteligente
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="p-6 space-y-4">
+                                <p className="text-zinc-400 text-xs leading-relaxed">
+                                    Tem uma planilha ou PDF? Nossa IA pode ler o arquivo e criar o treino ou dieta em segundos.
+                                </p>
+                                <Button asChild className="w-full bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 text-zinc-100 rounded-xl h-11 transition-all active:scale-[0.98] group-hover:border-green-500/30">
+                                    <Link href="/dashboard/trainer/import-pdf">
+                                        Importar via PDF
+                                    </Link>
+                                </Button>
+                            </CardContent>
+                        </Card>
                     )}
                 </div>
             </div>

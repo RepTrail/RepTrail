@@ -212,20 +212,19 @@ export function CardioAssignmentSection({ studentId, relationshipId }: CardioAss
                             <div className="space-y-3">
                                 <Label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-1">Dias da Semana</Label>
                                 <div className="grid grid-cols-4 gap-2">
-                                    {DAYS.map((day) => (
+                                    {DAYS.slice(0, 7).map((day) => (
                                         <Button
                                             key={day.value}
                                             type="button"
-                                            variant="outline"
                                             onClick={() => toggleDay(parseInt(day.value))}
                                             className={`
-                                                h-10 text-[9px] font-black uppercase tracking-tighter rounded-lg border-zinc-800 transition-all active:scale-90
+                                                h-11 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all active:scale-95 border-2
                                                 ${selectedDays.includes(parseInt(day.value))
-                                                    ? 'bg-orange-500 text-zinc-950 border-orange-400 shadow-[0_0_15px_rgba(249,115,22,0.4)] hover:bg-orange-400'
-                                                    : 'bg-zinc-900 text-zinc-500 hover:bg-zinc-800 hover:text-zinc-200 hover:border-zinc-700'}
+                                                    ? 'bg-orange-500 text-zinc-950 border-orange-400 shadow-[0_0_20px_rgba(249,115,22,0.4)] scale-105'
+                                                    : 'bg-zinc-900 text-zinc-500 border-zinc-800 hover:border-zinc-700 hover:text-zinc-200'}
                                             `}
                                         >
-                                            {day.label}
+                                            {day.label.substring(0, 3)}
                                         </Button>
                                     ))}
                                 </div>

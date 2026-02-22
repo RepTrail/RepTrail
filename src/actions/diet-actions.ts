@@ -362,39 +362,85 @@ export async function removeMeal(id: string, dietId: string) {
 }
 export async function estimateMacros(foodName: string, quantity: string) {
     try {
-        const { getGeminiApiKey } = await import('@/actions/app-settings-actions');
-        const apiKey = await getGeminiApiKey();
-        if (!apiKey) return { error: 'IA indisponível' };
-
-        const { GoogleGenerativeAI } = require("@google/generative-ai");
-        const genAI = new GoogleGenerativeAI(apiKey);
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const { createOpenRouterClient, callAI } = await import('@/lib/ai-client');
+        const client = createOpenRouterClient();
 
         const prompt = `
-        You are a nutrition expert. Estimate the macros for this food item.
-        Food: ${foodName}
-        Quantity: ${quantity || '1 portion'}
+You are a nutrition expert. Estimate the macronutrients for this food item.
+Food: ${foodName}
+Quantity: ${quantity || '1 portion'}
 
-        Return ONLY a JSON object with this exact structure:
-        {
-          "protein": number,
-          "carbs": number,
-          "fat": number
-        }
-        Use integers or decimals. Do not include any text or markdown formatting.
-        `;
+Return ONLY a JSON object with this exact structure (no markdown):
+{"protein": number, "carbs": number, "fat": number}
+Use integers or decimals.
+`;
 
-        const result = await model.generateContent(prompt);
-        const response = await result.response;
-        const textResponse = response.text();
-
-        // Clean markdown if present
-        const jsonString = textResponse.replace(/```json/g, '').replace(/```/g, '').trim();
-        const macros = JSON.parse(jsonString);
-
+        const macros = await callAI<{ protein: number; carbs: number; fat: number }>(client, prompt);
         return { success: true, macros };
     } catch (e: any) {
         console.error("AI Macro Estimation Error:", e.message);
+        return { error: e.message };
+    }
+}
+
+export async function estimateAllDietMacros(dietId: string) {
+    const supabase = await createClient()
+
+    try {
+        // 1. Get all items
+        const { data: diet, error: fetchErr } = await supabase
+            .from('diets')
+            .select(`*, meals(*, meal_items(*))`)
+            .eq('id', dietId)
+            .single()
+
+        if (fetchErr || !diet) throw fetchErr || new Error('Diet not found')
+
+        const allItems: any[] = []
+        diet.meals.forEach((m: any) => {
+            if (m.meal_items) allItems.push(...m.meal_items)
+        })
+
+        if (allItems.length === 0) return { success: true }
+
+        const { createOpenRouterClient, callAI } = await import('@/lib/ai-client');
+        const client = createOpenRouterClient();
+
+        const itemsList = allItems.map((item, idx) => `${idx}: ${item.food_name} (${item.quantity || '1 portion'})`).join('\n')
+
+        const prompt = `
+You are a nutrition expert. Estimate the macronutrients for each food item in the list below.
+Items:
+${itemsList}
+
+Return ONLY a JSON array of objects with this exact structure (no markdown):
+[
+  {"index": 0, "protein": number, "carbs": number, "fat": number},
+  ...
+]
+`;
+
+        const results = await callAI<any[]>(client, prompt);
+
+        // 2. Update database
+        for (const res of results) {
+            const item = allItems[res.index]
+            if (item) {
+                await supabase
+                    .from('meal_items')
+                    .update({
+                        protein: res.protein,
+                        carbs: res.carbs,
+                        fat: res.fat
+                    })
+                    .eq('id', item.id)
+            }
+        }
+
+        revalidatePath(`/dashboard/trainer/diets/${dietId}`)
+        return { success: true }
+    } catch (e: any) {
+        console.error("Bulk Macro Estimation Error:", e.message);
         return { error: e.message };
     }
 }

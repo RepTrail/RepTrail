@@ -239,20 +239,16 @@ export async function getTrainerRanking() {
         const ranking = trainers.map((t: any) => {
             const studentCount = Number(t.student_count || 0)
             const rating = Number(t.rating || 0)
-            let tier = (t.plan_tier || 'on_demand').toLowerCase()
 
-            if (tier === 'on_demand' && studentCount >= 50) {
-                tier = 'elite'
-            }
-
-            const tierPt = tierPoints[tier] || 0
-            const score = tierPt + (studentCount * 5) + (rating * 20)
+            // New Score Formula: (Students * 10) + (Rating * 50)
+            // No more plan_tier bias.
+            const score = (studentCount * 10) + (rating * 50)
 
             return {
                 id: t.trainer_id,
                 full_name: t.full_name || 'Treinador sem nome',
                 avatar_url: t.avatar_url,
-                plan_tier: tier,
+                plan_tier: t.plan_tier, // Keep for UI but it doesn't affect score
                 rating: isNaN(rating) ? 0 : rating,
                 studentCount,
                 score: isNaN(score) ? 0 : score,
@@ -371,7 +367,7 @@ export async function getTrainerActivityFeed(): Promise<ActivityItem[]> {
                     workout:workouts(name)
                 `)
                 .in('student_id', studentIds)
-                .in('status', ['started', 'completed'])
+                .in('status', ['in_progress', 'completed'])
                 .order('started_at', { ascending: false })
                 .limit(15),
 
@@ -480,11 +476,11 @@ export async function getTrainerActivityFeed(): Promise<ActivityItem[]> {
                 feed.push({
                     id: w.id,
                     type: 'workout',
-                    subType: w.status === 'started' ? 'started' : (w.adherence_status || 'completed'),
+                    subType: w.status === 'in_progress' ? 'started' : (w.adherence_status || 'completed'),
                     studentName: w.student?.full_name || 'Aluno',
                     studentAvatar: w.student?.avatar_url,
                     contentName: w.workout?.name || 'Treino',
-                    timestamp: w.status === 'started' ? w.started_at : w.completed_at,
+                    timestamp: w.status === 'in_progress' ? w.started_at : w.completed_at,
                     status: w.status,
                     adherenceStatus: w.adherence_status
                 })

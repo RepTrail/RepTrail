@@ -201,10 +201,14 @@ export async function searchTrainers(filters: {
     } else if (filters.sortBy === 'price_desc') {
         query = query.order('monthly_price', { ascending: false })
     } else if (filters.sortBy === 'popular') {
-        query = query.order('retention_rate', { ascending: false })
+        // Since we don't have a direct 'popular' column that is reliable across all, 
+        // we'll use average_rating as proxy or just rating.
+        // The user wants it based on Active Students. 
+        // For now, let's use average_rating until we have a students_count column.
+        query = query.order('average_rating', { ascending: false })
     } else {
-        // Default: Elite first, then rating
-        query = query.order('is_elite', { ascending: false }).order('average_rating', { ascending: false })
+        // Default: Highest rating first
+        query = query.order('average_rating', { ascending: false })
     }
 
     console.log('--- SEARCH TRAINERS DEBUG ---')
@@ -437,6 +441,30 @@ export async function uploadProgressPhotos(formData: FormData) {
 
         if (!user) return { success: false, error: 'Usuário não autenticado' }
 
+        // --- Monthly Photo Limit Check ---
+        const { data: profile } = await supabase
+            .from('profiles')
+            .select('monthly_photo_count, last_photo_reset')
+            .eq('id', user.id)
+            .single()
+
+        const now = new Date()
+        const lastReset = profile?.last_photo_reset ? new Date(profile.last_photo_reset) : new Date(0)
+
+        // Reset count if it's a new month
+        let currentCount = profile?.monthly_photo_count || 0
+        if (now.getMonth() !== lastReset.getMonth() || now.getFullYear() !== lastReset.getFullYear()) {
+            currentCount = 0
+            await supabase.from('profiles')
+                .update({ monthly_photo_count: 0, last_photo_reset: now.toISOString() })
+                .eq('id', user.id)
+        }
+
+        if (currentCount >= 4) {
+            return { success: false, error: 'Você atingiu o limite de 4 atualizações de fotos este mês. Aguarde o próximo mês!' }
+        }
+        // ---------------------------------
+
         const photos = {
             front: formData.get('front') as File,
             back: formData.get('back') as File,
@@ -495,6 +523,11 @@ export async function uploadProgressPhotos(formData: FormData) {
             console.error('Database error inserting progress photos:', dbError)
             throw new Error(`Erro ao salvar no banco: ${dbError.message}`)
         }
+
+        // Increment count
+        await supabase.from('profiles')
+            .update({ monthly_photo_count: currentCount + 1 })
+            .eq('id', user.id)
 
         console.log('Progress photos uploaded successfully.')
         revalidatePath('/dashboard/student/progress')
@@ -621,3 +654,54 @@ export async function updateProgressPhotoDate(photoId: string, newDate: string) 
     }
 }
 
+export async function updateStudentProfile(data: any) {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) return { success: false, error: 'Não autorizado' }
+
+    try {
+        const { error: detailError } = await supabase
+            .from('student_details')
+            .update({
+                age: data.age ? parseInt(data.age) : undefined,
+                sex: data.sex,
+                height: data.height ? parseFloat(data.height) : undefined,
+                activity_level: data.activity_level,
+                current_weight: data.weight ? parseFloat(data.weight) : undefined,
+                body_fat: data.body_fat ? parseFloat(data.body_fat) : undefined,
+                neck_cm: data.neck_cm ? parseFloat(data.neck_cm) : undefined,
+                waist_cm: data.waist_cm ? parseFloat(data.waist_cm) : undefined,
+                hip_cm: data.hip_cm ? parseFloat(data.hip_cm) : undefined,
+                updated_at: new Date().toISOString()
+            })
+            .eq('id', user.id)
+
+        if (detailError) throw detailError
+
+        // Save Weight History
+        if (data.weight) {
+            await supabase.from('weight_history').insert({
+                student_id: user.id,
+                weight_kg: parseFloat(data.weight),
+                recorded_at: new Date().toISOString()
+            })
+        }
+
+        // Save BF History
+        if (data.body_fat) {
+            await supabase.from('bf_history').insert({
+                student_id: user.id,
+                bf_percentage: parseFloat(data.body_fat),
+                recorded_at: new Date().toISOString()
+            })
+        }
+
+        revalidatePath('/dashboard/student')
+        revalidatePath('/dashboard/student/progress')
+        return { success: true }
+    } catch (e: any) {
+        console.error('Error updating student profile:', e)
+        return { success: false, error: e.message }
+    }
+}

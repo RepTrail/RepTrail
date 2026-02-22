@@ -13,7 +13,7 @@ export default async function RankingPage() {
     const ranking = await getTrainerRanking()
 
     return (
-        <div className="space-y-10 pb-10">
+        <div className="space-y-10 pb-10" suppressHydrationWarning>
             {/* Header Section */}
             <div className="flex flex-col gap-2 pb-2 border-b border-zinc-800/50">
                 <h1 className="text-4xl font-black tracking-tight text-white font-sans italic uppercase flex items-center gap-3">

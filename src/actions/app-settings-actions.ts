@@ -116,13 +116,21 @@ export async function updateAppSettings(data: {
     if (data.gemini_api_key !== undefined) update.gemini_api_key = data.gemini_api_key || null
     if (data.stripe_secret_key !== undefined) update.stripe_secret_key = data.stripe_secret_key || null
 
-    const { error } = await supabase
+    const { error: updateError, data: updateData } = await supabase
         .from('app_settings')
         .update(update)
         .eq('id', 1)
+        .select()
 
-    if (error) return { error: error.message }
+    if (updateError || !updateData || updateData.length === 0) {
+        const { error: upsertError } = await supabase
+            .from('app_settings')
+            .upsert({ id: 1, ...update })
+        if (upsertError) return { error: upsertError.message }
+    }
+
     revalidatePath('/admin')
+    revalidatePath('/dashboard/trainer/import-pdf')
     revalidatePath('/dashboard', 'layout')
     return { success: true }
 }

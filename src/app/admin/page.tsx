@@ -11,7 +11,6 @@ import {
 } from '@/actions/admin-actions'
 import { getAdminAffiliates } from '@/actions/admin-affiliate-actions'
 import { AffiliatesManagement } from '@/components/feature/admin/affiliates-management'
-import { getAppSettings, updateAppSettings } from '@/actions/app-settings-actions'
 import {
     BarChart3, Users, CreditCard, ShoppingBag, TrendingUp,
     ArrowUpRight, Users2, Settings, Package, Trophy,
@@ -26,7 +25,7 @@ import { useToast } from '@/hooks/use-toast'
 import { Logo } from '@/components/ui/logo'
 import { OperationalCosts } from '@/components/feature/admin/operational-costs'
 
-type Tab = 'overview' | 'trainers' | 'students' | 'affiliates' | 'store' | 'plans' | 'logs' | 'settings'
+type Tab = 'overview' | 'trainers' | 'students' | 'affiliates' | 'store' | 'logs'
 
 export default function AdminDashboardPage() {
     const [tab, setTab] = useState<Tab>('overview')
@@ -39,15 +38,8 @@ export default function AdminDashboardPage() {
     const [topProducts, setTopProducts] = useState<any[]>([])
     const [activityFeed, setActivityFeed] = useState<any[]>([])
     const [operationalCosts, setOperationalCosts] = useState<any[]>([])
-    const [planPricing, setPlanPricing] = useState<Record<string, {
-        monthly: number;
-        quarterly_discount: number;
-        annual_discount: number;
-        price_per_student?: number;
-        free_students_limit?: number;
-        pro_features_threshold?: number;
-    }> | null>(null)
-    const [appSettings, setAppSettings] = useState<{ beta_tester_mode: boolean; gemini_api_key: string; stripe_secret_key: string } | null>(null)
+    const [planPricing, setPlanPricing] = useState<any>(null)
+    const [appSettings, setAppSettings] = useState<any>(null)
     const [loading, setLoading] = useState(true)
     const [search, setSearch] = useState('')
     const [productModalOpen, setProductModalOpen] = useState(false)
@@ -59,7 +51,7 @@ export default function AdminDashboardPage() {
 
     async function loadAll() {
         setLoading(true)
-        const [s, t, u, aff, p, l, tp, af, pp, as, costs] = await Promise.all([
+        const [s, t, u, aff, p, l, tp, af, costs] = await Promise.all([
             getAdminOverview(),
             getAllTrainers(),
             getAllUsers(),
@@ -68,8 +60,6 @@ export default function AdminDashboardPage() {
             getAdminLogs(),
             getTopProductsByClicks(),
             getRecentStudentActivity(),
-            getPlanPricing(),
-            getAppSettings(),
             getOperationalCosts(),
         ])
         setStats(s)
@@ -80,8 +70,6 @@ export default function AdminDashboardPage() {
         setLogs(l)
         setTopProducts(tp)
         setActivityFeed(af)
-        setPlanPricing(pp)
-        setAppSettings(as ? { beta_tester_mode: as.beta_tester_mode, gemini_api_key: as.gemini_api_key, stripe_secret_key: as.stripe_secret_key } : null)
         setOperationalCosts(costs)
         setLoading(false)
     }
@@ -177,8 +165,6 @@ export default function AdminDashboardPage() {
         { id: 'students', label: 'Alunos', icon: Users },
         { id: 'affiliates', label: 'Afiliados', icon: HeartHandshake },
         { id: 'store', label: 'Loja', icon: ShoppingBag },
-        { id: 'plans', label: 'Planos', icon: Layers },
-        { id: 'settings', label: 'Credenciais', icon: Key },
         { id: 'logs', label: 'Logs', icon: Activity },
     ]
 
@@ -500,96 +486,7 @@ export default function AdminDashboardPage() {
                         </div>
                     )}
 
-                    {/* CREDENCIAIS / CONFIG TAB */}
-                    {tab === 'settings' && (
-                        <div className="space-y-6">
-                            <div>
-                                <h2 className="text-xl font-black text-white italic uppercase tracking-tight flex items-center gap-2">
-                                    <Key className="w-5 h-5 text-amber-500" />
-                                    Credenciais & Modo Beta
-                                </h2>
-                                <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest mt-1">
-                                    Gerencie tokens (Gemini, Stripe) e modo de teste incompleto. As alterações refletem na plataforma sem redeploy.
-                                </p>
-                            </div>
-                            <AppSettingsEditor
-                                settings={appSettings}
-                                onSave={async (data) => {
-                                    startTransition(async () => {
-                                        const res = await updateAppSettings(data)
-                                        if (res.error) toast({ variant: 'destructive', title: 'Erro', description: res.error })
-                                        else { toast({ title: 'Configurações salvas!' }); loadAll() }
-                                    })
-                                }}
-                                isPending={isPending}
-                            />
-                        </div>
-                    )}
 
-                    {/* PLANS TAB */}
-                    {tab === 'plans' && (
-                        <div className="space-y-6">
-                            <p className="text-[10px] font-black text-zinc-600 uppercase tracking-widest">
-                                Edite os preços mensais e descontos por período. As alterações refletem na página de planos dos personais.
-                            </p>
-                            <div className="grid gap-6 md:grid-cols-4">
-                                {planPricing && (['on_demand', 'start', 'pro', 'elite'] as const).map(tier => (
-                                    tier === 'on_demand' ? (
-                                        <OnDemandEditor
-                                            key={tier}
-                                            pricing={planPricing[tier]}
-                                            onSave={async (pricePerStudent, freeLimit, proThreshold) => {
-                                                startTransition(async () => {
-                                                    const res = await updatePlanPricing(tier, 0, 0, 0, {
-                                                        price_per_student: pricePerStudent,
-                                                        free_students_limit: freeLimit,
-                                                        pro_features_threshold: proThreshold
-                                                    })
-                                                    if (res.success) {
-                                                        toast({ title: `Plano ${tier} atualizado!` })
-                                                        setPlanPricing(prev => prev ? {
-                                                            ...prev,
-                                                            [tier]: {
-                                                                ...prev[tier],
-                                                                price_per_student: pricePerStudent,
-                                                                free_students_limit: freeLimit,
-                                                                pro_features_threshold: proThreshold
-                                                            }
-                                                        } : prev)
-                                                    } else {
-                                                        toast({ variant: 'destructive', title: 'Erro ao salvar', description: res.error || 'Erro desconhecido' })
-                                                    }
-                                                })
-                                            }}
-                                            isPending={isPending}
-                                        />
-                                    ) : (
-                                        <PlanEditor
-                                            key={tier}
-                                            tier={tier}
-                                            pricing={planPricing[tier]}
-                                            onSave={async (monthly, qDiscount, aDiscount) => {
-                                                startTransition(async () => {
-                                                    const res = await updatePlanPricing(tier, monthly, qDiscount, aDiscount)
-                                                    if (res.success) {
-                                                        toast({ title: `Plano ${tier} atualizado!` })
-                                                        setPlanPricing(prev => prev ? { ...prev, [tier]: { ...prev[tier], monthly, quarterly_discount: qDiscount, annual_discount: aDiscount } } : prev)
-                                                    } else {
-                                                        toast({
-                                                            variant: 'destructive',
-                                                            title: 'Erro ao salvar',
-                                                            description: res.error || 'Erro desconhecido'
-                                                        })
-                                                    }
-                                                })
-                                            }}
-                                            isPending={isPending}
-                                        />
-                                    )
-                                ))}
-                            </div>
-                        </div>
-                    )}
 
                     {/* LOGS TAB */}
                     {tab === 'logs' && (
@@ -861,13 +758,13 @@ function ProductCard({ product, onToggle, onEdit, onDelete, isPending }: any) {
 }
 
 function ProductEditorModal({ isOpen, onClose, product, onSave, onImport, onDelete }: any) {
-    const [form, setForm] = useState({ name: '', description: '', image_url: '', official_price: 0, link_url: '', category: 'supplement', rating: 0, reviews_count: 0 })
+    const [form, setForm] = useState({ name: '', description: '', image_url: '', official_price: 0, link_url: '', category: 'supplement', sub_category: '', rating: 0, reviews_count: 0 })
     const [importUrl, setImportUrl] = useState('')
     const [importing, setImporting] = useState(false)
 
     useEffect(() => {
-        if (product) setForm({ ...product })
-        else setForm({ name: '', description: '', image_url: '', official_price: 0, link_url: '', category: 'supplement', rating: 0, reviews_count: 0 })
+        if (product) setForm({ ...product, sub_category: product.sub_category || '' })
+        else setForm({ name: '', description: '', image_url: '', official_price: 0, link_url: '', category: 'supplement', sub_category: '', rating: 0, reviews_count: 0 })
         setImportUrl('')
     }, [product, isOpen])
 
@@ -895,6 +792,8 @@ function ProductEditorModal({ isOpen, onClose, product, onSave, onImport, onDele
             setImporting(false)
         }
     }
+
+    const supplementSubs = ['Pré-treino', 'Vitaminas', 'Whey', 'Outros']
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-in fade-in duration-200">
@@ -946,18 +845,33 @@ function ProductEditorModal({ isOpen, onClose, product, onSave, onImport, onDele
                             />
                         </div>
                     ))}
-                    <div className="space-y-1">
-                        <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Categoria</label>
-                        <select
-                            value={form.category}
-                            onChange={e => setForm(prev => ({ ...prev, category: e.target.value }))}
-                            className="w-full h-11 px-4 bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white focus:outline-none focus:border-zinc-600"
-                        >
-                            <option value="supplement">Suplemento</option>
-                            <option value="accessory">Acessório</option>
-                            <option value="clothing">Roupas</option>
-                            <option value="equipment">Equipamento</option>
-                        </select>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                            <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Categoria</label>
+                            <select
+                                value={form.category}
+                                onChange={e => setForm(prev => ({ ...prev, category: e.target.value, sub_category: '' }))}
+                                className="w-full h-11 px-4 bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white focus:outline-none focus:border-zinc-600"
+                            >
+                                <option value="Suplemento">Suplemento</option>
+                                <option value="Acessório">Acessório</option>
+                                <option value="Vestuário">Vestuário</option>
+                                <option value="Equipamento">Equipamento</option>
+                            </select>
+                        </div>
+                        {form.category === 'Suplemento' && (
+                            <div className="space-y-1">
+                                <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Sub-categoria</label>
+                                <select
+                                    value={form.sub_category}
+                                    onChange={e => setForm(prev => ({ ...prev, sub_category: e.target.value }))}
+                                    className="w-full h-11 px-4 bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white focus:outline-none focus:border-zinc-600"
+                                >
+                                    <option value="">Nenhum</option>
+                                    {supplementSubs.map(s => <option key={s} value={s}>{s}</option>)}
+                                </select>
+                            </div>
+                        )}
                     </div>
                 </div>
                 <div className="flex gap-3">
@@ -1018,14 +932,18 @@ function AppSettingsEditor({ settings, onSave, isPending }: {
                         <p className="text-xs text-zinc-500 mt-2">Quando ativado, oculta o botão Importar PDF (integração com IA desativada)</p>
                     </div>
                     <button
-                        onClick={() => setBetaMode(!betaMode)}
+                        onClick={() => {
+                            const newMode = !betaMode
+                            setBetaMode(newMode)
+                            onSave({ beta_tester_mode: newMode })
+                        }}
                         disabled={isPending}
-                        className={`h-11 w-24 rounded-xl border transition-all font-black text-[10px] uppercase shrink-0 ${betaMode
+                        className={`h-11 w-24 rounded-xl border transition-all font-black text-[10px] uppercase shrink-0 flex items-center justify-center ${betaMode
                             ? 'bg-amber-500/20 border-amber-500/50 text-amber-500'
                             : 'bg-zinc-900 border-zinc-800 text-zinc-600 hover:border-zinc-700'
                             }`}
                     >
-                        {betaMode ? 'Ativado' : 'Desativado'}
+                        {isPending ? <RefreshCw className="w-3 h-3 animate-spin" /> : (betaMode ? 'Ativado' : 'Desativado')}
                     </button>
                 </div>
 

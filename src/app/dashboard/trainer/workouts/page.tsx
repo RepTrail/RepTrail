@@ -18,7 +18,7 @@ export default async function TrainerWorkoutsPage() {
     ])
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6" suppressHydrationWarning>
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-2 border-b border-zinc-800/50">
                 <div className="space-y-1">
                     <h1 className="text-4xl font-black tracking-tight text-white font-sans italic uppercase">

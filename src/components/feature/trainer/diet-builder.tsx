@@ -25,6 +25,7 @@ import {
     removeMealItem,
     removeMeal,
     estimateMacros,
+    estimateAllDietMacros,
     updateDietMeta
 } from "@/actions/diet-actions"
 
@@ -95,6 +96,14 @@ export function DietBuilder({ diet }: DietBuilderProps) {
     }, { p: 0, c: 0, f: 0 }) || { p: 0, c: 0, f: 0 }
 
     const totalKcal = Math.round((totals.p * 4) + (totals.c * 4) + (totals.f * 9))
+    const isEstimatingAll = loadingMap['estimate-all']
+
+    async function handleEstimateAll() {
+        setLoadingMap(prev => ({ ...prev, 'estimate-all': true }))
+        const res = await estimateAllDietMacros(diet.id)
+        if (res.error) alert(`Erro ao calcular tudo: ${res.error}`)
+        setLoadingMap(prev => ({ ...prev, 'estimate-all': false }))
+    }
 
     async function handleAddMeal() {
         if (!newMealName) return
@@ -154,7 +163,7 @@ export function DietBuilder({ diet }: DietBuilderProps) {
 
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-8" suppressHydrationWarning>
             {/* Header / Totals */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div className="space-y-2 flex-1">
@@ -206,23 +215,40 @@ export function DietBuilder({ diet }: DietBuilderProps) {
                     <p className="text-zinc-500 uppercase tracking-widest text-[10px] font-bold">Resumo Nutricional do Plano</p>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full md:w-auto">
-                    <div className="bg-zinc-900/50 border border-zinc-800 p-3 rounded-xl min-w-[80px] text-center">
-                        <span className="block text-[10px] text-zinc-500 uppercase font-bold mb-1">Proteína</span>
-                        <span className="text-xl font-bold text-blue-400">{Math.round(totals.p)}<small className="text-[10px] ml-0.5">g</small></span>
+                <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full sm:w-auto">
+                        <div className="bg-zinc-900/50 border border-zinc-800 p-3 rounded-xl min-w-[80px] text-center">
+                            <span className="block text-[10px] text-zinc-500 uppercase font-bold mb-1">Proteína</span>
+                            <span className="text-xl font-bold text-blue-400">{Math.round(totals.p)}<small className="text-[10px] ml-0.5">g</small></span>
+                        </div>
+                        <div className="bg-zinc-900/50 border border-zinc-800 p-3 rounded-xl min-w-[80px] text-center">
+                            <span className="block text-[10px] text-zinc-500 uppercase font-bold mb-1">Carbs</span>
+                            <span className="text-xl font-bold text-orange-400">{Math.round(totals.c)}<small className="text-[10px] ml-0.5">g</small></span>
+                        </div>
+                        <div className="bg-zinc-900/50 border border-zinc-800 p-3 rounded-xl min-w-[80px] text-center">
+                            <span className="block text-[10px] text-zinc-500 uppercase font-bold mb-1">Gordura</span>
+                            <span className="text-xl font-bold text-yellow-500">{Math.round(totals.f)}<small className="text-[10px] ml-0.5">g</small></span>
+                        </div>
+                        <div className="bg-blue-500/10 border border-blue-500/20 p-3 rounded-xl min-w-[100px] text-center shadow-[0_0_15px_-5px_rgba(59,130,246,0.2)]">
+                            <span className="block text-[10px] text-blue-400 uppercase font-bold mb-1">Total Kcal</span>
+                            <span className="text-xl font-bold text-white">{totalKcal}</span>
+                        </div>
                     </div>
-                    <div className="bg-zinc-900/50 border border-zinc-800 p-3 rounded-xl min-w-[80px] text-center">
-                        <span className="block text-[10px] text-zinc-500 uppercase font-bold mb-1">Carbs</span>
-                        <span className="text-xl font-bold text-orange-400">{Math.round(totals.c)}<small className="text-[10px] ml-0.5">g</small></span>
-                    </div>
-                    <div className="bg-zinc-900/50 border border-zinc-800 p-3 rounded-xl min-w-[80px] text-center">
-                        <span className="block text-[10px] text-zinc-500 uppercase font-bold mb-1">Gordura</span>
-                        <span className="text-xl font-bold text-yellow-500">{Math.round(totals.f)}<small className="text-[10px] ml-0.5">g</small></span>
-                    </div>
-                    <div className="bg-blue-500/10 border border-blue-500/20 p-3 rounded-xl min-w-[100px] text-center shadow-[0_0_15px_-5px_rgba(59,130,246,0.2)]">
-                        <span className="block text-[10px] text-blue-400 uppercase font-bold mb-1">Total Kcal</span>
-                        <span className="text-xl font-bold text-white">{totalKcal}</span>
-                    </div>
+
+                    <Button
+                        onClick={handleEstimateAll}
+                        disabled={isEstimatingAll}
+                        className="w-full sm:w-auto h-[68px] px-6 bg-emerald-600/10 hover:bg-emerald-600/20 text-emerald-500 border border-emerald-500/20 rounded-xl font-black uppercase tracking-widest text-[10px] flex flex-col items-center justify-center gap-1 transition-all active:scale-95 group shadow-xl"
+                    >
+                        {isEstimatingAll ? (
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                        ) : (
+                            <>
+                                <Sparkles className="w-5 h-5 group-hover:scale-125 transition-transform" />
+                                <span>Calcular Tudo</span>
+                            </>
+                        )}
+                    </Button>
                 </div>
             </div>
 
@@ -234,7 +260,7 @@ export function DietBuilder({ diet }: DietBuilderProps) {
                     const mealKcal = Math.round((mealP * 4) + (mealC * 4) + (mealF * 9))
 
                     return (
-                        <Card key={meal.id} className="bg-zinc-950 border-zinc-800 overflow-hidden shadow-xl">
+                        <Card key={meal.id} className="bg-zinc-950 border-zinc-800 overflow-hidden shadow-xl" suppressHydrationWarning>
                             <div className="p-4 bg-zinc-900/40 border-b border-zinc-800/50 flex items-center justify-between">
                                 <div className="flex items-center gap-4">
                                     <div className="bg-zinc-800 p-2.5 rounded-xl border border-zinc-700/50">
@@ -269,7 +295,7 @@ export function DietBuilder({ diet }: DietBuilderProps) {
                                     </Button>
                                 </div>
                             </div>
-                            <CardContent className="p-0">
+                            <CardContent className="p-0" suppressHydrationWarning>
                                 <div className="divide-y divide-zinc-900/50">
                                     {meal.meal_items?.map((item) => (
                                         <div key={item.id} className="p-4 grid grid-cols-1 lg:grid-cols-12 gap-4 items-end group transition-colors hover:bg-zinc-900/20">
@@ -332,6 +358,31 @@ export function DietBuilder({ diet }: DietBuilderProps) {
                                                 </div>
                                             </div>
                                             <div className="lg:col-span-1 flex items-center justify-center gap-1 pb-0.5">
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    disabled={loadingMap[`estimate-${item.id}`] || !item.food_name}
+                                                    onClick={async () => {
+                                                        setLoadingMap(prev => ({ ...prev, [`estimate-${item.id}`]: true }))
+                                                        const res = await estimateMacros(item.food_name, item.quantity)
+                                                        if (res.success && res.macros) {
+                                                            await handleUpdateItem(item.id, res.macros)
+                                                            // We might need to force a refresh or trust that revalidatePath (if any) works,
+                                                            // but handleUpdateItem already handles loadingMap for saving.
+                                                        } else if (res.error) {
+                                                            alert(`Erro ao calcular: ${res.error}`)
+                                                        }
+                                                        setLoadingMap(prev => ({ ...prev, [`estimate-${item.id}`]: false }))
+                                                    }}
+                                                    className="text-zinc-700 hover:text-emerald-400 h-8 w-8 transition-colors group-hover:bg-emerald-400/5"
+                                                    title="Calcular macros com IA"
+                                                >
+                                                    {loadingMap[`estimate-${item.id}`] ? (
+                                                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                                    ) : (
+                                                        <Sparkles className="w-3.5 h-3.5" />
+                                                    )}
+                                                </Button>
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"

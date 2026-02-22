@@ -2,18 +2,29 @@
 
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { Badge } from "@/components/ui/badge"
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Upload, FileText, Check, Loader2, FileUp, X, Sparkles, Activity, Utensils } from 'lucide-react'
+import { Upload, FileText, Check, Loader2, FileUp, X, Sparkles } from 'lucide-react'
 import { parseUploadedPdf } from '@/actions/pdf-actions'
 import { saveParsedData } from '@/actions/save-actions'
 import { useToast } from '@/hooks/use-toast'
+import { PdfDataView } from './pdf-data-view'
 
-export function PdfUploader({ type }: { type: 'workout' | 'diet' }) {
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
+
+export function PdfUploader({ type, students = [] }: { type: 'workout' | 'diet', students?: any[] }) {
     const [uploading, setUploading] = useState(false)
     const [parsing, setParsing] = useState(false)
     const [saving, setSaving] = useState(false)
     const [parsedData, setParsedData] = useState<any>(null)
+    const [selectedStudentId, setSelectedStudentId] = useState<string>('')
     const { toast } = useToast()
     const supabase = createClient()
 
@@ -62,13 +73,23 @@ export function PdfUploader({ type }: { type: 'workout' | 'diet' }) {
     }
 
     const handleSave = async () => {
+        if (type === 'workout' && parsedData?.parsed_data?.ergogenics?.length > 0 && !selectedStudentId) {
+            toast({
+                variant: "destructive",
+                title: "Atenção!",
+                description: "Ergogênicos detectados. Selecione um aluno para salvar o protocolo."
+            })
+            return
+        }
+
         setSaving(true)
-        const result = await saveParsedData(type, parsedData.parsed_data)
+        const result = await saveParsedData(type, parsedData.parsed_data, selectedStudentId)
         setSaving(false)
 
         if (result.success) {
-            toast({ title: "Sucesso!", description: `${type === 'workout' ? 'Treino' : 'Dieta'} salvo na sua biblioteca.` })
+            toast({ title: "Sucesso!", description: `${type === 'workout' ? 'Treino' : 'Dieta'} salvo${selectedStudentId ? ' e vinculado ao aluno' : ''}.` })
             setParsedData(null)
+            setSelectedStudentId('')
         } else {
             toast({ variant: "destructive", title: "Erro ao salvar", description: result.error })
         }
@@ -142,37 +163,64 @@ export function PdfUploader({ type }: { type: 'workout' | 'diet' }) {
                         </div>
                     </div>
                 ) : (
-                    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                        {/* Status Message */}
                         <div className="flex items-center gap-3 text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-2xl">
                             <div className="p-2 bg-emerald-500/20 rounded-full">
                                 <Check className="h-4 w-4" />
                             </div>
-                            <div>
+                            <div className="flex-1">
                                 <p className="text-sm font-bold uppercase tracking-tight">Leitura Concluída</p>
-                                <p className="text-xs text-emerald-400/70">Abaixo você pode ver o que nossa IA organizou.</p>
+                                <p className="text-xs text-emerald-400/70">Revise abaixo as informações extraídas pela nossa IA.</p>
                             </div>
                         </div>
 
-                        <div className="bg-zinc-950 border border-zinc-800 rounded-2xl overflow-hidden shadow-inner">
-                            <div className="bg-zinc-900/50 px-4 py-2 border-b border-zinc-800 flex justify-between items-center">
+                        {/* Ergogenics Alert (Only for Workouts) */}
+                        {type === 'workout' && parsedData.parsed_data?.ergogenics?.length > 0 && (
+                            <div className="bg-amber-500/10 border border-amber-500/20 p-4 rounded-2xl flex flex-col gap-3 shadow-lg shadow-amber-500/5">
+                                <div className="flex items-center gap-2 text-amber-500">
+                                    <Sparkles className="w-4 h-4" />
+                                    <p className="text-xs font-bold uppercase tracking-tight">Protocolo Ergogênico Detectado!</p>
+                                </div>
+                                <p className="text-[10px] text-zinc-400 uppercase font-bold leading-tight">
+                                    Selecione o aluno abaixo para vincular este protocolo automaticamente ao salvá-lo.
+                                </p>
+                                <Select value={selectedStudentId} onValueChange={setSelectedStudentId}>
+                                    <SelectTrigger className="bg-zinc-900 border-zinc-800 text-white h-11 rounded-xl">
+                                        <SelectValue placeholder="Escolher Aluno..." />
+                                    </SelectTrigger>
+                                    <SelectContent className="bg-zinc-900 border-zinc-800 text-white">
+                                        {students.map((s) => (
+                                            <SelectItem key={s.student_id} value={s.student_id}>
+                                                {s.student?.[0]?.full_name || s.student?.full_name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        )}
+
+                        {/* Data Preview */}
+                        <div className="space-y-4">
+                            <div className="flex justify-between items-center border-b border-zinc-900 pb-2">
                                 <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-2">
-                                    <FileText className="w-3 h-3" />
-                                    Visualização dos Dados (JSON)
+                                    <FileText className="w-3 h-3 text-emerald-500" />
+                                    Dados Extraídos
                                 </span>
                             </div>
-                            <div className="p-4 max-h-[300px] overflow-auto scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent">
-                                <pre className="text-[11px] font-mono leading-relaxed text-zinc-400">
-                                    {JSON.stringify(parsedData.parsed_data, null, 2)}
-                                </pre>
-                            </div>
+                            <PdfDataView type={type} data={parsedData.parsed_data} />
                         </div>
 
-                        <div className="flex justify-end gap-3 pt-4 border-t border-zinc-900">
+                        {/* Actions */}
+                        <div className="flex justify-end gap-3 pt-6 border-t border-zinc-900/50">
                             <Button
                                 variant="ghost"
-                                onClick={() => setParsedData(null)}
+                                onClick={() => {
+                                    setParsedData(null)
+                                    setSelectedStudentId('')
+                                }}
                                 disabled={saving}
-                                className="text-zinc-500 hover:text-white rounded-xl h-11 px-6 font-bold uppercase tracking-widest text-[10px]"
+                                className="text-zinc-500 hover:text-white rounded-xl h-12 px-6 font-bold uppercase tracking-widest text-[10px]"
                             >
                                 <X className="w-4 h-4 mr-2" />
                                 Cancelar
@@ -180,7 +228,7 @@ export function PdfUploader({ type }: { type: 'workout' | 'diet' }) {
                             <Button
                                 onClick={handleSave}
                                 disabled={saving}
-                                className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl h-11 px-8 font-bold shadow-lg shadow-emerald-500/10 transition-all active:scale-95 flex gap-2"
+                                className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl h-12 px-10 font-bold shadow-lg shadow-emerald-500/10 transition-all active:scale-95 flex gap-2"
                             >
                                 {saving ? (
                                     <><Loader2 className="w-4 h-4 animate-spin" /> SALVANDO...</>

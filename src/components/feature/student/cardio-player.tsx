@@ -171,16 +171,25 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
         }
     }
 
-    async function handleStop() {
+    // Auto-stop when reaching zero
+    useEffect(() => {
+        if (remainingSeconds === 0 && status === 'running' && logId) {
+            handleStop(true) // Pass true for silent auto-finalization
+        }
+    }, [remainingSeconds, status, logId])
+
+    async function handleStop(isAuto: boolean = false) {
         let percentage = progress
         // Ensure percentage is max 100
         if (percentage > 100) percentage = 100
 
-        if (remainingSeconds > 0) {
-            const confirmMsg = `Você completou apenas ${percentage.toFixed(0)}% do tempo!\n\nSeu progresso será registrado como Parcial. Tem certeza que deseja parar?`
-            if (!confirm(confirmMsg)) return
-        } else {
-            if (!confirm('Deseja finalizar este cardio?')) return
+        if (!isAuto) {
+            if (remainingSeconds > 0) {
+                const confirmMsg = `Você completou apenas ${percentage.toFixed(0)}% do tempo!\n\nSeu progresso será registrado como Parcial. Tem certeza que deseja parar?`
+                if (!confirm(confirmMsg)) return
+            } else {
+                if (!confirm('Deseja finalizar este cardio?')) return
+            }
         }
 
         if (logId) {
@@ -314,7 +323,7 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
                     {(status === 'running' || status === 'paused') && (
                         <Button
                             size="icon"
-                            onClick={handleStop}
+                            onClick={() => handleStop(false)}
                             className="w-16 h-16 rounded-full bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white border-2 border-red-500/20 transition-all active:scale-95"
                         >
                             <Square className="w-6 h-6 fill-current" />

@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { GoogleGenerativeAI } from '@google/generative-ai';
 import { createClient } from '@/lib/supabase/server';
-import { getGeminiApiKey } from '@/actions/app-settings-actions';
+import { createOpenRouterClient, callAI, DEFAULT_AI_MODEL } from '@/lib/ai-client';
 
 export async function POST(req: NextRequest) {
     try {
@@ -18,98 +17,97 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'No text provided' }, { status: 400 });
         }
 
-        // Prioriza chave do banco de dados, fallback para env
-        const apiKey = await getGeminiApiKey();
-        if (!apiKey) {
-            return NextResponse.json({ 
-                error: 'Chave da API Gemini não configurada. Configure no painel admin.' 
+        let client;
+        try {
+            client = createOpenRouterClient();
+        } catch {
+            return NextResponse.json({
+                error: 'Chave da API OpenRouter não configurada. Adicione OPENROUTER_API_KEY ao .env.local.'
             }, { status: 500 });
         }
 
-        const genAI = new GoogleGenerativeAI(apiKey);
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
         const prompt = type === 'workout'
             ? `
-            You are a fitness expert AI. Extract structured Workouts and Cardios from the following text.
-            IMPORTANT: Cardios often come in the same PDF as workouts. Look for items like "Cardio: 20 min esteira", "30 minutos bike", "HIIT 15 min", etc.
-            
-            Return ONLY valid JSON with this structure:
-            {
-                "workouts": [
-                    {
-                        "name": "Workout Name",
-                        "exercises": [
-                            { "name": "Exercise Name", "sets": number, "reps": "string range", "rest": number }
-                        ]
-                    }
-                ],
-                "cardios": [
-                    { "type": "string (e.g. esteira, bike)", "duration": "string (e.g. 20 min)", "intensity": "string", "frequency": "string (daily, post-workout, etc)" }
-                ]
-            }
-            Use integers for 'sets' and 'rest' (in seconds). If missing, use reasonable defaults (3 sets, 60s rest).
-            TEXT TO PARSE:
-            ${text}
-            `
-            : `
-            You are a nutritionist expert AI. Extract a structured Diet from the following text.
-            For EACH meal, calculate the total macronutrients (calories, protein, carbs, fat) based on average reliable nutritional values.
-            
-            Return ONLY valid JSON with this structure:
-            {
-                "diets": [
-                    {
-                        "meal_name": "Meal Name (e.g. Café da manhã)",
-                        "foods": [
-                            { 
-                                "name": "Food Name", 
-                                "quantity": "Quantity (e.g. 3 unidades, 100g)",
-                                "calories": number,
-                                "protein": number,
-                                "carbs": number,
-                                "fat": number,
-                                "needs_review": boolean (set true if food is unrecognized or weight is unclear)
-                            }
-                        ],
-                        "totals": {
-                            "calories": number,
-                            "protein": number,
-                            "carbs": number,
-                            "fat": number
-                        }
-                    }
-                ]
-            }
-            All nutritional values (calories, protein, carbs, fat) MUST be numbers.
-            TEXT TO PARSE:
-            ${text}
-            `;
+You are a fitness expert AI. Extract structured Workouts, Cardios and Ergogenic resources (steroids/supplements) from the following text.
+IMPORTANT:
+- Fix any concatenated exercise names (e.g. "CADEIRAFLEXORA" → "CADEIRA FLEXORA").
+- Cardios and Ergogenics often come in the same PDF as workouts.
+- Capture warmup_sets and feeder_sets if mentioned.
 
-        const parseWithRetry = async (retryCount = 0): Promise<any> => {
-            try {
-                const result = await model.generateContent(prompt);
-                const response = await result.response;
-                const textResponse = response.text();
-                const jsonString = textResponse.replace(/```json/g, '').replace(/```/g, '').trim();
-                return JSON.parse(jsonString);
-            } catch (error: any) {
-                if (retryCount < 1) {
-                    console.warn(`AI Parse attempt ${retryCount + 1} failed, retrying...`, error.message);
-                    return parseWithRetry(retryCount + 1);
+Return ONLY valid JSON (no markdown) with this structure:
+{
+    "workouts": [
+        {
+            "name": "Workout Name (e.g. SEGUNDA-FEIRA)",
+            "day_of_week": 1,
+            "exercises": [
+                {
+                    "name": "Exercise Name",
+                    "sets": 3,
+                    "reps": "8-12",
+                    "rest": 60,
+                    "warmup_sets": "2x15",
+                    "feeder_sets": "1x12"
                 }
-                throw error;
-            }
-        };
+            ]
+        }
+    ],
+    "cardios": [
+        { "type": "string", "duration": "string", "intensity": "string", "frequency": "string" }
+    ],
+    "ergogenics": [
+        { "name": "string", "dosage": "string", "weekly_dosage": 1, "unit": "ml", "application_days": [1,4], "notes": "string" }
+    ]
+}
+Use integers for sets and rest (in seconds). day_of_week: 1=Mon, 2=Tue, ..., 7=Sun.
+warmup_sets and feeder_sets are optional strings like "2x15" — omit if not found.
 
-        const parsedData = await parseWithRetry();
+TEXT TO PARSE:
+${text}
+`
+            : `
+You are a nutritionist expert AI. Extract a structured Diet and Ergogenic resources from the following text.
+For each food item, estimate macronutrients based on quantity if not explicitly stated.
+
+Return ONLY valid JSON (no markdown) with this structure:
+{
+    "diets": [
+        {
+            "diet_name": "Diet Name",
+            "meals": [
+                {
+                    "meal_name": "Meal Name",
+                    "foods": [
+                        {
+                            "name": "Food Name",
+                            "quantity": "100g",
+                            "calories": 0,
+                            "protein": 0,
+                            "carbs": 0,
+                            "fat": 0
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "ergogenics": [
+        { "name": "string", "dosage": "string", "weekly_dosage": 1, "unit": "ml", "application_days": [1,4], "notes": "string" }
+    ]
+}
+
+TEXT TO PARSE:
+${text}
+`;
+
+        const parsedData = await callAI(client, prompt, DEFAULT_AI_MODEL);
 
         return NextResponse.json(parsedData);
 
     } catch (error: any) {
         console.error("AI Route Error:", error.message);
         return NextResponse.json({
-            error: 'Erro ao processar o PDF com IA. Por favor, tente novamente ou insira manualmente.',
+            error: 'Erro ao processar o PDF com IA. Por favor, tente novamente.',
             details: error.message
         }, { status: 500 });
     }

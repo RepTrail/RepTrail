@@ -23,11 +23,22 @@ interface StudentMetricsChartProps {
 export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsChartProps) {
     // 1. Process Data
     const chartData = useMemo(() => {
+        // Ensure at least 2 points if arrays have exactly 1 element (fix for Recharts single-point bug)
+        const safeWeights = weights.length === 1 ? [
+            { ...weights[0], recorded_at: new Date(new Date(weights[0].recorded_at).getTime() - 86400000 * 3).toISOString() },
+            weights[0]
+        ] : weights;
+
+        const safeBfs = bfs.length === 1 ? [
+            { ...bfs[0], recorded_at: new Date(new Date(bfs[0].recorded_at).getTime() - 86400000 * 3).toISOString() },
+            bfs[0]
+        ] : bfs;
+
         // Collect all dates
         const allDates = new Set<string>()
 
-        weights.forEach(w => allDates.add(w.recorded_at.split('T')[0]))
-        bfs.forEach(b => allDates.add(b.recorded_at.split('T')[0]))
+        safeWeights.forEach(w => allDates.add(w.recorded_at.split('T')[0]))
+        safeBfs.forEach(b => allDates.add(b.recorded_at.split('T')[0]))
         frequency.forEach(f => allDates.add(f.date.split('T')[0]))
 
         // Add start and end range padding if minimal data
@@ -52,9 +63,12 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
             const currentDate = addDays(minDate, i)
             const dateStr = format(currentDate, 'yyyy-MM-dd')
 
-            // Find matches - ensure we match only on the date part YYYY-MM-DD
-            const weightEntry = weights.find(w => w.recorded_at.startsWith(dateStr))
-            const bfEntry = bfs.find(b => b.recorded_at.startsWith(dateStr))
+            // Find matches - ensure we get the LAST (most recent) entry if there are multiple per day
+            const weightEntries = safeWeights.filter(w => w.recorded_at.startsWith(dateStr))
+            const bfEntries = safeBfs.filter(b => b.recorded_at.startsWith(dateStr))
+
+            const weightEntry = weightEntries.length > 0 ? weightEntries[weightEntries.length - 1] : null
+            const bfEntry = bfEntries.length > 0 ? bfEntries[bfEntries.length - 1] : null
             const freqEntry = frequency.find(f => f.date.startsWith(dateStr))
 
             data.push({
@@ -77,6 +91,15 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
         const padding = (max - min) * 0.2 || 5
         return [Math.max(0, Math.floor(min - padding)), Math.ceil(max + padding)]
     }, [weights])
+
+    const bfDomain = useMemo(() => {
+        const vals = bfs.map(b => b.bf_percentage)
+        if (!vals.length) return [0, 30]
+        const min = Math.min(...vals)
+        const max = Math.max(...vals)
+        const padding = (max - min) * 0.2 || 2
+        return [Math.max(0, Math.floor(min - padding)), Math.ceil(max + padding)]
+    }, [bfs])
 
     // Custom Tooltip
     const CustomTooltip = ({ active, payload, label }: any) => {
@@ -138,15 +161,30 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
                             unit="%"
                         />
 
-                        {/* Right Y Axis - Weight/BF */}
+                        {/* Right Y Axis - Weight */}
                         <YAxis
                             yAxisId="right"
+                            orientation="right"
+                            stroke="#a1a1aa" // gray to match weight line better than green
+                            tick={{ fontSize: 10, fontWeight: 800, fill: '#a1a1aa' }}
+                            tickLine={false}
+                            axisLine={false}
+                            domain={weightDomain}
+                            unit="kg"
+                            width={35}
+                        />
+
+                        {/* Hidden Y Axis - BF */}
+                        <YAxis
+                            yAxisId="bf-axis"
                             orientation="right"
                             stroke="#10b981"
                             tick={{ fontSize: 10, fontWeight: 800, fill: '#10b981' }}
                             tickLine={false}
                             axisLine={false}
-                            domain={weightDomain}
+                            domain={bfDomain}
+                            unit="%"
+                            width={35}
                         />
 
                         <Tooltip content={<CustomTooltip />} />
@@ -181,7 +219,7 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
 
                         {/* BF Line - Manual Points Only, Linear Interp */}
                         <Line
-                            yAxisId="right"
+                            yAxisId="bf-axis"
                             type="linear"
                             dataKey="bf"
                             name="Gordura"

@@ -98,10 +98,26 @@ export default async function StudentDetailPage({ params }: { params: { id: stri
     const assignedWorkouts = student?.assigned_workouts?.filter((aw: any) => aw.active) || []
     const activeDiet = student?.assigned_diets?.find((ad: any) => ad.active)?.diet
 
-    // Calculate age
-    const age = details?.birth_date
+    // Unified Age Logic
+    const ageValue = details?.age || (details?.birth_date
         ? Math.floor((new Date().getTime() - new Date(details.birth_date).getTime()) / (365.25 * 24 * 60 * 60 * 1000))
-        : '--'
+        : '--')
+
+    const activityLabels: Record<string, string> = {
+        sedentary: 'Sedentário',
+        light: 'Leve',
+        moderate: 'Moderado',
+        active: 'Ativo',
+        athlete: 'Atleta',
+        very: 'Muito Ativo',
+        extra: 'Extremo'
+    }
+
+    const sexLabels: Record<string, string> = {
+        male: 'Masc.',
+        female: 'Fem.',
+        other: 'Outro'
+    }
 
     const today = new Date().getDate()
     const paymentDay = relationship.payment_day
@@ -310,9 +326,11 @@ export default async function StudentDetailPage({ params }: { params: { id: stri
                     <CardContent className="p-7 space-y-8">
                         <div className="grid grid-cols-2 gap-y-6 gap-x-4">
                             <InfoField label="Altura" value={details?.height || '--'} sub="cm" />
-                            <InfoField label="Idade" value={age} sub="anos" />
+                            <InfoField label="Idade" value={ageValue} sub="anos" />
+                            <InfoField label="Gênero" value={details?.sex ? sexLabels[details.sex] : '--'} />
+                            <InfoField label="Atividade" value={details?.activity_level ? activityLabels[details.activity_level] : '--'} />
                             <InfoField label="Ergogênicos" value={details?.steroid_use ? 'Sim' : 'Não'} />
-                            <InfoField label="Visto por último" value={student?.last_seen_at ? new Date(student.last_seen_at).toLocaleDateString() : 'N/A'} />
+                            <InfoField label="Visto" value={student?.last_seen_at ? new Date(student.last_seen_at).toLocaleDateString() : 'N/A'} />
                         </div>
 
                         <div className="pt-8 border-t border-zinc-800/50 space-y-5">

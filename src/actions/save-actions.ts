@@ -3,7 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 
-export async function saveParsedData(type: 'workout' | 'diet', data: any) {
+export async function saveParsedData(type: 'workout' | 'diet', data: any, studentId?: string) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
@@ -11,65 +11,164 @@ export async function saveParsedData(type: 'workout' | 'diet', data: any) {
 
     try {
         if (type === 'workout') {
-            const results = { workouts: [] as string[], cardios: [] as string[] };
+            const results = { workouts: [] as string[], cardios: [] as string[], ergogenics: [] as string[] };
+            console.log(`[SAVE] Starting workout save. User: ${user.id}`);
+            console.log(`[SAVE] Incoming data keys: ${Object.keys(data)}`);
 
-            // 1. Save Workouts
+            // 1. Deep Normalization of Workouts
+            let workoutsToProcess: any[] = [];
+
             if (data.workouts && Array.isArray(data.workouts)) {
-                for (const wData of data.workouts) {
-                    const { data: workout, error: wError } = await supabase
-                        .from('workouts')
-                        .insert({
-                            trainer_id: user.id,
-                            name: wData.name || 'Treino Importado',
-                            description: 'Importado via PDF'
-                        })
-                        .select()
-                        .single()
+                console.log(`[SAVE] Found workouts array: ${data.workouts.length} items`);
+                workoutsToProcess = data.workouts;
+            } else if (data.exercises && Array.isArray(data.exercises)) {
+                console.log(`[SAVE] Found flat exercises array: ${data.exercises.length} items`);
+                workoutsToProcess = [{
+                    name: 'Treino Importado',
+                    exercises: data.exercises
+                }];
+            } else if (Array.isArray(data)) {
+                console.log(`[SAVE] Root data is array: ${data.length} items`);
+                workoutsToProcess = data;
+            } else {
+                console.log(`[SAVE] Unknown structure. Keys: ${Object.keys(data)}`);
+            }
 
-                    if (wError) throw wError
+            for (const [wIdx, wData] of workoutsToProcess.entries()) {
+                if (!wData || (typeof wData !== 'object')) {
+                    console.log(`[SAVE] Skipping invalid workout at index ${wIdx}`);
+                    continue;
+                }
 
-                    for (let i = 0; i < wData.exercises.length; i++) {
-                        const exData = wData.exercises[i]
+                const wName = wData.name || wData.workout_name || 'Treino Importado';
+                console.log(`[SAVE] Creating workout ${wIdx + 1}: "${wName}"`);
 
-                        // Get or create exercise in library
-                        let exerciseId;
-                        const { data: existingEx } = await supabase
-                            .from('exercises')
-                            .select('id')
-                            .eq('trainer_id', user.id)
-                            .eq('name', exData.name)
-                            .maybeSingle();
+                const { data: workout, error: wError } = await supabase
+                    .from('workouts')
+                    .insert({
+                        trainer_id: user.id,
+                        name: wName,
+                        description: 'Importado via PDF'
+                    })
+                    .select()
+                    .single()
 
-                        if (existingEx) {
-                            exerciseId = existingEx.id;
-                        } else {
-                            const { data: newEx, error: exError } = await supabase
-                                .from('exercises')
-                                .insert({
-                                    trainer_id: user.id,
-                                    name: exData.name
-                                })
-                                .select()
-                                .single()
-                            if (exError) throw exError
-                            exerciseId = newEx.id;
+                if (wError) {
+                    console.error(`[SAVE] Failed to create workout "${wName}":`, wError);
+                    continue;
+                }
+                console.log(`[SAVE] Workout created with ID: ${workout.id}`);
+
+                // Normalizing exercise array from possible AI keys
+                const exercisesArray = wData.exercises || wData.items || [];
+                console.log(`[SAVE] Processing ${exercisesArray.length} exercises for "${wName}"`);
+
+                if (Array.isArray(exercisesArray)) {
+                    for (let i = 0; i < exercisesArray.length; i++) {
+                        const exData = exercisesArray[i];
+                        if (!exData || typeof exData !== 'object') continue;
+
+                        // Property names can vary with AI
+                        const exName = exData.name || exData.exercise_name || exData.exercise;
+                        if (!exName) {
+                            console.log(`[SAVE] [Ex ${i}] Exercise has no name, skipping.`);
+                            continue;
                         }
 
-                        // Link to Workout
-                        await supabase
-                            .from('workout_exercises')
-                            .insert({
-                                workout_id: workout.id,
-                                exercise_id: exerciseId,
-                                order_index: i,
-                                working_sets: exData.sets || 3,
-                                reps: String(exData.reps || '10-12'),
-                                rest_seconds: exData.rest || 60
-                            })
+                        const cleanExName = exName.trim();
+                        let exerciseId: string | undefined;
+
+                        console.log(`[SAVE] [Ex ${i}] Looking for exercise: "${cleanExName}"`);
+
+                        // Try to find existing (the trainer's own or system default)
+                        const { data: existingEx, error: findError } = await supabase
+                            .from('exercises')
+                            .select('id')
+                            .eq('name', cleanExName)
+                            .maybeSingle();
+
+                        if (findError) console.error(`[SAVE] [Ex ${i}] Error finding exercise:`, findError);
+
+                        if (existingEx) {
+                            console.log(`[SAVE] [Ex ${i}] Found existing exercise: ${existingEx.id}`);
+                            exerciseId = existingEx.id;
+                        } else {
+                            console.log(`[SAVE] [Ex ${i}] Not found. Creating new for trainer...`);
+                            const { data: newEx, error: exError } = await supabase
+                                .from('exercises')
+                                .insert({ trainer_id: user.id, name: cleanExName })
+                                .select('id').single()
+
+                            if (exError) {
+                                // Fallback: if it failed because it exists but RLS hid it, 
+                                // it means it's a global exercise NOT owned by this trainer.
+                                // In a strictly private model, the trainer should have their own.
+                                // But if the insert failed with 23505, we MUST get the ID.
+                                if (exError.code === '23505') {
+                                    console.log(`[SAVE] [Ex ${i}] Collision/Race condition. Attempting to resolve...`);
+                                    // Try one more time without RLS filter if we had a RPC or similar, 
+                                    // but here we just try to fetch again.
+                                    const { data: raceEx } = await supabase
+                                        .from('exercises')
+                                        .select('id')
+                                        .eq('name', cleanExName)
+                                        .maybeSingle()
+
+                                    exerciseId = raceEx?.id;
+
+                                    if (!exerciseId) {
+                                        console.error(`[SAVE] [Ex ${i}] Collision occurred but exercise is invisible (RLS). This indicates a global name conflict.`);
+                                    }
+                                } else {
+                                    console.error(`[SAVE] [Ex ${i}] Error creating exercise "${cleanExName}":`, exError);
+                                }
+                            } else if (newEx) {
+                                console.log(`[SAVE] [Ex ${i}] New exercise created: ${newEx.id}`);
+                                exerciseId = newEx.id;
+                            }
+                        }
+
+                        if (!exerciseId) {
+                            console.error(`[SAVE] [Ex ${i}] Could not resolve exercise ID for "${exName}"`);
+                            continue;
+                        }
+
+                        const parseSets = (s: any) => {
+                            if (typeof s === 'number') return s;
+                            if (typeof s === 'string') {
+                                const match = s.match(/^(\d+)/);
+                                return match ? parseInt(match[1]) : 1;
+                            }
+                            return 3;
+                        };
+
+                        console.log(`[SAVE] [Ex ${i}] Linking to workout. Sets: ${exData.sets}, Reps: ${exData.reps}`);
+                        const { error: linkErr } = await supabase.from('workout_exercises').insert({
+                            workout_id: workout.id,
+                            exercise_id: exerciseId,
+                            order_index: i,
+                            working_sets: parseSets(exData.sets),
+                            reps: String(exData.reps || '10-12'),
+                            rest_seconds: parseInt(exData.rest) || 180,
+                            warmup_sets: parseSets(exData.warmup_sets || 0),
+                            warmup_reps: typeof exData.warmup_sets === 'string' ? exData.warmup_sets : '12-15',
+                            warmup_rest_seconds: 45,
+                            feeder_sets: parseSets(exData.feeder_sets || 0),
+                            feeder_reps: typeof exData.feeder_sets === 'string' ? exData.feeder_sets : '6-8',
+                            feeder_rest_seconds: 60,
+                            notes: exData.notes || null
+                        })
+
+                        if (linkErr) {
+                            console.error(`[SAVE] [Ex ${i}] Error linking exercise:`, linkErr);
+                        } else {
+                            console.log(`[SAVE] [Ex ${i}] Link successful.`);
+                        }
                     }
-                    results.workouts.push(workout.id);
                 }
+                results.workouts.push(workout.id);
             }
+            console.log(`[SAVE] Finished. Saved ${results.workouts.length} workouts.`);
 
             // 2. Save Cardios
             if (data.cardios && Array.isArray(data.cardios)) {
@@ -81,81 +180,102 @@ export async function saveParsedData(type: 'workout' | 'diet', data: any) {
                             name: cData.type || 'Cardio Importado',
                             description: `${cData.duration || ''} ${cData.intensity || ''} (${cData.frequency || ''})`.trim()
                         })
-                        .select()
-                        .single()
+                        .select().single()
 
                     if (cError) throw cError
                     results.cardios.push(cardio.id);
                 }
             }
 
+            // 3. Save Ergogenics (Only if studentId is provided)
+            if (studentId && data.ergogenics && Array.isArray(data.ergogenics)) {
+                for (const eData of data.ergogenics) {
+                    const { data: ergo, error: eError } = await supabase
+                        .from('ergogenics')
+                        .insert({
+                            trainer_id: user.id,
+                            student_id: studentId,
+                            name: eData.name,
+                            dosage: eData.dosage,
+                            weekly_dosage: eData.weekly_dosage || 0,
+                            unit: (eData.unit === 'mg' || eData.unit === 'ml') ? eData.unit : 'ml',
+                            application_days: eData.application_days || [],
+                            notes: eData.notes || '',
+                            start_date: new Date().toISOString().split('T')[0]
+                        })
+                        .select().single()
+                    if (eError) console.error("Error saving ergogenic:", eError.message)
+                    else results.ergogenics.push(ergo.id)
+                }
+            }
+
             revalidatePath('/dashboard/trainer/workouts')
+            if (studentId) revalidatePath(`/dashboard/trainer/students/${studentId}/ergogenics`)
             return { success: true, results }
 
         } else {
             // DIET
-            const dietIds = [];
-            if (data.diets && Array.isArray(data.diets)) {
-                // Since our current DB structure handles one diet per save call usually, 
-                // but AI might return multiple "diets" for different days if they are separated.
-                // Usually it's one diet with multiple meals. 
-                // If AI returns multiple in 'diets' array, we create multiple.
+            const results = { diets: [] as string[], ergogenics: [] as string[] };
 
-                for (const dData of data.diets) {
+            // Normalize diet data: if it's the new flattened structure (no 'diets' key but has 'meals' at top)
+            // wrap it in a mock diet so the loop below works.
+            let dietsToProcess = data.diets || [];
+            if (!data.diets && data.meals) {
+                dietsToProcess = [{
+                    diet_name: 'Dieta Importada',
+                    meals: data.meals
+                }];
+            }
+
+            if (Array.isArray(dietsToProcess)) {
+                for (const dData of dietsToProcess) {
                     const { data: diet, error: dError } = await supabase
                         .from('diets')
                         .insert({
                             trainer_id: user.id,
                             name: dData.diet_name || 'Dieta Importada'
                         })
-                        .select()
-                        .single()
+                        .select().single()
 
                     if (dError) throw dError
-                    dietIds.push(diet.id);
+                    results.diets.push(diet.id);
 
-                    if (dData.meals || dData.diet_meals) {
-                        const meals = dData.meals || dData.diet_meals;
-                        for (let i = 0; i < meals.length; i++) {
-                            const mealData = meals[i];
-                            const { data: meal, error: mError } = await supabase
-                                .from('meals')
-                                .insert({
-                                    diet_id: diet.id,
-                                    name: mealData.meal_name || mealData.name,
-                                    order_index: i
-                                })
-                                .select()
-                                .single()
+                    const meals = dData.meals || dData.diet_meals || [];
+                    for (let i = 0; i < meals.length; i++) {
+                        const mealData = meals[i];
+                        const { data: meal, error: mError } = await supabase
+                            .from('meals')
+                            .insert({
+                                diet_id: diet.id,
+                                name: mealData.meal_name || mealData.name,
+                                order_index: i
+                            })
+                            .select().single()
 
-                            if (mError) throw mError
+                        if (mError) throw mError
 
-                            if (mealData.foods || mealData.items) {
-                                const foods = mealData.foods || mealData.items;
-                                const itemsToInsert = foods.map((f: any) => ({
-                                    meal_id: meal.id,
-                                    food_name: f.name || f.food,
-                                    quantity: f.quantity,
-                                    protein: f.protein || 0,
-                                    carbs: f.carbs || 0,
-                                    fat: f.fat || 0,
-                                    calories: f.calories || 0
-                                }))
+                        const foods = mealData.foods || mealData.items || [];
+                        const itemsToInsert = foods.map((f: any) => ({
+                            meal_id: meal.id,
+                            food_name: f.name || f.food,
+                            quantity: f.quantity,
+                            protein: f.protein || 0,
+                            carbs: f.carbs || 0,
+                            fat: f.fat || 0,
+                            calories: f.calories || 0
+                        }))
 
-                                const { error: iError } = await supabase
-                                    .from('meal_items')
-                                    .insert(itemsToInsert)
-
-                                if (iError) throw iError
-                            }
+                        if (itemsToInsert.length > 0) {
+                            const { error: iError } = await supabase.from('meal_items').insert(itemsToInsert)
+                            if (iError) throw iError
                         }
                     }
                 }
             }
-            revalidatePath('/dashboard/trainer/diets')
-            return { success: true, ids: dietIds }
-        }
 
+            revalidatePath('/dashboard/trainer/diets')
+            return { success: true, results }
+        }
     } catch (e: any) {
         return { error: e.message }
     }

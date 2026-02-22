@@ -170,7 +170,10 @@ export default async function StudentProgressPage() {
 
             <PerformanceAnalysisSection
                 weights={metricsHistory.weights}
-                bfs={metricsHistory.bfs}
+                bfs={metricsHistory.bfs.length > 0 ? metricsHistory.bfs : (fullMetrics.details?.body_fat ? [
+                    { bf_percentage: fullMetrics.details.body_fat, recorded_at: new Date(Date.now() - 86400000 * 5).toISOString() }, // 5 dias atrás 
+                    { bf_percentage: fullMetrics.details.body_fat, recorded_at: new Date().toISOString() } // Hoje
+                ] : [])}
                 frequency={trainingFrequency || []}
                 trainerTier={trainerTier}
                 isStudentView={true}
