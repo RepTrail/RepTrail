@@ -586,7 +586,7 @@ function EmptyState({ label }: { label: string }) {
 }
 
 function TrainerRow({ trainer, onPlanChange, onEliteToggle, onEliteTrial, onDelete, isPending }: any) {
-    const plans = ['on_demand', 'start', 'pro', 'elite']
+    const plans = ['on_demand']
     const planColors: Record<string, string> = {
         on_demand: 'text-orange-400',
         start: 'text-zinc-400',
@@ -639,28 +639,7 @@ function TrainerRow({ trainer, onPlanChange, onEliteToggle, onEliteTrial, onDele
                         </button>
                     ))}
                 </div>
-                {/* Elite toggle */}
-                <button
-                    onClick={onEliteToggle}
-                    disabled={isPending}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-[9px] font-black uppercase tracking-widest transition-all ${trainer.is_elite
-                        ? 'bg-amber-500/10 border-amber-500/30 text-amber-500 hover:bg-amber-500/20'
-                        : 'bg-zinc-950 border-zinc-800 text-zinc-600 hover:text-zinc-400'
-                        }`}
-                >
-                    <Star className={`w-3 h-3 ${trainer.is_elite ? 'fill-amber-500' : ''}`} />
-                    Elite {trainer.elite_until && new Date(trainer.elite_until) > new Date() ? '(TRIAL)' : ''}
-                </button>
-
-                {/* Trial Button */}
-                <button
-                    onClick={onEliteTrial}
-                    disabled={isPending}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-zinc-800 bg-zinc-950 text-zinc-600 hover:text-orange-400 hover:border-orange-400/30 text-[9px] font-black uppercase tracking-widest transition-all"
-                >
-                    <Clock className="w-3 h-3" />
-                    Trial 15d
-                </button>
+                {/* Removed Elite toggle and Trial Button for On-Demand model */}
 
                 {/* Delete Button */}
                 <button
