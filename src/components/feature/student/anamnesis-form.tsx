@@ -161,10 +161,10 @@ export function AnamnesisForm({ initialData }: { initialData?: any }) {
                         </div>
 
                         <div className="space-y-8 relative z-10">
-                            <div className="space-y-2">
-                                <div className="flex items-center gap-2">
+                            <div className="space-y-2 relative z-10">
+                                <div className="flex flex-wrap items-center gap-2">
                                     <h4 className="text-sm font-black text-white italic uppercase tracking-widest">Medições Antropométricas</h4>
-                                    <Badge variant="outline" className="border-none bg-emerald-500 text-zinc-950 text-[8px] font-black uppercase h-5 px-2">Precisão Máxima</Badge>
+                                    <Badge variant="outline" className="border-none bg-emerald-500 text-zinc-950 text-[8px] font-black uppercase h-5 px-2 whitespace-nowrap">Precisão Máxima</Badge>
                                 </div>
                                 <p className="text-xs text-zinc-500 font-medium italic">Insira suas medidas exatas com fita métrica para o cálculo de elite.</p>
                             </div>
@@ -287,10 +287,26 @@ export function AnamnesisForm({ initialData }: { initialData?: any }) {
                             <Button
                                 type="submit"
                                 disabled={loading || !calculatedBF}
-                                className="w-full h-16 rounded-2xl bg-white hover:bg-emerald-500 hover:text-white text-zinc-950 font-black uppercase italic tracking-widest transition-all shadow-2xl active:scale-[0.98] group text-base"
+                                className="w-full relative h-auto py-4 sm:py-5 px-4 sm:px-8 rounded-2xl sm:rounded-3xl bg-white hover:bg-emerald-500 hover:text-white text-zinc-950 transition-all shadow-xl active:scale-95 group overflow-hidden"
                             >
-                                {loading ? "Processando Protocolo..." : "Salvar Dados Antropométricos"}
-                                <ArrowRight className="w-5 h-5 ml-3 group-hover:translate-x-1 transition-transform" />
+                                {/* Efeito de Shimmer */}
+                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent translate-x-[-100%] transition-transform duration-1000 group-hover:translate-x-[100%]" />
+
+                                <div className="flex flex-col items-center justify-center w-full relative z-10 sm:flex-row sm:justify-between gap-2 sm:gap-4">
+                                    <div className="flex flex-col items-center sm:items-start text-center sm:text-left">
+                                        <span className="font-black uppercase italic tracking-widest text-sm sm:text-base md:text-lg leading-none">
+                                            {loading ? "Processando..." : "Salvar Dados"}
+                                        </span>
+                                        {!loading && (
+                                            <span className="font-bold uppercase tracking-[0.2em] text-[9px] sm:text-[10px] text-zinc-500 group-hover:text-emerald-100 transition-colors mt-1">
+                                                Antropométricos
+                                            </span>
+                                        )}
+                                    </div>
+                                    <div className="w-10 h-10 rounded-full bg-zinc-100 group-hover:bg-white/20 flex items-center justify-center shrink-0 transition-colors">
+                                        <ArrowRight className="w-5 h-5 text-zinc-900 group-hover:text-white group-hover:translate-x-0.5 transition-transform" />
+                                    </div>
+                                </div>
                             </Button>
                         </div>
                     </div>

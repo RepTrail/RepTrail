@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { DollarSign, ArrowUpRight, CheckCircle2, AlertCircle, Clock } from 'lucide-react'
 import { Separator } from '@/components/ui/separator'
+import { RequestPayoutButton } from '@/components/feature/affiliate/request-payout-button'
 
 export default async function AffiliateEarningsPage() {
     const { commissions, payouts, checks } = await getAffiliateTransactions()
@@ -26,13 +27,17 @@ export default async function AffiliateEarningsPage() {
     return (
         <div className="space-y-10 pb-10">
             {/* Header */}
-            <div>
-                <h1 className="text-3xl font-black text-white italic uppercase tracking-tight">
-                    Meus Ganhos
-                </h1>
-                <p className="text-zinc-500 text-sm font-medium mt-2">
-                    Extrato completo de suas comissões e histórico de saques.
-                </p>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <h1 className="text-3xl font-black text-white italic uppercase tracking-tight">
+                        Meus Ganhos
+                    </h1>
+                    <p className="text-zinc-500 text-sm font-medium mt-2">
+                        Extrato completo de suas comissões e histórico de saques.
+                    </p>
+                </div>
+
+                <RequestPayoutButton availableBalance={checks.available} />
             </div>
 
             {/* Financial Summary */}

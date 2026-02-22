@@ -62,7 +62,7 @@ export default async function TrainerDashboard() {
     const tierName = profile?.plan_tier
         ? profile.plan_tier.split('_').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
         : 'On Demand'
-    const tierTrend = profile?.plan_tier === 'elite' ? 'Nível Máximo' : 'Upgrade Disponível'
+    const tierTrend = 'Ativo'
 
     // Ranking Logic
     const fullRanking = await getTrainerRanking()

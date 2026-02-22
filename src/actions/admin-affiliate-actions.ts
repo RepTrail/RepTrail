@@ -201,3 +201,73 @@ export async function toggleAffiliateStatus(userId: string, isAffiliate: boolean
     revalidatePath('/admin')
     return { success: true }
 }
+
+/** Obter solicitações de saque dos afiliados */
+export async function getAdminPayouts() {
+    const supabase = await createClient()
+
+    // Auth check (admin)
+    const { data: { user } } = await supabase.auth.getUser()
+    const { data: profile } = await supabase.from('profiles').select('is_admin').eq('id', user?.id).single()
+    if (!profile?.is_admin) return { error: 'Unauthorized' }
+
+    const { data: payouts, error } = await supabase
+        .from('affiliate_payouts')
+        .select(`
+            id, amount, status, payout_method, payout_details, created_at, affiliate_id,
+            profiles!affiliate_id(full_name, email)
+        `)
+        .order('created_at', { ascending: false })
+
+    if (error) return { error: error.message }
+    return { data: payouts || [] }
+}
+
+/** Atualizar status de uma solicitação de saque (admin) */
+export async function updatePayoutStatus(payoutId: string, status: 'completed' | 'rejected') {
+    const supabase = await createClient()
+
+    // Auth check (admin)
+    const { data: { user } } = await supabase.auth.getUser()
+    const { data: profile } = await supabase.from('profiles').select('is_admin').eq('id', user?.id).single()
+    if (!profile?.is_admin) return { error: 'Unauthorized' }
+
+    // Obter dados do saque para caso de rejeição (estornar saldo)
+    const { data: payout } = await supabase
+        .from('affiliate_payouts')
+        .select('affiliate_id, amount, status')
+        .eq('id', payoutId)
+        .single()
+
+    if (!payout) return { error: 'Saque não encontrado' }
+    if (payout.status !== 'requested' && payout.status !== 'pending') {
+        return { error: 'Este saque já foi processado' }
+    }
+
+    const { error } = await supabase
+        .from('affiliate_payouts')
+        .update({ status })
+        .eq('id', payoutId)
+
+    if (error) return { error: error.message }
+
+    // Se for rejeitado, estornamos o saldo para o afiliado
+    if (status === 'rejected') {
+        const { data: affiliateProfile } = await supabase
+            .from('profiles')
+            .select('affiliate_balance')
+            .eq('id', payout.affiliate_id)
+            .single()
+
+        if (affiliateProfile) {
+            await supabase
+                .from('profiles')
+                .update({ affiliate_balance: (affiliateProfile.affiliate_balance || 0) + payout.amount })
+                .eq('id', payout.affiliate_id)
+        }
+    }
+
+    revalidatePath('/admin/dashboard/affiliates')
+    revalidatePath('/dashboard/affiliate/earnings')
+    return { success: true }
+}
