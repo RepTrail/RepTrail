@@ -49,12 +49,12 @@ export function TrainerFeatures() {
                     </div>
 
                     <div className="pt-8">
-                        <Link href="/auth/signup" className="block md:inline-block">
-                            <Button className="w-full md:w-auto h-14 px-8 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase italic tracking-wide rounded-xl shadow-lg shadow-emerald-500/10 transition-all hover:scale-105">
+                        <Button asChild className="w-full md:w-auto h-14 px-8 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase italic tracking-wide rounded-xl shadow-lg shadow-emerald-500/10 transition-all hover:scale-105">
+                            <Link href="/auth/signup">
                                 Começar como Personal
                                 <ArrowRight className="ml-2 w-5 h-5" />
-                            </Button>
-                        </Link>
+                            </Link>
+                        </Button>
                     </div>
                 </div>
 

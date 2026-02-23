@@ -36,7 +36,7 @@ export default async function LandingPage() {
       '/dashboard/student'
 
   return (
-    <div className="flex flex-col min-h-screen bg-zinc-950 text-white font-sans selection:bg-emerald-500/30 overflow-x-hidden">
+    <div className="flex flex-col min-h-screen bg-zinc-950 text-white font-sans selection:bg-emerald-500/30 overflow-x-hidden" suppressHydrationWarning>
       <AffiliateTracker />
       {/* Header */}
       <header className="h-20 flex items-center border-b border-zinc-900/50 backdrop-blur-md sticky top-0 z-50 bg-zinc-950/80 supports-[backdrop-filter]:bg-zinc-950/60">
@@ -136,8 +136,8 @@ export default async function LandingPage() {
             © 2026 RepTrail Inc. Todos os direitos reservados.
           </p>
           <div className="flex flex-wrap justify-center gap-6 order-2 md:order-3">
-            <Link href="/afiliados/login" className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest hover:text-zinc-400 transition-colors">Sou afiliado</Link>
-            <Link href="/afiliados" className="text-[10px] font-bold text-amber-500/60 uppercase tracking-widest hover:text-amber-500 transition-colors">Quero me tornar afiliado</Link>
+            <Link href="/afiliados/login" className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest hover:text-zinc-400 transition-colors" suppressHydrationWarning>Sou afiliado</Link>
+            <Link href="/afiliados" className="text-[10px] font-bold text-amber-500/60 uppercase tracking-widest hover:text-amber-500 transition-colors" suppressHydrationWarning>Quero me tornar afiliado</Link>
             <Link href="#" className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest hover:text-zinc-400 transition-colors">Termos</Link>
             <Link href="#" className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest hover:text-zinc-400 transition-colors">Privacidade</Link>
           </div>

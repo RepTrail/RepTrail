@@ -48,19 +48,40 @@ export default async function StudentProgressPage() {
     // Metrics & Trends
     const weights = metricsHistory.weights
     const lastWeight = weights[weights.length - 1]?.weight_kg
-    const prevWeight = weights[weights.length - 2]?.weight_kg
-    const weightTrend = prevWeight ? (lastWeight - prevWeight).toFixed(1) : null
+    const firstWeight = weights[0]?.weight_kg
+
+    // Calculate weight change from 30 days ago (or first available)
+    const thirtyDaysAgo = new Date()
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+    const thirtyDaysAgoStr = thirtyDaysAgo.toISOString().split('T')[0]
+
+    const weight30d = [...weights].reverse().find(w => w.recorded_at < thirtyDaysAgoStr)?.weight_kg || firstWeight
+    const weightChange30d = (weight30d && lastWeight) ? (lastWeight - weight30d).toFixed(1) : null
 
     const bfs = metricsHistory.bfs
-    // Use BF from history if available, otherwise fallback to profile details
     const lastBF = bfs.length > 0 ? bfs[bfs.length - 1]?.bf_percentage : fullMetrics.details?.body_fat
-    const prevBF = bfs[bfs.length - 2]?.bf_percentage
-    const bfTrend = prevBF ? (lastBF - prevBF).toFixed(1) : null
+    const firstBF = bfs.length > 0 ? bfs[0]?.bf_percentage : fullMetrics.details?.body_fat
 
-    const weeklyAvg = metricsHistory.weights.length > 0 ? "Ativo" : "Sem dados"
+    // Calculate BF change (30 days or first available)
+    const bf30d = [...bfs].reverse().find(b => b.recorded_at < thirtyDaysAgoStr)?.bf_percentage || firstBF
+    const bfChange30d = (bfs.length > 1 && bf30d !== lastBF) ? (lastBF - bf30d).toFixed(1) : null
 
     const history = await getStudentWorkoutHistory(user.id)
     const adherenceHistory = await getAdherenceHistory(30)
+
+    // Calculate Adherence Average (last 30 days)
+    const last30dAdherence = (adherenceHistory || []).filter(h => h.diet_percentage > 0 || h.workout_status === 'completed' || h.cardio_status === 'completed')
+    const avgAdherence = last30dAdherence.length > 0 ? (
+        last30dAdherence.reduce((acc, h) => {
+            const pillars = [
+                h.diet_percentage,
+                h.workout_status === 'completed' ? 100 : 0,
+                h.cardio_status === 'completed' ? 100 : 0,
+                h.ergogenics_status === 'completed' ? 100 : 0
+            ]
+            return acc + (pillars.reduce((a, b) => a + b, 0) / 4)
+        }, 0) / last30dAdherence.length
+    ).toFixed(0) : 0
 
     const { data: progressPhotosData } = await supabase
         .from('progress_photos')
@@ -95,27 +116,27 @@ export default async function StudentProgressPage() {
                     value={lastWeight || '--'}
                     unit="kg"
                     icon={<TrendingUp className="w-4 h-4" />}
-                    trend={weightTrend ? (parseFloat(weightTrend) > 0 ? 'up' : 'down') : 'none'}
-                    trendVal={weightTrend ? `${Math.abs(parseFloat(weightTrend))}kg` : '--'}
-                    trendLabel={weightTrend ? "desde a última" : "Sem histórico"}
+                    trend={weightChange30d ? (parseFloat(weightChange30d) > 0 ? 'up' : 'down') : 'none'}
+                    trendVal={weightChange30d ? `${Math.abs(parseFloat(weightChange30d))}kg` : '--'}
+                    trendLabel={weightChange30d ? "no último mês" : "Sem histórico"}
                 />
                 <StatCard
                     label="Percentual de Gordura"
                     value={lastBF || '--'}
                     unit="%"
                     icon={<Droplet className="w-4 h-4" />}
-                    trend={bfTrend ? (parseFloat(bfTrend) > 0 ? 'up' : 'down') : 'none'}
-                    trendVal={bfTrend ? `${Math.abs(parseFloat(bfTrend))}%` : '--'}
-                    trendLabel={bfTrend ? "desde a última" : "Sem histórico"}
+                    trend={bfChange30d ? (parseFloat(bfChange30d) > 0 ? 'up' : 'down') : 'none'}
+                    trendVal={bfChange30d ? `${Math.abs(parseFloat(bfChange30d))}%` : '--'}
+                    trendLabel={bfChange30d ? "no último mês" : "Neutro / Sem histórico"}
                 />
                 <StatCard
-                    label="Status do Plano"
-                    value={weeklyAvg}
-                    unit=""
-                    icon={<Activity className="w-4 h-4" />}
+                    label="Adesão (30D)"
+                    value={avgAdherence}
+                    unit="%"
+                    icon={<Target className="w-4 h-4" />}
                     trend="none"
                     trendVal=""
-                    trendLabel="Acompanhamento Ativo"
+                    trendLabel="Média dos 4 Pilares"
                 />
             </div>
 

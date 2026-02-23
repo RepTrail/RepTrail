@@ -57,10 +57,7 @@ export async function MetricsAndEvolution({ studentId, steroidUse }: { studentId
                 </div>
                 <PerformanceAnalysisSection
                     weights={fullMetrics.weights}
-                    bfs={fullMetrics.bfs.length > 0 ? fullMetrics.bfs : (fullMetrics.details?.body_fat ? [
-                        { bf_percentage: fullMetrics.details.body_fat, recorded_at: new Date(Date.now() - 86400000 * 5).toISOString() },
-                        { bf_percentage: fullMetrics.details.body_fat, recorded_at: new Date().toISOString() }
-                    ] : [])}
+                    bfs={fullMetrics.bfs}
                     frequency={fullMetrics.frequency}
                     trainerTier="elite"
                     isStudentView={true}

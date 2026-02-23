@@ -31,12 +31,32 @@ export function AssignDietDialog({ dietId, students }: AssignDietDialogProps) {
     const [open, setOpen] = useState(false)
     const [loading, setLoading] = useState(false)
     const [selectedStudent, setSelectedStudent] = useState<string>('')
+    const [selectedDays, setSelectedDays] = useState<number[]>([0, 1, 2, 3, 4, 5, 6])
+
+    const days = [
+        { label: 'D', value: 0 },
+        { label: 'S', value: 1 },
+        { label: 'T', value: 2 },
+        { label: 'Q', value: 3 },
+        { label: 'Q', value: 4 },
+        { label: 'S', value: 5 },
+        { label: 'S', value: 6 },
+    ]
+
+    const toggleDay = (day: number) => {
+        if (selectedDays.includes(day)) {
+            setSelectedDays(selectedDays.filter(d => d !== day))
+        } else {
+            setSelectedDays([...selectedDays, day])
+        }
+    }
 
     async function handleAssign() {
         if (!selectedStudent) return alert('Selecione um aluno.')
+        if (selectedDays.length === 0) return alert('Selecione pelo menos um dia.')
 
         setLoading(true)
-        const result = await assignDiet(dietId, selectedStudent)
+        const result = await assignDiet(dietId, selectedStudent, selectedDays)
         setLoading(false)
 
         if (result.success) {
@@ -59,14 +79,14 @@ export function AssignDietDialog({ dietId, students }: AssignDietDialogProps) {
                 <DialogHeader>
                     <DialogTitle>Atribuir Dieta</DialogTitle>
                     <DialogDescription className="text-zinc-400">
-                        Escolha um aluno para receber este plano alimentar.
+                        Escolha um aluno e os dias para este plano alimentar.
                     </DialogDescription>
                 </DialogHeader>
-                <div className="space-y-4 py-4">
+                <div className="space-y-6 py-4">
                     <div className="space-y-2">
-                        <Label>Aluno</Label>
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Aluno</Label>
                         <Select onValueChange={setSelectedStudent}>
-                            <SelectTrigger className="bg-zinc-900 border-zinc-800">
+                            <SelectTrigger className="bg-zinc-900 border-zinc-800 h-12 rounded-xl">
                                 <SelectValue placeholder="Selecione o aluno" />
                             </SelectTrigger>
                             <SelectContent className="bg-zinc-900 border-zinc-800 text-white">
@@ -78,9 +98,30 @@ export function AssignDietDialog({ dietId, students }: AssignDietDialogProps) {
                             </SelectContent>
                         </Select>
                     </div>
+
+                    <div className="space-y-3">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Dias da Semana</Label>
+                        <div className="flex justify-between gap-1">
+                            {days.map((day) => {
+                                const isSelected = selectedDays.includes(day.value)
+                                return (
+                                    <button
+                                        key={day.value}
+                                        onClick={() => toggleDay(day.value)}
+                                        className={`w-9 h-9 rounded-xl text-[10px] font-black transition-all border ${isSelected
+                                                ? 'bg-emerald-500 border-emerald-400 text-zinc-950 shadow-[0_0_15px_rgba(16,185,129,0.2)]'
+                                                : 'bg-zinc-900 border-zinc-800 text-zinc-500 hover:border-zinc-700'
+                                            }`}
+                                    >
+                                        {day.label}
+                                    </button>
+                                )
+                            })}
+                        </div>
+                    </div>
                 </div>
                 <DialogFooter>
-                    <Button onClick={handleAssign} disabled={loading} className="w-full bg-zinc-100 text-zinc-900 hover:bg-white">
+                    <Button onClick={handleAssign} disabled={loading} className="w-full h-12 bg-zinc-100 text-zinc-900 hover:bg-white rounded-xl font-black uppercase italic tracking-widest text-xs">
                         {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
                         Confirmar Atribuição
                     </Button>

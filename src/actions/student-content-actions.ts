@@ -112,6 +112,8 @@ export async function deleteStudentWorkout(workoutId: string) {
     }
 }
 
+import { assignDiet } from './diet-actions'
+
 // === DIETS ===
 export async function createStudentDiet(formData: FormData) {
     const supabase = await createClient()
@@ -119,6 +121,8 @@ export async function createStudentDiet(formData: FormData) {
     if (!user) return { error: 'Unauthorized' }
 
     const name = formData.get('name')?.toString().trim() || 'Nova Dieta'
+    const daysOfWeekJson = formData.get('daysOfWeek')?.toString()
+    const daysOfWeek = daysOfWeekJson ? JSON.parse(daysOfWeekJson) : [0, 1, 2, 3, 4, 5, 6]
 
     try {
         const { data, error } = await supabase
@@ -133,24 +137,11 @@ export async function createStudentDiet(formData: FormData) {
         if (error) throw error
         const dietId = data.id
 
-        // Deactivate previous
-        await supabase
-            .from('assigned_diets')
-            .update({ active: false })
-            .eq('student_id', user.id)
-            .eq('active', true)
+        // Use the unified assignDiet function which handles overlaps
+        const assignResult = await assignDiet(dietId, user.id, daysOfWeek)
 
-        // Auto-assign to self
-        const { error: assignErr } = await supabase
-            .from('assigned_diets')
-            .insert({
-                diet_id: dietId,
-                student_id: user.id,
-                active: true,
-            })
-
-        if (assignErr) {
-            console.error('[STUDENT] Failed to auto-assign diet:', assignErr)
+        if (assignResult.error) {
+            console.error('[STUDENT] Failed to auto-assign diet:', assignResult.error)
         }
 
         revalidatePath('/dashboard/student/diet')

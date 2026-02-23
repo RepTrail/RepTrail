@@ -439,19 +439,46 @@ export async function getStudentAdherenceHistory(studentId: string, days: number
         .order('date', { ascending: true })
 
     const { data: aw } = await supabase.from('assigned_workouts').select('day_of_week').eq('student_id', studentId).neq('active', false)
-    const { data: ac } = await supabase.from('assigned_cardios').select('day_of_week').eq('student_id', studentId).neq('active', false)
-    const { data: ad } = await supabase.from('assigned_diets').select('id').eq('student_id', studentId).neq('active', false)
+    const { data: ac } = await supabase.from('assigned_cardios').select('day_of_week, days_of_week').eq('student_id', studentId).neq('active', false)
     const { data: ae } = await supabase.from('ergogenics').select('application_days').eq('student_id', studentId)
 
     const { data: details } = await supabase.from('student_details').select('steroid_use').eq('id', studentId).single()
     const steroidUse = !!details?.steroid_use
+
+    // Fetch execution logs for the period
+    const { data: wLogs } = await supabase
+        .from('workout_logs')
+        .select('started_at, status')
+        .eq('student_id', studentId)
+        .eq('status', 'completed')
+        .gte('started_at', startDateStr + 'T00:00:00')
+        .lte('started_at', todayStr + 'T23:59:59')
+
+    const { data: cLogs } = await supabase
+        .from('cardio_logs')
+        .select('started_at, status')
+        .eq('student_id', studentId)
+        .eq('status', 'completed')
+        .gte('started_at', startDateStr + 'T00:00:00')
+        .lte('started_at', todayStr + 'T23:59:59')
+
+    const { data: eLogs } = await supabase
+        .from('ergogenic_logs')
+        .select('created_at')
+        .eq('student_id', studentId)
+        .gte('created_at', startDateStr + 'T00:00:00')
+        .lte('created_at', todayStr + 'T23:59:59')
+
+    const workoutDates = new Set(wLogs?.map(l => l.started_at.split('T')[0]))
+    const cardioDates = new Set(cLogs?.map(l => l.started_at.split('T')[0]))
+    const ergoDates = new Set(eLogs?.map(l => l.created_at.split('T')[0]))
 
     const workoutDays = new Set((aw || []).map((a: any) => a.day_of_week))
     const cardioDays = new Set<number>()
     if (ac) {
         ac.forEach((c: any) => {
             if (c.day_of_week !== undefined && c.day_of_week !== null) cardioDays.add(c.day_of_week)
-            else if (c.days_of_week && Array.isArray(c.days_of_week)) c.days_of_week.forEach((day: number) => cardioDays.add(day))
+            if (c.days_of_week && Array.isArray(c.days_of_week)) c.days_of_week.forEach((day: number) => cardioDays.add(day))
         })
     }
     const ergogenicsDays = new Set((ae || []).map((e: any) => e.application_days || []).flat())
@@ -480,30 +507,40 @@ export async function getStudentAdherenceHistory(studentId: string, days: number
         const dow = d.getDay()
         const isPast = dateStr < todayStr
 
-        let item: any
-        if (found) {
-            item = { ...found }
-        } else {
-            item = {
-                date: dateStr,
-                diet_percentage: 0,
-                workout_status: workoutDays.has(dow) ? 'assigned' : 'none',
-                workout_percentage: 0,
-                cardio_status: cardioDays.has(dow) ? 'assigned' : 'none',
-                cardio_percentage: 0,
-                ergogenics_status: (steroidUse && ergogenicsDays.has(dow)) ? 'assigned' : 'none',
-                ergogenics_percentage: 0,
-            }
+        // Workout Status
+        let workoutStatus = found?.workout_status || 'none'
+        if (workoutDates.has(dateStr)) workoutStatus = 'completed'
+        else {
+            if (workoutStatus === 'none' && workoutDays.has(dow)) workoutStatus = 'assigned'
+            if (workoutStatus === 'assigned' && isPast) workoutStatus = 'skipped'
         }
 
-        // Final status fix for past days
-        if (isPast) {
-            if (item.workout_status === 'assigned') item.workout_status = 'skipped'
-            if (item.cardio_status === 'assigned') item.cardio_status = 'skipped'
-            if (item.ergogenics_status === 'assigned') item.ergogenics_status = 'skipped'
+        // Cardio Status
+        let cardioStatus = found?.cardio_status || 'none'
+        if (cardioDates.has(dateStr)) cardioStatus = 'completed'
+        else {
+            if (cardioStatus === 'none' && cardioDays.has(dow)) cardioStatus = 'assigned'
+            if (cardioStatus === 'assigned' && isPast) cardioStatus = 'skipped'
         }
 
-        historyArr.push(item)
+        // Ergo Status
+        let ergoStatus = found?.ergogenics_status || 'none'
+        if (ergoDates.has(dateStr)) ergoStatus = 'completed'
+        else {
+            if (ergoStatus === 'none' && steroidUse && ergogenicsDays.has(dow)) ergoStatus = 'assigned'
+            if (ergoStatus === 'assigned' && isPast) ergoStatus = 'skipped'
+        }
+
+        historyArr.push({
+            date: dateStr,
+            diet_percentage: found?.diet_percentage || 0,
+            workout_status: workoutStatus,
+            workout_percentage: workoutStatus === 'completed' ? 100 : (found?.workout_percentage || 0),
+            cardio_status: cardioStatus,
+            cardio_percentage: cardioStatus === 'completed' ? 100 : (found?.cardio_percentage || 0),
+            ergogenics_status: ergoStatus,
+            ergogenics_percentage: ergoStatus === 'completed' ? 100 : (found?.ergogenics_percentage || 0),
+        })
     }
 
     return historyArr

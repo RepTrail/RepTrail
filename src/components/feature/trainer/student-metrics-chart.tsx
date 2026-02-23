@@ -25,25 +25,13 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
 
     // 1. Process Data
     const chartData = useMemo(() => {
-        // Ensure at least 2 points if arrays have exactly 1 element (fix for Recharts single-point bug)
-        const safeWeights = weights.length === 1 ? [
-            { ...weights[0], recorded_at: new Date(new Date(weights[0].recorded_at).getTime() - 86400000 * 3).toISOString() },
-            weights[0]
-        ] : weights;
-
-        const safeBfs = bfs.length === 1 ? [
-            { ...bfs[0], recorded_at: new Date(new Date(bfs[0].recorded_at).getTime() - 86400000 * 3).toISOString() },
-            bfs[0]
-        ] : bfs;
-
-        // Collect all dates
+        // Collect all available dates
         const allDates = new Set<string>()
-
-        safeWeights.forEach(w => allDates.add(w.recorded_at.split('T')[0]))
-        safeBfs.forEach(b => allDates.add(b.recorded_at.split('T')[0]))
+        weights.forEach(w => allDates.add(w.recorded_at.split('T')[0]))
+        bfs.forEach(b => allDates.add(b.recorded_at.split('T')[0]))
         frequency.forEach(f => allDates.add(f.date.split('T')[0]))
 
-        // Add start and end range padding if minimal data
+        // Default range if no data
         if (allDates.size === 0) {
             const today = new Date()
             allDates.add(today.toISOString().split('T')[0])
@@ -56,22 +44,29 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
 
         const minDate = parseISO(minDateStr)
         const maxDate = parseISO(maxDateStr)
-        // Ensure we have a valid range even if dates are the same
         const daysDiff = Math.max(1, differenceInDays(maxDate, minDate))
+
+        // Find the first available data point dates to avoid back-padding lines
+        const sortedW = [...weights].sort((a, b) => a.recorded_at.localeCompare(b.recorded_at))
+        const sortedB = [...bfs].sort((a, b) => a.recorded_at.localeCompare(b.recorded_at))
+        const firstWDate = sortedW.length > 0 ? sortedW[0].recorded_at.split('T')[0] : null
+        const firstBDate = sortedB.length > 0 ? sortedB[0].recorded_at.split('T')[0] : null
 
         // Generate full daily range
         const data = []
-        let lastWeight = safeWeights.length > 0 ? safeWeights[0].weight_kg : null
-        let lastBf = safeBfs.length > 0 ? safeBfs[0].bf_percentage : null
-        let lastPerformance = frequency.length > 0 ? frequency[0].sessions : null
+        // Back-fill: initialize with the first available value to make lines start from the beginning
+        let lastWeight: number | null = sortedW.length > 0 ? sortedW[0].weight_kg : null
+        let lastBf: number | null = sortedB.length > 0 ? sortedB[0].bf_percentage : null
+
+        const sortedFreq = [...frequency].sort((a, b) => a.date.localeCompare(b.date))
+        let lastPerformance: number | null = sortedFreq.length > 0 ? sortedFreq[0].sessions : null
 
         for (let i = 0; i <= daysDiff; i++) {
             const currentDate = addDays(minDate, i)
             const dateStr = format(currentDate, 'yyyy-MM-dd')
 
-            // Find matches - ensure we get the LAST (most recent) entry if there are multiple per day
-            const weightEntries = safeWeights.filter(w => w.recorded_at.startsWith(dateStr))
-            const bfEntries = safeBfs.filter(b => b.recorded_at.startsWith(dateStr))
+            const weightEntries = weights.filter(w => w.recorded_at.startsWith(dateStr))
+            const bfEntries = bfs.filter(b => b.recorded_at.startsWith(dateStr))
 
             const weightEntry = weightEntries.length > 0 ? weightEntries[weightEntries.length - 1] : null
             const bfEntry = bfEntries.length > 0 ? bfEntries[bfEntries.length - 1] : null
@@ -86,7 +81,7 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
                 displayDate: format(currentDate, 'dd/MM'),
                 weight: lastWeight,
                 bf: lastBf,
-                performance: lastPerformance, // Adherence/Performance
+                performance: lastPerformance,
                 realWeight: !!weightEntry,
                 realBf: !!bfEntry,
                 realPerformance: !!freqEntry

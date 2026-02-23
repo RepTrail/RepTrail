@@ -163,26 +163,47 @@ export async function duplicateDiet(dietId: string) {
     }
 }
 
-export async function assignDiet(dietId: string, studentId: string) {
+export async function assignDiet(dietId: string, studentId: string, daysOfWeek: number[] = [0, 1, 2, 3, 4, 5, 6]) {
     const supabase = await createClient()
 
     try {
-        // Check if already assigned (even if inactive)
+        // 1. Handle conflicts: remove these days from all other active diets for this student
+        const { data: others } = await supabase
+            .from('assigned_diets')
+            .select('id, days_of_week')
+            .eq('student_id', studentId)
+            .eq('active', true)
+            .neq('diet_id', dietId)
+
+        if (others) {
+            for (const other of others) {
+                const currentDays = other.days_of_week || []
+                const newDays = currentDays.filter((d: number) => !daysOfWeek.includes(d))
+
+                if (newDays.length === 0) {
+                    await supabase.from('assigned_diets').update({ active: false, days_of_week: [] }).eq('id', other.id)
+                } else if (newDays.length !== currentDays.length) {
+                    await supabase.from('assigned_diets').update({ days_of_week: newDays }).eq('id', other.id)
+                }
+            }
+        }
+
+        // 2. Assign/Update target diet
         const { data: existing } = await supabase
             .from('assigned_diets')
-            .select('id, active')
+            .select('id, active, days_of_week')
             .eq('diet_id', dietId)
             .eq('student_id', studentId)
             .maybeSingle()
 
         if (existing) {
-            if (existing.active) {
-                return { success: true, message: 'Esta dieta já está assinada.' }
-            }
-            // Reactivate inactive one
+            // Update existing assignment with new days and reactivate
             const { error } = await supabase
                 .from('assigned_diets')
-                .update({ active: true })
+                .update({
+                    active: true,
+                    days_of_week: daysOfWeek
+                })
                 .eq('id', existing.id)
 
             if (error) throw error
@@ -193,13 +214,19 @@ export async function assignDiet(dietId: string, studentId: string) {
                 .insert({
                     diet_id: dietId,
                     student_id: studentId,
-                    active: true
+                    active: true,
+                    days_of_week: daysOfWeek
                 })
 
             if (error) throw error
         }
 
         revalidatePath('/dashboard/trainer/students')
+        revalidatePath(`/dashboard/trainer/students/${studentId}`)
+        revalidatePath(`/dashboard/trainer/students/${studentId}/diet`)
+        revalidatePath('/dashboard/student')
+        revalidatePath('/dashboard/student/diet')
+
         return { success: true }
     } catch (e: any) {
         return { error: e.message }
@@ -516,6 +543,8 @@ export async function getStudentDailyDiet(studentId: string) {
     const supabase = await createClient()
 
     try {
+        const todayDow = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' })).getDay()
+
         const { data: assignments, error: assignErr } = await supabase
             .from('assigned_diets')
             .select(`
@@ -529,17 +558,16 @@ export async function getStudentDailyDiet(studentId: string) {
             `)
             .eq('student_id', studentId)
             .eq('active', true)
-            .order('id', { ascending: false }) // Fallback order
+            .contains('days_of_week', [todayDow])
+            .order('created_at', { ascending: false })
             .limit(1)
 
         if (assignErr) {
-            console.error('[GET_DAILY_DIET] Error:', assignErr)
+            console.error('[GET_DAILY_DIET] Error:', assignErr.message)
             return null
         }
 
         const assignment = assignments?.[0]
-        console.log('[GET_DAILY_DIET] Assignment found:', !!assignment, (assignment?.diet as any)?.id)
-
         if (!assignment || !assignment.diet) return null
 
         const diet = assignment.diet as any

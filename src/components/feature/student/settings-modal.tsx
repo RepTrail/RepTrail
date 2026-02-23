@@ -155,34 +155,55 @@ export function SettingsModal({ hasTrainer = false }: SettingsModalProps) {
                             <div className="space-y-3">
                                 <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] px-1">Auto-Training</p>
                                 <div className="space-y-2">
-                                    <button
-                                        onClick={enableAutoTrainingTrial}
-                                        disabled={updating || loading || !canStartTrial}
-                                        className="w-full flex items-center justify-between p-4 bg-zinc-900/50 rounded-2xl border border-zinc-800 hover:bg-zinc-900 hover:border-zinc-700 transition-all group disabled:opacity-60 disabled:cursor-not-allowed"
-                                    >
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 bg-orange-500/10 rounded-xl flex items-center justify-center">
-                                                <Zap className="w-5 h-5 text-orange-500" />
-                                            </div>
-                                            <div className="text-left">
-                                                <p className="text-sm font-bold text-zinc-200">
-                                                    {isTrialActive
-                                                        ? `Trial ativo • ${daysRemaining} dia(s) restante(s)`
-                                                        : hasUsedTrial
-                                                            ? 'Trial indisponível'
+                                    {(isTrialActive || !hasUsedTrial) ? (
+                                        <button
+                                            onClick={enableAutoTrainingTrial}
+                                            disabled={updating || loading}
+                                            className="w-full flex items-center justify-between p-4 bg-zinc-900/50 rounded-2xl border border-zinc-800 hover:bg-zinc-900 hover:border-zinc-700 transition-all group disabled:opacity-60 disabled:cursor-not-allowed"
+                                        >
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-10 h-10 bg-orange-500/10 rounded-xl flex items-center justify-center">
+                                                    <Zap className="w-5 h-5 text-orange-500" />
+                                                </div>
+                                                <div className="text-left">
+                                                    <p className="text-sm font-bold text-zinc-200">
+                                                        {isTrialActive
+                                                            ? `Trial ativo • ${daysRemaining} dia(s) restante(s)`
                                                             : 'Ativar Trial do Auto-Training'}
-                                                </p>
-                                                <p className="text-[10px] text-zinc-500 uppercase font-medium">
-                                                    {isTrialActive
-                                                        ? 'Você já usou seu trial'
-                                                        : hasUsedTrial
-                                                            ? 'Você já utilizou o trial anteriormente'
-                                                            : 'Reexibir popup do trial'}
-                                                </p>
+                                                    </p>
+                                                    <p className="text-[10px] text-zinc-500 uppercase font-medium">
+                                                        {isTrialActive
+                                                            ? 'Aproveite seus 7 dias grátis'
+                                                            : 'Teste grátis por 7 dias'}
+                                                    </p>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <ChevronRight className="w-5 h-5 text-zinc-600 group-hover:text-zinc-400 transition-colors" />
-                                    </button>
+                                            <ChevronRight className="w-5 h-5 text-zinc-600 group-hover:text-zinc-400 transition-colors" />
+                                        </button>
+                                    ) : (
+                                        <button
+                                            onClick={() => router.push('/dashboard/student/plans')}
+                                            className="w-full flex items-center justify-between p-4 bg-emerald-500/10 rounded-2xl border border-emerald-500/20 hover:bg-emerald-500/20 hover:border-emerald-500/40 transition-all group"
+                                        >
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-10 h-10 bg-emerald-500/20 rounded-xl flex items-center justify-center">
+                                                    <ShieldCheck className="w-5 h-5 text-emerald-500" />
+                                                </div>
+                                                <div className="text-left">
+                                                    <p className="text-sm font-black text-white italic uppercase tracking-tight">
+                                                        Assinar Auto-Treino
+                                                    </p>
+                                                    <p className="text-[10px] text-emerald-500/70 uppercase font-bold tracking-widest leading-none mt-0.5">
+                                                        Liberar recursos premium
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-[9px] font-black text-emerald-500 uppercase bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">PRO</span>
+                                                <ChevronRight className="w-5 h-5 text-emerald-500 group-hover:translate-x-1 transition-all" />
+                                            </div>
+                                        </button>
+                                    )}
                                 </div>
                             </div>
                         )}

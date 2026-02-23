@@ -64,6 +64,7 @@ export default async function StudentDetailPage({ params }: { params: { id: stri
                 assigned_diets(
                     id,
                     active,
+                    days_of_week,
                     diet:diets(id, name)
                 )
             )
@@ -96,7 +97,7 @@ export default async function StudentDetailPage({ params }: { params: { id: stri
 
     // Get assignments (only active ones)
     const assignedWorkouts = student?.assigned_workouts?.filter((aw: any) => aw.active) || []
-    const activeDiet = student?.assigned_diets?.find((ad: any) => ad.active)?.diet
+    const activeDiets = student?.assigned_diets?.filter((ad: any) => ad.active) || []
 
     // Unified Age Logic
     const ageValue = details?.age || (details?.birth_date
@@ -451,20 +452,31 @@ export default async function StudentDetailPage({ params }: { params: { id: stri
                             <div className="space-y-5">
                                 <h3 className="text-[10px] font-black text-zinc-100 flex items-center gap-2 uppercase tracking-[0.2em] px-2">
                                     <Utensils className="w-3.5 h-3.5 text-emerald-500" />
-                                    Dieta Atual
+                                    Planos Alimentares
                                 </h3>
-                                {activeDiet ? (
-                                    <ContentCard
-                                        icon={<Utensils className="w-4 h-4 text-emerald-500" />}
-                                        label={activeDiet.name}
-                                        actionLabel="Editar"
-                                        href={`/dashboard/trainer/diets/${activeDiet.id}`}
-                                        unassignProps={{
-                                            type: 'diet',
-                                            contentId: activeDiet.id,
-                                            studentId: student.id
-                                        }}
-                                    />
+                                {activeDiets.length > 0 ? (
+                                    <div className="space-y-3">
+                                        {activeDiets.map((ad: any) => {
+                                            const dayLabels = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
+                                            const daysFormatted = ad.days_of_week?.map((d: number) => dayLabels[d]).join(', ') || 'Todos os dias'
+
+                                            return (
+                                                <ContentCard
+                                                    key={ad.id}
+                                                    icon={<Utensils className="w-4 h-4 text-emerald-500" />}
+                                                    label={ad.diet.name}
+                                                    subLabel={daysFormatted}
+                                                    actionLabel="Editar"
+                                                    href={`/dashboard/trainer/diets/${ad.diet.id}`}
+                                                    unassignProps={{
+                                                        type: 'diet',
+                                                        contentId: ad.diet.id,
+                                                        studentId: student.id
+                                                    }}
+                                                />
+                                            )
+                                        })}
+                                    </div>
                                 ) : (
                                     <div className="bg-zinc-900/30 border border-zinc-800/50 border-dashed rounded-3xl py-12 flex flex-col items-center justify-center text-center space-y-4">
                                         <p className="text-zinc-600 text-[10px] font-black uppercase tracking-widest italic">Nenhuma dieta assinada</p>
@@ -647,7 +659,7 @@ function InfoField({ label, value, sub }: any) {
     )
 }
 
-function ContentCard({ icon, label, actionLabel, href, unassignProps }: any) {
+function ContentCard({ icon, label, subLabel, actionLabel, href, unassignProps }: any) {
     return (
         <div className="bg-zinc-900/40 border border-zinc-800/50 shadow-xl rounded-3xl overflow-hidden backdrop-blur-sm group/card hover:border-zinc-700/50 transition-all duration-300">
             <div className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
@@ -655,7 +667,10 @@ function ContentCard({ icon, label, actionLabel, href, unassignProps }: any) {
                     <div className="w-11 h-11 rounded-2xl bg-zinc-900 flex items-center justify-center border border-zinc-800 group-hover/card:border-zinc-700 group-hover/card:shadow-[0_0_20px_rgba(255,255,255,0.02)] transition-all">
                         {icon}
                     </div>
-                    <p className="text-zinc-100 text-sm font-black uppercase italic tracking-wide truncate max-w-[150px]">{label}</p>
+                    <div>
+                        <p className="text-zinc-100 text-sm font-black uppercase italic tracking-wide truncate max-w-[150px]">{label}</p>
+                        {subLabel && <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mt-0.5">{subLabel}</p>}
+                    </div>
                 </div>
                 <div className="flex items-center gap-3">
                     {unassignProps && (

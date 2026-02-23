@@ -66,53 +66,61 @@ export function StudentErgogenicsView({ studentId, ergogenics, initialLogs }: St
         }
     }
 
-    const renderErgogenicCard = (e: Ergogenic & { application_days: number[] }, isToday: boolean) => (
-        <Card key={e.id} className={`bg-zinc-950 border-zinc-800 transition-all rounded-3xl overflow-hidden shadow-2xl group ${isToday ? 'border-emerald-500/30' : 'opacity-60'}`}>
-            <CardContent className="p-0">
-                <div className="p-6 bg-zinc-900/40 border-b border-zinc-900/50 flex items-center justify-between">
-                    <div className="space-y-1">
-                        <h3 className="text-lg font-black text-white italic uppercase tracking-tight">{e.name}</h3>
-                        <div className="text-[10px] font-bold text-emerald-500 uppercase tracking-tighter">
-                            {(e.weekly_dosage / (e.application_days?.length || 1)).toFixed(2)} {e.unit} por aplicação
+    const renderErgogenicCard = (e: Ergogenic & { application_days: number[] }, isToday: boolean) => {
+        if (!e) return null
+
+        // Calculate dosage per application safely
+        const appDaysCount = Array.isArray(e.application_days) ? e.application_days.length : 0
+        const dosagePerApp = appDaysCount > 0 ? (e.weekly_dosage / appDaysCount).toFixed(2) : (e.weekly_dosage || 0).toFixed(2)
+
+        return (
+            <Card key={e.id} className={`bg-zinc-950 border-zinc-800 transition-all rounded-3xl overflow-hidden shadow-2xl group ${isToday ? 'border-emerald-500/30' : 'opacity-60'}`}>
+                <CardContent className="p-0">
+                    <div className="p-6 bg-zinc-900/40 border-b border-zinc-900/50 flex items-center justify-between">
+                        <div className="space-y-1">
+                            <h3 className="text-lg font-black text-white italic uppercase tracking-tight">{e.name || 'Substância'}</h3>
+                            <div className="text-[10px] font-bold text-emerald-500 uppercase tracking-tighter">
+                                {dosagePerApp} {e.unit || ''} por aplicação
+                            </div>
                         </div>
+                        {isToday && (
+                            <Button
+                                onClick={() => handleLog(e.id)}
+                                disabled={loading[e.id]}
+                                className="h-12 w-12 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-500/20 active:scale-95 transition-all p-0"
+                            >
+                                {loading[e.id] ? <Loader2 className="w-5 h-5 animate-spin" /> : <Check className="w-6 h-6" />}
+                            </Button>
+                        )}
                     </div>
-                    {isToday && (
-                        <Button
-                            onClick={() => handleLog(e.id)}
-                            disabled={loading[e.id]}
-                            className="h-12 w-12 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-500/20 active:scale-95 transition-all p-0"
-                        >
-                            {loading[e.id] ? <Loader2 className="w-5 h-5 animate-spin" /> : <Check className="w-6 h-6" />}
-                        </Button>
-                    )}
-                </div>
-                <div className="p-6 space-y-4">
-                    <div className="space-y-2">
-                        <span className="text-[9px] font-black text-zinc-600 uppercase tracking-widest block">Dias de Aplicação</span>
-                        <div className="flex gap-1">
-                            {['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map((day, idx) => (
-                                <div
-                                    key={idx}
-                                    className={`w-6 h-6 rounded-md flex items-center justify-center text-[8px] font-black border transition-all cursor-default ${(e.application_days || []).some((d: number) => Number(d) === idx)
-                                        ? 'bg-emerald-500 border-emerald-300 text-zinc-950 shadow-lg shadow-emerald-500/30'
-                                        : 'bg-zinc-950 border-zinc-900 text-zinc-800 hover:border-zinc-700 hover:text-zinc-400'
-                                        }`}
-                                >
-                                    {day}
-                                </div>
-                            ))}
+                    <div className="p-6 space-y-4">
+                        <div className="space-y-2">
+                            <span className="text-[9px] font-black text-zinc-600 uppercase tracking-widest block">Dias de Aplicação</span>
+                            <div className="flex gap-1">
+                                {['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map((day, idx) => (
+                                    <div
+                                        key={idx}
+                                        className={`w-6 h-6 rounded-md flex items-center justify-center text-[8px] font-black border transition-all cursor-default ${(e.application_days || []).some((d: number) => Number(d) === idx)
+                                            ? 'bg-emerald-500 border-emerald-300 text-zinc-950 shadow-lg shadow-emerald-500/30'
+                                            : 'bg-zinc-950 border-zinc-900 text-zinc-800 hover:border-zinc-700 hover:text-zinc-400'
+                                            }`}
+                                    >
+                                        {day}
+                                    </div>
+                                ))}
+                            </div>
                         </div>
+                        {e.notes && (
+                            <div className="pt-4 border-t border-zinc-900">
+                                <span className="text-[9px] font-black text-emerald-500/70 uppercase tracking-widest block mb-2">Orientações</span>
+                                <p className="text-xs text-zinc-400 leading-relaxed font-medium italic">"{e.notes}"</p>
+                            </div>
+                        )}
                     </div>
-                    {e.notes && (
-                        <div className="pt-4 border-t border-zinc-900">
-                            <span className="text-[9px] font-black text-emerald-500/70 uppercase tracking-widest block mb-2">Orientações</span>
-                            <p className="text-xs text-zinc-400 leading-relaxed font-medium italic">"{e.notes}"</p>
-                        </div>
-                    )}
-                </div>
-            </CardContent>
-        </Card>
-    )
+                </CardContent>
+            </Card>
+        )
+    }
 
     return (
         <div className="space-y-12 animate-in fade-in duration-700">
@@ -168,23 +176,27 @@ export function StudentErgogenicsView({ studentId, ergogenics, initialLogs }: St
                     <CardContent className="p-0">
                         {logs.length > 0 ? (
                             <div className="divide-y divide-zinc-900">
-                                {logs.map((log: StudentLog) => (
-                                    <div key={log.id} className="p-5 flex items-center justify-between hover:bg-zinc-900/50 active:bg-zinc-900 transition-all cursor-pointer group/item">
-                                        <div className="flex items-center gap-4">
-                                            <div className="p-3 bg-zinc-900 rounded-2xl border border-zinc-800">
-                                                <FlaskConical className="w-4 h-4 text-emerald-500" />
+                                {logs.map((log: StudentLog) => {
+                                    if (!log) return null
+                                    const logDate = log.created_at ? new Date(log.created_at) : new Date()
+                                    return (
+                                        <div key={log.id} className="p-5 flex items-center justify-between hover:bg-zinc-900/50 active:bg-zinc-900 transition-all cursor-pointer group/item">
+                                            <div className="flex items-center gap-4">
+                                                <div className="p-3 bg-zinc-900 rounded-2xl border border-zinc-800">
+                                                    <FlaskConical className="w-4 h-4 text-emerald-500" />
+                                                </div>
+                                                <div className="space-y-0.5">
+                                                    <p className="text-sm font-black text-white uppercase italic">{log.ergogenics?.name || 'Substância'}</p>
+                                                    <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-tighter">Aplicação Confirmada</p>
+                                                </div>
                                             </div>
-                                            <div className="space-y-0.5">
-                                                <p className="text-sm font-black text-white uppercase italic">{log.ergogenics?.name}</p>
-                                                <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-tighter">Aplicação Confirmada</p>
+                                            <div className="text-right">
+                                                <p className="text-xs font-bold text-zinc-300">{logDate.toLocaleDateString()}</p>
+                                                <p className="text-[10px] font-medium text-zinc-600 uppercase tracking-widest">{logDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
                                             </div>
                                         </div>
-                                        <div className="text-right">
-                                            <p className="text-xs font-bold text-zinc-300">{new Date(log.created_at).toLocaleDateString()}</p>
-                                            <p className="text-[10px] font-medium text-zinc-600 uppercase tracking-widest">{new Date(log.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
-                                        </div>
-                                    </div>
-                                ))}
+                                    )
+                                })}
                             </div>
                         ) : (
                             <div className="p-12 text-center text-zinc-600 font-bold uppercase tracking-widest text-[10px]">Nenhum registro encontrado.</div>

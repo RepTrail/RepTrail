@@ -313,35 +313,35 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
                     Gerar Antes e Depois
                 </Button>
             </DialogTrigger>
-            <DialogContent className="bg-zinc-950/95 border-zinc-900 text-white max-w-lg rounded-[3.5rem] backdrop-blur-3xl p-0 overflow-hidden shadow-[0_0_100px_rgba(0,0,0,1)] gap-0 [&>button]:hidden">
-                <div className="absolute top-8 right-8 z-50">
+            <DialogContent className="bg-zinc-950/95 border-zinc-900 text-white max-w-lg rounded-[2.5rem] md:rounded-[3.5rem] backdrop-blur-3xl p-0 overflow-y-auto max-h-[90vh] shadow-[0_0_100px_rgba(0,0,0,1)] gap-0 [&>button]:hidden">
+                <div className="sticky top-6 right-6 flex justify-end px-6 z-50">
                     <DialogClose asChild>
-                        <Button variant="ghost" className="h-12 w-12 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-400 hover:text-white transition-all backdrop-blur-md">
+                        <Button variant="ghost" className="h-10 w-10 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-400 hover:text-white transition-all backdrop-blur-md">
                             <span className="sr-only">Fechar</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
                         </Button>
                     </DialogClose>
                 </div>
 
-                <div className="p-8 pt-16">
+                <div className="p-6 md:p-8 pt-4 md:pt-8">
                     {!previewUrl ? (
                         <>
-                            <DialogHeader className="mb-8">
-                                <div className="flex justify-center mb-8">
+                            <DialogHeader className="mb-6 md:mb-8">
+                                <div className="flex justify-center mb-4 md:mb-8">
                                     <div className="h-1.5 w-16 bg-gradient-to-r from-transparent via-[#f97316] to-transparent rounded-full opacity-50" />
                                 </div>
-                                <DialogTitle className="text-5xl md:text-6xl font-black italic uppercase tracking-tighter text-center leading-none">
+                                <DialogTitle className="text-4xl md:text-6xl font-black italic uppercase tracking-tighter text-center leading-none">
                                     EVOLUÇÃO <br />
                                     <span className="text-[#f97316]">BRUTAL 🔥</span>
                                 </DialogTitle>
-                                <p className="text-center text-emerald-500/60 text-[10px] font-black uppercase tracking-[0.4em] mt-6">RepTrail Premium Graphics</p>
+                                <p className="text-center text-emerald-500/60 text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] md:tracking-[0.4em] mt-4 md:mt-6">RepTrail Premium Graphics</p>
                             </DialogHeader>
 
-                            <div className="grid grid-cols-2 gap-6 md:gap-8 py-4">
+                            <div className="grid grid-cols-2 gap-4 md:gap-8 py-2 md:py-4">
                                 <button onClick={() => generateImage('story')} disabled={isGenerating} className="group flex flex-col items-center">
-                                    <div className="aspect-[9/16] w-full bg-zinc-900 rounded-[2.5rem] border border-white/5 flex flex-col items-center justify-center relative overflow-hidden group-hover:border-[#f97316]/30 transition-all shadow-2xl group-hover:shadow-[#f97316]/10">
-                                        <Instagram className="w-10 h-10 text-zinc-700 group-hover:text-white transition-all group-hover:scale-110" />
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-zinc-600 group-hover:text-white mt-6 transition-colors">Stories</span>
+                                    <div className="aspect-[9/16] w-full bg-zinc-900 rounded-[2rem] md:rounded-[2.5rem] border border-white/5 flex flex-col items-center justify-center relative overflow-hidden group-hover:border-[#f97316]/30 transition-all shadow-2xl group-hover:shadow-[#f97316]/10">
+                                        <Instagram className="w-8 h-8 md:w-10 md:h-10 text-zinc-700 group-hover:text-white transition-all group-hover:scale-110" />
+                                        <span className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-zinc-600 group-hover:text-white mt-4 md:mt-6 transition-colors">Stories</span>
                                         {isGenerating && (
                                             <div className="absolute inset-0 bg-black/80 flex items-center justify-center">
                                                 <div className="w-10 h-10 border-3 border-[#f97316] border-t-transparent rounded-full animate-spin" />
@@ -363,11 +363,11 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
                                 </button>
                             </div>
 
-                            <div className="mt-12 bg-zinc-900/50 p-8 rounded-[2.5rem] border border-white/5 relative overflow-hidden group">
+                            <div className="mt-8 md:mt-12 bg-zinc-900/50 p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] border border-white/5 relative overflow-hidden group">
                                 <div className="absolute top-0 right-0 w-32 h-32 bg-[#f97316]/10 blur-[50px] rounded-full -mr-16 -mt-16 group-hover:bg-[#f97316]/20 transition-all" />
-                                <p className="text-[11px] text-zinc-400 font-bold uppercase tracking-widest text-center leading-relaxed relative z-10">
+                                <p className="text-[10px] md:text-[11px] text-zinc-400 font-bold uppercase tracking-widest text-center leading-relaxed relative z-10">
                                     PRONTO PARA <span className="text-white">IMPACTAR</span>? <br />
-                                    <span className="text-zinc-600 text-[9px] mt-2 block">Sua evolução real com a identidade RepTrail.</span>
+                                    <span className="text-zinc-600 text-[8px] md:text-[9px] mt-2 block">Sua evolução real com a identidade RepTrail.</span>
                                 </p>
                             </div>
                         </>

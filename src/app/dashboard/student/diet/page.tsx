@@ -44,6 +44,8 @@ export default async function StudentDietPage() {
             .select(`
                 id,
                 diet_id,
+                days_of_week,
+                active,
                 diet:diets(
                     id,
                     name,
@@ -52,9 +54,11 @@ export default async function StudentDietPage() {
                 )
             `)
             .eq('student_id', user.id)
+            .eq('active', true)
 
         const diets = (assigned || []).map((a: any) => ({
             assignmentId: a.id,
+            daysOfWeek: a.days_of_week,
             ...(a.diet || {})
         }))
 
@@ -121,45 +125,50 @@ export default async function StudentDietPage() {
 
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                     {diets.length > 0 ? (
-                        diets.map((diet: any) => (
-                            <Card key={diet.id} className="bg-zinc-900 border-zinc-800 text-zinc-100 hover:border-zinc-700 transition-colors group">
-                                <CardHeader className="pb-2">
-                                    <div className="flex items-start justify-between">
-                                        <div className="bg-zinc-800 p-2 rounded-lg text-zinc-400 group-hover:text-white transition-colors">
-                                            <Utensils className="w-5 h-5" />
-                                        </div>
-                                        <div className="flex gap-2">
-                                            {allowCRUD && <DeleteDietButton dietId={diet.id} />}
-                                        </div>
-                                    </div>
-                                    <CardTitle className="mt-4 text-xl">{diet.name}</CardTitle>
-                                    <CardDescription className="text-zinc-500">
-                                        Plano alimentar completo.
-                                    </CardDescription>
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="flex items-center justify-between text-sm text-zinc-400 mb-6">
-                                        <span>{diet.meals?.[0]?.count || 0} Refeições</span>
-                                        <span>Criado em {diet.created_at ? new Date(diet.created_at).toLocaleDateString('pt-BR') : '-'}</span>
-                                    </div>
+                        diets.map((diet: any) => {
+                            const dayLabels = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
+                            const daysFormatted = diet.daysOfWeek?.map((d: number) => dayLabels[d]).join(', ') || 'Todos os dias'
 
-                                    {allowCRUD ? (
-                                        <Button asChild size="sm" className="w-full bg-zinc-100 text-zinc-900 hover:bg-white flex items-center justify-center gap-2">
-                                            <Link href={`/dashboard/student/diet/${diet.id}`}>
-                                                Editar
-                                                <ChevronRight className="w-4 h-4" />
-                                            </Link>
-                                        </Button>
-                                    ) : (
-                                        <Button asChild size="sm" variant="outline" className="w-full border-zinc-800 text-zinc-400">
-                                            <Link href="/dashboard/student">
-                                                Visualizar no Dashboard
-                                            </Link>
-                                        </Button>
-                                    )}
-                                </CardContent>
-                            </Card>
-                        ))
+                            return (
+                                <Card key={diet.id} className="bg-zinc-900 border-zinc-800 text-zinc-100 hover:border-zinc-700 transition-colors group">
+                                    <CardHeader className="pb-2">
+                                        <div className="flex items-start justify-between">
+                                            <div className="bg-zinc-800 p-2 rounded-lg text-zinc-400 group-hover:text-white transition-colors">
+                                                <Utensils className="w-5 h-5" />
+                                            </div>
+                                            <div className="flex gap-2">
+                                                {allowCRUD && <DeleteDietButton dietId={diet.id} />}
+                                            </div>
+                                        </div>
+                                        <CardTitle className="mt-4 text-xl">{diet.name}</CardTitle>
+                                        <CardDescription className="text-zinc-500 text-[10px] font-black uppercase tracking-widest mt-1">
+                                            {daysFormatted}
+                                        </CardDescription>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <div className="flex items-center justify-between text-[10px] text-zinc-500 font-bold uppercase tracking-widest mb-6">
+                                            <span>{diet.meals?.[0]?.count || 0} Refeições</span>
+                                            <span>{diet.created_at ? new Date(diet.created_at).toLocaleDateString('pt-BR') : '-'}</span>
+                                        </div>
+
+                                        {allowCRUD ? (
+                                            <Button asChild size="sm" className="w-full bg-zinc-100 text-zinc-900 hover:bg-white flex items-center justify-center gap-2">
+                                                <Link href={`/dashboard/student/diet/${diet.id}`}>
+                                                    Editar
+                                                    <ChevronRight className="w-4 h-4" />
+                                                </Link>
+                                            </Button>
+                                        ) : (
+                                            <Button asChild size="sm" variant="outline" className="w-full border-zinc-800 text-zinc-400">
+                                                <Link href="/dashboard/student">
+                                                    Visualizar no Dashboard
+                                                </Link>
+                                            </Button>
+                                        )}
+                                    </CardContent>
+                                </Card>
+                            )
+                        })
                     ) : (
                         <Card className="col-span-full bg-zinc-900/50 border-dashed border-zinc-800 p-12 text-center">
                             <div className="flex flex-col items-center gap-4">
