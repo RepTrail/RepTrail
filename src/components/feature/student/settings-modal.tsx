@@ -28,7 +28,11 @@ import { getTermsStatus, acceptTerms } from '@/actions/terms-actions'
 import { enableAutoTrainingTrialForCurrentUser, getAutoTrainingTrialInfoForCurrentUser } from '@/actions/auto-training-actions'
 import { useToast } from '@/hooks/use-toast'
 
-export function SettingsModal() {
+interface SettingsModalProps {
+    hasTrainer?: boolean
+}
+
+export function SettingsModal({ hasTrainer = false }: SettingsModalProps) {
     const [isOpen, setIsOpen] = useState(false)
     const [allowImageDisclosure, setAllowImageDisclosure] = useState(true)
     const [loading, setLoading] = useState(true)
@@ -53,11 +57,11 @@ export function SettingsModal() {
     }, [])
 
     useEffect(() => {
-        if (!isOpen) return
+        if (!isOpen || hasTrainer) return
         getAutoTrainingTrialInfoForCurrentUser().then((info) => {
             setTrialInfo(info)
         })
-    }, [isOpen])
+    }, [isOpen, hasTrainer])
 
     const handleTogglePhotos = async (checked: boolean) => {
         setUpdating(true)
@@ -147,39 +151,41 @@ export function SettingsModal() {
 
                     <div className="space-y-6">
                         {/* Auto-Training */}
-                        <div className="space-y-3">
-                            <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] px-1">Auto-Training</p>
-                            <div className="space-y-2">
-                                <button
-                                    onClick={enableAutoTrainingTrial}
-                                    disabled={updating || loading || !canStartTrial}
-                                    className="w-full flex items-center justify-between p-4 bg-zinc-900/50 rounded-2xl border border-zinc-800 hover:bg-zinc-900 hover:border-zinc-700 transition-all group disabled:opacity-60 disabled:cursor-not-allowed"
-                                >
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 bg-orange-500/10 rounded-xl flex items-center justify-center">
-                                            <Zap className="w-5 h-5 text-orange-500" />
+                        {!hasTrainer && (
+                            <div className="space-y-3">
+                                <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] px-1">Auto-Training</p>
+                                <div className="space-y-2">
+                                    <button
+                                        onClick={enableAutoTrainingTrial}
+                                        disabled={updating || loading || !canStartTrial}
+                                        className="w-full flex items-center justify-between p-4 bg-zinc-900/50 rounded-2xl border border-zinc-800 hover:bg-zinc-900 hover:border-zinc-700 transition-all group disabled:opacity-60 disabled:cursor-not-allowed"
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 bg-orange-500/10 rounded-xl flex items-center justify-center">
+                                                <Zap className="w-5 h-5 text-orange-500" />
+                                            </div>
+                                            <div className="text-left">
+                                                <p className="text-sm font-bold text-zinc-200">
+                                                    {isTrialActive
+                                                        ? `Trial ativo • ${daysRemaining} dia(s) restante(s)`
+                                                        : hasUsedTrial
+                                                            ? 'Trial indisponível'
+                                                            : 'Ativar Trial do Auto-Training'}
+                                                </p>
+                                                <p className="text-[10px] text-zinc-500 uppercase font-medium">
+                                                    {isTrialActive
+                                                        ? 'Você já usou seu trial'
+                                                        : hasUsedTrial
+                                                            ? 'Você já utilizou o trial anteriormente'
+                                                            : 'Reexibir popup do trial'}
+                                                </p>
+                                            </div>
                                         </div>
-                                        <div className="text-left">
-                                            <p className="text-sm font-bold text-zinc-200">
-                                                {isTrialActive
-                                                    ? `Trial ativo • ${daysRemaining} dia(s) restante(s)`
-                                                    : hasUsedTrial
-                                                        ? 'Trial indisponível'
-                                                        : 'Ativar Trial do Auto-Training'}
-                                            </p>
-                                            <p className="text-[10px] text-zinc-500 uppercase font-medium">
-                                                {isTrialActive
-                                                    ? 'Você já usou seu trial'
-                                                    : hasUsedTrial
-                                                        ? 'Você já utilizou o trial anteriormente'
-                                                        : 'Reexibir popup do trial'}
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <ChevronRight className="w-5 h-5 text-zinc-600 group-hover:text-zinc-400 transition-colors" />
-                                </button>
+                                        <ChevronRight className="w-5 h-5 text-zinc-600 group-hover:text-zinc-400 transition-colors" />
+                                    </button>
+                                </div>
                             </div>
-                        </div>
+                        )}
 
                         {/* Notifications */}
                         <div className="space-y-3">

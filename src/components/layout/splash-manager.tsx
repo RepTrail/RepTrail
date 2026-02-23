@@ -25,21 +25,26 @@ export function SplashManager({ children }: SplashManagerProps) {
         }
     }, [])
 
-    // 1. Initial state (before useEffect): Render black screen to block "Dashboard leak"
+    // 1. Initial state: Render black screen, but with pointer-events-none just in case of hydration lag
     if (view === 'none') {
-        return <div className="fixed inset-0 bg-black z-[9999]" />
-    }
-
-    // 2. Splash state: Show animation, keep children hidden to save CPU/lag
-    if (view === 'splash') {
         return (
             <>
-                <SplashScreen onFinish={() => setView('ready')} />
-                <div style={{ display: 'none' }}>{children}</div>
+                <div className="fixed inset-0 bg-black z-[9999] pointer-events-none" />
+                <div className="opacity-0">{children}</div>
             </>
         )
     }
 
-    // 3. Ready: High-fives all around
+    // 2. Splash state: Show animation on top of content
+    if (view === 'splash') {
+        return (
+            <>
+                <SplashScreen onFinish={() => setView('ready')} />
+                {children}
+            </>
+        )
+    }
+
+    // 3. Ready: Full content
     return <>{children}</>
 }

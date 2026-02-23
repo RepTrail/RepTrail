@@ -99,11 +99,11 @@ export default async function StudentLayout({
             </main>
 
             {/* Mobile Navigation (Floating Bottom Bar) */}
-            <div className="md:hidden fixed bottom-6 left-6 right-6 z-50">
+            <div className="md:hidden fixed bottom-6 left-6 right-6 z-[100]">
                 <MobileStudentNav hasTrainer={hasTrainer} steroidUse={steroidUse} autoTrainingActive={isAutoTrainingActive} />
             </div>
 
-            <SettingsModal />
+            <SettingsModal hasTrainer={hasTrainer} />
         </div>
     )
 }

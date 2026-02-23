@@ -393,27 +393,20 @@ export async function getStudentChartData(studentId: string) {
 
 export async function getStudentFullMetrics(studentId: string) {
     const supabase = await createClient()
-    console.log('DEBUG: getStudentFullMetrics called for studentId:', studentId)
-    
-    const metrics = await getStudentMetricsHistory(studentId)
-    console.log('DEBUG: getStudentMetricsHistory result:', { weights: metrics.weights?.length, bfs: metrics.bfs?.length })
-    
-    const chartData = await getStudentChartData(studentId)
-    console.log('DEBUG: getStudentChartData result:', chartData)
-    
-    const loadProgression = await getLoadProgression(studentId)
-    console.log('DEBUG: getLoadProgression result:', loadProgression)
 
-    const { data: details, error: detailsErr } = await supabase
+    // getStudentChartData already calls getStudentMetricsHistory internally
+    const chartData = await getStudentChartData(studentId)
+    const loadProgression = await getLoadProgression(studentId)
+
+    const { data: details } = await supabase
         .from('student_details')
         .select('body_fat, steroid_use')
         .eq('id', studentId)
         .single()
 
-    console.log('DEBUG: Student details result:', { details, error: detailsErr })
-
     return {
-        ...metrics,
+        weights: chartData.weights,
+        bfs: chartData.bfs,
         frequency: chartData.frequency,
         loadProgression,
         details

@@ -50,15 +50,15 @@ export function MobileHeader({ role, hasTrainer, steroidUse, hideImportPdf, auto
 
     return (
         <>
-            <header className="md:hidden fixed top-0 left-0 right-0 z-50 h-20 bg-zinc-950/70 backdrop-blur-lg border-b border-zinc-900 flex items-center justify-between px-6 gpu-accelerated">
-                <Link href="/">
+            <header className="md:hidden fixed top-0 left-0 right-0 z-[100] h-20 bg-zinc-950/70 backdrop-blur-lg border-b border-zinc-900 flex items-center justify-between px-6 gpu-accelerated">
+                <Link href="/" className="relative z-10">
                     <Logo size="sm" color={role === 'trainer' ? 'emerald' : 'orange'} />
                 </Link>
 
                 {links.length > 0 && (
                     <button
                         onClick={() => setIsOpen(true)}
-                        className="p-3 text-zinc-500 hover:text-white hover:bg-zinc-900 rounded-xl transition-all active:scale-90"
+                        className="relative z-10 p-3 text-zinc-500 hover:text-white hover:bg-zinc-900 rounded-xl transition-all active:scale-90"
                     >
                         <Menu className="w-6 h-6" />
                     </button>

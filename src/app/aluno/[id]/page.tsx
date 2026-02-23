@@ -1,17 +1,15 @@
-import { getPublicStudentProfile } from '@/actions/student-actions'
-import { getStudentFullMetrics } from '@/actions/metrics-actions'
-import { getStudentWorkoutHistory } from '@/actions/log-actions'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Calendar, TrendingUp, Trophy, User, Sparkles, ChevronRight, Activity, ArrowLeft, Target, Scale, Zap, History } from 'lucide-react'
-import { PerformanceAnalysisSection } from '@/components/feature/shared/performance-analysis-section'
-import { PublicStudentGallery } from '@/components/feature/student/public-student-gallery'
-import { AdherenceChart } from '@/components/feature/student/adherence-chart'
-import { StudentWorkoutHistory } from '@/components/feature/trainer/student-workout-history'
-
-import { ShareTransformation } from '@/components/feature/student/share-transformation'
+import { Activity, ArrowLeft, ChevronRight, Sparkles, Zap } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
+import { Suspense } from 'react'
+import { Skeleton } from '@/components/ui/skeleton'
+
+// Streaming Components
+import { MetricsAndEvolution } from './_components/metrics-evolution'
+import { WorkoutHistorySection } from './_components/history-section'
+import { PhotosAndTransformation } from './_components/photos-transformation'
 
 export const metadata = {
     title: 'Perfil do Aluno | RepTrail'
@@ -20,30 +18,39 @@ export const metadata = {
 export default async function StudentPublicProfilePage({ params }: { params: Promise<{ id: string }> }) {
     const { id: studentId } = await params
     const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    const isOwner = user?.id === studentId
+    const { data: { user: authUser } } = await supabase.auth.getUser()
+    const isOwner = authUser?.id === studentId
 
-    // Parallelize data fetching to optimize performance
-    const [data, fullMetrics, history] = await Promise.all([
-        getPublicStudentProfile(studentId),
-        getStudentFullMetrics(studentId),
-        getStudentWorkoutHistory(studentId)
-    ])
+    // 1. Fetch Core Profile Data (Fast)
+    const { data: profile } = await supabase
+        .from('profiles')
+        .select('id, full_name, avatar_url, created_at')
+        .eq('id', studentId)
+        .single()
 
-    if (!data) notFound()
+    if (!profile) notFound()
 
-    const { profile, details, hasTrainer, trainer, photos, beforeAfter, adherenceHistory } = data
-    const trainerData = trainer as { id: string; full_name: string; avatar_url: string; trainer_code?: string } | undefined
+    // 2. Fetch Basic Details (Fast)
+    const { data: details } = await supabase
+        .from('student_details')
+        .select('steroid_use')
+        .eq('id', studentId)
+        .single()
 
-    // Latest metrics for quick view
-    const latestWeight = fullMetrics.weights.length > 0
-        ? fullMetrics.weights[fullMetrics.weights.length - 1].weight_kg
-        : null
+    // 3. Fetch Trainer Info (Fast)
+    const { data: trainerLink } = await supabase
+        .from('trainer_students')
+        .select(`
+            active,
+            trainer:profiles!trainer_id(
+                id, full_name, avatar_url, trainer_code
+            )
+        `)
+        .eq('student_id', studentId)
+        .eq('active', true)
+        .maybeSingle()
 
-    // Fallback: Check history first, then details from either fetch
-    const latestBF = fullMetrics.bfs.length > 0
-        ? fullMetrics.bfs[fullMetrics.bfs.length - 1].bf_percentage
-        : (fullMetrics.details?.body_fat || details?.body_fat || null)
+    const trainerData = trainerLink?.trainer as { id: string; full_name: string; avatar_url: string; trainer_code?: string } | undefined
 
     return (
         <div className="min-h-screen bg-black text-white pb-20">
@@ -61,7 +68,7 @@ export default async function StudentPublicProfilePage({ params }: { params: Pro
                 </div>
             </div>
 
-            {/* Hero Section */}
+            {/* Hero Section (Immediate Render) */}
             <div className="max-w-6xl mx-auto px-6 pt-12">
                 <div className="relative rounded-[3rem] overflow-hidden bg-zinc-900/40 border border-white/5 p-8 md:p-12 mb-12">
                     <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12 relative z-10">
@@ -91,7 +98,7 @@ export default async function StudentPublicProfilePage({ params }: { params: Pro
                             </div>
 
                             <div className="flex flex-wrap items-center justify-center md:justify-start gap-4">
-                                {hasTrainer && trainerData ? (
+                                {trainerData ? (
                                     <Link
                                         href={`/personal/${trainerData.trainer_code || trainerData.id}`}
                                         className="group bg-emerald-500 text-zinc-950 px-8 py-4 rounded-2xl font-black italic uppercase text-xs tracking-widest transition-all hover:scale-105 active:scale-95 shadow-xl shadow-emerald-500/20 flex items-center gap-3"
@@ -126,143 +133,18 @@ export default async function StudentPublicProfilePage({ params }: { params: Pro
                     <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-radial from-emerald-500/10 to-transparent opacity-50" />
                 </div>
 
-                {/* Adherence and Performance Grid */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
-                    {/* Consistência Section with weight/bf cards */}
-                    <div className="space-y-6">
-                        <div className="flex items-center gap-3 px-2">
-                            <Target className="w-6 h-6 text-emerald-500" />
-                            <h2 className="text-xl font-black italic uppercase tracking-tight">Consistência (30D)</h2>
-                        </div>
+                {/* Heavy Sections (Streamed) */}
+                <Suspense fallback={<SectionSkeleton />}>
+                    <MetricsAndEvolution studentId={studentId} steroidUse={!!details?.steroid_use} />
+                </Suspense>
 
-                        {/* Combined Container for Stats and Adherence */}
-                        <div className="bg-zinc-900/40 border border-zinc-800/50 rounded-[2.5rem] overflow-hidden backdrop-blur-sm p-6 md:p-10 space-y-10">
-                            {/* 50/50 Quick Stats */}
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="bg-white/5 border border-white/5 p-6 rounded-[2rem] flex flex-col items-center justify-center text-center shadow-lg">
-                                    <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1">Peso Atual</span>
-                                    <div className="flex items-baseline gap-1">
-                                        <span className="text-3xl font-black italic text-emerald-500">{latestWeight || '--'}</span>
-                                        <span className="text-[10px] font-black uppercase text-zinc-600 italic">kg</span>
-                                    </div>
-                                </div>
-                                <div className="bg-white/5 border border-white/5 p-6 rounded-[2rem] flex flex-col items-center justify-center text-center shadow-lg">
-                                    <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1">BF Atual</span>
-                                    <div className="flex items-baseline gap-1">
-                                        <span className="text-3xl font-black italic text-emerald-500">{latestBF || '--'}</span>
-                                        <span className="text-[10px] font-black uppercase text-zinc-600 italic">%</span>
-                                    </div>
-                                </div>
-                            </div>
+                <Suspense fallback={<SectionSkeleton />}>
+                    <WorkoutHistorySection studentId={studentId} />
+                </Suspense>
 
-                            {/* Inner chart embedded */}
-                            <AdherenceChart
-                                history={adherenceHistory}
-                                showErgogenics={!!details?.steroid_use}
-                                noCard={true}
-                            />
-                        </div>
-                    </div>
-
-                    {/* Evolution Stats */}
-                    <div className="space-y-6">
-                        <div className="flex items-center gap-3 px-2">
-                            <TrendingUp className="w-6 h-6 text-emerald-500" />
-                            <h2 className="text-xl font-black italic uppercase tracking-tight text-white">Evolução Analítica</h2>
-                        </div>
-                        <PerformanceAnalysisSection
-                            weights={fullMetrics.weights}
-                            bfs={fullMetrics.bfs.length > 0 ? fullMetrics.bfs : (fullMetrics.details?.body_fat ? [
-                                { bf_percentage: fullMetrics.details.body_fat, recorded_at: new Date(Date.now() - 86400000 * 5).toISOString() }, // 5 dias atrás 
-                                { bf_percentage: fullMetrics.details.body_fat, recorded_at: new Date().toISOString() } // Hoje
-                            ] : [])}
-                            frequency={fullMetrics.frequency}
-                            trainerTier="elite" // Force elite to show full graphs
-                            isStudentView={true}
-                        />
-                    </div>
-                </div>
-
-                {/* Histórico de Treinos */}
-                <div className="space-y-6 mb-16">
-                    <div className="flex items-center gap-3 px-2">
-                        <History className="w-6 h-6 text-emerald-500" />
-                        <h2 className="text-xl font-black italic uppercase tracking-tight">Histórico de Treinos</h2>
-                    </div>
-                    <div className="bg-zinc-900/40 border border-zinc-800/50 rounded-[2.5rem] overflow-hidden backdrop-blur-sm p-6 md:p-10">
-                        <StudentWorkoutHistory
-                            history={history as any}
-                            isBlocked={false} // Always show in public profile
-                        />
-                    </div>
-                </div>
-
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
-                    {/* Before & After Section */}
-                    <div className="space-y-8">
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-                            <div className="flex items-center gap-3">
-                                <div className="p-2 bg-amber-500/10 rounded-xl border border-amber-500/20">
-                                    <Trophy className="w-6 h-6 text-amber-500" />
-                                </div>
-                                <h2 className="text-2xl font-black italic uppercase tracking-tight text-white">Antes vs Depois</h2>
-                            </div>
-                            {isOwner && (
-                                <div className="flex-shrink-0">
-                                    <ShareTransformation
-                                        studentName={profile.full_name}
-                                        beforeUrl={beforeAfter.before?.front_url}
-                                        afterUrl={beforeAfter.after?.front_url}
-                                        beforeDate={beforeAfter.before?.created_at}
-                                        afterDate={beforeAfter.after?.created_at}
-                                    />
-                                </div>
-                            )}
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4">
-                            {/* BEFORE */}
-                            <div className="space-y-4">
-                                <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Ponto de Partida</span>
-                                <div className="aspect-[3/4] relative rounded-3xl overflow-hidden border border-white/5 bg-zinc-900 group">
-                                    {beforeAfter.before ? (
-                                        <Image src={beforeAfter.before.front_url} alt="Antes" fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
-                                    ) : (
-                                        <div className="w-full h-full flex items-center justify-center text-zinc-800 uppercase font-black italic text-xs">Sem foto</div>
-                                    )}
-                                    <div className="absolute top-4 left-4 bg-black/40 backdrop-blur-md px-3 py-1 rounded-full border border-white/10 text-[8px] font-black uppercase italic">
-                                        Início
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* AFTER */}
-                            <div className="space-y-4">
-                                <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500">Status Atual</span>
-                                <div className="aspect-[3/4] relative rounded-3xl overflow-hidden border border-emerald-500/30 bg-zinc-900 shadow-[0_0_30px_rgba(16,185,129,0.1)] group">
-                                    {beforeAfter.after ? (
-                                        <Image src={beforeAfter.after.front_url} alt="Depois" fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
-                                    ) : (
-                                        <div className="w-full h-full flex items-center justify-center text-zinc-800 uppercase font-black italic text-xs">Sem foto</div>
-                                    )}
-                                    <div className="absolute top-4 left-4 bg-emerald-500 px-3 py-1 rounded-full text-zinc-950 text-[8px] font-black uppercase italic">
-                                        Atual
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Full Gallery Section */}
-                    <div className="space-y-8">
-                        <div className="flex items-center gap-3">
-                            <Activity className="w-6 h-6 text-purple-500" />
-                            <h2 className="text-2xl font-black italic uppercase tracking-tight">Galeria de Progresso</h2>
-                        </div>
-
-                        <PublicStudentGallery photos={photos} />
-                    </div>
-                </div>
+                <Suspense fallback={<SectionSkeleton />}>
+                    <PhotosAndTransformation studentId={studentId} isOwner={isOwner} studentName={profile.full_name} />
+                </Suspense>
 
                 {/* Footer */}
                 <footer className="mt-20 pt-8 border-t border-zinc-800/50">
@@ -283,5 +165,14 @@ export default async function StudentPublicProfilePage({ params }: { params: Pro
                 </footer>
             </div>
         </div >
+    )
+}
+
+function SectionSkeleton() {
+    return (
+        <div className="w-full space-y-6 mb-16">
+            <Skeleton className="h-8 w-48 bg-zinc-800" />
+            <Skeleton className="h-[300px] w-full bg-zinc-900/40 rounded-[2.5rem]" />
+        </div>
     )
 }

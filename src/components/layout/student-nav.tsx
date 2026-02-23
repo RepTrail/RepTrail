@@ -87,46 +87,46 @@ export function MobileStudentNav({ hasTrainer, steroidUse, autoTrainingActive = 
         <nav className="bg-zinc-900/80 backdrop-blur-xl border border-zinc-800/50 p-1.5 rounded-2xl flex items-center justify-around shadow-2xl gap-1 gpu-accelerated">
             <Link
                 href="/dashboard/student"
-                className={`p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student' ? 'bg-emerald-500 text-zinc-950 shadow-lg shadow-emerald-500/20' : 'text-zinc-500 hover:text-zinc-300'}`}
+                className={`z-10 relative p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student' ? 'bg-emerald-500 text-zinc-950 shadow-lg shadow-emerald-500/20' : 'text-zinc-500 hover:text-zinc-300'}`}
             >
                 <Home className="w-5 h-5" />
             </Link>
             <Link
                 href="/dashboard/student/loja"
-                className={`p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student/loja' ? 'bg-emerald-500 text-zinc-950 shadow-lg shadow-emerald-500/20' : 'text-zinc-500 hover:text-zinc-300'}`}
+                className={`z-10 relative p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student/loja' ? 'bg-emerald-500 text-zinc-950 shadow-lg shadow-emerald-500/20' : 'text-zinc-500 hover:text-zinc-300'}`}
             >
                 <ShoppingBag className="w-5 h-5" />
             </Link>
             <Link
                 href="/dashboard/student/ranking"
-                className={`p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student/ranking' ? 'bg-emerald-500 text-zinc-950 shadow-lg shadow-emerald-500/20' : 'text-zinc-500 hover:text-zinc-300'}`}
+                className={`z-10 relative p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student/ranking' ? 'bg-emerald-500 text-zinc-950 shadow-lg shadow-emerald-500/20' : 'text-zinc-500 hover:text-zinc-300'}`}
             >
                 <Trophy className="w-5 h-5" />
             </Link>
             <Link
                 href="/dashboard/student/anamnese"
-                className={`p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student/anamnese' ? 'bg-emerald-500 text-zinc-950 shadow-lg shadow-emerald-500/20' : 'text-zinc-500 hover:text-zinc-300'}`}
+                className={`z-10 relative p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student/anamnese' ? 'bg-emerald-500 text-zinc-950 shadow-lg shadow-emerald-500/20' : 'text-zinc-500 hover:text-zinc-300'}`}
             >
                 <ClipboardList className="w-5 h-5" />
             </Link>
             {hasTrainer ? (
                 <Link
                     href="/dashboard/student/meu-personal"
-                    className={`p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student/meu-personal' ? 'bg-emerald-500 text-zinc-950 shadow-lg shadow-emerald-500/20' : 'text-zinc-500 hover:text-zinc-300'}`}
+                    className={`z-10 relative p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student/meu-personal' ? 'bg-emerald-500 text-zinc-950 shadow-lg shadow-emerald-500/20' : 'text-zinc-500 hover:text-zinc-300'}`}
                 >
                     <UserCheck className="w-5 h-5" />
                 </Link>
             ) : !autoTrainingActive ? (
                 <Link
                     href="/buscar-personal"
-                    className={`p-2.5 rounded-xl transition-all ${pathname === '/buscar-personal' ? 'bg-emerald-500 text-zinc-950 shadow-lg shadow-emerald-500/20' : 'text-zinc-500 hover:text-zinc-300'}`}
+                    className={`z-10 relative p-2.5 rounded-xl transition-all ${pathname === '/buscar-personal' ? 'bg-emerald-500 text-zinc-950 shadow-lg shadow-emerald-500/20' : 'text-zinc-500 hover:text-zinc-300'}`}
                 >
                     <Search className="w-5 h-5" />
                 </Link>
             ) : null}
             <Link
                 href="/dashboard/student/profile"
-                className={`p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student/profile' ? 'bg-emerald-500 text-zinc-950 shadow-lg shadow-emerald-500/20' : 'text-zinc-500 hover:text-zinc-300'}`}
+                className={`z-10 relative p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student/profile' ? 'bg-emerald-500 text-zinc-950 shadow-lg shadow-emerald-500/20' : 'text-zinc-500 hover:text-zinc-300'}`}
             >
                 <User className="w-5 h-5" />
             </Link>
