@@ -42,7 +42,8 @@ export default async function LandingPage() {
       <header className="h-20 flex items-center border-b border-zinc-900/50 backdrop-blur-md sticky top-0 z-50 bg-zinc-950/80 supports-[backdrop-filter]:bg-zinc-950/60">
         <div className="container mx-auto px-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 group">
-            <Logo size="lg" className="group-hover:scale-105 transition-transform" />
+            <Logo size="md" className="md:hidden group-hover:scale-105 transition-transform" />
+            <Logo size="lg" className="hidden md:flex group-hover:scale-105 transition-transform" />
           </Link>
 
           <nav className="hidden md:flex gap-6 items-center">

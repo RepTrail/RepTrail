@@ -137,21 +137,22 @@ export function AuthForm({ view }: AuthFormProps) {
     }
 
     return (
-        <div className="w-full max-w-[440px] space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-1000">
-            <div className="flex flex-col items-center text-center space-y-2">
+        <div className="w-full max-w-[440px] space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-1000" suppressHydrationWarning>
+            <div className="flex flex-col items-center text-center space-y-2" suppressHydrationWarning>
                 <Link href="/">
                     <Logo size="lg" className="mb-4" />
                 </Link>
                 <h1 className="text-2xl font-black text-white tracking-tight italic uppercase">
                     {view === 'login' ? 'Bem-vindo de volta' : 'Comece sua jornada'}
                 </h1>
+                <h2 className="sr-only">Formulário de Autenticação</h2>
                 <p className="text-zinc-500 text-sm font-medium uppercase tracking-widest">
                     {view === 'login' ? 'Acesse sua conta para treinar' : 'Crie sua conta em segundos'}
                 </p>
             </div>
 
-            <Card className="bg-zinc-900 border-zinc-800 shadow-2xl rounded-3xl overflow-hidden border-t-zinc-700/50">
-                <CardContent className="p-8">
+            <Card className="bg-zinc-900 border-zinc-800 shadow-2xl rounded-3xl overflow-hidden border-t-zinc-700/50" suppressHydrationWarning>
+                <CardContent className="p-8" suppressHydrationWarning>
                     <form onSubmit={handleSubmit} className="space-y-5">
                         {error && (
                             <Alert className="bg-red-500/10 border-red-500/20 text-red-500 rounded-2xl">

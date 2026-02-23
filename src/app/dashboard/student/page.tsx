@@ -269,9 +269,9 @@ export default async function StudentDashboard() {
         <div className="space-y-10 pb-20" suppressHydrationWarning>
             <PaymentWarning relationship={trainerRel} />
             {/* Welcome Header */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                <div className="space-y-4">
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6" suppressHydrationWarning>
+                <div className="space-y-4" suppressHydrationWarning>
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-4" suppressHydrationWarning>
                         <h1 className="text-4xl font-black text-white italic uppercase tracking-tighter">
                             Dashboard
                         </h1>
@@ -296,8 +296,8 @@ export default async function StudentDashboard() {
                         )}
                     </p>
                 </div>
-                <div className="flex items-center gap-4 bg-zinc-900/50 p-2 rounded-2xl border border-zinc-800/50">
-                    <div className="px-4 py-2 bg-zinc-950 rounded-xl border border-zinc-800">
+                <div className="flex items-center gap-4 bg-zinc-900/50 p-2 rounded-2xl border border-zinc-800/50" suppressHydrationWarning>
+                    <div className="px-4 py-2 bg-zinc-950 rounded-xl border border-zinc-800" suppressHydrationWarning>
                         <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest block">Hoje</span>
                         <span className="text-xs font-black text-white italic uppercase">
                             {tzNow.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' })}
@@ -312,13 +312,13 @@ export default async function StudentDashboard() {
                 </div>
             )}
 
-            <div className="grid gap-8 lg:grid-cols-12">
+            <div className="grid gap-8 lg:grid-cols-12" suppressHydrationWarning>
                 {/* Main Content (Workout & Cardio) */}
-                <div className="lg:col-span-8 space-y-10">
+                <div className="lg:col-span-8 space-y-10" suppressHydrationWarning>
 
                     {/* Workout Section */}
-                    <div className="space-y-6">
-                        <div className="flex items-center justify-between px-2">
+                    <div className="space-y-6" suppressHydrationWarning>
+                        <div className="flex items-center justify-between px-2" suppressHydrationWarning>
                             <h2 className="text-[12px] font-black text-zinc-100 flex items-center gap-2 uppercase tracking-[0.2em]">
                                 <Dumbbell className="w-4 h-4 text-emerald-500" />
                                 Treino de Hoje
@@ -403,11 +403,11 @@ export default async function StudentDashboard() {
                                 </Link>
                             )
                         ) : (
-                            <div className="bg-zinc-900/20 border border-zinc-800/50 border-dashed rounded-[2.5rem] py-16 flex flex-col items-center justify-center text-center space-y-4">
-                                <div className="p-4 bg-zinc-900 rounded-full border border-zinc-800">
+                            <div className="bg-zinc-900/20 border border-zinc-800/50 border-dashed rounded-[2.5rem] py-16 flex flex-col items-center justify-center text-center space-y-4" suppressHydrationWarning>
+                                <div className="p-4 bg-zinc-900 rounded-full border border-zinc-800" suppressHydrationWarning>
                                     <Clock className="w-8 h-8 text-zinc-700" />
                                 </div>
-                                <div className="space-y-1">
+                                <div className="space-y-1" suppressHydrationWarning>
                                     <p className="text-zinc-400 text-sm font-black uppercase tracking-tight italic">Dia de Descanso</p>
                                     <p className="text-zinc-600 text-[9px] font-bold uppercase tracking-widest max-w-[250px]">
                                         Hoje é dia de descanso. Recuperação também faz parte do processo. Aproveite!
@@ -418,8 +418,8 @@ export default async function StudentDashboard() {
                     </div>
 
                     {/* Cardio Section */}
-                    <div className="space-y-6">
-                        <div className="flex items-center justify-between px-2">
+                    <div className="space-y-6" suppressHydrationWarning>
+                        <div className="flex items-center justify-between px-2" suppressHydrationWarning>
                             <h2 className="text-[12px] font-black text-zinc-100 flex items-center gap-2 uppercase tracking-[0.2em]">
                                 <Flame className="w-4 h-4 text-orange-500" />
                                 Cardio do Dia
@@ -427,7 +427,7 @@ export default async function StudentDashboard() {
                         </div>
 
                         {cardios.length > 0 ? (
-                            <div className="grid gap-6">
+                            <div className="grid gap-6" suppressHydrationWarning>
                                 {cardios.slice(0, 1).map((assignment: any) => {
                                     const isCompleted = todayCardioLogs?.some(
                                         (l: any) => l.assigned_cardio_id === assignment.id && l.status === 'completed'
@@ -446,8 +446,8 @@ export default async function StudentDashboard() {
                                 )}
                             </div>
                         ) : (
-                            <div className="bg-zinc-900/20 border border-zinc-800/50 border-dashed rounded-[2.5rem] py-16 flex flex-col items-center justify-center text-center space-y-4">
-                                <div className="p-4 bg-zinc-900 rounded-full border border-zinc-800">
+                            <div className="bg-zinc-900/20 border border-zinc-800/50 border-dashed rounded-[2.5rem] py-16 flex flex-col items-center justify-center text-center space-y-4" suppressHydrationWarning>
+                                <div className="p-4 bg-zinc-900 rounded-full border border-zinc-800" suppressHydrationWarning>
                                     <Activity className="w-8 h-8 text-zinc-700" />
                                 </div>
                                 <div className="space-y-1">
@@ -462,8 +462,8 @@ export default async function StudentDashboard() {
 
                     {/* Ergogenics Section */}
                     {steroidUse && (
-                        <div className="space-y-6">
-                            <div className="flex items-center justify-between px-2">
+                        <div className="space-y-6" suppressHydrationWarning>
+                            <div className="flex items-center justify-between px-2" suppressHydrationWarning>
                                 <h2 className="text-[12px] font-black text-zinc-100 flex items-center gap-2 uppercase tracking-[0.2em]">
                                     <Sparkles className="w-4 h-4 text-amber-500" />
                                     Ergogênicos do Dia
@@ -471,11 +471,11 @@ export default async function StudentDashboard() {
                             </div>
 
                             {todaysErgogenics.length > 0 ? (
-                                <div className="grid gap-6 md:grid-cols-2">
+                                <div className="grid gap-6 md:grid-cols-2" suppressHydrationWarning>
                                     {todaysErgogenics.map((erg: any) => (
-                                        <div key={erg.id} className="bg-zinc-900/40 border border-zinc-800/50 p-6 rounded-[2rem] backdrop-blur-sm space-y-4 hover:border-amber-500/30 transition-all duration-300">
-                                            <div className="flex items-center justify-between">
-                                                <div className="space-y-1">
+                                        <div key={erg.id} className="bg-zinc-900/40 border border-zinc-800/50 p-6 rounded-[2rem] backdrop-blur-sm space-y-4 hover:border-amber-500/30 transition-all duration-300" suppressHydrationWarning>
+                                            <div className="flex items-center justify-between" suppressHydrationWarning>
+                                                <div className="space-y-1" suppressHydrationWarning>
                                                     <h3 className="text-lg font-black text-white italic uppercase tracking-tight line-clamp-1">
                                                         {erg.name}
                                                     </h3>
@@ -502,8 +502,8 @@ export default async function StudentDashboard() {
                                     ))}
                                 </div>
                             ) : (
-                                <div className="bg-zinc-900/20 border border-zinc-800/50 border-dashed rounded-[2.5rem] py-16 flex flex-col items-center justify-center text-center space-y-4">
-                                    <div className="p-4 bg-zinc-900 rounded-full border border-zinc-800">
+                                <div className="bg-zinc-900/20 border border-zinc-800/50 border-dashed rounded-[2.5rem] py-16 flex flex-col items-center justify-center text-center space-y-4" suppressHydrationWarning>
+                                    <div className="p-4 bg-zinc-900 rounded-full border border-zinc-800" suppressHydrationWarning>
                                         <Sparkles className="w-8 h-8 text-zinc-700" />
                                     </div>
                                     <div className="space-y-1">
@@ -519,24 +519,24 @@ export default async function StudentDashboard() {
                 </div>
 
                 {/* Sidebar (Diet & Info) */}
-                <div className="lg:col-span-4 space-y-10">
+                <div className="lg:col-span-4 space-y-10" suppressHydrationWarning>
                     {/* Metrics Summary */}
-                    <div className="space-y-6">
+                    <div className="space-y-6" suppressHydrationWarning>
                         <h2 className="text-[12px] font-black text-zinc-100 flex items-center gap-2 uppercase tracking-[0.2em] px-2">
                             <Activity className="w-4 h-4 text-orange-500" />
                             Seu Progresso
                         </h2>
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="bg-zinc-900/30 border border-zinc-800/50 rounded-3xl p-5 space-y-1">
+                        <div className="grid grid-cols-2 gap-4" suppressHydrationWarning>
+                            <div className="bg-zinc-900/30 border border-zinc-800/50 rounded-3xl p-5 space-y-1" suppressHydrationWarning>
                                 <p className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Peso</p>
                                 <div className="flex items-baseline gap-1">
                                     <span className="text-2xl font-black text-white italic">{latestWeight || '--'}</span>
                                     <span className="text-[10px] font-bold text-zinc-600 uppercase">kg</span>
                                 </div>
                             </div>
-                            <div className="bg-zinc-900/30 border border-zinc-800/50 rounded-3xl p-5 space-y-1">
+                            <div className="bg-zinc-900/30 border border-zinc-800/50 rounded-3xl p-5 space-y-1" suppressHydrationWarning>
                                 <p className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Gordura</p>
-                                <div className="flex items-baseline gap-1">
+                                <div className="flex items-baseline gap-1" suppressHydrationWarning>
                                     <span className="text-2xl font-black text-white italic">{latestBF || '--'}</span>
                                     <span className="text-[10px] font-bold text-zinc-600 uppercase">%</span>
                                 </div>

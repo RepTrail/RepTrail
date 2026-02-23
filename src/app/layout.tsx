@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { PWAClient } from "@/components/layout/pwa-client";
 import { ForceReload } from "@/components/layout/force-reload";
+import { SplashManager } from "@/components/layout/splash-manager";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -48,6 +49,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-zinc-950`}
         suppressHydrationWarning
       >
+        <SplashManager />
         {children}
         <Toaster />
         <PWAClient />

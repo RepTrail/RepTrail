@@ -90,12 +90,12 @@ export function DietAdherence({ diet }: DietAdherenceProps) {
     }
 
     return (
-        <Card className="bg-zinc-900/40 border-zinc-800/50 shadow-2xl rounded-[2.5rem] overflow-hidden backdrop-blur-sm border-t-zinc-700/10">
-            <CardContent className="p-8 space-y-8">
+        <Card className="bg-zinc-900/40 border-zinc-800/50 shadow-2xl rounded-[2.5rem] overflow-hidden backdrop-blur-sm border-t-zinc-700/10" suppressHydrationWarning>
+            <CardContent className="p-8 space-y-8" suppressHydrationWarning>
                 {/* Header */}
-                <div className="flex items-center justify-between">
-                    <div className="space-y-1">
-                        <div className="flex items-center gap-2">
+                <div className="flex items-center justify-between" suppressHydrationWarning>
+                    <div className="space-y-1" suppressHydrationWarning>
+                        <div className="flex items-center gap-2" suppressHydrationWarning>
                             <Utensils className="w-4 h-4 text-emerald-500" />
                             <h3 className="text-xl font-black text-white italic uppercase">{diet.name}</h3>
                         </div>
@@ -103,7 +103,7 @@ export function DietAdherence({ diet }: DietAdherenceProps) {
                             Progresso Diário • {completedItems}/{totalItems} Itens
                         </p>
                     </div>
-                    <div className="flex flex-col items-end gap-1">
+                    <div className="flex flex-col items-end gap-1" suppressHydrationWarning>
                         <span className="text-2xl font-black text-emerald-500 italic">{Math.round(dailyPercentage)}%</span>
                         <Progress value={dailyPercentage} className="h-1.5 w-24 bg-zinc-800" indicatorClassName="bg-emerald-500" />
                     </div>
@@ -248,7 +248,7 @@ export function DietAdherence({ diet }: DietAdherenceProps) {
 
 function MacroMini({ label, value, unit = '' }: any) {
     return (
-        <div className="flex items-baseline gap-0.5">
+        <div className="flex items-baseline gap-0.5" suppressHydrationWarning>
             <span className="text-[9px] font-black text-zinc-600 uppercase">{label}</span>
             <span className="text-[10px] font-bold text-zinc-300">{Math.round(value)}{unit}</span>
         </div>
