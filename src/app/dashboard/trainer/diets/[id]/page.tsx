@@ -1,11 +1,6 @@
-import dynamic from "next/dynamic"
+import { DietBuilderClient } from "@/components/feature/trainer/diet-builder-client"
 import { getDietDetails } from "@/actions/diet-actions"
 import { notFound } from "next/navigation"
-
-const DietBuilder = dynamic(
-    () => import("@/components/feature/trainer/diet-builder").then(mod => ({ default: mod.DietBuilder })),
-    { ssr: false }
-)
 
 export default async function DietEditPage({ params }: { params: { id: string } }) {
     const { id } = await params
@@ -17,7 +12,7 @@ export default async function DietEditPage({ params }: { params: { id: string } 
 
     return (
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8" suppressHydrationWarning>
-            <DietBuilder diet={diet as any} />
+            <DietBuilderClient diet={diet as any} />
         </div>
     )
 }
