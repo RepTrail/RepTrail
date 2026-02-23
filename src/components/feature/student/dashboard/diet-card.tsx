@@ -33,5 +33,5 @@ export function DietCard({ userId, hasTrainer }: DietCardProps) {
         )
     }
 
-    return <DietAdherence diet={diet} />
+    return <DietAdherence diet={diet} hasTrainer={hasTrainer} />
 }

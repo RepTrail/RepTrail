@@ -17,9 +17,10 @@ import { useRouter } from 'next/navigation'
 interface DietAdherenceProps {
     diet: any
     allowEstimation?: boolean
+    hasTrainer?: boolean
 }
 
-export function DietAdherence({ diet, allowEstimation = false }: DietAdherenceProps) {
+export function DietAdherence({ diet, allowEstimation = false, hasTrainer = false }: DietAdherenceProps) {
     const { toast } = useToast()
     const router = useRouter()
     const [estimating, setEstimating] = useState(false)
@@ -292,7 +293,7 @@ export function DietAdherence({ diet, allowEstimation = false }: DietAdherencePr
                                                             </div>
                                                         </div>
                                                         <div className="flex items-center gap-2">
-                                                            {!item.is_checked && !allowEstimation && (
+                                                            {!item.is_checked && !hasTrainer && !allowEstimation && (
                                                                 <SubstituteItemDialog
                                                                     item={item}
                                                                     onSuccess={(updatedData) => {
