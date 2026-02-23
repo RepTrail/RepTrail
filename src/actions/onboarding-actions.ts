@@ -100,29 +100,38 @@ export async function submitOnboarding(prevState: OnboardingState, formData: For
 
     // 3. Trainer Linking (if code provided)
     if (data.trainerCode) {
-        // Find trainer by code
+        // Find trainer by code (case-insensitive)
         const { data: trainer } = await supabase
             .from('profiles')
             .select('id')
-            .eq('trainer_code', data.trainerCode)
-            .single()
+            .ilike('trainer_code', data.trainerCode)
+            .maybeSingle()
 
         if (trainer) {
+            console.log(`[ONBOARDING] Linking student ${user.id} to trainer ${trainer.id}`);
             // Link student to trainer
-            await supabase.from('trainer_students').insert({
+            const { error: linkErr } = await supabase.from('trainer_students').upsert({
                 trainer_id: trainer.id,
                 student_id: user.id,
-                billing_source: 'external', // Default to external for code invites? Or prompt pay?
-                // Master Prompt says: "Aluno cria conta -> insere código -> vínculo automático."
-                // We assume 'external' or 'manual' billing for now.
+                billing_source: 'external',
                 active: true
-            })
+            }, { onConflict: 'trainer_id,student_id' })
+
+            if (linkErr) {
+                console.error('[ONBOARDING] Link error:', linkErr);
+            } else {
+                // If linked to a trainer, they are NOT auto-training
+                await supabase
+                    .from('profiles')
+                    .update({ auto_training_status: 'inactive' })
+                    .eq('id', user.id);
+            }
         } else {
-            // Should we fail? Or just warn?
-            // For now, let's proceed but maybe return a warning in a real app.
+            console.warn(`[ONBOARDING] Trainer code not found: ${data.trainerCode}`);
         }
     } else {
         // If no personal trainer code, set them up with the Auto Training default plan
+        console.log(`[ONBOARDING] No trainer code, setting up Auto-Training for ${user.id}`);
         await setupAutoTrainingForStudent(user.id, data)
     }
 

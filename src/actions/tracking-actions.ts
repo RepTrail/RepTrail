@@ -45,6 +45,45 @@ export async function upsertDailyTracking(userId: string, updates: any, dateStr?
     }
 }
 
+export async function ensureDailyTracking(userId: string) {
+    const supabase = await createClient()
+    const today = getTodayStr()
+
+    // 1. Check if already exists
+    const { data: existing } = await supabase
+        .from('daily_tracking')
+        .select('id, workout_status, cardio_status, ergogenics_status')
+        .eq('user_id', userId)
+        .eq('date', today)
+        .maybeSingle()
+
+    // 2. Fetch current assignments
+    const dow = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' })).getDay()
+
+    const { data: aw } = await supabase.from('assigned_workouts').select('id').eq('student_id', userId).eq('day_of_week', dow).eq('active', true).maybeSingle()
+    const { data: ac } = await supabase.from('assigned_cardios').select('id').eq('student_id', userId).eq('day_of_week', dow).eq('active', true).maybeSingle()
+    const { data: steroids } = await supabase.from('student_details').select('steroid_use').eq('id', userId).single()
+
+    const hasWorkout = !!aw
+    const hasCardio = !!ac
+    const hasErgo = !!steroids?.steroid_use // Simple check, should ideally check ergogenics table
+
+    const updates: any = {}
+    if (!existing || existing.workout_status === 'none') {
+        if (hasWorkout) updates.workout_status = 'assigned'
+    }
+    if (!existing || existing.cardio_status === 'none') {
+        if (hasCardio) updates.cardio_status = 'assigned'
+    }
+    if (!existing || existing.ergogenics_status === 'none') {
+        if (hasErgo) updates.ergogenics_status = 'assigned'
+    }
+
+    if (Object.keys(updates).length > 0) {
+        await upsertDailyTracking(userId, updates, today)
+    }
+}
+
 export async function toggleMealItem(itemId: string, status: boolean, date?: string) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
@@ -131,6 +170,36 @@ export async function toggleMealGroup(mealId: string, status: boolean, date?: st
 
         revalidatePath('/dashboard/student')
         revalidatePath('/dashboard/student/progress')
+        return { success: true }
+    } catch (e: any) {
+        return { error: e.message }
+    }
+}
+
+export async function substituteMealItem(itemId: string, substituteData: { food_name: string, quantity: string }, date?: string) {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return { error: 'Unauthorized' }
+
+    const targetDate = date || getTodayStr()
+
+    try {
+        const { error } = await supabase
+            .from('meal_item_logs')
+            .upsert({
+                user_id: user.id,
+                meal_item_id: itemId,
+                date: targetDate,
+                is_substituted: true,
+                substituted_food_name: substituteData.food_name,
+                substituted_quantity: substituteData.quantity
+            }, {
+                onConflict: 'user_id, meal_item_id, date'
+            })
+
+        if (error) throw error
+
+        revalidatePath('/dashboard/student')
         return { success: true }
     } catch (e: any) {
         return { error: e.message }
@@ -302,17 +371,26 @@ export async function getAdherenceHistory(days: number = 30) {
         // Workout Status
         let workoutStatus = found?.workout_status || 'none'
         if (workoutDates.has(dateStr)) workoutStatus = 'completed'
-        else if (workoutStatus === 'none' && workoutDays.has(dow)) workoutStatus = isPast ? 'skipped' : 'assigned'
+        else {
+            if (workoutStatus === 'none' && workoutDays.has(dow)) workoutStatus = 'assigned'
+            if (workoutStatus === 'assigned' && isPast) workoutStatus = 'skipped'
+        }
 
         // Cardio Status
         let cardioStatus = found?.cardio_status || 'none'
         if (cardioDates.has(dateStr)) cardioStatus = 'completed'
-        else if (cardioStatus === 'none' && cardioDays.has(dow)) cardioStatus = isPast ? 'skipped' : 'assigned'
+        else {
+            if (cardioStatus === 'none' && cardioDays.has(dow)) cardioStatus = 'assigned'
+            if (cardioStatus === 'assigned' && isPast) cardioStatus = 'skipped'
+        }
 
         // Ergo Status
         let ergoStatus = found?.ergogenics_status || 'none'
         if (ergoDates.has(dateStr)) ergoStatus = 'completed'
-        else if (ergoStatus === 'none' && steroidUse && ergoDays.has(dow)) ergoStatus = isPast ? 'skipped' : 'assigned'
+        else {
+            if (ergoStatus === 'none' && steroidUse && ergoDays.has(dow)) ergoStatus = 'assigned'
+            if (ergoStatus === 'assigned' && isPast) ergoStatus = 'skipped'
+        }
 
         historyArr.push({
             date: dateStr,
@@ -402,24 +480,30 @@ export async function getStudentAdherenceHistory(studentId: string, days: number
         const dow = d.getDay()
         const isPast = dateStr < todayStr
 
+        let item: any
         if (found) {
-            historyArr.push(found)
+            item = { ...found }
         } else {
-            const workoutStatus = workoutDays.has(dow) ? (isPast ? 'skipped' : 'assigned') : 'none'
-            const cardioStatus = cardioDays.has(dow) ? (isPast ? 'skipped' : 'assigned') : 'none'
-            const ergoStatus = (steroidUse && ergogenicsDays.has(dow)) ? (isPast ? 'skipped' : 'assigned') : 'none'
-
-            historyArr.push({
+            item = {
                 date: dateStr,
                 diet_percentage: 0,
-                workout_status: workoutStatus,
+                workout_status: workoutDays.has(dow) ? 'assigned' : 'none',
                 workout_percentage: 0,
-                cardio_status: cardioStatus,
+                cardio_status: cardioDays.has(dow) ? 'assigned' : 'none',
                 cardio_percentage: 0,
-                ergogenics_status: ergoStatus,
+                ergogenics_status: (steroidUse && ergogenicsDays.has(dow)) ? 'assigned' : 'none',
                 ergogenics_percentage: 0,
-            })
+            }
         }
+
+        // Final status fix for past days
+        if (isPast) {
+            if (item.workout_status === 'assigned') item.workout_status = 'skipped'
+            if (item.cardio_status === 'assigned') item.cardio_status = 'skipped'
+            if (item.ergogenics_status === 'assigned') item.ergogenics_status = 'skipped'
+        }
+
+        historyArr.push(item)
     }
 
     return historyArr

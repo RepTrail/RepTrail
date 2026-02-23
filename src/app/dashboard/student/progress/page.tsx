@@ -32,15 +32,18 @@ export default async function StudentProgressPage() {
         .single()
 
     // 2. Get Trainer Tier
-    let trainerTier = 'start'
+    // FORCE PRO/ELITE view for everyone as tiers are deprecated for student features
+    let trainerTier = 'pro'
+    /*
     if (relationship?.trainer_id) {
         const { data: trainerProfile } = await supabase
             .from('profiles')
             .select('plan_tier')
             .eq('id', relationship.trainer_id)
             .single()
-        trainerTier = trainerProfile?.plan_tier || 'start'
+        trainerTier = trainerProfile?.plan_tier || 'pro'
     }
+    */
 
     // Metrics & Trends
     const weights = metricsHistory.weights

@@ -209,7 +209,12 @@ export function SettingsModal({ hasTrainer = false }: SettingsModalProps) {
                                 </div>
 
                                 <button
-                                    onClick={() => window.dispatchEvent(new CustomEvent('open-notifications-prompt'))}
+                                    onClick={() => {
+                                        setIsOpen(false)
+                                        setTimeout(() => {
+                                            window.dispatchEvent(new CustomEvent('open-notifications-prompt'))
+                                        }, 100)
+                                    }}
                                     className="w-full flex items-center justify-between p-4 bg-zinc-900/50 rounded-2xl border border-zinc-800 hover:bg-zinc-900 transition-colors group"
                                 >
                                     <div className="flex items-center gap-3">

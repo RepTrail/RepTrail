@@ -76,6 +76,7 @@ export function AuthForm({ view }: AuthFormProps) {
                             role: role,
                             is_affiliate: isAffiliate,
                             ...(referredById ? { referred_by_id: referredById } : {}),
+                            ...(searchParams.get('code') ? { trainer_code: searchParams.get('code') } : {}),
                         },
                     },
                 })

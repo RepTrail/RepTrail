@@ -9,7 +9,6 @@ import { DietCard } from '@/components/feature/student/dashboard/diet-card'
 import { MetricsSummary } from '@/components/feature/student/dashboard/metrics-summary'
 import { ErgogenicsCard } from '@/components/feature/student/dashboard/ergogenics-card'
 
-import { NotificationRequestModal } from '@/components/feature/student/notification-request-modal'
 import { PaymentWarning } from '@/components/feature/student/payment-warning'
 import { StudentDashboardModals } from '@/components/feature/student/student-dashboard-modals'
 import { AnamnesisForm } from '@/components/feature/student/anamnesis-form'
@@ -20,12 +19,16 @@ import { Card } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import Link from 'next/link'
 import { ShieldCheck } from 'lucide-react'
+import { ensureDailyTracking } from '@/actions/tracking-actions'
 
-export default async function StudentDashboard() {
+export default async function StudentDashboardPage() {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) return null
+
+    // Ensure tracking is initialized for today
+    await ensureDailyTracking(user.id)
 
     // Fetch minimal core data for the shell
     const [trainerRel, autoTrainingStatus, details] = await Promise.all([
@@ -270,7 +273,6 @@ export default async function StudentDashboard() {
                 </div>
             </div>
 
-            <NotificationRequestModal />
             <StudentDashboardModals userId={user.id} showModal={showAutoTrainingModal} hasTrainer={!!trainerRel} />
         </div>
     )

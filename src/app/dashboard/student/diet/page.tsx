@@ -7,12 +7,16 @@ import Link from 'next/link'
 import { Button } from "@/components/ui/button"
 import { CreateDietDialog } from '@/components/feature/student/create-diet-dialog'
 import { DeleteDietButton } from '@/components/feature/student/delete-diet-button'
+import { ensureDailyTracking } from '@/actions/tracking-actions'
 
 export default async function StudentDietPage() {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) return null
+
+    // Ensure tracking is initialized for today
+    await ensureDailyTracking(user.id)
 
     const { data: trainerRel } = await supabase
         .from('trainer_students')
@@ -28,11 +32,13 @@ export default async function StudentDietPage() {
         .single()
 
     const isAutoTrainingActive = profile?.auto_training_status === 'active' || profile?.auto_training_status === 'trial'
+    const hasTrainer = !!trainerRel
+    const allowCRUD = isAutoTrainingActive && !hasTrainer
 
-    // Auto-training (no trainer): show diet library + CRUD
-    if (!trainerRel && isAutoTrainingActive) {
-        const diet = await getStudentDailyDiet(user.id)
+    const diet = await getStudentDailyDiet(user.id)
 
+    // Library view only for those without trainer or strictly auto-training
+    if (!hasTrainer && isAutoTrainingActive) {
         const { data: assigned } = await supabase
             .from('assigned_diets')
             .select(`
@@ -42,11 +48,10 @@ export default async function StudentDietPage() {
                     id,
                     name,
                     created_at,
-                    meals:diet_meals(count)
+                    meals(count)
                 )
             `)
             .eq('student_id', user.id)
-            .eq('active', true)
 
         const diets = (assigned || []).map((a: any) => ({
             assignmentId: a.id,
@@ -72,16 +77,20 @@ export default async function StudentDietPage() {
                 {diet ? (
                     <div className="space-y-4">
                         <div className="flex justify-end gap-2">
-                            <Button asChild size="sm" variant="outline" className="bg-zinc-900 border-zinc-800 text-zinc-300 hover:bg-zinc-800">
-                                <Link href={`/dashboard/student/diet/${(diet as any).id}`}>
-                                    <Edit className="w-4 h-4 mr-2" />
-                                    Editar
-                                </Link>
-                            </Button>
-                            <DeleteDietButton dietId={(diet as any).id} />
+                            {allowCRUD && (
+                                <>
+                                    <Button asChild size="sm" variant="outline" className="bg-zinc-900 border-zinc-800 text-zinc-300 hover:bg-zinc-800">
+                                        <Link href={`/dashboard/student/diet/${(diet as any).id}`}>
+                                            <Edit className="w-4 h-4 mr-2" />
+                                            Editar
+                                        </Link>
+                                    </Button>
+                                    <DeleteDietButton dietId={(diet as any).id} />
+                                </>
+                            )}
                         </div>
                         <div className="max-w-3xl mx-auto">
-                            <DietAdherence diet={diet} />
+                            <DietAdherence diet={diet} allowEstimation={hasTrainer} />
                         </div>
                     </div>
                 ) : (
@@ -92,7 +101,7 @@ export default async function StudentDietPage() {
                         <div className="space-y-1">
                             <h3 className="text-xl font-bold text-white uppercase italic">Nenhuma dieta ativa</h3>
                             <p className="text-zinc-500 text-xs font-bold uppercase tracking-widest max-w-[300px]">
-                                Crie ou importe uma dieta para começar.
+                                {hasTrainer ? "Seu personal ainda não atribuiu uma dieta." : "Crie ou importe uma dieta para começar."}
                             </p>
                         </div>
                     </div>
@@ -107,7 +116,7 @@ export default async function StudentDietPage() {
                             Gerencie seus planos alimentares.
                         </p>
                     </div>
-                    <CreateDietDialog />
+                    {allowCRUD && <CreateDietDialog />}
                 </div>
 
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -120,7 +129,7 @@ export default async function StudentDietPage() {
                                             <Utensils className="w-5 h-5" />
                                         </div>
                                         <div className="flex gap-2">
-                                            <DeleteDietButton dietId={diet.id} />
+                                            {allowCRUD && <DeleteDietButton dietId={diet.id} />}
                                         </div>
                                     </div>
                                     <CardTitle className="mt-4 text-xl">{diet.name}</CardTitle>
@@ -134,12 +143,20 @@ export default async function StudentDietPage() {
                                         <span>Criado em {diet.created_at ? new Date(diet.created_at).toLocaleDateString('pt-BR') : '-'}</span>
                                     </div>
 
-                                    <Button asChild size="sm" className="w-full bg-zinc-100 text-zinc-900 hover:bg-white flex items-center justify-center gap-2">
-                                        <Link href={`/dashboard/student/diet/${diet.id}`}>
-                                            Editar
-                                            <ChevronRight className="w-4 h-4" />
-                                        </Link>
-                                    </Button>
+                                    {allowCRUD ? (
+                                        <Button asChild size="sm" className="w-full bg-zinc-100 text-zinc-900 hover:bg-white flex items-center justify-center gap-2">
+                                            <Link href={`/dashboard/student/diet/${diet.id}`}>
+                                                Editar
+                                                <ChevronRight className="w-4 h-4" />
+                                            </Link>
+                                        </Button>
+                                    ) : (
+                                        <Button asChild size="sm" variant="outline" className="w-full border-zinc-800 text-zinc-400">
+                                            <Link href="/dashboard/student">
+                                                Visualizar no Dashboard
+                                            </Link>
+                                        </Button>
+                                    )}
                                 </CardContent>
                             </Card>
                         ))
@@ -151,9 +168,9 @@ export default async function StudentDietPage() {
                                 </div>
                                 <div>
                                     <h3 className="text-xl font-semibold text-zinc-300">Nenhuma dieta encontrada</h3>
-                                    <p className="text-zinc-500 mt-1">Crie uma nova dieta para começar.</p>
+                                    <p className="text-zinc-500 mt-1">{hasTrainer ? "Aguarde o preenchimento do seu personal." : "Crie uma nova dieta para começar."}</p>
                                 </div>
-                                <CreateDietDialog />
+                                {allowCRUD && <CreateDietDialog />}
                             </div>
                         </Card>
                     )}
@@ -162,8 +179,7 @@ export default async function StudentDietPage() {
         )
     }
 
-    // Personal student: daily diet view
-    const diet = await getStudentDailyDiet(user.id)
+    // Personal student or those with trainer: only daily diet view
     const meals = diet?.meals || []
 
     return (
@@ -196,7 +212,7 @@ export default async function StudentDietPage() {
                 </div>
             ) : (
                 <div className="max-w-3xl mx-auto">
-                    <DietAdherence diet={diet} />
+                    <DietAdherence diet={diet} allowEstimation={hasTrainer} />
                 </div>
             )}
 

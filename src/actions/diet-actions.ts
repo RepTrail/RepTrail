@@ -384,6 +384,7 @@ Use integers or decimals.
 }
 
 export async function estimateAllDietMacros(dietId: string) {
+    console.log(`[MACRO_ESTIMATE] Starting for diet: ${dietId}`)
     const supabase = await createClient()
 
     try {
@@ -394,13 +395,17 @@ export async function estimateAllDietMacros(dietId: string) {
             .eq('id', dietId)
             .single()
 
-        if (fetchErr || !diet) throw fetchErr || new Error('Diet not found')
+        if (fetchErr || !diet) {
+            console.error(`[MACRO_ESTIMATE] Fetch error:`, fetchErr)
+            throw fetchErr || new Error('Diet not found')
+        }
 
         const allItems: any[] = []
         diet.meals.forEach((m: any) => {
             if (m.meal_items) allItems.push(...m.meal_items)
         })
 
+        console.log(`[MACRO_ESTIMATE] Found ${allItems.length} items.`)
         if (allItems.length === 0) return { success: true }
 
         const { createOpenRouterClient, callAI } = await import('@/lib/ai-client');
@@ -409,38 +414,67 @@ export async function estimateAllDietMacros(dietId: string) {
         const itemsList = allItems.map((item, idx) => `${idx}: ${item.food_name} (${item.quantity || '1 portion'})`).join('\n')
 
         const prompt = `
-You are a nutrition expert. Estimate the macronutrients for each food item in the list below.
+You are a nutrition expert. Estimate the macronutrients (Protein, Carbs, Fat) AND Dietary Fiber for each food item in the list below. 
+It is very important to provide realistic fiber values for vegetables, grains, and fruits.
+
 Items:
 ${itemsList}
 
 Return ONLY a JSON array of objects with this exact structure (no markdown):
 [
-  {"index": 0, "protein": number, "carbs": number, "fat": number},
+  {"index": 0, "protein": number, "carbs": number, "fat": number, "fiber": number},
   ...
 ]
 `;
 
+        console.log(`[MACRO_ESTIMATE] Requesting AI calculation with Fiber...`)
         const results = await callAI<any[]>(client, prompt);
+        console.log(`[MACRO_ESTIMATE] AI returned ${results?.length || 0} items with fiber data.`)
+
+        if (!results || !Array.isArray(results)) {
+            console.error(`[MACRO_ESTIMATE] Invalid AI response:`, results)
+            throw new Error('AI returned invalid format')
+        }
 
         // 2. Update database
+        console.log(`[MACRO_ESTIMATE] AI Result Sample:`, JSON.stringify(results.slice(0, 2)))
+
+        // Verify column
+        const { data: colCheck } = await supabase.from('meal_items').select('*').limit(1)
+        if (colCheck && colCheck[0]) {
+            console.log(`[MACRO_ESTIMATE] Database Columns present:`, Object.keys(colCheck[0]).join(', '))
+            if (!('fiber' in colCheck[0])) {
+                console.error(`[MACRO_ESTIMATE] CRITICAL: 'fiber' column is MISSING in meal_items table!`)
+            }
+        }
+
+        console.log(`[MACRO_ESTIMATE] Starting database updates for ${results.length} items...`)
         for (const res of results) {
             const item = allItems[res.index]
             if (item) {
-                await supabase
+                console.log(`[MACRO_ESTIMATE] Upd: ${item.food_name} -> P:${res.protein} C:${res.carbs} G:${res.fat} F:${res.fiber}`)
+                const { error: upErr } = await supabase
                     .from('meal_items')
                     .update({
                         protein: res.protein,
                         carbs: res.carbs,
-                        fat: res.fat
+                        fat: res.fat,
+                        fiber: res.fiber || 0
                     })
                     .eq('id', item.id)
+
+                if (upErr) console.error(`[MACRO_ESTIMATE] SQL Error for ${item.food_name}:`, upErr)
             }
         }
 
+        console.log(`[MACRO_ESTIMATE] All updates finished.`)
         revalidatePath(`/dashboard/trainer/diets/${dietId}`)
+        revalidatePath(`/dashboard/student/diet`)
+        revalidatePath(`/dashboard/student`)
+
         return { success: true }
     } catch (e: any) {
-        console.error("Bulk Macro Estimation Error:", e.message);
+        console.error("[MACRO_ESTIMATE] Fatal error:", e.message);
         return { error: e.message };
     }
 }
@@ -482,7 +516,7 @@ export async function getStudentDailyDiet(studentId: string) {
     const supabase = await createClient()
 
     try {
-        const { data: assignment } = await supabase
+        const { data: assignments, error: assignErr } = await supabase
             .from('assigned_diets')
             .select(`
                 diet:diets(
@@ -495,7 +529,16 @@ export async function getStudentDailyDiet(studentId: string) {
             `)
             .eq('student_id', studentId)
             .eq('active', true)
-            .maybeSingle()
+            .order('id', { ascending: false }) // Fallback order
+            .limit(1)
+
+        if (assignErr) {
+            console.error('[GET_DAILY_DIET] Error:', assignErr)
+            return null
+        }
+
+        const assignment = assignments?.[0]
+        console.log('[GET_DAILY_DIET] Assignment found:', !!assignment, (assignment?.diet as any)?.id)
 
         if (!assignment || !assignment.diet) return null
 

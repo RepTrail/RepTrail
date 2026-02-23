@@ -763,7 +763,9 @@ function ProductEditorModal({ isOpen, onClose, product, onSave, onImport, onDele
                 official_price: data.price || prev.official_price,
                 link_url: importUrl,
                 rating: data.rating || prev.rating || 0,
-                reviews_count: data.reviews_count || prev.reviews_count || 0
+                reviews_count: data.reviews_count || prev.reviews_count || 0,
+                category: data.category || prev.category,
+                sub_category: data.sub_category || prev.sub_category
             }))
         } catch (e: any) {
             alert('Erro ao importar: ' + e.message)

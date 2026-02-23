@@ -44,7 +44,7 @@ export function PaymentWarning({ relationship }: PaymentWarningProps) {
     if (!isVisible) return null
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/80 backdrop-blur-md animate-in fade-in duration-500">
+        <div className="fixed inset-0 z-[100] flex items-start justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-md animate-in fade-in duration-500 pt-12 md:pt-24 overflow-y-auto">
             <Card className="max-w-md w-full bg-zinc-950 border-orange-500/30 shadow-[0_0_50px_rgba(249,115,22,0.15)] rounded-[3rem] overflow-hidden relative border-2">
                 <button
                     onClick={() => {

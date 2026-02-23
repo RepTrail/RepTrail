@@ -66,7 +66,7 @@ function SubmitButton() {
     )
 }
 
-export function OnboardingForm() {
+export function OnboardingForm({ defaultTrainerCode = '' }: { defaultTrainerCode?: string }) {
     const [state, formAction] = useActionState(submitOnboarding, initialState)
     const [step, setStep] = useState(1)
     const [activityLevel, setActivityLevel] = useState('moderate')
@@ -76,6 +76,7 @@ export function OnboardingForm() {
     const [estimatedBf, setEstimatedBf] = useState('')
     const [birthDate, setBirthDate] = useState('')
     const [goal, setGoal] = useState('')
+    const [trainerCode, setTrainerCode] = useState(defaultTrainerCode)
 
     // Simple multi-step logic
     const nextStep = () => setStep(s => s + 1)
@@ -118,6 +119,7 @@ export function OnboardingForm() {
                     <input type="hidden" name="goal" value={goal} />
                     <input type="hidden" name="activityLevel" value={activityLevel} />
                     <input type="hidden" name="imageAuth" value={imageAuth} />
+                    <input type="hidden" name="trainerCode" value={trainerCode} />
                     {state?.message && (
                         <div className="p-4 bg-red-500/10 border border-red-500/20 text-red-500 text-xs font-bold uppercase tracking-widest rounded-xl text-center space-y-2">
                             <div>{state.message}</div>
@@ -321,8 +323,9 @@ export function OnboardingForm() {
                                     </Label>
                                     <Input
                                         id="trainerCode"
-                                        name="trainerCode"
                                         placeholder="Ex: TREINADOR123"
+                                        value={trainerCode}
+                                        onChange={(e) => setTrainerCode(e.target.value)}
                                         className="bg-zinc-950 border-zinc-800 text-white rounded-xl h-14 font-bold focus:ring-emerald-500/20"
                                     />
                                     <p className="text-[9px] font-bold text-zinc-600 uppercase tracking-widest text-center px-4">Insira o código se você já tem um personal vinculado.</p>

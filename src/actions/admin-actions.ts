@@ -320,14 +320,31 @@ export async function addStoreProduct(data: {
     official_price: number
     link_url: string
     category: string
+    sub_category: string
     rating?: number
     reviews_count?: number
 }) {
     const { supabase, userId: adminId } = await checkAdmin()
-    const { error } = await supabase.from('store_products').insert({ ...data, is_active: true })
+
+    // Map PT-BR categories to EN keys if needed, or unify
+    const categoryMap: Record<string, string> = {
+        'Suplemento': 'supplement',
+        'Acessório': 'accessory',
+        'Vestuário': 'clothing',
+        'Equipamento': 'equipment'
+    }
+    const finalCategory = categoryMap[data.category] || data.category
+
+    const { error } = await supabase.from('store_products').insert({
+        ...data,
+        category: finalCategory,
+        is_active: true
+    })
     if (error) return { error: error.message }
-    await supabase.from('admin_logs').insert({ admin_id: adminId, action: 'add_product', details: data })
+    await supabase.from('admin_logs').insert({ admin_id: adminId, action: 'add_product', details: { ...data, category: finalCategory } })
     revalidatePath('/admin')
+    revalidatePath('/dashboard/student/loja/explorar')
+    revalidatePath('/dashboard/trainer/loja/explorar')
     return { success: true }
 }
 
@@ -367,18 +384,47 @@ export async function getTopProductsByClicks() {
 
 export async function getRecentStudentActivity() {
     const { supabase } = await checkAdmin()
-    const { data } = await supabase
-        .from('workout_logs')
-        .select(`
-            id,
-            created_at,
-            status,
-            student:profiles!student_id(full_name, avatar_url),
-            workout:workouts(name)
-        `)
-        .order('created_at', { ascending: false })
-        .limit(20)
-    return data || []
+    const [workouts, cardios] = await Promise.all([
+        supabase
+            .from('workout_logs')
+            .select(`
+                id,
+                created_at,
+                status,
+                student:profiles!student_id(full_name, avatar_url),
+                workout:workouts(name)
+            `)
+            .order('created_at', { ascending: false })
+            .limit(15),
+        supabase
+            .from('cardio_logs')
+            .select(`
+                id,
+                created_at,
+                status,
+                student:profiles!student_id(full_name, avatar_url),
+                cardio:assigned_cardios(cardio:cardios(name))
+            `)
+            .order('created_at', { ascending: false })
+            .limit(15)
+    ])
+
+    const workoutActivities = (workouts.data || []).map(w => ({
+        ...w,
+        type: 'workout'
+    }))
+
+    const cardioActivities = (cardios.data || []).map(c => ({
+        ...c,
+        type: 'cardio',
+        workout: (c as any).cardio?.cardio // mapping to 'workout' key so frontend doesn't break
+    }))
+
+    const combined = [...workoutActivities, ...cardioActivities]
+        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+        .slice(0, 20)
+
+    return combined
 }
 
 // Default prices (fallback if not in DB)
@@ -589,10 +635,24 @@ export async function deleteUser(userId: string) {
 
 export async function updateStoreProduct(id: string, data: any) {
     const { supabase, userId: adminId } = await checkAdmin()
+
+    // Map PT-BR categories to EN keys
+    const categoryMap: Record<string, string> = {
+        'Suplemento': 'supplement',
+        'Acessório': 'accessory',
+        'Vestuário': 'clothing',
+        'Equipamento': 'equipment'
+    }
+    if (data.category && categoryMap[data.category]) {
+        data.category = categoryMap[data.category]
+    }
+
     const { error } = await supabase.from('store_products').update(data).eq('id', id)
-    if (error) return { error: 400 } // using generic error for now
+    if (error) return { error: error.message }
     await supabase.from('admin_logs').insert({ admin_id: adminId, action: 'update_product', target_id: id, details: data })
     revalidatePath('/admin')
+    revalidatePath('/dashboard/student/loja/explorar')
+    revalidatePath('/dashboard/trainer/loja/explorar')
     return { success: true }
 }
 
@@ -679,6 +739,57 @@ export async function fetchProductFromUrl(url: string) {
 
             const reviewMatch = html.match(/"reviewCount":"(\d+)"/i) || html.match(/itemprop="reviewCount" content="(\d+)"/i)
             if (reviewMatch) reviews = parseInt(reviewMatch[1])
+        }
+
+        // AI Integration
+        const openrouterKey = process.env.OPENROUTER_API_KEY
+        if (openrouterKey) {
+            try {
+                const { createOpenRouterClient, callAI, DEFAULT_AI_MODEL } = await import('@/lib/ai-client')
+                const client = createOpenRouterClient(openrouterKey)
+
+                // Truncate HTML to avoid token limits, focus on body if possible
+                const bodyText = html.match(/<body[^>]*>([\s\S]*)<\/body>/i)?.[1] || html
+                const cleanBody = bodyText
+                    .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+                    .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+                    .substring(0, 15000) // limit to ~15k chars for prompt
+
+                const prompt = `
+Extract product information from this HTML snippet. 
+Site: ${url}
+
+Return ONLY a JSON object with this schema:
+{
+  "title": "Clean product name",
+  "description": "Brief description",
+  "price": number,
+  "image": "image_url",
+  "rating": number (0-5),
+  "reviews_count": number,
+  "category": "supplement" | "accessory" | "clothing" | "equipment",
+  "sub_category": "Whey" | "Pré-treino" | "Creatina" | "Vitaminas" | "Outros" (if supplement)
+}
+
+HTML Snippet:
+${cleanBody}
+`
+                const aiResponse = await callAI(client, prompt, DEFAULT_AI_MODEL)
+                if (aiResponse && !aiResponse.error) {
+                    return {
+                        title: aiResponse.title || title || '',
+                        description: aiResponse.description || description || '',
+                        image: aiResponse.image || image || '',
+                        price: aiResponse.price || price || 0,
+                        rating: aiResponse.rating || rating || 0,
+                        reviews_count: aiResponse.reviews_count || reviews || 0,
+                        category: aiResponse.category || 'supplement',
+                        sub_category: aiResponse.sub_category || ''
+                    }
+                }
+            } catch (aiErr) {
+                console.error('AI extraction failed:', aiErr)
+            }
         }
 
         return {

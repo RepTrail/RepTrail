@@ -174,6 +174,20 @@ export async function saveParsedData(type: 'workout' | 'diet', data: any, studen
 
                 if (isStudentMode && targetStudentId) {
                     const dayOfWeek = typeof wData.day_of_week === 'number' ? wData.day_of_week : null
+                    console.log(`[SAVE] Student mode: deactivating previous workouts for ${targetStudentId} on dayOfWeek=${dayOfWeek}`);
+
+                    const query = supabase
+                        .from('assigned_workouts')
+                        .update({ active: false })
+                        .eq('student_id', targetStudentId)
+                        .eq('active', true);
+
+                    if (dayOfWeek !== null) {
+                        query.eq('day_of_week', dayOfWeek);
+                    }
+
+                    await query;
+
                     console.log(`[SAVE] Student mode: assigning workout ${workout.id} to student ${targetStudentId} dayOfWeek=${dayOfWeek}`)
                     const { error: assignErr } = await supabase
                         .from('assigned_workouts')
@@ -266,11 +280,13 @@ export async function saveParsedData(type: 'workout' | 'diet', data: any, studen
         } else {
             // DIET
             const results = { diets: [] as string[], ergogenics: [] as string[] };
+            console.log(`[SAVE] Starting diet save. User: ${user.id}, isStudentMode: ${isStudentMode}`);
 
             // Normalize diet data: if it's the new flattened structure (no 'diets' key but has 'meals' at top)
             // wrap it in a mock diet so the loop below works.
             let dietsToProcess = data.diets || [];
             if (!data.diets && data.meals) {
+                console.log(`[SAVE] No 'diets' key found, but found 'meals'. Wrapping into Dieta Importada.`);
                 dietsToProcess = [{
                     diet_name: 'Dieta Importada',
                     meals: data.meals
@@ -278,7 +294,9 @@ export async function saveParsedData(type: 'workout' | 'diet', data: any, studen
             }
 
             if (Array.isArray(dietsToProcess)) {
-                for (const dData of dietsToProcess) {
+                console.log(`[SAVE] Processing ${dietsToProcess.length} diets.`);
+                for (const [dIdx, dData] of dietsToProcess.entries()) {
+                    console.log(`[SAVE] [Diet ${dIdx}] Creating diet: "${dData.diet_name || 'Dieta Importada'}"`);
                     const { data: diet, error: dError } = await supabase
                         .from('diets')
                         .insert({
@@ -287,10 +305,22 @@ export async function saveParsedData(type: 'workout' | 'diet', data: any, studen
                         })
                         .select().single()
 
-                    if (dError) throw dError
+                    if (dError) {
+                        console.error(`[SAVE] [Diet ${dIdx}] Error creating diet:`, dError);
+                        throw dError;
+                    }
+                    console.log(`[SAVE] [Diet ${dIdx}] Diet created with ID: ${diet.id}`);
                     results.diets.push(diet.id);
 
                     if (isStudentMode && targetStudentId) {
+                        console.log(`[SAVE] [Diet ${dIdx}] Student mode: deactivating previous diets for ${targetStudentId}`);
+                        await supabase
+                            .from('assigned_diets')
+                            .update({ active: false })
+                            .eq('student_id', targetStudentId)
+                            .eq('active', true);
+
+                        console.log(`[SAVE] [Diet ${dIdx}] Student mode: assigning diet to ${targetStudentId}`);
                         const { error: assignDietErr } = await supabase
                             .from('assigned_diets')
                             .insert({
@@ -300,13 +330,18 @@ export async function saveParsedData(type: 'workout' | 'diet', data: any, studen
                             })
 
                         if (assignDietErr) {
-                            console.error(`[SAVE] Failed to assign imported diet ${diet.id} to student ${targetStudentId}:`, assignDietErr)
+                            console.error(`[SAVE] [Diet ${dIdx}] Failed to assign imported diet ${diet.id} to student ${targetStudentId}:`, assignDietErr)
+                            // We don't throw here to allow partial success, but it's critical for student mode
+                        } else {
+                            console.log(`[SAVE] [Diet ${dIdx}] Diet assignment successful.`);
                         }
                     }
 
                     const meals = dData.meals || dData.diet_meals || [];
+                    console.log(`[SAVE] [Diet ${dIdx}] Processing ${meals.length} meals.`);
                     for (let i = 0; i < meals.length; i++) {
                         const mealData = meals[i];
+                        console.log(`[SAVE] [Diet ${dIdx}] [Meal ${i}] Creating meal: "${mealData.meal_name || mealData.name}"`);
                         const { data: meal, error: mError } = await supabase
                             .from('meals')
                             .insert({
@@ -316,9 +351,14 @@ export async function saveParsedData(type: 'workout' | 'diet', data: any, studen
                             })
                             .select().single()
 
-                        if (mError) throw mError
+                        if (mError) {
+                            console.error(`[SAVE] [Diet ${dIdx}] [Meal ${i}] Error creating meal:`, mError);
+                            throw mError;
+                        }
+                        console.log(`[SAVE] [Diet ${dIdx}] [Meal ${i}] Meal created with ID: ${meal.id}`);
 
                         const foods = mealData.foods || mealData.items || [];
+                        console.log(`[SAVE] [Diet ${dIdx}] [Meal ${i}] Processing ${foods.length} items.`);
                         const itemsToInsert = foods.map((f: any) => ({
                             meal_id: meal.id,
                             food_name: f.name || f.food,
@@ -331,7 +371,11 @@ export async function saveParsedData(type: 'workout' | 'diet', data: any, studen
 
                         if (itemsToInsert.length > 0) {
                             const { error: iError } = await supabase.from('meal_items').insert(itemsToInsert)
-                            if (iError) throw iError
+                            if (iError) {
+                                console.error(`[SAVE] [Diet ${dIdx}] [Meal ${i}] Error creating items:`, iError);
+                                throw iError;
+                            }
+                            console.log(`[SAVE] [Diet ${dIdx}] [Meal ${i}] Successfully inserted ${itemsToInsert.length} items.`);
                         }
                     }
                 }
@@ -341,11 +385,14 @@ export async function saveParsedData(type: 'workout' | 'diet', data: any, studen
                 revalidatePath('/dashboard/student/diet')
                 revalidatePath('/dashboard/student')
             } else {
+                revalidatePath('/dashboard/trainer/students/[id]', 'page')
                 revalidatePath('/dashboard/trainer/diets')
             }
+            console.log(`[SAVE] Diet save complete. Diets: ${results.diets.length}`);
             return { success: true, results }
         }
     } catch (e: any) {
+        console.error(`[SAVE] FATAL ERROR during saveParsedData (${type}):`, e);
         return { error: e.message }
     }
 }

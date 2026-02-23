@@ -9,6 +9,7 @@ import { getStudentTrainer } from '@/actions/student-actions'
 import { Logo } from '@/components/ui/logo'
 import { MobileHeader } from '@/components/layout/mobile-header'
 import { SettingsModal } from '@/components/feature/student/settings-modal'
+import { NotificationRequestModal } from '@/components/feature/student/notification-request-modal'
 
 export default async function StudentLayout({
     children,
@@ -104,6 +105,7 @@ export default async function StudentLayout({
             </div>
 
             <SettingsModal hasTrainer={hasTrainer} />
+            <NotificationRequestModal />
         </div>
     )
 }

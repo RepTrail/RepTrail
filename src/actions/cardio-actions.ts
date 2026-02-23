@@ -260,6 +260,9 @@ export async function getActiveCardioSession() {
     if (!user) return null
 
     try {
+        const tzNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }))
+        const todayStr = tzNow.toISOString().split('T')[0]
+
         const { data, error } = await supabase
             .from('cardio_logs')
             .select(`
@@ -271,6 +274,7 @@ export async function getActiveCardioSession() {
             `)
             .eq('student_id', user.id)
             .eq('status', 'in_progress')
+            .gte('started_at', todayStr + 'T00:00:00')
             .order('last_heartbeat_at', { ascending: false })
             .limit(1)
             .maybeSingle()

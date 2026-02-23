@@ -10,7 +10,7 @@ export function CopyInviteButton({ trainerCode }: { trainerCode: string }) {
     const { toast } = useToast()
 
     const copyLink = () => {
-        const inviteLink = `${window.location.origin}/register?code=${trainerCode}`
+        const inviteLink = `${window.location.origin}/auth/signup?code=${trainerCode}`
         navigator.clipboard.writeText(inviteLink)
         setCopied(true)
         toast({

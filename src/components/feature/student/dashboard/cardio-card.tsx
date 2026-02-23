@@ -56,7 +56,7 @@ export function CardioCard({ userId }: CardioCardProps) {
 
     return (
         <div className="grid gap-6">
-            {cardios.slice(0, 1).map((assignment: any) => {
+            {cardios.map((assignment: any) => {
                 const isCompleted = cardioLogs?.some(
                     (l: any) => l.assigned_cardio_id === assignment.id && l.status === 'completed'
                 )

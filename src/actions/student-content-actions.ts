@@ -25,12 +25,24 @@ export async function createStudentWorkout(formData: FormData) {
             .single()
 
         if (error) throw error
+        const workoutId = data.id
+
+        // Deactivate previous for same day (if scheduled)
+        // If it's a general assignment, deactivate all active for student?
+        // Usually for auto-training it's better to manage per day if scheduled, 
+        // but if no day is specified, maybe just deactivate all active ones?
+        // Let's assume they want to replace their current plan.
+        await supabase
+            .from('assigned_workouts')
+            .update({ active: false })
+            .eq('student_id', user.id)
+            .eq('active', true)
 
         // Auto-assign to self
         const { error: assignErr } = await supabase
             .from('assigned_workouts')
             .insert({
-                workout_id: data.id,
+                workout_id: workoutId,
                 student_id: user.id,
                 active: true,
             })
@@ -119,12 +131,20 @@ export async function createStudentDiet(formData: FormData) {
             .single()
 
         if (error) throw error
+        const dietId = data.id
+
+        // Deactivate previous
+        await supabase
+            .from('assigned_diets')
+            .update({ active: false })
+            .eq('student_id', user.id)
+            .eq('active', true)
 
         // Auto-assign to self
         const { error: assignErr } = await supabase
             .from('assigned_diets')
             .insert({
-                diet_id: data.id,
+                diet_id: dietId,
                 student_id: user.id,
                 active: true,
             })
@@ -170,16 +190,15 @@ export async function deleteStudentDiet(dietId: string) {
     if (!user) return { error: 'Unauthorized' }
 
     try {
-        // Unassign first
+        // Hard delete assignment
         await supabase
             .from('assigned_diets')
-            .update({ active: false })
+            .delete()
             .eq('diet_id', dietId)
             .eq('student_id', user.id)
 
-        // NOTE: In auto-training student flow we do NOT hard-delete diets.
-        // We only deactivate the assignment so it disappears from the daily view.
         revalidatePath('/dashboard/student/diet')
+        revalidatePath('/dashboard/student')
         return { success: true }
     } catch (e: any) {
         return { error: e.message }
