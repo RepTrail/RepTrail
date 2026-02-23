@@ -161,7 +161,7 @@ export function DietAdherence({ diet, allowEstimation = false }: DietAdherencePr
                 </div>
 
                 {/* Total Macros Summary */}
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-3 p-4 bg-zinc-950/30 border border-zinc-800/50 rounded-3xl" suppressHydrationWarning>
+                <div className="grid grid-cols-6 gap-3 p-4 bg-zinc-950/30 border border-zinc-800/50 rounded-3xl" suppressHydrationWarning>
                     {(() => {
                         const t = meals.reduce((acc: any, meal: any) => {
                             const items = meal.meal_items || []
@@ -176,11 +176,11 @@ export function DietAdherence({ diet, allowEstimation = false }: DietAdherencePr
 
                         return (
                             <>
-                                <MacroBox label="Calorias" value={cals} unit="kcal" color="text-zinc-100" />
-                                <MacroBox label="Proteínas" value={t.p} unit="g" color="text-emerald-500" />
-                                <MacroBox label="Carbos" value={t.c} unit="g" color="text-amber-500" />
-                                <MacroBox label="Gorduras" value={t.g} unit="g" color="text-red-500" />
-                                <MacroBox label="Fibras" value={t.f} unit="g" color="text-blue-500" />
+                                <MacroBox label="Calorias" value={cals} unit="kcal" color="text-zinc-100" className="col-span-2" />
+                                <MacroBox label="Proteínas" value={t.p} unit="g" color="text-emerald-500" className="col-span-2" />
+                                <MacroBox label="Carbos" value={t.c} unit="g" color="text-amber-500" className="col-span-2" />
+                                <MacroBox label="Gorduras" value={t.g} unit="g" color="text-red-500" className="col-span-3" />
+                                <MacroBox label="Fibras" value={t.f} unit="g" color="text-blue-500" className="col-span-3" />
                             </>
                         )
                     })()}
@@ -351,9 +351,9 @@ export function DietAdherence({ diet, allowEstimation = false }: DietAdherencePr
     )
 }
 
-function MacroBox({ label, value, unit, color }: any) {
+function MacroBox({ label, value, unit, color, className }: any) {
     return (
-        <div className="flex flex-col items-center justify-center p-3 sm:p-4 rounded-2xl bg-zinc-900/50 border border-zinc-800/50 shadow-inner">
+        <div className={cn("flex flex-col items-center justify-center p-3 sm:p-4 rounded-2xl bg-zinc-900/50 border border-zinc-800/50 shadow-inner", className)}>
             <span className="text-[10px] font-black text-zinc-500 uppercase tracking-tighter mb-1">{label}</span>
             <div className="flex items-baseline gap-1">
                 <span className={cn("text-xl sm:text-2xl font-black italic", color)}>{Math.round(value)}</span>
