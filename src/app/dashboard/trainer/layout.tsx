@@ -66,7 +66,7 @@ export default async function TrainerLayout({
         return (
             <div className="flex h-screen w-full bg-zinc-950 text-zinc-100 font-sans">
                 {/* Minimal Top Header for Paywall */}
-                <header className="fixed top-0 left-0 right-0 h-20 bg-zinc-950/80 backdrop-blur-xl border-b border-zinc-900 z-50 px-6 flex items-center justify-between">
+                <header className="fixed top-0 left-0 right-0 h-20 bg-zinc-950/80 backdrop-blur-xl border-b border-zinc-900 z-40 px-6 flex items-center justify-between">
                     <Logo size="md" color="emerald" />
                     <form action={signOutAction}>
                         <Button variant="ghost" className="text-zinc-500 hover:text-white hover:bg-white/5 border border-transparent hover:border-zinc-800 gap-2 font-bold uppercase text-[10px] tracking-widest px-4 h-10 rounded-xl transition-all active:scale-95">
@@ -144,7 +144,7 @@ export default async function TrainerLayout({
             </aside>
 
             {/* Mobile Bottom Navigation */}
-            <nav className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[95vw] h-16 bg-zinc-900/90 backdrop-blur-xl border border-zinc-800 rounded-2xl z-50 px-2 flex items-center justify-around shadow-2xl shadow-black/50">
+            <nav className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[95vw] h-16 bg-zinc-900/90 backdrop-blur-xl border border-zinc-800 rounded-2xl z-40 px-2 flex items-center justify-around shadow-2xl shadow-black/50">
                 <MobileNavLink href="/dashboard/trainer" icon={<Home className="w-5 h-5" />} />
                 <MobileNavLink href="/dashboard/trainer/students" icon={<Users className="w-5 h-5" />} />
                 <MobileNavLink href="/dashboard/trainer/loja" icon={<ShoppingBag className="w-5 h-5" />} />

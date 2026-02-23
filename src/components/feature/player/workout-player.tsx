@@ -247,7 +247,19 @@ export function WorkoutPlayer({
         }
 
         if ("Notification" in window && Notification.permission === "granted") {
-            new Notification("Descanso Finalizado!", { body: "Hora de voltar para a série." })
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.ready.then(registration => {
+                    registration.showNotification("Descanso Finalizado!", {
+                        body: "Hora de voltar para a série.",
+                        icon: '/icon.jpg',
+                        badge: '/icon.jpg',
+                        vibrate: [200, 100, 200],
+                        tag: 'workout-rest'
+                    } as any);
+                });
+            } else {
+                new Notification("Descanso Finalizado!", { body: "Hora de voltar para a série." })
+            }
         }
     }
 

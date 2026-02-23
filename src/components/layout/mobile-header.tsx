@@ -50,7 +50,7 @@ export function MobileHeader({ role, hasTrainer, steroidUse, hideImportPdf, auto
 
     return (
         <>
-            <header className="md:hidden fixed top-0 left-0 right-0 z-[100] h-20 bg-zinc-950/70 backdrop-blur-lg border-b border-zinc-900 flex items-center justify-between px-6 gpu-accelerated">
+            <header className="md:hidden fixed top-0 left-0 right-0 z-40 h-20 bg-zinc-950/70 backdrop-blur-lg border-b border-zinc-900 flex items-center justify-between px-6 gpu-accelerated">
                 <Link href="/" className="relative z-10">
                     <Logo size="sm" color={role === 'trainer' ? 'emerald' : 'orange'} />
                 </Link>
@@ -66,7 +66,7 @@ export function MobileHeader({ role, hasTrainer, steroidUse, hideImportPdf, auto
             </header>
 
             {/* Slide-over Menu */}
-            <div className={`fixed inset-0 z-[100] transition-opacity duration-300 ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+            <div className={`fixed inset-0 z-[150] transition-opacity duration-300 ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
                 {/* Backdrop */}
                 <div
                     className="absolute inset-0 bg-black/60 backdrop-blur-sm"

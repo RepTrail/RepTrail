@@ -34,6 +34,7 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
     const [seconds, setSeconds] = useState(0)
     const [logId, setLogId] = useState<string | null>(null)
     const [loading, setLoading] = useState(true)
+    const [wakeLock, setWakeLock] = useState<any>(null)
 
     const timerRef = useRef<NodeJS.Timeout | null>(null)
     const syncRef = useRef<NodeJS.Timeout | null>(null)
@@ -54,8 +55,50 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
         return () => {
             if (timerRef.current) clearInterval(timerRef.current)
             if (syncRef.current) clearInterval(syncRef.current)
+            releaseWakeLock()
         }
     }, [isCompleted])
+
+    const requestWakeLock = async () => {
+        if ('wakeLock' in navigator) {
+            try {
+                const lock = await (navigator as any).wakeLock.request('screen')
+                setWakeLock(lock)
+                lock.addEventListener('release', () => {
+                    console.log('Wake Lock was released')
+                })
+            } catch (err: any) {
+                console.error(`${err.name}, ${err.message}`)
+            }
+        }
+    }
+
+    const releaseWakeLock = () => {
+        if (wakeLock) {
+            wakeLock.release()
+            setWakeLock(null)
+        }
+    }
+
+    const showNotification = (title: string, body: string) => {
+        if ("Notification" in window && Notification.permission === "granted") {
+            // Use Service Worker if available for better background support
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.ready.then(registration => {
+                    registration.showNotification(title, {
+                        body,
+                        icon: '/icon.jpg',
+                        badge: '/icon.jpg',
+                        vibrate: [200, 100, 200, 100, 200],
+                        tag: 'cardio-timer',
+                        renotify: true
+                    } as any)
+                })
+            } else {
+                new Notification(title, { body })
+            }
+        }
+    }
 
     async function checkActiveSession() {
         setLoading(true)
@@ -146,7 +189,7 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
                 }, 1000)
 
                 startSync()
-
+                requestWakeLock()
             } else {
                 toast({
                     variant: 'destructive',
@@ -160,12 +203,14 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
             setStatus('running')
             startTimer() // Resume from current seconds
             startSync()
+            requestWakeLock()
         }
     }
 
     async function handlePause() {
         setStatus('paused')
         stopTimer()
+        releaseWakeLock()
         if (logId) {
             await updateCardioSession(logId, seconds, false)
         }
@@ -174,6 +219,7 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
     // Auto-stop when reaching zero
     useEffect(() => {
         if (remainingSeconds === 0 && status === 'running' && logId) {
+            showNotification("Cardio Concluído!", "Você atingiu sua meta de tempo. Parabéns!")
             handleStop(true) // Pass true for silent auto-finalization
         }
     }, [remainingSeconds, status, logId])
