@@ -184,25 +184,27 @@ export async function getStudentWorkoutHistory(studentId: string) {
 
         if (error) {
             console.error('Error fetching workout history details:', error)
-
-            // Fallback: If complex join fails, try a very simple select to at least get something
-            const { data: simpleLogs, error: simpleError } = await supabase
-                .from('workout_logs')
-                .select('id, student_id, started_at, completed_at, status, feedback, perceived_effort')
-                .eq('student_id', studentId)
-                .eq('status', 'completed')
-                .order('completed_at', { ascending: false })
-                .limit(50)
-
-            if (simpleError) {
-                console.error('Simple fallback also failed:', simpleError)
-                return []
-            }
-
-            return (simpleLogs || []).map(log => ({ ...log, loads: [], workout: { name: 'Treino' } }))
+            return []
         }
 
-        return logs || []
+        if (logs) {
+            return logs.map((log: any) => {
+                // Supabase joins can return arrays for 1:1 relations depending on the client/schema
+                const workout = Array.isArray(log.workout) ? log.workout[0] : log.workout;
+
+                return {
+                    ...log,
+                    workout: workout || { name: 'Treino' },
+                    loads: (log.loads || []).map((load: any) => ({
+                        ...load,
+                        // handle exercise join which could also be an array
+                        exercise: Array.isArray(load.exercise) ? load.exercise[0] : (load.exercise || { name: 'Exercício', id: load.exercise_id })
+                    }))
+                }
+            })
+        }
+
+        return []
     } catch (e: any) {
         console.error('Exception in getStudentWorkoutHistory:', e)
         return []
@@ -276,18 +278,20 @@ export async function getStudentLastActivity(studentId: string) {
         if (workoutRes.data) {
             const timestamp = workoutRes.data.completed_at || workoutRes.data.started_at
             if (timestamp) {
+                const workout = Array.isArray(workoutRes.data.workout) ? workoutRes.data.workout[0] : workoutRes.data.workout;
                 activities.push({
                     type: 'workout',
-                    name: (workoutRes.data.workout as any)?.name || 'Treino',
+                    name: (workout as any)?.name || 'Treino',
                     timestamp
                 })
             }
         }
 
         if (mealRes.data && mealRes.data.consumed_at) {
+            const meal = Array.isArray(mealRes.data.meal) ? mealRes.data.meal[0] : mealRes.data.meal;
             activities.push({
                 type: 'meal',
-                name: (mealRes.data.meal as any)?.name || 'Refeição',
+                name: (meal as any)?.name || 'Refeição',
                 timestamp: mealRes.data.consumed_at
             })
         }
@@ -295,9 +299,11 @@ export async function getStudentLastActivity(studentId: string) {
         if (cardioRes.data) {
             const timestamp = cardioRes.data.completed_at || cardioRes.data.started_at
             if (timestamp) {
+                const assigned = Array.isArray(cardioRes.data.assigned_cardio) ? cardioRes.data.assigned_cardio[0] : cardioRes.data.assigned_cardio;
+                const cardio = Array.isArray((assigned as any)?.cardio) ? (assigned as any).cardio[0] : (assigned as any)?.cardio;
                 activities.push({
                     type: 'cardio',
-                    name: ((cardioRes.data.assigned_cardio as any)?.cardio?.name) || 'Cardio',
+                    name: (cardio as any)?.name || 'Cardio',
                     timestamp
                 })
             }

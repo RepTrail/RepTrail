@@ -2,7 +2,7 @@
 export const STRIPE_PRICES = {
     // Student Plans
     AUTO_TRAINING_MONTHLY: {
-        id: 'price_1T3qUZRrnMgl7YdWboa5qAS2',
+        id: 'price_1T3ubcRwTvmG5rf23p2y0vHQ',
         amount: 1090, // R$ 10,90 in cents
         currency: 'brl',
         interval: 'month',
