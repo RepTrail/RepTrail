@@ -107,56 +107,60 @@ export function DietAdherence({ diet, allowEstimation = false }: DietAdherencePr
         <Card className="bg-zinc-900/40 border-zinc-800/50 shadow-2xl rounded-[2.5rem] overflow-hidden backdrop-blur-sm border-t-zinc-700/10" suppressHydrationWarning>
             <CardContent className="p-8 space-y-8" suppressHydrationWarning>
                 {/* Header */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6" suppressHydrationWarning>
-                    <div className="space-y-1" suppressHydrationWarning>
-                        <div className="flex items-center gap-2" suppressHydrationWarning>
-                            <Utensils className="w-4 h-4 text-emerald-500" />
-                            <h3 className="text-xl font-black text-white italic uppercase">{diet.name}</h3>
+                {/* Header Section */}
+                <div className="space-y-6">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6" suppressHydrationWarning>
+                        <div className="space-y-1" suppressHydrationWarning>
+                            <div className="flex items-center gap-2" suppressHydrationWarning>
+                                <Utensils className="w-4 h-4 text-emerald-500" />
+                                <h3 className="text-xl font-black text-white italic uppercase">{diet.name}</h3>
+                            </div>
+                            <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
+                                Progresso Diário • {completedItems}/{totalItems} Itens
+                            </p>
                         </div>
-                        <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
-                            Progresso Diário • {completedItems}/{totalItems} Itens
-                        </p>
-                    </div>
 
-                    <div className="flex items-center gap-6" suppressHydrationWarning>
-                        {allowEstimation && (
-                            <Button
-                                size="sm"
-                                variant="outline"
-                                disabled={estimating}
-                                onClick={async () => {
-                                    setEstimating(true)
-                                    try {
-                                        const res = await estimateAllDietMacros(diet.id)
-                                        if (res.success) {
-                                            toast({ title: 'Macros Calculados!', description: 'A IA preencheu os valores nutricionais da sua dieta.' })
-                                            router.refresh()
-                                        } else {
-                                            throw new Error(res.error)
+                        <div className="flex items-center gap-6" suppressHydrationWarning>
+                            {allowEstimation && (
+                                <Button
+                                    size="sm"
+                                    variant="outline"
+                                    disabled={estimating}
+                                    onClick={async () => {
+                                        setEstimating(true)
+                                        try {
+                                            const res = await estimateAllDietMacros(diet.id)
+                                            if (res.success) {
+                                                toast({ title: 'Macros Calculados!', description: 'A IA preencheu os valores nutricionais da sua dieta.' })
+                                                router.refresh()
+                                            } else {
+                                                throw new Error(res.error)
+                                            }
+                                        } catch (e: any) {
+                                            toast({ variant: 'destructive', title: 'Erro', description: 'Não foi possível calcular os macros.' })
+                                        } finally {
+                                            setEstimating(false)
                                         }
-                                    } catch (e: any) {
-                                        toast({ variant: 'destructive', title: 'Erro', description: 'Não foi possível calcular os macros.' })
-                                    } finally {
-                                        setEstimating(false)
-                                    }
-                                }}
-                                className="h-10 px-4 rounded-xl border-amber-500/30 bg-amber-500/5 text-amber-500 hover:bg-amber-500/10 hover:text-amber-400 font-bold uppercase italic tracking-widest text-[10px] gap-2"
-                            >
-                                {estimating ? (
-                                    <Loader2 className="w-3 h-3 animate-spin" />
-                                ) : (
-                                    <Sparkles className="w-3 h-3" />
-                                )}
-                                Calcular Macros
-                            </Button>
-                        )}
-                        <div className="flex flex-col items-end gap-1" suppressHydrationWarning>
+                                    }}
+                                    className="h-10 px-4 rounded-xl border-amber-500/30 bg-amber-500/5 text-amber-500 hover:bg-amber-500/10 hover:text-amber-400 font-bold uppercase italic tracking-widest text-[10px] gap-2"
+                                >
+                                    {estimating ? (
+                                        <Loader2 className="w-3 h-3 animate-spin" />
+                                    ) : (
+                                        <Sparkles className="w-3 h-3" />
+                                    )}
+                                    Calcular Macros
+                                </Button>
+                            )}
                             <div className="flex items-baseline gap-1">
-                                <span className="text-2xl font-black text-emerald-500 italic">{Math.round(dailyPercentage)}</span>
+                                <span className="text-3xl font-black text-emerald-500 italic">{Math.round(dailyPercentage)}</span>
                                 <span className="text-[10px] font-black text-zinc-500 uppercase italic">%</span>
                             </div>
-                            <Progress value={dailyPercentage} className="h-1.5 w-24 bg-zinc-800" indicatorClassName="bg-emerald-500" />
                         </div>
+                    </div>
+
+                    <div className="space-y-2">
+                        <Progress value={dailyPercentage} className="h-3 w-full bg-zinc-950 border border-zinc-900 shadow-inner" indicatorClassName="bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.4)]" />
                     </div>
                 </div>
 
@@ -176,11 +180,11 @@ export function DietAdherence({ diet, allowEstimation = false }: DietAdherencePr
 
                         return (
                             <>
-                                <MacroBox label="Calorias" value={cals} unit="kcal" color="text-zinc-100" className="col-span-2" />
-                                <MacroBox label="Proteínas" value={t.p} unit="g" color="text-emerald-500" className="col-span-2" />
-                                <MacroBox label="Carbos" value={t.c} unit="g" color="text-amber-500" className="col-span-2" />
-                                <MacroBox label="Gorduras" value={t.g} unit="g" color="text-red-500" className="col-span-3" />
-                                <MacroBox label="Fibras" value={t.f} unit="g" color="text-blue-500" className="col-span-3" />
+                                <MacroBox label="Calorias" value={cals} unit="kcal" color="text-zinc-100" className="col-span-3 sm:col-span-2" />
+                                <MacroBox label="Proteínas" value={t.p} unit="g" color="text-emerald-500" className="col-span-3 sm:col-span-2" />
+                                <MacroBox label="Carbos" value={t.c} unit="g" color="text-amber-500" className="col-span-3 sm:col-span-2" />
+                                <MacroBox label="Gorduras" value={t.g} unit="g" color="text-red-500" className="col-span-3 sm:col-span-3" />
+                                <MacroBox label="Fibras" value={t.f} unit="g" color="text-blue-500" className="col-span-6 sm:col-span-3" />
                             </>
                         )
                     })()}
