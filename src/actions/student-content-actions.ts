@@ -356,7 +356,6 @@ export async function updateStudentErgogenic(ergogenicId: string, formData: Form
                 notes,
             })
             .eq('id', ergogenicId)
-            .eq('trainer_id', user.id)
             .eq('student_id', user.id)
 
         if (error) throw error
@@ -378,7 +377,6 @@ export async function deleteStudentErgogenic(ergogenicId: string) {
             .from('ergogenics')
             .delete()
             .eq('id', ergogenicId)
-            .eq('trainer_id', user.id)
             .eq('student_id', user.id)
 
         if (error) throw error
