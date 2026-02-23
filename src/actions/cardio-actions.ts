@@ -61,9 +61,11 @@ export async function getCardioDetails(cardioId: string) {
 export async function updateCardioMeta(cardioId: string, name: string, description?: string) {
     const supabase = await createClient()
     try {
+        const updateData: any = { name: name.trim(), description: description?.trim() ?? null }
+
         const { error } = await supabase
             .from('cardios')
-            .update({ name: name.trim(), description: description?.trim() ?? null })
+            .update(updateData)
             .eq('id', cardioId)
         if (error) throw error
         revalidatePath('/dashboard/trainer/cardio')

@@ -1,6 +1,11 @@
+import dynamic from "next/dynamic"
 import { getDietDetails } from "@/actions/diet-actions"
-import { DietBuilder } from "@/components/feature/trainer/diet-builder"
 import { notFound } from "next/navigation"
+
+const DietBuilder = dynamic(
+    () => import("@/components/feature/trainer/diet-builder").then(mod => ({ default: mod.DietBuilder })),
+    { ssr: false }
+)
 
 export default async function DietEditPage({ params }: { params: { id: string } }) {
     const { id } = await params

@@ -7,6 +7,7 @@ import {
     DialogDescription,
     DialogHeader,
     DialogTitle,
+    DialogClose,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Download, Smartphone, Share, PlusSquare, CheckCircle2 } from 'lucide-react'
@@ -93,83 +94,97 @@ export function PWAInstallPrompt() {
 
     return (
         <Dialog open={showPrompt} onOpenChange={setShowPrompt}>
-            <DialogContent className="sm:max-w-md bg-zinc-950 border-zinc-800 p-0 overflow-hidden rounded-[2.5rem]">
-                <div className="relative p-8 space-y-8">
+            <DialogContent className="bg-zinc-950/95 border-zinc-900 text-white max-w-lg rounded-[3.5rem] backdrop-blur-3xl p-0 overflow-hidden shadow-[0_0_100px_rgba(0,0,0,1)] gap-0 [&>button]:hidden">
+                <div className="absolute top-8 right-8 z-50">
+                    <DialogClose asChild>
+                        <Button variant="ghost" className="h-12 w-12 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-400 hover:text-white transition-all backdrop-blur-md">
+                            <span className="sr-only">Fechar</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
+                        </Button>
+                    </DialogClose>
+                </div>
+
+                <div className="relative p-10 pt-16 space-y-8">
                     {/* Visual Decor */}
-                    <div className="absolute top-0 right-0 p-8 opacity-5">
-                        <Smartphone className="w-32 h-32 text-emerald-500" />
+                    <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none">
+                        <Smartphone className="w-48 h-48 text-emerald-500" />
                     </div>
 
-                    <DialogHeader className="relative z-10 text-left space-y-4">
-                        <div className="w-16 h-16 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl flex items-center justify-center">
-                            <Download className="w-8 h-8 text-emerald-500" />
+                    <DialogHeader className="relative z-10 text-left space-y-6">
+                        <div className="w-20 h-20 bg-emerald-500/10 border border-emerald-500/20 rounded-[2rem] flex items-center justify-center shadow-xl shadow-emerald-500/10">
+                            <Download className="w-10 h-10 text-emerald-500" />
                         </div>
                         <div>
-                            <DialogTitle className="text-3xl font-black text-white italic uppercase tracking-tight">
-                                RepTrail no seu Celular
+                            <DialogTitle className="text-4xl md:text-5xl font-black text-white italic uppercase tracking-tighter leading-tight">
+                                RepTrail no seu <span className="text-emerald-500">Celular</span>
                             </DialogTitle>
-                            <DialogDescription className="text-zinc-500 font-medium text-base mt-2">
-                                Experimente a melhor performance usando o RepTrail em tela cheia, como um aplicativo instalado.
+                            <DialogDescription className="text-zinc-500 font-bold uppercase tracking-widest text-[10px] mt-4">
+                                Performance máxima em tela cheia
                             </DialogDescription>
                         </div>
                     </DialogHeader>
 
-                    <div className="space-y-6 relative z-10">
-                        <div className="grid gap-4">
-                            <div className="flex items-start gap-4 p-4 bg-zinc-900/50 rounded-2xl border border-zinc-800">
-                                <CheckCircle2 className="w-5 h-5 text-emerald-500 mt-1 shrink-0" />
+                    <div className="space-y-8 relative z-10">
+                        <div className="grid gap-4 pb-4">
+                            <div className="flex items-center gap-5 p-6 bg-white/5 rounded-[2rem] border border-white/5 backdrop-blur-sm group hover:bg-white/10 transition-colors">
+                                <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 flex items-center justify-center border border-emerald-500/20 group-hover:scale-110 transition-transform">
+                                    <CheckCircle2 className="w-6 h-6 text-emerald-500" />
+                                </div>
                                 <div className="space-y-1">
-                                    <p className="text-sm font-bold text-zinc-200 uppercase tracking-wide">Sem Barras</p>
-                                    <p className="text-xs text-zinc-500">Navegue em tela cheia sem a barra de endereço do navegador.</p>
+                                    <p className="text-sm font-black text-white uppercase italic tracking-wider">Sem Barras</p>
+                                    <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest">Navegação Full Screen</p>
                                 </div>
                             </div>
-                            <div className="flex items-start gap-4 p-4 bg-zinc-900/50 rounded-2xl border border-zinc-800">
-                                <CheckCircle2 className="w-5 h-5 text-emerald-500 mt-1 shrink-0" />
+                            <div className="flex items-center gap-5 p-6 bg-white/5 rounded-[2rem] border border-white/5 backdrop-blur-sm group hover:bg-white/10 transition-colors">
+                                <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 flex items-center justify-center border border-emerald-500/20 group-hover:scale-110 transition-transform">
+                                    <CheckCircle2 className="w-6 h-6 text-emerald-500" />
+                                </div>
                                 <div className="space-y-1">
-                                    <p className="text-sm font-bold text-zinc-200 uppercase tracking-wide">Acesso Rápido</p>
-                                    <p className="text-xs text-zinc-500">Ícone na sua tela de início para abrir instantaneamente.</p>
+                                    <p className="text-sm font-black text-white uppercase italic tracking-wider">Acesso Rápido</p>
+                                    <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest">Atalho na Home</p>
                                 </div>
                             </div>
                         </div>
 
                         {isIOS ? (
-                            <div className="bg-emerald-500/10 border border-emerald-500/20 p-6 rounded-3xl">
-                                <p className="text-sm font-black text-emerald-500 uppercase tracking-widest flex items-center gap-2 mb-4">
-                                    Como instalar no iPhone:
+                            <div className="bg-emerald-500/10 border border-emerald-500/20 p-8 rounded-[2.5rem] space-y-6">
+                                <p className="text-xs font-black text-emerald-500 uppercase tracking-[0.3em] flex items-center gap-2 mb-4">
+                                    Configuração iOS:
                                 </p>
                                 <ol className="space-y-4">
-                                    <li className="flex items-center gap-3 text-zinc-300 text-sm font-bold">
-                                        <div className="w-8 h-8 rounded-lg bg-zinc-900 border border-zinc-800 flex items-center justify-center shrink-0">
-                                            <Share className="w-4 h-4 text-white" />
+                                    <li className="flex items-center gap-4 text-white text-xs font-black uppercase italic tracking-widest">
+                                        <div className="w-10 h-10 rounded-xl bg-zinc-950 border border-zinc-900 flex items-center justify-center shrink-0 shadow-2xl">
+                                            <Share className="w-5 h-5 text-emerald-500" />
                                         </div>
-                                        1. Clique no botão de Compartilhar
+                                        1. Clique em Compartilhar
                                     </li>
-                                    <li className="flex items-center gap-3 text-zinc-300 text-sm font-bold">
-                                        <div className="w-8 h-8 rounded-lg bg-zinc-900 border border-zinc-800 flex items-center justify-center shrink-0">
-                                            <PlusSquare className="w-4 h-4 text-white" />
+                                    <li className="flex items-center gap-4 text-white text-xs font-black uppercase italic tracking-widest">
+                                        <div className="w-10 h-10 rounded-xl bg-zinc-950 border border-zinc-900 flex items-center justify-center shrink-0 shadow-2xl">
+                                            <PlusSquare className="w-5 h-5 text-emerald-500" />
                                         </div>
-                                        2. Selecione "Adicionar à Tela de Início"
+                                        2. "Tela de Início"
                                     </li>
                                 </ol>
                                 <Button
                                     onClick={closePrompt}
-                                    className="w-full mt-6 h-12 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase italic"
+                                    className="w-full mt-6 h-14 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase italic tracking-widest shadow-xl shadow-emerald-500/20"
                                 >
                                     Entendi
                                 </Button>
                             </div>
                         ) : (
-                            <div className="flex flex-col gap-3">
+                            <div className="flex flex-col gap-4">
                                 <Button
                                     onClick={handleInstallClick}
-                                    className="h-14 rounded-2xl bg-white hover:bg-emerald-500 text-zinc-950 font-black uppercase italic tracking-wide transition-all shadow-xl text-lg"
+                                    className="h-16 rounded-[2rem] bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase italic tracking-widest transition-all shadow-2xl shadow-emerald-500/30 text-lg group"
                                 >
+                                    <Download className="w-5 h-5 mr-3 group-hover:bounce" />
                                     Instalar Agora
                                 </Button>
                                 <Button
                                     variant="ghost"
                                     onClick={closePrompt}
-                                    className="h-12 text-zinc-500 hover:text-white"
+                                    className="h-12 text-zinc-600 hover:text-white font-black uppercase italic tracking-widest text-[10px]"
                                 >
                                     Agora não
                                 </Button>

@@ -213,9 +213,9 @@ export async function getAdherenceHistory(days: number = 30) {
 
     // Fetch assignments
     const { data: aw } = await supabase.from('assigned_workouts').select('day_of_week').eq('student_id', user.id).eq('active', true)
-    const { data: ac } = await supabase.from('assigned_cardios').select('days_of_week, day_of_week').eq('student_id', user.id).eq('active', true)
+    const { data: ac } = await supabase.from('assigned_cardios').select('days_of_week').eq('student_id', user.id).eq('active', true)
     const { data: ad } = await supabase.from('assigned_diets').select('id').eq('student_id', user.id).eq('active', true)
-    const { data: ae } = await supabase.from('assigned_ergogenics').select('application_days').eq('student_id', user.id).eq('active', true)
+    const { data: ae } = await supabase.from('ergogenics').select('application_days').eq('student_id', user.id)
 
     // Check steroid use
     const { data: details } = await supabase.from('student_details').select('steroid_use').eq('id', user.id).single()
@@ -332,10 +332,12 @@ export async function getAdherenceHistory(days: number = 30) {
 // Trainer-side version: fetch adherence history for any student by ID
 export async function getStudentAdherenceHistory(studentId: string, days: number = 30) {
     const supabase = await createClient()
+    console.log('DEBUG: getStudentAdherenceHistory called for studentId:', studentId)
 
     // 1. Determine Effective Start Date
     const { data: profile } = await supabase.from('profiles').select('created_at').eq('id', studentId).single()
     const profileCreatedStr = profile?.created_at ? new Date(profile.created_at).toISOString().split('T')[0] : '2000-01-01'
+    console.log('DEBUG: Profile created:', profileCreatedStr)
 
     const { data: trainerLink } = await supabase
         .from('trainer_students')
@@ -345,6 +347,7 @@ export async function getStudentAdherenceHistory(studentId: string, days: number
         .maybeSingle()
 
     const linkDateStr = trainerLink?.created_at ? new Date(trainerLink.created_at).toISOString().split('T')[0] : '2000-01-01'
+    console.log('DEBUG: Trainer link created:', linkDateStr)
 
     const effectiveStartStr = linkDateStr > profileCreatedStr ? linkDateStr : profileCreatedStr
 
@@ -356,7 +359,8 @@ export async function getStudentAdherenceHistory(studentId: string, days: number
     const startDateStr = startDate.toISOString().split('T')[0]
     const endDateStr = todayStr
 
-    const { data: tracking } = await supabase
+    console.log('DEBUG: Fetching daily_tracking from', startDateStr, 'to', endDateStr)
+    const { data: tracking, error: trackingErr } = await supabase
         .from('daily_tracking')
         .select('*')
         .eq('user_id', studentId)
@@ -364,38 +368,52 @@ export async function getStudentAdherenceHistory(studentId: string, days: number
         .lte('date', endDateStr)
         .order('date', { ascending: true })
 
-    // Fetch assignments for the student
-    const { data: aw } = await supabase.from('assigned_workouts').select('day_of_week').eq('student_id', studentId).eq('active', true)
-    const { data: ac } = await supabase.from('assigned_cardios').select('days_of_week, day_of_week').eq('student_id', studentId).eq('active', true)
-    const { data: ad } = await supabase.from('assigned_diets').select('id').eq('student_id', studentId).eq('active', true)
-    const { data: ae } = await supabase.from('assigned_ergogenics').select('application_days').eq('student_id', studentId).eq('active', true)
+    console.log('DEBUG: Daily tracking result:', { tracking: tracking?.length, error: trackingErr })
+
+    // Fetch assignments for the student (Handle nulls in active column for safety)
+    console.log('DEBUG: Fetching assignments for student:', studentId)
+    const { data: aw, error: awErr } = await supabase.from('assigned_workouts').select('day_of_week').eq('student_id', studentId).neq('active', false)
+    const { data: ac, error: acErr } = await supabase.from('assigned_cardios').select('day_of_week').eq('student_id', studentId).neq('active', false)
+    const { data: ad, error: adErr } = await supabase.from('assigned_diets').select('id').eq('student_id', studentId).neq('active', false)
+    const { data: ae, error: aeErr } = await supabase.from('ergogenics').select('application_days').eq('student_id', studentId)
+
+    console.log('DEBUG ADHERENCE:', {
+        studentId,
+        workoutsRequested: aw?.length || 0,
+        cardiosRequested: ac?.length || 0,
+        dietsRequested: ad?.length || 0,
+        ergogenicsRequested: ae?.length || 0,
+        awErr,
+        acErr,
+        adErr,
+        aeErr
+    });
 
     // Check steroid use
     const { data: details } = await supabase.from('student_details').select('steroid_use').eq('id', studentId).single()
     const steroidUse = !!details?.steroid_use
 
+    console.log('DEBUG: Steroid use:', steroidUse)
+
     const workoutDays = new Set((aw || []).map((a: any) => a.day_of_week))
+    console.log('DEBUG: Workout days:', Array.from(workoutDays))
 
     // Robust Cardio Days Logic (Synced with getAdherenceHistory)
     const cardioDays = new Set<number>()
-    if (ac) {
-        ac.forEach((a: any) => {
-            if (a.days_of_week && Array.isArray(a.days_of_week)) {
-                a.days_of_week.forEach((d: number) => cardioDays.add(d))
-            } else if (a.day_of_week !== undefined && a.day_of_week !== null) {
-                cardioDays.add(a.day_of_week)
+    if (ac && ac.length > 0) {
+        ac.forEach((c: any) => {
+            if (c.day_of_week !== undefined && c.day_of_week !== null) {
+                cardioDays.add(c.day_of_week)
+            } else if (c.days_of_week && Array.isArray(c.days_of_week)) {
+                c.days_of_week.forEach((day: number) => cardioDays.add(day))
             }
         })
     }
+    console.log('DEBUG: Cardio days:', Array.from(cardioDays))
 
-    const ergoDays = new Set<number>()
-    if (ae) {
-        ae.forEach((a: any) => {
-            if (a.application_days && Array.isArray(a.application_days)) {
-                a.application_days.forEach((d: number) => ergoDays.add(d))
-            }
-        })
-    }
+    const dietDays = new Set([0, 1, 2, 3, 4, 5, 6]) // Diet is always available
+    const ergogenicsDays = new Set((ae || []).map((e: any) => e.application_days || []).flat())
+    console.log('DEBUG: Ergogenics days:', Array.from(ergogenicsDays))
 
     const hasDiet = (ad?.length ?? 0) > 0
 
@@ -410,6 +428,7 @@ export async function getStudentAdherenceHistory(studentId: string, days: number
     for (const dateStr of dayListSlice) {
         // Rule: If date is before effective start date, do not mark as failure/skipped.
         if (dateStr < effectiveStartStr) {
+            console.log('DEBUG: Skipping date before effective start:', dateStr)
             historyArr.push({
                 date: dateStr,
                 diet_percentage: 0,
@@ -424,14 +443,24 @@ export async function getStudentAdherenceHistory(studentId: string, days: number
         }
 
         const found = tracking?.find((t: any) => t.date === dateStr)
+        const d = new Date(dateStr + 'T12:00:00')
+        const dow = d.getDay()
+        const isToday = dateStr === todayStr
+        const isPast = dateStr < todayStr
+
+        console.log('DEBUG: Date:', dateStr, 'Found tracking:', !!found, 'Day of week:', dow, 'Is past:', isPast)
+        console.log('DEBUG: Cardio days available:', Array.from(cardioDays), 'Has cardio on this day:', cardioDays.has(dow))
 
         if (found) {
+            console.log('DEBUG: Using found tracking data for:', dateStr)
             historyArr.push(found)
         } else {
             const d = new Date(dateStr + 'T12:00:00')
             const dow = d.getDay()
             const isToday = dateStr === todayStr
             const isPast = dateStr < todayStr
+
+            console.log('DEBUG: No tracking data for:', dateStr, 'Day of week:', dow, 'Is past:', isPast)
 
             const workoutStatus = workoutDays.has(dow)
                 ? (isPast ? 'skipped' : 'assigned')
@@ -443,9 +472,15 @@ export async function getStudentAdherenceHistory(studentId: string, days: number
 
             // Ergogenics Logic
             let ergoStatus = 'none'
-            if (steroidUse && ergoDays.has(dow)) {
+            if (steroidUse && ergogenicsDays.has(dow)) {
                 ergoStatus = isPast ? 'skipped' : 'assigned'
             }
+
+            console.log('DEBUG: Generated statuses for', dateStr, ':', {
+                workoutStatus,
+                cardioStatus,
+                ergoStatus
+            })
 
             historyArr.push({
                 date: dateStr,

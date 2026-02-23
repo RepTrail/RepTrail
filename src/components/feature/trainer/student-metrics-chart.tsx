@@ -211,7 +211,7 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
                                 width={35}
                             />
 
-                            {/* Hidden Y Axis - BF */}
+                            {/* Hidden Y Axis - BF (Keep it hidden but ensure it exists) */}
                             <YAxis
                                 yAxisId="bf-axis"
                                 orientation="right"
@@ -258,8 +258,7 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
                                 dataKey="bf"
                                 name="Gordura"
                                 stroke="#10b981"
-                                strokeWidth={2}
-                                strokeDasharray="4 4"
+                                strokeWidth={3}
                                 dot={<CustomBfDot />}
                                 activeDot={{ r: 6, fill: '#10b981' }}
                                 connectNulls={true}

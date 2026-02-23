@@ -5,10 +5,12 @@ import { getStudentDailyDiet } from '@/actions/diet-actions'
 import { getStudentTrainer } from '@/actions/student-actions'
 import { getTrainerRanking } from '@/actions/trainer-actions'
 import { getStudentErgogenics } from '@/actions/ergogenics-actions'
+import { getStudentAutoTrainingStatus } from '@/actions/auto-training-actions'
 import { CardioPlayer } from '@/components/feature/student/cardio-player'
 import { DietAdherence } from '@/components/feature/student/diet-adherence'
 import { NotificationRequestModal } from '@/components/feature/student/notification-request-modal'
 import { PaymentWarning } from '@/components/feature/student/payment-warning'
+import { StudentDashboardModals } from '@/components/feature/student/student-dashboard-modals'
 
 import { Flame, Activity, Clock, Utensils, Dumbbell, Star, Search, ShieldCheck, Trophy, ArrowRight, Zap, Target, LogOut, Sparkles, CheckCircle, Play } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -32,6 +34,12 @@ export default async function StudentDashboard() {
 
     // 1. Check Personal Relationship
     const trainerRel = await getStudentTrainer(user.id)
+
+    // Get auto-training status for modal
+    const autoTrainingStatus = await getStudentAutoTrainingStatus(user.id)
+    const showAutoTrainingModal = !autoTrainingStatus?.saw_auto_training_onboarding_modal && !trainerRel
+
+    const hasAutoTraining = autoTrainingStatus?.auto_training_status === 'active' || autoTrainingStatus?.auto_training_status === 'trial'
 
     // 2. Fetch full details for anamnesis check
     const { data: details } = await supabase
@@ -126,20 +134,20 @@ export default async function StudentDashboard() {
         }
     }
 
-    // UI for students without personal
-    if (!trainerRel) {
+    // UI for students without personal and without auto-training
+    if (!trainerRel && !hasAutoTraining) {
         const ranking = await getTrainerRanking()
         const topTrainers = ranking.slice(0, 3)
 
         return (
-            <div className="space-y-12 pb-20 animate-in fade-in duration-700">
+            <div className="space-y-12 pb-20 animate-in fade-in duration-700" suppressHydrationWarning>
                 <header className="space-y-8">
                     <div className="relative group overflow-hidden p-10 md:p-16 bg-zinc-900 border border-zinc-800 rounded-[3.5rem] shadow-2xl">
                         <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 via-transparent to-transparent opacity-50" />
                         <div className="relative z-10 flex flex-col md:flex-row gap-12 items-center">
                             <div className="flex-1 space-y-6 text-center md:text-left">
                                 <div className="space-y-2">
-                                    <h2 className="text-4xl md:text-6xl font-black text-white italic uppercase tracking-tighter leading-tight">
+                                    <h2 className="text-3xl md:text-5xl font-black text-white italic uppercase tracking-tighter leading-tight">
                                         Desbloqueie seu <br /><span className="text-orange-500">Potencial Máximo</span>
                                     </h2>
                                     <p className="text-zinc-500 text-sm md:text-lg font-medium leading-relaxed max-w-md mx-auto md:mx-0">
@@ -172,7 +180,7 @@ export default async function StudentDashboard() {
                     <div className="flex items-center justify-between px-2">
                         <div className="flex items-center gap-3">
                             <div className="w-2 h-4 bg-amber-500 rounded-full" />
-                            <h2 className="text-[10px] font-black text-white flex items-center gap-2 uppercase tracking-[0.3em]">
+                            <h2 className="text-[10px] font-black text-white flex items-center gap-2 uppercase tracking-[0.18em] sm:tracking-[0.3em] flex-wrap">
                                 <Trophy className="w-3.5 h-3.5 text-amber-500" />
                                 Elite RepTrail • Ranking Global
                             </h2>
@@ -251,6 +259,8 @@ export default async function StudentDashboard() {
                         </Link>
                     </div>
                 </section>
+
+                <StudentDashboardModals userId={user.id} showModal={showAutoTrainingModal} hasTrainer={false} />
             </div>
         )
     }
@@ -260,13 +270,30 @@ export default async function StudentDashboard() {
             <PaymentWarning relationship={trainerRel} />
             {/* Welcome Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                <div className="space-y-2">
-                    <h1 className="text-4xl font-black text-white italic uppercase tracking-tighter">
-                        Dashboard
-                    </h1>
+                <div className="space-y-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                        <h1 className="text-4xl font-black text-white italic uppercase tracking-tighter">
+                            Dashboard
+                        </h1>
+                        <Link href={`/aluno/${user.id}`}>
+                            <Button variant="outline" className="h-9 px-6 rounded-xl border-zinc-800 bg-zinc-900/50 hover:bg-zinc-800 text-zinc-300 hover:text-emerald-500 font-black uppercase italic tracking-widest text-[9px] transition-all gap-2">
+                                <Sparkles className="w-3 h-3" />
+                                Meu Perfil Público
+                            </Button>
+                        </Link>
+                    </div>
                     <p className="text-zinc-600 font-bold uppercase tracking-widest text-[10px] flex items-center gap-2">
-                        <ShieldCheck className="w-3 h-3 text-emerald-500" />
-                        Seu Personal: <span className="text-zinc-400">{trainerRel.trainer.full_name}</span>
+                        {trainerRel ? (
+                            <>
+                                <ShieldCheck className="w-3 h-3 text-emerald-500" />
+                                Seu Personal: <span className="text-zinc-400">{trainerRel.trainer.full_name}</span>
+                            </>
+                        ) : (
+                            <>
+                                <Dumbbell className="w-3 h-3 text-orange-500" />
+                                Auto-Training Ativo
+                            </>
+                        )}
                     </p>
                 </div>
                 <div className="flex items-center gap-4 bg-zinc-900/50 p-2 rounded-2xl border border-zinc-800/50">
@@ -296,6 +323,10 @@ export default async function StudentDashboard() {
                                 <Dumbbell className="w-4 h-4 text-emerald-500" />
                                 Treino de Hoje
                             </h2>
+                            <Link href="/dashboard/student/workouts" className="text-[9px] font-black text-zinc-500 hover:text-white uppercase tracking-widest transition-colors flex items-center gap-2">
+                                Ver biblioteca
+                                <ArrowRight className="w-3 h-3" />
+                            </Link>
                         </div>
 
                         {workout ? (
@@ -306,24 +337,22 @@ export default async function StudentDashboard() {
                                     </div>
                                     <div className="relative space-y-6">
                                         <div className="space-y-1">
-                                            <h3 className="text-3xl font-black text-emerald-500 italic uppercase leading-none">
-                                                Treino Concluído!
-                                            </h3>
-                                            <p className="text-zinc-400 text-xs font-bold uppercase tracking-widest">
-                                                Bom descanso, guerreiro.
-                                            </p>
-                                        </div>
-                                        <div className="flex items-center gap-3">
-                                            <div className="px-4 py-2 bg-emerald-500/10 rounded-xl border border-emerald-500/20 text-emerald-400 text-[10px] font-black uppercase tracking-wider flex items-center gap-2">
+                                            <div className="flex items-center gap-2">
                                                 <CheckCircle className="w-3 h-3" />
                                                 Missão Cumprida
                                             </div>
-                                            <Link href={`/dashboard/student/workout/${workout.id}`}>
-                                                <Button variant="ghost" className="h-9 px-4 rounded-xl text-zinc-500 hover:text-white text-[10px] uppercase font-black tracking-wider">
-                                                    Ver Detalhes
-                                                </Button>
-                                            </Link>
+                                            <h3 className="text-3xl font-black text-white italic uppercase leading-none">
+                                                {workout.name}
+                                            </h3>
+                                            <p className="text-zinc-500 text-xs font-bold uppercase tracking-widest">
+                                                {workout.exercises?.length || 0} Exercícios • Treino concluído
+                                            </p>
                                         </div>
+                                        <Link href={`/dashboard/student/workout/${workout.id}`}>
+                                            <Button variant="ghost" className="h-9 px-4 rounded-xl text-zinc-500 hover:text-white text-[10px] uppercase font-black tracking-wider">
+                                                Ver Detalhes
+                                            </Button>
+                                        </Link>
                                     </div>
                                 </div>
                             ) : workoutStatus === 'in_progress' ? (
@@ -334,8 +363,8 @@ export default async function StudentDashboard() {
                                         </div>
                                         <div className="relative space-y-6">
                                             <div className="space-y-1">
-                                                <div className="flex items-center gap-2 mb-2">
-                                                    <span className="w-2 h-2 bg-amber-500 rounded-full animate-pulse" />
+                                                <div className="flex items-center gap-2">
+                                                    <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
                                                     <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest">Em Andamento</span>
                                                 </div>
                                                 <h3 className="text-3xl font-black text-white italic uppercase leading-none group-hover:text-amber-500 transition-colors">
@@ -347,7 +376,6 @@ export default async function StudentDashboard() {
                                             </div>
                                             <Button className="h-12 px-8 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-black uppercase italic tracking-wide group-hover:scale-105 transition-transform shadow-lg shadow-amber-500/20">
                                                 Continuar Treino
-                                                <Play className="ml-2 w-4 h-4 fill-current" />
                                             </Button>
                                         </div>
                                     </div>
@@ -527,7 +555,7 @@ export default async function StudentDashboard() {
                             <div className="bg-zinc-900/30 border border-zinc-800/50 rounded-[2.5rem] p-8 text-center space-y-3">
                                 <Utensils className="w-8 h-8 text-zinc-700 mx-auto" />
                                 <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest leading-relaxed">
-                                    Seu personal ainda não enviou sua dieta.
+                                    {trainerRel ? 'Seu personal ainda não enviou sua dieta.' : 'Você ainda não criou sua dieta.'}
                                 </p>
                             </div>
                         )}
@@ -535,6 +563,7 @@ export default async function StudentDashboard() {
                 </div>
             </div>
             <NotificationRequestModal />
+            <StudentDashboardModals userId={user.id} showModal={showAutoTrainingModal} hasTrainer={!!trainerRel} />
         </div>
     )
 }

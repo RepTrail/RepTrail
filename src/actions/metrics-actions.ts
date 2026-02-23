@@ -74,22 +74,21 @@ export async function getAdherenceForDates(
 
     const { data: eLogs } = await supabase
         .from('ergogenic_logs')
-        .select('taken_at, status')
+        .select('created_at')
         .eq('student_id', studentId)
-        .eq('status', 'taken')
-        .gte('taken_at', minDate + 'T00:00:00')
-        .lte('taken_at', maxDate + 'T23:59:59')
+        .gte('created_at', minDate + 'T00:00:00')
+        .lte('created_at', maxDate + 'T23:59:59')
 
     // Map logs to YYYY-MM-DD keys (using consistent server time interpretation)
     const workoutDates = new Set(wLogs?.map(l => toDateKey(l.started_at)))
     const cardioDates = new Set(cLogs?.map(l => toDateKey(l.started_at)))
-    const ergoDates = new Set(eLogs?.map(l => toDateKey(l.taken_at)))
+    const ergoDates = new Set(eLogs?.map(l => toDateKey(l.created_at)))
 
     // Fetch Assignments & Details
-    const { data: aw } = await supabase.from('assigned_workouts').select('day_of_week').eq('student_id', studentId).eq('active', true)
-    const { data: ac } = await supabase.from('assigned_cardios').select('days_of_week, day_of_week').eq('student_id', studentId).eq('active', true)
-    const { data: ad } = await supabase.from('assigned_diets').select('id').eq('student_id', studentId).eq('active', true)
-    const { data: ae } = await supabase.from('assigned_ergogenics').select('application_days').eq('student_id', studentId).eq('active', true)
+    const { data: aw } = await supabase.from('assigned_workouts').select('day_of_week').eq('student_id', studentId).neq('active', false)
+    const { data: ac } = await supabase.from('assigned_cardios').select('days_of_week').eq('student_id', studentId).neq('active', false)
+    const { data: ad } = await supabase.from('assigned_diets').select('id').eq('student_id', studentId).neq('active', false)
+    const { data: ae } = await supabase.from('ergogenics').select('application_days').eq('student_id', studentId)
 
     // Ergogenics Check
     const { data: details } = await supabase.from('student_details').select('steroid_use').eq('id', studentId).single()
@@ -394,15 +393,24 @@ export async function getStudentChartData(studentId: string) {
 
 export async function getStudentFullMetrics(studentId: string) {
     const supabase = await createClient()
+    console.log('DEBUG: getStudentFullMetrics called for studentId:', studentId)
+    
     const metrics = await getStudentMetricsHistory(studentId)
+    console.log('DEBUG: getStudentMetricsHistory result:', { weights: metrics.weights?.length, bfs: metrics.bfs?.length })
+    
     const chartData = await getStudentChartData(studentId)
+    console.log('DEBUG: getStudentChartData result:', chartData)
+    
     const loadProgression = await getLoadProgression(studentId)
+    console.log('DEBUG: getLoadProgression result:', loadProgression)
 
-    const { data: details } = await supabase
+    const { data: details, error: detailsErr } = await supabase
         .from('student_details')
         .select('body_fat, steroid_use')
         .eq('id', studentId)
         .single()
+
+    console.log('DEBUG: Student details result:', { details, error: detailsErr })
 
     return {
         ...metrics,

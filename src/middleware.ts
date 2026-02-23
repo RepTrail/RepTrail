@@ -50,22 +50,64 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL('/dashboard', request.url))
     }
 
-    // Trainer Paywall Check in Middleware
-    if (user && request.nextUrl.pathname.startsWith('/dashboard/trainer') && !request.nextUrl.pathname.includes('/plans')) {
+    // Paywall checks for Dashboard
+    if (user && request.nextUrl.pathname.startsWith('/dashboard')) {
         const { data: profile } = await supabase
             .from('profiles')
-            .select('role, plan_tier, elite_until')
+            .select('role, plan_tier, elite_until, auto_training_status, auto_training_trial_end')
             .eq('id', user.id)
             .single()
 
-        if (profile?.role === 'trainer') {
+        // --- TRAINER PAYWALL ---
+        if (profile?.role === 'trainer' && request.nextUrl.pathname.startsWith('/dashboard/trainer') && !request.nextUrl.pathname.includes('/plans')) {
             const now = new Date()
-            const isEliteTrial = profile?.plan_tier === 'elite' && !!profile?.elite_until
+            const isEliteTrial = profile.plan_tier === 'elite' && !!profile.elite_until
             const isTrialExpired = isEliteTrial && new Date(profile.elite_until) <= now
-            const hasPlan = !!profile?.plan_tier && profile.plan_tier !== 'none' && !isTrialExpired
+            const hasPlan = !!profile.plan_tier && profile.plan_tier !== 'none' && !isTrialExpired
 
             if (!hasPlan) {
                 return NextResponse.redirect(new URL('/dashboard/trainer/plans', request.url))
+            }
+        }
+
+        // --- STUDENT AUTO-TRAINING PAYWALL ---
+        if (profile?.role === 'student' && request.nextUrl.pathname.startsWith('/dashboard/student')) {
+            const pathUrl = request.nextUrl.pathname;
+            const isProtectedAutoTrainingRoute =
+                pathUrl.startsWith('/dashboard/student/workouts') ||
+                pathUrl.startsWith('/dashboard/student/diet') ||
+                pathUrl.startsWith('/dashboard/student/cardio') ||
+                pathUrl.startsWith('/dashboard/student/ergogenics') ||
+                pathUrl.startsWith('/dashboard/student/import-pdf');
+
+            if (isProtectedAutoTrainingRoute) {
+                // Check if they have an active personal trainer
+                const { count } = await supabase
+                    .from('trainer_students')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('student_id', user.id)
+                    .eq('active', true)
+
+                const hasTrainer = (count || 0) > 0;
+
+                if (!hasTrainer && !pathUrl.includes('/plans')) {
+                    const now = new Date()
+                    let activeAutoTraining = false;
+
+                    if (profile.auto_training_status === 'active') {
+                        activeAutoTraining = true;
+                    } else if (profile.auto_training_status === 'trial' && profile.auto_training_trial_end) {
+                        const trialEnd = new Date(profile.auto_training_trial_end)
+                        if (now <= trialEnd) {
+                            activeAutoTraining = true;
+                        }
+                    }
+
+                    if (!activeAutoTraining) {
+                        // If no active auto training and no personal, block access.
+                        return NextResponse.redirect(new URL('/dashboard/student/plans', request.url))
+                    }
+                }
             }
         }
     }

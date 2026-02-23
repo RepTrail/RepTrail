@@ -2,7 +2,9 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { headers } from 'next/headers'
+import { redirect } from 'next/navigation'
 import { stripe } from '@/lib/stripe'
+import { STRIPE_PRICES } from '@/lib/stripe-config'
 
 const FREE_STUDENTS_LIMIT = 5
 const PRICE_PER_STUDENT = 10.90 // R$ por aluno/mês acima do limite grátis
@@ -61,6 +63,41 @@ export async function createCheckoutSession(
     } catch (e: any) {
         console.error('[STRIPE ERROR]', e.message)
         return { error: e.message }
+    }
+}
+
+export async function createStudentAutoTrainingCheckoutSession() {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return
+
+    const origin = (await headers()).get('origin') || 'http://localhost:3000'
+
+    const session = await stripe.checkout.sessions.create({
+        mode: 'subscription',
+        line_items: [
+            {
+                price: STRIPE_PRICES.AUTO_TRAINING_MONTHLY.id,
+                quantity: 1,
+            },
+        ],
+        success_url: `${origin}/dashboard/student/plans/success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${origin}/dashboard/student/plans`,
+        customer_email: user.email,
+        metadata: {
+            user_id: user.id,
+            plan: 'auto_training',
+        },
+        subscription_data: {
+            metadata: {
+                user_id: user.id,
+                plan: 'auto_training',
+            },
+        },
+    })
+
+    if (session.url) {
+        redirect(session.url)
     }
 }
 

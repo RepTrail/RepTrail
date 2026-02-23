@@ -1,8 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import {
     Dialog,
+    DialogClose,
     DialogContent,
     DialogDescription,
     DialogHeader,
@@ -18,9 +20,12 @@ import {
     Trash2,
     ChevronRight,
     MessageSquare,
-    ShieldCheck
+    ShieldCheck,
+    Zap,
+    X
 } from 'lucide-react'
 import { getTermsStatus, acceptTerms } from '@/actions/terms-actions'
+import { enableAutoTrainingTrialForCurrentUser, getAutoTrainingTrialInfoForCurrentUser } from '@/actions/auto-training-actions'
 import { useToast } from '@/hooks/use-toast'
 
 export function SettingsModal() {
@@ -28,7 +33,9 @@ export function SettingsModal() {
     const [allowImageDisclosure, setAllowImageDisclosure] = useState(true)
     const [loading, setLoading] = useState(true)
     const [updating, setUpdating] = useState(false)
+    const [trialInfo, setTrialInfo] = useState<any>(null)
     const { toast } = useToast()
+    const router = useRouter()
 
     useEffect(() => {
         const handleOpen = () => setIsOpen(true)
@@ -44,6 +51,13 @@ export function SettingsModal() {
 
         return () => window.removeEventListener('open-settings', handleOpen)
     }, [])
+
+    useEffect(() => {
+        if (!isOpen) return
+        getAutoTrainingTrialInfoForCurrentUser().then((info) => {
+            setTrialInfo(info)
+        })
+    }, [isOpen])
 
     const handleTogglePhotos = async (checked: boolean) => {
         setUpdating(true)
@@ -78,10 +92,47 @@ export function SettingsModal() {
         window.open(`https://wa.me/5541998364028?text=${message}`, '_blank')
     }
 
+    const enableAutoTrainingTrial = async () => {
+        setUpdating(true)
+        const result = await enableAutoTrainingTrialForCurrentUser()
+        setUpdating(false)
+
+        if (result.success) {
+            toast({
+                title: 'Auto-Training ativado',
+                description: 'Seu trial foi reativado. O popup será exibido novamente.',
+            })
+            setIsOpen(false)
+            router.refresh()
+        } else {
+            toast({
+                title: 'Erro ao ativar',
+                description: result.error || 'Não foi possível ativar o Auto-Training.',
+                variant: 'destructive'
+            })
+        }
+    }
+
+    const now = Date.now()
+    const trialEndMs = trialInfo?.auto_training_trial_end ? new Date(trialInfo.auto_training_trial_end).getTime() : null
+    const isTrialActive = trialInfo?.auto_training_status === 'trial' && !!trialEndMs && now <= trialEndMs
+    const daysRemaining = isTrialActive && trialEndMs ? Math.max(0, Math.ceil((trialEndMs - now) / (1000 * 60 * 60 * 24))) : 0
+    const hasUsedTrial = !!trialInfo?.auto_training_trial_used
+    const canStartTrial = !hasUsedTrial || isTrialActive
+
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
-            <DialogContent className="sm:max-w-md bg-zinc-950 border-zinc-800 p-0 overflow-hidden rounded-[2.5rem]">
-                <div className="p-8 space-y-8">
+            <DialogContent showCloseButton={false} className="sm:max-w-md bg-zinc-950 border-zinc-800 p-0 overflow-hidden rounded-[2.5rem] max-h-[85vh] flex flex-col">
+                <div className="p-8 space-y-8 relative flex-1 overflow-y-auto pr-2">
+                    <DialogClose asChild>
+                        <button
+                            type="button"
+                            aria-label="Fechar"
+                            className="absolute top-6 right-6 w-10 h-10 rounded-2xl bg-zinc-900/60 border border-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-900 hover:border-zinc-700 shadow-lg transition-all active:scale-95 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+                        >
+                            <X className="w-5 h-5 mx-auto" />
+                        </button>
+                    </DialogClose>
                     <DialogHeader className="text-left space-y-2">
                         <div className="w-12 h-12 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center mb-2">
                             <Settings2 className="w-6 h-6 text-white" />
@@ -95,6 +146,41 @@ export function SettingsModal() {
                     </DialogHeader>
 
                     <div className="space-y-6">
+                        {/* Auto-Training */}
+                        <div className="space-y-3">
+                            <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] px-1">Auto-Training</p>
+                            <div className="space-y-2">
+                                <button
+                                    onClick={enableAutoTrainingTrial}
+                                    disabled={updating || loading || !canStartTrial}
+                                    className="w-full flex items-center justify-between p-4 bg-zinc-900/50 rounded-2xl border border-zinc-800 hover:bg-zinc-900 hover:border-zinc-700 transition-all group disabled:opacity-60 disabled:cursor-not-allowed"
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 bg-orange-500/10 rounded-xl flex items-center justify-center">
+                                            <Zap className="w-5 h-5 text-orange-500" />
+                                        </div>
+                                        <div className="text-left">
+                                            <p className="text-sm font-bold text-zinc-200">
+                                                {isTrialActive
+                                                    ? `Trial ativo • ${daysRemaining} dia(s) restante(s)`
+                                                    : hasUsedTrial
+                                                        ? 'Trial indisponível'
+                                                        : 'Ativar Trial do Auto-Training'}
+                                            </p>
+                                            <p className="text-[10px] text-zinc-500 uppercase font-medium">
+                                                {isTrialActive
+                                                    ? 'Você já usou seu trial'
+                                                    : hasUsedTrial
+                                                        ? 'Você já utilizou o trial anteriormente'
+                                                        : 'Reexibir popup do trial'}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <ChevronRight className="w-5 h-5 text-zinc-600 group-hover:text-zinc-400 transition-colors" />
+                                </button>
+                            </div>
+                        </div>
+
                         {/* Notifications */}
                         <div className="space-y-3">
                             <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] px-1">Privacidade & Notificações</p>
@@ -145,8 +231,8 @@ export function SettingsModal() {
                                     <div className="w-10 h-10 bg-amber-500/10 rounded-xl flex items-center justify-center">
                                         <FileText className="w-5 h-5 text-amber-500" />
                                     </div>
-                                    <div>
-                                        <p className="text-sm font-bold text-zinc-200 text-left">Termos de Uso</p>
+                                    <div className="text-left">
+                                        <p className="text-sm font-bold text-zinc-200">Termos de Uso</p>
                                         <p className="text-[10px] text-zinc-500 uppercase font-medium">Rever contrato</p>
                                     </div>
                                 </div>
@@ -165,8 +251,8 @@ export function SettingsModal() {
                                     <div className="w-10 h-10 bg-red-500/10 rounded-xl flex items-center justify-center">
                                         <Trash2 className="w-5 h-5 text-red-500" />
                                     </div>
-                                    <div>
-                                        <p className="text-sm font-bold text-red-500 text-left">Excluir Minha Conta</p>
+                                    <div className="text-left">
+                                        <p className="text-sm font-bold text-red-500">Excluir Minha Conta</p>
                                         <p className="text-[10px] text-red-500/60 uppercase font-medium whitespace-nowrap overflow-hidden text-ellipsis">Falar com suporte via WhatsApp</p>
                                     </div>
                                 </div>

@@ -7,7 +7,8 @@ interface Props {
 }
 
 export default async function CardioDetailPage({ params }: Props) {
-    const cardio = await getCardioDetails(params.id)
+    const { id } = await params
+    const cardio = await getCardioDetails(id)
     if (!cardio) notFound()
 
     return (

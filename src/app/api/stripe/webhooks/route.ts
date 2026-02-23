@@ -37,7 +37,7 @@ export async function POST(req: Request) {
             // ✅ Checkout completed → ativa o plano on_demand no Supabase
             case 'checkout.session.completed': {
                 const session = event.data.object as any
-                const { user_id } = session.metadata || {}
+                const { user_id, plan } = session.metadata || {}
 
                 if (!user_id) {
                     console.error('[STRIPE WEBHOOK] Missing user_id in metadata')
@@ -46,13 +46,20 @@ export async function POST(req: Request) {
 
                 console.log(`[STRIPE WEBHOOK] Checkout completed for user ${user_id}`)
 
+                const updatePayload: Record<string, any> = {
+                    stripe_subscription_id: session.subscription,
+                    stripe_customer_id: session.customer,
+                }
+
+                if (plan === 'auto_training') {
+                    updatePayload.auto_training_status = 'active'
+                } else {
+                    updatePayload.plan_tier = 'on_demand'
+                }
+
                 const { error } = await (admin as any)
                     .from('profiles')
-                    .update({
-                        plan_tier: 'on_demand',
-                        stripe_subscription_id: session.subscription,
-                        stripe_customer_id: session.customer,
-                    })
+                    .update(updatePayload)
                     .eq('id', user_id)
 
                 if (error) {
@@ -115,12 +122,21 @@ export async function POST(req: Request) {
                 const subscription = event.data.object as any
                 const customerId = subscription.customer
 
+                const plan = subscription.metadata?.plan
+
+                const updatePayload: Record<string, any> = {
+                    stripe_subscription_id: null,
+                }
+
+                if (plan === 'auto_training') {
+                    updatePayload.auto_training_status = 'expired'
+                } else {
+                    updatePayload.plan_tier = 'none'
+                }
+
                 const { error } = await (admin as any)
                     .from('profiles')
-                    .update({
-                        plan_tier: 'none',
-                        stripe_subscription_id: null,
-                    })
+                    .update(updatePayload)
                     .eq('stripe_customer_id', customerId)
 
                 if (error) {

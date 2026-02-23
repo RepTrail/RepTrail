@@ -67,7 +67,7 @@ export default function SearchPersonalPage() {
                             <ArrowRight className="w-3 h-3 rotate-180 group-hover:-translate-x-1 transition-transform" />
                             Voltar ao Dashboard
                         </Link>
-                        <Logo size="xl" />
+                        <Logo size="xl" className="max-md:scale-90" />
                     </div>
 
                     <div className="flex flex-col md:flex-row gap-4 items-stretch">

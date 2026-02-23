@@ -19,7 +19,7 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 
-export function PdfUploader({ type, students = [] }: { type: 'workout' | 'diet', students?: any[] }) {
+export function PdfUploader({ type, students = [], role = 'trainer' }: { type: 'workout' | 'diet', students?: any[], role?: 'trainer' | 'student' }) {
     const [uploading, setUploading] = useState(false)
     const [parsing, setParsing] = useState(false)
     const [saving, setSaving] = useState(false)
@@ -73,7 +73,7 @@ export function PdfUploader({ type, students = [] }: { type: 'workout' | 'diet',
     }
 
     const handleSave = async () => {
-        if (type === 'workout' && parsedData?.parsed_data?.ergogenics?.length > 0 && !selectedStudentId) {
+        if (role === 'trainer' && type === 'workout' && parsedData?.parsed_data?.ergogenics?.length > 0 && !selectedStudentId) {
             toast({
                 variant: "destructive",
                 title: "Atenção!",
@@ -175,8 +175,8 @@ export function PdfUploader({ type, students = [] }: { type: 'workout' | 'diet',
                             </div>
                         </div>
 
-                        {/* Ergogenics Alert (Only for Workouts) */}
-                        {type === 'workout' && parsedData.parsed_data?.ergogenics?.length > 0 && (
+                        {/* Ergogenics Alert (Only for Workouts + Trainer) */}
+                        {role === 'trainer' && type === 'workout' && parsedData.parsed_data?.ergogenics?.length > 0 && (
                             <div className="bg-amber-500/10 border border-amber-500/20 p-4 rounded-2xl flex flex-col gap-3 shadow-lg shadow-amber-500/5">
                                 <div className="flex items-center gap-2 text-amber-500">
                                     <Sparkles className="w-4 h-4" />

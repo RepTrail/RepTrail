@@ -68,18 +68,23 @@ export default async function StudentProgressPage() {
     const progressPhotos = progressPhotosData || []
 
     return (
-        <div className="space-y-10 max-w-7xl mx-auto">
-            <div className="space-y-2">
-                <div className="flex items-center gap-3 mb-2">
-                    <div className="w-2 h-8 bg-emerald-500 rounded-full shadow-[0_0_15px_rgba(16,185,129,0.3)]" />
-                    <h1 className="text-5xl font-black tracking-tight text-white uppercase italic">
-                        Minha Evolução
-                    </h1>
+        <div className="space-y-12 pb-20">
+            {/* Header */}
+            <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                        <div className="p-2 bg-orange-500 rounded-xl">
+                            <TrendingUp className="w-5 h-5 text-zinc-950" />
+                        </div>
+                        <h1 className="text-4xl font-black text-white italic uppercase tracking-tighter">
+                            Minha <span className="text-orange-500">Evolução</span>
+                        </h1>
+                    </div>
+                    <p className="text-zinc-500 text-sm font-medium max-w-md">
+                        Acompanhe seu progresso físico e evolução corporal.
+                    </p>
                 </div>
-                <p className="text-zinc-500 font-black uppercase tracking-[0.2em] text-[10px]">
-                    Os números não mentem: você está cada dia mais forte.
-                </p>
-            </div>
+            </header>
 
             <div className="grid gap-6 md:grid-cols-3">
                 <StatCard

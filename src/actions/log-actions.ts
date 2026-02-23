@@ -150,14 +150,25 @@ export async function deleteWorkoutLog(logId: string) {
 export async function getStudentWorkoutHistory(studentId: string) {
     const supabase = await createClient()
 
+    // Basic validation to prevent UUID type errors in Supabase
+    if (!studentId || studentId.length < 30) {
+        console.warn('getStudentWorkoutHistory: Invalid or missing studentId:', studentId)
+        return []
+    }
+
     try {
-        const { data, error } = await supabase
+        const { data: logs, error } = await supabase
             .from('workout_logs')
             .select(`
-                *,
+                id,
+                student_id,
+                started_at,
+                completed_at,
+                status,
+                feedback,
+                perceived_effort,
                 workout:workouts(name),
                 loads:load_history(
-                    id,
                     weight_kg,
                     reps_performed,
                     set_type,
@@ -169,11 +180,31 @@ export async function getStudentWorkoutHistory(studentId: string) {
             .eq('student_id', studentId)
             .eq('status', 'completed')
             .order('completed_at', { ascending: false })
+            .limit(50)
 
-        if (error) throw error
-        return data || []
+        if (error) {
+            console.error('Error fetching workout history details:', error)
+
+            // Fallback: If complex join fails, try a very simple select to at least get something
+            const { data: simpleLogs, error: simpleError } = await supabase
+                .from('workout_logs')
+                .select('id, student_id, started_at, completed_at, status, feedback, perceived_effort')
+                .eq('student_id', studentId)
+                .eq('status', 'completed')
+                .order('completed_at', { ascending: false })
+                .limit(50)
+
+            if (simpleError) {
+                console.error('Simple fallback also failed:', simpleError)
+                return []
+            }
+
+            return (simpleLogs || []).map(log => ({ ...log, loads: [], workout: { name: 'Treino' } }))
+        }
+
+        return logs || []
     } catch (e: any) {
-        console.error('Error fetching history:', e)
+        console.error('Exception in getStudentWorkoutHistory:', e)
         return []
     }
 }

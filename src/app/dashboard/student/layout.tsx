@@ -25,12 +25,24 @@ export default async function StudentLayout({
     // Check Role in DB (Source of Truth)
     const { data: profile, error: profileErr } = await supabase
         .from('profiles')
-        .select('role')
+        .select('role, auto_training_status, auto_training_trial_end')
         .eq('id', user.id)
         .single()
 
     if (profile?.role === 'trainer') {
         redirect('/dashboard/trainer')
+    }
+
+    const now = new Date()
+    let isAutoTrainingActive = false;
+
+    if (profile?.auto_training_status === 'active') {
+        isAutoTrainingActive = true;
+    } else if (profile?.auto_training_status === 'trial' && profile?.auto_training_trial_end) {
+        const trialEnd = new Date(profile.auto_training_trial_end)
+        if (now <= trialEnd) {
+            isAutoTrainingActive = true;
+        }
     }
 
     // Check Onboarding
@@ -62,7 +74,7 @@ export default async function StudentLayout({
                         </Link>
                     </div>
 
-                    <StudentNav hasTrainer={hasTrainer} steroidUse={steroidUse} />
+                    <StudentNav hasTrainer={hasTrainer} steroidUse={steroidUse} autoTrainingActive={isAutoTrainingActive} />
                 </div>
 
                 <div className="pt-6 border-t border-zinc-800 space-y-4">
@@ -79,7 +91,7 @@ export default async function StudentLayout({
             </aside>
 
             {/* Mobile Top Header */}
-            <MobileHeader role="student" hasTrainer={hasTrainer} steroidUse={steroidUse} />
+            <MobileHeader role="student" hasTrainer={hasTrainer} steroidUse={steroidUse} autoTrainingActive={isAutoTrainingActive} />
 
             {/* Main Content Area */}
             <main className="flex-1 overflow-x-hidden overflow-y-auto bg-zinc-950 relative custom-scrollbar">
@@ -95,7 +107,7 @@ export default async function StudentLayout({
 
             {/* Mobile Navigation (Floating Bottom Bar) */}
             <div className="md:hidden fixed bottom-6 left-6 right-6 z-50">
-                <MobileStudentNav hasTrainer={hasTrainer} steroidUse={steroidUse} />
+                <MobileStudentNav hasTrainer={hasTrainer} steroidUse={steroidUse} autoTrainingActive={isAutoTrainingActive} />
             </div>
 
             <SettingsModal />

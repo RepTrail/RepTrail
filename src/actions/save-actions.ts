@@ -9,6 +9,10 @@ export async function saveParsedData(type: 'workout' | 'diet', data: any, studen
 
     if (!user) return { error: 'Unauthorized' }
 
+    const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
+    const isStudentMode = profile?.role === 'student';
+    const targetStudentId = isStudentMode ? user.id : studentId;
+
     try {
         if (type === 'workout') {
             const results = { workouts: [] as string[], cardios: [] as string[], ergogenics: [] as string[] };
@@ -167,6 +171,25 @@ export async function saveParsedData(type: 'workout' | 'diet', data: any, studen
                     }
                 }
                 results.workouts.push(workout.id);
+
+                if (isStudentMode && targetStudentId) {
+                    const dayOfWeek = typeof wData.day_of_week === 'number' ? wData.day_of_week : null
+                    console.log(`[SAVE] Student mode: assigning workout ${workout.id} to student ${targetStudentId} dayOfWeek=${dayOfWeek}`)
+                    const { error: assignErr } = await supabase
+                        .from('assigned_workouts')
+                        .insert({
+                            workout_id: workout.id,
+                            student_id: targetStudentId,
+                            day_of_week: dayOfWeek,
+                            active: true,
+                        })
+
+                    if (assignErr) {
+                        console.error(`[SAVE] Failed to assign imported workout ${workout.id} to student ${targetStudentId}:`, assignErr)
+                    } else {
+                        console.log(`[SAVE] ✅ Assigned workout ${workout.id} to student ${targetStudentId}`)
+                    }
+                }
             }
             console.log(`[SAVE] Finished. Saved ${results.workouts.length} workouts.`);
 
@@ -184,17 +207,38 @@ export async function saveParsedData(type: 'workout' | 'diet', data: any, studen
 
                     if (cError) throw cError
                     results.cardios.push(cardio.id);
+
+                    if (isStudentMode && targetStudentId) {
+                        const durationMinutes = parseInt(cData.duration) || 30
+                        const intensity = (cData.intensity || cData.suggested_intensity || 'Moderado').toString()
+                        const daysOfWeek = Array.isArray(cData.days_of_week) ? cData.days_of_week : undefined
+
+                        const { error: assignCardioErr } = await supabase
+                            .from('assigned_cardios')
+                            .insert({
+                                student_id: targetStudentId,
+                                cardio_id: cardio.id,
+                                duration_minutes: durationMinutes,
+                                suggested_intensity: intensity,
+                                days_of_week: daysOfWeek,
+                                active: true,
+                            })
+
+                        if (assignCardioErr) {
+                            console.error(`[SAVE] Failed to assign imported cardio ${cardio.id} to student ${targetStudentId}:`, assignCardioErr)
+                        }
+                    }
                 }
             }
 
-            // 3. Save Ergogenics (Only if studentId is provided)
-            if (studentId && data.ergogenics && Array.isArray(data.ergogenics)) {
+            // 3. Save Ergogenics (Only if targetStudentId is provided)
+            if (targetStudentId && data.ergogenics && Array.isArray(data.ergogenics)) {
                 for (const eData of data.ergogenics) {
                     const { data: ergo, error: eError } = await supabase
                         .from('ergogenics')
                         .insert({
                             trainer_id: user.id,
-                            student_id: studentId,
+                            student_id: targetStudentId,
                             name: eData.name,
                             dosage: eData.dosage,
                             weekly_dosage: eData.weekly_dosage || 0,
@@ -209,8 +253,14 @@ export async function saveParsedData(type: 'workout' | 'diet', data: any, studen
                 }
             }
 
-            revalidatePath('/dashboard/trainer/workouts')
-            if (studentId) revalidatePath(`/dashboard/trainer/students/${studentId}/ergogenics`)
+            if (isStudentMode) {
+                revalidatePath('/dashboard/student/workouts')
+                revalidatePath('/dashboard/student/cardio')
+                revalidatePath('/dashboard/student/ergogenics')
+            } else {
+                revalidatePath('/dashboard/trainer/workouts')
+                if (targetStudentId) revalidatePath(`/dashboard/trainer/students/${targetStudentId}/ergogenics`)
+            }
             return { success: true, results }
 
         } else {
@@ -239,6 +289,20 @@ export async function saveParsedData(type: 'workout' | 'diet', data: any, studen
 
                     if (dError) throw dError
                     results.diets.push(diet.id);
+
+                    if (isStudentMode && targetStudentId) {
+                        const { error: assignDietErr } = await supabase
+                            .from('assigned_diets')
+                            .insert({
+                                diet_id: diet.id,
+                                student_id: targetStudentId,
+                                active: true,
+                            })
+
+                        if (assignDietErr) {
+                            console.error(`[SAVE] Failed to assign imported diet ${diet.id} to student ${targetStudentId}:`, assignDietErr)
+                        }
+                    }
 
                     const meals = dData.meals || dData.diet_meals || [];
                     for (let i = 0; i < meals.length; i++) {
@@ -273,7 +337,12 @@ export async function saveParsedData(type: 'workout' | 'diet', data: any, studen
                 }
             }
 
-            revalidatePath('/dashboard/trainer/diets')
+            if (isStudentMode) {
+                revalidatePath('/dashboard/student/diet')
+                revalidatePath('/dashboard/student')
+            } else {
+                revalidatePath('/dashboard/trainer/diets')
+            }
             return { success: true, results }
         }
     } catch (e: any) {

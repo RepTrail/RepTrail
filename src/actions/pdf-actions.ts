@@ -56,6 +56,19 @@ export async function parseUploadedPdf(filePath: string, type: 'workout' | 'diet
     let parsedData: any = null
     let method = 'local-parser'
 
+    // Early validation: check if PDF content matches expected type
+    const textLower = text.toLowerCase()
+    const isWorkoutContent = /treino|exercício|repetição|série|aquecimento|peso|kg|carga|musculação|academia/.test(textLower)
+    const isDietContent = /dieta|refeição|café|almoço|jantar|lanche|caloria|proteína|carboidrato|gordura|grama/.test(textLower)
+
+    // If content clearly doesn't match type, return error early
+    if (type === 'workout' && !isWorkoutContent && isDietContent) {
+        return { error: 'Este PDF parece ser uma dieta, não um treino. Use a aba "Dieta" para importar arquivos de dieta.' }
+    }
+    if (type === 'diet' && !isDietContent && isWorkoutContent) {
+        return { error: 'Este PDF parece ser um treino, não uma dieta. Use a aba "Treino" para importar arquivos de treino.' }
+    }
+
     const openrouterKey = process.env.OPENROUTER_API_KEY
     if (openrouterKey) {
         try {

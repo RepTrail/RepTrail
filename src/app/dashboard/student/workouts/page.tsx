@@ -2,7 +2,8 @@ import { createClient } from '@/lib/supabase/server'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import Link from 'next/link'
-import { Dumbbell, Calendar, PlayCircle, Clock, ChevronRight } from 'lucide-react'
+import { Dumbbell, Calendar, PlayCircle, Clock, ChevronRight, Plus, Edit, Trash2 } from 'lucide-react'
+import { WorkoutActions } from './workout-actions'
 
 export default async function StudentWorkoutsPage() {
     const supabase = await createClient()
@@ -15,9 +16,18 @@ export default async function StudentWorkoutsPage() {
         .eq('student_id', user?.id)
         .single()
 
+    // 2. Get auto-training status
+    const { data: profile } = await supabase
+        .from('profiles')
+        .select('auto_training_status')
+        .eq('id', user?.id)
+        .single()
+
+    const isAutoTrainingActive = profile?.auto_training_status === 'active' || profile?.auto_training_status === 'trial'
+
     let workouts: any[] = []
     if (user?.id) {
-        const { data } = await supabase
+        const { data, error } = await supabase
             .from('assigned_workouts')
             .select(`
                 id,
@@ -31,20 +41,31 @@ export default async function StudentWorkoutsPage() {
             .eq('student_id', user.id)
             .eq('active', true)
         workouts = data || []
+        console.log('[DEBUG] Assigned workouts for student:', { user_id: user.id, workouts, error })
     }
 
     return (
-        <div className="space-y-10">
+        <div className="space-y-10" suppressHydrationWarning>
             {/* Header Section */}
             <div className="space-y-2">
-                <div className="flex items-center gap-3 mb-2">
-                    <div className="w-2 h-8 bg-emerald-500 rounded-full shadow-[0_0_15px_rgba(16,185,129,0.3)]" />
-                    <h1 className="text-4xl font-black tracking-tight text-white uppercase italic">
-                        Meus Treinos
-                    </h1>
+                <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-3">
+                        <div className="p-2 bg-orange-500 rounded-xl">
+                            <Dumbbell className="w-5 h-5 text-zinc-950" />
+                        </div>
+                        <h1 className="text-4xl font-black text-white italic uppercase tracking-tighter">
+                            Meus <span className="text-orange-500">Treinos</span>
+                        </h1>
+                    </div>
+                    {isAutoTrainingActive && (
+                        <WorkoutActions isAutoTrainingActive={isAutoTrainingActive} />
+                    )}
                 </div>
-                <p className="text-zinc-500 font-bold uppercase tracking-[0.2em] text-[10px]">
-                    Seu treinador preparou {workouts.length} fichas de treino para você.
+                <p className="text-zinc-500 text-sm font-medium max-w-md">
+                    {isAutoTrainingActive 
+                        ? `Você tem ${workouts.length} treino${workouts.length !== 1 ? 's' : ''} criado${workouts.length !== 1 ? 's' : ''}.`
+                        : `Seu treinador preparou ${workouts.length} fichas de treino para você.`
+                    }
                 </p>
             </div>
 
@@ -108,12 +129,23 @@ export default async function StudentWorkoutsPage() {
                                             <span className="text-[9px] font-black text-zinc-600 uppercase tracking-widest mb-0.5">Programado</span>
                                             <span className="text-xs font-black text-zinc-400 italic">{scheduledDay}</span>
                                         </div>
-                                        <Button asChild size="lg" className="h-14 bg-white hover:bg-emerald-500 text-zinc-950 font-black italic uppercase tracking-tight rounded-2xl transition-all shadow-xl active:scale-[0.98] group/btn">
-                                            <Link href={`/dashboard/student/workout/${workout.id}`} className="flex items-center gap-3 px-4">
-                                                Bora
-                                                <div className="w-2.5 h-2.5 bg-zinc-300 rounded-full group-hover/btn:bg-white transition-colors" />
-                                            </Link>
-                                        </Button>
+                                        <div className="flex items-center gap-2">
+                                            {isAutoTrainingActive && (
+                                                <div className="flex gap-1">
+                                                    <Button asChild size="sm" variant="outline" className="h-10 px-3 border-zinc-700 text-zinc-400 hover:text-white">
+                                                        <Link href={`/dashboard/student/workouts/${workout.id}/edit`} className="flex items-center gap-1">
+                                                            <Edit className="w-3 h-3" />
+                                                            Editar
+                                                        </Link>
+                                                    </Button>
+                                                    <form action={`/api/student/workouts/${workout.id}/delete`} method="POST">
+                                                        <Button type="submit" size="sm" variant="outline" className="h-10 px-3 border-red-900 text-red-400 hover:text-red-300 hover:bg-red-500/10">
+                                                            <Trash2 className="w-3 h-3" />
+                                                        </Button>
+                                                    </form>
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                 </CardContent>
                             </Card>

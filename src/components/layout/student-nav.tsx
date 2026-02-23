@@ -2,29 +2,32 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Dumbbell, Utensils, Activity, User, Home, ShoppingBag, Trophy, Search, UserCheck, Sparkles, LogOut, TrendingUp, ClipboardList } from 'lucide-react'
+import { Dumbbell, Utensils, Activity, User, Home, ShoppingBag, Trophy, Search, UserCheck, Sparkles, LogOut, TrendingUp, ClipboardList, Settings } from 'lucide-react'
 import { signOutAction } from '@/actions/auth-actions'
 
 interface StudentNavProps {
     hasTrainer: boolean
     steroidUse?: boolean
+    autoTrainingActive?: boolean
 }
 
-export function StudentNav({ hasTrainer, steroidUse }: StudentNavProps) {
+export function StudentNav({ hasTrainer, steroidUse, autoTrainingActive = false }: StudentNavProps) {
     const pathname = usePathname()
 
     const allLinks = [
         { href: '/dashboard/student', icon: <Home className="w-4 h-4" />, label: 'Home', requiresTrainer: false },
         { href: '/dashboard/student/workouts', icon: <Dumbbell className="w-4 h-4" />, label: 'Meus Treinos', requiresTrainer: true },
-        { href: '/dashboard/student/diet', icon: <Utensils className="w-4 h-4" />, label: 'Minha Dieta', requiresTrainer: true },
         { href: '/dashboard/student/cardio', icon: <Activity className="w-4 h-4" />, label: 'Cardio', requiresTrainer: true },
-        { href: '/dashboard/student/progress', icon: <TrendingUp className="w-4 h-4" />, label: 'Evolução', requiresTrainer: true },
+        { href: '/dashboard/student/diet', icon: <Utensils className="w-4 h-4" />, label: 'Minha Dieta', requiresTrainer: true },
         { href: '/dashboard/student/ergogenics', icon: <Sparkles className="w-4 h-4" />, label: 'Ergogênicos', requiresTrainer: true, showOnlyIfSteroidUse: true },
-        { href: '/dashboard/student/loja', icon: <ShoppingBag className="w-4 h-4" />, label: 'Loja', requiresTrainer: false },
-        { href: '/dashboard/student/ranking', icon: <Trophy className="w-4 h-4" />, label: 'Ranking', requiresTrainer: false },
-        { href: '/buscar-personal', icon: <Search className="w-4 h-4" />, label: 'Buscar Personal', requiresTrainer: false, hideIfHasTrainer: true },
-        { href: '/dashboard/student/meu-personal', icon: <UserCheck className="w-4 h-4" />, label: 'Meu Personal', requiresTrainer: true, showOnlyIfHasTrainer: true },
+        { href: '/dashboard/student/progress', icon: <TrendingUp className="w-4 h-4" />, label: 'Evolução', requiresTrainer: true },
+        { href: '/dashboard/student/import-pdf', icon: <Sparkles className="w-4 h-4" />, label: 'Importar PDF', requiresTrainer: true, hideIfHasTrainer: true },
         { href: '/dashboard/student/anamnese', icon: <ClipboardList className="w-4 h-4" />, label: 'Anamnese', requiresTrainer: false },
+        { href: '/buscar-personal', icon: <Search className="w-4 h-4" />, label: 'Buscar Personal', requiresTrainer: false, hideIfHasTrainer: true },
+        { href: '/dashboard/student/feed', icon: <UserCheck className="w-4 h-4" />, label: 'Feed de Alunos', requiresTrainer: false },
+        { href: '/dashboard/student/ranking', icon: <Trophy className="w-4 h-4" />, label: 'Ranking', requiresTrainer: false },
+        { href: '/dashboard/student/loja', icon: <ShoppingBag className="w-4 h-4" />, label: 'Loja', requiresTrainer: false },
+        { href: '/dashboard/student/meu-personal', icon: <UserCheck className="w-4 h-4" />, label: 'Meu Personal', requiresTrainer: true, showOnlyIfHasTrainer: true },
         { href: '/dashboard/student/profile', icon: <User className="w-4 h-4" />, label: 'Meu Perfil', requiresTrainer: false },
     ]
 
@@ -33,7 +36,9 @@ export function StudentNav({ hasTrainer, steroidUse }: StudentNavProps) {
         if (item.hideIfHasTrainer && hasTrainer) return false
         if (item.showOnlyIfHasTrainer && !hasTrainer) return false
         if (item.showOnlyIfSteroidUse && !steroidUse) return false
-        return !item.requiresTrainer || hasTrainer
+        // Hide "Buscar Personal" when auto-training is active
+        if (item.href === '/buscar-personal' && autoTrainingActive) return false
+        return !item.requiresTrainer || hasTrainer || autoTrainingActive
     })
 
     return (
@@ -59,11 +64,22 @@ export function StudentNav({ hasTrainer, steroidUse }: StudentNavProps) {
                     </Link>
                 )
             })}
+
+            <button
+                type="button"
+                onClick={() => window.dispatchEvent(new CustomEvent('open-settings'))}
+                className="flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-300 group text-zinc-500 hover:bg-zinc-800 hover:text-white border border-transparent hover:border-zinc-700 hover:shadow-xl w-full"
+            >
+                <div className="transition-all duration-300 group-hover:scale-110">
+                    <Settings className="w-4 h-4" />
+                </div>
+                <span className="text-[10px] font-black uppercase tracking-[0.2em]">Configurações</span>
+            </button>
         </nav>
     )
 }
 
-export function MobileStudentNav({ hasTrainer, steroidUse }: StudentNavProps) {
+export function MobileStudentNav({ hasTrainer, steroidUse, autoTrainingActive = false }: StudentNavProps) {
     const pathname = usePathname()
 
     // Mobile: Home, Loja, Ranking, Encontre/Meu Personal, Perfil, Logout
@@ -100,14 +116,14 @@ export function MobileStudentNav({ hasTrainer, steroidUse }: StudentNavProps) {
                 >
                     <UserCheck className="w-5 h-5" />
                 </Link>
-            ) : (
+            ) : !autoTrainingActive ? (
                 <Link
                     href="/buscar-personal"
                     className={`p-2.5 rounded-xl transition-all ${pathname === '/buscar-personal' ? 'bg-emerald-500 text-zinc-950 shadow-lg shadow-emerald-500/20' : 'text-zinc-500 hover:text-zinc-300'}`}
                 >
                     <Search className="w-5 h-5" />
                 </Link>
-            )}
+            ) : null}
             <Link
                 href="/dashboard/student/profile"
                 className={`p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student/profile' ? 'bg-emerald-500 text-zinc-950 shadow-lg shadow-emerald-500/20' : 'text-zinc-500 hover:text-zinc-300'}`}

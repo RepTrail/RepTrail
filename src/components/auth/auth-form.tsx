@@ -84,9 +84,19 @@ export function AuthForm({ view }: AuthFormProps) {
                 // Guarantee the profile has the name saved — some environments have
                 // trigger constraints that silently drop the name. This upsert ensures it.
                 if (signUpData?.user?.id) {
+                    // Calculate trial end date (7 days from now)
+                    const trialEndDate = new Date()
+                    trialEndDate.setDate(trialEndDate.getDate() + 7)
+
                     await supabase
                         .from('profiles')
-                        .update({ full_name: fullName, whatsapp: whatsapp })
+                        .update({
+                            full_name: fullName,
+                            whatsapp: whatsapp,
+                            auto_training_status: 'trial',
+                            auto_training_trial_end: trialEndDate.toISOString(),
+                            saw_auto_training_onboarding_modal: false
+                        })
                         .eq('id', signUpData.user.id)
                 }
 

@@ -1,4 +1,3 @@
-
 import { getTrainerRanking } from '@/actions/trainer-actions'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Trophy, Users, Star, TrendingUp, Medal, ArrowRight, ShieldCheck, MapPin } from "lucide-react"
@@ -7,6 +6,10 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Logo } from "@/components/ui/logo"
 import Link from 'next/link'
+import dynamic from 'next/dynamic'
+
+// Remover dynamic import e usar um Client Component separado
+import { RankingHeader } from '@/components/feature/student/ranking-header'
 
 export const revalidate = 0
 
@@ -16,22 +19,7 @@ export default async function StudentRankingPage() {
     return (
         <div className="space-y-12 pb-20 animate-in fade-in duration-700" suppressHydrationWarning>
             {/* Header Section */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 pb-8 border-b border-zinc-800/50">
-                <div className="space-y-4">
-                    <Logo size="lg" />
-                    <p className="text-zinc-500 text-sm font-medium max-w-md leading-relaxed">
-                        Conheça os profissionais que estão transformando o mercado fitness com resultados reais e suporte de elite.
-                    </p>
-                </div>
-
-                <Link href="/buscar-personal">
-                    <Button className="h-14 px-8 rounded-2xl bg-white hover:bg-zinc-200 text-zinc-950 font-black uppercase italic tracking-wide group shadow-xl transition-all active:scale-95">
-                        Ver Todos os Profissionais
-                        <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                    </Button>
-                </Link>
-            </div>
-
+            <RankingHeader />
             {/* Top 3 Podium */}
             <div className="grid gap-8 lg:grid-cols-3">
                 {ranking.slice(0, 3).map((trainer: any, index: number) => (
@@ -64,8 +52,6 @@ export default async function StudentRankingPage() {
                     </CardContent>
                 </Card>
             </div>
-
-
         </div>
     )
 }

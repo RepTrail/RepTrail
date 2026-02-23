@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Activity, Utensils } from "lucide-react"
 import { useEffect, useState } from 'react'
 
-export function ImportPdfClient({ students }: { students: any[] }) {
+export function ImportPdfClient({ students, role = 'trainer' }: { students?: any[], role?: 'trainer' | 'student' }) {
     const [isMounted, setIsMounted] = useState(false)
 
     useEffect(() => {
@@ -52,10 +52,10 @@ export function ImportPdfClient({ students }: { students: any[] }) {
 
                 <div className="mt-8">
                     <TabsContent value="workout" className="m-0 focus-visible:outline-none">
-                        <PdfUploader type="workout" students={students} />
+                        <PdfUploader type="workout" students={students} role={role} />
                     </TabsContent>
                     <TabsContent value="diet" className="m-0 focus-visible:outline-none">
-                        <PdfUploader type="diet" students={students} />
+                        <PdfUploader type="diet" students={students} role={role} />
                     </TabsContent>
                 </div>
             </Tabs>

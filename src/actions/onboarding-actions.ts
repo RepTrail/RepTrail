@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { z } from 'zod'
 import { redirect } from 'next/navigation'
+import { setupAutoTrainingForStudent } from './auto-training-setup'
 
 const onboardingSchema = z.object({
     birthDate: z.string().refine((val) => !isNaN(Date.parse(val)), "Data inválida"),
@@ -120,6 +121,9 @@ export async function submitOnboarding(prevState: OnboardingState, formData: For
             // Should we fail? Or just warn?
             // For now, let's proceed but maybe return a warning in a real app.
         }
+    } else {
+        // If no personal trainer code, set them up with the Auto Training default plan
+        await setupAutoTrainingForStudent(user.id, data)
     }
 
     // 4. Update Profile to set "onboarding_completed" (if we had that flag, or just check existing details)

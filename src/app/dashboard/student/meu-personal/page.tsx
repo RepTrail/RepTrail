@@ -29,15 +29,18 @@ export default async function MeuPersonalPage() {
     return (
         <div className="space-y-10 pb-20 animate-in fade-in duration-700">
             {/* Header */}
-            <div className="space-y-2">
+            <div className="flex items-center gap-3 mb-2">
+                <div className="p-2 bg-orange-500 rounded-xl">
+                    <UserCheck className="w-5 h-5 text-zinc-950" />
+                </div>
                 <h1 className="text-4xl font-black text-white italic uppercase tracking-tighter">
-                    Meu Personal
+                    Meu <span className="text-orange-500">Personal</span>
                 </h1>
-                <p className="text-zinc-600 font-bold uppercase tracking-widest text-[10px] flex items-center gap-2">
-                    <UserCheck className="w-3 h-3 text-emerald-500" />
-                    Seu treinador de confiança
-                </p>
             </div>
+            <p className="text-zinc-500 text-sm font-medium max-w-md flex items-center gap-2">
+                <UserCheck className="w-3 h-3 text-emerald-500" />
+                Seu treinador de confiança
+            </p>
 
             {/* Trainer Hero Card */}
             <div className="relative group p-8 md:p-12 bg-zinc-900/50 border border-zinc-800 rounded-[3rem] overflow-hidden shadow-2xl">

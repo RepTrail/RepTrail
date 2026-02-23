@@ -146,10 +146,10 @@ export function AssignCardioDialog({ cardioId, students }: AssignCardioDialogPro
                                     type="button"
                                     onClick={() => toggleDay(parseInt(day.value))}
                                     className={`
-                                        h-11 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all active:scale-95 border-2
+                                        h-11 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all duration-200 border-2
                                         ${selectedDays.includes(parseInt(day.value))
-                                            ? 'bg-emerald-500 text-zinc-950 border-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.4)] scale-105'
-                                            : 'bg-zinc-900 text-zinc-500 border-zinc-800 hover:border-zinc-700 hover:text-zinc-300'}
+                                            ? 'bg-emerald-500 text-zinc-950 border-emerald-400 shadow-lg shadow-emerald-500/25 scale-105'
+                                            : 'bg-zinc-900/50 text-zinc-400 border-zinc-700/50 hover:bg-zinc-800/70 hover:text-zinc-200 hover:border-zinc-600'}
                                     `}
                                 >
                                     {day.label.substring(0, 3)}

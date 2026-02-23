@@ -53,10 +53,18 @@ export default function StudentStorePage() {
 
     return (
         <div className="space-y-12 pb-20 animate-in fade-in duration-700">
-            {/* Store Header */}
+            {/* Header Section */}
+            <div className="flex items-center gap-3 mb-8">
+                <div className="p-2 bg-orange-500 rounded-xl">
+                    <ShoppingBag className="w-5 h-5 text-zinc-950" />
+                </div>
+                <h1 className="text-4xl font-black text-white italic uppercase tracking-tighter">
+                    Minha <span className="text-orange-500">Loja</span>
+                </h1>
+            </div>
+            {/* Subtítulo com Search */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
-                <div className="space-y-4">
-                    <Logo size="lg" />
+                <div className="space-y-2">
                     <p className="text-zinc-500 text-sm font-medium max-w-md leading-relaxed">
                         Suplementos de alta performance selecionados criteriosamente para acelerar seus resultados.
                     </p>

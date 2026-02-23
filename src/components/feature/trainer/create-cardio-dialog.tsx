@@ -52,7 +52,7 @@ export function CreateCardioDialog() {
                 <DialogHeader>
                     <DialogTitle className="text-xl font-black italic uppercase tracking-tight">Novo Modelo de Cardio</DialogTitle>
                     <DialogDescription className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest">
-                        Crie um template (ex: Esteira 45min) para atribuir aos alunos.
+                        Crie um template (ex: Esteira 45min) para agendar seus treinos.
                     </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={onSubmit} className="space-y-6 py-4">

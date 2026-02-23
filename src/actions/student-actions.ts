@@ -697,11 +697,82 @@ export async function updateStudentProfile(data: any) {
             })
         }
 
-        revalidatePath('/dashboard/student')
         revalidatePath('/dashboard/student/progress')
         return { success: true }
     } catch (e: any) {
         console.error('Error updating student profile:', e)
         return { success: false, error: e.message }
+    }
+}
+
+export async function getPublicStudentProfile(studentId: string) {
+    const supabase = await createClient()
+
+    try {
+        // 1. Basic Profile & Details (Basic safety: only if public_profile_enabled or similar if we had it, but for now we follow feed rules)
+        const { data: profile, error: profileErr } = await supabase
+            .from('profiles')
+            .select(`
+                id, full_name, avatar_url, allow_public_feed, public_profile_enabled,
+                auto_training_status, auto_training_trial_end, created_at
+            `)
+            .eq('id', studentId)
+            .single()
+
+        if (profileErr || !profile) throw new Error('Student not found')
+
+        // 2. Check for Trainer
+        const { data: trainerLink } = await supabase
+            .from('trainer_students')
+            .select(`
+                active,
+                trainer:profiles!trainer_id(
+                    id, full_name, avatar_url, trainer_code
+                )
+            `)
+            .eq('student_id', studentId)
+            .eq('active', true)
+            .maybeSingle()
+
+        // 3. Photos (All public ones)
+        const { data: photos } = await supabase
+            .from('progress_photos')
+            .select('*')
+            .eq('student_id', studentId)
+            .eq('is_private', false)
+            .order('created_at', { ascending: false })
+
+        // 4. First and Last for "Before & After"
+        const oldestPhoto = photos && photos.length > 0 ? photos[photos.length - 1] : null;
+        const newestPhoto = photos && photos.length > 0 ? photos[0] : null;
+
+        // 5. Adherence History (imported from tracking-actions)
+        // We'll import it dynamically or just call the function if it's in the same project
+        // Since it's a server action, we can import it.
+        const { getStudentAdherenceHistory } = await import('./tracking-actions')
+        const adherenceHistory = await getStudentAdherenceHistory(studentId, 30)
+
+        // 6. Student Details (for steroid use flag)
+        const { data: details } = await supabase
+            .from('student_details')
+            .select('body_fat, steroid_use, image_publication_authorized')
+            .eq('id', studentId)
+            .single()
+
+        return {
+            profile,
+            details,
+            hasTrainer: !!trainerLink,
+            trainer: trainerLink?.trainer,
+            photos: photos || [],
+            adherenceHistory: adherenceHistory || [],
+            beforeAfter: {
+                before: oldestPhoto,
+                after: newestPhoto
+            }
+        }
+    } catch (e) {
+        console.error('Error in getPublicStudentProfile:', e)
+        return null
     }
 }

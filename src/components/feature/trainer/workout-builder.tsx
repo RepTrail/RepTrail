@@ -58,9 +58,10 @@ interface WorkoutBuilderProps {
         description: string
         exercises: WorkoutExercise[]
     }
+    backHref?: string
 }
 
-export function WorkoutBuilder({ workout }: WorkoutBuilderProps) {
+export function WorkoutBuilder({ workout, backHref = '/dashboard/trainer/workouts' }: WorkoutBuilderProps) {
     const [searchQuery, setSearchQuery] = useState('')
     const [searchResults, setSearchResults] = useState<Exercise[]>([])
     const [isSearching, setIsSearching] = useState(false)
@@ -459,7 +460,7 @@ export function WorkoutBuilder({ workout }: WorkoutBuilderProps) {
                     variant="ghost"
                     className="text-zinc-500 hover:text-white hover:bg-zinc-900 gap-2 px-6 h-12 rounded-xl transition-all"
                 >
-                    <Link href="/dashboard/trainer/workouts">
+                    <Link href={backHref}>
                         <ArrowLeft className="w-4 h-4" />
                         Voltar para a Biblioteca de Treinos
                     </Link>

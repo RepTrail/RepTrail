@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Menu, X, LogOut, Dumbbell, Utensils, Activity, Home, Users, Trophy, CreditCard, FileUp, Sparkles, FlaskConical, TrendingUp, Download, Settings } from 'lucide-react'
+import { Menu, X, LogOut, Dumbbell, Utensils, Activity, Home, Users, Trophy, CreditCard, FileUp, Sparkles, FlaskConical, TrendingUp, Download, Settings, ClipboardList } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Logo } from '@/components/ui/logo'
 import Link from 'next/link'
@@ -12,17 +12,21 @@ interface MobileHeaderProps {
     hasTrainer?: boolean // for students
     steroidUse?: boolean
     hideImportPdf?: boolean // for trainers
+    autoTrainingActive?: boolean
 }
 
-export function MobileHeader({ role, hasTrainer, steroidUse, hideImportPdf }: MobileHeaderProps) {
+export function MobileHeader({ role, hasTrainer, steroidUse, hideImportPdf, autoTrainingActive }: MobileHeaderProps) {
     const [isOpen, setIsOpen] = useState(false)
 
     const studentLinks = [
         { href: '/dashboard/student/workouts', icon: <Dumbbell className="w-5 h-5" />, label: 'Meus Treinos', requiresTrainer: true },
         { href: '/dashboard/student/diet', icon: <Utensils className="w-5 h-5" />, label: 'Minha Dieta', requiresTrainer: true },
         { href: '/dashboard/student/cardio', icon: <Activity className="w-5 h-5" />, label: 'Cardio', requiresTrainer: true },
+        { href: '/dashboard/student/import-pdf', icon: <FileUp className="w-5 h-5" />, label: 'Importar PDF', requiresTrainer: true, hideIfHasTrainer: true },
         { href: '/dashboard/student/progress', icon: <TrendingUp className="w-5 h-5" />, label: 'Minha Evolução', requiresTrainer: true },
         { href: '/dashboard/student/ergogenics', icon: <Sparkles className="w-5 h-5" />, label: 'Ergogênicos', requiresTrainer: true, showOnlyIfSteroidUse: true },
+        { href: '/dashboard/student/feed', icon: <Users className="w-5 h-5" />, label: 'Feed de Alunos' },
+        { href: '/dashboard/student/anamnese', icon: <ClipboardList className="w-5 h-5" />, label: 'Anamnese' },
     ]
 
     const trainerLinks = [
@@ -36,8 +40,10 @@ export function MobileHeader({ role, hasTrainer, steroidUse, hideImportPdf }: Mo
 
     const links = role === 'student'
         ? studentLinks.filter(link => {
-            if (link.requiresTrainer && !hasTrainer) return false
-            if (link.showOnlyIfSteroidUse && !steroidUse) return false
+            const item = link as any;
+            if (item.requiresTrainer && !hasTrainer && !autoTrainingActive) return false
+            if (item.showOnlyIfSteroidUse && !steroidUse) return false
+            if (item.hideIfHasTrainer && hasTrainer) return false
             return true
         })
         : trainerLinks
@@ -82,7 +88,7 @@ export function MobileHeader({ role, hasTrainer, steroidUse, hideImportPdf }: Mo
                             </button>
                         </div>
 
-                        <nav className="space-y-4">
+                        <nav className="space-y-4 flex-1 overflow-y-auto pb-4">
                             {links.map((link) => (
                                 <Link
                                     key={link.href}

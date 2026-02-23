@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { PWAClient } from "@/components/layout/pwa-client";
+import { ForceReload } from "@/components/layout/force-reload";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -50,6 +51,7 @@ export default function RootLayout({
         {children}
         <Toaster />
         <PWAClient />
+        <ForceReload />
       </body>
     </html>
   );

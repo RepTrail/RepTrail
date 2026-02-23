@@ -22,15 +22,18 @@ export default async function StudentProfilePage() {
         <div className="space-y-12 pb-20">
             {/* Header */}
             <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                <div className="space-y-2">
+                <div className="flex items-center gap-3 mb-2">
+                    <div className="p-2 bg-orange-500 rounded-xl">
+                        <ShieldCheck className="w-5 h-5 text-zinc-950" />
+                    </div>
                     <h1 className="text-4xl font-black text-white italic uppercase tracking-tighter">
-                        Meu Perfil
+                        Meu <span className="text-orange-500">Perfil</span>
                     </h1>
-                    <p className="text-zinc-500 font-bold uppercase tracking-widest text-[10px] flex items-center gap-2">
-                        <ShieldCheck className="w-3 h-3 text-emerald-500" />
-                        Configurações da conta e dados físicos
-                    </p>
                 </div>
+                <p className="text-zinc-500 text-sm font-medium max-w-md flex items-center gap-2">
+                    <ShieldCheck className="w-3 h-3 text-emerald-500" />
+                    Configurações da conta e dados físicos
+                </p>
             </header>
 
             <StudentProfileForm profile={profile} />

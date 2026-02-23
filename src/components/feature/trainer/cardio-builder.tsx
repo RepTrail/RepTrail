@@ -26,9 +26,10 @@ interface CardioBuilderProps {
         description?: string | null
         created_at: string
     }
+    backHref?: string
 }
 
-export function CardioBuilder({ cardio }: CardioBuilderProps) {
+export function CardioBuilder({ cardio, backHref = '/dashboard/trainer/cardio' }: CardioBuilderProps) {
     // Inline name editing
     const [isEditingName, setIsEditingName] = useState(false)
     const [editName, setEditName] = useState(cardio.name)
@@ -187,11 +188,9 @@ export function CardioBuilder({ cardio }: CardioBuilderProps) {
                 )}
             </div>
 
-            {/* Tips / Quick stats — só visual */}
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            {/* Tips / Quick stats */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 {[
-                    { icon: <Clock className="w-4 h-4 text-orange-400" />, label: 'Duração', hint: 'Definida na atribuição ao aluno' },
-                    { icon: <Flame className="w-4 h-4 text-red-400" />, label: 'Intensidade', hint: 'Definida na atribuição ao aluno' },
                     { icon: <Activity className="w-4 h-4 text-zinc-500" />, label: 'Template', hint: 'Reutilizável para múltiplos alunos' },
                 ].map((item, i) => (
                     <div key={i} className="bg-zinc-900/40 border border-zinc-800/50 rounded-2xl p-4 space-y-1.5">
@@ -199,19 +198,19 @@ export function CardioBuilder({ cardio }: CardioBuilderProps) {
                             {item.icon}
                             <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">{item.label}</span>
                         </div>
-                        <p className="text-xs text-zinc-600 leading-relaxed">{item.hint}</p>
+                        {item.hint && <p className="text-xs text-zinc-600 leading-relaxed">{item.hint}</p>}
                     </div>
                 ))}
             </div>
 
             {/* Back */}
-            <div className="pt-4 flex justify-center">
+            <div className="pt-10 flex justify-center border-t border-zinc-800/30">
                 <Button
                     asChild
                     variant="ghost"
                     className="text-zinc-500 hover:text-white hover:bg-zinc-900 gap-2 px-6 h-12 rounded-xl transition-all border border-transparent hover:border-zinc-800"
                 >
-                    <Link href="/dashboard/trainer/cardio">
+                    <Link href={backHref}>
                         <ArrowLeft className="w-4 h-4" />
                         Voltar para Biblioteca de Cardio
                     </Link>
