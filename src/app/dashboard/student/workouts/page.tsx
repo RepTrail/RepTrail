@@ -24,6 +24,8 @@ export default async function StudentWorkoutsPage() {
         .single()
 
     const isAutoTrainingActive = profile?.auto_training_status === 'active' || profile?.auto_training_status === 'trial'
+    const hasTrainer = !!relationship
+    const allowManualWorkouts = isAutoTrainingActive && !hasTrainer
 
     let workouts: any[] = []
     if (user?.id) {
@@ -41,7 +43,6 @@ export default async function StudentWorkoutsPage() {
             .eq('student_id', user.id)
             .eq('active', true)
         workouts = data || []
-        console.log('[DEBUG] Assigned workouts for student:', { user_id: user.id, workouts, error })
     }
 
     return (
@@ -57,12 +58,12 @@ export default async function StudentWorkoutsPage() {
                             Meus <span className="text-orange-500">Treinos</span>
                         </h1>
                     </div>
-                    {isAutoTrainingActive && (
+                    {allowManualWorkouts && (
                         <WorkoutActions isAutoTrainingActive={isAutoTrainingActive} />
                     )}
                 </div>
                 <p className="text-zinc-500 text-sm font-medium max-w-md">
-                    {isAutoTrainingActive 
+                    {allowManualWorkouts
                         ? `Você tem ${workouts.length} treino${workouts.length !== 1 ? 's' : ''} criado${workouts.length !== 1 ? 's' : ''}.`
                         : `Seu treinador preparou ${workouts.length} fichas de treino para você.`
                     }
@@ -130,7 +131,7 @@ export default async function StudentWorkoutsPage() {
                                             <span className="text-xs font-black text-zinc-400 italic">{scheduledDay}</span>
                                         </div>
                                         <div className="flex items-center gap-2">
-                                            {isAutoTrainingActive && (
+                                            {allowManualWorkouts && (
                                                 <div className="flex gap-1">
                                                     <Button asChild size="sm" variant="outline" className="h-10 px-3 border-zinc-700 text-zinc-400 hover:text-white">
                                                         <Link href={`/dashboard/student/workouts/${workout.id}/edit`} className="flex items-center gap-1">
