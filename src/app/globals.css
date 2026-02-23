@@ -138,11 +138,19 @@
     -webkit-overflow-scrolling: touch;
     overscroll-behavior-y: auto;
     touch-action: manipulation;
-    /* Melhora a resposta ao toque */
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+}
+
+.gpu-accelerated {
+  transform: translateZ(0);
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 /* Page Entry Animations */

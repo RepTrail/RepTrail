@@ -22,12 +22,15 @@ export default async function StudentLayout({
         redirect('/auth/login')
     }
 
-    // Check Role in DB (Source of Truth)
-    const { data: profile, error: profileErr } = await supabase
-        .from('profiles')
-        .select('role, auto_training_status, auto_training_trial_end')
-        .eq('id', user.id)
-        .single()
+    // Fetch profile, details and trainer status in parallel to avoid waterfalls
+    const [profileRes, detailsRes, trainerRel] = await Promise.all([
+        supabase.from('profiles').select('role, auto_training_status, auto_training_trial_end').eq('id', user.id).single(),
+        supabase.from('student_details').select('id, steroid_use').eq('id', user.id).single(),
+        getStudentTrainer(user.id)
+    ])
+
+    const profile = profileRes.data
+    const details = detailsRes.data
 
     if (profile?.role === 'trainer') {
         redirect('/dashboard/trainer')
@@ -45,21 +48,11 @@ export default async function StudentLayout({
         }
     }
 
-    // Check Onboarding
-    const { data: details, error: detailsErr } = await supabase
-        .from('student_details')
-        .select('id, steroid_use')
-        .eq('id', user.id)
-        .single()
-
     if (!details) {
         redirect('/onboarding')
     }
 
     const steroidUse = !!details.steroid_use
-
-    // Check Trainer Status
-    const trainerRel = await getStudentTrainer(user.id)
     const hasTrainer = !!trainerRel
 
     return (

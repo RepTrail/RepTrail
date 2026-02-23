@@ -52,7 +52,7 @@ export function SplashScreen({ onFinish, redirectHref }: SplashScreenProps) {
             <style>{`
                 @keyframes saber-draw {
                     from { stroke-dashoffset: 100; }
-                    to { stroke-dashoffset: -2; } /* slight overlap */
+                    to { stroke-dashoffset: -0.1; }
                 }
 
                 @keyframes saber-flicker {
@@ -63,22 +63,23 @@ export function SplashScreen({ onFinish, redirectHref }: SplashScreenProps) {
                 @keyframes saber-ignite-bloom {
                     0% { transform: scale(1); filter: brightness(1) blur(0px); }
                     30% { transform: scale(1.02); filter: brightness(1.4); }
-                    /* Flash to white */
                     50% { transform: scale(1.04); filter: brightness(4) drop-shadow(0 0 20px #ffffff); }
                     100% { transform: scale(1.1); filter: brightness(8) drop-shadow(0 0 50px #ffffff); }
                 }
 
                 .rt-saber-path {
-                    stroke-dasharray: 100 100;
+                    /* Use 200 to ensure that even with rounding, the path stays fully "covered" at offset 0 */
+                    stroke-dasharray: 200;
                     stroke-dashoffset: 100;
-                    animation: saber-draw 3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+                    animation: saber-draw 3s cubic-bezier(0.4, 0, 0, 1) forwards;
                     stroke-linecap: round;
                     stroke-linejoin: round;
+                    will-change: stroke-dashoffset;
                 }
 
                 .rt-saber-active .rt-saber-path {
                     stroke: #ffffff !important;
-                    stroke-dashoffset: -2 !important;
+                    stroke-dashoffset: -0.1 !important;
                 }
 
                 .rt-saber-active {
@@ -131,7 +132,7 @@ export function SplashScreen({ onFinish, redirectHref }: SplashScreenProps) {
                                 strokeWidth="0.4"
                                 pathLength="100"
                                 className="rt-saber-path"
-                                style={{ opacity: 0.8, animationDelay: '0.1s' }}
+                                style={{ opacity: 0.8 }}
                             />
                         </g>
                     </svg>

@@ -19,7 +19,8 @@ import {
     AlertTriangle,
     CheckCircle2,
     XCircle,
-    Clock
+    Clock,
+    BedDouble
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -55,7 +56,7 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
             case 'milestone':
                 return { icon: <Trophy className="w-4 h-4" />, color: 'bg-yellow-500/10 text-yellow-500', label: 'Meta 100%' }
             case 'alert':
-                return { icon: <AlertTriangle className="w-4 h-4" />, color: 'bg-red-500/10 text-red-500', label: 'Alerta' }
+                return { icon: <BedDouble className="w-4 h-4 text-orange-400" />, color: 'bg-orange-500/10 text-orange-400', label: 'Modo Ilha' }
             default:
                 return { icon: <ActivityIcon className="w-4 h-4" />, color: 'bg-zinc-500/10 text-zinc-500', label: 'Atividade' }
         }

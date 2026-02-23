@@ -776,3 +776,13 @@ export async function getPublicStudentProfile(studentId: string) {
         return null
     }
 }
+
+export async function getStudentDetails(userId: string) {
+    const supabase = await createClient()
+    const { data } = await supabase
+        .from('student_details')
+        .select('*')
+        .eq('id', userId)
+        .single()
+    return data
+}

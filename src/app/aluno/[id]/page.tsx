@@ -23,9 +23,12 @@ export default async function StudentPublicProfilePage({ params }: { params: Pro
     const { data: { user } } = await supabase.auth.getUser()
     const isOwner = user?.id === studentId
 
-    const data = await getPublicStudentProfile(studentId)
-    const fullMetrics = await getStudentFullMetrics(studentId)
-    const history = await getStudentWorkoutHistory(studentId)
+    // Parallelize data fetching to optimize performance
+    const [data, fullMetrics, history] = await Promise.all([
+        getPublicStudentProfile(studentId),
+        getStudentFullMetrics(studentId),
+        getStudentWorkoutHistory(studentId)
+    ])
 
     if (!data) notFound()
 
@@ -197,13 +200,15 @@ export default async function StudentPublicProfilePage({ params }: { params: Pro
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
                     {/* Before & After Section */}
                     <div className="space-y-8">
-                        <div className="flex items-center justify-between gap-3">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
                             <div className="flex items-center gap-3">
-                                <Trophy className="w-6 h-6 text-amber-500" />
-                                <h2 className="text-2xl font-black italic uppercase tracking-tight">Antes vs Depois</h2>
+                                <div className="p-2 bg-amber-500/10 rounded-xl border border-amber-500/20">
+                                    <Trophy className="w-6 h-6 text-amber-500" />
+                                </div>
+                                <h2 className="text-2xl font-black italic uppercase tracking-tight text-white">Antes vs Depois</h2>
                             </div>
                             {isOwner && (
-                                <div className="hidden md:block">
+                                <div className="flex-shrink-0">
                                     <ShareTransformation
                                         studentName={profile.full_name}
                                         beforeUrl={beforeAfter.before?.front_url}
@@ -214,20 +219,6 @@ export default async function StudentPublicProfilePage({ params }: { params: Pro
                                 </div>
                             )}
                         </div>
-
-                        {isOwner && (
-                            <div className="md:hidden">
-                                <div className="flex justify-end">
-                                    <ShareTransformation
-                                        studentName={profile.full_name}
-                                        beforeUrl={beforeAfter.before?.front_url}
-                                        afterUrl={beforeAfter.after?.front_url}
-                                        beforeDate={beforeAfter.before?.created_at}
-                                        afterDate={beforeAfter.after?.created_at}
-                                    />
-                                </div>
-                            </div>
-                        )}
 
                         <div className="grid grid-cols-2 gap-4">
                             {/* BEFORE */}
@@ -291,6 +282,6 @@ export default async function StudentPublicProfilePage({ params }: { params: Pro
                     </div>
                 </footer>
             </div>
-        </div>
+        </div >
     )
 }

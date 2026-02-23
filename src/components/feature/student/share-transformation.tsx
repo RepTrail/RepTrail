@@ -16,6 +16,8 @@ interface ShareTransformationProps {
 export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDate, afterDate }: ShareTransformationProps) {
     const canvasRef = useRef<HTMLCanvasElement>(null)
     const [isGenerating, setIsGenerating] = useState(false)
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+    const [currentFormat, setCurrentFormat] = useState<'story' | 'feed' | null>(null)
 
     const drawImageCover = (ctx: CanvasRenderingContext2D, img: HTMLImageElement, x: number, y: number, w: number, h: number) => {
         const imgRatio = img.width / img.height
@@ -131,11 +133,13 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
             const photoHeight = format === 'story' ? height * 0.65 : height * 0.65
             const yOffset = (height - photoHeight) / 2 + (format === 'story' ? 60 : 60)
 
-            // Background Bloom
-            ctx.save()
-            ctx.filter = 'blur(150px) opacity(0.2)'
-            drawImageCover(ctx, imgAfter, 0, 0, width, height)
-            ctx.restore()
+            // Background Bloom - REMOVED ctx.filter as it bugs on mobile
+            // Instead, use a stylized gradient overlay
+            const bloomGradient = ctx.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, width)
+            bloomGradient.addColorStop(0, 'rgba(249, 115, 22, 0.08)')
+            bloomGradient.addColorStop(1, 'transparent')
+            ctx.fillStyle = bloomGradient
+            ctx.fillRect(0, 0, width, height)
 
             // Photos
             ctx.shadowBlur = 80
@@ -241,12 +245,12 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
             ctx.fillStyle = 'white'
             ctx.font = 'italic 900 52px Arial Black, sans-serif'
             ctx.textAlign = 'center'
-            ctx.fillText(studentName.toUpperCase(), width / 2, height - (format === 'story' ? 200 : 100))
+            ctx.fillText(studentName.toUpperCase(), width / 2, height - (format === 'story' ? 140 : 80))
 
             ctx.fillStyle = '#f97316'
             ctx.font = 'bold 22px Arial, sans-serif'
             ctx.letterSpacing = '6px'
-            ctx.fillText('REP-TRAIL.VERCEL.APP', width / 2, height - (format === 'story' ? 140 : 50))
+            ctx.fillText('REP-TRAIL.VERCEL.APP', width / 2, height - (format === 'story' ? 80 : 30))
 
             // Signature Line
             ctx.strokeStyle = 'rgba(249, 115, 22, 0.4)'
@@ -254,18 +258,48 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
             ctx.setLineDash([15, 15])
             ctx.beginPath()
             ctx.moveTo(width / 2, yOffset + 20)
-            ctx.lineTo(width / 2, yOffset + photoHeight - 120) // Leave space for label
+            ctx.lineTo(width / 2, yOffset + photoHeight - 40) // End just before the badge area
             ctx.stroke()
 
-            const link = document.createElement('a')
-            link.download = `reptrail-evolucao-${studentName.toLowerCase().replace(/\s+/g, '-')}.png`
-            link.href = canvas.toDataURL('image/png')
-            link.click()
+            const dataUrl = canvas.toDataURL('image/png')
+            setPreviewUrl(dataUrl)
+            setCurrentFormat(format)
         } catch (err) {
             console.error(err)
             alert('Erro ao gerar imagem premium. Tente novamente.')
         } finally {
             setIsGenerating(false)
+        }
+    }
+
+    const handleShare = async () => {
+        if (!previewUrl) return
+
+        try {
+            const response = await fetch(previewUrl)
+            const blob = await response.blob()
+            const file = new File([blob], `reptrail-evolucao-${studentName.toLowerCase().replace(/\s+/g, '-')}.png`, { type: 'image/png' })
+
+            if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+                await navigator.share({
+                    files: [file],
+                    title: 'Minha Evolução | RepTrail',
+                    text: `Confira minha evolução no RepTrail! #RepTrail #Fitness`,
+                })
+            } else {
+                // Fallback to download if sharing is not supported
+                const link = document.createElement('a')
+                link.download = file.name
+                link.href = previewUrl
+                link.click()
+            }
+        } catch (err) {
+            console.error('Share error:', err)
+            // Fallback to download
+            const link = document.createElement('a')
+            link.download = `reptrail-evolucao.png`
+            link.href = previewUrl
+            link.click()
         }
     }
 
@@ -289,51 +323,96 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
                     </DialogClose>
                 </div>
 
-                <div className="p-10 pt-16">
-                    <DialogHeader className="mb-8">
-                        <div className="flex justify-center mb-8">
-                            <div className="h-1.5 w-16 bg-gradient-to-r from-transparent via-[#f97316] to-transparent rounded-full opacity-50" />
+                <div className="p-8 pt-16">
+                    {!previewUrl ? (
+                        <>
+                            <DialogHeader className="mb-8">
+                                <div className="flex justify-center mb-8">
+                                    <div className="h-1.5 w-16 bg-gradient-to-r from-transparent via-[#f97316] to-transparent rounded-full opacity-50" />
+                                </div>
+                                <DialogTitle className="text-5xl md:text-6xl font-black italic uppercase tracking-tighter text-center leading-none">
+                                    EVOLUÇÃO <br />
+                                    <span className="text-[#f97316]">BRUTAL 🔥</span>
+                                </DialogTitle>
+                                <p className="text-center text-emerald-500/60 text-[10px] font-black uppercase tracking-[0.4em] mt-6">RepTrail Premium Graphics</p>
+                            </DialogHeader>
+
+                            <div className="grid grid-cols-2 gap-6 md:gap-8 py-4">
+                                <button onClick={() => generateImage('story')} disabled={isGenerating} className="group flex flex-col items-center">
+                                    <div className="aspect-[9/16] w-full bg-zinc-900 rounded-[2.5rem] border border-white/5 flex flex-col items-center justify-center relative overflow-hidden group-hover:border-[#f97316]/30 transition-all shadow-2xl group-hover:shadow-[#f97316]/10">
+                                        <Instagram className="w-10 h-10 text-zinc-700 group-hover:text-white transition-all group-hover:scale-110" />
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-zinc-600 group-hover:text-white mt-6 transition-colors">Stories</span>
+                                        {isGenerating && (
+                                            <div className="absolute inset-0 bg-black/80 flex items-center justify-center">
+                                                <div className="w-10 h-10 border-3 border-[#f97316] border-t-transparent rounded-full animate-spin" />
+                                            </div>
+                                        )}
+                                    </div>
+                                </button>
+
+                                <button onClick={() => generateImage('feed')} disabled={isGenerating} className="group flex flex-col items-center">
+                                    <div className="aspect-square w-full bg-zinc-900 rounded-[2.5rem] border border-white/5 flex flex-col items-center justify-center relative overflow-hidden group-hover:border-[#f97316]/30 transition-all shadow-2xl group-hover:shadow-[#f97316]/10">
+                                        <ImageIcon className="w-10 h-10 text-zinc-700 group-hover:text-white transition-all group-hover:scale-110" />
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-zinc-600 group-hover:text-white mt-6 transition-colors">Feed</span>
+                                        {isGenerating && (
+                                            <div className="absolute inset-0 bg-black/90 flex items-center justify-center">
+                                                <div className="w-10 h-10 border-3 border-[#f97316] border-t-transparent rounded-full animate-spin" />
+                                            </div>
+                                        )}
+                                    </div>
+                                </button>
+                            </div>
+
+                            <div className="mt-12 bg-zinc-900/50 p-8 rounded-[2.5rem] border border-white/5 relative overflow-hidden group">
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-[#f97316]/10 blur-[50px] rounded-full -mr-16 -mt-16 group-hover:bg-[#f97316]/20 transition-all" />
+                                <p className="text-[11px] text-zinc-400 font-bold uppercase tracking-widest text-center leading-relaxed relative z-10">
+                                    PRONTO PARA <span className="text-white">IMPACTAR</span>? <br />
+                                    <span className="text-zinc-600 text-[9px] mt-2 block">Sua evolução real com a identidade RepTrail.</span>
+                                </p>
+                            </div>
+                        </>
+                    ) : (
+                        <div className="space-y-8 animate-in fade-in zoom-in duration-500">
+                            <div className="flex items-center justify-between mb-2">
+                                <Button
+                                    variant="ghost"
+                                    onClick={() => setPreviewUrl(null)}
+                                    className="text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-white h-auto p-0"
+                                >
+                                    ← Voltar
+                                </Button>
+                                <span className="text-[10px] font-black uppercase tracking-widest text-[#f97316]">Pronto para Compartilhar</span>
+                            </div>
+
+                            <div className={`relative mx-auto bg-zinc-900 rounded-[2rem] overflow-hidden shadow-2xl border border-white/5 ${currentFormat === 'story' ? 'aspect-[9/16] w-[260px]' : 'aspect-square w-full max-w-[340px]'}`}>
+                                <img src={previewUrl} alt="Preview" className="w-full h-full object-contain" />
+                            </div>
+
+                            <div className="flex flex-col gap-4">
+                                <Button
+                                    onClick={handleShare}
+                                    className="w-full h-16 bg-[#f97316] text-black hover:bg-[#ea580c] rounded-2xl font-black uppercase italic tracking-widest text-sm flex items-center justify-center gap-3 shadow-xl transition-all active:scale-95"
+                                >
+                                    <Share2 className="w-5 h-5" />
+                                    Compartilhar Agora
+                                </Button>
+
+                                <Button
+                                    onClick={() => {
+                                        const link = document.createElement('a')
+                                        link.download = `reptrail-evolucao.png`
+                                        link.href = previewUrl
+                                        link.click()
+                                    }}
+                                    variant="outline"
+                                    className="w-full h-14 border-zinc-800 bg-transparent text-white hover:bg-zinc-900 rounded-2xl font-black uppercase italic tracking-widest text-[10px]"
+                                >
+                                    <Download className="w-4 h-4 mr-2" />
+                                    Salvar Imagem
+                                </Button>
+                            </div>
                         </div>
-                        <DialogTitle className="text-5xl md:text-6xl font-black italic uppercase tracking-tighter text-center leading-none">
-                            EVOLUÇÃO <br />
-                            <span className="text-[#f97316]">BRUTAL 🔥</span>
-                        </DialogTitle>
-                        <p className="text-center text-emerald-500/60 text-[10px] font-black uppercase tracking-[0.4em] mt-6">RepTrail Premium Graphics</p>
-                    </DialogHeader>
-
-                    <div className="grid grid-cols-2 gap-6 md:gap-8 py-4">
-                        <button onClick={() => generateImage('story')} disabled={isGenerating} className="group flex flex-col items-center">
-                            <div className="aspect-[9/16] w-full bg-zinc-900 rounded-[2.5rem] border border-white/5 flex flex-col items-center justify-center relative overflow-hidden group-hover:border-[#f97316]/30 transition-all shadow-2xl group-hover:shadow-[#f97316]/10">
-                                <Instagram className="w-10 h-10 text-zinc-700 group-hover:text-white transition-all group-hover:scale-110" />
-                                <span className="text-[10px] font-black uppercase tracking-widest text-zinc-600 group-hover:text-white mt-6 transition-colors">Stories</span>
-                                {isGenerating && (
-                                    <div className="absolute inset-0 bg-black/80 flex items-center justify-center">
-                                        <div className="w-10 h-10 border-3 border-[#f97316] border-t-transparent rounded-full animate-spin" />
-                                    </div>
-                                )}
-                            </div>
-                        </button>
-
-                        <button onClick={() => generateImage('feed')} disabled={isGenerating} className="group flex flex-col items-center">
-                            <div className="aspect-square w-full bg-zinc-900 rounded-[2.5rem] border border-white/5 flex flex-col items-center justify-center relative overflow-hidden group-hover:border-[#f97316]/30 transition-all shadow-2xl group-hover:shadow-[#f97316]/10">
-                                <ImageIcon className="w-10 h-10 text-zinc-700 group-hover:text-white transition-all group-hover:scale-110" />
-                                <span className="text-[10px] font-black uppercase tracking-widest text-zinc-600 group-hover:text-white mt-6 transition-colors">Feed</span>
-                                {isGenerating && (
-                                    <div className="absolute inset-0 bg-black/90 flex items-center justify-center">
-                                        <div className="w-10 h-10 border-3 border-[#f97316] border-t-transparent rounded-full animate-spin" />
-                                    </div>
-                                )}
-                            </div>
-                        </button>
-                    </div>
-
-                    <div className="mt-12 bg-zinc-900/50 p-8 rounded-[2.5rem] border border-white/5 relative overflow-hidden group">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-[#f97316]/10 blur-[50px] rounded-full -mr-16 -mt-16 group-hover:bg-[#f97316]/20 transition-all" />
-                        <p className="text-[11px] text-zinc-400 font-bold uppercase tracking-widest text-center leading-relaxed relative z-10">
-                            PRONTO PARA <span className="text-white">IMPACTAR</span>? <br />
-                            <span className="text-zinc-600 text-[9px] mt-2 block">Sua evolução real com a identidade RepTrail.</span>
-                        </p>
-                    </div>
+                    )}
                 </div>
 
                 <canvas ref={canvasRef} style={{ display: 'none' }} />

@@ -38,6 +38,8 @@ export const viewport: Viewport = {
   userScalable: false,
 };
 
+import { QueryProvider } from "@/components/providers/query-provider";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -49,9 +51,11 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-zinc-950`}
         suppressHydrationWarning
       >
-        <SplashManager>
-          {children}
-        </SplashManager>
+        <QueryProvider>
+          <SplashManager>
+            {children}
+          </SplashManager>
+        </QueryProvider>
         <Toaster />
         <PWAClient />
         <ForceReload />

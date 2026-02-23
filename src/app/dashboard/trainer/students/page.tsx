@@ -181,12 +181,19 @@ export default async function StudentsPage() {
                                             <TableRow key={item.id} className="border-zinc-900 hover:bg-zinc-900/20 transition-colors group">
                                                 <TableCell className="py-4">
                                                     <div className="flex items-center gap-3">
-                                                        <Avatar className="h-9 w-9 border border-zinc-800">
-                                                            <AvatarImage src={item.student?.avatar_url} />
-                                                            <AvatarFallback className="bg-zinc-900 text-zinc-400 font-bold text-xs uppercase">
-                                                                {item.student?.full_name?.substring(0, 2) || 'AL'}
-                                                            </AvatarFallback>
-                                                        </Avatar>
+                                                        <div className="relative">
+                                                            <Avatar className="h-9 w-9 border border-zinc-800">
+                                                                <AvatarImage src={item.student?.avatar_url} />
+                                                                <AvatarFallback className="bg-zinc-900 text-zinc-400 font-bold text-xs uppercase">
+                                                                    {item.student?.full_name?.substring(0, 2) || 'AL'}
+                                                                </AvatarFallback>
+                                                            </Avatar>
+                                                            {item.active && item.student_id && isLazyStudent(item.student?.last_seen_at, item.created_at) && (
+                                                                <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-gradient-to-tr from-amber-400 via-orange-500 to-yellow-300 rounded-full border-2 border-zinc-950 flex items-center justify-center text-[10px] shadow-lg animate-in zoom-in duration-500 hover:scale-110 transition-transform cursor-help" title="Modo Ilha: Sem atividade há mais de 7 dias">
+                                                                    🏝️
+                                                                </div>
+                                                            )}
+                                                        </div>
                                                         <div className="flex flex-col">
                                                             <span className="font-bold text-zinc-100 group-hover:text-white transition-colors">
                                                                 {item.student?.full_name || 'Sem nome'}
@@ -257,8 +264,8 @@ export default async function StudentsPage() {
                                                         })()}
                                                         {/* Lazy badge desktop */}
                                                         {item.active && item.student_id && isLazyStudent(item.student?.last_seen_at, item.created_at) && (
-                                                            <Badge variant="outline" className="bg-orange-500/10 text-orange-400 border-orange-500/20 text-[9px] font-black uppercase tracking-widest px-1.5 py-0 rounded-full flex gap-1 items-center w-fit" title={`Sem atividade há ${getDaysSinceActivity(item.student?.last_seen_at) ?? '7+'} dias`}>
-                                                                <BedDouble className="w-2.5 h-2.5" /> Preguiçoso
+                                                            <Badge variant="outline" className="bg-orange-500/10 text-orange-400 border-orange-500/20 text-[9px] font-black uppercase tracking-widest px-1.5 py-0 rounded-full flex gap-1 items-center w-fit shadow-sm shadow-orange-500/10" title={`Sem atividade há ${getDaysSinceActivity(item.student?.last_seen_at) ?? '7+'} dias`}>
+                                                                <BedDouble className="w-2.5 h-2.5" /> Modo Ilha
                                                             </Badge>
                                                         )}
                                                     </div>
@@ -292,14 +299,21 @@ export default async function StudentsPage() {
                                         <div key={item.id} className="p-4 space-y-4 hover:bg-zinc-900/20 transition-colors">
                                             <div className="flex items-center justify-between">
                                                 <div className="flex items-center gap-3">
-                                                    <Avatar className="h-10 w-10 border border-zinc-800">
-                                                        <AvatarImage src={item.student?.avatar_url} />
-                                                        <AvatarFallback className="bg-zinc-900 text-zinc-400 font-bold text-xs uppercase">
-                                                            {item.student?.full_name?.substring(0, 2) || 'AL'}
-                                                        </AvatarFallback>
-                                                    </Avatar>
+                                                    <div className="relative">
+                                                        <Avatar className="h-10 w-10 border border-zinc-800 group-hover:scale-105 transition-transform">
+                                                            <AvatarImage src={item.student?.avatar_url} />
+                                                            <AvatarFallback className="bg-zinc-900 text-zinc-400 font-bold text-xs uppercase">
+                                                                {item.student?.full_name?.substring(0, 2) || 'AL'}
+                                                            </AvatarFallback>
+                                                        </Avatar>
+                                                        {item.active && item.student_id && isLazyStudent(item.student?.last_seen_at, item.created_at) && (
+                                                            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-gradient-to-tr from-amber-400 via-orange-500 to-yellow-300 rounded-full border-2 border-zinc-950 flex items-center justify-center text-[10px] shadow-lg animate-bounce duration-[3s]">
+                                                                🏝️
+                                                            </div>
+                                                        )}
+                                                    </div>
                                                     <div className="flex flex-col">
-                                                        <span className="font-bold text-sm text-zinc-100">{item.student?.full_name}</span>
+                                                        <span className="font-bold text-sm text-zinc-100 group-hover:text-emerald-500 transition-colors">{item.student?.full_name}</span>
                                                         <span className="text-[10px] text-zinc-600 font-medium">Desde {new Date(item.created_at).toLocaleDateString('pt-BR')}</span>
                                                     </div>
                                                 </div>
@@ -339,8 +353,8 @@ export default async function StudentsPage() {
                                                         ) : null}
                                                         {/* Lazy badge mobile */}
                                                         {item.active && item.student_id && isLazyStudent(item.student?.last_seen_at, item.created_at) && (
-                                                            <Badge variant="outline" className="bg-orange-500/10 text-orange-400 border-orange-500/20 text-[8px] font-black uppercase tracking-widest px-1.5 py-0 rounded-full flex gap-1 items-center">
-                                                                <BedDouble className="w-2 h-2" /> Preguiçoso
+                                                            <Badge variant="outline" className="bg-orange-500/10 text-orange-400 border-orange-500/20 text-[8px] font-black uppercase tracking-widest px-1.5 py-0 rounded-full flex gap-1 items-center shadow-sm shadow-orange-500/5">
+                                                                <BedDouble className="w-2 h-2" /> Modo Ilha
                                                             </Badge>
                                                         )}
                                                     </div>

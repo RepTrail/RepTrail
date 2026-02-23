@@ -1,30 +1,25 @@
 import { createClient } from '@/lib/supabase/server'
-import { getStudentCardioAssignments } from '@/actions/cardio-actions'
-import { getTodayWorkout } from '@/actions/workout-actions'
-import { getStudentDailyDiet } from '@/actions/diet-actions'
-import { getStudentTrainer } from '@/actions/student-actions'
-import { getTrainerRanking } from '@/actions/trainer-actions'
-import { getStudentErgogenics } from '@/actions/ergogenics-actions'
+import { getStudentTrainer, getStudentDetails } from '@/actions/student-actions'
 import { getStudentAutoTrainingStatus } from '@/actions/auto-training-actions'
-import { CardioPlayer } from '@/components/feature/student/cardio-player'
-import { DietAdherence } from '@/components/feature/student/diet-adherence'
+import { getTrainerRanking } from '@/actions/trainer-actions'
+
+import { WorkoutCard } from '@/components/feature/student/dashboard/workout-card'
+import { CardioCard } from '@/components/feature/student/dashboard/cardio-card'
+import { DietCard } from '@/components/feature/student/dashboard/diet-card'
+import { MetricsSummary } from '@/components/feature/student/dashboard/metrics-summary'
+import { ErgogenicsCard } from '@/components/feature/student/dashboard/ergogenics-card'
+
 import { NotificationRequestModal } from '@/components/feature/student/notification-request-modal'
 import { PaymentWarning } from '@/components/feature/student/payment-warning'
 import { StudentDashboardModals } from '@/components/feature/student/student-dashboard-modals'
+import { AnamnesisForm } from '@/components/feature/student/anamnesis-form'
 
-import { Flame, Activity, Clock, Utensils, Dumbbell, Star, Search, ShieldCheck, Trophy, ArrowRight, Zap, Target, LogOut, Sparkles, CheckCircle, Play } from 'lucide-react'
+import { Activity, Utensils, Dumbbell, Star, Search, Trophy, ArrowRight, Sparkles, Zap } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Logo } from '@/components/ui/logo'
 import Link from 'next/link'
-import { signOutAction } from '@/actions/auth-actions'
-import { getTodayRangeBrazil, getTodayStrBrazil } from '@/lib/date-utils'
-import { ErgogenicCheckButton } from '@/components/feature/student/ergogenic-check-button'
-
-import { AnamnesisForm } from '@/components/feature/student/anamnesis-form'
-
-import { getStudentMetricsHistory } from '@/actions/metrics-actions'
+import { ShieldCheck } from 'lucide-react'
 
 export default async function StudentDashboard() {
     const supabase = await createClient()
@@ -32,115 +27,24 @@ export default async function StudentDashboard() {
 
     if (!user) return null
 
-    // 1. Check Personal Relationship
-    const trainerRel = await getStudentTrainer(user.id)
-
-    // Get auto-training status for modal
-    const autoTrainingStatus = await getStudentAutoTrainingStatus(user.id)
-    const showAutoTrainingModal = !autoTrainingStatus?.saw_auto_training_onboarding_modal && !trainerRel
+    // Fetch minimal core data for the shell
+    const [trainerRel, autoTrainingStatus, details] = await Promise.all([
+        getStudentTrainer(user.id),
+        getStudentAutoTrainingStatus(user.id),
+        getStudentDetails(user.id)
+    ])
 
     const hasAutoTraining = autoTrainingStatus?.auto_training_status === 'active' || autoTrainingStatus?.auto_training_status === 'trial'
-
-    // 2. Fetch full details for anamnesis check
-    const { data: details } = await supabase
-        .from('student_details')
-        .select('*')
-        .eq('id', user.id)
-        .single()
-
-    const steroidUse = !!details?.steroid_use
+    const showAutoTrainingModal = !autoTrainingStatus?.saw_auto_training_onboarding_modal && !trainerRel
     const showAnamnesis = !details?.age || !details?.height || !details?.current_weight
 
-    // New: Fetch Metrics
-    const metricsHistory = await getStudentMetricsHistory(user.id)
-    const latestWeight = metricsHistory.weights[metricsHistory.weights.length - 1]?.weight_kg
-    const latestBF = metricsHistory.bfs[metricsHistory.bfs.length - 1]?.bf_percentage || details?.body_fat
-
-    // 3. Fetch Daily Data
-    const rawCardios = await getStudentCardioAssignments(user.id)
-    // Pega a data no timezone de Brasília (evita bug de virada de dia quando UTC já avançou)
-    const tzNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }))
-    const today = tzNow.getDay() // 0=Dom ... 6=Sab, correto para Brasília
-    const todayStr = getTodayStrBrazil()
-    const { start: todayStart, end: todayEnd } = getTodayRangeBrazil()
-
-    // Fetch logs for ergogenics today
-    const { data: ergoLogs } = await supabase
-        .from('ergogenic_logs')
-        .select('ergogenic_id')
-        .eq('student_id', user.id)
-        .gte('created_at', todayStart)
-        .lte('created_at', todayEnd)
-
-    const loggedErgoIds = new Set(ergoLogs?.map((l: any) => l.ergogenic_id) || [])
-
-    const cardios = rawCardios.filter((a: any) =>
-        !a.days_of_week || a.days_of_week.length === 0 || a.days_of_week.includes(today)
-    )
-    const workout = await getTodayWorkout(user.id)
-    const diet = await getStudentDailyDiet(user.id)
-
-    // Fetch Cardio Logs for Today
-    const { data: todayCardioLogs } = await supabase
-        .from('cardio_logs')
-        .select('assigned_cardio_id, status')
-        .eq('student_id', user.id)
-        .gte('started_at', todayStart)
-        .lte('started_at', todayEnd)
-
-    // Check workout status
-    let workoutStatus: 'not_started' | 'in_progress' | 'completed' = 'not_started'
-
-    if (workout) {
-        // 1. Check Completed Today
-        const { data: completed } = await supabase
-            .from('workout_logs')
-            .select('id')
-            .eq('workout_id', workout.id)
-            .eq('student_id', user.id)
-            .eq('status', 'completed')
-            .gte('completed_at', todayStart)
-            .lte('completed_at', todayEnd)
-            .maybeSingle()
-
-        if (completed) {
-            workoutStatus = 'completed'
-        } else {
-            // 2. Check In Progress (Any active log for this workout)
-            const { data: inProgress } = await supabase
-                .from('workout_logs')
-                .select('id')
-                .eq('workout_id', workout.id)
-                .eq('student_id', user.id)
-                .eq('status', 'in_progress')
-                .order('started_at', { ascending: false })
-                .limit(1)
-                .maybeSingle()
-
-            if (inProgress) {
-                workoutStatus = 'in_progress'
-            }
-        }
-    }
-
-    // Ergogenics
-    let todaysErgogenics: any[] = []
-    if (steroidUse) {
-        const { data: ergogenics } = await getStudentErgogenics(user.id)
-        if (ergogenics) {
-            todaysErgogenics = ergogenics.filter((e: any) =>
-                e.application_days && Array.isArray(e.application_days) && e.application_days.includes(today)
-            )
-        }
-    }
-
-    // UI for students without personal and without auto-training
+    // Case: No Trainer and No Auto-Training (Public/Newbie View)
     if (!trainerRel && !hasAutoTraining) {
         const ranking = await getTrainerRanking()
         const topTrainers = ranking.slice(0, 3)
 
         return (
-            <div className="space-y-12 pb-20 animate-in fade-in duration-700" suppressHydrationWarning>
+            <div className="space-y-12 pb-20 animate-in fade-in duration-700">
                 <header className="space-y-8">
                     <div className="relative group overflow-hidden p-10 md:p-16 bg-zinc-900 border border-zinc-800 rounded-[3.5rem] shadow-2xl">
                         <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 via-transparent to-transparent opacity-50" />
@@ -232,7 +136,7 @@ export default async function StudentDashboard() {
                                     {CardContent}
                                 </Link>
                             ) : (
-                                <div key={trainer.id}>
+                                <div key={trainer.id} className="h-full">
                                     {CardContent}
                                 </div>
                             )
@@ -244,7 +148,7 @@ export default async function StudentDashboard() {
                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(249,115,22,0.05),transparent_70%)] opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
                     <div className="relative z-10 space-y-6">
                         <div className="w-16 h-16 bg-zinc-950 rounded-2xl flex items-center justify-center border border-zinc-800 mx-auto shadow-2xl rotate-3">
-                            <Target className="w-8 h-8 text-orange-500 -rotate-3" />
+                            <Search className="w-8 h-8 text-orange-500 -rotate-3" />
                         </div>
                         <div className="space-y-2">
                             <h3 className="text-2xl font-black text-white italic uppercase tracking-tight">O suporte que você merece</h3>
@@ -265,13 +169,17 @@ export default async function StudentDashboard() {
         )
     }
 
+    // Main Case: Active Training (Personal or Auto-Training)
+    const tzNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }))
+
     return (
-        <div className="space-y-10 pb-20" suppressHydrationWarning>
+        <div className="space-y-10 pb-20 animate-in fade-in duration-500">
             <PaymentWarning relationship={trainerRel} />
-            {/* Welcome Header */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6" suppressHydrationWarning>
-                <div className="space-y-4" suppressHydrationWarning>
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-4" suppressHydrationWarning>
+
+            {/* Welcome Header - Static/Sync part of the shell */}
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                <div className="space-y-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                         <h1 className="text-4xl font-black text-white italic uppercase tracking-tighter">
                             Dashboard
                         </h1>
@@ -296,8 +204,8 @@ export default async function StudentDashboard() {
                         )}
                     </p>
                 </div>
-                <div className="flex items-center gap-4 bg-zinc-900/50 p-2 rounded-2xl border border-zinc-800/50" suppressHydrationWarning>
-                    <div className="px-4 py-2 bg-zinc-950 rounded-xl border border-zinc-800" suppressHydrationWarning>
+                <div className="flex items-center gap-4 bg-zinc-900/50 p-2 rounded-2xl border border-zinc-800/50">
+                    <div className="px-4 py-2 bg-zinc-950 rounded-xl border border-zinc-800">
                         <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest block">Hoje</span>
                         <span className="text-xs font-black text-white italic uppercase">
                             {tzNow.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' })}
@@ -312,13 +220,11 @@ export default async function StudentDashboard() {
                 </div>
             )}
 
-            <div className="grid gap-8 lg:grid-cols-12" suppressHydrationWarning>
-                {/* Main Content (Workout & Cardio) */}
-                <div className="lg:col-span-8 space-y-10" suppressHydrationWarning>
-
-                    {/* Workout Section */}
-                    <div className="space-y-6" suppressHydrationWarning>
-                        <div className="flex items-center justify-between px-2" suppressHydrationWarning>
+            <div className="grid gap-8 lg:grid-cols-12">
+                {/* Async Sections (Independent data fetching) */}
+                <div className="lg:col-span-8 space-y-10">
+                    <div className="space-y-6">
+                        <div className="flex items-center justify-between px-2">
                             <h2 className="text-[12px] font-black text-zinc-100 flex items-center gap-2 uppercase tracking-[0.2em]">
                                 <Dumbbell className="w-4 h-4 text-emerald-500" />
                                 Treino de Hoje
@@ -328,220 +234,30 @@ export default async function StudentDashboard() {
                                 <ArrowRight className="w-3 h-3" />
                             </Link>
                         </div>
-
-                        {workout ? (
-                            workoutStatus === 'completed' ? (
-                                <div className="group relative bg-emerald-950/20 border border-emerald-500/20 p-8 rounded-[2.5rem] backdrop-blur-sm overflow-hidden transition-all duration-500 cursor-default shadow-xl">
-                                    <div className="absolute top-0 right-0 p-8 opacity-10">
-                                        <CheckCircle className="w-32 h-32 text-emerald-500" />
-                                    </div>
-                                    <div className="relative space-y-6">
-                                        <div className="space-y-1">
-                                            <div className="flex items-center gap-2">
-                                                <CheckCircle className="w-3 h-3" />
-                                                Missão Cumprida
-                                            </div>
-                                            <h3 className="text-3xl font-black text-white italic uppercase leading-none">
-                                                {workout.name}
-                                            </h3>
-                                            <p className="text-zinc-500 text-xs font-bold uppercase tracking-widest">
-                                                {workout.exercises?.length || 0} Exercícios • Treino concluído
-                                            </p>
-                                        </div>
-                                        <Link href={`/dashboard/student/workout/${workout.id}`}>
-                                            <Button variant="ghost" className="h-9 px-4 rounded-xl text-zinc-500 hover:text-white text-[10px] uppercase font-black tracking-wider">
-                                                Ver Detalhes
-                                            </Button>
-                                        </Link>
-                                    </div>
-                                </div>
-                            ) : workoutStatus === 'in_progress' ? (
-                                <Link href={`/dashboard/student/workout/${workout.id}`}>
-                                    <div className="group relative bg-amber-500/10 border border-amber-500/20 p-8 rounded-[2.5rem] backdrop-blur-sm overflow-hidden hover:border-amber-500/40 transition-all duration-500 cursor-pointer shadow-xl">
-                                        <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
-                                            <Dumbbell className="w-32 h-32 text-amber-500" />
-                                        </div>
-                                        <div className="relative space-y-6">
-                                            <div className="space-y-1">
-                                                <div className="flex items-center gap-2">
-                                                    <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-                                                    <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest">Em Andamento</span>
-                                                </div>
-                                                <h3 className="text-3xl font-black text-white italic uppercase leading-none group-hover:text-amber-500 transition-colors">
-                                                    {workout.name}
-                                                </h3>
-                                                <p className="text-zinc-500 text-xs font-bold uppercase tracking-widest">
-                                                    {workout.exercises?.length || 0} Exercícios • Continue o foco
-                                                </p>
-                                            </div>
-                                            <Button className="h-12 px-8 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-black uppercase italic tracking-wide group-hover:scale-105 transition-transform shadow-lg shadow-amber-500/20">
-                                                Continuar Treino
-                                            </Button>
-                                        </div>
-                                    </div>
-                                </Link>
-                            ) : (
-                                <Link href={`/dashboard/student/workout/${workout.id}`}>
-                                    <div className="group relative bg-zinc-900/40 border border-zinc-800/50 p-8 rounded-[2.5rem] backdrop-blur-sm overflow-hidden hover:border-emerald-500/30 transition-all duration-500 cursor-pointer shadow-xl">
-                                        <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
-                                            <Dumbbell className="w-32 h-32 text-white" />
-                                        </div>
-                                        <div className="relative space-y-6">
-                                            <div className="space-y-1">
-                                                <h3 className="text-3xl font-black text-white italic uppercase leading-none group-hover:text-emerald-500 transition-colors">
-                                                    {workout.name}
-                                                </h3>
-                                                <p className="text-zinc-500 text-xs font-bold uppercase tracking-widest">
-                                                    {workout.exercises?.length || 0} Exercícios • Foco do dia
-                                                </p>
-                                            </div>
-                                            <Button className="h-12 px-6 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase italic tracking-wide group-hover:scale-105 transition-transform shadow-lg shadow-emerald-500/20">
-                                                Iniciar Treino
-                                            </Button>
-                                        </div>
-                                    </div>
-                                </Link>
-                            )
-                        ) : (
-                            <div className="bg-zinc-900/20 border border-zinc-800/50 border-dashed rounded-[2.5rem] py-16 flex flex-col items-center justify-center text-center space-y-4" suppressHydrationWarning>
-                                <div className="p-4 bg-zinc-900 rounded-full border border-zinc-800" suppressHydrationWarning>
-                                    <Clock className="w-8 h-8 text-zinc-700" />
-                                </div>
-                                <div className="space-y-1" suppressHydrationWarning>
-                                    <p className="text-zinc-400 text-sm font-black uppercase tracking-tight italic">Dia de Descanso</p>
-                                    <p className="text-zinc-600 text-[9px] font-bold uppercase tracking-widest max-w-[250px]">
-                                        Hoje é dia de descanso. Recuperação também faz parte do processo. Aproveite!
-                                    </p>
-                                </div>
-                            </div>
-                        )}
+                        <WorkoutCard userId={user.id} />
                     </div>
 
-                    {/* Cardio Section */}
-                    <div className="space-y-6" suppressHydrationWarning>
-                        <div className="flex items-center justify-between px-2" suppressHydrationWarning>
+                    <div className="space-y-6">
+                        <div className="flex items-center justify-between px-2">
                             <h2 className="text-[12px] font-black text-zinc-100 flex items-center gap-2 uppercase tracking-[0.2em]">
-                                <Flame className="w-4 h-4 text-orange-500" />
+                                <Activity className="w-4 h-4 text-orange-500" />
                                 Cardio do Dia
                             </h2>
                         </div>
-
-                        {cardios.length > 0 ? (
-                            <div className="grid gap-6" suppressHydrationWarning>
-                                {cardios.slice(0, 1).map((assignment: any) => {
-                                    const isCompleted = todayCardioLogs?.some(
-                                        (l: any) => l.assigned_cardio_id === assignment.id && l.status === 'completed'
-                                    )
-                                    return <CardioPlayer key={assignment.id} assignment={assignment} isCompleted={isCompleted} />
-                                })}
-                                {cardios.length > 1 && (
-                                    <div className="px-8 py-4 bg-zinc-900/30 border border-zinc-800/50 rounded-3xl flex items-center justify-between">
-                                        <span className="text-[10px] font-black text-zinc-600 uppercase tracking-widest">
-                                            Próximos Cardios: {cardios.length - 1} pendente(s)
-                                        </span>
-                                        <span className="text-[10px] font-black text-orange-500 uppercase tracking-widest italic animate-pulse">
-                                            Execute um por vez
-                                        </span>
-                                    </div>
-                                )}
-                            </div>
-                        ) : (
-                            <div className="bg-zinc-900/20 border border-zinc-800/50 border-dashed rounded-[2.5rem] py-16 flex flex-col items-center justify-center text-center space-y-4" suppressHydrationWarning>
-                                <div className="p-4 bg-zinc-900 rounded-full border border-zinc-800" suppressHydrationWarning>
-                                    <Activity className="w-8 h-8 text-zinc-700" />
-                                </div>
-                                <div className="space-y-1">
-                                    <p className="text-zinc-400 text-sm font-black uppercase tracking-tight italic">Nenhum cardio pendente</p>
-                                    <p className="text-zinc-600 text-[9px] font-bold uppercase tracking-widest max-w-[200px]">
-                                        Não há cardios atribuídos para este plano hoje.
-                                    </p>
-                                </div>
-                            </div>
-                        )}
+                        <CardioCard userId={user.id} />
                     </div>
 
-                    {/* Ergogenics Section */}
-                    {steroidUse && (
-                        <div className="space-y-6" suppressHydrationWarning>
-                            <div className="flex items-center justify-between px-2" suppressHydrationWarning>
-                                <h2 className="text-[12px] font-black text-zinc-100 flex items-center gap-2 uppercase tracking-[0.2em]">
-                                    <Sparkles className="w-4 h-4 text-amber-500" />
-                                    Ergogênicos do Dia
-                                </h2>
-                            </div>
-
-                            {todaysErgogenics.length > 0 ? (
-                                <div className="grid gap-6 md:grid-cols-2" suppressHydrationWarning>
-                                    {todaysErgogenics.map((erg: any) => (
-                                        <div key={erg.id} className="bg-zinc-900/40 border border-zinc-800/50 p-6 rounded-[2rem] backdrop-blur-sm space-y-4 hover:border-amber-500/30 transition-all duration-300" suppressHydrationWarning>
-                                            <div className="flex items-center justify-between" suppressHydrationWarning>
-                                                <div className="space-y-1" suppressHydrationWarning>
-                                                    <h3 className="text-lg font-black text-white italic uppercase tracking-tight line-clamp-1">
-                                                        {erg.name}
-                                                    </h3>
-                                                    <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
-                                                        {(erg.weekly_dosage / (erg.application_days?.length || 1)).toFixed(2)} {erg.unit}
-                                                    </p>
-                                                </div>
-                                                <div className="flex-shrink-0">
-                                                    <ErgogenicCheckButton
-                                                        studentId={user.id}
-                                                        ergogenicId={erg.id}
-                                                        initialChecked={loggedErgoIds.has(erg.id)}
-                                                    />
-                                                </div>
-                                            </div>
-                                            {erg.notes && (
-                                                <div className="pt-4 border-t border-zinc-800/50">
-                                                    <p className="text-[10px] text-zinc-400 font-medium italic line-clamp-2">
-                                                        "{erg.notes}"
-                                                    </p>
-                                                </div>
-                                            )}
-                                        </div>
-                                    ))}
-                                </div>
-                            ) : (
-                                <div className="bg-zinc-900/20 border border-zinc-800/50 border-dashed rounded-[2.5rem] py-16 flex flex-col items-center justify-center text-center space-y-4" suppressHydrationWarning>
-                                    <div className="p-4 bg-zinc-900 rounded-full border border-zinc-800" suppressHydrationWarning>
-                                        <Sparkles className="w-8 h-8 text-zinc-700" />
-                                    </div>
-                                    <div className="space-y-1">
-                                        <p className="text-zinc-400 text-sm font-black uppercase tracking-tight italic">Nenhuma aplicação hoje</p>
-                                        <p className="text-zinc-600 text-[9px] font-bold uppercase tracking-widest max-w-[200px]">
-                                            Curta seu dia de descanso dos ergogênicos.
-                                        </p>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    )}
+                    <ErgogenicsCard userId={user.id} />
                 </div>
 
-                {/* Sidebar (Diet & Info) */}
-                <div className="lg:col-span-4 space-y-10" suppressHydrationWarning>
-                    {/* Metrics Summary */}
-                    <div className="space-y-6" suppressHydrationWarning>
+                {/* Sidebar (Metrics & Diet) */}
+                <div className="lg:col-span-4 space-y-10">
+                    <div className="space-y-6">
                         <h2 className="text-[12px] font-black text-zinc-100 flex items-center gap-2 uppercase tracking-[0.2em] px-2">
                             <Activity className="w-4 h-4 text-orange-500" />
                             Seu Progresso
                         </h2>
-                        <div className="grid grid-cols-2 gap-4" suppressHydrationWarning>
-                            <div className="bg-zinc-900/30 border border-zinc-800/50 rounded-3xl p-5 space-y-1" suppressHydrationWarning>
-                                <p className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Peso</p>
-                                <div className="flex items-baseline gap-1">
-                                    <span className="text-2xl font-black text-white italic">{latestWeight || '--'}</span>
-                                    <span className="text-[10px] font-bold text-zinc-600 uppercase">kg</span>
-                                </div>
-                            </div>
-                            <div className="bg-zinc-900/30 border border-zinc-800/50 rounded-3xl p-5 space-y-1" suppressHydrationWarning>
-                                <p className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Gordura</p>
-                                <div className="flex items-baseline gap-1" suppressHydrationWarning>
-                                    <span className="text-2xl font-black text-white italic">{latestBF || '--'}</span>
-                                    <span className="text-[10px] font-bold text-zinc-600 uppercase">%</span>
-                                </div>
-                            </div>
-                        </div>
+                        <MetricsSummary userId={user.id} />
                     </div>
 
                     <div className="space-y-6">
@@ -549,19 +265,11 @@ export default async function StudentDashboard() {
                             <Utensils className="w-4 h-4 text-emerald-500" />
                             Sua Dieta
                         </h2>
-                        {diet ? (
-                            <DietAdherence diet={diet} />
-                        ) : (
-                            <div className="bg-zinc-900/30 border border-zinc-800/50 rounded-[2.5rem] p-8 text-center space-y-3">
-                                <Utensils className="w-8 h-8 text-zinc-700 mx-auto" />
-                                <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest leading-relaxed">
-                                    {trainerRel ? 'Seu personal ainda não enviou sua dieta.' : 'Você ainda não criou sua dieta.'}
-                                </p>
-                            </div>
-                        )}
+                        <DietCard userId={user.id} hasTrainer={!!trainerRel} />
                     </div>
                 </div>
             </div>
+
             <NotificationRequestModal />
             <StudentDashboardModals userId={user.id} showModal={showAutoTrainingModal} hasTrainer={!!trainerRel} />
         </div>
