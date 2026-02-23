@@ -49,8 +49,9 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-zinc-950`}
         suppressHydrationWarning
       >
-        <SplashManager />
-        {children}
+        <SplashManager>
+          {children}
+        </SplashManager>
         <Toaster />
         <PWAClient />
         <ForceReload />

@@ -3,27 +3,43 @@
 import { useState, useEffect } from 'react'
 import { SplashScreen } from '@/components/feature/shared/splash-screen'
 
-export function SplashManager() {
-    const [showSplash, setShowSplash] = useState(false)
+interface SplashManagerProps {
+    children: React.ReactNode
+}
+
+export function SplashManager({ children }: SplashManagerProps) {
+    const [view, setView] = useState<'none' | 'splash' | 'ready'>('none')
 
     useEffect(() => {
-        // We only want to show the splash on the "Cold Boot" (first load of the JS bundle)
-        // especially when in standalone mode (PWA)
-
-        const isStandalone = window.matchMedia('(display-mode: standalone)').matches
-        const isPWAUrl = window.location.search.includes('source=pwa')
-        const hasSeenSplash = sessionStorage.getItem('reptrail_splash_seen')
+        // Detect environment and session status
+        const isStandalone = typeof window !== 'undefined' && window.matchMedia('(display-mode: standalone)').matches
+        const isPWAUrl = typeof window !== 'undefined' && window.location.search.includes('source=pwa')
+        const hasSeenSplash = typeof window !== 'undefined' && sessionStorage.getItem('reptrail_splash_seen')
 
         // If it's PWA or first time in session
-        if ((isStandalone || isPWAUrl || !hasSeenSplash)) {
-            setShowSplash(true)
+        if (isStandalone || isPWAUrl || !hasSeenSplash) {
+            setView('splash')
             sessionStorage.setItem('reptrail_splash_seen', 'true')
+        } else {
+            setView('ready')
         }
     }, [])
 
-    if (!showSplash) return null
+    // 1. Initial state (before useEffect): Render black screen to block "Dashboard leak"
+    if (view === 'none') {
+        return <div className="fixed inset-0 bg-black z-[9999]" />
+    }
 
-    return (
-        <SplashScreen onFinish={() => setShowSplash(false)} />
-    )
+    // 2. Splash state: Show animation, keep children hidden to save CPU/lag
+    if (view === 'splash') {
+        return (
+            <>
+                <SplashScreen onFinish={() => setView('ready')} />
+                <div style={{ display: 'none' }}>{children}</div>
+            </>
+        )
+    }
+
+    // 3. Ready: High-fives all around
+    return <>{children}</>
 }

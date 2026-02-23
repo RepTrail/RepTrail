@@ -219,26 +219,26 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
             <Card className="bg-emerald-950/20 border-emerald-500/20 shadow-2xl rounded-[2.5rem] overflow-hidden backdrop-blur-sm transition-all duration-500 cursor-default">
                 <CardContent className="p-8 space-y-6">
                     <div className="flex items-center justify-between">
-                        <div className="space-y-1">
+                        <div className="space-y-2">
                             <div className="flex items-center gap-2">
-                                <Activity className="w-4 h-4 text-emerald-500" />
+                                <Activity className="w-5 h-5 text-emerald-500" />
                                 <h3 className="text-xl font-black text-white italic uppercase">{assignment.cardio?.name || 'Cardio'}</h3>
                             </div>
-                            <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-2">
-                                <span>{assignment.duration_minutes} min</span>
-                                <span>•</span>
-                                <span>Intensidade: {assignment.suggested_intensity}</span>
+                            <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+                                <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest bg-zinc-800/50 px-2 py-0.5 rounded-md border border-zinc-700/30">{assignment.duration_minutes} min</span>
+                                <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest bg-zinc-800/50 px-2 py-0.5 rounded-md border border-zinc-700/30 italic">{assignment.suggested_intensity}</span>
                                 {assignment.day_of_week !== undefined && (
-                                    <>
-                                        <span>•</span>
-                                        <span className="text-emerald-500/80">Programado: {["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"][assignment.day_of_week]}</span>
-                                    </>
+                                    <span className="text-[10px] font-bold text-emerald-500/80 uppercase tracking-widest bg-emerald-500/5 px-2 py-0.5 rounded-md border border-emerald-500/10 italic">
+                                        {["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"][assignment.day_of_week]}
+                                    </span>
                                 )}
-                            </p>
+                            </div>
                         </div>
-                        <div className="flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
-                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
-                            <span className="text-[8px] font-black text-emerald-500 uppercase tracking-widest">Concluído</span>
+                        <div className="flex-shrink-0">
+                            <div className="flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
+                                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                                <span className="text-[8px] font-black text-emerald-500 uppercase tracking-widest">Concluído</span>
+                            </div>
                         </div>
                     </div>
 
@@ -265,28 +265,28 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
     return (
         <Card className="bg-zinc-900/40 border-zinc-800/50 shadow-2xl rounded-[2.5rem] overflow-hidden backdrop-blur-sm border-t-zinc-700/10">
             <CardContent className="p-8 space-y-8">
-                <div className="flex items-center justify-between">
-                    <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                            <Activity className="w-4 h-4 text-orange-500" />
-                            <h3 className="text-xl font-black text-white italic uppercase">{assignment.cardio?.name || 'Cardio'}</h3>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="space-y-3">
+                        <div className="flex items-center gap-3">
+                            <div className="p-2 bg-orange-500/10 rounded-xl border border-orange-500/20">
+                                <Activity className="w-5 h-5 text-orange-500" />
+                            </div>
+                            <h3 className="text-2xl font-black text-white italic uppercase tracking-tighter">{assignment.cardio?.name || 'Cardio'}</h3>
                         </div>
-                        <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-2">
-                            <span>{assignment.duration_minutes} min</span>
-                            <span>•</span>
-                            <span>Intensidade: {assignment.suggested_intensity}</span>
+                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 ml-1">
+                            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest bg-zinc-800/50 px-2 py-0.5 rounded-md border border-zinc-700/30">{assignment.duration_minutes} min</span>
+                            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest bg-zinc-800/50 px-2 py-0.5 rounded-md border border-zinc-700/30 italic">{assignment.suggested_intensity}</span>
                             {assignment.day_of_week !== undefined && (
-                                <>
-                                    <span>•</span>
-                                    <span className="text-orange-500/80">Programado: {["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"][assignment.day_of_week]}</span>
-                                </>
+                                <span className="text-[10px] font-bold text-orange-500/80 uppercase tracking-widest bg-orange-500/5 px-2 py-0.5 rounded-md border border-orange-500/10 italic">
+                                    {["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"][assignment.day_of_week]}
+                                </span>
                             )}
-                        </p>
+                        </div>
                     </div>
                     {status !== 'idle' && (
-                        <div className="flex items-center gap-1.5 px-3 py-1 bg-orange-500/10 border border-orange-500/20 rounded-full animate-pulse">
-                            <div className="w-1.5 h-1.5 rounded-full bg-orange-500" />
-                            <span className="text-[8px] font-black text-orange-500 uppercase tracking-widest">Ativo</span>
+                        <div className="self-start sm:self-center flex items-center gap-2 px-4 py-1.5 bg-orange-500/10 border border-orange-500/20 rounded-full animate-pulse shadow-[0_0_20px_rgba(249,115,22,0.1)]">
+                            <div className="w-2 h-2 rounded-full bg-orange-500" />
+                            <span className="text-[10px] font-black text-orange-500 uppercase tracking-widest italic">Sessão Ativa</span>
                         </div>
                     )}
                 </div>
