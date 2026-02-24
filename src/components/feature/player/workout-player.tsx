@@ -91,8 +91,13 @@ export function WorkoutPlayer({
 
     // Helper to identify Bi-set/Tri-set groups
     const isBiSetMember = (ex: any) => {
-        const n = ex?.notes?.toUpperCase() || ''
-        return n.includes('BI-SET') || n.includes('CONJUGADO') || n.includes('SUPER-SET')
+        if (!ex) return false
+        const n = ex.notes?.toUpperCase() || ''
+        const title = ex.exercise?.name?.toUpperCase() || ''
+        const lowRest = ex.rest_seconds <= 15
+        const hasKeyword = n.includes('BI-SET') || n.includes('CONJUGADO') || n.includes('SUPER-SET') ||
+            title.includes('BI-SET') || title.includes('CONJUGADO') || title.includes('+')
+        return lowRest || hasKeyword
     }
 
     const findGroup = (index: number) => {
