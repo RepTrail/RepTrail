@@ -284,6 +284,24 @@ export async function toggleEliteStatus(userId: string, isElite: boolean) {
     return { success: true }
 }
 
+export async function toggleBillingExemption(userId: string, isExempt: boolean) {
+    const { supabase, userId: adminId } = await checkAdmin()
+    const { error } = await supabase.from('profiles').update({ is_billing_exempt: isExempt }).eq('id', userId)
+    if (error) return { error: error.message }
+
+    await supabase.from('admin_logs').insert({
+        admin_id: adminId,
+        action: 'toggle_billing_exempt',
+        target_id: userId,
+        details: { is_billing_exempt: isExempt }
+    })
+
+    revalidatePath('/admin')
+    revalidatePath('/dashboard/trainer', 'layout')
+    revalidatePath('/dashboard/trainer/plans')
+    return { success: true }
+}
+
 export async function grantEliteTrial(userId: string) {
     const { supabase, userId: adminId } = await checkAdmin()
 

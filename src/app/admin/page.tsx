@@ -3,7 +3,7 @@
 import { useState, useEffect, useTransition } from 'react'
 import {
     getAdminOverview, getAllTrainers, getAllUsers,
-    updateUserPlanTier, toggleEliteStatus, grantEliteTrial,
+    updateUserPlanTier, toggleEliteStatus, grantEliteTrial, toggleBillingExemption,
     getAllStoreProducts, toggleProductStatus, addStoreProduct, updateStoreProduct, deleteStoreProduct, fetchProductFromUrl,
     getAdminLogs, getTopProductsByClicks, getRecentStudentActivity,
     getPlanPricing, updatePlanPricing, deleteUser,
@@ -97,6 +97,17 @@ export default function AdminDashboardPage() {
             else {
                 toast({ title: !current ? 'Elite ativado!' : 'Elite removido' })
                 setTrainers(prev => prev.map(t => t.id === userId ? { ...t, is_elite: !current } : t))
+            }
+        })
+    }
+
+    async function handleExemptToggle(userId: string, current: boolean) {
+        startTransition(async () => {
+            const res = await toggleBillingExemption(userId, !current)
+            if (res.error) toast({ variant: 'destructive', title: 'Erro', description: res.error })
+            else {
+                toast({ title: !current ? 'Isenção ativada!' : 'Isenção removida' })
+                setTrainers(prev => prev.map(t => t.id === userId ? { ...t, is_billing_exempt: !current } : t))
             }
         })
     }
@@ -393,6 +404,7 @@ export default function AdminDashboardPage() {
                                             trainer={trainer}
                                             onPlanChange={(plan: string) => handlePlanChange(trainer.id, plan)}
                                             onEliteToggle={() => handleEliteToggle(trainer.id, trainer.is_elite)}
+                                            onExemptToggle={() => handleExemptToggle(trainer.id, trainer.is_billing_exempt)}
                                             onEliteTrial={() => handleEliteTrial(trainer.id)}
                                             onDelete={() => handleDeleteUser(trainer.id, trainer.full_name || trainer.email, true)}
                                             isPending={isPending}
@@ -605,7 +617,7 @@ function EmptyState({ label }: { label: string }) {
     )
 }
 
-function TrainerRow({ trainer, onPlanChange, onEliteToggle, onEliteTrial, onDelete, isPending }: any) {
+function TrainerRow({ trainer, onPlanChange, onEliteToggle, onExemptToggle, onEliteTrial, onDelete, isPending }: any) {
     const plans = ['on_demand']
     const planColors: Record<string, string> = {
         on_demand: 'text-orange-400',
@@ -665,6 +677,20 @@ function TrainerRow({ trainer, onPlanChange, onEliteToggle, onEliteTrial, onDele
                     ))}
                 </div>
                 {/* Removed Elite toggle and Trial Button for On-Demand model */}
+
+                {/* Exempt toggle */}
+                <button
+                    onClick={onExemptToggle}
+                    disabled={isPending}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border transition-all text-[9px] font-black uppercase tracking-widest ${trainer.is_billing_exempt
+                        ? 'bg-amber-500/20 border-amber-500/50 text-amber-500 hover:bg-amber-500/30'
+                        : 'bg-zinc-800 border-zinc-700 text-zinc-500 hover:text-white hover:border-zinc-500'
+                        }`}
+                    title={trainer.is_billing_exempt ? "Remover Isenção" : "Tornar Isento (VIP)"}
+                >
+                    <HeartHandshake className="w-3 h-3" />
+                    {trainer.is_billing_exempt ? 'Isento' : 'Isentar'}
+                </button>
 
                 {/* Delete Button */}
                 <button
