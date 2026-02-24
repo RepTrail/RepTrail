@@ -27,14 +27,13 @@ export default async function TrainerLayout({
     }
 
     // Fetch profile to know the role and plan status
-    const { data: profile, error: profileErr } = await supabase
+    const { data: profile } = await supabase
         .from('profiles')
         .select('role, full_name, avatar_url, plan_tier, elite_until')
         .eq('id', user.id)
         .single()
 
     // If not a trainer, they shouldn't be here. 
-    // We only redirect if we found a profile and it says 'student' or it's missing the trainer role.
     if (!profile || profile.role !== 'trainer') {
         redirect('/dashboard/student')
     }
@@ -45,17 +44,8 @@ export default async function TrainerLayout({
     const headerList = await headers()
     const pathname = headerList.get('x-pathname') || ''
 
-    const now = new Date()
-    const isEliteTrial = profile?.plan_tier === 'elite' && !!profile?.elite_until
-    const isTrialExpired = isEliteTrial && new Date(profile.elite_until) <= now
-
-    if (isTrialExpired) {
-        const { processExpiredTrial } = await import('@/actions/trainer-actions')
-        await processExpiredTrial(user.id)
-        redirect(pathname)
-    }
-
-    const hasPlan = !!profile?.plan_tier && profile.plan_tier !== 'none' && !isTrialExpired
+    // Paywall Check: If tier is 'none', they MUST be on the plans page
+    const hasPlan = !!profile?.plan_tier && profile.plan_tier !== 'none'
 
     if (!hasPlan && !pathname.includes('/plans')) {
         redirect('/dashboard/trainer/plans')
@@ -89,7 +79,6 @@ export default async function TrainerLayout({
             {/* Desktop Sidebar */}
             <aside className="hidden md:flex w-72 bg-zinc-900 border-r border-zinc-800 p-6 flex-col justify-between shadow-2xl z-20">
                 <div>
-                    {/* Logo Container */}
                     <div className="mb-10 flex items-center justify-start px-4">
                         <Link href="/">
                             <Logo size="md" color="emerald" />
@@ -152,17 +141,14 @@ export default async function TrainerLayout({
                 <MobileNavLink href="/dashboard/trainer/profile" icon={<User className="w-5 h-5" />} />
             </nav>
 
-            {/* Mobile Top Header */}
             <MobileHeader role="trainer" hideImportPdf={betaTesterMode} />
 
-            {/* Main Content */}
             <main className="flex-1 overflow-y-auto pt-24 md:pt-[50px] p-4 pb-32 md:pb-10 md:p-10 bg-zinc-950 text-zinc-100 scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent">
                 <div className="max-w-7xl mx-auto">
                     {children}
                 </div>
             </main>
 
-            <TrialWarningPopup eliteUntil={profile?.elite_until} />
         </div>
     )
 }

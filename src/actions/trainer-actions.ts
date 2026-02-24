@@ -305,7 +305,7 @@ export async function getTrainerTier(): Promise<'none' | 'start' | 'on_demand' |
         .eq('id', user.id)
         .single()
 
-    return (data?.plan_tier as 'none' | 'on_demand' | 'start' | 'pro' | 'elite') || 'on_demand'
+    return (data?.plan_tier as 'none' | 'on_demand' | 'start' | 'pro' | 'elite') || 'none'
 }
 
 export async function getEffectiveTier(): Promise<'none' | 'start' | 'on_demand' | 'pro' | 'elite'> {
@@ -319,7 +319,7 @@ export async function getEffectiveTier(): Promise<'none' | 'start' | 'on_demand'
         .eq('id', user.id)
         .single()
 
-    const tier = (profile?.plan_tier as 'none' | 'on_demand' | 'start' | 'pro' | 'elite') || 'on_demand'
+    const tier = (profile?.plan_tier as 'none' | 'on_demand' | 'start' | 'pro' | 'elite') || 'none'
 
     if (tier === 'on_demand') {
         const { count } = await supabase
@@ -682,34 +682,6 @@ export async function getPublicPlanPricing() {
     return result
 }
 
-export async function processExpiredTrial(userId: string) {
-    const supabase = await createClient()
-
-    // First verify it's actually expired to avoid race conditions or malicious calls
-    const { data: profile } = await supabase
-        .from('profiles')
-        .select('plan_tier, elite_until')
-        .eq('id', userId)
-        .single()
-
-    const now = new Date()
-    const isEliteTrial = profile?.plan_tier === 'elite' && !!profile?.elite_until
-    const isTrialExpired = isEliteTrial && new Date(profile.elite_until) <= now
-
-    if (isTrialExpired) {
-        console.log(`Trial expired for user ${userId}. Downgrading to on_demand...`)
-        await supabase
-            .from('profiles')
-            .update({
-                plan_tier: 'on_demand',
-                // We keep elite_until for history and display
-            })
-            .eq('id', userId)
-
-        revalidatePath('/dashboard', 'layout')
-        revalidatePath('/dashboard/trainer', 'layout')
-    }
-}
 
 export async function toggleStudentStatus(relationshipId: string, isActive: boolean) {
     const supabase = await createClient()
