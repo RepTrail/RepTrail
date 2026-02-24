@@ -101,9 +101,6 @@ function PodiumCard({ trainer, rank }: { trainer: any, rank: number }) {
                     </div>
 
                     <div className="flex items-center justify-center gap-2">
-                        <Badge variant="outline" className={`${tierColors[trainer.plan_tier]} text-[9px] font-black uppercase tracking-widest px-3 py-0.5 rounded-lg`}>
-                            {trainer.plan_tier}
-                        </Badge>
                         <div className="flex items-center gap-1.5 px-3 py-0.5 bg-amber-500/5 border border-amber-500/20 rounded-lg">
                             <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
                             <span className="text-xs font-black text-amber-500">{Number(trainer.rating || 0).toFixed(1)}</span>
@@ -163,10 +160,6 @@ function RankingRow({ trainer, rank }: { trainer: any, rank: number }) {
                         <div className="flex items-center gap-1.5 flex-shrink-0">
                             <Star className="w-3 h-3 text-amber-500/50 fill-amber-500/50" />
                             <span className="text-[9px] md:text-[11px] font-black text-zinc-500 tracking-widest uppercase">{Number(trainer.rating || 0).toFixed(1)} Rating</span>
-                        </div>
-                        <div className="flex items-center gap-1.5 flex-shrink-0">
-                            <ShieldCheck className="w-3 h-3 text-emerald-500/30" />
-                            <span className="text-[9px] md:text-[11px] font-black text-zinc-600 tracking-widest uppercase">{trainer.plan_tier} tier</span>
                         </div>
                     </div>
                 </div>

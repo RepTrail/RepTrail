@@ -104,9 +104,6 @@ function PodiumCard({ trainer, rank }: { trainer: any, rank: number }) {
                         {trainer.full_name || 'Treinador sem nome'}
                     </h3>
                     <div className="flex items-center justify-center gap-2">
-                        <Badge variant="outline" className={`${tierColors[trainer.plan_tier] || 'bg-zinc-800 text-zinc-400 border-zinc-700'} text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full`}>
-                            {trainer.plan_tier === 'on_demand' ? 'On Demand' : trainer.plan_tier === 'elite' ? 'Elite Trail' : trainer.plan_tier}
-                        </Badge>
                         <div className="flex items-center gap-1">
                             <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
                             <span className="text-xs font-bold text-zinc-300">{trainer.rating}</span>
@@ -170,9 +167,6 @@ function RankingRow({ trainer, rank }: { trainer: any, rank: number }) {
                         {trainer.full_name}
                     </p>
                     <div className="flex items-center gap-3">
-                        <span className={`text-[9px] font-black uppercase tracking-widest ${tierColors[trainer.plan_tier] || 'text-zinc-500'}`}>
-                            {trainer.plan_tier === 'on_demand' ? 'On Demand' : trainer.plan_tier === 'elite' ? 'Elite Trail' : trainer.plan_tier}
-                        </span>
                         <div className="flex items-center gap-1">
                             <Star className="w-2.5 h-2.5 text-amber-500/50 fill-amber-500/50" />
                             <span className="text-[10px] font-bold text-zinc-500">{trainer.rating}</span>

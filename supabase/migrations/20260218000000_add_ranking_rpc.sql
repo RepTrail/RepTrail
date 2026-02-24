@@ -26,6 +26,8 @@ BEGIN
     FROM 
         profiles p
     WHERE 
-        p.role = 'trainer';
+        p.role = 'trainer'
+        AND p.plan_tier IS NOT NULL
+        AND p.plan_tier <> 'none';
 END;
 $$;

@@ -236,25 +236,27 @@ export async function getTrainerRanking() {
             'elite': 500
         }
 
-        const ranking = trainers.map((t: any) => {
-            const studentCount = Number(t.student_count || 0)
-            const rating = Number(t.rating || 0)
+        const ranking = trainers
+            .filter((t: any) => t.plan_tier && t.plan_tier !== 'none')
+            .map((t: any) => {
+                const studentCount = Number(t.student_count || 0)
+                const rating = Number(t.rating || 0)
 
-            // New Score Formula: (Students * 10) + (Rating * 50)
-            // No more plan_tier bias.
-            const score = (studentCount * 10) + (rating * 50)
+                // New Score Formula: (Students * 10) + (Rating * 50)
+                // No more plan_tier bias.
+                const score = (studentCount * 10) + (rating * 50)
 
-            return {
-                id: t.trainer_id,
-                full_name: t.full_name || 'Treinador sem nome',
-                avatar_url: t.avatar_url,
-                plan_tier: t.plan_tier, // Keep for UI but it doesn't affect score
-                rating: isNaN(rating) ? 0 : rating,
-                studentCount,
-                score: isNaN(score) ? 0 : score,
-                trainer_code: t.trainer_code ? String(t.trainer_code).trim() : null
-            }
-        })
+                return {
+                    id: t.trainer_id,
+                    full_name: t.full_name || 'Treinador sem nome',
+                    avatar_url: t.avatar_url,
+                    plan_tier: t.plan_tier, // Keep for UI but it doesn't affect score
+                    rating: isNaN(rating) ? 0 : rating,
+                    studentCount,
+                    score: isNaN(score) ? 0 : score,
+                    trainer_code: t.trainer_code ? String(t.trainer_code).trim() : null
+                }
+            })
 
         return ranking
             .sort((a: any, b: any) => b.score - a.score)

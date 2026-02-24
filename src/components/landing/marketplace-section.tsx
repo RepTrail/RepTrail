@@ -90,16 +90,10 @@ export function MarketplaceSection({ initialTrainers }: MarketplaceSectionProps)
                                 </Avatar>
 
                                 <div className="flex flex-col items-end gap-1">
-                                    {trainer.plan_tier === 'elite' ? (
-                                        <div className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 px-2.5 py-1 rounded text-[10px] font-black uppercase tracking-widest flex items-center gap-1 shadow-[0_0_10px_rgba(16,185,129,0.15)]">
-                                            <ShieldCheck className="w-3 h-3" />
-                                            Elite
-                                        </div>
-                                    ) : (
-                                        <div className="bg-zinc-800/50 border border-zinc-700/50 text-zinc-500 px-2.5 py-1 rounded text-[10px] font-black uppercase tracking-widest flex items-center gap-1">
-                                            Pro
-                                        </div>
-                                    )}
+                                    <div className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 px-2.5 py-1 rounded text-[10px] font-black uppercase tracking-widest flex items-center gap-1 shadow-[0_0_10px_rgba(16,185,129,0.15)]">
+                                        <ShieldCheck className="w-3 h-3" />
+                                        Verificado
+                                    </div>
 
                                     <div className="flex items-center gap-1 text-[10px] font-bold text-zinc-500">
                                         <Users className="w-3 h-3" />
