@@ -371,13 +371,7 @@ export function WorkoutPlayer({
     }
 
     const handleSaveExercise = async () => {
-        // Validate inputs
-        if (!exerciseNote.trim()) {
-            toast({ variant: 'destructive', title: 'Anotação Obrigatória', description: 'Por favor, registre como foi o exercício.' })
-            return
-        }
-
-        // Validate that all sets have inputs
+        // Validate that all sets have inputs (Mandatory Load Recording)
         for (let i = 0; i < setsLog.length; i++) {
             if (!summaryInputs[i]?.weight || !summaryInputs[i]?.reps) {
                 toast({ variant: 'destructive', title: 'Dados Incompletos', description: 'Preencha carga e repetições de todas as séries.' })
