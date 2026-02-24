@@ -4,9 +4,6 @@
 import webpush from 'web-push'
 import { createClient } from '@/lib/supabase/server'
 
-const publicVapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!
-const privateVapidKey = process.env.STRIPE_SECRET_KEY! // WAIT, NO. They need a STRIPE_PRIVATE_VAPID_KEY
-
 // Initial config
 if (process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_VAPID_KEY) {
     webpush.setVapidDetails(

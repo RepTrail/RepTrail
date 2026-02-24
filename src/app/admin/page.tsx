@@ -9,8 +9,10 @@ import {
     getPlanPricing, updatePlanPricing, deleteUser,
     getOperationalCosts
 } from '@/actions/admin-actions'
-import { getAdminAffiliates } from '@/actions/admin-affiliate-actions'
+import { getAdminAffiliates, getAdminPayouts } from '@/actions/admin-affiliate-actions'
 import { AffiliatesManagement } from '@/components/feature/admin/affiliates-management'
+import { PayoutsManagement } from '@/components/feature/admin/payouts-management'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
     BarChart3, Users, CreditCard, ShoppingBag, TrendingUp,
     ArrowUpRight, Users2, Settings, Package, Trophy,
@@ -33,6 +35,7 @@ export default function AdminDashboardPage() {
     const [trainers, setTrainers] = useState<any[]>([])
     const [students, setStudents] = useState<any[]>([])
     const [affiliates, setAffiliates] = useState<any[]>([])
+    const [payouts, setPayouts] = useState<any[]>([])
     const [products, setProducts] = useState<any[]>([])
     const [logs, setLogs] = useState<any[]>([])
     const [topProducts, setTopProducts] = useState<any[]>([])
@@ -51,11 +54,12 @@ export default function AdminDashboardPage() {
 
     async function loadAll() {
         setLoading(true)
-        const [s, t, u, aff, p, l, tp, af, costs] = await Promise.all([
+        const [s, t, u, aff, pay, p, l, tp, af, costs] = await Promise.all([
             getAdminOverview(),
             getAllTrainers(),
             getAllUsers(),
             getAdminAffiliates(),
+            getAdminPayouts(),
             getAllStoreProducts(),
             getAdminLogs(),
             getTopProductsByClicks(),
@@ -66,6 +70,7 @@ export default function AdminDashboardPage() {
         setTrainers(t)
         setStudents(u)
         setAffiliates(aff.data || [])
+        setPayouts(pay.data || [])
         setProducts(p)
         setLogs(l)
         setTopProducts(tp)
@@ -400,12 +405,27 @@ export default function AdminDashboardPage() {
 
                     {/* AFFILIATES TAB */}
                     {tab === 'affiliates' && (
-                        <div className="space-y-6">
-                            <p className="text-[10px] font-black text-zinc-600 uppercase tracking-widest">
-                                Gerencie comissões individualizadas e atribuições de alunos.
-                            </p>
-                            <AffiliatesManagement initialAffiliates={affiliates} allUsers={students} />
-                        </div>
+                        <Tabs defaultValue="list" className="w-full">
+                            <TabsList className="bg-zinc-900 border border-zinc-800 p-1 mb-6">
+                                <TabsTrigger value="list" className="text-xs font-black uppercase tracking-widest px-6 data-[state=active]:bg-zinc-800 data-[state=active]:text-white data-[state=active]:shadow-xl">
+                                    Afiliados
+                                </TabsTrigger>
+                                <TabsTrigger value="payouts" className="text-xs font-black uppercase tracking-widest px-6 data-[state=active]:bg-emerald-500/20 data-[state=active]:text-emerald-500 data-[state=active]:shadow-xl relative overflow-visible">
+                                    Saques PIX
+                                    {payouts.filter(p => p.status === 'requested' || p.status === 'pending').length > 0 && (
+                                        <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-amber-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(245,158,11,0.5)]" />
+                                    )}
+                                </TabsTrigger>
+                            </TabsList>
+
+                            <TabsContent value="list" className="mt-0 outline-none">
+                                <AffiliatesManagement initialAffiliates={affiliates} allUsers={students} />
+                            </TabsContent>
+
+                            <TabsContent value="payouts" className="mt-0 outline-none">
+                                <PayoutsManagement initialPayouts={payouts} />
+                            </TabsContent>
+                        </Tabs>
                     )}
 
                     {/* STUDENTS TAB */}

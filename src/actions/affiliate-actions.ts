@@ -235,6 +235,7 @@ export async function requestPayout(amount: number, method: string, details: str
         .eq('id', user.id)
 
     revalidatePath('/dashboard/affiliate')
+    revalidatePath('/dashboard/affiliate/earnings')
     return { success: true }
 }
 

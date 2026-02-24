@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Upload, BarChart3, Users, Zap, CheckCircle } from 'lucide-react'
-import { formatPrice, STRIPE_PRICES } from '@/lib/stripe-config'
 
 interface AutoTrainingOnboardingModalProps {
     isOpen: boolean
@@ -113,7 +112,7 @@ export function AutoTrainingOnboardingModal({ isOpen, onAccept, onReject }: Auto
 
                     <div className="p-4 rounded-2xl bg-zinc-800/30 border border-zinc-700/50 space-y-3">
                         <p className="text-zinc-400 text-sm">
-                            Após os 7 dias de teste, você pode continuar com um plano de <span className="font-black text-orange-500">{formatPrice(STRIPE_PRICES.AUTO_TRAINING_MONTHLY.amount)}/mês</span> ou conectar-se com um personal trainer da plataforma.
+                            Após os 7 dias de teste, você pode continuar com um plano de <span className="font-black text-orange-500">R$ 10,90/mês</span> ou conectar-se com um personal trainer da plataforma.
                         </p>
                     </div>
 

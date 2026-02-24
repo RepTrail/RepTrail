@@ -1,4 +1,4 @@
-import { stripe } from '@/lib/stripe'
+// asaas success page doesn't necessarily need session_id
 import { redirect } from 'next/navigation'
 import { CheckCircle, ArrowRight, Crown, Sparkles, Zap, Activity } from 'lucide-react'
 import Link from 'next/link'
@@ -9,30 +9,9 @@ const tierInfo: Record<string, { name: string; icon: any; color: string; descrip
     elite: { name: 'Elite', icon: Crown, color: 'text-amber-400', description: 'Badge Elite e prioridade no ranking ativados!' },
 }
 
-export default async function PlanSuccessPage({
-    searchParams,
-}: {
-    searchParams: Promise<{ session_id?: string }>
-}) {
-    const { session_id } = await searchParams
-
-    if (!session_id) {
-        redirect('/dashboard/trainer/plans')
-    }
-
-    let tier = 'pro'
-    let customerEmail = ''
-
-    try {
-        const session = await stripe.checkout.sessions.retrieve(session_id)
-        tier = session.metadata?.tier || 'pro'
-        customerEmail = session.customer_details?.email || ''
-    } catch (e) {
-        // Se a sessão não existir, redireciona
-        redirect('/dashboard/trainer/plans')
-    }
-
-    const info = tierInfo[tier] || tierInfo.pro
+export default async function PlanSuccessPage() {
+    // We can assume success if they reached here after asaas redirect
+    const info = tierInfo.on_demand
     const Icon = info.icon
 
     return (
@@ -62,11 +41,6 @@ export default async function PlanSuccessPage({
                     <p className="text-zinc-500 text-sm">
                         {info.description}
                     </p>
-                    {customerEmail && (
-                        <p className="text-zinc-600 text-xs">
-                            Recibo enviado para <span className="text-zinc-400">{customerEmail}</span>
-                        </p>
-                    )}
                 </div>
 
                 {/* CTA */}

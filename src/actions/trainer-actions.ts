@@ -137,7 +137,7 @@ export async function getTrainerProfile() {
         .eq('id', user.id)
         .single()
 
-    console.log(`[GET PROFILE] ${user.id} - cancel_at_period_end:`, data?.stripe_cancel_at_period_end)
+    console.log(`[GET PROFILE] ${user.id} - asaas_subscription_id:`, data?.asaas_subscription_id)
 
     return data
 }

@@ -143,6 +143,8 @@
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    /* Force pointer events to be active for navigation elements */
+    pointer-events: auto !important;
   }
 }
 

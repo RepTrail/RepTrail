@@ -56,7 +56,7 @@ export default async function TrainerProfilePage() {
                     Gerencie sua identidade e veja seu progresso como treinador.
                 </p>
                 <div className="text-[10px] text-zinc-800 font-mono mt-2">
-                    DEBUG: {JSON.stringify({ c: profile?.stripe_cancel_at_period_end, e: profile?.stripe_current_period_end })}
+                    DEBUG: {JSON.stringify({ s: profile?.asaas_subscription_id, t: profile?.asaas_billing_type })}
                 </div>
             </div>
 
@@ -115,7 +115,7 @@ export default async function TrainerProfilePage() {
                         </CardContent>
                     </Card>
 
-                    {/* ASSINATURA & FATURAMENTO - REDESIGNED PER REQUEST */}
+                    {/* ASSINATURA & FATURAMENTO */}
                     <Card className="bg-zinc-950 border-zinc-800/50 shadow-2xl rounded-[2rem] overflow-hidden group relative text-left">
                         <CardHeader className="bg-zinc-900/40 border-b border-zinc-900/50 py-5 relative z-10">
                             <CardTitle className="text-xs font-black text-purple-500 flex items-center gap-2 uppercase tracking-[0.2em]">
@@ -128,13 +128,11 @@ export default async function TrainerProfilePage() {
                                 <div className="flex justify-between items-end pb-4 border-b border-zinc-900/50">
                                     <div className="space-y-1">
                                         <div className="text-[10px] font-black text-zinc-600 uppercase tracking-widest leading-none text-left">Status Atual</div>
-                                        <div className={`text-lg font-black italic uppercase tracking-tighter ${profile?.plan_tier && profile.plan_tier !== 'none' ? (profile?.stripe_cancel_at_period_end ? 'text-orange-500' : 'text-emerald-500') : 'text-zinc-600'}`}>
-                                            {profile?.plan_tier && profile.plan_tier !== 'none'
-                                                ? (profile?.stripe_cancel_at_period_end ? 'Cancelamento Agendado' : 'Plano On Demand Ativo')
-                                                : 'Plano Inativo'}
+                                        <div className={`text-lg font-black italic uppercase tracking-tighter ${profile?.asaas_subscription_id ? 'text-emerald-500' : 'text-zinc-600'}`}>
+                                            {profile?.asaas_subscription_id ? 'Plano Ativo' : 'Plano Inativo'}
                                         </div>
                                     </div>
-                                    {profile?.plan_tier && profile.plan_tier !== 'none' && !profile?.stripe_cancel_at_period_end && (
+                                    {profile?.asaas_subscription_id && (
                                         <div className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-[9px] font-black text-emerald-500 uppercase tracking-widest animate-pulse">
                                             Válido
                                         </div>
@@ -143,7 +141,7 @@ export default async function TrainerProfilePage() {
 
                                 <div className="space-y-2 text-left w-full pt-1">
                                     <div className="flex items-center gap-2">
-                                        <div className={`w-1.5 h-1.5 rounded-full ${profile?.stripe_cancel_at_period_end ? 'bg-orange-500' : 'bg-purple-500'}`} />
+                                        <div className={`w-1.5 h-1.5 rounded-full ${profile?.asaas_subscription_id ? 'bg-purple-500' : 'bg-zinc-800'}`} />
                                         <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider">
                                             Ciclo On Demand Mensal
                                         </p>
@@ -151,18 +149,15 @@ export default async function TrainerProfilePage() {
                                     <div className="flex items-center gap-2">
                                         <div className="w-1.5 h-1.5 rounded-full bg-zinc-800" />
                                         <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider text-left">
-                                            Gestão via Stripe Billing
+                                            Pagamento Seguro via Asaas
                                         </p>
                                     </div>
                                 </div>
                             </div>
 
-                            {profile?.plan_tier && profile.plan_tier !== 'none' ? (
+                            {profile?.asaas_subscription_id ? (
                                 <div className="w-full">
-                                    <CancelSubscriptionButton
-                                        isCancelled={profile?.stripe_cancel_at_period_end}
-                                        periodEnd={profile?.stripe_current_period_end}
-                                    />
+                                    <CancelSubscriptionButton />
                                 </div>
                             ) : (
                                 <Link href="/dashboard/trainer/plans" className="w-full">
@@ -174,9 +169,8 @@ export default async function TrainerProfilePage() {
                             )}
 
                             <div className="flex items-center gap-2 pt-2 grayscale opacity-30 hover:grayscale-0 hover:opacity-100 transition-all cursor-default">
-                                <span className="text-[8px] font-bold text-zinc-500 uppercase tracking-[0.2em]">Secured by</span>
-                                <CreditCard className="w-3 h-3 text-white" />
-                                <span className="text-[8px] font-black text-white uppercase tracking-tighter">Stripe</span>
+                                <span className="text-[8px] font-bold text-zinc-500 uppercase tracking-[0.2em]">Faturamento por</span>
+                                <span className="text-[10px] font-black text-white italic uppercase tracking-tighter">Asaas</span>
                             </div>
                         </CardContent>
                     </Card>

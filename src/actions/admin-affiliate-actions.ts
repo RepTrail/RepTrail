@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { createAsaasTransfer } from './asaas-actions'
 
 /** Get full list of affiliates for admin panel */
 export async function getAdminAffiliates() {
@@ -77,6 +78,7 @@ export async function getAdminAffiliates() {
             affiliate_token: a.affiliate_token,
             affiliate_balance: a.affiliate_balance || 0,
             commission_rate: a.commission_rate || 10,
+            created_at: a.created_at,
             formatted_created_at: new Date(a.created_at).toLocaleDateString('pt-BR'),
             total_referrals: totalReferrals,
             active_referrals: activeReferralsCount,
@@ -202,6 +204,15 @@ export async function toggleAffiliateStatus(userId: string, isAffiliate: boolean
     return { success: true }
 }
 
+function getPixType(key: string): 'CPF' | 'CNPJ' | 'EMAIL' | 'PHONE' | 'EVP' {
+    const clean = key.replace(/\D/g, '')
+    if (key.includes('@')) return 'EMAIL'
+    if (clean.length === 11) return 'CPF'
+    if (clean.length === 14) return 'CNPJ'
+    if (clean.length > 10 && clean.length < 16) return 'PHONE'
+    return 'EVP'
+}
+
 /** Obter solicitações de saque dos afiliados */
 export async function getAdminPayouts() {
     const supabase = await createClient()
@@ -232,16 +243,35 @@ export async function updatePayoutStatus(payoutId: string, status: 'completed' |
     const { data: profile } = await supabase.from('profiles').select('is_admin').eq('id', user?.id).single()
     if (!profile?.is_admin) return { error: 'Unauthorized' }
 
-    // Obter dados do saque para caso de rejeição (estornar saldo)
+    // Obter dados do saque
     const { data: payout } = await supabase
         .from('affiliate_payouts')
-        .select('affiliate_id, amount, status')
+        .select('affiliate_id, amount, status, payout_details')
         .eq('id', payoutId)
         .single()
 
     if (!payout) return { error: 'Saque não encontrado' }
     if (payout.status !== 'requested' && payout.status !== 'pending') {
         return { error: 'Este saque já foi processado' }
+    }
+
+    // Se for completar, tentar fazer a transferência real via Asaas primeiro
+    if (status === 'completed') {
+        const detailsValue = (payout.payout_details as any)?.details || ""
+        if (!detailsValue) {
+            return { error: 'Detalhes do saque (Chave PIX) não encontrados' }
+        }
+
+        const transferRes = await createAsaasTransfer({
+            amount: payout.amount,
+            pixAddressKey: detailsValue,
+            pixAddressKeyType: getPixType(detailsValue),
+            description: `Saque Afiliado RepTrail - ID ${payoutId.substring(0, 8)}`
+        })
+
+        if (!transferRes.success) {
+            return { error: `Erro no Asaas: ${transferRes.error}` }
+        }
     }
 
     const { error } = await supabase
@@ -268,6 +298,7 @@ export async function updatePayoutStatus(payoutId: string, status: 'completed' |
     }
 
     revalidatePath('/admin/dashboard/affiliates')
+    revalidatePath('/dashboard/affiliate')
     revalidatePath('/dashboard/affiliate/earnings')
     return { success: true }
 }

@@ -2,8 +2,8 @@
 
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { Check, Users, Zap, ArrowRight, Sparkles } from 'lucide-react'
-import { createCheckoutSession } from "@/actions/stripe-actions"
+import { Check, Users, Zap, ArrowRight, Sparkles, CreditCard, QrCode, FileText } from 'lucide-react'
+import { createAsaasSubscription } from "@/actions/asaas-actions"
 import { useToast } from "@/hooks/use-toast"
 
 const FREE_LIMIT = 5
@@ -24,31 +24,19 @@ export function PlansClient({ currentTier, studentCount }: PlansClientProps) {
     const billableStudents = Math.max(0, simStudents - FREE_LIMIT)
     const monthlyTotal = billableStudents * PRICE_PER_STUDENT
 
-    const handleSubscribe = async () => {
+    const handleSubscribeAsaas = async (type: 'PIX' | 'BOLETO' | 'CREDIT_CARD') => {
         setLoading(true)
-
         toast({
-            title: "Processando...",
-            description: "Redirecionando para o pagamento seguro...",
+            title: "Gerando pagamento...",
+            description: `Aguarde um instante enquanto preparamos seu checkout via ${type === 'PIX' ? 'Pix' : type === 'BOLETO' ? 'Boleto' : 'Cartão'}...`
         })
-
-        const res = await createCheckoutSession('on_demand', 'monthly', studentCount)
-
+        const res = await createAsaasSubscription('on_demand', type)
         setLoading(false)
 
-        if ('url' in res && res.url) {
-            window.location.href = res.url
-        } else if ('isMock' in res && res.isMock) {
-            toast({
-                title: "Stripe ainda não configurada",
-                description: "Configure as chaves no painel Admin → Credenciais.",
-            })
-        } else if ('error' in res && res.error) {
-            toast({
-                variant: 'destructive',
-                title: 'Erro no checkout',
-                description: res.error,
-            })
+        if (res.success && res.invoiceUrl) {
+            window.location.href = res.invoiceUrl
+        } else if (res.error) {
+            toast({ variant: 'destructive', title: 'Erro no Asaas', description: res.error })
         }
     }
 
@@ -179,24 +167,40 @@ export function PlansClient({ currentTier, studentCount }: PlansClientProps) {
                             <span className="text-emerald-400 font-bold text-sm">Plano ativo — você está sendo cobrado conforme o uso</span>
                         </div>
                     ) : (
-                        <Button
-                            onClick={handleSubscribe}
-                            disabled={loading}
-                            className="w-full h-14 rounded-2xl bg-white hover:bg-zinc-100 text-zinc-950 font-black uppercase tracking-widest text-sm gap-3 transition-all hover:scale-[1.02] active:scale-[0.98]"
-                        >
-                            {loading ? (
-                                <>Processando...</>
-                            ) : (
-                                <>
-                                    Começar Grátis
-                                    <ArrowRight className="w-5 h-5" />
-                                </>
-                            )}
-                        </Button>
+                        <div className="flex flex-col gap-4">
+                            <Button
+                                onClick={() => handleSubscribeAsaas('CREDIT_CARD')}
+                                disabled={loading}
+                                className="w-full h-14 rounded-2xl bg-white hover:bg-zinc-100 text-zinc-950 font-black uppercase tracking-widest text-sm gap-3 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                            >
+                                <CreditCard className="w-5 h-5" />
+                                Cartão de Crédito
+                            </Button>
+                            <div className="grid grid-cols-2 gap-4">
+                                <Button
+                                    onClick={() => handleSubscribeAsaas('PIX')}
+                                    disabled={loading}
+                                    variant="outline"
+                                    className="h-12 rounded-xl border-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-800 font-black uppercase tracking-widest text-[10px] gap-2 transition-all"
+                                >
+                                    <QrCode className="w-4 h-4 text-emerald-500" />
+                                    Pix instantâneo
+                                </Button>
+                                <Button
+                                    onClick={() => handleSubscribeAsaas('BOLETO')}
+                                    disabled={loading}
+                                    variant="outline"
+                                    className="h-12 rounded-xl border-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-800 font-black uppercase tracking-widest text-[10px] gap-2 transition-all"
+                                >
+                                    <FileText className="w-4 h-4" />
+                                    Boleto Bancário
+                                </Button>
+                            </div>
+                        </div>
                     )}
 
                     <p className="text-center text-zinc-600 text-xs">
-                        Sem taxa de setup · Cancele quando quiser · Cobrado automaticamente todo mês
+                        Sem taxa de setup · Cancele quando quiser · Checkout Seguro via Asaas
                     </p>
                 </div>
             </div>
@@ -204,3 +208,4 @@ export function PlansClient({ currentTier, studentCount }: PlansClientProps) {
         </div>
     )
 }
+

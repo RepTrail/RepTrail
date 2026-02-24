@@ -1,28 +1,7 @@
-import { stripe } from '@/lib/stripe'
-import { redirect } from 'next/navigation'
 import { CheckCircle, ArrowRight, Dumbbell } from 'lucide-react'
 import Link from 'next/link'
 
-export default async function StudentAutoTrainingSuccessPage({
-    searchParams,
-}: {
-    searchParams: Promise<{ session_id?: string }>
-}) {
-    const { session_id } = await searchParams
-
-    if (!session_id) {
-        redirect('/dashboard/student/plans')
-    }
-
-    let customerEmail = ''
-
-    try {
-        const session = await stripe.checkout.sessions.retrieve(session_id)
-        customerEmail = session.customer_details?.email || ''
-    } catch {
-        redirect('/dashboard/student/plans')
-    }
-
+export default async function StudentAutoTrainingSuccessPage() {
     return (
         <div className="min-h-screen bg-zinc-950 flex items-center justify-center p-6">
             <div className="max-w-lg w-full text-center space-y-10">
@@ -44,11 +23,6 @@ export default async function StudentAutoTrainingSuccessPage({
                     <p className="text-zinc-400 text-lg">
                         Seu plano <span className="font-black text-emerald-400">Auto-Training</span> foi ativado.
                     </p>
-                    {customerEmail && (
-                        <p className="text-zinc-600 text-xs">
-                            Recibo enviado para <span className="text-zinc-400">{customerEmail}</span>
-                        </p>
-                    )}
                 </div>
 
                 <Link

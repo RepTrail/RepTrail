@@ -3,8 +3,8 @@ import { redirect } from 'next/navigation'
 import { Dumbbell, CreditCard, Sparkles, Search, Check, Zap, ArrowRight, ShieldCheck } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { createStudentAutoTrainingCheckoutSession } from '@/actions/stripe-actions'
 import { CancelSubscriptionButton } from '@/components/feature/subscription/cancel-subscription-button'
+import { StudentPaymentButtons } from '@/components/feature/student/payment-buttons'
 
 export const dynamic = 'force-dynamic'
 
@@ -16,7 +16,7 @@ export default async function StudentPlansPage() {
 
     const { data: profile } = await supabase
         .from('profiles')
-        .select('auto_training_status, auto_training_trial_end, stripe_cancel_at_period_end, stripe_current_period_end')
+        .select('auto_training_status, auto_training_trial_end, asaas_subscription_id')
         .eq('id', user.id)
         .single()
 
@@ -59,7 +59,7 @@ export default async function StudentPlansPage() {
                 `}>
                     {isActive && (
                         <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-emerald-500 text-zinc-950 font-black uppercase tracking-widest text-[10px] py-1.5 px-4 rounded-full shadow-lg">
-                            {profile?.stripe_cancel_at_period_end ? 'Ciclo em Encerramento' : 'Plano Atual Ativo'}
+                            Plano Atual Ativo
                         </div>
                     )}
                     <h3 className="text-2xl font-black italic uppercase flex items-center gap-3">
@@ -82,28 +82,20 @@ export default async function StudentPlansPage() {
 
                     {isActive ? (
                         <div className="space-y-4">
-                            <div className={`w-full py-4 rounded-xl flex flex-col items-center justify-center text-center px-4 ${profile?.stripe_cancel_at_period_end ? 'bg-orange-500/10 border border-orange-500/20' : 'bg-zinc-950 border border-emerald-500/10'}`}>
-                                <span className={`text-[10px] font-black uppercase tracking-widest ${profile?.stripe_cancel_at_period_end ? 'text-orange-500' : 'text-emerald-500'}`}>
-                                    {profile?.stripe_cancel_at_period_end ? 'Renovação Inativa' : 'Plano Ativo'}
+                            <div className="w-full py-4 rounded-xl flex flex-col items-center justify-center text-center px-4 bg-zinc-950 border border-emerald-500/10">
+                                <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500">
+                                    Plano Ativo
                                 </span>
                                 <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest mt-1">
-                                    {profile?.stripe_cancel_at_period_end ? 'Encerramento Agendado' : 'Cobrança Mensal no Stripe'}
+                                    Assinatura via Asaas
                                 </span>
                             </div>
                             <div className="flex justify-center w-full">
-                                <CancelSubscriptionButton
-                                    isCancelled={profile?.stripe_cancel_at_period_end}
-                                    periodEnd={profile?.stripe_current_period_end}
-                                />
+                                <CancelSubscriptionButton />
                             </div>
                         </div>
                     ) : (
-                        <form action={createStudentAutoTrainingCheckoutSession}>
-                            <Button className="w-full h-14 font-black uppercase tracking-widest bg-white text-zinc-950 hover:bg-emerald-500 hover:text-white transition-all rounded-2xl shadow-xl">
-                                <Zap className="w-4 h-4 mr-2" />
-                                Assinar Agora
-                            </Button>
-                        </form>
+                        <StudentPaymentButtons />
                     )}
                 </div>
 
@@ -138,7 +130,7 @@ export default async function StudentPlansPage() {
             <div className="flex items-center justify-center gap-8 text-center opacity-30 hover:opacity-100 transition-opacity pb-8">
                 <div className="flex items-center gap-2">
                     <ShieldCheck className="w-4 h-4" />
-                    <span className="text-[10px] font-black uppercase tracking-widest">Segurança Stripe</span>
+                    <span className="text-[10px] font-black uppercase tracking-widest">Pagamento Seguro</span>
                 </div>
                 <div className="flex items-center gap-2">
                     <CreditCard className="w-4 h-4" />

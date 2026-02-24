@@ -39,8 +39,8 @@ export async function getAdminOverview() {
             if (s.trainer_id) trainerStudentCounts[s.trainer_id] = (trainerStudentCounts[s.trainer_id] || 0) + 1
         })
 
-        const prices: any = { start: 49.90, pro: 149.90, elite: 299.90, on_demand: 0 }
-        const usageRules: any = { on_demand: { limit: 5, price_per_extra: 20 } } // Default logic
+        const prices: any = { on_demand: 0 }
+        const usageRules: any = { on_demand: { limit: 5, price_per_extra: 10.90 } } // New model: 10.90 per student > 5
 
         let monthlySubsRevenue = 0
         let totalSubsRevenue = 0
@@ -53,8 +53,6 @@ export async function getAdminOverview() {
             // Check for active trial
             const isTrialActive = t.elite_until && new Date(t.elite_until) > new Date()
 
-            console.log(`Trainer ${t.id} (${t.plan_tier}) | EliteUntil: ${t.elite_until} | Trial: ${isTrialActive}`)
-
             // If trial is active, subscription revenue is 0
             if (isTrialActive) {
                 trialCount++
@@ -62,27 +60,42 @@ export async function getAdminOverview() {
                 return
             }
 
-            const p = t.plan_tier || 'on_demand' // Default is On Demand (Free fixed cost)
+            const p = t.plan_tier || 'on_demand'
             const fixedPrice = prices[p] || 0
 
             let revenue = fixedPrice
 
-            // If On Demand, add usage fee
-            if (p === 'on_demand') {
-                const count = trainerStudentCounts[t.id] || 0
-                const { limit, price_per_extra } = usageRules.on_demand
-                if (count > limit) {
-                    revenue += (count - limit) * price_per_extra
-                }
+            // If On Demand (or any plan now), add usage fee
+            const count = trainerStudentCounts[t.id] || 0
+            const { limit, price_per_extra } = usageRules.on_demand
+            if (count > limit) {
+                revenue += (count - limit) * price_per_extra
             }
 
             monthlySubsRevenue += revenue
 
-            // Estimate lifetime subs (rough estimate assuming current plan was always the plan)
             const start = new Date(t.created_at)
             const now = new Date()
             const months = Math.max(1, (now.getFullYear() - start.getFullYear()) * 12 + (now.getMonth() - start.getMonth()) + 1)
             totalSubsRevenue += (revenue * months)
+        })
+
+        // --- NEW: Student Auto-Training Revenue ---
+        const { data: autoTrainingStudents } = await supabase
+            .from('profiles')
+            .select('id, created_at')
+            .eq('role', 'student')
+            .eq('auto_training_status', 'active')
+
+        const studentAutoTrainingPrice = 10.90
+        const monthlyStudentRevenue = (autoTrainingStudents?.length || 0) * studentAutoTrainingPrice
+        monthlySubsRevenue += monthlyStudentRevenue
+
+        autoTrainingStudents?.forEach(s => {
+            const start = new Date(s.created_at)
+            const now = new Date()
+            const months = Math.max(1, (now.getFullYear() - start.getFullYear()) * 12 + (now.getMonth() - start.getMonth()) + 1)
+            totalSubsRevenue += (studentAutoTrainingPrice * months)
         })
 
         // Trainer Volume (Students paying Trainers) - Just purely volume, no tax taken
