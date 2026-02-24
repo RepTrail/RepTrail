@@ -62,7 +62,14 @@ export function WorkoutPlayer({
     const [restTimeLeft, setRestTimeLeft] = useState(initialRestEndTime ? Math.max(0, Math.ceil((initialRestEndTime - Date.now()) / 1000)) : 0)
 
     // Batch Input State
-    const [setsLog, setSetsLog] = useState<Array<{ type: string, setNumber: number, label: string, expectedReps: string }>>([])
+    const [setsLog, setSetsLog] = useState<Array<{
+        exerciseId: string,
+        exerciseName: string,
+        type: string,
+        setNumber: number,
+        label: string,
+        expectedReps: string
+    }>>([])
     const [showSummary, setShowSummary] = useState(false)
     const [summaryInputs, setSummaryInputs] = useState<Record<number, { weight: string, reps: string }>>({})
     const [exerciseNote, setExerciseNote] = useState('')
@@ -81,6 +88,23 @@ export function WorkoutPlayer({
 
     const currentExercise = exercises[currentExerciseIndex]
     const totalExercises = exercises.length
+
+    // Helper to identify Bi-set/Tri-set groups
+    const isBiSetMember = (ex: any) => {
+        const n = ex?.notes?.toUpperCase() || ''
+        return n.includes('BI-SET') || n.includes('CONJUGADO') || n.includes('SUPER-SET')
+    }
+
+    const findGroup = (index: number) => {
+        if (!isBiSetMember(exercises[index])) return null
+        let start = index
+        while (start > 0 && isBiSetMember(exercises[start - 1])) start--
+        let end = index
+        while (end < totalExercises - 1 && isBiSetMember(exercises[end + 1])) end++
+        return { start, end }
+    }
+
+    const currentGroup = findGroup(currentExerciseIndex)
 
     // Calculate Progress based on SETS
     const totalWorkoutSets = exercises.reduce((acc, ex) => {
@@ -142,13 +166,22 @@ export function WorkoutPlayer({
     }
 
     // Reset state on exercise change
+    const lastIdxRef = useRef(initialExerciseIndex)
     useEffect(() => {
         if (!isMounted.current) {
             isMounted.current = true
             return
         }
 
-        if (currentExercise) {
+        const prevIdx = lastIdxRef.current
+        const currIdx = currentExerciseIndex
+        lastIdxRef.current = currIdx
+
+        const prevGroup = findGroup(prevIdx)
+        const currGroup = findGroup(currIdx)
+        const isSameGroup = prevGroup && currGroup && prevGroup.start === currGroup.start
+
+        if (!isSameGroup && currentExercise) {
             const initialType = getInitialSetType(currentExercise)
             setSetType(initialType)
             setCurrentSet(1)
@@ -217,8 +250,17 @@ export function WorkoutPlayer({
         setIsResting(false)
         setRestEndTime(null)
         const ex = currentExercise
+        const group = findGroup(currentExerciseIndex)
 
-        // This logic calculates the NEXT set state
+        // If in Bi-set group, handle jumping back to first exercise for next set
+        if (group && currentExerciseIndex === group.end) {
+            setCurrentExerciseIndex(group.start)
+            setCurrentSet(prev => prev + 1)
+            // Note: setType follows the first exercise's logic or stays synced
+            return
+        }
+
+        // Standard linear logic
         if (setType === 'WARMUP') {
             if (currentSet < ex.warmup_sets) {
                 setCurrentSet(prev => prev + 1)
@@ -240,8 +282,6 @@ export function WorkoutPlayer({
             if (currentSet < (ex.working_sets || 3)) {
                 setCurrentSet(prev => prev + 1)
             } else {
-                // If rest ended after last set, it shouldn't happen usually because we go to summary
-                // But if it does (e.g. manual skip rest on last set), go to summary
                 setShowSummary(true)
             }
         }
@@ -274,29 +314,39 @@ export function WorkoutPlayer({
     // Main Interaction Handler
     const handleSetAction = () => {
         const ex = currentExercise
+        const group = currentGroup
 
         // Add current set to log placeholder
-        // Determine expected reps
         let expectedReps = '10'
         if (setType === 'WARMUP') expectedReps = ex.warmup_reps
         else if (setType === 'FEEDER') expectedReps = ex.feeder_reps
         else expectedReps = ex.reps
 
         setSetsLog(prev => [...prev, {
+            exerciseId: currentExercise.exercise_id,
+            exerciseName: currentExercise.exercise?.name || 'Exercício',
             type: setType,
             setNumber: currentSet,
             label: `${setTypeLabel} ${currentSet}`,
             expectedReps: expectedReps || '0'
         }])
 
-        // Check if it was the LAST set of the exercise
+        // Bi-set Transition Logic
+        if (group && currentExerciseIndex < group.end) {
+            // Move to next exercise in group IMMEDIATELY (no rest)
+            setCurrentExerciseIndex(prev => prev + 1)
+            return
+        }
+
+        // Check if it was the LAST set of the exercise (or group)
         let isLast = false
         if (setType === 'WORKING' && currentSet === (ex.working_sets || 3)) {
-            isLast = true
+            if (!group || currentExerciseIndex === group.end) {
+                isLast = true
+            }
         }
 
         if (isLast) {
-            // Go to Summary
             setShowSummary(true)
         } else {
             // Start Rest
@@ -332,17 +382,17 @@ export function WorkoutPlayer({
 
         if (logId) {
             setLoading(true)
-            // Batch Save
+            // Batch Save - Use the specific exercise ID from each log item
             for (let i = 0; i < setsLog.length; i++) {
                 const set = setsLog[i]
                 const input = summaryInputs[i]
                 await recordSetLoad({
                     logId,
-                    exerciseId: currentExercise.exercise_id,
+                    exerciseId: set.exerciseId,
                     weight: parseFloat(input.weight),
                     reps: parseInt(input.reps),
                     setType: set.type as any,
-                    notes: i === setsLog.length - 1 ? exerciseNote : '' // Save note on last set or duplicate? Saving on last is fine usually
+                    notes: i === setsLog.length - 1 ? exerciseNote : ''
                 })
             }
             setLoading(false)
@@ -492,38 +542,54 @@ export function WorkoutPlayer({
                                 <p className="text-zinc-500 text-xs font-bold uppercase tracking-widest">Preencha os dados das séries realizadas</p>
                             </div>
 
-                            <div className="space-y-4">
-                                {setsLog.map((set, idx) => (
-                                    <div key={idx} className="bg-zinc-950/50 border border-zinc-800 rounded-2xl p-4 flex flex-col md:flex-row gap-4 items-center">
-                                        <div className="w-full md:w-48 shrink-0">
-                                            <span className={`text-[10px] font-black uppercase px-3 py-1.5 rounded-lg border whitespace-nowrap block w-fit ${set.type === 'WARMUP' ? 'bg-orange-500/10 border-orange-500/20 text-orange-500' :
-                                                set.type === 'FEEDER' ? 'bg-blue-500/10 border-blue-500/20 text-blue-500' :
-                                                    'bg-emerald-500/10 border-emerald-500/20 text-emerald-500'
-                                                }`}>
-                                                {set.type === 'WORKING' ? `Série ${set.setNumber}` : set.label}
-                                            </span>
+                            <div className="space-y-8 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
+                                {Object.entries(
+                                    setsLog.reduce((acc, set, idx) => {
+                                        if (!acc[set.exerciseId]) acc[set.exerciseId] = { name: set.exerciseName, items: [] }
+                                        acc[set.exerciseId].items.push({ ...set, summaryIdx: idx })
+                                        return acc
+                                    }, {} as Record<string, { name: string, items: any[] }>)
+                                ).map(([exId, group]) => (
+                                    <div key={exId} className="space-y-4">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-1 h-4 bg-emerald-500 rounded-full" />
+                                            <h4 className="text-xs font-black text-white uppercase italic">{group.name}</h4>
                                         </div>
-                                        <div className="flex gap-4 w-full">
-                                            <div className="flex-1 space-y-1">
-                                                <Label className="text-[9px] text-zinc-500 uppercase font-black">Carga (kg)</Label>
-                                                <Input
-                                                    type="number"
-                                                    placeholder="0"
-                                                    value={summaryInputs[idx]?.weight || ''}
-                                                    onChange={e => setSummaryInputs(prev => ({ ...prev, [idx]: { ...prev[idx], weight: e.target.value } }))}
-                                                    className="bg-zinc-900 border-zinc-800 h-10 text-center font-bold"
-                                                />
-                                            </div>
-                                            <div className="flex-1 space-y-1">
-                                                <Label className="text-[9px] text-zinc-500 uppercase font-black">Reps</Label>
-                                                <Input
-                                                    type="number"
-                                                    placeholder={set.expectedReps}
-                                                    value={summaryInputs[idx]?.reps || ''}
-                                                    onChange={e => setSummaryInputs(prev => ({ ...prev, [idx]: { ...prev[idx], reps: e.target.value } }))}
-                                                    className="bg-zinc-900 border-zinc-800 h-10 text-center font-bold text-emerald-500"
-                                                />
-                                            </div>
+                                        <div className="space-y-4">
+                                            {group.items.map((set) => (
+                                                <div key={set.summaryIdx} className="bg-zinc-950/50 border border-zinc-800 rounded-2xl p-4 flex flex-col md:flex-row gap-4 items-center">
+                                                    <div className="w-full md:w-32 shrink-0">
+                                                        <span className={`text-[10px] font-black uppercase px-3 py-1.5 rounded-lg border whitespace-nowrap block w-fit ${set.type === 'WARMUP' ? 'bg-orange-500/10 border-orange-500/20 text-orange-500' :
+                                                            set.type === 'FEEDER' ? 'bg-blue-500/10 border-blue-500/20 text-blue-500' :
+                                                                'bg-emerald-500/10 border-emerald-500/20 text-emerald-500'
+                                                            }`}>
+                                                            {set.type === 'WORKING' ? `Série ${set.setNumber}` : set.label}
+                                                        </span>
+                                                    </div>
+                                                    <div className="flex gap-4 w-full">
+                                                        <div className="flex-1 space-y-1">
+                                                            <Label className="text-[9px] text-zinc-500 uppercase font-black">Carga (kg)</Label>
+                                                            <Input
+                                                                type="number"
+                                                                placeholder="0"
+                                                                value={summaryInputs[set.summaryIdx]?.weight || ''}
+                                                                onChange={e => setSummaryInputs(prev => ({ ...prev, [set.summaryIdx]: { ...prev[set.summaryIdx], weight: e.target.value } }))}
+                                                                className="bg-zinc-900 border-zinc-800 h-10 text-center font-bold"
+                                                            />
+                                                        </div>
+                                                        <div className="flex-1 space-y-1">
+                                                            <Label className="text-[9px] text-zinc-500 uppercase font-black">Reps</Label>
+                                                            <Input
+                                                                type="number"
+                                                                placeholder={set.expectedReps}
+                                                                value={summaryInputs[set.summaryIdx]?.reps || ''}
+                                                                onChange={e => setSummaryInputs(prev => ({ ...prev, [set.summaryIdx]: { ...prev[set.summaryIdx], reps: e.target.value } }))}
+                                                                className="bg-zinc-900 border-zinc-800 h-10 text-center font-bold text-emerald-500"
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
                                         </div>
                                     </div>
                                 ))}
@@ -596,6 +662,11 @@ export function WorkoutPlayer({
                                     <Badge variant="outline" className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-md italic shadow-lg border-2 ${setTypeColor}`}>
                                         {setTypeLabel}
                                     </Badge>
+                                    {currentGroup && (
+                                        <Badge className="bg-emerald-500 text-zinc-950 text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-md italic shadow-lg border-transparent">
+                                            Bi-Set / Conjugado
+                                        </Badge>
+                                    )}
                                     {setType === 'WORKING' && (
                                         <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.8)]" />
                                     )}
@@ -662,10 +733,12 @@ export function WorkoutPlayer({
 
                             <div className="flex flex-col items-start gap-1 relative z-10 text-left">
                                 <span className="text-[10px] font-bold uppercase tracking-widest opacity-80">
-                                    {setType === 'WORKING' && currentSet === (currentExercise.working_sets || 3) ? 'Finalizar' : 'Iniciar Descanso'}
+                                    {currentGroup && currentExerciseIndex < currentGroup.end ? `Próximo: ${exercises[currentExerciseIndex + 1].exercise.name}` :
+                                        setType === 'WORKING' && currentSet === (currentExercise.working_sets || 3) ? 'Finalizar' : 'Iniciar Descanso'}
                                 </span>
                                 <span>
-                                    {setType === 'WORKING' && currentSet === (currentExercise.working_sets || 3) ? 'Concluir & Revisar' : setTypeLabel}
+                                    {currentGroup && currentExerciseIndex < currentGroup.end ? 'Ir para exercício B' :
+                                        setType === 'WORKING' && currentSet === (currentExercise.working_sets || 3) ? 'Concluir & Revisar' : setTypeLabel}
                                 </span>
                             </div>
 
