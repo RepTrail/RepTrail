@@ -7,14 +7,34 @@ import { upsertDailyTracking } from '@/actions/tracking-actions'
 
 export async function getStudentErgogenics(studentId: string) {
     const supabase = await createClient()
-    const { data, error } = await supabase
+    const { data: records, error } = await supabase
         .from('ergogenics')
         .select('*')
         .eq('student_id', studentId)
         .order('created_at', { ascending: false })
 
     if (error) return { error: error.message }
-    return { data }
+
+    // Data Pruning: Filter by active trainer link
+    const filteredRecords = []
+    for (const record of (records || [])) {
+        if (record.trainer_id && record.trainer_id !== studentId) {
+            const { data: link } = await supabase
+                .from('trainer_students')
+                .select('id')
+                .eq('trainer_id', record.trainer_id)
+                .eq('student_id', studentId)
+                .eq('active', true)
+                .maybeSingle()
+
+            if (link) filteredRecords.push(record)
+        } else {
+            // Se foi o próprio aluno que adicionou (Auto-Treino), mantém
+            filteredRecords.push(record)
+        }
+    }
+
+    return { data: filteredRecords }
 }
 
 export async function addErgogenic(data: {

@@ -398,14 +398,47 @@ Food: ${foodName}
 Quantity: ${quantity || '1 portion'}
 
 Return ONLY a JSON object with this exact structure (no markdown):
-{"protein": number, "carbs": number, "fat": number}
+{"protein": number, "carbs": number, "fat": number, "fiber": number}
 Use integers or decimals.
 `;
 
-        const macros = await callAI<{ protein: number; carbs: number; fat: number }>(client, prompt);
+        const macros = await callAI<{ protein: number; carbs: number; fat: number; fiber: number }>(client, prompt);
         return { success: true, macros };
     } catch (e: any) {
         console.error("AI Macro Estimation Error:", e.message);
+        return { error: e.message };
+    }
+}
+
+export async function suggestSubstitution(foodName: string, quantity: string) {
+    try {
+        const { createOpenRouterClient, callAI } = await import('@/lib/ai-client');
+        const client = createOpenRouterClient();
+
+        const prompt = `
+You are a nutrition expert. Suggest a SIMILAR and healthy substitution for this food item.
+Original Food: ${foodName}
+Original Quantity: ${quantity || '1 portion'}
+
+IMPORTANT: You MUST adjust the "quantity" of the suggested food so that its macronutrients (Protein, Carbs, Fat) match the original food's macros as closely as possible. 
+For example, if the original item has 40g of carbs and you suggest bread, calculate how many slices are needed to reach ~40g of carbs.
+
+Return ONLY a JSON object with this exact structure (no markdown):
+{
+  "food_name": "string",
+  "quantity": "string",
+  "protein": number,
+  "carbs": number,
+  "fat": number,
+  "fiber": number
+}
+Ensure the macros returned are calculated specifically for the suggested quantity.
+`;
+
+        const suggestion = await callAI<{ food_name: string; quantity: string; protein: number; carbs: number; fat: number; fiber: number }>(client, prompt);
+        return { success: true, suggestion };
+    } catch (e: any) {
+        console.error("AI Substitution Suggestion Error:", e.message);
         return { error: e.message };
     }
 }
@@ -548,8 +581,9 @@ export async function getStudentDailyDiet(studentId: string) {
         const { data: assignments, error: assignErr } = await supabase
             .from('assigned_diets')
             .select(`
-                diet:diets(
+                diet:diets!inner(
                     *,
+                    trainer_id,
                     meals(
                         *,
                         meal_items(*)
@@ -571,6 +605,19 @@ export async function getStudentDailyDiet(studentId: string) {
         if (!assignment || !assignment.diet) return null
 
         const diet = assignment.diet as any
+
+        // Data Pruning: Check if trainer is still linked
+        if (diet.trainer_id && diet.trainer_id !== studentId) {
+            const { data: link } = await supabase
+                .from('trainer_students')
+                .select('id')
+                .eq('trainer_id', diet.trainer_id)
+                .eq('student_id', studentId)
+                .eq('active', true)
+                .maybeSingle()
+
+            if (!link) return null // Unlinked trainer's data is hidden
+        }
         const { start, end } = getTodayRangeBrazil()
 
         const todayStr = getTodayStrBrazil()
@@ -585,21 +632,31 @@ export async function getStudentDailyDiet(studentId: string) {
         // Fetch detailed item logs — query by 'date' column (DATE), not consumed_at
         const { data: itemLogs } = await supabase
             .from('meal_item_logs')
-            .select('meal_item_id')
+            .select('*')
             .eq('user_id', studentId)
             .eq('date', todayStr)
 
         const loggedMealIds = new Set(logs?.map(l => l.meal_id) || [])
-        const loggedItemIds = new Set(itemLogs?.map(l => l.meal_item_id) || [])
+        const itemLogMap = new Map(itemLogs?.map(l => [l.meal_item_id, l]) || [])
 
         if (diet.meals) {
             diet.meals.sort((a: any, b: any) => a.order_index - b.order_index)
             diet.meals = diet.meals.map((meal: any) => {
                 // Check items first
-                const itemsWithStatus = meal.meal_items?.map((item: any) => ({
-                    ...item,
-                    is_checked: loggedItemIds.has(item.id)
-                })) || []
+                const itemsWithStatus = meal.meal_items?.map((item: any) => {
+                    const log = itemLogMap.get(item.id)
+                    return {
+                        ...item,
+                        is_checked: !!log,
+                        is_substituted: log?.is_substituted || false,
+                        substituted_food_name: log?.substituted_food_name,
+                        substituted_quantity: log?.substituted_quantity,
+                        substituted_protein: log?.substituted_protein,
+                        substituted_carbs: log?.substituted_carbs,
+                        substituted_fat: log?.substituted_fat,
+                        substituted_fiber: log?.substituted_fiber,
+                    }
+                }) || []
 
                 // Meal is fully checked if all items are checked OR if explicitly logged (legacy)
                 const allItemsChecked = itemsWithStatus.length > 0 && itemsWithStatus.every((i: any) => i.is_checked)

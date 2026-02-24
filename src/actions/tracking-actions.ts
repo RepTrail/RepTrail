@@ -176,7 +176,14 @@ export async function toggleMealGroup(mealId: string, status: boolean, date?: st
     }
 }
 
-export async function substituteMealItem(itemId: string, substituteData: { food_name: string, quantity: string }, date?: string) {
+export async function substituteMealItem(itemId: string, substituteData: {
+    food_name: string,
+    quantity: string,
+    protein?: number,
+    carbs?: number,
+    fat?: number,
+    fiber?: number
+}, date?: string) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { error: 'Unauthorized' }
@@ -192,7 +199,11 @@ export async function substituteMealItem(itemId: string, substituteData: { food_
                 date: targetDate,
                 is_substituted: true,
                 substituted_food_name: substituteData.food_name,
-                substituted_quantity: substituteData.quantity
+                substituted_quantity: substituteData.quantity,
+                substituted_protein: substituteData.protein || 0,
+                substituted_carbs: substituteData.carbs || 0,
+                substituted_fat: substituteData.fat || 0,
+                substituted_fiber: substituteData.fiber || 0
             }, {
                 onConflict: 'user_id, meal_item_id, date'
             })
@@ -200,6 +211,77 @@ export async function substituteMealItem(itemId: string, substituteData: { food_
         if (error) throw error
 
         revalidatePath('/dashboard/student')
+        revalidatePath('/dashboard/student/diet')
+        return { success: true }
+    } catch (e: any) {
+        return { error: e.message }
+    }
+}
+
+export async function toggleSubstitution(itemId: string, date?: string) {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return { error: 'Unauthorized' }
+
+    const targetDate = date || getTodayStr()
+
+    try {
+        // 1. Get current log status
+        const { data: log } = await supabase
+            .from('meal_item_logs')
+            .select('*')
+            .eq('user_id', user.id)
+            .eq('meal_item_id', itemId)
+            .eq('date', targetDate)
+            .maybeSingle()
+
+        // 2. Get predefined substitute
+        const { data: item } = await supabase
+            .from('meal_items')
+            .select('*')
+            .eq('id', itemId)
+            .single()
+
+        if (!item) throw new Error('Item not found')
+
+        if (log) {
+            const newIsSubstituted = !log.is_substituted
+            const { error } = await supabase
+                .from('meal_item_logs')
+                .update({
+                    is_substituted: newIsSubstituted,
+                    substituted_food_name: newIsSubstituted ? (item.sub_food_name || item.food_name) : null,
+                    substituted_quantity: newIsSubstituted ? (item.sub_quantity || item.quantity) : null,
+                    substituted_protein: newIsSubstituted ? (item.sub_protein ?? 0) : 0,
+                    substituted_carbs: newIsSubstituted ? (item.sub_carbs ?? 0) : 0,
+                    substituted_fat: newIsSubstituted ? (item.sub_fat ?? 0) : 0,
+                    substituted_fiber: newIsSubstituted ? (item.sub_fiber ?? 0) : 0,
+                })
+                .eq('id', log.id)
+
+            if (error) throw error
+        } else {
+            // Create new log with substitution
+            const { error } = await supabase
+                .from('meal_item_logs')
+                .insert({
+                    user_id: user.id,
+                    meal_item_id: itemId,
+                    date: targetDate,
+                    is_substituted: true,
+                    substituted_food_name: item.sub_food_name || item.food_name,
+                    substituted_quantity: item.sub_quantity || item.quantity,
+                    substituted_protein: item.sub_protein || 0,
+                    substituted_carbs: item.sub_carbs || 0,
+                    substituted_fat: item.sub_fat || 0,
+                    substituted_fiber: item.sub_fiber || 0,
+                })
+
+            if (error) throw error
+        }
+
+        revalidatePath('/dashboard/student')
+        revalidatePath('/dashboard/student/diet')
         return { success: true }
     } catch (e: any) {
         return { error: e.message }

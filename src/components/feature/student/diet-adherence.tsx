@@ -4,9 +4,9 @@
 import { useState, useEffect } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Progress } from "@/components/ui/progress"
-import { CheckCircle2, Circle, Utensils, Info, ChevronDown, Check, ChevronUp, Sparkles, Loader2 } from 'lucide-react'
+import { CheckCircle2, Circle, Utensils, Info, ChevronDown, Check, ChevronUp, Sparkles, Loader2, Repeat2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { toggleMealItem, toggleMealGroup } from '@/actions/tracking-actions'
+import { toggleMealItem, toggleMealGroup, toggleSubstitution } from '@/actions/tracking-actions'
 import { useToast } from '@/hooks/use-toast'
 import { cn } from '@/lib/utils'
 import { SubstituteItemDialog } from './substitute-item-dialog'
@@ -104,6 +104,60 @@ export function DietAdherence({ diet, allowEstimation = false, hasTrainer = fals
         }
     }
 
+    async function handleSwap(itemId: string, mealId: string) {
+        // Optimistic update
+        const meal = meals.find(m => m.id === mealId)
+        const item = meal?.meal_items?.find((i: any) => i.id === itemId)
+        if (!item) return
+
+        const currentSubStatus = !!item.is_substituted
+        const newSubStatus = !currentSubStatus
+
+        setMeals(prev => prev.map(m => {
+            if (m.id !== mealId) return m
+            return {
+                ...m,
+                meal_items: m.meal_items.map((i: any) => {
+                    if (i.id !== itemId) return i
+                    return {
+                        ...i,
+                        is_substituted: newSubStatus,
+                        // If turning on, we try to use the predefined substitution values from the item itself
+                        substituted_food_name: newSubStatus ? (i.sub_food_name || i.food_name) : null,
+                        substituted_quantity: newSubStatus ? (i.sub_quantity || i.quantity) : null,
+                        substituted_protein: newSubStatus ? (i.sub_protein || 0) : 0,
+                        substituted_carbs: newSubStatus ? (i.sub_carbs || 0) : 0,
+                        substituted_fat: newSubStatus ? (i.sub_fat || 0) : 0,
+                        substituted_fiber: newSubStatus ? (i.sub_fiber || 0) : 0,
+                    }
+                })
+            }
+        }))
+
+        setLoadingMap(prev => ({ ...prev, [`swap-${itemId}`]: true }))
+        try {
+            const res = await toggleSubstitution(itemId)
+            if (res.success) {
+                toast({ title: 'Alimento Alterado!', description: 'Substituição aplicada com sucesso.' })
+                router.refresh()
+            } else {
+                throw new Error(res.error)
+            }
+        } catch (e: any) {
+            // Revert
+            setMeals(prev => prev.map(m => {
+                if (m.id !== mealId) return m
+                return {
+                    ...m,
+                    meal_items: m.meal_items.map((i: any) => i.id === itemId ? { ...i, is_substituted: currentSubStatus } : i)
+                }
+            }))
+            toast({ variant: 'destructive', title: 'Erro ao trocar', description: e.message || 'Erro ao trocar alimento.' })
+        } finally {
+            setLoadingMap(prev => ({ ...prev, [`swap-${itemId}`]: false }))
+        }
+    }
+
     return (
         <Card className="bg-zinc-900/40 border-zinc-800/50 shadow-2xl rounded-[2.5rem] overflow-hidden backdrop-blur-sm border-t-zinc-700/10" suppressHydrationWarning>
             <CardContent className="p-8 space-y-8" suppressHydrationWarning>
@@ -165,16 +219,15 @@ export function DietAdherence({ diet, allowEstimation = false, hasTrainer = fals
                     </div>
                 </div>
 
-                {/* Total Macros Summary */}
                 <div className="grid grid-cols-6 gap-3 p-4 bg-zinc-950/30 border border-zinc-800/50 rounded-3xl" suppressHydrationWarning>
                     {(() => {
                         const t = meals.reduce((acc: any, meal: any) => {
                             const items = meal.meal_items || []
                             return {
-                                p: acc.p + items.reduce((s: any, i: any) => s + (i.protein || 0), 0),
-                                c: acc.c + items.reduce((s: any, i: any) => s + (i.carbs || 0), 0),
-                                g: acc.g + items.reduce((s: any, i: any) => s + (i.fat || 0), 0),
-                                f: acc.f + items.reduce((s: any, i: any) => s + (i.fiber || 0), 0),
+                                p: acc.p + items.reduce((s: any, i: any) => s + (i.is_substituted ? (i.substituted_protein || 0) : (i.protein || 0)), 0),
+                                c: acc.c + items.reduce((s: any, i: any) => s + (i.is_substituted ? (i.substituted_carbs || 0) : (i.carbs || 0)), 0),
+                                g: acc.g + items.reduce((s: any, i: any) => s + (i.is_substituted ? (i.substituted_fat || 0) : (i.fat || 0)), 0),
+                                f: acc.f + items.reduce((s: any, i: any) => s + (i.is_substituted ? (i.substituted_fiber || 0) : (i.fiber || 0)), 0),
                             }
                         }, { p: 0, c: 0, g: 0, f: 0 })
                         const cals = (t.p * 4) + (t.c * 4) + (t.g * 9)
@@ -234,10 +287,10 @@ export function DietAdherence({ diet, allowEstimation = false, hasTrainer = fals
                                         {/* Macros Summary (Visible when collapsed) */}
                                         {!isOpen && (
                                             <div className="hidden sm:flex gap-3 mr-2 opacity-60">
-                                                <MacroMini label="P" value={meal.meal_items?.reduce((acc: any, i: any) => acc + (i.protein || 0), 0)} />
-                                                <MacroMini label="C" value={meal.meal_items?.reduce((acc: any, i: any) => acc + (i.carbs || 0), 0)} />
-                                                <MacroMini label="G" value={meal.meal_items?.reduce((acc: any, i: any) => acc + (i.fat || 0), 0)} />
-                                                <MacroMini label="F" value={meal.meal_items?.reduce((acc: any, i: any) => acc + (i.fiber || 0), 0)} />
+                                                <MacroMini label="P" value={meal.meal_items?.reduce((acc: any, i: any) => acc + (i.is_substituted ? (i.substituted_protein || 0) : (i.protein || 0)), 0)} />
+                                                <MacroMini label="C" value={meal.meal_items?.reduce((acc: any, i: any) => acc + (i.is_substituted ? (i.substituted_carbs || 0) : (i.carbs || 0)), 0)} />
+                                                <MacroMini label="G" value={meal.meal_items?.reduce((acc: any, i: any) => acc + (i.is_substituted ? (i.substituted_fat || 0) : (i.fat || 0)), 0)} />
+                                                <MacroMini label="F" value={meal.meal_items?.reduce((acc: any, i: any) => acc + (i.is_substituted ? (i.substituted_fiber || 0) : (i.fiber || 0)), 0)} />
                                             </div>
                                         )}
                                         <ChevronDown className={cn("w-5 h-5 text-zinc-600 transition-transform duration-300", isOpen && "rotate-180")} />
@@ -257,8 +310,8 @@ export function DietAdherence({ diet, allowEstimation = false, hasTrainer = fals
                                             {/* Items List */}
                                             {meal.meal_items?.length > 0 ? (
                                                 meal.meal_items.map((item: any) => (
-                                                    <div key={item.id} className="flex items-center justify-between p-3 rounded-xl bg-zinc-900/30 border border-zinc-800/50 hover:bg-zinc-900/50 transition-colors">
-                                                        <div className="flex items-center gap-3">
+                                                    <div key={item.id} className="flex items-center justify-between p-3 rounded-xl bg-zinc-900/30 border border-zinc-800/50 hover:bg-zinc-900/50 transition-colors gap-3">
+                                                        <div className="flex items-center gap-3 min-w-0">
                                                             <Button
                                                                 variant="ghost"
                                                                 size="icon"
@@ -276,24 +329,51 @@ export function DietAdherence({ diet, allowEstimation = false, hasTrainer = fals
                                                             >
                                                                 <Check className="w-3 h-3" strokeWidth={4} />
                                                             </Button>
-                                                            <div className="text-xs">
-                                                                {item.is_substituted ? (
-                                                                    <>
-                                                                        <span className="font-bold text-orange-500 mr-1.5">{item.substituted_quantity}</span>
-                                                                        <span className="text-orange-200">{item.substituted_food_name}</span>
-                                                                        <span className="text-[9px] font-black text-orange-500/50 uppercase tracking-tighter ml-2">(SUBSTITUÍDO)</span>
-                                                                    </>
-                                                                ) : (
-                                                                    <>
-                                                                        <span className="font-bold text-white mr-1.5">{item.quantity}</span>
-                                                                        <span className="text-zinc-300">{item.food_name}</span>
-                                                                        {item.approx_measure && <span className="text-zinc-500 ml-1">({item.approx_measure})</span>}
-                                                                    </>
-                                                                )}
+                                                            <div className="flex flex-col min-w-0">
+                                                                <div className="text-xs truncate sm:whitespace-normal">
+                                                                    {item.is_substituted ? (
+                                                                        <>
+                                                                            <span className="font-bold text-orange-500 mr-1.5">{item.substituted_quantity}</span>
+                                                                            <span className="text-orange-200">{item.substituted_food_name}</span>
+                                                                            <span className="text-[9px] font-black text-orange-500/50 uppercase tracking-tighter ml-2">(SUBSTITUÍDO)</span>
+                                                                        </>
+                                                                    ) : (
+                                                                        <>
+                                                                            <span className="font-bold text-white mr-1.5">{item.quantity}</span>
+                                                                            <span className="text-zinc-300">{item.food_name}</span>
+                                                                            {item.approx_measure && <span className="text-zinc-500 ml-1">({item.approx_measure})</span>}
+                                                                        </>
+                                                                    )}
+                                                                </div>
+                                                                {/* Item Macros */}
+                                                                <div className="flex gap-2 text-[9px] font-bold text-zinc-600 uppercase mt-0.5">
+                                                                    <span>P: {Math.round(item.is_substituted ? (item.substituted_protein || 0) : (item.protein || 0))}</span>
+                                                                    <span>C: {Math.round(item.is_substituted ? (item.substituted_carbs || 0) : (item.carbs || 0))}</span>
+                                                                    <span>G: {Math.round(item.is_substituted ? (item.substituted_fat || 0) : (item.fat || 0))}</span>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                        <div className="flex items-center gap-2">
-                                                            {!item.is_checked && !hasTrainer && !allowEstimation && (
+                                                        <div className="flex items-center gap-2 flex-shrink-0">
+                                                            {item.has_substitute && (
+                                                                <Button
+                                                                    variant="ghost"
+                                                                    size="icon"
+                                                                    disabled={loadingMap[`swap-${item.id}`]}
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation()
+                                                                        handleSwap(item.id, meal.id)
+                                                                    }}
+                                                                    className={cn(
+                                                                        "w-8 h-8 transition-colors",
+                                                                        item.is_substituted
+                                                                            ? "text-orange-500 bg-orange-500/10 hover:bg-orange-500/20"
+                                                                            : "text-zinc-600 hover:text-orange-500 hover:bg-orange-500/10"
+                                                                    )}
+                                                                >
+                                                                    <Repeat2 className={cn("w-4 h-4", loadingMap[`swap-${item.id}`] && "animate-spin")} />
+                                                                </Button>
+                                                            )}
+                                                            {!item.is_checked && !hasTrainer && !allowEstimation && !item.has_substitute && (
                                                                 <SubstituteItemDialog
                                                                     item={item}
                                                                     onSuccess={(updatedData) => {
@@ -307,13 +387,6 @@ export function DietAdherence({ diet, allowEstimation = false, hasTrainer = fals
                                                                     }}
                                                                 />
                                                             )}
-                                                            {/* Item Macros */}
-                                                            <div className="flex gap-2 text-[9px] font-bold text-zinc-600 uppercase">
-                                                                <span>P: {Math.round(item.protein || 0)}</span>
-                                                                <span>C: {Math.round(item.carbs || 0)}</span>
-                                                                <span>G: {Math.round(item.fat || 0)}</span>
-                                                                <span>F: {Math.round(item.fiber || 0)}</span>
-                                                            </div>
                                                         </div>
                                                     </div>
                                                 ))
@@ -324,9 +397,9 @@ export function DietAdherence({ diet, allowEstimation = false, hasTrainer = fals
                                             {/* Actions Footer */}
                                             <div className="pt-4 flex flex-col gap-4">
                                                 <div className="flex gap-4 items-center">
-                                                    <MacroMini label="P" value={meal.meal_items?.reduce((acc: any, i: any) => acc + (i.protein || 0), 0)} unit="g" />
-                                                    <MacroMini label="C" value={meal.meal_items?.reduce((acc: any, i: any) => acc + (i.carbs || 0), 0)} unit="g" />
-                                                    <MacroMini label="G" value={meal.meal_items?.reduce((acc: any, i: any) => acc + (i.fat || 0), 0)} unit="g" />
+                                                    <MacroMini label="P" value={meal.meal_items?.reduce((acc: any, i: any) => acc + (i.is_substituted ? (i.substituted_protein || 0) : (i.protein || 0)), 0)} unit="g" />
+                                                    <MacroMini label="C" value={meal.meal_items?.reduce((acc: any, i: any) => acc + (i.is_substituted ? (i.substituted_carbs || 0) : (i.carbs || 0)), 0)} unit="g" />
+                                                    <MacroMini label="G" value={meal.meal_items?.reduce((acc: any, i: any) => acc + (i.is_substituted ? (i.substituted_fat || 0) : (i.fat || 0)), 0)} unit="g" />
                                                 </div>
 
                                                 <Button

@@ -34,7 +34,17 @@ export function SubstituteItemDialog({ item, onSuccess }: SubstituteItemDialogPr
 
         setLoading(true)
         try {
-            const res = await substituteMealItem(item.id, { food_name: foodName, quantity })
+            // Estimate macros for the custom substitution
+            const { estimateMacros } = await import('@/actions/diet-actions')
+            const estRes = await estimateMacros(foodName, quantity)
+            const macros = estRes.success ? (estRes.macros as any) : { protein: 0, carbs: 0, fat: 0, fiber: 0 }
+
+            const res = await substituteMealItem(item.id, {
+                food_name: foodName,
+                quantity,
+                ...macros
+            })
+
             if (res.success) {
                 toast({ title: 'Item substituído!' })
                 onSuccess({
@@ -42,7 +52,11 @@ export function SubstituteItemDialog({ item, onSuccess }: SubstituteItemDialogPr
                     is_checked: true,
                     is_substituted: true,
                     substituted_food_name: foodName,
-                    substituted_quantity: quantity
+                    substituted_quantity: quantity,
+                    substituted_protein: macros.protein,
+                    substituted_carbs: macros.carbs,
+                    substituted_fat: macros.fat,
+                    substituted_fiber: macros.fiber
                 })
                 setOpen(false)
             } else {

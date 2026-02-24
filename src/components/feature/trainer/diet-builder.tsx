@@ -16,8 +16,11 @@ import {
     Sparkles,
     Pencil,
     Check,
-    X
+    X,
+    Repeat2,
+    ListRestart
 } from "lucide-react"
+import { cn } from '@/lib/utils'
 import {
     addMealToDiet,
     addMealItem,
@@ -26,18 +29,27 @@ import {
     removeMeal,
     estimateMacros,
     estimateAllDietMacros,
-    updateDietMeta
+    updateDietMeta,
+    suggestSubstitution
 } from "@/actions/diet-actions"
 
 interface MealItem {
     id: string
     food_name: string
     quantity: string
-    approx_measure: string
+    approx_measure?: string
     protein: number
     carbs: number
     fat: number
+    fiber?: number
     calories?: number
+    has_substitute?: boolean
+    sub_food_name?: string
+    sub_quantity?: string
+    sub_protein?: number
+    sub_carbs?: number
+    sub_fat?: number
+    sub_fiber?: number
 }
 
 interface Meal {
@@ -297,103 +309,246 @@ export function DietBuilder({ diet, backHref = '/dashboard/trainer/diets' }: Die
                                 </div>
                             </div>
                             <CardContent className="p-0" suppressHydrationWarning>
-                                <div className="divide-y divide-zinc-900/50">
+                                <div className="divide-y divide-zinc-900/40">
                                     {meal.meal_items?.map((item) => (
-                                        <div key={item.id} className="p-4 grid grid-cols-1 lg:grid-cols-12 gap-4 items-end group transition-colors hover:bg-zinc-900/20">
-                                            <div className="lg:col-span-4 space-y-1.5">
-                                                <Label className="text-[10px] text-zinc-600 uppercase font-bold tracking-tight">Alimento</Label>
-                                                <Input
-                                                    defaultValue={item.food_name}
-                                                    onBlur={(e) => handleUpdateItem(item.id, { food_name: e.target.value })}
-                                                    className="bg-zinc-900/50 border-zinc-800 text-sm h-9 focus:ring-1 focus:ring-green-500/20 text-white"
-                                                />
-                                            </div>
-                                            <div className="lg:col-span-2 space-y-1.5">
-                                                <Label className="text-[10px] text-zinc-600 uppercase font-bold tracking-tight">Quantidade</Label>
-                                                <Input
-                                                    defaultValue={item.quantity}
-                                                    onBlur={(e) => handleUpdateItem(item.id, { quantity: e.target.value })}
-                                                    placeholder="Opcional (ex: 100g)"
-                                                    className="bg-zinc-900/50 border-zinc-800 text-sm h-9 text-center text-white"
-                                                />
-                                            </div>
-                                            <div className="lg:col-span-5 grid grid-cols-2 sm:grid-cols-4 gap-2">
-                                                <div className="space-y-1.5">
-                                                    <Label className="text-[10px] text-zinc-600 uppercase font-bold tracking-tight">Medida</Label>
+                                        <div key={item.id} className="group relative transition-all duration-300">
+                                            {/* Original Item Row */}
+                                            <div className="p-4 grid grid-cols-1 lg:grid-cols-12 gap-4 items-end transition-colors hover:bg-zinc-900/20">
+                                                <div className="lg:col-span-3 space-y-1.5">
+                                                    <Label className="text-[10px] text-zinc-600 uppercase font-bold tracking-tight">Alimento</Label>
                                                     <Input
-                                                        defaultValue={item.approx_measure}
-                                                        onBlur={(e) => handleUpdateItem(item.id, { approx_measure: e.target.value })}
-                                                        placeholder="Opcional (ex: 1 colher)"
-                                                        className="bg-zinc-900/50 border-zinc-800 text-xs h-9 text-white"
+                                                        defaultValue={item.food_name}
+                                                        onBlur={(e) => handleUpdateItem(item.id, { food_name: e.target.value })}
+                                                        className="bg-zinc-900/50 border-zinc-800 text-sm h-9 focus:ring-1 focus:ring-green-500/20 text-white"
                                                     />
                                                 </div>
-                                                <div className="space-y-1.5">
-                                                    <Label className="text-[10px] text-blue-500/50 uppercase font-bold tracking-tight">Prot</Label>
+                                                <div className="lg:col-span-2 space-y-1.5">
+                                                    <Label className="text-[10px] text-zinc-600 uppercase font-bold tracking-tight">Quantidade</Label>
                                                     <Input
-                                                        type="number"
-                                                        step="0.1"
-                                                        defaultValue={item.protein}
-                                                        onBlur={(e) => handleUpdateItem(item.id, { protein: parseFloat(e.target.value) || 0 })}
-                                                        className="bg-zinc-900/50 border-zinc-800 text-xs h-9 text-center text-blue-400 font-medium"
+                                                        defaultValue={item.quantity}
+                                                        onBlur={(e) => handleUpdateItem(item.id, { quantity: e.target.value })}
+                                                        placeholder="Ex: 100g"
+                                                        className="bg-zinc-900/50 border-zinc-800 text-sm h-9 text-center text-white"
                                                     />
                                                 </div>
-                                                <div className="space-y-1.5">
-                                                    <Label className="text-[10px] text-orange-500/50 uppercase font-bold tracking-tight">Carb</Label>
-                                                    <Input
-                                                        type="number"
-                                                        step="0.1"
-                                                        defaultValue={item.carbs}
-                                                        onBlur={(e) => handleUpdateItem(item.id, { carbs: parseFloat(e.target.value) || 0 })}
-                                                        className="bg-zinc-900/50 border-zinc-800 text-xs h-9 text-center text-orange-400 font-medium"
-                                                    />
+                                                <div className="lg:col-span-4 grid grid-cols-3 gap-2">
+                                                    <div className="space-y-1.5">
+                                                        <Label className="text-[10px] text-blue-500/50 uppercase font-bold tracking-tight">Prot</Label>
+                                                        <Input
+                                                            type="number"
+                                                            step="0.1"
+                                                            defaultValue={item.protein}
+                                                            onBlur={(e) => handleUpdateItem(item.id, { protein: parseFloat(e.target.value) || 0 })}
+                                                            className="bg-zinc-900/50 border-zinc-800 text-xs h-9 text-center text-blue-400 font-medium"
+                                                        />
+                                                    </div>
+                                                    <div className="space-y-1.5">
+                                                        <Label className="text-[10px] text-orange-500/50 uppercase font-bold tracking-tight">Carb</Label>
+                                                        <Input
+                                                            type="number"
+                                                            step="0.1"
+                                                            defaultValue={item.carbs}
+                                                            onBlur={(e) => handleUpdateItem(item.id, { carbs: parseFloat(e.target.value) || 0 })}
+                                                            className="bg-zinc-900/50 border-zinc-800 text-xs h-9 text-center text-orange-400 font-medium"
+                                                        />
+                                                    </div>
+                                                    <div className="space-y-1.5">
+                                                        <Label className="text-[10px] text-yellow-500/50 uppercase font-bold tracking-tight">Gord</Label>
+                                                        <Input
+                                                            type="number"
+                                                            step="0.1"
+                                                            defaultValue={item.fat}
+                                                            onBlur={(e) => handleUpdateItem(item.id, { fat: parseFloat(e.target.value) || 0 })}
+                                                            className="bg-zinc-900/50 border-zinc-800 text-xs h-9 text-center text-yellow-500 font-medium"
+                                                        />
+                                                    </div>
                                                 </div>
-                                                <div className="space-y-1.5">
-                                                    <Label className="text-[10px] text-yellow-500/50 uppercase font-bold tracking-tight">Gord</Label>
-                                                    <Input
-                                                        type="number"
-                                                        step="0.1"
-                                                        defaultValue={item.fat}
-                                                        onBlur={(e) => handleUpdateItem(item.id, { fat: parseFloat(e.target.value) || 0 })}
-                                                        className="bg-zinc-900/50 border-zinc-800 text-xs h-9 text-center text-yellow-500 font-medium"
-                                                    />
+                                                <div className="lg:col-span-3 flex items-center justify-end gap-2 pb-0.5">
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        disabled={loadingMap[`estimate-${item.id}`] || !item.food_name}
+                                                        onClick={async () => {
+                                                            setLoadingMap(prev => ({ ...prev, [`estimate-${item.id}`]: true }))
+                                                            const res = await estimateMacros(item.food_name, item.quantity)
+                                                            if (res.success && res.macros) {
+                                                                await handleUpdateItem(item.id, res.macros)
+                                                            } else if (res.error) {
+                                                                alert(`Erro ao calcular: ${res.error}`)
+                                                            }
+                                                            setLoadingMap(prev => ({ ...prev, [`estimate-${item.id}`]: false }))
+                                                        }}
+                                                        className="text-zinc-600 hover:text-emerald-400 h-9 w-9 transition-colors hover:bg-emerald-400/5 border border-zinc-800"
+                                                        title="Calcular macros com IA"
+                                                    >
+                                                        {loadingMap[`estimate-${item.id}`] ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+                                                    </Button>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        onClick={() => handleUpdateItem(item.id, { has_substitute: !item.has_substitute })}
+                                                        className={cn("h-9 w-9 transition-colors border", item.has_substitute ? "text-orange-500 bg-orange-500/10 border-orange-500/20" : "text-zinc-600 hover:text-orange-400 hover:bg-orange-400/5 border-zinc-800")}
+                                                        title="Adicionar/Remover Substituição"
+                                                    >
+                                                        <Repeat2 className="w-4 h-4" />
+                                                    </Button>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        onClick={() => handleRemoveItem(item.id)}
+                                                        className="text-zinc-600 hover:text-red-400 h-9 w-9 transition-colors hover:bg-red-400/5 border border-zinc-800"
+                                                    >
+                                                        <Trash2 className="w-4 h-4" />
+                                                    </Button>
                                                 </div>
                                             </div>
-                                            <div className="lg:col-span-1 flex items-center justify-center gap-1 pb-0.5">
-                                                <Button
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    disabled={loadingMap[`estimate-${item.id}`] || !item.food_name}
-                                                    onClick={async () => {
-                                                        setLoadingMap(prev => ({ ...prev, [`estimate-${item.id}`]: true }))
-                                                        const res = await estimateMacros(item.food_name, item.quantity)
-                                                        if (res.success && res.macros) {
-                                                            await handleUpdateItem(item.id, res.macros)
-                                                            // We might need to force a refresh or trust that revalidatePath (if any) works,
-                                                            // but handleUpdateItem already handles loadingMap for saving.
-                                                        } else if (res.error) {
-                                                            alert(`Erro ao calcular: ${res.error}`)
-                                                        }
-                                                        setLoadingMap(prev => ({ ...prev, [`estimate-${item.id}`]: false }))
-                                                    }}
-                                                    className="text-zinc-700 hover:text-emerald-400 h-8 w-8 transition-colors group-hover:bg-emerald-400/5"
-                                                    title="Calcular macros com IA"
-                                                >
-                                                    {loadingMap[`estimate-${item.id}`] ? (
-                                                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                                                    ) : (
-                                                        <Sparkles className="w-3.5 h-3.5" />
-                                                    )}
-                                                </Button>
-                                                <Button
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    onClick={() => handleRemoveItem(item.id)}
-                                                    disabled={loadingMap[`delete-${item.id}`]}
-                                                    className="text-zinc-700 hover:text-red-400 h-8 w-8 transition-colors group-hover:bg-red-400/5"
-                                                >
-                                                    <Trash2 className="w-3.5 h-3.5" />
-                                                </Button>
-                                            </div>
+
+                                            {/* Substitution Row */}
+                                            {item.has_substitute && (
+                                                <div className="px-4 pb-4 pt-1 grid grid-cols-1 lg:grid-cols-12 gap-4 items-end bg-orange-500/5 border-t border-orange-500/10 animate-in fade-in slide-in-from-top-1 duration-200">
+                                                    <div className="lg:col-span-3 space-y-1.5">
+                                                        <div className="flex items-center gap-2 mb-1">
+                                                            <div className="w-1.5 h-1.5 rounded-full bg-orange-500" />
+                                                            <Label className="text-[10px] text-orange-500 uppercase font-black tracking-widest">Substituição</Label>
+                                                        </div>
+                                                        <Input
+                                                            value={item.sub_food_name || ''}
+                                                            onChange={(e) => handleUpdateItem(item.id, {
+                                                                sub_food_name: e.target.value,
+                                                                has_substitute: e.target.value.length > 0
+                                                            })}
+                                                            placeholder="Nome da substituição..."
+                                                            className="bg-zinc-950 border-orange-500/20 text-sm h-9 focus:ring-1 focus:ring-orange-500/20 text-white"
+                                                        />
+                                                    </div>
+                                                    <div className="lg:col-span-2 space-y-1.5">
+                                                        <Label className="text-[10px] text-zinc-600 uppercase font-bold tracking-tight">Quantidade</Label>
+                                                        <Input
+                                                            value={item.sub_quantity || ''}
+                                                            onChange={(e) => handleUpdateItem(item.id, { sub_quantity: e.target.value })}
+                                                            placeholder="Ex: 100g"
+                                                            className="bg-zinc-950 border-zinc-800 text-sm h-9 text-center text-white"
+                                                        />
+                                                    </div>
+                                                    <div className="lg:col-span-4 grid grid-cols-3 gap-2">
+                                                        <div className="space-y-1.5">
+                                                            <Label className="text-[10px] text-blue-500/50 uppercase font-bold tracking-tight text-center">Prot</Label>
+                                                            <Input
+                                                                type="number"
+                                                                step="0.1"
+                                                                value={item.sub_protein || 0}
+                                                                onChange={(e) => handleUpdateItem(item.id, { sub_protein: parseFloat(e.target.value) || 0 })}
+                                                                className="bg-zinc-950 border-zinc-800 text-xs h-9 text-center text-blue-400/80 font-medium"
+                                                            />
+                                                        </div>
+                                                        <div className="space-y-1.5">
+                                                            <Label className="text-[10px] text-orange-500/50 uppercase font-bold tracking-tight text-center">Carb</Label>
+                                                            <Input
+                                                                type="number"
+                                                                step="0.1"
+                                                                value={item.sub_carbs || 0}
+                                                                onChange={(e) => handleUpdateItem(item.id, { sub_carbs: parseFloat(e.target.value) || 0 })}
+                                                                className="bg-zinc-950 border-zinc-800 text-xs h-9 text-center text-orange-400/80 font-medium"
+                                                            />
+                                                        </div>
+                                                        <div className="space-y-1.5">
+                                                            <Label className="text-[10px] text-yellow-500/50 uppercase font-bold tracking-tight text-center">Gord</Label>
+                                                            <Input
+                                                                type="number"
+                                                                step="0.1"
+                                                                value={item.sub_fat || 0}
+                                                                onChange={(e) => handleUpdateItem(item.id, { sub_fat: parseFloat(e.target.value) || 0 })}
+                                                                className="bg-zinc-950 border-zinc-800 text-xs h-9 text-center text-yellow-500/80 font-medium"
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                    <div className="lg:col-span-3 flex items-center justify-end gap-2 pb-0.5">
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            disabled={loadingMap[`estimate-sub-${item.id}`] || !item.sub_food_name}
+                                                            onClick={async () => {
+                                                                setLoadingMap(prev => ({ ...prev, [`estimate-sub-${item.id}`]: true }))
+                                                                const res = await estimateMacros(item.sub_food_name!, item.sub_quantity!)
+                                                                if (res.success && res.macros) {
+                                                                    await handleUpdateItem(item.id, {
+                                                                        sub_protein: res.macros.protein,
+                                                                        sub_carbs: res.macros.carbs,
+                                                                        sub_fat: res.macros.fat
+                                                                    })
+                                                                } else if (res.error) {
+                                                                    alert(`Erro ao calcular substituição: ${res.error}`)
+                                                                }
+                                                                setLoadingMap(prev => ({ ...prev, [`estimate-sub-${item.id}`]: false }))
+                                                            }}
+                                                            className="text-zinc-600 hover:text-orange-400 h-9 w-9 transition-colors border border-zinc-800 bg-zinc-900/50"
+                                                            title="Calcular macros da substituição com IA"
+                                                        >
+                                                            {loadingMap[`estimate-sub-${item.id}`] ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+                                                        </Button>
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            disabled={loadingMap[`suggest-sub-${item.id}`]}
+                                                            onClick={async () => {
+                                                                setLoadingMap(prev => ({ ...prev, [`suggest-sub-${item.id}`]: true }))
+                                                                const res = await suggestSubstitution(item.food_name, item.quantity)
+                                                                if (res.success && res.suggestion) {
+                                                                    await handleUpdateItem(item.id, {
+                                                                        has_substitute: true,
+                                                                        sub_food_name: res.suggestion.food_name,
+                                                                        sub_quantity: res.suggestion.quantity,
+                                                                        sub_protein: res.suggestion.protein,
+                                                                        sub_carbs: res.suggestion.carbs,
+                                                                        sub_fat: res.suggestion.fat,
+                                                                        sub_fiber: res.suggestion.fiber
+                                                                    })
+                                                                } else if (res.error) {
+                                                                    alert(`Erro na sugestão: ${res.error}`)
+                                                                }
+                                                                setLoadingMap(prev => ({ ...prev, [`suggest-sub-${item.id}`]: false }))
+                                                            }}
+                                                            className="text-zinc-600 hover:text-purple-400 h-9 w-9 transition-colors border border-zinc-800 bg-zinc-900/50"
+                                                            title="Sugerir substituição similar com IA"
+                                                        >
+                                                            {loadingMap[`suggest-sub-${item.id}`] ? <Loader2 className="w-4 h-4 animate-spin" /> : <Utensils className="w-4 h-4" />}
+                                                        </Button>
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            onClick={() => handleUpdateItem(item.id, {
+                                                                sub_food_name: item.food_name,
+                                                                sub_quantity: item.quantity,
+                                                                sub_protein: item.protein,
+                                                                sub_carbs: item.carbs,
+                                                                sub_fat: item.fat,
+                                                                sub_fiber: item.fiber
+                                                            })}
+                                                            className="text-zinc-600 hover:text-blue-400 h-9 w-9 transition-colors border border-zinc-800 bg-zinc-900/50"
+                                                            title="Copiar dados do alimento original"
+                                                        >
+                                                            <ListRestart className="w-4 h-4" />
+                                                        </Button>
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            onClick={() => handleUpdateItem(item.id, {
+                                                                has_substitute: false,
+                                                                sub_food_name: '',
+                                                                sub_quantity: '',
+                                                                sub_protein: 0,
+                                                                sub_carbs: 0,
+                                                                sub_fat: 0,
+                                                                sub_fiber: 0
+                                                            })}
+                                                            className="text-zinc-600 hover:text-red-400 h-9 w-9 transition-colors border border-zinc-800 bg-zinc-900/50"
+                                                            title="Limpar campos da substituição"
+                                                        >
+                                                            <Trash2 className="w-4 h-4" />
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                            )}
                                         </div>
                                     ))}
                                 </div>

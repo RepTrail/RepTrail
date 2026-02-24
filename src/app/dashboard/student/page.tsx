@@ -41,6 +41,50 @@ export default async function StudentDashboardPage() {
     const showAutoTrainingModal = !autoTrainingStatus?.saw_auto_training_onboarding_modal && !trainerRel
     const showAnamnesis = !details?.age || !details?.height || !details?.current_weight
 
+    // Case: Trainer Inactive (plan_tier === 'none')
+    if (trainerRel && trainerRel.trainer.plan_tier === 'none' && !hasAutoTraining) {
+        return (
+            <div className="space-y-12 pb-20 animate-in fade-in duration-700">
+                <header className="space-y-8">
+                    <div className="relative group overflow-hidden p-10 md:p-16 bg-zinc-900 border border-zinc-800 rounded-[3.5rem] shadow-2xl">
+                        <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 via-transparent to-transparent opacity-50" />
+                        <div className="relative z-10 flex flex-col md:flex-row gap-12 items-center">
+                            <div className="flex-1 space-y-6 text-center md:text-left">
+                                <div className="space-y-2">
+                                    <h2 className="text-3xl md:text-5xl font-black text-white italic uppercase tracking-tighter leading-tight">
+                                        Seu Personal <br /><span className="text-red-500">ficou Inativo</span>
+                                    </h2>
+                                    <p className="text-zinc-500 text-sm md:text-lg font-medium leading-relaxed max-w-md mx-auto md:mx-0">
+                                        Infelizmente, seu personal trainer {trainerRel.trainer.full_name} não utiliza mais a plataforma RepTrail.
+                                        Para continuar seus treinos, você pode procurar um novo personal ou ativar o Auto-Training.
+                                    </p>
+                                </div>
+                                <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-center md:justify-start">
+                                    <Link href="/buscar-personal">
+                                        <Button className="h-16 px-10 rounded-2xl bg-white hover:bg-orange-500 hover:text-zinc-950 text-zinc-950 font-black uppercase italic tracking-wide group shadow-xl transition-all active:scale-95 text-lg">
+                                            Procurar Novo Personal
+                                            <Search className="w-5 h-5 ml-2 group-hover:rotate-12 transition-transform" />
+                                        </Button>
+                                    </Link>
+                                    <Link href="/dashboard/student/plans">
+                                        <Button variant="outline" className="h-16 px-10 rounded-2xl border-orange-500/30 bg-orange-500/5 hover:bg-orange-500 hover:border-orange-500 text-orange-500 hover:text-zinc-950 font-black uppercase italic tracking-widest text-lg transition-all shadow-xl backdrop-blur-sm">
+                                            Ativar Auto-Training
+                                            <Zap className="w-5 h-5 ml-2" />
+                                        </Button>
+                                    </Link>
+                                </div>
+                            </div>
+                            <div className="hidden lg:block relative shrink-0">
+                                <div className="absolute inset-0 bg-red-500 blur-[80px] opacity-20" />
+                                <ShieldCheck className="w-48 h-48 text-zinc-800 relative z-10 opacity-50" />
+                            </div>
+                        </div>
+                    </div>
+                </header>
+            </div>
+        )
+    }
+
     // Case: No Trainer and No Auto-Training (Public/Newbie View)
     if (!trainerRel && !hasAutoTraining) {
         const ranking = await getTrainerRanking()

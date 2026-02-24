@@ -1,9 +1,12 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { Dumbbell, CreditCard, Sparkles, Search, Check } from 'lucide-react'
+import { Dumbbell, CreditCard, Sparkles, Search, Check, Zap, ArrowRight, ShieldCheck } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { createStudentAutoTrainingCheckoutSession } from '@/actions/stripe-actions'
+import { CancelSubscriptionButton } from '@/components/feature/subscription/cancel-subscription-button'
+
+export const dynamic = 'force-dynamic'
 
 export default async function StudentPlansPage() {
     const supabase = await createClient()
@@ -13,7 +16,7 @@ export default async function StudentPlansPage() {
 
     const { data: profile } = await supabase
         .from('profiles')
-        .select('auto_training_status, auto_training_trial_end')
+        .select('auto_training_status, auto_training_trial_end, stripe_cancel_at_period_end, stripe_current_period_end')
         .eq('id', user.id)
         .single()
 
@@ -51,12 +54,12 @@ export default async function StudentPlansPage() {
             <div className="grid md:grid-cols-2 gap-8 mt-10">
                 {/* AUTO TRAINING PLAN */}
                 <div className={`
-                    relative p-8 rounded-3xl border 
-                    ${isActive ? 'bg-emerald-500/10 border-emerald-500 shadow-[0_0_50px_rgba(16,185,129,0.1)]' : 'bg-zinc-900 border-zinc-800'}
+                    relative p-8 rounded-3xl border transition-all duration-300
+                    ${isActive ? 'bg-emerald-500/5 border-emerald-500/30 shadow-2xl' : 'bg-zinc-900 border-zinc-800 hover:border-emerald-500/20'}
                 `}>
                     {isActive && (
-                        <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-emerald-500 text-zinc-950 font-black uppercase tracking-widest text-[10px] py-1.5 px-4 rounded-full">
-                            Plano Atual
+                        <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-emerald-500 text-zinc-950 font-black uppercase tracking-widest text-[10px] py-1.5 px-4 rounded-full shadow-lg">
+                            {profile?.stripe_cancel_at_period_end ? 'Ciclo em Encerramento' : 'Plano Atual Ativo'}
                         </div>
                     )}
                     <h3 className="text-2xl font-black italic uppercase flex items-center gap-3">
@@ -69,22 +72,35 @@ export default async function StudentPlansPage() {
                     </div>
 
                     <ul className="space-y-4 mb-8">
-                        {['Importação de PDF (Treino e Dieta)', 'Montagem de rotinas de Cardio', 'Auto-administração de Ergogênicos', 'Gráficos de Adesão e Performance', 'Execução Diária de Treinos'].map((item, i) => (
+                        {['Importação de PDF (Treino e Dieta)', 'Montagem de rotinas de Cardio', 'Administração de Ergogênicos', 'Gráficos de Adesão e Performance', 'Execução Diária de Treinos'].map((item, i) => (
                             <li key={i} className="flex items-start gap-3">
                                 <Check className="w-5 h-5 text-emerald-500 shrink-0" />
-                                <span className="text-sm font-medium text-zinc-300">{item}</span>
+                                <span className={`text-sm font-medium ${isActive ? 'text-zinc-300' : 'text-zinc-500'}`}>{item}</span>
                             </li>
                         ))}
                     </ul>
 
                     {isActive ? (
-                        <div className="w-full h-12 rounded-xl bg-zinc-950 text-emerald-500 flex items-center justify-center font-bold tracking-widest uppercase text-xs border border-emerald-500/20">
-                            ATIVO
+                        <div className="space-y-4">
+                            <div className={`w-full py-4 rounded-xl flex flex-col items-center justify-center text-center px-4 ${profile?.stripe_cancel_at_period_end ? 'bg-orange-500/10 border border-orange-500/20' : 'bg-zinc-950 border border-emerald-500/10'}`}>
+                                <span className={`text-[10px] font-black uppercase tracking-widest ${profile?.stripe_cancel_at_period_end ? 'text-orange-500' : 'text-emerald-500'}`}>
+                                    {profile?.stripe_cancel_at_period_end ? 'Renovação Inativa' : 'Plano Ativo'}
+                                </span>
+                                <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest mt-1">
+                                    {profile?.stripe_cancel_at_period_end ? 'Encerramento Agendado' : 'Cobrança Mensal no Stripe'}
+                                </span>
+                            </div>
+                            <div className="flex justify-center w-full">
+                                <CancelSubscriptionButton
+                                    isCancelled={profile?.stripe_cancel_at_period_end}
+                                    periodEnd={profile?.stripe_current_period_end}
+                                />
+                            </div>
                         </div>
                     ) : (
                         <form action={createStudentAutoTrainingCheckoutSession}>
-                            <Button className="w-full h-12 font-black uppercase tracking-widest bg-white text-zinc-950 hover:bg-zinc-200">
-                                <Sparkles className="w-4 h-4 mr-2" />
+                            <Button className="w-full h-14 font-black uppercase tracking-widest bg-white text-zinc-950 hover:bg-emerald-500 hover:text-white transition-all rounded-2xl shadow-xl">
+                                <Zap className="w-4 h-4 mr-2" />
                                 Assinar Agora
                             </Button>
                         </form>
@@ -92,7 +108,7 @@ export default async function StudentPlansPage() {
                 </div>
 
                 {/* SEEK TRAINER OPTION */}
-                <div className="p-8 rounded-3xl bg-zinc-900 border border-zinc-800 flex flex-col">
+                <div className="p-8 rounded-3xl bg-zinc-900 border border-zinc-800 flex flex-col hover:border-orange-500/20 transition-all">
                     <h3 className="text-2xl font-black italic uppercase flex items-center gap-3">
                         <Search className="text-orange-500" />
                         Com Personal
@@ -112,10 +128,21 @@ export default async function StudentPlansPage() {
                     </ul>
 
                     <Link href="/buscar-personal" className="w-full">
-                        <Button variant="outline" className="w-full h-12 font-black uppercase tracking-widest text-zinc-400 border-zinc-800 hover:text-white hover:bg-zinc-800">
+                        <Button variant="outline" className="w-full h-14 font-black uppercase tracking-widest text-zinc-400 border-zinc-800 hover:text-white hover:bg-zinc-800 rounded-2xl">
                             Buscar Personal
                         </Button>
                     </Link>
+                </div>
+            </div>
+
+            <div className="flex items-center justify-center gap-8 text-center opacity-30 hover:opacity-100 transition-opacity pb-8">
+                <div className="flex items-center gap-2">
+                    <ShieldCheck className="w-4 h-4" />
+                    <span className="text-[10px] font-black uppercase tracking-widest">Segurança Stripe</span>
+                </div>
+                <div className="flex items-center gap-2">
+                    <CreditCard className="w-4 h-4" />
+                    <span className="text-[10px] font-black uppercase tracking-widest">Sem Fidelidade</span>
                 </div>
             </div>
         </div>

@@ -348,8 +348,9 @@ export async function getTodayWorkout(studentId: string) {
         const { data: assignment } = await supabase
             .from('assigned_workouts')
             .select(`
-                workout:workouts(
+                workout:workouts!inner(
                     *,
+                    trainer_id,
                     exercises:workout_exercises(
                         *,
                         exercise:exercises(*)
@@ -364,6 +365,19 @@ export async function getTodayWorkout(studentId: string) {
         if (!assignment || !assignment.workout) return null
 
         const workout = assignment.workout as any
+
+        // Data Pruning: Check if trainer is still linked
+        if (workout.trainer_id && workout.trainer_id !== studentId) {
+            const { data: link } = await supabase
+                .from('trainer_students')
+                .select('id')
+                .eq('trainer_id', workout.trainer_id)
+                .eq('student_id', studentId)
+                .eq('active', true)
+                .maybeSingle()
+
+            if (!link) return null // Unlinked trainer's data is hidden
+        }
         if (workout.exercises) {
             workout.exercises.sort((a: any, b: any) => a.order_index - b.order_index)
         }

@@ -139,7 +139,8 @@ export async function getStudentTrainer(studentId: string) {
                     total_reviews,
                     is_elite,
                     whatsapp,
-                    instagram
+                    instagram,
+                    plan_tier
                 )
             `)
             .eq('student_id', studentId)

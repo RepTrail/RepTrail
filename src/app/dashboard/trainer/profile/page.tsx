@@ -3,6 +3,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Award, User, CreditCard, Sparkles, Zap, Crown, Activity } from "lucide-react"
 import { createClient } from '@/lib/supabase/server'
 import { ClientProfileForm } from "@/components/feature/trainer/client-profile-form"
+import { CancelSubscriptionButton } from "@/components/feature/subscription/cancel-subscription-button"
+import Link from 'next/link'
+import { Button } from "@/components/ui/button"
+
+export const dynamic = 'force-dynamic'
 
 export default async function TrainerProfilePage() {
     const profile = await getTrainerProfile()
@@ -50,6 +55,9 @@ export default async function TrainerProfilePage() {
                 <p className="text-zinc-500 text-sm font-medium">
                     Gerencie sua identidade e veja seu progresso como treinador.
                 </p>
+                <div className="text-[10px] text-zinc-800 font-mono mt-2">
+                    DEBUG: {JSON.stringify({ c: profile?.stripe_cancel_at_period_end, e: profile?.stripe_current_period_end })}
+                </div>
             </div>
 
             <div className="grid gap-6 lg:grid-cols-12">
@@ -93,7 +101,7 @@ export default async function TrainerProfilePage() {
                                 <div className="p-4 bg-zinc-900/50 rounded-xl border border-zinc-800/50 text-center">
                                     <div className="text-[9px] font-black text-zinc-600 uppercase tracking-widest mb-1">Avaliação</div>
                                     <div className={`text-xl font-bold ${tierColor}`}>
-                                        {profile?.rating && profile.rating > 0 ? `${profile.rating} ★` : 'S/ Av.'}
+                                        {profile?.rating && profile.rating > 0 ? `${profile.rating} ★` : '0.0'}
                                     </div>
                                     {(!profile?.rating || profile.rating === 0) && (
                                         <p className="text-[8px] text-zinc-600 mt-1 uppercase font-bold tracking-tight">Sem avaliações ainda</p>
@@ -104,26 +112,71 @@ export default async function TrainerProfilePage() {
                                     <div className="text-xl font-bold text-white">{activeStudents || 0}</div>
                                 </div>
                             </div>
-
-                            <p className="text-[9px] text-zinc-500 font-bold uppercase tracking-widest text-center">
-                                Baseado na atividade real da sua conta.
-                            </p>
                         </CardContent>
                     </Card>
 
-                    <Card className="bg-zinc-950 border-zinc-800 shadow-2xl rounded-2xl overflow-hidden group opacity-60">
-                        <CardHeader className="bg-purple-500/5 border-b border-purple-500/10 py-4">
-                            <CardTitle className="text-sm font-bold text-purple-500 flex items-center gap-2 uppercase tracking-widest">
+                    {/* ASSINATURA & FATURAMENTO - REDESIGNED PER REQUEST */}
+                    <Card className="bg-zinc-950 border-zinc-800/50 shadow-2xl rounded-[2rem] overflow-hidden group relative text-left">
+                        <CardHeader className="bg-zinc-900/40 border-b border-zinc-900/50 py-5 relative z-10">
+                            <CardTitle className="text-xs font-black text-purple-500 flex items-center gap-2 uppercase tracking-[0.2em]">
                                 <CreditCard className="w-4 h-4" />
-                                Pagamentos & Planos
+                                Assinatura & Faturamento
                             </CardTitle>
                         </CardHeader>
-                        <CardContent className="p-6 space-y-4">
-                            <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest leading-relaxed">
-                                Gerencie seus preços e receba pagamentos diretamente dos alunos.
-                            </p>
-                            <div className="p-3 bg-zinc-900/50 rounded-xl border border-zinc-800 text-[10px] font-bold text-zinc-600 uppercase tracking-widest text-center">
-                                Stripe Connect em breve
+                        <CardContent className="p-8 space-y-6 flex flex-col items-center relative z-10">
+                            <div className="w-full space-y-4">
+                                <div className="flex justify-between items-end pb-4 border-b border-zinc-900/50">
+                                    <div className="space-y-1">
+                                        <div className="text-[10px] font-black text-zinc-600 uppercase tracking-widest leading-none text-left">Status Atual</div>
+                                        <div className={`text-lg font-black italic uppercase tracking-tighter ${profile?.plan_tier && profile.plan_tier !== 'none' ? (profile?.stripe_cancel_at_period_end ? 'text-orange-500' : 'text-emerald-500') : 'text-zinc-600'}`}>
+                                            {profile?.plan_tier && profile.plan_tier !== 'none'
+                                                ? (profile?.stripe_cancel_at_period_end ? 'Cancelamento Agendado' : 'Plano On Demand Ativo')
+                                                : 'Plano Inativo'}
+                                        </div>
+                                    </div>
+                                    {profile?.plan_tier && profile.plan_tier !== 'none' && !profile?.stripe_cancel_at_period_end && (
+                                        <div className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-[9px] font-black text-emerald-500 uppercase tracking-widest animate-pulse">
+                                            Válido
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="space-y-2 text-left w-full pt-1">
+                                    <div className="flex items-center gap-2">
+                                        <div className={`w-1.5 h-1.5 rounded-full ${profile?.stripe_cancel_at_period_end ? 'bg-orange-500' : 'bg-purple-500'}`} />
+                                        <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider">
+                                            Ciclo On Demand Mensal
+                                        </p>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-zinc-800" />
+                                        <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider text-left">
+                                            Gestão via Stripe Billing
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {profile?.plan_tier && profile.plan_tier !== 'none' ? (
+                                <div className="w-full">
+                                    <CancelSubscriptionButton
+                                        isCancelled={profile?.stripe_cancel_at_period_end}
+                                        periodEnd={profile?.stripe_current_period_end}
+                                    />
+                                </div>
+                            ) : (
+                                <Link href="/dashboard/trainer/plans" className="w-full">
+                                    <Button className="w-full h-12 rounded-xl bg-white text-zinc-950 hover:bg-purple-500 hover:text-white font-black uppercase italic tracking-widest text-xs transition-all shadow-xl">
+                                        Explorar Planos
+                                        <Zap className="w-4 h-4 ml-2" />
+                                    </Button>
+                                </Link>
+                            )}
+
+                            <div className="flex items-center gap-2 pt-2 grayscale opacity-30 hover:grayscale-0 hover:opacity-100 transition-all cursor-default">
+                                <span className="text-[8px] font-bold text-zinc-500 uppercase tracking-[0.2em]">Secured by</span>
+                                <CreditCard className="w-3 h-3 text-white" />
+                                <span className="text-[8px] font-black text-white uppercase tracking-tighter">Stripe</span>
                             </div>
                         </CardContent>
                     </Card>

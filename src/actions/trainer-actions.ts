@@ -137,6 +137,8 @@ export async function getTrainerProfile() {
         .eq('id', user.id)
         .single()
 
+    console.log(`[GET PROFILE] ${user.id} - cancel_at_period_end:`, data?.stripe_cancel_at_period_end)
+
     return data
 }
 
@@ -155,7 +157,7 @@ export async function createStudent(prevState: any, formData: FormData) {
         // 1. Find Student by Email
         const { data: student, error: fetchError } = await supabase
             .from('profiles')
-            .select('id, role')
+            .select('id, role, auto_training_status')
             .eq('email', email)
             .single()
 
@@ -165,6 +167,23 @@ export async function createStudent(prevState: any, formData: FormData) {
 
         if (student.role === 'trainer') {
             return { success: false, message: 'Este email pertence a um treinador, não a um aluno.' }
+        }
+
+        // Restriction: Student cannot have active auto-training
+        if (student.auto_training_status === 'active' || student.auto_training_status === 'trial') {
+            return { success: false, message: 'Este aluno possui uma assinatura de Auto-Training ativa e não pode ser vinculado a um personal no momento.' }
+        }
+
+        // Restriction: Student cannot be linked to another trainer
+        const { data: existingTrainer } = await supabase
+            .from('trainer_students')
+            .select('trainer_id')
+            .eq('student_id', student.id)
+            .eq('active', true)
+            .maybeSingle()
+
+        if (existingTrainer) {
+            return { success: false, message: 'Este aluno já está vinculado a outro personal trainer.' }
         }
 
         // 2. Link Student to Trainer

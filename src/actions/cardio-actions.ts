@@ -156,14 +156,34 @@ export async function getStudentCardioAssignments(studentId: string) {
             .from('assigned_cardios')
             .select(`
                 *,
-                cardio:cardios(*)
+                cardio:cardios!inner(*)
             `)
             .eq('student_id', studentId)
             .eq('active', true)
             .order('created_at', { ascending: false })
 
         if (error) throw error
-        return data || []
+
+        // Data Pruning: Check if trainer is still linked for each cardio
+        const filteredData = []
+        for (const item of (data || [])) {
+            const cardio = item.cardio as any
+            if (cardio.trainer_id && cardio.trainer_id !== studentId) {
+                const { data: link } = await supabase
+                    .from('trainer_students')
+                    .select('id')
+                    .eq('trainer_id', cardio.trainer_id)
+                    .eq('student_id', studentId)
+                    .eq('active', true)
+                    .maybeSingle()
+
+                if (link) filteredData.push(item)
+            } else {
+                filteredData.push(item)
+            }
+        }
+
+        return filteredData
     } catch (e) {
         console.error('Error fetching student cardios:', e)
         return []

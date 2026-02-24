@@ -117,6 +117,39 @@ export async function POST(req: Request) {
                 break
             }
 
+            // 🔄 Subscription updated → sincroniza status de cancelamento e datas
+            case 'customer.subscription.updated': {
+                const subscription = event.data.object as any
+                const customerId = subscription.customer
+                const plan = subscription.metadata?.plan || subscription.metadata?.tier
+
+                const updatePayload: Record<string, any> = {
+                    stripe_cancel_at_period_end: subscription.cancel_at_period_end,
+                    stripe_current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+                }
+
+                // Se o cancelamento foi revertido e estava expirado, reativa!
+                if (!subscription.cancel_at_period_end) {
+                    if (plan === 'auto_training') {
+                        updatePayload.auto_training_status = 'active'
+                    } else {
+                        updatePayload.plan_tier = 'on_demand'
+                    }
+                }
+
+                const { error } = await (admin as any)
+                    .from('profiles')
+                    .update(updatePayload)
+                    .eq('stripe_customer_id', customerId)
+
+                if (error) {
+                    console.error('[STRIPE WEBHOOK] Error updating subscription state:', error)
+                } else {
+                    console.log(`[STRIPE WEBHOOK] ✅ Subscription updated for customer ${customerId}`)
+                }
+                break
+            }
+
             // ❌ Subscription deleted → desativa o plano
             case 'customer.subscription.deleted': {
                 const subscription = event.data.object as any
@@ -126,6 +159,8 @@ export async function POST(req: Request) {
 
                 const updatePayload: Record<string, any> = {
                     stripe_subscription_id: null,
+                    stripe_cancel_at_period_end: false,
+                    stripe_current_period_end: null
                 }
 
                 if (plan === 'auto_training') {
