@@ -1,10 +1,11 @@
-import { getTrainerTier, getTrainerStudents } from '@/actions/trainer-actions'
+import { getTrainerTier, getTrainerStudents, getTrainerProfile } from '@/actions/trainer-actions'
 import { PlansClient } from '@/components/feature/trainer/plans-client'
 
 export default async function TrainerPlansPage() {
     const currentTier = await getTrainerTier() as any
     const students = await getTrainerStudents()
     const studentCount = students?.length || 0
+    const profile = await getTrainerProfile()
 
     return (
         <div className="space-y-10 pb-10" suppressHydrationWarning>
@@ -20,7 +21,11 @@ export default async function TrainerPlansPage() {
                 </div>
             </div>
 
-            <PlansClient currentTier={currentTier} studentCount={studentCount} />
+            <PlansClient
+                currentTier={currentTier}
+                studentCount={studentCount}
+                profile={profile}
+            />
         </div>
     )
 }

@@ -708,7 +708,33 @@ export async function toggleStudentStatus(relationshipId: string, isActive: bool
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
-    if (!user) return { success: false, message: 'Unauthorized' }
+    if (!user) return { success: false, message: 'Não autorizado' }
+
+    // 1. Get Trainer Profile and active students count
+    const { data: profile } = await supabase
+        .from('profiles')
+        .select('asaas_subscription_id, is_billing_exempt')
+        .eq('id', user.id)
+        .single()
+
+    // 2. If activating, check limits
+    if (isActive) {
+        const { count } = await supabase
+            .from('trainer_students')
+            .select('*', { count: 'exact', head: true })
+            .eq('trainer_id', user.id)
+            .eq('active', true)
+
+        const activeCount = count || 0
+
+        // If trainer is not exempt and doesn't have a sub, limit to 5
+        if (activeCount >= 5 && !profile?.asaas_subscription_id && !profile?.is_billing_exempt) {
+            return {
+                success: false,
+                message: 'Limite gratuito atingido. Para ter mais de 5 alunos ativos, você precisa configurar sua assinatura no menu Planos.'
+            }
+        }
+    }
 
     // Verify ownership
     const { data: rel } = await supabase
@@ -718,7 +744,7 @@ export async function toggleStudentStatus(relationshipId: string, isActive: bool
         .single()
 
     if (!rel || rel.trainer_id !== user.id) {
-        return { success: false, message: 'Unauthorized' }
+        return { success: false, message: 'Não autorizado' }
     }
 
     const { error } = await supabase

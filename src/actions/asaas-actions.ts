@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { fetchAsaas } from '@/lib/asaas'
 import { revalidatePath } from 'next/cache'
 
-export async function getOrCreateAsaasCustomer() {
+export async function getOrCreateAsaasCustomer(cpfCnpj?: string) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) throw new Error('Não autorizado')
@@ -16,6 +16,8 @@ export async function getOrCreateAsaasCustomer() {
         .single()
 
     if (profile?.asaas_customer_id) {
+        // If we have a customer ID but Asaas now requires a CPF we didn't have before, 
+        // we might need to update the customer. For now let's keep it simple.
         return profile.asaas_customer_id
     }
 
@@ -25,14 +27,18 @@ export async function getOrCreateAsaasCustomer() {
         body: JSON.stringify({
             name: profile?.full_name || user.email?.split('@')[0],
             email: user.email,
+            cpfCnpj: cpfCnpj || profile?.cpf_cnpj,
             externalReference: user.id
         })
     })
 
     // Store in DB
+    const updates: any = { asaas_customer_id: customer.id }
+    if (cpfCnpj) updates.cpf_cnpj = cpfCnpj
+
     await supabase
         .from('profiles')
-        .update({ asaas_customer_id: customer.id })
+        .update(updates)
         .eq('id', user.id)
 
     return customer.id
@@ -40,14 +46,15 @@ export async function getOrCreateAsaasCustomer() {
 
 export async function createAsaasSubscription(
     tier: 'on_demand' | 'auto_training',
-    billingType: 'BOLETO' | 'CREDIT_CARD' | 'PIX' = 'PIX'
+    billingType: 'BOLETO' | 'CREDIT_CARD' | 'PIX' = 'PIX',
+    taxId?: string
 ) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { error: 'Não autorizado' }
 
     try {
-        const customerId = await getOrCreateAsaasCustomer()
+        const customerId = await getOrCreateAsaasCustomer(taxId)
 
         // Calculate value for on_demand (10.90 per student after the first 5 free)
         let value = tier === 'auto_training' ? 10.90 : 0

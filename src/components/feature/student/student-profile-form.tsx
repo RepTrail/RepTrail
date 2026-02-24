@@ -21,6 +21,7 @@ import { toast } from '@/hooks/use-toast'
 import { Checkbox } from '@/components/ui/checkbox'
 import { AvatarUploadWithCrop } from '@/components/feature/avatar-upload-with-crop'
 import { StudentTrialBadge } from './student-trial-badge'
+import { CancelSubscriptionButton } from '../subscription/cancel-subscription-button'
 
 interface StudentProfileFormProps {
     profile: any
@@ -108,6 +109,12 @@ export function StudentProfileForm({ profile }: StudentProfileFormProps) {
                                 </span>
                             </div>
                         </div>
+
+                        {profile?.asaas_subscription_id && (
+                            <div className="pt-2 flex justify-center">
+                                <CancelSubscriptionButton />
+                            </div>
+                        )}
                     </CardContent>
                 </Card>
             </div>
@@ -118,6 +125,7 @@ export function StudentProfileForm({ profile }: StudentProfileFormProps) {
                     <StudentTrialBadge
                         trialEnd={profile.auto_training_trial_end}
                         status={profile.auto_training_status}
+                        currentCpf={profile?.cpf_cnpj}
                     />
                 )}
 

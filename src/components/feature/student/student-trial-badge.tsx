@@ -1,19 +1,18 @@
 'use client'
 
 import { useState } from 'react'
-import { Sparkles, Calendar, Zap, CreditCard, QrCode, FileText } from 'lucide-react'
+import { Sparkles, Calendar, Zap } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { createAsaasSubscription } from '@/actions/asaas-actions'
-import { toast } from '@/hooks/use-toast'
+import { PaymentModal } from '../asaas/payment-modal'
 
 interface StudentTrialBadgeProps {
     trialEnd: string | null
     status: string | null
+    currentCpf?: string
 }
 
-export function StudentTrialBadge({ trialEnd, status }: StudentTrialBadgeProps) {
-    const [loading, setLoading] = useState(false)
-    const [showPayment, setShowPayment] = useState(false)
+export function StudentTrialBadge({ trialEnd, status, currentCpf }: StudentTrialBadgeProps) {
+    const [isModalOpen, setIsModalOpen] = useState(false)
 
     if (!trialEnd || status === 'active') return null
 
@@ -24,25 +23,16 @@ export function StudentTrialBadge({ trialEnd, status }: StudentTrialBadgeProps) 
 
     const isExpired = diffDays <= 0
 
-    const handleSubscribe = async (type: 'PIX' | 'BOLETO' | 'CREDIT_CARD') => {
-        setLoading(true)
-        toast({
-            title: "Gerando pagamento...",
-            description: "Preparando sua assinatura Auto-Treino..."
-        })
-
-        const res = await createAsaasSubscription('auto_training', type)
-        setLoading(false)
-
-        if (res.success && res.invoiceUrl) {
-            window.location.href = res.invoiceUrl
-        } else if (res.error) {
-            toast({ variant: 'destructive', title: 'Erro', description: res.error })
-        }
-    }
-
     return (
         <div className="space-y-4">
+            <PaymentModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                tier="auto_training"
+                currentCpf={currentCpf}
+                monthlyTotal={10.9}
+            />
+
             <div className={`
                 p-6 rounded-[2rem] border backdrop-blur-sm shadow-xl transition-all
                 ${isExpired
@@ -70,41 +60,13 @@ export function StudentTrialBadge({ trialEnd, status }: StudentTrialBadgeProps) 
                     </div>
 
                     <div className="flex items-center gap-3">
-                        {!showPayment ? (
-                            <Button
-                                onClick={() => setShowPayment(true)}
-                                className="h-12 px-8 rounded-xl bg-white text-zinc-950 hover:bg-zinc-200 font-black uppercase italic tracking-wide text-xs group"
-                            >
-                                Assinar Agora
-                                <Zap className="w-3.5 h-3.5 ml-2 fill-current" />
-                            </Button>
-                        ) : (
-                            <div className="flex flex-wrap gap-2">
-                                <Button
-                                    onClick={() => handleSubscribe('PIX')}
-                                    disabled={loading}
-                                    variant="outline"
-                                    className="h-10 rounded-lg border-emerald-500/30 bg-emerald-500/5 text-emerald-400 font-black uppercase text-[9px] gap-2"
-                                >
-                                    <QrCode className="w-3 h-3" /> Pix
-                                </Button>
-                                <Button
-                                    onClick={() => handleSubscribe('CREDIT_CARD')}
-                                    disabled={loading}
-                                    variant="outline"
-                                    className="h-10 rounded-lg border-zinc-800 bg-zinc-900 text-white font-black uppercase text-[9px] gap-2"
-                                >
-                                    <CreditCard className="w-3 h-3" /> Cartão
-                                </Button>
-                                <Button
-                                    onClick={() => setShowPayment(false)}
-                                    variant="ghost"
-                                    className="h-10 px-3 text-zinc-500 hover:text-white"
-                                >
-                                    Cancelar
-                                </Button>
-                            </div>
-                        )}
+                        <Button
+                            onClick={() => setIsModalOpen(true)}
+                            className="h-12 px-8 rounded-xl bg-white text-zinc-950 hover:bg-zinc-200 font-black uppercase italic tracking-wide text-xs group"
+                        >
+                            Assinar Agora
+                            <Zap className="w-3.5 h-3.5 ml-2 fill-current" />
+                        </Button>
                     </div>
                 </div>
             </div>

@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Check, Users, Zap, ArrowRight, Sparkles, CreditCard, QrCode, FileText } from 'lucide-react'
 import { createAsaasSubscription } from "@/actions/asaas-actions"
 import { useToast } from "@/hooks/use-toast"
+import { PaymentModal } from "../asaas/payment-modal"
 
 const FREE_LIMIT = 5
 const PRICE_PER_STUDENT = 10.90
@@ -12,11 +13,13 @@ const PRICE_PER_STUDENT = 10.90
 interface PlansClientProps {
     currentTier: string
     studentCount: number
+    profile?: any
 }
 
-export function PlansClient({ currentTier, studentCount }: PlansClientProps) {
+export function PlansClient({ currentTier, studentCount, profile }: PlansClientProps) {
     const [simStudents, setSimStudents] = useState(studentCount || FREE_LIMIT)
     const [loading, setLoading] = useState(false)
+    const [isModalOpen, setIsModalOpen] = useState(false)
     const { toast } = useToast()
 
     const isActive = currentTier && currentTier !== 'none'
@@ -32,26 +35,18 @@ export function PlansClient({ currentTier, studentCount }: PlansClientProps) {
                 title: "Ativando plano...",
                 description: "Como você tem até 5 alunos, seu plano será ativado sem custo agora."
             })
-        } else {
-            toast({
-                title: "Gerando pagamento...",
-                description: `Aguarde um instante enquanto preparamos seu checkout via ${type === 'PIX' ? 'Pix' : type === 'BOLETO' ? 'Boleto' : 'Cartão'}...`
-            })
-        }
+            const res = await createAsaasSubscription('on_demand', type)
+            setLoading(false)
 
-        const res = await createAsaasSubscription('on_demand', type)
-        setLoading(false)
-
-        if (res.success) {
-            if (res.invoiceUrl) {
-                window.location.href = res.invoiceUrl
-            } else {
+            if (res.success) {
                 toast({ title: 'Plano Ativado!', description: 'Seu plano on-demand foi ativado com sucesso.' })
-                // Give a small delay to show the toast before redirect/refresh
                 setTimeout(() => window.location.reload(), 2000)
+            } else if (res.error) {
+                toast({ variant: 'destructive', title: 'Erro', description: res.error })
             }
-        } else if (res.error) {
-            toast({ variant: 'destructive', title: 'Erro no Asaas', description: res.error })
+        } else {
+            setIsModalOpen(true)
+            setLoading(false)
         }
     }
 
@@ -61,6 +56,13 @@ export function PlansClient({ currentTier, studentCount }: PlansClientProps) {
 
     return (
         <div className="max-w-2xl mx-auto space-y-10" suppressHydrationWarning>
+            <PaymentModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                tier="on_demand"
+                currentCpf={profile?.cpf_cnpj}
+                monthlyTotal={monthlyTotal}
+            />
 
             {/* Plan Card */}
             <div className="relative rounded-3xl overflow-hidden border border-zinc-800 bg-zinc-950 shadow-2xl">
@@ -193,39 +195,18 @@ export function PlansClient({ currentTier, studentCount }: PlansClientProps) {
                                     Ativar Plano Gratuito
                                 </Button>
                             ) : (
-                                <>
-                                    <Button
-                                        onClick={() => handleSubscribeAsaas('CREDIT_CARD')}
-                                        disabled={loading}
-                                        className="w-full h-14 rounded-2xl bg-white hover:bg-zinc-100 text-zinc-950 font-black uppercase tracking-widest text-sm gap-3 transition-all hover:scale-[1.02] active:scale-[0.98]"
-                                    >
-                                        <CreditCard className="w-5 h-5" />
-                                        Cartão de Crédito
-                                    </Button>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <Button
-                                            onClick={() => handleSubscribeAsaas('PIX')}
-                                            disabled={loading}
-                                            variant="outline"
-                                            className="h-12 rounded-xl border-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-800 font-black uppercase tracking-widest text-[10px] gap-2 transition-all"
-                                        >
-                                            <QrCode className="w-4 h-4 text-emerald-500" />
-                                            Pix instantâneo
-                                        </Button>
-                                        <Button
-                                            onClick={() => handleSubscribeAsaas('BOLETO')}
-                                            disabled={loading}
-                                            variant="outline"
-                                            className="h-12 rounded-xl border-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-800 font-black uppercase tracking-widest text-[10px] gap-2 transition-all"
-                                        >
-                                            <FileText className="w-4 h-4" />
-                                            Boleto Bancário
-                                        </Button>
-                                    </div>
-                                </>
+                                <Button
+                                    onClick={() => setIsModalOpen(true)}
+                                    disabled={loading}
+                                    className="w-full h-14 rounded-2xl bg-white hover:bg-zinc-100 text-zinc-950 font-black uppercase tracking-widest text-sm gap-3 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                                >
+                                    <Zap className="w-5 h-5 fill-current" />
+                                    Finalizar Assinatura
+                                </Button>
                             )}
                         </div>
                     )}
+
 
                     <p className="text-center text-zinc-600 text-xs">
                         Sem taxa de setup · Cancele quando quiser · Checkout Seguro via Asaas
