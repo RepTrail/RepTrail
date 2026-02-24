@@ -125,8 +125,8 @@ export async function createAsaasSubscription(
             bankSlipUrl: subscription.bankSlipUrl // If BOLETO
         }
     } catch (e: any) {
-        console.error('[ASAAS_SUBSCRIPTION_ERROR]', e.message)
-        return { error: e.message }
+        console.error('[ASAAS_SUBSCRIPTION_CRITICAL_ERROR]', e)
+        return { error: e.message || 'Erro inesperado na assinatura.' }
     }
 }
 
