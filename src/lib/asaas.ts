@@ -36,8 +36,11 @@ export async function fetchAsaas(endpoint: string, options: RequestInit = {}) {
     }
 
     if (!response.ok) {
-        console.error('[ASAAS_ERROR]', data)
-        throw new Error(data.errors?.[0]?.description || 'Erro na integração com Asaas')
+        console.error('[ASAAS_ERROR_STATUS]', response.status)
+        console.error('[ASAAS_ERROR_DATA]', data)
+
+        const description = data.errors?.[0]?.description || data.message || `Erro ${response.status} na integração com Asaas`
+        throw new Error(description)
     }
 
     return data
