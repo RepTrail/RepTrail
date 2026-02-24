@@ -49,13 +49,33 @@ export async function createAsaasSubscription(
     try {
         const customerId = await getOrCreateAsaasCustomer()
 
-        // Define value based on tier
-        // NOTE: RepTrail current logic for trainer is Metered Billing (10.90 per student > 5)
-        // Asaas subscriptions usually have a fixed value.
-        // For 'on_demand', maybe we handle it differently (like a base price or we bill later)
-        // For demonstration, let's use a fixed value or a placeholder.
+        // Calculate value for on_demand (10.90 per student after the first 5 free)
+        let value = tier === 'auto_training' ? 10.90 : 0
 
-        const value = tier === 'auto_training' ? 10.90 : 0 // On demand starts at 0 or base
+        if (tier === 'on_demand') {
+            const { count } = await supabase
+                .from('trainer_students')
+                .select('*', { count: 'exact', head: true })
+                .eq('trainer_id', user.id)
+                .eq('active', true)
+
+            const activeStudents = count || 0
+            const FREE_LIMIT = 5
+            const PRICE_PER_EXTRA = 10.90
+            const billable = Math.max(0, activeStudents - FREE_LIMIT)
+            value = billable * PRICE_PER_EXTRA
+        }
+
+        // If the value is 0 (Case of trainer with < 5 students), just activate the account
+        if (value === 0 && tier === 'on_demand') {
+            await supabase
+                .from('profiles')
+                .update({ plan_tier: 'on_demand' })
+                .eq('id', user.id)
+
+            revalidatePath('/dashboard/trainer/plans')
+            return { success: true }
+        }
 
         const subscription = await fetchAsaas('/subscriptions', {
             method: 'POST',
@@ -75,7 +95,8 @@ export async function createAsaasSubscription(
             .from('profiles')
             .update({
                 asaas_subscription_id: subscription.id,
-                asaas_billing_type: billingType
+                asaas_billing_type: billingType,
+                plan_tier: tier // Mark as active if subscription created
             })
             .eq('id', user.id)
 

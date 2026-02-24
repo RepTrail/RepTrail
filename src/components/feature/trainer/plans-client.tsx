@@ -26,15 +26,30 @@ export function PlansClient({ currentTier, studentCount }: PlansClientProps) {
 
     const handleSubscribeAsaas = async (type: 'PIX' | 'BOLETO' | 'CREDIT_CARD') => {
         setLoading(true)
-        toast({
-            title: "Gerando pagamento...",
-            description: `Aguarde um instante enquanto preparamos seu checkout via ${type === 'PIX' ? 'Pix' : type === 'BOLETO' ? 'Boleto' : 'Cartão'}...`
-        })
+
+        if (monthlyTotal === 0) {
+            toast({
+                title: "Ativando plano...",
+                description: "Como você tem até 5 alunos, seu plano será ativado sem custo agora."
+            })
+        } else {
+            toast({
+                title: "Gerando pagamento...",
+                description: `Aguarde um instante enquanto preparamos seu checkout via ${type === 'PIX' ? 'Pix' : type === 'BOLETO' ? 'Boleto' : 'Cartão'}...`
+            })
+        }
+
         const res = await createAsaasSubscription('on_demand', type)
         setLoading(false)
 
-        if (res.success && res.invoiceUrl) {
-            window.location.href = res.invoiceUrl
+        if (res.success) {
+            if (res.invoiceUrl) {
+                window.location.href = res.invoiceUrl
+            } else {
+                toast({ title: 'Plano Ativado!', description: 'Seu plano on-demand foi ativado com sucesso.' })
+                // Give a small delay to show the toast before redirect/refresh
+                setTimeout(() => window.location.reload(), 2000)
+            }
         } else if (res.error) {
             toast({ variant: 'destructive', title: 'Erro no Asaas', description: res.error })
         }
@@ -168,34 +183,47 @@ export function PlansClient({ currentTier, studentCount }: PlansClientProps) {
                         </div>
                     ) : (
                         <div className="flex flex-col gap-4">
-                            <Button
-                                onClick={() => handleSubscribeAsaas('CREDIT_CARD')}
-                                disabled={loading}
-                                className="w-full h-14 rounded-2xl bg-white hover:bg-zinc-100 text-zinc-950 font-black uppercase tracking-widest text-sm gap-3 transition-all hover:scale-[1.02] active:scale-[0.98]"
-                            >
-                                <CreditCard className="w-5 h-5" />
-                                Cartão de Crédito
-                            </Button>
-                            <div className="grid grid-cols-2 gap-4">
+                            {monthlyTotal === 0 ? (
                                 <Button
                                     onClick={() => handleSubscribeAsaas('PIX')}
                                     disabled={loading}
-                                    variant="outline"
-                                    className="h-12 rounded-xl border-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-800 font-black uppercase tracking-widest text-[10px] gap-2 transition-all"
+                                    className="w-full h-14 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-black uppercase tracking-widest text-sm gap-3 transition-all hover:scale-[1.02] active:scale-[0.98]"
                                 >
-                                    <QrCode className="w-4 h-4 text-emerald-500" />
-                                    Pix instantâneo
+                                    <Zap className="w-5 h-5 fill-current" />
+                                    Ativar Plano Gratuito
                                 </Button>
-                                <Button
-                                    onClick={() => handleSubscribeAsaas('BOLETO')}
-                                    disabled={loading}
-                                    variant="outline"
-                                    className="h-12 rounded-xl border-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-800 font-black uppercase tracking-widest text-[10px] gap-2 transition-all"
-                                >
-                                    <FileText className="w-4 h-4" />
-                                    Boleto Bancário
-                                </Button>
-                            </div>
+                            ) : (
+                                <>
+                                    <Button
+                                        onClick={() => handleSubscribeAsaas('CREDIT_CARD')}
+                                        disabled={loading}
+                                        className="w-full h-14 rounded-2xl bg-white hover:bg-zinc-100 text-zinc-950 font-black uppercase tracking-widest text-sm gap-3 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                                    >
+                                        <CreditCard className="w-5 h-5" />
+                                        Cartão de Crédito
+                                    </Button>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <Button
+                                            onClick={() => handleSubscribeAsaas('PIX')}
+                                            disabled={loading}
+                                            variant="outline"
+                                            className="h-12 rounded-xl border-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-800 font-black uppercase tracking-widest text-[10px] gap-2 transition-all"
+                                        >
+                                            <QrCode className="w-4 h-4 text-emerald-500" />
+                                            Pix instantâneo
+                                        </Button>
+                                        <Button
+                                            onClick={() => handleSubscribeAsaas('BOLETO')}
+                                            disabled={loading}
+                                            variant="outline"
+                                            className="h-12 rounded-xl border-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-800 font-black uppercase tracking-widest text-[10px] gap-2 transition-all"
+                                        >
+                                            <FileText className="w-4 h-4" />
+                                            Boleto Bancário
+                                        </Button>
+                                    </div>
+                                </>
+                            )}
                         </div>
                     )}
 
