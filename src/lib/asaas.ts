@@ -1,12 +1,18 @@
 export const ASAAS_API_URL = process.env.ASAAS_API_URL || 'https://sandbox.asaas.com/v3'
 export const ASAAS_API_KEY = process.env.ASAAS_API_KEY
 
+console.log(`[ASAAS_INIT] Base URL: ${ASAAS_API_URL}`)
+
 export async function fetchAsaas(endpoint: string, options: RequestInit = {}) {
     if (!ASAAS_API_KEY) {
         throw new Error('ASAAS_API_KEY is not set')
     }
 
-    const url = `${ASAAS_API_URL}${endpoint}`
+    const baseUrl = ASAAS_API_URL.endsWith('/') ? ASAAS_API_URL.slice(0, -1) : ASAAS_API_URL
+    const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`
+    const url = `${baseUrl}${cleanEndpoint}`
+
+    console.log(`[ASAAS_DEBUG] Request: ${options.method || 'GET'} ${url}`)
 
     const response = await fetch(url, {
         ...options,

@@ -32,6 +32,8 @@ export async function getOrCreateAsaasCustomer(cpfCnpj?: string) {
         })
     })
 
+    console.log(`[ASAAS_DEBUG] Customer created: ${customer.id}`)
+
     // Store in DB
     const updates: any = { asaas_customer_id: customer.id }
     if (cpfCnpj) updates.cpf_cnpj = cpfCnpj
@@ -63,6 +65,7 @@ export async function createAsaasSubscription(
         }
 
         const customerId = await getOrCreateAsaasCustomer(taxId)
+        console.log(`[ASAAS_DEBUG] Using Customer ID: ${customerId}`)
 
         // Calculate value for on_demand (10.90 per student after the first 5 free)
         let value = tier === 'auto_training' ? 10.90 : 0
@@ -80,6 +83,8 @@ export async function createAsaasSubscription(
             const billable = Math.max(0, activeStudents - FREE_LIMIT)
             value = billable * PRICE_PER_EXTRA
         }
+
+        console.log(`[ASAAS_DEBUG] Subscription value: ${value} for tier: ${tier}`)
 
         // If the value is 0 (Case of trainer with < 5 students), just activate the account
         if (value === 0 && tier === 'on_demand') {
