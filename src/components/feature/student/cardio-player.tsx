@@ -339,11 +339,16 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
 
                 <div className="flex flex-col items-center justify-center space-y-4">
                     <div className="text-[10px] font-black text-zinc-600 uppercase tracking-[0.2em] italic">
-                        {remainingSeconds > 0 ? "Tempo Restante" : "Tempo Concluído"}
+                        {remainingSeconds > 0 ? "Tempo Restante" : "Objetivo Alcançado"}
                     </div>
                     <div className={`text-7xl font-black italic tracking-tighter tabular-nums drop-shadow-[0_0_30px_rgba(255,255,255,0.05)] ${remainingSeconds === 0 && status !== 'idle' ? 'text-emerald-500' : 'text-white'}`}>
-                        {formatTime(remainingSeconds > 0 ? remainingSeconds : seconds)}
+                        {remainingSeconds > 0 ? formatTime(remainingSeconds) : "00:00"}
                     </div>
+                    {remainingSeconds === 0 && status !== 'idle' && (
+                        <div className="text-emerald-500 text-[10px] font-black uppercase tracking-widest animate-bounce">
+                            Missão Cumprida!
+                        </div>
+                    )}
                     <Progress value={progress} className="h-2 bg-zinc-800 rounded-full w-full max-w-xs" indicatorClassName="bg-gradient-to-r from-orange-500 to-amber-500" />
                 </div>
 

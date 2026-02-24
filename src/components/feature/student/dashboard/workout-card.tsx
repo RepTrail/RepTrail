@@ -40,13 +40,15 @@ export function WorkoutCard({ userId }: WorkoutCardProps) {
 
             if (completed) return 'completed'
 
-            // Check In Progress
+            // Check In Progress (Only if started in the last 12 hours to avoid stale sessions)
+            const twelveHoursAgo = new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString()
             const { data: inProgress } = await supabase
                 .from('workout_logs')
                 .select('id')
                 .eq('workout_id', workout!.id)
                 .eq('student_id', userId)
                 .eq('status', 'in_progress')
+                .gt('started_at', twelveHoursAgo)
                 .maybeSingle()
 
             return inProgress ? 'in_progress' : 'not_started'
@@ -69,10 +71,10 @@ export function WorkoutCard({ userId }: WorkoutCardProps) {
     return (
         <Link href={`/dashboard/student/workout/${workout.id}`}>
             <div className={`group relative p-8 rounded-[2.5rem] backdrop-blur-sm overflow-hidden transition-all duration-500 cursor-pointer shadow-xl border ${statusData === 'completed'
-                    ? 'bg-emerald-950/20 border-emerald-500/20'
-                    : statusData === 'in_progress'
-                        ? 'bg-amber-500/10 border-amber-500/20 hover:border-amber-500/40'
-                        : 'bg-zinc-900/40 border-zinc-800/50 hover:border-emerald-500/30'
+                ? 'bg-emerald-950/20 border-emerald-500/20'
+                : statusData === 'in_progress'
+                    ? 'bg-amber-500/10 border-amber-500/20 hover:border-amber-500/40'
+                    : 'bg-zinc-900/40 border-zinc-800/50 hover:border-emerald-500/30'
                 }`}>
                 <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
                     <Dumbbell className="w-32 h-32 text-white" />
@@ -99,10 +101,10 @@ export function WorkoutCard({ userId }: WorkoutCardProps) {
                         </p>
                     </div>
                     <Button className={`h-12 px-8 rounded-xl font-black uppercase italic tracking-wide transition-transform shadow-lg ${statusData === 'completed'
-                            ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 hover:bg-emerald-500/20'
-                            : statusData === 'in_progress'
-                                ? 'bg-amber-500 hover:bg-amber-400 text-zinc-950 shadow-amber-500/20'
-                                : 'bg-emerald-500 hover:bg-emerald-400 text-zinc-950 shadow-emerald-500/20'
+                        ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 hover:bg-emerald-500/20'
+                        : statusData === 'in_progress'
+                            ? 'bg-amber-500 hover:bg-amber-400 text-zinc-950 shadow-amber-500/20'
+                            : 'bg-emerald-500 hover:bg-emerald-400 text-zinc-950 shadow-emerald-500/20'
                         }`}>
                         {statusData === 'completed' ? 'Revisar Treino' : statusData === 'in_progress' ? 'Continuar Treino' : 'Iniciar Treino'}
                     </Button>

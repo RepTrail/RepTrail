@@ -77,13 +77,15 @@ export default async function WorkoutPlayerPage({ params }: { params: Promise<{ 
         )
     }
 
-    // 4. Check for In-Progress Workout (Resume)
+    // 4. Check for In-Progress Workout (Resume) - Only within last 12 hours
+    const twelveHoursAgo = new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString()
     const { data: inProgressLog } = await supabase
         .from('workout_logs')
         .select('id, current_state')
         .eq('workout_id', workout.id) // Specific workout
         .eq('student_id', user.id)
         .eq('status', 'in_progress')
+        .gt('started_at', twelveHoursAgo)
         .order('started_at', { ascending: false })
         .limit(1)
         .maybeSingle()

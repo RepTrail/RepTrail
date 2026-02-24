@@ -11,13 +11,15 @@ export async function startWorkoutLog(workoutId: string) {
     if (!user) return { error: 'Unauthorized' }
 
     try {
-        // Check for existing in_progress log
+        // Check for existing in_progress log (within last 12 hours)
+        const twelveHoursAgo = new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString()
         const { data: existing } = await supabase
             .from('workout_logs')
             .select('id')
             .eq('student_id', user.id)
             .eq('workout_id', workoutId)
             .eq('status', 'in_progress')
+            .gt('started_at', twelveHoursAgo)
             .order('started_at', { ascending: false })
             .limit(1)
             .maybeSingle()

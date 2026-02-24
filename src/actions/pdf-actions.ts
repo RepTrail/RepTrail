@@ -80,7 +80,7 @@ export async function parseUploadedPdf(filePath: string, type: 'workout' | 'diet
                 ? `
 You are a surgical Fitness Data Extraction AI. You translate messy Portuguese gym PDFs into structured JSON.
 
-Your number one priority is to find PREPARATORY SETS (Aquecimento/Warmup/Feeder) and separate them from WORKING SETS.
+ Your number one priority is to find PREPARATORY SETS (Aquecimento/Warmup/Feeder) and separate them from WORKING SETS.
 
 STRICT EXTRACTION PROTOCOL:
 1. **Analyze every line**: Look for numbers near words like "aquecimento", "manguito", "preparação", "mobilidade", "ativação", "feeder", "aproximação", "vão", "antes", "subindo carga".
@@ -91,7 +91,7 @@ STRICT EXTRACTION PROTOCOL:
 
 JSON SCHEMA:
 {
-    "thought_process": "Write here your analysis of the PDF structure and where you found the warmup details...",
+    "thought_process": "Write here your analysis of the PDF structure and where you found the warmup and intensity techniques...",
     "workouts": [
         {
             "name": "TREINO A",
@@ -103,7 +103,8 @@ JSON SCHEMA:
                     "reps": "10",
                     "rest": 180,
                     "warmup_sets": "2x15",
-                    "feeder_sets": "1x10"
+                    "feeder_sets": "1x10",
+                    "notes": "BI-SET com Cadeira Extensora / DROP-SET na última série"
                 }
             ]
         }
@@ -111,6 +112,11 @@ JSON SCHEMA:
     "cardios": [],
     "ergogenics": []
 }
+
+STRICT INTENSITY TECHNIQUES PROTOCOL:
+1. **Identify Grouped Exercises**: Look for words like "CONJUGADO", "BI-SET", "TRI-SET", "GIGANT-SET", "SUPER-SET". If two exercises are linked, add a note to BOTH exercises stating they are part of a bi-set/conjugado.
+2. **Technique Detection**: Look for "DROP", "DROP-SET", "REST-PAUSE", "CLUSTER", "CLUSTER-SET", "PICO DE CONTRAÇÃO", "FALHA".
+3. **Storage**: All these techniques should be written clearly in the "notes" field of the corresponding exercise.
 
 TEXT TO ANALYZE:
 ${text}
