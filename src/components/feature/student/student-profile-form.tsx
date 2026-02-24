@@ -20,6 +20,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { toast } from '@/hooks/use-toast'
 import { Checkbox } from '@/components/ui/checkbox'
 import { AvatarUploadWithCrop } from '@/components/feature/avatar-upload-with-crop'
+import { StudentTrialBadge } from './student-trial-badge'
 
 interface StudentProfileFormProps {
     profile: any
@@ -102,7 +103,9 @@ export function StudentProfileForm({ profile }: StudentProfileFormProps) {
                             </div>
                             <div className="p-4 bg-zinc-950/50 rounded-3xl border border-zinc-800 text-center">
                                 <span className="text-[9px] font-black text-zinc-600 uppercase tracking-widest block mb-1">Status</span>
-                                <span className="text-xs font-black text-emerald-500 uppercase italic">OK</span>
+                                <span className={`text-xs font-black uppercase italic ${profile?.auto_training_status === 'active' ? 'text-emerald-500' : 'text-amber-500'}`}>
+                                    {profile?.auto_training_status === 'active' ? 'Assinante' : 'Trial'}
+                                </span>
                             </div>
                         </div>
                     </CardContent>
@@ -110,7 +113,14 @@ export function StudentProfileForm({ profile }: StudentProfileFormProps) {
             </div>
 
             {/* Edit Form */}
-            <div className="lg:col-span-8">
+            <div className="lg:col-span-8 space-y-8">
+                {profile?.auto_training_trial_end && (
+                    <StudentTrialBadge
+                        trialEnd={profile.auto_training_trial_end}
+                        status={profile.auto_training_status}
+                    />
+                )}
+
                 <Card className="bg-zinc-900/40 border-zinc-800/50 rounded-[3rem] backdrop-blur-sm shadow-2xl overflow-hidden">
                     <CardHeader className="p-10 border-b border-zinc-800/50">
                         <CardTitle className="text-xl font-black text-white italic uppercase tracking-tight flex items-center gap-3">
