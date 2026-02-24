@@ -627,6 +627,11 @@ function TrainerRow({ trainer, onPlanChange, onEliteToggle, onEliteTrial, onDele
                     <div className="flex items-center gap-2">
                         <p className="text-sm font-black text-white truncate">{trainer.full_name || 'Sem nome'}</p>
                         {trainer.is_elite && <Crown className="w-3.5 h-3.5 text-amber-500 shrink-0" />}
+                        {trainer.is_billing_exempt && (
+                            <span className="px-2 py-0.5 bg-amber-500/10 border border-amber-500/20 rounded text-[8px] font-black text-amber-500 uppercase tracking-widest">
+                                Isento
+                            </span>
+                        )}
                     </div>
                     <p className="text-[10px] font-bold text-zinc-600 truncate">{trainer.email}</p>
                 </div>

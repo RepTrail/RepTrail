@@ -178,7 +178,15 @@ export function PlansClient({ currentTier, studentCount, profile }: PlansClientP
                     </div>
 
                     {/* CTA */}
-                    {isActive ? (
+                    {profile?.is_billing_exempt ? (
+                        <div className="flex items-center gap-3 p-6 rounded-2xl bg-amber-500/10 border border-amber-500/20 shadow-xl shadow-amber-950/20">
+                            <Sparkles className="w-5 h-5 text-amber-500 animate-pulse" />
+                            <div className="space-y-0.5">
+                                <p className="text-amber-500 font-black text-sm uppercase italic tracking-tighter">Acesso VIP Ilimitado</p>
+                                <p className="text-amber-500/60 text-[10px] font-bold uppercase tracking-widest">Você é um parceiro isento de cobranças.</p>
+                            </div>
+                        </div>
+                    ) : isActive ? (
                         <div className="flex items-center gap-3 p-4 rounded-2xl bg-emerald-500/5 border border-emerald-500/20">
                             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                             <span className="text-emerald-400 font-bold text-sm">Plano ativo — você está sendo cobrado conforme o uso</span>

@@ -54,6 +54,14 @@ export async function createAsaasSubscription(
     if (!user) return { error: 'Não autorizado' }
 
     try {
+        const { data: profile } = await supabase.from('profiles').select('is_billing_exempt').eq('id', user.id).single()
+
+        if (profile?.is_billing_exempt) {
+            await supabase.from('profiles').update({ plan_tier: tier }).eq('id', user.id)
+            revalidatePath('/')
+            return { success: true }
+        }
+
         const customerId = await getOrCreateAsaasCustomer(taxId)
 
         // Calculate value for on_demand (10.90 per student after the first 5 free)

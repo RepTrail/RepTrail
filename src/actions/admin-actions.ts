@@ -212,7 +212,7 @@ export async function getAdminOverview() {
 
 export async function getAllUsers(role?: string) {
     const { supabase } = await checkAdmin()
-    let query = supabase.from('profiles').select('id, full_name, email, role, plan_tier, is_admin, created_at, avatar_url, trainer_code')
+    let query = supabase.from('profiles').select('id, full_name, email, role, plan_tier, is_admin, created_at, avatar_url, trainer_code, is_billing_exempt')
     if (role) query = query.eq('role', role)
     const { data } = await query.order('created_at', { ascending: false })
     return data || []
@@ -223,7 +223,7 @@ export async function getAllTrainers() {
     const { data } = await supabase
         .from('profiles')
         .select(`
-            id, full_name, email, plan_tier, average_rating, total_reviews, is_elite, created_at, avatar_url, trainer_code, specialty, region,
+            id, full_name, email, plan_tier, average_rating, total_reviews, is_elite, created_at, avatar_url, trainer_code, specialty, region, is_billing_exempt,
             students:trainer_students!trainer_id(monthly_fee, active, created_at)
         `)
         .eq('role', 'trainer')
@@ -263,6 +263,7 @@ export async function updateUserPlanTier(userId: string, planTier: string) {
     const { supabase, userId: adminId } = await checkAdmin()
     const { error } = await supabase.from('profiles').update({
         plan_tier: planTier,
+        is_billing_exempt: true, // Auto-exempt when admin activates manually
         elite_until: null // Clear trial status when manually updating plan
     }).eq('id', userId)
     if (error) return { error: error.message }
