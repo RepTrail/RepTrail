@@ -16,9 +16,15 @@ export async function getOrCreateAsaasCustomer(cpfCnpj?: string) {
         .single()
 
     if (profile?.asaas_customer_id) {
-        // If we have a customer ID but Asaas now requires a CPF we didn't have before, 
-        // we might need to update the customer. For now let's keep it simple.
-        return profile.asaas_customer_id
+        try {
+            // Verify if customer still exists in Asaas (handles env swaps)
+            await fetchAsaas(`/customers/${profile.asaas_customer_id}`)
+            return profile.asaas_customer_id
+        } catch (e) {
+            console.log(`[ASAAS_DEBUG] Cached customer ${profile.asaas_customer_id} is invalid or from another env. Recreating...`)
+            // Clear invalid ID
+            await supabase.from('profiles').update({ asaas_customer_id: null }).eq('id', user.id)
+        }
     }
 
     // Create customer in Asaas
