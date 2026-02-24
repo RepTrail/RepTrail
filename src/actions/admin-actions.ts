@@ -3,6 +3,8 @@
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { revalidatePath } from 'next/cache'
+import { cookies } from 'next/headers'
+import { redirect } from 'next/navigation'
 
 async function checkAdmin() {
     const supabase = await createClient()
@@ -686,6 +688,73 @@ export async function updateStoreProduct(id: string, data: any) {
     revalidatePath('/dashboard/student/loja/explorar')
     revalidatePath('/dashboard/trainer/loja/explorar')
     return { success: true }
+}
+
+export async function impersonateUser(targetUserId: string) {
+    // 1. Check if current user is admin OR if we are already impersonating (to allow going back)
+    const supabase = await createClient()
+    const cookieStore = await cookies()
+    const isCurrentlyImpersonating = (await cookieStore).get('rt_impersonating')?.value === 'true'
+
+    let adminId = ''
+
+    if (!isCurrentlyImpersonating) {
+        const { data: { user: adminUser } } = await supabase.auth.getUser()
+        if (!adminUser) return { error: 'Não autorizado' }
+        const { data: profile } = await supabase.from('profiles').select('is_admin').eq('id', adminUser.id).single()
+        if (!profile?.is_admin) return { error: 'Apenas admins podem impersonar usuários' }
+        adminId = adminUser.id
+    } else {
+        adminId = (await cookieStore).get('rt_admin_id')?.value || ''
+    }
+
+    // 2. Get target user email
+    const { data: targetProfile } = await supabase.from('profiles').select('email, role').eq('id', targetUserId).single()
+    if (!targetProfile?.email) return { error: 'Usuário não encontrado ou sem e-mail' }
+
+    // 3. Generate login link using Admin Client
+    const admin = createAdminClient()
+    if (!admin) return { error: 'Erro de configuração do servidor (Admin SDK)' }
+
+    const { data, error } = await admin.auth.admin.generateLink({
+        type: 'magiclink',
+        email: targetProfile.email,
+        options: { redirectTo: '/' }
+    })
+
+    if (error || !data.properties?.email_otp) {
+        return { error: `Erro ao gerar link de acesso: ${error?.message || 'Token não gerado'}` }
+    }
+
+    // 4. Verify OTP (this signs in the user and sets cookies)
+    const { error: verifyError } = await supabase.auth.verifyOtp({
+        email: targetProfile.email,
+        token: data.properties.email_otp,
+        type: 'magiclink'
+    })
+
+    if (verifyError) return { error: `Erro ao aplicar sessão: ${verifyError.message}` }
+
+    // 5. Set helper cookies for our ImpersonationBar
+    const expires = new Date(Date.now() + 60 * 60 * 1000) // 1 hour
+
+    if (!isCurrentlyImpersonating) {
+        (await cookieStore).set('rt_impersonating', 'true', { expires });
+        (await cookieStore).set('rt_admin_id', adminId, { expires });
+    } else {
+        // If we were going back to admin, clear the flags
+        const { data: originalAdminProfile } = await supabase.from('profiles').select('is_admin').eq('id', targetUserId).single()
+        if (originalAdminProfile?.is_admin) {
+            (await cookieStore).delete('rt_impersonating');
+            (await cookieStore).delete('rt_admin_id');
+        }
+    }
+
+    // 6. Redirect to proper dashboard based on role
+    if (targetProfile.role === 'trainer') redirect('/dashboard/trainer')
+    if (targetProfile.role === 'student') redirect('/dashboard/student')
+
+    redirect('/dashboard')
 }
 
 export async function deleteStoreProduct(productId: string) {

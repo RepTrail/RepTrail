@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { PWAClient } from "@/components/layout/pwa-client";
 import { ForceReload } from "@/components/layout/force-reload";
 import { SplashManager } from "@/components/layout/splash-manager";
+import { ImpersonationBar } from "@/components/feature/admin/impersonation-bar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -56,6 +57,7 @@ export default function RootLayout({
             {children}
           </SplashManager>
         </QueryProvider>
+        <ImpersonationBar />
         <Toaster />
         <PWAClient />
         <ForceReload />

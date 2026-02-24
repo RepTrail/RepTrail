@@ -4,6 +4,7 @@ import { useState, useEffect, useTransition } from 'react'
 import {
     getAdminOverview, getAllTrainers, getAllUsers,
     updateUserPlanTier, toggleEliteStatus, grantEliteTrial, toggleBillingExemption,
+    impersonateUser,
     getAllStoreProducts, toggleProductStatus, addStoreProduct, updateStoreProduct, deleteStoreProduct, fetchProductFromUrl,
     getAdminLogs, getTopProductsByClicks, getRecentStudentActivity,
     getPlanPricing, updatePlanPricing, deleteUser,
@@ -120,6 +121,13 @@ export default function AdminDashboardPage() {
                 toast({ title: 'Elite trial (15 dias) concedido!' })
                 setTrainers(prev => prev.map(t => t.id === userId ? { ...t, is_elite: true, plan_tier: 'elite' } : t))
             }
+        })
+    }
+
+    async function handleImpersonate(userId: string) {
+        startTransition(async () => {
+            const res = await impersonateUser(userId)
+            if (res?.error) toast({ variant: 'destructive', title: 'Erro ao inspecionar', description: res.error })
         })
     }
 
@@ -406,6 +414,7 @@ export default function AdminDashboardPage() {
                                             onEliteToggle={() => handleEliteToggle(trainer.id, trainer.is_elite)}
                                             onExemptToggle={() => handleExemptToggle(trainer.id, trainer.is_billing_exempt)}
                                             onEliteTrial={() => handleEliteTrial(trainer.id)}
+                                            onImpersonate={() => handleImpersonate(trainer.id)}
                                             onDelete={() => handleDeleteUser(trainer.id, trainer.full_name || trainer.email, true)}
                                             isPending={isPending}
                                         />
@@ -452,6 +461,7 @@ export default function AdminDashboardPage() {
                                         <StudentRow
                                             key={student.id}
                                             student={student}
+                                            onImpersonate={() => handleImpersonate(student.id)}
                                             onDelete={() => handleDeleteUser(student.id, student.full_name || student.email, false)}
                                             isPending={isPending}
                                         />
@@ -617,7 +627,7 @@ function EmptyState({ label }: { label: string }) {
     )
 }
 
-function TrainerRow({ trainer, onPlanChange, onEliteToggle, onExemptToggle, onEliteTrial, onDelete, isPending }: any) {
+function TrainerRow({ trainer, onPlanChange, onEliteToggle, onExemptToggle, onEliteTrial, onImpersonate, onDelete, isPending }: any) {
     const plans = ['on_demand']
     const planColors: Record<string, string> = {
         on_demand: 'text-orange-400',
@@ -692,6 +702,17 @@ function TrainerRow({ trainer, onPlanChange, onEliteToggle, onExemptToggle, onEl
                     {trainer.is_billing_exempt ? 'Isento' : 'Isentar'}
                 </button>
 
+                {/* Impersonate Button */}
+                <button
+                    onClick={onImpersonate}
+                    disabled={isPending}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-blue-500/30 bg-blue-500/10 text-blue-500 hover:bg-blue-500/20 hover:border-blue-500/50 text-[9px] font-black uppercase tracking-widest transition-all"
+                    title="Inspecionar conta"
+                >
+                    <Eye className="w-3 h-3" />
+                    Inspecionar
+                </button>
+
                 {/* Delete Button */}
                 <button
                     onClick={onDelete}
@@ -706,7 +727,7 @@ function TrainerRow({ trainer, onPlanChange, onEliteToggle, onExemptToggle, onEl
     )
 }
 
-function StudentRow({ student, onDelete, isPending }: any) {
+function StudentRow({ student, onImpersonate, onDelete, isPending }: any) {
     return (
         <div className="flex items-center gap-4 p-4 bg-zinc-900/40 border border-zinc-800/50 rounded-2xl">
             <Avatar className="w-10 h-10 shrink-0">
@@ -723,6 +744,17 @@ function StudentRow({ student, onDelete, isPending }: any) {
                 <span className="text-[9px] font-black text-zinc-600 uppercase tracking-widest">
                     {new Date(student.created_at).toLocaleDateString('pt-BR')}
                 </span>
+
+                <button
+                    onClick={onImpersonate}
+                    disabled={isPending}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-blue-500/30 bg-blue-500/10 text-blue-500 hover:bg-blue-500/20 hover:border-blue-500/50 text-[9px] font-black uppercase tracking-widest transition-all"
+                    title="Inspecionar conta"
+                >
+                    <Eye className="w-3 h-3" />
+                    Inspecionar
+                </button>
+
                 <button
                     onClick={onDelete}
                     disabled={isPending}

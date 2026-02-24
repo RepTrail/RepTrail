@@ -1,4 +1,4 @@
-export const ASAAS_API_URL = process.env.ASAAS_API_URL || 'https://sandbox.asaas.com/api/v3'
+export const ASAAS_API_URL = process.env.ASAAS_API_URL || 'https://sandbox.asaas.com/v3'
 export const ASAAS_API_KEY = process.env.ASAAS_API_KEY
 
 export async function fetchAsaas(endpoint: string, options: RequestInit = {}) {
