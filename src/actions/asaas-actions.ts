@@ -122,9 +122,13 @@ export async function createAsaasSubscription(
             .update({
                 asaas_subscription_id: subscription.id,
                 asaas_billing_type: billingType,
-                plan_tier: tier // Mark as active if subscription created
+                // Removed immediate plan_tier update. Webhook will handle activation upon payment.
             })
             .eq('id', user.id)
+
+        // Fetch the first payment of this subscription to get the invoice URL
+        const payments = await fetchAsaas(`/subscriptions/${subscription.id}/payments`)
+        const firstPayment = payments.data?.[0]
 
         revalidatePath('/dashboard/trainer/plans')
         revalidatePath('/dashboard/student/plans')
@@ -132,8 +136,8 @@ export async function createAsaasSubscription(
         return {
             success: true,
             subscriptionId: subscription.id,
-            invoiceUrl: subscription.invoiceUrl, // Link for the first invoice
-            bankSlipUrl: subscription.bankSlipUrl // If BOLETO
+            invoiceUrl: firstPayment?.invoiceUrl || firstPayment?.bankSlipUrl,
+            bankSlipUrl: firstPayment?.bankSlipUrl
         }
     } catch (e: any) {
         console.error('[ASAAS_SUBSCRIPTION_CRITICAL_ERROR]', e)

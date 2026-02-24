@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { CreditCard, QrCode, FileText, User, ShieldCheck } from 'lucide-react'
+import { CreditCard, User, ShieldCheck } from 'lucide-react'
 import { createAsaasSubscription } from '@/actions/asaas-actions'
 import { useToast } from '@/hooks/use-toast'
 
@@ -141,27 +141,6 @@ export function PaymentModal({ isOpen, onClose, tier, currentCpf, monthlyTotal }
                                     <CreditCard className="w-5 h-5 text-zinc-950" />
                                     Cartão de Crédito
                                 </Button>
-
-                                <div className="grid grid-cols-2 gap-4">
-                                    <Button
-                                        onClick={() => handleSubscribe('PIX')}
-                                        disabled={loading}
-                                        variant="outline"
-                                        className="h-12 rounded-xl border-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-900 font-black uppercase tracking-widest text-[10px] gap-2 transition-all"
-                                    >
-                                        <QrCode className="w-4 h-4 text-emerald-500" />
-                                        Pix
-                                    </Button>
-                                    <Button
-                                        onClick={() => handleSubscribe('BOLETO')}
-                                        disabled={loading}
-                                        variant="outline"
-                                        className="h-12 rounded-xl border-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-900 font-black uppercase tracking-widest text-[10px] gap-2 transition-all"
-                                    >
-                                        <FileText className="w-4 h-4" />
-                                        Boleto
-                                    </Button>
-                                </div>
                             </div>
 
                             <button
