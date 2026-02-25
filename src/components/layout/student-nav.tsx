@@ -106,12 +106,6 @@ export function MobileStudentNav({ hasTrainer, steroidUse, autoTrainingActive = 
             >
                 <Trophy className="w-5 h-5" />
             </Link>
-            <Link
-                href="/dashboard/student/anamnese"
-                className={`z-10 relative p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student/anamnese' ? 'bg-emerald-500 text-zinc-950 shadow-lg shadow-emerald-500/20' : 'text-zinc-500 hover:text-zinc-300'}`}
-            >
-                <ClipboardList className="w-5 h-5" />
-            </Link>
             {hasTrainer ? (
                 <Link
                     href="/dashboard/student/meu-personal"

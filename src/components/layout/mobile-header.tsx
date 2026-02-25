@@ -1,11 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { Menu, X, LogOut, Dumbbell, Utensils, Activity, Home, Users, Trophy, CreditCard, FileUp, Sparkles, FlaskConical, TrendingUp, Download, Settings, ClipboardList } from 'lucide-react'
+import { Menu, X, LogOut, Dumbbell, Utensils, Activity, Home, Users, Trophy, CreditCard, FileUp, Sparkles, FlaskConical, TrendingUp, Download, Settings, ClipboardList, Timer } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Logo } from '@/components/ui/logo'
 import Link from 'next/link'
 import { signOutAction } from '@/actions/auth-actions'
+import { usePathname } from 'next/navigation'
 
 interface MobileHeaderProps {
     role: 'student' | 'trainer'
@@ -17,6 +18,7 @@ interface MobileHeaderProps {
 
 export function MobileHeader({ role, hasTrainer, steroidUse, hideImportPdf, autoTrainingActive }: MobileHeaderProps) {
     const [isOpen, setIsOpen] = useState(false)
+    const pathname = usePathname()
 
     const studentLinks = [
         { href: '/dashboard/student/workouts', icon: <Dumbbell className="w-5 h-5" />, label: 'Meus Treinos', requiresTrainer: true },
@@ -65,7 +67,7 @@ export function MobileHeader({ role, hasTrainer, steroidUse, hideImportPdf, auto
                 )}
             </header>
 
-            {/* Slide-over Menu - Only render if open to avoid iOS blocking issues */}
+            {/* Slide-over Menu */}
             {isOpen && (
                 <div className="fixed inset-0 z-[150] animate-in fade-in duration-300">
                     {/* Backdrop */}
@@ -76,8 +78,8 @@ export function MobileHeader({ role, hasTrainer, steroidUse, hideImportPdf, auto
 
                     {/* Panel */}
                     <div className="absolute top-0 right-0 w-[280px] h-full bg-zinc-950 border-l border-zinc-800 shadow-2xl animate-in slide-in-from-right duration-300 ease-out p-8 flex flex-col justify-between" style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 2rem)' }}>
-                        <div className="space-y-10">
-                            <div className="flex items-center justify-between">
+                        <div className="space-y-10 flex flex-col h-full">
+                            <div className="flex items-center justify-between flex-shrink-0">
                                 <Link href="/" onClick={() => setIsOpen(false)}>
                                     <Logo size="sm" color={role === 'trainer' ? 'emerald' : 'orange'} />
                                 </Link>
@@ -89,22 +91,35 @@ export function MobileHeader({ role, hasTrainer, steroidUse, hideImportPdf, auto
                                 </button>
                             </div>
 
-                            <nav className="space-y-4 flex-1 overflow-y-auto pb-4">
-                                {links.map((link) => (
-                                    <Link
-                                        key={link.href}
-                                        href={link.href}
-                                        onClick={() => setIsOpen(false)}
-                                        className="flex items-center gap-4 p-4 rounded-2xl bg-zinc-900/50 border border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-700 transition-all font-bold uppercase italic tracking-widest text-xs"
-                                    >
-                                        <span className={role === 'trainer' ? "text-emerald-500" : "text-orange-500"}>{link.icon}</span>
-                                        {link.label}
-                                    </Link>
-                                ))}
+                            <nav className="space-y-4 flex-1 overflow-y-auto pb-8 px-1 -mx-1 scrollbar-none">
+                                {links.map((link) => {
+                                    const isActive = pathname.startsWith(link.href)
+                                    return (
+                                        <Link
+                                            key={link.href}
+                                            href={link.href}
+                                            onClick={() => setIsOpen(false)}
+                                            className={`
+                                                flex items-center gap-4 p-4 rounded-2xl transition-all font-bold uppercase italic tracking-widest text-xs border-2
+                                                ${isActive
+                                                    ? role === 'trainer'
+                                                        ? 'bg-emerald-500/10 border-emerald-500/30 text-white shadow-[0_8px_32px_rgba(16,185,129,0.1)]'
+                                                        : 'bg-orange-500/10 border-orange-500/30 text-white shadow-[0_8px_32px_rgba(249,115,22,0.1)]'
+                                                    : 'bg-zinc-900/40 border-transparent text-zinc-500 hover:text-zinc-300'
+                                                }
+                                            `}
+                                        >
+                                            <span className={isActive ? (role === 'trainer' ? "text-emerald-500" : "text-orange-500") : "text-zinc-500"}>
+                                                {link.icon}
+                                            </span>
+                                            {link.label}
+                                        </Link>
+                                    )
+                                })}
                             </nav>
                         </div>
 
-                        <div className="space-y-6" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
+                        <div className="space-y-6 flex-shrink-0" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
                             <div className="h-px bg-zinc-800" />
 
                             {role === 'student' && (
