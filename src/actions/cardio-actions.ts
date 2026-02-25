@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { revalidatePath } from 'next/cache'
 import { upsertDailyTracking } from '@/actions/tracking-actions'
 
@@ -170,7 +171,8 @@ export async function removeCardioAssignment(assignmentId: string) {
 export async function getStudentCardioAssignments(studentId: string) {
     // We use the admin client here to ensure that students can see the metadata (name, description)
     // of cardios assigned to them, as RLS on the 'cardios' table might be restricted to trainers.
-    const supabase = await createAdminClient()
+    const supabase = createAdminClient()
+    if (!supabase) throw new Error('Admin client not initialized')
 
     try {
         const { data, error } = await supabase
