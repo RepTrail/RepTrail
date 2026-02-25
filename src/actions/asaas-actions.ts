@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { fetchAsaas } from '@/lib/asaas'
 import { revalidatePath } from 'next/cache'
+import { FREE_STUDENTS_LIMIT, ON_DEMAND_PRICE_PER_STUDENT } from '@/lib/constants'
 
 export async function searchAsaasCustomer(cpfCnpj: string) {
     try {
@@ -104,21 +105,21 @@ export async function createAsaasSubscription(
         const customerId = await getOrCreateAsaasCustomer(taxId, fullName)
         console.log(`[ASAAS_DEBUG] Using Customer ID: ${customerId}`)
 
-        // Calculate value for on_demand (10.90 per student after the first 5 free)
-        let value = tier === 'auto_training' ? 10.90 : 0
+        let value: number
 
-        if (tier === 'on_demand') {
+        if (tier === 'auto_training') {
+            value = ON_DEMAND_PRICE_PER_STUDENT
+        } else {
+            // Calculate value for on_demand (price per student after the first few free)
             const { count } = await supabase
                 .from('trainer_students')
                 .select('*', { count: 'exact', head: true })
                 .eq('trainer_id', user.id)
                 .eq('active', true)
 
-            const activeStudents = count || 0
-            const FREE_LIMIT = 5
-            const PRICE_PER_EXTRA = 10.90
-            const billable = Math.max(0, activeStudents - FREE_LIMIT)
-            value = billable * PRICE_PER_EXTRA
+            const totalStudents = count || 0
+            const billable = Math.max(0, totalStudents - FREE_STUDENTS_LIMIT)
+            value = billable * ON_DEMAND_PRICE_PER_STUDENT
         }
 
         console.log(`[ASAAS_DEBUG] Subscription value: ${value} for tier: ${tier}`)

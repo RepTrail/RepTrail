@@ -7,8 +7,7 @@ import { createAsaasSubscription } from "@/actions/asaas-actions"
 import { useToast } from "@/hooks/use-toast"
 import { PaymentModal } from "../asaas/payment-modal"
 
-const FREE_LIMIT = 5
-const PRICE_PER_STUDENT = 10.90
+import { FREE_STUDENTS_LIMIT, ON_DEMAND_PRICE_PER_STUDENT } from '@/lib/constants'
 
 interface PlansClientProps {
     currentTier: string
@@ -17,15 +16,15 @@ interface PlansClientProps {
 }
 
 export function PlansClient({ currentTier, studentCount, profile }: PlansClientProps) {
-    const [simStudents, setSimStudents] = useState(studentCount || FREE_LIMIT)
+    const [simStudents, setSimStudents] = useState(studentCount || FREE_STUDENTS_LIMIT)
     const [loading, setLoading] = useState(false)
     const [isModalOpen, setIsModalOpen] = useState(false)
     const { toast } = useToast()
 
     const isActive = currentTier && currentTier !== 'none'
 
-    const billableStudents = Math.max(0, simStudents - FREE_LIMIT)
-    const monthlyTotal = billableStudents * PRICE_PER_STUDENT
+    const billableStudents = Math.max(0, simStudents - FREE_STUDENTS_LIMIT)
+    const monthlyTotal = billableStudents * ON_DEMAND_PRICE_PER_STUDENT
 
     const handleSubscribeAsaas = async (type: 'PIX' | 'BOLETO' | 'CREDIT_CARD') => {
         setLoading(true)
@@ -92,13 +91,13 @@ export function PlansClient({ currentTier, studentCount, profile }: PlansClientP
                     <div className="space-y-1">
                         <div className="flex items-baseline gap-2">
                             <span className="text-5xl font-black text-white">Grátis</span>
-                            <span className="text-zinc-500 text-sm font-medium">até {FREE_LIMIT} alunos</span>
+                            <span className="text-zinc-500 text-sm font-medium">até {FREE_STUDENTS_LIMIT} alunos</span>
                         </div>
                         <div className="flex items-center gap-2 text-zinc-400">
                             <span className="text-lg font-bold text-emerald-400">
-                                R$ {formatCurrency(PRICE_PER_STUDENT)}
+                                R$ {formatCurrency(ON_DEMAND_PRICE_PER_STUDENT)}
                             </span>
-                            <span className="text-zinc-500 text-sm">/aluno/mês acima de {FREE_LIMIT}</span>
+                            <span className="text-zinc-500 text-sm">/aluno/mês acima de {FREE_STUDENTS_LIMIT}</span>
                         </div>
                     </div>
 
@@ -159,13 +158,13 @@ export function PlansClient({ currentTier, studentCount, profile }: PlansClientP
                         {/* Result */}
                         <div className="rounded-xl bg-zinc-950 border border-zinc-800 p-4 space-y-2">
                             <div className="flex justify-between items-center text-xs text-zinc-500">
-                                <span>Primeiros {FREE_LIMIT} alunos</span>
+                                <span>Primeiros {FREE_STUDENTS_LIMIT} alunos</span>
                                 <span className="text-emerald-400 font-bold">GRÁTIS</span>
                             </div>
                             {billableStudents > 0 && (
                                 <div className="flex justify-between items-center text-xs text-zinc-500">
-                                    <span>{billableStudents} alunos extras × R$ {formatCurrency(PRICE_PER_STUDENT)}</span>
-                                    <span className="text-zinc-300 font-bold">R$ {formatCurrency(billableStudents * PRICE_PER_STUDENT)}</span>
+                                    <span>{billableStudents} alunos extras × R$ {formatCurrency(ON_DEMAND_PRICE_PER_STUDENT)}</span>
+                                    <span className="text-zinc-300 font-bold">R$ {formatCurrency(billableStudents * ON_DEMAND_PRICE_PER_STUDENT)}</span>
                                 </div>
                             )}
                             <div className="h-px bg-zinc-800" />

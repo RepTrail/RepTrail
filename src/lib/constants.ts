@@ -1,0 +1,3 @@
+export const AUTO_TRAINING_PRICE = 10.90
+export const FREE_STUDENTS_LIMIT = 5
+export const ON_DEMAND_PRICE_PER_STUDENT = 10.90

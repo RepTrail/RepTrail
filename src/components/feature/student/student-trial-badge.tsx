@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Sparkles, Calendar, Zap } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { AUTO_TRAINING_PRICE } from '@/lib/constants'
 import { PaymentModal } from '../asaas/payment-modal'
 
 interface StudentTrialBadgeProps {
@@ -15,12 +16,13 @@ interface StudentTrialBadgeProps {
 export function StudentTrialBadge({ trialEnd, status, currentCpf, currentName }: StudentTrialBadgeProps) {
     const [isModalOpen, setIsModalOpen] = useState(false)
 
-    if (!trialEnd || status === 'active') return null
+    // Only show if trial is active or expired, but not if it was never started (none) or is already a subscription (active)
+    if (!trialEnd || status === 'active' || status === 'none' || !status) return null
 
     const expiryDate = new Date(trialEnd)
     const now = new Date()
     const diffMs = expiryDate.getTime() - now.getTime()
-    const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24))
+    const diffDays = Math.max(0, Math.ceil(diffMs / (1000 * 60 * 60 * 24)))
 
     const isExpired = diffDays <= 0
 
@@ -32,7 +34,7 @@ export function StudentTrialBadge({ trialEnd, status, currentCpf, currentName }:
                 tier="auto_training"
                 currentCpf={currentCpf}
                 currentName={currentName}
-                monthlyTotal={10.9}
+                monthlyTotal={AUTO_TRAINING_PRICE}
             />
 
             <div className={`
