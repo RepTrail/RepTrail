@@ -98,20 +98,16 @@ export function StudentProfileForm({ profile, hasTrainer = false }: StudentProfi
                             </p>
                         </div>
 
-                        <div className="pt-6 border-t border-zinc-800/50 grid grid-cols-2 gap-4">
-                            <div className="p-4 bg-zinc-950/50 rounded-3xl border border-zinc-800 text-center col-span-2 md:col-span-1">
-                                <span className="text-[9px] font-black text-zinc-600 uppercase tracking-widest block mb-1">Início</span>
-                                <span className="text-xs font-black text-white uppercase italic">Ativo</span>
-                            </div>
-                            {!hasTrainer && (
-                                <div className="p-4 bg-zinc-950/50 rounded-3xl border border-zinc-800 text-center">
+                        {!hasTrainer && (
+                            <div className="pt-6 border-t border-zinc-800/50">
+                                <div className="p-4 bg-zinc-950/50 rounded-3xl border border-zinc-800 text-center w-full">
                                     <span className="text-[9px] font-black text-zinc-600 uppercase tracking-widest block mb-1">Status</span>
                                     <span className={`text-xs font-black uppercase italic ${profile?.auto_training_status === 'active' ? 'text-emerald-500' : 'text-amber-500'}`}>
                                         {profile?.auto_training_status === 'active' ? 'Assinante' : 'Trial'}
                                     </span>
                                 </div>
-                            )}
-                        </div>
+                            </div>
+                        )}
 
                         {profile?.asaas_subscription_id && (
                             <div className="pt-2 flex justify-center">
@@ -129,6 +125,7 @@ export function StudentProfileForm({ profile, hasTrainer = false }: StudentProfi
                         trialEnd={profile.auto_training_trial_end}
                         status={profile.auto_training_status}
                         currentCpf={profile?.cpf_cnpj}
+                        currentName={profile?.full_name}
                     />
                 )}
 

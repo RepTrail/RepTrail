@@ -35,7 +35,7 @@ export function PlansClient({ currentTier, studentCount, profile }: PlansClientP
                 title: "Ativando plano...",
                 description: "Como você tem até 5 alunos, seu plano será ativado sem custo agora."
             })
-            const res = await createAsaasSubscription('on_demand', type)
+            const res = await createAsaasSubscription('on_demand', type, profile?.cpf_cnpj, profile?.full_name)
             setLoading(false)
 
             if (res.success) {
@@ -61,6 +61,7 @@ export function PlansClient({ currentTier, studentCount, profile }: PlansClientP
                 onClose={() => setIsModalOpen(false)}
                 tier="on_demand"
                 currentCpf={profile?.cpf_cnpj}
+                currentName={profile?.full_name}
                 monthlyTotal={monthlyTotal}
             />
 

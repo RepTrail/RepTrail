@@ -1020,3 +1020,32 @@
   "userId": "14c12662-e9ba-4d59-ad30-e306468c02e1",
   "trainerRel": null
 }
+{
+  "timestamp": "2026-02-25T03:58:49.860Z",
+  "userId": "14c12662-e9ba-4d59-ad30-e306468c02e1",
+  "trainerRel": null
+}
+{
+  "timestamp": "2026-02-25T03:58:55.816Z",
+  "userId": "14c12662-e9ba-4d59-ad30-e306468c02e1",
+  "trainerRel": null
+}
+{
+  "timestamp": "2026-02-25T03:59:44.336Z",
+  "userId": "14c12662-e9ba-4d59-ad30-e306468c02e1",
+  "trainerRel": null
+}
+{
+  "timestamp": "2026-02-25T03:59:51.299Z",
+  "userId": "14c12662-e9ba-4d59-ad30-e306468c02e1",
+  "trainerRel": null
+}
+{
+  "timestamp": "2026-02-25T04:00:00.664Z",
+  "userId": "812c9f7a-39e1-43aa-acdd-abe9dbdf189a",
+  "trainerRel": {
+    "id": "362ff409-3215-4b2f-a73f-66fecffdfa95",
+    "trainer_id": "450e9218-e98d-482b-b3b8-ff7a93fa6309",
+    "active": true
+  }
+}

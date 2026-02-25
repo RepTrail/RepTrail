@@ -11,27 +11,109 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { CreditCard, User, ShieldCheck } from 'lucide-react'
-import { createAsaasSubscription } from '@/actions/asaas-actions'
+import { createAsaasSubscription, searchAsaasCustomer } from '@/actions/asaas-actions'
 import { useToast } from '@/hooks/use-toast'
+import { useEffect } from 'react'
 
 interface PaymentModalProps {
     isOpen: boolean
     onClose: () => void
     tier: 'on_demand' | 'auto_training'
     currentCpf?: string
+    currentName?: string
     monthlyTotal: number
 }
 
-export function PaymentModal({ isOpen, onClose, tier, currentCpf, monthlyTotal }: PaymentModalProps) {
-    const [step, setStep] = useState<'info' | 'payment'>(currentCpf ? 'payment' : 'info')
+export function PaymentModal({ isOpen, onClose, tier, currentCpf, currentName, monthlyTotal }: PaymentModalProps) {
+    const [step, setStep] = useState<'info' | 'payment'>(currentCpf && currentName ? 'payment' : 'info')
     const [cpf, setCpf] = useState(currentCpf || '')
+    const [fullName, setFullName] = useState(currentName || '')
+    const [fetchingName, setFetchingName] = useState(false)
     const [loading, setLoading] = useState(false)
     const { toast } = useToast()
+
+    const maskCpfCnpj = (value: string) => {
+        const clean = value.replace(/\D/g, '')
+        if (clean.length <= 11) {
+            return clean
+                .replace(/(\d{3})(\d)/, '$1.$2')
+                .replace(/(\d{3})(\d)/, '$1.$2')
+                .replace(/(\d{3})(\d{1,2})/, '$1-$2')
+                .replace(/(-\d{2})\d+?$/, '$1')
+        }
+        return clean
+            .replace(/(\d{2})(\d)/, '$1.$2')
+            .replace(/(\d{3})(\d)/, '$1.$2')
+            .replace(/(\d{3})(\d)/, '$1/$2')
+            .replace(/(\d{4})(\d{1,2})/, '$1-$2')
+            .replace(/(-\d{2})\d+?$/, '$1')
+    }
+
+    const validateCpfCnpj = (val: string) => {
+        const clean = val.replace(/\D/g, '')
+        if (clean.length === 11) {
+            // Basic CPF validation logic
+            if (/^(\d)\1+$/.test(clean)) return false
+            let sum = 0
+            for (let i = 1; i <= 9; i++) sum = sum + parseInt(clean.substring(i - 1, i)) * (11 - i)
+            let rest = (sum * 10) % 11
+            if ((rest === 10) || (rest === 11)) rest = 0
+            if (rest !== parseInt(clean.substring(9, 10))) return false
+            sum = 0
+            for (let i = 1; i <= 10; i++) sum = sum + parseInt(clean.substring(i - 1, i)) * (12 - i)
+            rest = (sum * 10) % 11
+            if ((rest === 10) || (rest === 11)) rest = 0
+            if (rest !== parseInt(clean.substring(10, 11))) return false
+            return true
+        }
+        if (clean.length === 14) return true // Basic length check for CNPJ for now
+        return false
+    }
+
+    // Auto-search name when CPF is completed
+    useEffect(() => {
+        const clean = cpf.replace(/\D/g, '')
+        console.log(`[ASAAS_CLIENT] Input changed. Clean: ${clean} | Len: ${clean.length}`)
+
+        if ((clean.length === 11 || clean.length === 14)) {
+            console.log(`[ASAAS_CLIENT] Target length reached. Current fullName: "${fullName}"`)
+
+            // Only search if we don't have a full name yet or if it looks like a placeholder
+            const isPlaceholder = !fullName || fullName.trim().split(' ').length < 2
+
+            if (isPlaceholder) {
+                console.log(`[ASAAS_CLIENT] Triggering lookup for: ${clean}`)
+                const timer = setTimeout(async () => {
+                    setFetchingName(true)
+                    try {
+                        const res = await searchAsaasCustomer(clean)
+                        console.log(`[ASAAS_CLIENT] API Response:`, res)
+                        if (res.success && res.name) {
+                            console.log(`[ASAAS_CLIENT] Name found! Updating to: ${res.name}`)
+                            setFullName(res.name)
+                            toast({
+                                title: "Nome Identificado",
+                                description: `Encontramos ${res.name} na base Asaas.`
+                            })
+                        } else {
+                            console.log(`[ASAAS_CLIENT] Name not found in Asaas base.`)
+                        }
+                    } catch (err) {
+                        console.error(`[ASAAS_CLIENT] Server Action Error:`, err)
+                    } finally {
+                        setFetchingName(false)
+                    }
+                }, 800)
+                return () => clearTimeout(timer)
+            }
+        }
+    }, [cpf])
 
     const handleCpfSubmit = (e: React.FormEvent) => {
         e.preventDefault()
         const cleanCpf = cpf.replace(/\D/g, '')
-        if (cleanCpf.length !== 11 && cleanCpf.length !== 14) {
+
+        if (!validateCpfCnpj(cleanCpf)) {
             toast({
                 variant: 'destructive',
                 title: 'Documento inválido',
@@ -39,6 +121,16 @@ export function PaymentModal({ isOpen, onClose, tier, currentCpf, monthlyTotal }
             })
             return
         }
+
+        if (fullName.trim().split(' ').length < 2) {
+            toast({
+                variant: 'destructive',
+                title: 'Nome incompleto',
+                description: 'Por favor, insira seu nome completo para evitar problemas no pagamento.'
+            })
+            return
+        }
+
         setStep('payment')
     }
 
@@ -50,7 +142,7 @@ export function PaymentModal({ isOpen, onClose, tier, currentCpf, monthlyTotal }
         })
 
         try {
-            const res = await createAsaasSubscription(tier, method, cpf.replace(/\D/g, ''))
+            const res = await createAsaasSubscription(tier, method, cpf.replace(/\D/g, ''), fullName.trim())
 
             if (res.success) {
                 if (res.invoiceUrl) {
@@ -81,7 +173,7 @@ export function PaymentModal({ isOpen, onClose, tier, currentCpf, monthlyTotal }
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className="bg-zinc-950 border-zinc-900 sm:max-w-md rounded-[2.5rem] p-8 overflow-hidden">
                 {/* Decoration */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 blur-3xl -mr-16 -mt-16" />
+                <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 blur-3xl -mr-16 -mt-16 pointer-events-none" />
 
                 <DialogHeader className="space-y-4 mb-6 relative z-10">
                     <div className="flex justify-center">
@@ -109,15 +201,41 @@ export function PaymentModal({ isOpen, onClose, tier, currentCpf, monthlyTotal }
                                 </label>
                                 <Input
                                     value={cpf}
-                                    onChange={(e) => setCpf(e.target.value)}
+                                    onChange={(e) => setCpf(maskCpfCnpj(e.target.value))}
                                     placeholder="000.000.000-00"
                                     className="h-14 bg-zinc-900 border-zinc-800 rounded-2xl focus:border-emerald-500/50 font-bold text-white text-center"
                                     required
+                                    maxLength={18}
                                 />
                                 <p className="text-[9px] text-zinc-600 font-bold uppercase text-center leading-relaxed">
                                     O Asaas exige um documento válido para gerar a cobrança de forma segura.
                                 </p>
                             </div>
+
+                            <div className="space-y-3">
+                                <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest flex items-center gap-2">
+                                    <User className="w-3.5 h-3.5" />
+                                    Nome Completo
+                                </label>
+                                <div className="relative">
+                                    <Input
+                                        value={fullName}
+                                        onChange={(e) => setFullName(e.target.value)}
+                                        placeholder="Ex: João Silva Santos"
+                                        className="h-14 bg-zinc-900 border-zinc-800 rounded-2xl focus:border-emerald-500/50 font-bold text-white text-center"
+                                        required
+                                    />
+                                    {fetchingName && (
+                                        <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                                            <div className="w-4 h-4 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+                                        </div>
+                                    )}
+                                </div>
+                                <p className="text-[9px] text-zinc-600 font-bold uppercase text-center leading-relaxed">
+                                    O nome deve ser idêntico ao registrado no CPF e no cartão de crédito.
+                                </p>
+                            </div>
+
                             <Button
                                 type="submit"
                                 className="w-full h-14 bg-white hover:bg-zinc-200 text-zinc-950 rounded-2xl font-black uppercase italic tracking-wide transition-all shadow-xl active:scale-95"

@@ -4,7 +4,28 @@ import { createClient } from '@/lib/supabase/server'
 import { fetchAsaas } from '@/lib/asaas'
 import { revalidatePath } from 'next/cache'
 
-export async function getOrCreateAsaasCustomer(cpfCnpj?: string) {
+export async function searchAsaasCustomer(cpfCnpj: string) {
+    try {
+        const cleanTaxId = cpfCnpj.replace(/\D/g, '')
+        console.log(`[ASAAS_DEBUG] Searching for customer with CPF/CNPJ: ${cleanTaxId} (Raw: ${cpfCnpj})`)
+        const res = await fetchAsaas(`/customers?cpfCnpj=${cleanTaxId}`)
+
+        console.log(`[ASAAS_DEBUG] Asaas Response raw:`, JSON.stringify(res))
+
+        if (res.data && res.data.length > 0) {
+            console.log(`[ASAAS_DEBUG] Customer found! Name: ${res.data[0].name}`)
+            return { success: true, name: res.data[0].name }
+        }
+
+        console.log(`[ASAAS_DEBUG] Customer not found for this CPF/CNPJ.`)
+        return { success: false }
+    } catch (e: any) {
+        console.error(`[ASAAS_DEBUG] Error searching customer:`, e)
+        return { success: false }
+    }
+}
+
+export async function getOrCreateAsaasCustomer(cpfCnpj?: string, fullName?: string) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) throw new Error('Não autorizado')
@@ -18,7 +39,16 @@ export async function getOrCreateAsaasCustomer(cpfCnpj?: string) {
     if (profile?.asaas_customer_id) {
         try {
             // Verify if customer still exists in Asaas (handles env swaps)
-            await fetchAsaas(`/customers/${profile.asaas_customer_id}`)
+            const customer = await fetchAsaas(`/customers/${profile.asaas_customer_id}`)
+
+            // If we have a new name provided, update it in Asaas if it differs significantly
+            if (fullName && customer.name !== fullName) {
+                await fetchAsaas(`/customers/${profile.asaas_customer_id}`, {
+                    method: 'POST',
+                    body: JSON.stringify({ name: fullName })
+                })
+            }
+
             return profile.asaas_customer_id
         } catch (e) {
             console.log(`[ASAAS_DEBUG] Cached customer ${profile.asaas_customer_id} is invalid or from another env. Recreating...`)
@@ -31,7 +61,7 @@ export async function getOrCreateAsaasCustomer(cpfCnpj?: string) {
     const customer = await fetchAsaas('/customers', {
         method: 'POST',
         body: JSON.stringify({
-            name: profile?.full_name || user.email?.split('@')[0],
+            name: fullName || profile?.full_name || user.email?.split('@')[0],
             email: user.email,
             cpfCnpj: cpfCnpj || profile?.cpf_cnpj,
             externalReference: user.id
@@ -55,7 +85,8 @@ export async function getOrCreateAsaasCustomer(cpfCnpj?: string) {
 export async function createAsaasSubscription(
     tier: 'on_demand' | 'auto_training',
     billingType: 'BOLETO' | 'CREDIT_CARD' | 'PIX' = 'PIX',
-    taxId?: string
+    taxId?: string,
+    fullName?: string
 ) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
@@ -70,7 +101,7 @@ export async function createAsaasSubscription(
             return { success: true }
         }
 
-        const customerId = await getOrCreateAsaasCustomer(taxId)
+        const customerId = await getOrCreateAsaasCustomer(taxId, fullName)
         console.log(`[ASAAS_DEBUG] Using Customer ID: ${customerId}`)
 
         // Calculate value for on_demand (10.90 per student after the first 5 free)

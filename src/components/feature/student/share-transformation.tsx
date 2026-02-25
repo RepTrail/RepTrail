@@ -316,9 +316,9 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
             <DialogContent className="bg-zinc-950/95 border-zinc-900 text-white max-w-lg rounded-[2.5rem] md:rounded-[3.5rem] backdrop-blur-3xl p-0 overflow-y-auto max-h-[90vh] shadow-[0_0_100px_rgba(0,0,0,1)] gap-0 [&>button]:hidden">
                 <div className="sticky top-6 right-6 flex justify-end px-6 z-50">
                     <DialogClose asChild>
-                        <Button variant="ghost" className="h-10 w-10 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-400 hover:text-white transition-all backdrop-blur-md">
+                        <Button variant="ghost" className="h-12 w-12 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-400 hover:text-white transition-all backdrop-blur-md">
                             <span className="sr-only">Fechar</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
                         </Button>
                     </DialogClose>
                 </div>
@@ -364,7 +364,7 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
                             </div>
 
                             <div className="mt-8 md:mt-12 bg-zinc-900/50 p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] border border-white/5 relative overflow-hidden group">
-                                <div className="absolute top-0 right-0 w-32 h-32 bg-[#f97316]/10 blur-[50px] rounded-full -mr-16 -mt-16 group-hover:bg-[#f97316]/20 transition-all" />
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-[#f97316]/10 blur-[50px] rounded-full -mr-16 -mt-16 group-hover:bg-[#f97316]/20 transition-all pointer-events-none" />
                                 <p className="text-[10px] md:text-[11px] text-zinc-400 font-bold uppercase tracking-widest text-center leading-relaxed relative z-10">
                                     PRONTO PARA <span className="text-white">IMPACTAR</span>? <br />
                                     <span className="text-zinc-600 text-[8px] md:text-[9px] mt-2 block">Sua evolução real com a identidade RepTrail.</span>

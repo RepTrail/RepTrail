@@ -9,9 +9,10 @@ interface StudentTrialBadgeProps {
     trialEnd: string | null
     status: string | null
     currentCpf?: string
+    currentName?: string
 }
 
-export function StudentTrialBadge({ trialEnd, status, currentCpf }: StudentTrialBadgeProps) {
+export function StudentTrialBadge({ trialEnd, status, currentCpf, currentName }: StudentTrialBadgeProps) {
     const [isModalOpen, setIsModalOpen] = useState(false)
 
     if (!trialEnd || status === 'active') return null
@@ -30,6 +31,7 @@ export function StudentTrialBadge({ trialEnd, status, currentCpf }: StudentTrial
                 onClose={() => setIsModalOpen(false)}
                 tier="auto_training"
                 currentCpf={currentCpf}
+                currentName={currentName}
                 monthlyTotal={10.9}
             />
 
@@ -39,7 +41,7 @@ export function StudentTrialBadge({ trialEnd, status, currentCpf }: StudentTrial
                     ? 'bg-red-500/10 border-red-500/20'
                     : 'bg-emerald-500/10 border-emerald-500/20'}
             `}>
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div className="flex flex-col gap-6">
                     <div className="flex items-start gap-4">
                         <div className={`
                             p-3 rounded-2xl 
@@ -59,13 +61,13 @@ export function StudentTrialBadge({ trialEnd, status, currentCpf }: StudentTrial
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-3">
+                    <div className="w-full">
                         <Button
                             onClick={() => setIsModalOpen(true)}
-                            className="h-12 px-8 rounded-xl bg-white text-zinc-950 hover:bg-zinc-200 font-black uppercase italic tracking-wide text-xs group"
+                            className="w-full h-14 rounded-2xl bg-white text-zinc-950 hover:bg-zinc-200 font-black uppercase italic tracking-wide text-sm group shadow-xl active:scale-95 transition-all"
                         >
                             Assinar Agora
-                            <Zap className="w-3.5 h-3.5 ml-2 fill-current" />
+                            <Zap className="w-4 h-4 ml-2 fill-current" />
                         </Button>
                     </div>
                 </div>
