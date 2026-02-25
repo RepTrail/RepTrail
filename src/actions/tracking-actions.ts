@@ -414,9 +414,9 @@ export async function getAdherenceHistory(days: number = 30) {
 
     const { data: cLogs } = await supabase
         .from('cardio_logs')
-        .select('started_at, status')
+        .select('started_at, status, elapsed_seconds, assignment:assigned_cardios(duration_minutes)')
         .eq('student_id', user.id)
-        .eq('status', 'completed')
+        .in('status', ['completed', 'in_progress'])
         .gte('started_at', startDateStr + 'T00:00:00-03:00')
         .lte('started_at', endDateStr + 'T23:59:59-03:00')
 
@@ -428,7 +428,21 @@ export async function getAdherenceHistory(days: number = 30) {
         .lte('created_at', endDateStr + 'T23:59:59-03:00')
 
     const workoutDates = new Set(wLogs?.map(l => formatToBrazilDate(l.started_at)))
-    const cardioDates = new Set(cLogs?.map(l => formatToBrazilDate(l.started_at)))
+
+    // Process Cardio Logs to support Partial/In-Progress from past days
+    const cardioDataMap = new Map<string, { status: string, percentage: number }>()
+    cLogs?.forEach((l: any) => {
+        const dateKey = formatToBrazilDate(l.started_at)
+        const targetSeconds = (l.assignment?.duration_minutes || 30) * 60
+        const percentage = Math.min(Math.round((l.elapsed_seconds / targetSeconds) * 100), 100)
+
+        // If multiple logs, pick the best one
+        const existing = cardioDataMap.get(dateKey)
+        if (!existing || percentage > existing.percentage) {
+            cardioDataMap.set(dateKey, { status: l.status, percentage })
+        }
+    })
+
     const ergoDates = new Set(eLogs?.map(l => formatToBrazilDate(l.created_at)))
 
     for (const dateStr of dayListSlice) {
@@ -453,25 +467,43 @@ export async function getAdherenceHistory(days: number = 30) {
 
         // Workout Status
         let workoutStatus = found?.workout_status || 'none'
-        if (workoutDates.has(dateStr)) workoutStatus = 'completed'
-        else {
+        let workoutPercentage = found?.workout_percentage || 0
+        if (workoutDates.has(dateStr)) {
+            if (workoutStatus !== 'partial') workoutStatus = 'completed'
+            if (workoutStatus === 'completed') workoutPercentage = 100
+        } else {
             if (workoutStatus === 'none' && workoutDays.has(dow)) workoutStatus = 'assigned'
             if (workoutStatus === 'assigned' && isPast) workoutStatus = 'skipped'
         }
 
         // Cardio Status
         let cardioStatus = found?.cardio_status || 'none'
-        if (cardioDates.has(dateStr)) cardioStatus = 'completed'
-        else {
+        let cardioPercentage = found?.cardio_percentage || 0
+        const logData = cardioDataMap.get(dateStr)
+
+        if (logData) {
+            // Priority: if daily_tracking already has a more complete status/percentage, keep it
+            // otherwise use the log data (especially for historical partials)
+            if (cardioStatus === 'none' || cardioStatus === 'assigned' || cardioStatus === 'skipped') {
+                cardioStatus = logData.status === 'completed' ? (logData.percentage >= 100 ? 'completed' : 'partial') : 'partial'
+                cardioPercentage = logData.percentage
+            } else if (cardioStatus === 'partial' && logData.percentage > cardioPercentage) {
+                cardioPercentage = logData.percentage
+            } else if (cardioStatus === 'completed') {
+                cardioPercentage = 100
+            }
+        } else {
             if (cardioStatus === 'none' && cardioDays.has(dow)) cardioStatus = 'assigned'
             if (cardioStatus === 'assigned' && isPast) cardioStatus = 'skipped'
         }
 
         // Ergo Status
         let ergoStatus = found?.ergogenics_status || 'none'
-        if (ergoDates.has(dateStr)) ergoStatus = 'completed'
-        else {
-            // Only consider it assigned/skipped if it's actually in ergoDays
+        let ergoPercentage = found?.ergogenics_percentage || 0
+        if (ergoDates.has(dateStr)) {
+            ergoStatus = 'completed'
+            ergoPercentage = 100
+        } else {
             if (!ergoDays.has(dow)) {
                 ergoStatus = 'none'
             } else {
@@ -484,11 +516,11 @@ export async function getAdherenceHistory(days: number = 30) {
             date: dateStr,
             diet_percentage: found?.diet_percentage || 0,
             workout_status: workoutStatus,
-            workout_percentage: workoutStatus === 'completed' ? 100 : (found?.workout_percentage || 0),
+            workout_percentage: workoutPercentage,
             cardio_status: cardioStatus,
-            cardio_percentage: cardioStatus === 'completed' ? 100 : (found?.cardio_percentage || 0),
+            cardio_percentage: cardioPercentage,
             ergogenics_status: ergoStatus,
-            ergogenics_percentage: ergoStatus === 'completed' ? 100 : (found?.ergogenics_percentage || 0),
+            ergogenics_percentage: ergoPercentage,
         })
     }
 
@@ -544,9 +576,9 @@ export async function getStudentAdherenceHistory(studentId: string, days: number
 
     const { data: cLogs } = await supabase
         .from('cardio_logs')
-        .select('started_at, status')
+        .select('started_at, status, elapsed_seconds, assignment:assigned_cardios(duration_minutes)')
         .eq('student_id', studentId)
-        .eq('status', 'completed')
+        .in('status', ['completed', 'in_progress'])
         .gte('started_at', startDateStr + 'T00:00:00-03:00')
         .lte('started_at', todayStr + 'T23:59:59-03:00')
 
@@ -558,7 +590,20 @@ export async function getStudentAdherenceHistory(studentId: string, days: number
         .lte('created_at', todayStr + 'T23:59:59-03:00')
 
     const workoutDates = new Set(wLogs?.map(l => formatToBrazilDate(l.started_at)))
-    const cardioDates = new Set(cLogs?.map(l => formatToBrazilDate(l.started_at)))
+
+    // Process Cardio Logs to support Partial/In-Progress
+    const cardioDataMap = new Map<string, { status: string, percentage: number }>()
+    cLogs?.forEach((l: any) => {
+        const dateKey = formatToBrazilDate(l.started_at)
+        const targetSeconds = (l.assignment?.duration_minutes || 30) * 60
+        const percentage = Math.min(Math.round((l.elapsed_seconds / targetSeconds) * 100), 100)
+
+        const existing = cardioDataMap.get(dateKey)
+        if (!existing || percentage > existing.percentage) {
+            cardioDataMap.set(dateKey, { status: l.status, percentage })
+        }
+    })
+
     const ergoDates = new Set(eLogs?.map(l => formatToBrazilDate(l.created_at)))
 
     const workoutDays = new Set((aw || []).map((a: any) => a.day_of_week))
@@ -597,24 +642,43 @@ export async function getStudentAdherenceHistory(studentId: string, days: number
 
         // Workout Status
         let workoutStatus = found?.workout_status || 'none'
-        if (workoutDates.has(dateStr)) workoutStatus = 'completed'
-        else {
+        let workoutPercentage = found?.workout_percentage || 0
+        if (workoutDates.has(dateStr)) {
+            if (workoutStatus !== 'partial') workoutStatus = 'completed'
+            if (workoutStatus === 'completed') workoutPercentage = 100
+        } else {
             if (workoutStatus === 'none' && workoutDays.has(dow)) workoutStatus = 'assigned'
             if (workoutStatus === 'assigned' && isPast) workoutStatus = 'skipped'
         }
 
         // Cardio Status
         let cardioStatus = found?.cardio_status || 'none'
-        if (cardioDates.has(dateStr)) cardioStatus = 'completed'
-        else {
+        let cardioPercentage = found?.cardio_percentage || 0
+        const logData = cardioDataMap.get(dateStr)
+
+        if (logData) {
+            // Priority: if daily_tracking already has a more complete status/percentage, keep it
+            // otherwise use the log data (especially for historical partials)
+            if (cardioStatus === 'none' || cardioStatus === 'assigned' || cardioStatus === 'skipped') {
+                cardioStatus = logData.status === 'completed' ? (logData.percentage >= 100 ? 'completed' : 'partial') : 'partial'
+                cardioPercentage = logData.percentage
+            } else if (cardioStatus === 'partial' && logData.percentage > cardioPercentage) {
+                cardioPercentage = logData.percentage
+            } else if (cardioStatus === 'completed') {
+                cardioPercentage = 100
+            }
+        } else {
             if (cardioStatus === 'none' && cardioDays.has(dow)) cardioStatus = 'assigned'
             if (cardioStatus === 'assigned' && isPast) cardioStatus = 'skipped'
         }
 
         // Ergo Status
         let ergoStatus = found?.ergogenics_status || 'none'
-        if (ergoDates.has(dateStr)) ergoStatus = 'completed'
-        else {
+        let ergoPercentage = found?.ergogenics_percentage || 0
+        if (ergoDates.has(dateStr)) {
+            ergoStatus = 'completed'
+            ergoPercentage = 100
+        } else {
             if (!ergogenicsDays.has(dow)) {
                 ergoStatus = 'none'
             } else {
@@ -627,11 +691,11 @@ export async function getStudentAdherenceHistory(studentId: string, days: number
             date: dateStr,
             diet_percentage: found?.diet_percentage || 0,
             workout_status: workoutStatus,
-            workout_percentage: workoutStatus === 'completed' ? 100 : (found?.workout_percentage || 0),
+            workout_percentage: workoutPercentage,
             cardio_status: cardioStatus,
-            cardio_percentage: cardioStatus === 'completed' ? 100 : (found?.cardio_percentage || 0),
+            cardio_percentage: cardioPercentage,
             ergogenics_status: ergoStatus,
-            ergogenics_percentage: ergoStatus === 'completed' ? 100 : (found?.ergogenics_percentage || 0),
+            ergogenics_percentage: ergoPercentage,
         })
     }
 

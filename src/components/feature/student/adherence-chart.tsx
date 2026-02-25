@@ -38,10 +38,8 @@ export function AdherenceChart({ history, showErgogenics = false, noCard = false
     const getStatusColor = (status: string, percentage?: number) => {
         if (percentage !== undefined && percentage !== null && status !== 'none') {
             if (percentage >= 100) return 'bg-emerald-500'
-            if (percentage >= 50) return 'bg-amber-500'
-            if (percentage > 0) return 'bg-red-500/50'
-            // If percentage is 0 but it's not 'none', it's a failure
-            if (status === 'skipped') return 'bg-red-500'
+            if (percentage > 0) return 'bg-amber-500' // Amber for any partial progress
+            if (status === 'skipped' || status === 'fail') return 'bg-red-500'
             return 'bg-zinc-800'
         }
         switch (status) {

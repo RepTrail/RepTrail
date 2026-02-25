@@ -3,15 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { startOfWeek, endOfWeek, eachDayOfInterval, format, isSameDay, subWeeks } from 'date-fns'
 
-function toDateKey(isoOrDate: string): string {
-    if (!isoOrDate) return ''
-    const d = new Date(isoOrDate)
-    // Adjust UTC to Brazil (approx -3h) to ensure late night workouts (that might be next day in UTC) 
-    // count for the correct day. Also handles server-side (UTC) consistency.
-    const offset = 3 * 60 * 60 * 1000
-    const adjusted = new Date(d.getTime() - offset)
-    return adjusted.toISOString().split('T')[0]
-}
+import { formatToBrazilDate } from '@/lib/date-utils'
 
 /** Adherence = Average of (diet, workout, cardio) progress per day. Synchronized with daily_tracking. */
 export async function getAdherenceForDates(
@@ -43,7 +35,7 @@ export async function getAdherenceForDates(
 
     if (applicableDates.length === 0) return []
 
-    const sortedDates = [...new Set(applicableDates.map(toDateKey))].sort()
+    const sortedDates = [...new Set(applicableDates)].sort()
     const minDate = sortedDates[0]
     const maxDate = sortedDates[sortedDates.length - 1]
 
@@ -56,33 +48,49 @@ export async function getAdherenceForDates(
         .lte('date', maxDate)
 
     // Fetch Activity Logs (Source of Truth for Execution)
+    const searchMin = minDate + 'T00:00:00-03:00'
+    const searchMax = maxDate + 'T23:59:59-03:00'
+
     const { data: wLogs } = await supabase
         .from('workout_logs')
         .select('started_at, status')
         .eq('student_id', studentId)
         .eq('status', 'completed')
-        .gte('started_at', minDate + 'T00:00:00')
-        .lte('started_at', maxDate + 'T23:59:59')
+        .gte('started_at', searchMin)
+        .lte('started_at', searchMax)
 
     const { data: cLogs } = await supabase
         .from('cardio_logs')
-        .select('started_at, status, completed_at')
+        .select('started_at, status, elapsed_seconds, assignment:assigned_cardios(duration_minutes)')
         .eq('student_id', studentId)
-        .eq('status', 'completed')
-        .gte('started_at', minDate + 'T00:00:00')
-        .lte('started_at', maxDate + 'T23:59:59')
+        .in('status', ['completed', 'in_progress'])
+        .gte('started_at', searchMin)
+        .lte('started_at', searchMax)
 
     const { data: eLogs } = await supabase
         .from('ergogenic_logs')
         .select('created_at')
         .eq('student_id', studentId)
-        .gte('created_at', minDate + 'T00:00:00')
-        .lte('created_at', maxDate + 'T23:59:59')
+        .gte('created_at', searchMin)
+        .lte('created_at', searchMax)
 
     // Map logs to YYYY-MM-DD keys (using consistent server time interpretation)
-    const workoutDates = new Set(wLogs?.map(l => toDateKey(l.started_at)))
-    const cardioDates = new Set(cLogs?.map(l => toDateKey(l.started_at)))
-    const ergoDates = new Set(eLogs?.map(l => toDateKey(l.created_at)))
+    const workoutDates = new Set(wLogs?.map(l => formatToBrazilDate(l.started_at)))
+
+    // Process Cardio Logs to support Partial/In-Progress
+    const cardioDataMap = new Map<string, { status: string, percentage: number }>()
+    cLogs?.forEach((l: any) => {
+        const dateKey = formatToBrazilDate(l.started_at)
+        const targetSeconds = (l.assignment?.duration_minutes || 30) * 60
+        const percentage = Math.min(Math.round((l.elapsed_seconds / targetSeconds) * 100), 100)
+
+        const existing = cardioDataMap.get(dateKey)
+        if (!existing || percentage > existing.percentage) {
+            cardioDataMap.set(dateKey, { status: l.status, percentage })
+        }
+    })
+
+    const ergoDates = new Set(eLogs?.map(l => formatToBrazilDate(l.created_at)))
 
     // Fetch Assignments & Details
     const { data: aw } = await supabase.from('assigned_workouts').select('day_of_week').eq('student_id', studentId).neq('active', false)
@@ -139,26 +147,40 @@ export async function getAdherenceForDates(
 
         // --- RULE 3: Workout (Check Logs OR Tracking) ---
         const doneWorkout = workoutDates.has(dateStr) || day?.workout_status === 'completed'
-        if (workoutDays.has(dow) || doneWorkout) {
+        const isPartialWorkout = day?.workout_status === 'partial'
+
+        if (workoutDays.has(dow) || doneWorkout || isPartialWorkout) {
             possible += 1
             if (doneWorkout) points += 1
-            else if (day?.workout_status === 'partial') points += (day.workout_percentage || 0) / 100
+            else if (isPartialWorkout) points += (day.workout_percentage || 0) / 100
         }
 
         // --- RULE 4: Cardio (Check Logs OR Tracking) ---
-        const doneCardio = cardioDates.has(dateStr) || day?.cardio_status === 'completed'
-        if (cardioDays.has(dow) || doneCardio) {
+        const logData = cardioDataMap.get(dateStr)
+        const doneCardio = logData?.status === 'completed' || day?.cardio_status === 'completed'
+        const isPartialCardio = logData?.status === 'in_progress' || day?.cardio_status === 'partial'
+
+        let cardioPts = 0
+        if (doneCardio) cardioPts = 1
+        else if (isPartialCardio) {
+            const trackPct = (day?.cardio_percentage || 0) / 100
+            const logPct = (logData?.percentage || 0) / 100
+            cardioPts = Math.max(trackPct, logPct)
+        }
+
+        if (cardioDays.has(dow) || doneCardio || isPartialCardio) {
             possible += 1
-            if (doneCardio) points += 1
-            else if (day?.cardio_status === 'partial') points += (day.cardio_percentage || 0) / 100
+            points += cardioPts
         }
 
         // --- RULE 5: Ergogenics (Check Logs OR Tracking) ---
         const doneErgo = ergoDates.has(dateStr) || day?.ergogenics_status === 'completed'
-        if ((steroidUse && ergoDays.has(dow)) || (steroidUse && doneErgo)) {
+        const isPartialErgo = day?.ergogenics_status === 'partial'
+
+        if ((steroidUse && ergoDays.has(dow)) || (steroidUse && (doneErgo || isPartialErgo))) {
             possible += 1
             if (doneErgo) points += 1
-            else if (day?.ergogenics_status === 'partial') points += (day.ergogenics_percentage || 0) / 100
+            else if (isPartialErgo) points += (day.ergogenics_percentage || 0) / 100
         }
 
         // --- RULE 6: Calculation ---
@@ -357,7 +379,7 @@ export async function getStudentChartData(studentId: string) {
 
     // 2. Generate ALL dates in the interval Day-by-Day
     const dateKeys = eachDayOfInterval({ start: startDate, end: endDate })
-        .map(d => toDateKey(d.toISOString()))
+        .map(d => formatToBrazilDate(d.toISOString()))
 
     // 3. Calculate adherence for the full range
     const adherence = await getAdherenceForDates(studentId, dateKeys)
@@ -367,13 +389,13 @@ export async function getStudentChartData(studentId: string) {
 
     // Priority timestamps from metrics
     for (const w of weights) {
-        const key = toDateKey(w.recorded_at)
+        const key = formatToBrazilDate(w.recorded_at)
         const t = new Date(w.recorded_at).getTime()
         const cur = dateToTimestamp.get(key)
         if (!cur || t > cur) dateToTimestamp.set(key, t)
     }
     for (const b of bfs) {
-        const key = toDateKey(b.recorded_at)
+        const key = formatToBrazilDate(b.recorded_at)
         const t = new Date(b.recorded_at).getTime()
         const cur = dateToTimestamp.get(key)
         if (!cur || t > cur) dateToTimestamp.set(key, t)

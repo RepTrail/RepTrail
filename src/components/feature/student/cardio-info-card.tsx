@@ -12,10 +12,6 @@ export function CardioInfoCard({ assignment }: CardioInfoCardProps) {
 
     return (
         <Card className="group relative bg-zinc-900/40 border-zinc-800/50 shadow-2xl rounded-[2.5rem] overflow-hidden backdrop-blur-sm border-t-zinc-700/10 hover:border-orange-500/20 transition-all duration-500">
-            {/* Background Accent */}
-            <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity">
-                <Flame className="w-32 h-32 text-orange-500" />
-            </div>
 
             <CardContent className="p-8 relative z-10 space-y-6">
                 <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
@@ -47,26 +43,26 @@ export function CardioInfoCard({ assignment }: CardioInfoCardProps) {
                                 </span>
                             </div>
 
-                            {assignment.day_of_week !== undefined && (
-                                <div className="flex items-center gap-2 px-3 py-1.5 bg-orange-500/5 rounded-xl border border-orange-500/10">
-                                    <Calendar className="w-3.5 h-3.5 text-orange-500" />
-                                    <span className="text-[10px] font-black text-orange-500 uppercase tracking-widest leading-none">
-                                        {dayNamesShort[assignment.day_of_week]}
-                                    </span>
-                                </div>
-                            )}
+                            <div className="flex flex-wrap gap-1">
+                                {(() => {
+                                    const days = new Set<number>()
+                                    if (assignment.day_of_week !== undefined && assignment.day_of_week !== null) {
+                                        days.add(assignment.day_of_week)
+                                    }
+                                    if (assignment.days_of_week && Array.isArray(assignment.days_of_week)) {
+                                        assignment.days_of_week.forEach((d: number) => days.add(d))
+                                    }
 
-                            {assignment.days_of_week && Array.isArray(assignment.days_of_week) && (
-                                <div className="flex gap-1">
-                                    {assignment.days_of_week.map((d: number) => (
+                                    return Array.from(days).sort((a, b) => a - b).map((d) => (
                                         <div key={d} className="flex items-center gap-2 px-3 py-1.5 bg-orange-500/5 rounded-xl border border-orange-500/10">
+                                            {days.size === 1 && <Calendar className="w-3.5 h-3.5 text-orange-500" />}
                                             <span className="text-[10px] font-black text-orange-500 uppercase tracking-widest leading-none">
                                                 {dayNamesShort[d]}
                                             </span>
                                         </div>
-                                    ))}
-                                </div>
-                            )}
+                                    ))
+                                })()}
+                            </div>
                         </div>
                     </div>
 

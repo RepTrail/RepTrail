@@ -7,6 +7,7 @@ import { Activity, Dumbbell, ChevronRight, Timer, X } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
+import { cn } from '@/lib/utils'
 
 export function PersistentActiveSession() {
     const pathname = usePathname()
@@ -107,12 +108,16 @@ export function PersistentActiveSession() {
                         <div className="flex items-center gap-3 md:gap-4 overflow-hidden">
                             <div className="w-10 h-10 md:w-12 md:h-12 bg-orange-500/20 rounded-xl flex items-center justify-center border border-orange-500/30 relative shrink-0">
                                 {isCardio ? <Activity className="w-5 h-5 md:w-6 md:h-6 text-orange-500" /> : <Dumbbell className="w-5 h-5 md:w-6 md:h-6 text-orange-500" />}
-                                <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-orange-500 rounded-full animate-ping" />
-                                <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-orange-500 rounded-full border-2 border-zinc-950" />
+                                {activeSession.is_running !== false && (
+                                    <>
+                                        <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-orange-500 rounded-full animate-ping" />
+                                        <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-orange-500 rounded-full border-2 border-zinc-950" />
+                                    </>
+                                )}
                             </div>
                             <div className="space-y-0.5 overflow-hidden">
                                 <p className="text-[9px] md:text-[10px] font-black text-orange-500 uppercase tracking-[.20em] italic leading-none truncate drop-shadow-[0_0_10px_rgba(249,115,22,0.3)]">
-                                    {isCardio ? 'CARDIO ATIVO' : 'TREINO ATIVO'}
+                                    {isCardio ? (activeSession.is_running === false ? 'CARDIO PAUSADO' : 'CARDIO ATIVO') : 'TREINO ATIVO'}
                                 </p>
                                 <h4 className="text-xs md:text-sm font-black text-white uppercase italic tracking-tighter truncate">{name}</h4>
                             </div>
@@ -122,8 +127,10 @@ export function PersistentActiveSession() {
                             <div className="hidden xs:flex flex-col items-end">
                                 <span className="text-[8px] md:text-[9px] font-bold text-zinc-500 uppercase tracking-widest leading-none mb-1">Abrir</span>
                                 <div className="flex items-center gap-1">
-                                    <Timer className="w-2.5 h-2.5 text-orange-500/70" />
-                                    <span className="text-[10px] md:text-xs font-black text-white tabular-nums border-none shadow-none bg-transparent p-0 m-0">Ativo</span>
+                                    <Timer className={cn("w-2.5 h-2.5", activeSession.is_running === false ? "text-zinc-500" : "text-orange-500/70")} />
+                                    <span className="text-[10px] md:text-xs font-black text-white tabular-nums border-none shadow-none bg-transparent p-0 m-0">
+                                        {activeSession.is_running === false ? 'Pausado' : 'Ativo'}
+                                    </span>
                                 </div>
                             </div>
                             <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-zinc-800/80 flex items-center justify-center border border-zinc-700 hover:bg-zinc-700 transition-all">

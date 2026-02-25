@@ -53,11 +53,11 @@ export function StudentNav({ hasTrainer, steroidUse, autoTrainingActive = false 
                         className={`
                             flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-300 group
                             ${isActive
-                                ? 'bg-zinc-800 text-emerald-500 border border-zinc-700 shadow-[0_8px_30px_rgb(0,0,0,0.4)]'
-                                : 'text-zinc-500 hover:bg-zinc-800 hover:text-white border border-transparent hover:border-zinc-700 hover:shadow-xl'}
+                                ? 'bg-orange-500/10 border-orange-500/30 text-white shadow-[0_8px_32px_rgba(249,115,22,0.1)] border-2'
+                                : 'text-zinc-500 hover:bg-zinc-800 hover:text-white border-2 border-transparent hover:border-zinc-700 hover:shadow-xl'}
                         `}
                     >
-                        <div className={`transition-all duration-300 ${isActive ? 'scale-110 drop-shadow-[0_0_8px_rgba(16,185,129,0.3)]' : 'group-hover:scale-110'}`}>
+                        <div className={`transition-all duration-300 ${isActive ? 'scale-110 text-orange-500 drop-shadow-[0_0_8px_rgba(249,115,22,0.3)]' : 'group-hover:scale-110'}`}>
                             {link.icon}
                         </div>
                         <span className="text-[10px] font-black uppercase tracking-[0.2em]">{link.label}</span>

@@ -15,9 +15,6 @@ interface StatCardProps {
 export function StatCard({ label, value, unit, trend, trendVal, trendLabel, icon }: StatCardProps) {
     return (
         <Card className="bg-zinc-900/40 border-zinc-800/50 shadow-2xl rounded-[2rem] overflow-hidden group backdrop-blur-sm transition-all hover:border-zinc-700/50 relative">
-            <div className="absolute top-0 right-0 p-4 opacity-[0.03] group-hover:opacity-10 transition-opacity">
-                {icon}
-            </div>
             <CardHeader className="p-8 relative z-10">
                 <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
                     <span className="text-emerald-500 mb-0.5">{icon}</span>

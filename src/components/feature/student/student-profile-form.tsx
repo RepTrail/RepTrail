@@ -25,9 +25,10 @@ import { CancelSubscriptionButton } from '../subscription/cancel-subscription-bu
 
 interface StudentProfileFormProps {
     profile: any
+    hasTrainer?: boolean
 }
 
-export function StudentProfileForm({ profile }: StudentProfileFormProps) {
+export function StudentProfileForm({ profile, hasTrainer = false }: StudentProfileFormProps) {
     const [saving, setSaving] = useState(false)
     const [avatarUrl, setAvatarUrl] = useState(profile?.avatar_url || '')
     const [formData, setFormData] = useState({
@@ -98,16 +99,18 @@ export function StudentProfileForm({ profile }: StudentProfileFormProps) {
                         </div>
 
                         <div className="pt-6 border-t border-zinc-800/50 grid grid-cols-2 gap-4">
-                            <div className="p-4 bg-zinc-950/50 rounded-3xl border border-zinc-800 text-center">
+                            <div className="p-4 bg-zinc-950/50 rounded-3xl border border-zinc-800 text-center col-span-2 md:col-span-1">
                                 <span className="text-[9px] font-black text-zinc-600 uppercase tracking-widest block mb-1">Início</span>
                                 <span className="text-xs font-black text-white uppercase italic">Ativo</span>
                             </div>
-                            <div className="p-4 bg-zinc-950/50 rounded-3xl border border-zinc-800 text-center">
-                                <span className="text-[9px] font-black text-zinc-600 uppercase tracking-widest block mb-1">Status</span>
-                                <span className={`text-xs font-black uppercase italic ${profile?.auto_training_status === 'active' ? 'text-emerald-500' : 'text-amber-500'}`}>
-                                    {profile?.auto_training_status === 'active' ? 'Assinante' : 'Trial'}
-                                </span>
-                            </div>
+                            {!hasTrainer && (
+                                <div className="p-4 bg-zinc-950/50 rounded-3xl border border-zinc-800 text-center">
+                                    <span className="text-[9px] font-black text-zinc-600 uppercase tracking-widest block mb-1">Status</span>
+                                    <span className={`text-xs font-black uppercase italic ${profile?.auto_training_status === 'active' ? 'text-emerald-500' : 'text-amber-500'}`}>
+                                        {profile?.auto_training_status === 'active' ? 'Assinante' : 'Trial'}
+                                    </span>
+                                </div>
+                            )}
                         </div>
 
                         {profile?.asaas_subscription_id && (
@@ -121,7 +124,7 @@ export function StudentProfileForm({ profile }: StudentProfileFormProps) {
 
             {/* Edit Form */}
             <div className="lg:col-span-8 space-y-8">
-                {profile?.auto_training_trial_end && (
+                {!hasTrainer && profile?.auto_training_trial_end && (
                     <StudentTrialBadge
                         trialEnd={profile.auto_training_trial_end}
                         status={profile.auto_training_status}

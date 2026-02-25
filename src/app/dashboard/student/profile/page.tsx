@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import { getStudentProfile } from '@/actions/student-actions'
+import { getStudentProfile, getStudentTrainer } from '@/actions/student-actions'
 import { ShieldCheck } from 'lucide-react'
 import { StudentProfileForm } from '@/components/feature/student/student-profile-form'
 import { redirect } from 'next/navigation'
@@ -15,6 +15,7 @@ export default async function StudentProfilePage() {
     }
 
     const profile = await getStudentProfile(user.id)
+    const trainerRel = await getStudentTrainer(user.id)
 
     if (!profile) return null
 
@@ -36,7 +37,7 @@ export default async function StudentProfilePage() {
                 </p>
             </header>
 
-            <StudentProfileForm profile={profile} />
+            <StudentProfileForm profile={profile} hasTrainer={!!trainerRel} />
         </div>
     )
 }

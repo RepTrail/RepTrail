@@ -95,7 +95,7 @@ export default async function StudentCardioPage() {
                         )}
                     </div>
 
-                    {isAutoTrainingActive && (
+                    {isAutoTrainingActive && !trainerRel && (
                         <div className="pt-10 space-y-8">
                             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-2 border-b border-zinc-800/50">
                                 <div className="space-y-1">
