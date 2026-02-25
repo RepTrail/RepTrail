@@ -35,7 +35,46 @@ export function CardioCard({ userId }: CardioCardProps) {
     })
 
     if (isLoading || isLoadingLogs) {
-        return <Skeleton className="h-[200px] w-full rounded-[2.5rem]" />
+        return (
+            <div className="bg-zinc-900/40 border border-zinc-800/50 shadow-2xl border-t-zinc-700/10 p-8 rounded-[2.5rem] overflow-hidden backdrop-blur-sm space-y-8 min-h-[400px] animate-pulse">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="space-y-3">
+                        <div className="flex items-center gap-3">
+                            <div className="p-2 bg-zinc-950 rounded-xl border border-zinc-800">
+                                <Activity className="w-5 h-5 text-zinc-800" />
+                            </div>
+                            <Skeleton className="h-6 w-40 rounded-lg bg-zinc-800/50" />
+                        </div>
+                        <div className="flex gap-2">
+                            <Skeleton className="h-4 w-16 rounded-md bg-zinc-800/50" />
+                            <Skeleton className="h-4 w-20 rounded-md bg-zinc-800/50" />
+                        </div>
+                    </div>
+                </div>
+
+                <div className="flex flex-col items-center justify-center space-y-4">
+                    <Skeleton className="h-2 w-24 bg-zinc-800/50" />
+                    <Skeleton className="h-20 w-48 rounded-2xl bg-zinc-800/50" />
+                    <Skeleton className="h-2 w-full max-w-xs rounded-full bg-zinc-800/50" />
+                </div>
+
+                <div className="flex items-center justify-center gap-6">
+                    <Skeleton className="w-20 h-20 rounded-full bg-zinc-800/50" />
+                    <Skeleton className="w-16 h-16 rounded-full bg-zinc-800/50" />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                    <div className="h-16 rounded-3xl bg-zinc-950/50 border border-zinc-900 flex flex-col items-center justify-center gap-1">
+                        <Skeleton className="h-2 w-12 bg-zinc-800/50" />
+                        <Skeleton className="h-4 w-16 bg-zinc-800/50" />
+                    </div>
+                    <div className="h-16 rounded-3xl bg-zinc-950/50 border border-zinc-900 flex flex-col items-center justify-center gap-1">
+                        <Skeleton className="h-2 w-12 bg-zinc-800/50" />
+                        <Skeleton className="h-4 w-16 bg-zinc-800/50" />
+                    </div>
+                </div>
+            </div>
+        )
     }
 
     const tzNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }))

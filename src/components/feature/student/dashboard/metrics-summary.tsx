@@ -31,9 +31,15 @@ export function MetricsSummary({ userId }: MetricsSummaryProps) {
 
     if (isLoading) {
         return (
-            <div className="grid grid-cols-2 gap-4">
-                <Skeleton className="h-24 w-full rounded-3xl" />
-                <Skeleton className="h-24 w-full rounded-3xl" />
+            <div className="grid grid-cols-2 gap-4 animate-pulse">
+                <div className="bg-zinc-900/30 border border-zinc-800/50 rounded-3xl p-5 space-y-2">
+                    <Skeleton className="h-2 w-10 bg-zinc-800/50" />
+                    <Skeleton className="h-6 w-16 bg-zinc-800/50" />
+                </div>
+                <div className="bg-zinc-900/30 border border-zinc-800/50 rounded-3xl p-5 space-y-2">
+                    <Skeleton className="h-2 w-10 bg-zinc-800/50" />
+                    <Skeleton className="h-6 w-16 bg-zinc-800/50" />
+                </div>
             </div>
         )
     }

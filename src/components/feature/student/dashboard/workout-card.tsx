@@ -58,7 +58,20 @@ export function WorkoutCard({ userId }: WorkoutCardProps) {
     })
 
     if (isLoading || (workout && isLoadingStatus)) {
-        return <Skeleton className="h-[280px] w-full rounded-[2.5rem]" />
+        return (
+            <div className="bg-zinc-900/40 border border-zinc-800/50 shadow-xl p-8 rounded-[2.5rem] backdrop-blur-sm overflow-hidden h-[280px] relative animate-pulse">
+                <div className="absolute top-0 right-0 p-8 opacity-[0.02]">
+                    <Dumbbell className="w-32 h-32" />
+                </div>
+                <div className="relative space-y-8">
+                    <div className="space-y-3">
+                        <Skeleton className="h-8 w-3/4 rounded-xl bg-zinc-800/50" />
+                        <Skeleton className="h-3 w-48 rounded-md bg-zinc-800/50" />
+                    </div>
+                    <Skeleton className="h-12 w-40 rounded-xl bg-zinc-800/50" />
+                </div>
+            </div>
+        )
     }
 
     if (!workout) {

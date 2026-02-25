@@ -51,7 +51,29 @@ export function ErgogenicsCard({ userId }: ErgogenicsCardProps) {
     if (!status?.steroid_use) return null
 
     if (isLoading || isLoadingLogs) {
-        return <Skeleton className="h-[200px] w-full rounded-[2.5rem]" />
+        return (
+            <div className="space-y-6 animate-pulse">
+                <div className="flex items-center justify-between px-2">
+                    <div className="flex items-center gap-2">
+                        <Sparkles className="w-4 h-4 text-zinc-800" />
+                        <Skeleton className="h-4 w-32 bg-zinc-800/50" />
+                    </div>
+                </div>
+                <div className="grid gap-6 md:grid-cols-2">
+                    {[1, 2].map((i) => (
+                        <div key={i} className="bg-zinc-900/40 border border-zinc-800/50 shadow-xl p-6 rounded-[2rem] backdrop-blur-sm space-y-4">
+                            <div className="flex items-center justify-between">
+                                <div className="space-y-2">
+                                    <Skeleton className="h-5 w-32 bg-zinc-800/50" />
+                                    <Skeleton className="h-3 w-20 bg-zinc-800/50" />
+                                </div>
+                                <Skeleton className="h-10 w-10 rounded-xl bg-zinc-800/50" />
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        )
     }
 
     const tzNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }))
