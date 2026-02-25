@@ -156,15 +156,26 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
         }, 15000)
     }
 
-    // Effect to handle sync when state changes
+    // State for syncing
+    const lastSyncRef = useRef<{ seconds: number, status: string }>({ seconds: 0, status: 'idle' })
+
+    // Periodic sync effect
     useEffect(() => {
-        if (logId && (status === 'running' || status === 'paused')) {
-            const timeout = setTimeout(() => {
-                updateCardioSession(logId, seconds, status === 'running')
-            }, 5000)
-            return () => clearTimeout(timeout)
-        }
-    }, [seconds, status, logId])
+        if (!logId || status === 'idle') return
+
+        const syncInterval = setInterval(async () => {
+            // Only sync if values changed significantly or every X seconds
+            const hasStatusChanged = lastSyncRef.current.status !== status
+            const hasTimeProgressed = Math.abs(lastSyncRef.current.seconds - seconds) >= 10
+
+            if (hasStatusChanged || hasTimeProgressed) {
+                await updateCardioSession(logId, seconds, status === 'running')
+                lastSyncRef.current = { seconds, status }
+            }
+        }, 10000) // Sync every 10s
+
+        return () => clearInterval(syncInterval)
+    }, [logId, status, seconds])
 
     async function handleStart() {
         if (!logId) {
