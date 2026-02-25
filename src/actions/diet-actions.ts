@@ -389,8 +389,10 @@ export async function removeMeal(id: string, dietId: string) {
 }
 export async function estimateMacros(foodName: string, quantity: string) {
     try {
+        console.log('DEBUG: estimateMacros called with:', { foodName, quantity })
         const { createOpenRouterClient, callAI } = await import('@/lib/ai-client');
         const client = createOpenRouterClient();
+        console.log('DEBUG: AI client created')
 
         const prompt = `
 You are a nutrition expert. Estimate the macronutrients for this food item.
@@ -401,8 +403,10 @@ Return ONLY a JSON object with this exact structure (no markdown):
 {"protein": number, "carbs": number, "fat": number, "fiber": number}
 Use integers or decimals.
 `;
+        console.log('DEBUG: Calling AI with prompt:', prompt)
 
         const macros = await callAI<{ protein: number; carbs: number; fat: number; fiber: number }>(client, prompt);
+        console.log('DEBUG: AI response:', macros)
         return { success: true, macros };
     } catch (e: any) {
         console.error("AI Macro Estimation Error:", e.message);
@@ -412,8 +416,10 @@ Use integers or decimals.
 
 export async function suggestSubstitution(foodName: string, quantity: string) {
     try {
+        console.log('DEBUG: suggestSubstitution called with:', { foodName, quantity })
         const { createOpenRouterClient, callAI } = await import('@/lib/ai-client');
         const client = createOpenRouterClient();
+        console.log('DEBUG: AI client created for substitution')
 
         const prompt = `
 You are a nutrition expert. Suggest a SIMILAR and healthy substitution for this food item.
@@ -434,8 +440,10 @@ Return ONLY a JSON object with this exact structure (no markdown):
 }
 Ensure the macros returned are calculated specifically for the suggested quantity.
 `;
+        console.log('DEBUG: Calling AI with substitution prompt:', prompt)
 
         const suggestion = await callAI<{ food_name: string; quantity: string; protein: number; carbs: number; fat: number; fiber: number }>(client, prompt);
+        console.log('DEBUG: AI substitution response:', suggestion)
         return { success: true, suggestion };
     } catch (e: any) {
         console.error("AI Substitution Suggestion Error:", e.message);

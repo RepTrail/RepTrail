@@ -92,7 +92,8 @@ export function AdherenceChart({ history, showErgogenics = false, noCard = false
                                 }
 
                                 const colorClass = getStatusColor(status, percentage)
-                                const dateLabel = new Date(day.date).toLocaleDateString('pt-BR')
+                                const [y, m, d] = day.date.split('-')
+                                const dateLabel = `${d}/${m}/${y}`
 
                                 return (
                                     <TooltipProvider key={day.date}>

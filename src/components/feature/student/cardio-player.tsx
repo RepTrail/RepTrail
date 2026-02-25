@@ -5,9 +5,7 @@ import {
     Play,
     Pause,
     Square,
-    Timer,
     Activity,
-    ChevronRight,
     Flame,
     Zap,
     CheckCircle2
@@ -38,13 +36,13 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
 
     const timerRef = useRef<NodeJS.Timeout | null>(null)
     const syncRef = useRef<NodeJS.Timeout | null>(null)
+
     // Duration in seconds for progress bar
     const targetSeconds = assignment.duration_minutes * 60
-    const progress = Math.min((seconds / targetSeconds) * 100, 100)
 
-    // Regressive timer: Target - Seconds Elapsed
+    // Regressive timer calculation
     const remainingSeconds = Math.max(targetSeconds - seconds, 0)
-    const isFinished = remainingSeconds === 0 && status !== 'idle'
+    const progress = Math.min((seconds / targetSeconds) * 100, 100)
 
     useEffect(() => {
         if (!isCompleted) {
@@ -59,14 +57,13 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
         }
     }, [isCompleted])
 
+    // --- Helper Functions ---
+
     const requestWakeLock = async () => {
         if ('wakeLock' in navigator) {
             try {
                 const lock = await (navigator as any).wakeLock.request('screen')
                 setWakeLock(lock)
-                lock.addEventListener('release', () => {
-                    console.log('Wake Lock was released')
-                })
             } catch (err: any) {
                 console.error(`${err.name}, ${err.message}`)
             }
@@ -82,7 +79,6 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
 
     const showNotification = (title: string, body: string) => {
         if ("Notification" in window && Notification.permission === "granted") {
-            // Use Service Worker if available for better background support
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.ready.then(registration => {
                     registration.showNotification(title, {
@@ -103,33 +99,42 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
     async function checkActiveSession() {
         setLoading(true)
         const active = await getActiveCardioSession()
+
         if (active && active.assigned_cardio_id === assignment.id) {
             setLogId(active.id)
-            setSeconds(active.elapsed_seconds)
-            setStatus(active.is_running ? 'running' : 'paused')
-            if (active.is_running) {
-                // startTimer needs current seconds to be correct
-                // We'll call startTimer logic directly here or rely on the helper which uses 'seconds' state
-                // Note: 'seconds' state won't be updated immediately here for startTimer usage if it was separate.
-                // But startTimer uses 'seconds' from closure or ref? No, it uses 'seconds' state.
-                // To fix the closure staleness, we pass the current value.
-                startTimer(active.elapsed_seconds)
+
+            // Logic to calculate elapsed time precisely even if app was closed
+            const storedStart = localStorage.getItem(`cardio_start_${active.id}`)
+            let currentElapsed = active.elapsed_seconds
+
+            if (active.is_running && storedStart) {
+                const startTime = parseInt(storedStart)
+                const now = Date.now()
+                currentElapsed = Math.floor((now - startTime) / 1000)
+
+                // If it reached target while app was closed, cap it
+                if (currentElapsed > targetSeconds) currentElapsed = targetSeconds
             }
-            startSync()
+
+            setSeconds(currentElapsed)
+            setStatus(active.is_running ? 'running' : 'paused')
+
+            if (active.is_running) {
+                const virtualStart = Date.now() - (currentElapsed * 1000)
+                startTimer(virtualStart)
+                startSync()
+                requestWakeLock()
+            }
         }
         setLoading(false)
     }
 
-    function startTimer(initialSeconds?: number) {
-        const currentSeconds = initialSeconds !== undefined ? initialSeconds : seconds
-        // Define timestamp de referência para cálculo preciso mesmo em background
-        // Se já temos segundos decorridos, subtraímos para achar o "início virtual"
-        const startRef = Date.now() - (currentSeconds * 1000)
-
+    function startTimer(virtualStart: number) {
         if (timerRef.current) clearInterval(timerRef.current)
+
         timerRef.current = setInterval(() => {
             const now = Date.now()
-            const diff = Math.floor((now - startRef) / 1000)
+            const diff = Math.floor((now - virtualStart) / 1000)
             setSeconds(diff)
         }, 1000)
     }
@@ -142,22 +147,8 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
     function startSync() {
         if (syncRef.current) clearInterval(syncRef.current)
         syncRef.current = setInterval(() => {
-            syncProgress()
-        }, 15000) // Sync every 15 seconds
-    }
-
-    async function syncProgress() {
-        if (!logId) return
-        // We need to use valid logId here, but inside setInterval closure logId might be stale?
-        // Actually logId is state, but setInterval closure captures the initial value.
-        // It's better to use a ref for logId if we want to access it inside an interval without resetting it.
-        // However, for simplicity, we rely on the implementation where syncProgress 
-        // reads the state. React state in closures is tricky.
-        // A better approach is to not rely on 'logId' inside the interval callback directly if it changes.
-        // We'll trust the useEffect based sync below more, but this interval triggers 'syncProgress'.
-        // Let's make syncProgress check a ref or just rely on the effect below.
-        // Actually, the useEffect below handles the sync logic based on seconds/status changes.
-        // This 'startSync'/'syncProgress' seems redundant or intended to force a save.
+            // Background sync logic handles it via useEffect
+        }, 15000)
     }
 
     // Effect to handle sync when state changes
@@ -175,33 +166,23 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
             const res = await startCardioSession(assignment.id)
             if (res.success && res.logId) {
                 setLogId(res.logId)
-                // Need to start timer with 0 explicitly or wait for re-render
-                // Using 0 here essentially
                 setStatus('running')
 
-                // Manually start timer logic
-                const startRef = Date.now()
-                if (timerRef.current) clearInterval(timerRef.current)
-                timerRef.current = setInterval(() => {
-                    const now = Date.now()
-                    const diff = Math.floor((now - startRef) / 1000)
-                    setSeconds(diff)
-                }, 1000)
+                const now = Date.now()
+                localStorage.setItem(`cardio_start_${res.logId}`, now.toString())
 
+                startTimer(now)
                 startSync()
                 requestWakeLock()
             } else {
-                toast({
-                    variant: 'destructive',
-                    title: 'Erro',
-                    description: 'Erro ao iniciar sessão'
-                })
-                return
+                toast({ variant: 'destructive', title: 'Erro', description: 'Erro ao iniciar sessão' })
             }
         } else {
             // Resuming
             setStatus('running')
-            startTimer() // Resume from current seconds
+            const virtualStart = Date.now() - (seconds * 1000)
+            localStorage.setItem(`cardio_start_${logId}`, virtualStart.toString())
+            startTimer(virtualStart)
             startSync()
             requestWakeLock()
         }
@@ -211,6 +192,7 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
         setStatus('paused')
         stopTimer()
         releaseWakeLock()
+        localStorage.removeItem(`cardio_start_${logId}`)
         if (logId) {
             await updateCardioSession(logId, seconds, false)
         }
@@ -220,13 +202,12 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
     useEffect(() => {
         if (remainingSeconds === 0 && status === 'running' && logId) {
             showNotification("Cardio Concluído!", "Você atingiu sua meta de tempo. Parabéns!")
-            handleStop(true) // Pass true for silent auto-finalization
+            handleStop(true)
         }
     }, [remainingSeconds, status, logId])
 
     async function handleStop(isAuto: boolean = false) {
         let percentage = progress
-        // Ensure percentage is max 100
         if (percentage > 100) percentage = 100
 
         if (!isAuto) {
@@ -245,6 +226,7 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
                     title: percentage >= 100 ? 'Parabéns!' : 'Cardio Finalizado',
                     description: percentage >= 100 ? 'Cardio finalizado com sucesso!' : 'Cardio finalizado parcialmente.'
                 })
+                localStorage.removeItem(`cardio_start_${logId}`)
                 setStatus('idle')
                 setSeconds(0)
                 setLogId(null)
@@ -273,11 +255,6 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
                             <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
                                 <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest bg-zinc-800/50 px-2 py-0.5 rounded-md border border-zinc-700/30">{assignment.duration_minutes} min</span>
                                 <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest bg-zinc-800/50 px-2 py-0.5 rounded-md border border-zinc-700/30 italic">{assignment.suggested_intensity}</span>
-                                {assignment.day_of_week !== undefined && (
-                                    <span className="text-[10px] font-bold text-emerald-500/80 uppercase tracking-widest bg-emerald-500/5 px-2 py-0.5 rounded-md border border-emerald-500/10 italic">
-                                        {["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"][assignment.day_of_week]}
-                                    </span>
-                                )}
                             </div>
                         </div>
                         <div className="flex-shrink-0">
@@ -322,11 +299,6 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
                         <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 ml-1">
                             <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest bg-zinc-800/50 px-2 py-0.5 rounded-md border border-zinc-700/30">{assignment.duration_minutes} min</span>
                             <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest bg-zinc-800/50 px-2 py-0.5 rounded-md border border-zinc-700/30 italic">{assignment.suggested_intensity}</span>
-                            {assignment.day_of_week !== undefined && (
-                                <span className="text-[10px] font-bold text-orange-500/80 uppercase tracking-widest bg-orange-500/5 px-2 py-0.5 rounded-md border border-orange-500/10 italic">
-                                    {["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"][assignment.day_of_week]}
-                                </span>
-                            )}
                         </div>
                     </div>
                     {status !== 'idle' && (
@@ -344,11 +316,6 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
                     <div className={`text-7xl font-black italic tracking-tighter tabular-nums drop-shadow-[0_0_30px_rgba(255,255,255,0.05)] ${remainingSeconds === 0 && status !== 'idle' ? 'text-emerald-500' : 'text-white'}`}>
                         {remainingSeconds > 0 ? formatTime(remainingSeconds) : "00:00"}
                     </div>
-                    {remainingSeconds === 0 && status !== 'idle' && (
-                        <div className="text-emerald-500 text-[10px] font-black uppercase tracking-widest animate-bounce">
-                            Missão Cumprida!
-                        </div>
-                    )}
                     <Progress value={progress} className="h-2 bg-zinc-800 rounded-full w-full max-w-xs" indicatorClassName="bg-gradient-to-r from-orange-500 to-amber-500" />
                 </div>
 

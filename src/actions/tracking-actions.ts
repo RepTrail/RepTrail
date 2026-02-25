@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { formatToBrazilDate } from '@/lib/date-utils'
 
 function getTodayStr() {
     // Returns YYYY-MM-DD for Brazil time
@@ -324,14 +325,9 @@ export async function getAdherenceHistory(days: number = 30) {
     if (!user) return []
 
     // 1. Determine Effective Start Date
-    // Fetch user profile creation date
     const { data: profile } = await supabase.from('profiles').select('created_at').eq('id', user.id).single()
     const profileCreatedStr = profile?.created_at ? new Date(profile.created_at).toISOString().split('T')[0] : '2000-01-01'
 
-    // Fetch active trainer link date
-    // We assume trainer_students has created_at; it usually does in Supabase.
-    // If it doesn't, this query will fail or return null. 
-    // Given previous interactions, tables seem standard.
     const { data: trainerLink } = await supabase
         .from('trainer_students')
         .select('created_at')
@@ -340,10 +336,6 @@ export async function getAdherenceHistory(days: number = 30) {
         .maybeSingle()
 
     const linkDateStr = trainerLink?.created_at ? new Date(trainerLink.created_at).toISOString().split('T')[0] : '2000-01-01'
-
-    // Use the later of the two dates as the effective start for tracking
-    // If they have a trainer, we count stats from when they joined that trainer.
-    // If no trainer, we count from when they joined the platform.
     const effectiveStartStr = linkDateStr > profileCreatedStr ? linkDateStr : profileCreatedStr
 
     const todayStr = getTodayStr()
@@ -405,30 +397,30 @@ export async function getAdherenceHistory(days: number = 30) {
     // Fetch execution logs for the period
     const { data: wLogs } = await supabase
         .from('workout_logs')
-        .select('started_at, status')
+        .select('id, started_at, status')
         .eq('student_id', user.id)
         .eq('status', 'completed')
-        .gte('started_at', startDateStr + 'T00:00:00')
-        .lte('started_at', endDateStr + 'T23:59:59')
+        .gte('started_at', startDateStr + 'T00:00:00-03:00')
+        .lte('started_at', endDateStr + 'T23:59:59-03:00')
 
     const { data: cLogs } = await supabase
         .from('cardio_logs')
         .select('started_at, status')
         .eq('student_id', user.id)
         .eq('status', 'completed')
-        .gte('started_at', startDateStr + 'T00:00:00')
-        .lte('started_at', endDateStr + 'T23:59:59')
+        .gte('started_at', startDateStr + 'T00:00:00-03:00')
+        .lte('started_at', endDateStr + 'T23:59:59-03:00')
 
     const { data: eLogs } = await supabase
         .from('ergogenic_logs')
         .select('created_at')
         .eq('student_id', user.id)
-        .gte('created_at', startDateStr + 'T00:00:00')
-        .lte('created_at', endDateStr + 'T23:59:59')
+        .gte('created_at', startDateStr + 'T00:00:00-03:00')
+        .lte('created_at', endDateStr + 'T23:59:59-03:00')
 
-    const workoutDates = new Set(wLogs?.map(l => l.started_at.split('T')[0]))
-    const cardioDates = new Set(cLogs?.map(l => l.started_at.split('T')[0]))
-    const ergoDates = new Set(eLogs?.map(l => l.created_at.split('T')[0]))
+    const workoutDates = new Set(wLogs?.map(l => formatToBrazilDate(l.started_at)))
+    const cardioDates = new Set(cLogs?.map(l => formatToBrazilDate(l.started_at)))
+    const ergoDates = new Set(eLogs?.map(l => formatToBrazilDate(l.created_at)))
 
     for (const dateStr of dayListSlice) {
         if (dateStr < effectiveStartStr) {
@@ -533,27 +525,27 @@ export async function getStudentAdherenceHistory(studentId: string, days: number
         .select('started_at, status')
         .eq('student_id', studentId)
         .eq('status', 'completed')
-        .gte('started_at', startDateStr + 'T00:00:00')
-        .lte('started_at', todayStr + 'T23:59:59')
+        .gte('started_at', startDateStr + 'T00:00:00-03:00')
+        .lte('started_at', todayStr + 'T23:59:59-03:00')
 
     const { data: cLogs } = await supabase
         .from('cardio_logs')
         .select('started_at, status')
         .eq('student_id', studentId)
         .eq('status', 'completed')
-        .gte('started_at', startDateStr + 'T00:00:00')
-        .lte('started_at', todayStr + 'T23:59:59')
+        .gte('started_at', startDateStr + 'T00:00:00-03:00')
+        .lte('started_at', todayStr + 'T23:59:59-03:00')
 
     const { data: eLogs } = await supabase
         .from('ergogenic_logs')
         .select('created_at')
         .eq('student_id', studentId)
-        .gte('created_at', startDateStr + 'T00:00:00')
-        .lte('created_at', todayStr + 'T23:59:59')
+        .gte('created_at', startDateStr + 'T00:00:00-03:00')
+        .lte('created_at', todayStr + 'T23:59:59-03:00')
 
-    const workoutDates = new Set(wLogs?.map(l => l.started_at.split('T')[0]))
-    const cardioDates = new Set(cLogs?.map(l => l.started_at.split('T')[0]))
-    const ergoDates = new Set(eLogs?.map(l => l.created_at.split('T')[0]))
+    const workoutDates = new Set(wLogs?.map(l => formatToBrazilDate(l.started_at)))
+    const cardioDates = new Set(cLogs?.map(l => formatToBrazilDate(l.started_at)))
+    const ergoDates = new Set(eLogs?.map(l => formatToBrazilDate(l.created_at)))
 
     const workoutDays = new Set((aw || []).map((a: any) => a.day_of_week))
     const cardioDays = new Set<number>()

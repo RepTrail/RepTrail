@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import { getTodayWorkout } from '@/actions/workout-actions'
 import { createClient } from '@/lib/supabase/client'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Dumbbell, ArrowRight, CheckCircle } from 'lucide-react'
+import { Dumbbell, CheckCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { getTodayRangeBrazil } from '@/lib/date-utils'
@@ -17,7 +17,7 @@ export function WorkoutCard({ userId }: WorkoutCardProps) {
     const { data: workout, isLoading } = useQuery({
         queryKey: ['today-workout', userId],
         queryFn: () => getTodayWorkout(userId),
-        staleTime: 1000 * 60 * 5, // 5 min
+        staleTime: 1000 * 30, // 30 seconds
     })
 
     const { data: statusData, isLoading: isLoadingStatus } = useQuery({
@@ -30,28 +30,30 @@ export function WorkoutCard({ userId }: WorkoutCardProps) {
             // Check Completed
             const { data: completed } = await supabase
                 .from('workout_logs')
-                .select('id')
+                .select('*')
                 .eq('workout_id', workout!.id)
                 .eq('student_id', userId)
                 .eq('status', 'completed')
                 .gte('completed_at', start)
                 .lte('completed_at', end)
-                .maybeSingle()
+                .order('completed_at', { ascending: false })
+                .limit(1)
 
-            if (completed) return 'completed'
+            if (completed && completed.length > 0) return 'completed'
 
-            // Check In Progress (Only if started in the last 12 hours to avoid stale sessions)
+            // Check In Progress
             const twelveHoursAgo = new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString()
             const { data: inProgress } = await supabase
                 .from('workout_logs')
-                .select('id')
+                .select('*')
                 .eq('workout_id', workout!.id)
                 .eq('student_id', userId)
                 .eq('status', 'in_progress')
                 .gt('started_at', twelveHoursAgo)
-                .maybeSingle()
+                .order('started_at', { ascending: false })
+                .limit(1)
 
-            return inProgress ? 'in_progress' : 'not_started'
+            return (inProgress && inProgress.length > 0) ? 'in_progress' : 'not_started'
         }
     })
 
@@ -70,14 +72,14 @@ export function WorkoutCard({ userId }: WorkoutCardProps) {
 
     return (
         <Link href={`/dashboard/student/workout/${workout.id}`}>
-            <div className={`group relative p-8 rounded-[2.5rem] backdrop-blur-sm overflow-hidden transition-all duration-500 cursor-pointer shadow-xl border ${statusData === 'completed'
+            <div className={`group relative p-8 rounded-[2.5rem] backdrop-blur-sm overflow-hidden transition-all duration-500 shadow-xl border cursor-pointer ${statusData === 'completed'
                 ? 'bg-emerald-950/20 border-emerald-500/20'
                 : statusData === 'in_progress'
                     ? 'bg-amber-500/10 border-amber-500/20 hover:border-amber-500/40'
                     : 'bg-zinc-900/40 border-zinc-800/50 hover:border-emerald-500/30'
                 }`}>
-                <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
-                    <Dumbbell className="w-32 h-32 text-white" />
+                <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity text-white">
+                    <Dumbbell className="w-32 h-32" />
                 </div>
                 <div className="relative space-y-6">
                     <div className="space-y-1">
@@ -100,6 +102,7 @@ export function WorkoutCard({ userId }: WorkoutCardProps) {
                             {workout.exercises?.length || 0} Exercícios • {statusData === 'completed' ? 'Treino concluído' : 'Foco do dia'}
                         </p>
                     </div>
+
                     <Button className={`h-12 px-8 rounded-xl font-black uppercase italic tracking-wide transition-transform shadow-lg ${statusData === 'completed'
                         ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 hover:bg-emerald-500/20'
                         : statusData === 'in_progress'

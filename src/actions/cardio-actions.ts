@@ -10,13 +10,32 @@ export async function getCardioLibrary() {
     if (!user) return []
 
     try {
+        // Fetch student's trainer
+        const { data: trainerRel } = await supabase
+            .from('trainer_students')
+            .select('trainer_id')
+            .eq('student_id', user.id)
+            .eq('active', true)
+            .maybeSingle()
+
+        const trainerIds = [user.id]
+        if (trainerRel?.trainer_id) {
+            trainerIds.push(trainerRel.trainer_id)
+        }
+
         const { data, error } = await supabase
             .from('cardios')
-            .select('*')
-            .eq('trainer_id', user.id)
+            .select('id, name, description, trainer_id, created_at')
+            .in('trainer_id', trainerIds)
             .order('name', { ascending: true })
+            .limit(100)
 
-        if (error) throw error
+        console.log('DEBUG: getCardioLibrary for user:', user.id, { data: data?.length, error })
+
+        if (error) {
+            console.error('ERROR: getCardioLibrary failed:', error)
+            throw error
+        }
         return data || []
     } catch (e) {
         console.error('Error fetching cardio library:', e)
@@ -149,41 +168,28 @@ export async function removeCardioAssignment(assignmentId: string) {
 }
 
 export async function getStudentCardioAssignments(studentId: string) {
-    const supabase = await createClient()
+    // We use the admin client here to ensure that students can see the metadata (name, description)
+    // of cardios assigned to them, as RLS on the 'cardios' table might be restricted to trainers.
+    const supabase = await createAdminClient()
 
     try {
         const { data, error } = await supabase
             .from('assigned_cardios')
             .select(`
                 *,
-                cardio:cardios!inner(*)
+                cardio:cardios(id, name, description, trainer_id, created_at)
             `)
             .eq('student_id', studentId)
             .eq('active', true)
             .order('created_at', { ascending: false })
+            .limit(20) // Limit to prevent timeout
 
-        if (error) throw error
-
-        // Data Pruning: Check if trainer is still linked for each cardio
-        const filteredData = []
-        for (const item of (data || [])) {
-            const cardio = item.cardio as any
-            if (cardio.trainer_id && cardio.trainer_id !== studentId) {
-                const { data: link } = await supabase
-                    .from('trainer_students')
-                    .select('id')
-                    .eq('trainer_id', cardio.trainer_id)
-                    .eq('student_id', studentId)
-                    .eq('active', true)
-                    .maybeSingle()
-
-                if (link) filteredData.push(item)
-            } else {
-                filteredData.push(item)
-            }
+        if (error) {
+            console.error('ERROR: Query failed:', error)
+            throw error
         }
 
-        return filteredData
+        return data || []
     } catch (e) {
         console.error('Error fetching student cardios:', e)
         return []

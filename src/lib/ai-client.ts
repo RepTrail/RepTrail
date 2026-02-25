@@ -9,9 +9,19 @@ import OpenAI from 'openai'
  */
 export function createOpenRouterClient(apiKey?: string | null) {
     const key = apiKey || process.env.OPENROUTER_API_KEY
-    if (!key) throw new Error('OPENROUTER_API_KEY não configurada.')
+    console.log('DEBUG: AI API key check:', { 
+        hasKey: !!key, 
+        keyLength: key?.length,
+        envHasKey: !!process.env.OPENROUTER_API_KEY,
+        envKeyLength: process.env.OPENROUTER_API_KEY?.length
+    })
+    
+    if (!key) {
+        console.error('ERROR: OPENROUTER_API_KEY não configurada.')
+        throw new Error('OPENROUTER_API_KEY não configurada.')
+    }
 
-    return new OpenAI({
+    const client = new OpenAI({
         apiKey: key,
         baseURL: 'https://openrouter.ai/api/v1',
         defaultHeaders: {
@@ -19,6 +29,9 @@ export function createOpenRouterClient(apiKey?: string | null) {
             'X-Title': 'RepTrail',
         },
     })
+    
+    console.log('DEBUG: AI client created successfully')
+    return client
 }
 
 /**
@@ -38,23 +51,40 @@ export async function callAI<T = any>(
     prompt: string,
     model: string = DEFAULT_AI_MODEL
 ): Promise<T> {
+    console.log('DEBUG: callAI starting:', { model, promptLength: prompt.length })
+    
     const attempt = async (): Promise<T> => {
-        const completion = await client.chat.completions.create({
-            model,
-            messages: [{ role: 'user', content: prompt }],
-            temperature: 0.1,
-        })
+        try {
+            console.log('DEBUG: Making AI request...')
+            const completion = await client.chat.completions.create({
+                model,
+                messages: [{ role: 'user', content: prompt }],
+                temperature: 0.1,
+            })
+            
+            console.log('DEBUG: AI response received:', { 
+                choices: completion.choices?.length,
+                content: completion.choices[0]?.message?.content?.substring(0, 100) + '...'
+            })
 
-        const text = completion.choices[0]?.message?.content || ''
-        // Strip any accidental markdown fences
-        const clean = text.replace(/```json/g, '').replace(/```/g, '').trim()
-        return JSON.parse(clean) as T
+            const text = completion.choices[0]?.message?.content || ''
+            // Strip any accidental markdown fences
+            const clean = text.replace(/```json/g, '').replace(/```/g, '').trim()
+            console.log('DEBUG: Cleaned response:', clean)
+            
+            const parsed = JSON.parse(clean) as T
+            console.log('DEBUG: Parsed JSON successfully:', parsed)
+            return parsed
+        } catch (error) {
+            console.error('DEBUG: AI request failed:', error)
+            throw error
+        }
     }
 
     try {
         return await attempt()
-    } catch {
-        console.warn('[AI] First attempt failed, retrying...')
+    } catch (error) {
+        console.warn('[AI] First attempt failed, retrying...', error)
         return await attempt()
     }
 }

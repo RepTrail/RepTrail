@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -18,7 +18,8 @@ import {
     Check,
     X,
     Repeat2,
-    ListRestart
+    ListRestart,
+    Save
 } from "lucide-react"
 import { cn } from '@/lib/utils'
 import {
@@ -70,6 +71,339 @@ interface DietBuilderProps {
     backHref?: string
 }
 
+// Extracted Component to prevent lag
+function MealItemRow({
+    item,
+    dietId,
+    onRemove
+}: {
+    item: MealItem;
+    dietId: string;
+    onRemove: (id: string) => Promise<void>;
+}) {
+    const [loading, setLoading] = useState<Record<string, boolean>>({})
+
+    // Local state for all fields to ensure zero-lag typing
+    const [foodName, setFoodName] = useState(item.food_name)
+    const [quantity, setQuantity] = useState(item.quantity)
+    const [protein, setProtein] = useState(item.protein)
+    const [carbs, setCarbs] = useState(item.carbs)
+    const [fat, setFat] = useState(item.fat)
+
+    const [hasSubstitute, setHasSubstitute] = useState(item.has_substitute || false)
+    const [subFoodName, setSubFoodName] = useState(item.sub_food_name || '')
+    const [subQuantity, setSubQuantity] = useState(item.sub_quantity || '')
+    const [subProtein, setSubProtein] = useState(item.sub_protein || 0)
+    const [subCarbs, setSubCarbs] = useState(item.sub_carbs || 0)
+    const [subFat, setSubFat] = useState(item.sub_fat || 0)
+    const [isSaved, setIsSaved] = useState(true)
+
+    // Sync from props if item data changes (like after "Estimate All")
+    useEffect(() => {
+        setFoodName(item.food_name)
+        setQuantity(item.quantity)
+        setProtein(item.protein)
+        setCarbs(item.carbs)
+        setFat(item.fat)
+        setHasSubstitute(item.has_substitute || false)
+        setSubFoodName(item.sub_food_name || '')
+        setSubQuantity(item.sub_quantity || '')
+        setSubProtein(item.sub_protein || 0)
+        setSubCarbs(item.sub_carbs || 0)
+        setSubFat(item.sub_fat || 0)
+        setIsSaved(true)
+    }, [item])
+
+    const handleSave = async () => {
+        setLoading(prev => ({ ...prev, save: true }))
+        const res = await updateMealItem(item.id, dietId, {
+            food_name: foodName,
+            quantity: quantity,
+            protein,
+            carbs,
+            fat,
+            has_substitute: hasSubstitute,
+            sub_food_name: subFoodName,
+            sub_quantity: subQuantity,
+            sub_protein: subProtein,
+            sub_carbs: subCarbs,
+            sub_fat: subFat
+        })
+        if (!res.error) setIsSaved(true)
+        setLoading(prev => ({ ...prev, save: false }))
+    }
+
+    const handleChange = (setter: any, val: any) => {
+        setter(val)
+        setIsSaved(false)
+    }
+
+    const handleEstimateMain = async () => {
+        setLoading(prev => ({ ...prev, estimate: true }))
+        const res = await estimateMacros(foodName, quantity)
+        if (res.success && res.macros) {
+            setProtein(res.macros.protein)
+            setCarbs(res.macros.carbs)
+            setFat(res.macros.fat)
+            setIsSaved(false)
+        }
+        setLoading(prev => ({ ...prev, estimate: false }))
+    }
+
+    const handleEstimateSub = async () => {
+        setLoading(prev => ({ ...prev, estimateSub: true }))
+        const res = await estimateMacros(subFoodName, subQuantity)
+        if (res.success && res.macros) {
+            setSubProtein(res.macros.protein)
+            setSubCarbs(res.macros.carbs)
+            setSubFat(res.macros.fat)
+            setIsSaved(false)
+        }
+        setLoading(prev => ({ ...prev, estimateSub: false }))
+    }
+
+    const handleSuggestSub = async () => {
+        setLoading(prev => ({ ...prev, suggestSub: true }))
+        const res = await suggestSubstitution(foodName, quantity)
+        if (res.success && res.suggestion) {
+            setHasSubstitute(true)
+            setSubFoodName(res.suggestion.food_name)
+            setSubQuantity(res.suggestion.quantity)
+            setSubProtein(res.suggestion.protein)
+            setSubCarbs(res.suggestion.carbs)
+            setSubFat(res.suggestion.fat)
+            setIsSaved(false)
+        }
+        setLoading(prev => ({ ...prev, suggestSub: false }))
+    }
+
+    const handleClearSub = () => {
+        setSubFoodName('')
+        setSubQuantity('')
+        setSubProtein(0)
+        setSubCarbs(0)
+        setSubFat(0)
+        setHasSubstitute(false)
+        setIsSaved(false)
+    }
+
+    return (
+        <div className={cn(
+            "group relative transition-all duration-300",
+            !isSaved && "bg-orange-500/5"
+        )}>
+            {/* Original Item Row */}
+            <div className={cn(
+                "p-4 grid grid-cols-1 lg:grid-cols-12 gap-4 items-end hover:bg-zinc-900/20 border-l-2 transition-all",
+                isSaved ? "border-l-transparent" : "border-l-orange-500 shadow-[inset_10px_0_15px_-10px_rgba(249,115,22,0.1)]"
+            )}>
+                <div className="lg:col-span-3 space-y-1.5">
+                    <div className="flex items-center justify-between">
+                        <Label className="text-[10px] text-zinc-600 uppercase font-bold tracking-tight">Alimento</Label>
+                        {!isSaved && <span className="text-[8px] font-black text-orange-500 bg-orange-500/10 px-1.5 py-0.5 rounded uppercase animate-pulse">Pendente</span>}
+                    </div>
+                    <Input
+                        value={foodName}
+                        onChange={(e) => handleChange(setFoodName, e.target.value)}
+                        className="bg-zinc-900 border-zinc-700 text-sm h-9 text-white focus:border-green-500/50"
+                    />
+                </div>
+                <div className="lg:col-span-2 space-y-1.5">
+                    <Label className="text-[10px] text-zinc-600 uppercase font-bold tracking-tight">Quantidade</Label>
+                    <Input
+                        value={quantity}
+                        onChange={(e) => handleChange(setQuantity, e.target.value)}
+                        placeholder="Ex: 100g"
+                        className="bg-zinc-900 border-zinc-700 text-sm h-9 text-center text-white focus:border-green-500/50"
+                    />
+                </div>
+                <div className="lg:col-span-4 grid grid-cols-3 gap-2">
+                    <div className="space-y-1.5">
+                        <Label className="text-[10px] text-blue-500/50 uppercase font-bold tracking-tight">Prot</Label>
+                        <Input
+                            type="number"
+                            step="0.1"
+                            value={protein}
+                            onChange={(e) => handleChange(setProtein, parseFloat(e.target.value) || 0)}
+                            className="bg-zinc-900 border-zinc-700 text-xs h-9 text-center text-blue-400 font-medium"
+                        />
+                    </div>
+                    <div className="space-y-1.5">
+                        <Label className="text-[10px] text-orange-500/50 uppercase font-bold tracking-tight">Carb</Label>
+                        <Input
+                            type="number"
+                            step="0.1"
+                            value={carbs}
+                            onChange={(e) => handleChange(setCarbs, parseFloat(e.target.value) || 0)}
+                            className="bg-zinc-900 border-zinc-700 text-xs h-9 text-center text-orange-400 font-medium"
+                        />
+                    </div>
+                    <div className="space-y-1.5">
+                        <Label className="text-[10px] text-yellow-500/50 uppercase font-bold tracking-tight">Gord</Label>
+                        <Input
+                            type="number"
+                            step="0.1"
+                            value={fat}
+                            onChange={(e) => handleChange(setFat, parseFloat(e.target.value) || 0)}
+                            className="bg-zinc-900 border-zinc-700 text-xs h-9 text-center text-yellow-500 font-medium"
+                        />
+                    </div>
+                </div>
+                <div className="lg:col-span-3 flex items-center justify-end gap-2 pb-0.5">
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        disabled={loading.estimate || !foodName}
+                        onClick={handleEstimateMain}
+                        className="text-zinc-600 hover:text-emerald-400 h-9 w-9 hover:bg-emerald-400/5 border border-zinc-800"
+                        title="Calcular macros com IA"
+                    >
+                        {loading.estimate ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+                    </Button>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleChange(setHasSubstitute, !hasSubstitute)}
+                        className={cn("h-9 w-9 border", hasSubstitute ? "text-orange-500 bg-orange-500/10 border-orange-500/20" : "text-zinc-600 hover:text-orange-400 hover:bg-orange-400/5 border-zinc-800")}
+                        title="Adicionar/Remover Substituição"
+                    >
+                        <Repeat2 className="w-4 h-4" />
+                    </Button>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => onRemove(item.id)}
+                        className="text-zinc-600 hover:text-red-400 h-9 w-9 hover:bg-red-400/5 border border-zinc-800"
+                        title="Remover item"
+                    >
+                        <Trash2 className="w-4 h-4" />
+                    </Button>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={handleSave}
+                        disabled={loading.save || (isSaved && !loading.save)}
+                        className={cn(
+                            "h-9 w-9 border transition-all shadow-lg",
+                            isSaved
+                                ? "bg-zinc-800/50 text-zinc-600 border-zinc-800"
+                                : "bg-emerald-500 text-white border-emerald-400 hover:bg-emerald-400"
+                        )}
+                        title="Salvar Alterações"
+                    >
+                        {loading.save ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+                    </Button>
+                </div>
+            </div>
+
+            {/* Substitution Row */}
+            {hasSubstitute && (
+                <div className="px-4 pb-4 pt-1 grid grid-cols-1 lg:grid-cols-12 gap-4 items-end bg-orange-500/5 border-t border-orange-500/10 transition-all duration-300">
+                    <div className="lg:col-span-3 space-y-1.5">
+                        <div className="flex items-center gap-2 mb-1">
+                            <div className="w-1.5 h-1.5 rounded-full bg-orange-500" />
+                            <Label className="text-[10px] text-orange-500 uppercase font-black tracking-widest">Substituição</Label>
+                        </div>
+                        <Input
+                            value={subFoodName}
+                            onChange={(e) => handleChange(setSubFoodName, e.target.value)}
+                            placeholder="Nome da substituição..."
+                            className="bg-zinc-950 border-zinc-700 text-sm h-9 text-white focus:border-orange-500/50"
+                        />
+                    </div>
+                    <div className="lg:col-span-2 space-y-1.5">
+                        <Label className="text-[10px] text-zinc-600 uppercase font-bold tracking-tight">Quantidade</Label>
+                        <Input
+                            value={subQuantity}
+                            onChange={(e) => handleChange(setSubQuantity, e.target.value)}
+                            placeholder="Ex: 100g"
+                            className="bg-zinc-950 border-zinc-700 text-sm h-9 text-center text-white focus:border-orange-500/50"
+                        />
+                    </div>
+                    <div className="lg:col-span-4 grid grid-cols-3 gap-2">
+                        <div className="space-y-1.5">
+                            <Label className="text-[10px] text-blue-500/50 uppercase font-bold tracking-tight text-center">Prot</Label>
+                            <Input
+                                type="number"
+                                step="0.1"
+                                value={subProtein}
+                                onChange={(e) => handleChange(setSubProtein, parseFloat(e.target.value) || 0)}
+                                className="bg-zinc-950 border-zinc-700 text-xs h-9 text-center text-blue-400/80 font-medium"
+                            />
+                        </div>
+                        <div className="space-y-1.5">
+                            <Label className="text-[10px] text-orange-500/50 uppercase font-bold tracking-tight text-center">Carb</Label>
+                            <Input
+                                type="number"
+                                step="0.1"
+                                value={subCarbs}
+                                onChange={(e) => handleChange(setSubCarbs, parseFloat(e.target.value) || 0)}
+                                className="bg-zinc-950 border-zinc-700 text-xs h-9 text-center text-orange-400/80 font-medium"
+                            />
+                        </div>
+                        <div className="space-y-1.5">
+                            <Label className="text-[10px] text-yellow-500/50 uppercase font-bold tracking-tight text-center">Gord</Label>
+                            <Input
+                                type="number"
+                                step="0.1"
+                                value={subFat}
+                                onChange={(e) => handleChange(setSubFat, parseFloat(e.target.value) || 0)}
+                                className="bg-zinc-950 border-zinc-700 text-xs h-9 text-center text-yellow-500/80 font-medium"
+                            />
+                        </div>
+                    </div>
+                    <div className="lg:col-span-3 flex items-center justify-end gap-2 pb-0.5">
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            disabled={loading.estimateSub || !subFoodName}
+                            onClick={handleEstimateSub}
+                            className="text-zinc-600 hover:text-orange-400 h-9 w-9 border border-zinc-800 bg-zinc-900/50"
+                            title="Calcular macros da substituição com IA"
+                        >
+                            {loading.estimateSub ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+                        </Button>
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            disabled={loading.suggestSub}
+                            onClick={handleSuggestSub}
+                            className="text-zinc-600 hover:text-purple-400 h-9 w-9 border border-zinc-800 bg-zinc-900/50"
+                            title="Sugerir substituição similar com IA"
+                        >
+                            {loading.suggestSub ? <Loader2 className="w-4 h-4 animate-spin" /> : <Utensils className="w-4 h-4" />}
+                        </Button>
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={handleClearSub}
+                            className="text-zinc-600 hover:text-red-400 h-9 w-9 border border-zinc-800 bg-zinc-900/50"
+                            title="Limpar campos da substituição"
+                        >
+                            <Trash2 className="w-4 h-4" />
+                        </Button>
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={handleSave}
+                            disabled={loading.save || (isSaved && !loading.save)}
+                            className={cn(
+                                "h-9 w-9 border transition-all shadow-lg",
+                                isSaved
+                                    ? "bg-zinc-800/50 text-zinc-600 border-zinc-800"
+                                    : "bg-emerald-500 text-white border-emerald-400 hover:bg-emerald-400"
+                            )}
+                            title="Salvar Alterações"
+                        >
+                            {loading.save ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+                        </Button>
+                    </div>
+                </div>
+            )}
+        </div>
+    )
+}
+
 export function DietBuilder({ diet, backHref = '/dashboard/trainer/diets' }: DietBuilderProps) {
     const [loadingMap, setLoadingMap] = useState<Record<string, boolean>>({})
     const [newMealName, setNewMealName] = useState('')
@@ -81,6 +415,8 @@ export function DietBuilder({ diet, backHref = '/dashboard/trainer/diets' }: Die
     const [isSavingName, setIsSavingName] = useState(false)
     const nameInputRef = useRef<HTMLInputElement>(null)
 
+    const dietIdRef = useRef(diet.id)
+
     useEffect(() => {
         if (isEditingName) nameInputRef.current?.focus()
     }, [isEditingName])
@@ -88,7 +424,7 @@ export function DietBuilder({ diet, backHref = '/dashboard/trainer/diets' }: Die
     async function handleSaveName() {
         if (!editName.trim()) return
         setIsSavingName(true)
-        const res = await updateDietMeta(diet.id, editName)
+        const res = await updateDietMeta(dietIdRef.current, editName)
         setIsSavingName(false)
         if (res.success) setIsEditingName(false)
     }
@@ -113,7 +449,7 @@ export function DietBuilder({ diet, backHref = '/dashboard/trainer/diets' }: Die
 
     async function handleEstimateAll() {
         setLoadingMap(prev => ({ ...prev, 'estimate-all': true }))
-        const res = await estimateAllDietMacros(diet.id)
+        const res = await estimateAllDietMacros(dietIdRef.current)
         if (res.error) alert(`Erro ao calcular tudo: ${res.error}`)
         setLoadingMap(prev => ({ ...prev, 'estimate-all': false }))
     }
@@ -121,7 +457,7 @@ export function DietBuilder({ diet, backHref = '/dashboard/trainer/diets' }: Die
     async function handleAddMeal() {
         if (!newMealName) return
         setLoadingMap(prev => ({ ...prev, 'add-meal': true }))
-        const res = await addMealToDiet(diet.id, newMealName, newMealTime || "08:00")
+        const res = await addMealToDiet(dietIdRef.current, newMealName, newMealTime || "08:00")
         if (res?.error) {
             alert(`Erro ao adicionar refeição: ${res.error}`)
         } else {
@@ -133,7 +469,7 @@ export function DietBuilder({ diet, backHref = '/dashboard/trainer/diets' }: Die
 
     async function handleAddItem(mealId: string) {
         setLoadingMap(prev => ({ ...prev, [`add-item-${mealId}`]: true }))
-        const res = await addMealItem(mealId, diet.id, {
+        const res = await addMealItem(mealId, dietIdRef.current, {
             food_name: 'Novo Alimento',
             quantity: '',
             approx_measure: '',
@@ -142,38 +478,24 @@ export function DietBuilder({ diet, backHref = '/dashboard/trainer/diets' }: Die
             fat: 0
         })
         if (res?.error) {
-            alert(`Erro ao adicionar item: ${res.error}\n\nCertifique-se de ter rodado o SQL de migração dos Macros no Supabase.`)
+            alert(`Erro ao adicionar item: ${res.error}`)
         }
         setLoadingMap(prev => ({ ...prev, [`add-item-${mealId}`]: false }))
     }
 
-    async function handleUpdateItem(id: string, data: any) {
-        setLoadingMap(prev => ({ ...prev, [`save-${id}`]: true }))
-        const res = await updateMealItem(id, diet.id, data)
-        if (res?.error) {
-            console.error('Update error:', res.error)
-        }
-        setLoadingMap(prev => ({ ...prev, [`save-${id}`]: false }))
-    }
-
-    async function handleUpdateMeal(id: string, data: any) {
-        // Implement when needed
-    }
-
     async function handleRemoveItem(id: string) {
         setLoadingMap(prev => ({ ...prev, [`delete-${id}`]: true }))
-        const res = await removeMealItem(id, diet.id)
+        const res = await removeMealItem(id, dietIdRef.current)
         if (res?.error) alert(`Erro ao remover item: ${res.error}`)
     }
 
     async function handleRemoveMeal(id: string) {
         if (!confirm('Remover esta refeição inteira?')) return
         setLoadingMap(prev => ({ ...prev, [`delete-meal-${id}`]: true }))
-        const res = await removeMeal(id, diet.id)
+        const res = await removeMeal(id, dietIdRef.current)
         if (res?.error) alert(`Erro ao remover refeição: ${res.error}`)
         setLoadingMap(prev => ({ ...prev, [`delete-meal-${id}`]: false }))
     }
-
 
     return (
         <div className="space-y-8" suppressHydrationWarning>
@@ -181,21 +503,21 @@ export function DietBuilder({ diet, backHref = '/dashboard/trainer/diets' }: Die
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div className="space-y-2 flex-1">
                     {isEditingName ? (
-                        <div className="animate-in fade-in slide-in-from-top-2 duration-200 bg-zinc-900/60 border border-zinc-700/60 rounded-2xl p-5 space-y-3 shadow-xl">
+                        <div className="bg-zinc-900/60 border border-zinc-700/60 rounded-2xl p-5 space-y-3 shadow-xl">
                             <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Nome da Dieta</label>
                             <Input
                                 ref={nameInputRef}
                                 value={editName}
                                 onChange={e => setEditName(e.target.value)}
                                 onKeyDown={e => { if (e.key === 'Enter') handleSaveName(); if (e.key === 'Escape') handleCancelName() }}
-                                className="bg-zinc-950 border-zinc-700 text-white text-lg font-black h-12 rounded-xl focus-visible:ring-green-500/30 focus-visible:border-green-500/50"
+                                className="bg-zinc-950 border-zinc-700 text-white text-lg font-black h-12 rounded-xl"
                                 placeholder="Nome da dieta..."
                             />
                             <div className="flex items-center gap-2 pt-1">
                                 <Button
                                     onClick={handleSaveName}
                                     disabled={isSavingName || !editName.trim()}
-                                    className="h-9 px-4 bg-green-600 hover:bg-green-500 text-white font-black uppercase tracking-widest text-[10px] rounded-xl transition-all shadow-lg shadow-green-500/20 active:scale-95"
+                                    className="h-9 px-4 bg-green-600 hover:bg-green-500 text-white font-black uppercase tracking-widest text-[10px] rounded-xl shadow-lg shadow-green-500/20"
                                 >
                                     {isSavingName ? <Loader2 className="w-3 h-3 animate-spin" /> : <><Check className="w-3 h-3 mr-1.5" />Salvar</>}
                                 </Button>
@@ -203,7 +525,7 @@ export function DietBuilder({ diet, backHref = '/dashboard/trainer/diets' }: Die
                                     onClick={handleCancelName}
                                     disabled={isSavingName}
                                     variant="ghost"
-                                    className="h-9 px-4 bg-zinc-800/60 hover:bg-zinc-700/60 text-zinc-400 hover:text-white font-black uppercase tracking-widest text-[10px] rounded-xl transition-all border border-zinc-700/50 hover:border-zinc-600"
+                                    className="h-9 px-4 bg-zinc-800/60 hover:bg-zinc-700/60 text-zinc-400 hover:text-white font-black uppercase tracking-widest text-[10px] rounded-xl border border-zinc-700/50 hover:border-zinc-600"
                                 >
                                     <X className="w-3 h-3 mr-1.5" />Cancelar
                                 </Button>
@@ -214,11 +536,11 @@ export function DietBuilder({ diet, backHref = '/dashboard/trainer/diets' }: Die
                             className="group flex items-center gap-3 cursor-pointer w-fit"
                             onClick={() => setIsEditingName(true)}
                         >
-                            <h1 className="text-3xl font-bold text-white font-sans group-hover:text-green-400 transition-colors duration-200 border-b border-transparent group-hover:border-green-400/40 pb-0.5">
+                            <h1 className="text-3xl font-bold text-white font-sans group-hover:text-green-400 border-b border-transparent group-hover:border-green-400/40 pb-0.5">
                                 {editName}
                             </h1>
                             <button
-                                className="p-2 rounded-xl text-zinc-600 hover:text-green-400 hover:bg-green-400/10 transition-all border border-transparent hover:border-green-400/20 active:scale-90"
+                                className="p-2 rounded-xl text-zinc-600 hover:text-green-400 hover:bg-green-400/10 border border-transparent hover:border-green-400/20"
                                 title="Editar nome da dieta"
                             >
                                 <Pencil className="w-4 h-4" />
@@ -251,13 +573,13 @@ export function DietBuilder({ diet, backHref = '/dashboard/trainer/diets' }: Die
                     <Button
                         onClick={handleEstimateAll}
                         disabled={isEstimatingAll}
-                        className="w-full sm:w-auto h-[68px] px-6 bg-emerald-600/10 hover:bg-emerald-600/20 text-emerald-500 border border-emerald-500/20 rounded-xl font-black uppercase tracking-widest text-[10px] flex flex-col items-center justify-center gap-1 transition-all active:scale-95 group shadow-xl"
+                        className="w-full sm:w-auto h-[68px] px-6 bg-emerald-600/10 hover:bg-emerald-600/20 text-emerald-500 border border-emerald-500/20 rounded-xl font-black uppercase tracking-widest text-[10px] flex flex-col items-center justify-center gap-1 group shadow-xl"
                     >
                         {isEstimatingAll ? (
                             <Loader2 className="w-5 h-5 animate-spin" />
                         ) : (
                             <>
-                                <Sparkles className="w-5 h-5 group-hover:scale-125 transition-transform" />
+                                <Sparkles className="w-5 h-5" />
                                 <span>Calcular Tudo</span>
                             </>
                         )}
@@ -302,7 +624,7 @@ export function DietBuilder({ diet, backHref = '/dashboard/trainer/diets' }: Die
                                         size="icon"
                                         onClick={() => handleRemoveMeal(meal.id)}
                                         disabled={loadingMap[`delete-meal-${meal.id}`]}
-                                        className="text-zinc-600 hover:text-red-400 hover:bg-red-400/10 h-8 w-8 transition-all"
+                                        className="text-zinc-600 hover:text-red-400 hover:bg-red-400/10 h-8 w-8"
                                     >
                                         <Trash2 className="w-4 h-4" />
                                     </Button>
@@ -311,245 +633,12 @@ export function DietBuilder({ diet, backHref = '/dashboard/trainer/diets' }: Die
                             <CardContent className="p-0" suppressHydrationWarning>
                                 <div className="divide-y divide-zinc-900/40">
                                     {meal.meal_items?.map((item) => (
-                                        <div key={item.id} className="group relative transition-all duration-300">
-                                            {/* Original Item Row */}
-                                            <div className="p-4 grid grid-cols-1 lg:grid-cols-12 gap-4 items-end transition-colors hover:bg-zinc-900/20">
-                                                <div className="lg:col-span-3 space-y-1.5">
-                                                    <Label className="text-[10px] text-zinc-600 uppercase font-bold tracking-tight">Alimento</Label>
-                                                    <Input
-                                                        defaultValue={item.food_name}
-                                                        onBlur={(e) => handleUpdateItem(item.id, { food_name: e.target.value })}
-                                                        className="bg-zinc-900/50 border-zinc-800 text-sm h-9 focus:ring-1 focus:ring-green-500/20 text-white"
-                                                    />
-                                                </div>
-                                                <div className="lg:col-span-2 space-y-1.5">
-                                                    <Label className="text-[10px] text-zinc-600 uppercase font-bold tracking-tight">Quantidade</Label>
-                                                    <Input
-                                                        defaultValue={item.quantity}
-                                                        onBlur={(e) => handleUpdateItem(item.id, { quantity: e.target.value })}
-                                                        placeholder="Ex: 100g"
-                                                        className="bg-zinc-900/50 border-zinc-800 text-sm h-9 text-center text-white"
-                                                    />
-                                                </div>
-                                                <div className="lg:col-span-4 grid grid-cols-3 gap-2">
-                                                    <div className="space-y-1.5">
-                                                        <Label className="text-[10px] text-blue-500/50 uppercase font-bold tracking-tight">Prot</Label>
-                                                        <Input
-                                                            type="number"
-                                                            step="0.1"
-                                                            defaultValue={item.protein}
-                                                            onBlur={(e) => handleUpdateItem(item.id, { protein: parseFloat(e.target.value) || 0 })}
-                                                            className="bg-zinc-900/50 border-zinc-800 text-xs h-9 text-center text-blue-400 font-medium"
-                                                        />
-                                                    </div>
-                                                    <div className="space-y-1.5">
-                                                        <Label className="text-[10px] text-orange-500/50 uppercase font-bold tracking-tight">Carb</Label>
-                                                        <Input
-                                                            type="number"
-                                                            step="0.1"
-                                                            defaultValue={item.carbs}
-                                                            onBlur={(e) => handleUpdateItem(item.id, { carbs: parseFloat(e.target.value) || 0 })}
-                                                            className="bg-zinc-900/50 border-zinc-800 text-xs h-9 text-center text-orange-400 font-medium"
-                                                        />
-                                                    </div>
-                                                    <div className="space-y-1.5">
-                                                        <Label className="text-[10px] text-yellow-500/50 uppercase font-bold tracking-tight">Gord</Label>
-                                                        <Input
-                                                            type="number"
-                                                            step="0.1"
-                                                            defaultValue={item.fat}
-                                                            onBlur={(e) => handleUpdateItem(item.id, { fat: parseFloat(e.target.value) || 0 })}
-                                                            className="bg-zinc-900/50 border-zinc-800 text-xs h-9 text-center text-yellow-500 font-medium"
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div className="lg:col-span-3 flex items-center justify-end gap-2 pb-0.5">
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        disabled={loadingMap[`estimate-${item.id}`] || !item.food_name}
-                                                        onClick={async () => {
-                                                            setLoadingMap(prev => ({ ...prev, [`estimate-${item.id}`]: true }))
-                                                            const res = await estimateMacros(item.food_name, item.quantity)
-                                                            if (res.success && res.macros) {
-                                                                await handleUpdateItem(item.id, res.macros)
-                                                            } else if (res.error) {
-                                                                alert(`Erro ao calcular: ${res.error}`)
-                                                            }
-                                                            setLoadingMap(prev => ({ ...prev, [`estimate-${item.id}`]: false }))
-                                                        }}
-                                                        className="text-zinc-600 hover:text-emerald-400 h-9 w-9 transition-colors hover:bg-emerald-400/5 border border-zinc-800"
-                                                        title="Calcular macros com IA"
-                                                    >
-                                                        {loadingMap[`estimate-${item.id}`] ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-                                                    </Button>
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        onClick={() => handleUpdateItem(item.id, { has_substitute: !item.has_substitute })}
-                                                        className={cn("h-9 w-9 transition-colors border", item.has_substitute ? "text-orange-500 bg-orange-500/10 border-orange-500/20" : "text-zinc-600 hover:text-orange-400 hover:bg-orange-400/5 border-zinc-800")}
-                                                        title="Adicionar/Remover Substituição"
-                                                    >
-                                                        <Repeat2 className="w-4 h-4" />
-                                                    </Button>
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        onClick={() => handleRemoveItem(item.id)}
-                                                        className="text-zinc-600 hover:text-red-400 h-9 w-9 transition-colors hover:bg-red-400/5 border border-zinc-800"
-                                                    >
-                                                        <Trash2 className="w-4 h-4" />
-                                                    </Button>
-                                                </div>
-                                            </div>
-
-                                            {/* Substitution Row */}
-                                            {item.has_substitute && (
-                                                <div className="px-4 pb-4 pt-1 grid grid-cols-1 lg:grid-cols-12 gap-4 items-end bg-orange-500/5 border-t border-orange-500/10 animate-in fade-in slide-in-from-top-1 duration-200">
-                                                    <div className="lg:col-span-3 space-y-1.5">
-                                                        <div className="flex items-center gap-2 mb-1">
-                                                            <div className="w-1.5 h-1.5 rounded-full bg-orange-500" />
-                                                            <Label className="text-[10px] text-orange-500 uppercase font-black tracking-widest">Substituição</Label>
-                                                        </div>
-                                                        <Input
-                                                            value={item.sub_food_name || ''}
-                                                            onChange={(e) => handleUpdateItem(item.id, {
-                                                                sub_food_name: e.target.value,
-                                                                has_substitute: e.target.value.length > 0
-                                                            })}
-                                                            placeholder="Nome da substituição..."
-                                                            className="bg-zinc-950 border-orange-500/20 text-sm h-9 focus:ring-1 focus:ring-orange-500/20 text-white"
-                                                        />
-                                                    </div>
-                                                    <div className="lg:col-span-2 space-y-1.5">
-                                                        <Label className="text-[10px] text-zinc-600 uppercase font-bold tracking-tight">Quantidade</Label>
-                                                        <Input
-                                                            value={item.sub_quantity || ''}
-                                                            onChange={(e) => handleUpdateItem(item.id, { sub_quantity: e.target.value })}
-                                                            placeholder="Ex: 100g"
-                                                            className="bg-zinc-950 border-zinc-800 text-sm h-9 text-center text-white"
-                                                        />
-                                                    </div>
-                                                    <div className="lg:col-span-4 grid grid-cols-3 gap-2">
-                                                        <div className="space-y-1.5">
-                                                            <Label className="text-[10px] text-blue-500/50 uppercase font-bold tracking-tight text-center">Prot</Label>
-                                                            <Input
-                                                                type="number"
-                                                                step="0.1"
-                                                                value={item.sub_protein || 0}
-                                                                onChange={(e) => handleUpdateItem(item.id, { sub_protein: parseFloat(e.target.value) || 0 })}
-                                                                className="bg-zinc-950 border-zinc-800 text-xs h-9 text-center text-blue-400/80 font-medium"
-                                                            />
-                                                        </div>
-                                                        <div className="space-y-1.5">
-                                                            <Label className="text-[10px] text-orange-500/50 uppercase font-bold tracking-tight text-center">Carb</Label>
-                                                            <Input
-                                                                type="number"
-                                                                step="0.1"
-                                                                value={item.sub_carbs || 0}
-                                                                onChange={(e) => handleUpdateItem(item.id, { sub_carbs: parseFloat(e.target.value) || 0 })}
-                                                                className="bg-zinc-950 border-zinc-800 text-xs h-9 text-center text-orange-400/80 font-medium"
-                                                            />
-                                                        </div>
-                                                        <div className="space-y-1.5">
-                                                            <Label className="text-[10px] text-yellow-500/50 uppercase font-bold tracking-tight text-center">Gord</Label>
-                                                            <Input
-                                                                type="number"
-                                                                step="0.1"
-                                                                value={item.sub_fat || 0}
-                                                                onChange={(e) => handleUpdateItem(item.id, { sub_fat: parseFloat(e.target.value) || 0 })}
-                                                                className="bg-zinc-950 border-zinc-800 text-xs h-9 text-center text-yellow-500/80 font-medium"
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                    <div className="lg:col-span-3 flex items-center justify-end gap-2 pb-0.5">
-                                                        <Button
-                                                            variant="ghost"
-                                                            size="icon"
-                                                            disabled={loadingMap[`estimate-sub-${item.id}`] || !item.sub_food_name}
-                                                            onClick={async () => {
-                                                                setLoadingMap(prev => ({ ...prev, [`estimate-sub-${item.id}`]: true }))
-                                                                const res = await estimateMacros(item.sub_food_name!, item.sub_quantity!)
-                                                                if (res.success && res.macros) {
-                                                                    await handleUpdateItem(item.id, {
-                                                                        sub_protein: res.macros.protein,
-                                                                        sub_carbs: res.macros.carbs,
-                                                                        sub_fat: res.macros.fat
-                                                                    })
-                                                                } else if (res.error) {
-                                                                    alert(`Erro ao calcular substituição: ${res.error}`)
-                                                                }
-                                                                setLoadingMap(prev => ({ ...prev, [`estimate-sub-${item.id}`]: false }))
-                                                            }}
-                                                            className="text-zinc-600 hover:text-orange-400 h-9 w-9 transition-colors border border-zinc-800 bg-zinc-900/50"
-                                                            title="Calcular macros da substituição com IA"
-                                                        >
-                                                            {loadingMap[`estimate-sub-${item.id}`] ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-                                                        </Button>
-                                                        <Button
-                                                            variant="ghost"
-                                                            size="icon"
-                                                            disabled={loadingMap[`suggest-sub-${item.id}`]}
-                                                            onClick={async () => {
-                                                                setLoadingMap(prev => ({ ...prev, [`suggest-sub-${item.id}`]: true }))
-                                                                const res = await suggestSubstitution(item.food_name, item.quantity)
-                                                                if (res.success && res.suggestion) {
-                                                                    await handleUpdateItem(item.id, {
-                                                                        has_substitute: true,
-                                                                        sub_food_name: res.suggestion.food_name,
-                                                                        sub_quantity: res.suggestion.quantity,
-                                                                        sub_protein: res.suggestion.protein,
-                                                                        sub_carbs: res.suggestion.carbs,
-                                                                        sub_fat: res.suggestion.fat,
-                                                                        sub_fiber: res.suggestion.fiber
-                                                                    })
-                                                                } else if (res.error) {
-                                                                    alert(`Erro na sugestão: ${res.error}`)
-                                                                }
-                                                                setLoadingMap(prev => ({ ...prev, [`suggest-sub-${item.id}`]: false }))
-                                                            }}
-                                                            className="text-zinc-600 hover:text-purple-400 h-9 w-9 transition-colors border border-zinc-800 bg-zinc-900/50"
-                                                            title="Sugerir substituição similar com IA"
-                                                        >
-                                                            {loadingMap[`suggest-sub-${item.id}`] ? <Loader2 className="w-4 h-4 animate-spin" /> : <Utensils className="w-4 h-4" />}
-                                                        </Button>
-                                                        <Button
-                                                            variant="ghost"
-                                                            size="icon"
-                                                            onClick={() => handleUpdateItem(item.id, {
-                                                                sub_food_name: item.food_name,
-                                                                sub_quantity: item.quantity,
-                                                                sub_protein: item.protein,
-                                                                sub_carbs: item.carbs,
-                                                                sub_fat: item.fat,
-                                                                sub_fiber: item.fiber
-                                                            })}
-                                                            className="text-zinc-600 hover:text-blue-400 h-9 w-9 transition-colors border border-zinc-800 bg-zinc-900/50"
-                                                            title="Copiar dados do alimento original"
-                                                        >
-                                                            <ListRestart className="w-4 h-4" />
-                                                        </Button>
-                                                        <Button
-                                                            variant="ghost"
-                                                            size="icon"
-                                                            onClick={() => handleUpdateItem(item.id, {
-                                                                has_substitute: false,
-                                                                sub_food_name: '',
-                                                                sub_quantity: '',
-                                                                sub_protein: 0,
-                                                                sub_carbs: 0,
-                                                                sub_fat: 0,
-                                                                sub_fiber: 0
-                                                            })}
-                                                            className="text-zinc-600 hover:text-red-400 h-9 w-9 transition-colors border border-zinc-800 bg-zinc-900/50"
-                                                            title="Limpar campos da substituição"
-                                                        >
-                                                            <Trash2 className="w-4 h-4" />
-                                                        </Button>
-                                                    </div>
-                                                </div>
-                                            )}
-                                        </div>
+                                        <MealItemRow
+                                            key={item.id}
+                                            item={item}
+                                            dietId={diet.id}
+                                            onRemove={handleRemoveItem}
+                                        />
                                     ))}
                                 </div>
 
@@ -571,20 +660,20 @@ export function DietBuilder({ diet, backHref = '/dashboard/trainer/diets' }: Die
                 })}
 
                 {/* New Meal Form */}
-                <div className="bg-zinc-900/30 p-8 rounded-2xl border-2 border-dashed border-zinc-800/50 flex flex-col md:flex-row gap-6 items-end mt-12 transition-colors hover:border-zinc-700/50 group">
+                <div className="bg-zinc-900/30 p-8 rounded-2xl border-2 border-dashed border-zinc-800/50 flex flex-col md:flex-row gap-6 items-end mt-12 group">
                     <div className="flex-1 space-y-2.5 w-full">
                         <Label className="text-zinc-500 text-[10px] uppercase font-bold tracking-widest ml-1">Nome da Nova Refeição</Label>
                         <Input
                             placeholder="Ex: Café da Manhã, Almoço..."
                             value={newMealName}
                             onChange={(e) => setNewMealName(e.target.value)}
-                            className="bg-zinc-950 border-zinc-800 h-11 rounded-xl text-white placeholder:text-zinc-700 font-medium"
+                            className="bg-zinc-950 border-zinc-700 h-11 rounded-xl text-white placeholder:text-zinc-700 font-medium"
                         />
                     </div>
                     <Button
                         onClick={handleAddMeal}
                         disabled={loadingMap['add-meal'] || !newMealName}
-                        className="bg-white text-zinc-950 hover:bg-zinc-200 w-full md:w-auto h-11 px-8 rounded-xl font-bold transition-all shadow-lg active:scale-95 flex items-center gap-2"
+                        className="bg-white text-zinc-950 hover:bg-zinc-200 w-full md:w-auto h-11 px-8 rounded-xl font-bold shadow-lg flex items-center gap-2"
                     >
                         {loadingMap['add-meal'] ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
                         Adicionar Refeição
@@ -596,7 +685,7 @@ export function DietBuilder({ diet, backHref = '/dashboard/trainer/diets' }: Die
                     <Button
                         asChild
                         variant="ghost"
-                        className="text-zinc-500 hover:text-white hover:bg-zinc-900 gap-2 px-6 h-12 rounded-xl transition-all"
+                        className="text-zinc-500 hover:text-white hover:bg-zinc-900 gap-2 px-6 h-12 rounded-xl"
                     >
                         <Link href={backHref || '/dashboard/trainer/diets'}>
                             <ArrowLeft className="w-4 h-4" />

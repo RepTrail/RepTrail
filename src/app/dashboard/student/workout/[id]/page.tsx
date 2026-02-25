@@ -190,6 +190,7 @@ export default async function WorkoutPlayerPage({ params }: { params: Promise<{ 
             <div className="flex-1 p-4 md:p-8 flex flex-col">
                 <div className="max-w-xl mx-auto w-full flex-1">
                     <WorkoutPlayer
+                        userId={user.id}
                         workout={workout}
                         exercises={exercises}
                         initialExerciseIndex={initialExerciseIndex}

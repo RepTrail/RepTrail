@@ -19,3 +19,11 @@ export function getTodayRangeBrazil() {
         end: end.toISOString()
     }
 }
+
+export function formatToBrazilDate(isoString: string) {
+    const d = new Date(new Date(isoString).toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }))
+    const year = d.getFullYear()
+    const month = String(d.getMonth() + 1).padStart(2, '0')
+    const day = String(d.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+}

@@ -16,7 +16,7 @@ export function CardioCard({ userId }: CardioCardProps) {
     const { data: rawCardios, isLoading } = useQuery({
         queryKey: ['cardio-assignments', userId],
         queryFn: () => getStudentCardioAssignments(userId),
-        staleTime: 1000 * 60 * 10, // 10 min
+        staleTime: 1000 * 30, // 30 seconds
     })
 
     const { data: cardioLogs, isLoading: isLoadingLogs } = useQuery({
@@ -41,9 +41,15 @@ export function CardioCard({ userId }: CardioCardProps) {
     const tzNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }))
     const today = tzNow.getDay()
 
-    const cardios = rawCardios?.filter((a: any) =>
-        !a.days_of_week || a.days_of_week.length === 0 || a.days_of_week.includes(today)
-    ) || []
+    const cardios = rawCardios?.filter((a: any) => {
+        const hasDaysArray = a.days_of_week && Array.isArray(a.days_of_week) && a.days_of_week.length > 0;
+        const hasDaySingular = a.day_of_week !== undefined && a.day_of_week !== null;
+
+        if (hasDaysArray) return a.days_of_week.includes(today);
+        if (hasDaySingular) return a.day_of_week === today;
+
+        return true; // Show by default if no specific day constraint
+    }) || []
 
     if (cardios.length === 0) {
         return (

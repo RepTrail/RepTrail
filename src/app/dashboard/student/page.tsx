@@ -24,8 +24,22 @@ import { ensureDailyTracking } from '@/actions/tracking-actions'
 export default async function StudentDashboardPage() {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
-
     if (!user) return null
+
+    const fs = require('fs')
+    try {
+        const relationship = await getStudentTrainer(user.id)
+        const diagStudent = {
+            timestamp: new Date().toISOString(),
+            userId: user.id,
+            trainerRel: relationship ? {
+                id: relationship.id,
+                trainer_id: relationship.trainer_id,
+                active: relationship.active
+            } : null
+        }
+        fs.appendFileSync('diag_student.json', JSON.stringify(diagStudent, null, 2) + '\n')
+    } catch (e) { }
 
     // Ensure tracking is initialized for today
     await ensureDailyTracking(user.id)

@@ -77,7 +77,11 @@ export function ScheduleCardioDialog({ cardioId }: ScheduleCardioDialogProps) {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant="outline" size="sm" className="bg-zinc-900 border-zinc-700 hover:bg-zinc-800 hover:text-white flex items-center gap-2 rounded-xl text-[9px] font-black uppercase tracking-widest leading-none h-9 flex-1">
+                <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="bg-zinc-900 border-zinc-700 hover:bg-zinc-800 hover:text-white flex items-center gap-2 rounded-xl text-[9px] font-black uppercase tracking-widest leading-none h-9 flex-1"
+                >
                     <Calendar className="w-3 h-3" />
                     Agendar
                 </Button>
@@ -95,7 +99,7 @@ export function ScheduleCardioDialog({ cardioId }: ScheduleCardioDialogProps) {
                             <Label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-1">Duração (min)</Label>
                             <Input
                                 type="number"
-                                className="bg-zinc-900 border-zinc-800 rounded-xl h-12"
+                                className="bg-zinc-900 border-zinc-800 text-white rounded-xl h-12"
                                 value={duration}
                                 onChange={(e) => setDuration(e.target.value)}
                             />
@@ -103,7 +107,7 @@ export function ScheduleCardioDialog({ cardioId }: ScheduleCardioDialogProps) {
                         <div className="space-y-2">
                             <Label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-1">Intensidade</Label>
                             <Select value={intensity} onValueChange={setIntensity}>
-                                <SelectTrigger className="bg-zinc-900 border-zinc-800 rounded-xl h-12">
+                                <SelectTrigger className="bg-zinc-900 border-zinc-800 text-white rounded-xl h-12">
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent className="bg-zinc-900 border-zinc-800 text-white">
@@ -125,7 +129,7 @@ export function ScheduleCardioDialog({ cardioId }: ScheduleCardioDialogProps) {
                                     type="button"
                                     onClick={() => toggleDay(parseInt(day.value))}
                                     className={`
-                                        h-11 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all duration-200 border-2
+                                        h-11 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all duration-200 border-2 cursor-pointer
                                         ${selectedDays.includes(parseInt(day.value))
                                             ? 'bg-emerald-500 text-zinc-950 border-emerald-400 shadow-lg shadow-emerald-500/25 scale-105'
                                             : 'bg-zinc-900/50 text-zinc-400 border-zinc-700/50 hover:bg-zinc-800/70 hover:text-zinc-200 hover:border-zinc-600'}
@@ -138,7 +142,11 @@ export function ScheduleCardioDialog({ cardioId }: ScheduleCardioDialogProps) {
                     </div>
                 </div>
                 <DialogFooter>
-                    <Button onClick={handleSchedule} disabled={loading} className="w-full bg-emerald-500 text-zinc-950 hover:bg-emerald-600 font-black uppercase italic rounded-xl h-12 transition-all">
+                    <Button 
+                        onClick={handleSchedule} 
+                        disabled={loading} 
+                        className="w-full bg-emerald-500 text-zinc-950 hover:bg-emerald-600 font-black uppercase italic rounded-xl h-12 transition-all"
+                    >
                         {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
                         Confirmar Agendamento
                     </Button>

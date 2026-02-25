@@ -25,6 +25,7 @@ export async function startWorkoutLog(workoutId: string) {
             .maybeSingle()
 
         if (existing) {
+            console.log('DEBUG: Resuming existing workout log:', existing.id)
             return { success: true, logId: existing.id, resumed: true }
         }
 
@@ -38,6 +39,8 @@ export async function startWorkoutLog(workoutId: string) {
             })
             .select('id')
             .single()
+
+        console.log('DEBUG: Started new workout log:', { data, error })
 
         if (error) throw error
         return { success: true, logId: data.id, resumed: false }
@@ -85,8 +88,10 @@ export async function finishWorkoutLog(id: string, feedback?: string, perceivedE
 
     const { data: { user } } = await supabase.auth.getUser()
 
+    console.log(`DEBUG: Finalizing workout log: ${id}`, { feedback, perceivedEffort, adherenceStatus })
+
     try {
-        const { error } = await supabase
+        const { data, error } = await supabase
             .from('workout_logs')
             .update({
                 status: 'completed',
@@ -96,6 +101,9 @@ export async function finishWorkoutLog(id: string, feedback?: string, perceivedE
                 adherence_status: adherenceStatus
             })
             .eq('id', id)
+            .select()
+
+        console.log('DEBUG: Workout log update result:', { data, error })
 
         if (error) throw error
 
@@ -382,11 +390,41 @@ export async function getExerciseProgress(studentId: string, exerciseId: string)
             .eq('workout_log.status', 'completed')
             .gt('weight_kg', 0)
             .order('recorded_at', { ascending: true })
-
         if (error) throw error
         return data || []
     } catch (e: any) {
         console.error('Error fetching exercise progress:', e)
         return []
+    }
+}
+
+export async function getWorkoutLastSession(studentId: string, workoutId: string) {
+    const supabase = await createClient()
+
+    try {
+        const { data: log, error } = await supabase
+            .from('workout_logs')
+            .select(`
+                id,
+                completed_at,
+                loads:load_history(
+                    weight_kg,
+                    reps_performed,
+                    set_type,
+                    exercise_id
+                )
+            `)
+            .eq('student_id', studentId)
+            .eq('workout_id', workoutId)
+            .eq('status', 'completed')
+            .order('completed_at', { ascending: false })
+            .limit(1)
+            .maybeSingle()
+
+        if (error) throw error
+        return log
+    } catch (e: any) {
+        console.error('Error in getWorkoutLastSession:', e)
+        return null
     }
 }

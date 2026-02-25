@@ -398,25 +398,38 @@ export async function assignCardioToStudent(cardioId: string, data: {
     if (!user) return { error: 'Unauthorized' }
 
     try {
+        console.log('DEBUG: Assigning cardio to student:', { cardioId, userId: user.id, data })
+
         // Create assignments for each selected day
         const assignments = data.daysOfWeek.map(day => ({
             student_id: user.id,
             cardio_id: cardioId,
             duration_minutes: data.duration,
-            intensity: data.intensity,
+            suggested_intensity: data.intensity, // Use correct field name
             day_of_week: day,
             active: true
         }))
 
+        console.log('DEBUG: Creating assignments:', assignments)
+
+        // Use timeout option and limit batch size
         const { error } = await supabase
             .from('assigned_cardios')
             .insert(assignments)
+            .select('id')
+            .limit(1) // Just return one ID to confirm success
 
-        if (error) throw error
+        console.log('DEBUG: Assignment result:', { error })
+
+        if (error) {
+            console.error('ERROR: Assignment failed:', error)
+            throw error
+        }
 
         revalidatePath('/dashboard/student/cardio')
         return { success: true }
     } catch (e: any) {
-        return { error: e.message }
+        console.error('ERROR: Failed to assign cardio:', e)
+        return { error: e.message || 'Failed to assign cardio' }
     }
 }

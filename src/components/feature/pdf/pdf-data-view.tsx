@@ -10,6 +10,7 @@ interface Exercise {
     rest: number
     warmup_sets?: string
     feeder_sets?: string
+    notes?: string
 }
 
 interface Workout {
@@ -82,10 +83,27 @@ export function PdfDataView({ type, data }: { type: 'workout' | 'diet', data: an
                                 <div key={exIdx} className="p-4 lg:p-6 hover:bg-zinc-800/20 transition-colors group">
                                     <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                                         <div className="flex-1 space-y-1">
-                                            <div className="flex items-center gap-2">
-                                                <p className="text-white font-bold text-sm lg:text-base group-hover:text-emerald-400 transition-colors">
-                                                    {ex.name}
-                                                </p>
+                                            <div className="flex items-center justify-between gap-4">
+                                                <div className="flex items-center gap-2">
+                                                    <p className="text-white font-bold text-sm lg:text-base group-hover:text-emerald-400 transition-colors">
+                                                        {ex.name}
+                                                    </p>
+                                                    {(ex.name?.toLowerCase().includes('+') ||
+                                                        ex.name?.toLowerCase().includes('conjugado') ||
+                                                        ex.notes?.toLowerCase().includes('bi-set') ||
+                                                        ex.notes?.toLowerCase().includes('biset') ||
+                                                        ex.notes?.toLowerCase().includes('conjugado')) && (
+                                                            <Badge className="bg-blue-500/10 text-blue-400 border-blue-500/20 text-[8px] font-black uppercase tracking-widest px-1.5 h-4">
+                                                                <Zap className="w-2 h-2 mr-1" /> CONJUGADO
+                                                            </Badge>
+                                                        )}
+                                                </div>
+                                                {ex.notes && (
+                                                    <div className="flex items-center gap-1 text-[10px] text-zinc-500 italic bg-zinc-800/30 px-2 py-0.5 rounded-lg border border-zinc-800/50">
+                                                        <Info className="w-2.5 h-2.5" />
+                                                        {ex.notes}
+                                                    </div>
+                                                )}
                                             </div>
 
                                             {/* Detailed Sets Breakdown */}

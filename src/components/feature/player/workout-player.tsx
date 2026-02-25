@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
@@ -19,14 +20,16 @@ import {
     Target,
     ChevronDown,
     ChevronUp,
-    XCircle
+    XCircle,
+    Check
 } from 'lucide-react'
 import { useToast } from "@/hooks/use-toast"
 import { cn } from "@/lib/utils"
 import { useRouter } from 'next/navigation'
-import { startWorkoutLog, recordSetLoad, finishWorkoutLog, saveWorkoutLogState } from '@/actions/log-actions'
+import { startWorkoutLog, recordSetLoad, finishWorkoutLog, saveWorkoutLogState, getWorkoutLastSession } from '@/actions/log-actions'
 
 export function WorkoutPlayer({
+    userId,
     workout,
     exercises,
     initialExerciseIndex = 0,
@@ -36,6 +39,7 @@ export function WorkoutPlayer({
     initialIsResting,
     initialRestEndTime
 }: {
+    userId: string,
     workout: any,
     exercises: any[],
     initialExerciseIndex?: number,
@@ -45,6 +49,7 @@ export function WorkoutPlayer({
     initialIsResting?: boolean,
     initialRestEndTime?: number
 }) {
+    const [lastSession, setLastSession] = useState<any>(null)
     const isMounted = useRef(false)
     const [currentExerciseIndex, setCurrentExerciseIndex] = useState(initialExerciseIndex)
 
@@ -83,8 +88,17 @@ export function WorkoutPlayer({
 
     const { toast } = useToast()
     const router = useRouter()
+    const queryClient = useQueryClient()
 
     const [skippedIndices, setSkippedIndices] = useState<number[]>([])
+
+    useEffect(() => {
+        const fetchHistory = async () => {
+            const data = await getWorkoutLastSession(userId, workout.id)
+            if (data) setLastSession(data)
+        }
+        fetchHistory()
+    }, [userId, workout.id])
 
     const currentExercise = exercises[currentExerciseIndex]
     const totalExercises = exercises.length
@@ -381,31 +395,59 @@ export function WorkoutPlayer({
 
         if (logId) {
             setLoading(true)
-            // Batch Save - Use the specific exercise ID from each log item
-            for (let i = 0; i < setsLog.length; i++) {
-                const set = setsLog[i]
-                const input = summaryInputs[i]
-                await recordSetLoad({
-                    logId,
-                    exerciseId: set.exerciseId,
-                    weight: parseFloat(input.weight),
-                    reps: parseInt(input.reps),
-                    setType: set.type as any,
-                    notes: i === setsLog.length - 1 ? exerciseNote : ''
+            try {
+                // Batch Save in parallel for better performance
+                const savePromises = setsLog.map((set, i) => {
+                    const input = summaryInputs[i]
+                    return recordSetLoad({
+                        logId,
+                        exerciseId: set.exerciseId,
+                        weight: parseFloat(input.weight),
+                        reps: parseInt(input.reps),
+                        setType: set.type as any,
+                        notes: i === setsLog.length - 1 ? exerciseNote : ''
+                    })
                 })
+
+                const results = await Promise.all(savePromises)
+                const failed = results.filter(r => !r.success)
+
+                if (failed.length > 0) {
+                    console.error('Failed to save some sets:', failed)
+                }
+
+                advanceExercise()
+            } catch (error) {
+                console.error('Error saving exercise sets:', error)
+                toast({ variant: 'destructive', title: 'Erro ao Salvar', description: 'Ocorreu um erro ao salvar os dados.' })
+            } finally {
+                setLoading(false)
             }
-            setLoading(false)
-            advanceExercise()
         }
     }
 
     const handleFinishWorkout = async () => {
         setLoading(true)
-        if (logId) {
-            await finishWorkoutLog(logId, feedback, parseInt(perceivedEffort), adherenceStatus)
+        try {
+            if (logId) {
+                const res = await finishWorkoutLog(logId, feedback, parseInt(perceivedEffort), adherenceStatus)
+                if (res?.error) {
+                    toast({ variant: 'destructive', title: 'Erro ao Finalizar', description: res.error })
+                    setLoading(false)
+                    return
+                }
+            }
+            queryClient.invalidateQueries({ queryKey: ['today-workout'] })
+            queryClient.invalidateQueries({ queryKey: ['workout-status'] })
+            toast({ title: "MISSÃO CUMPRIDA!", description: "Treino registrado com sucesso." })
+            router.refresh()
+            router.push('/dashboard/student')
+        } catch (error) {
+            console.error('Error finishing workout:', error)
+            toast({ variant: 'destructive', title: 'Erro ao Finalizar', description: 'Ocorreu um erro ao salvar seu treino.' })
+        } finally {
+            setLoading(false)
         }
-        toast({ title: "MISSÃO CUMPRIDA!", description: "Treino registrado com sucesso." })
-        router.push('/dashboard/student')
     }
 
     const setTypeColor = {
@@ -555,47 +597,30 @@ export function WorkoutPlayer({
                                             <h4 className="text-xs font-black text-white uppercase italic">{group.name}</h4>
                                         </div>
                                         <div className="space-y-4">
-                                            {group.items.map((set) => (
-                                                <div key={set.summaryIdx} className="bg-zinc-950/50 border border-zinc-800 rounded-2xl p-4 flex flex-col md:flex-row gap-4 items-center">
-                                                    <div className="w-full md:w-32 shrink-0">
-                                                        <span className={`text-[10px] font-black uppercase px-3 py-1.5 rounded-lg border whitespace-nowrap block w-fit ${set.type === 'WARMUP' ? 'bg-orange-500/10 border-orange-500/20 text-orange-500' :
-                                                            set.type === 'FEEDER' ? 'bg-blue-500/10 border-blue-500/20 text-blue-500' :
-                                                                'bg-emerald-500/10 border-emerald-500/20 text-emerald-500'
-                                                            }`}>
-                                                            {set.type === 'WORKING' ? `Série ${set.setNumber}` : set.label}
-                                                        </span>
-                                                    </div>
-                                                    <div className="flex gap-4 w-full">
-                                                        <div className="flex-1 space-y-1">
-                                                            <Label className="text-[9px] text-zinc-500 uppercase font-black">Carga (kg)</Label>
-                                                            <Input
-                                                                type="number"
-                                                                placeholder="0"
-                                                                value={summaryInputs[set.summaryIdx]?.weight || ''}
-                                                                onChange={e => setSummaryInputs(prev => ({ ...prev, [set.summaryIdx]: { ...prev[set.summaryIdx], weight: e.target.value } }))}
-                                                                className="bg-zinc-900 border-zinc-800 h-10 text-center font-bold"
-                                                            />
-                                                        </div>
-                                                        <div className="flex-1 space-y-1">
-                                                            <Label className="text-[9px] text-zinc-500 uppercase font-black">Reps</Label>
-                                                            <Input
-                                                                type="number"
-                                                                placeholder={set.expectedReps}
-                                                                value={summaryInputs[set.summaryIdx]?.reps || ''}
-                                                                onChange={e => setSummaryInputs(prev => ({ ...prev, [set.summaryIdx]: { ...prev[set.summaryIdx], reps: e.target.value } }))}
-                                                                className="bg-zinc-900 border-zinc-800 h-10 text-center font-bold text-emerald-500"
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            ))}
+                                            {group.items.map((set) => {
+                                                const exerciseHistory = lastSession?.loads?.filter((l: any) => l.exercise_id === exId) || []
+                                                const lastSessionSet = exerciseHistory[set.setNumber - 1]
+
+                                                return (
+                                                    <SummarySetRow
+                                                        key={set.summaryIdx}
+                                                        set={set}
+                                                        lastSessionSet={lastSessionSet}
+                                                        initialWeight={summaryInputs[set.summaryIdx]?.weight || ''}
+                                                        initialReps={summaryInputs[set.summaryIdx]?.reps || ''}
+                                                        onUpdate={(weight: string, reps: string) =>
+                                                            setSummaryInputs(prev => ({ ...prev, [set.summaryIdx]: { weight, reps } }))
+                                                        }
+                                                    />
+                                                )
+                                            })}
                                         </div>
                                     </div>
                                 ))}
                             </div>
 
                             <div className="space-y-2 pt-4 border-t border-zinc-800/50">
-                                <Label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest pl-1">Anotação Técnica (Obrigatório)</Label>
+                                <Label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest pl-1">Anotação Técnica</Label>
                                 <textarea
                                     value={exerciseNote}
                                     onChange={(e) => setExerciseNote(e.target.value)}
@@ -780,6 +805,68 @@ export function WorkoutPlayer({
     )
 }
 
+
+function SummarySetRow({ set, lastSessionSet, initialWeight, initialReps, onUpdate }: { set: any, lastSessionSet?: any, initialWeight: string, initialReps: string, onUpdate: (w: string, r: string) => void }) {
+    const [weight, setWeight] = useState(initialWeight)
+    const [reps, setReps] = useState(initialReps)
+
+    const handleChange = (type: 'weight' | 'reps', val: string) => {
+        let newWeight = weight
+        let newReps = reps
+        if (type === 'weight') {
+            setWeight(val)
+            newWeight = val
+        } else {
+            setReps(val)
+            newReps = val
+        }
+        onUpdate(newWeight, newReps)
+    }
+
+    return (
+        <div className="bg-zinc-950/50 border border-zinc-800 rounded-2xl p-4 flex flex-col md:flex-row gap-4 items-center transition-all">
+            <div className="w-full md:w-32 shrink-0">
+                <span className={`text-[10px] font-black uppercase px-3 py-1.5 rounded-lg border whitespace-nowrap block w-fit ${set.type === 'WARMUP' ? 'bg-orange-500/10 border-orange-500/20 text-orange-500' :
+                    set.type === 'FEEDER' ? 'bg-blue-500/10 border-blue-500/20 text-blue-500' :
+                        'bg-emerald-500/10 border-emerald-500/20 text-emerald-500'
+                    }`}>
+                    {set.type === 'WORKING' ? `Série ${set.setNumber}` : set.label}
+                </span>
+                {lastSessionSet && (
+                    <div className="mt-1 flex flex-col">
+                        <span className="text-[7px] font-black text-zinc-600 uppercase tracking-widest">Anterior</span>
+                        <span className="text-[8px] font-black text-zinc-400 italic">
+                            {lastSessionSet.weight_kg}kg x {lastSessionSet.reps_performed}
+                        </span>
+                    </div>
+                )}
+            </div>
+            <div className="flex gap-4 w-full flex-1">
+                <div className="flex-1 space-y-1">
+                    <Label className="text-[9px] text-zinc-500 uppercase font-black">Carga (kg)</Label>
+                    <Input
+                        type="number"
+                        placeholder="0"
+                        value={weight}
+                        onChange={e => handleChange('weight', e.target.value)}
+                        className="bg-zinc-900 border-zinc-800 h-10 text-center font-bold"
+                    />
+                </div>
+                <div className="flex-1 space-y-1">
+                    <Label className="text-[9px] text-zinc-500 uppercase font-black">Reps</Label>
+                    <Input
+                        type="number"
+                        placeholder={set.expectedReps}
+                        value={reps}
+                        onChange={e => handleChange('reps', e.target.value)}
+                        className="bg-zinc-900 border-zinc-800 h-10 text-center font-bold text-emerald-500"
+                    />
+                </div>
+            </div>
+        </div>
+    )
+}
+
 function Badge({ children, variant, className }: any) {
     return (
         <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${className}`}>
@@ -787,3 +874,4 @@ function Badge({ children, variant, className }: any) {
         </span>
     )
 }
+
