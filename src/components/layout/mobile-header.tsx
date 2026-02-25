@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Menu, X, LogOut, Dumbbell, Utensils, Activity, Home, Users, Trophy, CreditCard, FileUp, Sparkles, FlaskConical, TrendingUp, Download, Settings, ClipboardList, Timer } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Logo } from '@/components/ui/logo'
@@ -18,7 +18,15 @@ interface MobileHeaderProps {
 
 export function MobileHeader({ role, hasTrainer, steroidUse, hideImportPdf, autoTrainingActive }: MobileHeaderProps) {
     const [isOpen, setIsOpen] = useState(false)
+    const [isStandalone, setIsStandalone] = useState(false)
     const pathname = usePathname()
+
+    useEffect(() => {
+        const isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches
+            || (window.navigator as any).standalone
+            || document.referrer.includes('android-app://')
+        setIsStandalone(isStandaloneMode)
+    }, [])
 
     const studentLinks = [
         { href: '/dashboard/student/workouts', icon: <Dumbbell className="w-5 h-5" />, label: 'Meus Treinos', requiresTrainer: true },
@@ -78,7 +86,7 @@ export function MobileHeader({ role, hasTrainer, steroidUse, hideImportPdf, auto
 
                     {/* Panel */}
                     <div className="absolute top-0 right-0 w-[280px] h-full bg-zinc-950 border-l border-zinc-800 shadow-2xl animate-in slide-in-from-right duration-300 ease-out p-8 flex flex-col justify-between" style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 2rem)' }}>
-                        <div className="space-y-10 flex flex-col h-full">
+                        <div className="space-y-6 flex flex-col min-h-0 flex-1">
                             <div className="flex items-center justify-between flex-shrink-0">
                                 <Link href="/" onClick={() => setIsOpen(false)}>
                                     <Logo size="sm" color={role === 'trainer' ? 'emerald' : 'orange'} />
@@ -91,7 +99,7 @@ export function MobileHeader({ role, hasTrainer, steroidUse, hideImportPdf, auto
                                 </button>
                             </div>
 
-                            <nav className="space-y-4 flex-1 overflow-y-auto pb-8 px-1 -mx-1 scrollbar-none">
+                            <nav className="space-y-4 flex-1 overflow-y-auto pb-8 px-1 -mx-1">
                                 {links.map((link) => {
                                     const isActive = pathname.startsWith(link.href)
                                     return (
@@ -135,16 +143,18 @@ export function MobileHeader({ role, hasTrainer, steroidUse, hideImportPdf, auto
                                         Configurações
                                     </button>
 
-                                    <button
-                                        onClick={() => {
-                                            window.dispatchEvent(new CustomEvent('open-pwa-prompt'))
-                                            setIsOpen(false)
-                                        }}
-                                        className="w-full flex items-center gap-4 p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 hover:bg-emerald-500/20 transition-all font-bold uppercase italic tracking-widest text-xs"
-                                    >
-                                        <Download className="w-5 h-5" />
-                                        Instalar Aplicativo
-                                    </button>
+                                    {!isStandalone && (
+                                        <button
+                                            onClick={() => {
+                                                window.dispatchEvent(new CustomEvent('open-pwa-prompt'))
+                                                setIsOpen(false)
+                                            }}
+                                            className="w-full flex items-center gap-4 p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 hover:bg-emerald-500/20 transition-all font-bold uppercase italic tracking-widest text-xs"
+                                        >
+                                            <Download className="w-5 h-5" />
+                                            Instalar Aplicativo
+                                        </button>
+                                    )}
                                 </div>
                             )}
 
