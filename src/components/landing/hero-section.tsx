@@ -42,18 +42,20 @@ export function HeroSection() {
                         <Button
                             asChild
                             variant="outline"
+                            suppressHydrationWarning
                             className="w-full md:w-auto h-16 px-10 text-lg border-zinc-800 bg-zinc-900/50 text-zinc-400 hover:bg-zinc-800 hover:text-white hover:border-zinc-700 font-black uppercase italic tracking-widest rounded-2xl backdrop-blur-sm transition-all hover:-translate-y-1 shadow-2xl"
                         >
-                            <a href="#marketplace">
+                            <a href="#marketplace" suppressHydrationWarning>
                                 <Search className="mr-2 h-5 w-5" />
                                 Buscar Personal
                             </a>
                         </Button>
                         <Button
                             asChild
+                            suppressHydrationWarning
                             className="w-full md:w-auto h-16 px-10 text-lg bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase italic tracking-wide rounded-2xl shadow-xl shadow-emerald-500/20 hover:shadow-emerald-500/40 transition-all hover:-translate-y-1 hover:scale-105"
                         >
-                            <Link href="/auth/signup">
+                            <Link href="/auth/signup" suppressHydrationWarning>
                                 Sou Personal Trainer
                                 <ArrowRight className="ml-2 h-5 w-5" />
                             </Link>

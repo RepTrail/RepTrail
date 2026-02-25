@@ -50,22 +50,15 @@ export default async function ErgogenicsPage() {
 
     return (
         <div className="space-y-10 pb-10">
-            {/* Header */}
-            <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 bg-orange-500 rounded-xl">
-                    <Activity className="w-5 h-5 text-zinc-950" />
+            <div className="flex flex-col gap-2 pb-6 border-b border-zinc-800/50">
+                <div className="flex items-center gap-3">
+                    <div className="p-2 bg-orange-500 rounded-xl">
+                        <Activity className="w-5 h-5 text-zinc-950" />
+                    </div>
+                    <h1 className="text-4xl font-black text-white italic uppercase tracking-tighter">
+                        Meus <span className="text-orange-500">Ergogênicos</span>
+                    </h1>
                 </div>
-                <h1 className="text-4xl font-black text-white italic uppercase tracking-tighter">
-                    Meus <span className="text-orange-500">Ergogênicos</span>
-                </h1>
-            </div>
-            <p className="text-zinc-500 text-sm font-medium max-w-md">
-                Acompanhe e registre suas substâncias e dosagens prescritas.
-            </p>
-            <div className="flex flex-col gap-2 pb-2 border-b border-zinc-800/50">
-                <h1 className="text-4xl font-black tracking-tight text-white font-sans italic uppercase flex items-center gap-3">
-                    Meu Protocolo
-                </h1>
                 <p className="text-zinc-500 text-sm font-medium">
                     Acompanhe e registre suas substâncias e dosagens prescritas.
                 </p>

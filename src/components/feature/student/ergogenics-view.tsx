@@ -1,11 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Check, Clock, Calendar, FlaskConical, Loader2, History } from "lucide-react"
-import { logErgogenicIntake } from "@/actions/ergogenics-actions"
+import { Check, Clock, Calendar, FlaskConical, Loader2, History, X } from "lucide-react"
+import { toggleErgogenicLog } from "@/actions/ergogenics-actions"
 import { useToast } from "@/hooks/use-toast"
+import { getTodayRangeBrazil } from '@/lib/date-utils'
 
 interface Ergogenic {
     id: string
@@ -23,6 +24,7 @@ const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', '
 interface StudentLog {
     id: string
     created_at: string
+    ergogenic_id?: string
     notes?: string
     ergogenics?: { name: string }
 }
@@ -41,40 +43,84 @@ export function StudentErgogenicsView({ studentId, ergogenics, initialLogs }: St
     const today = new Date().getDay() // 0-6
     const todayName = WEEKDAYS[today]
 
+    // Determine which ergogenics are logged today
+    const { start, end } = useMemo(() => getTodayRangeBrazil(), [])
+
+    const todaysLogsMap = useMemo(() => {
+        const map: Record<string, boolean> = {}
+        logs.forEach(log => {
+            if (log.created_at >= start && log.created_at <= end && log.ergogenic_id) {
+                map[log.ergogenic_id] = true
+            }
+        })
+        return map
+    }, [logs, start, end])
+
     const safeErgogenics = ergogenics.map((e: Ergogenic) => ({
         ...e,
         application_days: Array.isArray(e.application_days) ? e.application_days : []
     }))
+
     const todaysErgogenics = safeErgogenics.filter((e) => e.application_days.some((d: number) => Number(d) === today))
     const otherErgogenics = safeErgogenics.filter((e) => !e.application_days.some((d: number) => Number(d) === today))
 
-    async function handleLog(ergogenicId: string) {
-        setLoading({ [ergogenicId]: true })
-        const res = await logErgogenicIntake({ student_id: studentId, ergogenic_id: ergogenicId })
-        setLoading({})
+    async function handleToggle(ergogenicId: string) {
+        const isLogged = todaysLogsMap[ergogenicId]
+        const newStatus = !isLogged
 
-        if (res.success) {
-            const erg = ergogenics.find((e: Ergogenic) => e.id === ergogenicId)
-            const newLog = {
-                ...res.data,
-                ergogenics: { name: erg?.name || 'Substância' }
-            } as StudentLog
-            setLogs([newLog, ...logs])
-            toast({ title: "Registrado!", description: "Sua aplicação/ingestão foi salva." })
-        } else {
-            toast({ variant: "destructive", title: "Erro ao registrar", description: res.error })
+        setLoading(prev => ({ ...prev, [ergogenicId]: true }))
+
+        try {
+            const res = await toggleErgogenicLog(studentId, ergogenicId, newStatus)
+
+            if (res.success) {
+                if (newStatus) {
+                    // Added log
+                    const erg = ergogenics.find((e: Ergogenic) => e.id === ergogenicId)
+                    const newLog = {
+                        ...res.data,
+                        ergogenic_id: ergogenicId,
+                        ergogenics: { name: erg?.name || 'Substância' }
+                    } as StudentLog
+                    setLogs(prev => [newLog, ...prev])
+                } else {
+                    // Removed logs for today
+                    setLogs(prev => prev.filter(log => {
+                        const isTodayLog = log.created_at >= start && log.created_at <= end
+                        const isSameErg = log.ergogenic_id === ergogenicId
+                        return !(isTodayLog && isSameErg)
+                    }))
+                }
+
+                toast({
+                    title: newStatus ? "Registrado!" : "Removido",
+                    description: newStatus ? "Sua aplicação foi salva." : "O registro de hoje foi removido."
+                })
+            } else {
+                throw new Error(res.error)
+            }
+        } catch (error: any) {
+            toast({
+                variant: "destructive",
+                title: "Erro",
+                description: error.message || "Não foi possível atualizar o registro."
+            })
+        } finally {
+            setLoading(prev => ({ ...prev, [ergogenicId]: false }))
         }
     }
 
     const renderErgogenicCard = (e: Ergogenic & { application_days: number[] }, isToday: boolean) => {
         if (!e) return null
 
+        const isDone = todaysLogsMap[e.id]
+
         // Calculate dosage per application safely
         const appDaysCount = Array.isArray(e.application_days) ? e.application_days.length : 0
         const dosagePerApp = appDaysCount > 0 ? (e.weekly_dosage / appDaysCount).toFixed(2) : (e.weekly_dosage || 0).toFixed(2)
 
         return (
-            <Card key={e.id} className={`bg-zinc-950 border-zinc-800 transition-all rounded-3xl overflow-hidden shadow-2xl group ${isToday ? 'border-emerald-500/30' : 'opacity-60'}`}>
+            <Card key={e.id} className={`bg-zinc-950 border-zinc-800 transition-all rounded-3xl overflow-hidden shadow-2xl group ${isToday ? (isDone ? 'border-emerald-500/50 bg-emerald-500/5' : 'border-zinc-800') : 'opacity-60'}`}>
                 <CardContent className="p-0">
                     <div className="p-6 bg-zinc-900/40 border-b border-zinc-900/50 flex items-center justify-between">
                         <div className="space-y-1">
@@ -85,11 +131,20 @@ export function StudentErgogenicsView({ studentId, ergogenics, initialLogs }: St
                         </div>
                         {isToday && (
                             <Button
-                                onClick={() => handleLog(e.id)}
+                                onClick={() => handleToggle(e.id)}
                                 disabled={loading[e.id]}
-                                className="h-12 w-12 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-500/20 active:scale-95 transition-all p-0"
+                                className={`h-12 w-12 rounded-2xl shadow-lg active:scale-95 transition-all p-0 ${isDone
+                                        ? "bg-zinc-800 hover:bg-zinc-700 text-emerald-500 border border-emerald-500/20"
+                                        : "bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-500/20"
+                                    }`}
                             >
-                                {loading[e.id] ? <Loader2 className="w-5 h-5 animate-spin" /> : <Check className="w-6 h-6" />}
+                                {loading[e.id] ? (
+                                    <Loader2 className="w-5 h-5 animate-spin" />
+                                ) : isDone ? (
+                                    <X className="w-5 h-5" />
+                                ) : (
+                                    <Check className="w-6 h-6" />
+                                )}
                             </Button>
                         )}
                     </div>
@@ -110,6 +165,12 @@ export function StudentErgogenicsView({ studentId, ergogenics, initialLogs }: St
                                 ))}
                             </div>
                         </div>
+                        {isDone && (
+                            <div className="flex items-center gap-2 px-3 py-2 bg-emerald-500/10 rounded-xl border border-emerald-500/20">
+                                <Check className="w-3 h-3 text-emerald-500" />
+                                <span className="text-[10px] font-bold text-emerald-500 uppercase italic">Concluído hoje</span>
+                            </div>
+                        )}
                         {e.notes && (
                             <div className="pt-4 border-t border-zinc-900">
                                 <span className="text-[9px] font-black text-emerald-500/70 uppercase tracking-widest block mb-2">Orientações</span>
