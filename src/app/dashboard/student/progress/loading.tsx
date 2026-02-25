@@ -1,77 +1,98 @@
 
 import { Skeleton } from "@/components/ui/skeleton"
+import { TrendingUp, Camera, Images, History } from 'lucide-react'
 
 export default function StudentProgressLoading() {
     return (
-        <div className="space-y-10 max-w-7xl mx-auto pb-10">
-            {/* Header */}
-            <div className="space-y-2">
-                <div className="flex items-center gap-3">
-                    <div className="w-2 h-8 bg-zinc-800 rounded-full" />
-                    <Skeleton className="h-12 w-64" />
+        <div className="max-w-7xl mx-auto space-y-10 pb-32 px-4 sm:px-6 md:px-8 animate-pulse">
+            {/* Header matches StudentProgressPage header */}
+            <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                        <div className="p-2 bg-zinc-900 rounded-xl">
+                            <TrendingUp className="w-5 h-5 text-zinc-800" />
+                        </div>
+                        <Skeleton className="h-10 w-64 rounded-xl bg-zinc-800/50" />
+                    </div>
+                    <Skeleton className="h-4 w-96 max-w-full bg-zinc-800/50" />
                 </div>
-                <Skeleton className="h-4 w-96 max-w-full" />
-            </div>
+            </header>
 
-            {/* Metrics */}
+            {/* Stat Cards - Matches real layout */}
             <div className="grid gap-6 md:grid-cols-3">
                 {[1, 2, 3].map((i) => (
-                    <div key={i} className="bg-zinc-900/40 border border-zinc-800/50 rounded-2xl p-5 space-y-3">
-                        <div className="flex justify-between items-center">
-                            <Skeleton className="h-3 w-24" />
-                            <Skeleton className="h-4 w-4" />
+                    <div key={i} className="bg-zinc-900/40 border border-zinc-800/50 rounded-3xl p-8 space-y-4">
+                        <div className="flex items-center gap-2">
+                            <Skeleton className="w-4 h-4 rounded bg-zinc-800/50" />
+                            <Skeleton className="h-2 w-20 bg-zinc-800/50" />
                         </div>
-                        <Skeleton className="h-8 w-16" />
-                        <Skeleton className="h-3 w-32" />
+                        <Skeleton className="h-8 w-16 bg-zinc-800/50" />
+                        <div className="flex items-center gap-2">
+                            <Skeleton className="h-4 w-12 bg-zinc-950 rounded-lg" />
+                            <Skeleton className="h-2 w-24 bg-zinc-800/50" />
+                        </div>
                     </div>
                 ))}
             </div>
 
             {/* Photo Upload Section */}
-            <div className="bg-zinc-900/40 border border-zinc-800/50 rounded-[3rem] p-10 space-y-6">
-                <div className="space-y-2">
-                    <Skeleton className="h-8 w-48" />
-                    <Skeleton className="h-3 w-64" />
+            <div className="bg-zinc-900/40 border border-zinc-800/50 shadow-2xl rounded-[3rem] p-10 space-y-8">
+                <div className="space-y-3">
+                    <div className="flex items-center gap-3">
+                        <Camera className="w-6 h-6 text-zinc-800" />
+                        <Skeleton className="h-6 w-48 bg-zinc-800/50" />
+                    </div>
+                    <Skeleton className="h-3 w-64 bg-zinc-800/50" />
                 </div>
-                <Skeleton className="h-40 w-full rounded-2xl" />
+                <div className="aspect-[2/1] w-full rounded-2xl bg-zinc-950/50 border border-zinc-800/50" />
             </div>
 
             {/* Gallery Section */}
-            <div className="bg-zinc-900/40 border border-zinc-800/50 rounded-[3rem] p-10 space-y-6">
-                <div className="space-y-2">
-                    <Skeleton className="h-8 w-32" />
-                    <Skeleton className="h-3 w-48" />
+            <div className="bg-zinc-900/40 border border-zinc-800/50 shadow-2xl rounded-[2.5rem] p-10 space-y-8">
+                <div className="space-y-3">
+                    <div className="flex items-center gap-3">
+                        <Images className="w-6 h-6 text-zinc-800" />
+                        <Skeleton className="h-6 w-32 bg-zinc-800/50" />
+                    </div>
+                    <Skeleton className="h-3 w-48 bg-zinc-800/50" />
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {[1, 2, 3, 4].map((i) => (
-                        <Skeleton key={i} className="aspect-[3/4] w-full rounded-2xl" />
+                        <div key={i} className="aspect-[3/4] w-full rounded-2xl bg-zinc-950/50 border border-zinc-800/50" />
                     ))}
                 </div>
             </div>
 
-            {/* Workout History */}
-            <div className="bg-zinc-900/40 border border-zinc-800/50 rounded-[3rem] p-10 space-y-6">
-                <div className="space-y-2">
-                    <Skeleton className="h-8 w-56" />
-                    <Skeleton className="h-3 w-64" />
+            {/* Workout History Card */}
+            <div className="bg-zinc-900/40 border border-zinc-800/50 shadow-2xl rounded-[2.5rem] p-10 space-y-8">
+                <div className="space-y-3">
+                    <div className="flex items-center gap-3">
+                        <History className="w-6 h-6 text-zinc-800" />
+                        <Skeleton className="h-6 w-56 bg-zinc-800/50" />
+                    </div>
+                    <Skeleton className="h-3 w-64 bg-zinc-800/50" />
                 </div>
                 <div className="space-y-4">
                     {[1, 2, 3].map((i) => (
-                        <div key={i} className="h-16 w-full rounded-2xl bg-zinc-900/50 flex items-center p-4 gap-4">
-                            <Skeleton className="w-8 h-8 rounded-lg" />
+                        <div key={i} className="h-20 w-full rounded-2xl bg-zinc-950/50 border border-zinc-900 flex items-center p-6 gap-6">
+                            <Skeleton className="w-10 h-10 rounded-xl bg-zinc-800/50" />
                             <div className="space-y-2 flex-1">
-                                <Skeleton className="h-3 w-32" />
-                                <Skeleton className="h-2 w-24" />
+                                <Skeleton className="h-3 w-48 bg-zinc-800/50" />
+                                <Skeleton className="h-2 w-32 bg-zinc-800/50" />
                             </div>
                         </div>
                     ))}
                 </div>
             </div>
 
-            {/* Charts Skeleton */}
+            {/* Charts Section */}
             <div className="space-y-10">
-                <Skeleton className="w-full h-[400px] rounded-[2.5rem]" />
-                <Skeleton className="w-full h-[300px] rounded-[2.5rem]" />
+                <div className="bg-zinc-900/40 border border-zinc-800/50 shadow-2xl rounded-[2.5rem] p-10 h-[400px]">
+                    <Skeleton className="w-full h-full rounded-2xl bg-zinc-950/50" />
+                </div>
+                <div className="bg-zinc-900/40 border border-zinc-800/50 shadow-2xl rounded-[2.5rem] p-10 h-[300px]">
+                    <Skeleton className="w-full h-full rounded-2xl bg-zinc-950/50" />
+                </div>
             </div>
         </div>
     )

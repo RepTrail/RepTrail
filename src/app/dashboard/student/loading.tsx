@@ -77,30 +77,54 @@ export default function StudentDashboardLoading() {
                                         <Skeleton className="h-6 w-40 rounded-lg" />
                                     </div>
                                     <div className="flex gap-2">
-                                        <Skeleton className="h-4 w-16 rounded-md" />
-                                        <Skeleton className="h-4 w-20 rounded-md" />
+                                        <Skeleton className="h-4 w-16 rounded-md bg-zinc-800/20" />
+                                        <Skeleton className="h-4 w-20 rounded-md bg-zinc-800/20" />
                                     </div>
                                 </div>
                             </div>
 
                             <div className="flex flex-col items-center justify-center space-y-4">
-                                <Skeleton className="h-2 w-24" />
-                                <Skeleton className="h-20 w-48 rounded-2xl" />
-                                <Skeleton className="h-2 w-full max-w-xs rounded-full" />
+                                <Skeleton className="h-2 w-24 bg-zinc-800" />
+                                <Skeleton className="h-20 w-48 rounded-2xl bg-zinc-800/50" />
+                                <Skeleton className="h-2 w-full max-w-xs rounded-full bg-zinc-800/20" />
                             </div>
 
                             <div className="flex items-center justify-center gap-6">
-                                <Skeleton className="w-20 h-20 rounded-full" />
-                                <Skeleton className="w-16 h-16 rounded-full" />
+                                <Skeleton className="w-20 h-20 rounded-full bg-zinc-800/40" />
+                                <Skeleton className="w-16 h-16 rounded-full bg-zinc-800/30" />
                             </div>
 
                             <div className="grid grid-cols-6 gap-3 p-4 bg-zinc-950/30 border border-zinc-800/50 rounded-3xl">
-                                <div className="h-14 rounded-2xl bg-zinc-900/50 border border-zinc-800/50 col-span-3 sm:col-span-2" />
-                                <div className="h-14 rounded-2xl bg-zinc-900/50 border border-zinc-800/50 col-span-3 sm:col-span-2" />
-                                <div className="h-14 rounded-2xl bg-zinc-900/50 border border-zinc-800/50 col-span-3 sm:col-span-2" />
-                                <div className="h-14 rounded-2xl bg-zinc-900/50 border border-zinc-800/50 col-span-3 sm:col-span-3" />
-                                <div className="h-14 rounded-2xl bg-zinc-900/50 border border-zinc-800/50 col-span-6 sm:col-span-3" />
+                                {[1, 2, 3, 4, 5].map((i) => (
+                                    <div key={i} className={`h-14 rounded-2xl bg-zinc-900/50 border border-zinc-800/50 ${i <= 3 ? 'col-span-3 sm:col-span-2' : i === 4 ? 'col-span-6 sm:col-span-3' : 'col-span-6 sm:col-span-3'}`} />
+                                ))}
                             </div>
+                        </div>
+                    </div>
+
+                    {/* Ergogenics Section Skeleton */}
+                    <div className="space-y-6">
+                        <div className="flex items-center justify-between px-2">
+                            <div className="flex items-center gap-2">
+                                <Sparkles className="w-4 h-4 text-zinc-800" />
+                                <Skeleton className="h-4 w-40 bg-zinc-800/50 rounded-md" />
+                            </div>
+                        </div>
+                        <div className="grid gap-6 md:grid-cols-2">
+                            {[1, 2].map((i) => (
+                                <div key={i} className="bg-zinc-900/40 border border-zinc-800/50 shadow-xl p-6 rounded-[2rem] backdrop-blur-sm space-y-4">
+                                    <div className="flex items-center justify-between">
+                                        <div className="space-y-2">
+                                            <Skeleton className="h-5 w-32 bg-zinc-800/50" />
+                                            <Skeleton className="h-2 w-20 bg-zinc-800/30" />
+                                        </div>
+                                        <Skeleton className="h-10 w-10 rounded-xl bg-zinc-900 border border-zinc-800" />
+                                    </div>
+                                    <div className="pt-4 border-t border-zinc-800/50">
+                                        <Skeleton className="h-2 w-full bg-zinc-800/10" />
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </div>
