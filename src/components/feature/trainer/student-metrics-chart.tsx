@@ -138,13 +138,13 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
     const CustomWeightDot = (props: any) => {
         const { cx, cy, payload } = props;
         if (!payload.realWeight) return null;
-        return <circle cx={cx} cy={cy} r={4} fill="#000" stroke="#fff" strokeWidth={2} />;
+        return <circle cx={cx} cy={cy} r={4} fill="#000" stroke="#eab308" strokeWidth={2} />;
     }
 
     const CustomBfDot = (props: any) => {
         const { cx, cy, payload } = props;
         if (!payload.realBf) return null;
-        return <circle cx={cx} cy={cy} r={4} fill="#000" stroke="#10b981" strokeWidth={2} />;
+        return <circle cx={cx} cy={cy} r={4} fill="#000" stroke="#ef4444" strokeWidth={2} />;
     }
 
     useEffect(() => {
@@ -160,9 +160,9 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
     return (
         <div className="w-full space-y-6">
             <div className="flex flex-wrap gap-4 items-center justify-end px-2">
-                <LegendItem color="#3b82f6" label="Performance" />
-                <LegendItem color="#ffffff" label="Peso" />
-                <LegendItem color="#10b981" label="BF%" />
+                <LegendItem color="#10b981" label="Performance" />
+                <LegendItem color="#eab308" label="Peso" />
+                <LegendItem color="#ef4444" label="BF%" />
             </div>
 
             <div className="h-[300px] w-full overflow-x-auto overflow-y-hidden" ref={scrollRef}>
@@ -184,8 +184,8 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
                             <YAxis
                                 yAxisId="left"
                                 orientation="left"
-                                stroke="#3b82f6"
-                                tick={{ fontSize: 10, fontWeight: 800, fill: '#3b82f6' }}
+                                stroke="#10b981"
+                                tick={{ fontSize: 10, fontWeight: 800, fill: '#10b981' }}
                                 tickLine={false}
                                 axisLine={false}
                                 domain={[0, 100]}
@@ -197,8 +197,8 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
                             <YAxis
                                 yAxisId="right"
                                 orientation="right"
-                                stroke="#a1a1aa" // gray to match weight line better than green
-                                tick={{ fontSize: 10, fontWeight: 800, fill: '#a1a1aa' }}
+                                stroke="#eab308"
+                                tick={{ fontSize: 10, fontWeight: 800, fill: '#eab308' }}
                                 tickLine={false}
                                 axisLine={false}
                                 domain={weightDomain}
@@ -210,7 +210,7 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
                             <YAxis
                                 yAxisId="bf-axis"
                                 orientation="right"
-                                stroke="#10b981"
+                                stroke="#ef4444"
                                 domain={bfDomain}
                                 unit="%"
                                 hide={true}
@@ -224,10 +224,10 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
                                 type="monotone"
                                 dataKey="performance"
                                 name="Performance"
-                                stroke="#3b82f6"
+                                stroke="#10b981"
                                 strokeWidth={3}
                                 dot={false}
-                                activeDot={{ r: 4, fill: '#3b82f6', stroke: '#1e3a8a', strokeWidth: 2 }}
+                                activeDot={{ r: 4, fill: '#10b981', stroke: '#064e3b', strokeWidth: 2 }}
                                 connectNulls={true}
                                 unit="%"
                             />
@@ -238,10 +238,10 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
                                 type="linear"
                                 dataKey="weight"
                                 name="Peso"
-                                stroke="#ffffff"
+                                stroke="#eab308"
                                 strokeWidth={2}
                                 dot={<CustomWeightDot />}
-                                activeDot={{ r: 6, fill: '#fff' }}
+                                activeDot={{ r: 6, fill: '#eab308' }}
                                 connectNulls={true}
                                 unit="kg"
                             />
@@ -252,10 +252,10 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
                                 type="linear"
                                 dataKey="bf"
                                 name="Gordura"
-                                stroke="#10b981"
+                                stroke="#ef4444"
                                 strokeWidth={3}
                                 dot={<CustomBfDot />}
-                                activeDot={{ r: 6, fill: '#10b981' }}
+                                activeDot={{ r: 6, fill: '#ef4444' }}
                                 connectNulls={true}
                                 unit="%"
                             />

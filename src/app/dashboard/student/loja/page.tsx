@@ -88,8 +88,8 @@ export default function StudentStorePage() {
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(249,115,22,0.1),transparent_50%)]" />
 
                 <img
-                    src="https://images.unsplash.com/photo-1593079831268-3381b0db4a77?auto=format&fit=crop&q=80&w=1200"
-                    alt="Growth Training"
+                    src="https://images.unsplash.com/photo-1540497077202-7c8a3999166f?auto=format&fit=crop&q=80&w=1200"
+                    alt=""
                     className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-[4s]"
                 />
 

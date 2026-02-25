@@ -98,6 +98,17 @@ export function WorkoutPlayer({
             if (data) setLastSession(data)
         }
         fetchHistory()
+
+        // Midnight check: if day changes, refresh everything
+        const currentDay = new Date().toDateString()
+        const interval = setInterval(() => {
+            if (new Date().toDateString() !== currentDay) {
+                console.log('Day changed! Resetting workout player...')
+                window.location.reload()
+            }
+        }, 60000)
+
+        return () => clearInterval(interval)
     }, [userId, workout.id])
 
     const currentExercise = exercises[currentExerciseIndex]

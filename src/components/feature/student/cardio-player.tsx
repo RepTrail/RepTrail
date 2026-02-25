@@ -53,7 +53,18 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
         } else {
             setLoading(false)
         }
+
+        // Midnight check: if day changes, refresh everything
+        const currentDay = new Date().toDateString()
+        const interval = setInterval(() => {
+            if (new Date().toDateString() !== currentDay) {
+                console.log('Day changed! Resetting cardio player...')
+                window.location.reload() // Simplest way to force lazy closure logic
+            }
+        }, 60000)
+
         return () => {
+            clearInterval(interval)
             if (timerRef.current) clearInterval(timerRef.current)
             if (syncRef.current) clearInterval(syncRef.current)
             releaseWakeLock()

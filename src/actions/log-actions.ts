@@ -434,6 +434,9 @@ export async function getActiveWorkoutSession() {
     if (!user) return null
 
     try {
+        const tzNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }))
+        const todayStr = tzNow.toISOString().split('T')[0]
+
         const { data, error } = await supabase
             .from('workout_logs')
             .select(`
@@ -447,6 +450,15 @@ export async function getActiveWorkoutSession() {
             .maybeSingle()
 
         if (error) throw error
+        if (!data) return null
+
+        const sessionDate = new Date(data.started_at).toISOString().split('T')[0]
+        if (sessionDate < todayStr) {
+            console.log('Lazy Closing previous day workout session:', data.id)
+            await finishWorkoutLog(data.id, 'Fechamento automático (virada do dia)', 5, 'partial')
+            return null
+        }
+
         return data
     } catch (e) {
         console.error('Error fetching active workout session:', e)

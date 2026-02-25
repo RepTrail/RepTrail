@@ -64,10 +64,19 @@ export async function ensureDailyTracking(userId: string) {
     const { data: aw } = await supabase.from('assigned_workouts').select('id').eq('student_id', userId).eq('day_of_week', dow).eq('active', true).maybeSingle()
     const { data: ac } = await supabase.from('assigned_cardios').select('id').eq('student_id', userId).eq('day_of_week', dow).eq('active', true).maybeSingle()
     const { data: steroids } = await supabase.from('student_details').select('steroid_use').eq('id', userId).single()
+    const { data: ae } = await supabase.from('ergogenics').select('application_days').eq('student_id', userId)
 
     const hasWorkout = !!aw
     const hasCardio = !!ac
-    const hasErgo = !!steroids?.steroid_use // Simple check, should ideally check ergogenics table
+
+    let hasErgo = false
+    if (steroids?.steroid_use && ae) {
+        ae.forEach((a: any) => {
+            if (a.application_days && Array.isArray(a.application_days)) {
+                if (a.application_days.includes(dow)) hasErgo = true
+            }
+        })
+    }
 
     const updates: any = {}
     if (!existing || existing.workout_status === 'none') {
@@ -462,8 +471,13 @@ export async function getAdherenceHistory(days: number = 30) {
         let ergoStatus = found?.ergogenics_status || 'none'
         if (ergoDates.has(dateStr)) ergoStatus = 'completed'
         else {
-            if (ergoStatus === 'none' && steroidUse && ergoDays.has(dow)) ergoStatus = 'assigned'
-            if (ergoStatus === 'assigned' && isPast) ergoStatus = 'skipped'
+            // Only consider it assigned/skipped if it's actually in ergoDays
+            if (!ergoDays.has(dow)) {
+                ergoStatus = 'none'
+            } else {
+                if (ergoStatus === 'none' && steroidUse) ergoStatus = 'assigned'
+                if (ergoStatus === 'assigned' && isPast) ergoStatus = 'skipped'
+            }
         }
 
         historyArr.push({
@@ -601,8 +615,12 @@ export async function getStudentAdherenceHistory(studentId: string, days: number
         let ergoStatus = found?.ergogenics_status || 'none'
         if (ergoDates.has(dateStr)) ergoStatus = 'completed'
         else {
-            if (ergoStatus === 'none' && steroidUse && ergogenicsDays.has(dow)) ergoStatus = 'assigned'
-            if (ergoStatus === 'assigned' && isPast) ergoStatus = 'skipped'
+            if (!ergogenicsDays.has(dow)) {
+                ergoStatus = 'none'
+            } else {
+                if (ergoStatus === 'none' && steroidUse) ergoStatus = 'assigned'
+                if (ergoStatus === 'assigned' && isPast) ergoStatus = 'skipped'
+            }
         }
 
         historyArr.push({
