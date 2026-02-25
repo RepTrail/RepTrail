@@ -216,11 +216,13 @@ export function WorkoutPlayer({
         const initLog = async () => {
             if (initialLogId) {
                 setLogId(initialLogId)
+                queryClient.invalidateQueries({ queryKey: ['active-workout-session'] })
                 return
             }
             const result = await startWorkoutLog(workout.id)
             if (result.success) {
                 setLogId(result.logId)
+                queryClient.invalidateQueries({ queryKey: ['active-workout-session'] })
             } else {
                 toast({ title: "Erro", description: "Falha ao iniciar log.", variant: "destructive" })
             }
@@ -436,6 +438,7 @@ export function WorkoutPlayer({
                     setLoading(false)
                     return
                 }
+                queryClient.invalidateQueries({ queryKey: ['active-workout-session'] })
             }
             queryClient.invalidateQueries({ queryKey: ['today-workout'] })
             queryClient.invalidateQueries({ queryKey: ['workout-status'] })

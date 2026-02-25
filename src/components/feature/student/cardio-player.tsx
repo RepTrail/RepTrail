@@ -21,6 +21,8 @@ import {
 } from '@/actions/cardio-actions'
 import { useToast } from '@/hooks/use-toast'
 
+import { useQueryClient } from '@tanstack/react-query'
+
 interface CardioPlayerProps {
     assignment: any
     isCompleted?: boolean
@@ -28,6 +30,7 @@ interface CardioPlayerProps {
 
 export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
     const { toast } = useToast()
+    const queryClient = useQueryClient()
     const [status, setStatus] = useState<'idle' | 'running' | 'paused'>('idle')
     const [seconds, setSeconds] = useState(0)
     const [logId, setLogId] = useState<string | null>(null)
@@ -103,16 +106,18 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
         if (active && active.assigned_cardio_id === assignment.id) {
             setLogId(active.id)
 
-            // Logic to calculate elapsed time precisely even if app was closed
-            const storedStart = localStorage.getItem(`cardio_start_${active.id}`)
             let currentElapsed = active.elapsed_seconds
 
-            if (active.is_running && storedStart) {
-                const startTime = parseInt(storedStart)
+            if (active.is_running) {
+                // Calculation based on DB timestamp (last_resumed_at)
+                // This is the most precise way to resume the timer
+                const lastResumed = new Date(active.last_resumed_at || active.last_heartbeat_at).getTime()
                 const now = Date.now()
-                currentElapsed = Math.floor((now - startTime) / 1000)
+                const diff = Math.floor((now - lastResumed) / 1000)
 
-                // If it reached target while app was closed, cap it
+                currentElapsed += Math.max(0, diff)
+
+                // Cap at target if reached
                 if (currentElapsed > targetSeconds) currentElapsed = targetSeconds
             }
 
@@ -168,10 +173,9 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
                 setLogId(res.logId)
                 setStatus('running')
 
-                const now = Date.now()
-                localStorage.setItem(`cardio_start_${res.logId}`, now.toString())
+                queryClient.invalidateQueries({ queryKey: ['active-cardio-session'] })
 
-                startTimer(now)
+                startTimer(Date.now())
                 startSync()
                 requestWakeLock()
             } else {
@@ -180,8 +184,11 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
         } else {
             // Resuming
             setStatus('running')
+            if (logId) {
+                await updateCardioSession(logId, seconds, true)
+            }
             const virtualStart = Date.now() - (seconds * 1000)
-            localStorage.setItem(`cardio_start_${logId}`, virtualStart.toString())
+            queryClient.invalidateQueries({ queryKey: ['active-cardio-session'] })
             startTimer(virtualStart)
             startSync()
             requestWakeLock()
@@ -192,9 +199,9 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
         setStatus('paused')
         stopTimer()
         releaseWakeLock()
-        localStorage.removeItem(`cardio_start_${logId}`)
         if (logId) {
             await updateCardioSession(logId, seconds, false)
+            queryClient.invalidateQueries({ queryKey: ['active-cardio-session'] })
         }
     }
 
@@ -226,7 +233,7 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
                     title: percentage >= 100 ? 'Parabéns!' : 'Cardio Finalizado',
                     description: percentage >= 100 ? 'Cardio finalizado com sucesso!' : 'Cardio finalizado parcialmente.'
                 })
-                localStorage.removeItem(`cardio_start_${logId}`)
+                queryClient.invalidateQueries({ queryKey: ['active-cardio-session'] })
                 setStatus('idle')
                 setSeconds(0)
                 setLogId(null)

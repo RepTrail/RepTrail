@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     title: "RepTrail",
   },
   icons: {
-    icon: '/favicon.ico',
+    icon: '/icon.jpg',
     apple: '/icon.jpg',
   },
 };

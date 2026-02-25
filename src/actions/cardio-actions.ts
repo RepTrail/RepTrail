@@ -212,7 +212,9 @@ export async function startCardioSession(assignmentId: string) {
                 assigned_cardio_id: assignmentId,
                 status: 'in_progress',
                 is_running: true,
-                started_at: new Date().toISOString()
+                started_at: new Date().toISOString(),
+                last_resumed_at: new Date().toISOString(),
+                last_heartbeat_at: new Date().toISOString()
             })
             .select()
             .single()
@@ -228,13 +230,21 @@ export async function updateCardioSession(logId: string, seconds: number, runnin
     const supabase = await createClient()
 
     try {
+        const updateData: any = {
+            elapsed_seconds: seconds,
+            is_running: running,
+            last_heartbeat_at: new Date().toISOString()
+        }
+
+        if (running) {
+            updateData.last_resumed_at = new Date().toISOString()
+        } else {
+            updateData.last_paused_at = new Date().toISOString()
+        }
+
         const { error } = await supabase
             .from('cardio_logs')
-            .update({
-                elapsed_seconds: seconds,
-                is_running: running,
-                last_heartbeat_at: new Date().toISOString()
-            })
+            .update(updateData)
             .eq('id', logId)
 
         if (error) throw error

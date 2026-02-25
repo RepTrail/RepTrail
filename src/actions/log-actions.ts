@@ -428,3 +428,28 @@ export async function getWorkoutLastSession(studentId: string, workoutId: string
         return null
     }
 }
+export async function getActiveWorkoutSession() {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return null
+
+    try {
+        const { data, error } = await supabase
+            .from('workout_logs')
+            .select(`
+                *,
+                workout:workouts(*)
+            `)
+            .eq('student_id', user.id)
+            .eq('status', 'in_progress')
+            .order('started_at', { ascending: false })
+            .limit(1)
+            .maybeSingle()
+
+        if (error) throw error
+        return data
+    } catch (e) {
+        console.error('Error fetching active workout session:', e)
+        return null
+    }
+}
