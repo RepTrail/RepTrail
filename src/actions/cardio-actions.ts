@@ -301,7 +301,8 @@ export async function getActiveCardioSession() {
         const tzNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }))
         const todayStr = tzNow.toISOString().split('T')[0]
 
-        const { data, error } = await supabase
+        // 1. Search for ANY in_progress session for this user
+        const { data: active, error } = await supabase
             .from('cardio_logs')
             .select(`
                 *,
@@ -312,15 +313,33 @@ export async function getActiveCardioSession() {
             `)
             .eq('student_id', user.id)
             .eq('status', 'in_progress')
-            .gte('started_at', todayStr + 'T00:00:00')
-            .order('last_heartbeat_at', { ascending: false })
+            .order('started_at', { ascending: false })
             .limit(1)
             .maybeSingle()
 
         if (error) throw error
-        return data
+        if (!active) return null
+
+        // 2. Check if the session is from a previous day
+        const sessionDate = new Date(active.started_at).toISOString().split('T')[0]
+        const isFromPreviousDay = sessionDate < todayStr
+
+        if (isFromPreviousDay) {
+            console.log('Lazy Closing previous day cardio session:', active.id)
+
+            // Calculate percentage based on duration
+            const targetSeconds = (active.assignment?.duration_minutes || 30) * 60
+            let percentage = Math.min((active.elapsed_seconds / targetSeconds) * 100, 100)
+
+            // Auto-finish it
+            await finishCardioSession(active.id, 'Fechamento automático (virada do dia)', undefined, percentage)
+
+            return null // New day, new start
+        }
+
+        return active
     } catch (e) {
-        console.error('Error fetching active cardio session:', e)
+        console.error('Error fetching/auto-closing cardio session:', e)
         return null
     }
 }
