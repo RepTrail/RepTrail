@@ -254,7 +254,7 @@ export function TrainerErgogenicsView({ studentId, initialData }: TrainerErgogen
                                         {DAYS.map(day => (
                                             <div
                                                 key={day.value}
-                                                className={`w-9 h-9 rounded-xl flex items-center justify-center text-[10px] font-black border-2 transition-all ${e.application_days.includes(day.value)
+                                                className={`w-9 h-9 rounded-xl flex items-center justify-center text-[10px] font-black border-2 transition-all ${(e.application_days || []).includes(day.value)
                                                     ? 'bg-emerald-500 border-emerald-400 text-zinc-950 shadow-lg shadow-emerald-500/20 scale-110 z-10'
                                                     : 'bg-zinc-950 border-zinc-900 text-zinc-700'
                                                     }`}
@@ -269,7 +269,7 @@ export function TrainerErgogenicsView({ studentId, initialData }: TrainerErgogen
                                     <div className="bg-zinc-950/40 p-4 rounded-2xl border border-zinc-900/50">
                                         <Label className="text-[9px] text-zinc-600 uppercase font-black tracking-widest block mb-1">Dose Dia</Label>
                                         <p className="text-sm font-black text-emerald-500 italic uppercase">
-                                            {(e.weekly_dosage / e.application_days.length).toFixed(2)} {e.unit}
+                                            {(e.weekly_dosage / Math.max((e.application_days || []).length, 1)).toFixed(2)} {e.unit}
                                         </p>
                                     </div>
                                     <div className="bg-zinc-950/40 p-4 rounded-2xl border border-zinc-900/50">
