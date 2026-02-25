@@ -53,24 +53,24 @@ export default async function StudentPublicProfilePage({ params }: { params: Pro
     const trainerData = trainerLink?.trainer as { id: string; full_name: string; avatar_url: string; trainer_code?: string } | undefined
 
     return (
-        <div className="min-h-screen bg-black text-white pb-20">
+        <div className="min-h-screen bg-black text-white pb-20 overflow-x-hidden">
             {/* Navigation Header */}
-            <div className="sticky top-0 z-50 bg-black/60 backdrop-blur-xl border-b border-white/5 px-6 py-4">
-                <div className="max-w-6xl mx-auto flex items-center justify-between">
-                    <Link href="/dashboard/student/feed" className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors group">
+            <div className="sticky top-0 z-50 bg-black/60 backdrop-blur-xl border-b border-white/5 px-4 sm:px-6 py-4">
+                <div className="max-w-6xl mx-auto flex items-center justify-between gap-2">
+                    <Link href="/dashboard/student/feed" className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors group shrink-0">
                         <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-                        <span className="text-xs font-black uppercase tracking-widest italic">Voltar ao Feed</span>
+                        <span className="text-[10px] sm:text-xs font-black uppercase tracking-widest italic">Voltar ao Feed</span>
                     </Link>
-                    <div className="flex items-center gap-2 bg-emerald-500/10 px-4 py-1.5 rounded-full border border-emerald-500/20">
+                    <div className="flex items-center gap-2 bg-emerald-500/10 px-3 sm:px-4 py-1.5 rounded-full border border-emerald-500/20 shrink-0">
                         <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                        <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500">Perfil Verificado</span>
+                        <span className="text-[8px] sm:text-[10px] font-black uppercase tracking-widest text-emerald-500 whitespace-nowrap">Perfil Verificado</span>
                     </div>
                 </div>
             </div>
 
             {/* Hero Section (Immediate Render) */}
-            <div className="max-w-6xl mx-auto px-6 pt-12">
-                <div className="relative rounded-[3rem] overflow-hidden bg-zinc-900/40 border border-white/5 p-8 md:p-12 mb-12">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-12">
+                <div className="relative rounded-[2.5rem] sm:rounded-[3rem] overflow-hidden bg-zinc-900/40 border border-white/5 p-6 sm:p-8 md:p-12 mb-12">
                     <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12 relative z-10">
                         <div className="w-32 h-32 md:w-48 md:h-48 rounded-full border-4 border-emerald-500/30 overflow-hidden relative shadow-2xl">
                             {profile.avatar_url ? (

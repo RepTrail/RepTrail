@@ -1,7 +1,9 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { Camera, Calendar, X, Maximize2, Pencil, Check } from 'lucide-react'
+import { Camera, Calendar, X, Maximize2, Pencil, Check, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { deleteProgressPhoto, updateProgressPhotoDate } from '@/actions/student-actions'
@@ -21,7 +23,7 @@ interface StudentProgressGalleryProps {
 }
 
 export function StudentProgressGallery({ photos }: StudentProgressGalleryProps) {
-    const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null)
+    const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(null)
     const [hoveredId, setHoveredId] = useState<string | null>(null)
     const [editingId, setEditingId] = useState<string | null>(null)
     const [editDate, setEditDate] = useState('')
@@ -31,6 +33,14 @@ export function StudentProgressGallery({ photos }: StudentProgressGalleryProps) 
     const sortedPhotos = [...photos].sort((a, b) =>
         new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     )
+
+    // Flat list of all photos for navigation
+    const allPhotos = sortedPhotos.flatMap(set => ([
+        { url: set.front_url, label: 'Frente', type: 'front_url', date: set.created_at, id: set.id },
+        { url: set.back_url, label: 'Costas', type: 'back_url', date: set.created_at, id: set.id },
+        { url: set.side_right_url, label: 'Lado D', type: 'side_right_url', date: set.created_at, id: set.id },
+        { url: set.side_left_url, label: 'Lado E', type: 'side_left_url', date: set.created_at, id: set.id },
+    ].filter(p => !!p.url))) as any[]
 
     async function handleDelete(photoId: string) {
         if (!confirm('Tem certeza que deseja remover este registro de fotos?')) return
@@ -149,55 +159,99 @@ export function StudentProgressGallery({ photos }: StudentProgressGalleryProps) 
                                 </div>
                             </div>
                             <div className="grid grid-cols-2 gap-2 p-4">
-                                {photosInSet.map((photo, idx) => (
-                                    <div
-                                        key={`${set.id}-${photo.key}`}
-                                        className="relative aspect-[3/4] bg-zinc-950 rounded-xl overflow-hidden border border-zinc-800 cursor-pointer group/item"
-                                        onClick={() => setSelectedPhoto(photo.url ?? null)}
-                                    >
-                                        <img
-                                            src={photo.url}
-                                            alt={photo.label}
-                                            className="w-full h-full object-cover grayscale group-hover/item:grayscale-0 transition-all duration-500"
-                                        />
-                                        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-2 translate-y-2 group-hover/item:translate-y-0 transition-transform">
-                                            <p className="text-[9px] font-bold text-white uppercase tracking-tighter">
-                                                {photo.label}
-                                            </p>
+                                {photosInSet.map((photo, idx) => {
+                                    const globalIndex = allPhotos.findIndex(p => p.url === photo.url)
+                                    return (
+                                        <div
+                                            key={`${set.id}-${photo.key}`}
+                                            className="relative aspect-[3/4] bg-zinc-950 rounded-xl overflow-hidden border border-zinc-800 cursor-pointer group/item"
+                                            onClick={() => setSelectedPhotoIndex(globalIndex)}
+                                        >
+                                            <img
+                                                src={photo.url}
+                                                alt={photo.label}
+                                                className="w-full h-full object-cover grayscale group-hover/item:grayscale-0 transition-all duration-500"
+                                            />
+                                            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-2 translate-y-2 group-hover/item:translate-y-0 transition-transform">
+                                                <p className="text-[9px] font-bold text-white uppercase tracking-tighter">
+                                                    {photo.label}
+                                                </p>
+                                            </div>
+                                            <div className="absolute inset-0 bg-purple-500/10 opacity-0 group-hover/item:opacity-100 transition-opacity flex items-center justify-center">
+                                                <Maximize2 className="w-4 h-4 text-white" />
+                                            </div>
                                         </div>
-                                        <div className="absolute inset-0 bg-purple-500/10 opacity-0 group-hover/item:opacity-100 transition-opacity flex items-center justify-center">
-                                            <Maximize2 className="w-4 h-4 text-white" />
-                                        </div>
-                                    </div>
-                                ))}
+                                    )
+                                })}
                             </div>
                         </div>
                     )
                 })}
             </div>
 
-            {/* Lightbox */}
-            {selectedPhoto && (
-                <div
-                    className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4 md:p-10 animate-in fade-in duration-300"
-                    onClick={() => setSelectedPhoto(null)}
-                >
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="absolute top-6 right-6 text-white hover:bg-white/10 rounded-full"
-                        onClick={() => setSelectedPhoto(null)}
-                    >
-                        <X className="w-8 h-8" />
-                    </Button>
-                    <img
-                        src={selectedPhoto}
-                        alt="Zoom"
-                        className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
-                        onClick={(e) => e.stopPropagation()}
-                    />
-                </div>
-            )}
+            {/* Premium Lightbox Modal */}
+            <Dialog open={selectedPhotoIndex !== null} onOpenChange={(open) => !open && setSelectedPhotoIndex(null)}>
+                <DialogContent className="max-w-[95vw] w-full max-h-[95vh] p-0 border-none bg-black/90 backdrop-blur-xl flex items-center justify-center">
+                    <VisuallyHidden>
+                        <DialogTitle>Visualização de Foto</DialogTitle>
+                    </VisuallyHidden>
+
+                    {selectedPhotoIndex !== null && (
+                        <div className="relative w-full h-full flex items-center justify-center p-4">
+                            <div className="relative aspect-[3/4] w-full max-h-[85vh]">
+                                <img
+                                    src={allPhotos[selectedPhotoIndex].url}
+                                    alt="Foto em destaque"
+                                    className="w-full h-full object-contain rounded-lg"
+                                />
+                            </div>
+
+                            {/* Info Overlay */}
+                            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 bg-zinc-900/80 backdrop-blur-md px-6 py-3 rounded-full border border-white/10 flex items-center gap-6">
+                                <div className="text-center">
+                                    <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest leading-none mb-1">Tipo</p>
+                                    <p className="text-xs font-black uppercase italic text-white leading-none">
+                                        {allPhotos[selectedPhotoIndex].label}
+                                    </p>
+                                </div>
+                                <div className="w-px h-6 bg-white/10" />
+                                <div className="text-center">
+                                    <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest leading-none mb-1">Data</p>
+                                    <p className="text-xs font-black uppercase italic text-white leading-none">
+                                        {new Date(allPhotos[selectedPhotoIndex].date).toLocaleDateString('pt-BR')}
+                                    </p>
+                                </div>
+                            </div>
+
+                            {/* Controls */}
+                            <button
+                                onClick={(e) => { e.stopPropagation(); setSelectedPhotoIndex(null); }}
+                                className="absolute top-4 right-4 w-12 h-12 flex items-center justify-center bg-white/10 hover:bg-white/20 rounded-full transition-colors z-50 text-white"
+                            >
+                                <X className="w-6 h-6" />
+                            </button>
+
+                            {selectedPhotoIndex > 0 && (
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); setSelectedPhotoIndex(selectedPhotoIndex - 1); }}
+                                    className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center bg-white/20 hover:bg-white/40 rounded-full transition-colors z-50 text-white"
+                                >
+                                    <ChevronLeft className="w-6 h-6" />
+                                </button>
+                            )}
+
+                            {selectedPhotoIndex < allPhotos.length - 1 && (
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); setSelectedPhotoIndex(selectedPhotoIndex + 1); }}
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center bg-white/20 hover:bg-white/40 rounded-full transition-colors z-50 text-white"
+                                >
+                                    <ChevronRight className="w-6 h-6" />
+                                </button>
+                            )}
+                        </div>
+                    )}
+                </DialogContent>
+            </Dialog>
         </>
     )
 }

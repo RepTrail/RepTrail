@@ -10,7 +10,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import Link from 'next/link'
-import { ShieldCheck, ArrowRight, User, Users, Megaphone } from 'lucide-react'
+import { ShieldCheck, ArrowRight, User, Users, Megaphone, Eye, EyeOff } from 'lucide-react'
 import { Logo } from '@/components/ui/logo'
 import { useSearchParams } from 'next/navigation'
 import { useEffect } from 'react'
@@ -26,6 +26,7 @@ export function AuthForm({ view }: AuthFormProps) {
     const [whatsapp, setWhatsapp] = useState('')
     const [role, setRole] = useState<'trainer' | 'student'>('student')
     const [isAffiliate, setIsAffiliate] = useState(false)
+    const [showPassword, setShowPassword] = useState(false)
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const router = useRouter()
@@ -184,15 +185,24 @@ export function AuthForm({ view }: AuthFormProps) {
                                     </Link>
                                 )}
                             </div>
-                            <Input
-                                id="password"
-                                type="password"
-                                placeholder="••••••••"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                required
-                                className="bg-zinc-950 border-zinc-800 text-white rounded-xl h-12 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
-                            />
+                            <div className="relative group">
+                                <Input
+                                    id="password"
+                                    type={showPassword ? "text" : "password"}
+                                    placeholder="••••••••"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    required
+                                    className="bg-zinc-950 border-zinc-800 text-white rounded-xl h-12 pr-12 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition-colors"
+                                >
+                                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                </button>
+                            </div>
                         </div>
 
                         {view === 'signup' && (

@@ -11,7 +11,7 @@ export async function WorkoutHistorySection({ studentId }: { studentId: string }
                 <History className="w-6 h-6 text-emerald-500" />
                 <h2 className="text-xl font-black italic uppercase tracking-tight">Histórico de Treinos</h2>
             </div>
-            <div className="bg-zinc-900/40 border border-zinc-800/50 rounded-[2.5rem] overflow-hidden backdrop-blur-sm p-6 md:p-10">
+            <div className="bg-zinc-900/40 border border-zinc-800/50 rounded-[2.5rem] overflow-hidden backdrop-blur-sm p-4 sm:p-6 md:p-10">
                 <StudentWorkoutHistory
                     history={history as any}
                     isBlocked={false}

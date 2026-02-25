@@ -19,9 +19,9 @@ export async function MetricsAndEvolution({ studentId, steroidUse }: { studentId
                     <h2 className="text-xl font-black italic uppercase tracking-tight">Consistência (30D)</h2>
                 </div>
 
-                <div className="bg-zinc-900/40 border border-zinc-800/50 rounded-[2.5rem] overflow-hidden backdrop-blur-sm p-6 md:p-10 space-y-10">
+                <div className="bg-zinc-900/40 border border-zinc-800/50 rounded-[2.5rem] overflow-hidden backdrop-blur-sm p-4 sm:p-6 md:p-10 space-y-8 sm:space-y-10">
                     <div className="grid grid-cols-2 gap-4">
-                        <div className="bg-white/5 border border-white/5 p-6 rounded-[2rem] flex flex-col items-center justify-center text-center shadow-lg">
+                        <div className="bg-white/5 border border-white/5 p-4 sm:p-6 rounded-[2rem] flex flex-col items-center justify-center text-center shadow-lg">
                             <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1">Peso Atual</span>
                             <div className="flex items-baseline gap-1">
                                 <span className="text-3xl font-black italic text-emerald-500">
@@ -30,7 +30,7 @@ export async function MetricsAndEvolution({ studentId, steroidUse }: { studentId
                                 <span className="text-[10px] font-black uppercase text-zinc-600 italic">kg</span>
                             </div>
                         </div>
-                        <div className="bg-white/5 border border-white/5 p-6 rounded-[2rem] flex flex-col items-center justify-center text-center shadow-lg">
+                        <div className="bg-white/5 border border-white/5 p-4 sm:p-6 rounded-[2rem] flex flex-col items-center justify-center text-center shadow-lg">
                             <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1">BF Atual</span>
                             <div className="flex items-baseline gap-1">
                                 <span className="text-3xl font-black italic text-emerald-500">
@@ -41,11 +41,13 @@ export async function MetricsAndEvolution({ studentId, steroidUse }: { studentId
                         </div>
                     </div>
 
-                    <AdherenceChart
-                        history={adherenceHistory || []}
-                        showErgogenics={steroidUse}
-                        noCard={true}
-                    />
+                    <div className="max-w-full overflow-hidden">
+                        <AdherenceChart
+                            history={adherenceHistory || []}
+                            showErgogenics={steroidUse}
+                            noCard={true}
+                        />
+                    </div>
                 </div>
             </div>
 

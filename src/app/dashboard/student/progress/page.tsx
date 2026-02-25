@@ -92,7 +92,7 @@ export default async function StudentProgressPage() {
     const progressPhotos = progressPhotosData || []
 
     return (
-        <div className="space-y-12 pb-20">
+        <div className="max-w-7xl mx-auto space-y-10 pb-32 px-4 sm:px-6 md:px-8">
             {/* Header */}
             <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div className="space-y-4">
@@ -189,7 +189,7 @@ export default async function StudentProgressPage() {
                         </div>
                     </div>
                 </CardHeader>
-                <CardContent className="p-8 md:p-10 pt-0">
+                <CardContent className="p-4 sm:p-8 md:p-10 pt-0">
                     <StudentWorkoutHistory
                         history={history}
                         isBlocked={trainerTier === 'start'}

@@ -133,71 +133,71 @@ export function StudentWorkoutHistory({ history, isBlocked }: StudentWorkoutHist
                         `}
                     >
                         <div
-                            className="p-5 md:p-6 flex items-center justify-between cursor-pointer group"
+                            className="p-4 sm:p-5 md:p-6 flex flex-col sm:flex-row sm:items-center justify-between cursor-pointer group gap-4"
                             onClick={() => toggleLog(log.id)}
                         >
-                            <div className="flex items-center gap-5">
-                                <div className="w-12 h-12 rounded-2xl bg-zinc-900 flex items-center justify-center border border-zinc-800 group-hover:border-emerald-500/30 transition-all shadow-lg">
-                                    <Dumbbell className="w-6 h-6 text-emerald-500" />
+                            <div className="flex items-center gap-4 sm:gap-5">
+                                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-zinc-900 flex items-center justify-center border border-zinc-800 group-hover:border-emerald-500/30 transition-all shadow-lg shrink-0">
+                                    <Dumbbell className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-500" />
                                 </div>
-                                <div className="space-y-1.5">
-                                    <h4 className="text-base font-black text-white italic uppercase tracking-tight leading-none">
+                                <div className="space-y-1 sm:space-y-1.5 min-w-0">
+                                    <h4 className="text-sm sm:text-base font-black text-white italic uppercase tracking-tight leading-none truncate">
                                         {log.workout?.name || 'Treino Avulso'}
                                     </h4>
-                                    <div className="flex items-center gap-4">
-                                        <span className="text-[10px] font-black text-zinc-500 flex items-center gap-1.5 uppercase tracking-widest">
-                                            <Calendar className="w-3 h-3 text-zinc-700" />
+                                    <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
+                                        <span className="text-[9px] sm:text-[10px] font-black text-zinc-500 flex items-center gap-1.5 uppercase tracking-widest whitespace-nowrap">
+                                            <Calendar className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-zinc-700" />
                                             {new Date(log.started_at).toLocaleDateString('pt-BR')}
                                         </span>
                                         {duration && (
-                                            <span className="text-[10px] font-black text-zinc-500 flex items-center gap-1.5 uppercase tracking-widest">
-                                                <Timer className="w-3 h-3 text-zinc-700" />
+                                            <span className="text-[9px] sm:text-[10px] font-black text-zinc-500 flex items-center gap-1.5 uppercase tracking-widest whitespace-nowrap">
+                                                <Timer className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-zinc-700" />
                                                 {duration} min
                                             </span>
                                         )}
                                     </div>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-4">
-                                <div className="hidden sm:flex flex-col items-end gap-0.5">
-                                    <span className="text-[9px] font-black text-zinc-600 uppercase tracking-widest">Status</span>
-                                    <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest flex items-center gap-1">
-                                        <div className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
+                            <div className="flex items-center justify-between sm:justify-end gap-4 border-t border-zinc-800/50 sm:border-0 pt-3 sm:pt-0">
+                                <div className="flex flex-col items-start sm:items-end gap-0.5">
+                                    <span className="text-[8px] sm:text-[9px] font-black text-zinc-600 uppercase tracking-widest">Status</span>
+                                    <span className="text-[8px] sm:text-[9px] font-black text-emerald-500 uppercase tracking-widest flex items-center gap-1">
+                                        <div className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_5px_rgba(16,185,129,0.5)]" />
                                         Concluído
                                     </span>
                                 </div>
-                                <div className="flex items-center gap-3">
+                                <div className="flex items-center gap-2 sm:gap-3">
                                     <DeleteWorkoutDialog logId={log.id} workoutName={log.workout?.name || 'Treino Avulso'} />
                                     <div className={`
-                                        w-10 h-10 rounded-2xl border flex items-center justify-center transition-all duration-300
+                                        w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl border flex items-center justify-center transition-all duration-300
                                         ${isExpanded ? 'bg-zinc-100 text-zinc-950 border-white' : 'bg-zinc-900 border-zinc-800 text-zinc-500 group-hover:border-zinc-700'}
                                     `}>
-                                        {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                                        {isExpanded ? <ChevronUp className="w-4 h-4 sm:w-5 sm:h-5" /> : <ChevronDown className="w-4 h-4 sm:w-5 sm:h-5" />}
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         {isExpanded && (
-                            <div className="p-6 pt-0 border-t border-zinc-800/30 animate-in slide-in-from-top-4 duration-300">
+                            <div className="p-4 sm:p-6 pt-0 border-t border-zinc-800/30 animate-in slide-in-from-top-4 duration-300">
                                 {/* Feedback Section */}
                                 {(log.perceived_effort || log.feedback) && (
-                                    <div className="mt-6 p-5 bg-zinc-950/50 rounded-3xl border border-zinc-800/50 space-y-4">
-                                        <div className="flex items-center justify-between">
+                                    <div className="mt-6 p-4 sm:p-5 bg-zinc-950/50 rounded-3xl border border-zinc-800/50 space-y-4">
+                                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                             <div className="flex items-center gap-3">
-                                                <div className="p-2 bg-zinc-900 rounded-xl border border-zinc-800">
+                                                <div className="p-2 bg-zinc-900 rounded-xl border border-zinc-800 shrink-0">
                                                     <Activity className="w-4 h-4 text-emerald-500" />
                                                 </div>
-                                                <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest italic">Análise de Desempenho</p>
+                                                <p className="text-[9px] sm:text-[10px] font-black text-zinc-400 uppercase tracking-widest italic leading-tight">Análise de Desempenho (RPE)</p>
                                             </div>
                                             {log.perceived_effort && (
-                                                <div className="flex items-center gap-2">
-                                                    <span className="text-[9px] font-black text-zinc-600 uppercase tracking-widest">Esforço (RPE)</span>
+                                                <div className="flex items-center justify-between sm:justify-end gap-3 bg-zinc-900/40 sm:bg-transparent p-3 sm:p-0 rounded-2xl border border-zinc-800/30 sm:border-0">
+                                                    <span className="text-[8px] sm:text-[9px] font-black text-zinc-600 uppercase tracking-widest whitespace-nowrap">Nível de Esforço</span>
                                                     <span className={`
-                                                        px-3 py-1 rounded-lg text-[10px] font-black border italic
-                                                        ${log.perceived_effort >= 8 ? 'bg-red-500/10 text-red-500 border-red-500/20' :
-                                                            log.perceived_effort >= 5 ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' :
-                                                                'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'}
+                                                        px-3 py-1 rounded-lg text-[10px] sm:text-xs font-black border italic shrink-0
+                                                        ${log.perceived_effort >= 8 ? 'bg-red-500/10 text-red-500 border-red-500/20 shadow-[0_0_10px_rgba(239,68,68,0.1)]' :
+                                                            log.perceived_effort >= 5 ? 'bg-amber-500/10 text-amber-500 border-amber-500/20 shadow-[0_0_10px_rgba(245,158,11,0.1)]' :
+                                                                'bg-emerald-500/10 text-emerald-500 border-emerald-500/20 shadow-[0_0_10px_rgba(16,185,129,0.1)]'}
                                                     `}>
                                                         {log.perceived_effort}/10
                                                     </span>
@@ -233,40 +233,49 @@ export function StudentWorkoutHistory({ history, isBlocked }: StudentWorkoutHist
                                                     <div key={exGroup.id} className="space-y-2">
                                                         <div
                                                             className={`
-                                                                flex items-center justify-between bg-zinc-950/40 p-5 rounded-2xl border transition-all cursor-pointer
-                                                                ${isExExpanded ? 'border-zinc-700' : 'border-zinc-800/50 hover:border-zinc-700/50'}
+                                                                grid grid-cols-[40px_1fr_auto] items-center bg-zinc-950/40 p-3 sm:p-4 rounded-[1.5rem] sm:rounded-3xl border transition-all cursor-pointer gap-3
+                                                                ${isExExpanded ? 'border-zinc-700 bg-zinc-900/40 ring-1 ring-zinc-700/20' : 'border-zinc-800/50 hover:border-zinc-700/50'}
                                                             `}
                                                             onClick={() => toggleExercise(logExId)}
                                                         >
-                                                            <div className="flex items-center gap-4">
-                                                                <div className="w-8 h-8 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center shadow-inner">
-                                                                    <div className={`w-1.5 h-1.5 rounded-full ${isExExpanded ? 'bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]' : 'bg-zinc-800'}`} />
-                                                                </div>
-                                                                <span className="text-xs font-black text-zinc-100 uppercase italic tracking-wide">{exGroup.name}</span>
+                                                            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-center shadow-inner shrink-0 transition-transform group-hover:scale-105">
+                                                                <div className={`w-2 h-2 rounded-full ${isExExpanded ? 'bg-emerald-500 animate-pulse shadow-[0_0_15px_rgba(16,185,129,0.5)]' : 'bg-zinc-800'}`} />
                                                             </div>
-                                                            <div className="flex items-center gap-3">
-                                                                <div className="bg-zinc-900/80 px-3 py-1.5 rounded-xl border border-zinc-800/50 shadow-inner">
-                                                                    <span className="text-[10px] font-black text-zinc-400 uppercase italic">{exGroup.sets.length} <span className="text-[8px] text-zinc-600">Séries</span></span>
+
+                                                            <div className="min-w-0 flex flex-col justify-center">
+                                                                <span className="text-xs sm:text-sm font-black text-zinc-100 uppercase italic tracking-tight truncate block leading-tight">{exGroup.name}</span>
+                                                                <div className="flex items-center gap-1.5 mt-1">
+                                                                    <div className="bg-zinc-900/80 px-2 py-0.5 rounded-lg border border-zinc-800/50 flex items-baseline gap-1">
+                                                                        <span className="text-[10px] font-black text-zinc-400 uppercase italic">{exGroup.sets.length}</span>
+                                                                        <span className="text-[7px] text-zinc-600 font-black uppercase tracking-widest">Séries</span>
+                                                                    </div>
                                                                 </div>
-                                                                <div className="flex items-center gap-2">
-                                                                    <ObservationsPopup
-                                                                        exerciseName={exGroup.name}
-                                                                        notes={exGroup.sets.map(s => s.notes).filter(Boolean) as string[]}
-                                                                    />
-                                                                    <ProgressionPopup studentId={log.student_id} exerciseId={exGroup.id} exerciseName={exGroup.name} />
+                                                            </div>
+
+                                                            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                                                                <ObservationsPopup
+                                                                    exerciseName={exGroup.name}
+                                                                    notes={exGroup.sets.map(s => s.notes).filter(Boolean) as string[]}
+                                                                />
+                                                                <ProgressionPopup studentId={log.student_id} exerciseId={exGroup.id} exerciseName={exGroup.name} />
+                                                                <div className={`
+                                                                    w-9 h-9 sm:w-10 sm:h-10 rounded-xl border flex items-center justify-center transition-all duration-300
+                                                                    ${isExExpanded ? 'bg-zinc-100 text-zinc-950 border-white shadow-lg shadow-white/10' : 'bg-zinc-900 border-zinc-800 text-zinc-500'}
+                                                                `}>
+                                                                    {isExExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                                                                 </div>
-                                                                {isExExpanded ? <ChevronUp className="w-4 h-4 text-zinc-600" /> : <ChevronDown className="w-4 h-4 text-zinc-600" />}
                                                             </div>
                                                         </div>
 
                                                         {isExExpanded && (
-                                                            <div className="grid gap-2 pl-4 animate-in slide-in-from-left-2 duration-200">
+                                                            <div className="grid gap-2.5 animate-in slide-in-from-left-2 duration-200">
                                                                 {exGroup.sets.map((load, idx) => (
-                                                                    <div key={idx} className="flex items-center justify-between bg-zinc-900/30 p-4 rounded-xl border border-zinc-800/30">
-                                                                        <div className="flex items-center gap-4">
-                                                                            <span className="text-[8px] font-black text-zinc-700 uppercase italic tracking-widest">{idx + 1}ª Série</span>
+                                                                    <div key={idx} className="grid grid-cols-[25px_1.5fr_1fr_1fr] items-center bg-zinc-900/30 p-3.5 sm:p-5 rounded-2xl border border-zinc-800/30 gap-2 sm:gap-4">
+                                                                        <span className="text-[11px] font-black text-zinc-600 uppercase italic leading-none">{idx + 1}º</span>
+
+                                                                        <div className="flex justify-start min-w-0">
                                                                             <div className={`
-                                                                                px-2 py-0.5 rounded-full text-[7px] font-black uppercase tracking-widest border
+                                                                                px-2.5 py-1 rounded-lg text-[8px] sm:text-[9px] font-black uppercase tracking-widest border
                                                                                 ${load.set_type === 'WARMUP' ? 'bg-orange-500/10 text-orange-500 border-orange-500/20' :
                                                                                     load.set_type === 'FEEDER' ? 'bg-blue-500/10 text-blue-500 border-blue-500/20' :
                                                                                         'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'}
@@ -275,18 +284,18 @@ export function StudentWorkoutHistory({ history, isBlocked }: StudentWorkoutHist
                                                                                     load.set_type === 'FEEDER' ? 'Feeder' : 'Trabalho'}
                                                                             </div>
                                                                         </div>
-                                                                        <div className="flex items-center gap-6">
-                                                                            <div className="flex flex-col items-end">
-                                                                                <span className="text-[7px] font-black text-zinc-600 uppercase tracking-widest leading-none">Carga</span>
-                                                                                <div className="flex items-baseline gap-1">
-                                                                                    <span className="text-sm font-black text-white italic">{load.weight_kg}</span>
-                                                                                    <span className="text-[8px] font-black text-zinc-700 uppercase italic">kg</span>
-                                                                                </div>
+
+                                                                        <div className="flex flex-col items-end border-l border-zinc-800/50 pl-3">
+                                                                            <span className="text-[7px] font-black text-zinc-500 uppercase tracking-widest leading-none mb-1">Carga</span>
+                                                                            <div className="flex items-baseline gap-0.5">
+                                                                                <span className="text-sm sm:text-base font-black text-white italic leading-none">{load.weight_kg}</span>
+                                                                                <span className="text-[9px] font-black text-zinc-700 uppercase italic">kg</span>
                                                                             </div>
-                                                                            <div className="flex flex-col items-end">
-                                                                                <span className="text-[7px] font-black text-zinc-600 uppercase tracking-widest leading-none">Reps</span>
-                                                                                <span className="text-sm font-black text-emerald-500 italic">{load.reps_performed}</span>
-                                                                            </div>
+                                                                        </div>
+
+                                                                        <div className="flex flex-col items-end border-l border-zinc-800/50 pl-3">
+                                                                            <span className="text-[7px] font-black text-zinc-500 uppercase tracking-widest leading-none mb-1">Reps</span>
+                                                                            <span className="text-sm sm:text-base font-black text-emerald-500 italic leading-none">{load.reps_performed}</span>
                                                                         </div>
                                                                     </div>
                                                                 ))}
@@ -353,17 +362,17 @@ function ProgressionPopup({ studentId, exerciseId, exerciseName }: { studentId: 
                     </Button>
                 </DialogClose>
 
-                <div className="overflow-y-auto max-h-[85vh] p-8">
-                    <DialogHeader className="space-y-4 mb-6">
-                        <div className="flex items-center gap-3">
-                            <div className="p-3 bg-emerald-500/10 rounded-2xl border border-emerald-500/20">
+                <div className="overflow-y-auto max-h-[85vh] p-6 sm:p-10">
+                    <DialogHeader className="mb-8">
+                        <div className="flex items-center justify-start gap-4 pr-12">
+                            <div className="w-12 h-12 flex items-center justify-center bg-emerald-500/10 rounded-2xl border border-emerald-500/20 shrink-0">
                                 <TrendingUp className="w-6 h-6 text-emerald-500" />
                             </div>
-                            <div className="space-y-1">
-                                <DialogTitle className="text-2xl font-black text-zinc-100 uppercase italic tracking-tighter">
+                            <div className="space-y-1 text-left min-w-0">
+                                <DialogTitle className="text-lg sm:text-2xl font-black text-zinc-100 uppercase italic tracking-tighter leading-tight">
                                     Evolução de Carga
                                 </DialogTitle>
-                                <p className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">{exerciseName}</p>
+                                <p className="text-[9px] sm:text-[10px] font-black text-emerald-500 uppercase tracking-widest">{exerciseName}</p>
                             </div>
                         </div>
                     </DialogHeader>
@@ -416,17 +425,17 @@ function ObservationsPopup({ exerciseName, notes }: { exerciseName: string, note
                     </Button>
                 </DialogClose>
 
-                <div className="p-8 space-y-6">
-                    <DialogHeader className="space-y-4">
-                        <div className="flex items-center gap-3">
-                            <div className="p-3 bg-red-500/10 rounded-2xl border border-red-500/20">
+                <div className="p-6 sm:p-10 space-y-8">
+                    <DialogHeader>
+                        <div className="flex items-center justify-start gap-4 pr-12">
+                            <div className="w-12 h-12 flex items-center justify-center bg-red-500/10 rounded-2xl border border-red-500/20 shrink-0">
                                 <Bell className="w-6 h-6 text-red-500" />
                             </div>
-                            <div className="space-y-1">
-                                <DialogTitle className="text-2xl font-black text-zinc-100 uppercase italic tracking-tighter">
+                            <div className="space-y-1 text-left min-w-0">
+                                <DialogTitle className="text-lg sm:text-2xl font-black text-zinc-100 uppercase italic tracking-tighter leading-tight">
                                     Observações do Aluno
                                 </DialogTitle>
-                                <p className="text-[10px] font-black text-red-500 uppercase tracking-widest">{exerciseName}</p>
+                                <p className="text-[9px] sm:text-[10px] font-black text-red-500 uppercase tracking-widest">{exerciseName}</p>
                             </div>
                         </div>
                     </DialogHeader>
@@ -506,17 +515,17 @@ function DeleteWorkoutDialog({ logId, workoutName }: { logId: string, workoutNam
                 </Button>
             </DialogTrigger>
             <DialogContent showCloseButton={false} className="max-w-md bg-zinc-950 border-zinc-800 rounded-[2rem] p-0 overflow-hidden shadow-2xl scale-100 animate-in zoom-in-95 duration-300 relative fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                <div className="p-8 space-y-6">
-                    <DialogHeader className="space-y-4">
-                        <div className="flex items-center gap-3">
-                            <div className="p-3 bg-red-500/10 rounded-2xl border border-red-500/20">
+                <div className="p-6 sm:p-10 space-y-8">
+                    <DialogHeader>
+                        <div className="flex items-center justify-start gap-4 pr-12">
+                            <div className="w-12 h-12 flex items-center justify-center bg-red-500/10 rounded-2xl border border-red-500/20 shrink-0">
                                 <Trash2 className="w-6 h-6 text-red-500" />
                             </div>
-                            <div className="space-y-1">
-                                <DialogTitle className="text-2xl font-black text-zinc-100 uppercase italic tracking-tighter leading-none">
+                            <div className="space-y-1 text-left min-w-0">
+                                <DialogTitle className="text-lg sm:text-2xl font-black text-zinc-100 uppercase italic tracking-tighter leading-tight">
                                     Apagar Registro?
                                 </DialogTitle>
-                                <DialogDescription className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest leading-none">
+                                <DialogDescription className="text-zinc-500 text-[9px] sm:text-[10px] font-bold uppercase tracking-widest leading-none">
                                     Esta ação não pode ser desfeita.
                                 </DialogDescription>
                             </div>
@@ -584,17 +593,17 @@ function WorkoutFeedbackPopup({ feedback, workoutName }: { feedback?: string, wo
                     </Button>
                 </DialogClose>
 
-                <div className="p-8 space-y-6">
-                    <DialogHeader className="space-y-4">
-                        <div className="flex items-center gap-3">
-                            <div className="p-3 bg-emerald-500/10 rounded-2xl border border-emerald-500/20">
+                <div className="p-6 sm:p-10 space-y-8">
+                    <DialogHeader>
+                        <div className="flex items-center justify-start gap-4 pr-12">
+                            <div className="w-12 h-12 flex items-center justify-center bg-emerald-500/10 rounded-2xl border border-emerald-500/20 shrink-0">
                                 <Activity className="w-6 h-6 text-emerald-500" />
                             </div>
-                            <div className="space-y-1">
-                                <DialogTitle className="text-2xl font-black text-zinc-100 uppercase italic tracking-tighter leading-none">
+                            <div className="space-y-1 text-left min-w-0">
+                                <DialogTitle className="text-lg sm:text-2xl font-black text-zinc-100 uppercase italic tracking-tighter leading-tight">
                                     Relato do Treino
                                 </DialogTitle>
-                                <p className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">{workoutName}</p>
+                                <p className="text-[9px] sm:text-[10px] font-black text-emerald-500 uppercase tracking-widest">{workoutName}</p>
                             </div>
                         </div>
                     </DialogHeader>
