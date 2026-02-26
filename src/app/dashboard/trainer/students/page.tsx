@@ -2,7 +2,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Users, Search, Mail, Wallet, Activity, ArrowUpRight, AlertCircle, CheckCircle, Zap, Sparkles, Crown, BedDouble } from 'lucide-react'
+import { Users, Search, Mail, Wallet, Activity, ArrowUpRight, AlertCircle, CheckCircle, Zap, Sparkles, Crown, BedDouble, Plus } from 'lucide-react'
 import { Badge } from "@/components/ui/badge"
 import {
     Table,
@@ -12,7 +12,8 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { AddStudentDialog } from '@/components/feature/trainer/add-student-dialog'
+import { UnifiedCreationDialog } from '@/components/feature/shared/unified-creation-dialog'
+import { createStudent } from '@/actions/trainer-actions'
 import { CopyInviteButton } from '@/components/feature/trainer/copy-invite-button'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import Link from 'next/link'
@@ -117,7 +118,22 @@ export default async function StudentsPage() {
                 </div>
                 <div className="flex items-center gap-3">
                     <CopyInviteButton trainerCode={profile?.trainer_code || ''} />
-                    <AddStudentDialog />
+                    <UnifiedCreationDialog
+                        title="Vincular Novo Aluno"
+                        description="O aluno deve possuir uma conta no RepTrail. Insira o email abaixo."
+                        trigger={
+                            <Button className="border-emerald-500/20 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/30 hover:border-emerald-500/50 hover:text-emerald-400 rounded-xl font-bold h-11 px-6 gap-2 transition-all duration-200 border">
+                                <Plus className="w-4 h-4" /> Vincular Aluno
+                            </Button>
+                        }
+                        fields={[
+                            { name: 'email', label: 'Email da Conta', placeholder: 'ex: aluno@email.com', type: 'text', required: true },
+                            { name: 'monthlyFee', label: 'Valor da Mensalidade (R$)', placeholder: '0.00', type: 'number', required: false }
+                        ]}
+                        actionType="create-student"
+                        successMessage="Aluno vinculado com sucesso!"
+                        footerLabel="Finalizar Vínculo"
+                    />
                 </div>
             </div>
 

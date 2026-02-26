@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Plus, Trash2, Edit2, Loader2, Sparkles, Calendar, FlaskConical, Zap } from "lucide-react"
 import { addErgogenic, updateErgogenic, deleteErgogenic } from "@/actions/ergogenics-actions"
 import { Switch } from "@/components/ui/switch"
+import { UnifiedDeleteButton } from "@/components/feature/shared/unified-delete-button"
 
 interface Ergogenic {
     id: string
@@ -236,15 +237,11 @@ export function TrainerErgogenicsView({ studentId, initialData }: TrainerErgogen
                                         </div>
                                     </div>
                                 </div>
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    onClick={() => handleDelete(e.id)}
-                                    disabled={loading[e.id]}
-                                    className="text-zinc-700 hover:text-red-400 hover:bg-red-400/10 h-8 w-8 rounded-xl active:scale-90 transition-all"
-                                >
-                                    {loading[e.id] ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
-                                </Button>
+                                <UnifiedDeleteButton
+                                    id={e.id}
+                                    actionType="ergogenic"
+                                    itemName={e.name}
+                                />
                             </div>
 
                             <div className="space-y-4">

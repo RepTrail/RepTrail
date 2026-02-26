@@ -5,8 +5,10 @@ import { DietAdherence } from '@/components/feature/student/diet-adherence'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import Link from 'next/link'
 import { Button } from "@/components/ui/button"
-import { CreateDietDialog } from '@/components/feature/student/create-diet-dialog'
-import { DeleteDietButton } from '@/components/feature/student/delete-diet-button'
+import { UnifiedCreationDialog } from '@/components/feature/shared/unified-creation-dialog'
+import { createStudentDiet } from '@/actions/student-content-actions'
+import { createStudentWorkout } from '@/actions/student-content-actions'
+import { UnifiedDeleteButton } from '@/components/feature/shared/unified-delete-button'
 import { ensureDailyTracking } from '@/actions/tracking-actions'
 
 export default async function StudentDietPage() {
@@ -89,7 +91,11 @@ export default async function StudentDietPage() {
                                             Editar
                                         </Link>
                                     </Button>
-                                    <DeleteDietButton dietId={(diet as any).id} />
+                                    <UnifiedDeleteButton
+                                        id={(diet as any).id}
+                                        actionType="diet"
+                                        itemName={(diet as any).name}
+                                    />
                                 </>
                             )}
                         </div>
@@ -120,7 +126,18 @@ export default async function StudentDietPage() {
                             Gerencie seus planos alimentares.
                         </p>
                     </div>
-                    {allowCRUD && <CreateDietDialog />}
+                    {allowCRUD && <UnifiedCreationDialog
+                        title="Nova Dieta"
+                        description="Crie um plano alimentar para seu auto-treino."
+                        triggerLabel="Criar Manualmente"
+                        fields={[
+                            { name: 'name', label: 'Nome da Dieta', placeholder: 'Ex: Minha Dieta Clean', required: true },
+                            { name: 'daysOfWeek', label: 'Dias da Semana', type: 'days' }
+                        ]}
+                        actionType="create-student-diet"
+                        successMessage="Dieta criada!"
+                        footerLabel="Salvar Template"
+                    />}
                 </div>
 
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -137,7 +154,11 @@ export default async function StudentDietPage() {
                                                 <Utensils className="w-5 h-5" />
                                             </div>
                                             <div className="flex gap-2">
-                                                {allowCRUD && <DeleteDietButton dietId={diet.id} />}
+                                                {allowCRUD && <UnifiedDeleteButton
+                                                    id={diet.id}
+                                                    actionType="diet"
+                                                    itemName={diet.name}
+                                                />}
                                             </div>
                                         </div>
                                         <CardTitle className="mt-4 text-xl">{diet.name}</CardTitle>
@@ -179,7 +200,18 @@ export default async function StudentDietPage() {
                                     <h3 className="text-xl font-semibold text-zinc-300">Nenhuma dieta encontrada</h3>
                                     <p className="text-zinc-500 mt-1">{hasTrainer ? "Aguarde o preenchimento do seu personal." : "Crie uma nova dieta para começar."}</p>
                                 </div>
-                                {allowCRUD && <CreateDietDialog />}
+                                {allowCRUD && <UnifiedCreationDialog
+                                    title="Nova Dieta"
+                                    description="Crie um plano alimentar para seu auto-treino."
+                                    triggerLabel="Criar Manualmente"
+                                    fields={[
+                                        { name: 'name', label: 'Nome da Dieta', placeholder: 'Ex: Minha Dieta Clean', required: true },
+                                        { name: 'daysOfWeek', label: 'Dias da Semana', type: 'days' }
+                                    ]}
+                                    actionType="create-student-diet"
+                                    successMessage="Dieta criada!"
+                                    footerLabel="Salvar Template"
+                                />}
                             </div>
                         </Card>
                     )}

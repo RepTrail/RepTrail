@@ -2,15 +2,29 @@
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { FlaskConical } from 'lucide-react'
-import { CreateErgogenicDialog } from '@/components/feature/student/create-ergogenic-dialog'
+import { UnifiedCreationDialog } from '@/components/feature/shared/unified-creation-dialog'
+import { createClient } from '@/lib/supabase/client'
+import { useEffect, useState } from 'react'
 import { EditErgogenicDialog } from '@/components/feature/student/edit-ergogenic-dialog'
-import { DeleteErgogenicButton } from '@/components/feature/student/delete-ergogenic-button'
+import { UnifiedDeleteButton } from '@/components/feature/shared/unified-delete-button'
 
 export function AutoTrainingErgogenicsManager({
     ergogenics,
 }: {
     ergogenics: any[]
 }) {
+    const [studentId, setStudentId] = useState<string | null>(null)
+
+    useEffect(() => {
+        const getSession = async () => {
+            const supabase = createClient()
+            const { data: { user } } = await supabase.auth.getUser()
+            if (user) setStudentId(user.id)
+        }
+        getSession()
+    }, [])
+
+    if (!studentId) return null
     return (
         <div className="space-y-10 pb-10">
             {/* Header */}
@@ -24,7 +38,16 @@ export function AutoTrainingErgogenicsManager({
                         Gerencie protocolos farmacológicos e suplementação avançada.
                     </p>
                 </div>
-                <CreateErgogenicDialog />
+                <UnifiedCreationDialog
+                    title="Adicionar Protocolo"
+                    description="Registre um novo ergogênico ou suplemento."
+                    actionType="create-student-ergogenic"
+                    fields={[
+                        { name: 'name', label: 'Nome', type: 'text', placeholder: 'Ex: Testosterona' },
+                        { name: 'weekly_dosage', label: 'Dosagem Semanal', type: 'number', placeholder: 'Ex: 250' },
+                        { name: 'unit', label: 'Unidade', type: 'text', placeholder: 'Ex: mg' }
+                    ]}
+                />
             </div>
 
             {ergogenics.length > 0 ? (
@@ -47,7 +70,11 @@ export function AutoTrainingErgogenicsManager({
                                 </div>
                                 <div className="flex gap-1">
                                     <EditErgogenicDialog ergogenic={e} />
-                                    <DeleteErgogenicButton ergogenicId={e.id} />
+                                    <UnifiedDeleteButton
+                                        id={e.id}
+                                        actionType="ergogenic"
+                                        itemName={e.name}
+                                    />
                                 </div>
                             </CardContent>
                         </Card>
@@ -64,7 +91,16 @@ export function AutoTrainingErgogenicsManager({
                             Crie seu primeiro protocolo para começar.
                         </p>
                     </div>
-                    <CreateErgogenicDialog />
+                    <UnifiedCreationDialog
+                        title="Adicionar Protocolo"
+                        description="Registre um novo ergogênico ou suplemento."
+                        actionType="create-student-ergogenic"
+                        fields={[
+                            { name: 'name', label: 'Nome', type: 'text', placeholder: 'Ex: Testosterona' },
+                            { name: 'weekly_dosage', label: 'Dosagem Semanal', type: 'number', placeholder: 'Ex: 250' },
+                            { name: 'unit', label: 'Unidade', type: 'text', placeholder: 'Ex: mg' }
+                        ]}
+                    />
                 </div>
             )}
         </div>

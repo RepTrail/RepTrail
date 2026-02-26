@@ -38,7 +38,7 @@ import { getStudentMetricsHistory, getStudentChartData } from '@/actions/metrics
 import { StudentMetricsChart } from '@/components/feature/trainer/student-metrics-chart'
 import { CardioAssignmentSection } from '@/components/feature/trainer/cardio-assignment-section'
 import { getStudentAdherenceHistory } from '@/actions/tracking-actions'
-import { AdherenceChart } from '@/components/feature/student/adherence-chart'
+import { UnifiedAdherenceChart } from '@/components/feature/shared/unified-adherence-chart'
 import { ToggleStudentStatusButton } from '@/components/feature/trainer/toggle-student-status-button'
 import { StatCard } from '@/components/feature/shared/stat-card'
 import { PerformanceAnalysisSection } from '@/components/feature/shared/performance-analysis-section'
@@ -644,7 +644,11 @@ export default async function StudentDetailPage({ params }: { params: { id: stri
                     trainerTier={trainerTier}
                 />
 
-                <AdherenceChart history={adherenceHistory} showErgogenics={!!details?.steroid_use} />
+                <UnifiedAdherenceChart
+                    history={adherenceHistory}
+                    showErgogenics={student.details?.steroid_use}
+                    noCard
+                />
             </div>
         </div>
     )

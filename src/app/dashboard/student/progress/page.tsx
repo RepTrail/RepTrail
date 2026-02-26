@@ -6,9 +6,9 @@ import { getStudentWorkoutHistory } from '@/actions/log-actions'
 import { StudentMetricsChart } from '@/components/feature/trainer/student-metrics-chart'
 import { StudentWorkoutHistory } from '@/components/feature/trainer/student-workout-history'
 import { ProgressPhotoUpload } from '@/components/feature/student/progress-photo-upload'
-import { StudentProgressGallery } from '@/components/feature/student/student-progress-gallery'
 import { getAdherenceHistory } from '@/actions/tracking-actions'
-import { AdherenceChart } from '@/components/feature/student/adherence-chart'
+import { UnifiedAdherenceChart } from '@/components/feature/shared/unified-adherence-chart'
+import { UnifiedProgressGallery } from '@/components/feature/shared/unified-progress-gallery'
 import { StatCard } from '@/components/feature/shared/stat-card'
 import { PerformanceAnalysisSection } from '@/components/feature/shared/performance-analysis-section'
 import Link from 'next/link'
@@ -172,7 +172,7 @@ export default async function StudentProgressPage() {
                     </div>
                 </CardHeader>
                 <CardContent className="p-8 md:p-10 pt-0">
-                    <StudentProgressGallery photos={progressPhotos} />
+                    <UnifiedProgressGallery photos={progressPhotos} mode="student" />
                 </CardContent>
             </Card>
 
@@ -210,7 +210,7 @@ export default async function StudentProgressPage() {
 
             {/* Adherence Chart */}
             <div className="animate-in slide-in-from-bottom-4 duration-700 delay-100">
-                <AdherenceChart history={adherenceHistory} showErgogenics={!!fullMetrics.details?.steroid_use} />
+                <UnifiedAdherenceChart history={adherenceHistory} showErgogenics={!!fullMetrics.details?.steroid_use} />
             </div>
 
         </div>

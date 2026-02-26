@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
-import { TrainerErgogenicsView } from '@/components/feature/trainer/ergogenics-view'
 import { ChevronLeft, FlaskConical } from 'lucide-react'
 import Link from 'next/link'
+import { UnifiedErgogenicsModule } from '@/components/feature/shared/unified-ergogenics-module'
 
 export default async function StudentErgogenicsPage({ params }: { params: { id: string } }) {
     const { id } = await params
@@ -10,7 +10,7 @@ export default async function StudentErgogenicsPage({ params }: { params: { id: 
     // Get relationship to find student_id
     const { data: relationship } = await supabase
         .from('trainer_students')
-        .select('student_id')
+        .select('student_id, profiles(full_name)')
         .eq('id', id)
         .single()
 
@@ -23,6 +23,8 @@ export default async function StudentErgogenicsPage({ params }: { params: { id: 
         .select('*')
         .eq('student_id', relationship.student_id)
         .order('created_at', { ascending: false })
+
+    const studentName = (relationship.profiles as any)?.full_name || 'Aluno'
 
     return (
         <div className="space-y-10 pb-10">
@@ -42,14 +44,16 @@ export default async function StudentErgogenicsPage({ params }: { params: { id: 
                         <h1 className="text-3xl font-black tracking-tight text-white font-sans italic uppercase">
                             Ergogênicos & Ciclos
                         </h1>
-                        <p className="text-zinc-500 text-[10px] uppercase font-bold tracking-widest mt-1">Organize o protocolo farmacológico do aluno</p>
+                        <p className="text-zinc-500 text-[10px] uppercase font-bold tracking-widest mt-1">Organize o protocolo farmacológico de {studentName}</p>
                     </div>
                 </div>
             </div>
 
-            <TrainerErgogenicsView
+            <UnifiedErgogenicsModule
                 studentId={relationship.student_id}
-                initialData={ergogenics || []}
+                mode="trainer"
+                initialErgogenics={ergogenics || []}
+                studentName={studentName}
             />
         </div>
     )

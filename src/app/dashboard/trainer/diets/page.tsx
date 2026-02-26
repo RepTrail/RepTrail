@@ -3,9 +3,9 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Utensils, ChevronRight } from "lucide-react"
 import Link from "next/link"
-import { DeleteDietButton } from "@/components/feature/trainer/delete-diet-button"
-import { CreateDietDialog } from "@/components/feature/trainer/create-diet-dialog"
-import { AssignDietDialog } from "@/components/feature/trainer/assign-diet-dialog"
+import { UnifiedDeleteButton } from "@/components/feature/shared/unified-delete-button"
+import { UnifiedAssignDialog } from "@/components/feature/shared/unified-assign-dialog"
+import { UnifiedCreationDialog } from "@/components/feature/shared/unified-creation-dialog"
 import { getTrainerStudents } from "@/actions/trainer-actions"
 import { getBetaTesterMode } from "@/actions/app-settings-actions"
 import { DuplicateButton } from "@/components/feature/trainer/duplicate-button"
@@ -28,7 +28,17 @@ export default async function TrainerDietsPage() {
                         Gerencie seus planos alimentares e atribua-os aos seus alunos.
                     </p>
                 </div>
-                <CreateDietDialog />
+                <UnifiedCreationDialog
+                    title="Novo Modelo de Dieta"
+                    description="Crie um template de dieta (Cutting, Bulking, etc) para atribuir aos seus alunos."
+                    triggerLabel="Criar Manualmente"
+                    fields={[
+                        { name: 'name', label: 'Nome da Dieta', placeholder: 'Ex: Dieta para Secar (Low Carb)', required: true }
+                    ]}
+                    actionType="create-student-diet"
+                    successMessage="Template de dieta criado!"
+                    footerLabel="Salvar Template"
+                />
             </div>
 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -42,7 +52,11 @@ export default async function TrainerDietsPage() {
                                     </div>
                                     <div className="flex gap-2">
                                         <DuplicateButton id={diet.id} type="diet" />
-                                        <DeleteDietButton dietId={diet.id} />
+                                        <UnifiedDeleteButton
+                                            id={diet.id}
+                                            actionType="diet"
+                                            itemName={diet.name}
+                                        />
                                     </div>
                                 </div>
                                 <CardTitle className="mt-4 text-xl">{diet.name}</CardTitle>
@@ -57,7 +71,13 @@ export default async function TrainerDietsPage() {
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-2">
-                                    <AssignDietDialog dietId={diet.id} students={students} />
+                                    <UnifiedAssignDialog
+                                        itemId={diet.id}
+                                        students={students}
+                                        type="diet"
+                                        title="Atribuir Dieta"
+                                        description="Escolha um aluno e os dias para este plano alimentar."
+                                    />
                                     <Button asChild size="sm" className="bg-zinc-100 text-zinc-900 hover:bg-white flex items-center justify-center gap-2">
                                         <Link href={`/dashboard/trainer/diets/${diet.id}`}>
                                             Editar

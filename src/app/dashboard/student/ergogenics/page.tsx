@@ -1,9 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
 import { getStudentErgogenics, getErgogenicLogs } from '@/actions/ergogenics-actions'
 import { redirect } from 'next/navigation'
-import { StudentErgogenicsViewWrapper } from '@/components/feature/student/ergogenics-view-wrapper'
 import { Activity } from 'lucide-react'
-import { AutoTrainingErgogenicsManager } from '@/components/feature/student/auto-training-ergogenics-manager'
+import { UnifiedErgogenicsModule } from '@/components/feature/shared/unified-ergogenics-module'
 
 export default async function ErgogenicsPage() {
     const supabase = await createClient()
@@ -19,7 +18,7 @@ export default async function ErgogenicsPage() {
 
     const { data: profile } = await supabase
         .from('profiles')
-        .select('auto_training_status')
+        .select('auto_training_status, full_name')
         .eq('id', user.id)
         .single()
 
@@ -39,14 +38,9 @@ export default async function ErgogenicsPage() {
     const { data: ergogenics } = await getStudentErgogenics(user.id)
     const { data: logs } = await getErgogenicLogs(user.id)
 
-    // Auto-training (no trainer): CRUD manager view
-    if (!trainerRel && isAutoTrainingActive) {
-        return (
-            <div className="space-y-10 pb-10">
-                <AutoTrainingErgogenicsManager ergogenics={ergogenics || []} />
-            </div>
-        )
-    }
+    // Mode is 'trainer' if they are doing auto-training (they manage their own protocol)
+    // Mode is 'student' if they have a real trainer (they only log intake)
+    const viewMode = trainerRel ? 'student' : 'trainer'
 
     return (
         <div className="space-y-10 pb-10">
@@ -60,14 +54,18 @@ export default async function ErgogenicsPage() {
                     </h1>
                 </div>
                 <p className="text-zinc-500 text-sm font-medium">
-                    Acompanhe e registre suas substâncias e dosagens prescritas.
+                    {viewMode === 'trainer'
+                        ? 'Gerencie seu protocolo farmacológico e suplementação.'
+                        : 'Acompanhe e registre suas substâncias e dosagens prescritas.'}
                 </p>
             </div>
 
-            <StudentErgogenicsViewWrapper
+            <UnifiedErgogenicsModule
                 studentId={user.id}
-                ergogenics={ergogenics || []}
+                mode={viewMode}
+                initialErgogenics={ergogenics || []}
                 initialLogs={logs || []}
+                studentName={profile?.full_name}
             />
         </div>
     )

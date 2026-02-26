@@ -28,7 +28,7 @@ import {
     DialogDescription,
     DialogFooter,
 } from "@/components/ui/dialog"
-import { ExerciseLoadChart } from './exercise-load-chart'
+import { UnifiedExerciseChart } from '@/components/feature/shared/unified-exercise-chart'
 import { getExerciseProgress, deleteWorkoutLog } from '@/actions/log-actions'
 import { useToast } from '@/hooks/use-toast'
 
@@ -385,7 +385,7 @@ function ProgressionPopup({ studentId, exerciseId, exerciseName }: { studentId: 
                             </div>
                         </div>
                     ) : (
-                        <ExerciseLoadChart data={data} exerciseName={exerciseName} />
+                        <UnifiedExerciseChart data={data} mode="detailed" exerciseName={exerciseName} />
                     )}
                 </div>
             </DialogContent>

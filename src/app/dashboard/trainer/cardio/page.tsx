@@ -4,8 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Activity, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { CreateCardioDialog } from '@/components/feature/trainer/create-cardio-dialog'
-import { AssignCardioDialog } from '@/components/feature/trainer/assign-cardio-dialog'
+import { UnifiedDeleteButton } from '@/components/feature/shared/unified-delete-button'
+import { UnifiedAssignDialog } from '@/components/feature/shared/unified-assign-dialog'
+import { UnifiedCreationDialog } from '@/components/feature/shared/unified-creation-dialog'
 import { DuplicateButton } from '@/components/feature/trainer/duplicate-button'
 
 export default async function TrainerCardioPage() {
@@ -25,7 +26,18 @@ export default async function TrainerCardioPage() {
                     </p>
                 </div>
                 <div className="flex items-center gap-3">
-                    <CreateCardioDialog />
+                    <UnifiedCreationDialog
+                        title="Novo Modelo de Cardio"
+                        description="Crie um template (ex: Esteira 45min) para agendar para seus alunos."
+                        triggerLabel="Criar Modelo"
+                        fields={[
+                            { name: 'name', label: 'Nome do Cardio', placeholder: 'Ex: Corrida na Esteira', required: true },
+                            { name: 'description', label: 'Descrição (Opcional)', placeholder: 'Ex: Manter batimentos entre 130-140...', type: 'textarea' }
+                        ]}
+                        actionType="create-student-cardio"
+                        successMessage="Modelo de cardio criado!"
+                        footerLabel="Salvar Modelo"
+                    />
                 </div>
             </div>
 
@@ -51,15 +63,25 @@ export default async function TrainerCardioPage() {
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-2">
-                                    <AssignCardioDialog cardioId={cardio.id} students={students} />
+                                    <UnifiedAssignDialog
+                                        itemId={cardio.id}
+                                        students={students}
+                                        type="cardio"
+                                        title="Atribuir Cardio"
+                                        description="Escolha um aluno e os dias da semana para este protocolo."
+                                    />
                                     <div className="flex gap-2">
+                                        <UnifiedDeleteButton
+                                            id={cardio.id}
+                                            actionType="cardio"
+                                            itemName={cardio.name}
+                                        />
                                         <Button asChild size="sm" className="flex-1 bg-zinc-100 text-zinc-900 hover:bg-white flex items-center justify-center gap-1.5 rounded-xl font-bold">
                                             <Link href={`/dashboard/trainer/cardio/${cardio.id}`}>
                                                 Editar
                                                 <ChevronRight className="w-3.5 h-3.5" />
                                             </Link>
                                         </Button>
-                                        <DuplicateButton id={cardio.id} type="cardio" />
                                     </div>
                                 </div>
                             </CardContent>
@@ -75,7 +97,18 @@ export default async function TrainerCardioPage() {
                                 <h3 className="text-2xl font-black text-white italic uppercase tracking-tight">Nenhum cardio encontrado</h3>
                                 <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest">Crie seu primeiro modelo de cardio para começar a atribuir.</p>
                             </div>
-                            <CreateCardioDialog />
+                            <UnifiedCreationDialog
+                                title="Novo Modelo de Cardio"
+                                description="Crie um template (ex: Esteira 45min) para agendar para seus alunos."
+                                triggerLabel="Criar Modelo"
+                                fields={[
+                                    { name: 'name', label: 'Nome do Cardio', placeholder: 'Ex: Corrida na Esteira', required: true },
+                                    { name: 'description', label: 'Descrição (Opcional)', placeholder: 'Ex: Manter batimentos entre 130-140...', type: 'textarea' }
+                                ]}
+                                actionType="create-student-cardio"
+                                successMessage="Modelo de cardio criado!"
+                                footerLabel="Salvar Modelo"
+                            />
                         </div>
                     </Card>
                 )}

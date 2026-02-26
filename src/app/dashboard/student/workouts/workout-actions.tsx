@@ -1,6 +1,6 @@
 'use client'
 
-import { CreateWorkoutDialog } from '@/components/feature/student/create-workout-dialog'
+import { UnifiedCreationDialog } from '@/components/feature/shared/unified-creation-dialog'
 
 interface WorkoutActionsProps {
     isAutoTrainingActive: boolean
@@ -9,5 +9,18 @@ interface WorkoutActionsProps {
 export function WorkoutActions({ isAutoTrainingActive }: WorkoutActionsProps) {
     if (!isAutoTrainingActive) return null
 
-    return <CreateWorkoutDialog />
+    return (
+        <UnifiedCreationDialog
+            title="Novo Treino"
+            description="Crie um treino para seu plano de auto-training."
+            triggerLabel="Criar Manualmente"
+            fields={[
+                { name: 'name', label: 'Nome do Treino', placeholder: 'Ex: Hipertrofia A - Peito/Tríceps', required: true },
+                { name: 'description', label: 'Descrição (Opcional)', placeholder: 'Instruções gerais, foco do treino, etc.', type: 'textarea' }
+            ]}
+            actionType="create-student-workout"
+            successMessage="Treino criado!"
+            footerLabel="Salvar Treino"
+        />
+    )
 }

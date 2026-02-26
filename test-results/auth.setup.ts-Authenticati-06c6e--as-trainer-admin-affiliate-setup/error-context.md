@@ -1,0 +1,47 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - link "REPTRAIL" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e6]:
+          - img [ref=e8]
+          - heading "REPTRAIL" [level=1] [ref=e10]
+      - heading "Bem-vindo de volta" [level=1] [ref=e11]
+      - heading "Formulário de Autenticação" [level=2] [ref=e12]
+      - paragraph [ref=e13]: Acesse sua conta para treinar
+    - generic [ref=e14]:
+      - generic [ref=e16]:
+        - generic [ref=e17]:
+          - generic [ref=e18]: Email Profissional
+          - textbox "Email Profissional" [active] [ref=e19]:
+            - /placeholder: exemplo@email.com
+        - generic [ref=e20]:
+          - generic [ref=e21]:
+            - generic "Senha" [ref=e22]: Senha de Acesso
+            - link "Esqueci a senha" [ref=e23] [cursor=pointer]:
+              - /url: /auth/forgot-password
+          - generic [ref=e24]:
+            - textbox "Senha de Acesso" [ref=e25]:
+              - /placeholder: ••••••••
+            - button [ref=e26]:
+              - img [ref=e27]
+        - button "Entrar Agora" [ref=e30]:
+          - generic [ref=e31]:
+            - text: Entrar Agora
+            - img
+      - paragraph [ref=e33]:
+        - text: Ainda não é membro?
+        - link "Cadastre-se grátis" [ref=e34] [cursor=pointer]:
+          - /url: /auth/signup
+    - generic [ref=e35]:
+      - img [ref=e36]
+      - generic [ref=e39]: Acesso Seguro & Criptografado
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e45] [cursor=pointer]:
+    - img [ref=e46]
+  - alert [ref=e49]
+```

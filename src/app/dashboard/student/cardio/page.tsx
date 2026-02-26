@@ -5,9 +5,9 @@ import { Flame, Activity, Timer, History, ChevronRight, Calendar } from 'lucide-
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { CreateCardioDialog } from '@/components/feature/trainer/create-cardio-dialog'
+import { UnifiedCreationDialog } from '@/components/feature/shared/unified-creation-dialog'
 import { DuplicateButton } from '@/components/feature/trainer/duplicate-button'
-import { ScheduleCardioDialog } from '@/components/feature/student/schedule-cardio-dialog'
+import { UnifiedAssignDialog } from '@/components/feature/shared/unified-assign-dialog'
 
 export default async function StudentCardioPage() {
     const supabase = await createClient()
@@ -108,7 +108,17 @@ export default async function StudentCardioPage() {
                                     </p>
                                 </div>
                                 <div className="flex items-center gap-3">
-                                    <CreateCardioDialog />
+                                    <UnifiedCreationDialog
+                                        title="Novo Modelo de Cardio"
+                                        description="Crie um template (ex: Esteira 45min) para agendar para seus auto-treinos."
+                                        triggerLabel="Criar Modelo"
+                                        fields={[
+                                            { name: 'name', label: 'Nome do Cardio', placeholder: 'Ex: Corrida na Esteira', required: true },
+                                            { name: 'description', label: 'Descrição (Opcional)', placeholder: 'Ex: 45 minutos em ritmo moderado', type: 'textarea' }
+                                        ]}
+                                        actionType="create-student-cardio"
+                                        successMessage="Modelo de cardio criado com sucesso!"
+                                    />
                                 </div>
                             </div>
 
@@ -149,7 +159,23 @@ export default async function StudentCardioPage() {
                                                     )}
 
                                                     <div className="grid grid-cols-2 gap-2">
-                                                        <ScheduleCardioDialog cardioId={cardio.id} />
+                                                        <UnifiedAssignDialog
+                                                            title="Agendar Cardio"
+                                                            description="Escolha os dias da semana para este protocolo."
+                                                            itemId={cardio.id}
+                                                            fixedStudentId={user.id}
+                                                            type="cardio"
+                                                            trigger={
+                                                                <Button
+                                                                    variant="outline"
+                                                                    size="sm"
+                                                                    className="bg-zinc-900 border-zinc-700 hover:bg-zinc-800 hover:text-white flex items-center gap-2 rounded-xl text-[9px] font-black uppercase tracking-widest leading-none h-9 flex-1"
+                                                                >
+                                                                    <Calendar className="w-3 h-3" />
+                                                                    Agendar
+                                                                </Button>
+                                                            }
+                                                        />
                                                         <div className="flex gap-2">
                                                             <Button asChild size="sm" variant="outline" className="flex-1 bg-zinc-800 border-zinc-700 text-zinc-100 hover:bg-zinc-700 flex items-center justify-center gap-1.5 rounded-xl font-bold h-9 text-[10px]">
                                                                 <Link href={`/dashboard/student/cardio/${cardio.id}`}>

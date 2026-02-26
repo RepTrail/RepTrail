@@ -3,9 +3,9 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Dumbbell, ChevronRight } from "lucide-react"
 import Link from "next/link"
-import { DeleteWorkoutButton } from "@/components/feature/trainer/delete-workout-button"
-import { CreateWorkoutDialog } from "@/components/feature/trainer/create-workout-dialog"
-import { AssignWorkoutDialog } from "@/components/feature/trainer/assign-workout-dialog"
+import { UnifiedDeleteButton } from "@/components/feature/shared/unified-delete-button"
+import { UnifiedAssignDialog } from "@/components/feature/shared/unified-assign-dialog"
+import { UnifiedCreationDialog } from "@/components/feature/shared/unified-creation-dialog"
 import { getTrainerStudents } from "@/actions/trainer-actions"
 import { getBetaTesterMode } from "@/actions/app-settings-actions"
 import { DuplicateButton } from "@/components/feature/trainer/duplicate-button"
@@ -29,7 +29,18 @@ export default async function TrainerWorkoutsPage() {
                     </p>
                 </div>
                 <div className="flex items-center gap-3">
-                    <CreateWorkoutDialog />
+                    <UnifiedCreationDialog
+                        title="Novo Modelo de Treino"
+                        description="Crie um template que poderá ser atribuído para vários alunos."
+                        triggerLabel="Criar Manualmente"
+                        fields={[
+                            { name: 'name', label: 'Nome do Treino', placeholder: 'Ex: Hipertrofia A - Peito/Tríceps', required: true },
+                            { name: 'description', label: 'Descrição (Opcional)', placeholder: 'Instruções gerais, foco do treino, etc.', type: 'textarea' }
+                        ]}
+                        actionType="create-manual-workout"
+                        successMessage="Template de treino criado!"
+                        footerLabel="Salvar Template"
+                    />
                 </div>
             </div>
 
@@ -44,7 +55,11 @@ export default async function TrainerWorkoutsPage() {
                                     </div>
                                     <div className="flex gap-2">
                                         <DuplicateButton id={workout.id} type="workout" />
-                                        <DeleteWorkoutButton workoutId={workout.id} />
+                                        <UnifiedDeleteButton
+                                            id={workout.id}
+                                            actionType="workout"
+                                            itemName={workout.name}
+                                        />
                                     </div>
                                 </div>
                                 <CardTitle className="mt-4 text-xl">{workout.name}</CardTitle>
@@ -59,7 +74,13 @@ export default async function TrainerWorkoutsPage() {
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-2">
-                                    <AssignWorkoutDialog workoutId={workout.id} students={students} />
+                                    <UnifiedAssignDialog
+                                        itemId={workout.id}
+                                        students={students}
+                                        type="workout"
+                                        title="Atribuir Treino"
+                                        description="Escolha um aluno e o dia da semana para este treino."
+                                    />
                                     <Button asChild size="sm" className="bg-zinc-100 text-zinc-900 hover:bg-white flex items-center justify-center gap-2">
                                         <Link href={`/dashboard/trainer/workouts/${workout.id}`}>
                                             Editar

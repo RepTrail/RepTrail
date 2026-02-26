@@ -44,10 +44,20 @@ export async function getCardioLibrary() {
     }
 }
 
-export async function createCardio(name: string, description?: string) {
+export async function createCardio(nameOrData: string | FormData, description?: string) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { error: 'Unauthorized' }
+
+    let name = ''
+    let desc = description
+
+    if (nameOrData instanceof FormData) {
+        name = nameOrData.get('name') as string
+        desc = (nameOrData.get('description') as string) || undefined
+    } else {
+        name = nameOrData
+    }
 
     try {
         const { data, error } = await supabase
@@ -55,7 +65,7 @@ export async function createCardio(name: string, description?: string) {
             .insert({
                 trainer_id: user.id,
                 name,
-                description
+                description: desc
             })
             .select()
             .single()
@@ -346,5 +356,21 @@ export async function getActiveCardioSession() {
     } catch (e) {
         console.error('Error fetching/auto-closing cardio session:', e)
         return null
+    }
+}
+
+export async function deleteCardio(cardioId: string) {
+    const supabase = await createClient()
+    try {
+        const { error } = await supabase
+            .from('cardios')
+            .delete()
+            .eq('id', cardioId)
+
+        if (error) throw error
+        revalidatePath('/dashboard/trainer/cardio')
+        return { success: true }
+    } catch (e: any) {
+        return { error: e.message }
     }
 }
