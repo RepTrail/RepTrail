@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -27,6 +27,7 @@ import { useToast } from "@/hooks/use-toast"
 import { cn } from "@/lib/utils"
 import { useRouter } from 'next/navigation'
 import { startWorkoutLog, recordSetLoad, finishWorkoutLog, saveWorkoutLogState, getWorkoutLastSession } from '@/actions/log-actions'
+import { generateExecutionSteps, ExecutionStep, WorkoutPhase } from '@/lib/workout-flow-engine'
 
 export function WorkoutPlayer({
     userId,
@@ -51,20 +52,27 @@ export function WorkoutPlayer({
 }) {
     const [lastSession, setLastSession] = useState<any>(null)
     const isMounted = useRef(false)
-    const [currentExerciseIndex, setCurrentExerciseIndex] = useState(initialExerciseIndex)
 
-    const getInitialStartType = () => {
-        if (initialSetType) return initialSetType
-        const firstEx = exercises[initialExerciseIndex]
-        if (firstEx?.warmup_sets > 0) return 'WARMUP'
-        if (firstEx?.feeder_sets > 0) return 'FEEDER'
-        return 'WORKING'
+    // 1. Generate Linear Steps
+    const steps = useMemo(() => generateExecutionSteps(exercises), [exercises])
+
+    // 2. Find Initial Step for Resume
+    const findInitialStepIndex = () => {
+        if (!initialExerciseIndex && !initialSet && !initialSetType) return 0
+        const idx = steps.findIndex(s =>
+            s.exerciseIndex === initialExerciseIndex &&
+            s.setNumber === initialSet &&
+            s.phase === initialSetType
+        )
+        return idx !== -1 ? idx : 0
     }
 
-    const [setType, setSetType] = useState<'WARMUP' | 'FEEDER' | 'WORKING'>(getInitialStartType())
-    const [currentSet, setCurrentSet] = useState(initialSet || 1)
+    const [currentStepIndex, setCurrentStepIndex] = useState(findInitialStepIndex())
+    const currentStep = steps[currentStepIndex] || steps[0]
+
     const [isResting, setIsResting] = useState(initialIsResting || false)
     const [restTimeLeft, setRestTimeLeft] = useState(initialRestEndTime ? Math.max(0, Math.ceil((initialRestEndTime - Date.now()) / 1000)) : 0)
+    const [restEndTime, setRestEndTime] = useState<number | null>(initialRestEndTime || null)
 
     // Batch Input State
     const [setsLog, setSetsLog] = useState<Array<{
@@ -111,116 +119,52 @@ export function WorkoutPlayer({
         return () => clearInterval(interval)
     }, [userId, workout.id])
 
-    const currentExercise = exercises[currentExerciseIndex]
-    const totalExercises = exercises.length
+    const currentExercise = exercises[currentStep.exerciseIndex]
+    const currentSet = currentStep.setNumber
+    const setType = currentStep.phase
 
-    // Helper to identify Bi-set/Tri-set groups
-    const isBiSetMember = (ex: any) => {
-        if (!ex) return false
-        const n = ex.notes?.toUpperCase() || ''
-        const title = ex.exercise?.name?.toUpperCase() || ''
-        const lowRest = ex.rest_seconds <= 15
-        const hasKeyword = n.includes('BI-SET') || n.includes('CONJUGADO') || n.includes('SUPER-SET') ||
-            title.includes('BI-SET') || title.includes('CONJUGADO') || title.includes('+')
-        return lowRest || hasKeyword
-    }
-
-    const findGroup = (index: number) => {
-        if (!isBiSetMember(exercises[index])) return null
-        let start = index
-        while (start > 0 && isBiSetMember(exercises[start - 1])) start--
-        let end = index
-        while (end < totalExercises - 1 && isBiSetMember(exercises[end + 1])) end++
-        return { start, end }
-    }
-
-    const currentGroup = findGroup(currentExerciseIndex)
-
-    // Calculate Progress based on SETS
-    const totalWorkoutSets = exercises.reduce((acc, ex) => {
-        return acc + (ex.warmup_sets || 0) + (ex.feeder_sets || 0) + (ex.working_sets || 3)
-    }, 0)
-
-    const getCurrentExerciseCompletedSets = () => {
-        if (!currentExercise) return 0
-        let count = 0
-        // Base count from previous set types within this exercise
-        if (setType === 'FEEDER') count += (currentExercise.warmup_sets || 0)
-        if (setType === 'WORKING') count += (currentExercise.warmup_sets || 0) + (currentExercise.feeder_sets || 0)
-
-        // Add current set index (0-based from logic view)
-        // currentSet is 1-based.
-        // If we are resting, it means currentSet was Just Completed.
-        // If we in execution, currentSet is In Progress (not done).
-        // BUT, visually, user likely wants to see progression AS they finish.
-        // Logic:
-        // Sets 1, 2, 3.
-        // Start: 0 done.
-        // Finish Set 1 -> Resting -> 1 done.
-        // Finish Rest -> Set 2 -> 1 done.
-        // Finish Set 2 -> Resting -> 2 done.
-        // ...
-        // Finish Last Set -> Summary -> All done.
-
-        let setsInCurrentType = currentSet - 1
-        if (isResting) setsInCurrentType += 1
-
-        count += setsInCurrentType
-
-        // Correction for Summary View (All sets done)
-        if (showSummary) {
-            return (currentExercise.warmup_sets || 0) + (currentExercise.feeder_sets || 0) + (currentExercise.working_sets || 3)
-        }
-
-        return count
-    }
-
-    const completedSetsBefore = exercises.slice(0, currentExerciseIndex).reduce((acc, ex, idx) => {
-        if (skippedIndices.includes(idx)) return acc
-        return acc + (ex.warmup_sets || 0) + (ex.feeder_sets || 0) + (ex.working_sets || 3)
-    }, 0)
-
-    const totalCompletedSets = completedSetsBefore + getCurrentExerciseCompletedSets()
+    // Simplified Progress & UI Helpers
+    const totalWorkoutSets = steps.length
+    const totalCompletedSets = isResting ? currentStepIndex + 1 : currentStepIndex
     const progress = totalWorkoutSets > 0 ? (totalCompletedSets / totalWorkoutSets) * 100 : 0
 
-    const setTypeLabel = {
+    const isBiSet = useMemo(() => {
+        const currentGroupId = currentStep.groupId
+        const groupSteps = steps.filter(s => s.groupId === currentGroupId)
+        const uniqueExercises = new Set(groupSteps.map(s => s.exerciseIndex))
+        return uniqueExercises.size > 1
+    }, [currentStep.groupId, steps])
+
+    const setTypeLabel = ({
         WARMUP: 'Aquecimento',
         FEEDER: 'Feeder Set',
         WORKING: 'Trabalho'
-    }[setType]
+    } as any)[setType]
 
-    const getInitialSetType = (ex: any) => {
-        if (ex.warmup_sets > 0) return 'WARMUP'
-        if (ex.feeder_sets > 0) return 'FEEDER'
-        return 'WORKING'
-    }
-
-    // Reset state on exercise change
-    const lastIdxRef = useRef(initialExerciseIndex)
+    // Reset state on step change
     useEffect(() => {
         if (!isMounted.current) {
             isMounted.current = true
             return
         }
 
-        const prevIdx = lastIdxRef.current
-        const currIdx = currentExerciseIndex
-        lastIdxRef.current = currIdx
+        // Auto Save State when critical values change
+        if (!logId) return
 
-        const prevGroup = findGroup(prevIdx)
-        const currGroup = findGroup(currIdx)
-        const isSameGroup = prevGroup && currGroup && prevGroup.start === currGroup.start
-
-        if (!isSameGroup && currentExercise) {
-            const initialType = getInitialSetType(currentExercise)
-            setSetType(initialType)
-            setCurrentSet(1)
-            setSetsLog([])
-            setShowSummary(false)
-            setSummaryInputs({})
-            setExerciseNote('')
+        const stateToSave = {
+            exerciseIndex: currentStep.exerciseIndex,
+            set: currentStep.setNumber,
+            type: currentStep.phase,
+            restEndTime: restEndTime,
+            isResting: isResting
         }
-    }, [currentExerciseIndex])
+
+        const timer = setTimeout(() => {
+            saveWorkoutLogState(logId, stateToSave)
+        }, 1000)
+
+        return () => clearTimeout(timer)
+    }, [currentStepIndex, isResting, restEndTime, logId])
 
     // Initialize Log
     useEffect(() => {
@@ -242,26 +186,6 @@ export function WorkoutPlayer({
     }, [workout.id, initialLogId])
 
     // Rest Timer Logic
-    const [restEndTime, setRestEndTime] = useState<number | null>(initialRestEndTime || null)
-
-    // Auto Save State when critical values change
-    useEffect(() => {
-        if (!logId) return
-
-        const stateToSave = {
-            exerciseIndex: currentExerciseIndex,
-            set: currentSet,
-            type: setType,
-            restEndTime: restEndTime,
-            isResting: isResting
-        }
-
-        const timer = setTimeout(() => {
-            saveWorkoutLogState(logId, stateToSave)
-        }, 1000)
-
-        return () => clearTimeout(timer)
-    }, [currentExerciseIndex, currentSet, setType, isResting, restEndTime, logId])
 
     useEffect(() => {
         if (!isResting || !restEndTime) return
@@ -281,41 +205,10 @@ export function WorkoutPlayer({
     const handleRestEnd = () => {
         setIsResting(false)
         setRestEndTime(null)
-        const ex = currentExercise
-        const group = findGroup(currentExerciseIndex)
 
-        // If in Bi-set group, handle jumping back to first exercise for next set
-        if (group && currentExerciseIndex === group.end) {
-            setCurrentExerciseIndex(group.start)
-            setCurrentSet(prev => prev + 1)
-            // Note: setType follows the first exercise's logic or stays synced
-            return
-        }
-
-        // Standard linear logic
-        if (setType === 'WARMUP') {
-            if (currentSet < ex.warmup_sets) {
-                setCurrentSet(prev => prev + 1)
-            } else if (ex.feeder_sets > 0) {
-                setSetType('FEEDER')
-                setCurrentSet(1)
-            } else {
-                setSetType('WORKING')
-                setCurrentSet(1)
-            }
-        } else if (setType === 'FEEDER') {
-            if (currentSet < ex.feeder_sets) {
-                setCurrentSet(prev => prev + 1)
-            } else {
-                setSetType('WORKING')
-                setCurrentSet(1)
-            }
-        } else {
-            if (currentSet < (ex.working_sets || 3)) {
-                setCurrentSet(prev => prev + 1)
-            } else {
-                setShowSummary(true)
-            }
+        // Advance to next step
+        if (currentStepIndex < steps.length - 1) {
+            setCurrentStepIndex(prev => prev + 1)
         }
 
         if ("Notification" in window && Notification.permission === "granted") {
@@ -336,8 +229,14 @@ export function WorkoutPlayer({
     }
 
     const advanceExercise = () => {
-        if (currentExerciseIndex < totalExercises - 1) {
-            setCurrentExerciseIndex(prev => prev + 1)
+        // Clear log for next block
+        setSetsLog([])
+        setSummaryInputs({})
+        setExerciseNote('')
+        setShowSummary(false)
+
+        if (currentStepIndex < steps.length - 1) {
+            setCurrentStepIndex(prev => prev + 1)
         } else {
             setIsFinished(true)
         }
@@ -345,55 +244,39 @@ export function WorkoutPlayer({
 
     // Main Interaction Handler
     const handleSetAction = () => {
-        const ex = currentExercise
-        const group = currentGroup
-
-        // Add current set to log placeholder
+        // Record current set
         let expectedReps = '10'
-        if (setType === 'WARMUP') expectedReps = ex.warmup_reps
-        else if (setType === 'FEEDER') expectedReps = ex.feeder_reps
-        else expectedReps = ex.reps
+        if (setType === 'WARMUP') expectedReps = currentExercise.warmup_reps
+        else if (setType === 'FEEDER') expectedReps = currentExercise.feeder_reps
+        else expectedReps = currentExercise.reps
 
         setSetsLog(prev => [...prev, {
-            exerciseId: currentExercise.exercise_id,
-            exerciseName: currentExercise.exercise?.name || 'Exercício',
+            exerciseId: currentExercise.exercise_id || currentExercise.id,
+            exerciseName: currentStep.exerciseName,
             type: setType,
             setNumber: currentSet,
             label: `${setTypeLabel} ${currentSet}`,
             expectedReps: expectedReps || '0'
         }])
 
-        // Bi-set Transition Logic
-        if (group && currentExerciseIndex < group.end) {
-            // Move to next exercise in group IMMEDIATELY (no rest)
-            setCurrentExerciseIndex(prev => prev + 1)
+        // Terminal Block logic
+        if (currentStep.isLastInBlock) {
+            setShowSummary(true)
             return
         }
 
-        // Check if it was the LAST set of the exercise (or group)
-        let isLast = false
-        if (setType === 'WORKING' && currentSet === (ex.working_sets || 3)) {
-            if (!group || currentExerciseIndex === group.end) {
-                isLast = true
-            }
-        }
-
-        if (isLast) {
-            setShowSummary(true)
-        } else {
-            // Start Rest
-            let restTime = 60
-            if (setType === 'WARMUP') restTime = ex.warmup_rest_seconds || 45
-            else if (setType === 'FEEDER') restTime = ex.feeder_rest_seconds || 60
-            else restTime = ex.rest_seconds || 60
-
-            setRestTimeLeft(restTime)
-            setRestEndTime(Date.now() + restTime * 1000)
+        // Intra-block logic (Rest or Switch)
+        if (currentStep.restSeconds > 0) {
+            setRestTimeLeft(currentStep.restSeconds)
+            setRestEndTime(Date.now() + currentStep.restSeconds * 1000)
             setIsResting(true)
 
             if ("Notification" in window && Notification.permission === "default") {
                 Notification.requestPermission()
             }
+        } else {
+            // Immediate switch to next set (Transition in Bi-set)
+            setCurrentStepIndex(prev => prev + 1)
         }
     }
 
@@ -464,33 +347,31 @@ export function WorkoutPlayer({
         }
     }
 
-    const setTypeColor = {
+    const setTypeColor = ({
         WARMUP: 'text-orange-500 bg-orange-500/10 border-orange-500/20',
         FEEDER: 'text-blue-500 bg-blue-500/10 border-blue-500/20',
         WORKING: 'text-emerald-500 bg-emerald-500/10 border-emerald-500/20'
-    }[setType]
+    } as any)[setType]
 
     const getNextSetInfo = () => {
-        if (!currentExercise) return null
-        const ex = currentExercise
-
-        if (setType === 'WARMUP') {
-            if (currentSet < ex.warmup_sets) return { label: 'Aquecimento', set: currentSet + 1, type: 'WARMUP', color: 'text-orange-500' }
-            if (ex.feeder_sets > 0) return { label: 'Feeder Set', set: 1, type: 'FEEDER', color: 'text-blue-500' }
-            return { label: 'Série de Trabalho', set: 1, type: 'WORKING', color: 'text-emerald-500' }
-        }
-
-        if (setType === 'FEEDER') {
-            if (currentSet < ex.feeder_sets) return { label: 'Feeder Set', set: currentSet + 1, type: 'FEEDER', color: 'text-blue-500' }
-            return { label: 'Série de Trabalho', set: 1, type: 'WORKING', color: 'text-emerald-500' }
-        }
-
-        if (setType === 'WORKING') {
-            if (currentSet < (ex.working_sets || 3)) return { label: 'Série de Trabalho', set: currentSet + 1, type: 'WORKING', color: 'text-emerald-500' }
+        if (currentStepIndex >= steps.length - 1) {
             return { label: 'Resumo do Exercício', set: 0, type: 'SUMMARY', color: 'text-white' }
         }
 
-        return null
+        const next = steps[currentStepIndex + 1]
+        const label = ({
+            WARMUP: 'Aquecimento',
+            FEEDER: 'Feeder Set',
+            WORKING: 'Série de Trabalho'
+        } as any)[next.phase]
+
+        const color = ({
+            WARMUP: 'text-orange-500',
+            FEEDER: 'text-blue-500',
+            WORKING: 'text-emerald-500'
+        } as any)[next.phase]
+
+        return { label, set: next.setNumber, type: next.phase, color }
     }
 
     const nextSet = getNextSetInfo()
@@ -574,7 +455,7 @@ export function WorkoutPlayer({
                     <div className="space-y-1">
                         <p className="text-[10px] font-black text-zinc-600 uppercase tracking-[0.2em]">Progresso Geral</p>
                         <h3 className="text-lg font-black text-white italic uppercase tracking-tight leading-none">
-                            {currentExerciseIndex + 1} <span className="text-zinc-700">/ {totalExercises}</span>
+                            {totalCompletedSets} <span className="text-zinc-700">/ {totalWorkoutSets}</span>
                         </h3>
                     </div>
                     <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest bg-emerald-500/10 px-3 py-1 rounded-lg border border-emerald-500/20">
@@ -700,7 +581,7 @@ export function WorkoutPlayer({
                                     <Badge variant="outline" className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-md italic shadow-lg border-2 ${setTypeColor}`}>
                                         {setTypeLabel}
                                     </Badge>
-                                    {currentGroup && (
+                                    {isBiSet && (
                                         <Badge className="bg-emerald-500 text-zinc-950 text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-md italic shadow-lg border-transparent">
                                             Bi-Set / Conjugado
                                         </Badge>
@@ -710,7 +591,10 @@ export function WorkoutPlayer({
                                     )}
                                 </div>
                                 <h2 className="text-4xl md:text-6xl font-black text-white uppercase italic tracking-tighter leading-[0.9] break-words">
-                                    {currentExercise.exercise?.name || 'Exercício'}
+                                    {currentExercise?.exercise?.name || currentExercise?.name || 'Exercício'}
+                                    {isBiSet && (
+                                        <span className="text-xl md:text-2xl text-orange-400 ml-2">(Bi-set)</span>
+                                    )}
                                 </h2>
                             </div>
 
@@ -771,32 +655,28 @@ export function WorkoutPlayer({
 
                             <div className="flex flex-col items-start gap-1 relative z-10 text-left">
                                 <span className="text-[10px] font-bold uppercase tracking-widest opacity-80">
-                                    {currentGroup && currentExerciseIndex < currentGroup.end ? `Próximo: ${exercises[currentExerciseIndex + 1].exercise.name}` :
-                                        setType === 'WORKING' && currentSet === (currentExercise.working_sets || 3) ? 'Finalizar' : 'Iniciar Descanso'}
+                                    {isBiSet && currentStep.restSeconds === 0 ? `Próximo: ${steps[currentStepIndex + 1]?.exerciseName || 'Exercício'}` :
+                                        currentStep.isLastInBlock ? 'Finalizar' : 'Iniciar Descanso'}
                                 </span>
                                 <span>
-                                    {currentGroup && currentExerciseIndex < currentGroup.end ? 'Ir para exercício B' :
-                                        setType === 'WORKING' && currentSet === (currentExercise.working_sets || 3) ? 'Concluir & Revisar' : setTypeLabel}
+                                    {isBiSet && currentStep.restSeconds === 0 ? 'Ir para próximo exercício' :
+                                        currentStep.isLastInBlock ? 'Concluir & Revisar' : setTypeLabel}
                                 </span>
                             </div>
-
-                            <div className="w-20 h-20 bg-black/10 rounded-full flex items-center justify-center backdrop-blur-sm border border-black/5 shrink-0 group-hover:scale-110 transition-transform">
-                                <Timer className="w-12 h-12 md:w-14 md:h-14 text-zinc-950 stroke-[2.5]" />
+                            <div className="relative z-10">
+                                <Play className="w-12 h-12 md:w-16 md:h-16 fill-current" />
                             </div>
                         </Button>
-
-                        <p className="text-center text-[10px] text-zinc-600 font-medium uppercase tracking-widest opacity-60">
-                            Registre as cargas ao final do exercício
-                        </p>
                     </div>
                 )}
             </div>
+
             {/* Footer Actions */}
             <div className="pt-10 flex items-center justify-between border-t border-zinc-800/30">
                 <Button
                     variant="ghost"
-                    onClick={() => setCurrentExerciseIndex(prev => Math.max(0, prev - 1))}
-                    disabled={currentExerciseIndex === 0}
+                    onClick={() => setCurrentStepIndex(prev => Math.max(0, prev - 1))}
+                    disabled={currentStepIndex === 0}
                     className="text-zinc-600 hover:text-white font-black uppercase italic tracking-widest text-[10px]"
                 >
                     Anterior
@@ -805,8 +685,8 @@ export function WorkoutPlayer({
                 <Button
                     variant="ghost"
                     onClick={() => {
-                        if (!skippedIndices.includes(currentExerciseIndex)) {
-                            setSkippedIndices(prev => [...prev, currentExerciseIndex])
+                        if (!skippedIndices.includes(currentStep.exerciseIndex)) {
+                            setSkippedIndices(prev => [...prev, currentStep.exerciseIndex])
                         }
                         advanceExercise()
                     }}
@@ -888,4 +768,3 @@ function Badge({ children, variant, className }: any) {
         </span>
     )
 }
-
