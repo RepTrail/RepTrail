@@ -1,14 +1,17 @@
-export const ASAAS_API_URL = process.env.ASAAS_API_URL || 'https://sandbox.asaas.com/v3'
-export const ASAAS_API_KEY = process.env.ASAAS_API_KEY
-
-console.log(`[ASAAS_INIT] Base URL: ${ASAAS_API_URL}`)
-
 export async function fetchAsaas(endpoint: string, options: RequestInit = {}) {
-    if (!ASAAS_API_KEY) {
+    const apiKey = process.env.ASAAS_API_KEY
+    const apiUrl = process.env.ASAAS_API_URL || 'https://sandbox.asaas.com/v3'
+
+    console.log(`[ASAAS_DEBUG] Using URL: ${apiUrl}`)
+    console.log(`[ASAAS_DEBUG] API Key present: ${!!apiKey} (len: ${apiKey?.length || 0})`)
+
+    if (!apiKey) {
+        console.error('[ASAAS_ERROR] process.env.ASAAS_API_KEY is undefined!')
+        console.log('[ASAAS_DEBUG] All Env Keys:', Object.keys(process.env).filter(k => k.includes('ASAAS') || k.includes('SUPABASE')))
         throw new Error('ASAAS_API_KEY is not set')
     }
 
-    const baseUrl = ASAAS_API_URL.endsWith('/') ? ASAAS_API_URL.slice(0, -1) : ASAAS_API_URL
+    const baseUrl = apiUrl.endsWith('/') ? apiUrl.slice(0, -1) : apiUrl
     const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`
     const url = `${baseUrl}${cleanEndpoint}`
 
@@ -18,7 +21,7 @@ export async function fetchAsaas(endpoint: string, options: RequestInit = {}) {
         ...options,
         headers: {
             'Content-Type': 'application/json',
-            'access_token': ASAAS_API_KEY,
+            'access_token': apiKey,
             ...options.headers,
         },
     })
@@ -43,9 +46,21 @@ export async function fetchAsaas(endpoint: string, options: RequestInit = {}) {
 
     if (!response.ok) {
         console.error('[ASAAS_ERROR_STATUS]', response.status)
-        console.error('[ASAAS_ERROR_DATA]', data)
+        console.error('[ASAAS_ERROR_DATA]', JSON.stringify(data, null, 2))
 
-        const description = data.errors?.[0]?.description || data.message || `Erro ${response.status} na integração com Asaas`
+        let description = 'Ocorreu um erro na integração com Asaas.'
+
+        if (data.errors && Array.isArray(data.errors)) {
+            // Join all error descriptions if multiple exist
+            description = data.errors.map((e: any) => e.description).join(' | ')
+        } else if (data.message) {
+            description = data.message
+        } else if (response.status === 401) {
+            description = 'Chave de API do Asaas inválida ou expirada.'
+        } else if (response.status === 403) {
+            description = 'Acesso negado ao recurso do Asaas.'
+        }
+
         throw new Error(description)
     }
 
