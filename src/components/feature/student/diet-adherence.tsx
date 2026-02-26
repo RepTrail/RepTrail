@@ -354,7 +354,7 @@ export function DietAdherence({ diet, allowEstimation = false, hasTrainer = fals
                                                             </div>
                                                         </div>
                                                         <div className="flex items-center gap-2 flex-shrink-0">
-                                                            {item.has_substitute && (
+                                                            {hasTrainer && item.has_substitute && (
                                                                 <Button
                                                                     variant="ghost"
                                                                     size="icon"
@@ -372,20 +372,6 @@ export function DietAdherence({ diet, allowEstimation = false, hasTrainer = fals
                                                                 >
                                                                     <Repeat2 className={cn("w-4 h-4", loadingMap[`swap-${item.id}`] && "animate-spin")} />
                                                                 </Button>
-                                                            )}
-                                                            {!item.is_checked && !hasTrainer && !allowEstimation && !item.has_substitute && (
-                                                                <SubstituteItemDialog
-                                                                    item={item}
-                                                                    onSuccess={(updatedData) => {
-                                                                        setMeals(prev => prev.map(m => {
-                                                                            if (m.id !== meal.id) return m
-                                                                            return {
-                                                                                ...m,
-                                                                                meal_items: m.meal_items.map((i: any) => i.id === item.id ? updatedData : i)
-                                                                            }
-                                                                        }))
-                                                                    }}
-                                                                />
                                                             )}
                                                         </div>
                                                     </div>

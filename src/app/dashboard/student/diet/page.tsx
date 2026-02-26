@@ -253,7 +253,7 @@ export default async function StudentDietPage() {
                 </div>
             ) : (
                 <div className="max-w-3xl mx-auto">
-                    <DietAdherence diet={diet} allowEstimation={hasTrainer} />
+                    <DietAdherence diet={diet} allowEstimation={hasTrainer} hasTrainer={hasTrainer} />
                 </div>
             )}
 
