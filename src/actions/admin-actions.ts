@@ -402,7 +402,7 @@ const DEFAULT_PRICES: Record<string, { monthly: number; quarterly_discount: numb
 }
 
 export async function getPlanPricing() {
-    const { supabase } = await createClient()
+    const supabase = await createClient()
     const { data } = await supabase
         .from('plan_features')
         .select('plan_tier, feature_key, limit_value')
