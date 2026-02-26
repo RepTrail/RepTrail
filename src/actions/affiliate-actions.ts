@@ -113,6 +113,8 @@ export async function getAffiliateData() {
     ])
 
     // Cálculos e Processamento
+    if (!profile) return null
+
     const totalEarned = commissionsData
         ?.filter(c => c.status !== 'cancelled')
         .reduce((sum, c) => sum + Number(c.amount), 0) ?? 0
