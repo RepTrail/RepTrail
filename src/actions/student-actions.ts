@@ -252,20 +252,15 @@ export async function getStudentProfile(studentId: string) {
     const supabase = await createClient()
 
     try {
-        const { data: profile, error: profileError } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', studentId)
-            .single()
+        const [
+            { data: profile, error: profileError },
+            { data: details, error: detailsError }
+        ] = await Promise.all([
+            supabase.from('profiles').select('*').eq('id', studentId).single(),
+            supabase.from('student_details').select('*').eq('id', studentId).maybeSingle()
+        ])
 
         if (profileError) throw profileError
-
-        const { data: details, error: detailsError } = await supabase
-            .from('student_details')
-            .select('*')
-            .eq('id', studentId)
-            .single()
-
         if (detailsError && detailsError.code !== 'PGRST116') throw detailsError
 
         return { ...profile, details }
@@ -710,55 +705,53 @@ export async function getPublicStudentProfile(studentId: string) {
     const supabase = await createClient()
 
     try {
-        // 1. Basic Profile & Details (Basic safety: only if public_profile_enabled or similar if we had it, but for now we follow feed rules)
-        const { data: profile, error: profileErr } = await supabase
-            .from('profiles')
-            .select(`
-                id, full_name, avatar_url, allow_public_feed, public_profile_enabled,
-                auto_training_status, auto_training_trial_end, created_at
-            `)
-            .eq('id', studentId)
-            .single()
+        // Fetch all student profile data in parallel
+        const [
+            { data: profile, error: profileErr },
+            { data: trainerLink },
+            { data: photos },
+            { data: details }
+        ] = await Promise.all([
+            supabase
+                .from('profiles')
+                .select(`
+                    id, full_name, avatar_url, allow_public_feed, public_profile_enabled,
+                    auto_training_status, auto_training_trial_end, created_at
+                `)
+                .eq('id', studentId)
+                .single(),
+            supabase
+                .from('trainer_students')
+                .select(`
+                    active,
+                    trainer:profiles!trainer_id(
+                        id, full_name, avatar_url, trainer_code
+                    )
+                `)
+                .eq('student_id', studentId)
+                .eq('active', true)
+                .maybeSingle(),
+            supabase
+                .from('progress_photos')
+                .select('*')
+                .eq('student_id', studentId)
+                .eq('is_private', false)
+                .order('created_at', { ascending: false }),
+            supabase
+                .from('student_details')
+                .select('body_fat, steroid_use, image_publication_authorized')
+                .eq('id', studentId)
+                .single()
+        ])
 
         if (profileErr || !profile) throw new Error('Student not found')
 
-        // 2. Check for Trainer
-        const { data: trainerLink } = await supabase
-            .from('trainer_students')
-            .select(`
-                active,
-                trainer:profiles!trainer_id(
-                    id, full_name, avatar_url, trainer_code
-                )
-            `)
-            .eq('student_id', studentId)
-            .eq('active', true)
-            .maybeSingle()
-
-        // 3. Photos (All public ones)
-        const { data: photos } = await supabase
-            .from('progress_photos')
-            .select('*')
-            .eq('student_id', studentId)
-            .eq('is_private', false)
-            .order('created_at', { ascending: false })
-
-        // 4. First and Last for "Before & After"
         const oldestPhoto = photos && photos.length > 0 ? photos[photos.length - 1] : null;
         const newestPhoto = photos && photos.length > 0 ? photos[0] : null;
 
-        // 5. Adherence History (imported from tracking-actions)
-        // We'll import it dynamically or just call the function if it's in the same project
-        // Since it's a server action, we can import it.
+        // Fetch adherence history separately (it's also an async import/call)
         const { getStudentAdherenceHistory } = await import('./tracking-actions')
         const adherenceHistory = await getStudentAdherenceHistory(studentId, 30)
-
-        // 6. Student Details (for steroid use flag)
-        const { data: details } = await supabase
-            .from('student_details')
-            .select('body_fat, steroid_use, image_publication_authorized')
-            .eq('id', studentId)
-            .single()
 
         return {
             profile,

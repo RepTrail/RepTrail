@@ -50,40 +50,69 @@ export async function getAffiliateData() {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return null
 
-    // Fetch profile
-    const { data: profile } = await supabase
-        .from('profiles')
-        .select('id, full_name, avatar_url, is_affiliate, affiliate_token, affiliate_balance, email')
-        .eq('id', user.id)
-        .single()
+    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
 
-    if (!profile) return null
+    // Paraleliza todas as consultas de dados do afiliado
+    const [
+        { data: profile },
+        { count: totalClicks },
+        { count: totalReferrals },
+        { count: activeTrainers },
+        { data: commissionsData },
+        { data: recentClicks },
+        { data: recentReferrals },
+        { data: recentCommissions },
+        { data: payouts }
+    ] = await Promise.all([
+        supabase
+            .from('profiles')
+            .select('id, full_name, avatar_url, is_affiliate, affiliate_token, affiliate_balance, email')
+            .eq('id', user.id)
+            .single(),
+        supabase
+            .from('affiliate_clicks')
+            .select('*', { count: 'exact', head: true })
+            .eq('affiliate_id', user.id),
+        supabase
+            .from('profiles')
+            .select('*', { count: 'exact', head: true })
+            .eq('referred_by_id', user.id),
+        supabase
+            .from('profiles')
+            .select('*', { count: 'exact', head: true })
+            .eq('referred_by_id', user.id)
+            .eq('role', 'trainer'),
+        supabase
+            .from('affiliate_commissions')
+            .select('amount, status')
+            .eq('affiliate_id', user.id),
+        supabase
+            .from('affiliate_clicks')
+            .select('created_at')
+            .eq('affiliate_id', user.id)
+            .gte('created_at', sevenDaysAgo)
+            .order('created_at', { ascending: true }),
+        supabase
+            .from('profiles')
+            .select('id, full_name, email, role, created_at, avatar_url')
+            .eq('referred_by_id', user.id)
+            .order('created_at', { ascending: false })
+            .limit(10),
+        supabase
+            .from('affiliate_commissions')
+            .select('id, amount, status, description, created_at')
+            .eq('affiliate_id', user.id)
+            .order('created_at', { ascending: false })
+            .limit(10),
+        supabase
+            .from('affiliate_payouts')
+            .select('id, amount, status, created_at')
+            .eq('affiliate_id', user.id)
+            .order('created_at', { ascending: false })
+            .limit(5)
+    ])
 
-    // Total clicks
-    const { count: totalClicks } = await supabase
-        .from('affiliate_clicks')
-        .select('*', { count: 'exact', head: true })
-        .eq('affiliate_id', user.id)
-
-    // Total referrals (users who signed up via this affiliate)
-    const { count: totalReferrals } = await supabase
-        .from('profiles')
-        .select('*', { count: 'exact', head: true })
-        .eq('referred_by_id', user.id)
-
-    // Active personal referrals (trainers referred)
-    const { count: activeTrainers } = await supabase
-        .from('profiles')
-        .select('*', { count: 'exact', head: true })
-        .eq('referred_by_id', user.id)
-        .eq('role', 'trainer')
-
-    // Total earned all-time
-    const { data: commissionsData } = await supabase
-        .from('affiliate_commissions')
-        .select('amount, status')
-        .eq('affiliate_id', user.id)
-
+    // Cálculos e Processamento
     const totalEarned = commissionsData
         ?.filter(c => c.status !== 'cancelled')
         .reduce((sum, c) => sum + Number(c.amount), 0) ?? 0
@@ -92,21 +121,10 @@ export async function getAffiliateData() {
         ?.filter(c => c.status === 'pending')
         .reduce((sum, c) => sum + Number(c.amount), 0) ?? 0
 
-    // Conversion rate
     const conversionRate = (totalClicks ?? 0) > 0
         ? (((totalReferrals ?? 0) / (totalClicks ?? 1)) * 100).toFixed(1)
         : '0.0'
 
-    // Clicks last 7 days for sparkline
-    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
-    const { data: recentClicks } = await supabase
-        .from('affiliate_clicks')
-        .select('created_at')
-        .eq('affiliate_id', user.id)
-        .gte('created_at', sevenDaysAgo)
-        .order('created_at', { ascending: true })
-
-    // Clicks per day bucket (last 7 days)
     const clicksPerDay: Record<string, number> = {}
     for (let i = 6; i >= 0; i--) {
         const d = new Date()
@@ -119,30 +137,6 @@ export async function getAffiliateData() {
         if (key in clicksPerDay) clicksPerDay[key]++
     })
 
-    // Recent referrals
-    const { data: recentReferrals } = await supabase
-        .from('profiles')
-        .select('id, full_name, email, role, created_at, avatar_url')
-        .eq('referred_by_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(10)
-
-    // Recent commissions
-    const { data: recentCommissions } = await supabase
-        .from('affiliate_commissions')
-        .select('id, amount, status, description, created_at')
-        .eq('affiliate_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(10)
-
-    // Payouts
-    const { data: payouts } = await supabase
-        .from('affiliate_payouts')
-        .select('id, amount, status, created_at')
-        .eq('affiliate_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(5)
-
     return {
         profile,
         stats: {
@@ -151,7 +145,7 @@ export async function getAffiliateData() {
             activeTrainers: activeTrainers ?? 0,
             totalEarned,
             pendingAmount,
-            balance: profile.affiliate_balance ?? 0,
+            balance: profile?.affiliate_balance ?? 0,
             conversionRate,
         },
         clicksPerDay,
@@ -264,17 +258,18 @@ export async function getAffiliateTransactions() {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { commissions: [], payouts: [], checks: { available: 0, pending: 0, paid: 0 } }
 
-    const { data: commissions } = await supabase
-        .from('affiliate_commissions')
-        .select('*')
-        .eq('affiliate_id', user.id)
-        .order('created_at', { ascending: false })
-
-    const { data: payouts } = await supabase
-        .from('affiliate_payouts')
-        .select('*')
-        .eq('affiliate_id', user.id)
-        .order('created_at', { ascending: false })
+    const [{ data: commissions }, { data: payouts }] = await Promise.all([
+        supabase
+            .from('affiliate_commissions')
+            .select('*')
+            .eq('affiliate_id', user.id)
+            .order('created_at', { ascending: false }),
+        supabase
+            .from('affiliate_payouts')
+            .select('*')
+            .eq('affiliate_id', user.id)
+            .order('created_at', { ascending: false })
+    ])
 
     // Calculate totals
     const available = commissions
@@ -310,13 +305,33 @@ export async function getAffiliateStatsDetails() {
     // 30 days ago
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
 
-    // Clicks per day bucket (last 30 days)
-    const { data: clicks } = await supabase
-        .from('affiliate_clicks')
-        .select('created_at')
-        .eq('affiliate_id', user.id)
-        .gte('created_at', thirtyDaysAgo)
-        .order('created_at', { ascending: true })
+    const [
+        { data: clicks },
+        { count: totalClicks },
+        { count: totalReferrals },
+        { count: payingReferrals }
+    ] = await Promise.all([
+        supabase
+            .from('affiliate_clicks')
+            .select('created_at')
+            .eq('affiliate_id', user.id)
+            .gte('created_at', thirtyDaysAgo)
+            .order('created_at', { ascending: true }),
+        supabase
+            .from('affiliate_clicks')
+            .select('*', { count: 'exact', head: true })
+            .eq('affiliate_id', user.id),
+        supabase
+            .from('profiles')
+            .select('*', { count: 'exact', head: true })
+            .eq('referred_by_id', user.id),
+        supabase
+            .from('profiles')
+            .select('*', { count: 'exact', head: true })
+            .eq('referred_by_id', user.id)
+            .neq('plan_tier', 'none')
+            .neq('plan_tier', 'start')
+    ])
 
     const clicksPerDay: Record<string, number> = {}
     // Initialize 30 days
@@ -332,24 +347,6 @@ export async function getAffiliateStatsDetails() {
         const key = c.created_at.slice(0, 10)
         if (key in clicksPerDay) clicksPerDay[key]++
     })
-
-    // Conversion calculation
-    const { count: totalClicks } = await supabase
-        .from('affiliate_clicks')
-        .select('*', { count: 'exact', head: true })
-        .eq('affiliate_id', user.id)
-
-    const { count: totalReferrals } = await supabase
-        .from('profiles')
-        .select('*', { count: 'exact', head: true })
-        .eq('referred_by_id', user.id)
-
-    const { count: payingReferrals } = await supabase
-        .from('profiles')
-        .select('*', { count: 'exact', head: true })
-        .eq('referred_by_id', user.id)
-        .neq('plan_tier', 'none')
-        .neq('plan_tier', 'start')
 
     const clickToSignup = (totalClicks ?? 0) > 0
         ? (((totalReferrals ?? 0) / (totalClicks ?? 1)) * 100).toFixed(1)

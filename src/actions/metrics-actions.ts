@@ -14,17 +14,16 @@ export async function getAdherenceForDates(
 
     const supabase = await createClient()
 
-    // 1. Determine Effective Start Date
-    const { data: profile } = await supabase.from('profiles').select('created_at').eq('id', studentId).single()
+    // 1. Determine Effective Start Date in parallel
+    const [
+        { data: profile },
+        { data: trainerLink }
+    ] = await Promise.all([
+        supabase.from('profiles').select('created_at').eq('id', studentId).single(),
+        supabase.from('trainer_students').select('created_at').eq('student_id', studentId).eq('active', true).maybeSingle()
+    ])
+
     const profileCreatedStr = profile?.created_at ? new Date(profile.created_at).toISOString().split('T')[0] : '2000-01-01'
-
-    const { data: trainerLink } = await supabase
-        .from('trainer_students')
-        .select('created_at')
-        .eq('student_id', studentId)
-        .eq('active', true)
-        .maybeSingle()
-
     const linkDateStr = trainerLink?.created_at ? new Date(trainerLink.created_at).toISOString().split('T')[0] : '2000-01-01'
 
     // Use the later of the two dates as the effective start
@@ -39,70 +38,49 @@ export async function getAdherenceForDates(
     const minDate = sortedDates[0]
     const maxDate = sortedDates[sortedDates.length - 1]
 
-    // Fetch Daily Tracking (Primary for Diet, adjustments for others)
-    const { data: tracking } = await supabase
-        .from('daily_tracking')
-        .select('*')
-        .eq('user_id', studentId)
-        .gte('date', minDate)
-        .lte('date', maxDate)
-
-    // Fetch Activity Logs (Source of Truth for Execution)
     const searchMin = minDate + 'T00:00:00-03:00'
     const searchMax = maxDate + 'T23:59:59-03:00'
 
-    const { data: wLogs } = await supabase
-        .from('workout_logs')
-        .select('started_at, status')
-        .eq('student_id', studentId)
-        .eq('status', 'completed')
-        .gte('started_at', searchMin)
-        .lte('started_at', searchMax)
+    // 2. Fetch everything in parallel
+    const [
+        { data: tracking },
+        { data: wLogs },
+        { data: cLogs },
+        { data: eLogs },
+        { data: aw },
+        { data: ac },
+        { data: ad },
+        { data: ae },
+        { data: details }
+    ] = await Promise.all([
+        supabase.from('daily_tracking').select('*').eq('user_id', studentId).gte('date', minDate).lte('date', maxDate),
+        supabase.from('workout_logs').select('started_at, status').eq('student_id', studentId).eq('status', 'completed').gte('started_at', searchMin).lte('started_at', searchMax),
+        supabase.from('cardio_logs').select('started_at, status, elapsed_seconds, assignment:assigned_cardios(duration_minutes)').eq('student_id', studentId).in('status', ['completed', 'in_progress']).gte('started_at', searchMin).lte('started_at', searchMax),
+        supabase.from('ergogenic_logs').select('created_at').eq('student_id', studentId).gte('created_at', searchMin).lte('created_at', searchMax),
+        supabase.from('assigned_workouts').select('day_of_week').eq('student_id', studentId).neq('active', false),
+        supabase.from('assigned_cardios').select('days_of_week').eq('student_id', studentId).neq('active', false),
+        supabase.from('assigned_diets').select('id').eq('student_id', studentId).neq('active', false),
+        supabase.from('ergogenics').select('application_days').eq('student_id', studentId),
+        supabase.from('student_details').select('steroid_use').eq('id', studentId).single()
+    ])
 
-    const { data: cLogs } = await supabase
-        .from('cardio_logs')
-        .select('started_at, status, elapsed_seconds, assignment:assigned_cardios(duration_minutes)')
-        .eq('student_id', studentId)
-        .in('status', ['completed', 'in_progress'])
-        .gte('started_at', searchMin)
-        .lte('started_at', searchMax)
-
-    const { data: eLogs } = await supabase
-        .from('ergogenic_logs')
-        .select('created_at')
-        .eq('student_id', studentId)
-        .gte('created_at', searchMin)
-        .lte('created_at', searchMax)
-
-    // Map logs to YYYY-MM-DD keys (using consistent server time interpretation)
+    // Map logs to YYYY-MM-DD keys
     const workoutDates = new Set(wLogs?.map(l => formatToBrazilDate(l.started_at)))
+    const ergoDates = new Set(eLogs?.map(l => formatToBrazilDate(l.created_at)))
 
-    // Process Cardio Logs to support Partial/In-Progress
+    // Process Cardio Logs
     const cardioDataMap = new Map<string, { status: string, percentage: number }>()
     cLogs?.forEach((l: any) => {
         const dateKey = formatToBrazilDate(l.started_at)
         const targetSeconds = (l.assignment?.duration_minutes || 30) * 60
         const percentage = Math.min(Math.round((l.elapsed_seconds / targetSeconds) * 100), 100)
-
         const existing = cardioDataMap.get(dateKey)
         if (!existing || percentage > existing.percentage) {
             cardioDataMap.set(dateKey, { status: l.status, percentage })
         }
     })
 
-    const ergoDates = new Set(eLogs?.map(l => formatToBrazilDate(l.created_at)))
-
-    // Fetch Assignments & Details
-    const { data: aw } = await supabase.from('assigned_workouts').select('day_of_week').eq('student_id', studentId).neq('active', false)
-    const { data: ac } = await supabase.from('assigned_cardios').select('days_of_week').eq('student_id', studentId).neq('active', false)
-    const { data: ad } = await supabase.from('assigned_diets').select('id').eq('student_id', studentId).neq('active', false)
-    const { data: ae } = await supabase.from('ergogenics').select('application_days').eq('student_id', studentId)
-
-    // Ergogenics Check
-    const { data: details } = await supabase.from('student_details').select('steroid_use').eq('id', studentId).single()
     const steroidUse = !!details?.steroid_use
-
-    // Sets for O(1) lookup
     const workoutDays = new Set((aw || []).map((a: any) => a.day_of_week))
 
     const cardioDays = new Set<number>()
@@ -206,17 +184,13 @@ export async function getAdherenceForDates(
 export async function getStudentMetricsHistory(studentId: string) {
     const supabase = await createClient()
 
-    const { data: weights } = await supabase
-        .from('weight_history')
-        .select('weight_kg, recorded_at')
-        .eq('student_id', studentId)
-        .order('recorded_at', { ascending: true })
-
-    const { data: bfs } = await supabase
-        .from('bf_history')
-        .select('bf_percentage, recorded_at')
-        .eq('student_id', studentId)
-        .order('recorded_at', { ascending: true })
+    const [
+        { data: weights },
+        { data: bfs }
+    ] = await Promise.all([
+        supabase.from('weight_history').select('weight_kg, recorded_at').eq('student_id', studentId).order('recorded_at', { ascending: true }),
+        supabase.from('bf_history').select('bf_percentage, recorded_at').eq('student_id', studentId).order('recorded_at', { ascending: true })
+    ])
 
     return {
         weights: weights || [],

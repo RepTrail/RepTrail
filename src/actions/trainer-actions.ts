@@ -334,22 +334,18 @@ export async function getEffectiveTier(): Promise<'none' | 'start' | 'on_demand'
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return 'none'
 
-    const { data: profile } = await supabase
-        .from('profiles')
-        .select('plan_tier')
-        .eq('id', user.id)
-        .single()
+    const [
+        { data: profile },
+        { count: activeStudentsCount }
+    ] = await Promise.all([
+        supabase.from('profiles').select('plan_tier').eq('id', user.id).single(),
+        supabase.from('trainer_students').select('*', { count: 'exact', head: true }).eq('trainer_id', user.id).eq('active', true)
+    ])
 
     const tier = (profile?.plan_tier as 'none' | 'on_demand' | 'start' | 'pro' | 'elite') || 'none'
 
-    if (tier === 'on_demand') {
-        const { count } = await supabase
-            .from('trainer_students')
-            .select('*', { count: 'exact', head: true })
-            .eq('trainer_id', user.id)
-            .eq('active', true)
-
-        if ((count || 0) >= 8) return 'pro'
+    if (tier === 'on_demand' && (activeStudentsCount || 0) >= 8) {
+        return 'pro'
     }
 
     return tier

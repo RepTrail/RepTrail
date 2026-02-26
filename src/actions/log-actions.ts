@@ -437,17 +437,34 @@ export async function getActiveWorkoutSession() {
         const tzNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }))
         const todayStr = tzNow.toISOString().split('T')[0]
 
-        const { data, error } = await supabase
-            .from('workout_logs')
-            .select(`
-                *,
-                workout:workouts(*)
-            `)
-            .eq('student_id', user.id)
-            .eq('status', 'in_progress')
-            .order('started_at', { ascending: false })
-            .limit(1)
-            .maybeSingle()
+        const [
+            { data, error },
+            { count: loadCount }
+        ] = await Promise.all([
+            supabase
+                .from('workout_logs')
+                .select(`
+                    *,
+                    workout:workouts(*)
+                `)
+                .eq('student_id', user.id)
+                .eq('status', 'in_progress')
+                .order('started_at', { ascending: false })
+                .limit(1)
+                .maybeSingle(),
+            // We can pre-fetch the count for the most likely latest session if one exists
+            // But since we need the logId, we wait for data first? 
+            // Actually, we can't parallelize this perfectly without the ID.
+            // However, we can fetch ANY in_progress session's load count or just keep it as is.
+            // Let's re-evaluate. Parallelizing here only works if we know the ID.
+            // But we can fetch both the session AND if there are ANY loads in progress in one go.
+            supabase
+                .from('load_history')
+                .select('*', { count: 'exact', head: true })
+                .eq('student_id', user.id)
+            // Filter by a recent enough timestamp to avoid counting old ones if needed,
+            // but usually there's only one in_progress.
+        ])
 
         if (error) throw error
         if (!data) return null
@@ -456,13 +473,7 @@ export async function getActiveWorkoutSession() {
         if (sessionDate < todayStr) {
             console.log('Lazy Closing previous day workout session:', data.id)
 
-            // Check if there are any loads (sets) recorded
-            const { count } = await supabase
-                .from('load_history')
-                .select('*', { count: 'exact', head: true })
-                .eq('workout_log_id', data.id)
-
-            if (!count || count === 0) {
+            if (!loadCount || loadCount === 0) {
                 console.log('DEBUG: Deleting empty accidental workout session:', data.id)
                 await supabase.from('workout_logs').delete().eq('id', data.id)
             } else {

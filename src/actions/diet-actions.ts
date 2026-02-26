@@ -586,23 +586,50 @@ export async function getStudentDailyDiet(studentId: string) {
     try {
         const todayDow = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' })).getDay()
 
-        const { data: assignments, error: assignErr } = await supabase
-            .from('assigned_diets')
-            .select(`
-                diet:diets!inner(
-                    *,
-                    trainer_id,
-                    meals(
+        const todayStr = getTodayStrBrazil()
+        const { start, end } = getTodayRangeBrazil()
+
+        // Fetch diet, logs and potential trainer links in parallel
+        const [
+            { data: assignments, error: assignErr },
+            { data: logs },
+            { data: itemLogs },
+            { data: trainerLinks }
+        ] = await Promise.all([
+            supabase
+                .from('assigned_diets')
+                .select(`
+                    diet:diets!inner(
                         *,
-                        meal_items(*)
+                        trainer_id,
+                        meals(
+                            *,
+                            meal_items(*)
+                        )
                     )
-                )
-            `)
-            .eq('student_id', studentId)
-            .eq('active', true)
-            .contains('days_of_week', [todayDow])
-            .order('created_at', { ascending: false })
-            .limit(1)
+                `)
+                .eq('student_id', studentId)
+                .eq('active', true)
+                .contains('days_of_week', [todayDow])
+                .order('created_at', { ascending: false })
+                .limit(1),
+            supabase
+                .from('meal_logs')
+                .select('meal_id')
+                .eq('student_id', studentId)
+                .gte('consumed_at', start)
+                .lt('consumed_at', end),
+            supabase
+                .from('meal_item_logs')
+                .select('*')
+                .eq('user_id', studentId)
+                .eq('date', todayStr),
+            supabase
+                .from('trainer_students')
+                .select('trainer_id')
+                .eq('student_id', studentId)
+                .eq('active', true)
+        ])
 
         if (assignErr) {
             console.error('[GET_DAILY_DIET] Error:', assignErr.message)
@@ -614,35 +641,11 @@ export async function getStudentDailyDiet(studentId: string) {
 
         const diet = assignment.diet as any
 
-        // Data Pruning: Check if trainer is still linked
+        // Data Pruning: Check if trainer is still linked (using pre-fetched links)
         if (diet.trainer_id && diet.trainer_id !== studentId) {
-            const { data: link } = await supabase
-                .from('trainer_students')
-                .select('id')
-                .eq('trainer_id', diet.trainer_id)
-                .eq('student_id', studentId)
-                .eq('active', true)
-                .maybeSingle()
-
-            if (!link) return null // Unlinked trainer's data is hidden
+            const isLinked = trainerLinks?.some(l => l.trainer_id === diet.trainer_id)
+            if (!isLinked) return null // Unlinked trainer's data is hidden
         }
-        const { start, end } = getTodayRangeBrazil()
-
-        const todayStr = getTodayStrBrazil()
-
-        const { data: logs } = await supabase
-            .from('meal_logs')
-            .select('meal_id')
-            .eq('student_id', studentId)
-            .gte('consumed_at', start)
-            .lt('consumed_at', end)
-
-        // Fetch detailed item logs — query by 'date' column (DATE), not consumed_at
-        const { data: itemLogs } = await supabase
-            .from('meal_item_logs')
-            .select('*')
-            .eq('user_id', studentId)
-            .eq('date', todayStr)
 
         const loggedMealIds = new Set(logs?.map(l => l.meal_id) || [])
         const itemLogMap = new Map(itemLogs?.map(l => [l.meal_item_id, l]) || [])

@@ -345,38 +345,41 @@ export async function getTodayWorkout(studentId: string) {
     const dayOfWeek = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' })).getDay() // 0=Dom ... 6=Sab, no fuso de Brasília
 
     try {
-        const { data: assignment } = await supabase
-            .from('assigned_workouts')
-            .select(`
-                workout:workouts!inner(
-                    *,
-                    trainer_id,
-                    exercises:workout_exercises(
+        const [
+            { data: assignment },
+            { data: trainerLinks }
+        ] = await Promise.all([
+            supabase
+                .from('assigned_workouts')
+                .select(`
+                    workout:workouts!inner(
                         *,
-                        exercise:exercises(*)
+                        trainer_id,
+                        exercises:workout_exercises(
+                            *,
+                            exercise:exercises(*)
+                        )
                     )
-                )
-            `)
-            .eq('student_id', studentId)
-            .eq('day_of_week', dayOfWeek)
-            .eq('active', true)
-            .maybeSingle()
+                `)
+                .eq('student_id', studentId)
+                .eq('day_of_week', dayOfWeek)
+                .eq('active', true)
+                .maybeSingle(),
+            supabase
+                .from('trainer_students')
+                .select('trainer_id')
+                .eq('student_id', studentId)
+                .eq('active', true)
+        ])
 
         if (!assignment || !assignment.workout) return null
 
         const workout = assignment.workout as any
 
-        // Data Pruning: Check if trainer is still linked
+        // Data Pruning: Check if trainer is still linked using pre-fetched links
         if (workout.trainer_id && workout.trainer_id !== studentId) {
-            const { data: link } = await supabase
-                .from('trainer_students')
-                .select('id')
-                .eq('trainer_id', workout.trainer_id)
-                .eq('student_id', studentId)
-                .eq('active', true)
-                .maybeSingle()
-
-            if (!link) return null // Unlinked trainer's data is hidden
+            const isLinked = trainerLinks?.some(l => l.trainer_id === workout.trainer_id)
+            if (!isLinked) return null // Unlinked trainer's data is hidden
         }
         if (workout.exercises) {
             workout.exercises.sort((a: any, b: any) => a.order_index - b.order_index)
