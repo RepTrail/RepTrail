@@ -22,12 +22,26 @@ export function AnamnesisForm({ initialData }: { initialData?: any }) {
     const { toast } = useToast()
     const [loading, setLoading] = useState(false)
 
+    // Calculate Age helper
+    const calculateAge = (birthDate: string) => {
+        if (!birthDate) return null
+        const today = new Date()
+        const birth = new Date(birthDate)
+        let age = today.getFullYear() - birth.getFullYear()
+        const m = today.getMonth() - birth.getMonth()
+        if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+            age--
+        }
+        return age
+    }
+
+    const studentAge = initialData?.birth_date ? calculateAge(initialData.birth_date) : initialData?.age
+    const studentHeight = initialData?.height || ''
+    const studentWeight = initialData?.weight || initialData?.current_weight || ''
+
     // Form State
     const [formData, setFormData] = useState({
-        age: initialData?.age || '',
         sex: initialData?.sex || 'male',
-        height: initialData?.height || '',
-        weight: initialData?.weight || initialData?.current_weight || '',
         activity_level: initialData?.activity_level || 'moderate',
         // Measurements for Navy Seal
         neck_cm: initialData?.neck_cm || '',
@@ -39,7 +53,7 @@ export function AnamnesisForm({ initialData }: { initialData?: any }) {
 
     // Navy Seal Calculation Logic
     useEffect(() => {
-        const h = parseFloat(formData.height)
+        const h = parseFloat(studentHeight)
         const neck = parseFloat(formData.neck_cm)
         const waist = parseFloat(formData.waist_cm)
         const hip = parseFloat(formData.hip_cm)
@@ -61,7 +75,7 @@ export function AnamnesisForm({ initialData }: { initialData?: any }) {
             const bf = 495 / (1.29579 - 0.35004 * Math.log10(waist + hip - neck) + 0.22100 * Math.log10(h)) - 450
             setCalculatedBF(Math.max(2, bf).toFixed(1))
         }
-    }, [formData])
+    }, [formData, studentHeight])
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault()
@@ -112,45 +126,29 @@ export function AnamnesisForm({ initialData }: { initialData?: any }) {
                 <form onSubmit={handleSubmit} className="space-y-12">
                     {/* Basic Info */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <div className="space-y-3">
+                        <div className="space-y-3 flex flex-col justify-center px-8 bg-zinc-900/20 border border-zinc-900 rounded-2xl h-16">
                             <Label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest flex items-center gap-2">
                                 <User className="w-3 h-3" /> Idade
                             </Label>
-                            <Input
-                                type="number"
-                                placeholder="25"
-                                value={formData.age}
-                                onChange={e => setFormData(prev => ({ ...prev, age: e.target.value }))}
-                                className="h-16 bg-zinc-900/30 border-zinc-800 focus:border-emerald-500/50 rounded-2xl font-black italic text-xl px-6"
-                                required
-                            />
+                            <span className="text-xl font-black italic text-zinc-400">
+                                {studentAge ? `${studentAge} anos` : 'Não informada'}
+                            </span>
                         </div>
-                        <div className="space-y-3">
+                        <div className="space-y-3 flex flex-col justify-center px-8 bg-zinc-900/20 border border-zinc-900 rounded-2xl h-16">
                             <Label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest flex items-center gap-2">
-                                <Ruler className="w-3 h-3" /> Altura (cm)
+                                <Ruler className="w-3 h-3" /> Altura
                             </Label>
-                            <Input
-                                type="number"
-                                placeholder="180"
-                                value={formData.height}
-                                onChange={e => setFormData(prev => ({ ...prev, height: e.target.value }))}
-                                className="h-16 bg-zinc-900/30 border-zinc-800 focus:border-emerald-500/50 rounded-2xl font-black italic text-xl px-6"
-                                required
-                            />
+                            <span className="text-xl font-black italic text-zinc-400">
+                                {studentHeight ? `${studentHeight} cm` : 'Não informada'}
+                            </span>
                         </div>
-                        <div className="space-y-3">
+                        <div className="space-y-3 flex flex-col justify-center px-8 bg-zinc-900/20 border border-zinc-900 rounded-2xl h-16">
                             <Label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest flex items-center gap-2">
-                                <Weight className="w-3 h-3" /> Peso (kg)
+                                <Weight className="w-3 h-3" /> Peso
                             </Label>
-                            <Input
-                                type="number"
-                                step="0.1"
-                                placeholder="85.5"
-                                value={formData.weight}
-                                onChange={e => setFormData(prev => ({ ...prev, weight: e.target.value }))}
-                                className="h-16 bg-zinc-900/30 border-zinc-800 focus:border-emerald-500/50 rounded-2xl font-black italic text-xl px-6"
-                                required
-                            />
+                            <span className="text-xl font-black italic text-zinc-400">
+                                {studentWeight ? `${studentWeight} kg` : 'Não informado'}
+                            </span>
                         </div>
                     </div>
 
