@@ -575,8 +575,9 @@ export default async function StudentDetailPage({ params }: { params: { id: stri
                                     Antes vs Depois
                                 </CardTitle>
                                 <StudentGalleryDialog photos={student?.progress_photos || []} studentName={student.full_name}>
-                                    <Button variant="ghost" size="sm" className="h-7 text-zinc-500 hover:text-white text-[9px] uppercase font-black tracking-widest px-3 bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800/50 rounded-xl transition-all">
-                                        Galeria Completa
+                                    <Button variant="outline" size="sm" className="h-8 border-zinc-800 bg-zinc-900/80 text-zinc-400 hover:text-white hover:bg-zinc-800 hover:border-purple-500/50 rounded-xl text-[10px] uppercase font-black tracking-widest px-4 gap-2 transition-all shadow-xl active:scale-95">
+                                        <ImageIcon className="w-3.5 h-3.5" />
+                                        Ver Galeria
                                     </Button>
                                 </StudentGalleryDialog>
                             </CardHeader>

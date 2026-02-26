@@ -70,9 +70,9 @@ function DialogContent({
         {showCloseButton && (
           <DialogPrimitive.Close
             data-slot="dialog-close"
-            className="absolute top-6 right-6 p-4 bg-zinc-900 border border-zinc-800 rounded-xl text-zinc-500 hover:text-white hover:bg-zinc-800 outline-none focus:ring-2 focus:ring-zinc-700 disabled:pointer-events-none group transition-colors cursor-pointer z-[60] pointer-events-auto"
+            className="absolute top-6 right-6 w-9 h-9 flex items-center justify-center bg-zinc-900/50 border border-zinc-800/80 rounded-xl text-zinc-500 hover:text-white hover:bg-zinc-800 hover:border-zinc-700 transition-all cursor-pointer z-[60] group"
           >
-            <XIcon className="w-5 h-5" />
+            <XIcon className="w-4 h-4 transition-transform group-hover:scale-110" />
             <span className="sr-only">Close</span>
           </DialogPrimitive.Close>
         )}

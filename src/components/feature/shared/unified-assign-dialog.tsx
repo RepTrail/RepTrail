@@ -94,7 +94,7 @@ export function UnifiedAssignDialog({
         setLoading(true)
         try {
             let res: any
-            
+
             // Call the appropriate server action based on type
             if (type === 'cardio') {
                 const { assignCardioToStudent } = await import('@/actions/student-content-actions')
@@ -136,25 +136,25 @@ export function UnifiedAssignDialog({
                     </Button>
                 )}
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[450px] bg-zinc-950 text-white border-zinc-800 rounded-[2.5rem] shadow-2xl p-0 border-white/5 overflow-hidden">
-                <DialogHeader className="p-8 bg-zinc-900/40 border-b border-zinc-900">
-                    <DialogTitle className="text-2xl font-black italic uppercase tracking-tighter">{title}</DialogTitle>
-                    <DialogDescription className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest mt-1">
+            <DialogContent className="sm:max-w-[450px] bg-zinc-950 text-white border-zinc-800 rounded-[2.5rem] shadow-2xl p-0 border-white/5 overflow-hidden backdrop-blur-xl">
+                <DialogHeader className="p-10 pb-8 bg-zinc-900/30 border-b border-zinc-900/50">
+                    <DialogTitle className="text-3xl font-black italic uppercase tracking-tighter leading-none tracking-tight">{title}</DialogTitle>
+                    <DialogDescription className="text-zinc-500 text-[10px] font-black uppercase tracking-[0.2em] mt-3">
                         {description}
                     </DialogDescription>
                 </DialogHeader>
 
-                <div className="p-8 space-y-8">
+                <div className="p-10 space-y-8">
                     {items.length > 0 && !itemId && (
-                        <div className="space-y-3">
-                            <Label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-1">Selecione o Item</Label>
+                        <div className="space-y-4">
+                            <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 ml-1">Selecione o Item</Label>
                             <Select onValueChange={setSelectedItem}>
-                                <SelectTrigger className="bg-zinc-900 border-zinc-800 h-14 rounded-2xl focus:ring-emerald-500/20 transition-all font-medium">
+                                <SelectTrigger className="w-full bg-zinc-900/50 border-zinc-800 !h-14 rounded-2xl focus:ring-emerald-500/20 hover:border-zinc-700 transition-all font-bold px-4">
                                     <SelectValue placeholder="Escolha um protocolo..." />
                                 </SelectTrigger>
-                                <SelectContent className="bg-zinc-900 border-zinc-800 text-white rounded-2xl">
+                                <SelectContent className="bg-zinc-900 border-zinc-800 text-white rounded-2xl p-1">
                                     {items.map((i) => (
-                                        <SelectItem key={i.id} value={i.id} className="focus:bg-emerald-500/10 focus:text-emerald-500 rounded-xl m-1">
+                                        <SelectItem key={i.id} value={i.id} className="focus:bg-emerald-500/10 focus:text-emerald-500 rounded-xl m-1 font-bold">
                                             {i.name}
                                         </SelectItem>
                                     ))}
@@ -167,7 +167,7 @@ export function UnifiedAssignDialog({
                         <div className="space-y-3">
                             <Label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-1">Selecione o Aluno</Label>
                             <Select onValueChange={setSelectedStudent}>
-                                <SelectTrigger className="bg-zinc-900 border-zinc-800 h-14 rounded-2xl focus:ring-emerald-500/20 transition-all font-medium">
+                                <SelectTrigger className="w-full bg-zinc-900/50 border-zinc-800 !h-14 rounded-2xl focus:ring-emerald-500/20 hover:border-zinc-700 transition-all font-bold px-4">
                                     <SelectValue placeholder="Escolha um aluno da lista..." />
                                 </SelectTrigger>
                                 <SelectContent className="bg-zinc-900 border-zinc-800 text-white rounded-2xl">
@@ -182,39 +182,39 @@ export function UnifiedAssignDialog({
                     )}
 
                     {type === 'cardio' && (
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-3">
-                                <Label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-1">Duração (min)</Label>
+                        <div className="grid grid-cols-2 gap-5">
+                            <div className="space-y-4">
+                                <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 ml-1">Duração (min)</Label>
                                 <Input
                                     type="number"
                                     value={duration}
                                     onChange={(e) => setDuration(e.target.value)}
-                                    className="bg-zinc-900 border-zinc-800 h-14 rounded-2xl focus:ring-orange-500/20 transition-all font-medium"
+                                    className="bg-zinc-900/50 border-zinc-800 !h-14 rounded-2xl focus:ring-orange-500/20 hover:border-zinc-700 transition-all font-bold text-center px-4"
                                 />
                             </div>
-                            <div className="space-y-3">
-                                <Label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-1">Intensidade</Label>
+                            <div className="space-y-4">
+                                <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 ml-1">Intensidade</Label>
                                 <Select value={intensity} onValueChange={setIntensity}>
-                                    <SelectTrigger className="bg-zinc-900 border-zinc-800 h-14 rounded-2xl focus:ring-orange-500/20 transition-all font-medium">
+                                    <SelectTrigger className="w-full bg-zinc-900/50 border-zinc-800 !h-14 rounded-2xl focus:ring-orange-500/20 hover:border-zinc-700 transition-all font-bold px-4">
                                         <SelectValue />
                                     </SelectTrigger>
-                                    <SelectContent className="bg-zinc-900 border-zinc-800 text-white rounded-2xl">
-                                        <SelectItem value="Leve" className="rounded-xl m-1">Leve</SelectItem>
-                                        <SelectItem value="Moderada" className="rounded-xl m-1">Moderada</SelectItem>
-                                        <SelectItem value="Alta" className="rounded-xl m-1">Alta</SelectItem>
-                                        <SelectItem value="Máxima" className="rounded-xl m-1">Máxima</SelectItem>
+                                    <SelectContent className="bg-zinc-900 border-zinc-800 text-white rounded-2xl p-1">
+                                        <SelectItem value="Leve" className="rounded-xl m-1 font-bold">Leve</SelectItem>
+                                        <SelectItem value="Moderada" className="rounded-xl m-1 font-bold">Moderada</SelectItem>
+                                        <SelectItem value="Alta" className="rounded-xl m-1 font-bold">Alta</SelectItem>
+                                        <SelectItem value="Máxima" className="rounded-xl m-1 font-bold">Máxima</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
                         </div>
                     )}
 
-                    <div className="space-y-4">
-                        <Label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-1 flex items-center gap-2">
+                    <div className="space-y-5">
+                        <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 ml-1 flex items-center gap-2">
                             <Calendar className="w-3.5 h-3.5" />
                             {type === 'workout' ? 'Dia Programado' : 'Dias da Semana'}
                         </Label>
-                        <div className="flex justify-between gap-1.5 h-12 p-1.5 bg-zinc-900/50 rounded-[1.2rem] border border-zinc-800/50">
+                        <div className="flex justify-between gap-2 h-14 p-2 bg-zinc-900/40 rounded-[1.5rem] border border-zinc-800/50 shadow-inner">
                             {WEEKDAYS.map((day) => {
                                 const isSelected = selectedDays.includes(day.value)
                                 return (
@@ -223,10 +223,10 @@ export function UnifiedAssignDialog({
                                         type="button"
                                         onClick={() => toggleDay(day.value)}
                                         className={cn(
-                                            "flex-1 rounded-xl text-[10px] font-black transition-all",
+                                            "flex-1 rounded-[1rem] text-[11px] font-black transition-all active:scale-90",
                                             isSelected
-                                                ? type === 'workout' ? "bg-orange-500 text-zinc-950 shadow-lg shadow-orange-500/20" : "bg-emerald-500 text-zinc-950 shadow-lg shadow-emerald-500/20"
-                                                : "text-zinc-500 hover:text-white hover:bg-zinc-800"
+                                                ? type === 'workout' ? "bg-orange-500 text-zinc-950 shadow-lg shadow-orange-500/30" : "bg-emerald-500 text-zinc-950 shadow-lg shadow-emerald-500/30"
+                                                : "text-zinc-600 hover:text-white hover:bg-zinc-800"
                                         )}
                                     >
                                         {day.label}
@@ -234,24 +234,22 @@ export function UnifiedAssignDialog({
                                 )
                             })}
                         </div>
-                        {type === 'workout' && (
-                            <p className="text-[9px] text-zinc-600 font-bold uppercase tracking-widest text-center">
-                                Selecionado: {WEEKDAYS.find(d => d.value === selectedDays[0])?.full}
-                            </p>
-                        )}
                     </div>
 
-                    <DialogFooter className="pt-4">
+                    <DialogFooter className="pt-6">
                         <Button
                             onClick={handleAssign}
                             disabled={loading}
                             className={cn(
-                                "w-full h-14 rounded-2xl font-black uppercase italic tracking-tight transition-all active:scale-[0.98] shadow-xl",
-                                type === 'workout' ? "bg-orange-500 hover:bg-orange-400 text-zinc-950" : "bg-emerald-600 hover:bg-emerald-500 text-white"
+                                "w-full h-16 rounded-2xl font-black uppercase italic tracking-widest transition-all active:scale-[0.98] shadow-2xl group overflow-hidden relative",
+                                type === 'workout'
+                                    ? "bg-gradient-to-r from-orange-600 to-orange-400 hover:from-orange-500 hover:to-orange-300 text-zinc-950"
+                                    : "bg-gradient-to-r from-emerald-600 to-emerald-400 hover:from-emerald-500 hover:to-emerald-300 text-zinc-950"
                             )}
                         >
-                            {loading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <UserPlus className="w-5 h-5 mr-2" />}
-                            Confirmar Atribuição
+                            <div className="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                            {loading ? <Loader2 className="w-5 h-5 animate-spin mr-3" /> : <UserPlus className="w-5 h-5 mr-3" />}
+                            <span className="relative z-10">Confirmar Atribuição</span>
                         </Button>
                     </DialogFooter>
                 </div>
