@@ -25,7 +25,7 @@ export default function StoreExploreLoading() {
                     </div>
 
                     <div className="flex gap-2">
-                        <div className="h-12 w-32 bg-zinc-900/50 border border-zinc-800/50 rounded-2xl flex items-center justify-between px-6">
+                        <div className="h-12 min-w-[140px] bg-zinc-900/50 border border-zinc-800/50 rounded-2xl flex items-center justify-between px-6">
                             <Filter className="w-3.5 h-3.5 text-zinc-800" />
                             <ChevronDown className="w-4 h-4 text-zinc-800" />
                         </div>
