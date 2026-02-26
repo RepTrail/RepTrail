@@ -369,6 +369,12 @@ export async function addStoreProduct(data: {
     }
     const finalCategory = categoryMap[data.category] || data.category
 
+    // Ensure image is persisted in our storage
+    if (data.image_url && data.image_url.startsWith('http') && !data.image_url.includes('supabase.co')) {
+        const uploaded = await uploadImageFromUrl(data.image_url)
+        if (uploaded) data.image_url = uploaded
+    }
+
     const { error } = await supabase.from('store_products').insert({
         ...data,
         category: finalCategory,
@@ -681,6 +687,12 @@ export async function updateStoreProduct(id: string, data: any) {
         data.category = categoryMap[data.category]
     }
 
+    // Ensure image is persisted in our storage (if it's a new external URL)
+    if (data.image_url && data.image_url.startsWith('http') && !data.image_url.includes('supabase.co')) {
+        const uploaded = await uploadImageFromUrl(data.image_url)
+        if (uploaded) data.image_url = uploaded
+    }
+
     const { error } = await supabase.from('store_products').update(data).eq('id', id)
     if (error) return { error: error.message }
     await supabase.from('admin_logs').insert({ admin_id: adminId, action: 'update_product', target_id: id, details: data })
@@ -766,80 +778,183 @@ export async function deleteStoreProduct(productId: string) {
     return { success: true }
 }
 
-export async function fetchProductFromUrl(url: string) {
+async function uploadImageFromUrl(url: string, prefix: string = 'product') {
+    if (!url || !url.startsWith('http') || url.includes('supabase.co')) return url
+
     try {
-        const res = await fetch(url, {
+        const response = await fetch(url, {
             headers: {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
             }
         })
-        if (!res.ok) throw new Error('Failed to load URL')
+        if (!response.ok) throw new Error(`Failed to fetch image: ${response.statusText}`)
+        const arrayBuffer = await response.arrayBuffer()
+        const buffer = Buffer.from(arrayBuffer)
+
+        const supabase = createAdminClient()
+        if (!supabase) throw new Error('Failed to create admin client')
+
+        const contentType = response.headers.get('content-type') || 'image/jpeg'
+        const ext = contentType.split('/')[1]?.split(';')[0] || 'jpg'
+        const fileName = `${prefix}-${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`
+
+        const { error } = await supabase.storage
+            .from('store-products')
+            .upload(fileName, buffer, {
+                contentType,
+                upsert: true
+            })
+
+        if (error) {
+            // Try to create bucket if it doesn't exist
+            if (error.message.includes('not found') || (error as any).status === 404) {
+                await supabase.storage.createBucket('store-products', { public: true })
+                const { error: retryError } = await supabase.storage
+                    .from('store-products')
+                    .upload(fileName, buffer, { contentType, upsert: true })
+                if (retryError) throw retryError
+            } else {
+                throw error
+            }
+        }
+
+        const { data: { publicUrl } } = supabase.storage
+            .from('store-products')
+            .getPublicUrl(fileName)
+
+        return publicUrl
+    } catch (error) {
+        console.error('Error uploading image:', error)
+        return url // Fallback
+    }
+}
+
+export async function fetchProductFromUrl(url: string) {
+    try {
+        console.log(`[Fetch] Starting import for: ${url}`)
+        const res = await fetch(url, {
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+                'Accept-Language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
+                'Cache-Control': 'no-cache',
+                'Pragma': 'no-cache'
+            },
+            redirect: 'follow'
+        })
+        if (!res.ok) throw new Error(`Failed to load URL: ${res.status}`)
         const html = await res.text()
+        const finalUrl = res.url
+        console.log(`[Fetch] Final URL after redirects: ${finalUrl}`)
 
         const getMeta = (prop: string) => {
-            const match = html.match(new RegExp(`<meta property="${prop}" content="([^"]*)"`, 'i'))
-                || html.match(new RegExp(`<meta name="${prop}" content="([^"]*)"`, 'i'))
+            const regex = new RegExp(`<meta[^>]*(?:property|name|itemprop)=["']${prop}["'][^>]*content=["']([^"']*)["']`, 'i')
+                || new RegExp(`<meta[^>]*content=["']([^"']*)["'][^>]*(?:property|name|itemprop)=["']${prop}["']`, 'i')
+            const match = html.match(regex)
             return match ? match[1] : null
         }
 
-        let title = getMeta('og:title') || (html.match(/<title>([^<]*)<\/title>/i)?.[1]) || ''
-        const description = getMeta('og:description') || getMeta('description') || ''
-        const image = getMeta('og:image') || ''
-        let priceStr = getMeta('product:price:amount') || getMeta('price')
+        let title = getMeta('og:title') || getMeta('twitter:title') || (html.match(/<title>([^<]*)<\/title>/i)?.[1]) || ''
+        let description = getMeta('og:description') || getMeta('description') || ''
+        let image = getMeta('og:image') || getMeta('twitter:image') || ''
+        let priceStr = getMeta('product:price:amount') || getMeta('price') || getMeta('twitter:data1')
 
-        // Handle price in title (common in Mercado Livre: "Product Name - R$ 50,00")
-        const priceRegex = /R\$\s*([\d.,]+)/i
-        const match = title.match(priceRegex)
-
-        if (match) {
-            // If no meta price, use the one from title
-            if (!priceStr) {
-                priceStr = match[1]
-            }
-            // Remove price from title for cleaner name
-            title = title.replace(match[0], '').trim()
-            if (title.endsWith('-')) title = title.substring(0, title.length - 1).trim()
+        // Mercado Livre specific description selectors (to avoid generic store descriptions)
+        const mlDescMatch = html.match(/<p class="ui-pdp-description__content">([\s\S]*?)<\/p>/i)
+        if (mlDescMatch && mlDescMatch[1].length > 50) {
+            description = mlDescMatch[1].trim()
         }
 
-        let price = 0
-        if (priceStr) {
-            let clean = priceStr.replace(/[^\d.,]/g, '')
-            if (clean.includes(',')) {
-                // Assume 1.000,00 format
-                clean = clean.replace(/\./g, '').replace(',', '.')
+        // Try to find price in standard classes/tags if meta fails
+        if (!priceStr) {
+            // ML price selectors (fraction + cents)
+            const fraction = html.match(/class="andes-money-amount__fraction"[^>]*>([\d.,]+)<\/span>/i)?.[1]
+            const cents = html.match(/class="andes-money-amount__cents"[^>]*>(\d+)<\/span>/i)?.[1] || '00'
+
+            if (fraction) {
+                priceStr = `${fraction}.${cents}`
+            } else {
+                // Alternative ML or generic price
+                const genPrice = html.match(/itemprop="price" content="([\d.]+)"/i)
+                    || html.match(/"price":\s*([\d.]+)/i)
+                    || html.match(/R\$\s*([\d.,]+)/i)
+                if (genPrice) priceStr = genPrice[1]
             }
-            price = parseFloat(clean)
         }
 
         // Rating extraction
         let rating = 0
         let reviews = 0
 
-        // Try to find JSON-LD
+        // Try to find rating in ARIA labels or visually hidden spans (Common in ML)
+        const visuallyHiddenMatch = html.match(/class="andes-visually-hidden">Avaliação\s*([\d.,]+)\s*de\s*5\.\s*([\d.]+)\s*opiniões/i)
+            || html.match(/class="andes-visually-hidden">Avaliado com ([\d.,]+)\s*estrelas/i)
+
+        if (visuallyHiddenMatch) {
+            rating = parseFloat(visuallyHiddenMatch[1].replace(',', '.'))
+            if (visuallyHiddenMatch[2]) {
+                reviews = parseInt(visuallyHiddenMatch[2].replace(/\./g, ''))
+            }
+        }
+
+        if (!rating) {
+            const ariaRating = html.match(/aria-label="([\d.,]+)\s*estrelas/i) || html.match(/aria-label="Avaliado com ([\d.,]+)\s*estrelas/i)
+            if (ariaRating) rating = parseFloat(ariaRating[1].replace(',', '.'))
+        }
+
+        if (!reviews) {
+            const ariaReviews = html.match(/aria-label="([\d.]+)\s*opiniões/i) || html.match(/\(([\d.]+)\)\s*opiniões/i)
+            if (ariaReviews) reviews = parseInt(ariaReviews[1].replace(/\./g, ''))
+        }
+
         const jsonLdMatch = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/i)
         if (jsonLdMatch) {
             try {
                 const inner = jsonLdMatch[1].trim()
                 const json = JSON.parse(inner)
-                // It might be an array or object
                 const product = Array.isArray(json) ? json.find(i => i['@type'] === 'Product') : (json['@type'] === 'Product' ? json : null)
-
-                if (product?.aggregateRating) {
-                    rating = parseFloat(product.aggregateRating.ratingValue || 0)
-                    reviews = parseInt(product.aggregateRating.reviewCount || 0)
+                if (product) {
+                    if (product.aggregateRating) {
+                        if (!rating) rating = parseFloat(product.aggregateRating.ratingValue || 0)
+                        if (!reviews) reviews = parseInt(product.aggregateRating.reviewCount || 0)
+                    }
+                    if (!priceStr && product.offers?.price) {
+                        priceStr = product.offers.price.toString()
+                    }
+                    if (!image && product.image) {
+                        image = Array.isArray(product.image) ? product.image[0] : product.image
+                    }
                 }
-            } catch (e) {
-                // ignore json parse error
-            }
+            } catch (e) { }
         }
 
-        // Fallback 
-        if (!rating) {
-            const ratingMatch = html.match(/"ratingValue":"([\d.]+)"/i) || html.match(/itemprop="ratingValue" content="([\d.]+)"/i)
-            if (ratingMatch) rating = parseFloat(ratingMatch[1])
+        // Handle price in title (common in Mercado Livre: "Product Name - R$ 50,00")
+        const priceRegex = /R\$\s*([\d.,]+)/i
+        const match = title.match(priceRegex)
 
-            const reviewMatch = html.match(/"reviewCount":"(\d+)"/i) || html.match(/itemprop="reviewCount" content="(\d+)"/i)
-            if (reviewMatch) reviews = parseInt(reviewMatch[1])
+        if (match) {
+            if (!priceStr) priceStr = match[1]
+            title = title.replace(match[0], '').trim()
+            if (title.endsWith('-')) title = title.substring(0, title.length - 1).trim()
+        }
+
+        let price = 0
+        if (priceStr) {
+            let clean = priceStr.toString().replace(/[^\d.,]/g, '')
+            if (clean.includes(',')) {
+                if (clean.includes('.')) clean = clean.replace(/\./g, '').replace(',', '.')
+                else clean = clean.replace(',', '.')
+            }
+            price = parseFloat(clean)
+        }
+
+        let finalData: any = {
+            title: title || '',
+            description: description || '',
+            image: image || '',
+            price: price || 0,
+            rating: rating || 0,
+            reviews_count: reviews || 0
         }
 
         // AI Integration
@@ -849,41 +964,47 @@ export async function fetchProductFromUrl(url: string) {
                 const { createOpenRouterClient, callAI, DEFAULT_AI_MODEL } = await import('@/lib/ai-client')
                 const client = createOpenRouterClient(openrouterKey)
 
-                // Truncate HTML to avoid token limits, focus on body if possible
+                // Help AI by identifying the site
+                const isML = finalUrl.includes('mercadolivre.com') || finalUrl.includes('meli.la')
+
                 const bodyText = html.match(/<body[^>]*>([\s\S]*)<\/body>/i)?.[1] || html
                 const cleanBody = bodyText
                     .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
                     .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
-                    .substring(0, 15000) // limit to ~15k chars for prompt
+                    .replace(/<nav[^>]*>[\s\S]*?<\/nav>/gi, '')
+                    .replace(/<footer[^>]*>[\s\S]*?<\/footer>/gi, '')
+                    .replace(/<svg[^>]*>[\s\S]*?<\/svg>/gi, '')
+                    .substring(0, 18000)
 
                 const prompt = `
-Extract product information from this HTML snippet. 
-Site: ${url}
+Extract MAIN product information from this HTML from ${isML ? 'Mercado Livre' : 'Store'}.
+Site: ${finalUrl}
 
-Return ONLY a JSON object with this schema:
-{
-  "title": "Clean product name",
-  "description": "Brief description",
-  "price": number,
-  "image": "image_url",
-  "rating": number (0-5),
-  "reviews_count": number,
-  "category": "supplement" | "accessory" | "clothing" | "equipment",
-  "sub_category": "Whey" | "Pré-treino" | "Creatina" | "Vitaminas" | "Outros" (if supplement)
-}
+DATA EXTRACTION RULES:
+1. "title": CLEAN product name ONLY. No slogans, seller names, or "Free Shipping".
+2. "description": 
+   - IGNORE seller metadata like "Visite a página e encontre todos os produtos de...".
+   - Extract the ACTUAL product benefits and technical features.
+   - Summarize into 2 paragraphs if too long.
+3. "price": Find the numeric price (Look for R$, decimals, or meta tags).
+4. "rating": Look for "estrelas", "nota" or aggregateRating (0 to 5).
+5. "reviews_count": Number of reviews/opinions/avaliacoes.
+6. "image": URL of the primary, high-resolution product image.
+7. "category": "supplement" | "accessory" | "clothing" | "equipment".
+8. "sub_category": If supplement, "Whey" | "Pré-treino" | "Creatina" | "Vitaminas" | "Outros".
 
-HTML Snippet:
+HTML Content:
 ${cleanBody}
 `
                 const aiResponse = await callAI(client, prompt, DEFAULT_AI_MODEL)
                 if (aiResponse && !aiResponse.error) {
-                    return {
-                        title: aiResponse.title || title || '',
-                        description: aiResponse.description || description || '',
-                        image: aiResponse.image || image || '',
-                        price: aiResponse.price || price || 0,
-                        rating: aiResponse.rating || rating || 0,
-                        reviews_count: aiResponse.reviews_count || reviews || 0,
+                    finalData = {
+                        title: aiResponse.title || finalData.title,
+                        description: aiResponse.description || finalData.description,
+                        image: aiResponse.image || finalData.image,
+                        price: aiResponse.price || finalData.price,
+                        rating: aiResponse.rating || finalData.rating,
+                        reviews_count: aiResponse.reviews_count || finalData.reviews_count,
                         category: aiResponse.category || 'supplement',
                         sub_category: aiResponse.sub_category || ''
                     }
@@ -893,14 +1014,13 @@ ${cleanBody}
             }
         }
 
-        return {
-            title: title || '',
-            description: description || '',
-            image: image || '',
-            price: price || 0,
-            rating: rating || 0,
-            reviews_count: reviews || 0
+        // AUTO UPLOAD IMAGE TO SUPABASE
+        if (finalData.image) {
+            const uploadedUrl = await uploadImageFromUrl(finalData.image)
+            if (uploadedUrl) finalData.image = uploadedUrl
         }
+
+        return finalData
     } catch (e) {
         console.error('Fetch error:', e)
         return { error: 'Falha ao buscar dados. Verifique o link e tente novamente.' }

@@ -269,7 +269,7 @@ export function DietAdherence({ diet, allowEstimation = false, hasTrainer = fals
                                 >
                                     <div className="flex items-center gap-4">
                                         <div className={cn(
-                                            "w-10 h-10 rounded-2xl flex items-center justify-center transition-colors",
+                                            "w-10 h-10 rounded-full flex-shrink-0 aspect-square flex items-center justify-center transition-colors",
                                             isFullyComplete ? "bg-emerald-500 text-zinc-950" : "bg-zinc-900 text-zinc-600"
                                         )}>
                                             {isFullyComplete ? <CheckCircle2 className="w-6 h-6" /> : <Circle className="w-6 h-6" />}

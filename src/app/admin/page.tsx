@@ -844,12 +844,15 @@ function ProductEditorModal({ isOpen, onClose, product, onSave, onImport, onDele
                 description: data.description || prev.description,
                 image_url: data.image || prev.image_url,
                 official_price: data.price || prev.official_price,
-                link_url: importUrl,
+                // Don't overwrite link_url if user already pasted an affiliate link
+                link_url: prev.link_url || importUrl,
                 rating: data.rating || prev.rating || 0,
                 reviews_count: data.reviews_count || prev.reviews_count || 0,
                 category: data.category || prev.category,
                 sub_category: data.sub_category || prev.sub_category
             }))
+            // Clear import URL after success to avoid confusion
+            setImportUrl('')
         } catch (e: any) {
             alert('Erro ao importar: ' + e.message)
         } finally {
@@ -861,96 +864,155 @@ function ProductEditorModal({ isOpen, onClose, product, onSave, onImport, onDele
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-            <div className="bg-zinc-900 border border-zinc-800 rounded-[2rem] p-6 sm:p-8 w-full max-w-lg space-y-6 max-h-[90vh] overflow-y-auto">
+            <div className="bg-zinc-900 border border-zinc-800 rounded-[2rem] p-6 sm:p-8 w-full max-w-lg space-y-6 max-h-[95vh] overflow-y-auto">
                 <div className="flex items-center justify-between">
-                    <h3 className="text-xl font-black text-white italic uppercase">{product ? 'Editar Produto' : 'Novo Produto'}</h3>
+                    <div>
+                        <h3 className="text-xl font-black text-white italic uppercase">{product ? 'Editar Produto' : 'Novo Produto'}</h3>
+                        <p className="text-[9px] font-bold text-zinc-600 uppercase tracking-widest mt-1">Configure os detalhes da oferta na loja</p>
+                    </div>
                     <button onClick={onClose} className="p-2 hover:bg-zinc-800 rounded-xl transition-all">
                         <X className="w-4 h-4 text-zinc-500" />
                     </button>
                 </div>
 
-                {!product && (
-                    <div className="p-4 bg-zinc-950 rounded-2xl border border-zinc-800 space-y-3">
-                        <div className="flex items-center gap-2 text-zinc-400">
-                            <TrendingUp className="w-4 h-4 text-emerald-500" />
-                            <span className="text-[10px] font-black uppercase tracking-widest">Importar de Link (Beta)</span>
+                {/* Import Section - More prominent */}
+                <div className="p-5 bg-emerald-500/5 rounded-[1.5rem] border border-emerald-500/10 space-y-4">
+                    <div className="flex items-center gap-2">
+                        <div className="w-6 h-6 rounded-lg bg-emerald-500/20 flex items-center justify-center">
+                            <Zap className="w-3 h-3 text-emerald-500" />
                         </div>
-                        <div className="flex gap-2">
-                            <input
-                                placeholder="Cole a URL do produto..."
-                                value={importUrl}
-                                onChange={e => setImportUrl(e.target.value)}
-                                className="flex-1 h-9 px-3 bg-zinc-900 border border-zinc-800 rounded-lg text-xs text-white focus:outline-none focus:border-zinc-600"
-                            />
-                            <Button onClick={handleImport} disabled={importing || !importUrl} size="sm" className="h-9 bg-emerald-600 hover:bg-emerald-500 text-white font-bold uppercase text-[9px] tracking-widest shrink-0 w-24">
-                                {importing ? <RefreshCw className="w-3 h-3 animate-spin" /> : 'Carregar'}
-                            </Button>
-                        </div>
+                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-500">Auto-Importar Dados (IA)</span>
                     </div>
-                )}
-
-                <div className="space-y-4">
-                    {[
-                        { key: 'name', label: 'Nome', type: 'text' },
-                        { key: 'description', label: 'Descrição', type: 'text' },
-                        { key: 'image_url', label: 'URL da Imagem', type: 'text' },
-                        { key: 'link_url', label: 'Link do Produto', type: 'text' },
-                        { key: 'official_price', label: 'Preço (R$)', type: 'number' },
-                        { key: 'rating', label: 'Nota (0-5)', type: 'number' },
-                        { key: 'reviews_count', label: 'Avaliações', type: 'number' },
-                    ].map(field => (
-                        <div key={field.key} className="space-y-1">
-                            <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">{field.label}</label>
-                            <input
-                                type={field.type}
-                                value={(form as any)[field.key]}
-                                onChange={e => setForm(prev => ({ ...prev, [field.key]: field.type === 'number' ? Number(e.target.value) : e.target.value }))}
-                                className="w-full h-11 px-4 bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white focus:outline-none focus:border-zinc-600"
-                            />
-                        </div>
-                    ))}
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-1">
-                            <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Categoria</label>
-                            <select
-                                value={form.category}
-                                onChange={e => setForm(prev => ({ ...prev, category: e.target.value, sub_category: '' }))}
-                                className="w-full h-11 px-4 bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white focus:outline-none focus:border-zinc-600"
-                            >
-                                <option value="Suplemento">Suplemento</option>
-                                <option value="Acessório">Acessório</option>
-                                <option value="Vestuário">Vestuário</option>
-                                <option value="Equipamento">Equipamento</option>
-                            </select>
-                        </div>
-                        {form.category === 'Suplemento' && (
-                            <div className="space-y-1">
-                                <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Sub-categoria</label>
-                                <select
-                                    value={form.sub_category}
-                                    onChange={e => setForm(prev => ({ ...prev, sub_category: e.target.value }))}
-                                    className="w-full h-11 px-4 bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white focus:outline-none focus:border-zinc-600"
-                                >
-                                    <option value="">Nenhum</option>
-                                    {supplementSubs.map(s => <option key={s} value={s}>{s}</option>)}
-                                </select>
-                            </div>
-                        )}
+                    <p className="text-[9px] text-zinc-500 font-medium leading-relaxed">
+                        Cole o link <span className="text-zinc-300 font-bold">direto do produto</span> para preencher automaticamente nome, preço, imagem e descrição via Inteligência Artificial.
+                    </p>
+                    <div className="flex gap-2">
+                        <input
+                            placeholder="Link do produto (ex: mercadolivre.com/p/whey...)"
+                            value={importUrl}
+                            onChange={e => setImportUrl(e.target.value)}
+                            className="flex-1 h-11 px-4 bg-zinc-950 border border-zinc-800 rounded-xl text-xs text-white focus:outline-none focus:border-emerald-500/50 transition-colors"
+                        />
+                        <Button
+                            onClick={handleImport}
+                            disabled={importing || !importUrl}
+                            className="h-11 px-6 bg-emerald-600 hover:bg-emerald-500 text-white font-black uppercase text-[10px] tracking-widest shrink-0 rounded-xl disabled:opacity-50"
+                        >
+                            {importing ? <RefreshCw className="w-4 h-4 animate-spin" /> : 'Carregar'}
+                        </Button>
                     </div>
                 </div>
-                <div className="flex gap-3">
+
+                <div className="space-y-5">
+                    <div className="grid grid-cols-1 gap-4">
+                        <div className="space-y-1.5">
+                            <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest pl-1">Link de Afiliado (Botão de Compra)</label>
+                            <div className="relative">
+                                <ExternalLink className="absolute left-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-600" />
+                                <input
+                                    placeholder="Seu link de afiliado (ex: meli.la/...)"
+                                    value={form.link_url}
+                                    onChange={e => setForm(prev => ({ ...prev, link_url: e.target.value }))}
+                                    className="w-full h-11 pl-11 pr-4 bg-zinc-950 border border-zinc-800 rounded-xl text-xs text-white focus:outline-none focus:border-zinc-600 placeholder:text-zinc-700"
+                                />
+                            </div>
+                        </div>
+
+                        {[
+                            { key: 'name', label: 'Nome do Produto', type: 'text', icon: Package },
+                            { key: 'description', label: 'Descrição Curta', type: 'text', icon: Pencil },
+                            { key: 'image_url', label: 'URL da Imagem', type: 'text', icon: Eye },
+                        ].map(field => (
+                            <div key={field.key} className="space-y-1.5">
+                                <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest pl-1">{field.label}</label>
+                                <div className="relative">
+                                    <field.icon className="absolute left-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-600" />
+                                    <input
+                                        type={field.type}
+                                        value={(form as any)[field.key]}
+                                        onChange={e => setForm(prev => ({ ...prev, [field.key]: e.target.value }))}
+                                        className="w-full h-11 pl-11 pr-4 bg-zinc-950 border border-zinc-800 rounded-xl text-xs text-white focus:outline-none focus:border-zinc-600"
+                                    />
+                                </div>
+                            </div>
+                        ))}
+
+                        <div className="grid grid-cols-3 gap-4">
+                            <div className="space-y-1.5">
+                                <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Preço (R$)</label>
+                                <input
+                                    type="number"
+                                    step="0.01"
+                                    value={form.official_price}
+                                    onChange={e => setForm(prev => ({ ...prev, official_price: Number(e.target.value) }))}
+                                    className="w-full h-11 px-4 bg-zinc-950 border border-zinc-800 rounded-xl text-xs text-emerald-500 font-bold focus:outline-none focus:border-zinc-600"
+                                />
+                            </div>
+                            <div className="space-y-1.5">
+                                <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Nota (0-5)</label>
+                                <input
+                                    type="number"
+                                    step="0.1"
+                                    value={form.rating}
+                                    onChange={e => setForm(prev => ({ ...prev, rating: Number(e.target.value) }))}
+                                    className="w-full h-11 px-4 bg-zinc-950 border border-zinc-800 rounded-xl text-xs text-amber-500 font-bold focus:outline-none focus:border-zinc-600"
+                                />
+                            </div>
+                            <div className="space-y-1.5">
+                                <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Reviews</label>
+                                <input
+                                    type="number"
+                                    value={form.reviews_count}
+                                    onChange={e => setForm(prev => ({ ...prev, reviews_count: Number(e.target.value) }))}
+                                    className="w-full h-11 px-4 bg-zinc-950 border border-zinc-800 rounded-xl text-xs text-zinc-400 font-bold focus:outline-none focus:border-zinc-600"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-1.5">
+                                <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest pl-1">Categoria</label>
+                                <select
+                                    value={form.category}
+                                    onChange={e => setForm(prev => ({ ...prev, category: e.target.value, sub_category: '' }))}
+                                    className="w-full h-11 px-4 bg-zinc-950 border border-zinc-800 rounded-xl text-xs text-white focus:outline-none focus:border-zinc-600"
+                                >
+                                    <option value="Suplemento">Suplemento</option>
+                                    <option value="Acessório">Acessório</option>
+                                    <option value="Vestuário">Vestuário</option>
+                                    <option value="Equipamento">Equipamento</option>
+                                </select>
+                            </div>
+                            {form.category === 'Suplemento' && (
+                                <div className="space-y-1.5">
+                                    <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest pl-1">Tipo</label>
+                                    <select
+                                        value={form.sub_category}
+                                        onChange={e => setForm(prev => ({ ...prev, sub_category: e.target.value }))}
+                                        className="w-full h-11 px-4 bg-zinc-950 border border-zinc-800 rounded-xl text-xs text-white focus:outline-none focus:border-zinc-600"
+                                    >
+                                        <option value="">Geral</option>
+                                        {supplementSubs.map(s => <option key={s} value={s}>{s}</option>)}
+                                    </select>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+
+                <div className="flex gap-3 pt-2">
                     {product && onDelete && (
                         <Button onClick={onDelete} variant="destructive" className="h-12 w-12 rounded-2xl p-0 flex items-center justify-center shrink-0">
                             <Trash2 className="w-5 h-5" />
                         </Button>
                     )}
-                    <Button onClick={onClose} variant="ghost" className="flex-1 h-12 rounded-2xl text-zinc-500">Cancelar</Button>
+                    <Button onClick={onClose} variant="ghost" className="flex-1 h-12 rounded-2xl text-zinc-500 font-black uppercase text-[10px] tracking-widest">Cancelar</Button>
                     <Button
                         onClick={() => onSave(form)}
-                        className="flex-1 h-12 rounded-2xl bg-white hover:bg-zinc-200 text-zinc-950 font-black uppercase italic"
+                        className="flex-1 h-12 rounded-2xl bg-white hover:bg-zinc-200 text-zinc-950 font-black uppercase italic tracking-wide"
                     >
                         <Save className="w-4 h-4 mr-2" />
-                        Salvar
+                        Salvar Produto
                     </Button>
                 </div>
             </div>

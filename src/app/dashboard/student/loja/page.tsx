@@ -175,9 +175,23 @@ export default function StudentStorePage() {
 
                                 <div className="text-right space-y-1">
                                     <div className="flex gap-0.5 justify-end">
-                                        {[1, 2, 3, 4, 5].map(i => <Star key={i} className="w-3 h-3 text-orange-500 fill-orange-500" />)}
+                                        {[1, 2, 3, 4, 5].map(i => (
+                                            <Star
+                                                key={i}
+                                                className={`w-3 h-3 ${i <= Math.round(product.rating || 5) ? 'text-orange-500 fill-orange-500' : 'text-zinc-800'}`}
+                                            />
+                                        ))}
                                     </div>
-                                    <p className="text-[9px] font-black text-zinc-600 uppercase tracking-widest">4.9/5.0</p>
+                                    <div className="flex flex-col items-end">
+                                        <p className="text-[9px] font-black text-white uppercase tracking-widest leading-none">
+                                            {(product.rating || 5.0).toFixed(1)}/5.0
+                                        </p>
+                                        {product.reviews_count > 0 && (
+                                            <p className="text-[9px] font-black text-zinc-500 uppercase tracking-widest mt-1">
+                                                {product.reviews_count.toLocaleString('pt-BR')} opiniões
+                                            </p>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
 

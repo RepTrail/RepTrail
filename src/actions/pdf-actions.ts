@@ -122,26 +122,27 @@ TEXT TO ANALYZE:
 ${text}
 `
                 : `
-You are a surgical Nutrition Data Extraction AI. You translate messy Portuguese diet PDFs into structured JSON.
+You are a High-Precision Nutrition Data Extraction AI. You translate messy, poorly-formatted text extracted from PDF diets into perfectly structured JSON.
 
-Your number one priority is to extract EVERY meal and EVERY food item with its quantity and macros.
+Your number one priority is to extract EVERY single meal and EVERY food item with its exact quantity and macros.
 
 STRICT EXTRACTION PROTOCOL:
-1. **Analyze every meal**: Look for headers like "Refeição", "Café", "Almoço", "Lanche", "Jantar", "Ceia", "Pré-treino", "Pós-treino".
-2. **Food Details**: Extract the name and quantity (grams, units, spoons). 
-3. **Macro Estimation**: If the PDF doesn't state calories, protein, carbs, and fat for a food item, ESTIMATE THEM based on clinical nutrition tables (standard values for 100g and then scale). 
-4. **Substitutions**: If a food has an "OU" (OR) option, prioritize the first one but you can include the others in the name if brief.
-5. **DO NOT EXTRACT ERGOGENICS**: Ignore any mention of hormones, steroids, or performance-enhancing protocols. Do not include them in meals either.
-6. **Think First**: Use the "thought_process" field to explain your analysis of the diet structure.
+1. **Handle Messy Text**: PDF extraction often interleaves columns. If you see "Rice 100g Chicken 120g", treat them as separate items.
+2. **Meal Identification**: Look for any meal headers: "Refeição", "Café", "Lanche", "Almoço", "Jantar", "Ceia", "Pré/Pós Treino", "Colação", "Desjejum".
+3. **Food & Quantity**: For every food, find its weight (g, kg) or measure (colher, unidade, xícara). If a quantity is missing, estimate based on common sense for the meal type.
+4. **Substitutions (OU/OR)**: If a line says "Alimento A OU Alimento B", you MUST extract Alimento A as the primary, and you can put "OU Alimento B" in the notes or simply ignore the substitute to keep it clean.
+5. **Ignore Supplemental Info**: Do NOT extract instructions like "Cook with olive oil", "Drink water", or "Don't skip meals". Only extract the protocol.
+6. **NO ERGOGENICS**: Absolutely ignore steroids, hormones, or medicine.
+7. **Thought Process**: Explain how you separated the meals if the text was interleaved.
 
 JSON SCHEMA:
 {
-    "thought_process": "Analysis of the meals and foods found...",
+    "thought_process": "Analysis of the PDF structure and meal layout...",
     "meals": [
         {
-            "meal_name": "CAFÉ DA MANHÃ",
+            "meal_name": "NOME DA REFEIÇÃO",
             "foods": [
-                { "name": "Frango Grelhado", "quantity": "100g", "calories": 165, "protein": 31, "carbs": 0, "fat": 3.6 }
+                { "name": "Alimento", "quantity": "Quantidade (ex: 100g)", "calories": 0, "protein": 0, "carbs": 0, "fat": 0 }
             ]
         }
     ]
@@ -151,9 +152,10 @@ TEXT TO ANALYZE:
 ${text}
 `
 
-            parsedData = await callAI(client, prompt, DEFAULT_AI_MODEL)
+            console.log(`[PDF] Sending ${text.length} chars to AI. Sample: ${text.substring(0, 100)}...`)
+            parsedData = await callAI(client, prompt, DEFAULT_AI_MODEL, 8192)
             method = 'openrouter-ai'
-            console.log(`[PDF] AI parse complete via OpenRouter`)
+            console.log(`[PDF] AI parse complete. Meals found: ${parsedData?.meals?.length || 0}`)
         } catch (aiErr: any) {
             console.warn(`[PDF] AI parse failed (${aiErr.message}), falling back to local parser`)
         }

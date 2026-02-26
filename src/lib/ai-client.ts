@@ -9,13 +9,13 @@ import OpenAI from 'openai'
  */
 export function createOpenRouterClient(apiKey?: string | null) {
     const key = apiKey || process.env.OPENROUTER_API_KEY
-    console.log('DEBUG: AI API key check:', { 
-        hasKey: !!key, 
+    console.log('DEBUG: AI API key check:', {
+        hasKey: !!key,
         keyLength: key?.length,
         envHasKey: !!process.env.OPENROUTER_API_KEY,
         envKeyLength: process.env.OPENROUTER_API_KEY?.length
     })
-    
+
     if (!key) {
         console.error('ERROR: OPENROUTER_API_KEY não configurada.')
         throw new Error('OPENROUTER_API_KEY não configurada.')
@@ -29,7 +29,7 @@ export function createOpenRouterClient(apiKey?: string | null) {
             'X-Title': 'RepTrail',
         },
     })
-    
+
     console.log('DEBUG: AI client created successfully')
     return client
 }
@@ -49,10 +49,11 @@ export const DEFAULT_AI_MODEL = 'google/gemini-2.0-flash-001'
 export async function callAI<T = any>(
     client: OpenAI,
     prompt: string,
-    model: string = DEFAULT_AI_MODEL
+    model: string = DEFAULT_AI_MODEL,
+    maxTokens?: number
 ): Promise<T> {
     console.log('DEBUG: callAI starting:', { model, promptLength: prompt.length })
-    
+
     const attempt = async (): Promise<T> => {
         try {
             console.log('DEBUG: Making AI request...')
@@ -60,9 +61,10 @@ export async function callAI<T = any>(
                 model,
                 messages: [{ role: 'user', content: prompt }],
                 temperature: 0.1,
+                max_tokens: (arguments as any)[3] || undefined,
             })
-            
-            console.log('DEBUG: AI response received:', { 
+
+            console.log('DEBUG: AI response received:', {
                 choices: completion.choices?.length,
                 content: completion.choices[0]?.message?.content?.substring(0, 100) + '...'
             })
@@ -71,7 +73,7 @@ export async function callAI<T = any>(
             // Strip any accidental markdown fences
             const clean = text.replace(/```json/g, '').replace(/```/g, '').trim()
             console.log('DEBUG: Cleaned response:', clean)
-            
+
             const parsed = JSON.parse(clean) as T
             console.log('DEBUG: Parsed JSON successfully:', parsed)
             return parsed
