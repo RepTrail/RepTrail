@@ -21,8 +21,10 @@ export default function RankingLoading() {
                             <Skeleton className="w-24 h-24 rounded-full" />
                         </div>
 
-                        <div className="flex flex-col items-center gap-4 pt-4 relative z-10 w-full">
-                            <Skeleton className="h-24 w-24 rounded-full border-4 border-zinc-900" />
+                        <div className="flex flex-col items-center gap-4 pt-4 relative z-10 w-full text-center">
+                            <div className="h-24 w-24 rounded-full border-4 border-zinc-900 bg-zinc-900 relative overflow-hidden">
+                                <Skeleton className="absolute inset-0 w-full h-full bg-zinc-800/40" />
+                            </div>
                             <div className="space-y-2 w-full flex flex-col items-center">
                                 <Skeleton className="h-6 w-3/4" />
                                 <div className="flex gap-2">

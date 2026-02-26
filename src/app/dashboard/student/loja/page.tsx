@@ -9,10 +9,11 @@ import {
     Heart,
     Star,
     ShieldCheck,
+    Flame,
     Search,
-    ArrowRight,
-    Flame
+    ArrowRight
 } from 'lucide-react'
+import { ProductSkeleton } from './loading'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -121,7 +122,7 @@ export default function StudentStorePage() {
             <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {loading ? (
                     Array.from({ length: 8 }).map((_, i) => (
-                        <div key={i} className="h-[450px] bg-zinc-900/40 border border-zinc-800/50 rounded-[2.5rem] animate-pulse" />
+                        <ProductSkeleton key={i} />
                     ))
                 ) : filteredProducts.map(product => (
                     <Card key={product.id} className="group relative flex flex-col bg-zinc-950 border border-zinc-800 hover:border-orange-500/50 transition-all duration-500 rounded-3xl overflow-hidden hover:shadow-[0_0_40px_-5px_rgba(249,115,22,0.15)]">

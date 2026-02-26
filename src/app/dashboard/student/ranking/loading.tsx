@@ -26,7 +26,9 @@ export default function StudentRankingLoading() {
                         </div>
 
                         <div className="relative z-10 w-full flex flex-col items-center gap-6">
-                            <Skeleton className="h-32 w-32 rounded-full border-4 border-zinc-950 bg-zinc-800/50 shadow-2xl" />
+                            <div className="h-32 w-32 rounded-full border-4 border-zinc-950 bg-zinc-950 shadow-2xl relative overflow-hidden">
+                                <Skeleton className="absolute inset-0 w-full h-full bg-zinc-800/40" />
+                            </div>
                             <div className="space-y-3 w-full flex flex-col items-center">
                                 <Skeleton className="h-8 w-3/4 bg-zinc-800/50 rounded-xl" />
                                 <Skeleton className="h-3 w-32 bg-zinc-800/30 rounded-md" />

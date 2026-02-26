@@ -140,14 +140,21 @@ export async function getAffiliateData() {
     })
 
     return {
-        profile,
+        profile: {
+            id: profile.id,
+            full_name: profile.full_name,
+            avatar_url: profile.avatar_url,
+            affiliate_token: profile.affiliate_token,
+            affiliate_balance: Number(profile.affiliate_balance) || 0,
+            email: profile.email
+        },
         stats: {
             totalClicks: totalClicks ?? 0,
             totalReferrals: totalReferrals ?? 0,
             activeTrainers: activeTrainers ?? 0,
             totalEarned,
             pendingAmount,
-            balance: profile?.affiliate_balance ?? 0,
+            balance: Number(profile.affiliate_balance) || 0,
             conversionRate,
         },
         clicksPerDay,
