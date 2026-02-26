@@ -572,48 +572,51 @@ export default async function StudentDetailPage({ params }: { params: { id: stri
                             <CardHeader className="bg-zinc-900/60 border-b border-zinc-800/50 py-5 flex flex-row items-center justify-between gap-4">
                                 <CardTitle className="text-[10px] font-black text-purple-500 flex items-center gap-2 uppercase tracking-[0.2em]">
                                     <Camera className="w-3.5 h-3.5" />
-                                    Fotos Evolução
+                                    Antes vs Depois
                                 </CardTitle>
                                 <StudentGalleryDialog photos={student?.progress_photos || []} studentName={student.full_name}>
                                     <Button variant="ghost" size="sm" className="h-7 text-zinc-500 hover:text-white text-[9px] uppercase font-black tracking-widest px-3 bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800/50 rounded-xl transition-all">
-                                        Galeria
+                                        Galeria Completa
                                     </Button>
                                 </StudentGalleryDialog>
                             </CardHeader>
                             <CardContent className="p-7">
-                                {student?.progress_photos?.length > 0 ? (
-                                    <StudentGalleryDialog photos={student.progress_photos} studentName={student.full_name}>
-                                        <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide cursor-pointer group">
-                                            {student.progress_photos.slice(0, 3).map((photo: any) => (
-                                                <div key={photo.id} className="relative aspect-[3/4] w-20 flex-shrink-0 rounded-2xl overflow-hidden border-2 border-zinc-800 bg-zinc-900 group-hover:border-purple-500/40 transition-all shadow-xl">
-                                                    <img
-                                                        src={photo.front_url || photo.back_url || photo.side_right_url || photo.side_left_url}
-                                                        alt="Progresso"
-                                                        className="w-full h-full object-cover grayscale brightness-75 group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-500"
-                                                    />
-                                                    <div className="absolute inset-0 bg-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity" />
-                                                </div>
-                                            ))}
-                                            {student.progress_photos.length > 3 && (
-                                                <div className="w-20 aspect-[3/4] rounded-2xl border-2 border-dashed border-zinc-800 flex items-center justify-center text-[11px] font-black text-zinc-600 uppercase italic group-hover:bg-zinc-800/50 group-hover:border-zinc-700 transition-all">
-                                                    +{student.progress_photos.length - 3}
-                                                </div>
-                                            )}
-                                        </div>
-                                    </StudentGalleryDialog>
-                                ) : (
-                                    <StudentGalleryDialog photos={[]} studentName={student.full_name}>
-                                        <div className="flex items-center gap-5 text-zinc-500 cursor-pointer group hover:bg-zinc-900/50 p-3 rounded-2xl transition-all border border-transparent hover:border-zinc-800/50">
-                                            <div className="w-12 h-12 rounded-2xl bg-zinc-900 flex items-center justify-center border border-zinc-800 group-hover:border-purple-500/30 group-hover:shadow-[0_0_20px_rgba(168,85,247,0.1)] transition-all">
-                                                <Camera className="w-6 h-6 group-hover:text-purple-500 transition-colors" />
+                                {(() => {
+                                    const sortedPhotos = [...(student?.progress_photos || [])].sort((a, b) =>
+                                        new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+                                    );
+                                    const before = sortedPhotos[0]?.front_url;
+                                    const after = sortedPhotos[sortedPhotos.length - 1]?.front_url;
+
+                                    if (!before) return (
+                                        <div className="flex items-center gap-5 text-zinc-500 p-3">
+                                            <div className="w-12 h-12 rounded-2xl bg-zinc-900 flex items-center justify-center border border-zinc-800">
+                                                <Camera className="w-6 h-6" />
                                             </div>
                                             <div className="space-y-1">
-                                                <p className="text-[10px] font-black uppercase tracking-widest italic group-hover:text-zinc-300">Nova Galeria</p>
-                                                <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-700">Sem fotos registradas</p>
+                                                <p className="text-[10px] font-black uppercase tracking-widest italic">Aguardando Fotos</p>
+                                                <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-700">O aluno ainda não enviou fotos</p>
                                             </div>
                                         </div>
-                                    </StudentGalleryDialog>
-                                )}
+                                    );
+
+                                    return (
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="space-y-2">
+                                                <p className="text-[8px] font-black text-zinc-500 uppercase tracking-widest text-center">Antes ({new Date(sortedPhotos[0].created_at).toLocaleDateString()})</p>
+                                                <div className="aspect-[3/4] relative rounded-2xl overflow-hidden border border-zinc-800 bg-zinc-900">
+                                                    <img src={before} alt="Antes" className="w-full h-full object-cover" />
+                                                </div>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <p className="text-[8px] font-black text-emerald-500 uppercase tracking-widest text-center">Depois ({new Date(sortedPhotos[sortedPhotos.length - 1].created_at).toLocaleDateString()})</p>
+                                                <div className="aspect-[3/4] relative rounded-2xl overflow-hidden border border-emerald-500/30 bg-zinc-900">
+                                                    <img src={after} alt="Depois" className="w-full h-full object-cover" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                })()}
                             </CardContent>
                         </Card>
                     </div>

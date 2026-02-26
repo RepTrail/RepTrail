@@ -4,22 +4,17 @@ import Image from 'next/image'
 import { ShareTransformation } from '@/components/feature/student/share-transformation'
 import { PublicStudentGallery } from '@/components/feature/student/public-student-gallery'
 
+import { UnifiedProgressGallery } from '@/components/feature/shared/unified-progress-gallery'
+
 interface Props {
     studentId: string
     isOwner: boolean
     studentName: string
+    photos: any[]
 }
 
-export async function PhotosAndTransformation({ studentId, isOwner, studentName }: Props) {
+export async function PhotosAndTransformation({ studentId, isOwner, studentName, photos }: Props) {
     const supabase = await createClient()
-
-    // 1. Photos (All public ones)
-    const { data: photos } = await supabase
-        .from('progress_photos')
-        .select('*')
-        .eq('student_id', studentId)
-        .eq('is_private', false)
-        .order('created_at', { ascending: false })
 
     const oldestPhoto = photos && photos.length > 0 ? photos[photos.length - 1] : null;
     const newestPhoto = photos && photos.length > 0 ? photos[0] : null;
@@ -83,7 +78,7 @@ export async function PhotosAndTransformation({ studentId, isOwner, studentName 
                     <Activity className="w-6 h-6 text-purple-500" />
                     <h2 className="text-2xl font-black italic uppercase tracking-tight">Galeria de Progresso</h2>
                 </div>
-                <PublicStudentGallery photos={photos || []} />
+                <UnifiedProgressGallery photos={photos || []} mode="public" studentName={studentName} />
             </div>
         </div>
     )

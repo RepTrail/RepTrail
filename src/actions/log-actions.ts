@@ -455,7 +455,19 @@ export async function getActiveWorkoutSession() {
         const sessionDate = new Date(data.started_at).toISOString().split('T')[0]
         if (sessionDate < todayStr) {
             console.log('Lazy Closing previous day workout session:', data.id)
-            await finishWorkoutLog(data.id, 'Fechamento automático (virada do dia)', 5, 'partial')
+
+            // Check if there are any loads (sets) recorded
+            const { count } = await supabase
+                .from('load_history')
+                .select('*', { count: 'exact', head: true })
+                .eq('workout_log_id', data.id)
+
+            if (!count || count === 0) {
+                console.log('DEBUG: Deleting empty accidental workout session:', data.id)
+                await supabase.from('workout_logs').delete().eq('id', data.id)
+            } else {
+                await finishWorkoutLog(data.id, 'Fechamento automático (virada do dia)', 5, 'partial')
+            }
             return null
         }
 

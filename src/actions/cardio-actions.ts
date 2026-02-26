@@ -327,12 +327,17 @@ export async function getActiveCardioSession() {
         if (isFromPreviousDay) {
             console.log('Lazy Closing previous day cardio session:', active.id)
 
-            // Calculate percentage based on duration
-            const targetSeconds = (active.assignment?.duration_minutes || 30) * 60
-            let percentage = Math.min((active.elapsed_seconds / targetSeconds) * 100, 100)
+            if ((active.elapsed_seconds || 0) < 60) {
+                console.log('DEBUG: Deleting short accidental cardio session:', active.id)
+                await supabase.from('cardio_logs').delete().eq('id', active.id)
+            } else {
+                // Calculate percentage based on duration
+                const targetSeconds = (active.assignment?.duration_minutes || 30) * 60
+                let percentage = Math.min((active.elapsed_seconds / targetSeconds) * 100, 100)
 
-            // Auto-finish it
-            await finishCardioSession(active.id, 'Fechamento automático (virada do dia)', undefined, percentage)
+                // Auto-finish it
+                await finishCardioSession(active.id, 'Fechamento automático (virada do dia)', undefined, percentage)
+            }
 
             return null // New day, new start
         }

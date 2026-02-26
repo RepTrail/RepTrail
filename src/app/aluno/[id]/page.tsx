@@ -52,6 +52,14 @@ export default async function StudentPublicProfilePage({ params }: { params: Pro
 
     const trainerData = trainerLink?.trainer as { id: string; full_name: string; avatar_url: string; trainer_code?: string } | undefined
 
+    // 4. Fetch Public Photos (Fast)
+    const { data: photos } = await supabase
+        .from('progress_photos')
+        .select('*')
+        .eq('student_id', studentId)
+        .eq('is_private', false)
+        .order('created_at', { ascending: false })
+
     return (
         <div className="min-h-screen bg-black text-white pb-20 overflow-x-hidden">
             {/* Navigation Header */}
@@ -143,7 +151,7 @@ export default async function StudentPublicProfilePage({ params }: { params: Pro
                 </Suspense>
 
                 <Suspense fallback={<SectionSkeleton />}>
-                    <PhotosAndTransformation studentId={studentId} isOwner={isOwner} studentName={profile.full_name} />
+                    <PhotosAndTransformation studentId={studentId} isOwner={isOwner} studentName={profile.full_name} photos={photos || []} />
                 </Suspense>
 
                 {/* Footer */}

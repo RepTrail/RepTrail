@@ -191,7 +191,7 @@ export function StudentProgressGallery({ photos }: StudentProgressGalleryProps) 
 
             {/* Premium Lightbox Modal */}
             <Dialog open={selectedPhotoIndex !== null} onOpenChange={(open) => !open && setSelectedPhotoIndex(null)}>
-                <DialogContent className="max-w-[95vw] w-full max-h-[95vh] p-0 border-none bg-black/90 backdrop-blur-xl flex items-center justify-center">
+                <DialogContent className="max-w-[95vw] w-full max-h-[95vh] p-0 border-none bg-black/90 backdrop-blur-xl flex items-center justify-center" showCloseButton={false}>
                     <VisuallyHidden>
                         <DialogTitle>Visualização de Foto</DialogTitle>
                     </VisuallyHidden>
@@ -226,26 +226,26 @@ export function StudentProgressGallery({ photos }: StudentProgressGalleryProps) 
                             {/* Controls */}
                             <button
                                 onClick={(e) => { e.stopPropagation(); setSelectedPhotoIndex(null); }}
-                                className="absolute top-4 right-4 w-12 h-12 flex items-center justify-center bg-white/10 hover:bg-white/20 rounded-full transition-colors z-50 text-white"
+                                className="absolute top-4 right-4 w-12 h-12 flex items-center justify-center bg-black/50 hover:bg-black/70 border border-white/10 rounded-full transition-all z-50 text-white shadow-xl backdrop-blur-sm"
                             >
-                                <X className="w-6 h-6" />
+                                <X className="w-6 h-6 drop-shadow-md" />
                             </button>
 
                             {selectedPhotoIndex > 0 && (
                                 <button
                                     onClick={(e) => { e.stopPropagation(); setSelectedPhotoIndex(selectedPhotoIndex - 1); }}
-                                    className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center bg-white/20 hover:bg-white/40 rounded-full transition-colors z-50 text-white"
+                                    className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center bg-black/50 hover:bg-black/70 border border-white/10 rounded-full transition-all z-50 text-white shadow-xl backdrop-blur-sm"
                                 >
-                                    <ChevronLeft className="w-6 h-6" />
+                                    <ChevronLeft className="w-6 h-6 drop-shadow-md" />
                                 </button>
                             )}
 
                             {selectedPhotoIndex < allPhotos.length - 1 && (
                                 <button
                                     onClick={(e) => { e.stopPropagation(); setSelectedPhotoIndex(selectedPhotoIndex + 1); }}
-                                    className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center bg-white/20 hover:bg-white/40 rounded-full transition-colors z-50 text-white"
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center bg-black/50 hover:bg-black/70 border border-white/10 rounded-full transition-all z-50 text-white shadow-xl backdrop-blur-sm"
                                 >
-                                    <ChevronRight className="w-6 h-6" />
+                                    <ChevronRight className="w-6 h-6 drop-shadow-md" />
                                 </button>
                             )}
                         </div>
