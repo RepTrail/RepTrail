@@ -25,9 +25,17 @@ interface PaymentModalProps {
 }
 
 export function PaymentModal({ isOpen, onClose, tier, currentCpf, currentName, monthlyTotal }: PaymentModalProps) {
-    const [step, setStep] = useState<'info' | 'payment'>(currentCpf && currentName ? 'payment' : 'info')
+    const [step, setStep] = useState<'info' | 'payment' | 'card_details'>(currentCpf && currentName ? 'payment' : 'info')
     const [cpf, setCpf] = useState(currentCpf || '')
     const [fullName, setFullName] = useState(currentName || '')
+    const [cardData, setCardData] = useState({
+        number: '',
+        holder: '',
+        expiry: '',
+        cvv: '',
+        postalCode: '',
+        addressNumber: ''
+    })
     const [fetchingName, setFetchingName] = useState(false)
     const [loading, setLoading] = useState(false)
     const { toast } = useToast()
@@ -47,6 +55,18 @@ export function PaymentModal({ isOpen, onClose, tier, currentCpf, currentName, m
             .replace(/(\d{3})(\d)/, '$1/$2')
             .replace(/(\d{4})(\d{1,2})/, '$1-$2')
             .replace(/(-\d{2})\d+?$/, '$1')
+    }
+
+    const maskCardNumber = (value: string) => {
+        return value.replace(/\D/g, '').replace(/(\d{4})/g, '$1 ').trim().substring(0, 19)
+    }
+
+    const maskExpiry = (value: string) => {
+        return value.replace(/\D/g, '').replace(/(\d{2})/, '$1/').substring(0, 5)
+    }
+
+    const maskCep = (value: string) => {
+        return value.replace(/\D/g, '').replace(/(\d{5})/, '$1-').substring(0, 9)
     }
 
     const validateCpfCnpj = (val: string) => {
@@ -73,30 +93,19 @@ export function PaymentModal({ isOpen, onClose, tier, currentCpf, currentName, m
     // Auto-search name when CPF is completed
     useEffect(() => {
         const clean = cpf.replace(/\D/g, '')
-        console.log(`[ASAAS_CLIENT] Input changed. Clean: ${clean} | Len: ${clean.length}`)
-
         if ((clean.length === 11 || clean.length === 14)) {
-            console.log(`[ASAAS_CLIENT] Target length reached. Current fullName: "${fullName}"`)
-
-            // Only search if we don't have a full name yet or if it looks like a placeholder
             const isPlaceholder = !fullName || fullName.trim().split(' ').length < 2
-
             if (isPlaceholder) {
-                console.log(`[ASAAS_CLIENT] Triggering lookup for: ${clean}`)
                 const timer = setTimeout(async () => {
                     setFetchingName(true)
                     try {
                         const res = await searchAsaasCustomer(clean)
-                        console.log(`[ASAAS_CLIENT] API Response:`, res)
                         if (res.success && res.name) {
-                            console.log(`[ASAAS_CLIENT] Name found! Updating to: ${res.name}`)
                             setFullName(res.name)
                             toast({
                                 title: "Nome Identificado",
                                 description: `Encontramos ${res.name} na base Asaas.`
                             })
-                        } else {
-                            console.log(`[ASAAS_CLIENT] Name not found in Asaas base.`)
                         }
                     } catch (err) {
                         console.error(`[ASAAS_CLIENT] Server Action Error:`, err)
@@ -134,28 +143,42 @@ export function PaymentModal({ isOpen, onClose, tier, currentCpf, currentName, m
         setStep('payment')
     }
 
-    const handleSubscribe = async (method: 'PIX' | 'BOLETO' | 'CREDIT_CARD') => {
+    const handleSubscribe = async (e: React.FormEvent) => {
+        e.preventDefault()
         setLoading(true)
         toast({
             title: "Processando...",
             description: "Estamos preparando sua assinatura no Asaas."
         })
 
+        const [month, year] = cardData.expiry.split('/')
+        const fullYear = `20${year}`
+
         try {
-            const res = await createAsaasSubscription(tier, method, cpf.replace(/\D/g, ''), fullName.trim())
+            const res = await createAsaasSubscription(
+                tier,
+                'CREDIT_CARD',
+                cpf.replace(/\D/g, ''),
+                fullName.trim(),
+                {
+                    holderName: cardData.holder,
+                    number: cardData.number.replace(/\s/g, ''),
+                    expiryMonth: month,
+                    expiryYear: fullYear,
+                    ccv: cardData.cvv,
+                    postalCode: cardData.postalCode.replace(/\D/g, ''),
+                    addressNumber: cardData.addressNumber
+                }
+            )
 
             if (res.success) {
-                if (res.invoiceUrl) {
-                    window.location.href = res.invoiceUrl
-                } else {
-                    toast({ title: 'Sucesso!', description: 'Seu plano foi ativado com sucesso.' })
-                    setTimeout(() => window.location.reload(), 2000)
-                }
+                toast({ title: 'Sucesso!', description: 'Seu plano foi ativado com sucesso.' })
+                setTimeout(() => window.location.href = '/dashboard/student/plans', 1500)
             } else {
                 toast({
                     variant: 'destructive',
-                    title: 'Erro no Asaas',
-                    description: res.error || 'Ocorreu um erro ao processar o pagamento.'
+                    title: 'Erro no Pagamento',
+                    description: res.error || 'Ocorreu um erro ao processar o cartão.'
                 })
             }
         } catch (error: any) {
@@ -232,7 +255,7 @@ export function PaymentModal({ isOpen, onClose, tier, currentCpf, currentName, m
                                     )}
                                 </div>
                                 <p className="text-[9px] text-zinc-600 font-bold uppercase text-center leading-relaxed">
-                                    O nome deve ser idêntico ao registrado no CPF e no cartão de crédito.
+                                    O nome deve ser idêntico ao registrado no CPF.
                                 </p>
                             </div>
 
@@ -240,10 +263,10 @@ export function PaymentModal({ isOpen, onClose, tier, currentCpf, currentName, m
                                 type="submit"
                                 className="w-full h-14 bg-white hover:bg-zinc-200 text-zinc-950 rounded-2xl font-black uppercase italic tracking-wide transition-all shadow-xl active:scale-95"
                             >
-                                Continuar para Pagamento
+                                Continuar
                             </Button>
                         </form>
-                    ) : (
+                    ) : step === 'payment' ? (
                         <div className="space-y-6">
                             <div className="p-4 bg-zinc-900 border border-zinc-800 rounded-2xl text-center space-y-1">
                                 <p className="text-[9px] font-black text-zinc-600 uppercase tracking-widest">Valor da Assinatura</p>
@@ -252,7 +275,7 @@ export function PaymentModal({ isOpen, onClose, tier, currentCpf, currentName, m
 
                             <div className="space-y-3">
                                 <Button
-                                    onClick={() => handleSubscribe('CREDIT_CARD')}
+                                    onClick={() => setStep('card_details')}
                                     disabled={loading}
                                     className="w-full h-14 bg-white hover:bg-zinc-100 text-zinc-950 rounded-2xl font-black uppercase italic tracking-wide text-sm gap-3 transition-all hover:scale-[1.02] active:scale-[0.98]"
                                 >
@@ -268,6 +291,93 @@ export function PaymentModal({ isOpen, onClose, tier, currentCpf, currentName, m
                                 Alterar Documento
                             </button>
                         </div>
+                    ) : (
+                        <form onSubmit={handleSubscribe} className="space-y-4">
+                            <div className="space-y-2">
+                                <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Número do Cartão</label>
+                                <Input
+                                    value={cardData.number}
+                                    onChange={(e) => setCardData(d => ({ ...d, number: maskCardNumber(e.target.value) }))}
+                                    placeholder="0000 0000 0000 0000"
+                                    className="h-12 bg-zinc-900 border-zinc-800 rounded-xl font-bold text-white"
+                                    required
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Nome Impresso no Cartão</label>
+                                <Input
+                                    value={cardData.holder}
+                                    onChange={(e) => setCardData(d => ({ ...d, holder: e.target.value.toUpperCase() }))}
+                                    placeholder="JOÃO S SANTOS"
+                                    className="h-12 bg-zinc-900 border-zinc-800 rounded-xl font-bold text-white"
+                                    required
+                                />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Validade (MM/AA)</label>
+                                    <Input
+                                        value={cardData.expiry}
+                                        onChange={(e) => setCardData(d => ({ ...d, expiry: maskExpiry(e.target.value) }))}
+                                        placeholder="MM/AA"
+                                        className="h-12 bg-zinc-900 border-zinc-800 rounded-xl font-bold text-white text-center"
+                                        required
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">CVV</label>
+                                    <Input
+                                        value={cardData.cvv}
+                                        onChange={(e) => setCardData(d => ({ ...d, cvv: e.target.value.replace(/\D/g, '').substring(0, 4) }))}
+                                        placeholder="000"
+                                        className="h-12 bg-zinc-900 border-zinc-800 rounded-xl font-bold text-white text-center"
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">CEP (Endereço de Cobrança)</label>
+                                    <Input
+                                        value={cardData.postalCode}
+                                        onChange={(e) => setCardData(d => ({ ...d, postalCode: maskCep(e.target.value) }))}
+                                        placeholder="00000-000"
+                                        className="h-12 bg-zinc-900 border-zinc-800 rounded-xl font-bold text-white text-center"
+                                        required
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Número</label>
+                                    <Input
+                                        value={cardData.addressNumber}
+                                        onChange={(e) => setCardData(d => ({ ...d, addressNumber: e.target.value }))}
+                                        placeholder="Ex: 123"
+                                        className="h-12 bg-zinc-900 border-zinc-800 rounded-xl font-bold text-white text-center"
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="pt-4 space-y-3">
+                                <Button
+                                    type="submit"
+                                    disabled={loading}
+                                    className="w-full h-14 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 rounded-2xl font-black uppercase italic tracking-wide transition-all shadow-xl shadow-emerald-500/10 active:scale-95"
+                                >
+                                    {loading ? 'Processando...' : 'Finalizar Assinatura'}
+                                </Button>
+                                <button
+                                    type="button"
+                                    onClick={() => setStep('payment')}
+                                    className="w-full text-zinc-600 hover:text-zinc-400 text-[10px] font-black uppercase tracking-widest transition-colors"
+                                >
+                                    Voltar
+                                </button>
+                            </div>
+                        </form>
                     )}
                 </div>
             </DialogContent>

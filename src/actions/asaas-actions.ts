@@ -87,14 +87,23 @@ export async function createAsaasSubscription(
     tier: 'on_demand' | 'auto_training',
     billingType: 'BOLETO' | 'CREDIT_CARD' | 'PIX' = 'PIX',
     taxId?: string,
-    fullName?: string
+    fullName?: string,
+    creditCardData?: {
+        holderName: string,
+        number: string,
+        expiryMonth: string,
+        expiryYear: string,
+        ccv: string,
+        postalCode: string,
+        addressNumber: string
+    }
 ) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { error: 'Não autorizado' }
 
     try {
-        const { data: profile } = await supabase.from('profiles').select('is_billing_exempt').eq('id', user.id).single()
+        const { data: profile } = await supabase.from('profiles').select('is_billing_exempt, email, whatsapp, cpf_cnpj').eq('id', user.id).single()
 
         if (profile?.is_billing_exempt) {
             await supabase.from('profiles').update({ plan_tier: tier }).eq('id', user.id)
@@ -135,17 +144,44 @@ export async function createAsaasSubscription(
             return { success: true }
         }
 
+        const subscriptionPayload: any = {
+            customer: customerId,
+            billingType: billingType,
+            value: value,
+            nextDueDate: new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString().split('T')[0], // Amanhã
+            cycle: 'MONTHLY',
+            description: `Assinatura RepTrail - ${tier}`,
+            externalReference: `${user.id}_${tier}`
+        }
+
+        if (billingType === 'CREDIT_CARD' && creditCardData) {
+            const { headers: nextHeaders } = await import('next/headers')
+            const clientHeaders = await nextHeaders()
+            const forwarded = clientHeaders.get('x-forwarded-for')
+            const remoteIp = forwarded ? forwarded.split(',')[0] : '127.0.0.1'
+
+            subscriptionPayload.creditCard = {
+                holderName: creditCardData.holderName,
+                number: creditCardData.number,
+                expiryMonth: creditCardData.expiryMonth,
+                expiryYear: creditCardData.expiryYear,
+                ccv: creditCardData.ccv
+            }
+            subscriptionPayload.creditCardHolderInfo = {
+                name: creditCardData.holderName,
+                email: user.email,
+                cpfCnpj: taxId || profile?.cpf_cnpj,
+                postalCode: creditCardData.postalCode.replace(/\D/g, ''),
+                addressNumber: creditCardData.addressNumber,
+                phone: profile?.whatsapp?.replace(/\D/g, '') || '', // Optional but good
+                mobilePhone: profile?.whatsapp?.replace(/\D/g, '') || ''
+            }
+            subscriptionPayload.remoteIp = remoteIp
+        }
+
         const subscription = await fetchAsaas('/subscriptions', {
             method: 'POST',
-            body: JSON.stringify({
-                customer: customerId,
-                billingType: billingType,
-                value: value,
-                nextDueDate: new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString().split('T')[0], // Amanhã
-                cycle: 'MONTHLY',
-                description: `Assinatura RepTrail - ${tier}`,
-                externalReference: `${user.id}_${tier}`
-            })
+            body: JSON.stringify(subscriptionPayload)
         })
 
         // Store subscription ID
@@ -168,6 +204,7 @@ export async function createAsaasSubscription(
         return {
             success: true,
             subscriptionId: subscription.id,
+            status: subscription.status,
             invoiceUrl: firstPayment?.invoiceUrl || firstPayment?.bankSlipUrl,
             bankSlipUrl: firstPayment?.bankSlipUrl
         }
