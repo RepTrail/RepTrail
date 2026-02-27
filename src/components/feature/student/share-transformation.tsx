@@ -114,7 +114,7 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
         if (!ctx) return
 
         const width = 1080
-        const height = format === 'story' ? 1920 : 1080
+        const height = format === 'story' ? 1920 : 1350
         canvas.width = width
         canvas.height = height
 
@@ -173,8 +173,8 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
             // 2. Photo Layout
             const padding = 50
             const photoWidth = (width - (padding * 3)) / 2
-            const photoHeight = format === 'story' ? height * 0.65 : height * 0.65
-            const yOffset = (height - photoHeight) / 2 + (format === 'story' ? 60 : 60)
+            const photoHeight = format === 'story' ? height * 0.65 : height * 0.62
+            const yOffset = height * 0.18 // Fixed top offset for better control
 
             // Background Bloom - REMOVED ctx.filter as it bugs on mobile
             // Instead, use a stylized gradient overlay
@@ -319,12 +319,12 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
             ctx.fillStyle = 'white'
             ctx.font = 'italic 900 52px Arial Black, sans-serif'
             ctx.textAlign = 'center'
-            ctx.fillText(studentName.toUpperCase(), width / 2, height - (format === 'story' ? 140 : 80))
+            ctx.fillText(studentName.toUpperCase(), width / 2, height - (format === 'story' ? 140 : 120))
 
             ctx.fillStyle = '#10b981'
             ctx.font = 'bold 22px Arial, sans-serif'
             ctx.letterSpacing = '6px'
-            ctx.fillText('REP-TRAIL.VERCEL.APP', width / 2, height - (format === 'story' ? 80 : 30))
+            ctx.fillText('REP-TRAIL.VERCEL.APP', width / 2, height - (format === 'story' ? 80 : 60))
 
             // Signature Line
             ctx.strokeStyle = 'rgba(16, 185, 129, 0.4)'
@@ -469,7 +469,7 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
                                 </div>
                             </div>
 
-                            <div className={`relative mx-auto bg-black rounded-[2rem] overflow-hidden shadow-[0_15px_40px_rgba(0,0,0,0.5)] border border-zinc-800/50 mb-6 ${currentFormat === 'story' ? 'h-[420px] aspect-[9/16]' : 'w-full max-w-[340px] aspect-square'}`}>
+                            <div className={`relative mx-auto bg-black rounded-[2rem] overflow-hidden shadow-[0_15px_40px_rgba(0,0,0,0.5)] border border-zinc-800/50 mb-6 ${currentFormat === 'story' ? 'h-[420px] aspect-[9/16]' : 'h-[420px] aspect-[4/5]'}`}>
                                 <img src={previewUrl} alt="Preview" className="w-full h-full object-contain" />
                             </div>
 
