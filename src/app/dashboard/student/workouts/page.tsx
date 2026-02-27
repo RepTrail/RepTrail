@@ -48,18 +48,20 @@ export default async function StudentWorkoutsPage() {
     return (
         <div className="space-y-10" suppressHydrationWarning>
             {/* Header Section */}
-            <div className="space-y-2">
-                <div className="flex items-center justify-between mb-2">
+            <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div className="flex items-center gap-3">
-                        <div className="p-2 bg-orange-500 rounded-xl">
+                        <div className="p-2 bg-orange-500 rounded-xl shrink-0">
                             <Dumbbell className="w-5 h-5 text-zinc-950" />
                         </div>
-                        <h1 className="text-4xl font-black text-white italic uppercase tracking-tighter">
+                        <h1 className="text-3xl md:text-4xl font-black text-white italic uppercase tracking-tighter leading-none">
                             Meus <span className="text-orange-500">Treinos</span>
                         </h1>
                     </div>
                     {allowManualWorkouts && (
-                        <WorkoutActions isAutoTrainingActive={isAutoTrainingActive} />
+                        <div className="w-full sm:w-auto flex">
+                            <WorkoutActions isAutoTrainingActive={isAutoTrainingActive} />
+                        </div>
                     )}
                 </div>
                 <p className="text-zinc-500 text-sm font-medium max-w-md">

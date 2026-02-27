@@ -71,20 +71,21 @@ export function generateExecutionSteps(exercises: any[]): ExecutionStep[] {
             const maxSetsInPhase = Math.max(...block.map(getPhaseSets));
 
             for (let setNum = 1; setNum <= maxSetsInPhase; setNum++) {
-                // Filtrar exercícios que ainda têm séries nesta fase
-                const exercisesInRound = block.filter(ex => getPhaseSets(ex) >= setNum);
+                // Em um bi-set, todos os exercícios do bloco participam da rodada.
+                // Se o exercício A tem aquecimento e o B não tem, forçamos o B a ter para não quebrar a sincronia do conjugado (Ex A -> Ex B -> Descanso).
+                const exercisesInRound = block.length > 1 ? block : block.filter(ex => getPhaseSets(ex) >= setNum);
 
-                // NEW: Flatten exercises that have '+' to create virtual Bi-Sets within a single record
                 const flattenedExercisesInRound: any[] = [];
+                let currentSubIndex = 0;
                 for (const ex of exercisesInRound) {
                     const fullName = ex.exercise?.name || ex.name || '';
                     if (fullName.includes('+')) {
                         const parts = fullName.split('+').map((p: string) => p.trim());
-                        parts.forEach((part: string, sIdx: number) => {
-                            flattenedExercisesInRound.push({ ...ex, exerciseName: part, subIndex: sIdx });
+                        parts.forEach((part: string) => {
+                            flattenedExercisesInRound.push({ ...ex, exerciseName: part, subIndex: currentSubIndex++ });
                         });
                     } else {
-                        flattenedExercisesInRound.push({ ...ex, exerciseName: fullName, subIndex: 0 });
+                        flattenedExercisesInRound.push({ ...ex, exerciseName: fullName, subIndex: currentSubIndex++ });
                     }
                 }
 
@@ -105,7 +106,7 @@ export function generateExecutionSteps(exercises: any[]): ExecutionStep[] {
                         ) : 0,
                         groupId,
                         isLastInBlock: false,
-                        subIndex: ex.subIndex
+                        subIndex: flattenedExercisesInRound.length > 1 ? ex.subIndex : undefined
                     });
                 }
             }

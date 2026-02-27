@@ -196,6 +196,7 @@ export async function getStudentWorkoutHistory(studentId: string) {
                     notes,
                     exercise_id,
                     sub_index,
+                    group_id,
                     exercise:exercises(id, name)
                 )
             `)

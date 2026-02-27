@@ -249,13 +249,11 @@ export function WorkoutPlayer({
         setIsResting(false)
         setRestEndTime(null)
 
-        // If it was the last set in block, show summary after rest
         if (currentStep.isLastInBlock) {
-            setShowSummary(true)
+            advanceExercise()
             return
         }
 
-        // Advance to next step
         if (currentStepIndex < steps.length - 1) {
             setCurrentStepIndex(prev => prev + 1)
         }
@@ -313,7 +311,9 @@ export function WorkoutPlayer({
         }])
 
         // Intra-block logic (Rest or Switch)
-        if (currentStep.restSeconds > 0) {
+        if (currentStep.isLastInBlock) {
+            setShowSummary(true)
+        } else if (currentStep.restSeconds > 0) {
             setRestTimeLeft(currentStep.restSeconds)
             setRestEndTime(Date.now() + currentStep.restSeconds * 1000)
             setIsResting(true)
@@ -322,12 +322,7 @@ export function WorkoutPlayer({
                 Notification.requestPermission()
             }
         } else {
-            // Immediate switch or summary
-            if (currentStep.isLastInBlock) {
-                setShowSummary(true)
-            } else {
-                setCurrentStepIndex(prev => prev + 1)
-            }
+            setCurrentStepIndex(prev => prev + 1)
         }
     }
 
@@ -370,7 +365,14 @@ export function WorkoutPlayer({
                     console.error('Failed to save some sets:', failed)
                 }
 
-                advanceExercise()
+                if (currentStep.restSeconds > 0 && currentStepIndex < steps.length - 1) {
+                    setShowSummary(false)
+                    setRestTimeLeft(currentStep.restSeconds)
+                    setRestEndTime(Date.now() + currentStep.restSeconds * 1000)
+                    setIsResting(true)
+                } else {
+                    advanceExercise()
+                }
             } catch (error) {
                 console.error('Error saving exercise sets:', error)
                 toast({ variant: 'destructive', title: 'Erro ao Salvar', description: 'Ocorreu um erro ao salvar os dados.' })
@@ -688,9 +690,6 @@ export function WorkoutPlayer({
                                 </div>
                                 <h2 className="text-4xl md:text-6xl font-black text-white uppercase italic tracking-tighter leading-[0.9] break-words">
                                     {currentStep.exerciseName}
-                                    {isBiSet && (
-                                        <span className="text-xl md:text-2xl text-orange-400 ml-2">(Bi-set)</span>
-                                    )}
                                 </h2>
                                 {currentStep.subIndex !== undefined && (
                                     <div className="flex items-center gap-2 mt-1">

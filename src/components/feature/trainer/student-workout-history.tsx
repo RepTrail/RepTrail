@@ -45,6 +45,8 @@ interface WorkoutLog {
         reps_performed: number
         set_type?: string
         notes?: string
+        sub_index?: number
+        group_id?: string
         exercise_id: string
         exercise: { name: string, id: string }
     }>
@@ -112,19 +114,34 @@ export function StudentWorkoutHistory({ history, isBlocked, mode = 'student' }: 
                     ? Math.round((new Date(log.completed_at).getTime() - new Date(log.started_at).getTime()) / 60000)
                     : null
 
-                // Group loads by exercise
-                const groupedByExercise = log.loads.reduce((acc, load) => {
-                    const exId = load.exercise_id || load.exercise?.id
+                // Group loads by exercise or group_id
+                const rawGroups = log.loads.reduce((acc, load) => {
+                    const exId = load.group_id || load.exercise_id || load.exercise?.id || 'unknown';
                     if (!acc[exId]) {
                         acc[exId] = {
-                            name: load.exercise?.name,
                             id: exId,
+                            partsSet: new Set<string>(),
                             sets: []
                         }
                     }
-                    acc[exId].sets.push(load)
-                    return acc
-                }, {} as Record<string, { name: string, id: string, sets: any[] }>)
+                    const exName = load.exercise?.name || 'Exercício Desconhecido';
+                    acc[exId].partsSet.add(exName);
+                    acc[exId].sets.push(load);
+                    return acc;
+                }, {} as Record<string, { id: string, partsSet: Set<string>, sets: any[] }>);
+
+                const groupedByExercise = Object.values(rawGroups).reduce((acc, group) => {
+                    // Extract all sub-parts if some names already have '+' inside them
+                    const allParts = Array.from(group.partsSet).flatMap(p => p.split(/\s*\+\s*/).map(sp => sp.trim()));
+                    const uniqueParts = Array.from(new Set(allParts));
+
+                    acc[group.id] = {
+                        id: group.id,
+                        name: uniqueParts.join(' + '),
+                        sets: group.sets
+                    };
+                    return acc;
+                }, {} as Record<string, { name: string, id: string, sets: any[] }>);
 
                 return (
                     <div
@@ -299,14 +316,39 @@ export function StudentWorkoutHistory({ history, isBlocked, mode = 'student' }: 
 
                                                                 {exGroup.sets.filter((load: any) => {
                                                                     if (!isBiSet) return true;
+
+                                                                    // Let's log why a load is or isn't shown
+                                                                    const currentPartName = parts[activePartIdx].toLowerCase().trim();
+
+                                                                    // NEW logic for bi-sets composed of separate exercises:
+                                                                    if (load.exercise?.name) {
+                                                                        const loadExName = load.exercise.name.toLowerCase().trim();
+                                                                        const matchesExName = loadExName.includes(currentPartName);
+                                                                        console.log(`[Bi-set Filter] ABA: ${currentPartName} | Carga: ${loadExName} | Match? ${matchesExName}`);
+                                                                        if (matchesExName) return true;
+
+                                                                        // Se tem nome do banco mas não deu match na aba atual, checa se NÃO pertence à outra
+                                                                        const belongsToOtherEx = parts.some((p, i) => i !== activePartIdx && loadExName.includes(p.toLowerCase().trim()));
+                                                                        if (belongsToOtherEx) return false;
+                                                                    }
+
+                                                                    // Fallback 1. Trust sub_index if it exists
                                                                     if (load.sub_index !== undefined && load.sub_index !== null) {
+                                                                        console.log(`[Bi-set Filter] ABA: ${currentPartName} | sub_index: ${load.sub_index} | Match? ${load.sub_index === activePartIdx}`);
                                                                         return load.sub_index === activePartIdx;
                                                                     }
-                                                                    const currentPartName = parts[activePartIdx];
-                                                                    if (load.notes?.includes(`[${currentPartName}]`)) return true;
-                                                                    // Fallback: If no sub_index/note but is bi-set, assign to first block unless notes tell us otherwise
-                                                                    // Since old data might just all fall to part 0, that's better than duplicating.
-                                                                    return activePartIdx === 0 && !parts.some((p, i) => i !== 0 && load.notes?.includes(`[${p}]`));
+
+                                                                    // Fallback 2. Case-insensitive notes matching
+                                                                    const matchesNote = load.notes?.toLowerCase().includes(`[${currentPartName}]`);
+                                                                    if (matchesNote) return true;
+
+                                                                    // Fallback 3. Missing info - put in first block
+                                                                    const belongsToAnotherPart = parts.some((p, i) => i !== activePartIdx && load.notes?.toLowerCase().includes(`[${p.toLowerCase().trim()}]`));
+                                                                    const fallbackFirst = activePartIdx === 0 && !belongsToAnotherPart;
+
+                                                                    if (fallbackFirst) return true;
+
+                                                                    return false;
                                                                 }).map((load, idx) => (
                                                                     <div key={idx} className="grid grid-cols-[25px_1.5fr_1fr_1fr] items-center bg-zinc-900/30 p-3.5 sm:p-5 rounded-2xl border border-zinc-800/30 gap-2 sm:gap-4">
                                                                         <span className="text-[11px] font-black text-zinc-600 uppercase italic leading-none">{idx + 1}º</span>

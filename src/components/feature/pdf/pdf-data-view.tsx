@@ -55,12 +55,12 @@ export function PdfDataView({ type, data }: { type: 'workout' | 'diet', data: an
                 {/* Workouts */}
                 {workouts.map((workout: Workout, idx: number) => (
                     <div key={idx} className="bg-zinc-900/40 border border-zinc-800 rounded-2xl overflow-hidden">
-                        <div className="bg-zinc-900/60 px-6 py-4 border-b border-zinc-800 flex items-center justify-between">
+                        <div className="bg-zinc-900/60 px-6 py-4 border-b border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                             <h3 className="text-white font-black italic uppercase tracking-tighter flex items-center gap-2">
-                                <Activity className="w-5 h-5 text-emerald-500" />
-                                {workout.name || `TREINO ${idx + 1}`}
+                                <Activity className="w-5 h-5 text-emerald-500 shrink-0" />
+                                <span className="line-clamp-2">{workout.name || `TREINO ${idx + 1}`}</span>
                             </h3>
-                            <div className="flex gap-2">
+                            <div className="flex flex-wrap gap-2">
                                 <Badge variant="outline" className="bg-zinc-950 border-zinc-800 text-zinc-400 text-[9px] font-black uppercase tracking-widest px-2 py-0.5">
                                     {workout.exercises?.length || 0} EXERCÍCIOS
                                 </Badge>
@@ -83,8 +83,8 @@ export function PdfDataView({ type, data }: { type: 'workout' | 'diet', data: an
                                 <div key={exIdx} className="p-4 lg:p-6 hover:bg-zinc-800/20 transition-colors group">
                                     <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                                         <div className="flex-1 space-y-1">
-                                            <div className="flex items-center justify-between gap-4">
-                                                <div className="flex items-center gap-2">
+                                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+                                                <div className="flex flex-wrap items-center gap-2">
                                                     <p className="text-white font-bold text-sm lg:text-base group-hover:text-emerald-400 transition-colors">
                                                         {ex.name}
                                                     </p>
@@ -93,15 +93,15 @@ export function PdfDataView({ type, data }: { type: 'workout' | 'diet', data: an
                                                         ex.notes?.toLowerCase().includes('bi-set') ||
                                                         ex.notes?.toLowerCase().includes('biset') ||
                                                         ex.notes?.toLowerCase().includes('conjugado')) && (
-                                                            <Badge className="bg-blue-500/10 text-blue-400 border-blue-500/20 text-[8px] font-black uppercase tracking-widest px-1.5 h-4">
+                                                            <Badge className="bg-blue-500/10 text-blue-400 border-blue-500/20 text-[8px] font-black uppercase tracking-widest px-1.5 h-4 shrink-0">
                                                                 <Zap className="w-2 h-2 mr-1" /> CONJUGADO
                                                             </Badge>
                                                         )}
                                                 </div>
                                                 {ex.notes && (
-                                                    <div className="flex items-center gap-1 text-[10px] text-zinc-500 italic bg-zinc-800/30 px-2 py-0.5 rounded-lg border border-zinc-800/50">
-                                                        <Info className="w-2.5 h-2.5" />
-                                                        {ex.notes}
+                                                    <div className="flex items-center gap-1 text-[10px] text-zinc-500 italic bg-zinc-800/30 px-2 py-1 rounded-lg border border-zinc-800/50 sm:whitespace-nowrap w-fit">
+                                                        <Info className="w-2.5 h-2.5 shrink-0" />
+                                                        <span className="line-clamp-2 sm:line-clamp-1">{ex.notes}</span>
                                                     </div>
                                                 )}
                                             </div>
