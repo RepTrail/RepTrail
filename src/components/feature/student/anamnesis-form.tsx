@@ -36,13 +36,13 @@ export function AnamnesisForm({ initialData }: { initialData?: any }) {
     }
 
     const studentAge = initialData?.birth_date ? calculateAge(initialData.birth_date) : initialData?.age
-    const studentHeight = initialData?.height || ''
-    const studentWeight = initialData?.weight || initialData?.current_weight || ''
 
     // Form State
     const [formData, setFormData] = useState({
         sex: initialData?.sex || 'male',
         activity_level: initialData?.activity_level || 'moderate',
+        height: initialData?.height || '',
+        weight: initialData?.weight || initialData?.current_weight || '',
         // Measurements for Navy Seal
         neck_cm: initialData?.neck_cm || '',
         waist_cm: initialData?.waist_cm || '',
@@ -53,7 +53,7 @@ export function AnamnesisForm({ initialData }: { initialData?: any }) {
 
     // Navy Seal Calculation Logic
     useEffect(() => {
-        const h = parseFloat(studentHeight)
+        const h = parseFloat(formData.height)
         const neck = parseFloat(formData.neck_cm)
         const waist = parseFloat(formData.waist_cm)
         const hip = parseFloat(formData.hip_cm)
@@ -75,7 +75,7 @@ export function AnamnesisForm({ initialData }: { initialData?: any }) {
             const bf = 495 / (1.29579 - 0.35004 * Math.log10(waist + hip - neck) + 0.22100 * Math.log10(h)) - 450
             setCalculatedBF(Math.max(2, bf).toFixed(1))
         }
-    }, [formData, studentHeight])
+    }, [formData])
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault()
@@ -126,29 +126,43 @@ export function AnamnesisForm({ initialData }: { initialData?: any }) {
                 <form onSubmit={handleSubmit} className="space-y-12">
                     {/* Basic Info */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <div className="space-y-3 flex flex-col justify-center px-8 bg-zinc-900/20 border border-zinc-900 rounded-2xl h-16">
+                        <div className="space-y-3">
                             <Label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest flex items-center gap-2">
                                 <User className="w-3 h-3" /> Idade
                             </Label>
-                            <span className="text-xl font-black italic text-zinc-400">
-                                {studentAge ? `${studentAge} anos` : 'Não informada'}
-                            </span>
+                            <div className="flex items-center px-6 bg-zinc-900/20 border border-zinc-900 rounded-2xl h-16 opacity-70 cursor-not-allowed">
+                                <span className="text-xl font-black italic text-zinc-400">
+                                    {studentAge ? `${studentAge} anos` : '--'}
+                                </span>
+                            </div>
                         </div>
-                        <div className="space-y-3 flex flex-col justify-center px-8 bg-zinc-900/20 border border-zinc-900 rounded-2xl h-16">
+                        <div className="space-y-3">
                             <Label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest flex items-center gap-2">
-                                <Ruler className="w-3 h-3" /> Altura
+                                <Ruler className="w-3 h-3" /> Altura (cm)
                             </Label>
-                            <span className="text-xl font-black italic text-zinc-400">
-                                {studentHeight ? `${studentHeight} cm` : 'Não informada'}
-                            </span>
+                            <Input
+                                type="number"
+                                step="0.1"
+                                placeholder="Ex: 175"
+                                value={formData.height}
+                                onChange={e => setFormData(prev => ({ ...prev, height: e.target.value }))}
+                                className="h-16 bg-zinc-900/20 border border-zinc-900 focus:border-zinc-700 rounded-2xl font-black italic text-xl px-6 text-zinc-300"
+                                required
+                            />
                         </div>
-                        <div className="space-y-3 flex flex-col justify-center px-8 bg-zinc-900/20 border border-zinc-900 rounded-2xl h-16">
+                        <div className="space-y-3">
                             <Label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest flex items-center gap-2">
-                                <Weight className="w-3 h-3" /> Peso
+                                <Weight className="w-3 h-3" /> Peso (kg)
                             </Label>
-                            <span className="text-xl font-black italic text-zinc-400">
-                                {studentWeight ? `${studentWeight} kg` : 'Não informado'}
-                            </span>
+                            <Input
+                                type="number"
+                                step="0.1"
+                                placeholder="Ex: 80"
+                                value={formData.weight}
+                                onChange={e => setFormData(prev => ({ ...prev, weight: e.target.value }))}
+                                className="h-16 bg-zinc-900/20 border border-zinc-900 focus:border-zinc-700 rounded-2xl font-black italic text-xl px-6 text-zinc-300"
+                                required
+                            />
                         </div>
                     </div>
 
