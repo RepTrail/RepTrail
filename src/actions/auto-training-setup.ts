@@ -61,14 +61,14 @@ export async function setupAutoTrainingForStudent(studentId: string, profileData
         // 4. Insert Exercises into the Workout Plan (with the specific structure requested)
         // 2 Warm Up, 1 Feeder, 2 Working Sets
         const exercisesToInsert = [
-            { workout_id: workoutId, exercise_id: benchPressId, order_index: 1, warmup_sets: 2, feeder_sets: 1, working_sets: 2, reps: '8-10', rest_seconds: 90 },
-            { workout_id: workoutId, exercise_id: pulldownId, order_index: 2, warmup_sets: 2, feeder_sets: 1, working_sets: 2, reps: '10-12', rest_seconds: 90 },
-            { workout_id: workoutId, exercise_id: shoulderPressId, order_index: 3, warmup_sets: 1, feeder_sets: 0, working_sets: 3, reps: '10-12', rest_seconds: 60 },
-            { workout_id: workoutId, exercise_id: bicepCurlId, order_index: 4, warmup_sets: 0, feeder_sets: 0, working_sets: 3, reps: '12-15', rest_seconds: 60 },
-            { workout_id: workoutId, exercise_id: tricepPushdownId, order_index: 5, warmup_sets: 0, feeder_sets: 0, working_sets: 3, reps: '12-15', rest_seconds: 60 },
-            { workout_id: workoutId, exercise_id: squatId, order_index: 6, warmup_sets: 2, feeder_sets: 1, working_sets: 2, reps: '8-10', rest_seconds: 120 },
-            { workout_id: workoutId, exercise_id: legpressId, order_index: 7, warmup_sets: 1, feeder_sets: 1, working_sets: 2, reps: '10-12', rest_seconds: 90 },
-            { workout_id: workoutId, exercise_id: calfRaiseId, order_index: 8, warmup_sets: 0, feeder_sets: 0, working_sets: 4, reps: '15-20', rest_seconds: 45 },
+            { workout_id: workoutId, exercise_id: benchPressId, order_index: 1, warmup_sets: 2, feeder_sets: 1, working_sets: 2, reps: '10', rest_seconds: 90 },
+            { workout_id: workoutId, exercise_id: pulldownId, order_index: 2, warmup_sets: 2, feeder_sets: 1, working_sets: 2, reps: '12', rest_seconds: 90 },
+            { workout_id: workoutId, exercise_id: shoulderPressId, order_index: 3, warmup_sets: 1, feeder_sets: 0, working_sets: 3, reps: '12', rest_seconds: 60 },
+            { workout_id: workoutId, exercise_id: bicepCurlId, order_index: 4, warmup_sets: 0, feeder_sets: 0, working_sets: 3, reps: '15', rest_seconds: 60 },
+            { workout_id: workoutId, exercise_id: tricepPushdownId, order_index: 5, warmup_sets: 0, feeder_sets: 0, working_sets: 3, reps: '15', rest_seconds: 60 },
+            { workout_id: workoutId, exercise_id: squatId, order_index: 6, warmup_sets: 2, feeder_sets: 1, working_sets: 2, reps: '10', rest_seconds: 120 },
+            { workout_id: workoutId, exercise_id: legpressId, order_index: 7, warmup_sets: 1, feeder_sets: 1, working_sets: 2, reps: '12', rest_seconds: 90 },
+            { workout_id: workoutId, exercise_id: calfRaiseId, order_index: 8, warmup_sets: 0, feeder_sets: 0, working_sets: 4, reps: '20', rest_seconds: 45 },
         ].filter(e => e.exercise_id);
 
         if (exercisesToInsert.length > 0) {

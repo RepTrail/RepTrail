@@ -693,6 +693,7 @@ export async function updateStudentProfile(data: any) {
             })
         }
 
+        revalidatePath('/dashboard/student')
         revalidatePath('/dashboard/student/progress')
         return { success: true }
     } catch (e: any) {

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { Zap, CreditCard, QrCode } from 'lucide-react'
+import { CreditCard, Loader2 } from 'lucide-react'
 import { useToast } from "@/hooks/use-toast"
 import { createAsaasSubscription } from '@/actions/asaas-actions'
 
@@ -14,7 +14,7 @@ export function StudentPaymentButtons() {
         setLoading(true)
         toast({
             title: "Gerando pagamento...",
-            description: `Aguarde um instante enquanto preparamos seu checkout via ${type === 'PIX' ? 'Pix' : type === 'BOLETO' ? 'Boleto' : 'Cartão'}...`
+            description: `Aguarde um instante enquanto preparamos seu checkout via Cartão...`
         })
         const res = await createAsaasSubscription('auto_training', type)
         setLoading(false)
@@ -31,31 +31,20 @@ export function StudentPaymentButtons() {
             <Button
                 onClick={() => handleAsaas('CREDIT_CARD')}
                 disabled={loading}
-                className="w-full h-14 font-black uppercase tracking-widest bg-white text-zinc-950 hover:bg-zinc-100 transition-all rounded-2xl shadow-xl flex items-center justify-center gap-2"
+                className="w-full h-14 font-black uppercase tracking-[0.15em] bg-emerald-500 text-zinc-950 hover:bg-emerald-400 transition-all rounded-2xl shadow-xl shadow-emerald-500/20 flex items-center justify-center gap-2"
             >
-                <CreditCard className="w-4 h-4" />
-                Cartão de Crédito
+                {loading ? (
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                ) : (
+                    <>
+                        <CreditCard className="w-5 h-5" />
+                        Assinar com Cartão
+                    </>
+                )}
             </Button>
-
-            <div className="flex gap-3">
-                <Button
-                    onClick={() => handleAsaas('PIX')}
-                    disabled={loading}
-                    variant="outline"
-                    className="flex-1 h-12 font-black uppercase tracking-widest border-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-800 transition-all rounded-xl flex items-center justify-center gap-2"
-                >
-                    <QrCode className="w-4 h-4" />
-                    Pix
-                </Button>
-                <Button
-                    onClick={() => handleAsaas('BOLETO')}
-                    disabled={loading}
-                    variant="outline"
-                    className="flex-1 h-12 font-black uppercase tracking-widest border-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-800 transition-all rounded-xl flex items-center justify-center gap-2"
-                >
-                    Boleto
-                </Button>
-            </div>
+            <p className="text-[9px] text-zinc-600 font-bold uppercase tracking-widest text-center mt-2">
+                Pagamento processado com segurança pelo Asaas
+            </p>
         </div>
     )
 }

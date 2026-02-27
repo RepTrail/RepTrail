@@ -10,6 +10,7 @@ interface LoadPoint {
     weight_kg: number
     recorded_at: string
     exercises?: { name: string }
+    exercise?: { name: string } | { name: string }[]
 }
 
 interface UnifiedExerciseChartProps {
@@ -41,7 +42,9 @@ export function UnifiedExerciseChart({
 
         const grouped: Record<string, any[]> = {}
         data.forEach(entry => {
-            const name = entry.exercises?.name || 'Exercício'
+            const exerciseData = entry.exercise || entry.exercises
+            const name = (Array.isArray(exerciseData) ? exerciseData[0]?.name : exerciseData?.name) || exerciseName || 'Exercício'
+
             if (!grouped[name]) grouped[name] = []
             grouped[name].push({
                 val: entry.weight_kg,
@@ -51,8 +54,8 @@ export function UnifiedExerciseChart({
             })
         })
 
-        if (mode === 'detailed' && exerciseName) {
-            const history = grouped[exerciseName] || []
+        if (mode === 'detailed') {
+            const history = exerciseName ? (grouped[exerciseName] || Object.values(grouped)[0] || []) : (Object.values(grouped)[0] || [])
             // Group by day for detailed view (max weight per session)
             const sessionMap = new Map<string, any>()
             history.forEach(h => {

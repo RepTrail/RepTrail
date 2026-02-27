@@ -1,23 +1,22 @@
 'use server'
 
-export async function markAutoTrainingOnboardingModalSeen(userId: string) {
+export async function resetAutoTrainingOnboardingModal(userId: string) {
     const { createClient } = await import('@/lib/supabase/server')
     const supabase = await createClient()
 
     return await supabase
         .from('profiles')
-        .update({ saw_auto_training_onboarding_modal: true })
+        .update({ saw_auto_training_onboarding_modal: false })
         .eq('id', userId)
 }
 
-export async function disableAutoTrainingForStudent(userId: string) {
+export async function dismissAutoTrainingForSession(userId: string) {
     const { createClient } = await import('@/lib/supabase/server')
     const supabase = await createClient()
 
     return await supabase
         .from('profiles')
         .update({
-            auto_training_status: 'disabled',
             saw_auto_training_onboarding_modal: true,
         })
         .eq('id', userId)
@@ -44,24 +43,28 @@ export async function enableAutoTrainingTrialForCurrentUser() {
     }
 
     const now = new Date()
-    const hasUsedTrial = !!(current as any)?.auto_training_trial_used
     const trialEndExisting = (current as any)?.auto_training_trial_end ? new Date((current as any).auto_training_trial_end) : null
-    const isTrialCurrentlyActive = (current as any)?.auto_training_status === 'trial' && trialEndExisting && now <= trialEndExisting
+    const isWithinTrialPeriod = trialEndExisting && now <= trialEndExisting
+    const hasUsedTrial = !!(current as any)?.auto_training_trial_used
 
-    if (hasUsedTrial && !isTrialCurrentlyActive) {
-        return { success: false, error: 'Trial já utilizado.' }
+    if (hasUsedTrial && !isWithinTrialPeriod) {
+        return { success: false, error: 'Seu período de 7 dias já expirou.' }
     }
 
-    const trialEnd = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+    // If they haven't started trial yet, set the 7 days
+    const updateData: any = {
+        saw_auto_training_onboarding_modal: false,
+    }
+
+    if (!hasUsedTrial) {
+        updateData.auto_training_status = 'trial'
+        updateData.auto_training_trial_end = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+        updateData.auto_training_trial_used = true
+    }
 
     const { error } = await supabase
         .from('profiles')
-        .update({
-            auto_training_status: 'trial',
-            auto_training_trial_end: trialEnd,
-            auto_training_trial_used: true,
-            saw_auto_training_onboarding_modal: false,
-        })
+        .update(updateData)
         .eq('id', user.id)
 
     if (error) {

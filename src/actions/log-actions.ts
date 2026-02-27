@@ -86,7 +86,7 @@ export async function recordSetLoad(data: {
 export async function finishWorkoutLog(id: string, feedback?: string, perceivedEffort?: number, adherenceStatus: 'success' | 'partial' | 'fail' = 'success') {
     const supabase = await createClient()
 
-    const { data: { user } } = await supabase.auth.getUser()
+    const { data: { user } = {} } = await supabase.auth.getUser()
 
     console.log(`DEBUG: Finalizing workout log: ${id}`, { feedback, perceivedEffort, adherenceStatus })
 
@@ -382,6 +382,7 @@ export async function getExerciseProgress(studentId: string, exerciseId: string)
             .from('load_history')
             .select(`
                 *,
+                exercise:exercises(name),
                 workout_log:workout_logs!inner(status)
             `)
             .eq('student_id', studentId)
@@ -486,5 +487,21 @@ export async function getActiveWorkoutSession() {
     } catch (e) {
         console.error('Error fetching active workout session:', e)
         return null
+    }
+}
+
+export async function getWorkoutCurrentSessionLoads(logId: string) {
+    const supabase = await createClient()
+    try {
+        const { data, error } = await supabase
+            .from('load_history')
+            .select('weight_kg, reps_performed, set_type, exercise_id')
+            .eq('workout_log_id', logId)
+            .order('recorded_at', { ascending: true })
+        if (error) throw error
+        return data || []
+    } catch (e) {
+        console.error('Error fetching current session loads:', e)
+        return []
     }
 }

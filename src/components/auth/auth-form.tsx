@@ -14,6 +14,7 @@ import { ShieldCheck, ArrowRight, User, Users, Megaphone, Eye, EyeOff } from 'lu
 import { Logo } from '@/components/ui/logo'
 import { useSearchParams } from 'next/navigation'
 import { useEffect } from 'react'
+import { AuthLoadingScreen } from './auth-loading-screen'
 
 interface AuthFormProps {
     view: 'login' | 'signup'
@@ -140,175 +141,178 @@ export function AuthForm({ view }: AuthFormProps) {
     }
 
     return (
-        <div className="w-full max-w-[440px] space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-1000" suppressHydrationWarning>
-            <div className="flex flex-col items-center text-center space-y-2" suppressHydrationWarning>
-                <Link href="/">
-                    <Logo size="lg" className="mb-4" />
-                </Link>
-                <h1 className="text-2xl font-black text-white tracking-tight italic uppercase">
-                    {view === 'login' ? 'Bem-vindo de volta' : 'Comece sua jornada'}
-                </h1>
-                <h2 className="sr-only">Formulário de Autenticação</h2>
-                <p className="text-zinc-500 text-sm font-medium uppercase tracking-widest">
-                    {view === 'login' ? 'Acesse sua conta para treinar' : 'Crie sua conta em segundos'}
-                </p>
-            </div>
-
-            <Card className="bg-zinc-900 border-zinc-800 shadow-2xl rounded-3xl overflow-hidden border-t-zinc-700/50" suppressHydrationWarning>
-                <CardContent className="p-8" suppressHydrationWarning>
-                    <form onSubmit={handleSubmit} className="space-y-5">
-                        {error && (
-                            <Alert className="bg-red-500/10 border-red-500/20 text-red-500 rounded-2xl">
-                                <AlertDescription className="text-xs font-bold uppercase tracking-wide">{error}</AlertDescription>
-                            </Alert>
-                        )}
-
-                        <div className="space-y-2">
-                            <Label htmlFor="email" className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Email Profissional</Label>
-                            <Input
-                                id="email"
-                                type="email"
-                                placeholder="exemplo@email.com"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                required
-                                className="bg-zinc-950 border-zinc-800 text-white rounded-xl h-12 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
-                            />
-                        </div>
-
-                        <div className="space-y-2">
-                            <div className="flex items-center justify-between px-1">
-                                <Label htmlFor="password" title="Senha" className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Senha de Acesso</Label>
-                                {view === 'login' && (
-                                    <Link href="/auth/forgot-password" className="text-[10px] font-black text-emerald-500 uppercase tracking-widest hover:text-emerald-400">
-                                        Esqueci a senha
-                                    </Link>
-                                )}
-                            </div>
-                            <div className="relative group">
-                                <Input
-                                    id="password"
-                                    type={showPassword ? "text" : "password"}
-                                    placeholder="••••••••"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    required
-                                    className="bg-zinc-950 border-zinc-800 text-white rounded-xl h-12 pr-12 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition-colors"
-                                >
-                                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                                </button>
-                            </div>
-                        </div>
-
-                        {view === 'signup' && (
-                            <>
-                                <div className="space-y-2">
-                                    <Label htmlFor="fullName" className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Nome Completo</Label>
-                                    <Input
-                                        id="fullName"
-                                        placeholder="Como devemos te chamar?"
-                                        value={fullName}
-                                        onChange={(e) => setFullName(e.target.value)}
-                                        required
-                                        className="bg-zinc-950 border-zinc-800 text-white rounded-xl h-12 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
-                                    />
-                                </div>
-
-                                <div className="space-y-2">
-                                    <Label htmlFor="whatsapp" className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">WhatsApp</Label>
-                                    <Input
-                                        id="whatsapp"
-                                        placeholder="Ex: 11 99999-9999"
-                                        value={whatsapp}
-                                        onChange={(e) => setWhatsapp(e.target.value)}
-                                        required
-                                        className="bg-zinc-950 border-zinc-800 text-white rounded-xl h-12 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
-                                    />
-                                </div>
-
-                                <div className="space-y-2">
-                                    <Label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Tipo de Perfil</Label>
-                                    <div className="grid grid-cols-2 gap-3">
-                                        <button
-                                            type="button"
-                                            onClick={() => setRole('student')}
-                                            className={`flex items-center justify-center gap-2 h-12 rounded-xl border transition-all font-bold text-xs uppercase tracking-widest ${role === 'student' ? 'bg-emerald-500 border-emerald-500 text-zinc-950' : 'bg-zinc-950 border-zinc-800 text-zinc-500 hover:border-zinc-700'}`}
-                                        >
-                                            <User className="w-4 h-4" /> Aluno
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={() => setRole('trainer')}
-                                            className={`flex items-center justify-center gap-2 h-12 rounded-xl border transition-all font-bold text-xs uppercase tracking-widest ${role === 'trainer' ? 'bg-emerald-500 border-emerald-500 text-zinc-950' : 'bg-zinc-950 border-zinc-800 text-zinc-500 hover:border-zinc-700'}`}
-                                        >
-                                            <Users className="w-4 h-4" /> Personal
-                                        </button>
-                                    </div>
-                                </div>
-
-                                {/* Affiliate option */}
-                                <button
-                                    type="button"
-                                    onClick={() => setIsAffiliate(!isAffiliate)}
-                                    className={`w-full flex items-center justify-between h-12 rounded-xl border px-4 transition-all ${isAffiliate ? 'bg-amber-500/10 border-amber-500/50 text-amber-400' : 'bg-zinc-950 border-zinc-800 text-zinc-500 hover:border-zinc-700'}`}
-                                >
-                                    <span className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest">
-                                        <Megaphone className="w-4 h-4" />
-                                        Quero ser afiliado
-                                    </span>
-                                    <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md ${isAffiliate ? 'bg-amber-500 text-zinc-950' : 'bg-zinc-800 text-zinc-500'}`}>
-                                        {isAffiliate ? 'Ativo' : 'Opcional'}
-                                    </span>
-                                </button>
-                                {isAffiliate && (
-                                    <p className="text-[10px] text-amber-500/70 text-center font-medium px-2">
-                                        Ganhe 10% de comissão por cada personal que você indicar 🚀
-                                    </p>
-                                )}
-                            </>
-                        )}
-
-                        <Button
-                            type="submit"
-                            className="w-full h-12 bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-black uppercase tracking-[0.1em] rounded-xl shadow-lg shadow-emerald-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] mt-4"
-                            disabled={loading}
-                        >
-                            {loading ? (
-                                <div className="flex items-center gap-2">
-                                    <div className="w-4 h-4 border-2 border-zinc-950 border-t-transparent rounded-full animate-spin" />
-                                    Processando...
-                                </div>
-                            ) : (
-                                <span className="flex items-center gap-2">
-                                    {view === 'login' ? 'Entrar Agora' : 'Criar minha conta'}
-                                    <ArrowRight className="w-4 h-4" />
-                                </span>
-                            )}
-                        </Button>
-                    </form>
-                </CardContent>
-                <CardFooter className="bg-zinc-950/50 border-t border-zinc-800 p-6 flex justify-center">
-                    <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
-                        {view === 'login' ? 'Ainda não é membro? ' : 'Já possui uma conta? '}
-                        <Link
-                            href={view === 'login' ? '/auth/signup' : '/auth/login'}
-                            className="text-emerald-500 hover:text-emerald-400 transition-colors underline underline-offset-4"
-                        >
-                            {view === 'login' ? 'Cadastre-se grátis' : 'Fazer login'}
-                        </Link>
+        <>
+            {loading && <AuthLoadingScreen />}
+            <div className="w-full max-w-[440px] space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-1000" suppressHydrationWarning>
+                <div className="flex flex-col items-center text-center space-y-2" suppressHydrationWarning>
+                    <Link href="/">
+                        <Logo size="lg" className="mb-4" />
+                    </Link>
+                    <h1 className="text-2xl font-black text-white tracking-tight italic uppercase">
+                        {view === 'login' ? 'Bem-vindo de volta' : 'Comece sua jornada'}
+                    </h1>
+                    <h2 className="sr-only">Formulário de Autenticação</h2>
+                    <p className="text-zinc-500 text-sm font-medium uppercase tracking-widest">
+                        {view === 'login' ? 'Acesse sua conta para treinar' : 'Crie sua conta em segundos'}
                     </p>
-                </CardFooter>
-            </Card>
+                </div>
 
-            <div className="flex items-center justify-center gap-2 text-zinc-600">
-                <ShieldCheck className="w-4 h-4" />
-                <span className="text-[10px] font-black uppercase tracking-widest">Acesso Seguro & Criptografado</span>
+                <Card className="bg-zinc-900 border-zinc-800 shadow-2xl rounded-3xl overflow-hidden border-t-zinc-700/50" suppressHydrationWarning>
+                    <CardContent className="p-8" suppressHydrationWarning>
+                        <form onSubmit={handleSubmit} className="space-y-5">
+                            {error && (
+                                <Alert className="bg-red-500/10 border-red-500/20 text-red-500 rounded-2xl">
+                                    <AlertDescription className="text-xs font-bold uppercase tracking-wide">{error}</AlertDescription>
+                                </Alert>
+                            )}
+
+                            <div className="space-y-2">
+                                <Label htmlFor="email" className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Email Profissional</Label>
+                                <Input
+                                    id="email"
+                                    type="email"
+                                    placeholder="exemplo@email.com"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    required
+                                    className="bg-zinc-950 border-zinc-800 text-white rounded-xl h-12 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <div className="flex items-center justify-between px-1">
+                                    <Label htmlFor="password" title="Senha" className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Senha de Acesso</Label>
+                                    {view === 'login' && (
+                                        <Link href="/auth/forgot-password" className="text-[10px] font-black text-emerald-500 uppercase tracking-widest hover:text-emerald-400">
+                                            Esqueci a senha
+                                        </Link>
+                                    )}
+                                </div>
+                                <div className="relative group">
+                                    <Input
+                                        id="password"
+                                        type={showPassword ? "text" : "password"}
+                                        placeholder="••••••••"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        required
+                                        className="bg-zinc-950 border-zinc-800 text-white rounded-xl h-12 pr-12 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition-colors"
+                                    >
+                                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                    </button>
+                                </div>
+                            </div>
+
+                            {view === 'signup' && (
+                                <>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="fullName" className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Nome Completo</Label>
+                                        <Input
+                                            id="fullName"
+                                            placeholder="Como devemos te chamar?"
+                                            value={fullName}
+                                            onChange={(e) => setFullName(e.target.value)}
+                                            required
+                                            className="bg-zinc-950 border-zinc-800 text-white rounded-xl h-12 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
+                                        />
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <Label htmlFor="whatsapp" className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">WhatsApp</Label>
+                                        <Input
+                                            id="whatsapp"
+                                            placeholder="Ex: 11 99999-9999"
+                                            value={whatsapp}
+                                            onChange={(e) => setWhatsapp(e.target.value)}
+                                            required
+                                            className="bg-zinc-950 border-zinc-800 text-white rounded-xl h-12 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
+                                        />
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <Label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Tipo de Perfil</Label>
+                                        <div className="grid grid-cols-2 gap-3">
+                                            <button
+                                                type="button"
+                                                onClick={() => setRole('student')}
+                                                className={`flex items-center justify-center gap-2 h-12 rounded-xl border transition-all font-bold text-xs uppercase tracking-widest ${role === 'student' ? 'bg-emerald-500 border-emerald-500 text-zinc-950' : 'bg-zinc-950 border-zinc-800 text-zinc-500 hover:border-zinc-700'}`}
+                                            >
+                                                <User className="w-4 h-4" /> Aluno
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => setRole('trainer')}
+                                                className={`flex items-center justify-center gap-2 h-12 rounded-xl border transition-all font-bold text-xs uppercase tracking-widest ${role === 'trainer' ? 'bg-emerald-500 border-emerald-500 text-zinc-950' : 'bg-zinc-950 border-zinc-800 text-zinc-500 hover:border-zinc-700'}`}
+                                            >
+                                                <Users className="w-4 h-4" /> Personal
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    {/* Affiliate option */}
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsAffiliate(!isAffiliate)}
+                                        className={`w-full flex items-center justify-between h-12 rounded-xl border px-4 transition-all ${isAffiliate ? 'bg-amber-500/10 border-amber-500/50 text-amber-400' : 'bg-zinc-950 border-zinc-800 text-zinc-500 hover:border-zinc-700'}`}
+                                    >
+                                        <span className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest">
+                                            <Megaphone className="w-4 h-4" />
+                                            Quero ser afiliado
+                                        </span>
+                                        <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md ${isAffiliate ? 'bg-amber-500 text-zinc-950' : 'bg-zinc-800 text-zinc-500'}`}>
+                                            {isAffiliate ? 'Ativo' : 'Opcional'}
+                                        </span>
+                                    </button>
+                                    {isAffiliate && (
+                                        <p className="text-[10px] text-amber-500/70 text-center font-medium px-2">
+                                            Ganhe 10% de comissão por cada personal que você indicar 🚀
+                                        </p>
+                                    )}
+                                </>
+                            )}
+
+                            <Button
+                                type="submit"
+                                className="w-full h-12 bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-black uppercase tracking-[0.1em] rounded-xl shadow-lg shadow-emerald-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] mt-4"
+                                disabled={loading}
+                            >
+                                {loading ? (
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-4 h-4 border-2 border-zinc-950 border-t-transparent rounded-full animate-spin" />
+                                        Processando...
+                                    </div>
+                                ) : (
+                                    <span className="flex items-center gap-2">
+                                        {view === 'login' ? 'Entrar Agora' : 'Criar minha conta'}
+                                        <ArrowRight className="w-4 h-4" />
+                                    </span>
+                                )}
+                            </Button>
+                        </form>
+                    </CardContent>
+                    <CardFooter className="bg-zinc-950/50 border-t border-zinc-800 p-6 flex justify-center">
+                        <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
+                            {view === 'login' ? 'Ainda não é membro? ' : 'Já possui uma conta? '}
+                            <Link
+                                href={view === 'login' ? '/auth/signup' : '/auth/login'}
+                                className="text-emerald-500 hover:text-emerald-400 transition-colors underline underline-offset-4"
+                            >
+                                {view === 'login' ? 'Cadastre-se grátis' : 'Fazer login'}
+                            </Link>
+                        </p>
+                    </CardFooter>
+                </Card>
+
+                <div className="flex items-center justify-center gap-2 text-zinc-600">
+                    <ShieldCheck className="w-4 h-4" />
+                    <span className="text-[10px] font-black uppercase tracking-widest">Acesso Seguro & Criptografado</span>
+                </div>
             </div>
-        </div>
+        </>
     )
 }

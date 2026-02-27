@@ -10,14 +10,17 @@ interface AutoTrainingOnboardingModalProps {
     isOpen: boolean
     onAccept: () => Promise<void>
     onReject: () => void
+    onClose?: () => void
 }
 
-export function AutoTrainingOnboardingModal({ isOpen, onAccept, onReject }: AutoTrainingOnboardingModalProps) {
+export function AutoTrainingOnboardingModal({ isOpen, onAccept, onReject, onClose }: AutoTrainingOnboardingModalProps) {
     const [accepted, setAccepted] = useState(false)
     const [loading, setLoading] = useState(false)
 
     const handleAccept = async () => {
         setLoading(true)
+        // If we want the modal to NOT show up again after accepting, we should set it to SEEN (true)
+        // But the user said click should trigger the popup.
         await onAccept()
         setLoading(false)
     }
@@ -46,7 +49,7 @@ export function AutoTrainingOnboardingModal({ isOpen, onAccept, onReject }: Auto
     ]
 
     return (
-        <Dialog open={isOpen} onOpenChange={(open) => !open && onReject()}>
+        <Dialog open={isOpen} onOpenChange={(open) => !open && (onClose ? onClose() : onReject())}>
             <DialogContent className="max-w-2xl bg-zinc-900 border-zinc-800 text-white rounded-3xl max-h-[85vh] overflow-hidden flex flex-col">
                 <DialogHeader className="space-y-4 shrink-0">
                     <div className="space-y-2">

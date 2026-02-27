@@ -76,6 +76,8 @@ export function WorkoutPlayer({
 
     // Batch Input State
     const [setsLog, setSetsLog] = useState<Array<{
+        id: string,
+        workoutExerciseId: string,
         exerciseId: string,
         exerciseName: string,
         type: string,
@@ -106,6 +108,42 @@ export function WorkoutPlayer({
             if (data) setLastSession(data)
         }
         fetchHistory()
+
+        // Populate setsLog if resuming in the middle of a block
+        if (initialLogId) {
+            const startIdx = findInitialStepIndex()
+            const currentGroup = steps[startIdx]?.groupId
+            if (currentGroup) {
+                const previousStepsInGroup = steps.slice(0, startIdx + (initialIsResting ? 1 : 0))
+                    .filter(s => s.groupId === currentGroup)
+
+                const reconstructedLog = previousStepsInGroup.map((s, idx) => {
+                    const ex = exercises[s.exerciseIndex]
+                    const sTypeLabel = ({
+                        WARMUP: 'Aquecimento',
+                        FEEDER: 'Feeder Set',
+                        WORKING: 'Trabalho'
+                    } as any)[s.phase]
+
+                    let expectedReps = '10'
+                    if (s.phase === 'WARMUP') expectedReps = ex.warmup_reps
+                    else if (s.phase === 'FEEDER') expectedReps = ex.feeder_reps
+                    else expectedReps = ex.reps
+
+                    return {
+                        id: `${ex.id}-${idx}-${Date.now()}`,
+                        workoutExerciseId: ex.id,
+                        exerciseId: ex.exercise_id || (ex as any).exercise?.id,
+                        exerciseName: s.exerciseName,
+                        type: s.phase,
+                        setNumber: s.setNumber,
+                        label: `${sTypeLabel} ${s.setNumber}`,
+                        expectedReps: expectedReps || '0'
+                    }
+                })
+                setSetsLog(reconstructedLog)
+            }
+        }
 
         // Midnight check: if day changes, refresh everything
         const currentDay = new Date().toDateString()
@@ -206,6 +244,12 @@ export function WorkoutPlayer({
         setIsResting(false)
         setRestEndTime(null)
 
+        // If it was the last set in block, show summary after rest
+        if (currentStep.isLastInBlock) {
+            setShowSummary(true)
+            return
+        }
+
         // Advance to next step
         if (currentStepIndex < steps.length - 1) {
             setCurrentStepIndex(prev => prev + 1)
@@ -251,19 +295,15 @@ export function WorkoutPlayer({
         else expectedReps = currentExercise.reps
 
         setSetsLog(prev => [...prev, {
-            exerciseId: currentExercise.exercise_id || currentExercise.id,
+            id: `${currentExercise.id}-${setsLog.length}-${Date.now()}`,
+            workoutExerciseId: currentExercise.id,
+            exerciseId: currentExercise.exercise_id || (currentExercise as any).exercise?.id,
             exerciseName: currentStep.exerciseName,
             type: setType,
             setNumber: currentSet,
             label: `${setTypeLabel} ${currentSet}`,
             expectedReps: expectedReps || '0'
         }])
-
-        // Terminal Block logic
-        if (currentStep.isLastInBlock) {
-            setShowSummary(true)
-            return
-        }
 
         // Intra-block logic (Rest or Switch)
         if (currentStep.restSeconds > 0) {
@@ -275,8 +315,12 @@ export function WorkoutPlayer({
                 Notification.requestPermission()
             }
         } else {
-            // Immediate switch to next set (Transition in Bi-set)
-            setCurrentStepIndex(prev => prev + 1)
+            // Immediate switch or summary
+            if (currentStep.isLastInBlock) {
+                setShowSummary(true)
+            } else {
+                setCurrentStepIndex(prev => prev + 1)
+            }
         }
     }
 
@@ -297,7 +341,7 @@ export function WorkoutPlayer({
                     const input = summaryInputs[i]
                     return recordSetLoad({
                         logId,
-                        exerciseId: set.exerciseId,
+                        exerciseId: set.exerciseId, // This is now correctly the template ID
                         weight: parseFloat(input.weight),
                         reps: parseInt(input.reps),
                         setType: set.type as any,
@@ -481,19 +525,23 @@ export function WorkoutPlayer({
                             <div className="space-y-8 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
                                 {Object.entries(
                                     setsLog.reduce((acc, set, idx) => {
-                                        if (!acc[set.exerciseId]) acc[set.exerciseId] = { name: set.exerciseName, items: [] }
-                                        acc[set.exerciseId].items.push({ ...set, summaryIdx: idx })
+                                        // Group by workoutExerciseId to differentiate same exercise in Bi-Sets
+                                        // but display title under the exercise template name
+                                        const groupId = set.workoutExerciseId
+                                        if (!acc[groupId]) acc[groupId] = { name: set.exerciseName, items: [] }
+                                        acc[groupId].items.push({ ...set, summaryIdx: idx })
                                         return acc
                                     }, {} as Record<string, { name: string, items: any[] }>)
                                 ).map(([exId, group]) => (
                                     <div key={exId} className="space-y-4">
                                         <div className="flex items-center gap-3">
-                                            <div className="w-1 h-4 bg-emerald-500 rounded-full" />
-                                            <h4 className="text-xs font-black text-white uppercase italic">{group.name}</h4>
+                                            <div className="w-1.5 h-6 bg-emerald-500 rounded-full shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
+                                            <h4 className="text-lg font-black text-white uppercase italic tracking-tight">{group.name}</h4>
                                         </div>
                                         <div className="space-y-4">
                                             {group.items.map((set) => {
-                                                const exerciseHistory = lastSession?.loads?.filter((l: any) => l.exercise_id === exId) || []
+                                                // Check history using the TEMPLATE exerciseId
+                                                const exerciseHistory = lastSession?.loads?.filter((l: any) => l.exercise_id === set.exerciseId) || []
                                                 const lastSessionSet = exerciseHistory[set.setNumber - 1]
 
                                                 return (
@@ -719,18 +767,18 @@ function SummarySetRow({ set, lastSessionSet, initialWeight, initialReps, onUpda
 
     return (
         <div className="bg-zinc-950/50 border border-zinc-800 rounded-2xl p-4 flex flex-col md:flex-row gap-4 items-center transition-all">
-            <div className="w-full md:w-32 shrink-0">
-                <span className={`text-[10px] font-black uppercase px-3 py-1.5 rounded-lg border whitespace-nowrap block w-fit ${set.type === 'WARMUP' ? 'bg-orange-500/10 border-orange-500/20 text-orange-500' :
+            <div className="w-full md:w-40 shrink-0">
+                <span className={`text-[10px] font-black uppercase px-3 py-1.5 rounded-lg border whitespace-nowrap block w-fit shadow-sm ${set.type === 'WARMUP' ? 'bg-orange-500/10 border-orange-500/20 text-orange-500' :
                     set.type === 'FEEDER' ? 'bg-blue-500/10 border-blue-500/20 text-blue-500' :
                         'bg-emerald-500/10 border-emerald-500/20 text-emerald-500'
                     }`}>
                     {set.type === 'WORKING' ? `Série ${set.setNumber}` : set.label}
                 </span>
                 {lastSessionSet && (
-                    <div className="mt-1 flex flex-col">
-                        <span className="text-[7px] font-black text-zinc-600 uppercase tracking-widest">Anterior</span>
-                        <span className="text-[8px] font-black text-zinc-400 italic">
-                            {lastSessionSet.weight_kg}kg x {lastSessionSet.reps_performed}
+                    <div className="mt-1.5 flex flex-col pl-1">
+                        <span className="text-[7px] font-black text-zinc-600 uppercase tracking-widest leading-none mb-0.5">Último Treino</span>
+                        <span className="text-[10px] font-black text-zinc-400 italic">
+                            {lastSessionSet.weight_kg}kg <span className="text-zinc-600 not-italic">x</span> {lastSessionSet.reps_performed}
                         </span>
                     </div>
                 )}

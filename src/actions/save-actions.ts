@@ -146,19 +146,40 @@ export async function saveParsedData(type: 'workout' | 'diet', data: any, studen
                             return 3;
                         };
 
+                        const parseReps = (r: any): string => {
+                            if (!r) return '10';
+                            const s = String(r);
+                            // Se for no formato 2x15, pegamos o segundo número
+                            if (s.includes('x') || s.includes('X')) {
+                                const parts = s.split(/[xX]/);
+                                const lastPart = parts[parts.length - 1].match(/\d+/);
+                                return lastPart ? lastPart[0] : '10';
+                            }
+                            // Se for intervalo 10-12, pegamos o maior
+                            if (s.includes('-')) {
+                                const nums = s.match(/\d+/g);
+                                if (nums && nums.length >= 2) {
+                                    return Math.max(parseInt(nums[0]), parseInt(nums[1])).toString();
+                                }
+                            }
+                            // Pega o primeiro número que encontrar
+                            const match = s.match(/\d+/);
+                            return match ? match[0] : '10';
+                        };
+
                         console.log(`[SAVE] [Ex ${i}] Linking to workout. Sets: ${exData.sets}, Reps: ${exData.reps}`);
                         const { error: linkErr } = await supabase.from('workout_exercises').insert({
                             workout_id: workout.id,
                             exercise_id: exerciseId,
                             order_index: i,
                             working_sets: parseSets(exData.sets),
-                            reps: String(exData.reps || '10-12'),
-                            rest_seconds: parseInt(exData.rest) || 180,
+                            reps: parseReps(exData.reps),
+                            rest_seconds: parseInt(exData.rest) || 60,
                             warmup_sets: parseSets(exData.warmup_sets || 0),
-                            warmup_reps: typeof exData.warmup_sets === 'string' ? exData.warmup_sets : '12-15',
+                            warmup_reps: parseReps(exData.warmup_reps || exData.warmup_sets),
                             warmup_rest_seconds: 45,
                             feeder_sets: parseSets(exData.feeder_sets || 0),
-                            feeder_reps: typeof exData.feeder_sets === 'string' ? exData.feeder_sets : '6-8',
+                            feeder_reps: parseReps(exData.feeder_reps || exData.feeder_sets),
                             feeder_rest_seconds: 60,
                             notes: exData.notes || null
                         })

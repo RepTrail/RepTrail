@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { AutoTrainingOnboardingModal } from '@/components/feature/student/auto-training-onboarding-modal'
-import { disableAutoTrainingForStudent, markAutoTrainingOnboardingModalSeen } from '@/actions/auto-training-actions'
+import { dismissAutoTrainingForSession, resetAutoTrainingOnboardingModal } from '@/actions/auto-training-actions'
 
 interface StudentDashboardModalProps {
     userId: string
@@ -21,16 +21,28 @@ export function StudentDashboardModals({ userId, showModal, hasTrainer }: Studen
         }
     }, [showModal, hasTrainer])
 
+    useEffect(() => {
+        const handleOpen = () => setIsModalOpen(true)
+        window.addEventListener('open-auto-training-onboarding', handleOpen)
+        return () => window.removeEventListener('open-auto-training-onboarding', handleOpen)
+    }, [])
+
     const handleAccept = async () => {
-        await markAutoTrainingOnboardingModalSeen(userId)
+        // User accepted, so we mark it as seen so it doesn't pop up again
+        // unless they go to settings and force it again.
+        await dismissAutoTrainingForSession(userId)
         setIsModalOpen(false)
         router.refresh()
     }
 
     const handleReject = async () => {
-        await disableAutoTrainingForStudent(userId)
+        await dismissAutoTrainingForSession(userId)
         setIsModalOpen(false)
         router.refresh()
+    }
+
+    const handleClose = () => {
+        setIsModalOpen(false)
     }
 
     return (
@@ -38,6 +50,7 @@ export function StudentDashboardModals({ userId, showModal, hasTrainer }: Studen
             isOpen={isModalOpen}
             onAccept={handleAccept}
             onReject={handleReject}
+            onClose={handleClose}
         />
     )
 }

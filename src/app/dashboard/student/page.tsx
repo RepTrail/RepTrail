@@ -53,7 +53,7 @@ export default async function StudentDashboardPage() {
 
     const hasAutoTraining = autoTrainingStatus?.auto_training_status === 'active' || autoTrainingStatus?.auto_training_status === 'trial'
     const showAutoTrainingModal = !autoTrainingStatus?.saw_auto_training_onboarding_modal && !trainerRel
-    const showAnamnesis = !details?.age || !details?.height || !details?.current_weight
+    const showAnamnesis = details?.body_fat === null || details?.body_fat === undefined
 
     // Case: Trainer Inactive (plan_tier === 'none')
     if (trainerRel && trainerRel.trainer.plan_tier === 'none' && !hasAutoTraining) {

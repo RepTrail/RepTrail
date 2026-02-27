@@ -31,13 +31,23 @@ export function generateExecutionSteps(exercises: any[]): ExecutionStep[] {
 
     for (let i = 0; i < totalExercises; i++) {
         const ex = { ...exercises[i], originalIndex: i };
-        if (isBiSetMember(ex)) {
-            currentBlock.push(ex);
-        } else {
-            if (currentBlock.length > 0) {
+
+        // Se já temos um bloco iniciado por um bi-set (rest <= 15 no anterior)
+        // ou se o atual é explicitamente marcado como bi-set membro
+        if (currentBlock.length > 0) {
+            const prevEx = currentBlock[currentBlock.length - 1];
+            if ((prevEx.rest_seconds !== undefined && prevEx.rest_seconds <= 15) || isBiSetMember(ex)) {
+                currentBlock.push(ex);
+                continue;
+            } else {
                 blocks.push(currentBlock);
                 currentBlock = [];
             }
+        }
+
+        if (isBiSetMember(ex)) {
+            currentBlock.push(ex);
+        } else {
             blocks.push([ex]);
         }
     }
@@ -88,9 +98,7 @@ export function generateExecutionSteps(exercises: any[]): ExecutionStep[] {
         // Marcar o último passo do bloco para mostrar o resumo
         if (blockSteps.length > 0) {
             blockSteps[blockSteps.length - 1].isLastInBlock = true;
-            // O último passo de um bloco não deve ter descanso de transição, 
-            // pois o resumo será exibido.
-            blockSteps[blockSteps.length - 1].restSeconds = 0;
+            // Mantemos o descanso mesmo no último passo para o player decidir quando mostrar o resumo
             steps.push(...blockSteps);
         }
     }

@@ -23,10 +23,22 @@ export default async function DashboardLayout({
         redirect('/auth/login')
     }
 
+    // Check if user is a student and if they have completed onboarding
+    // to avoid flashing the terms modal before the redirect to /onboarding
+    const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
+    let skipTerms = false
+
+    if (profile?.role === 'student') {
+        const { data: details } = await supabase.from('student_details').select('id').eq('id', user.id).single()
+        if (!details) {
+            skipTerms = true
+        }
+    }
+
     return (
         <div className="min-h-screen w-full bg-zinc-950">
             <LastSeenTracker />
-            <TermsAcceptanceModal />
+            {!skipTerms && <TermsAcceptanceModal />}
             {children}
         </div>
     )

@@ -98,23 +98,14 @@ export function SettingsModal({ hasTrainer = false }: SettingsModalProps) {
 
     const enableAutoTrainingTrial = async () => {
         setUpdating(true)
-        const result = await enableAutoTrainingTrialForCurrentUser()
+        await enableAutoTrainingTrialForCurrentUser()
         setUpdating(false)
 
-        if (result.success) {
-            toast({
-                title: 'Auto-Training ativado',
-                description: 'Seu trial foi reativado. O popup será exibido novamente.',
-            })
-            setIsOpen(false)
-            router.refresh()
-        } else {
-            toast({
-                title: 'Erro ao ativar',
-                description: result.error || 'Não foi possível ativar o Auto-Training.',
-                variant: 'destructive'
-            })
-        }
+        // Close settings and trigger the onboarding popup directly
+        setIsOpen(false)
+        setTimeout(() => {
+            window.dispatchEvent(new CustomEvent('open-auto-training-onboarding'))
+        }, 100)
     }
 
     const now = Date.now()
@@ -122,7 +113,9 @@ export function SettingsModal({ hasTrainer = false }: SettingsModalProps) {
     const isTrialActive = trialInfo?.auto_training_status === 'trial' && !!trialEndMs && now <= trialEndMs
     const daysRemaining = isTrialActive && trialEndMs ? Math.max(0, Math.ceil((trialEndMs - now) / (1000 * 60 * 60 * 24))) : 0
     const hasUsedTrial = !!trialInfo?.auto_training_trial_used
-    const canStartTrial = !hasUsedTrial || isTrialActive
+
+    // User can start trial if they haven't used it OR if they are still within the trial period of a previous activation
+    const canStartTrial = !hasUsedTrial || (!!trialEndMs && now <= trialEndMs)
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
