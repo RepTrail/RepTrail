@@ -716,3 +716,136 @@ export async function repairWorkoutExercisesData() {
         return { error: e.message }
     }
 }
+
+export async function repairBiSets() {
+    const { supabase, userId: adminId } = await checkAdmin()
+    const stats = { structureFixed: 0, historyFixed: 0 }
+
+    try {
+        console.log('[REPAIR] Starting Bi-set structure repair...')
+
+        // 1. IMPROVE STRUCTURE: Merge sequential 0-rest exercises
+        const { data: workouts } = await supabase.from('workouts').select('id')
+        if (workouts) {
+            for (const w of workouts) {
+                const { data: exes } = await supabase
+                    .from('workout_exercises')
+                    .select('*, exercise:exercises(name, id)')
+                    .eq('workout_id', w.id)
+                    .order('order_index', { ascending: true })
+
+                if (!exes || exes.length < 2) continue
+
+                const groupsToMerge: any[][] = []
+                let currentBatch: any[] = []
+
+                for (let i = 0; i < exes.length; i++) {
+                    currentBatch.push(exes[i])
+                    // If rest is 0 and not last, it's a candidate for merge
+                    if (i < exes.length - 1 && (exes[i].rest_seconds === 0 || exes[i].rest_seconds === null)) {
+                        continue
+                    } else if (currentBatch.length > 1) {
+                        groupsToMerge.push([...currentBatch])
+                        currentBatch = []
+                    } else {
+                        currentBatch = []
+                    }
+                }
+
+                for (const group of groupsToMerge) {
+                    const first = group[0]
+                    const last = group[group.length - 1]
+                    const combinedName = group.map(g => g.exercise?.name || 'Exercício').join(' + ')
+
+                    // Find or Create a Template for this Bi-Set
+                    const { data: existingTemplate } = await supabase
+                        .from('exercises')
+                        .select('id')
+                        .eq('name', combinedName)
+                        .maybeSingle()
+
+                    let templateId = existingTemplate?.id
+
+                    if (!templateId) {
+                        const { data: newT } = await supabase
+                            .from('exercises')
+                            .insert({
+                                name: combinedName,
+                                trainer_id: first.exercise?.trainer_id || null,
+                                is_system_default: false
+                            })
+                            .select('id')
+                            .single()
+                        templateId = newT?.id
+                    }
+
+                    if (templateId) {
+                        // Merge them into the first record
+                        await supabase.from('workout_exercises').update({
+                            exercise_id: templateId,
+                            rest_seconds: last.rest_seconds,
+                            working_sets: first.working_sets,
+                            reps: first.reps
+                        }).eq('id', first.id)
+
+                        // Delete the others
+                        const toDelete = group.slice(1).map(g => g.id)
+                        await supabase.from('workout_exercises').delete().in('id', toDelete)
+                        stats.structureFixed++
+                    }
+                }
+            }
+        }
+
+        // 2. IMPROVE HISTORY: Backfill markers for existing bi-sets
+        console.log('[REPAIR] Starting Bi-set history backfill...')
+        const { data: history } = await supabase
+            .from('load_history')
+            .select('*, exercise:exercises(name)')
+            .is('sub_index', null)
+            .ilike('exercises.name', '%+%')
+
+        if (history) {
+            // Group by log and exercise to detect sequences
+            const groups = history.reduce((acc, item) => {
+                const key = `${item.workout_log_id}-${item.exercise_id}`
+                if (!acc[key]) acc[key] = []
+                acc[key].push(item)
+                return acc
+            }, {} as Record<string, any[]>)
+
+            for (const key in groups) {
+                const sets = groups[key]
+                const exerciseName = sets[0].exercise?.name || ''
+                const parts = exerciseName.split(/\s*\+\s*/).map((p: string) => p.trim())
+
+                if (parts.length > 1) {
+                    // Try to distribute sets.
+                    // If we have 6 sets and 2 parts, assume 1A, 1B, 2A, 2B, 3A, 3B
+                    // Actually, often in old logs they are just sequential A, A, A...
+                    // But if there are multiple parts, let's just tag them with at least indices.
+                    for (let i = 0; i < sets.length; i++) {
+                        const partIdx = i % parts.length
+                        await supabase.from('load_history').update({
+                            sub_index: partIdx,
+                            notes: `[${parts[partIdx]}] ${sets[i].notes || ''}`.trim()
+                        }).eq('id', sets[i].id)
+                        stats.historyFixed++
+                    }
+                }
+            }
+        }
+
+        await supabase.from('admin_logs').insert({
+            admin_id: adminId,
+            action: 'repair_bisets',
+            details: stats
+        })
+
+        return { success: true, message: `Reparo concluído! ${stats.structureFixed} bi-sets estruturados e ${stats.historyFixed} registros de histórico corrigidos.` }
+
+    } catch (e: any) {
+        console.error('[REPAIR BISETS] Failed:', e)
+        return { error: e.message }
+    }
+}

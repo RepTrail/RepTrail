@@ -55,7 +55,9 @@ export async function recordSetLoad(data: {
     weight: number,
     reps: number,
     setType?: string,
-    notes?: string
+    notes?: string,
+    subIndex?: number,
+    groupId?: string
 }) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
@@ -73,6 +75,8 @@ export async function recordSetLoad(data: {
                 reps_performed: data.reps,
                 set_type: data.setType || 'WORKING',
                 notes: data.notes,
+                sub_index: data.subIndex,
+                group_id: data.groupId,
                 recorded_at: new Date().toISOString()
             })
 
@@ -191,6 +195,7 @@ export async function getStudentWorkoutHistory(studentId: string) {
                     set_type,
                     notes,
                     exercise_id,
+                    sub_index,
                     exercise:exercises(id, name)
                 )
             `)

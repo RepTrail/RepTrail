@@ -8,7 +8,7 @@ import {
     getAllStoreProducts, toggleProductStatus, addStoreProduct, updateStoreProduct, deleteStoreProduct, fetchProductFromUrl,
     getAdminLogs, getTopProductsByClicks, getRecentStudentActivity,
     getPlanPricing, updatePlanPricing, deleteUser,
-    getOperationalCosts, repairWorkoutExercisesData
+    getOperationalCosts, repairWorkoutExercisesData, repairBiSets
 } from '@/actions/admin-actions'
 import { getAdminAffiliates, getAdminPayouts } from '@/actions/admin-affiliate-actions'
 import { AffiliatesManagement } from '@/components/feature/admin/affiliates-management'
@@ -195,6 +195,18 @@ export default function AdminDashboardPage() {
         })
     }
 
+    async function handleRepairBiSets() {
+        if (!confirm('Deseja reparar Bi-sets? Isso vai:\n1. Mesclar exercícios seguidos com 0 de descanso\n2. Corrigir histórico antigo para aparecer no novo player\n\nEsta ação modifica treinos e histórico.')) return
+        startTransition(async () => {
+            const res = await repairBiSets()
+            if (res.error) toast({ variant: 'destructive', title: 'Erro', description: res.error })
+            else {
+                toast({ title: 'Sucesso!', description: res.message, className: 'bg-emerald-500 border-none text-white' })
+                loadAll()
+            }
+        })
+    }
+
     const tabs: { id: Tab; label: string; icon: any }[] = [
         { id: 'overview', label: 'Visão Geral', icon: BarChart3 },
         { id: 'trainers', label: 'Personais', icon: Users2 },
@@ -227,6 +239,16 @@ export default function AdminDashboardPage() {
                         </div>
                     </div>
                     <div className="flex items-center gap-2">
+                        <Button
+                            onClick={handleRepairBiSets}
+                            variant="ghost"
+                            className="h-9 px-3 text-zinc-500 hover:text-cyan-500 gap-2 border border-transparent hover:border-cyan-500/20 hover:bg-cyan-500/5 transition-all"
+                            title="Reparar Bi-sets"
+                        >
+                            <Layers className="w-4 h-4" />
+                            <span className="text-[10px] font-black uppercase tracking-widest hidden lg:inline">Bi-sets</span>
+                        </Button>
+
                         <Button
                             onClick={handleRepairData}
                             variant="ghost"

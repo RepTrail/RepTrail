@@ -9,6 +9,7 @@ export interface ExecutionStep {
     groupId: string;
     isLastInBlock: boolean;
     exerciseName: string;
+    subIndex?: number;
 }
 
 export function isBiSetMember(ex: any) {
@@ -73,13 +74,27 @@ export function generateExecutionSteps(exercises: any[]): ExecutionStep[] {
                 // Filtrar exercícios que ainda têm séries nesta fase
                 const exercisesInRound = block.filter(ex => getPhaseSets(ex) >= setNum);
 
-                for (let i = 0; i < exercisesInRound.length; i++) {
-                    const ex = exercisesInRound[i];
-                    const isLastInRound = i === exercisesInRound.length - 1;
+                // NEW: Flatten exercises that have '+' to create virtual Bi-Sets within a single record
+                const flattenedExercisesInRound: any[] = [];
+                for (const ex of exercisesInRound) {
+                    const fullName = ex.exercise?.name || ex.name || '';
+                    if (fullName.includes('+')) {
+                        const parts = fullName.split('+').map((p: string) => p.trim());
+                        parts.forEach((part: string, sIdx: number) => {
+                            flattenedExercisesInRound.push({ ...ex, exerciseName: part, subIndex: sIdx });
+                        });
+                    } else {
+                        flattenedExercisesInRound.push({ ...ex, exerciseName: fullName, subIndex: 0 });
+                    }
+                }
+
+                for (let i = 0; i < flattenedExercisesInRound.length; i++) {
+                    const ex = flattenedExercisesInRound[i];
+                    const isLastInRound = i === flattenedExercisesInRound.length - 1;
 
                     blockSteps.push({
                         exerciseIndex: ex.originalIndex,
-                        exerciseName: ex.exercise?.name || ex.name || 'Exercício',
+                        exerciseName: ex.exerciseName,
                         phase,
                         setNumber: setNum,
                         // Descanso apenas após completar o par/trio no round
@@ -89,7 +104,8 @@ export function generateExecutionSteps(exercises: any[]): ExecutionStep[] {
                                     ex.rest_seconds || 60
                         ) : 0,
                         groupId,
-                        isLastInBlock: false // Será setado abaixo
+                        isLastInBlock: false,
+                        subIndex: ex.subIndex
                     });
                 }
             }
@@ -105,3 +121,4 @@ export function generateExecutionSteps(exercises: any[]): ExecutionStep[] {
 
     return steps;
 }
+

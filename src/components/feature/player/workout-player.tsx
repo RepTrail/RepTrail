@@ -83,10 +83,13 @@ export function WorkoutPlayer({
         type: string,
         setNumber: number,
         label: string,
-        expectedReps: string
+        expectedReps: string,
+        subIndex?: number,
+        groupId?: string
     }>>([])
     const [showSummary, setShowSummary] = useState(false)
     const [summaryInputs, setSummaryInputs] = useState<Record<number, { weight: string, reps: string }>>({})
+    const [summaryActiveSubIndex, setSummaryActiveSubIndex] = useState<Record<string, number>>({})
     const [exerciseNote, setExerciseNote] = useState('')
 
     const [logId, setLogId] = useState<string | null>(null)
@@ -138,7 +141,9 @@ export function WorkoutPlayer({
                         type: s.phase,
                         setNumber: s.setNumber,
                         label: `${sTypeLabel} ${s.setNumber}`,
-                        expectedReps: expectedReps || '0'
+                        expectedReps: expectedReps || '0',
+                        subIndex: s.subIndex,
+                        groupId: s.groupId
                     }
                 })
                 setSetsLog(reconstructedLog)
@@ -169,8 +174,8 @@ export function WorkoutPlayer({
     const isBiSet = useMemo(() => {
         const currentGroupId = currentStep.groupId
         const groupSteps = steps.filter(s => s.groupId === currentGroupId)
-        const uniqueExercises = new Set(groupSteps.map(s => s.exerciseIndex))
-        return uniqueExercises.size > 1
+        const uniqueNames = new Set(groupSteps.map(s => s.exerciseName))
+        return uniqueNames.size > 1
     }, [currentStep.groupId, steps])
 
     const setTypeLabel = ({
@@ -302,7 +307,9 @@ export function WorkoutPlayer({
             type: setType,
             setNumber: currentSet,
             label: `${setTypeLabel} ${currentSet}`,
-            expectedReps: expectedReps || '0'
+            expectedReps: expectedReps || '0',
+            subIndex: currentStep.subIndex,
+            groupId: currentStep.groupId
         }])
 
         // Intra-block logic (Rest or Switch)
@@ -339,13 +346,20 @@ export function WorkoutPlayer({
                 // Batch Save in parallel for better performance
                 const savePromises = setsLog.map((set, i) => {
                     const input = summaryInputs[i]
+                    // If it's a split exercise part, include the part name in the notes for clarity in history
+                    const recordNotes = set.subIndex !== undefined && set.subIndex > 0 || (setsLog.some(s => s.groupId === set.groupId && s.subIndex !== undefined && s.subIndex > 0))
+                        ? `[${set.exerciseName}] ${i === setsLog.length - 1 ? exerciseNote : ''}`
+                        : (i === setsLog.length - 1 ? exerciseNote : '')
+
                     return recordSetLoad({
                         logId,
-                        exerciseId: set.exerciseId, // This is now correctly the template ID
+                        exerciseId: set.exerciseId,
                         weight: parseFloat(input.weight),
                         reps: parseInt(input.reps),
                         setType: set.type as any,
-                        notes: i === setsLog.length - 1 ? exerciseNote : ''
+                        notes: recordNotes,
+                        subIndex: set.subIndex,
+                        groupId: set.groupId
                     })
                 })
 
@@ -525,41 +539,75 @@ export function WorkoutPlayer({
                             <div className="space-y-8 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
                                 {Object.entries(
                                     setsLog.reduce((acc, set, idx) => {
-                                        // Group by workoutExerciseId to differentiate same exercise in Bi-Sets
-                                        // but display title under the exercise template name
-                                        const groupId = set.workoutExerciseId
-                                        if (!acc[groupId]) acc[groupId] = { name: set.exerciseName, items: [] }
+                                        // Group by groupId to keep bi-sets together in one card
+                                        const groupId = set.groupId || 'none'
+                                        if (!acc[groupId]) acc[groupId] = { items: [] }
                                         acc[groupId].items.push({ ...set, summaryIdx: idx })
                                         return acc
-                                    }, {} as Record<string, { name: string, items: any[] }>)
-                                ).map(([exId, group]) => (
-                                    <div key={exId} className="space-y-4">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-1.5 h-6 bg-emerald-500 rounded-full shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
-                                            <h4 className="text-lg font-black text-white uppercase italic tracking-tight">{group.name}</h4>
-                                        </div>
-                                        <div className="space-y-4">
-                                            {group.items.map((set) => {
-                                                // Check history using the TEMPLATE exerciseId
-                                                const exerciseHistory = lastSession?.loads?.filter((l: any) => l.exercise_id === set.exerciseId) || []
-                                                const lastSessionSet = exerciseHistory[set.setNumber - 1]
+                                    }, {} as Record<string, { items: any[] }>)
+                                ).map(([gId, group]) => {
+                                    const uniqueExercises = Array.from(new Set(group.items.map(i => i.exerciseName)))
+                                    const activeSubIndex = summaryActiveSubIndex[gId] || 0
+                                    const activeExerciseName = uniqueExercises[activeSubIndex] || uniqueExercises[0]
+                                    const filteredItems = group.items.filter(i => i.exerciseName === activeExerciseName)
 
-                                                return (
-                                                    <SummarySetRow
-                                                        key={set.summaryIdx}
-                                                        set={set}
-                                                        lastSessionSet={lastSessionSet}
-                                                        initialWeight={summaryInputs[set.summaryIdx]?.weight || ''}
-                                                        initialReps={summaryInputs[set.summaryIdx]?.reps || ''}
-                                                        onUpdate={(weight: string, reps: string) =>
-                                                            setSummaryInputs(prev => ({ ...prev, [set.summaryIdx]: { weight, reps } }))
-                                                        }
-                                                    />
-                                                )
-                                            })}
+                                    return (
+                                        <div key={gId} className="space-y-6 bg-zinc-950/20 p-4 rounded-3xl border border-zinc-800/30">
+                                            <div className="space-y-4">
+                                                <div className="flex flex-col gap-4">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="w-1.5 h-6 bg-emerald-500 rounded-full shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
+                                                        <h4 className="text-lg font-black text-white uppercase italic tracking-tight">
+                                                            {uniqueExercises.length > 1 ? "Exercício Conjugado" : activeExerciseName}
+                                                        </h4>
+                                                    </div>
+
+                                                    {uniqueExercises.length > 1 && (
+                                                        <div className="flex p-1 bg-zinc-900/50 rounded-xl border border-zinc-800 gap-1">
+                                                            {uniqueExercises.map((exName, idx) => (
+                                                                <button
+                                                                    key={exName}
+                                                                    onClick={() => setSummaryActiveSubIndex(prev => ({ ...prev, [gId]: idx }))}
+                                                                    className={cn(
+                                                                        "flex-1 py-2 px-3 rounded-lg text-[10px] font-black uppercase tracking-tighter transition-all",
+                                                                        activeSubIndex === idx
+                                                                            ? "bg-emerald-500 text-zinc-950 shadow-lg"
+                                                                            : "text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800"
+                                                                    )}
+                                                                >
+                                                                    {exName}
+                                                                </button>
+                                                            ))}
+                                                        </div>
+                                                    )}
+                                                </div>
+
+                                                <div className="space-y-4">
+                                                    {filteredItems.map((set) => {
+                                                        const exerciseHistory = lastSession?.loads?.filter((l: any) => l.exercise_id === set.exerciseId) || []
+                                                        // Attempt to find history for this specific part if it was recorded with notes
+                                                        const pHistory = exerciseHistory.filter((l: any) => l.notes?.includes(`[${set.exerciseName}]`))
+                                                        const historyRef = pHistory.length > 0 ? pHistory : exerciseHistory
+                                                        const lastSessionSet = historyRef[set.setNumber - 1]
+
+                                                        return (
+                                                            <SummarySetRow
+                                                                key={set.summaryIdx}
+                                                                set={set}
+                                                                lastSessionSet={lastSessionSet}
+                                                                initialWeight={summaryInputs[set.summaryIdx]?.weight || ''}
+                                                                initialReps={summaryInputs[set.summaryIdx]?.reps || ''}
+                                                                onUpdate={(weight: string, reps: string) =>
+                                                                    setSummaryInputs(prev => ({ ...prev, [set.summaryIdx]: { weight, reps } }))
+                                                                }
+                                                            />
+                                                        )
+                                                    })}
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    )
+                                })}
                             </div>
 
                             <div className="space-y-2 pt-4 border-t border-zinc-800/50">
@@ -639,11 +687,18 @@ export function WorkoutPlayer({
                                     )}
                                 </div>
                                 <h2 className="text-4xl md:text-6xl font-black text-white uppercase italic tracking-tighter leading-[0.9] break-words">
-                                    {currentExercise?.exercise?.name || currentExercise?.name || 'Exercício'}
+                                    {currentStep.exerciseName}
                                     {isBiSet && (
                                         <span className="text-xl md:text-2xl text-orange-400 ml-2">(Bi-set)</span>
                                     )}
                                 </h2>
+                                {currentStep.subIndex !== undefined && (
+                                    <div className="flex items-center gap-2 mt-1">
+                                        <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest bg-zinc-950 px-2 py-0.5 rounded border border-zinc-800">
+                                            PARTE {(currentStep.subIndex + 1)}
+                                        </span>
+                                    </div>
+                                )}
                             </div>
 
                             {/* HUD Stats Layout Grid */}

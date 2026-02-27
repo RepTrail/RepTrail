@@ -59,6 +59,7 @@ interface StudentWorkoutHistoryProps {
 export function StudentWorkoutHistory({ history, isBlocked, mode = 'student' }: StudentWorkoutHistoryProps) {
     const [expandedLogs, setExpandedLogs] = useState<string[]>([])
     const [expandedExercises, setExpandedExercises] = useState<string[]>([])
+    const [activeParts, setActiveParts] = useState<Record<string, number>>({})
     const { toast } = useToast()
 
     const toggleLog = (id: string) => {
@@ -232,6 +233,10 @@ export function StudentWorkoutHistory({ history, isBlocked, mode = 'student' }: 
                                                 const logExId = `${log.id}-${exGroup.id}`
                                                 const isExExpanded = expandedExercises.includes(logExId)
 
+                                                const isBiSet = exGroup.name.includes('+')
+                                                const parts = isBiSet ? exGroup.name.split(/\s*\+\s*/).map(p => p.trim()) : [exGroup.name]
+                                                const activePartIdx = activeParts[logExId] || 0
+
                                                 return (
                                                     <div key={exGroup.id} className="space-y-2">
                                                         <div
@@ -246,12 +251,14 @@ export function StudentWorkoutHistory({ history, isBlocked, mode = 'student' }: 
                                                             </div>
 
                                                             <div className="min-w-0 flex flex-col justify-center">
-                                                                <span className="text-xs sm:text-sm font-black text-zinc-100 uppercase italic tracking-tight truncate block leading-tight">{exGroup.name}</span>
+                                                                <span className="text-xs sm:text-sm font-black text-zinc-100 uppercase italic tracking-tight truncate block leading-tight">{isBiSet ? "Exercício Conjugado" : exGroup.name}</span>
                                                                 <div className="flex items-center gap-1.5 mt-1">
-                                                                    <div className="bg-zinc-900/80 px-2 py-0.5 rounded-lg border border-zinc-800/50 flex items-baseline gap-1">
-                                                                        <span className="text-[10px] font-black text-zinc-400 uppercase italic">{exGroup.sets.length}</span>
-                                                                        <span className="text-[7px] text-zinc-600 font-black uppercase tracking-widest">Séries</span>
-                                                                    </div>
+                                                                    {!isBiSet && (
+                                                                        <div className="bg-zinc-900/80 px-2 py-0.5 rounded-lg border border-zinc-800/50 flex items-baseline gap-1">
+                                                                            <span className="text-[10px] font-black text-zinc-400 uppercase italic">{exGroup.sets.length}</span>
+                                                                            <span className="text-[7px] text-zinc-600 font-black uppercase tracking-widest">Séries</span>
+                                                                        </div>
+                                                                    )}
                                                                 </div>
                                                             </div>
 
@@ -272,7 +279,35 @@ export function StudentWorkoutHistory({ history, isBlocked, mode = 'student' }: 
 
                                                         {isExExpanded && (
                                                             <div className="grid gap-2.5 animate-in slide-in-from-left-2 duration-200">
-                                                                {exGroup.sets.map((load, idx) => (
+                                                                {isBiSet && parts.length > 1 && (
+                                                                    <div className="flex p-1 bg-zinc-900/50 rounded-xl border border-zinc-800 gap-1 mb-2">
+                                                                        {parts.map((partName, idx) => (
+                                                                            <button
+                                                                                key={idx}
+                                                                                onClick={() => setActiveParts(prev => ({ ...prev, [logExId]: idx }))}
+                                                                                className={`flex-1 py-2 px-3 rounded-lg text-[10px] font-black uppercase tracking-tighter transition-all ${activePartIdx === idx
+                                                                                    ? "bg-emerald-500 text-zinc-950 shadow-lg"
+                                                                                    : "text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800"
+                                                                                    }`}
+                                                                                type="button"
+                                                                            >
+                                                                                {partName}
+                                                                            </button>
+                                                                        ))}
+                                                                    </div>
+                                                                )}
+
+                                                                {exGroup.sets.filter((load: any) => {
+                                                                    if (!isBiSet) return true;
+                                                                    if (load.sub_index !== undefined && load.sub_index !== null) {
+                                                                        return load.sub_index === activePartIdx;
+                                                                    }
+                                                                    const currentPartName = parts[activePartIdx];
+                                                                    if (load.notes?.includes(`[${currentPartName}]`)) return true;
+                                                                    // Fallback: If no sub_index/note but is bi-set, assign to first block unless notes tell us otherwise
+                                                                    // Since old data might just all fall to part 0, that's better than duplicating.
+                                                                    return activePartIdx === 0 && !parts.some((p, i) => i !== 0 && load.notes?.includes(`[${p}]`));
+                                                                }).map((load, idx) => (
                                                                     <div key={idx} className="grid grid-cols-[25px_1.5fr_1fr_1fr] items-center bg-zinc-900/30 p-3.5 sm:p-5 rounded-2xl border border-zinc-800/30 gap-2 sm:gap-4">
                                                                         <span className="text-[11px] font-black text-zinc-600 uppercase italic leading-none">{idx + 1}º</span>
 
