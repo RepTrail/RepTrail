@@ -193,8 +193,9 @@ export function UnifiedErgogenicsModule({
     // Render Helpers
     const renderErgogenicCard = (e: Ergogenic, isToday: boolean) => {
         const isDone = todaysLogsMap[e.id]
-        const appDaysCount = e.application_days.length
-        const dosage = appDaysCount > 0 ? (e.weekly_dosage / appDaysCount).toFixed(2) : e.weekly_dosage.toFixed(2)
+        const appDaysCount = e.application_days?.length || 0
+        const weeklyDosage = e.weekly_dosage || 0
+        const dosage = appDaysCount > 0 ? (weeklyDosage / appDaysCount).toFixed(2) : weeklyDosage.toFixed(2)
 
         return (
             <Card key={e.id} className={`bg-zinc-950 border-zinc-800 transition-all rounded-[2rem] overflow-hidden shadow-2xl group ${isToday ? (isDone ? 'border-emerald-500/50 bg-emerald-500/5' : 'border-zinc-800') : 'opacity-60'}`}>
