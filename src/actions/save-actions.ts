@@ -307,9 +307,9 @@ export async function saveParsedData(type: 'workout' | 'diet', data: any, studen
             // wrap it in a mock diet so the loop below works.
             let dietsToProcess = data.diets || [];
             if (!data.diets && data.meals) {
-                console.log(`[SAVE] No 'diets' key found, but found 'meals'. Wrapping into Dieta Importada.`);
+                console.log(`[SAVE] No 'diets' key found, but found 'meals'. Wrapping into ${data.diet_name || 'Dieta Importada'}.`);
                 dietsToProcess = [{
-                    diet_name: 'Dieta Importada',
+                    diet_name: data.diet_name || 'Dieta Importada',
                     meals: data.meals
                 }];
             }

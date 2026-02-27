@@ -25,6 +25,7 @@ export function PdfUploader({ type, students = [], role = 'trainer' }: { type: '
     const [saving, setSaving] = useState(false)
     const [parsedData, setParsedData] = useState<any>(null)
     const [selectedStudentId, setSelectedStudentId] = useState<string>('')
+    const [selectedOptionIndex, setSelectedOptionIndex] = useState<number>(0)
     const { toast } = useToast()
     const supabase = createClient()
 
@@ -58,6 +59,7 @@ export function PdfUploader({ type, students = [], role = 'trainer' }: { type: '
             }
 
             setParsedData(result.data)
+            setSelectedOptionIndex(0)
             toast({ title: "Processamento concluído!", description: "Revise os dados antes de salvar." })
 
         } catch (error: any) {
@@ -83,13 +85,28 @@ export function PdfUploader({ type, students = [], role = 'trainer' }: { type: '
         }
 
         setSaving(true)
-        const result = await saveParsedData(type, parsedData.parsed_data, selectedStudentId)
+
+        let dataToSave = parsedData.parsed_data
+
+        // If it's a diet with options, we only save the selected one
+        if (type === 'diet' && parsedData.parsed_data?.options?.length > 0) {
+            const selectedOption = parsedData.parsed_data.options[selectedOptionIndex]
+            dataToSave = {
+                diet_name: selectedOption.name,
+                meals: selectedOption.meals,
+                cardios: parsedData.parsed_data.cardios, // keep global cardios if any
+                ergogenics: parsedData.parsed_data.ergogenics
+            }
+        }
+
+        const result = await saveParsedData(type, dataToSave, selectedStudentId)
         setSaving(false)
 
         if (result.success) {
             toast({ title: "Sucesso!", description: `${type === 'workout' ? 'Treino' : 'Dieta'} salvo${selectedStudentId ? ' e vinculado ao aluno' : ''}.` })
             setParsedData(null)
             setSelectedStudentId('')
+            setSelectedOptionIndex(0)
         } else {
             toast({ variant: "destructive", title: "Erro ao salvar", description: result.error })
         }
@@ -202,13 +219,45 @@ export function PdfUploader({ type, students = [], role = 'trainer' }: { type: '
 
                         {/* Data Preview */}
                         <div className="space-y-4">
-                            <div className="flex justify-between items-center border-b border-zinc-900 pb-2">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-900 pb-4">
                                 <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-2">
                                     <FileText className="w-3 h-3 text-emerald-500" />
                                     Dados Extraídos
                                 </span>
+
+                                {type === 'diet' && parsedData.parsed_data?.options?.length > 1 && (
+                                    <div className="flex items-center gap-3">
+                                        <span className="text-[9px] font-black text-zinc-600 uppercase tracking-widest">Escolher Cardápio:</span>
+                                        <Select
+                                            value={selectedOptionIndex.toString()}
+                                            onValueChange={(v) => setSelectedOptionIndex(parseInt(v))}
+                                        >
+                                            <SelectTrigger className="h-9 min-w-[180px] bg-zinc-900 border-zinc-800 text-xs font-bold text-emerald-400 rounded-xl">
+                                                <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent className="bg-zinc-900 border-zinc-800 text-white">
+                                                {parsedData.parsed_data.options.map((opt: any, idx: number) => (
+                                                    <SelectItem key={idx} value={idx.toString()} className="text-xs font-bold">
+                                                        {opt.name}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                )}
                             </div>
-                            <PdfDataView type={type} data={parsedData.parsed_data} />
+
+                            <PdfDataView
+                                type={type}
+                                data={type === 'diet' && parsedData.parsed_data?.options?.length > 0
+                                    ? {
+                                        ...parsedData.parsed_data,
+                                        meals: parsedData.parsed_data.options[selectedOptionIndex].meals,
+                                        diet_name: parsedData.parsed_data.options[selectedOptionIndex].name
+                                    }
+                                    : parsedData.parsed_data
+                                }
+                            />
                         </div>
 
                         {/* Actions */}

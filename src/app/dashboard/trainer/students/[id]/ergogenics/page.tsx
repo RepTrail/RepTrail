@@ -7,15 +7,26 @@ export default async function StudentErgogenicsPage({ params }: { params: { id: 
     const { id } = await params
     const supabase = await createClient()
 
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) {
+        return <div className="p-10 text-center text-zinc-500 font-bold uppercase tracking-widest text-xs">Não autorizado.</div>
+    }
+
     // Get relationship to find student_id
+    // We try to find by ID (relationship id) OR student_id, but always restricted to this trainer
     const { data: relationship } = await supabase
         .from('trainer_students')
-        .select('student_id, profiles(full_name)')
-        .eq('id', id)
-        .single()
+        .select(`
+            student_id,
+            student:profiles!student_id(full_name)
+        `)
+        .or(`id.eq.${id},student_id.eq.${id}`)
+        .eq('trainer_id', user.id)
+        .maybeSingle()
 
     if (!relationship) {
-        return <div className="p-10 text-center text-zinc-500 font-bold uppercase tracking-widest text-xs">Dados não encontrados.</div>
+        return <div className="p-10 text-center text-zinc-500 font-bold uppercase tracking-widest text-xs">Dados não encontrados ou você não tem acesso a este aluno.</div>
     }
 
     const { data: ergogenics } = await supabase
@@ -24,7 +35,7 @@ export default async function StudentErgogenicsPage({ params }: { params: { id: 
         .eq('student_id', relationship.student_id)
         .order('created_at', { ascending: false })
 
-    const studentName = (relationship.profiles as any)?.full_name || 'Aluno'
+    const studentName = (relationship.student as any)?.full_name || 'Aluno'
 
     return (
         <div className="space-y-10 pb-10">
