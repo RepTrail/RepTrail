@@ -631,3 +631,88 @@ export async function getOperationalCosts() {
     const { data } = await supabase.from('operational_costs').select('*').order('created_at', { ascending: false })
     return data || []
 }
+
+export async function repairWorkoutExercisesData() {
+    const { supabase, userId: adminId } = await checkAdmin()
+
+    try {
+        console.log('[REPAIR] Starting workout_exercises data cleanup...')
+
+        // 1. Fetch all exercises that might need cleaning
+        const { data: exercises, error: fetchErr } = await supabase
+            .from('workout_exercises')
+            .select('id, reps, warmup_reps, feeder_reps')
+            .or('reps.ilike.%movimento%,reps.ilike.%serie%,warmup_reps.ilike.%movimento%,warmup_reps.ilike.%serie%,feeder_reps.ilike.%movimento%,feeder_reps.ilike.%serie%')
+
+        if (fetchErr) throw fetchErr
+        if (!exercises || exercises.length === 0) {
+            return { success: true, message: 'Nenhum exercício precisa de reparo.' }
+        }
+
+        console.log(`[REPAIR] Found ${exercises.length} exercises to potentially repair.`)
+
+        const cleanValue = (val: string | null) => {
+            if (!val) return val
+            let s = val.trim()
+
+            // Pattern: "1 a 2 series de 10 Movimentos" or "3x10 reps" or "series de 10"
+            // We want to capture the last part which is usually the reps
+            const complexPattern = s.match(/(?:\d+.*series?|series?.*de|x)\s*(\d+(?:\s*[-–a/]\s*\d+)?)\b/i)
+            if (complexPattern) {
+                return complexPattern[1].replace(/\s+/g, '').replace(/a|[-–/]/g, '-').trim()
+            }
+
+            // Pattern: "10 Movimentos" or "10 reps" (simple)
+            const simplePattern = s.match(/^(\d+(?:\s*[-–a/]\s*\d+)?)\s*(?:movimentos|reps?|repetições|repeticoes)/i)
+            if (simplePattern) {
+                return simplePattern[1].replace(/\s+/g, '').replace(/a|[-–/]/g, '-').trim()
+            }
+
+            // Final fallback: if "series" is in the text and there are multiple numbers, take the last one
+            if (/serie/i.test(s)) {
+                const numbers = s.match(/\d+/g)
+                if (numbers && numbers.length > 1) {
+                    return numbers[numbers.length - 1]
+                }
+            }
+
+            return s
+        }
+
+        let updatedCount = 0
+        const updatePromises = exercises.map(async (ex) => {
+            const nextReps = cleanValue(ex.reps)
+            const nextWarmup = cleanValue(ex.warmup_reps)
+            const nextFeeder = cleanValue(ex.feeder_reps)
+
+            if (nextReps !== ex.reps || nextWarmup !== ex.warmup_reps || nextFeeder !== ex.feeder_reps) {
+                const { error } = await supabase
+                    .from('workout_exercises')
+                    .update({
+                        reps: nextReps,
+                        warmup_reps: nextWarmup,
+                        feeder_reps: nextFeeder
+                    })
+                    .eq('id', ex.id)
+
+                if (!error) updatedCount++
+                return !error
+            }
+            return false
+        })
+
+        await Promise.all(updatePromises)
+
+        await supabase.from('admin_logs').insert({
+            admin_id: adminId,
+            action: 'repair_workout_data',
+            details: { repaired_count: updatedCount }
+        })
+
+        return { success: true, message: `${updatedCount} exercícios foram limpos com sucesso.` }
+
+    } catch (e: any) {
+        console.error('[REPAIR] Failed:', e)
+        return { error: e.message }
+    }
+}

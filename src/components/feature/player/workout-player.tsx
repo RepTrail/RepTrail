@@ -669,9 +669,18 @@ export function WorkoutPlayer({
                                 <div className="col-span-7 bg-zinc-900/60 border border-zinc-800 p-4 rounded-xl">
                                     <p className="text-[9px] font-black text-zinc-500 uppercase tracking-[0.1em] mb-1">Alvo</p>
                                     <p className="text-3xl font-black text-emerald-400 italic tracking-tight">
-                                        {setType === 'WARMUP' ? currentExercise.warmup_reps :
-                                            setType === 'FEEDER' ? currentExercise.feeder_reps :
-                                                currentExercise.reps}
+                                        {(() => {
+                                            const val = (setType === 'WARMUP' ? currentExercise.warmup_reps :
+                                                setType === 'FEEDER' ? currentExercise.feeder_reps :
+                                                    currentExercise.reps) || '10'
+
+                                            // 1. Try to find the number after "series de" or similar prefixes
+                                            const match = val.match(/(?:\d+.*series?|series?.*de|x)\s*(\d+(?:\s*[-–a/]\s*\d+)?)\b/i)
+                                            if (match) return match[1].replace(/\s+/g, '').replace(/a|[-–/]/g, '-')
+
+                                            // 2. Just clean the string of common words if no pattern found
+                                            return val.replace(/(?:movimentos|reps?|repetições|repeticoes|series?|de)/gi, '').trim()
+                                        })()}
                                         <span className="text-xs text-zinc-500 ml-1 not-italic font-bold">REPS</span>
                                     </p>
                                 </div>

@@ -8,7 +8,7 @@ import {
     getAllStoreProducts, toggleProductStatus, addStoreProduct, updateStoreProduct, deleteStoreProduct, fetchProductFromUrl,
     getAdminLogs, getTopProductsByClicks, getRecentStudentActivity,
     getPlanPricing, updatePlanPricing, deleteUser,
-    getOperationalCosts
+    getOperationalCosts, repairWorkoutExercisesData
 } from '@/actions/admin-actions'
 import { getAdminAffiliates, getAdminPayouts } from '@/actions/admin-affiliate-actions'
 import { AffiliatesManagement } from '@/components/feature/admin/affiliates-management'
@@ -183,6 +183,18 @@ export default function AdminDashboardPage() {
         return true
     }
 
+    async function handleRepairData() {
+        if (!confirm('Deseja iniciar a limpeza dos dados de treino? Isso removerá textos desnecessários dos campos de repetições (ex: "X movimentos" -> "X").')) return
+        startTransition(async () => {
+            const res = await repairWorkoutExercisesData()
+            if (res.error) toast({ variant: 'destructive', title: 'Erro', description: res.error })
+            else {
+                toast({ title: 'Sucesso!', description: res.message })
+                loadAll()
+            }
+        })
+    }
+
     const tabs: { id: Tab; label: string; icon: any }[] = [
         { id: 'overview', label: 'Visão Geral', icon: BarChart3 },
         { id: 'trainers', label: 'Personais', icon: Users2 },
@@ -214,14 +226,26 @@ export default function AdminDashboardPage() {
                             <span className="text-[10px] font-black text-red-500 uppercase tracking-widest">Super Admin</span>
                         </div>
                     </div>
-                    <Button
-                        onClick={loadAll}
-                        variant="ghost"
-                        className="h-9 px-3 sm:px-4 text-zinc-500 hover:text-white gap-2"
-                    >
-                        <RefreshCw className={`w-4 h-4 ${isPending ? 'animate-spin' : ''}`} />
-                        <span className="text-[10px] font-black uppercase tracking-widest hidden sm:inline">Atualizar</span>
-                    </Button>
+                    <div className="flex items-center gap-2">
+                        <Button
+                            onClick={handleRepairData}
+                            variant="ghost"
+                            className="h-9 px-3 text-zinc-500 hover:text-amber-500 gap-2 border border-transparent hover:border-amber-500/20 hover:bg-amber-500/5 transition-all"
+                            title="Reparar Dados de Treino"
+                        >
+                            <Wrench className="w-4 h-4" />
+                            <span className="text-[10px] font-black uppercase tracking-widest hidden lg:inline">Reparar Dados</span>
+                        </Button>
+
+                        <Button
+                            onClick={loadAll}
+                            variant="ghost"
+                            className="h-9 px-3 sm:px-4 text-zinc-500 hover:text-white gap-2"
+                        >
+                            <RefreshCw className={`w-4 h-4 ${isPending ? 'animate-spin' : ''}`} />
+                            <span className="text-[10px] font-black uppercase tracking-widest hidden sm:inline">Atualizar</span>
+                        </Button>
+                    </div>
                 </div>
             </header>
 
