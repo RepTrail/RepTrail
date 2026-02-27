@@ -58,6 +58,7 @@ export function AuthForm({ view }: AuthFormProps) {
         e.preventDefault()
         setLoading(true)
         setError(null)
+        let isRedirecting = false
 
         try {
             if (view === 'signup') {
@@ -111,6 +112,7 @@ export function AuthForm({ view }: AuthFormProps) {
 
                 alert('Cadastro realizado! Verifique seu email ou faça login.')
                 router.push('/auth/login')
+                isRedirecting = true
             } else {
                 const { error } = await supabase.auth.signInWithPassword({
                     email,
@@ -131,12 +133,15 @@ export function AuthForm({ view }: AuthFormProps) {
                     } else {
                         router.push('/dashboard/student')
                     }
+                    isRedirecting = true
                 }
             }
         } catch (err: any) {
             setError(err.message)
         } finally {
-            setLoading(false)
+            if (!isRedirecting) {
+                setLoading(false)
+            }
         }
     }
 
