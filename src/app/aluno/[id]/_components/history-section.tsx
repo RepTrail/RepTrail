@@ -15,6 +15,7 @@ export async function WorkoutHistorySection({ studentId }: { studentId: string }
                 <StudentWorkoutHistory
                     history={history as any}
                     isBlocked={false}
+                    mode="student"
                 />
             </div>
         </div>

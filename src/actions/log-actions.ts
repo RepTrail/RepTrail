@@ -138,16 +138,23 @@ export async function finishWorkoutLog(id: string, feedback?: string, perceivedE
 export async function deleteWorkoutLog(logId: string) {
     const supabase = await createClient()
 
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) {
+        return { error: 'Não autorizado. Faça login novamente.' }
+    }
+
     try {
         const { error, count } = await supabase
             .from('workout_logs')
             .delete({ count: 'exact' })
             .eq('id', logId)
+            .eq('student_id', user.id)
 
         if (error) throw error
 
         if (count === 0) {
-            return { error: 'O treino não pôde ser excluído ou você não tem permissão.' }
+            return { error: 'O treino não pôde ser encontrado ou você não tem permissão para excluí-lo.' }
         }
 
         revalidatePath('/dashboard/trainer/students/[id]', 'page')

@@ -53,9 +53,10 @@ interface WorkoutLog {
 interface StudentWorkoutHistoryProps {
     history: WorkoutLog[]
     isBlocked?: boolean
+    mode?: 'student' | 'trainer'
 }
 
-export function StudentWorkoutHistory({ history, isBlocked }: StudentWorkoutHistoryProps) {
+export function StudentWorkoutHistory({ history, isBlocked, mode = 'student' }: StudentWorkoutHistoryProps) {
     const [expandedLogs, setExpandedLogs] = useState<string[]>([])
     const [expandedExercises, setExpandedExercises] = useState<string[]>([])
     const { toast } = useToast()
@@ -167,7 +168,9 @@ export function StudentWorkoutHistory({ history, isBlocked }: StudentWorkoutHist
                                     </span>
                                 </div>
                                 <div className="flex items-center gap-2 sm:gap-3">
-                                    <DeleteWorkoutDialog logId={log.id} workoutName={log.workout?.name || 'Treino Avulso'} />
+                                    {mode === 'student' && (
+                                        <DeleteWorkoutDialog logId={log.id} workoutName={log.workout?.name || 'Treino Avulso'} />
+                                    )}
                                     <div className={`
                                         w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl border flex items-center justify-center transition-all duration-300
                                         ${isExpanded ? 'bg-zinc-100 text-zinc-950 border-white' : 'bg-zinc-900 border-zinc-800 text-zinc-500 group-hover:border-zinc-700'}

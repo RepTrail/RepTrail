@@ -23,7 +23,8 @@ import {
     DollarSign,
     TrendingUp,
     Sparkles,
-    FlaskConical
+    FlaskConical,
+    Target
 } from 'lucide-react'
 import { Badge } from "@/components/ui/badge"
 import Link from 'next/link'
@@ -147,6 +148,20 @@ export default async function StudentDetailPage({ params }: { params: { id: stri
     const lastBF = bfs.length > 0 ? bfs[bfs.length - 1]?.bf_percentage : details?.body_fat
     const prevBF = bfs[bfs.length - 2]?.bf_percentage
     const bfTrend = prevBF ? (lastBF - prevBF).toFixed(1) : null
+
+    // Calculate Adherence Average (last 30 days) — Same as student evolution page
+    const last30dAdherence = (adherenceHistory || []).filter(h => h.diet_percentage > 0 || h.workout_status === 'completed' || h.cardio_status === 'completed')
+    const avgAdherence = last30dAdherence.length > 0 ? (
+        last30dAdherence.reduce((acc, h) => {
+            const pillars = [
+                h.diet_percentage,
+                h.workout_status === 'completed' ? 100 : 0,
+                h.cardio_status === 'completed' ? 100 : 0,
+                h.ergogenics_status === 'completed' ? 100 : 0
+            ]
+            return acc + (pillars.reduce((a, b) => a + b, 0) / 4)
+        }, 0) / last30dAdherence.length
+    ).toFixed(0) : 0
 
     const formatWhatsAppUrl = (phone: string | null | undefined, message: string) => {
         if (!phone) return '#';
@@ -303,13 +318,13 @@ export default async function StudentDetailPage({ params }: { params: { id: stri
                     trendLabel={bfTrend ? "desde a última" : "Sem histórico"}
                 />
                 <StatCard
-                    label="Status do Plano"
-                    value={relationship.active ? 'Ativo' : 'Inativo'}
-                    unit=""
-                    icon={<Activity className="w-4 h-4" />}
+                    label="Adesão (30D)"
+                    value={avgAdherence}
+                    unit="%"
+                    icon={<Target className="w-4 h-4" />}
                     trend="none"
                     trendVal=""
-                    trendLabel="Acompanhamento Direto"
+                    trendLabel="Média de Consistência"
                 />
             </div>
 
@@ -631,6 +646,7 @@ export default async function StudentDetailPage({ params }: { params: { id: stri
                         <StudentWorkoutHistory
                             history={history}
                             isBlocked={trainerTier === 'start'}
+                            mode="trainer"
                         />
                     </div>
                 </div>

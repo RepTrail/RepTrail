@@ -110,7 +110,17 @@ export async function markPaymentAsReceived(studentId: string, trainerId: string
 
         if (error) throw error
 
-        revalidatePath(`/dashboard/trainer/students/${studentId}`)
+        const { data: relationship } = await supabase
+            .from('trainer_students')
+            .select('id')
+            .eq('trainer_id', trainerId)
+            .eq('student_id', studentId)
+            .maybeSingle()
+
+        if (relationship) {
+            revalidatePath(`/dashboard/trainer/students/${relationship.id}`)
+        }
+
         revalidatePath('/dashboard/trainer/students')
         return { success: true }
     } catch (error: any) {
@@ -541,17 +551,27 @@ export async function deleteProgressPhoto(photoId: string) {
 
         if (!user) return { success: false, error: 'Não autorizado' }
 
-        // First, get the photo record to delete the files from storage
         const { data: photo, error: fetchError } = await supabase
             .from('progress_photos')
-            .select('front_url, back_url, side_left_url, side_right_url')
+            .select('student_id, front_url, back_url, side_left_url, side_right_url')
             .eq('id', photoId)
-            .eq('student_id', user.id)
             .single()
 
         if (fetchError || !photo) {
             return { success: false, error: 'Foto não encontrada' }
         }
+
+        // Check ownership - strictly restricted to student as requested
+        if (photo.student_id !== user.id) {
+            return { success: false, error: 'Não autorizado para remover esta foto.' }
+        }
+
+        const { data: trainerLink } = await supabase
+            .from('trainer_students')
+            .select('id')
+            .eq('student_id', photo.student_id)
+            .eq('active', true)
+            .maybeSingle()
 
         // Delete files from storage
         const urls = [photo.front_url, photo.back_url, photo.side_left_url, photo.side_right_url]
@@ -573,7 +593,6 @@ export async function deleteProgressPhoto(photoId: string) {
             .from('progress_photos')
             .delete()
             .eq('id', photoId)
-            .eq('student_id', user.id)
 
         if (deleteError) {
             console.error('Database error deleting progress photo:', deleteError)
@@ -581,6 +600,7 @@ export async function deleteProgressPhoto(photoId: string) {
         }
 
         revalidatePath('/dashboard/student/progress')
+        revalidatePath(`/dashboard/trainer/students/${trainerLink?.id || ''}`)
         return { success: true }
     } catch (e: any) {
         console.error('Unexpected error in deleteProgressPhoto:', e)
@@ -631,11 +651,30 @@ export async function updateProgressPhotoDate(photoId: string, newDate: string) 
     }
 
     try {
+        // Find photo to check student_id
+        const { data: photo } = await supabase
+            .from('progress_photos')
+            .select('student_id')
+            .eq('id', photoId)
+            .single()
+
+        if (!photo) return { success: false, error: 'Foto não encontrada' }
+
+        // Check ownership - strictly restricted to student as requested
+        if (photo.student_id !== user.id) {
+            return { success: false, error: 'Não autorizado para editar esta foto.' }
+        }
+
+        const { data: trainerLink } = await supabase
+            .from('trainer_students')
+            .select('id')
+            .eq('student_id', photo.student_id)
+            .maybeSingle()
+
         const { error } = await supabase
             .from('progress_photos')
             .update({ created_at: newDate })
             .eq('id', photoId)
-            .eq('student_id', user.id)
 
         if (error) {
             console.error('Database error in updateProgressPhotoDate:', error)
@@ -643,6 +682,7 @@ export async function updateProgressPhotoDate(photoId: string, newDate: string) 
         }
 
         revalidatePath('/dashboard/student/progress')
+        revalidatePath(`/dashboard/trainer/students/${trainerLink?.id || ''}`)
         return { success: true }
     } catch (e: any) {
         console.error('Unexpected error in updateProgressPhotoDate:', e)
