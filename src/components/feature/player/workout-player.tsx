@@ -103,7 +103,6 @@ export function WorkoutPlayer({
     const router = useRouter()
     const queryClient = useQueryClient()
 
-    const [skippedIndices, setSkippedIndices] = useState<number[]>([])
 
     useEffect(() => {
         const fetchHistory = async () => {
@@ -782,30 +781,7 @@ export function WorkoutPlayer({
                 )}
             </div>
 
-            {/* Footer Actions */}
-            <div className="pt-10 flex items-center justify-between border-t border-zinc-800/30">
-                <Button
-                    variant="ghost"
-                    onClick={() => setCurrentStepIndex(prev => Math.max(0, prev - 1))}
-                    disabled={currentStepIndex === 0}
-                    className="text-zinc-600 hover:text-white font-black uppercase italic tracking-widest text-[10px]"
-                >
-                    Anterior
-                </Button>
-                <div className="w-1.5 h-1.5 bg-zinc-800 rounded-full" />
-                <Button
-                    variant="ghost"
-                    onClick={() => {
-                        if (!skippedIndices.includes(currentStep.exerciseIndex)) {
-                            setSkippedIndices(prev => [...prev, currentStep.exerciseIndex])
-                        }
-                        advanceExercise()
-                    }}
-                    className="text-zinc-600 hover:text-red-500 font-black uppercase italic tracking-widest text-[10px]"
-                >
-                    Desistir / Pular
-                </Button>
-            </div>
+
         </div>
     )
 }
