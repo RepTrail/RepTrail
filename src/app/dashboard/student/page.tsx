@@ -2,11 +2,13 @@ import { createClient } from '@/lib/supabase/server'
 import { getStudentTrainer, getStudentDetails } from '@/actions/student-actions'
 import { getStudentAutoTrainingStatus } from '@/actions/auto-training-actions'
 import { getTrainerRanking } from '@/actions/trainer-actions'
+import { checkStudentHasProtocol } from '@/actions/ai-protocol-actions'
 
 import { WorkoutCard } from '@/components/feature/student/dashboard/workout-card'
 import { CardioCard } from '@/components/feature/student/dashboard/cardio-card'
 import { DietCard } from '@/components/feature/student/dashboard/diet-card'
 import { ErgogenicsCard } from '@/components/feature/student/dashboard/ergogenics-card'
+import { AIProtocolEmptyState } from '@/components/feature/student/ai-protocol-empty-state'
 
 import { PaymentWarning } from '@/components/feature/student/payment-warning'
 import { StudentDashboardModals } from '@/components/feature/student/student-dashboard-modals'
@@ -281,6 +283,13 @@ export default async function StudentDashboardPage() {
     // Main Case: Active Training (Personal or Auto-Training)
     const tzNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }))
 
+    // Check if auto-training student has an active protocol
+    let hasProtocol = true
+    if (!trainerRel && hasAutoTraining) {
+        const protocolStatus = await checkStudentHasProtocol(user.id)
+        hasProtocol = protocolStatus.hasWorkout || protocolStatus.hasDiet
+    }
+
     return (
         <div className="space-y-10 pb-20 animate-in fade-in duration-500">
             <PaymentWarning relationship={trainerRel} />
@@ -292,12 +301,6 @@ export default async function StudentDashboardPage() {
                         <h1 className="text-4xl font-black text-white italic uppercase tracking-tighter">
                             Dashboard
                         </h1>
-                        <Link href={`/aluno/${user.id}`}>
-                            <Button variant="outline" className="h-9 px-6 rounded-xl border-zinc-800 bg-zinc-900/50 hover:bg-zinc-800 text-zinc-300 hover:text-emerald-500 font-black uppercase italic tracking-widest text-[9px] transition-all gap-2">
-                                <Sparkles className="w-3 h-3" />
-                                Meu Perfil Público
-                            </Button>
-                        </Link>
                     </div>
                     <p className="text-zinc-600 font-bold uppercase tracking-widest text-[10px] flex items-center gap-2">
                         {trainerRel ? (
@@ -329,48 +332,57 @@ export default async function StudentDashboardPage() {
                 </div>
             )}
 
-            <div className="grid gap-8 lg:grid-cols-12">
-                {/* Async Sections (Independent data fetching) */}
-                <div className="lg:col-span-8 space-y-10">
-                    <div className="space-y-6">
-                        <div className="flex items-center justify-between px-2">
-                            <h2 className="text-[12px] font-black text-zinc-100 flex items-center gap-2 uppercase tracking-[0.2em]">
-                                <Dumbbell className="w-4 h-4 text-emerald-500" />
-                                Treino de Hoje
-                            </h2>
-                            <Link href="/dashboard/student/workouts" className="text-[9px] font-black text-zinc-500 hover:text-white uppercase tracking-widest transition-colors flex items-center gap-2">
-                                Ver biblioteca
-                                <ArrowRight className="w-3 h-3" />
-                            </Link>
-                        </div>
-                        <WorkoutCard userId={user.id} />
-                    </div>
-
-                    <div className="space-y-6">
-                        <div className="flex items-center justify-between px-2">
-                            <h2 className="text-[12px] font-black text-zinc-100 flex items-center gap-2 uppercase tracking-[0.2em]">
-                                <Activity className="w-4 h-4 text-orange-500" />
-                                Cardio do Dia
-                            </h2>
-                        </div>
-                        <CardioCard userId={user.id} />
-                    </div>
-
-                    <ErgogenicsCard userId={user.id} />
+            {/* Empty state: auto-training student with NO protocol yet */}
+            {!hasProtocol && !trainerRel && (
+                <div className="animate-in fade-in slide-in-from-bottom-6 duration-700">
+                    <AIProtocolEmptyState />
                 </div>
+            )}
 
-                {/* Sidebar (Metrics & Diet) */}
-                <div className="lg:col-span-4 space-y-10">
+            {hasProtocol && (
+                <div className="grid gap-8 lg:grid-cols-12">
+                    {/* Async Sections (Independent data fetching) */}
+                    <div className="lg:col-span-8 space-y-10">
+                        <div className="space-y-6">
+                            <div className="flex items-center justify-between px-2">
+                                <h2 className="text-[12px] font-black text-zinc-100 flex items-center gap-2 uppercase tracking-[0.2em]">
+                                    <Dumbbell className="w-4 h-4 text-emerald-500" />
+                                    Treino de Hoje
+                                </h2>
+                                <Link href="/dashboard/student/workouts" className="text-[9px] font-black text-zinc-500 hover:text-white uppercase tracking-widest transition-colors flex items-center gap-2">
+                                    Ver biblioteca
+                                    <ArrowRight className="w-3 h-3" />
+                                </Link>
+                            </div>
+                            <WorkoutCard userId={user.id} />
+                        </div>
 
-                    <div className="space-y-6">
-                        <h2 className="text-[12px] font-black text-zinc-100 flex items-center gap-2 uppercase tracking-[0.2em] px-2">
-                            <Utensils className="w-4 h-4 text-emerald-500" />
-                            Sua Dieta
-                        </h2>
-                        <DietCard userId={user.id} hasTrainer={!!trainerRel} />
+                        <div className="space-y-6">
+                            <div className="flex items-center justify-between px-2">
+                                <h2 className="text-[12px] font-black text-zinc-100 flex items-center gap-2 uppercase tracking-[0.2em]">
+                                    <Activity className="w-4 h-4 text-orange-500" />
+                                    Cardio do Dia
+                                </h2>
+                            </div>
+                            <CardioCard userId={user.id} />
+                        </div>
+
+                        <ErgogenicsCard userId={user.id} />
+                    </div>
+
+                    {/* Sidebar (Metrics & Diet) */}
+                    <div className="lg:col-span-4 space-y-10">
+
+                        <div className="space-y-6">
+                            <h2 className="text-[12px] font-black text-zinc-100 flex items-center gap-2 uppercase tracking-[0.2em] px-2">
+                                <Utensils className="w-4 h-4 text-emerald-500" />
+                                Sua Dieta
+                            </h2>
+                            <DietCard userId={user.id} hasTrainer={!!trainerRel} />
+                        </div>
                     </div>
                 </div>
-            </div>
+            )}
 
             <StudentDashboardModals userId={user.id} showModal={showAutoTrainingModal} hasTrainer={!!trainerRel} />
         </div>

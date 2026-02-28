@@ -1,7 +1,7 @@
 import { getCardioLibrary } from '@/actions/cardio-actions'
 import { getTrainerStudents } from '@/actions/trainer-actions'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Activity, ChevronRight } from 'lucide-react'
+import { Activity, Calendar } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { UnifiedDeleteButton } from '@/components/feature/shared/unified-delete-button'
@@ -21,7 +21,7 @@ export default async function TrainerCardioPage() {
                         Biblioteca de Cardio
                     </h1>
                     <p className="text-zinc-500 font-bold uppercase tracking-widest text-[10px] flex items-center gap-2">
-                        <Activity className="w-3.5 h-3.5 text-orange-500" />
+                        <Activity className="w-3.5 h-3.5 text-emerald-500" />
                         Gerencie seus modelos de cardio e atribua aos seus alunos
                     </p>
                 </div>
@@ -37,6 +37,7 @@ export default async function TrainerCardioPage() {
                         actionType="create-student-cardio"
                         successMessage="Modelo de cardio criado!"
                         footerLabel="Salvar Modelo"
+                        colorScheme="emerald"
                     />
                 </div>
             </div>
@@ -44,45 +45,53 @@ export default async function TrainerCardioPage() {
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {cardios.length > 0 ? (
                     cardios.map((cardio: any) => (
-                        <Card key={cardio.id} className="bg-zinc-900 border-zinc-800 text-zinc-100 hover:border-orange-500/30 transition-all group rounded-[2rem] overflow-hidden">
-                            <CardHeader className="pb-2">
+                        <Card key={cardio.id} className="bg-zinc-900/50 border-zinc-800 text-zinc-100 hover:border-emerald-500/30 transition-all group rounded-[2rem] overflow-hidden flex flex-col">
+                            <CardHeader className="p-6 pb-4">
                                 <div className="flex items-start justify-between">
-                                    <div className="bg-zinc-800 p-2 rounded-lg text-zinc-400 group-hover:text-orange-500 transition-colors">
+                                    <div className="bg-zinc-800 p-2 rounded-lg text-zinc-400 group-hover:text-emerald-500 transition-colors">
                                         <Activity className="w-5 h-5" />
                                     </div>
+                                    <div className="flex gap-1">
+                                        <DuplicateButton id={cardio.id} type="cardio" />
+                                        <UnifiedDeleteButton
+                                            id={cardio.id}
+                                            actionType="cardio"
+                                            itemName={cardio.name}
+                                            className="text-zinc-600 hover:text-red-400 hover:bg-red-400/10 rounded-xl transition-all"
+                                        />
+                                    </div>
                                 </div>
-                                <CardTitle className="mt-4 text-xl font-black italic uppercase tracking-tight">{cardio.name}</CardTitle>
+                                <CardTitle className="mt-4 text-lg font-black italic uppercase tracking-tight">{cardio.name}</CardTitle>
                                 <CardDescription className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest line-clamp-2">
                                     {cardio.description || "Sem descrição."}
                                 </CardDescription>
                             </CardHeader>
-                            <CardContent>
-                                <div className="flex items-center justify-between text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-6 border-t border-zinc-800 pt-4">
+                            <CardContent className="p-6 pt-0 flex-1 flex flex-col">
+                                <div className="flex items-center justify-between text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-6">
                                     <span>Template</span>
                                     <span>{new Date(cardio.created_at).toLocaleDateString('pt-BR')}</span>
                                 </div>
 
-                                <div className="grid grid-cols-2 gap-2">
+                                <div className="mt-auto pt-6 border-t border-zinc-800/50 flex items-center gap-2">
                                     <UnifiedAssignDialog
                                         itemId={cardio.id}
                                         students={students}
                                         type="cardio"
                                         title="Atribuir Cardio"
                                         description="Escolha um aluno e os dias da semana para este protocolo."
+                                        colorScheme="emerald"
+                                        trigger={
+                                            <Button className="flex-1 min-w-0 h-9 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-1.5 px-3">
+                                                <Calendar className="w-3.5 h-3.5" />
+                                                <span className="truncate">Atribuir</span>
+                                            </Button>
+                                        }
                                     />
-                                    <div className="flex gap-2">
-                                        <UnifiedDeleteButton
-                                            id={cardio.id}
-                                            actionType="cardio"
-                                            itemName={cardio.name}
-                                        />
-                                        <Button asChild size="sm" className="flex-1 bg-zinc-100 text-zinc-900 hover:bg-white flex items-center justify-center gap-1.5 rounded-xl font-bold">
-                                            <Link href={`/dashboard/trainer/cardio/${cardio.id}`}>
-                                                Editar
-                                                <ChevronRight className="w-3.5 h-3.5" />
-                                            </Link>
-                                        </Button>
-                                    </div>
+                                    <Button asChild variant="outline" className="flex-1 min-w-0 h-9 bg-zinc-800 border-zinc-700 text-zinc-100 hover:bg-zinc-700 flex items-center justify-center gap-1.5 rounded-xl font-black text-[10px] uppercase italic tracking-widest border-white/5 px-3">
+                                        <Link href={`/dashboard/trainer/cardio/${cardio.id}`}>
+                                            <span className="truncate">Editar</span>
+                                        </Link>
+                                    </Button>
                                 </div>
                             </CardContent>
                         </Card>
@@ -108,6 +117,7 @@ export default async function TrainerCardioPage() {
                                 actionType="create-student-cardio"
                                 successMessage="Modelo de cardio criado!"
                                 footerLabel="Salvar Modelo"
+                                colorScheme="emerald"
                             />
                         </div>
                     </Card>

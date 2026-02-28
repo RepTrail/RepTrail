@@ -69,11 +69,13 @@ export function UnifiedAssignDialog({
     const [selectedDays, setSelectedDays] = useState<number[]>(initialDays)
 
     // Sync initialDays when dialog opens
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     React.useEffect(() => {
         if (open) {
             setSelectedDays(initialDays || [])
         }
-    }, [open, initialDays])
+        // JSON.stringify prevents infinite loop from array reference changing every render
+    }, [open, JSON.stringify(initialDays)])
 
     const { toast } = useToast()
     const router = useRouter()

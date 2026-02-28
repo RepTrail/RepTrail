@@ -90,40 +90,40 @@ export function MobileStudentNav({ hasTrainer, steroidUse, autoTrainingActive = 
         >
             <Link
                 href="/dashboard/student"
-                className={`z-10 relative p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student' ? 'bg-emerald-500 text-zinc-950 shadow-lg shadow-emerald-500/20' : 'text-zinc-500 hover:text-zinc-300'}`}
+                className={`z-10 relative p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student' ? 'bg-orange-500 text-zinc-950 shadow-lg shadow-orange-500/20' : 'text-zinc-500 hover:text-zinc-300'}`}
             >
                 <Home className="w-5 h-5" />
             </Link>
             <Link
                 href="/dashboard/student/loja"
-                className={`z-10 relative p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student/loja' ? 'bg-emerald-500 text-zinc-950 shadow-lg shadow-emerald-500/20' : 'text-zinc-500 hover:text-zinc-300'}`}
+                className={`z-10 relative p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student/loja' ? 'bg-orange-500 text-zinc-950 shadow-lg shadow-orange-500/20' : 'text-zinc-500 hover:text-zinc-300'}`}
             >
                 <ShoppingBag className="w-5 h-5" />
             </Link>
             <Link
                 href="/dashboard/student/ranking"
-                className={`z-10 relative p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student/ranking' ? 'bg-emerald-500 text-zinc-950 shadow-lg shadow-emerald-500/20' : 'text-zinc-500 hover:text-zinc-300'}`}
+                className={`z-10 relative p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student/ranking' ? 'bg-orange-500 text-zinc-950 shadow-lg shadow-orange-500/20' : 'text-zinc-500 hover:text-zinc-300'}`}
             >
                 <Trophy className="w-5 h-5" />
             </Link>
             {hasTrainer ? (
                 <Link
                     href="/dashboard/student/meu-personal"
-                    className={`z-10 relative p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student/meu-personal' ? 'bg-emerald-500 text-zinc-950 shadow-lg shadow-emerald-500/20' : 'text-zinc-500 hover:text-zinc-300'}`}
+                    className={`z-10 relative p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student/meu-personal' ? 'bg-orange-500 text-zinc-950 shadow-lg shadow-orange-500/20' : 'text-zinc-500 hover:text-zinc-300'}`}
                 >
                     <UserCheck className="w-5 h-5" />
                 </Link>
             ) : !autoTrainingActive ? (
                 <Link
                     href="/buscar-personal"
-                    className={`z-10 relative p-2.5 rounded-xl transition-all ${pathname === '/buscar-personal' ? 'bg-emerald-500 text-zinc-950 shadow-lg shadow-emerald-500/20' : 'text-zinc-500 hover:text-zinc-300'}`}
+                    className={`z-10 relative p-2.5 rounded-xl transition-all ${pathname === '/buscar-personal' ? 'bg-orange-500 text-zinc-950 shadow-lg shadow-orange-500/20' : 'text-zinc-500 hover:text-zinc-300'}`}
                 >
                     <Search className="w-5 h-5" />
                 </Link>
             ) : null}
             <Link
                 href="/dashboard/student/profile"
-                className={`z-10 relative p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student/profile' ? 'bg-emerald-500 text-zinc-950 shadow-lg shadow-emerald-500/20' : 'text-zinc-500 hover:text-zinc-300'}`}
+                className={`z-10 relative p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student/profile' ? 'bg-orange-500 text-zinc-950 shadow-lg shadow-orange-500/20' : 'text-zinc-500 hover:text-zinc-300'}`}
             >
                 <User className="w-5 h-5" />
             </Link>

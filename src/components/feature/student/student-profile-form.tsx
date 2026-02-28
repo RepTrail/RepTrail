@@ -11,7 +11,8 @@ import {
     Activity,
     FileText,
     Save,
-    Phone
+    Phone,
+    ExternalLink
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -22,6 +23,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { AvatarUploadWithCrop } from '@/components/feature/avatar-upload-with-crop'
 import { StudentTrialBadge } from './student-trial-badge'
 import { CancelSubscriptionButton } from '../subscription/cancel-subscription-button'
+import Link from 'next/link'
 
 interface StudentProfileFormProps {
     profile: any
@@ -118,6 +120,13 @@ export function StudentProfileForm({ profile, hasTrainer = false }: StudentProfi
                                     {profile?.email}
                                 </p>
                             </div>
+
+                            <Link href={`/aluno/${profile?.id}`} target="_blank">
+                                <Button variant="outline" className="w-full h-10 rounded-2xl border-zinc-700 bg-zinc-800/50 hover:bg-zinc-700 hover:border-orange-500/40 text-zinc-300 hover:text-orange-400 font-black uppercase italic tracking-widest text-[9px] transition-all gap-2">
+                                    <ExternalLink className="w-3.5 h-3.5" />
+                                    Ver Perfil Público
+                                </Button>
+                            </Link>
 
                             {!hasTrainer && profile?.auto_training_status && (
                                 <div className="pt-6 border-t border-zinc-800/50">
