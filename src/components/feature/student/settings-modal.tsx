@@ -97,6 +97,8 @@ export function SettingsModal({ hasTrainer = false }: SettingsModalProps) {
     }
 
     const enableAutoTrainingTrial = async () => {
+        if (isTrialActive) return
+
         setUpdating(true)
         await enableAutoTrainingTrialForCurrentUser()
         setUpdating(false)
@@ -150,9 +152,9 @@ export function SettingsModal({ hasTrainer = false }: SettingsModalProps) {
                                 <div className="space-y-2">
                                     {(isTrialActive || !hasUsedTrial) ? (
                                         <button
-                                            onClick={enableAutoTrainingTrial}
+                                            onClick={isTrialActive ? undefined : enableAutoTrainingTrial}
                                             disabled={updating || loading}
-                                            className="w-full flex items-center justify-between p-4 bg-zinc-900/50 rounded-2xl border border-zinc-800 hover:bg-zinc-900 hover:border-zinc-700 transition-all group disabled:opacity-60 disabled:cursor-not-allowed"
+                                            className={`w-full flex items-center justify-between p-4 bg-zinc-900/50 rounded-2xl border border-zinc-800 transition-all group ${isTrialActive ? 'cursor-default' : 'hover:bg-zinc-900 hover:border-zinc-700 disabled:opacity-60 disabled:cursor-not-allowed'}`}
                                         >
                                             <div className="flex items-center gap-3">
                                                 <div className="w-10 h-10 bg-orange-500/10 rounded-xl flex items-center justify-center">
@@ -171,7 +173,13 @@ export function SettingsModal({ hasTrainer = false }: SettingsModalProps) {
                                                     </p>
                                                 </div>
                                             </div>
-                                            <ChevronRight className="w-5 h-5 text-zinc-600 group-hover:text-zinc-400 transition-colors" />
+                                            {isTrialActive ? (
+                                                <div className="flex items-center justify-center pr-2">
+                                                    <div className="w-2 h-2 rounded-full bg-orange-500 animate-[pulse_2s_ease-in-out_infinite]" />
+                                                </div>
+                                            ) : (
+                                                <ChevronRight className="w-5 h-5 text-zinc-600 group-hover:text-zinc-400 transition-colors" />
+                                            )}
                                         </button>
                                     ) : (
                                         <button

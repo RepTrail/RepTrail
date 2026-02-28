@@ -19,7 +19,8 @@ import {
     X,
     Repeat2,
     ListRestart,
-    Save
+    Save,
+    GripVertical
 } from "lucide-react"
 import { cn } from '@/lib/utils'
 import {
@@ -31,7 +32,9 @@ import {
     estimateMacros,
     estimateAllDietMacros,
     updateDietMeta,
-    suggestSubstitution
+    suggestSubstitution,
+    updateMealsOrder,
+    updateMealItemsOrder
 } from "@/actions/diet-actions"
 
 interface MealItem {
@@ -75,11 +78,13 @@ interface DietBuilderProps {
 function MealItemRow({
     item,
     dietId,
-    onRemove
+    onRemove,
+    draggableProps = {}
 }: {
     item: MealItem;
     dietId: string;
     onRemove: (id: string) => Promise<void>;
+    draggableProps?: any;
 }) {
     const [loading, setLoading] = useState<Record<string, boolean>>({})
 
@@ -193,106 +198,115 @@ function MealItemRow({
             !isSaved && "bg-orange-500/5"
         )}>
             {/* Original Item Row */}
-            <div className={cn(
-                "p-4 grid grid-cols-1 lg:grid-cols-12 gap-4 items-end hover:bg-zinc-900/20 border-l-2 transition-all",
-                isSaved ? "border-l-transparent" : "border-l-orange-500 shadow-[inset_10px_0_15px_-10px_rgba(249,115,22,0.1)]"
-            )}>
-                <div className="lg:col-span-3 space-y-1.5">
-                    <div className="flex items-center justify-between">
-                        <Label className="text-[10px] text-zinc-600 uppercase font-bold tracking-tight">Alimento</Label>
-                        {!isSaved && <span className="text-[8px] font-black text-orange-500 bg-orange-500/10 px-1.5 py-0.5 rounded uppercase animate-pulse">Pendente</span>}
-                    </div>
-                    <Input
-                        value={foodName}
-                        onChange={(e) => handleChange(setFoodName, e.target.value)}
-                        className="bg-zinc-900 border-zinc-700 text-sm h-9 text-white focus:border-green-500/50"
-                    />
+            <div
+                {...draggableProps}
+                className={cn(
+                    "p-3 lg:p-4 flex items-start lg:items-end gap-2 lg:gap-3 hover:bg-zinc-900/20 border-l-2 transition-all",
+                    isSaved ? "border-l-transparent" : "border-l-orange-500 shadow-[inset_10px_0_15px_-10px_rgba(249,115,22,0.1)]",
+                    draggableProps.draggable && "cursor-default"
+                )}
+            >
+                <div className="shrink-0 mt-7 lg:mt-0 lg:mb-2.5 flex items-center justify-center">
+                    <GripVertical className="w-4 h-4 text-zinc-700 cursor-move hover:text-orange-500 transition-colors" />
                 </div>
-                <div className="lg:col-span-2 space-y-1.5">
-                    <Label className="text-[10px] text-zinc-600 uppercase font-bold tracking-tight">Quantidade</Label>
-                    <Input
-                        value={quantity}
-                        onChange={(e) => handleChange(setQuantity, e.target.value)}
-                        placeholder="Ex: 100g"
-                        className="bg-zinc-900 border-zinc-700 text-sm h-9 text-center text-white focus:border-green-500/50"
-                    />
-                </div>
-                <div className="lg:col-span-4 grid grid-cols-3 gap-2">
-                    <div className="space-y-1.5">
-                        <Label className="text-[10px] text-blue-500/50 uppercase font-bold tracking-tight">Prot</Label>
+                <div className="flex-1 grid grid-cols-12 gap-2 lg:gap-4 items-end">
+                    <div className="col-span-12 lg:col-span-5 space-y-1.5">
+                        <div className="flex items-center justify-between">
+                            <Label className="text-[10px] text-zinc-600 uppercase font-bold tracking-tight">Alimento</Label>
+                            {!isSaved && <span className="text-[8px] font-black text-orange-500 bg-orange-500/10 px-1.5 py-0.5 rounded uppercase animate-pulse">Pendente</span>}
+                        </div>
                         <Input
-                            type="number"
-                            step="0.1"
-                            value={protein}
-                            onChange={(e) => handleChange(setProtein, parseFloat(e.target.value) || 0)}
-                            className="bg-zinc-900 border-zinc-700 text-xs h-9 text-center text-blue-400 font-medium"
+                            value={foodName}
+                            onChange={(e) => handleChange(setFoodName, e.target.value)}
+                            className="bg-zinc-900 border-zinc-700 text-sm h-9 text-white focus:border-green-500/50 rounded-xl w-full"
                         />
                     </div>
-                    <div className="space-y-1.5">
-                        <Label className="text-[10px] text-orange-500/50 uppercase font-bold tracking-tight">Carb</Label>
+                    <div className="col-span-4 lg:col-span-2 space-y-1.5">
+                        <Label className="text-[10px] text-zinc-600 uppercase font-bold tracking-tight">Qtd</Label>
                         <Input
-                            type="number"
-                            step="0.1"
-                            value={carbs}
-                            onChange={(e) => handleChange(setCarbs, parseFloat(e.target.value) || 0)}
-                            className="bg-zinc-900 border-zinc-700 text-xs h-9 text-center text-orange-400 font-medium"
+                            value={quantity}
+                            onChange={(e) => handleChange(setQuantity, e.target.value)}
+                            placeholder="Ex: 100g"
+                            className="bg-zinc-900 border-zinc-700 text-sm h-9 text-center text-white focus:border-green-500/50 rounded-xl"
                         />
                     </div>
-                    <div className="space-y-1.5">
-                        <Label className="text-[10px] text-yellow-500/50 uppercase font-bold tracking-tight">Gord</Label>
-                        <Input
-                            type="number"
-                            step="0.1"
-                            value={fat}
-                            onChange={(e) => handleChange(setFat, parseFloat(e.target.value) || 0)}
-                            className="bg-zinc-900 border-zinc-700 text-xs h-9 text-center text-yellow-500 font-medium"
-                        />
+                    <div className="col-span-8 lg:col-span-3 grid grid-cols-3 gap-1.5">
+                        <div className="space-y-1.5">
+                            <Label className="text-[10px] text-blue-500/50 uppercase font-bold tracking-tight">Prot</Label>
+                            <Input
+                                type="number"
+                                step="0.1"
+                                value={protein}
+                                onChange={(e) => handleChange(setProtein, parseFloat(e.target.value) || 0)}
+                                className="bg-zinc-900 border-zinc-700 text-xs h-9 text-center text-blue-400 font-medium rounded-xl px-1"
+                            />
+                        </div>
+                        <div className="space-y-1.5">
+                            <Label className="text-[10px] text-orange-500/50 uppercase font-bold tracking-tight">Carb</Label>
+                            <Input
+                                type="number"
+                                step="0.1"
+                                value={carbs}
+                                onChange={(e) => handleChange(setCarbs, parseFloat(e.target.value) || 0)}
+                                className="bg-zinc-900 border-zinc-700 text-xs h-9 text-center text-orange-400 font-medium rounded-xl px-1"
+                            />
+                        </div>
+                        <div className="space-y-1.5">
+                            <Label className="text-[10px] text-yellow-500/50 uppercase font-bold tracking-tight">Gord</Label>
+                            <Input
+                                type="number"
+                                step="0.1"
+                                value={fat}
+                                onChange={(e) => handleChange(setFat, parseFloat(e.target.value) || 0)}
+                                className="bg-zinc-900 border-zinc-700 text-xs h-9 text-center text-yellow-500 font-medium rounded-xl px-1"
+                            />
+                        </div>
                     </div>
-                </div>
-                <div className="lg:col-span-3 flex items-center justify-end gap-2 pb-0.5">
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        disabled={loading.estimate || !foodName}
-                        onClick={handleEstimateMain}
-                        className="text-zinc-600 hover:text-emerald-400 h-9 w-9 hover:bg-emerald-400/5 border border-zinc-800"
-                        title="Calcular macros com IA"
-                    >
-                        {loading.estimate ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-                    </Button>
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleChange(setHasSubstitute, !hasSubstitute)}
-                        className={cn("h-9 w-9 border", hasSubstitute ? "text-orange-500 bg-orange-500/10 border-orange-500/20" : "text-zinc-600 hover:text-orange-400 hover:bg-orange-400/5 border-zinc-800")}
-                        title="Adicionar/Remover Substituição"
-                    >
-                        <Repeat2 className="w-4 h-4" />
-                    </Button>
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => onRemove(item.id)}
-                        className="text-zinc-600 hover:text-red-400 h-9 w-9 hover:bg-red-400/5 border border-zinc-800"
-                        title="Remover item"
-                    >
-                        <Trash2 className="w-4 h-4" />
-                    </Button>
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={handleSave}
-                        disabled={loading.save || (isSaved && !loading.save)}
-                        className={cn(
-                            "h-9 w-9 border transition-all shadow-lg",
-                            isSaved
-                                ? "bg-zinc-800/50 text-zinc-600 border-zinc-800"
-                                : "bg-emerald-500 text-white border-emerald-400 hover:bg-emerald-400"
-                        )}
-                        title="Salvar Alterações"
-                    >
-                        {loading.save ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
-                    </Button>
+                    <div className="col-span-12 lg:col-span-2 flex items-center justify-end gap-1.5 lg:pb-0.5 mt-1 lg:mt-0">
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            disabled={loading.estimate || !foodName}
+                            onClick={handleEstimateMain}
+                            className="text-zinc-600 hover:text-emerald-400 h-9 w-8 hover:bg-emerald-400/5 border border-zinc-800 rounded-xl"
+                            title="Calcular macros com IA"
+                        >
+                            {loading.estimate ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+                        </Button>
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleChange(setHasSubstitute, !hasSubstitute)}
+                            className={cn("h-9 w-8 border rounded-xl", hasSubstitute ? "text-orange-500 bg-orange-500/10 border-orange-500/20" : "text-zinc-600 hover:text-orange-400 hover:bg-orange-400/5 border-zinc-800")}
+                            title="Adicionar/Remover Substituição"
+                        >
+                            <Repeat2 className="w-4 h-4" />
+                        </Button>
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => onRemove(item.id)}
+                            className="text-zinc-600 hover:text-red-400 h-9 w-8 hover:bg-red-400/5 border border-zinc-800 rounded-xl"
+                            title="Remover item"
+                        >
+                            <Trash2 className="w-4 h-4" />
+                        </Button>
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={handleSave}
+                            disabled={loading.save || (isSaved && !loading.save)}
+                            className={cn(
+                                "h-9 w-8 border transition-all rounded-xl",
+                                isSaved
+                                    ? "bg-zinc-800 text-zinc-500 border-zinc-700 opacity-50 cursor-not-allowed"
+                                    : "bg-orange-500 text-zinc-950 border-orange-400 hover:bg-orange-400 animate-pulse shadow-[0_0_15px_rgba(249,115,22,0.3)]"
+                            )}
+                            title="Salvar alterações"
+                        >
+                            {loading.save ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                        </Button>
+                    </div>
                 </div>
             </div>
 
@@ -408,6 +422,93 @@ export function DietBuilder({ diet, backHref = '/dashboard/trainer/diets' }: Die
     const [loadingMap, setLoadingMap] = useState<Record<string, boolean>>({})
     const [newMealName, setNewMealName] = useState('')
     const [newMealTime, setNewMealTime] = useState('')
+
+    // Drag and Drop State
+    const [meals, setMeals] = useState<Meal[]>(diet.meals || [])
+    const [draggedMealId, setDraggedMealId] = useState<string | null>(null)
+    const [draggedItemId, setDraggedItemId] = useState<{ mealId: string, itemId: string } | null>(null)
+
+    useEffect(() => {
+        setMeals(diet.meals || [])
+    }, [diet.meals])
+
+    // Meal Reordering
+    const handleMealDragStart = (e: React.DragEvent, id: string) => {
+        setDraggedMealId(id)
+        if (e.dataTransfer) e.dataTransfer.effectAllowed = 'move'
+    }
+
+    const handleMealDragOver = (e: React.DragEvent, targetId: string) => {
+        e.preventDefault()
+        if (!draggedMealId || draggedMealId === targetId) return
+
+        const draggedIndex = meals.findIndex(m => m.id === draggedMealId)
+        const targetIndex = meals.findIndex(m => m.id === targetId)
+        if (draggedIndex === -1 || targetIndex === -1) return
+
+        const newMeals = [...meals]
+        const [removed] = newMeals.splice(draggedIndex, 1)
+        newMeals.splice(targetIndex, 0, removed)
+        setMeals(newMeals)
+    }
+
+    const handleMealDragEnd = async () => {
+        if (!draggedMealId) return
+        const currentMeals = [...meals]
+        setDraggedMealId(null)
+        setLoadingMap(prev => ({ ...prev, 'reorder-meals': true }))
+
+        const res = await updateMealsOrder(dietIdRef.current, currentMeals.map(m => m.id))
+        if (res.error) {
+            alert("Erro ao reordenar refeições")
+            setMeals(diet.meals)
+        }
+        setLoadingMap(prev => ({ ...prev, 'reorder-meals': false }))
+    }
+
+    // Item Reordering
+    const handleItemDragStart = (e: React.DragEvent, mealId: string, itemId: string) => {
+        e.stopPropagation() // Prevent meal drag
+        setDraggedItemId({ mealId, itemId })
+        if (e.dataTransfer) e.dataTransfer.effectAllowed = 'move'
+    }
+
+    const handleItemDragOver = (e: React.DragEvent, mealId: string, targetId: string) => {
+        e.preventDefault()
+        if (!draggedItemId || draggedItemId.mealId !== mealId || draggedItemId.itemId === targetId) return
+
+        const mealIndex = meals.findIndex(m => m.id === mealId)
+        if (mealIndex === -1) return
+
+        const currentItems = meals[mealIndex].meal_items || []
+        const draggedIndex = currentItems.findIndex(i => i.id === draggedItemId.itemId)
+        const targetIndex = currentItems.findIndex(i => i.id === targetId)
+        if (draggedIndex === -1 || targetIndex === -1) return
+
+        const newMeals = [...meals]
+        const newItems = [...currentItems]
+        const [removed] = newItems.splice(draggedIndex, 1)
+        newItems.splice(targetIndex, 0, removed)
+        newMeals[mealIndex] = { ...newMeals[mealIndex], meal_items: newItems }
+        setMeals(newMeals)
+    }
+
+    const handleItemDragEnd = async (mealId: string) => {
+        if (!draggedItemId) return
+        const currentMeals = [...meals]
+        const meal = currentMeals.find(m => m.id === mealId)
+        setDraggedItemId(null)
+
+        if (meal) {
+            setLoadingMap(prev => ({ ...prev, [`reorder-items-${mealId}`]: true }))
+            const res = await updateMealItemsOrder(mealId, (meal.meal_items || []).map(i => i.id))
+            if (res.error) {
+                alert("Erro ao reordenar itens")
+                setMeals(diet.meals)
+            }
+            setLoadingMap(prev => ({ ...prev, [`reorder-items-${mealId}`]: false }))
+        }
+    }
 
     // Inline name editing
     const [isEditingName, setIsEditingName] = useState(false)
@@ -588,74 +689,102 @@ export function DietBuilder({ diet, backHref = '/dashboard/trainer/diets' }: Die
             </div>
 
             <div className="space-y-6">
-                {diet.meals?.map((meal, index) => {
+                {meals.map((meal, index) => {
                     const mealP = meal.meal_items?.reduce((s, i) => s + (Number(i.protein) || 0), 0)
                     const mealC = meal.meal_items?.reduce((s, i) => s + (Number(i.carbs) || 0), 0)
                     const mealF = meal.meal_items?.reduce((s, i) => s + (Number(i.fat) || 0), 0)
                     const mealKcal = Math.round((mealP * 4) + (mealC * 4) + (mealF * 9))
 
                     return (
-                        <Card key={meal.id} className="bg-zinc-950 border-zinc-800 overflow-hidden shadow-xl" suppressHydrationWarning>
-                            <div className="p-4 bg-zinc-900/40 border-b border-zinc-800/50 flex items-center justify-between">
-                                <div className="flex items-center gap-4">
-                                    <div className="bg-zinc-800 p-2.5 rounded-xl border border-zinc-700/50">
-                                        <Utensils className="w-4 h-4 text-green-400" />
-                                    </div>
-                                    <div className="space-y-0.5">
-                                        <div className="flex items-center gap-3">
-                                            <h3 className="font-bold text-zinc-100 italic">Refeição {index + 1}</h3>
-                                            <span className="text-sm font-medium text-zinc-500">
-                                                {meal.name}
-                                            </span>
-                                            <span className="text-[10px] bg-zinc-800 text-zinc-400 px-2 py-0.5 rounded-full uppercase tracking-tighter">
-                                                {mealKcal} kcal
-                                            </span>
+                        <div
+                            key={meal.id}
+                            draggable
+                            onDragStart={(e) => handleMealDragStart(e, meal.id)}
+                            onDragOver={(e) => handleMealDragOver(e, meal.id)}
+                            onDragEnd={handleMealDragEnd}
+                            className={cn(
+                                "transition-all duration-200",
+                                draggedMealId === meal.id ? "opacity-40 scale-[0.98]" : ""
+                            )}
+                        >
+                            <Card className="bg-zinc-950 border-zinc-800 overflow-hidden shadow-xl" suppressHydrationWarning>
+                                <div className="p-4 bg-zinc-900/40 border-b border-zinc-800/50 flex items-center justify-between">
+                                    <div className="flex items-center gap-4">
+                                        <div className="bg-zinc-800 p-2.5 rounded-xl border border-zinc-700/50 cursor-move">
+                                            <Utensils className="w-4 h-4 text-green-400" />
+                                        </div>
+                                        <div className="space-y-0.5">
+                                            <div className="flex items-center gap-3">
+                                                <h3 className="font-bold text-zinc-100 italic">Refeição {index + 1}</h3>
+                                                {meal.name && !meal.name.toLowerCase().includes('refeição') && (
+                                                    <span className="text-sm font-medium text-zinc-500">
+                                                        {meal.name}
+                                                    </span>
+                                                )}
+                                                <span className="text-[10px] bg-zinc-800 text-zinc-400 px-2 py-0.5 rounded-full uppercase tracking-tighter">
+                                                    {mealKcal} kcal
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <div className="hidden md:flex gap-3 mr-4 text-[10px] uppercase font-bold">
-                                        <span className="text-blue-400/80">P: {Math.round(mealP)}g</span>
-                                        <span className="text-orange-400/80">C: {Math.round(mealC)}g</span>
-                                        <span className="text-yellow-500/80">G: {Math.round(mealF)}g</span>
+                                    <div className="flex items-center gap-2">
+                                        <div className="hidden md:flex gap-3 mr-4 text-[10px] uppercase font-bold">
+                                            <span className="text-blue-400/80">P: {Math.round(mealP)}g</span>
+                                            <span className="text-orange-400/80">C: {Math.round(mealC)}g</span>
+                                            <span className="text-yellow-500/80">G: {Math.round(mealF)}g</span>
+                                            {loadingMap[`reorder-items-${meal.id}`] && <Loader2 className="w-3 h-3 animate-spin text-zinc-600" />}
+                                        </div>
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={() => handleRemoveMeal(meal.id)}
+                                            disabled={loadingMap[`delete-meal-${meal.id}`]}
+                                            className="text-zinc-600 hover:text-red-400 hover:bg-red-400/10 h-8 w-8"
+                                        >
+                                            <Trash2 className="w-4 h-4" />
+                                        </Button>
                                     </div>
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        onClick={() => handleRemoveMeal(meal.id)}
-                                        disabled={loadingMap[`delete-meal-${meal.id}`]}
-                                        className="text-zinc-600 hover:text-red-400 hover:bg-red-400/10 h-8 w-8"
-                                    >
-                                        <Trash2 className="w-4 h-4" />
-                                    </Button>
                                 </div>
-                            </div>
-                            <CardContent className="p-0" suppressHydrationWarning>
-                                <div className="divide-y divide-zinc-900/40">
-                                    {meal.meal_items?.map((item) => (
-                                        <MealItemRow
-                                            key={item.id}
-                                            item={item}
-                                            dietId={diet.id}
-                                            onRemove={handleRemoveItem}
-                                        />
-                                    ))}
-                                </div>
+                                <CardContent className="p-0" suppressHydrationWarning>
+                                    <div className="divide-y divide-zinc-900/40">
+                                        {meal.meal_items?.map((item) => (
+                                            <div
+                                                key={item.id}
+                                                className={cn(
+                                                    "transition-all duration-200",
+                                                    draggedItemId?.itemId === item.id ? "opacity-40" : ""
+                                                )}
+                                            >
+                                                <MealItemRow
+                                                    item={item}
+                                                    dietId={diet.id}
+                                                    onRemove={handleRemoveItem}
+                                                    draggableProps={{
+                                                        draggable: true,
+                                                        onDragStart: (e: any) => handleItemDragStart(e, meal.id, item.id),
+                                                        onDragOver: (e: any) => handleItemDragOver(e, meal.id, item.id),
+                                                        onDragEnd: () => handleItemDragEnd(meal.id)
+                                                    }}
+                                                />
+                                            </div>
+                                        ))}
+                                    </div>
 
-                                <div className="p-4 bg-zinc-900/20 border-t border-zinc-900/50">
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => handleAddItem(meal.id)}
-                                        disabled={loadingMap[`add-item-${meal.id}`]}
-                                        className="w-full border-dashed border-zinc-800 bg-transparent hover:bg-zinc-900 hover:text-zinc-100 text-zinc-500 h-10 rounded-xl"
-                                    >
-                                        {loadingMap[`add-item-${meal.id}`] ? <Loader2 className="w-3 h-3 animate-spin mr-2" /> : <PlusCircle className="w-3 h-3 mr-2" />}
-                                        Adicionar Item à Refeição
-                                    </Button>
-                                </div>
-                            </CardContent>
-                        </Card>
+                                    <div className="p-4 bg-zinc-900/20 border-t border-zinc-900/50">
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => handleAddItem(meal.id)}
+                                            disabled={loadingMap[`add-item-${meal.id}`]}
+                                            className="w-full border-dashed border-zinc-800 bg-transparent hover:bg-zinc-900 hover:text-zinc-100 text-zinc-500 h-10 rounded-xl"
+                                        >
+                                            {loadingMap[`add-item-${meal.id}`] ? <Loader2 className="w-3 h-3 animate-spin mr-2" /> : <PlusCircle className="w-3 h-3 mr-2" />}
+                                            Adicionar Item à Refeição
+                                        </Button>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </div>
                     )
                 })}
 

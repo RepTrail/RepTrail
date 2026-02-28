@@ -64,6 +64,7 @@ export async function deleteWorkout(workoutId: string) {
         if (error) throw error
 
         revalidatePath('/dashboard/trainer/workouts')
+        revalidatePath('/dashboard/student/workouts')
         return { success: true }
     } catch (e: any) {
         return { error: e.message }
@@ -143,7 +144,15 @@ export async function assignWorkout(workoutId: string, studentId: string, dayOfW
     const supabase = await createClient()
 
     try {
-        // Check if already assigned (even if inactive)
+        // First, deactivate any existing day assignments for this workout and student
+        // This ensures the workout is "moved" to the new day rather than duplicated
+        await supabase
+            .from('assigned_workouts')
+            .update({ active: false })
+            .eq('workout_id', workoutId)
+            .eq('student_id', studentId)
+
+        // Check if already assigned (even if inactive) on the SPECIFIC new day
         const { data: existing } = await supabase
             .from('assigned_workouts')
             .select('id, active')
@@ -297,6 +306,26 @@ export async function removeExerciseFromWorkout(id: string, workoutId: string) {
             .eq('id', id)
 
         if (error) throw error
+
+        revalidatePath(`/dashboard/trainer/workouts/${workoutId}`)
+        return { success: true }
+    } catch (e: any) {
+        return { error: e.message }
+    }
+}
+
+export async function updateWorkoutExercisesOrder(workoutId: string, orderedIds: string[]) {
+    const supabase = await createClient()
+
+    try {
+        const promises = orderedIds.map((id, index) =>
+            supabase
+                .from('workout_exercises')
+                .update({ order_index: index })
+                .eq('id', id)
+        )
+
+        await Promise.all(promises)
 
         revalidatePath(`/dashboard/trainer/workouts/${workoutId}`)
         return { success: true }

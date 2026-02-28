@@ -414,7 +414,7 @@ export function WorkoutPlayer({
 
     const getNextSetInfo = () => {
         if (currentStepIndex >= steps.length - 1) {
-            return { label: 'Resumo do Exercício', set: 0, type: 'SUMMARY', color: 'text-white' }
+            return { label: 'Resumo do Exercício', set: 0, type: 'SUMMARY', color: 'text-white', isNewExercise: false, nextExerciseName: '' }
         }
 
         const next = steps[currentStepIndex + 1]
@@ -430,7 +430,9 @@ export function WorkoutPlayer({
             WORKING: 'text-emerald-500'
         } as any)[next.phase]
 
-        return { label, set: next.setNumber, type: next.phase, color }
+        const isNewExercise = next.exerciseName !== currentStep.exerciseName
+
+        return { label, set: next.setNumber, type: next.phase, color, isNewExercise, nextExerciseName: next.exerciseName }
     }
 
     const nextSet = getNextSetInfo()
@@ -643,14 +645,31 @@ export function WorkoutPlayer({
                                 </span>
                             </div>
                         </div>
-                        <div className="text-center space-y-2">
+                        <div className="text-center space-y-3 flex flex-col items-center">
                             <h4 className="text-lg font-black text-zinc-100 uppercase italic">Hora de Descansar</h4>
                             {nextSet && (
-                                <div className="space-y-1 animate-pulse">
-                                    <p className="text-zinc-500 text-[10px] font-black uppercase tracking-widest">Próxima Série</p>
-                                    <p className={`text-xl md:text-2xl font-black uppercase italic tracking-tighter ${nextSet.color}`}>
-                                        {nextSet.label} {nextSet.type !== 'SUMMARY' && nextSet.set}
-                                    </p>
+                                <div className="space-y-1 animate-pulse flex flex-col items-center w-full">
+                                    {nextSet.isNewExercise && nextSet.nextExerciseName ? (
+                                        <>
+                                            <p className="text-zinc-500 text-[10px] font-black uppercase tracking-widest">Prepare-se para o próximo Exercício</p>
+                                            <p className="text-2xl md:text-3xl font-black text-orange-500 uppercase italic tracking-tighter text-center max-w-[90vw] break-words">
+                                                {nextSet.nextExerciseName}
+                                            </p>
+                                            <div className="mt-4 bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2 text-center">
+                                                <p className="text-zinc-500 text-[9px] font-black uppercase tracking-widest">Primeira Série</p>
+                                                <p className={`text-sm font-black uppercase italic tracking-tighter ${nextSet.color}`}>
+                                                    {nextSet.label} {nextSet.type !== 'SUMMARY' && nextSet.set}
+                                                </p>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <p className="text-zinc-500 text-[10px] font-black uppercase tracking-widest">Próxima Série</p>
+                                            <p className={`text-xl md:text-2xl font-black uppercase italic tracking-tighter ${nextSet.color}`}>
+                                                {nextSet.label} {nextSet.type !== 'SUMMARY' && nextSet.set}
+                                            </p>
+                                        </>
+                                    )}
                                 </div>
                             )}
                         </div>

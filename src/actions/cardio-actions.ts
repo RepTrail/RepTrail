@@ -26,17 +26,12 @@ export async function getCardioLibrary() {
 
         const { data, error } = await supabase
             .from('cardios')
-            .select('id, name, description, trainer_id, created_at')
+            .select('id, name, description, trainer_id, created_at, duration_minutes, suggested_intensity')
             .in('trainer_id', trainerIds)
             .order('name', { ascending: true })
             .limit(100)
 
-        console.log('DEBUG: getCardioLibrary for user:', user.id, { data: data?.length, error })
-
-        if (error) {
-            console.error('ERROR: getCardioLibrary failed:', error)
-            throw error
-        }
+        if (error) throw error
         return data || []
     } catch (e) {
         console.error('Error fetching cardio library:', e)
@@ -51,10 +46,14 @@ export async function createCardio(nameOrData: string | FormData, description?: 
 
     let name = ''
     let desc = description
+    let duration = 30
+    let intensity = 'Moderada'
 
     if (nameOrData instanceof FormData) {
         name = nameOrData.get('name') as string
         desc = (nameOrData.get('description') as string) || undefined
+        duration = parseInt(nameOrData.get('duration_minutes')?.toString() || '30')
+        intensity = nameOrData.get('suggested_intensity')?.toString() || 'Moderada'
     } else {
         name = nameOrData
     }
@@ -65,12 +64,17 @@ export async function createCardio(nameOrData: string | FormData, description?: 
             .insert({
                 trainer_id: user.id,
                 name,
-                description: desc
+                description: desc,
+                duration_minutes: duration,
+                suggested_intensity: intensity
             })
             .select()
             .single()
 
         if (error) throw error
+
+        revalidatePath('/dashboard/trainer/cardio')
+        revalidatePath('/dashboard/student/cardio')
         return { success: true, cardio: data }
     } catch (e: any) {
         return { error: e.message }
@@ -88,18 +92,25 @@ export async function getCardioDetails(cardioId: string) {
     return data
 }
 
-export async function updateCardioMeta(cardioId: string, name: string, description?: string) {
+export async function updateCardioMeta(cardioId: string, name: string, description?: string, duration?: number, intensity?: string) {
     const supabase = await createClient()
     try {
-        const updateData: any = { name: name.trim(), description: description?.trim() ?? null }
+        const updateData: any = {
+            name: name.trim(),
+            description: description?.trim() ?? null,
+            duration_minutes: duration,
+            suggested_intensity: intensity
+        }
 
         const { error } = await supabase
             .from('cardios')
             .update(updateData)
             .eq('id', cardioId)
+
         if (error) throw error
         revalidatePath('/dashboard/trainer/cardio')
         revalidatePath(`/dashboard/trainer/cardio/${cardioId}`)
+        revalidatePath('/dashboard/student/cardio')
         return { success: true }
     } catch (e: any) {
         return { error: e.message }
@@ -127,6 +138,7 @@ export async function duplicateCardio(cardioId: string) {
         if (insertErr) throw insertErr
 
         revalidatePath('/dashboard/trainer/cardio')
+        revalidatePath('/dashboard/student/cardio')
         return { success: true }
     } catch (e: any) {
         return { error: e.message }
@@ -136,25 +148,38 @@ export async function duplicateCardio(cardioId: string) {
 export async function assignCardio(data: {
     studentId: string,
     cardioId: string,
-    duration: number,
-    intensity: string,
+    duration?: number,
+    intensity?: string,
     daysOfWeek?: number[]
 }) {
     const supabase = await createClient()
 
     try {
+        // Fetch cardio defaults from template if not provided
+        const { data: template, error: templateErr } = await supabase
+            .from('cardios')
+            .select('duration_minutes, suggested_intensity')
+            .eq('id', data.cardioId)
+            .single()
+
+        if (templateErr) throw templateErr
+
+        const duration = data.duration ?? template.duration_minutes ?? 30
+        const intensity = data.intensity ?? template.suggested_intensity ?? 'Moderada'
+
         const { error } = await supabase
             .from('assigned_cardios')
             .insert({
                 student_id: data.studentId,
                 cardio_id: data.cardioId,
-                duration_minutes: data.duration,
-                suggested_intensity: data.intensity,
+                duration_minutes: duration,
+                suggested_intensity: intensity,
                 days_of_week: data.daysOfWeek
             })
 
         if (error) throw error
         revalidatePath('/dashboard/trainer/students/[id]', 'page')
+        revalidatePath('/dashboard/student/cardio')
         return { success: true }
     } catch (e: any) {
         return { error: e.message }
@@ -172,6 +197,7 @@ export async function removeCardioAssignment(assignmentId: string) {
 
         if (error) throw error
         revalidatePath('/dashboard/trainer/students/[id]', 'page')
+        revalidatePath('/dashboard/student/cardio')
         return { success: true }
     } catch (e: any) {
         return { error: e.message }
@@ -179,8 +205,6 @@ export async function removeCardioAssignment(assignmentId: string) {
 }
 
 export async function getStudentCardioAssignments(studentId: string) {
-    // We use the admin client here to ensure that students can see the metadata (name, description)
-    // of cardios assigned to them, as RLS on the 'cardios' table might be restricted to trainers.
     const supabase = createAdminClient()
     if (!supabase) throw new Error('Admin client not initialized')
 
@@ -189,18 +213,14 @@ export async function getStudentCardioAssignments(studentId: string) {
             .from('assigned_cardios')
             .select(`
                 *,
-                cardio:cardios(id, name, description, trainer_id, created_at)
+                cardio:cardios(id, name, description, trainer_id, created_at, duration_minutes, suggested_intensity)
             `)
             .eq('student_id', studentId)
             .eq('active', true)
             .order('created_at', { ascending: false })
-            .limit(20) // Limit to prevent timeout
+            .limit(20)
 
-        if (error) {
-            console.error('ERROR: Query failed:', error)
-            throw error
-        }
-
+        if (error) throw error
         return data || []
     } catch (e) {
         console.error('Error fetching student cardios:', e)
@@ -208,7 +228,6 @@ export async function getStudentCardioAssignments(studentId: string) {
     }
 }
 
-// Player / Logging Actions
 export async function startCardioSession(assignmentId: string) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
@@ -267,8 +286,6 @@ export async function updateCardioSession(logId: string, seconds: number, runnin
 export async function finishCardioSession(logId: string, feedback?: string, intensity?: string, percentage?: number) {
     const supabase = await createClient()
 
-    const { data: { user } } = await supabase.auth.getUser()
-
     try {
         const { error } = await supabase
             .from('cardio_logs')
@@ -283,7 +300,6 @@ export async function finishCardioSession(logId: string, feedback?: string, inte
 
         if (error) throw error
 
-        // Update Adherence
         const { data: { user } } = await supabase.auth.getUser()
         if (user) {
             const finalPercentage = percentage !== undefined ? percentage : 100
@@ -296,6 +312,7 @@ export async function finishCardioSession(logId: string, feedback?: string, inte
         }
 
         revalidatePath('/dashboard/student', 'page')
+        revalidatePath('/dashboard/student/cardio')
         return { success: true }
     } catch (e: any) {
         return { error: e.message }
@@ -311,7 +328,6 @@ export async function getActiveCardioSession() {
         const tzNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }))
         const todayStr = tzNow.toISOString().split('T')[0]
 
-        // 1. Search for ANY in_progress session for this user
         const { data: active, error } = await supabase
             .from('cardio_logs')
             .select(`
@@ -330,26 +346,16 @@ export async function getActiveCardioSession() {
         if (error) throw error
         if (!active) return null
 
-        // 2. Check if the session is from a previous day
         const sessionDate = new Date(active.started_at).toISOString().split('T')[0]
-        const isFromPreviousDay = sessionDate < todayStr
-
-        if (isFromPreviousDay) {
-            console.log('Lazy Closing previous day cardio session:', active.id)
-
+        if (sessionDate < todayStr) {
             if ((active.elapsed_seconds || 0) < 60) {
-                console.log('DEBUG: Deleting short accidental cardio session:', active.id)
                 await supabase.from('cardio_logs').delete().eq('id', active.id)
             } else {
-                // Calculate percentage based on duration
                 const targetSeconds = (active.assignment?.duration_minutes || 30) * 60
                 let percentage = Math.min((active.elapsed_seconds / targetSeconds) * 100, 100)
-
-                // Auto-finish it
-                await finishCardioSession(active.id, 'Fechamento automático (virada do dia)', undefined, percentage)
+                await finishCardioSession(active.id, 'Fechamento automático', undefined, percentage)
             }
-
-            return null // New day, new start
+            return null
         }
 
         return active
@@ -369,6 +375,7 @@ export async function deleteCardio(cardioId: string) {
 
         if (error) throw error
         revalidatePath('/dashboard/trainer/cardio')
+        revalidatePath('/dashboard/student/cardio')
         return { success: true }
     } catch (e: any) {
         return { error: e.message }

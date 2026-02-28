@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Menu, X, LogOut, Dumbbell, Utensils, Activity, Home, Users, Trophy, CreditCard, FileUp, Sparkles, FlaskConical, TrendingUp, Download, Settings, ClipboardList, Timer } from 'lucide-react'
+import { Menu, X, LogOut, Dumbbell, Utensils, Activity, Home, Users, Trophy, CreditCard, FileUp, Sparkles, Syringe, TrendingUp, Download, Settings, ClipboardList, Timer } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Logo } from '@/components/ui/logo'
 import Link from 'next/link'
@@ -34,7 +34,7 @@ export function MobileHeader({ role, hasTrainer, steroidUse, hideImportPdf, auto
         { href: '/dashboard/student/cardio', icon: <Activity className="w-5 h-5" />, label: 'Cardio', requiresTrainer: true },
         { href: '/dashboard/student/import-pdf', icon: <FileUp className="w-5 h-5" />, label: 'Importar PDF', requiresTrainer: true, hideIfHasTrainer: true },
         { href: '/dashboard/student/progress', icon: <TrendingUp className="w-5 h-5" />, label: 'Minha Evolução', requiresTrainer: true },
-        { href: '/dashboard/student/ergogenics', icon: <Sparkles className="w-5 h-5" />, label: 'Ergogênicos', requiresTrainer: true, showOnlyIfSteroidUse: true },
+        { href: '/dashboard/student/ergogenics', icon: <Syringe className="w-5 h-5" />, label: 'Ergogênicos', requiresTrainer: true, showOnlyIfSteroidUse: true },
         { href: '/dashboard/student/feed', icon: <Users className="w-5 h-5" />, label: 'Feed de Alunos' },
         { href: '/dashboard/student/anamnese', icon: <ClipboardList className="w-5 h-5" />, label: 'Anamnese' },
     ]
@@ -43,7 +43,7 @@ export function MobileHeader({ role, hasTrainer, steroidUse, hideImportPdf, auto
         { href: '/dashboard/trainer/workouts', icon: <Dumbbell className="w-5 h-5" />, label: 'Treinos' },
         { href: '/dashboard/trainer/diets', icon: <Utensils className="w-5 h-5" />, label: 'Dietas' },
         { href: '/dashboard/trainer/cardio', icon: <Activity className="w-5 h-5" />, label: 'Cardio' },
-        { href: '/dashboard/trainer/ergogenics', icon: <FlaskConical className="w-5 h-5" />, label: 'Ergogênicos' },
+        { href: '/dashboard/trainer/ergogenics', icon: <Syringe className="w-5 h-5" />, label: 'Ergogênicos' },
         ...(hideImportPdf ? [] : [{ href: '/dashboard/trainer/import-pdf', icon: <FileUp className="w-5 h-5" />, label: 'Importar PDF' }]),
         { href: '/dashboard/trainer/plans', icon: <CreditCard className="w-5 h-5" />, label: 'Planos & Assinatura' },
     ]

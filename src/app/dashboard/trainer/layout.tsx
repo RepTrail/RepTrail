@@ -8,6 +8,7 @@ import { signOutAction } from '@/actions/auth-actions'
 import { Logo } from '@/components/ui/logo'
 import { MobileHeader } from '@/components/layout/mobile-header'
 import { TrialWarningPopup } from '@/components/layout/trial-warning-popup'
+import { TrainerNavLink, TrainerMobileNavLink } from '@/components/layout/trainer-nav'
 import { headers } from 'next/headers'
 import { getBetaTesterMode } from '@/actions/app-settings-actions'
 
@@ -86,20 +87,20 @@ export default async function TrainerLayout({
                     </div>
 
                     <nav className="space-y-2">
-                        <NavLink href="/dashboard/trainer" icon={<Home className="w-5 h-5" />}>Visão Geral</NavLink>
-                        <NavLink href="/dashboard/trainer/students" icon={<Users className="w-5 h-5" />}>Alunos</NavLink>
-                        <NavLink href="/dashboard/trainer/workouts" icon={<Dumbbell className="w-5 h-5" />}>Treinos</NavLink>
-                        <NavLink href="/dashboard/trainer/diets" icon={<Utensils className="w-5 h-5" />}>Dietas</NavLink>
-                        <NavLink href="/dashboard/trainer/cardio" icon={<Activity className="w-5 h-5" />}>Cardio</NavLink>
-                        <NavLink href="/dashboard/trainer/ergogenics" icon={<FlaskConical className="w-5 h-5" />}>Ergogênicos</NavLink>
-                        {!betaTesterMode && <NavLink href="/dashboard/trainer/import-pdf" icon={<FileUp className="w-5 h-5" />}>Importar PDF</NavLink>}
-                        <NavLink href="/dashboard/trainer/loja" icon={<ShoppingBag className="w-5 h-5" />}>Loja</NavLink>
-                        <NavLink href="/dashboard/trainer/plans" icon={<CreditCard className="w-5 h-5" />}>Planos & Assinatura</NavLink>
-                        <NavLink href="/dashboard/trainer/ranking" icon={<Trophy className="w-5 h-5" />}>Ranking Geral</NavLink>
+                        <TrainerNavLink href="/dashboard/trainer" icon={<Home className="w-5 h-5" />} exact>Visão Geral</TrainerNavLink>
+                        <TrainerNavLink href="/dashboard/trainer/students" icon={<Users className="w-5 h-5" />}>Alunos</TrainerNavLink>
+                        <TrainerNavLink href="/dashboard/trainer/workouts" icon={<Dumbbell className="w-5 h-5" />}>Treinos</TrainerNavLink>
+                        <TrainerNavLink href="/dashboard/trainer/diets" icon={<Utensils className="w-5 h-5" />}>Dietas</TrainerNavLink>
+                        <TrainerNavLink href="/dashboard/trainer/cardio" icon={<Activity className="w-5 h-5" />}>Cardio</TrainerNavLink>
+                        <TrainerNavLink href="/dashboard/trainer/ergogenics" icon={<FlaskConical className="w-5 h-5" />}>Ergogênicos</TrainerNavLink>
+                        {!betaTesterMode && <TrainerNavLink href="/dashboard/trainer/import-pdf" icon={<FileUp className="w-5 h-5" />}>Importar PDF</TrainerNavLink>}
+                        <TrainerNavLink href="/dashboard/trainer/loja" icon={<ShoppingBag className="w-5 h-5" />}>Loja</TrainerNavLink>
+                        <TrainerNavLink href="/dashboard/trainer/plans" icon={<CreditCard className="w-5 h-5" />}>Planos &amp; Assinatura</TrainerNavLink>
+                        <TrainerNavLink href="/dashboard/trainer/ranking" icon={<Trophy className="w-5 h-5" />}>Ranking Geral</TrainerNavLink>
 
                         <div className="border-t border-zinc-800 my-4 pt-4">
                             <div className="px-4 text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Conta</div>
-                            <NavLink href="/dashboard/trainer/profile" icon={<User className="w-5 h-5" />}>Meu Perfil</NavLink>
+                            <TrainerNavLink href="/dashboard/trainer/profile" icon={<User className="w-5 h-5" />}>Meu Perfil</TrainerNavLink>
                         </div>
                     </nav>
                 </div>
@@ -134,11 +135,11 @@ export default async function TrainerLayout({
 
             {/* Mobile Bottom Navigation */}
             <nav className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[95vw] h-16 bg-zinc-900/90 backdrop-blur-xl border border-zinc-800 rounded-2xl z-40 px-2 flex items-center justify-around shadow-2xl shadow-black/50">
-                <MobileNavLink href="/dashboard/trainer" icon={<Home className="w-5 h-5" />} />
-                <MobileNavLink href="/dashboard/trainer/students" icon={<Users className="w-5 h-5" />} />
-                <MobileNavLink href="/dashboard/trainer/loja" icon={<ShoppingBag className="w-5 h-5" />} />
-                <MobileNavLink href="/dashboard/trainer/ranking" icon={<Trophy className="w-5 h-5" />} />
-                <MobileNavLink href="/dashboard/trainer/profile" icon={<User className="w-5 h-5" />} />
+                <TrainerMobileNavLink href="/dashboard/trainer" icon={<Home className="w-5 h-5" />} exact />
+                <TrainerMobileNavLink href="/dashboard/trainer/students" icon={<Users className="w-5 h-5" />} />
+                <TrainerMobileNavLink href="/dashboard/trainer/loja" icon={<ShoppingBag className="w-5 h-5" />} />
+                <TrainerMobileNavLink href="/dashboard/trainer/ranking" icon={<Trophy className="w-5 h-5" />} />
+                <TrainerMobileNavLink href="/dashboard/trainer/profile" icon={<User className="w-5 h-5" />} />
             </nav>
 
             <MobileHeader role="trainer" hideImportPdf={betaTesterMode} />
@@ -153,25 +154,3 @@ export default async function TrainerLayout({
     )
 }
 
-function NavLink({ href, children, icon }: { href: string; children: React.ReactNode; icon?: React.ReactNode }) {
-    return (
-        <Link
-            href={href}
-            className="flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/80 transition-all duration-200 group"
-        >
-            <span className="group-hover:text-white transition-colors text-zinc-500">{icon}</span>
-            <span className="font-medium">{children}</span>
-        </Link>
-    )
-}
-
-function MobileNavLink({ href, icon }: { href: string; icon: React.ReactNode }) {
-    return (
-        <Link
-            href={href}
-            className="p-3 text-zinc-500 hover:text-white transition-colors"
-        >
-            {icon}
-        </Link>
-    )
-}

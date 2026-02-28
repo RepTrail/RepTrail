@@ -6,7 +6,6 @@ import { getTrainerRanking } from '@/actions/trainer-actions'
 import { WorkoutCard } from '@/components/feature/student/dashboard/workout-card'
 import { CardioCard } from '@/components/feature/student/dashboard/cardio-card'
 import { DietCard } from '@/components/feature/student/dashboard/diet-card'
-import { MetricsSummary } from '@/components/feature/student/dashboard/metrics-summary'
 import { ErgogenicsCard } from '@/components/feature/student/dashboard/ergogenics-card'
 
 import { PaymentWarning } from '@/components/feature/student/payment-warning'
@@ -51,7 +50,10 @@ export default async function StudentDashboardPage() {
         getStudentDetails(user.id)
     ])
 
-    const hasAutoTraining = autoTrainingStatus?.auto_training_status === 'active' || autoTrainingStatus?.auto_training_status === 'trial'
+    const hasAutoTraining = autoTrainingStatus?.auto_training_status === 'active' ||
+        (autoTrainingStatus?.auto_training_status === 'trial' && autoTrainingStatus?.auto_training_trial_used && new Date() <= new Date(autoTrainingStatus?.auto_training_trial_end || Date.now() + 100000))
+    const isTrialExpired = autoTrainingStatus?.auto_training_status === 'trial' && autoTrainingStatus?.auto_training_trial_used && new Date() > new Date(autoTrainingStatus?.auto_training_trial_end || Date.now() + 100000)
+
     const showAutoTrainingModal = !autoTrainingStatus?.saw_auto_training_onboarding_modal && !trainerRel
     const showAnamnesis = details?.body_fat === null || details?.body_fat === undefined
 
@@ -99,13 +101,59 @@ export default async function StudentDashboardPage() {
         )
     }
 
+    // Case: Trial Expired
+    if (!trainerRel && isTrialExpired && !hasAutoTraining) {
+        return (
+            <div className="space-y-12 pb-20 animate-in fade-in duration-700">
+                <header className="space-y-8">
+                    <div className="relative group overflow-hidden p-10 md:p-16 bg-zinc-900 border border-zinc-800 rounded-[3.5rem] shadow-2xl mt-12">
+                        <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 via-transparent to-transparent opacity-50" />
+                        <div className="relative z-10 flex flex-col md:flex-row gap-12 items-center">
+                            <div className="flex-1 space-y-6 text-center md:text-left">
+                                <div className="space-y-2">
+                                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-zinc-950 rounded-full border border-emerald-500/30 mb-2">
+                                        <div className="w-2 h-2 rounded-full bg-emerald-500 animate-[pulse_2s_ease-in-out_infinite]" />
+                                        <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Plano Pro</span>
+                                    </div>
+                                    <h2 className="text-3xl md:text-5xl font-black text-white italic uppercase tracking-tighter leading-tight">
+                                        Seu Teste <span className="text-zinc-500">Expirou!</span>
+                                    </h2>
+                                    <p className="text-zinc-400 text-sm md:text-lg font-medium leading-relaxed max-w-md mx-auto md:mx-0">
+                                        Os seus 7 dias gratuitos chegaram ao fim. Assine o Auto-Training Pro e não perca o seu histórico de evolução.
+                                    </p>
+                                </div>
+                                <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-center md:justify-start">
+                                    <Link href="/dashboard/student/plans">
+                                        <Button className="h-16 px-10 rounded-2xl bg-emerald-500 hover:bg-emerald-400 hover:text-zinc-950 text-zinc-950 font-black uppercase italic tracking-wide group shadow-xl transition-all active:scale-95 text-lg">
+                                            Assinar Agora
+                                            <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                                        </Button>
+                                    </Link>
+                                    <Link href="/buscar-personal">
+                                        <Button variant="outline" className="h-16 px-10 rounded-2xl border-zinc-800 bg-zinc-950/50 hover:bg-zinc-800 hover:border-zinc-700 text-white font-black uppercase italic tracking-widest text-lg transition-all shadow-xl backdrop-blur-sm">
+                                            Procurar Personal
+                                        </Button>
+                                    </Link>
+                                </div>
+                            </div>
+                            <div className="hidden lg:block relative shrink-0">
+                                <div className="absolute inset-0 bg-emerald-500 blur-[80px] opacity-20" />
+                                <ShieldCheck className="w-48 h-48 text-emerald-500 relative z-10 opacity-70" />
+                            </div>
+                        </div>
+                    </div>
+                </header>
+            </div>
+        )
+    }
+
     // Case: No Trainer and No Auto-Training (Public/Newbie View)
     if (!trainerRel && !hasAutoTraining) {
         const ranking = await getTrainerRanking()
         const topTrainers = ranking.slice(0, 3)
 
         return (
-            <div className="space-y-12 pb-20 animate-in fade-in duration-700">
+            <div className="space-y-12 pb-20 animate-in fade-in duration-700 mt-12">
                 <header className="space-y-8">
                     <div className="relative group overflow-hidden p-10 md:p-16 bg-zinc-900 border border-zinc-800 rounded-[3.5rem] shadow-2xl">
                         <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 via-transparent to-transparent opacity-50" />
@@ -313,13 +361,6 @@ export default async function StudentDashboardPage() {
 
                 {/* Sidebar (Metrics & Diet) */}
                 <div className="lg:col-span-4 space-y-10">
-                    <div className="space-y-6">
-                        <h2 className="text-[12px] font-black text-zinc-100 flex items-center gap-2 uppercase tracking-[0.2em] px-2">
-                            <Activity className="w-4 h-4 text-orange-500" />
-                            Seu Progresso
-                        </h2>
-                        <MetricsSummary userId={user.id} />
-                    </div>
 
                     <div className="space-y-6">
                         <h2 className="text-[12px] font-black text-zinc-100 flex items-center gap-2 uppercase tracking-[0.2em] px-2">

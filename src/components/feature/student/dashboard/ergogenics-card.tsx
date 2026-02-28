@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import { getStudentErgogenics } from '@/actions/ergogenics-actions'
 import { createClient } from '@/lib/supabase/client'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Sparkles } from 'lucide-react'
+import { Syringe } from 'lucide-react'
 import { ErgogenicCheckButton } from '@/components/feature/student/ergogenic-check-button'
 import { getTodayRangeBrazil } from '@/lib/date-utils'
 
@@ -55,7 +55,7 @@ export function ErgogenicsCard({ userId }: ErgogenicsCardProps) {
             <div className="space-y-6 animate-pulse">
                 <div className="flex items-center justify-between px-2">
                     <div className="flex items-center gap-2">
-                        <Sparkles className="w-4 h-4 text-zinc-800" />
+                        <Syringe className="w-4 h-4 text-zinc-800" />
                         <Skeleton className="h-4 w-32 bg-zinc-800/50" />
                     </div>
                 </div>
@@ -88,7 +88,7 @@ export function ErgogenicsCard({ userId }: ErgogenicsCardProps) {
         <div className="space-y-6">
             <div className="flex items-center justify-between px-2">
                 <h2 className="text-[12px] font-black text-zinc-100 flex items-center gap-2 uppercase tracking-[0.2em]">
-                    <Sparkles className="w-4 h-4 text-amber-500" />
+                    <Syringe className="w-4 h-4 text-orange-500" />
                     Ergogênicos do Dia
                 </h2>
             </div>
@@ -96,7 +96,7 @@ export function ErgogenicsCard({ userId }: ErgogenicsCardProps) {
             {todaysErgogenics.length > 0 ? (
                 <div className="grid gap-6 md:grid-cols-2">
                     {todaysErgogenics.map((erg: any) => (
-                        <div key={erg.id} className="bg-zinc-900/40 border border-zinc-800/50 p-6 rounded-[2rem] backdrop-blur-sm space-y-4 hover:border-amber-500/30 transition-all duration-300">
+                        <div key={erg.id} className="bg-zinc-900/40 border border-zinc-800/50 p-6 rounded-[2rem] backdrop-blur-sm space-y-4 hover:border-orange-500/30 transition-all duration-300">
                             <div className="flex items-center justify-between">
                                 <div className="space-y-1">
                                     <h3 className="text-lg font-black text-white italic uppercase tracking-tight line-clamp-1">
@@ -126,7 +126,7 @@ export function ErgogenicsCard({ userId }: ErgogenicsCardProps) {
                 </div>
             ) : (
                 <div className="bg-zinc-900/20 border border-zinc-800/50 border-dashed rounded-[2.5rem] py-16 flex flex-col items-center justify-center text-center space-y-4">
-                    <Sparkles className="w-8 h-8 text-zinc-700" />
+                    <Syringe className="w-8 h-8 text-zinc-700" />
                     <div className="space-y-1">
                         <p className="text-zinc-400 text-sm font-black uppercase tracking-tight italic">Nenhuma aplicação hoje</p>
                         <p className="text-zinc-600 text-[9px] font-bold uppercase tracking-widest max-w-[200px]">

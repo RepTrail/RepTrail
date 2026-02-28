@@ -24,7 +24,8 @@ import {
     TrendingUp,
     Sparkles,
     FlaskConical,
-    Target
+    Target,
+    Syringe
 } from 'lucide-react'
 import { Badge } from "@/components/ui/badge"
 import Link from 'next/link'
@@ -503,11 +504,11 @@ export default async function StudentDetailPage({ params }: { params: { id: stri
                                 {details?.steroid_use && (
                                     <div className="space-y-5 lg:col-span-2 pt-6">
                                         <h3 className="text-[10px] font-black text-zinc-100 flex items-center gap-2 uppercase tracking-[0.2em] px-2 leading-none">
-                                            <Sparkles className="w-3.5 h-3.5 text-emerald-500" />
+                                            <Sparkles className="w-3.5 h-3.5 text-orange-500" />
                                             Protocolo Ergogênico
                                         </h3>
                                         <ContentCard
-                                            icon={<FlaskConical className="w-4 h-4 text-emerald-500" />}
+                                            icon={<Syringe className="w-4 h-4 text-orange-500" />}
                                             label="Gerenciar Protocolo Farmacológico"
                                             actionLabel="Gerenciar"
                                             href={`/dashboard/trainer/students/${id}/ergogenics`}

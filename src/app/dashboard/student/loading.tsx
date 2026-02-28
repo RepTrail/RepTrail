@@ -1,6 +1,6 @@
 
 import { Skeleton } from "@/components/ui/skeleton"
-import { Activity, Utensils, Dumbbell, Sparkles, ShieldCheck } from 'lucide-react'
+import { Activity, Utensils, Dumbbell, Syringe, ShieldCheck } from 'lucide-react'
 
 export default function StudentDashboardLoading() {
     return (
@@ -106,7 +106,7 @@ export default function StudentDashboardLoading() {
                     <div className="space-y-6">
                         <div className="flex items-center justify-between px-2">
                             <div className="flex items-center gap-2">
-                                <Sparkles className="w-4 h-4 text-zinc-800" />
+                                <Syringe className="w-4 h-4 text-zinc-800" />
                                 <Skeleton className="h-4 w-40 bg-zinc-800/50 rounded-md" />
                             </div>
                         </div>
@@ -131,24 +131,6 @@ export default function StudentDashboardLoading() {
 
                 {/* Sidebar (Diet & Info) */}
                 <div className="lg:col-span-4 space-y-10">
-                    <div className="space-y-6">
-                        <div className="flex items-center gap-2 px-2">
-                            <Activity className="w-4 h-4 text-zinc-800" />
-                            <Skeleton className="h-4 w-32 rounded-md" />
-                        </div>
-
-                        {/* Metrics Summary Skeleton */}
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="bg-zinc-900/30 border border-zinc-800/50 rounded-3xl p-5 space-y-2">
-                                <Skeleton className="h-2 w-10" />
-                                <Skeleton className="h-6 w-16" />
-                            </div>
-                            <div className="bg-zinc-900/30 border border-zinc-800/50 rounded-3xl p-5 space-y-2">
-                                <Skeleton className="h-2 w-10" />
-                                <Skeleton className="h-6 w-16" />
-                            </div>
-                        </div>
-                    </div>
 
                     <div className="space-y-6">
                         <div className="flex items-center gap-2 px-2">

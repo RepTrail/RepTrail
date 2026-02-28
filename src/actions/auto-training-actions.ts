@@ -53,7 +53,7 @@ export async function enableAutoTrainingTrialForCurrentUser() {
 
     // If they haven't started trial yet, set the 7 days
     const updateData: any = {
-        saw_auto_training_onboarding_modal: false,
+        saw_auto_training_onboarding_modal: true,
     }
 
     if (!hasUsedTrial) {
@@ -103,7 +103,7 @@ export async function getStudentAutoTrainingStatus(userId: string) {
 
     const { data, error, status } = await supabase
         .from('profiles')
-        .select('auto_training_status, auto_training_trial_end, saw_auto_training_onboarding_modal')
+        .select('auto_training_status, auto_training_trial_end, auto_training_trial_used, saw_auto_training_onboarding_modal')
         .eq('id', userId)
         .maybeSingle()
 

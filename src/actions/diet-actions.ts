@@ -36,12 +36,18 @@ export async function getTrainerDiets() {
         .from('diets')
         .select(`
             *,
-            meals(count)
+            meals(count),
+            assigned_diets(days_of_week)
         `)
         .eq('trainer_id', user.id)
         .order('created_at', { ascending: false })
 
-    return data || []
+    if (!data) return []
+
+    return data.map((diet: any) => ({
+        ...diet,
+        daysOfWeek: diet.assigned_diets?.[0]?.days_of_week || []
+    }))
 }
 
 export async function createManualDiet(formData: FormData) {
@@ -101,8 +107,10 @@ export async function updateDietMeta(dietId: string, name: string) {
 
         if (error) throw error
 
+        if (error) throw error
+
         revalidatePath('/dashboard/trainer/diets')
-        revalidatePath(`/dashboard/trainer/diets/${dietId}`)
+        revalidatePath('/dashboard/student/diet')
         return { success: true }
     } catch (e: any) {
         return { error: e.message }
@@ -157,6 +165,7 @@ export async function duplicateDiet(dietId: string) {
         }
 
         revalidatePath('/dashboard/trainer/diets')
+        revalidatePath('/dashboard/student/diet')
         return { success: true, newId: newDiet.id }
     } catch (e: any) {
         return { error: e.message }
@@ -270,12 +279,12 @@ export async function getDietDetails(dietId: string) {
 
     if (!diet) return null
 
-    // Sort meals by order_index
+    // Sort meals and items by order_index
     if (diet.meals) {
         diet.meals.sort((a: any, b: any) => a.order_index - b.order_index)
         diet.meals.forEach((meal: any) => {
             if (meal.meal_items) {
-                // Keep order if we had one, for now they are insertion order
+                meal.meal_items.sort((a: any, b: any) => (a.order_index || 0) - (b.order_index || 0))
             }
         })
     }
@@ -318,11 +327,21 @@ export async function addMealItem(mealId: string, dietId: string, data: any) {
     const supabase = await createClient()
 
     try {
+        const { data: existing } = await supabase
+            .from('meal_items')
+            .select('order_index')
+            .eq('meal_id', mealId)
+            .order('order_index', { ascending: false })
+            .limit(1)
+
+        const nextIndex = (existing?.[0]?.order_index ?? -1) + 1
+
         const { error } = await supabase
             .from('meal_items')
             .insert({
                 meal_id: mealId,
-                ...data
+                ...data,
+                order_index: nextIndex
             })
 
         if (error) throw error
@@ -653,6 +672,11 @@ export async function getStudentDailyDiet(studentId: string) {
         if (diet.meals) {
             diet.meals.sort((a: any, b: any) => a.order_index - b.order_index)
             diet.meals = diet.meals.map((meal: any) => {
+                // Sort items
+                if (meal.meal_items) {
+                    meal.meal_items.sort((a: any, b: any) => (a.order_index || 0) - (b.order_index || 0))
+                }
+
                 // Check items first
                 const itemsWithStatus = meal.meal_items?.map((item: any) => {
                     const log = itemLogMap.get(item.id)
@@ -685,5 +709,42 @@ export async function getStudentDailyDiet(studentId: string) {
     } catch (e) {
         console.error('Error fetching student daily diet:', e)
         return null
+    }
+}
+
+export async function updateMealsOrder(dietId: string, orderedIds: string[]) {
+    const supabase = await createClient()
+    try {
+        for (let i = 0; i < orderedIds.length; i++) {
+            await supabase
+                .from('meals')
+                .update({ order_index: i })
+                .eq('id', orderedIds[i])
+                .eq('diet_id', dietId)
+        }
+        revalidatePath(`/dashboard/trainer/diets/${dietId}`)
+        revalidatePath(`/dashboard/student/diet`)
+        return { success: true }
+    } catch (e: any) {
+        return { error: e.message }
+    }
+}
+
+export async function updateMealItemsOrder(mealId: string, orderedIds: string[]) {
+    const supabase = await createClient()
+    try {
+        for (let i = 0; i < orderedIds.length; i++) {
+            await supabase
+                .from('meal_items')
+                .update({ order_index: i })
+                .eq('id', orderedIds[i])
+                .eq('meal_id', mealId)
+        }
+        // We need the dietId to revalidate. We can fetch it or just revalidate parent paths.
+        revalidatePath('/dashboard/trainer/diets')
+        revalidatePath('/dashboard/student/diet')
+        return { success: true }
+    } catch (e: any) {
+        return { error: e.message }
     }
 }

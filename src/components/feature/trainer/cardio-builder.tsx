@@ -12,11 +12,18 @@ import {
     Check,
     X,
     Loader2,
-    Clock,
-    Flame,
     AlignLeft,
-    Save
+    Save,
+    Clock,
+    Zap
 } from 'lucide-react'
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 import { updateCardioMeta } from '@/actions/cardio-actions'
 
 interface CardioBuilderProps {
@@ -24,6 +31,8 @@ interface CardioBuilderProps {
         id: string
         name: string
         description?: string | null
+        duration_minutes?: number | null
+        suggested_intensity?: string | null
         created_at: string
     }
     backHref?: string
@@ -42,13 +51,18 @@ export function CardioBuilder({ cardio, backHref = '/dashboard/trainer/cardio' }
     const [isSavingDesc, setIsSavingDesc] = useState(false)
     const descRef = useRef<HTMLTextAreaElement>(null)
 
+    // Duration and Intensity
+    const [editDuration, setEditDuration] = useState(cardio.duration_minutes?.toString() || '30')
+    const [editIntensity, setEditIntensity] = useState(cardio.suggested_intensity || 'Moderada')
+    const [isSavingMeta, setIsSavingMeta] = useState(false)
+
     useEffect(() => { if (isEditingName) nameInputRef.current?.focus() }, [isEditingName])
     useEffect(() => { if (isEditingDesc) descRef.current?.focus() }, [isEditingDesc])
 
     async function handleSaveName() {
         if (!editName.trim()) return
         setIsSavingName(true)
-        const res = await updateCardioMeta(cardio.id, editName, editDesc)
+        const res = await updateCardioMeta(cardio.id, editName, editDesc, parseInt(editDuration), editIntensity)
         setIsSavingName(false)
         if (res.success) setIsEditingName(false)
     }
@@ -60,9 +74,15 @@ export function CardioBuilder({ cardio, backHref = '/dashboard/trainer/cardio' }
 
     async function handleSaveDesc() {
         setIsSavingDesc(true)
-        const res = await updateCardioMeta(cardio.id, editName, editDesc)
+        const res = await updateCardioMeta(cardio.id, editName, editDesc, parseInt(editDuration), editIntensity)
         setIsSavingDesc(false)
         if (res.success) setIsEditingDesc(false)
+    }
+
+    async function handleSaveQuickMeta(duration: string, intensity: string) {
+        setIsSavingMeta(true)
+        await updateCardioMeta(cardio.id, editName, editDesc, parseInt(duration), intensity)
+        setIsSavingMeta(false)
     }
 
     function handleCancelDesc() {
@@ -188,19 +208,74 @@ export function CardioBuilder({ cardio, backHref = '/dashboard/trainer/cardio' }
                 )}
             </div>
 
-            {/* Tips / Quick stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                {[
-                    { icon: <Activity className="w-4 h-4 text-zinc-500" />, label: 'Template', hint: 'Reutilizável para múltiplos alunos' },
-                ].map((item, i) => (
-                    <div key={i} className="bg-zinc-900/40 border border-zinc-800/50 rounded-2xl p-4 space-y-1.5">
-                        <div className="flex items-center gap-2">
-                            {item.icon}
-                            <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">{item.label}</span>
-                        </div>
-                        {item.hint && <p className="text-xs text-zinc-600 leading-relaxed">{item.hint}</p>}
+            {/* Duration / Intensity */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-zinc-900/40 border border-zinc-800/50 rounded-2xl p-6 space-y-4">
+                    <div className="flex items-center gap-2">
+                        <Clock className="w-4 h-4 text-orange-500" />
+                        <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Duração Padrão (min)</span>
                     </div>
-                ))}
+                    <div className="flex items-center gap-3">
+                        <Input
+                            type="number"
+                            value={editDuration}
+                            onChange={(e) => {
+                                setEditDuration(e.target.value)
+                                handleSaveQuickMeta(e.target.value, editIntensity)
+                            }}
+                            className="bg-zinc-950 border-zinc-800 h-12 rounded-xl focus-visible:ring-orange-500/30 font-bold"
+                        />
+                        {isSavingMeta && <Loader2 className="w-4 h-4 animate-spin text-orange-500" />}
+                    </div>
+                </div>
+
+                <div className="bg-zinc-900/40 border border-zinc-800/50 rounded-2xl p-6 space-y-4">
+                    <div className="flex items-center gap-2">
+                        <Zap className="w-4 h-4 text-orange-500" />
+                        <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Intensidade Sugerida</span>
+                    </div>
+                    <Select
+                        value={editIntensity}
+                        onValueChange={(val) => {
+                            setEditIntensity(val)
+                            handleSaveQuickMeta(editDuration, val)
+                        }}
+                    >
+                        <SelectTrigger className="bg-zinc-950 border-zinc-800 h-12 rounded-xl focus:ring-orange-500/30 font-bold">
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent position="popper" className="bg-zinc-900 border-zinc-800 text-white rounded-2xl p-2 shadow-2xl border-white/5">
+                            {[
+                                { label: 'Leve', value: 'Leve', color: '#10b981' },
+                                { label: 'Moderada', value: 'Moderada', color: '#f59e0b' },
+                                { label: 'Alta', value: 'Alta', color: '#ef4444' },
+                                { label: 'Máxima', value: 'Máxima', color: '#a855f7' }
+                            ].map((opt) => (
+                                <SelectItem
+                                    key={opt.value}
+                                    value={opt.value}
+                                    className="rounded-xl px-3 py-2.5 font-bold focus:bg-orange-500/10 focus:text-orange-500 transition-all cursor-pointer mb-1 last:mb-0"
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: opt.color, boxShadow: `0 0 8px ${opt.color}66` }} />
+                                        {opt.label}
+                                    </div>
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
+            </div>
+
+            {/* Template Info */}
+            <div className="bg-zinc-900/20 border border-zinc-800/30 rounded-2xl p-4 flex items-center gap-3">
+                <div className="p-2 bg-orange-500/10 rounded-lg">
+                    <Activity className="w-4 h-4 text-orange-500" />
+                </div>
+                <div>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Template Reutilizável</p>
+                    <p className="text-[9px] text-zinc-600 font-medium">As configurações acima serão sugeridas automaticamente ao agendar este cardio.</p>
+                </div>
             </div>
 
             {/* Back */}

@@ -131,7 +131,13 @@ export async function submitOnboarding(prevState: OnboardingState, formData: For
         }
     } else {
         // If no personal trainer code, set them up with the Auto Training default plan
-        console.log(`[ONBOARDING] No trainer code, setting up Auto-Training for ${user.id}`);
+        console.log(`[ONBOARDING] No trainer code, setting up Auto-Training data for ${user.id}, but keeping status as none until accepted`);
+
+        await supabase
+            .from('profiles')
+            .update({ auto_training_status: 'none' })
+            .eq('id', user.id);
+
         await setupAutoTrainingForStudent(user.id, data)
     }
 

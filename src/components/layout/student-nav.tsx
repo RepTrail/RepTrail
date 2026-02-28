@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Dumbbell, Utensils, Activity, User, Home, ShoppingBag, Trophy, Search, UserCheck, Sparkles, LogOut, TrendingUp, ClipboardList, Settings } from 'lucide-react'
+import { Dumbbell, Utensils, Activity, User, Home, ShoppingBag, Trophy, Search, UserCheck, Sparkles, LogOut, TrendingUp, ClipboardList, Settings, Syringe } from 'lucide-react'
 import { signOutAction } from '@/actions/auth-actions'
 
 interface StudentNavProps {
@@ -19,7 +19,7 @@ export function StudentNav({ hasTrainer, steroidUse, autoTrainingActive = false 
         { href: '/dashboard/student/workouts', icon: <Dumbbell className="w-4 h-4" />, label: 'Meus Treinos', requiresTrainer: true },
         { href: '/dashboard/student/cardio', icon: <Activity className="w-4 h-4" />, label: 'Cardio', requiresTrainer: true },
         { href: '/dashboard/student/diet', icon: <Utensils className="w-4 h-4" />, label: 'Minha Dieta', requiresTrainer: true },
-        { href: '/dashboard/student/ergogenics', icon: <Sparkles className="w-4 h-4" />, label: 'Ergogênicos', requiresTrainer: true, showOnlyIfSteroidUse: true },
+        { href: '/dashboard/student/ergogenics', icon: <Syringe className="w-4 h-4" />, label: 'Ergogênicos', requiresTrainer: true, showOnlyIfSteroidUse: true },
         { href: '/dashboard/student/progress', icon: <TrendingUp className="w-4 h-4" />, label: 'Evolução', requiresTrainer: true },
         { href: '/dashboard/student/import-pdf', icon: <Sparkles className="w-4 h-4" />, label: 'Importar PDF', requiresTrainer: true, hideIfHasTrainer: true },
         { href: '/dashboard/student/anamnese', icon: <ClipboardList className="w-4 h-4" />, label: 'Anamnese', requiresTrainer: false },

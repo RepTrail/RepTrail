@@ -181,12 +181,20 @@ export async function deleteStudentDiet(dietId: string) {
     if (!user) return { error: 'Unauthorized' }
 
     try {
-        // Hard delete assignment
+        // 1. Delete assignment first (if it's not cascaded)
         await supabase
             .from('assigned_diets')
             .delete()
             .eq('diet_id', dietId)
             .eq('student_id', user.id)
+
+        // 2. Delete the diet record itself if the student is the "trainer" (owner)
+        // This ensures the item disappears from the library
+        await supabase
+            .from('diets')
+            .delete()
+            .eq('id', dietId)
+            .eq('trainer_id', user.id)
 
         revalidatePath('/dashboard/student/diet')
         revalidatePath('/dashboard/student')
@@ -389,8 +397,8 @@ export async function deleteStudentErgogenic(ergogenicId: string) {
 }
 
 export async function assignCardioToStudent(cardioId: string, data: {
-    duration: number
-    intensity: string
+    duration?: number
+    intensity?: string
     daysOfWeek: number[]
 }) {
     const supabase = await createClient()
@@ -398,38 +406,70 @@ export async function assignCardioToStudent(cardioId: string, data: {
     if (!user) return { error: 'Unauthorized' }
 
     try {
-        console.log('DEBUG: Assigning cardio to student:', { cardioId, userId: user.id, data })
+        // Fetch cardio defaults from template if not provided
+        const { data: template, error: templateErr } = await supabase
+            .from('cardios')
+            .select('duration_minutes, suggested_intensity')
+            .eq('id', cardioId)
+            .single()
+
+        if (templateErr) throw templateErr
+
+        const duration = data.duration ?? template.duration_minutes ?? 30
+        const intensity = data.intensity ?? template.suggested_intensity ?? 'Moderada'
+
+        // Deactivate previous day assignments for this cardio
+        await supabase
+            .from('assigned_cardios')
+            .update({ active: false })
+            .eq('cardio_id', cardioId)
+            .eq('student_id', user.id)
 
         // Create assignments for each selected day
         const assignments = data.daysOfWeek.map(day => ({
             student_id: user.id,
             cardio_id: cardioId,
-            duration_minutes: data.duration,
-            suggested_intensity: data.intensity, // Use correct field name
+            duration_minutes: duration,
+            suggested_intensity: intensity,
             day_of_week: day,
             active: true
         }))
-
-        console.log('DEBUG: Creating assignments:', assignments)
 
         // Use timeout option and limit batch size
         const { error } = await supabase
             .from('assigned_cardios')
             .insert(assignments)
             .select('id')
-            .limit(1) // Just return one ID to confirm success
+            .limit(1)
 
-        console.log('DEBUG: Assignment result:', { error })
-
-        if (error) {
-            console.error('ERROR: Assignment failed:', error)
-            throw error
-        }
+        if (error) throw error
 
         revalidatePath('/dashboard/student/cardio')
         return { success: true }
     } catch (e: any) {
-        console.error('ERROR: Failed to assign cardio:', e)
         return { error: e.message || 'Failed to assign cardio' }
+    }
+}
+
+export async function assignErgogenic(ergogenicId: string, daysOfWeek: number[]) {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return { error: 'Unauthorized' }
+
+    try {
+        const { error } = await supabase
+            .from('ergogenics')
+            .update({
+                application_days: daysOfWeek
+            })
+            .eq('id', ergogenicId)
+            .eq('student_id', user.id)
+
+        if (error) throw error
+
+        revalidatePath('/dashboard/student/ergogenics')
+        return { success: true }
+    } catch (e: any) {
+        return { error: e.message || 'Failed to assign ergogenic' }
     }
 }

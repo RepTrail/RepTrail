@@ -35,9 +35,10 @@ export default async function TrainerDietsPage() {
                     fields={[
                         { name: 'name', label: 'Nome da Dieta', placeholder: 'Ex: Dieta para Secar (Low Carb)', required: true }
                     ]}
-                    actionType="create-student-diet"
+                    actionType="create-manual-diet"
                     successMessage="Template de dieta criado!"
                     footerLabel="Salvar Template"
+                    colorScheme="emerald"
                 />
             </div>
 
@@ -78,7 +79,7 @@ export default async function TrainerDietsPage() {
                                         title="Atribuir Dieta"
                                         description="Escolha um aluno e os dias para este plano alimentar."
                                     />
-                                    <Button asChild size="sm" className="bg-zinc-100 text-zinc-900 hover:bg-white flex items-center justify-center gap-2">
+                                    <Button asChild size="sm" className="bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold flex items-center justify-center gap-2 rounded-xl">
                                         <Link href={`/dashboard/trainer/diets/${diet.id}`}>
                                             Editar
                                             <ChevronRight className="w-4 h-4" />
@@ -99,7 +100,7 @@ export default async function TrainerDietsPage() {
                                 <p className="text-zinc-500 mt-1">{betaTesterMode ? 'Crie uma nova dieta para começar.' : 'Importe um PDF ou crie uma nova dieta para começar.'}</p>
                             </div>
                             {!betaTesterMode && (
-                                <Button asChild className="bg-zinc-100 text-zinc-900 hover:bg-white">
+                                <Button asChild className="bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold rounded-xl">
                                     <Link href="/dashboard/trainer/import-pdf">Importar Primeira Dieta</Link>
                                 </Button>
                             )}

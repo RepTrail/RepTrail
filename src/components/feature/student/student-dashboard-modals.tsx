@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { AutoTrainingOnboardingModal } from '@/components/feature/student/auto-training-onboarding-modal'
-import { dismissAutoTrainingForSession, resetAutoTrainingOnboardingModal } from '@/actions/auto-training-actions'
+import { dismissAutoTrainingForSession, resetAutoTrainingOnboardingModal, enableAutoTrainingTrialForCurrentUser } from '@/actions/auto-training-actions'
 
 interface StudentDashboardModalProps {
     userId: string
@@ -28,9 +28,7 @@ export function StudentDashboardModals({ userId, showModal, hasTrainer }: Studen
     }, [])
 
     const handleAccept = async () => {
-        // User accepted, so we mark it as seen so it doesn't pop up again
-        // unless they go to settings and force it again.
-        await dismissAutoTrainingForSession(userId)
+        await enableAutoTrainingTrialForCurrentUser()
         setIsModalOpen(false)
         router.refresh()
     }

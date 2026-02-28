@@ -1,6 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
-import { ChevronLeft, FlaskConical } from 'lucide-react'
+import { ChevronLeft, Syringe, Plus } from 'lucide-react'
 import Link from 'next/link'
+import { Button } from '@/components/ui/button'
+import { UnifiedCreationDialog } from '@/components/feature/shared/unified-creation-dialog'
 import { UnifiedErgogenicsModule } from '@/components/feature/shared/unified-ergogenics-module'
 
 export default async function StudentErgogenicsPage({ params }: { params: { id: string } }) {
@@ -39,32 +41,63 @@ export default async function StudentErgogenicsPage({ params }: { params: { id: 
 
     return (
         <div className="space-y-10 pb-10">
-            <div className="flex flex-col gap-6 pb-2 border-b border-zinc-800/50">
-                <Link
-                    href={`/dashboard/trainer/students/${id}`}
-                    className="flex items-center gap-2 text-zinc-500 hover:text-white transition-colors text-[10px] font-bold uppercase tracking-widest"
-                >
-                    <ChevronLeft className="w-3 h-3" />
-                    Voltar para Aluno
-                </Link>
-                <div className="flex items-center gap-4">
-                    <div className="p-3 bg-emerald-500/10 rounded-2xl border border-emerald-500/20">
-                        <FlaskConical className="w-6 h-6 text-emerald-500" />
-                    </div>
-                    <div>
-                        <h1 className="text-3xl font-black tracking-tight text-white font-sans italic uppercase">
-                            Ergogênicos & Ciclos
-                        </h1>
-                        <p className="text-zinc-500 text-[10px] uppercase font-bold tracking-widest mt-1">Organize o protocolo farmacológico de {studentName}</p>
+            <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 px-4">
+                <div className="space-y-4">
+                    <Link
+                        href={`/dashboard/trainer/students/${id}`}
+                        className="flex items-center gap-2 text-zinc-500 hover:text-white transition-colors text-[10px] font-bold uppercase tracking-widest"
+                    >
+                        <ChevronLeft className="w-3 h-3" />
+                        Voltar para Aluno
+                    </Link>
+                    <div className="flex items-center gap-4">
+                        <div className="p-3 bg-orange-500/10 rounded-2xl border border-orange-500/20">
+                            <Syringe className="w-6 h-6 text-orange-500" />
+                        </div>
+                        <div>
+                            <h1 className="text-3xl font-black tracking-tight text-white font-sans italic uppercase">
+                                Ergogênicos & <span className="text-orange-500">Ciclos</span>
+                            </h1>
+                            <p className="text-zinc-500 text-[10px] uppercase font-bold tracking-widest mt-1">Organize o protocolo farmacológico de {studentName}</p>
+                        </div>
                     </div>
                 </div>
-            </div>
+
+                <div className="flex items-center gap-3 w-full sm:w-auto self-end md:self-center">
+                    <UnifiedCreationDialog
+                        title="Nova Substância"
+                        description={`Defina uma nova substância para o protocolo de ${studentName}.`}
+                        trigger={
+                            <Button className="flex-1 sm:flex-none h-12 px-6 bg-orange-500 hover:bg-orange-400 text-zinc-950 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2">
+                                <Plus className="w-4 h-4" />
+                                Adicionar Substância
+                            </Button>
+                        }
+                        fields={[
+                            { name: 'name', label: 'Nome da Substância', placeholder: 'Ex: Enantato de Testosterona', required: true },
+                            { name: 'weekly_dosage', label: 'Dosagem Semanal Total', placeholder: '250', type: 'number', required: true },
+                            {
+                                name: 'unit', label: 'Unidade', type: 'select', defaultValue: 'mg', options: [
+                                    { label: 'mg (Miligramas)', value: 'mg' },
+                                    { label: 'ml (Mililitros)', value: 'ml' }
+                                ], required: true
+                            },
+                            { name: 'application_days', label: 'Dias de Aplicação', type: 'days', required: true },
+                            { name: 'notes', label: 'Instruções / Notas (Opcional)', placeholder: 'Ex: Aplicar no glúteo...', type: 'textarea' }
+                        ]}
+                        actionType="create-student-ergogenic"
+                        successMessage="Substância adicionada ao protocolo!"
+                        colorScheme="orange"
+                    />
+                </div>
+            </header>
 
             <UnifiedErgogenicsModule
                 studentId={relationship.student_id}
                 mode="trainer"
                 initialErgogenics={ergogenics || []}
                 studentName={studentName}
+                colorScheme="orange"
             />
         </div>
     )
