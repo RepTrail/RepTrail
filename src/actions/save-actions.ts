@@ -384,10 +384,10 @@ export async function saveParsedData(type: 'workout' | 'diet', data: any, studen
                             meal_id: meal.id,
                             food_name: f.name || f.food,
                             quantity: f.quantity,
-                            protein: f.protein || 0,
-                            carbs: f.carbs || 0,
-                            fat: f.fat || 0,
-                            calories: f.calories || 0
+                            protein: Math.round(f.protein || 0),
+                            carbs: Math.round(f.carbs || 0),
+                            fat: Math.round(f.fat || 0),
+                            calories: Math.round(f.calories || 0)
                         }))
 
                         if (itemsToInsert.length > 0) {
