@@ -279,7 +279,7 @@ export function DietAdherence({ diet, allowEstimation = false, hasTrainer = fals
                                                 {meal.name}
                                             </h4>
                                             <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-0.5">
-                                                {meal.time_of_day} • {mealCompleted}/{mealTotal} Itens
+                                                {mealCompleted}/{mealTotal} Itens
                                             </p>
                                         </div>
                                     </div>

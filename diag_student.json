@@ -3809,3 +3809,12 @@
     "active": true
   }
 }
+{
+  "timestamp": "2026-03-02T01:04:12.425Z",
+  "userId": "812c9f7a-39e1-43aa-acdd-abe9dbdf189a",
+  "trainerRel": {
+    "id": "362ff409-3215-4b2f-a73f-66fecffdfa95",
+    "trainer_id": "450e9218-e98d-482b-b3b8-ff7a93fa6309",
+    "active": true
+  }
+}
