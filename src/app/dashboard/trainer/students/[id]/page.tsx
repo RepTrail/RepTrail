@@ -35,7 +35,7 @@ import { StudentGalleryDialog } from '@/components/feature/trainer/student-galle
 import { MarkPaidButton } from '@/components/feature/trainer/mark-paid-button'
 import { UnassignButton } from '@/components/feature/trainer/unassign-button'
 import { StudentWorkoutHistory } from '@/components/feature/trainer/student-workout-history'
-import { getStudentWorkoutHistory, getStudentLastActivity } from '@/actions/log-actions'
+import { getStudentWorkoutHistory, getStudentRecentActivities } from '@/actions/log-actions'
 import { getStudentMetricsHistory, getStudentChartData } from '@/actions/metrics-actions'
 import { StudentMetricsChart } from '@/components/feature/trainer/student-metrics-chart'
 import { CardioAssignmentSection } from '@/components/feature/trainer/cardio-assignment-section'
@@ -44,6 +44,7 @@ import { UnifiedAdherenceChart } from '@/components/feature/shared/unified-adher
 import { ToggleStudentStatusButton } from '@/components/feature/trainer/toggle-student-status-button'
 import { StatCard } from '@/components/feature/shared/stat-card'
 import { PerformanceAnalysisSection } from '@/components/feature/shared/performance-analysis-section'
+import { StudentRecentActivities } from '@/components/feature/trainer/student-recent-activities'
 import { Droplet, Ruler, Info } from 'lucide-react'
 
 export default async function StudentDetailPage({ params }: { params: { id: string } }) {
@@ -91,7 +92,7 @@ export default async function StudentDetailPage({ params }: { params: { id: stri
     const history = await getStudentWorkoutHistory(relationship.student_id)
     const metricsHistory = await getStudentMetricsHistory(relationship.student_id)
     const chartData = await getStudentChartData(relationship.student_id)
-    const lastActivity = await getStudentLastActivity(relationship.student_id)
+    const recentActivities = await getStudentRecentActivities(relationship.student_id, 50)
     const adherenceHistory = await getStudentAdherenceHistory(relationship.student_id, 30)
 
     const { student } = relationship
@@ -528,60 +529,8 @@ export default async function StudentDetailPage({ params }: { params: { id: stri
                     </div>
 
                     <div className="grid gap-8 md:grid-cols-2">
-                        {/* Last Activity Card */}
-                        <Card className="bg-zinc-900/40 border-zinc-800/50 shadow-2xl rounded-3xl overflow-hidden backdrop-blur-sm">
-                            <CardHeader className="bg-zinc-900/60 border-b border-zinc-800/50 py-5">
-                                <CardTitle className="text-[10px] font-black text-amber-500 flex items-center gap-2 uppercase tracking-[0.2em]">
-                                    <Clock className="w-3.5 h-3.5" />
-                                    Última Atividade
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent className="p-7">
-                                {lastActivity ? (
-                                    <div className="space-y-4">
-                                        <div className="flex items-center gap-5">
-                                            <div className="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center border border-amber-500/20 shadow-[0_0_20px_rgba(245,158,11,0.05)]">
-                                                {lastActivity.type === 'workout' && <Dumbbell className="w-6 h-6 text-amber-500" />}
-                                                {lastActivity.type === 'meal' && <Utensils className="w-6 h-6 text-amber-500" />}
-                                                {lastActivity.type === 'cardio' && <Activity className="w-6 h-6 text-amber-500" />}
-                                                {lastActivity.type === 'weight' && <TrendingUp className="w-6 h-6 text-amber-500" />}
-                                                {lastActivity.type === 'photo' && <Camera className="w-6 h-6 text-amber-500" />}
-                                                {!['workout', 'meal', 'cardio', 'weight', 'photo'].includes(lastActivity.type) && <Eye className="w-6 h-6 text-amber-500" />}
-                                            </div>
-                                            <div className="flex-1 space-y-1 min-w-0">
-                                                <p className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Última atividade</p>
-                                                <p className="text-sm font-black text-white italic uppercase tracking-tight truncate">
-                                                    {lastActivity.name}
-                                                </p>
-                                                <p className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest">
-                                                    {lastActivity.relativeTime}
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div className="pt-3 border-t border-zinc-800/50">
-                                            <p className="text-[9px] font-bold text-zinc-600 uppercase tracking-widest">
-                                                {lastActivity.formattedDate}
-                                            </p>
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <div className="flex items-center gap-5">
-                                        <div className="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center border border-amber-500/20 shadow-[0_0_20px_rgba(245,158,11,0.05)]">
-                                            <Eye className="w-6 h-6 text-amber-500" />
-                                        </div>
-                                        <div className="space-y-1">
-                                            <p className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Visto por último</p>
-                                            <p className="text-sm font-black text-white italic uppercase tracking-tight">
-                                                {student?.last_seen_at
-                                                    ? new Date(student.last_seen_at).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })
-                                                    : 'Ainda não acessou'
-                                                }
-                                            </p>
-                                        </div>
-                                    </div>
-                                )}
-                            </CardContent>
-                        </Card>
+                        {/* Recent Activities Card */}
+                        <StudentRecentActivities activities={recentActivities} />
 
                         {/* Photo History Card */}
                         <Card className="bg-zinc-900/40 border-zinc-800/50 shadow-2xl rounded-3xl overflow-hidden backdrop-blur-sm">

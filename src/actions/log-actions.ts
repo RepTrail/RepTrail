@@ -371,6 +371,93 @@ export async function getStudentLastActivity(studentId: string) {
     }
 }
 
+export async function getStudentRecentActivities(studentId: string, limit: number = 10) {
+    const supabase = await createClient()
+
+    try {
+        const [workoutRes, mealRes, cardioRes, weightRes, photoRes] = await Promise.all([
+            supabase
+                .from('workout_logs')
+                .select('completed_at, started_at, workout:workouts(name)')
+                .eq('student_id', studentId)
+                .eq('status', 'completed')
+                .order('completed_at', { ascending: false })
+                .limit(limit),
+            supabase
+                .from('meal_logs')
+                .select('consumed_at, meal:meals(name)')
+                .eq('student_id', studentId)
+                .eq('check_status', true)
+                .order('consumed_at', { ascending: false })
+                .limit(limit),
+            supabase
+                .from('cardio_logs')
+                .select('completed_at, started_at, assigned_cardio:assigned_cardios(cardio:cardios(name))')
+                .eq('student_id', studentId)
+                .eq('status', 'completed')
+                .order('completed_at', { ascending: false })
+                .limit(limit),
+            supabase
+                .from('weight_history')
+                .select('recorded_at, weight_kg')
+                .eq('student_id', studentId)
+                .order('recorded_at', { ascending: false })
+                .limit(limit),
+            supabase
+                .from('progress_photos')
+                .select('created_at')
+                .eq('student_id', studentId)
+                .order('created_at', { ascending: false })
+                .limit(limit),
+        ])
+
+        const activities: Array<{ type: string; name: string; timestamp: string }> = []
+
+        for (const row of workoutRes.data || []) {
+            const ts = row.completed_at || row.started_at
+            if (!ts) continue
+            const workout = Array.isArray(row.workout) ? row.workout[0] : row.workout
+            activities.push({ type: 'workout', name: (workout as any)?.name || 'Treino', timestamp: ts })
+        }
+
+        for (const row of mealRes.data || []) {
+            if (!row.consumed_at) continue
+            const meal = Array.isArray(row.meal) ? row.meal[0] : row.meal
+            activities.push({ type: 'meal', name: (meal as any)?.name || 'Refeição', timestamp: row.consumed_at })
+        }
+
+        for (const row of cardioRes.data || []) {
+            const ts = row.completed_at || row.started_at
+            if (!ts) continue
+            const assigned = Array.isArray(row.assigned_cardio) ? row.assigned_cardio[0] : row.assigned_cardio
+            const cardio = Array.isArray((assigned as any)?.cardio) ? (assigned as any).cardio[0] : (assigned as any)?.cardio
+            activities.push({ type: 'cardio', name: (cardio as any)?.name || 'Cardio', timestamp: ts })
+        }
+
+        for (const row of weightRes.data || []) {
+            if (!row.recorded_at) continue
+            activities.push({ type: 'weight', name: `${row.weight_kg}kg registrado`, timestamp: row.recorded_at })
+        }
+
+        for (const row of photoRes.data || []) {
+            if (!row.created_at) continue
+            activities.push({ type: 'photo', name: 'Fotos de progresso', timestamp: row.created_at })
+        }
+
+        return activities
+            .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+            .slice(0, limit)
+            .map(a => ({
+                ...a,
+                formattedDate: new Date(a.timestamp).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }),
+                relativeTime: getRelativeTime(new Date(a.timestamp)),
+            }))
+    } catch (e) {
+        console.error('Error fetching student recent activities:', e)
+        return []
+    }
+}
+
 function getRelativeTime(date: Date): string {
     const now = new Date()
     const diffMs = now.getTime() - date.getTime()

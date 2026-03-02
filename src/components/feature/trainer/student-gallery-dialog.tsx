@@ -33,13 +33,17 @@ export function StudentGalleryDialog({ photos, studentName, children }: StudentG
     return (
         <>
             <Dialog open={open} onOpenChange={setOpen}>
-                <DialogTrigger asChild>
-                    {children || (
+                {children ? (
+                    <DialogTrigger asChild>
+                        {children}
+                    </DialogTrigger>
+                ) : (
+                    <DialogTrigger asChild>
                         <Button variant="outline" size="sm" className="h-8 border-zinc-800 bg-zinc-900/50 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-lg text-[10px] uppercase font-bold tracking-widest gap-2">
                             Ver Galeria
                         </Button>
-                    )}
-                </DialogTrigger>
+                    </DialogTrigger>
+                )}
                 <DialogContent className="bg-zinc-950 border-zinc-800 text-white sm:max-w-6xl max-w-[98vw] max-h-[95vh] flex flex-col p-0 overflow-hidden rounded-[2.5rem] shadow-2xl">
                     <DialogHeader className="p-8 border-b border-zinc-900 bg-zinc-900/20">
                         <div className="flex items-center justify-between mt-2">
