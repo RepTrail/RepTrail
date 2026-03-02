@@ -140,16 +140,26 @@ export default async function StudentDetailPage({ params }: { params: { id: stri
         }
     }
 
-    // Trend Calculations
+    // Trend Calculations — últimos 30 dias
     const weights = metricsHistory.weights
     const lastWeight = weights[weights.length - 1]?.weight_kg
-    const prevWeight = weights[weights.length - 2]?.weight_kg
-    const weightTrend = prevWeight ? (lastWeight - prevWeight).toFixed(1) : null
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+    // Finds the oldest measurement within the last 30 days (or the most recent before that)
+    const weightBase30 = weights
+        .filter((w: any) => new Date(w.recorded_at) <= thirtyDaysAgo)
+        .at(-1) ?? weights[0]
+    const weightTrend = (lastWeight != null && weightBase30 && weightBase30.weight_kg !== lastWeight)
+        ? (lastWeight - weightBase30.weight_kg).toFixed(1)
+        : null
 
     const bfs = metricsHistory.bfs
     const lastBF = bfs.length > 0 ? bfs[bfs.length - 1]?.bf_percentage : details?.body_fat
-    const prevBF = bfs[bfs.length - 2]?.bf_percentage
-    const bfTrend = prevBF ? (lastBF - prevBF).toFixed(1) : null
+    const bfBase30 = bfs
+        .filter((b: any) => new Date(b.recorded_at) <= thirtyDaysAgo)
+        .at(-1) ?? bfs[0]
+    const bfTrend = (lastBF != null && bfBase30 && bfBase30.bf_percentage !== lastBF)
+        ? (lastBF - bfBase30.bf_percentage).toFixed(1)
+        : null
 
     // Calculate Adherence Average (last 30 days) — Same as student evolution page
     const last30dAdherence = (adherenceHistory || []).filter(h => h.diet_percentage > 0 || h.workout_status === 'completed' || h.cardio_status === 'completed')
@@ -308,7 +318,7 @@ export default async function StudentDetailPage({ params }: { params: { id: stri
                     icon={<TrendingUp className="w-4 h-4" />}
                     trend={weightTrend ? (parseFloat(weightTrend) > 0 ? 'up' : 'down') : 'none'}
                     trendVal={weightTrend ? `${Math.abs(parseFloat(weightTrend))}kg` : '--'}
-                    trendLabel={weightTrend ? "desde a última" : "Sem histórico"}
+                    trendLabel={weightTrend ? "nos últimos 30d" : "Sem histórico"}
                 />
                 <StatCard
                     label="Percentual de Gordura"
@@ -317,7 +327,7 @@ export default async function StudentDetailPage({ params }: { params: { id: stri
                     icon={<Droplet className="w-4 h-4" />}
                     trend={bfTrend ? (parseFloat(bfTrend) > 0 ? 'up' : 'down') : 'none'}
                     trendVal={bfTrend ? `${Math.abs(parseFloat(bfTrend))}%` : '--'}
-                    trendLabel={bfTrend ? "desde a última" : "Sem histórico"}
+                    trendLabel={bfTrend ? "nos últimos 30d" : "Sem histórico"}
                 />
                 <StatCard
                     label="Adesão (30D)"
@@ -539,12 +549,7 @@ export default async function StudentDetailPage({ params }: { params: { id: stri
                                     <Camera className="w-3.5 h-3.5" />
                                     Antes vs Depois
                                 </CardTitle>
-                                <StudentGalleryDialog photos={student?.progress_photos || []} studentName={student.full_name}>
-                                    <Button variant="outline" size="sm" className="h-8 border-zinc-800 bg-zinc-900/80 text-zinc-400 hover:text-white hover:bg-zinc-800 hover:border-purple-500/50 rounded-xl text-[10px] uppercase font-black tracking-widest px-4 gap-2 transition-all shadow-xl active:scale-95">
-                                        <ImageIcon className="w-3.5 h-3.5" />
-                                        Ver Galeria
-                                    </Button>
-                                </StudentGalleryDialog>
+                                <StudentGalleryDialog photos={student?.progress_photos || []} studentName={student.full_name} />
                             </CardHeader>
                             <CardContent className="p-7">
                                 {(() => {
@@ -638,7 +643,7 @@ function ContentCard({ icon, label, subLabel, actionLabel, href, unassignProps }
         <div className="bg-zinc-900/40 border border-zinc-800/50 shadow-xl rounded-3xl overflow-hidden backdrop-blur-sm group/card hover:border-zinc-700/50 transition-all duration-300">
             <div className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
                 <div className="flex items-center gap-4">
-                    <div className="w-11 h-11 rounded-2xl bg-zinc-900 flex items-center justify-center border border-zinc-800 group-hover/card:border-zinc-700 group-hover/card:shadow-[0_0_20px_rgba(255,255,255,0.02)] transition-all">
+                    <div className="w-11 h-11 shrink-0 rounded-2xl bg-zinc-900 flex items-center justify-center border border-zinc-800 group-hover/card:border-zinc-700 group-hover/card:shadow-[0_0_20px_rgba(255,255,255,0.02)] transition-all">
                         {icon}
                     </div>
                     <div>

@@ -7,9 +7,9 @@ import {
     DialogContent,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
+import { Image as ImageIcon } from 'lucide-react'
 import { UnifiedProgressGallery } from '@/components/feature/shared/unified-progress-gallery'
 
 interface PhotoSet {
@@ -24,26 +24,24 @@ interface PhotoSet {
 interface StudentGalleryDialogProps {
     photos: PhotoSet[]
     studentName: string
-    children?: React.ReactNode
 }
 
-export function StudentGalleryDialog({ photos, studentName, children }: StudentGalleryDialogProps) {
+export function StudentGalleryDialog({ photos, studentName }: StudentGalleryDialogProps) {
     const [open, setOpen] = useState(false)
 
     return (
         <>
+            <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setOpen(true)}
+                className="h-8 border-zinc-800 bg-zinc-900/80 text-zinc-400 hover:text-white hover:bg-zinc-800 hover:border-purple-500/50 rounded-xl text-[10px] uppercase font-black tracking-widest px-4 gap-2 transition-all shadow-xl active:scale-95"
+            >
+                <ImageIcon className="w-3.5 h-3.5" />
+                Ver Galeria
+            </Button>
+
             <Dialog open={open} onOpenChange={setOpen}>
-                {children ? (
-                    <DialogTrigger asChild>
-                        {children}
-                    </DialogTrigger>
-                ) : (
-                    <DialogTrigger asChild>
-                        <Button variant="outline" size="sm" className="h-8 border-zinc-800 bg-zinc-900/50 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-lg text-[10px] uppercase font-bold tracking-widest gap-2">
-                            Ver Galeria
-                        </Button>
-                    </DialogTrigger>
-                )}
                 <DialogContent className="bg-zinc-950 border-zinc-800 text-white sm:max-w-6xl max-w-[98vw] max-h-[95vh] flex flex-col p-0 overflow-hidden rounded-[2.5rem] shadow-2xl">
                     <DialogHeader className="p-8 border-b border-zinc-900 bg-zinc-900/20">
                         <div className="flex items-center justify-between mt-2">

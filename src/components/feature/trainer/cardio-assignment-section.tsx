@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import {
-    Plus,
     Activity,
     Clock,
     Timer,
@@ -17,7 +16,6 @@ import {
     getStudentCardioAssignments
 } from '@/actions/cardio-actions'
 import { Badge } from '@/components/ui/badge'
-import { UnifiedAssignDialog } from '@/components/feature/shared/unified-assign-dialog'
 import { UnifiedDeleteButton } from '@/components/feature/shared/unified-delete-button'
 
 interface CardioAssignmentSectionProps {
@@ -67,18 +65,6 @@ export function CardioAssignmentSection({ studentId, relationshipId }: CardioAss
                     <Activity className="w-3.5 h-3.5 text-orange-500" />
                     Cardios Atribuídos
                 </h3>
-                <UnifiedAssignDialog
-                    title="Atribuir Cardio"
-                    description="Selecione um protocolo da biblioteca para este aluno."
-                    items={library}
-                    fixedStudentId={studentId}
-                    type="cardio"
-                    trigger={
-                        <Button variant="ghost" size="sm" className="text-zinc-500 hover:text-white text-[9px] uppercase font-black tracking-widest gap-2 bg-zinc-900/50 rounded-lg h-7 px-3">
-                            Adicionar <Plus className="w-3 h-3" />
-                        </Button>
-                    }
-                />
             </div>
 
             {loading ? (
