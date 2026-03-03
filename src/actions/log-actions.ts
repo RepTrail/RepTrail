@@ -605,3 +605,78 @@ export async function getWorkoutCurrentSessionLoads(logId: string) {
         return []
     }
 }
+
+export async function getWorkoutLogForReview(logId: string) {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return null
+
+    try {
+        const { data: log, error } = await supabase
+            .from('workout_logs')
+            .select(`
+                id,
+                completed_at,
+                feedback,
+                perceived_effort,
+                adherence_status,
+                workout:workouts(id, name),
+                loads:load_history(
+                    id,
+                    exercise_id,
+                    weight_kg,
+                    reps_performed,
+                    set_type,
+                    notes,
+                    recorded_at,
+                    exercise:exercises(id, name)
+                )
+            `)
+            .eq('id', logId)
+            .eq('student_id', user.id)
+            .single()
+
+        if (error) throw error
+        if (!log) return null
+
+        const workout = Array.isArray(log.workout) ? log.workout[0] : log.workout
+        const loads = (log.loads || []).map((l: any) => ({
+            ...l,
+            exercise: Array.isArray(l.exercise) ? l.exercise[0] : (l.exercise || { name: 'Exercício', id: l.exercise_id })
+        }))
+
+        // Group loads by exercise, then by set_type order
+        const setTypeOrder: Record<string, number> = { WARMUP: 0, FEEDER: 1, WORKING: 2 }
+        loads.sort((a: any, b: any) => {
+            const nameA = a.exercise?.name || ''
+            const nameB = b.exercise?.name || ''
+            if (nameA !== nameB) return nameA.localeCompare(nameB)
+            return (setTypeOrder[a.set_type] ?? 3) - (setTypeOrder[b.set_type] ?? 3)
+        })
+
+        return { ...log, workout: workout || { name: 'Treino' }, loads }
+    } catch (e: any) {
+        console.error('Error fetching workout log for review:', e)
+        return null
+    }
+}
+
+export async function updateLoadEntry(loadId: string, weightKg: number, repsPerformed: number) {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return { error: 'Não autorizado.' }
+
+    try {
+        const { error } = await supabase
+            .from('load_history')
+            .update({ weight_kg: weightKg, reps_performed: repsPerformed })
+            .eq('id', loadId)
+            .eq('student_id', user.id)
+
+        if (error) throw error
+        return { success: true }
+    } catch (e: any) {
+        return { error: e.message }
+    }
+}
+

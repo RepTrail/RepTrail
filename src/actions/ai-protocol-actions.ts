@@ -75,8 +75,8 @@ export async function generateAIProtocol(preferences: AIProtocolPreferences) {
   }
   const splitDisplay = splitNames[preferences.workoutSplit] || preferences.workoutSplit
   const volumeDisplay = preferences.trainingVolume === 'low'
-    ? 'Low Volume (menor número de séries, alta intens)'
-    : 'High Volume (maior número de séries, volumes elevados)'
+    ? 'Low Volume (~4 séries por grupo muscular por semana, alta intensidade)'
+    : 'High Volume (~20 séries por grupo muscular por semana, volume elevado)'
 
   const prompt = `
 Você é um Personal Trainer e Nutricionista de elite. Crie um protocolo completo e individualizado baseado nos dados abaixo.
@@ -134,7 +134,7 @@ Retorne SOMENTE um JSON válido com esta estrutura exata. Não adicione markdown
   ],
   "diets": [
     {
-      "diet_name": "Protocolo Alimentar - ${goal === 'muscle_gain' ? 'Superávit' : goal === 'fat_loss' ? 'Déficit' : 'Manutenção'} (${targetCalories} kcal)",
+      "diet_name": "Protocolo Alimentar - ${goal === 'muscle_gain' ? 'Superávit' : goal === 'fat_loss' ? 'Déficit' : 'Manutenção'}",
       "meals": [
         {
           "meal_name": "Café da Manhã (07:00)",
@@ -149,10 +149,15 @@ Retorne SOMENTE um JSON válido com esta estrutura exata. Não adicione markdown
 
 REGRAS:
 - Crie ${preferences.trainingDaysPerWeek} treinos, um para cada dia
-- Volume: ${preferences.trainingVolume === 'low'
-      ? 'LOW VOLUME: 3-4 séries por exercício, 3-5 exercícios por treino, alta intensidade'
-      : 'HIGH VOLUME: 4-5 séries por exercício, 6-10 exercícios por treino, volume elevado'}
-- Cada treino deve ter entre 6-10 exercícios e caber em ${preferences.sessionDurationMinutes} minutos
+- Volume de treino: ${preferences.trainingVolume === 'low'
+      ? 'LOW VOLUME — meta de ~4 séries diretas por grupo muscular por semana. Use 3-4 séries por exercício e selecione menos exercícios por sessão. Priorize alta intensidade e progressão de carga.'
+      : 'HIGH VOLUME — meta de ~20 séries diretas por grupo muscular por semana. Use 4-5 séries por exercício e inclua mais exercícios por sessão, distribuídos ao longo da semana.'}
+- REGRA DE VOLUME SINERGISTA (MUITO IMPORTANTE): Ao calcular o volume semanal de bíceps e tríceps, considere:
+  • Cada exercício de EMPURRAR (supino, desenvolvimento, crucifixo, flies, tríceps pulley etc.) conta como 0,5 série para o TRÍCEPS.
+  • Cada exercício de PUXAR (remada, puxada, serrote, pullover etc.) conta como 0,5 série para o BÍCEPS.
+  • Séries diretas de bíceps (rosca direta, rosca alternada etc.) e tríceps (tríceps corda, barra etc.) contam como 1 série inteira.
+  • Some todas as séries (diretas + sinergistas × 0,5) para garantir que o total semanal de bíceps e tríceps atinja a meta de volume.
+- Cada treino deve caber em ${preferences.sessionDurationMinutes} minutos
 - O cardio deve usar APENAS os tipos que o atleta gosta: ${preferences.cardioLikes || 'qualquer tipo'}
 - Evite os tipos que não gosta: ${preferences.cardioDislikes || 'nenhum'}
 - A dieta deve ter exatamente ${preferences.mealsPerDay} refeições

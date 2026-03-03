@@ -9,6 +9,7 @@ import { DuplicateButton } from '@/components/feature/trainer/duplicate-button'
 import { getTrainerWorkouts } from '@/actions/workout-actions'
 import { UnifiedDeleteButton } from '@/components/feature/shared/unified-delete-button'
 import { cn } from "@/lib/utils"
+import { WorkoutPreviewDialog } from '@/components/feature/student/workout-preview-dialog'
 
 export default async function StudentWorkoutsPage() {
     const supabase = await createClient()
@@ -47,7 +48,15 @@ export default async function StudentWorkoutsPage() {
                 active,
                 workout:workouts(
                     *,
-                    exercises:workout_exercises(*)
+                    exercises:workout_exercises(
+                            id,
+                            order_index,
+                            warmup_sets,
+                            feeder_sets,
+                            working_sets,
+                            reps,
+                            exercise:exercises(name)
+                        )
                 )
             `)
             .eq('student_id', user.id)
@@ -181,6 +190,10 @@ export default async function StudentWorkoutsPage() {
                                                 <span className="text-xs font-black text-zinc-400 italic">{scheduledDay}</span>
                                             </div>
                                             <div className="flex items-center gap-2">
+                                                <WorkoutPreviewDialog
+                                                    workoutName={workout.name}
+                                                    exercises={workout.exercises || []}
+                                                />
                                                 {allowManualWorkouts && (
                                                     <div className="flex gap-1">
                                                         <Button asChild size="sm" variant="outline" className="h-10 px-3 border-zinc-700 text-zinc-400 hover:text-white">

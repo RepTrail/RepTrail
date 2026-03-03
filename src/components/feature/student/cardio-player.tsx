@@ -257,6 +257,7 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
                     description: percentage >= 100 ? 'Cardio finalizado com sucesso!' : 'Cardio finalizado parcialmente.'
                 })
                 queryClient.invalidateQueries({ queryKey: ['active-cardio-session'] })
+                queryClient.invalidateQueries({ queryKey: ['today-cardio-logs'] })
                 setStatus('idle')
                 setSeconds(0)
                 setLogId(null)

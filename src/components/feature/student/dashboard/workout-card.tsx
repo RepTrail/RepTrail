@@ -30,7 +30,7 @@ export function WorkoutCard({ userId }: WorkoutCardProps) {
             // Check Completed
             const { data: completed } = await supabase
                 .from('workout_logs')
-                .select('*')
+                .select('id, status')
                 .eq('workout_id', workout!.id)
                 .eq('student_id', userId)
                 .eq('status', 'completed')
@@ -39,13 +39,13 @@ export function WorkoutCard({ userId }: WorkoutCardProps) {
                 .order('completed_at', { ascending: false })
                 .limit(1)
 
-            if (completed && completed.length > 0) return 'completed'
+            if (completed && completed.length > 0) return { status: 'completed', logId: completed[0].id }
 
             // Check In Progress
             const twelveHoursAgo = new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString()
             const { data: inProgress } = await supabase
                 .from('workout_logs')
-                .select('*')
+                .select('id, status')
                 .eq('workout_id', workout!.id)
                 .eq('student_id', userId)
                 .eq('status', 'in_progress')
@@ -53,7 +53,7 @@ export function WorkoutCard({ userId }: WorkoutCardProps) {
                 .order('started_at', { ascending: false })
                 .limit(1)
 
-            return (inProgress && inProgress.length > 0) ? 'in_progress' : 'not_started'
+            return (inProgress && inProgress.length > 0) ? { status: 'in_progress', logId: inProgress[0].id } : { status: 'not_started', logId: null }
         }
     })
 
@@ -83,11 +83,18 @@ export function WorkoutCard({ userId }: WorkoutCardProps) {
         )
     }
 
+    const status = statusData?.status ?? 'not_started'
+    const logId = statusData?.logId
+
+    const href = status === 'completed' && logId
+        ? `/dashboard/student/workout-log/${logId}/review`
+        : `/dashboard/student/workout/${workout.id}`
+
     return (
-        <Link href={`/dashboard/student/workout/${workout.id}`}>
-            <div className={`group relative p-8 rounded-[2.5rem] backdrop-blur-sm overflow-hidden transition-all duration-500 shadow-xl border cursor-pointer ${statusData === 'completed'
+        <Link href={href}>
+            <div className={`group relative p-8 rounded-[2.5rem] backdrop-blur-sm overflow-hidden transition-all duration-500 shadow-xl border cursor-pointer ${status === 'completed'
                 ? 'bg-emerald-950/20 border-emerald-500/20'
-                : statusData === 'in_progress'
+                : status === 'in_progress'
                     ? 'bg-amber-500/10 border-amber-500/20 hover:border-amber-500/40'
                     : 'bg-zinc-900/40 border-zinc-800/50 hover:border-emerald-500/30'
                 }`}>
@@ -96,13 +103,13 @@ export function WorkoutCard({ userId }: WorkoutCardProps) {
                 </div>
                 <div className="relative space-y-6">
                     <div className="space-y-1">
-                        {statusData === 'completed' && (
+                        {status === 'completed' && (
                             <div className="flex items-center gap-2 text-emerald-500 text-[10px] font-black uppercase tracking-widest mb-1">
                                 <CheckCircle className="w-3 h-3" />
                                 Missão Cumprida
                             </div>
                         )}
-                        {statusData === 'in_progress' && (
+                        {status === 'in_progress' && (
                             <div className="flex items-center gap-2 text-amber-500 text-[10px] font-black uppercase tracking-widest mb-1">
                                 <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
                                 Em Andamento
@@ -112,17 +119,17 @@ export function WorkoutCard({ userId }: WorkoutCardProps) {
                             {workout.name}
                         </h3>
                         <p className="text-zinc-500 text-xs font-bold uppercase tracking-widest">
-                            {workout.exercises?.length || 0} Exercícios • {statusData === 'completed' ? 'Treino concluído' : 'Foco do dia'}
+                            {workout.exercises?.length || 0} Exercícios • {status === 'completed' ? 'Treino concluído' : 'Foco do dia'}
                         </p>
                     </div>
 
-                    <Button className={`h-12 px-8 rounded-xl font-black uppercase italic tracking-wide transition-transform shadow-lg ${statusData === 'completed'
+                    <Button className={`h-12 px-8 rounded-xl font-black uppercase italic tracking-wide transition-transform shadow-lg ${status === 'completed'
                         ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 hover:bg-emerald-500/20'
-                        : statusData === 'in_progress'
+                        : status === 'in_progress'
                             ? 'bg-amber-500 hover:bg-amber-400 text-zinc-950 shadow-amber-500/20'
                             : 'bg-emerald-500 hover:bg-emerald-400 text-zinc-950 shadow-emerald-500/20'
                         }`}>
-                        {statusData === 'completed' ? 'Revisar Treino' : statusData === 'in_progress' ? 'Continuar Treino' : 'Iniciar Treino'}
+                        {status === 'completed' ? 'Revisar Treino' : status === 'in_progress' ? 'Continuar Treino' : 'Iniciar Treino'}
                     </Button>
                 </div>
             </div>
