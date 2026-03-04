@@ -137,7 +137,7 @@ Retorne SOMENTE um JSON válido com esta estrutura exata. Não adicione markdown
       "diet_name": "Protocolo Alimentar - ${goal === 'muscle_gain' ? 'Superávit' : goal === 'fat_loss' ? 'Déficit' : 'Manutenção'}",
       "meals": [
         {
-          "meal_name": "Café da Manhã (07:00)",
+          "meal_name": "Refeição 1",
           "foods": [
             { "name": "Ovo inteiro", "quantity": "3 unidades", "calories": 210, "protein": 18, "carbs": 0, "fat": 15 }
           ]
@@ -161,6 +161,11 @@ REGRAS:
 - O cardio deve usar APENAS os tipos que o atleta gosta: ${preferences.cardioLikes || 'qualquer tipo'}
 - Evite os tipos que não gosta: ${preferences.cardioDislikes || 'nenhum'}
 - A dieta deve ter exatamente ${preferences.mealsPerDay} refeições
+- NOMES DAS REFEIÇÕES: Use SOMENTE "Refeição 1", "Refeição 2", "Refeição 3"... sem horários, sem nomes descritivos.
+- DISTRIBUIÇÃO CALÓRICA DAS REFEIÇÕES:
+${preferences.mealsPerDay === 4 ? `  • 4 refeições: Refeição 1 = leve (~15% das calorias, iniciar metabolismo) | Refeição 2 = pesada (~35%, almoço principal) | Refeição 3 = moderada (~30%, pré-treino com carboidratos) | Refeição 4 = moderada (~20%, pós-treino com proteína)`
+      : preferences.mealsPerDay === 6 ? `  • 6 refeições: Refeição 1 = leve (~10%) | Refeição 2 = pesada (~25%, principal do dia) | Refeição 3 = moderada (~15%, lanche) | Refeição 4 = moderada (~20%, pré-treino) | Refeição 5 = moderada (~20%, pós-treino) | Refeição 6 = leve (~10%, última do dia)`
+        : `  • Distribua as calorias de forma que a segunda refeição seja a mais calórica do dia e a última seja leve. A penúltima deve ser pré-treino (carboidratos) e a última pós-treino (proteína).`}
 - Use apenas alimentos que o atleta gosta: ${preferences.foodLikes || 'qualquer alimento'}
 - Evite: ${preferences.foodDislikes || 'nenhum'} e respeite as restrições: ${preferences.dietaryRestrictions || 'nenhuma'}
 - Macros total das refeições devem somar aproximadamente: ${proteinG}g proteína, ${carbG}g carbs, ${fatG}g gordura

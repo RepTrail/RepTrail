@@ -33,6 +33,11 @@ interface StudentProfileFormProps {
 export function StudentProfileForm({ profile, hasTrainer = false }: StudentProfileFormProps) {
     const [saving, setSaving] = useState(false)
     const [avatarUrl, setAvatarUrl] = useState(profile?.avatar_url || '')
+    const [displayBirthDate, setDisplayBirthDate] = useState(() => {
+        if (!profile?.details?.birth_date) return ''
+        const [year, month, day] = profile.details.birth_date.split('-')
+        return `${day}/${month}/${year}`
+    })
     const [formData, setFormData] = useState({
         full_name: profile?.full_name || '',
         birth_date: profile?.details?.birth_date || '',
@@ -44,6 +49,30 @@ export function StudentProfileForm({ profile, hasTrainer = false }: StudentProfi
         steroid_use: profile?.details?.steroid_use || false,
         whatsapp: profile?.whatsapp || ''
     })
+
+    const handleBirthDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        let value = e.target.value.replace(/\D/g, '')
+        if (value.length > 8) value = value.slice(0, 8)
+
+        let formatted = value
+        if (value.length > 2) {
+            formatted = value.slice(0, 2) + '/' + value.slice(2)
+        }
+        if (value.length > 4) {
+            formatted = formatted.slice(0, 5) + '/' + formatted.slice(5)
+        }
+
+        setDisplayBirthDate(formatted)
+
+        if (value.length === 8) {
+            const day = value.slice(0, 2)
+            const month = value.slice(2, 4)
+            const year = value.slice(4, 8)
+            setFormData(prev => ({ ...prev, birth_date: `${year}-${month}-${day}` }))
+        } else {
+            setFormData(prev => ({ ...prev, birth_date: '' }))
+        }
+    }
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault()
@@ -179,9 +208,11 @@ export function StudentProfileForm({ profile, hasTrainer = false }: StudentProfi
                                             Data de Nascimento
                                         </label>
                                         <Input
-                                            type="date"
-                                            value={formData.birth_date}
-                                            onChange={e => setFormData(f => ({ ...f, birth_date: e.target.value }))}
+                                            id="displayBirthDate"
+                                            type="text"
+                                            placeholder="DD/MM/AAAA"
+                                            value={displayBirthDate}
+                                            onChange={handleBirthDateChange}
                                             className="h-14 bg-zinc-950 border-zinc-800 rounded-2xl focus:border-orange-500/50 font-bold text-white uppercase"
                                         />
                                     </div>

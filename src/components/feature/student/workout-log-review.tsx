@@ -167,18 +167,16 @@ export function WorkoutLogReview({ logId, workoutName, completedAt, loads }: Wor
                 ))}
             </div>
 
-            {/* Save button — fixed bottom */}
-            <div className="fixed bottom-0 left-0 right-0 p-4 bg-zinc-950/95 backdrop-blur-md border-t border-zinc-800/60 z-10">
-                <div className="max-w-lg mx-auto">
-                    <Button
-                        onClick={handleSaveAll}
-                        disabled={isPending}
-                        className="w-full h-14 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black italic uppercase tracking-tight text-base rounded-2xl shadow-2xl shadow-emerald-500/20 transition-all flex items-center justify-center gap-3 active:scale-[0.98]"
-                    >
-                        <Save className="w-5 h-5" />
-                        {isPending ? 'Salvando...' : 'Salvar Alterações'}
-                    </Button>
-                </div>
+            {/* Save button — floating at the bottom */}
+            <div className="fixed bottom-6 left-6 right-6 md:bottom-8 md:left-1/2 md:-translate-x-1/2 md:max-w-lg md:w-full z-50">
+                <Button
+                    onClick={handleSaveAll}
+                    disabled={isPending}
+                    className="w-full h-14 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black italic uppercase tracking-tight text-base rounded-2xl shadow-[0_8px_32px_rgba(16,185,129,0.3)] transition-all flex items-center justify-center gap-3 active:scale-[0.98] border-t border-emerald-400/20"
+                >
+                    <Save className="w-5 h-5" />
+                    {isPending ? 'Salvando...' : 'Salvar Alterações'}
+                </Button>
             </div>
         </div>
     )

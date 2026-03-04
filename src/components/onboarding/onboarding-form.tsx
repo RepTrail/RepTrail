@@ -74,9 +74,34 @@ export function OnboardingForm({ defaultTrainerCode = '' }: { defaultTrainerCode
     const [height, setHeight] = useState('')
     const [startingWeight, setStartingWeight] = useState('')
     const [estimatedBf, setEstimatedBf] = useState('')
+    const [displayBirthDate, setDisplayBirthDate] = useState('')
     const [birthDate, setBirthDate] = useState('')
     const [goal, setGoal] = useState('')
     const [trainerCode, setTrainerCode] = useState(defaultTrainerCode)
+
+    const handleBirthDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        let value = e.target.value.replace(/\D/g, '')
+        if (value.length > 8) value = value.slice(0, 8)
+
+        let formatted = value
+        if (value.length > 2) {
+            formatted = value.slice(0, 2) + '/' + value.slice(2)
+        }
+        if (value.length > 4) {
+            formatted = formatted.slice(0, 5) + '/' + formatted.slice(5)
+        }
+
+        setDisplayBirthDate(formatted)
+
+        if (value.length === 8) {
+            const day = value.slice(0, 2)
+            const month = value.slice(2, 4)
+            const year = value.slice(4, 8)
+            setBirthDate(`${year}-${month}-${day}`)
+        } else {
+            setBirthDate('')
+        }
+    }
 
     // Simple multi-step logic
     const nextStep = () => setStep(s => s + 1)
@@ -181,10 +206,11 @@ export function OnboardingForm({ defaultTrainerCode = '' }: { defaultTrainerCode
                             <div className="space-y-3">
                                 <Label htmlFor="birthDate" className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Data de Nascimento</Label>
                                 <Input
-                                    id="birthDate"
-                                    type="date"
-                                    value={birthDate}
-                                    onChange={(e) => setBirthDate(e.target.value)}
+                                    id="displayBirthDate"
+                                    type="text"
+                                    placeholder="DD/MM/AAAA"
+                                    value={displayBirthDate}
+                                    onChange={handleBirthDateChange}
                                     className="bg-zinc-950 border-zinc-800 text-white rounded-xl h-14 font-bold focus:ring-emerald-500/20"
                                 />
                             </div>

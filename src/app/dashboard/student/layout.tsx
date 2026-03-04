@@ -3,7 +3,8 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { LogOut } from 'lucide-react'
-import { StudentNav, MobileStudentNav } from '@/components/layout/student-nav'
+import { StudentNav } from '@/components/layout/student-nav'
+import { ConditionalMobileNav } from '@/components/layout/conditional-mobile-nav'
 import { signOutAction } from '@/actions/auth-actions'
 import { getStudentTrainer } from '@/actions/student-actions'
 import { Logo } from '@/components/ui/logo'
@@ -100,9 +101,11 @@ export default async function StudentLayout({
             </main>
 
             {/* Mobile Navigation (Floating Bottom Bar) */}
-            <div className="md:hidden fixed bottom-6 left-6 right-6 z-40">
-                <MobileStudentNav hasTrainer={hasTrainer} steroidUse={steroidUse} autoTrainingActive={isAutoTrainingActive} />
-            </div>
+            <ConditionalMobileNav
+                hasTrainer={hasTrainer}
+                steroidUse={steroidUse}
+                autoTrainingActive={isAutoTrainingActive}
+            />
 
             <SettingsModal hasTrainer={hasTrainer} />
             <NotificationRequestModal />
