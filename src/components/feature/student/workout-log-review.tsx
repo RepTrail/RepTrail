@@ -79,9 +79,9 @@ export function WorkoutLogReview({ logId, workoutName, completedAt, loads }: Wor
     const time = new Date(completedAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
 
     return (
-        <div className="max-w-lg mx-auto px-4 py-8 space-y-8 pb-28">
+        <div className="max-w-lg mx-auto px-4 py-6 space-y-4 pb-2 -mb-24">
             {/* Header */}
-            <div className="space-y-4">
+            <div className="space-y-3">
                 <Link
                     href="/dashboard/student"
                     className="flex items-center gap-2 text-zinc-500 hover:text-white text-[10px] font-black uppercase tracking-widest transition-colors"
@@ -109,11 +109,11 @@ export function WorkoutLogReview({ logId, workoutName, completedAt, loads }: Wor
             </div>
 
             {/* Exercises */}
-            <div className="space-y-4">
+            <div className="space-y-2">
                 {Object.entries(grouped).map(([exerciseName, exerciseLoads]) => (
                     <div key={exerciseName} className="bg-zinc-900/50 border border-zinc-800/60 rounded-2xl overflow-hidden">
                         {/* Exercise title */}
-                        <div className="flex items-center gap-3 px-4 py-3 border-b border-zinc-800/40">
+                        <div className="flex items-center gap-3 px-4 py-2 border-b border-zinc-800/40">
                             <Dumbbell className="w-4 h-4 text-orange-500/70 flex-shrink-0" />
                             <p className="text-sm font-black text-white italic uppercase tracking-tight">
                                 {exerciseName}
@@ -127,7 +127,7 @@ export function WorkoutLogReview({ logId, workoutName, completedAt, loads }: Wor
                                 const edit = edits[load.id] || { weight: '0', reps: '0' }
 
                                 return (
-                                    <div key={load.id} className="flex items-center gap-3 px-4 py-3">
+                                    <div key={load.id} className="flex items-center gap-3 px-4 py-2">
                                         {/* Set type badge */}
                                         <span className={`flex-shrink-0 text-[9px] font-black px-2 py-0.5 rounded-md border uppercase ${cfg.color} ${cfg.bg} ${cfg.border}`}>
                                             {cfg.label}
