@@ -12,8 +12,6 @@ import {
     Timer,
     Activity,
     Lock,
-    TrendingUp,
-    LineChart,
     XIcon,
     Bell,
     Trash2
@@ -28,8 +26,7 @@ import {
     DialogDescription,
     DialogFooter,
 } from "@/components/ui/dialog"
-import { UnifiedExerciseChart } from '@/components/feature/shared/unified-exercise-chart'
-import { getExerciseProgress, deleteWorkoutLog } from '@/actions/log-actions'
+import { deleteWorkoutLog } from '@/actions/log-actions'
 import { useToast } from '@/hooks/use-toast'
 
 interface WorkoutLog {
@@ -284,7 +281,6 @@ export function StudentWorkoutHistory({ history, isBlocked, mode = 'student' }: 
                                                                     exerciseName={exGroup.name}
                                                                     notes={exGroup.sets.map(s => s.notes).filter(Boolean) as string[]}
                                                                 />
-                                                                <ProgressionPopup studentId={log.student_id} exerciseId={exGroup.id} exerciseName={exGroup.name} />
                                                                 <div className={`
                                                                     w-9 h-9 sm:w-10 sm:h-10 rounded-xl border flex items-center justify-center transition-all duration-300
                                                                     ${isExExpanded ? 'bg-zinc-100 text-zinc-950 border-white shadow-lg shadow-white/10' : 'bg-zinc-900 border-zinc-800 text-zinc-500'}
@@ -400,78 +396,6 @@ export function StudentWorkoutHistory({ history, isBlocked, mode = 'student' }: 
     )
 }
 
-function ProgressionPopup({ studentId, exerciseId, exerciseName }: { studentId: string, exerciseId: string, exerciseName: string }) {
-    const [data, setData] = useState<any[]>([])
-    const [loading, setLoading] = useState(false)
-
-    const handleOpen = async () => {
-        setLoading(true)
-        try {
-            const history = await getExerciseProgress(studentId, exerciseId)
-            setData(history)
-        } catch (error) {
-            console.error(error)
-        } finally {
-            setLoading(false)
-        }
-    }
-
-    return (
-        <Dialog onOpenChange={(open) => open && handleOpen()}>
-            <DialogTrigger asChild>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={(e) => e.stopPropagation()}
-                    className="h-8 w-8 p-0 rounded-xl bg-emerald-500/5 border-emerald-500/20 hover:bg-emerald-500 hover:text-zinc-950 text-emerald-500 transition-all duration-300 shadow-xl border"
-                >
-                    <LineChart className="w-4 h-4" />
-                </Button>
-            </DialogTrigger>
-            <DialogContent
-                showCloseButton={false}
-                className="bg-zinc-950 border-zinc-800 rounded-[2.5rem] shadow-2xl max-w-4xl w-[90vw] max-h-[85vh] p-0"
-            >
-                <DialogClose asChild>
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="absolute top-4 right-4 z-50 w-10 h-10 rounded-2xl bg-zinc-900/50 border border-zinc-800 text-zinc-500 hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/20 transition-all duration-300"
-                    >
-                        <XIcon className="w-5 h-5" />
-                    </Button>
-                </DialogClose>
-
-                <div className="overflow-y-auto max-h-[85vh] p-6 sm:p-10">
-                    <DialogHeader className="mb-8">
-                        <div className="flex items-center justify-start gap-4 pr-12">
-                            <div className="w-12 h-12 flex items-center justify-center bg-emerald-500/10 rounded-2xl border border-emerald-500/20 shrink-0">
-                                <TrendingUp className="w-6 h-6 text-emerald-500" />
-                            </div>
-                            <div className="space-y-1 text-left min-w-0">
-                                <DialogTitle className="text-lg sm:text-2xl font-black text-zinc-100 uppercase italic tracking-tighter leading-tight">
-                                    Evolução de Carga
-                                </DialogTitle>
-                                <p className="text-[9px] sm:text-[10px] font-black text-emerald-500 uppercase tracking-widest">{exerciseName}</p>
-                            </div>
-                        </div>
-                    </DialogHeader>
-
-                    {loading ? (
-                        <div className="aspect-[16/7] flex items-center justify-center bg-zinc-900/30 rounded-3xl border border-zinc-800 border-dashed">
-                            <div className="flex flex-col items-center gap-4">
-                                <div className="w-8 h-8 rounded-full border-4 border-emerald-500/20 border-t-emerald-500 animate-spin" />
-                                <span className="text-[10px] font-black text-zinc-600 uppercase tracking-widest italic">Analisando histórico...</span>
-                            </div>
-                        </div>
-                    ) : (
-                        <UnifiedExerciseChart data={data} mode="detailed" exerciseName={exerciseName} />
-                    )}
-                </div>
-            </DialogContent>
-        </Dialog>
-    )
-}
 
 function ObservationsPopup({ exerciseName, notes }: { exerciseName: string, notes: string[] }) {
     const hasNotes = notes.length > 0

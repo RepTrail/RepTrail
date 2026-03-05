@@ -832,14 +832,7 @@ function SummarySetRow({ set, lastSessionSet, initialWeight, initialReps, onUpda
                     }`}>
                     {set.type === 'WORKING' ? `Série ${set.setNumber}` : set.label}
                 </span>
-                {lastSessionSet && (
-                    <div className="mt-1.5 flex flex-col pl-1">
-                        <span className="text-[7px] font-black text-zinc-600 uppercase tracking-widest leading-none mb-0.5">Último Treino</span>
-                        <span className="text-[10px] font-black text-zinc-400 italic">
-                            {lastSessionSet.weight_kg}kg <span className="text-zinc-600 not-italic">x</span> {lastSessionSet.reps_performed}
-                        </span>
-                    </div>
-                )}
+
             </div>
             <div className="flex gap-4 w-full flex-1">
                 <div className="flex-1 space-y-1">
