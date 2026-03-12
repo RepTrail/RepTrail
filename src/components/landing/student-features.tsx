@@ -42,8 +42,8 @@ export function StudentFeatures() {
                 </div>
 
                 {/* Text Content (Right Side on Desktop) */}
-                <div className="flex flex-col gap-[30px] md:gap-[50px] text-center lg:text-left w-full lg:w-[calc(50%-25px)] animate-in fade-in slide-in-from-right-8 duration-1000 delay-200">
-                    <div className="flex flex-col gap-[20px] items-center lg:items-start text-center lg:text-left">
+                <div className="flex flex-col gap-[30px] md:gap-[50px] text-left w-full lg:w-[calc(50%-25px)] animate-in fade-in slide-in-from-right-8 duration-1000 delay-200">
+                    <div className="flex flex-col gap-[20px] items-start text-left">
                         <div className="inline-flex items-center rounded-full border border-orange-500/20 bg-orange-500/5 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-orange-500">
                             <Flame className="w-3 h-3 mr-2" />
                             Para Alunos

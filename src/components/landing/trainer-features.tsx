@@ -16,7 +16,7 @@ export function TrainerFeatures() {
 
             <div className="w-full max-w-[1100px] mx-auto flex flex-col lg:flex-row gap-[50px] items-center justify-between relative z-10">
                 <div className="order-2 lg:order-1 flex flex-col gap-[30px] md:gap-[50px] w-full lg:w-[calc(50%-25px)] animate-in fade-in slide-in-from-left-8 duration-1000">
-                    <div className="flex flex-col gap-[20px] items-center lg:items-start text-center lg:text-left">
+                    <div className="flex flex-col gap-[20px] items-start text-left">
                         <div className="inline-flex items-center rounded-full border border-emerald-500/20 bg-emerald-500/5 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-emerald-500">
                             <ShieldCheck className="w-3 h-3 mr-2" />
                             Para Personal Trainers
