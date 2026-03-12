@@ -7,7 +7,7 @@ export function SocialProofSection() {
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-orange-900/10 via-zinc-950 to-zinc-950" />
 
             <div className="w-full max-w-[1100px] mx-auto flex flex-col gap-[30px] md:gap-[50px] relative z-10">
-                <div className="flex flex-col gap-[20px] items-center text-center max-w-2xl mx-auto">
+                <div className="flex flex-col items-center gap-[20px] text-center max-w-2xl mx-auto">
                     <h2 className="text-3xl md:text-5xl font-black text-white italic uppercase tracking-tighter">
                         Depoimentos e <span className="text-emerald-500">Resultados.</span>
                     </h2>

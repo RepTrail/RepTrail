@@ -37,7 +37,7 @@ export function GuaranteeSection() {
                             <h2 className="text-3xl md:text-5xl font-black text-white uppercase italic tracking-tighter leading-tight">
                                 Teste sem compromisso por <span className="text-emerald-500">7 dias.</span>
                             </h2>
-                            <p className="text-zinc-400 text-lg leading-relaxed max-w-xl">
+                            <p className="text-zinc-400 text-lg leading-relaxed max-w-xl text-justify">
                                 Temos tanta confiança na nossa infraestrutura que oferecemos uma <span className="text-white font-bold">garantia incondicional</span>. Se em 7 dias você sentir que o RepTrail não é para você, devolvemos 100% do seu investimento. Sem perguntas.
                             </p>
                         </div>

@@ -31,7 +31,7 @@ export function AboutSection() {
     return (
         <section className="py-[50px] md:py-[100px] px-[20px] bg-zinc-950 border-b border-zinc-900 w-full">
             <div className="w-full max-w-[1100px] mx-auto flex flex-col gap-[30px] md:gap-[50px]">
-                <div className="flex flex-col gap-[20px] text-center max-w-2xl mx-auto">
+                <div className="flex flex-col items-center gap-[20px] text-center max-w-2xl mx-auto">
                     <h2 className="text-3xl md:text-5xl font-black text-white uppercase italic tracking-tighter">
                         Infraestrutura <span className="text-emerald-500">Professional.</span>
                     </h2>
