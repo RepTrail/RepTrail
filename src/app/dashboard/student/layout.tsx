@@ -93,7 +93,7 @@ export default async function StudentLayout({
                 {/* Background Glow - Optimized for mobile performance */}
                 <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-emerald-500/10 blur-[80px] rounded-full -mr-32 -mt-32 pointer-events-none gpu-accelerated" />
 
-                <div className="pt-24 md:pt-[50px] p-4 pb-32 md:pb-10 md:p-10 relative z-10 page-entry">
+                <div className="pt-24 md:pt-[50px] px-container-padding pb-32 md:pb-10 relative z-10 page-entry">
                     <div className="max-w-7xl mx-auto">
                         {children}
                     </div>

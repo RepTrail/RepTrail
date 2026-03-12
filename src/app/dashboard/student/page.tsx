@@ -291,12 +291,12 @@ export default async function StudentDashboardPage() {
     }
 
     return (
-        <div className="space-y-10 pb-20 animate-in fade-in duration-500">
+        <div className="flex flex-col gap-section-gap px-container-padding animate-in fade-in duration-500">
             <PaymentWarning relationship={trainerRel} />
 
-            {/* Welcome Header - Static/Sync part of the shell */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                <div className="space-y-4">
+            {/* Welcome Header */}
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-header-gap">
+                <div className="flex flex-col gap-subtitle-gap">
                     <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                         <h1 className="text-4xl font-black text-white italic uppercase tracking-tighter">
                             Dashboard
@@ -340,10 +340,10 @@ export default async function StudentDashboardPage() {
             )}
 
             {hasProtocol && (
-                <div className="grid gap-8 lg:grid-cols-12">
-                    {/* Async Sections (Independent data fetching) */}
-                    <div className="lg:col-span-8 space-y-10">
-                        <div className="space-y-6">
+                <div className="grid gap-section-gap lg:grid-cols-12">
+                    {/* Async Sections */}
+                    <div className="lg:col-span-8 flex flex-col gap-section-gap">
+                        <div className="flex flex-col gap-header-gap">
                             <div className="flex items-center justify-between px-2">
                                 <h2 className="text-[12px] font-black text-zinc-100 flex items-center gap-2 uppercase tracking-[0.2em]">
                                     <Dumbbell className="w-4 h-4 text-emerald-500" />
@@ -357,7 +357,7 @@ export default async function StudentDashboardPage() {
                             <WorkoutCard userId={user.id} />
                         </div>
 
-                        <div className="space-y-6">
+                        <div className="flex flex-col gap-header-gap">
                             <div className="flex items-center justify-between px-2">
                                 <h2 className="text-[12px] font-black text-zinc-100 flex items-center gap-2 uppercase tracking-[0.2em]">
                                     <Activity className="w-4 h-4 text-orange-500" />
@@ -371,9 +371,8 @@ export default async function StudentDashboardPage() {
                     </div>
 
                     {/* Sidebar (Metrics & Diet) */}
-                    <div className="lg:col-span-4 space-y-10">
-
-                        <div className="space-y-6">
+                    <div className="lg:col-span-4 flex flex-col gap-section-gap">
+                        <div className="flex flex-col gap-header-gap">
                             <h2 className="text-[12px] font-black text-zinc-100 flex items-center gap-2 uppercase tracking-[0.2em] px-2">
                                 <Utensils className="w-4 h-4 text-emerald-500" />
                                 Sua Dieta

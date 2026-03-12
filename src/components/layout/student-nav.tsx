@@ -50,6 +50,7 @@ export function StudentNav({ hasTrainer, steroidUse, autoTrainingActive = false 
                     <Link
                         key={link.href}
                         href={link.href}
+                        prefetch={false}
                         className={`
                             flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-300 group
                             ${isActive
@@ -90,18 +91,21 @@ export function MobileStudentNav({ hasTrainer, steroidUse, autoTrainingActive = 
         >
             <Link
                 href="/dashboard/student"
+                prefetch={false}
                 className={`z-10 relative p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student' ? 'bg-orange-500 text-zinc-950 shadow-lg shadow-orange-500/20' : 'text-zinc-500 hover:text-zinc-300'}`}
             >
                 <Home className="w-5 h-5" />
             </Link>
             <Link
                 href="/dashboard/student/loja"
+                prefetch={false}
                 className={`z-10 relative p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student/loja' ? 'bg-orange-500 text-zinc-950 shadow-lg shadow-orange-500/20' : 'text-zinc-500 hover:text-zinc-300'}`}
             >
                 <ShoppingBag className="w-5 h-5" />
             </Link>
             <Link
                 href="/dashboard/student/ranking"
+                prefetch={false}
                 className={`z-10 relative p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student/ranking' ? 'bg-orange-500 text-zinc-950 shadow-lg shadow-orange-500/20' : 'text-zinc-500 hover:text-zinc-300'}`}
             >
                 <Trophy className="w-5 h-5" />
@@ -109,6 +113,7 @@ export function MobileStudentNav({ hasTrainer, steroidUse, autoTrainingActive = 
             {hasTrainer ? (
                 <Link
                     href="/dashboard/student/meu-personal"
+                    prefetch={false}
                     className={`z-10 relative p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student/meu-personal' ? 'bg-orange-500 text-zinc-950 shadow-lg shadow-orange-500/20' : 'text-zinc-500 hover:text-zinc-300'}`}
                 >
                     <UserCheck className="w-5 h-5" />
@@ -116,6 +121,7 @@ export function MobileStudentNav({ hasTrainer, steroidUse, autoTrainingActive = 
             ) : !autoTrainingActive ? (
                 <Link
                     href="/buscar-personal"
+                    prefetch={false}
                     className={`z-10 relative p-2.5 rounded-xl transition-all ${pathname === '/buscar-personal' ? 'bg-orange-500 text-zinc-950 shadow-lg shadow-orange-500/20' : 'text-zinc-500 hover:text-zinc-300'}`}
                 >
                     <Search className="w-5 h-5" />
@@ -123,6 +129,7 @@ export function MobileStudentNav({ hasTrainer, steroidUse, autoTrainingActive = 
             ) : null}
             <Link
                 href="/dashboard/student/profile"
+                prefetch={false}
                 className={`z-10 relative p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student/profile' ? 'bg-orange-500 text-zinc-950 shadow-lg shadow-orange-500/20' : 'text-zinc-500 hover:text-zinc-300'}`}
             >
                 <User className="w-5 h-5" />

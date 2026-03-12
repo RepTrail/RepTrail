@@ -3,11 +3,11 @@ import { Star, TrendingUp, Users, Wallet } from "lucide-react";
 
 export function SocialProofSection() {
     return (
-        <section className="py-24 bg-zinc-950 px-4 md:px-6 border-b border-zinc-900 relative">
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-blue-900/10 via-zinc-950 to-zinc-950" />
+        <section className="py-[50px] md:py-[100px] px-[20px] bg-zinc-950 w-full border-b border-zinc-900 relative">
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-orange-900/10 via-zinc-950 to-zinc-950" />
 
-            <div className="container mx-auto space-y-16 relative z-10">
-                <div className="text-center max-w-2xl mx-auto space-y-4">
+            <div className="w-full max-w-[1100px] mx-auto flex flex-col gap-[30px] md:gap-[50px] relative z-10">
+                <div className="flex flex-col gap-[20px] items-center text-center max-w-2xl mx-auto">
                     <h2 className="text-3xl md:text-5xl font-black text-white italic uppercase tracking-tighter">
                         Resultados que <span className="text-emerald-500">Falam.</span>
                     </h2>
@@ -16,11 +16,11 @@ export function SocialProofSection() {
                     </p>
                 </div>
 
-                <div className="grid md:grid-cols-3 gap-8">
+                <div className="flex flex-col md:flex-row flex-wrap gap-[20px]">
 
                     {/* Testimonial 1 - Scale */}
-                    <div className="bg-zinc-900/40 border border-zinc-800 p-8 rounded-3xl space-y-6 hover:border-zinc-700 transition-colors flex flex-col justify-between">
-                        <div className="space-y-4">
+                    <div className="w-full md:flex-1 bg-zinc-900/40 border border-zinc-800 p-8 rounded-3xl space-y-6 hover:border-zinc-700 transition-colors flex flex-col justify-between">
+                        <div className="flex flex-col gap-[20px]">
                             <div className="flex gap-1 text-yellow-500">
                                 {[1, 2, 3, 4, 5].map((s) => <Star key={s} className="w-4 h-4 fill-current" />)}
                             </div>
@@ -47,9 +47,9 @@ export function SocialProofSection() {
                     </div>
 
                     {/* Testimonial 2 - Revenue (Highlighted) */}
-                    <div className="bg-gradient-to-b from-zinc-900 to-zinc-950 border border-zinc-800 p-8 rounded-3xl space-y-6 hover:border-emerald-500/30 transition-all shadow-2xl shadow-emerald-900/10 transform md:-translate-y-4 flex flex-col justify-between relative">
+                    <div className="w-full md:flex-1 bg-gradient-to-b from-zinc-900 to-zinc-950 border border-zinc-800 p-8 rounded-3xl space-y-6 hover:border-emerald-500/30 transition-all shadow-2xl shadow-emerald-900/10 transform md:-translate-y-4 flex flex-col justify-between relative">
                         <div className="absolute top-0 right-0 -mr-2 -mt-2 bg-emerald-500 text-zinc-950 text-[10px] font-black px-2 py-1 rounded uppercase tracking-widest transform rotate-3 z-20">Destaque</div>
-                        <div className="space-y-4 relative z-10">
+                        <div className="flex flex-col gap-[20px] relative z-10">
                             <div className="flex gap-1 text-yellow-500">
                                 {[1, 2, 3, 4, 5].map((s) => <Star key={s} className="w-5 h-5 fill-current" />)}
                             </div>
@@ -76,8 +76,8 @@ export function SocialProofSection() {
                     </div>
 
                     {/* Testimonial 3 - Retention */}
-                    <div className="bg-zinc-900/40 border border-zinc-800 p-8 rounded-3xl space-y-6 hover:border-zinc-700 transition-colors flex flex-col justify-between">
-                        <div className="space-y-4">
+                    <div className="w-full md:flex-1 bg-zinc-900/40 border border-zinc-800 p-8 rounded-3xl space-y-6 hover:border-zinc-700 transition-colors flex flex-col justify-between">
+                        <div className="flex flex-col gap-[20px]">
                             <div className="flex gap-1 text-yellow-500">
                                 {[1, 2, 3, 4, 5].map((s) => <Star key={s} className="w-4 h-4 fill-current" />)}
                             </div>
@@ -96,9 +96,9 @@ export function SocialProofSection() {
                                     <p className="text-zinc-500 text-[8px] uppercase font-bold tracking-widest">Coach • Curitiba</p>
                                 </div>
                             </div>
-                            <div className="bg-blue-500/10 px-2 py-1 rounded border border-blue-500/20 flex items-center gap-1.5">
-                                <TrendingUp className="w-3 h-3 text-blue-500" />
-                                <span className="text-[9px] font-black text-blue-500 uppercase tracking-wide">Churn quase 0</span>
+                            <div className="bg-orange-500/10 px-2 py-1 rounded border border-orange-500/20 flex items-center gap-1.5">
+                                <TrendingUp className="w-3 h-3 text-orange-500" />
+                                <span className="text-[9px] font-black text-orange-500 uppercase tracking-wide">Churn quase 0</span>
                             </div>
                         </div>
                     </div>

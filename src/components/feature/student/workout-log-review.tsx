@@ -79,7 +79,7 @@ export function WorkoutLogReview({ logId, workoutName, completedAt, loads }: Wor
     const time = new Date(completedAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
 
     return (
-        <div className="max-w-lg mx-auto px-4 py-6 space-y-4 pb-2 -mb-24">
+        <div className="max-w-lg mx-auto px-4 space-y-4">
             {/* Header */}
             <div className="space-y-3">
                 <Link

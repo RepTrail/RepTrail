@@ -5,26 +5,27 @@ import { ArrowRight, Search, Zap, CheckCircle2 } from "lucide-react";
 
 export function CTASection() {
     return (
-        <section className="text-center py-32 bg-zinc-950 px-4 md:px-6 relative overflow-hidden flex flex-col items-center justify-center">
+        <section className="text-center py-[50px] md:py-[100px] px-[20px] bg-zinc-950 w-full relative overflow-hidden flex flex-col items-center justify-center">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-emerald-900/20 via-zinc-950 to-zinc-950" />
 
-            <div className="space-y-12 max-w-4xl mx-auto relative z-10 animate-in fade-in zoom-in-95 duration-1000">
-                <div className="inline-flex items-center rounded-full border border-emerald-500/20 bg-emerald-500/5 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-emerald-500 animate-pulse">
-                    <Zap className="mr-2 h-3 w-3" />
-                    Última chance para Evoluir
-                </div>
+            <div className="w-full max-w-[1100px] mx-auto flex flex-col gap-[30px] md:gap-[50px] relative z-10 animate-in fade-in zoom-in-95 duration-1000">
+                <div className="flex flex-col items-center gap-[20px] max-w-4xl mx-auto">
+                    <div className="inline-flex items-center rounded-full border border-emerald-500/20 bg-emerald-500/5 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-emerald-500 animate-pulse">
+                        <Zap className="mr-2 h-3 w-3" />
+                        Última chance para Evoluir
+                    </div>
 
-                <h2 className="text-4xl md:text-6xl font-black text-white uppercase italic tracking-tighter leading-tight drop-shadow-[0_0_20px_rgba(16,185,129,0.2)]">
-                    O Próximo Nível da <br className="hidden md:block" />
-                    <span className="text-emerald-500">Sua Consultoria.</span>
-                </h2>
+                    <h2 className="text-4xl md:text-6xl font-black text-white uppercase italic tracking-tighter leading-tight drop-shadow-[0_0_20px_rgba(16,185,129,0.2)]">
+                        O Próximo Nível da <br className="hidden md:block" />
+                        <span className="text-emerald-500">Sua Consultoria.</span>
+                    </h2>
 
-                <p className="text-zinc-400 text-lg md:text-xl font-medium max-w-2xl mx-auto">
-                    Não espere mais. Junte-se a treinadores Elite que já escalaram seus resultados com o RepTrail.
-                </p>
+                    <p className="text-zinc-400 text-lg md:text-xl font-medium max-w-2xl mx-auto">
+                        Não espere mais. Junte-se a treinadores Elite que já escalaram seus resultados com o RepTrail.
+                    </p>                </div>
 
-                <div className="flex flex-col items-center gap-6 pt-8 w-full max-w-xl mx-auto">
-                    <div className="flex flex-col md:flex-row gap-6 w-full justify-center px-4 md:px-0">
+                <div className="flex flex-col items-center gap-[20px] w-full max-w-xl mx-auto pt-8">
+                    <div className="flex flex-col md:flex-row gap-[20px] w-full justify-center px-4 md:px-0">
                         <Button
                             asChild
                             className="w-full md:w-auto h-16 px-10 text-lg bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase italic tracking-wide rounded-2xl shadow-xl shadow-emerald-500/10 hover:shadow-emerald-500/20 transition-all hover:-translate-y-1"

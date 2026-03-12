@@ -2,10 +2,11 @@ import { HeroSection } from '@/components/landing/hero-section'
 import { AboutSection } from '@/components/landing/about-section'
 import { TrainerFeatures } from '@/components/landing/trainer-features'
 import { StudentFeatures } from '@/components/landing/student-features'
+import { VideoShowcase } from '@/components/landing/video-showcase'
 import { MarketplaceSection } from '@/components/landing/marketplace-section'
 import { DifferentialsSection } from '@/components/landing/differentials-section'
 import { SocialProofSection } from '@/components/landing/social-proof-section'
-import { CTASection } from '@/components/landing/cta-section'
+import { FAQSection } from '@/components/landing/faq-section'
 import { Logo } from '@/components/ui/logo'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
@@ -36,10 +37,10 @@ export default async function LandingPage() {
       '/dashboard/student'
 
   return (
-    <div className="flex flex-col min-h-screen bg-zinc-950 text-white font-sans selection:bg-emerald-500/30 overflow-x-hidden" suppressHydrationWarning>
+    <div className="flex flex-col min-h-screen bg-zinc-950 text-white font-sans selection:bg-emerald-500/30" suppressHydrationWarning>
       <AffiliateTracker />
-      {/* Header */}
       <header className="h-20 flex items-center border-b border-zinc-900/50 backdrop-blur-md sticky top-0 z-50 bg-zinc-950/80 supports-[backdrop-filter]:bg-zinc-950/60">
+        {/* Header */}
         <div className="container mx-auto px-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 group">
             <Logo size="md" className="md:hidden group-hover:scale-105 transition-transform" />
@@ -118,13 +119,14 @@ export default async function LandingPage() {
 
       <main className="flex-1">
         <HeroSection />
+        <VideoShowcase />
         <AboutSection />
         <TrainerFeatures />
         <StudentFeatures />
-        <MarketplaceSection initialTrainers={trainers} />
         <DifferentialsSection />
+        <MarketplaceSection initialTrainers={trainers} />
         <SocialProofSection />
-        <CTASection />
+        <FAQSection />
       </main>
 
       <footer className="py-12 bg-zinc-950 border-t border-zinc-900">
