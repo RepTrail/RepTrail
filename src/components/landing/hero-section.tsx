@@ -28,38 +28,38 @@ export function HeroSection() {
                     </div>
 
                     <div className="flex flex-col items-center gap-[20px] w-full">
-                        <h1 className="text-4xl min-[380px]:text-5xl sm:text-6xl md:text-8xl lg:text-[7rem] xl:text-[8.5rem] font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-b from-white via-zinc-200 to-zinc-600 pb-2 leading-[0.85] uppercase italic text-center">
-                            Gerencie sua <span className="text-emerald-500">Consultoria</span> <br />
-                            <span className="text-white">Escalável.</span>
+                        <h1 className="text-4xl min-[380px]:text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] xl:text-[7rem] font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-b from-white via-zinc-200 to-zinc-600 pb-2 leading-[0.85] uppercase italic text-center">
+                            Transforme sua <span className="text-emerald-500">Consultoria</span> <br />
+                            <span className="text-white">de Educação Física.</span>
                         </h1>
-                        <p className="mx-auto max-w-3xl text-zinc-400 md:text-2xl font-medium leading-relaxed">
-                            Simplifique sua gestão de treinamento e aumente o <span className="text-white font-bold">resultado do seu aluno</span>. <br />
-                            A plataforma profissional para quem vive de performance.
+                        <p className="mx-auto max-w-3xl text-zinc-400 md:text-xl lg:text-2xl font-medium leading-relaxed">
+                            Aumente a <span className="text-white font-bold">retenção dos seus alunos</span> e <span className="text-emerald-500 font-bold">simplifique sua gestão</span> com o RepTrail. <br />
+                            A plataforma mais completa para profissionais de alta performance.
                         </p>
                     </div>
 
                     <div className="flex flex-col items-center gap-[20px] w-full pt-8">
-                        <div className="flex flex-col md:flex-row gap-[20px] w-full max-w-[900px] mx-auto justify-center px-4 md:px-0">
+                        <div className="flex flex-col gap-[16px] w-full max-w-2xl mx-auto items-center px-4">
+                            <Button
+                                asChild
+                                suppressHydrationWarning
+                                className="w-full h-auto min-h-[4.5rem] py-4 px-8 text-base md:text-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase italic tracking-wide rounded-2xl shadow-xl shadow-emerald-500/20 hover:shadow-emerald-500/40 transition-all hover:-translate-y-1 hover:scale-[1.01] whitespace-normal"
+                            >
+                                <Link href="/auth/signup" suppressHydrationWarning className="flex items-center justify-center h-full text-center leading-tight">
+                                    <span className="px-1">Quero começar a transformar minha consultoria agora</span>
+                                    <ArrowRight className="ml-2 h-5 w-5 shrink-0" />
+                                </Link>
+                            </Button>
                             <Button
                                 asChild
                                 variant="outline"
                                 suppressHydrationWarning
-                                className="order-2 md:order-1 w-full md:w-[calc(50%-10px)] h-auto min-h-[4rem] py-3 px-4 md:px-8 text-sm md:text-[15px] border-zinc-800 bg-zinc-900/50 text-zinc-400 hover:bg-zinc-800 hover:text-white hover:border-zinc-700 font-black uppercase italic tracking-wide rounded-2xl backdrop-blur-sm transition-all hover:-translate-y-1 shadow-2xl"
+                                className="w-full h-auto min-h-[4rem] py-4 px-6 text-sm md:text-base border-zinc-800 bg-zinc-900/50 text-zinc-400 hover:bg-zinc-800 hover:text-white hover:border-zinc-700 font-black uppercase italic tracking-wide rounded-2xl backdrop-blur-sm transition-all hover:-translate-y-1 shadow-2xl"
                             >
                                 <a href="#marketplace" suppressHydrationWarning className="flex items-center justify-center h-full text-center">
-                                    <Search className="mr-2 h-5 w-5 shrink-0" />
+                                    <Search className="mr-2 h-4 w-4 shrink-0" />
                                     Buscar Treinador
                                 </a>
-                            </Button>
-                            <Button
-                                asChild
-                                suppressHydrationWarning
-                                className="order-1 md:order-2 w-full md:w-[calc(50%-10px)] h-auto min-h-[4rem] py-3 px-4 md:px-8 text-sm md:text-[15px] bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase italic tracking-wide rounded-2xl shadow-xl shadow-emerald-500/20 hover:shadow-emerald-500/40 transition-all hover:-translate-y-1 hover:scale-105"
-                            >
-                                <Link href="/auth/signup" suppressHydrationWarning className="flex items-center justify-center h-full text-center leading-tight">
-                                    <span>Quero simplificar <br className="sm:hidden" />minha gestão agora</span>
-                                    <ArrowRight className="ml-2 h-5 w-5 shrink-0" />
-                                </Link>
                             </Button>
                         </div>
                         <div className="flex items-center gap-2 text-[10px] text-zinc-500 font-black uppercase tracking-[0.2em] opacity-80">

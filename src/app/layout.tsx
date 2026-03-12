@@ -18,8 +18,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "RepTrail | Plataforma de Treinamento Personalizado",
-  description: "Conecte-se com personal trainers profissionais e transforme seu corpo. Treinos periodizados, acompanhamento próximo e resultados garantidos.",
+  title: "Transforme sua Consultoria | RepTrail Gestão de Alunos",
+  description: "Aumente a retenção dos seus alunos e simplifique sua gestão com o RepTrail. A plataforma mais completa para personal trainers e consultorias de alta performance.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,

@@ -6,22 +6,22 @@ import { useState } from "react";
 const videos = [
     {
         src: "/Videos/dash inicial do aluno.MP4",
-        title: "Dashboard do Aluno",
-        desc: "Acompanhe o progresso de seu aluno em uma visão moderna e intuitiva.",
+        title: "Monitore o Progresso",
+        desc: "Acompanhe o progresso de seu aluno em uma visão moderna e intuitiva, identificando áreas de melhoria.",
         borderColorClass: "hover:border-orange-500/50 hover:shadow-[0_0_40px_rgba(249,115,22,0.15)]",
         titleColorClass: "group-hover:text-orange-500"
     },
     {
         src: "/Videos/tela minha evolução.MP4",
-        title: "Minha Evolução",
-        desc: "Monitore a evolução real com dados, fotos e métricas corporais precisas.",
+        title: "Veja a Evolução",
+        desc: "Monitore a evolução real dos seus alunos com dados, fotos e métricas corporais precisas.",
         borderColorClass: "hover:border-emerald-500/50 hover:shadow-[0_0_40px_rgba(16,185,129,0.15)]",
         titleColorClass: "group-hover:text-emerald-500"
     },
     {
         src: "/Videos/feed de alunos e perfil publico do aluno.MP4",
-        title: "Feed e Comunidade",
-        desc: "Aumente a retenção através da conexão e motivação entre seus alunos.",
+        title: "Conecte-se com Alunos",
+        desc: "Aumente a retenção através da conexão e motivação, criando uma comunidade engajada.",
         borderColorClass: "hover:border-orange-500/50 hover:shadow-[0_0_40px_rgba(249,115,22,0.15)]",
         titleColorClass: "group-hover:text-orange-500"
     }

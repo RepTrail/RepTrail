@@ -8,6 +8,7 @@ import { DifferentialsSection } from '@/components/landing/differentials-section
 import { SocialProofSection } from '@/components/landing/social-proof-section'
 import { GuaranteeSection } from '@/components/landing/guarantee-section'
 import { FAQSection } from '@/components/landing/faq-section'
+import { AuthoritySection } from '@/components/landing/authority-section'
 import { Logo } from '@/components/ui/logo'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
@@ -59,8 +60,8 @@ export default async function LandingPage() {
                   Login
                 </Link>
                 <Link href="/auth/signup">
-                  <Button className="bg-white hover:bg-zinc-200 text-zinc-950 font-black uppercase italic tracking-widest rounded-xl text-xs px-6 h-10 shadow-lg shadow-white/5 transition-all hover:scale-105 active:scale-95">
-                    Criar Conta
+                  <Button className="bg-white hover:bg-zinc-200 text-zinc-950 font-black uppercase italic tracking-widest rounded-xl text-xs px-6 h-10 shadow-lg shadow-white/5 transition-all hover:scale-105 active:scale-95 leading-none">
+                    Começar Agora
                   </Button>
                 </Link>
               </>
@@ -119,9 +120,16 @@ export default async function LandingPage() {
       </header>
 
       <main className="flex-1">
+        {/* Urgency Banner */}
+        <div className="bg-emerald-500 py-2 px-4 text-center">
+          <p className="text-[10px] md:text-xs font-black uppercase italic tracking-widest text-zinc-950">
+            ⚡️ Implementação assistida: Restam apenas <span className="underline">4 vagas</span> para este mês. ⚡️
+          </p>
+        </div>
         <HeroSection />
         <VideoShowcase />
         <AboutSection />
+        <AuthoritySection />
         <TrainerFeatures />
         <StudentFeatures />
         <DifferentialsSection />

@@ -23,12 +23,12 @@ export function TrainerFeatures() {
                         </div>
 
                         <h2 className="text-4xl md:text-5xl font-black text-white italic uppercase tracking-tighter leading-tight">
-                            O sistema de gestão <br className="hidden md:block" />
-                            <span className="text-emerald-500">de back-office.</span>
+                            Simplifique sua <br className="hidden md:block" />
+                            <span className="text-emerald-500">Gestão de Alunos.</span>
                         </h2>
 
                         <p className="text-zinc-400 text-lg leading-relaxed w-full">
-                            Elimine a confusão das planilhas e gerencie seus pagamentos, renovações automáticas e CRM de alunos de forma eficiente.
+                            Com o RepTrail, você pode gerenciar seus pagamentos, renovações automáticas e CRM de alunos de forma eficiente, eliminando a confusão das planilhas.
                         </p>
                     </div>
 
@@ -53,7 +53,7 @@ export function TrainerFeatures() {
                     <div className="flex w-full">
                         <Button asChild className="w-full h-14 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase italic tracking-wide rounded-xl shadow-lg shadow-emerald-500/10 transition-all hover:scale-105">
                             <Link href="/auth/signup">
-                                Otimizar minha gestão
+                                Quero simplificar minha gestão agora
                                 <ArrowRight className="ml-2 w-5 h-5" />
                             </Link>
                         </Button>
