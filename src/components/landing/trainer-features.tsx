@@ -78,6 +78,7 @@ export function TrainerFeatures() {
                                 loop
                                 muted
                                 playsInline
+                                preload="none"
                                 className="w-full h-full object-cover"
                             >
                                 Your browser does not support the video tag.

@@ -35,12 +35,15 @@ export function SplashManager({ children }: SplashManagerProps) {
         )
     }
 
-    // 2. Splash state: Show animation on top of content
+    // 2. Splash state: Show animation.
+    // Optimization: In standalone (PWA) mode, we DON'T render children behind the splash 
+    // to prevent heavy background loading (like videos) which cause iOS crashes.
     if (view === 'splash') {
+        const isStandalone = typeof window !== 'undefined' && window.matchMedia('(display-mode: standalone)').matches
         return (
             <>
                 <SplashScreen onFinish={() => setView('ready')} />
-                {children}
+                {!isStandalone && children}
             </>
         )
     }

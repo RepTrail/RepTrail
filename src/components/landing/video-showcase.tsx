@@ -63,11 +63,24 @@ export function VideoShowcase() {
                                         </div>
                                         <video
                                             src={vid.src}
-                                            autoPlay
+                                            autoPlay={idx === 0} // Only first video starts autoPlay
                                             loop
                                             muted
                                             playsInline
+                                            preload="none" // Essential for memory management
                                             className="w-full h-full object-cover"
+                                            ref={(el) => {
+                                                if (!el) return;
+                                                // Simplified control: if not active in mobile carousel, pause
+                                                // Using window check for responsive behavior
+                                                if (typeof window !== 'undefined' && window.innerWidth < 768) {
+                                                    if (idx === activeIndex) el.play().catch(() => { });
+                                                    else el.pause();
+                                                } else {
+                                                    // On desktop, keep initial active playing
+                                                    if (idx === 0) el.play().catch(() => { });
+                                                }
+                                            }}
                                         />
                                     </div>
                                     <div className="text-center space-y-1 mt-4">
