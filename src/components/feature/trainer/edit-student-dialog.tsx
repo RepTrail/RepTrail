@@ -92,7 +92,7 @@ export function EditStudentDialog({ relationshipId, studentId, trainerId, initia
                     </Button>
                 )}
             </DialogTrigger>
-            <DialogContent className="bg-zinc-950 border-zinc-800 text-white sm:max-w-[425px] rounded-2xl shadow-2xl">
+            <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
                     <DialogTitle className="text-xl font-bold italic uppercase tracking-tight">Editar Aluno</DialogTitle>
                     <DialogDescription className="text-zinc-500 text-xs font-medium uppercase tracking-widest">

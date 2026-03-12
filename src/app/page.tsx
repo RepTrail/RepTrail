@@ -16,6 +16,8 @@ import { getTrainerRanking } from '@/actions/trainer-actions'
 import { AffiliateTracker } from '@/components/landing/affiliate-tracker'
 import { createClient } from '@/lib/supabase/server'
 
+import { CTASection } from '@/components/landing/cta-section'
+
 export const dynamic = 'force-dynamic'
 
 export default async function LandingPage() {
@@ -130,13 +132,14 @@ export default async function LandingPage() {
         <VideoShowcase />
         <AboutSection />
         <AuthoritySection />
+        <SocialProofSection />
         <TrainerFeatures />
         <StudentFeatures />
         <DifferentialsSection />
         <MarketplaceSection initialTrainers={trainers} />
-        <SocialProofSection />
         <GuaranteeSection />
         <FAQSection />
+        <CTASection />
       </main>
 
       <footer className="py-12 bg-zinc-950 border-t border-zinc-900">

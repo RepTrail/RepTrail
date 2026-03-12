@@ -277,10 +277,6 @@ export function StudentWorkoutHistory({ history, isBlocked, mode = 'student' }: 
                                                             </div>
 
                                                             <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-                                                                <ObservationsPopup
-                                                                    exerciseName={exGroup.name}
-                                                                    notes={exGroup.sets.map(s => s.notes).filter(Boolean) as string[]}
-                                                                />
                                                                 <div className={`
                                                                     w-9 h-9 sm:w-10 sm:h-10 rounded-xl border flex items-center justify-center transition-all duration-300
                                                                     ${isExExpanded ? 'bg-zinc-100 text-zinc-950 border-white shadow-lg shadow-white/10' : 'bg-zinc-900 border-zinc-800 text-zinc-500'}
@@ -397,86 +393,6 @@ export function StudentWorkoutHistory({ history, isBlocked, mode = 'student' }: 
 }
 
 
-function ObservationsPopup({ exerciseName, notes }: { exerciseName: string, notes: string[] }) {
-    const hasNotes = notes.length > 0
-
-    return (
-        <Dialog>
-            <DialogTrigger asChild>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={(e) => e.stopPropagation()}
-                    className={`h-8 w-8 p-0 rounded-xl transition-all duration-300 shadow-xl border relative group/bell ${hasNotes
-                        ? 'bg-red-500/5 border-red-500/20 text-red-500 hover:bg-red-500 hover:text-zinc-950'
-                        : 'bg-zinc-900/50 border-zinc-800 text-zinc-700 hover:text-zinc-400'
-                        }`}
-                >
-                    <Bell className={`w-4 h-4 ${hasNotes ? 'group-hover/bell:animate-ring' : ''}`} />
-                    {hasNotes && (
-                        <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-zinc-950 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.5)]" />
-                    )}
-                </Button>
-            </DialogTrigger>
-            <DialogContent showCloseButton={false} className="max-w-xl bg-zinc-950 border-zinc-800 rounded-[2rem] p-0 overflow-hidden shadow-2xl scale-100 animate-in zoom-in-95 duration-300 relative fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                <DialogClose asChild>
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="absolute top-6 right-6 z-50 w-10 h-10 rounded-2xl bg-zinc-900/50 border border-zinc-800 text-zinc-500 hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/20 transition-all duration-300 backdrop-blur-md"
-                    >
-                        <XIcon className="w-5 h-5" />
-                    </Button>
-                </DialogClose>
-
-                <div className="p-6 sm:p-10 space-y-8">
-                    <DialogHeader>
-                        <div className="flex items-center justify-start gap-4 pr-12">
-                            <div className="w-12 h-12 flex items-center justify-center bg-red-500/10 rounded-2xl border border-red-500/20 shrink-0">
-                                <Bell className="w-6 h-6 text-red-500" />
-                            </div>
-                            <div className="space-y-1 text-left min-w-0">
-                                <DialogTitle className="text-lg sm:text-2xl font-black text-zinc-100 uppercase italic tracking-tighter leading-tight">
-                                    Observações do Aluno
-                                </DialogTitle>
-                                <p className="text-[9px] sm:text-[10px] font-black text-red-500 uppercase tracking-widest">{exerciseName}</p>
-                            </div>
-                        </div>
-                    </DialogHeader>
-
-                    <div className="space-y-4">
-                        {hasNotes ? (
-                            notes.map((note, idx) => (
-                                <div key={idx} className="bg-zinc-900/40 p-5 rounded-2xl border border-zinc-800/50 backdrop-blur-sm space-y-2">
-                                    <div className="flex items-center gap-2 text-[8px] font-black text-zinc-600 uppercase tracking-widest leading-none">
-                                        <Clock className="w-3 h-3" /> Relato {idx + 1}
-                                    </div>
-                                    <p className="text-sm font-medium text-zinc-300 italic leading-relaxed">
-                                        "{note}"
-                                    </p>
-                                </div>
-                            ))
-                        ) : (
-                            <div className="bg-zinc-900/20 p-8 rounded-2xl border border-zinc-800/30 border-dashed text-center">
-                                <p className="text-[10px] font-black text-zinc-700 uppercase tracking-[0.2em] italic">
-                                    Nenhuma observação anotada pelo aluno.
-                                </p>
-                            </div>
-                        )}
-                    </div>
-
-                    <div className="bg-zinc-900/20 p-4 rounded-xl border border-zinc-800/30 flex items-center gap-3">
-                        <Activity className="w-4 h-4 text-zinc-700" />
-                        <p className="text-[9px] font-bold text-zinc-600 uppercase tracking-widest leading-tight">
-                            Use estas informações para ajustar o volume ou a carga no próximo treino.
-                        </p>
-                    </div>
-                </div>
-            </DialogContent>
-        </Dialog>
-    )
-}
-
 function DeleteWorkoutDialog({ logId, workoutName }: { logId: string, workoutName: string }) {
     const [loading, setLoading] = useState(false)
     const [open, setOpen] = useState(false)
@@ -558,84 +474,6 @@ function DeleteWorkoutDialog({ logId, workoutName }: { logId: string, workoutNam
                         >
                             {loading ? "Apagando..." : "Confirmar Exclusão"}
                         </Button>
-                    </div>
-                </div>
-            </DialogContent>
-        </Dialog>
-    )
-}
-
-function WorkoutFeedbackPopup({ feedback, workoutName }: { feedback?: string, workoutName: string }) {
-    const hasFeedback = !!feedback
-
-    return (
-        <Dialog>
-            <DialogTrigger asChild>
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={(e) => e.stopPropagation()}
-                    className={`w-10 h-10 rounded-2xl transition-all duration-300 relative group/feedback ${hasFeedback
-                        ? 'text-emerald-500 hover:bg-emerald-500/10'
-                        : 'text-zinc-700 hover:text-zinc-500 hover:bg-zinc-800/50'
-                        }`}
-                >
-                    <Bell className={`w-4 h-4 ${hasFeedback ? 'group-hover/feedback:animate-ring' : ''}`} />
-                    {hasFeedback && (
-                        <div className="absolute top-2 right-2 w-2 h-2 bg-emerald-500 rounded-full border border-zinc-950 shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
-                    )}
-                </Button>
-            </DialogTrigger>
-            <DialogContent showCloseButton={false} className="max-w-xl bg-zinc-950 border-zinc-800 rounded-[2rem] p-0 overflow-hidden shadow-2xl scale-100 animate-in zoom-in-95 duration-300 relative fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                <DialogClose asChild>
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="absolute top-6 right-6 z-50 w-10 h-10 rounded-2xl bg-zinc-900/50 border border-zinc-800 text-zinc-500 hover:bg-emerald-500/10 hover:text-emerald-500 hover:border-emerald-500/20 transition-all duration-300 backdrop-blur-md"
-                    >
-                        <XIcon className="w-5 h-5" />
-                    </Button>
-                </DialogClose>
-
-                <div className="p-6 sm:p-10 space-y-8">
-                    <DialogHeader>
-                        <div className="flex items-center justify-start gap-4 pr-12">
-                            <div className="w-12 h-12 flex items-center justify-center bg-emerald-500/10 rounded-2xl border border-emerald-500/20 shrink-0">
-                                <Activity className="w-6 h-6 text-emerald-500" />
-                            </div>
-                            <div className="space-y-1 text-left min-w-0">
-                                <DialogTitle className="text-lg sm:text-2xl font-black text-zinc-100 uppercase italic tracking-tighter leading-tight">
-                                    Relato do Treino
-                                </DialogTitle>
-                                <p className="text-[9px] sm:text-[10px] font-black text-emerald-500 uppercase tracking-widest">{workoutName}</p>
-                            </div>
-                        </div>
-                    </DialogHeader>
-
-                    <div className="space-y-4">
-                        {hasFeedback ? (
-                            <div className="bg-zinc-900/40 p-5 rounded-2xl border border-zinc-800/50 backdrop-blur-sm space-y-3">
-                                <div className="flex items-center gap-2 text-[8px] font-black text-zinc-600 uppercase tracking-widest leading-none">
-                                    <Clock className="w-3 h-3" /> Comentário Pós-Treino
-                                </div>
-                                <p className="text-sm font-medium text-zinc-300 italic leading-relaxed">
-                                    "{feedback}"
-                                </p>
-                            </div>
-                        ) : (
-                            <div className="bg-zinc-900/20 p-8 rounded-2xl border border-zinc-800/30 border-dashed text-center">
-                                <p className="text-[10px] font-black text-zinc-700 uppercase tracking-[0.2em] italic">
-                                    O aluno concluiu o treino sem deixar um relato por escrito.
-                                </p>
-                            </div>
-                        )}
-                    </div>
-
-                    <div className="bg-zinc-900/20 p-4 rounded-xl border border-zinc-800/30 flex items-center gap-3">
-                        <Activity className="w-4 h-4 text-zinc-700" />
-                        <p className="text-[9px] font-bold text-zinc-600 uppercase tracking-widest leading-tight">
-                            Este relato ajuda a entender o nível de fadiga sistêmica do aluno.
-                        </p>
                     </div>
                 </div>
             </DialogContent>

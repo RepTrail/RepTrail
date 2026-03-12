@@ -52,7 +52,7 @@ export function AddStudentDialog() {
                     <Plus className="w-4 h-4" /> Vincular Aluno
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px] bg-zinc-950 border-zinc-800 shadow-2xl rounded-2xl border-t-zinc-700/50">
+            <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader className="space-y-3">
                     <div className="p-3 bg-zinc-900 rounded-2xl border border-zinc-800 w-fit">
                         <UserPlus className="w-5 h-5 text-emerald-500" />

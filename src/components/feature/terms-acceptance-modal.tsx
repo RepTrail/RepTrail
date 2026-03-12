@@ -67,7 +67,7 @@ export function TermsAcceptanceModal() {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogContent
-                className="max-w-lg bg-zinc-900 border-zinc-800 text-white"
+                className="max-w-xl"
                 showCloseButton={true}
                 onInteractOutside={(e) => {
                     if (!status?.accepted) e.preventDefault()

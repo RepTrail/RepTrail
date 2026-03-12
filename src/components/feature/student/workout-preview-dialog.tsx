@@ -38,7 +38,7 @@ export function WorkoutPreviewDialog({ workoutName, exercises }: WorkoutPreviewD
                 </Button>
             </DialogTrigger>
 
-            <DialogContent className="bg-zinc-950 border border-zinc-800 rounded-3xl max-w-md w-full p-0 overflow-hidden">
+            <DialogContent className="p-0 overflow-hidden gap-0 flex flex-col">
                 {/* Header */}
                 <DialogHeader className="px-6 pt-6 pb-4 border-b border-zinc-800/60">
                     <div className="flex items-center gap-3">
@@ -57,7 +57,7 @@ export function WorkoutPreviewDialog({ workoutName, exercises }: WorkoutPreviewD
                 </DialogHeader>
 
                 {/* Exercise List */}
-                <div className="overflow-y-auto max-h-[65vh] px-4 py-4 space-y-2">
+                <div className="flex-1 overflow-y-auto px-6 py-4 space-y-3">
                     {sorted.length === 0 ? (
                         <div className="flex flex-col items-center justify-center py-10 text-center gap-3">
                             <Dumbbell className="w-8 h-8 text-zinc-700" />
@@ -75,32 +75,32 @@ export function WorkoutPreviewDialog({ workoutName, exercises }: WorkoutPreviewD
                             return (
                                 <div
                                     key={ex.id}
-                                    className="flex items-center gap-3 p-3 bg-zinc-900/60 rounded-xl border border-zinc-800/50"
+                                    className="grid grid-cols-[16px_1fr_auto] items-center gap-3 p-3 bg-zinc-900/60 rounded-xl border border-zinc-800/50 w-full overflow-hidden"
                                 >
                                     {/* Index */}
-                                    <span className="flex-shrink-0 text-[10px] font-black text-zinc-600">
+                                    <span className="text-[10px] font-black text-zinc-600">
                                         {idx + 1}
                                     </span>
 
                                     {/* Name */}
-                                    <p className="flex-1 min-w-0 text-sm font-black text-white italic uppercase tracking-tight truncate">
+                                    <p className="text-sm font-black text-white italic uppercase tracking-tight truncate min-w-0">
                                         {name}
                                     </p>
 
                                     {/* Series badges */}
-                                    <div className="flex items-center gap-1.5 flex-shrink-0">
+                                    <div className="flex items-center gap-1 flex-shrink-0 min-w-fit">
                                         {warmup > 0 && (
-                                            <span className="px-2 py-0.5 bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[9px] font-black rounded-md uppercase">
+                                            <span className="px-1.5 py-0.5 bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[9px] font-black rounded-lg uppercase whitespace-nowrap">
                                                 {warmup}aq
                                             </span>
                                         )}
                                         {feeder > 0 && (
-                                            <span className="px-2 py-0.5 bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[9px] font-black rounded-md uppercase">
+                                            <span className="px-1.5 py-0.5 bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[9px] font-black rounded-lg uppercase whitespace-nowrap">
                                                 {feeder}fd
                                             </span>
                                         )}
                                         {working > 0 && (
-                                            <span className="px-2 py-0.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[9px] font-black rounded-md uppercase">
+                                            <span className="px-1.5 py-0.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[9px] font-black rounded-lg uppercase whitespace-nowrap">
                                                 {working}×{ex.reps || '–'}
                                             </span>
                                         )}
@@ -112,12 +112,12 @@ export function WorkoutPreviewDialog({ workoutName, exercises }: WorkoutPreviewD
                 </div>
 
                 {/* Footer */}
-                <div className="px-4 py-4 border-t border-zinc-800/60">
+                <div className="px-6 py-4 border-t border-zinc-800/60">
                     <Button
                         onClick={() => setOpen(false)}
-                        className="w-full h-9 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-zinc-400 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
+                        className="w-full h-11 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-zinc-400 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
                     >
-                        Fechar
+                        Fechar Visualização
                     </Button>
                 </div>
             </DialogContent>

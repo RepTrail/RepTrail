@@ -29,7 +29,7 @@ export function DifferentialsSection() {
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,_var(--tw-gradient-stops))] from-zinc-800/10 via-zinc-950 to-zinc-950" />
 
             <div className="w-full max-w-[1100px] mx-auto flex flex-col gap-[30px] md:gap-[50px]">
-                <div className="flex flex-col gap-[20px] items-center text-center w-full mx-auto">
+                <div className="flex flex-col gap-[20px] items-start md:items-center text-left md:text-center w-full mx-auto">
                     <h2 className="text-3xl md:text-5xl font-black text-white uppercase italic tracking-tighter">
                         Por que o <span className="text-emerald-500">RepTrail?</span>
                     </h2>

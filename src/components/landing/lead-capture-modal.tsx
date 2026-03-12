@@ -77,7 +77,7 @@ export function LeadCaptureModal({ isOpen, onOpenChange, trainerName, trainerCod
 
     return (
         <Dialog open={isOpen} onOpenChange={onOpenChange}>
-            <DialogContent className="bg-zinc-950 border-zinc-800 text-white sm:rounded-3xl max-w-md overflow-hidden">
+            <DialogContent className="sm:rounded-3xl max-w-md overflow-hidden">
                 {!success ? (
                     <>
                         <DialogHeader className="space-y-4 text-center pb-4">

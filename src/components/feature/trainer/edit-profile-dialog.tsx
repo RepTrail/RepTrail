@@ -95,7 +95,7 @@ export function EditProfileDialog({ profile }: EditProfileDialogProps) {
                     Editar Perfil Público
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px] bg-zinc-950 border-zinc-900 text-zinc-100">
+            <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
                     <DialogTitle className="text-xl font-black italic uppercase tracking-tight flex items-center gap-2">
                         <Sparkles className="w-5 h-5 text-emerald-500" />

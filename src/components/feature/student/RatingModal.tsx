@@ -73,7 +73,7 @@ export function RatingModal({ trainerId, trainerName, initialRating = 0, initial
                     </Button>
                 )}
             </DialogTrigger>
-            <DialogContent className="bg-zinc-950 border-zinc-900 sm:max-w-md rounded-[2.5rem] p-8">
+            <DialogContent className="sm:max-w-md">
                 <DialogHeader className="space-y-4">
                     <DialogTitle className="text-2xl font-black text-white italic uppercase tracking-tighter text-center">
                         Avaliar {trainerName}

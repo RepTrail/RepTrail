@@ -224,7 +224,7 @@ export function UnifiedCreationDialog({
                     </Button>
                 )}
             </DialogTrigger>
-            <DialogContent className="w-[calc(100%-2rem)] sm:max-w-[480px] bg-zinc-950 text-white border-zinc-800 rounded-[2.5rem] shadow-2xl overflow-hidden p-0 border-white/5 backdrop-blur-xl focus-visible:outline-none max-h-[90vh] overflow-y-auto">
+            <DialogContent className="sm:max-w-[480px] p-0 overflow-hidden">
                 <DialogHeader className="p-6 sm:p-10 pr-14 sm:pr-14 pb-6 sm:pb-8 bg-zinc-900/40 border-b border-zinc-900/50 relative">
                     <DialogTitle className="text-xl sm:text-3xl font-black italic uppercase tracking-tighter leading-tight">{title}</DialogTitle>
                     <DialogDescription className="text-zinc-500 text-[10px] font-black uppercase tracking-[0.2em] mt-3">

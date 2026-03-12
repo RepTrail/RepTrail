@@ -5238,3 +5238,102 @@
   "userId": "a1de092a-4750-49a6-b004-b04258a10d70",
   "trainerRel": null
 }
+{
+  "timestamp": "2026-03-12T06:04:44.797Z",
+  "userId": "812c9f7a-39e1-43aa-acdd-abe9dbdf189a",
+  "trainerRel": {
+    "id": "362ff409-3215-4b2f-a73f-66fecffdfa95",
+    "trainer_id": "450e9218-e98d-482b-b3b8-ff7a93fa6309",
+    "active": true
+  }
+}
+{
+  "timestamp": "2026-03-12T06:05:01.066Z",
+  "userId": "812c9f7a-39e1-43aa-acdd-abe9dbdf189a",
+  "trainerRel": {
+    "id": "362ff409-3215-4b2f-a73f-66fecffdfa95",
+    "trainer_id": "450e9218-e98d-482b-b3b8-ff7a93fa6309",
+    "active": true
+  }
+}
+{
+  "timestamp": "2026-03-12T06:12:16.691Z",
+  "userId": "812c9f7a-39e1-43aa-acdd-abe9dbdf189a",
+  "trainerRel": {
+    "id": "362ff409-3215-4b2f-a73f-66fecffdfa95",
+    "trainer_id": "450e9218-e98d-482b-b3b8-ff7a93fa6309",
+    "active": true
+  }
+}
+{
+  "timestamp": "2026-03-12T06:14:34.763Z",
+  "userId": "812c9f7a-39e1-43aa-acdd-abe9dbdf189a",
+  "trainerRel": {
+    "id": "362ff409-3215-4b2f-a73f-66fecffdfa95",
+    "trainer_id": "450e9218-e98d-482b-b3b8-ff7a93fa6309",
+    "active": true
+  }
+}
+{
+  "timestamp": "2026-03-12T06:19:26.011Z",
+  "userId": "812c9f7a-39e1-43aa-acdd-abe9dbdf189a",
+  "trainerRel": {
+    "id": "362ff409-3215-4b2f-a73f-66fecffdfa95",
+    "trainer_id": "450e9218-e98d-482b-b3b8-ff7a93fa6309",
+    "active": true
+  }
+}
+{
+  "timestamp": "2026-03-12T06:19:28.077Z",
+  "userId": "812c9f7a-39e1-43aa-acdd-abe9dbdf189a",
+  "trainerRel": {
+    "id": "362ff409-3215-4b2f-a73f-66fecffdfa95",
+    "trainer_id": "450e9218-e98d-482b-b3b8-ff7a93fa6309",
+    "active": true
+  }
+}
+{
+  "timestamp": "2026-03-12T06:19:35.452Z",
+  "userId": "812c9f7a-39e1-43aa-acdd-abe9dbdf189a",
+  "trainerRel": {
+    "id": "362ff409-3215-4b2f-a73f-66fecffdfa95",
+    "trainer_id": "450e9218-e98d-482b-b3b8-ff7a93fa6309",
+    "active": true
+  }
+}
+{
+  "timestamp": "2026-03-12T06:34:35.206Z",
+  "userId": "812c9f7a-39e1-43aa-acdd-abe9dbdf189a",
+  "trainerRel": {
+    "id": "362ff409-3215-4b2f-a73f-66fecffdfa95",
+    "trainer_id": "450e9218-e98d-482b-b3b8-ff7a93fa6309",
+    "active": true
+  }
+}
+{
+  "timestamp": "2026-03-12T06:34:35.545Z",
+  "userId": "812c9f7a-39e1-43aa-acdd-abe9dbdf189a",
+  "trainerRel": {
+    "id": "362ff409-3215-4b2f-a73f-66fecffdfa95",
+    "trainer_id": "450e9218-e98d-482b-b3b8-ff7a93fa6309",
+    "active": true
+  }
+}
+{
+  "timestamp": "2026-03-12T06:34:38.850Z",
+  "userId": "812c9f7a-39e1-43aa-acdd-abe9dbdf189a",
+  "trainerRel": {
+    "id": "362ff409-3215-4b2f-a73f-66fecffdfa95",
+    "trainer_id": "450e9218-e98d-482b-b3b8-ff7a93fa6309",
+    "active": true
+  }
+}
+{
+  "timestamp": "2026-03-12T06:34:55.316Z",
+  "userId": "812c9f7a-39e1-43aa-acdd-abe9dbdf189a",
+  "trainerRel": {
+    "id": "362ff409-3215-4b2f-a73f-66fecffdfa95",
+    "trainer_id": "450e9218-e98d-482b-b3b8-ff7a93fa6309",
+    "active": true
+  }
+}

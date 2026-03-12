@@ -50,7 +50,7 @@ export function AutoTrainingOnboardingModal({ isOpen, onAccept, onReject, onClos
 
     return (
         <Dialog open={isOpen} onOpenChange={(open) => !open && (onClose ? onClose() : onReject())}>
-            <DialogContent className="max-w-2xl bg-zinc-900 border-zinc-800 text-white rounded-3xl max-h-[85vh] overflow-hidden flex flex-col">
+            <DialogContent className="max-w-2xl">
                 <DialogHeader className="space-y-4 shrink-0">
                     <div className="space-y-2">
                         <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-orange-500/10 border border-orange-500/20 rounded-full">

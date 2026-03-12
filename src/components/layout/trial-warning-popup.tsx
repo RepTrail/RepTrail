@@ -1,9 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { AlertCircle, MessageCircle, X } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { AlertCircle, MessageCircle } from 'lucide-react'
 import { Logo } from '@/components/ui/logo'
+import { Dialog, DialogContent } from '@/components/ui/dialog'
 
 interface TrialWarningPopupProps {
     eliteUntil: string | null
@@ -37,17 +37,10 @@ export function TrialWarningPopup({ eliteUntil }: TrialWarningPopupProps) {
     const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${message}`
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 text-left">
-            <div className="bg-zinc-900 border border-emerald-500/30 rounded-[2.5rem] p-8 max-w-md w-full relative overflow-hidden shadow-2xl shadow-emerald-500/10">
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+            <DialogContent className="max-w-md overflow-hidden">
                 {/* Decoration */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 blur-3xl -mr-16 -mt-16" />
-
-                <button
-                    onClick={() => setIsOpen(false)}
-                    className="absolute top-6 right-6 p-2 text-zinc-500 hover:text-white transition-colors"
-                >
-                    <X className="w-5 h-5" />
-                </button>
+                <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 blur-3xl -mr-16 -mt-16 pointer-events-none" />
 
                 <div className="space-y-6 text-center relative z-10">
                     <div className="flex justify-center mb-2">
@@ -105,7 +98,7 @@ export function TrialWarningPopup({ eliteUntil }: TrialWarningPopupProps) {
                         </button>
                     </div>
                 </div>
-            </div>
-        </div>
+            </DialogContent>
+        </Dialog>
     )
 }

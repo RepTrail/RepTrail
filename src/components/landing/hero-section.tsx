@@ -46,7 +46,7 @@ export function HeroSection() {
                                 className="w-full h-auto min-h-[4.5rem] py-4 px-8 text-base md:text-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase italic tracking-wide rounded-2xl shadow-xl shadow-emerald-500/20 hover:shadow-emerald-500/40 transition-all hover:-translate-y-1 hover:scale-[1.01] whitespace-normal"
                             >
                                 <Link href="/auth/signup" suppressHydrationWarning className="flex items-center justify-center h-full text-center leading-tight">
-                                    <span className="px-1">Quero começar a transformar minha consultoria agora</span>
+                                    <span className="px-1">Quero transformar minha consultoria agora</span>
                                     <ArrowRight className="ml-2 h-5 w-5 shrink-0" />
                                 </Link>
                             </Button>

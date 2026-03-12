@@ -42,6 +42,11 @@
   --radius-4xl: calc(var(--radius) + 16px);
 
   /* Spacing Tokens */
+  --spacing-section-gap: var(--section-gap);
+  --spacing-header-gap: 24px;
+  --spacing-subtitle-gap: 8px;
+  --spacing-container-padding: var(--container-padding);
+  --spacing-item-gap: var(--item-gap);
   --spacing-app-section: var(--section-gap);
   --spacing-app-container: var(--container-padding);
   --spacing-app-item: var(--item-gap);

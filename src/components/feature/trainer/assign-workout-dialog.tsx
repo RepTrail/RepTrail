@@ -66,7 +66,7 @@ export function AssignWorkoutDialog({ workoutId, students }: AssignWorkoutDialog
                     Atribuir
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px] bg-zinc-950 text-white border-zinc-800">
+            <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
                     <DialogTitle>Atribuir Treino</DialogTitle>
                     <DialogDescription className="text-zinc-400">

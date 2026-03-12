@@ -121,13 +121,13 @@ export function SettingsModal({ hasTrainer = false }: SettingsModalProps) {
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
-            <DialogContent showCloseButton={false} className="sm:max-w-md bg-zinc-950 border-zinc-800 p-0 overflow-hidden rounded-[2.5rem] max-h-[85vh] flex flex-col">
-                <div className="p-8 space-y-8 relative flex-1 overflow-y-auto pr-2">
+            <DialogContent showCloseButton={false} className="bg-zinc-950 border-zinc-800 p-0 overflow-hidden rounded-[2.5rem] flex flex-col gap-0">
+                <div className="p-6 sm:p-8 space-y-8 relative flex-1 overflow-y-auto">
                     <DialogClose asChild>
                         <button
                             type="button"
                             aria-label="Fechar"
-                            className="absolute top-6 right-6 w-10 h-10 rounded-2xl bg-zinc-900/60 border border-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-900 hover:border-zinc-700 shadow-lg transition-all active:scale-95 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+                            className="absolute top-6 right-6 w-10 h-10 rounded-2xl bg-zinc-900/60 border border-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-900 hover:border-zinc-700 transition-all active:scale-95 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 z-50"
                         >
                             <X className="w-5 h-5 mx-auto" />
                         </button>
@@ -227,6 +227,7 @@ export function SettingsModal({ hasTrainer = false }: SettingsModalProps) {
                                         checked={allowImageDisclosure}
                                         onCheckedChange={handleTogglePhotos}
                                         disabled={updating || loading}
+                                        className="data-[state=checked]:bg-emerald-500 data-[state=unchecked]:bg-zinc-800"
                                     />
                                 </div>
 
