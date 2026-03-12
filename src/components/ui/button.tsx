@@ -5,30 +5,25 @@ import { Slot } from "radix-ui"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none transition-all active:scale-95",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-black uppercase tracking-widest transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 italic",
   {
     variants: {
       variant: {
-        default: "bg-brand-primary text-zinc-950 font-bold hover:bg-brand-primary/90",
+        default: "bg-brand-primary text-zinc-950 hover:bg-brand-primary/90 shadow-lg shadow-brand-primary/20",
         destructive: "bg-destructive text-white hover:bg-destructive/90",
-        outline: "border border-surface-800 bg-transparent shadow-xs hover:bg-surface-800 hover:text-white",
-        secondary: "bg-surface-800 text-white hover:bg-surface-800/80",
-        ghost: "hover:bg-surface-800 hover:text-white",
+        outline: "border border-zinc-800 bg-zinc-950/50 text-zinc-400 hover:bg-zinc-900 hover:text-white hover:border-zinc-700",
+        secondary: "bg-brand-secondary text-zinc-950 hover:bg-brand-secondary/90 shadow-lg shadow-brand-secondary/20",
+        accent: "bg-brand-accent text-zinc-950 hover:bg-brand-accent/90 shadow-lg shadow-brand-accent/20",
+        ghost: "hover:bg-zinc-900 hover:text-zinc-100",
         link: "text-brand-primary underline-offset-4 hover:underline",
-        premium: "bg-white text-zinc-950 hover:bg-zinc-200 font-bold italic uppercase tracking-widest",
-        brand: "bg-brand-primary text-zinc-950 hover:bg-brand-primary/90 font-bold uppercase italic tracking-widest",
       },
       size: {
-        default: "h-9 px-4 py-2 has-[>svg]:px-3",
-        xs: "h-6 gap-1 rounded-md px-2 text-xs has-[>svg]:px-1.5 [&_svg:not([class*='size-'])]:size-3",
-        sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
-        lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
-        xl: "h-12 rounded-xl px-8 text-base",
-        icon: "size-9",
-        "icon-xs": "size-6 rounded-md [&_svg:not([class*='size-'])]:size-3",
-        "icon-sm": "size-8",
-        "icon-lg": "size-10",
-        landing: "h-auto min-h-[4rem] py-4 px-8 text-base md:text-xl rounded-2xl italic uppercase tracking-wide",
+        default: "h-11 px-6 py-2",
+        xs: "h-7 gap-1 rounded-lg px-3 text-[10px]",
+        sm: "h-9 rounded-lg gap-1.5 px-4",
+        lg: "h-12 rounded-xl px-8 text-base",
+        hero: "h-auto min-h-[4rem] px-8 py-4 text-base md:text-xl rounded-2xl",
+        icon: "size-11",
       },
     },
     defaultVariants: {

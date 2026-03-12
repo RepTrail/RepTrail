@@ -31,17 +31,17 @@ export function VideoShowcase() {
     const [activeIndex, setActiveIndex] = useState(0);
 
     return (
-        <section className="py-[50px] md:py-[100px] px-[20px] bg-zinc-950 w-full relative overflow-hidden border-b border-zinc-900">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-emerald-900/10 via-zinc-950 to-zinc-950 opacity-40" />
+        <section className="py-[var(--spacing-app-section)] px-[var(--spacing-app-container)] bg-surface-950 w-full relative overflow-hidden border-b border-zinc-900">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-brand-primary/10 via-surface-950 to-surface-950 opacity-40" />
 
-            <div className="w-full max-w-[1100px] mx-auto flex flex-col gap-[30px] md:gap-[50px] relative z-10">
-                <div className="flex flex-col items-center gap-[20px] text-center max-w-2xl mx-auto">
-                    <div className="inline-flex items-center rounded-full border border-emerald-500/20 bg-emerald-500/5 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-emerald-500">
+            <div className="w-full max-w-[1100px] mx-auto flex flex-col gap-[var(--spacing-app-item)] md:gap-[var(--spacing-app-section)] relative z-10">
+                <div className="flex flex-col items-center gap-[var(--spacing-app-item)] text-center max-w-2xl mx-auto">
+                    <div className="inline-flex items-center rounded-full border border-brand-primary/20 bg-brand-primary/5 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-brand-primary">
                         <PlayCircle className="w-3 h-3 mr-2" />
                         RepTrail em Ação
                     </div>
                     <h2 className="text-3xl md:text-5xl font-black text-white italic uppercase tracking-tighter">
-                        Tecnologia <span className="text-emerald-500">Imersiva.</span>
+                        Tecnologia <span className="text-brand-primary">Imersiva.</span>
                     </h2>
                     <p className="text-zinc-500 text-lg">
                         Veja na prática como a plataforma revoluciona a experiência de treino, engajamento e acompanhamento dos seus alunos.
@@ -50,35 +50,34 @@ export function VideoShowcase() {
 
                 <div className="w-full mx-auto relative overflow-hidden md:overflow-visible">
                     <div
-                        className="flex flex-row gap-[20px] md:justify-between items-start w-full transition-transform duration-500 ease-out md:!transform-none"
+                        className="flex flex-row gap-[var(--spacing-app-item)] md:justify-between items-start w-full transition-transform duration-500 ease-out md:!transform-none"
                         style={{ transform: `translateX(calc(-${activeIndex * 100}% - ${activeIndex * 20}px))` }}
                     >
                         {videos.map((vid, idx) => (
-                            <div key={idx} className="flex flex-col gap-[20px] group items-center shrink-0 w-full md:w-[calc(33.333%-13.33px)]">
+                            <div key={idx} className="flex flex-col gap-[var(--spacing-app-item)] group items-center shrink-0 w-full md:w-[calc(33.333%-22px)]">
                                 <div className="w-[80%] md:w-full mx-auto flex flex-col items-center">
-                                    <div className={`relative w-full aspect-[1170/2532] bg-zinc-950 border-[8px] border-zinc-900 rounded-[2.5rem] shadow-2xl overflow-hidden ring-1 ring-zinc-800 transition-all duration-500 ${vid.borderColorClass}`}>
+                                    <div className={`relative w-full aspect-[1170/2532] bg-surface-950 border-[8px] border-zinc-900 rounded-[2.5rem] shadow-2xl overflow-hidden ring-1 ring-zinc-800 transition-all duration-500 ${vid.borderColorClass}`}>
                                         {/* Notch */}
                                         <div className="absolute top-0 inset-x-0 h-5 bg-zinc-900 z-20 rounded-b-xl mx-auto w-1/2 flex justify-center items-end pb-1.5">
                                             <div className="w-8 h-1 bg-zinc-800 rounded-full"></div>
                                         </div>
                                         <video
                                             src={vid.src}
-                                            autoPlay={idx === 0} // Only first video starts autoPlay
+                                            autoPlay
                                             loop
                                             muted
                                             playsInline
-                                            preload="none" // Essential for memory management
+                                            preload="auto"
                                             className="w-full h-full object-cover"
+                                            onContextMenu={(e) => e.preventDefault()}
                                             ref={(el) => {
                                                 if (!el) return;
-                                                // Simplified control: if not active in mobile carousel, pause
-                                                // Using window check for responsive behavior
                                                 if (typeof window !== 'undefined' && window.innerWidth < 768) {
                                                     if (idx === activeIndex) el.play().catch(() => { });
                                                     else el.pause();
                                                 } else {
-                                                    // On desktop, keep initial active playing
-                                                    if (idx === 0) el.play().catch(() => { });
+                                                    // On desktop, play all videos
+                                                    el.play().catch(() => { });
                                                 }
                                             }}
                                         />
@@ -102,7 +101,7 @@ export function VideoShowcase() {
                             <button
                                 key={idx}
                                 onClick={() => setActiveIndex(idx)}
-                                className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${activeIndex === idx ? 'bg-emerald-500 w-8' : 'bg-zinc-700 hover:bg-zinc-500'}`}
+                                className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${activeIndex === idx ? 'bg-brand-primary w-8' : 'bg-zinc-700 hover:bg-zinc-500'}`}
                                 aria-label={`Ir para a demonstração ${idx + 1}`}
                             />
                         ))}

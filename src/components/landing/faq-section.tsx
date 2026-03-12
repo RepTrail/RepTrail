@@ -30,30 +30,30 @@ export function FAQSection() {
     const [openIndex, setOpenIndex] = useState<number | null>(null);
 
     return (
-        <section className="py-[50px] md:py-[100px] px-[20px] bg-zinc-950 w-full border-b border-zinc-900 relative">
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-zinc-900/40 via-zinc-950 to-zinc-950" />
+        <section className="py-[var(--spacing-app-section)] px-[var(--spacing-app-container)] bg-surface-950 w-full border-b border-zinc-900 relative">
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-brand-primary/10 via-surface-950 to-surface-950" />
 
-            <div className="w-full max-w-[1100px] mx-auto relative z-10 flex flex-col gap-[30px] md:gap-[50px]">
-                <div className="flex flex-col items-center gap-[20px] text-center w-full mx-auto">
+            <div className="w-full max-w-[1100px] mx-auto relative z-10 flex flex-col gap-[var(--spacing-app-item)] md:gap-[var(--spacing-app-section)]">
+                <div className="flex flex-col items-center gap-[var(--spacing-app-item)] text-center w-full mx-auto">
                     <h2 className="text-3xl md:text-5xl font-black text-white italic uppercase tracking-tighter">
-                        Perguntas <span className="text-emerald-500">Frequentes.</span>
+                        Perguntas <span className="text-brand-primary">Frequentes.</span>
                     </h2>
                     <p className="text-zinc-500 text-lg">Tudo o que você precisa saber para alavancar com o RepTrail.</p>
                 </div>
 
-                <div className="flex flex-col gap-[20px] mx-auto w-full">
+                <div className="flex flex-col gap-[var(--spacing-app-item)] mx-auto w-full">
                     {faqs.map((faq, index) => (
                         <div
                             key={index}
                             className="bg-zinc-900/50 border border-zinc-800 rounded-2xl overflow-hidden hover:border-zinc-700 transition-colors"
                         >
                             <button
-                                className="w-full flex items-center justify-between p-6 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+                                className="w-full flex items-center justify-between p-6 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
                                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
                             >
                                 <span className="text-lg font-black text-white italic">{faq.question}</span>
                                 <ChevronDown
-                                    className={`w-5 h-5 text-emerald-500 transition-transform duration-300 ${openIndex === index ? 'rotate-180' : ''}`}
+                                    className={`w-5 h-5 text-brand-primary transition-transform duration-300 ${openIndex === index ? 'rotate-180' : ''}`}
                                 />
                             </button>
                             <div
