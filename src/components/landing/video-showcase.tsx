@@ -43,7 +43,7 @@ export function VideoShowcase() {
                     <h2 className="text-3xl md:text-5xl font-black text-white italic uppercase tracking-tighter">
                         Tecnologia <span className="text-emerald-500">Imersiva.</span>
                     </h2>
-                    <p className="text-zinc-500 text-lg text-center">
+                    <p className="text-zinc-500 text-lg">
                         Veja na prática como a plataforma revoluciona a experiência de treino, engajamento e acompanhamento dos seus alunos.
                     </p>
                 </div>

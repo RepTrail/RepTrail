@@ -54,7 +54,7 @@ export function StudentFeatures() {
                             <span className="text-orange-500">Maestria.</span>
                         </h2>
 
-                        <p className="text-zinc-400 text-lg leading-relaxed w-full text-justify">
+                        <p className="text-zinc-400 text-lg leading-relaxed w-full">
                             Seu plano está traçado. Sua dieta está calculada. Seu único trabalho é executar. Acompanhe cada série, cada refeição e cada quilo perdido com precisão cirúrgica.
                         </p>
                     </div>

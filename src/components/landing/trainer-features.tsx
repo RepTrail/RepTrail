@@ -27,7 +27,7 @@ export function TrainerFeatures() {
                             <span className="text-emerald-500">de back-office.</span>
                         </h2>
 
-                        <p className="text-zinc-400 text-lg leading-relaxed w-full text-justify">
+                        <p className="text-zinc-400 text-lg leading-relaxed w-full">
                             Elimine a confusão das planilhas e gerencie seus pagamentos, renovações automáticas e CRM de alunos de forma eficiente.
                         </p>
                     </div>
