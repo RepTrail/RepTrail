@@ -7,21 +7,21 @@ const videos = [
     {
         src: "/Videos/dash inicial do aluno.MP4",
         title: "Dashboard do Aluno",
-        desc: "Visão geral imersiva e moderna na palma da mão.",
+        desc: "Acompanhe o progresso de seu aluno em uma visão moderna e intuitiva.",
         borderColorClass: "hover:border-orange-500/50 hover:shadow-[0_0_40px_rgba(249,115,22,0.15)]",
         titleColorClass: "group-hover:text-orange-500"
     },
     {
         src: "/Videos/tela minha evolução.MP4",
         title: "Minha Evolução",
-        desc: "Acompanhamento visual de progresso e medidas reais.",
+        desc: "Monitore a evolução real com dados, fotos e métricas corporais precisas.",
         borderColorClass: "hover:border-emerald-500/50 hover:shadow-[0_0_40px_rgba(16,185,129,0.15)]",
         titleColorClass: "group-hover:text-emerald-500"
     },
     {
         src: "/Videos/feed de alunos e perfil publico do aluno.MP4",
         title: "Feed e Comunidade",
-        desc: "Engajamento real através das redes do RepTrail.",
+        desc: "Aumente a retenção através da conexão e motivação entre seus alunos.",
         borderColorClass: "hover:border-orange-500/50 hover:shadow-[0_0_40px_rgba(249,115,22,0.15)]",
         titleColorClass: "group-hover:text-orange-500"
     }

@@ -9,10 +9,10 @@ export function SocialProofSection() {
             <div className="w-full max-w-[1100px] mx-auto flex flex-col gap-[30px] md:gap-[50px] relative z-10">
                 <div className="flex flex-col gap-[20px] items-center text-center max-w-2xl mx-auto">
                     <h2 className="text-3xl md:text-5xl font-black text-white italic uppercase tracking-tighter">
-                        Resultados que <span className="text-emerald-500">Falam.</span>
+                        Depoimentos e <span className="text-emerald-500">Resultados.</span>
                     </h2>
                     <p className="text-zinc-500 text-lg">
-                        De preparadores de atletas Olympia a consultorias de emagrecimento. O RepTrail é a escolha dos campeões.
+                        Veja o que dizem os mais de 500 treinadores que já profissionalizaram sua consultoria com o RepTrail.
                     </p>
                 </div>
 
@@ -39,9 +39,9 @@ export function SocialProofSection() {
                                     <p className="text-zinc-500 text-[8px] uppercase font-bold tracking-widest">Treinador Elite • São Paulo</p>
                                 </div>
                             </div>
-                            <div className="bg-emerald-500/10 px-2 py-1 rounded border border-emerald-500/20 flex items-center gap-1.5">
+                            <div className="bg-emerald-500/10 px-2 py-1 rounded border border-emerald-500/20 flex items-center gap-1.5 shrink-0">
                                 <Users className="w-3 h-3 text-emerald-500" />
-                                <span className="text-[9px] font-black text-emerald-500 uppercase tracking-wide">120+ Alunos</span>
+                                <span className="text-[9px] font-black text-emerald-500 uppercase tracking-wide whitespace-nowrap">120+ Alunos</span>
                             </div>
                         </div>
                     </div>
@@ -68,9 +68,9 @@ export function SocialProofSection() {
                                     <p className="text-zinc-500 text-[9px] uppercase font-bold tracking-widest">Consultora • Rio de Janeiro</p>
                                 </div>
                             </div>
-                            <div className="bg-emerald-500 px-2.5 py-1 rounded border border-emerald-400 flex items-center gap-1.5 shadow-[0_0_10px_rgba(16,185,129,0.3)]">
+                            <div className="bg-emerald-500 px-2.5 py-1 rounded border border-emerald-400 flex items-center gap-1.5 shadow-[0_0_10px_rgba(16,185,129,0.3)] shrink-0">
                                 <Wallet className="w-3 h-3 text-zinc-950" />
-                                <span className="text-[9px] font-black text-zinc-950 uppercase tracking-wide">R$ 22k/mês</span>
+                                <span className="text-[9px] font-black text-zinc-950 uppercase tracking-wide whitespace-nowrap">R$ 22k/mês</span>
                             </div>
                         </div>
                     </div>
@@ -96,9 +96,9 @@ export function SocialProofSection() {
                                     <p className="text-zinc-500 text-[8px] uppercase font-bold tracking-widest">Coach • Curitiba</p>
                                 </div>
                             </div>
-                            <div className="bg-orange-500/10 px-2 py-1 rounded border border-orange-500/20 flex items-center gap-1.5">
+                            <div className="bg-orange-500/10 px-2 py-1 rounded border border-orange-500/20 flex items-center gap-1.5 shrink-0">
                                 <TrendingUp className="w-3 h-3 text-orange-500" />
-                                <span className="text-[9px] font-black text-orange-500 uppercase tracking-wide">Churn quase 0</span>
+                                <span className="text-[9px] font-black text-orange-500 uppercase tracking-wide whitespace-nowrap">Churn quase 0</span>
                             </div>
                         </div>
                     </div>

@@ -28,13 +28,13 @@ export function HeroSection() {
                     </div>
 
                     <div className="flex flex-col items-center gap-[20px] w-full">
-                        <h1 className="text-4xl min-[380px]:text-5xl sm:text-6xl md:text-8xl lg:text-[10rem] font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-b from-white via-zinc-200 to-zinc-600 pb-2 leading-[0.85] uppercase italic">
-                            Domine a <br className="hidden md:block" />
-                            <span className="text-emerald-500">Consultoria</span>
+                        <h1 className="text-4xl min-[380px]:text-5xl sm:text-6xl md:text-8xl lg:text-[7rem] xl:text-[8.5rem] font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-b from-white via-zinc-200 to-zinc-600 pb-2 leading-[0.85] uppercase italic text-center">
+                            Gerencie sua <span className="text-emerald-500">Consultoria</span> <br />
+                            <span className="text-white">Escalável.</span>
                         </h1>
                         <p className="mx-auto max-w-3xl text-zinc-400 md:text-2xl font-medium leading-relaxed">
-                            Com a <span className="text-white font-bold">Plataforma de Treinamento Personalizado</span>. <br />
-                            <span className="text-emerald-400 font-bold">Mais de 500 treinadores ativos</span> e <span className="text-white font-bold">10000 treinos realizados</span>.
+                            Simplifique sua gestão de treinamento e aumente o <span className="text-white font-bold">resultado do seu aluno</span>. <br />
+                            A plataforma profissional para quem vive de performance.
                         </p>
                     </div>
 
@@ -44,20 +44,20 @@ export function HeroSection() {
                                 asChild
                                 variant="outline"
                                 suppressHydrationWarning
-                                className="w-full md:w-[calc(50%-10px)] h-auto min-h-[4rem] py-3 px-4 md:px-8 text-sm md:text-[15px] border-zinc-800 bg-zinc-900/50 text-zinc-400 hover:bg-zinc-800 hover:text-white hover:border-zinc-700 font-black uppercase italic tracking-wide rounded-2xl backdrop-blur-sm transition-all hover:-translate-y-1 shadow-2xl"
+                                className="order-2 md:order-1 w-full md:w-[calc(50%-10px)] h-auto min-h-[4rem] py-3 px-4 md:px-8 text-sm md:text-[15px] border-zinc-800 bg-zinc-900/50 text-zinc-400 hover:bg-zinc-800 hover:text-white hover:border-zinc-700 font-black uppercase italic tracking-wide rounded-2xl backdrop-blur-sm transition-all hover:-translate-y-1 shadow-2xl"
                             >
                                 <a href="#marketplace" suppressHydrationWarning className="flex items-center justify-center h-full text-center">
                                     <Search className="mr-2 h-5 w-5 shrink-0" />
-                                    Buscar Personal
+                                    Buscar Treinador
                                 </a>
                             </Button>
                             <Button
                                 asChild
                                 suppressHydrationWarning
-                                className="w-full md:w-[calc(50%-10px)] h-auto min-h-[4rem] py-3 px-4 md:px-8 text-sm md:text-[15px] bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase italic tracking-wide rounded-2xl shadow-xl shadow-emerald-500/20 hover:shadow-emerald-500/40 transition-all hover:-translate-y-1 hover:scale-105"
+                                className="order-1 md:order-2 w-full md:w-[calc(50%-10px)] h-auto min-h-[4rem] py-3 px-4 md:px-8 text-sm md:text-[15px] bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase italic tracking-wide rounded-2xl shadow-xl shadow-emerald-500/20 hover:shadow-emerald-500/40 transition-all hover:-translate-y-1 hover:scale-105"
                             >
                                 <Link href="/auth/signup" suppressHydrationWarning className="flex items-center justify-center h-full text-center leading-tight">
-                                    <span>Quero me tornar <br className="sm:hidden" />um treinador de sucesso</span>
+                                    <span>Quero simplificar <br className="sm:hidden" />minha gestão agora</span>
                                     <ArrowRight className="ml-2 h-5 w-5 shrink-0" />
                                 </Link>
                             </Button>

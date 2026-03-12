@@ -6,6 +6,7 @@ import { VideoShowcase } from '@/components/landing/video-showcase'
 import { MarketplaceSection } from '@/components/landing/marketplace-section'
 import { DifferentialsSection } from '@/components/landing/differentials-section'
 import { SocialProofSection } from '@/components/landing/social-proof-section'
+import { GuaranteeSection } from '@/components/landing/guarantee-section'
 import { FAQSection } from '@/components/landing/faq-section'
 import { Logo } from '@/components/ui/logo'
 import Link from 'next/link'
@@ -126,6 +127,7 @@ export default async function LandingPage() {
         <DifferentialsSection />
         <MarketplaceSection initialTrainers={trainers} />
         <SocialProofSection />
+        <GuaranteeSection />
         <FAQSection />
       </main>
 
