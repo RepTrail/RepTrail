@@ -30,7 +30,7 @@ export function StudentFeatures() {
 
                             {/* Mock Screen Content */}
                             <video
-                                src="/videos/tela de treinos dos alunos.MP4"
+                                src="/Videos/tela de treinos dos alunos.MP4"
                                 autoPlay
                                 loop
                                 muted

@@ -73,7 +73,7 @@ export function TrainerFeatures() {
                             </div>
 
                             <video
-                                src="/videos/landing page do personal.MP4"
+                                src="/Videos/landing page do personal.MP4"
                                 autoPlay
                                 loop
                                 muted

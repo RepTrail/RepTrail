@@ -5,21 +5,21 @@ import { useState } from "react";
 
 const videos = [
     {
-        src: "/videos/dash inicial do aluno.MP4",
+        src: "/Videos/dash inicial do aluno.MP4",
         title: "Dashboard do Aluno",
         desc: "Visão geral imersiva e moderna na palma da mão.",
         borderColorClass: "hover:border-orange-500/50 hover:shadow-[0_0_40px_rgba(249,115,22,0.15)]",
         titleColorClass: "group-hover:text-orange-500"
     },
     {
-        src: "/videos/tela minha evolução.MP4",
+        src: "/Videos/tela minha evolução.MP4",
         title: "Minha Evolução",
         desc: "Acompanhamento visual de progresso e medidas reais.",
         borderColorClass: "hover:border-emerald-500/50 hover:shadow-[0_0_40px_rgba(16,185,129,0.15)]",
         titleColorClass: "group-hover:text-emerald-500"
     },
     {
-        src: "/videos/feed de alunos e perfil publico do aluno.MP4",
+        src: "/Videos/feed de alunos e perfil publico do aluno.MP4",
         title: "Feed e Comunidade",
         desc: "Engajamento real através das redes do RepTrail.",
         borderColorClass: "hover:border-orange-500/50 hover:shadow-[0_0_40px_rgba(249,115,22,0.15)]",
