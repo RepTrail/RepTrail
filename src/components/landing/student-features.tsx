@@ -54,13 +54,13 @@ export function StudentFeatures() {
                         subtitle="Ofereça um aplicativo intuitivo onde seu aluno visualiza treinos, dietas e evolução física de forma profissional, aumentando a fidelização."
                     />
 
-                    <div className="flex flex-col sm:flex-row flex-wrap gap-[20px] text-left">
+                    <div className="grid grid-cols-2 gap-[10px] sm:gap-[20px] text-left">
                         {features.map((item, idx) => (
-                            <div key={idx} className="flex flex-1 min-w-fullitems-center gap-[20px] group p-3 rounded-xl hover:bg-zinc-900/50 transition-colors border border-transparent hover:border-zinc-800">
+                            <div key={idx} className="flex items-center gap-[15px] sm:gap-[20px] group p-3 rounded-xl hover:bg-zinc-900/50 transition-colors border border-transparent hover:border-zinc-800">
                                 <div className="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center border border-orange-500/20 group-hover:border-orange-500/50 transition-colors shrink-0">
                                     <item.icon className="w-4 h-4 text-orange-500" />
                                 </div>
-                                <span className="text-sm font-bold text-zinc-300 uppercase italic tracking-wide group-hover:text-orange-400 transition-colors">
+                                <span className="text-xs sm:text-sm font-bold text-zinc-300 uppercase italic tracking-wide group-hover:text-orange-400 transition-colors">
                                     {item.text}
                                 </span>
                             </div>
