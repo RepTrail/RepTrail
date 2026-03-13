@@ -17,7 +17,7 @@ export default async function StudentRankingPage() {
     const ranking = await getTrainerRanking()
 
     return (
-        <div className="space-y-12 pb-20 animate-in fade-in duration-700" suppressHydrationWarning>
+        <div className="max-w-7xl mx-auto space-y-12 animate-in fade-in duration-700 " suppressHydrationWarning>
             {/* Header Section */}
             <RankingHeader />
             {/* Top 3 Podium */}
@@ -33,12 +33,12 @@ export default async function StudentRankingPage() {
 
             {/* General List */}
             <div className="space-y-6">
-                <div className="flex items-center gap-3 px-2">
+                <div className="flex items-center gap-3 pb-4 px-2">
                     <TrendingUp className="w-4 h-4 text-emerald-500" />
                     <h2 className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.3em]">Classificação Geral</h2>
                 </div>
 
-                <Card className="bg-zinc-900/30 border-zinc-800/50 shadow-2xl rounded-[2.5rem] overflow-hidden backdrop-blur-sm">
+                <Card className="bg-zinc-900/30 border-zinc-800/50 shadow-2xl rounded-3xl overflow-hidden backdrop-blur-sm">
                     <CardContent className="p-0">
                         <div className="divide-y divide-zinc-800/50">
                             {ranking.slice(3, 10).map((trainer: any, index: number) => (
@@ -70,12 +70,12 @@ function PodiumCard({ trainer, rank }: { trainer: any, rank: number }) {
     }
 
     return (
-        <Card className={`group relative bg-zinc-900 border-zinc-800 shadow-2xl rounded-[3rem] overflow-hidden transition-all duration-700 hover:border-amber-500/40 h-full`}>
+        <Card className={`group relative bg-zinc-900 border-zinc-800 shadow-2xl rounded-3xl overflow-hidden transition-all duration-700 hover:border-amber-500/40 h-full`}>
             <div className={`absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity`}>
                 <Trophy className={`w-32 h-32 ${colors[rank - 1].split(' ')[2]}`} />
             </div>
 
-            <CardContent className="p-10 flex flex-col items-center text-center space-y-8 relative z-10">
+            <CardContent className="p-6 sm:p-10 flex flex-col items-center text-center space-y-8 relative z-10">
                 <div className="relative">
                     <div className={`absolute -inset-4 bg-gradient-to-r ${colors[rank - 1].split(' ').slice(0, 2).join(' ')} rounded-full blur-2xl opacity-10 group-hover:opacity-30 transition duration-1000`}></div>
                     <Avatar className="h-32 w-32 border-4 border-zinc-900 shadow-2xl relative">
@@ -121,14 +121,14 @@ function PodiumCard({ trainer, rank }: { trainer: any, rank: number }) {
 
                 {trainer.trainer_code ? (
                     <Link href={`/personal/${trainer.trainer_code.toUpperCase().trim()}`} className="w-full pt-4">
-                        <Button className="w-full h-14 rounded-2xl bg-white hover:bg-amber-500 hover:text-zinc-950 text-zinc-950 font-black uppercase italic tracking-wide transition-all shadow-xl active:scale-95">
+                        <Button className="w-full h-auto min-h-[3.5rem] py-4 rounded-2xl bg-white hover:bg-amber-500 hover:text-zinc-950 text-zinc-950 font-black uppercase italic tracking-wide transition-all shadow-xl active:scale-95">
                             Ver Perfil
                             <ArrowRight className="w-5 h-5 ml-2" />
                         </Button>
                     </Link>
                 ) : (
                     <div className="w-full pt-4">
-                        <Button disabled className="w-full h-14 rounded-2xl bg-zinc-800 text-zinc-600 font-black uppercase italic tracking-wide cursor-not-allowed">
+                        <Button disabled className="w-full h-auto min-h-[3.5rem] py-4 rounded-2xl bg-zinc-800 text-zinc-600 font-black uppercase italic tracking-wide cursor-not-allowed">
                             Sem código
                         </Button>
                     </div>
@@ -172,7 +172,7 @@ function RankingRow({ trainer, rank }: { trainer: any, rank: number }) {
                 </div>
                 {trainer.trainer_code ? (
                     <Link href={`/personal/${trainer.trainer_code.toUpperCase().trim()}`}>
-                        <Button variant="outline" className="h-12 px-6 rounded-xl border-zinc-800 bg-transparent hover:bg-white hover:text-zinc-950 text-white font-black uppercase italic tracking-wide transition-all group/btn">
+                        <Button variant="outline" className="h-auto min-h-[3rem] py-3 px-6 rounded-xl border-zinc-800 bg-transparent hover:bg-white hover:text-zinc-950 text-white font-black uppercase italic tracking-wide transition-all group/btn">
                             Ver Perfil
                             <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
                         </Button>

@@ -77,7 +77,7 @@ export default async function StudentDietEditPage({ params }: { params: Promise<
     console.log('[STUDENT DIET EDIT] Diet found:', { id: diet.id, name: diet.name, mealsCount: diet.meals?.length })
 
     return (
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8" suppressHydrationWarning>
+        <div className="max-w-5xl mx-auto  sm:px-6 lg:px-8 py-8" suppressHydrationWarning>
             <DietBuilder diet={diet as any} backHref="/dashboard/student/diet" />
         </div>
     )

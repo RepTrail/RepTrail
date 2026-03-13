@@ -23,7 +23,7 @@ export async function PhotosAndTransformation({ studentId, isOwner, studentName,
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
             <div className="space-y-8">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 pb-4">
                         <div className="p-2 bg-amber-500/10 rounded-xl border border-amber-500/20">
                             <Trophy className="w-6 h-6 text-amber-500" />
                         </div>
@@ -74,7 +74,7 @@ export async function PhotosAndTransformation({ studentId, isOwner, studentName,
             </div>
 
             <div className="space-y-8">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 pb-4">
                     <Activity className="w-6 h-6 text-purple-500" />
                     <h2 className="text-2xl font-black italic uppercase tracking-tight">Galeria de Progresso</h2>
                 </div>

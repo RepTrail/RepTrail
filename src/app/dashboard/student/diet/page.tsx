@@ -56,14 +56,11 @@ export default async function StudentDietPage() {
     if (isAutoTrainingActive && !hasTrainer) {
 
         return (
-            <div className="space-y-12 pb-20" suppressHydrationWarning>
-                <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 px-4">
-                    <div className="space-y-4">
+            <div className="max-w-7xl mx-auto flex flex-col gap-section-gap" suppressHydrationWarning>
+                <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 px-2">
+                    <div className="space-y-2 sm:space-y-5">
                         <div className="flex items-center gap-3">
-                            <div className="p-2 bg-orange-500 rounded-xl">
-                                <Utensils className="w-5 h-5 text-zinc-950" />
-                            </div>
-                            <h1 className="text-4xl font-black text-white italic uppercase tracking-tighter">
+                            <h1 className="text-3xl font-black text-white italic uppercase tracking-tighter">
                                 Minha <span className="text-orange-500">Dieta</span>
                             </h1>
                         </div>
@@ -72,7 +69,7 @@ export default async function StudentDietPage() {
                         </p>
                     </div>
 
-                    <div className="flex items-center gap-3 w-full sm:w-auto">
+                    <div className="flex items-center gap-3 pb-4 w-full sm:w-auto">
                         <Button asChild variant="outline" className="flex-1 sm:flex-none h-11 px-6 bg-zinc-900 border-zinc-800 text-zinc-100 hover:bg-zinc-800 hover:text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2 border-white/5">
                             <Link href="/dashboard/student/import-pdf">
                                 <FileUp className="w-4 h-4" />
@@ -100,14 +97,14 @@ export default async function StudentDietPage() {
                     </div>
                 </header>
 
-                <div className="px-4">
+                <div className="">
                     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                         {diets.length > 0 ? (
                             diets.map((currentDiet: any) => {
                                 const assignedDays = dietDaysMap[currentDiet.id] || []
 
                                 return (
-                                    <Card key={currentDiet.id} className="bg-zinc-900/50 border-zinc-800 text-zinc-100 hover:border-orange-500/30 transition-all group rounded-[2rem] overflow-hidden flex flex-col">
+                                    <Card key={currentDiet.id} className="bg-zinc-900/50 border-zinc-800 text-zinc-100 hover:border-orange-500/30 transition-all group rounded-3xl overflow-hidden flex flex-col">
                                         <CardHeader className="p-6 pb-4">
                                             <div className="flex items-start justify-between">
                                                 <div className="bg-zinc-800 p-2 rounded-lg text-zinc-400 group-hover:text-orange-500 transition-colors">
@@ -160,7 +157,7 @@ export default async function StudentDietPage() {
                     </div>
                 </div>
 
-                <div className="px-4">
+                <div className="">
                     <div className="p-8 bg-zinc-900/40 backdrop-blur-sm rounded-3xl border border-zinc-800/50 text-center space-y-4 shadow-2xl">
                         <div className="flex items-center justify-center gap-4">
                             <div className="flex items-center gap-2 text-[10px] font-black text-zinc-500 uppercase tracking-widest">
@@ -180,23 +177,20 @@ export default async function StudentDietPage() {
     // Default: Personal View (Daily Tracker)
 
     return (
-        <div className="space-y-12 pb-20">
-            <header className="px-4">
+        <div className="max-w-7xl mx-auto flex flex-col gap-section-gap">
+            <header className="px-2 space-y-2 sm:space-y-5">
                 <div className="flex items-center gap-3">
-                    <div className="p-2 bg-orange-500 rounded-xl">
-                        <Utensils className="w-5 h-5 text-zinc-950" />
-                    </div>
-                    <h1 className="text-4xl font-black text-white italic uppercase tracking-tighter">
+                    <h1 className="text-3xl font-black text-white italic uppercase tracking-tighter">
                         Minha <span className="text-orange-500">Dieta</span>
                     </h1>
                 </div>
-                <p className="text-zinc-500 text-sm font-medium mt-4">
+                <p className="text-zinc-500 text-sm font-medium">
                     {studentDailyDiet ? (studentDailyDiet as any).name : "Acompanhe seu plano alimentar oficial."}
                 </p>
             </header>
 
             {studentDailyDiet?.meals?.length === 0 || !studentDailyDiet ? (
-                <div className="px-4">
+                <div className="">
                     <div className="flex flex-col items-center justify-center py-20 text-center space-y-4 bg-zinc-900/50 rounded-3xl border border-dashed border-zinc-800">
                         <div className="p-6 bg-zinc-950 rounded-full border border-zinc-800 mb-2">
                             <Utensils className="h-10 w-10 text-zinc-700" />
@@ -210,12 +204,12 @@ export default async function StudentDietPage() {
                     </div>
                 </div>
             ) : (
-                <div className="max-w-3xl mx-auto px-4">
+                <div className="max-w-3xl mx-auto ">
                     <DietAdherence diet={studentDailyDiet} allowEstimation={hasTrainer} hasTrainer={hasTrainer} />
                 </div>
             )}
 
-            <div className="px-4">
+            <div className="">
                 <div className="p-8 bg-zinc-900/40 backdrop-blur-sm rounded-3xl border border-zinc-800/50 text-center space-y-4 shadow-2xl">
                     <div className="flex items-center justify-center gap-4">
                         <div className="flex items-center gap-2 text-[10px] font-black text-zinc-500 uppercase tracking-widest">

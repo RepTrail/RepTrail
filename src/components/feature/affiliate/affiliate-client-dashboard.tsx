@@ -139,13 +139,13 @@ export function AffiliateClientDashboard({ data }: Props) {
                         <div className="space-y-2">
                             <p className="text-[10px] font-black text-amber-500 uppercase tracking-widest">Seu Link de Afiliado</p>
                             {affiliateLink ? (
-                                <div className="flex items-center gap-3">
-                                    <code className="text-sm text-amber-300 bg-zinc-950/50 px-4 py-2 rounded-xl border border-amber-500/20 font-mono break-all">
+                                <div className="flex items-center gap-3 pb-4">
+                                    <code className="text-sm text-amber-300 bg-zinc-950/50  py-2 rounded-xl border border-amber-500/20 font-mono break-all">
                                         {affiliateLink}
                                     </code>
                                     <Button
                                         onClick={handleCopy}
-                                        className={`shrink-0 h-10 px-4 rounded-xl font-bold text-xs uppercase tracking-widest transition-all ${copied ? 'bg-emerald-500 text-white' : 'bg-amber-500 hover:bg-amber-600 text-zinc-950'}`}
+                                        className={`shrink-0 h-10  rounded-xl font-bold text-xs uppercase tracking-widest transition-all ${copied ? 'bg-emerald-500 text-white' : 'bg-amber-500 hover:bg-amber-600 text-zinc-950'}`}
                                     >
                                         {copied ? <><Check className="w-4 h-4 mr-2" />Copiado!</> : <><Copy className="w-4 h-4 mr-2" />Copiar</>}
                                     </Button>
@@ -238,7 +238,7 @@ export function AffiliateClientDashboard({ data }: Props) {
                                 <div className="divide-y divide-zinc-800/50">
                                     {recentReferrals.map((r: any) => (
                                         <div key={r.id} className="flex items-center justify-between p-4 hover:bg-zinc-800/30 transition-colors">
-                                            <div className="flex items-center gap-3">
+                                            <div className="flex items-center gap-3 pb-4">
                                                 <Avatar className="h-9 w-9 border border-zinc-700">
                                                     <AvatarImage src={r.avatar_url || undefined} />
                                                     <AvatarFallback className="bg-zinc-800 text-zinc-400 font-bold text-xs">
@@ -285,7 +285,7 @@ export function AffiliateClientDashboard({ data }: Props) {
                                                 <p className="text-xs font-bold text-zinc-200">{c.description || 'Comissão de venda'}</p>
                                                 <p className="text-[10px] text-zinc-500">{new Date(c.created_at).toLocaleDateString('pt-BR')}</p>
                                             </div>
-                                            <div className="flex items-center gap-3">
+                                            <div className="flex items-center gap-3 pb-4">
                                                 <span className="text-sm font-black text-emerald-400">
                                                     +R$ {Number(c.amount).toFixed(2)}
                                                 </span>
@@ -452,7 +452,7 @@ export function AffiliateClientDashboard({ data }: Props) {
                                     { icon: '💰', text: 'Personal contrata um plano' },
                                     { icon: '🎉', text: 'Você recebe 10% de comissão!' },
                                 ].map((step, i) => (
-                                    <div key={i} className="flex items-center gap-3">
+                                    <div key={i} className="flex items-center gap-3 pb-4">
                                         <span className="text-lg">{step.icon}</span>
                                         <p className="text-xs text-zinc-400">{step.text}</p>
                                     </div>

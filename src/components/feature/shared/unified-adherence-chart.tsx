@@ -52,7 +52,7 @@ export function UnifiedAdherenceChart({ history, showErgogenics = false, noCard 
     }
 
     const content = (
-        <div className={cn("space-y-6 overflow-x-auto scrollbar-hide", noCard ? "" : "px-4 pb-4 sm:px-8 sm:pb-8")}>
+        <div className={cn("space-y-6 overflow-x-auto scrollbar-hide", noCard ? "" : " pb-4 sm:px-8 sm:pb-8")}>
             <div className="min-w-[500px] space-y-4">
                 {rows.map(row => (
                     <div key={row.id} className="grid grid-cols-[90px_1fr] gap-4 items-center group">
@@ -111,7 +111,7 @@ export function UnifiedAdherenceChart({ history, showErgogenics = false, noCard 
                 ))}
             </div>
 
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-[8px] font-black text-zinc-500 uppercase tracking-[0.2em] opacity-60">
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-[8px] font-black text-zinc-500 uppercase tracking-widest opacity-60">
                 <span className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-emerald-500" /> Meta Batida</span>
                 <span className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-amber-500" /> Parcial</span>
                 <span className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-red-500" /> Não Realizado</span>
@@ -123,9 +123,9 @@ export function UnifiedAdherenceChart({ history, showErgogenics = false, noCard 
     if (noCard) return content
 
     return (
-        <Card className="bg-zinc-900/40 border-zinc-800/50 rounded-[3rem] overflow-hidden backdrop-blur-sm shadow-2xl transition-all hover:border-zinc-700/50">
+        <Card className="bg-zinc-900/40 border-zinc-800/50 rounded-3xl overflow-hidden backdrop-blur-sm shadow-2xl transition-all hover:border-zinc-700/50">
             <CardHeader className="px-8 pt-8 pb-4">
-                <CardTitle className="flex items-center gap-3 text-lg font-black text-white italic uppercase tracking-tighter">
+                <CardTitle className="flex items-center gap-3 pb-4 text-lg font-black text-white italic uppercase tracking-tighter">
                     <Activity className="w-6 h-6 text-purple-500 animate-pulse" />
                     Adesão Consolidada <span className="text-zinc-500 text-xs ml-2 not-italic">(30 Dias)</span>
                 </CardTitle>

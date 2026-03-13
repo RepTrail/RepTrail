@@ -1,7 +1,7 @@
-
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Search, Users, Trophy, Star } from "lucide-react";
+import { ArrowRight, Search, Users, Trophy, Star, ShieldCheck } from "lucide-react";
+import { LandingBadge } from "./landing-badge";
 
 export function HeroSection() {
     return (
@@ -13,48 +13,44 @@ export function HeroSection() {
 
             <div className="w-full max-w-[1100px] mx-auto relative z-10 flex flex-col items-center text-center gap-[30px] md:gap-[50px] animate-in fade-in slide-in-from-bottom-8 duration-1000">
 
-                <div className="flex flex-col items-center gap-[20px] w-full">
-                    <div className="inline-flex items-center gap-2 rounded-full border border-zinc-800 bg-zinc-900/50 px-4 py-1.5 backdrop-blur-xl mb-4 hover:border-emerald-500/30 transition-colors">
-                        <div className="flex -space-x-2">
-                            {[1, 2, 3].map((i) => (
-                                <div key={i} className="w-5 h-5 rounded-full bg-zinc-800 border-2 border-zinc-900 flex items-center justify-center text-[8px] text-zinc-500 font-bold">
-                                    <Users className="w-3 h-3" />
-                                </div>
-                            ))}
-                        </div>
-                        <span className="text-xs font-medium text-zinc-300">
-                            <span className="text-emerald-400 font-bold">+500</span> treinadores ativos hoje
-                        </span>
+                <div className="flex flex-col items-center gap-[12px] w-full">
+                    <div className="flex flex-wrap items-center justify-center gap-2">
+                        <LandingBadge icon={Users} className="hover:border-emerald-500/30 transition-colors">
+                            <span className="text-emerald-400 font-bold mr-1">+500</span> treinadores ativos hoje
+                        </LandingBadge>
+                        <LandingBadge icon={ShieldCheck} variant="emerald" className="hover:border-emerald-500/30 transition-colors">
+                            <span className="text-emerald-400 font-bold mr-1">Grátis</span> até 5 alunos
+                        </LandingBadge>
                     </div>
 
                     <div className="flex flex-col items-center gap-[20px] w-full">
-                        <h1 className="text-3xl min-[380px]:text-4xl sm:text-6xl md:text-7xl lg:text-[5.5rem] xl:text-[7rem] font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-b from-white via-zinc-200 to-zinc-600 pb-2 leading-[0.85] uppercase italic text-center">
+                        <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-[5rem] xl:text-[6rem] font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-b from-white via-zinc-200 to-zinc-600 pb-2 leading-[0.85] uppercase italic text-center">
                             Transforme sua <span className="text-emerald-500">Consultoria</span> <br />
                             <span className="text-white">de Educação Física.</span>
                         </h1>
-                        <p className="mx-auto max-w-3xl text-zinc-400 md:text-xl lg:text-2xl font-medium leading-relaxed">
+                        <p className="mx-auto max-w-3xl text-zinc-400 text-lg md:text-xl lg:text-2xl font-medium leading-relaxed">
                             Aumente a <span className="text-white font-bold">retenção dos seus alunos</span> e <span className="text-emerald-500 font-bold">simplifique sua gestão</span> com o RepTrail. <br />
                             A plataforma mais completa para profissionais de alta performance.
                         </p>
                     </div>
 
                     <div className="flex flex-col items-center gap-[20px] w-full pt-8">
-                        <div className="flex flex-col gap-[16px] w-full max-w-2xl mx-auto items-center px-4">
+                        <div className="flex flex-col gap-[16px] w-full max-w-2xl mx-auto items-center ">
                             <Button
                                 asChild
                                 suppressHydrationWarning
-                                className="w-full h-auto min-h-[4.5rem] py-4 px-8 text-base md:text-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase italic tracking-wide rounded-2xl shadow-xl shadow-emerald-500/20 hover:shadow-emerald-500/40 transition-all hover:-translate-y-1 hover:scale-[1.01] whitespace-normal"
+                                className="w-full h-auto min-h-[4.5rem] py-4 px-8 text-sm md:text-lg bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase italic tracking-wide rounded-2xl shadow-xl shadow-emerald-500/20 hover:shadow-emerald-500/40 transition-all hover:-translate-y-1 hover:scale-[1.01] whitespace-normal"
                             >
-                                <Link href="/auth/signup" suppressHydrationWarning className="flex items-center justify-center h-full text-center leading-tight">
+                                <Link href="/auth/signup" suppressHydrationWarning className="flex flex-col sm:flex-row items-center justify-center h-full text-center leading-[1.1] sm:leading-tight py-1">
                                     <span className="px-1">Quero transformar minha consultoria agora</span>
-                                    <ArrowRight className="ml-2 h-5 w-5 shrink-0" />
+                                    <ArrowRight className="mt-2 sm:mt-0 sm:ml-2 h-5 w-5 shrink-0" />
                                 </Link>
                             </Button>
                             <Button
                                 asChild
                                 variant="outline"
                                 suppressHydrationWarning
-                                className="w-full h-auto min-h-[4rem] py-4 px-6 text-sm md:text-base border-zinc-800 bg-zinc-900/50 text-zinc-400 hover:bg-zinc-800 hover:text-white hover:border-zinc-700 font-black uppercase italic tracking-wide rounded-2xl backdrop-blur-sm transition-all hover:-translate-y-1 shadow-2xl"
+                                className="w-full h-auto min-h-[4rem] py-4 px-6 text-sm md:text-lg border-zinc-800 bg-zinc-900/50 text-zinc-400 hover:bg-zinc-800 hover:text-white hover:border-zinc-700 font-black uppercase italic tracking-wide rounded-2xl backdrop-blur-sm transition-all hover:-translate-y-1 shadow-2xl"
                             >
                                 <a href="#marketplace" suppressHydrationWarning className="flex items-center justify-center h-full text-center">
                                     <Search className="mr-2 h-4 w-4 shrink-0" />
@@ -101,4 +97,3 @@ export function HeroSection() {
         </section>
     );
 }
-

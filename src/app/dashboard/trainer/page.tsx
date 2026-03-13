@@ -95,7 +95,7 @@ export default async function TrainerDashboard() {
             <CodeAutoGenerator hasCode={!!profile?.trainer_code} />
             {/* Hero Section */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-2 border-b border-zinc-800/50">
-                <div className="space-y-1">
+                <div className="space-y-2 sm:space-y-5">
                     <h1 className="text-4xl font-black tracking-tight text-white font-sans italic uppercase">
                         Visão Geral
                     </h1>
@@ -103,7 +103,7 @@ export default async function TrainerDashboard() {
                         Bem-vindo de volta, <span className="text-zinc-200">{profile?.full_name?.split(' ')[0] || 'Treinador'}</span>. Aqui está o resumo do seu time.
                     </p>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 pb-4">
                     <Button asChild className="bg-white text-zinc-950 hover:bg-zinc-200 rounded-xl font-bold h-11 px-6 shadow-xl active:scale-95 transition-all gap-2">
                         <Link href="/dashboard/trainer/students">
                             <UserPlus className="w-4 h-4" />
@@ -218,7 +218,7 @@ export default async function TrainerDashboard() {
                                 <p className="text-zinc-400 text-xs leading-relaxed">
                                     Tem uma planilha ou PDF? Nossa IA pode ler o arquivo e criar o treino ou dieta em segundos.
                                 </p>
-                                <Button asChild className="w-full bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 text-zinc-100 rounded-xl h-11 transition-all active:scale-[0.98] group-hover:border-green-500/30">
+                                <Button asChild className="w-full bg-emerald-500 border border-emerald-400 text-zinc-950 hover:bg-emerald-400 rounded-xl h-11 font-bold shadow-lg shadow-emerald-500/10 transition-all active:scale-[0.98]">
                                     <Link href="/dashboard/trainer/import-pdf">
                                         Importar via PDF
                                     </Link>
@@ -275,9 +275,9 @@ function QuickActionCard({ title, description, icon, href, label }: any) {
                 </div>
                 <div className="space-y-1">
                     <h3 className="font-bold text-zinc-100">{title}</h3>
-                    <p className="text-xs text-zinc-500 leading-relaxed px-4">{description}</p>
+                    <p className="text-xs text-zinc-500 leading-relaxed ">{description}</p>
                 </div>
-                <Button asChild variant="ghost" className="text-zinc-400 hover:text-white hover:bg-zinc-900/50 h-9 px-4 text-xs font-bold rounded-xl mt-2 transition-all active:scale-95">
+                <Button asChild variant="ghost" className="text-zinc-400 hover:text-white hover:bg-zinc-900/50 h-9  text-xs font-bold rounded-xl mt-2 transition-all active:scale-95">
                     <Link href={href}>
                         {label}
                     </Link>

@@ -27,20 +27,19 @@ export default async function MeuPersonalPage() {
     }
 
     return (
-        <div className="space-y-10 pb-20 animate-in fade-in duration-700">
+        <div className="space-y-10 animate-in fade-in duration-700 ">
             {/* Header */}
-            <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 bg-orange-500 rounded-xl">
-                    <UserCheck className="w-5 h-5 text-zinc-950" />
+            <div className="space-y-2 sm:space-y-5">
+                <div className="flex items-center gap-3">
+                    <h1 className="text-3xl font-black text-white italic uppercase tracking-tighter">
+                        Meu <span className="text-orange-500">Personal</span>
+                    </h1>
                 </div>
-                <h1 className="text-4xl font-black text-white italic uppercase tracking-tighter">
-                    Meu <span className="text-orange-500">Personal</span>
-                </h1>
+                <p className="text-zinc-500 text-sm font-medium max-w-md flex items-center gap-2">
+                    <UserCheck className="w-3 h-3 text-emerald-500" />
+                    Seu treinador de confiança
+                </p>
             </div>
-            <p className="text-zinc-500 text-sm font-medium max-w-md flex items-center gap-2">
-                <UserCheck className="w-3 h-3 text-emerald-500" />
-                Seu treinador de confiança
-            </p>
 
             {/* Trainer Hero Card */}
             <div className="relative group p-8 md:p-12 bg-zinc-900/50 border border-zinc-800 rounded-[3rem] overflow-hidden shadow-2xl">
@@ -67,7 +66,7 @@ export default async function MeuPersonalPage() {
                     {/* Info */}
                     <div className="flex-1 space-y-6 text-center md:text-left">
                         <div className="space-y-3">
-                            <h2 className="text-3xl md:text-4xl font-black text-white italic uppercase tracking-tighter">
+                            <h2 className="text-3xl md:text-3xl font-black text-white italic uppercase tracking-tighter">
                                 {trainer.full_name}
                             </h2>
                             <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 text-sm font-medium text-zinc-400">

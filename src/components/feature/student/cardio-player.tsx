@@ -275,8 +275,8 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
 
     if (isCompleted) {
         return (
-            <Card className="bg-emerald-950/20 border-emerald-500/20 shadow-2xl rounded-[2.5rem] overflow-hidden backdrop-blur-sm transition-all duration-500 cursor-default">
-                <CardContent className="p-8 space-y-6">
+            <Card className="bg-emerald-950/20 border-emerald-500/20 shadow-2xl rounded-3xl overflow-hidden backdrop-blur-sm transition-all duration-500 cursor-default">
+                <CardContent className="p-10 space-y-6">
                     <div className="flex items-center justify-between">
                         <div className="space-y-2">
                             <div className="flex items-center gap-2">
@@ -311,11 +311,11 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
     }
 
     if (loading) return (
-        <Card className="bg-zinc-900/40 border-zinc-800/50 shadow-2xl rounded-[2.5rem] overflow-hidden backdrop-blur-sm animate-pulse border-t-zinc-700/10">
-            <CardContent className="p-8 space-y-8">
+        <Card className="bg-zinc-900/40 border-zinc-800/50 shadow-2xl rounded-3xl overflow-hidden backdrop-blur-sm animate-pulse border-t-zinc-700/10">
+            <CardContent className="p-6 space-y-8">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div className="space-y-3">
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3 pb-4">
                             <div className="p-2 bg-zinc-950 rounded-xl border border-zinc-800">
                                 <Activity className="w-5 h-5 text-zinc-800" />
                             </div>
@@ -354,11 +354,11 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
     )
 
     return (
-        <Card className="bg-zinc-900/40 border-zinc-800/50 shadow-2xl rounded-[2.5rem] overflow-hidden backdrop-blur-sm border-t-zinc-700/10">
-            <CardContent className="p-8 space-y-8">
+        <Card className="bg-zinc-900/40 border-zinc-800/50 shadow-2xl rounded-3xl overflow-hidden backdrop-blur-sm border-t-zinc-700/10">
+            <CardContent className="p-6 space-y-8">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div className="space-y-3">
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3 pb-4">
                             <div className="p-2 bg-orange-500/10 rounded-xl border border-orange-500/20">
                                 <Activity className="w-5 h-5 text-orange-500" />
                             </div>
@@ -370,7 +370,7 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
                         </div>
                     </div>
                     {status !== 'idle' && (
-                        <div className="self-start sm:self-center flex items-center gap-2 px-4 py-1.5 bg-orange-500/10 border border-orange-500/20 rounded-full animate-pulse shadow-[0_0_20px_rgba(249,115,22,0.1)]">
+                        <div className="self-start sm:self-center flex items-center gap-2  py-1.5 bg-orange-500/10 border border-orange-500/20 rounded-full animate-pulse shadow-[0_0_20px_rgba(249,115,22,0.1)]">
                             <div className="w-2 h-2 rounded-full bg-orange-500" />
                             <span className="text-[10px] font-black text-orange-500 uppercase tracking-widest italic">Sessão Ativa</span>
                         </div>

@@ -21,7 +21,7 @@ export default function StudentDashboardLoading() {
                     </div>
                 </div>
                 <div className="flex items-center gap-4 bg-zinc-900/50 p-2 rounded-2xl border border-zinc-800/50">
-                    <div className="px-4 py-2 bg-zinc-950 rounded-xl border border-zinc-800 space-y-2">
+                    <div className=" py-2 bg-zinc-950 rounded-xl border border-zinc-800 px-4 w-full px-4 space-y-2">
                         <Skeleton className="h-2 w-10" />
                         <Skeleton className="h-3 w-32" />
                     </div>
@@ -70,7 +70,7 @@ export default function StudentDashboardLoading() {
                         <div className="bg-zinc-900/40 border border-zinc-800/50 shadow-2xl border-t-zinc-700/10 p-8 rounded-[2.5rem] overflow-hidden backdrop-blur-sm space-y-8 min-h-[400px]">
                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                 <div className="space-y-3">
-                                    <div className="flex items-center gap-3">
+                                    <div className="flex items-center gap-3 pb-4">
                                         <div className="p-2 bg-zinc-950 rounded-xl border border-zinc-800">
                                             <Activity className="w-5 h-5 text-zinc-800" />
                                         </div>

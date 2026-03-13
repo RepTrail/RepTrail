@@ -558,7 +558,7 @@ export function WorkoutPlayer({
                                         <div key={gId} className="space-y-6 bg-zinc-950/20 p-4 rounded-3xl border border-zinc-800/30">
                                             <div className="space-y-4">
                                                 <div className="flex flex-col gap-4">
-                                                    <div className="flex items-center gap-3">
+                                                    <div className="flex items-center gap-3 pb-4">
                                                         <div className="w-1.5 h-6 bg-emerald-500 rounded-full shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
                                                         <h4 className="text-lg font-black text-white uppercase italic tracking-tight">
                                                             {uniqueExercises.length > 1 ? "Exercício Conjugado" : activeExerciseName}
@@ -655,7 +655,7 @@ export function WorkoutPlayer({
                                             <p className="text-2xl md:text-3xl font-black text-orange-500 uppercase italic tracking-tighter text-center max-w-[90vw] break-words">
                                                 {nextSet.nextExerciseName}
                                             </p>
-                                            <div className="mt-4 bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2 text-center">
+                                            <div className="mt-4 bg-zinc-900 border border-zinc-800 rounded-xl  py-2 text-center">
                                                 <p className="text-zinc-500 text-[9px] font-black uppercase tracking-widest">Primeira Série</p>
                                                 <p className={`text-sm font-black uppercase italic tracking-tighter ${nextSet.color}`}>
                                                     {nextSet.label} {nextSet.type !== 'SUMMARY' && nextSet.set}
@@ -693,7 +693,7 @@ export function WorkoutPlayer({
 
                             {/* Header */}
                             <div className="space-y-4 relative mb-8">
-                                <div className="flex items-center gap-3">
+                                <div className="flex items-center gap-3 pb-4">
                                     <Badge variant="outline" className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-md italic shadow-lg border-2 ${setTypeColor}`}>
                                         {setTypeLabel}
                                     </Badge>

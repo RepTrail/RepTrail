@@ -91,7 +91,7 @@ export default function AffiliadosCadastroPage() {
     return (
         <div className="min-h-screen bg-zinc-950 text-white flex flex-col">
             {/* Top bar */}
-            <header className="h-16 flex items-center border-b border-zinc-900/50 px-4">
+            <header className="h-16 flex items-center border-b border-zinc-900/50 ">
                 <div className="container mx-auto flex items-center justify-between">
                     <Link href="/afiliados">
                         <Logo size="md" />

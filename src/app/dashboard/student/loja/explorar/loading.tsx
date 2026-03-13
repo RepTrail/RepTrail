@@ -35,7 +35,7 @@ export default function StoreExploreLoading() {
 
             {/* Results Header */}
             <div className="flex items-center justify-between px-1">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 pb-4">
                     <div className="flex -space-x-2">
                         <div className="w-2 h-8 bg-orange-500/20 transform -skew-x-12" />
                         <div className="w-2 h-8 bg-orange-500/5 transform -skew-x-12" />

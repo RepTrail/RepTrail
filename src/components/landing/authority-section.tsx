@@ -1,25 +1,19 @@
 
-import { ShieldCheck, Award, Zap, CheckCircle2 } from "lucide-react";
+import { ShieldCheck, Award, Zap, CheckCircle2, HeartPulse } from "lucide-react";
+import { SectionHeader } from "./section-header";
 
 export function AuthoritySection() {
     return (
         <section className="py-[50px] md:py-[100px] px-[20px] bg-zinc-950 w-full relative overflow-hidden border-b border-zinc-900">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_left,_var(--tw-gradient-stops))] from-zinc-900/50 via-zinc-950 to-zinc-950" />
 
-            <div className="w-full max-w-[1100px] mx-auto flex flex-col items-start md:items-center text-left md:text-center gap-[30px] md:gap-[50px] relative z-10">
-                <div className="flex flex-col items-start md:items-center gap-[20px] max-w-3xl">
-                    <div className="inline-flex items-center rounded-full border border-emerald-500/20 bg-emerald-500/5 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-emerald-500">
-                        <Award className="w-3 h-3 mr-2" />
-                        Autoridade e Especialidade
-                    </div>
-                    <h2 className="text-3xl md:text-5xl font-black text-white italic uppercase tracking-tighter">
-                        Desenvolvido por quem <br />
-                        <span className="text-emerald-500">Vive a Performance.</span>
-                    </h2>
-                    <p className="text-zinc-400 text-lg leading-relaxed">
-                        Não somos apenas desenvolvedores de software. Somos entusiastas do fitness e profissionais que entendem as dores reais de quem trabalha com consultoria. O RepTrail foi criado para resolver a falta de ferramentas profissionais que realmente entregam o que prometem.
-                    </p>
-                </div>
+            <div className="w-full max-w-[1100px] mx-auto flex flex-col items-center text-center gap-[30px] md:gap-[50px] relative z-10">
+                <SectionHeader 
+                    badgeIcon={Award}
+                    badgeText="Autoridade e Especialidade"
+                    title={<>Desenvolvido por quem <span className="text-emerald-500">Vive a Performance.</span></>}
+                    subtitle="Não somos apenas desenvolvedores de software. Somos entusiastas do fitness e profissionais que entendem as dores reais de quem trabalha com consultoria. O RepTrail foi criado para resolver a falta de ferramentas profissionais que realmente entregam o que prometem."
+                />
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-[30px] w-full mt-10">
                     {[
@@ -52,5 +46,3 @@ export function AuthoritySection() {
         </section>
     );
 }
-
-import { HeartPulse } from "lucide-react";

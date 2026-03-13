@@ -54,15 +54,12 @@ export default async function StudentFeedPage() {
     const publicPhotos = Array.from(studentPhotos.values())
 
     return (
-        <div className="space-y-12 pb-20">
+        <div className="space-y-12">
             {/* Header */}
             <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                <div className="space-y-4">
+                <div className="space-y-5">
                     <div className="flex items-center gap-3">
-                        <div className="p-2 bg-orange-500 rounded-xl">
-                            <Users className="w-5 h-5 text-zinc-950" />
-                        </div>
-                        <h1 className="text-4xl font-black text-white italic uppercase tracking-tighter">
+                        <h1 className="text-3xl font-black text-white italic uppercase tracking-tighter">
                             Feed de <span className="text-orange-500">Alunos</span>
                         </h1>
                     </div>
@@ -113,7 +110,7 @@ export default async function StudentFeedPage() {
 
                                 {/* Student Info Card (Floating) */}
                                 <div className="absolute inset-x-4 bottom-4 p-4 rounded-2xl bg-zinc-900/80 backdrop-blur-xl border border-white/5 flex items-center justify-between group-hover:translate-y-[-4px] transition-transform duration-500">
-                                    <div className="flex items-center gap-3">
+                                    <div className="flex items-center gap-3 pb-4">
                                         <div className="w-12 h-12 rounded-full border-2 border-emerald-500/30 overflow-hidden relative shadow-2xl">
                                             {photo.student?.avatar_url ? (
                                                 <Image src={photo.student.avatar_url} alt="Avatar" fill className="object-cover" />

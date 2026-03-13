@@ -102,15 +102,15 @@ export function AnamnesisForm({ initialData }: { initialData?: any }) {
     }
 
     return (
-        <Card className="bg-zinc-950 border-zinc-900 shadow-2xl rounded-[2.5rem] overflow-hidden">
-            <CardHeader className="p-8 md:p-12 border-b border-zinc-900 bg-zinc-900/10">
+        <Card className="bg-zinc-950 border-zinc-900 shadow-2xl rounded-3xl overflow-hidden">
+            <CardHeader className="p-4 sm:p-6 md:p-12 border-b border-zinc-900 bg-zinc-900/10">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div className="space-y-2">
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3 pb-4">
                             <div className="p-2.5 bg-emerald-500/10 rounded-2xl border border-emerald-500/20">
                                 <Activity className="w-6 h-6 text-emerald-500" />
                             </div>
-                            <CardTitle className="text-3xl font-black text-white italic uppercase tracking-tighter">Anamnese de Performance</CardTitle>
+                            <CardTitle className="text-xl sm:text-2xl md:text-3xl font-black text-white italic uppercase tracking-tighter leading-tight">Anamnese de Performance</CardTitle>
                         </div>
                         <CardDescription className="text-zinc-500 font-medium text-sm">
                             Utilizando o protocolo da Marinha Americana (Navy Seal Body Fat Formula).
@@ -122,7 +122,7 @@ export function AnamnesisForm({ initialData }: { initialData?: any }) {
                 </div>
             </CardHeader>
 
-            <CardContent className="p-8 md:p-12">
+            <CardContent className="p-4 sm:p-6 md:p-12">
                 <form onSubmit={handleSubmit} className="space-y-12">
                     {/* Basic Info */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -167,7 +167,7 @@ export function AnamnesisForm({ initialData }: { initialData?: any }) {
                     </div>
 
                     {/* Navy Seal Measurements */}
-                    <div className="p-8 rounded-[2.5rem] bg-emerald-500/5 border border-emerald-500/10 relative overflow-hidden group">
+                    <div className="p-6 sm:p-8 rounded-3xl bg-emerald-500/5 border border-emerald-500/10 relative overflow-hidden group">
                         <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
                             <Target className="w-32 h-32 text-emerald-500" />
                         </div>
@@ -238,7 +238,7 @@ export function AnamnesisForm({ initialData }: { initialData?: any }) {
                                         <RadioGroupItem value="male" id="male" className="peer sr-only" />
                                         <Label
                                             htmlFor="male"
-                                            className="flex items-center justify-center h-16 bg-zinc-900/30 border border-zinc-800 rounded-2xl cursor-pointer hover:bg-zinc-800 peer-data-[state=checked]:border-emerald-500 peer-data-[state=checked]:bg-emerald-500/5 transition-all text-[10px] font-black uppercase italic tracking-widest text-zinc-500 peer-data-[state=checked]:text-emerald-500"
+                                            className="flex items-center justify-center w-full h-16 bg-zinc-900/30 border border-zinc-800 rounded-2xl cursor-pointer hover:bg-zinc-800 peer-data-[state=checked]:border-emerald-500 peer-data-[state=checked]:bg-emerald-500/5 transition-all text-[9px] sm:text-[10px] font-black uppercase italic tracking-widest text-zinc-500 peer-data-[state=checked]:text-emerald-500 px-2 text-center"
                                         >
                                             Masculino
                                         </Label>
@@ -247,7 +247,7 @@ export function AnamnesisForm({ initialData }: { initialData?: any }) {
                                         <RadioGroupItem value="female" id="female" className="peer sr-only" />
                                         <Label
                                             htmlFor="female"
-                                            className="flex items-center justify-center h-16 bg-zinc-900/30 border border-zinc-800 rounded-2xl cursor-pointer hover:bg-zinc-800 peer-data-[state=checked]:border-pink-500 peer-data-[state=checked]:bg-pink-500/5 transition-all text-[10px] font-black uppercase italic tracking-widest text-zinc-500 peer-data-[state=checked]:text-pink-500"
+                                            className="flex items-center justify-center w-full h-16 bg-zinc-900/30 border border-zinc-800 rounded-2xl cursor-pointer hover:bg-zinc-800 peer-data-[state=checked]:border-pink-500 peer-data-[state=checked]:bg-pink-500/5 transition-all text-[9px] sm:text-[10px] font-black uppercase italic tracking-widest text-zinc-500 peer-data-[state=checked]:text-pink-500 px-2 text-center"
                                         >
                                             Feminino
                                         </Label>
@@ -275,9 +275,8 @@ export function AnamnesisForm({ initialData }: { initialData?: any }) {
                             </div>
                         </div>
 
-                        {/* Result Dashboard */}
                         <div className="flex flex-col justify-end gap-8">
-                            <div className={`p-8 rounded-[2.5rem] border transition-all duration-700 ${calculatedBF ? 'bg-emerald-500/5 border-emerald-500/20 shadow-2xl shadow-emerald-500/5' : 'bg-zinc-900/10 border-zinc-800 opacity-50'}`}>
+                            <div className={`p-6 sm:p-8 rounded-3xl border transition-all duration-700 ${calculatedBF ? 'bg-emerald-500/5 border-emerald-500/20 shadow-2xl shadow-emerald-500/5' : 'bg-zinc-900/10 border-zinc-800 opacity-50'}`}>
                                 <div className="flex items-center justify-between mb-4">
                                     <p className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em]">Estimativa Navy Seal</p>
                                     {calculatedBF && <Check className="w-5 h-5 text-emerald-500" />}
@@ -299,7 +298,7 @@ export function AnamnesisForm({ initialData }: { initialData?: any }) {
                             <Button
                                 type="submit"
                                 disabled={loading || !calculatedBF}
-                                className="w-full relative h-auto py-4 sm:py-5 px-4 sm:px-8 rounded-2xl sm:rounded-3xl bg-white hover:bg-emerald-500 hover:text-white text-zinc-950 transition-all shadow-xl active:scale-95 group overflow-hidden"
+                                className="w-full relative h-auto py-4 sm:py-5  sm:px-8 rounded-2xl sm:rounded-3xl bg-white hover:bg-emerald-500 hover:text-white text-zinc-950 transition-all shadow-xl active:scale-95 group overflow-hidden"
                             >
                                 {/* Efeito de Shimmer */}
                                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent translate-x-[-100%] transition-transform duration-1000 group-hover:translate-x-[100%]" />

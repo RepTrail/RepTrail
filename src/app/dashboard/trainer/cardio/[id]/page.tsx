@@ -12,7 +12,7 @@ export default async function CardioDetailPage({ params }: Props) {
     if (!cardio) notFound()
 
     return (
-        <div className="max-w-3xl mx-auto py-6 px-4 space-y-8">
+        <div className="max-w-3xl mx-auto py-6  space-y-8">
             <CardioBuilder cardio={cardio} />
         </div>
     )

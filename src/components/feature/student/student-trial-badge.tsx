@@ -38,7 +38,7 @@ export function StudentTrialBadge({ trialEnd, status, currentCpf, currentName }:
             />
 
             <div className={`
-                p-6 rounded-[2rem] border backdrop-blur-sm shadow-xl transition-all
+                p-6 sm:p-8 rounded-3xl border backdrop-blur-sm shadow-xl transition-all
                 ${isExpired
                     ? 'bg-red-500/10 border-red-500/20'
                     : 'bg-emerald-500/10 border-emerald-500/20'}

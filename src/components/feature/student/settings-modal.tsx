@@ -121,13 +121,13 @@ export function SettingsModal({ hasTrainer = false }: SettingsModalProps) {
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
-            <DialogContent showCloseButton={false} className="bg-zinc-950 border-zinc-800 p-0 overflow-hidden rounded-[2.5rem] flex flex-col gap-0">
-                <div className="p-6 sm:p-8 space-y-8 relative flex-1 overflow-y-auto">
+            <DialogContent showCloseButton={false} className="max-w-xl">
+                <div className="space-y-10">
                     <DialogClose asChild>
                         <button
                             type="button"
                             aria-label="Fechar"
-                            className="absolute top-6 right-6 w-10 h-10 rounded-2xl bg-zinc-900/60 border border-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-900 hover:border-zinc-700 transition-all active:scale-95 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 z-50"
+                            className="absolute -top-2 -right-2 w-10 h-10 rounded-2xl bg-zinc-900/60 backdrop-blur-md border border-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-900 hover:border-zinc-700 transition-all active:scale-95 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 z-50"
                         >
                             <X className="w-5 h-5 mx-auto" />
                         </button>
@@ -156,7 +156,7 @@ export function SettingsModal({ hasTrainer = false }: SettingsModalProps) {
                                             disabled={updating || loading}
                                             className={`w-full flex items-center justify-between p-4 bg-zinc-900/50 rounded-2xl border border-zinc-800 transition-all group ${isTrialActive ? 'cursor-default' : 'hover:bg-zinc-900 hover:border-zinc-700 disabled:opacity-60 disabled:cursor-not-allowed'}`}
                                         >
-                                            <div className="flex items-center gap-3">
+                                            <div className="flex items-center gap-3 pb-4">
                                                 <div className="w-10 h-10 bg-orange-500/10 rounded-xl flex items-center justify-center">
                                                     <Zap className="w-5 h-5 text-orange-500" />
                                                 </div>
@@ -186,7 +186,7 @@ export function SettingsModal({ hasTrainer = false }: SettingsModalProps) {
                                             onClick={() => router.push('/dashboard/student/plans')}
                                             className="w-full flex items-center justify-between p-4 bg-emerald-500/10 rounded-2xl border border-emerald-500/20 hover:bg-emerald-500/20 hover:border-emerald-500/40 transition-all group"
                                         >
-                                            <div className="flex items-center gap-3">
+                                            <div className="flex items-center gap-3 pb-4">
                                                 <div className="w-10 h-10 bg-emerald-500/20 rounded-xl flex items-center justify-center">
                                                     <ShieldCheck className="w-5 h-5 text-emerald-500" />
                                                 </div>
@@ -214,7 +214,7 @@ export function SettingsModal({ hasTrainer = false }: SettingsModalProps) {
                             <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] px-1">Privacidade & Notificações</p>
                             <div className="space-y-2">
                                 <div className="flex items-center justify-between p-4 bg-zinc-900/50 rounded-2xl border border-zinc-800">
-                                    <div className="flex items-center gap-3">
+                                    <div className="flex items-center gap-3 pb-4">
                                         <div className="w-10 h-10 bg-emerald-500/10 rounded-xl flex items-center justify-center">
                                             <ImageIcon className="w-5 h-5 text-emerald-500" />
                                         </div>
@@ -240,7 +240,7 @@ export function SettingsModal({ hasTrainer = false }: SettingsModalProps) {
                                     }}
                                     className="w-full flex items-center justify-between p-4 bg-zinc-900/50 rounded-2xl border border-zinc-800 hover:bg-zinc-900 transition-colors group"
                                 >
-                                    <div className="flex items-center gap-3">
+                                    <div className="flex items-center gap-3 pb-4">
                                         <div className="w-10 h-10 bg-blue-500/10 rounded-xl flex items-center justify-center">
                                             <Bell className="w-5 h-5 text-blue-500" />
                                         </div>
@@ -261,7 +261,7 @@ export function SettingsModal({ hasTrainer = false }: SettingsModalProps) {
                                 onClick={openTerms}
                                 className="w-full flex items-center justify-between p-4 bg-zinc-900/50 rounded-2xl border border-zinc-800 hover:bg-zinc-900 transition-colors group"
                             >
-                                <div className="flex items-center gap-3">
+                                <div className="flex items-center gap-3 pb-4">
                                     <div className="w-10 h-10 bg-amber-500/10 rounded-xl flex items-center justify-center">
                                         <FileText className="w-5 h-5 text-amber-500" />
                                     </div>
@@ -281,7 +281,7 @@ export function SettingsModal({ hasTrainer = false }: SettingsModalProps) {
                                 onClick={requestDeletion}
                                 className="w-full flex items-center justify-between p-4 bg-red-500/5 rounded-2xl border border-red-500/10 hover:bg-red-500/10 transition-colors group"
                             >
-                                <div className="flex items-center gap-3">
+                                <div className="flex items-center gap-3 pb-4">
                                     <div className="w-10 h-10 bg-red-500/10 rounded-xl flex items-center justify-center">
                                         <Trash2 className="w-5 h-5 text-red-500" />
                                     </div>
@@ -306,3 +306,5 @@ export function SettingsModal({ hasTrainer = false }: SettingsModalProps) {
         </Dialog>
     )
 }
+
+// Force rebuild 2026-03-13 00:58

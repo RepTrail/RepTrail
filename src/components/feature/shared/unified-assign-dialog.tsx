@@ -192,25 +192,25 @@ export function UnifiedAssignDialog({
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 {trigger || (
-                    <Button variant="outline" size="sm" className="bg-zinc-950 border-zinc-800 text-zinc-400 hover:text-white rounded-xl h-10 px-4 gap-2 transition-all active:scale-95">
+                    <Button variant="outline" size="sm" className="bg-zinc-950 border-zinc-800 text-zinc-400 hover:text-white rounded-xl h-10  gap-2 transition-all active:scale-95">
                         <UserPlus className="w-4 h-4" /> Atribuir
                     </Button>
                 )}
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[450px] p-0 overflow-hidden">
-                <DialogHeader className="p-6 sm:p-10 pr-14 sm:pr-14 pb-6 sm:pb-8 bg-zinc-900/30 border-b border-zinc-900/50 relative">
+            <DialogContent className="sm:max-w-[450px]">
+                <DialogHeader className="relative">
                     <DialogTitle className="text-xl sm:text-3xl font-black italic uppercase tracking-tighter leading-tight">{title}</DialogTitle>
                     <DialogDescription className="text-zinc-500 text-[10px] font-black uppercase tracking-[0.2em] mt-3">
                         {description}
                     </DialogDescription>
                 </DialogHeader>
 
-                <div className="p-6 sm:p-10 space-y-6 sm:space-y-8">
+                <div className="space-y-10">
                     {items.length > 0 && !itemId && (
                         <div className="space-y-4">
                             <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 ml-1">Selecione o Item</Label>
                             <Select onValueChange={setSelectedItem} value={selectedItem}>
-                                <SelectTrigger className={cn("w-full bg-zinc-900/50 border-zinc-800 !h-14 rounded-2xl hover:border-zinc-700 transition-all font-bold px-4", config.color === 'orange' ? 'focus:ring-orange-500/20' : 'focus:ring-emerald-500/20')}>
+                                <SelectTrigger className={cn("w-full bg-zinc-900/50 border-zinc-800 !h-14 rounded-2xl hover:border-zinc-700 transition-all font-bold ", config.color === 'orange' ? 'focus:ring-orange-500/20' : 'focus:ring-emerald-500/20')}>
                                     <SelectValue placeholder="Escolha um protocolo..." />
                                 </SelectTrigger>
                                 <SelectContent position="popper" className="bg-zinc-900 border-zinc-800 text-white rounded-2xl p-2 shadow-2xl border-white/5 animate-in fade-in zoom-in duration-200">
@@ -228,7 +228,7 @@ export function UnifiedAssignDialog({
                         <div className="space-y-3">
                             <Label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-1">Selecione o Aluno</Label>
                             <Select onValueChange={setSelectedStudent} value={selectedStudent}>
-                                <SelectTrigger className={cn("w-full bg-zinc-900/50 border-zinc-800 !h-14 rounded-2xl hover:border-zinc-700 transition-all font-bold px-4", config.color === 'orange' ? 'focus:ring-orange-500/20' : 'focus:ring-emerald-500/20')}>
+                                <SelectTrigger className={cn("w-full bg-zinc-900/50 border-zinc-800 !h-14 rounded-2xl hover:border-zinc-700 transition-all font-bold ", config.color === 'orange' ? 'focus:ring-orange-500/20' : 'focus:ring-emerald-500/20')}>
                                     <SelectValue placeholder="Escolha um aluno da lista..." />
                                 </SelectTrigger>
                                 <SelectContent position="popper" className="bg-zinc-900 border-zinc-800 text-white rounded-2xl p-2 shadow-2xl border-white/5 animate-in fade-in zoom-in duration-200">

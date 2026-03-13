@@ -60,7 +60,7 @@ export default async function TrainerLayout({
                 <header className="fixed top-0 left-0 right-0 h-20 bg-zinc-950/80 backdrop-blur-xl border-b border-zinc-900 z-40 px-6 flex items-center justify-between">
                     <Logo size="md" color="emerald" />
                     <form action={signOutAction}>
-                        <Button variant="ghost" className="text-zinc-500 hover:text-white hover:bg-white/5 border border-transparent hover:border-zinc-800 gap-2 font-bold uppercase text-[10px] tracking-widest px-4 h-10 rounded-xl transition-all active:scale-95">
+                        <Button variant="ghost" className="text-zinc-500 hover:text-white hover:bg-white/5 border border-transparent hover:border-zinc-800 gap-2 font-bold uppercase text-[10px] tracking-widest  h-10 rounded-xl transition-all active:scale-95">
                             <LogOut className="w-4 h-4" /> Sair
                         </Button>
                     </form>
@@ -80,7 +80,7 @@ export default async function TrainerLayout({
             {/* Desktop Sidebar */}
             <aside className="hidden md:flex w-72 bg-zinc-900 border-r border-zinc-800 p-6 flex-col justify-between shadow-2xl z-20">
                 <div>
-                    <div className="mb-10 flex items-center justify-start px-4">
+                    <div className="mb-10 flex items-center justify-start ">
                         <Link href="/">
                             <Logo size="md" color="emerald" />
                         </Link>
@@ -99,14 +99,14 @@ export default async function TrainerLayout({
                         <TrainerNavLink href="/dashboard/trainer/ranking" icon={<Trophy className="w-5 h-5" />}>Ranking Geral</TrainerNavLink>
 
                         <div className="border-t border-zinc-800 my-4 pt-4">
-                            <div className="px-4 text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Conta</div>
+                            <div className=" text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Conta</div>
                             <TrainerNavLink href="/dashboard/trainer/profile" icon={<User className="w-5 h-5" />}>Meu Perfil</TrainerNavLink>
                         </div>
                     </nav>
                 </div>
 
                 <div className="border-t border-zinc-800 pt-6">
-                    <div className="flex items-center gap-3 mb-4 px-2">
+                    <div className="flex items-center gap-3 pb-4 mb-4 px-2">
                         <div className="relative w-10 h-10 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-900 font-bold border border-zinc-300 overflow-hidden">
                             {profile?.avatar_url ? (
                                 <Image

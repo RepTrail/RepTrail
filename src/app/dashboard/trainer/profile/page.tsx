@@ -48,16 +48,13 @@ export default async function TrainerProfilePage() {
     return (
         <div className="space-y-10 pb-10">
             {/* Header */}
-            <div className="space-y-1 pb-2 border-b border-zinc-800/50">
+            <div className="space-y-2 sm:space-y-5 pb-2 border-b border-zinc-800/50">
                 <h1 className="text-4xl font-black tracking-tight text-white font-sans italic uppercase">
                     Meu Perfil Profissional
                 </h1>
                 <p className="text-zinc-500 text-sm font-medium">
                     Gerencie sua identidade e veja seu progresso como treinador.
                 </p>
-                <div className="text-[10px] text-zinc-800 font-mono mt-2">
-                    DEBUG: {JSON.stringify({ s: profile?.asaas_subscription_id, t: profile?.asaas_billing_type })}
-                </div>
             </div>
 
             <div className="grid gap-6 lg:grid-cols-12">

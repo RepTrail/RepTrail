@@ -1,26 +1,21 @@
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Star, TrendingUp, Users, Wallet } from "lucide-react";
+import { SectionHeader } from "./section-header";
 
 export function SocialProofSection() {
     return (
         <section className="py-[50px] md:py-[100px] px-[20px] bg-zinc-950 w-full border-b border-zinc-900 relative">
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-orange-900/10 via-zinc-950 to-zinc-950" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-emerald-900/10 via-zinc-950 to-zinc-950" />
 
             <div className="w-full max-w-[1100px] mx-auto flex flex-col gap-[30px] md:gap-[50px] relative z-10">
-                <div className="flex flex-col items-start md:items-center gap-[20px] text-left md:text-center max-w-2xl mx-auto">
-                    <div className="inline-flex items-center rounded-full border border-emerald-500/20 bg-emerald-500/5 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-emerald-500">
-                        <Star className="w-3 h-3 mr-2 fill-current" />
-                        Resultados Reais
-                    </div>
-                    <h2 className="text-3xl md:text-5xl font-black text-white italic uppercase tracking-tighter">
-                        O que dizem os <span className="text-emerald-500">Elite.</span>
-                    </h2>
-                    <p className="text-zinc-500 text-lg">
-                        Junte-se a mais de 500 treinadores que já profissionalizaram sua consultoria.
-                    </p>
-                </div>
+                <SectionHeader
+                    badgeIcon={Star}
+                    badgeText="Resultados Reais"
+                    title={<>O que dizem os <span className="text-emerald-500">Elite.</span></>}
+                    subtitle="Junte-se a mais de 500 treinadores que já profissionalizaram sua consultoria."
+                />
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[20px]">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-[20px]">
 
                     {/* Testimonial 1 */}
                     <div className="bg-zinc-900/40 border border-zinc-800 p-6 rounded-3xl space-y-6 hover:border-zinc-700 transition-colors flex flex-col justify-between group">
@@ -33,7 +28,7 @@ export function SocialProofSection() {
                             </p>
                         </div>
                         <div className="pt-4 border-t border-zinc-800/50 flex items-center justify-between">
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-3 pb-4">
                                 <Avatar className="h-8 w-8 border border-zinc-700">
                                     <AvatarFallback className="bg-zinc-800 text-zinc-500 font-bold uppercase text-[8px]">RM</AvatarFallback>
                                 </Avatar>
@@ -42,8 +37,8 @@ export function SocialProofSection() {
                                     <p className="text-zinc-500 text-[7px] uppercase font-bold tracking-widest">São Paulo • SP</p>
                                 </div>
                             </div>
-                            <div className="bg-emerald-500/10 px-2 py-1 rounded border border-emerald-500/20">
-                                <span className="text-[8px] font-black text-emerald-500 uppercase tracking-wide">120+ Alunos</span>
+                            <div className="bg-emerald-500/10 px-2 py-1 rounded border border-emerald-500/20 flex items-center justify-center">
+                                <span className="text-[8px] font-black text-emerald-500 uppercase tracking-wide leading-none">120+ Alunos</span>
                             </div>
                         </div>
                     </div>
@@ -59,7 +54,7 @@ export function SocialProofSection() {
                             </p>
                         </div>
                         <div className="pt-4 border-t border-zinc-800/50 flex items-center justify-between">
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-3 pb-4">
                                 <Avatar className="h-10 w-10 border-2 border-emerald-500/30">
                                     <AvatarFallback className="bg-zinc-800 text-zinc-500 font-bold uppercase text-[10px]">JP</AvatarFallback>
                                 </Avatar>
@@ -68,8 +63,8 @@ export function SocialProofSection() {
                                     <p className="text-zinc-500 text-[8px] uppercase font-bold tracking-widest">Rio de Janeiro • RJ</p>
                                 </div>
                             </div>
-                            <div className="bg-emerald-500 px-2 py-1 rounded border border-emerald-400">
-                                <span className="text-[8px] font-black text-zinc-950 uppercase tracking-wide">R$ 22k/mês</span>
+                            <div className="bg-emerald-500 px-2 py-1 rounded border border-emerald-400 flex items-center justify-center">
+                                <span className="text-[8px] font-black text-zinc-950 uppercase tracking-wide leading-none">R$ 22k/mês</span>
                             </div>
                         </div>
                     </div>
@@ -85,7 +80,7 @@ export function SocialProofSection() {
                             </p>
                         </div>
                         <div className="pt-4 border-t border-zinc-800/50 flex items-center justify-between">
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-3 pb-4">
                                 <Avatar className="h-8 w-8 border border-zinc-700">
                                     <AvatarFallback className="bg-zinc-800 text-zinc-500 font-bold uppercase text-[8px]">MC</AvatarFallback>
                                 </Avatar>
@@ -94,8 +89,8 @@ export function SocialProofSection() {
                                     <p className="text-zinc-500 text-[7px] uppercase font-bold tracking-widest">Curitiba • PR</p>
                                 </div>
                             </div>
-                            <div className="bg-emerald-500/10 px-2 py-1 rounded border border-emerald-500/20">
-                                <span className="text-[8px] font-black text-emerald-500 uppercase tracking-wide">Retenção 98%</span>
+                            <div className="bg-emerald-500/10 px-2 py-1 rounded border border-emerald-500/20 flex items-center justify-center">
+                                <span className="text-[8px] font-black text-emerald-500 uppercase tracking-wide leading-none">Retenção 98%</span>
                             </div>
                         </div>
                     </div>
@@ -111,7 +106,7 @@ export function SocialProofSection() {
                             </p>
                         </div>
                         <div className="pt-4 border-t border-zinc-800/50 flex items-center justify-between">
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-3 pb-4">
                                 <Avatar className="h-8 w-8 border border-zinc-700">
                                     <AvatarFallback className="bg-zinc-800 text-zinc-500 font-bold uppercase text-[8px]">BS</AvatarFallback>
                                 </Avatar>
@@ -120,8 +115,8 @@ export function SocialProofSection() {
                                     <p className="text-zinc-500 text-[7px] uppercase font-bold tracking-widest">Interior • SP</p>
                                 </div>
                             </div>
-                            <div className="bg-emerald-500/10 px-2 py-1 rounded border border-emerald-500/20">
-                                <span className="text-[8px] font-black text-emerald-500 uppercase tracking-wide">Setup em 48h</span>
+                            <div className="bg-emerald-500/10 px-2 py-1 rounded border border-emerald-500/20 flex items-center justify-center">
+                                <span className="text-[8px] font-black text-emerald-500 uppercase tracking-wide leading-none">Setup em 48h</span>
                             </div>
                         </div>
                     </div>

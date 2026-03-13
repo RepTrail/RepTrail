@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { AlertTriangle, ChevronRight, CreditCard } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 
 interface PaymentWarningProps {
     relationship: any
@@ -50,21 +50,21 @@ export function PaymentWarning({ relationship }: PaymentWarningProps) {
                 sessionStorage.setItem('payment_warning_dismissed', 'true')
             }
         }}>
-            <DialogContent className="max-w-md border-orange-500/30">
-                <div className="space-y-8">
+            <DialogContent className="sm:max-w-md border-orange-500/30">
+                <div className="space-y-6 sm:space-y-8">
                     <div className="space-y-4 text-center">
                         <div className="w-20 h-20 bg-orange-500/10 rounded-[2rem] flex items-center justify-center border-2 border-orange-500/20 mx-auto animate-pulse">
                             <CreditCard className="w-10 h-10 text-orange-500" />
                         </div>
                         <div className="space-y-2">
-                            <h2 className="text-3xl font-black text-white italic uppercase tracking-tight">Vencimento Próximo</h2>
+                            <DialogTitle className="text-3xl font-black text-white italic uppercase tracking-tight">Vencimento Próximo</DialogTitle>
                             <p className="text-zinc-500 text-[10px] font-black uppercase tracking-widest leading-relaxed">
                                 Notamos que o prazo de pagamento do seu plano com <span className="text-white">{relationship.trainer?.full_name}</span> venceu ou está próximo.
                             </p>
                         </div>
                     </div>
 
-                    <div className="bg-zinc-900/50 rounded-3xl border border-zinc-800 p-6 space-y-4">
+                    <div className="bg-zinc-900/50 rounded-3xl border border-zinc-800 p-4 sm:p-6 space-y-4">
                         <div className="flex items-center justify-between text-xs font-black uppercase tracking-widest">
                             <span className="text-zinc-500">Dia de Vencimento</span>
                             <span className="text-orange-500">Dia {relationship.payment_day}</span>
@@ -76,7 +76,7 @@ export function PaymentWarning({ relationship }: PaymentWarningProps) {
                     </div>
 
                     <div className="space-y-3">
-                        <div className="p-4 bg-orange-500/5 border border-orange-500/10 rounded-2xl flex items-center gap-3">
+                        <div className="p-4 bg-orange-500/5 border border-orange-500/10 rounded-2xl flex items-center gap-3 pb-4">
                             <AlertTriangle className="w-5 h-5 text-orange-500 shrink-0" />
                             <p className="text-[10px] font-bold text-zinc-400 uppercase leading-snug">
                                 Para manter seu acesso aos treinos e dietas, realize o pagamento via PIX ou conforme combinado com seu personal.

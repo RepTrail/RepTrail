@@ -53,8 +53,8 @@ export function AdherenceChart({ history, showErgogenics = false, noCard = false
     }
 
     const content = (
-        <div className={cn("space-y-4 overflow-x-auto", noCard ? "" : "px-8 pb-8")}>
-            <div className="min-w-[600px] space-y-4">
+        <div className={cn("space-y-4 overflow-x-auto scrollbar-hide", noCard ? "" : "px-8 pb-8")}>
+            <div className="w-full space-y-4 min-w-[500px]">
 
 
                 {/* Rows */}

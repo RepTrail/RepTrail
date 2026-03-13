@@ -263,7 +263,7 @@ export function AuthForm({ view }: AuthFormProps) {
                                     <button
                                         type="button"
                                         onClick={() => setIsAffiliate(!isAffiliate)}
-                                        className={`w-full flex items-center justify-between h-12 rounded-xl border px-4 transition-all ${isAffiliate ? 'bg-amber-500/10 border-amber-500/50 text-amber-400' : 'bg-zinc-950 border-zinc-800 text-zinc-500 hover:border-zinc-700'}`}
+                                        className={`w-full flex items-center justify-between h-12 rounded-xl border  transition-all ${isAffiliate ? 'bg-amber-500/10 border-amber-500/50 text-amber-400' : 'bg-zinc-950 border-zinc-800 text-zinc-500 hover:border-zinc-700'}`}
                                     >
                                         <span className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest">
                                             <Megaphone className="w-4 h-4" />

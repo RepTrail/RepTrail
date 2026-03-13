@@ -61,7 +61,7 @@ export function ErgogenicsCard({ userId }: ErgogenicsCardProps) {
                 </div>
                 <div className="grid gap-6 md:grid-cols-2">
                     {[1, 2].map((i) => (
-                        <div key={i} className="bg-zinc-900/40 border border-zinc-800/50 shadow-xl p-6 rounded-[2rem] backdrop-blur-sm space-y-4">
+                        <div key={i} className="bg-zinc-900/40 border border-zinc-800/50 shadow-xl p-6 sm:p-10 rounded-3xl backdrop-blur-sm space-y-4">
                             <div className="flex items-center justify-between">
                                 <div className="space-y-2">
                                     <Skeleton className="h-5 w-32 bg-zinc-800/50" />
@@ -96,7 +96,7 @@ export function ErgogenicsCard({ userId }: ErgogenicsCardProps) {
             {todaysErgogenics.length > 0 ? (
                 <div className="grid gap-6 md:grid-cols-2">
                     {todaysErgogenics.map((erg: any) => (
-                        <div key={erg.id} className="bg-zinc-900/40 border border-zinc-800/50 p-6 rounded-[2rem] backdrop-blur-sm space-y-4 hover:border-orange-500/30 transition-all duration-300">
+                        <div key={erg.id} className="bg-zinc-900/40 border border-zinc-800/50 p-6 sm:p-10 rounded-3xl backdrop-blur-sm space-y-4 hover:border-orange-500/30 transition-all duration-300">
                             <div className="flex items-center justify-between">
                                 <div className="space-y-1">
                                     <h3 className="text-lg font-black text-white italic uppercase tracking-tight line-clamp-1">
@@ -125,7 +125,7 @@ export function ErgogenicsCard({ userId }: ErgogenicsCardProps) {
                     ))}
                 </div>
             ) : (
-                <div className="bg-zinc-900/20 border border-zinc-800/50 border-dashed rounded-[2.5rem] py-16 flex flex-col items-center justify-center text-center space-y-4">
+                <div className="bg-zinc-900/20 border border-zinc-800/50 border-dashed rounded-3xl py-16 flex flex-col items-center justify-center text-center space-y-4">
                     <Syringe className="w-8 h-8 text-zinc-700" />
                     <div className="space-y-1">
                         <p className="text-zinc-400 text-sm font-black uppercase tracking-tight italic">Nenhuma aplicação hoje</p>

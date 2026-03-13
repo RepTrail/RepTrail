@@ -224,7 +224,7 @@ export function WorkoutBuilder({ workout, backHref = '/dashboard/trainer/workout
                             <Button
                                 onClick={handleSaveMeta}
                                 disabled={isSavingMeta || !editName.trim()}
-                                className="h-9 px-4 bg-blue-600 hover:bg-blue-500 text-white font-black uppercase tracking-widest text-[10px] rounded-xl transition-all shadow-lg shadow-blue-500/20 active:scale-95"
+                                className="h-9  bg-blue-600 hover:bg-blue-500 text-white font-black uppercase tracking-widest text-[10px] rounded-xl transition-all shadow-lg shadow-blue-500/20 active:scale-95"
                             >
                                 {isSavingMeta ? <Loader2 className="w-3 h-3 animate-spin" /> : <><Check className="w-3 h-3 mr-1.5" />Salvar</>}
                             </Button>
@@ -232,7 +232,7 @@ export function WorkoutBuilder({ workout, backHref = '/dashboard/trainer/workout
                                 onClick={handleCancelMeta}
                                 disabled={isSavingMeta}
                                 variant="ghost"
-                                className="h-9 px-4 bg-zinc-800/60 hover:bg-zinc-700/60 text-zinc-400 hover:text-white font-black uppercase tracking-widest text-[10px] rounded-xl transition-all border border-zinc-700/50 hover:border-zinc-600"
+                                className="h-9  bg-zinc-800/60 hover:bg-zinc-700/60 text-zinc-400 hover:text-white font-black uppercase tracking-widest text-[10px] rounded-xl transition-all border border-zinc-700/50 hover:border-zinc-600"
                             >
                                 <X className="w-3 h-3 mr-1.5" />Cancelar
                             </Button>
@@ -286,7 +286,7 @@ export function WorkoutBuilder({ workout, backHref = '/dashboard/trainer/workout
                             <Card className="bg-zinc-950 border-zinc-800 relative group/card">
                                 <CardContent className="p-0">
                                     <div className="p-4 border-b border-zinc-800 flex items-center justify-between">
-                                        <div className="flex items-center gap-3">
+                                        <div className="flex items-center gap-3 pb-4">
                                             <GripVertical className="text-zinc-600 cursor-move" />
                                             <span className="font-semibold text-zinc-100">{item.exercise.name}</span>
                                         </div>
@@ -467,7 +467,7 @@ export function WorkoutBuilder({ workout, backHref = '/dashboard/trainer/workout
                                 variant="outline"
                                 onClick={() => handleAddExercise(ex)}
                                 disabled={loadingMap[ex.id]}
-                                className="justify-start bg-zinc-950 border-zinc-800 hover:border-zinc-700 hover:bg-zinc-900 h-auto py-3 px-4 text-zinc-300"
+                                className="justify-start bg-zinc-950 border-zinc-800 hover:border-zinc-700 hover:bg-zinc-900 h-auto py-3  text-zinc-300"
                             >
                                 <div className="flex flex-col items-start gap-0.5">
                                     <span className="font-semibold text-white">{ex.name}</span>

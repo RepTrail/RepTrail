@@ -20,14 +20,11 @@ export default async function StudentProfilePage() {
     if (!profile) return null
 
     return (
-        <div className="space-y-12 pb-20">
+        <div className="max-w-7xl mx-auto flex flex-col gap-section-gap">
             {/* Header */}
-            <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                <div className="flex items-center gap-3 mb-2">
-                    <div className="p-2 bg-orange-500 rounded-xl">
-                        <ShieldCheck className="w-5 h-5 text-zinc-950" />
-                    </div>
-                    <h1 className="text-4xl font-black text-white italic uppercase tracking-tighter">
+            <header className="space-y-5">
+                <div className="flex items-center gap-3">
+                    <h1 className="text-3xl font-black text-white italic uppercase tracking-tighter">
                         Meu <span className="text-orange-500">Perfil</span>
                     </h1>
                 </div>

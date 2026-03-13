@@ -76,7 +76,7 @@ export default async function AffiliateReferralsPage() {
                         <div className="divide-y divide-zinc-800/50">
                             {referrals.map((r) => (
                                 <div key={r.id} className="flex flex-col md:flex-row md:items-center justify-between p-4 hover:bg-zinc-800/30 transition-colors gap-4">
-                                    <div className="flex items-center gap-3">
+                                    <div className="flex items-center gap-3 pb-4">
                                         <Avatar className="h-10 w-10 border border-zinc-700">
                                             <AvatarImage src={r.avatar_url || undefined} />
                                             <AvatarFallback className="bg-zinc-800 text-zinc-400 font-bold text-xs">

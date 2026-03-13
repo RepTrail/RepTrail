@@ -116,7 +116,7 @@ export function PlansClient({ currentTier, studentCount, profile }: PlansClientP
                             'Ranking entre treinadores',
                             'Presença no marketplace',
                         ].map(feature => (
-                            <li key={feature} className="flex items-center gap-3">
+                            <li key={feature} className="flex items-center gap-3 pb-4">
                                 <div className="w-5 h-5 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center flex-shrink-0">
                                     <Check className="w-3 h-3 text-emerald-400" />
                                 </div>
@@ -168,9 +168,9 @@ export function PlansClient({ currentTier, studentCount, profile }: PlansClientP
                                 </div>
                             )}
                             <div className="h-px bg-zinc-800" />
-                            <div className="flex justify-between items-center">
+                            <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2 sm:gap-0">
                                 <span className="text-sm font-black text-white uppercase tracking-widest">Total/mês</span>
-                                <span className="text-xl font-black text-white">
+                                <span className="text-3xl sm:text-xl font-black text-white">
                                     {monthlyTotal === 0 ? 'R$ 0,00 🎉' : `R$ ${formatCurrency(monthlyTotal)}`}
                                 </span>
                             </div>
@@ -179,7 +179,7 @@ export function PlansClient({ currentTier, studentCount, profile }: PlansClientP
 
                     {/* CTA */}
                     {profile?.is_billing_exempt ? (
-                        <div className="flex items-center gap-3 p-6 rounded-2xl bg-amber-500/10 border border-amber-500/20 shadow-xl shadow-amber-950/20">
+                        <div className="flex items-center gap-3 pb-4 p-6 rounded-2xl bg-amber-500/10 border border-amber-500/20 shadow-xl shadow-amber-950/20">
                             <Sparkles className="w-5 h-5 text-amber-500 animate-pulse" />
                             <div className="space-y-0.5">
                                 <p className="text-amber-500 font-black text-sm uppercase italic tracking-tighter">Acesso VIP Ilimitado</p>
@@ -187,7 +187,7 @@ export function PlansClient({ currentTier, studentCount, profile }: PlansClientP
                             </div>
                         </div>
                     ) : isActive ? (
-                        <div className="flex items-center gap-3 p-4 rounded-2xl bg-emerald-500/5 border border-emerald-500/20">
+                        <div className="flex items-center gap-3 pb-4 p-4 rounded-2xl bg-emerald-500/5 border border-emerald-500/20">
                             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                             <span className="text-emerald-400 font-bold text-sm">Plano ativo — você está sendo cobrado conforme o uso</span>
                         </div>

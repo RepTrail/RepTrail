@@ -161,7 +161,7 @@ export function MobileHeader({ role, hasTrainer, steroidUse, hideImportPdf, auto
                             <form action={signOutAction}>
                                 <Button
                                     variant="ghost"
-                                    className="w-full justify-start gap-4 text-zinc-500 hover:text-red-400 hover:bg-red-400/10 h-14 rounded-2xl transition-all px-4"
+                                    className="w-full justify-start gap-4 text-zinc-500 hover:text-red-400 hover:bg-red-400/10 h-14 rounded-2xl transition-all "
                                 >
                                     <LogOut className="w-5 h-5" />
                                     <span className="font-black uppercase tracking-widest text-[10px]">Sair da Conta</span>

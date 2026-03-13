@@ -176,7 +176,7 @@ export function UnifiedErgogenicsModule({
 
         return (
             <Card key={e.id} className={cn(
-                "bg-zinc-900/50 border-zinc-800 text-zinc-100 transition-all group rounded-[2rem] overflow-hidden flex flex-col h-full",
+                "bg-zinc-900/50 border-zinc-800 text-zinc-100 transition-all group rounded-3xl overflow-hidden flex flex-col h-full",
                 colors.border,
                 isToday && isDone && colors.activeBg
             )}>
@@ -313,11 +313,11 @@ export function UnifiedErgogenicsModule({
     return (
         <div className="space-y-12 animate-in fade-in duration-700">
             {/* Main Content: Protocols */}
-            <div className="space-y-8 px-4">
+            <div className="space-y-8">
                 {mode === 'student' && todaysErgogenics.length > 0 && (
                     <div className="space-y-6">
                         <div className="px-2">
-                            <h2 className={cn("text-[12px] font-black flex items-center gap-2 uppercase tracking-[0.3em]", colorScheme === 'orange' ? 'text-orange-400' : 'text-emerald-400')}>
+                            <h2 className={cn("text-[10px] font-black flex items-center gap-2 uppercase tracking-widest", colorScheme === 'orange' ? 'text-orange-400' : 'text-emerald-400')}>
                                 <Clock className="w-4 h-4" />
                                 Aplicações de Hoje • <span className="text-white italic">{todayName}</span>
                             </h2>
@@ -331,7 +331,7 @@ export function UnifiedErgogenicsModule({
                 {otherErgogenics.length > 0 && (
                     <div className="space-y-6">
                         <div className="pt-8 px-2 border-t border-zinc-800/50">
-                            <h2 className="text-[12px] font-black text-zinc-500 flex items-center gap-2 uppercase tracking-[0.3em]">
+                            <h2 className="text-[10px] font-black text-zinc-500 flex items-center gap-2 uppercase tracking-widest">
                                 <Syringe className="w-4 h-4" />
                                 {mode === 'student' ? 'Restante do Protocolo' : 'Protocolo Ativo'}
                             </h2>
@@ -351,14 +351,14 @@ export function UnifiedErgogenicsModule({
 
             {/* History Section: Student only */}
             {mode === 'student' && logs.length > 0 && (
-                <div className="space-y-6 px-4">
+                <div className="space-y-6">
                     <div className="px-2">
-                        <h2 className="text-[12px] font-black text-zinc-500 flex items-center gap-2 uppercase tracking-[0.2em]">
+                        <h2 className="text-[10px] font-black text-zinc-500 flex items-center gap-2 uppercase tracking-widest">
                             <History className="w-4 h-4" />
                             Histórico de Registros
                         </h2>
                     </div>
-                    <Card className="bg-zinc-900/40 border-zinc-800/50 rounded-[2.5rem] overflow-hidden shadow-2xl backdrop-blur-sm">
+                    <Card className="bg-zinc-900/40 border-zinc-800/50 rounded-3xl overflow-hidden shadow-2xl backdrop-blur-sm">
                         <CardContent className="p-0">
                             <div className="divide-y divide-zinc-900/50">
                                 {logs.map(log => (

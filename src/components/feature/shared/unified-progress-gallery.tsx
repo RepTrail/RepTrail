@@ -163,7 +163,7 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName }:
                             key={f.value}
                             onClick={() => setActiveFilter(f.value)}
                             className={cn(
-                                "px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap border",
+                                "py-2 px-4 rounded-full text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap border",
                                 activeFilter === f.value
                                     ? 'bg-emerald-500 text-zinc-950 border-emerald-500 shadow-lg shadow-emerald-500/20'
                                     : 'bg-zinc-900/50 text-zinc-500 hover:text-white border-white/5 hover:border-white/10'
@@ -221,7 +221,7 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName }:
                                                             className="h-8 w-36 px-3 text-[11px] bg-zinc-900 border-zinc-800 text-white rounded-xl focus:ring-emerald-500/20"
                                                         />
                                                         <div className="flex gap-1">
-                                                            <Button size="sm" onClick={() => handleDateSave(set.id)} disabled={isPending} className="h-8 bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-black uppercase text-[10px] tracking-widest px-4 rounded-xl">
+                                                            <Button size="sm" onClick={() => handleDateSave(set.id)} disabled={isPending} className="h-8 bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-black uppercase text-[10px] tracking-widest  rounded-xl">
                                                                 Salvar
                                                             </Button>
                                                             <Button size="icon" variant="ghost" onClick={() => setEditingSetId(null)} disabled={isPending} className="h-8 w-8 text-zinc-500 hover:text-white hover:bg-zinc-800 rounded-xl">

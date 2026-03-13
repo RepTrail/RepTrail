@@ -9,7 +9,7 @@ export default function DietsLoading() {
                     <Skeleton className="h-10 w-64" />
                     <Skeleton className="h-4 w-96" />
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 pb-4">
                     <Skeleton className="h-10 w-32 rounded-xl" />
                 </div>
             </div>

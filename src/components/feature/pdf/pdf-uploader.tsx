@@ -182,7 +182,7 @@ export function PdfUploader({ type, students = [], role = 'trainer' }: { type: '
                 ) : (
                     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                         {/* Status Message */}
-                        <div className="flex items-center gap-3 text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-2xl">
+                        <div className="flex items-center gap-3 pb-4 text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-2xl">
                             <div className="p-2 bg-emerald-500/20 rounded-full">
                                 <Check className="h-4 w-4" />
                             </div>
@@ -226,7 +226,7 @@ export function PdfUploader({ type, students = [], role = 'trainer' }: { type: '
                                 </span>
 
                                 {type === 'diet' && parsedData.parsed_data?.options?.length > 1 && (
-                                    <div className="flex items-center gap-3">
+                                    <div className="flex items-center gap-3 pb-4">
                                         <span className="text-[9px] font-black text-zinc-600 uppercase tracking-widest">Escolher Cardápio:</span>
                                         <Select
                                             value={selectedOptionIndex.toString()}

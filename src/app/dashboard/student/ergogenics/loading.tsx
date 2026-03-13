@@ -20,9 +20,9 @@ export default function StudentErgogenicsLoading() {
     return (
         <div className="space-y-10 pb-10 animate-pulse">
             {/* Page header */}
-            <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 px-4">
+            <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 ">
                 <div className="space-y-4">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 pb-4">
                         <div className="p-2 bg-zinc-900 rounded-xl">
                             <Syringe className="w-5 h-5 text-zinc-800" />
                         </div>
@@ -34,7 +34,7 @@ export default function StudentErgogenicsLoading() {
                 <Skeleton className="h-12 w-44 rounded-xl bg-zinc-800/40 hidden sm:block" />
             </header>
 
-            <div className="px-4 space-y-12">
+            <div className=" space-y-12">
                 {/* Section: "Aplicações de Hoje" */}
                 <div className="space-y-6">
                     {/* Section heading */}

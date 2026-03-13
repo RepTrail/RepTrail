@@ -30,7 +30,7 @@ export default async function OnboardingPage() {
     const trainerCode = user.user_metadata?.trainer_code || ''
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-zinc-950 py-12 px-4">
+        <div className="flex min-h-screen items-center justify-center bg-zinc-950 py-12 ">
             <div className="w-full max-w-[600px]">
                 <OnboardingForm defaultTrainerCode={trainerCode} />
             </div>

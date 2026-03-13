@@ -5,7 +5,9 @@ import { Button } from '@/components/ui/button'
 import { Link, Copy, Check } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 
-export function CopyInviteButton({ trainerCode }: { trainerCode: string }) {
+import { cn } from '@/lib/utils'
+
+export function CopyInviteButton({ trainerCode, className }: { trainerCode: string, className?: string }) {
     const [copied, setCopied] = useState(false)
     const { toast } = useToast()
 
@@ -24,7 +26,7 @@ export function CopyInviteButton({ trainerCode }: { trainerCode: string }) {
         <Button
             onClick={copyLink}
             variant="outline"
-            className="border-orange-500/20 bg-orange-500/10 text-orange-500 hover:bg-orange-500/30 hover:border-orange-500/50 hover:text-orange-400 rounded-xl font-bold h-11 px-6 gap-2 transition-all duration-200"
+            className={cn("border-orange-500/20 bg-orange-500/10 text-orange-500 hover:bg-orange-500/30 hover:border-orange-500/50 hover:text-orange-400 rounded-xl font-bold h-11 px-6 gap-2 transition-all duration-200", className)}
         >
             {copied ? (
                 <><Check className="w-4 h-4" /> Link Copiado</>

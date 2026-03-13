@@ -45,14 +45,11 @@ export default async function ErgogenicsPage() {
     const viewMode = trainerRel ? 'student' : 'trainer'
 
     return (
-        <div className="space-y-10 pb-10">
-            <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 px-4">
-                <div className="space-y-4">
+        <div className="max-w-7xl mx-auto space-y-10">
+            <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 ">
+                <div className="space-y-5">
                     <div className="flex items-center gap-3">
-                        <div className="p-2 bg-orange-500 rounded-xl">
-                            <Syringe className="w-5 h-5 text-zinc-950" />
-                        </div>
-                        <h1 className="text-4xl font-black text-white italic uppercase tracking-tighter">
+                        <h1 className="text-3xl font-black text-white italic uppercase tracking-tighter">
                             Meus <span className="text-orange-500">Ergogênicos</span>
                         </h1>
                     </div>
@@ -64,7 +61,7 @@ export default async function ErgogenicsPage() {
                 </div>
 
                 {viewMode === 'trainer' && (
-                    <div className="flex items-center gap-3 w-full sm:w-auto">
+                    <div className="flex-1 sm:flex-none">
                         <UnifiedCreationDialog
                             title="Nova Substância"
                             description="Adicione uma nova substância ao seu protocolo farmacológico."

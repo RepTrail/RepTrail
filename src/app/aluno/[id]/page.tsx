@@ -10,6 +10,8 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { MetricsAndEvolution } from './_components/metrics-evolution'
 import { WorkoutHistorySection } from './_components/history-section'
 import { PhotosAndTransformation } from './_components/photos-transformation'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { TrendingUp, History, Image as ImageIcon } from 'lucide-react'
 
 export const metadata = {
     title: 'Perfil do Aluno | RepTrail'
@@ -63,13 +65,13 @@ export default async function StudentPublicProfilePage({ params }: { params: Pro
     return (
         <div className="min-h-screen bg-black text-white pb-20 overflow-x-hidden">
             {/* Navigation Header */}
-            <div className="sticky top-0 z-50 bg-black/60 backdrop-blur-xl border-b border-white/5 px-4 sm:px-6 py-4">
+            <div className="sticky top-0 z-50 bg-black/60 backdrop-blur-xl border-b border-white/5 px-5 sm:px-6 md:px-8 py-4">
                 <div className="max-w-6xl mx-auto flex items-center justify-between gap-2">
                     <Link href="/dashboard/student/feed" className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors group shrink-0">
                         <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
                         <span className="text-[10px] sm:text-xs font-black uppercase tracking-widest italic">Voltar ao Feed</span>
                     </Link>
-                    <div className="flex items-center gap-2 bg-emerald-500/10 px-3 sm:px-4 py-1.5 rounded-full border border-emerald-500/20 shrink-0">
+                    <div className="flex items-center gap-2 bg-emerald-500/10 px-3 sm: py-1.5 rounded-full border border-emerald-500/20 shrink-0">
                         <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                         <span className="text-[8px] sm:text-[10px] font-black uppercase tracking-widest text-emerald-500 whitespace-nowrap">Perfil Verificado</span>
                     </div>
@@ -77,8 +79,8 @@ export default async function StudentPublicProfilePage({ params }: { params: Pro
             </div>
 
             {/* Hero Section (Immediate Render) */}
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-12">
-                <div className="relative rounded-[2.5rem] sm:rounded-[3rem] overflow-hidden bg-zinc-900/40 border border-white/5 p-6 sm:p-8 md:p-12 mb-12">
+            <div className="max-w-6xl mx-auto px-5 sm:px-6 md:px-8 pt-12">
+                <div className="relative rounded-3xl overflow-hidden bg-zinc-900/40 border border-white/5 p-6 sm:p-8 md:p-12 mb-12">
                     <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12 relative z-10">
                         <div className="w-32 h-32 md:w-48 md:h-48 rounded-full border-4 border-emerald-500/30 overflow-hidden relative shadow-2xl">
                             {profile.avatar_url ? (
@@ -109,7 +111,7 @@ export default async function StudentPublicProfilePage({ params }: { params: Pro
                                 {trainerData ? (
                                     <Link
                                         href={`/personal/${trainerData.trainer_code || trainerData.id}`}
-                                        className="group bg-emerald-500 text-zinc-950 px-8 py-4 rounded-2xl font-black italic uppercase text-xs tracking-widest transition-all hover:scale-105 active:scale-95 shadow-xl shadow-emerald-500/20 flex items-center gap-3"
+                                        className="group bg-emerald-500 text-zinc-950 px-8 py-4 rounded-2xl font-black italic uppercase text-xs tracking-widest transition-all hover:scale-105 active:scale-95 shadow-xl shadow-emerald-500/20 flex items-center gap-3 pb-4"
                                     >
                                         <div className="w-10 h-10 rounded-full overflow-hidden relative border-2 border-zinc-950/20">
                                             {trainerData.avatar_url ? (
@@ -125,7 +127,7 @@ export default async function StudentPublicProfilePage({ params }: { params: Pro
                                         <ChevronRight className="w-4 h-4 ml-2" />
                                     </Link>
                                 ) : (
-                                    <div className="bg-emerald-500/10 px-6 py-4 rounded-2xl border border-emerald-500/20 flex items-center gap-3">
+                                    <div className="bg-emerald-500/10 px-6 py-4 rounded-2xl border border-emerald-500/20 flex items-center gap-3 pb-4">
                                         <Sparkles className="w-6 h-6 text-emerald-500" />
                                         <div className="text-left">
                                             <p className="text-[10px] font-black uppercase text-emerald-500/60 leading-none mb-1">Módulo</p>
@@ -141,18 +143,44 @@ export default async function StudentPublicProfilePage({ params }: { params: Pro
                     <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-radial from-emerald-500/10 to-transparent opacity-50" />
                 </div>
 
-                {/* Heavy Sections (Streamed) */}
-                <Suspense fallback={<SectionSkeleton />}>
-                    <MetricsAndEvolution studentId={studentId} steroidUse={!!details?.steroid_use} />
-                </Suspense>
+                {/* Tabs Navigation */}
+                <Tabs defaultValue="evolution" className="w-full">
+                    <div className="flex items-center justify-start sm:justify-center mb-12 overflow-x-auto no-scrollbar pb-2 px-2">
+                        <TabsList className="bg-zinc-900/50 border border-white/5 p-1 rounded-2xl h-14 w-max sm:w-auto">
+                            <TabsTrigger value="evolution" className="px-6 sm:px-8 rounded-xl font-black uppercase italic tracking-widest text-[10px] data-[state=active]:bg-emerald-500 data-[state=active]:text-zinc-950 transition-all gap-2 whitespace-nowrap">
+                                <TrendingUp className="w-3.5 h-3.5" />
+                                Evolução
+                            </TabsTrigger>
+                            <TabsTrigger value="history" className="px-6 sm:px-8 rounded-xl font-black uppercase italic tracking-widest text-[10px] data-[state=active]:bg-emerald-500 data-[state=active]:text-zinc-950 transition-all gap-2 whitespace-nowrap">
+                                <History className="w-3.5 h-3.5" />
+                                Histórico
+                            </TabsTrigger>
+                            <TabsTrigger value="photos" className="px-6 sm:px-8 rounded-xl font-black uppercase italic tracking-widest text-[10px] data-[state=active]:bg-emerald-500 data-[state=active]:text-zinc-950 transition-all gap-2 whitespace-nowrap">
+                                <ImageIcon className="w-3.5 h-3.5" />
+                                Galeria
+                            </TabsTrigger>
+                        </TabsList>
+                    </div>
 
-                <Suspense fallback={<SectionSkeleton />}>
-                    <WorkoutHistorySection studentId={studentId} />
-                </Suspense>
+                    <TabsContent value="evolution" className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                        {/* Heavy Sections (Streamed) */}
+                        <Suspense fallback={<SectionSkeleton />}>
+                            <MetricsAndEvolution studentId={studentId} steroidUse={!!details?.steroid_use} />
+                        </Suspense>
+                    </TabsContent>
 
-                <Suspense fallback={<SectionSkeleton />}>
-                    <PhotosAndTransformation studentId={studentId} isOwner={isOwner} studentName={profile.full_name} photos={photos || []} />
-                </Suspense>
+                    <TabsContent value="history" className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                        <Suspense fallback={<SectionSkeleton />}>
+                            <WorkoutHistorySection studentId={studentId} />
+                        </Suspense>
+                    </TabsContent>
+
+                    <TabsContent value="photos" className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                        <Suspense fallback={<SectionSkeleton />}>
+                            <PhotosAndTransformation studentId={studentId} isOwner={isOwner} studentName={profile.full_name} photos={photos || []} />
+                        </Suspense>
+                    </TabsContent>
+                </Tabs>
 
                 {/* Footer */}
                 <footer className="mt-20 pt-8 border-t border-zinc-800/50">
@@ -180,7 +208,7 @@ function SectionSkeleton() {
     return (
         <div className="w-full space-y-6 mb-16">
             <Skeleton className="h-8 w-48 bg-zinc-800" />
-            <Skeleton className="h-[300px] w-full bg-zinc-900/40 rounded-[2.5rem]" />
+            <Skeleton className="h-[300px] w-full bg-zinc-900/40 rounded-3xl" />
         </div>
     )
 }

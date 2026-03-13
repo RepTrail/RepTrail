@@ -27,7 +27,7 @@ export default async function EditStudentWorkoutPage({
 
     const isAutoTrainingActive = profile?.auto_training_status === 'active' || profile?.auto_training_status === 'trial'
     console.log('[EDIT] Auto-training status:', { isAutoTrainingActive, profile })
-    
+
     if (!isAutoTrainingActive) {
         console.log('[EDIT] Auto-training not active, returning 404')
         return notFound()
@@ -70,7 +70,7 @@ export default async function EditStudentWorkoutPage({
     console.log('[EDIT] Exercises found:', exercises?.length || 0)
 
     return (
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-5xl mx-auto  sm:px-6 lg:px-8 py-8">
             {assignment?.id ? (
                 <div className="flex justify-end pb-6">
                     <WorkoutDaySelector assignmentId={assignment.id} dayOfWeek={assignment.day_of_week ?? null} />

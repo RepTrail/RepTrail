@@ -30,7 +30,7 @@ export function AutoTrainingErgogenicsManager({
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-2 border-b border-zinc-800/50">
                 <div className="space-y-1">
-                    <h1 className="text-4xl font-black tracking-tight text-white font-sans italic uppercase flex items-center gap-3">
+                    <h1 className="text-4xl font-black tracking-tight text-white font-sans italic uppercase flex items-center gap-3 pb-4">
                         <FlaskConical className="w-8 h-8 text-emerald-500" />
                         Ergogênicos
                     </h1>

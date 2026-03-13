@@ -42,8 +42,8 @@ export function ImpersonationBar() {
     }
 
     return (
-        <div className="fixed top-0 left-0 right-0 z-[9999] bg-amber-500 text-zinc-950 px-4 py-2 border-b border-amber-600 shadow-2xl flex items-center justify-between animate-in slide-in-from-top duration-500">
-            <div className="flex items-center gap-3">
+        <div className="fixed top-0 left-0 right-0 z-[9999] bg-amber-500 text-zinc-950  py-2 border-b border-amber-600 shadow-2xl flex items-center justify-between animate-in slide-in-from-top duration-500">
+            <div className="flex items-center gap-3 pb-4">
                 <div className="p-1 px-2 bg-zinc-950 rounded flex items-center gap-2">
                     <ShieldAlert className="w-3.5 h-3.5 text-amber-500" />
                     <span className="text-[10px] font-black uppercase tracking-widest text-white">Modo Inspeção Ativo</span>

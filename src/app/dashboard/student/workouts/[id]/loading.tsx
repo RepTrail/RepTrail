@@ -12,7 +12,7 @@ import {
 
 export default function WorkoutBuilderLoading() {
     return (
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-pulse">
+        <div className="max-w-5xl mx-auto  sm:px-6 lg:px-8 py-8 space-y-8 animate-pulse">
             {/* Header / Meta */}
             <div className="flex flex-col gap-3">
                 <div className="flex items-start gap-3">
@@ -39,7 +39,7 @@ export default function WorkoutBuilderLoading() {
                     <Card key={i} className="bg-zinc-950 border-zinc-800 overflow-hidden">
                         <CardHeader className="p-0">
                             <div className="p-4 border-b border-zinc-800 flex items-center justify-between">
-                                <div className="flex items-center gap-3">
+                                <div className="flex items-center gap-3 pb-4">
                                     <GripVertical className="text-zinc-800" />
                                     <Skeleton className="h-5 w-48 bg-zinc-800/50 rounded-md" />
                                 </div>

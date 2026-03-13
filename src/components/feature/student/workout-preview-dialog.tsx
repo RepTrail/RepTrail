@@ -40,8 +40,8 @@ export function WorkoutPreviewDialog({ workoutName, exercises }: WorkoutPreviewD
 
             <DialogContent className="p-0 overflow-hidden gap-0 flex flex-col">
                 {/* Header */}
-                <DialogHeader className="px-6 pt-6 pb-4 border-b border-zinc-800/60">
-                    <div className="flex items-center gap-3">
+                <DialogHeader className="border-b border-zinc-800/60">
+                    <div className="flex items-center gap-3 pb-4">
                         <div className="p-2.5 bg-orange-500/10 rounded-xl border border-orange-500/20">
                             <Dumbbell className="w-5 h-5 text-orange-500" />
                         </div>
@@ -57,7 +57,7 @@ export function WorkoutPreviewDialog({ workoutName, exercises }: WorkoutPreviewD
                 </DialogHeader>
 
                 {/* Exercise List */}
-                <div className="flex-1 overflow-y-auto px-6 py-4 space-y-3">
+                <div className="flex-1 overflow-y-auto py-4 space-y-3">
                     {sorted.length === 0 ? (
                         <div className="flex flex-col items-center justify-center py-10 text-center gap-3">
                             <Dumbbell className="w-8 h-8 text-zinc-700" />
@@ -115,7 +115,7 @@ export function WorkoutPreviewDialog({ workoutName, exercises }: WorkoutPreviewD
                 <div className="px-6 py-4 border-t border-zinc-800/60">
                     <Button
                         onClick={() => setOpen(false)}
-                        className="w-full h-11 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-zinc-400 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
+                        className="w-full h-11 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg"
                     >
                         Fechar Visualização
                     </Button>

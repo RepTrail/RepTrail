@@ -449,7 +449,7 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
                                 <Button
                                     variant="ghost"
                                     onClick={() => setPreviewUrl(null)}
-                                    className="text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-white h-auto py-2 px-4 flex items-center gap-2"
+                                    className="text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-white h-auto py-2  flex items-center gap-2"
                                 >
                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
                                     Voltar

@@ -79,27 +79,28 @@ export default async function StudentWorkoutsPage() {
     }, {})
 
     return (
-        <div className="space-y-12 pb-20" suppressHydrationWarning>
+        <div className="max-w-7xl mx-auto flex flex-col gap-section-gap" suppressHydrationWarning>
             {/* Header Section */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 px-4">
-                <div className="space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 px-2">
+                <div className="space-y-2 sm:space-y-5">
                     <div className="flex items-center gap-3">
-                        <div className="p-2 bg-orange-500 rounded-xl">
-                            <Dumbbell className="w-5 h-5 text-zinc-950" />
-                        </div>
-                        <h1 className="text-4xl font-black text-white italic uppercase tracking-tighter">
+                        <h1 className="text-3xl font-black text-white italic uppercase tracking-tighter">
                             Meus <span className="text-orange-500">Treinos</span>
                         </h1>
                     </div>
-                    {allowManualWorkouts && (
+                    {allowManualWorkouts ? (
                         <p className="text-zinc-500 text-sm font-medium max-w-md">
                             Gerencie seus modelos de treino, importe fichas em PDF e organize sua rotina de musculação.
+                        </p>
+                    ) : (
+                        <p className="text-zinc-500 text-sm font-medium max-w-md">
+                            Acesse e execute os treinos preparados especialmente para você pelo seu treinador.
                         </p>
                     )}
                 </div>
 
                 {allowManualWorkouts && (
-                    <div className="flex items-center gap-3 w-full sm:w-auto">
+                    <div className="flex items-center gap-3 pb-4 w-full sm:w-auto">
                         <Button asChild variant="outline" className="flex-1 sm:flex-none h-12 px-6 bg-zinc-900 border-zinc-700 hover:bg-zinc-800 hover:text-white rounded-xl text-[10px] font-black uppercase tracking-widest text-zinc-300 transition-all flex items-center justify-center gap-2">
                             <Link href="/dashboard/student/import-pdf">
                                 <FileUp className="w-4 h-4 text-orange-500" />
@@ -222,7 +223,7 @@ export default async function StudentWorkoutsPage() {
             {/* Library Section */}
             {
                 allowManualWorkouts && (
-                    <div className="space-y-8 px-4">
+                    <div className="space-y-8">
                         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 pt-6">
                             {libraryWorkouts.length > 0 ? (
                                 libraryWorkouts.map((workout: any) => {
@@ -230,7 +231,7 @@ export default async function StudentWorkoutsPage() {
                                     const dayNamesShort = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"]
 
                                     return (
-                                        <Card key={workout.id} className="bg-zinc-900/50 border-zinc-800 text-zinc-100 hover:border-orange-500/30 transition-all group rounded-[2rem] overflow-hidden flex flex-col">
+                                        <Card key={workout.id} className="bg-zinc-900/50 border-zinc-800 text-zinc-100 hover:border-orange-500/30 transition-all group rounded-3xl overflow-hidden flex flex-col">
                                             <CardHeader className="p-6 pb-4 flex-1">
                                                 <div className="flex items-start justify-between">
                                                     <div className="bg-zinc-800 p-2 rounded-lg text-zinc-400 group-hover:text-orange-500 transition-colors">
@@ -274,14 +275,14 @@ export default async function StudentWorkoutsPage() {
                                                         initialDays={Array.from(new Set(assignedDays))}
                                                         trigger={
                                                             <Button
-                                                                className="flex-1 min-w-0 h-9 bg-orange-500 hover:bg-orange-400 text-zinc-950 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-1.5 px-3"
+                                                                className="flex-1 min-w-0 h-9 bg-orange-500 hover:bg-orange-400 text-zinc-950 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-1.5 px-6"
                                                             >
                                                                 <Calendar className="w-3.5 h-3.5" />
                                                                 <span className="truncate">Agendar</span>
                                                             </Button>
                                                         }
                                                     />
-                                                    <Button asChild variant="outline" className="flex-1 min-w-0 h-9 bg-zinc-800 border-zinc-700 text-zinc-100 hover:bg-zinc-700 flex items-center justify-center gap-1.5 rounded-xl font-black text-[10px] uppercase italic tracking-widest border-white/5 px-3">
+                                                    <Button asChild variant="outline" className="flex-1 min-w-0 h-9 bg-zinc-800 border-zinc-700 text-zinc-100 hover:bg-zinc-700 flex items-center justify-center gap-1.5 rounded-xl font-black text-[10px] uppercase italic tracking-widest border-white/5 px-6">
                                                         <Link href={`/dashboard/student/workouts/${workout.id}`}>
                                                             <span className="truncate">Editar</span>
                                                         </Link>

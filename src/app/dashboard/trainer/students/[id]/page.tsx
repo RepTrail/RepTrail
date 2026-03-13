@@ -245,7 +245,7 @@ export default async function StudentDetailPage({ params }: { params: { id: stri
                         </div>
                     )}
 
-                    <div className="hidden lg:flex items-center gap-3">
+                    <div className="hidden lg:flex items-center gap-3 pb-4">
                         {isPaidThisMonth && (
                             <Badge variant="outline" className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full flex gap-1 items-center">
                                 <CheckCircle className="w-3 h-3" /> Pago • TAXA ZERO
@@ -273,13 +273,13 @@ export default async function StudentDetailPage({ params }: { params: { id: stri
                 {/* Mobile Action Bar */}
                 <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                     {student?.whatsapp ? (
-                        <Button asChild variant="outline" className="flex-1 sm:flex-none border-zinc-800 bg-zinc-900/50 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-xl font-bold h-10 px-4 text-xs gap-2 transition-all">
+                        <Button asChild variant="outline" className="flex-1 sm:flex-none border-zinc-800 bg-zinc-900/50 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-xl font-bold h-10  text-xs gap-2 transition-all">
                             <a href={formatWhatsAppUrl(student.whatsapp, `Olá ${studentFirstName}, tudo bem? Gostaria de conversar sobre seu planejamento.`)} target="_blank" rel="noopener noreferrer">
                                 <MessageSquare className="w-4 h-4" /> WhatsApp
                             </a>
                         </Button>
                     ) : (
-                        <Button variant="outline" disabled className="flex-1 sm:flex-none border-zinc-800 bg-zinc-900/50 text-zinc-700 rounded-xl font-bold h-10 px-4 text-xs gap-2 transition-all">
+                        <Button variant="outline" disabled className="flex-1 sm:flex-none border-zinc-800 bg-zinc-900/50 text-zinc-700 rounded-xl font-bold h-10  text-xs gap-2 transition-all">
                             <MessageSquare className="w-4 h-4" /> Sem WhatsApp
                         </Button>
                     )}
@@ -651,7 +651,7 @@ function ContentCard({ icon, label, subLabel, actionLabel, href, unassignProps }
                         {subLabel && <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mt-0.5">{subLabel}</p>}
                     </div>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 pb-4">
                     {unassignProps && (
                         <UnassignButton {...unassignProps} />
                     )}

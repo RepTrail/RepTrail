@@ -108,7 +108,7 @@ export default async function StudentsPage() {
         <div className="space-y-10 pb-10">
             {/* Header Section */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-2 border-b border-zinc-800/50">
-                <div className="space-y-1">
+                <div className="space-y-2 sm:space-y-5">
                     <h1 className="text-4xl font-black tracking-tight text-white font-sans italic uppercase">
                         Meus Alunos
                     </h1>
@@ -116,13 +116,13 @@ export default async function StudentsPage() {
                         Gerenciamento básico e financeiro dos seus alunos vinculados.
                     </p>
                 </div>
-                <div className="flex items-center gap-3">
-                    <CopyInviteButton trainerCode={profile?.trainer_code || ''} />
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto pb-4">
+                    <CopyInviteButton trainerCode={profile?.trainer_code || ''} className="w-full sm:w-auto" />
                     <UnifiedCreationDialog
                         title="Vincular Novo Aluno"
                         description="O aluno deve possuir uma conta no RepTrail. Insira o email abaixo."
                         trigger={
-                            <Button className="border-emerald-500/20 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/30 hover:border-emerald-500/50 hover:text-emerald-400 rounded-xl font-bold h-11 px-6 gap-2 transition-all duration-200 border">
+                            <Button className="border-emerald-500/20 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/30 hover:border-emerald-500/50 hover:text-emerald-400 rounded-xl font-bold h-11 px-6 gap-2 transition-all duration-200 border w-full sm:w-auto">
                                 <Plus className="w-4 h-4" /> Vincular Aluno
                             </Button>
                         }
@@ -196,7 +196,7 @@ export default async function StudentsPage() {
                                         {students.map((item: any) => (
                                             <TableRow key={item.id} className="border-zinc-900 hover:bg-zinc-900/20 transition-colors group">
                                                 <TableCell className="py-4">
-                                                    <div className="flex items-center gap-3">
+                                                    <div className="flex items-center gap-3 pb-4">
                                                         <div className="relative">
                                                             <Avatar className="h-9 w-9 border border-zinc-800">
                                                                 <AvatarImage src={item.student?.avatar_url} />
@@ -314,7 +314,7 @@ export default async function StudentsPage() {
                                     return (
                                         <div key={item.id} className="p-4 space-y-4 hover:bg-zinc-900/20 transition-colors">
                                             <div className="flex items-center justify-between">
-                                                <div className="flex items-center gap-3">
+                                                <div className="flex items-center gap-3 pb-4">
                                                     <div className="relative">
                                                         <Avatar className="h-10 w-10 border border-zinc-800 group-hover:scale-105 transition-transform">
                                                             <AvatarImage src={item.student?.avatar_url} />

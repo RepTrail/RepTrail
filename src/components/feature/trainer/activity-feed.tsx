@@ -78,7 +78,7 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
     return (
         <Card className="bg-zinc-900/40 border-zinc-800/50 shadow-2xl rounded-[2.5rem] overflow-hidden backdrop-blur-sm">
             <CardHeader className="flex flex-row items-center justify-between p-8 border-b border-zinc-800/50">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 pb-4">
                     <div className="w-10 h-10 rounded-2xl bg-orange-500/10 flex items-center justify-center border border-orange-500/20">
                         <ActivityIcon className="w-5 h-5 text-orange-500" />
                     </div>

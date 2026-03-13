@@ -11,7 +11,7 @@ export default async function TrainerPlansPage() {
         <div className="space-y-10 pb-10" suppressHydrationWarning>
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-2 border-b border-zinc-800/50">
-                <div className="space-y-1">
+                <div className="space-y-2 sm:space-y-5">
                     <h1 className="text-4xl font-black tracking-tight text-white font-sans italic uppercase">
                         Plano & Assinatura
                     </h1>

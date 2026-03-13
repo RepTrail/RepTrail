@@ -89,7 +89,7 @@ export function ExerciseLoadChart({ data, exerciseName }: ExerciseLoadChartProps
                     <h4 className="text-xl font-black text-white italic uppercase tracking-tight leading-none">{exerciseName}</h4>
                 </div>
                 {weightEvolution !== 0 && (
-                    <div className={`flex items-center gap-3 border px-4 py-2 rounded-2xl ${weightEvolution > 0
+                    <div className={`flex items-center gap-3 pb-4 border  py-2 rounded-2xl ${weightEvolution > 0
                         ? 'bg-emerald-500/10 border-emerald-500/20'
                         : 'bg-red-500/10 border-red-500/20'
                         }`}>

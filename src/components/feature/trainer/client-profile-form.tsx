@@ -54,15 +54,15 @@ export function ClientProfileForm({ profile }: ClientProfileFormProps) {
             <div className="flex flex-col gap-10">
                 {/* Avatar and Basic Info Row */}
                 <div className="flex flex-col md:flex-row gap-10">
-                    <div className="flex-shrink-0">
-                        <Label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 block mb-4">Foto de Perfil</Label>
+                    <div className="flex-shrink-0 flex flex-col items-center md:items-start">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 block mb-4 text-center md:text-left">Foto de Perfil</Label>
                         <AvatarUploadWithCrop
                             currentImageUrl={avatarUrl}
                             userName={profile?.full_name}
                             onUploadSuccess={(url) => setAvatarUrl(url)}
                             uploadAction={uploadTrainerAvatar}
                             accentColor="emerald"
-                            align="start"
+                            align="center"
                         />
                     </div>
 

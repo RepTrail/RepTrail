@@ -99,7 +99,7 @@ export function OperationalCosts({ initialCosts, totalMonthly, totalAllTime }: O
                     </p>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-4 items-end sm:items-center w-full sm:w-auto">
-                    <div className="text-right px-4 py-2 bg-zinc-900/60 rounded-lg border border-zinc-800">
+                    <div className="text-right  py-2 bg-zinc-900/60 rounded-lg border border-zinc-800">
                         <p className="text-xs text-zinc-500 uppercase font-medium">Custo Mensal</p>
                         <p className="text-lg font-bold text-red-400">R$ {totalMonthly.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
                     </div>
@@ -184,8 +184,8 @@ export function OperationalCosts({ initialCosts, totalMonthly, totalAllTime }: O
                                         <td className="px-6 py-4 font-medium text-zinc-200">{cost.description}</td>
                                         <td className="px-6 py-4">
                                             <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${cost.type === 'fixed'
-                                                    ? 'bg-blue-500/10 text-blue-400 border-blue-500/20'
-                                                    : 'bg-orange-500/10 text-orange-400 border-orange-500/20'
+                                                ? 'bg-blue-500/10 text-blue-400 border-blue-500/20'
+                                                : 'bg-orange-500/10 text-orange-400 border-orange-500/20'
                                                 }`}>
                                                 {cost.type === 'fixed' ? 'Fixo' : 'Variável'}
                                             </span>

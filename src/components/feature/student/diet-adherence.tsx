@@ -159,8 +159,8 @@ export function DietAdherence({ diet, allowEstimation = false, hasTrainer = fals
     }
 
     return (
-        <Card className="bg-zinc-900/40 border-zinc-800/50 shadow-2xl rounded-[2.5rem] overflow-hidden backdrop-blur-sm border-t-zinc-700/10" suppressHydrationWarning>
-            <CardContent className="p-8 space-y-8" suppressHydrationWarning>
+        <Card className="bg-zinc-900/40 border-zinc-800/50 shadow-2xl rounded-3xl overflow-hidden backdrop-blur-sm border-t-zinc-700/10" suppressHydrationWarning>
+            <CardContent className="p-6 sm:p-6 space-y-8" suppressHydrationWarning>
                 {/* Header */}
                 {/* Header Section */}
                 <div className="space-y-6">
@@ -197,7 +197,7 @@ export function DietAdherence({ diet, allowEstimation = false, hasTrainer = fals
                                             setEstimating(false)
                                         }
                                     }}
-                                    className="h-10 px-4 rounded-xl border-amber-500/30 bg-amber-500/5 text-amber-500 hover:bg-amber-500/10 hover:text-amber-400 font-bold uppercase italic tracking-widest text-[10px] gap-2"
+                                    className="h-10 px-6 rounded-xl border-amber-500/30 bg-amber-500/5 text-amber-500 hover:bg-amber-500/10 hover:text-amber-400 font-bold uppercase italic tracking-widest text-[10px] gap-2"
                                 >
                                     {estimating ? (
                                         <Loader2 className="w-3 h-3 animate-spin" />
@@ -283,7 +283,7 @@ export function DietAdherence({ diet, allowEstimation = false, hasTrainer = fals
                                             </p>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-3">
+                                    <div className="flex items-center gap-3 pb-4">
                                         {/* Macros Summary (Visible when collapsed) */}
                                         {!isOpen && (
                                             <div className="hidden sm:flex gap-3 mr-2 opacity-60">
@@ -311,15 +311,15 @@ export function DietAdherence({ diet, allowEstimation = false, hasTrainer = fals
                                             {meal.meal_items?.length > 0 ? (
                                                 meal.meal_items.map((item: any) => (
                                                     <div key={item.id} className="flex items-center justify-between p-3 rounded-xl bg-zinc-900/30 border border-zinc-800/50 hover:bg-zinc-900/50 transition-colors gap-3">
-                                                        <div className="flex items-center gap-3 min-w-0">
+                                                        <div className="flex items-center gap-3 pb-4 min-w-0">
                                                             <Button
                                                                 variant="ghost"
                                                                 size="icon"
                                                                 className={cn(
-                                                                    "w-6 h-6 rounded-lg border flex-shrink-0 transition-colors",
+                                                                    "w-7 h-7 rounded-xl border flex-shrink-0 transition-all",
                                                                     item.is_checked
-                                                                        ? "bg-emerald-500 border-emerald-500 text-zinc-950 hover:bg-emerald-600 hover:text-white"
-                                                                        : "bg-transparent border-zinc-700 text-transparent hover:border-zinc-500"
+                                                                        ? "bg-emerald-500 border-emerald-400 text-zinc-950 hover:bg-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.3)]"
+                                                                        : "bg-zinc-900/50 border-zinc-800 text-zinc-600 hover:border-emerald-500/50 hover:text-emerald-500"
                                                                 )}
                                                                 onClick={(e) => {
                                                                     e.stopPropagation()
@@ -327,7 +327,7 @@ export function DietAdherence({ diet, allowEstimation = false, hasTrainer = fals
                                                                 }}
                                                                 disabled={loadingMap[item.id]}
                                                             >
-                                                                <Check className="w-3 h-3" strokeWidth={4} />
+                                                                <Check className={cn("w-4 h-4 transition-all", !item.is_checked ? "opacity-40" : "opacity-100")} strokeWidth={4} />
                                                             </Button>
                                                             <div className="flex flex-col min-w-0">
                                                                 <div className="text-xs truncate sm:whitespace-normal">

@@ -176,14 +176,19 @@ export default async function WorkoutPlayerPage({ params }: { params: Promise<{ 
     return (
         <div className="min-h-screen bg-zinc-950 flex flex-col">
             {/* Header Header */}
-            <div className="bg-black/40 backdrop-blur-xl border-b border-zinc-800/50 p-6 flex items-center justify-between sticky top-0 z-50">
-                <div className="flex items-center gap-4">
-                    <div className="w-1.5 h-6 bg-emerald-500 rounded-full shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
-                    <h1 className="text-xl font-black text-white uppercase italic tracking-tight">{workout.name}</h1>
+            <div className="bg-black/40 backdrop-blur-xl border-b border-zinc-800/50 p-4 sm:p-6 flex items-center justify-between sticky top-0 z-50">
+                <div className="space-y-1 sm:space-y-5">
+                    <div className="flex items-center gap-4">
+                        <div className="w-1.5 h-6 bg-emerald-500 rounded-full shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
+                        <h1 className="text-xl font-black text-white uppercase italic tracking-tight truncate max-w-[200px] sm:max-w-none">{workout.name}</h1>
+                    </div>
+                    <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest leading-none">
+                        Player de Treino • Foco e Intensidade
+                    </p>
                 </div>
-                <div className="flex items-center gap-2 px-3 py-1.5 bg-zinc-900/50 rounded-xl border border-zinc-800/50">
+                <div className="flex items-center gap-2 px-3 py-1.5 bg-zinc-900/50 rounded-xl border border-zinc-800/50 flex-shrink-0 ml-4">
                     <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-                    <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Em progresso</span>
+                    <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest whitespace-nowrap">Em progresso</span>
                 </div>
             </div>
 

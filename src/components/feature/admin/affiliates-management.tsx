@@ -134,7 +134,7 @@ export function AffiliatesManagement({ initialAffiliates, allUsers = [] }: Affil
                 </div>
                 <Button
                     onClick={() => setIsAddModalOpen(true)}
-                    className="bg-emerald-500 hover:bg-emerald-600 text-black font-bold uppercase text-xs tracking-wide rounded-xl h-10 px-4 gap-2"
+                    className="bg-emerald-500 hover:bg-emerald-600 text-black font-bold uppercase text-xs tracking-wide rounded-xl h-10  gap-2"
                 >
                     <UserPlus className="w-4 h-4" />
                     Novo Afiliado
@@ -306,7 +306,7 @@ export function AffiliatesManagement({ initialAffiliates, allUsers = [] }: Affil
                         <div className="space-y-2 max-h-[300px] overflow-y-auto">
                             {usersList.map(u => (
                                 <div key={u.id} className="flex items-center justify-between p-3 bg-zinc-900/50 rounded-lg hover:bg-zinc-900 transition-colors">
-                                    <div className="flex items-center gap-3">
+                                    <div className="flex items-center gap-3 pb-4">
                                         <Avatar className="w-8 h-8 rounded-lg border border-zinc-800">
                                             <AvatarImage src={u.avatar_url} />
                                             <AvatarFallback className="bg-zinc-950 text-zinc-500 text-xs font-black rounded-lg">

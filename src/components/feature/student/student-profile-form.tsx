@@ -133,8 +133,8 @@ export function StudentProfileForm({ profile, hasTrainer = false }: StudentProfi
             <div className="grid gap-10 lg:grid-cols-12">
                 {/* Profile Card / Avatar Area */}
                 <div className="lg:col-span-4 space-y-8">
-                    <Card className="bg-zinc-900/40 border-zinc-800/50 rounded-[3rem] overflow-hidden backdrop-blur-sm shadow-2xl">
-                        <CardContent className="p-10 text-center space-y-6">
+                    <Card className="bg-zinc-900/40 border-zinc-800/50 rounded-3xl overflow-hidden backdrop-blur-sm shadow-2xl">
+                        <CardContent className="p-6 sm:p-10 text-center space-y-6">
                             <AvatarUploadWithCrop
                                 currentImageUrl={avatarUrl}
                                 userName={formData.full_name}
@@ -150,8 +150,8 @@ export function StudentProfileForm({ profile, hasTrainer = false }: StudentProfi
                                 </p>
                             </div>
 
-                            <Link href={`/aluno/${profile?.id}`} target="_blank">
-                                <Button variant="outline" className="w-full h-10 rounded-2xl border-zinc-700 bg-zinc-800/50 hover:bg-zinc-700 hover:border-orange-500/40 text-zinc-300 hover:text-orange-400 font-black uppercase italic tracking-widest text-[9px] transition-all gap-2">
+                            <Link href={`/aluno/${profile?.id}`} target="_blank" className="w-full">
+                                <Button variant="outline" className="w-full h-10 px-8 rounded-2xl border-zinc-700 bg-zinc-800/50 hover:bg-zinc-700 hover:border-orange-500/40 text-zinc-300 hover:text-orange-400 font-black uppercase italic tracking-widest text-[9px] transition-all gap-2">
                                     <ExternalLink className="w-3.5 h-3.5" />
                                     Ver Perfil Público
                                 </Button>
@@ -179,14 +179,14 @@ export function StudentProfileForm({ profile, hasTrainer = false }: StudentProfi
 
                 {/* Edit Form */}
                 <div className="lg:col-span-8 space-y-8">
-                    <Card className="bg-zinc-900/40 border-zinc-800/50 rounded-[3rem] backdrop-blur-sm shadow-2xl overflow-hidden">
-                        <CardHeader className="p-10 border-b border-zinc-800/50">
-                            <CardTitle className="text-xl font-black text-white italic uppercase tracking-tight flex items-center gap-3">
+                    <Card className="bg-zinc-900/40 border-zinc-800/50 rounded-3xl backdrop-blur-sm shadow-2xl overflow-hidden">
+                        <CardHeader className="p-6 sm:p-10 border-b border-zinc-800/50">
+                            <CardTitle className="text-xl font-black text-white italic uppercase tracking-tight flex items-center gap-3 pb-4">
                                 <Settings className="w-5 h-5 text-orange-500" />
                                 Informações Pessoais
                             </CardTitle>
                         </CardHeader>
-                        <CardContent className="p-10">
+                        <CardContent className="p-6 sm:p-10">
                             <form onSubmit={handleSubmit} className="space-y-10">
                                 <div className="grid gap-x-8 gap-y-8 md:grid-cols-2">
                                     <div className="space-y-3">
@@ -291,7 +291,7 @@ export function StudentProfileForm({ profile, hasTrainer = false }: StudentProfi
                                     </div>
 
                                     <div className="md:col-span-2 space-y-3">
-                                        <div className="flex items-center space-x-3 p-6 bg-zinc-950 border border-zinc-800 rounded-2xl group-hover:border-orange-500/30 transition-all">
+                                        <div className="flex items-center space-x-3 p-6 bg-zinc-950 border border-zinc-800 rounded-3xl group-hover:border-orange-500/30 transition-all">
                                             <Checkbox
                                                 id="steroid_use"
                                                 checked={formData.steroid_use}
@@ -322,7 +322,7 @@ export function StudentProfileForm({ profile, hasTrainer = false }: StudentProfi
                                             value={formData.observations}
                                             onChange={e => setFormData(f => ({ ...f, observations: e.target.value }))}
                                             placeholder="Ex: Lesão no ombro direito, asma..."
-                                            className="min-h-[120px] bg-zinc-950 border-zinc-800 rounded-2xl focus:border-orange-500/50 font-bold italic text-white p-6"
+                                            className="min-h-[120px] bg-zinc-950 border-zinc-800 rounded-3xl focus:border-orange-500/50 font-bold italic text-white p-6"
                                         />
                                     </div>
                                 </div>

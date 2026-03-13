@@ -13,7 +13,7 @@ export default function StudentPlansLoading() {
             <div className="grid md:grid-cols-2 gap-8 mt-10">
                 {/* Auto Treino Plan Skeleton */}
                 <div className="relative p-8 rounded-3xl border border-zinc-800 bg-zinc-900/40 space-y-8">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 pb-4">
                         <Dumbbell className="text-zinc-800" />
                         <Skeleton className="h-8 w-32 bg-zinc-800/50 rounded-lg" />
                     </div>
@@ -25,7 +25,7 @@ export default function StudentPlansLoading() {
 
                     <ul className="space-y-4">
                         {[1, 2, 3, 4, 5].map((i) => (
-                            <li key={i} className="flex items-center gap-3">
+                            <li key={i} className="flex items-center gap-3 pb-4">
                                 <Check className="w-5 h-5 text-zinc-800" />
                                 <Skeleton className="h-3 w-48 bg-zinc-800/20" />
                             </li>
@@ -37,7 +37,7 @@ export default function StudentPlansLoading() {
 
                 {/* Com Personal Plan Skeleton */}
                 <div className="p-8 rounded-3xl bg-zinc-900/40 border border-zinc-800 space-y-8">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 pb-4">
                         <Search className="text-zinc-800" />
                         <Skeleton className="h-8 w-32 bg-zinc-800/50 rounded-lg" />
                     </div>
@@ -49,7 +49,7 @@ export default function StudentPlansLoading() {
 
                     <ul className="space-y-4">
                         {[1, 2, 3].map((i) => (
-                            <li key={i} className="flex items-center gap-3">
+                            <li key={i} className="flex items-center gap-3 pb-4">
                                 <Check className="w-5 h-5 text-zinc-800" />
                                 <Skeleton className="h-3 w-48 bg-zinc-800/20" />
                             </li>

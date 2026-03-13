@@ -38,7 +38,7 @@ export function TrialWarningPopup({ eliteUntil }: TrialWarningPopupProps) {
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
-            <DialogContent className="max-w-md overflow-hidden">
+            <DialogContent className="max-w-md">
                 {/* Decoration */}
                 <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 blur-3xl -mr-16 -mt-16 pointer-events-none" />
 

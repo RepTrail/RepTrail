@@ -54,7 +54,7 @@ export function ExerciseProgressSection({ studentId, exercises }: ExerciseProgre
     return (
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-zinc-900/40 p-5 rounded-[2rem] border border-zinc-800/50 backdrop-blur-sm">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 pb-4">
                     <div className="p-2 bg-zinc-900 rounded-xl border border-zinc-800 shadow-xl">
                         <Search className="w-4 h-4 text-zinc-500" />
                     </div>

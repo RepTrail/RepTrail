@@ -73,7 +73,7 @@ export default function StoreExplorePage() {
     }
 
     return (
-        <div className="space-y-10 pb-20 animate-in fade-in duration-700">
+        <div className="space-y-10 animate-in fade-in duration-700">
             {/* Header / Nav */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-2 border-b border-zinc-800/50">
                 <div className="flex items-center gap-4">
@@ -82,7 +82,7 @@ export default function StoreExplorePage() {
                             <ArrowLeft className="w-5 h-5 text-zinc-400" />
                         </Button>
                     </Link>
-                    <div className="space-y-1">
+                    <div className="space-y-5">
                         <h1 className="text-3xl font-black text-white italic uppercase tracking-tighter">Explorar Coleção</h1>
                         <p className="text-[10px] font-black text-zinc-600 uppercase tracking-widest leading-none">RepTrail Performance Store</p>
                     </div>
@@ -151,7 +151,7 @@ export default function StoreExplorePage() {
 
             {/* Results Header */}
             <div className="flex items-center justify-between px-1">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 pb-4">
                     <div className="flex -space-x-2">
                         <div className="w-2 h-8 bg-orange-500 transform -skew-x-12" />
                         <div className="w-2 h-8 bg-orange-500/30 transform -skew-x-12" />
@@ -238,7 +238,7 @@ export default function StoreExplorePage() {
             </div>
 
             {!loading && filteredProducts.length === 0 && (
-                <div className="py-24 text-center space-y-6 bg-zinc-900/20 border border-zinc-800/50 border-dashed rounded-[3rem] animate-in slide-in-from-bottom-4 duration-500">
+                <div className="py-12 sm:py-24 text-center space-y-6 bg-zinc-900/20 border border-zinc-800/50 border-dashed rounded-[2rem] sm:rounded-[3rem] animate-in slide-in-from-bottom-4 duration-500">
                     <div className="w-20 h-20 bg-zinc-900 rounded-full flex items-center justify-center border border-zinc-800 mx-auto shadow-2xl">
                         <ShoppingBag className="w-8 h-8 text-zinc-800" />
                     </div>

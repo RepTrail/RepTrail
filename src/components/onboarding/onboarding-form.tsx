@@ -50,7 +50,7 @@ function SubmitButton() {
         <Button
             type="submit"
             disabled={pending}
-            className="w-full sm:flex-1 order-1 sm:order-2 bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-black italic uppercase tracking-tight rounded-xl h-12 px-4 sm:px-8 shadow-xl shadow-emerald-500/30 group transition-all disabled:opacity-70 disabled:cursor-not-allowed min-w-0"
+            className="w-full sm:flex-1 order-1 sm:order-2 bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-black italic uppercase tracking-tight rounded-xl h-12  sm:px-8 shadow-xl shadow-emerald-500/30 group transition-all disabled:opacity-70 disabled:cursor-not-allowed min-w-0"
         >
             {pending ? (
                 <>
@@ -280,7 +280,7 @@ export function OnboardingForm({ defaultTrainerCode = '' }: { defaultTrainerCode
                                 type="button"
                                 onClick={nextStep}
                                 disabled={!goal || goal.trim().length < 3}
-                                className="w-full sm:flex-1 order-1 sm:order-2 bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-black italic uppercase tracking-tight rounded-xl h-12 px-4 sm:px-8 shadow-lg shadow-emerald-500/20 group transition-all min-w-0 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="w-full sm:flex-1 order-1 sm:order-2 bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-black italic uppercase tracking-tight rounded-xl h-12  sm:px-8 shadow-lg shadow-emerald-500/20 group transition-all min-w-0 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 Próximo <ChevronRight className="ml-2 h-4 w-4 shrink-0 group-hover:translate-x-1 transition-transform" />
                             </Button>
@@ -291,7 +291,7 @@ export function OnboardingForm({ defaultTrainerCode = '' }: { defaultTrainerCode
                     <div className={step === 3 ? 'block space-y-6' : 'hidden'}>
                         <div className="space-y-6">
                             <div className="p-5 rounded-2xl bg-zinc-950 border border-emerald-500/20 space-y-4">
-                                <div className="flex items-center gap-3">
+                                <div className="flex items-center gap-3 pb-4">
                                     <SteroidUseField />
                                     <div className="space-y-1">
                                         <Label htmlFor="steroidUse" className="text-xs font-black text-white italic uppercase tracking-tight cursor-pointer">Uso de recursos ergogênicos?</Label>
@@ -354,7 +354,7 @@ export function OnboardingForm({ defaultTrainerCode = '' }: { defaultTrainerCode
                                         onChange={(e) => setTrainerCode(e.target.value)}
                                         className="bg-zinc-950 border-zinc-800 text-white rounded-xl h-14 font-bold focus:ring-emerald-500/20"
                                     />
-                                    <p className="text-[9px] font-bold text-zinc-600 uppercase tracking-widest text-center px-4">Insira o código se você já tem um personal vinculado.</p>
+                                    <p className="text-[9px] font-bold text-zinc-600 uppercase tracking-widest text-center ">Insira o código se você já tem um personal vinculado.</p>
                                 </div>
                             </div>
                         </div>

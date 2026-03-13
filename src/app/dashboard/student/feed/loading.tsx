@@ -4,11 +4,11 @@ import { Users } from 'lucide-react'
 
 export default function StudentFeedLoading() {
     return (
-        <div className="space-y-12 pb-20 animate-pulse">
+        <div className="space-y-12 animate-pulse">
             {/* Header matches StudentFeedPage header */}
             <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div className="space-y-4">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 pb-4">
                         <div className="p-2 bg-zinc-900 rounded-xl">
                             <Users className="w-5 h-5 text-zinc-800" />
                         </div>
@@ -38,7 +38,7 @@ export default function StudentFeedLoading() {
 
                         {/* Floating Info Card Placeholder */}
                         <div className="absolute inset-x-4 bottom-4 p-4 rounded-2xl bg-zinc-900/80 backdrop-blur-xl border border-white/5 flex items-center justify-between">
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-3 pb-4">
                                 <Skeleton className="w-12 h-12 rounded-full bg-zinc-800/50" />
                                 <div className="space-y-2">
                                     <Skeleton className="h-3 w-24 bg-zinc-800/50" />

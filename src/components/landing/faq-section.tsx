@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
+import { SectionHeader } from './section-header';
 
 const faqs = [
     {
@@ -34,12 +35,10 @@ export function FAQSection() {
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-zinc-900/40 via-zinc-950 to-zinc-950" />
 
             <div className="w-full max-w-[1100px] mx-auto relative z-10 flex flex-col gap-[30px] md:gap-[50px]">
-                <div className="flex flex-col items-start md:items-center gap-[20px] text-left md:text-center w-full mx-auto">
-                    <h2 className="text-3xl md:text-5xl font-black text-white italic uppercase tracking-tighter">
-                        Perguntas <span className="text-emerald-500">Frequentes.</span>
-                    </h2>
-                    <p className="text-zinc-500 text-lg">Tudo o que você precisa saber para alavancar com o RepTrail.</p>
-                </div>
+                <SectionHeader 
+                    title={<>Perguntas <span className="text-emerald-500">Frequentes.</span></>}
+                    subtitle="Tudo o que você precisa saber para alavancar com o RepTrail."
+                />
 
                 <div className="flex flex-col gap-[20px] mx-auto w-full">
                     {faqs.map((faq, index) => (
@@ -51,7 +50,7 @@ export function FAQSection() {
                                 className="w-full flex items-center justify-between p-6 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
                                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
                             >
-                                <span className="text-lg font-black text-white italic">{faq.question}</span>
+                                <span className="text-lg font-black text-white italic whitespace-normal">{faq.question}</span>
                                 <ChevronDown
                                     className={`w-5 h-5 text-emerald-500 transition-transform duration-300 ${openIndex === index ? 'rotate-180' : ''}`}
                                 />

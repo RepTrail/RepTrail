@@ -23,14 +23,14 @@ export function PerformanceAnalysisSection({
     const isBlocked = trainerTier === 'start'
 
     return (
-        <Card className="bg-zinc-900/40 border-zinc-800/50 shadow-2xl rounded-[2.5rem] overflow-hidden backdrop-blur-sm border-t-zinc-700/10">
+        <Card className="bg-zinc-900/40 border-zinc-800/50 shadow-2xl rounded-3xl overflow-hidden backdrop-blur-sm border-t-zinc-700/10">
             <CardHeader className="p-8 md:p-12 pb-4">
                 <div className="flex items-center justify-between">
                     <div className="space-y-1">
                         <CardTitle className="text-3xl font-black text-white italic uppercase tracking-tight">
                             Análise de Performance
                         </CardTitle>
-                        <p className="text-emerald-500 font-black uppercase tracking-[0.2em] text-[10px]">
+                        <p className="text-emerald-500 font-black uppercase tracking-widest text-[10px]">
                             Peso, BF e Frequência
                         </p>
                     </div>

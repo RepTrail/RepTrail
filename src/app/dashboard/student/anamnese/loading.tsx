@@ -7,7 +7,7 @@ export default function AnamnesisLoading() {
     return (
         <div className="space-y-10 pb-20 animate-pulse">
             {/* Header matches AnamnesisPage header */}
-            <div className="flex items-center gap-3 mb-2">
+            <div className="flex items-center gap-3 pb-4 mb-2">
                 <div className="p-2 bg-zinc-900 rounded-xl">
                     <ClipboardList className="w-5 h-5 text-zinc-800" />
                 </div>
@@ -20,7 +20,7 @@ export default function AnamnesisLoading() {
                 <CardHeader className="p-8 md:p-12 border-b border-zinc-900 bg-zinc-900/10">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                         <div className="space-y-4">
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-3 pb-4">
                                 <div className="p-2.5 bg-zinc-900 rounded-2xl border border-zinc-800">
                                     <Activity className="w-6 h-6 text-zinc-800" />
                                 </div>

@@ -48,11 +48,12 @@ export function ErgogenicCheckButton({ studentId, ergogenicId, initialChecked }:
         <Button
             onClick={handleToggle}
             disabled={loading}
+            variant="ghost"
             className={cn(
                 "w-12 h-12 rounded-xl flex items-center justify-center border transition-all p-0 shadow-lg active:scale-95 group",
                 checked
-                    ? "bg-emerald-500 border-emerald-600 text-zinc-950 hover:bg-emerald-400"
-                    : "bg-zinc-950/50 border-zinc-800 text-zinc-600 hover:text-emerald-500 hover:border-emerald-500/50"
+                    ? "bg-emerald-500 border-emerald-400 text-zinc-950 hover:bg-emerald-400 shadow-[0_0_25px_rgba(16,185,129,0.5)]"
+                    : "bg-zinc-900/50 border-zinc-800 text-zinc-400 hover:text-emerald-500 hover:border-emerald-500/50"
             )}
         >
             {loading ? (
@@ -60,8 +61,8 @@ export function ErgogenicCheckButton({ studentId, ergogenicId, initialChecked }:
             ) : (
                 <Check className={cn(
                     "w-6 h-6 transition-all",
-                    checked ? "scale-100" : "scale-75 opacity-20 group-hover:opacity-100 group-hover:scale-100"
-                )} strokeWidth={3} />
+                    checked ? "scale-110 opacity-100" : "scale-100 opacity-50 group-hover:opacity-100"
+                )} strokeWidth={4} />
             )}
         </Button>
     )

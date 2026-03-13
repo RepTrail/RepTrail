@@ -20,7 +20,7 @@ export function DietCard({ userId, hasTrainer }: DietCardProps) {
 
     if (isLoading) {
         return (
-            <div className="bg-zinc-900/40 border border-zinc-800/50 shadow-2xl border-t-zinc-700/10 rounded-[2.5rem] p-8 space-y-8 min-h-[500px] animate-pulse">
+            <div className="bg-zinc-900/40 border border-zinc-800/50 shadow-2xl border-t-zinc-700/10 rounded-3xl p-6 sm:p-6 space-y-8 min-h-[500px] animate-pulse">
                 <div className="space-y-6">
                     <div className="flex items-center justify-between">
                         <div className="space-y-2">
@@ -63,7 +63,7 @@ export function DietCard({ userId, hasTrainer }: DietCardProps) {
 
     if (!diet) {
         return (
-            <div className="bg-zinc-900/30 border border-zinc-800/50 rounded-[2.5rem] p-8 text-center space-y-3">
+            <div className="bg-zinc-900/30 border border-zinc-800/50 rounded-3xl p-6 sm:p-10 text-center space-y-3">
                 <Utensils className="w-8 h-8 text-zinc-700 mx-auto" />
                 <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest leading-relaxed">
                     {hasTrainer ? 'Seu personal ainda não enviou sua dieta.' : 'Você ainda não criou sua dieta.'}

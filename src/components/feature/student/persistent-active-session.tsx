@@ -105,7 +105,7 @@ export function PersistentActiveSession() {
 
                 <Link href={href}>
                     <div className="bg-zinc-950/90 backdrop-blur-xl border border-orange-500/40 rounded-2xl p-3 md:p-4 flex items-center justify-between shadow-[0_20px_50px_rgba(0,0,0,0.6)] group-hover:border-orange-500/60 transition-all active:scale-[0.98] ring-1 ring-white/5">
-                        <div className="flex items-center gap-3 md:gap-4 overflow-hidden">
+                        <div className="flex items-center gap-3 pb-4 md:gap-4 overflow-hidden">
                             <div className="w-10 h-10 md:w-12 md:h-12 bg-orange-500/20 rounded-xl flex items-center justify-center border border-orange-500/30 relative shrink-0">
                                 {isCardio ? <Activity className="w-5 h-5 md:w-6 md:h-6 text-orange-500" /> : <Dumbbell className="w-5 h-5 md:w-6 md:h-6 text-orange-500" />}
                                 {activeSession.is_running !== false && (

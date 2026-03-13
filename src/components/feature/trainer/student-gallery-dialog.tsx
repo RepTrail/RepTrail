@@ -35,7 +35,7 @@ export function StudentGalleryDialog({ photos, studentName }: StudentGalleryDial
                 variant="outline"
                 size="sm"
                 onClick={() => setOpen(true)}
-                className="h-8 border-zinc-800 bg-zinc-900/80 text-zinc-400 hover:text-white hover:bg-zinc-800 hover:border-purple-500/50 rounded-xl text-[10px] uppercase font-black tracking-widest px-4 gap-2 transition-all shadow-xl active:scale-95"
+                className="h-8 border-zinc-800 bg-zinc-900/80 text-zinc-400 hover:text-white hover:bg-zinc-800 hover:border-purple-500/50 rounded-xl text-[10px] uppercase font-black tracking-widest  gap-2 transition-all shadow-xl active:scale-95"
             >
                 <ImageIcon className="w-3.5 h-3.5" />
                 Ver Galeria

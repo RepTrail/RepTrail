@@ -51,7 +51,7 @@ export function CancelSubscriptionButton() {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant="ghost" className="h-auto py-2 px-4 text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-red-500 hover:bg-red-500/5 mt-4 group transition-all rounded-full border border-zinc-800/50 hover:border-red-500/30">
+                <Button variant="ghost" className="h-auto py-2  text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-red-500 hover:bg-red-500/5 mt-4 group transition-all rounded-full border border-zinc-800/50 hover:border-red-500/30">
                     <XCircle className="w-3.5 h-3.5 mr-2 opacity-50 group-hover:opacity-100 group-hover:rotate-90 transition-all duration-500" />
                     Encerrar Assinatura
                 </Button>
@@ -76,7 +76,7 @@ export function CancelSubscriptionButton() {
 
                     <div className="space-y-4">
                         <div className="p-5 bg-zinc-900/50 border border-zinc-800 rounded-2xl space-y-3">
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-3 pb-4">
                                 <AlertTriangle className="w-4 h-4 text-orange-500 shrink-0" />
                                 <p className="text-[11px] font-bold text-zinc-300 uppercase tracking-wide">
                                     O que acontece agora?

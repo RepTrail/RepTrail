@@ -20,24 +20,24 @@ export function Logo({
 }: LogoProps) {
     const sizeMap = {
         sm: {
-            container: 'p-1.5 rounded-lg shadow-md',
-            icon: 'w-3 h-3',
-            text: 'text-xl'
-        },
-        md: {
-            container: 'p-2 rounded-xl shadow-lg',
+            container: 'p-2 rounded-lg shadow-md',
             icon: 'w-4 h-4',
             text: 'text-2xl'
         },
+        md: {
+            container: 'p-2.5 rounded-xl shadow-lg',
+            icon: 'w-5 h-5',
+            text: 'text-3xl'
+        },
         lg: {
-            container: 'p-3 rounded-2xl shadow-lg',
-            icon: 'w-6 h-6',
-            text: 'text-4xl md:text-5xl'
+            container: 'p-4 rounded-2xl shadow-lg',
+            icon: 'w-8 h-8',
+            text: 'text-5xl md:text-6xl'
         },
         xl: {
-            container: 'p-4 rounded-[2rem] shadow-2xl',
-            icon: 'w-10 h-10',
-            text: 'text-6xl md:text-8xl'
+            container: 'p-6 rounded-[2.5rem] shadow-2xl',
+            icon: 'w-14 h-14',
+            text: 'text-8xl md:text-[10rem]'
         }
     }
 
@@ -60,7 +60,7 @@ export function Logo({
     const currentColor = colorMap[color]
 
     return (
-        <div className={cn("flex items-center gap-3", className)} suppressHydrationWarning>
+        <div className={cn("flex items-center gap-3 pb-4", className)} suppressHydrationWarning>
             <div className={cn(
                 "rotate-3 transition-transform group-hover:rotate-0",
                 currentColor.bg,

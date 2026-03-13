@@ -6,7 +6,7 @@ export default function RankingLoading() {
         <div className="space-y-10 pb-10">
             {/* Header Section */}
             <div className="flex flex-col gap-2 pb-2 border-b border-zinc-800/50">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 pb-4">
                     <Skeleton className="w-8 h-8 rounded-full" />
                     <Skeleton className="h-10 w-64" />
                 </div>
@@ -65,11 +65,11 @@ export default function RankingLoading() {
                                 <Skeleton className="h-4 w-48" />
                                 <Skeleton className="h-3 w-32" />
                             </div>
-                            <div className="hidden sm:block text-center px-4 space-y-1">
+                            <div className="hidden sm:block text-center  space-y-1">
                                 <Skeleton className="h-2 w-16" />
                                 <Skeleton className="h-4 w-8" />
                             </div>
-                            <div className="text-right px-4 space-y-1">
+                            <div className="text-right  space-y-1">
                                 <Skeleton className="h-2 w-16" />
                                 <Skeleton className="h-4 w-12" />
                             </div>

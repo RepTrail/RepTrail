@@ -63,7 +63,7 @@ export default async function StudentLayout({
             <aside className="hidden md:flex w-72 bg-zinc-950 border-r border-zinc-900/50 p-6 flex-col justify-between shadow-2xl z-20">
                 <div>
                     {/* Logo Container */}
-                    <div className="mb-10 flex items-center justify-start px-4">
+                    <div className="mb-10 flex items-center justify-start ">
                         <Link href="/">
                             <Logo size="md" />
                         </Link>
@@ -76,7 +76,7 @@ export default async function StudentLayout({
                     <form action={signOutAction}>
                         <Button
                             variant="ghost"
-                            className="w-full justify-start gap-3 text-zinc-500 hover:text-red-400 hover:bg-red-400/10 h-12 rounded-xl transition-all group px-4"
+                            className="w-full justify-start gap-3 text-zinc-500 hover:text-red-400 hover:bg-red-400/10 h-12 rounded-xl transition-all group "
                         >
                             <LogOut className="w-5 h-5 group-hover:scale-110 transition-transform" />
                             <span className="font-bold uppercase tracking-widest text-[10px]">Sair da Conta</span>
@@ -93,7 +93,7 @@ export default async function StudentLayout({
                 {/* Background Glow - Optimized for mobile performance */}
                 <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-emerald-500/10 blur-[80px] rounded-full -mr-32 -mt-32 pointer-events-none gpu-accelerated" />
 
-                <div className="pt-24 md:pt-[50px] px-container-padding pb-32 md:pb-10 relative z-10 page-entry">
+                <div className="pt-24 md:pt-[50px] px-5 sm:px-6 md:px-8 pb-32 md:pb-10 relative z-10 page-entry">
                     <div className="max-w-7xl mx-auto">
                         {children}
                     </div>

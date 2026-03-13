@@ -229,7 +229,7 @@ export default function AdminDashboardPage() {
         <div className="min-h-screen bg-zinc-950 text-white overflow-x-hidden">
             {/* Top Bar */}
             <header className="sticky top-0 z-50 bg-zinc-950/90 backdrop-blur-md border-b border-zinc-900">
-                <div className="flex items-center justify-between px-4 sm:px-8 h-14 sm:h-16">
+                <div className="flex items-center justify-between  sm:px-8 h-14 sm:h-16">
                     <div className="flex items-center gap-2 sm:gap-4">
                         <Logo size="sm" />
                         <div className="w-px h-6 bg-zinc-800 hidden sm:block" />
@@ -262,7 +262,7 @@ export default function AdminDashboardPage() {
                         <Button
                             onClick={loadAll}
                             variant="ghost"
-                            className="h-9 px-3 sm:px-4 text-zinc-500 hover:text-white gap-2"
+                            className="h-9 px-3 sm: text-zinc-500 hover:text-white gap-2"
                         >
                             <RefreshCw className={`w-4 h-4 ${isPending ? 'animate-spin' : ''}`} />
                             <span className="text-[10px] font-black uppercase tracking-widest hidden sm:inline">Atualizar</span>
@@ -278,7 +278,7 @@ export default function AdminDashboardPage() {
                         <button
                             key={t.id}
                             onClick={() => setTab(t.id)}
-                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-left transition-all ${tab === t.id
+                            className={`w-full flex items-center gap-3 pb-4  py-3 rounded-2xl text-left transition-all ${tab === t.id
                                 ? 'bg-white text-zinc-950'
                                 : 'text-zinc-500 hover:text-white hover:bg-zinc-900'
                                 }`}
@@ -417,7 +417,7 @@ export default function AdminDashboardPage() {
                                                 return `${Math.floor(hrs / 24)}d atrás`
                                             })()
                                             return (
-                                                <div key={entry.id} className="flex items-center gap-3 p-3 bg-zinc-950 rounded-xl">
+                                                <div key={entry.id} className="flex items-center gap-3 pb-4 p-3 bg-zinc-950 rounded-xl">
                                                     <Avatar className="w-8 h-8 shrink-0">
                                                         <AvatarImage src={student?.avatar_url} />
                                                         <AvatarFallback className="bg-zinc-800 text-zinc-500 text-[10px] font-black">
@@ -585,7 +585,7 @@ export default function AdminDashboardPage() {
                                         <Zap className="w-4 h-4 text-amber-500" />
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <div className="flex items-center gap-3 flex-wrap">
+                                        <div className="flex items-center gap-3 pb-4 flex-wrap">
                                             <span className="text-[11px] font-black text-white uppercase tracking-wide">{log.action.replace(/_/g, ' ')}</span>
                                             {log.admin?.full_name && (
                                                 <span className="text-[9px] font-bold text-zinc-600 uppercase">por {log.admin.full_name}</span>
@@ -684,7 +684,7 @@ function TrainerRow({ trainer, onPlanChange, onEliteToggle, onExemptToggle, onEl
 
     return (
         <div className="flex flex-col sm:flex-row sm:items-center gap-3 p-4 bg-zinc-900/40 border border-zinc-800/50 rounded-2xl hover:bg-zinc-900/60 transition-all">
-            <div className="flex items-center gap-3 flex-1 min-w-0">
+            <div className="flex items-center gap-3 pb-4 flex-1 min-w-0">
                 <Avatar className="w-10 h-10 shrink-0">
                     <AvatarImage src={trainer.avatar_url} />
                     <AvatarFallback className="bg-zinc-800 text-zinc-500 text-xs font-black">
@@ -704,7 +704,7 @@ function TrainerRow({ trainer, onPlanChange, onEliteToggle, onExemptToggle, onEl
                     <p className="text-[10px] font-bold text-zinc-600 truncate">{trainer.email}</p>
                 </div>
 
-                <div className="hidden xl:flex items-center gap-4 px-4 border-l border-zinc-800/50">
+                <div className="hidden xl:flex items-center gap-4  border-l border-zinc-800/50">
                     <div className="text-right">
                         <span className="block text-[8px] font-black uppercase text-zinc-600 tracking-wide">Mensal</span>
                         <span className="block text-xs font-black text-emerald-500 tabular-nums">R$ {Number(trainer.monthly_revenue || 0).toFixed(2)}</span>
@@ -937,7 +937,7 @@ function ProductEditorModal({ isOpen, onClose, product, onSave, onImport, onDele
                             placeholder="Link do produto (ex: mercadolivre.com/p/whey...)"
                             value={importUrl}
                             onChange={e => setImportUrl(e.target.value)}
-                            className="flex-1 h-11 px-4 bg-zinc-950 border border-zinc-800 rounded-xl text-xs text-white focus:outline-none focus:border-emerald-500/50 transition-colors"
+                            className="flex-1 h-11  bg-zinc-950 border border-zinc-800 rounded-xl text-xs text-white focus:outline-none focus:border-emerald-500/50 transition-colors"
                         />
                         <Button
                             onClick={handleImport}
@@ -991,7 +991,7 @@ function ProductEditorModal({ isOpen, onClose, product, onSave, onImport, onDele
                                     step="0.01"
                                     value={form.official_price}
                                     onChange={e => setForm(prev => ({ ...prev, official_price: Number(e.target.value) }))}
-                                    className="w-full h-11 px-4 bg-zinc-950 border border-zinc-800 rounded-xl text-xs text-emerald-500 font-bold focus:outline-none focus:border-zinc-600"
+                                    className="w-full h-11  bg-zinc-950 border border-zinc-800 rounded-xl text-xs text-emerald-500 font-bold focus:outline-none focus:border-zinc-600"
                                 />
                             </div>
                             <div className="space-y-1.5">
@@ -1001,7 +1001,7 @@ function ProductEditorModal({ isOpen, onClose, product, onSave, onImport, onDele
                                     step="0.1"
                                     value={form.rating}
                                     onChange={e => setForm(prev => ({ ...prev, rating: Number(e.target.value) }))}
-                                    className="w-full h-11 px-4 bg-zinc-950 border border-zinc-800 rounded-xl text-xs text-amber-500 font-bold focus:outline-none focus:border-zinc-600"
+                                    className="w-full h-11  bg-zinc-950 border border-zinc-800 rounded-xl text-xs text-amber-500 font-bold focus:outline-none focus:border-zinc-600"
                                 />
                             </div>
                             <div className="space-y-1.5">
@@ -1010,7 +1010,7 @@ function ProductEditorModal({ isOpen, onClose, product, onSave, onImport, onDele
                                     type="number"
                                     value={form.reviews_count}
                                     onChange={e => setForm(prev => ({ ...prev, reviews_count: Number(e.target.value) }))}
-                                    className="w-full h-11 px-4 bg-zinc-950 border border-zinc-800 rounded-xl text-xs text-zinc-400 font-bold focus:outline-none focus:border-zinc-600"
+                                    className="w-full h-11  bg-zinc-950 border border-zinc-800 rounded-xl text-xs text-zinc-400 font-bold focus:outline-none focus:border-zinc-600"
                                 />
                             </div>
                         </div>
@@ -1021,7 +1021,7 @@ function ProductEditorModal({ isOpen, onClose, product, onSave, onImport, onDele
                                 <select
                                     value={form.category}
                                     onChange={e => setForm(prev => ({ ...prev, category: e.target.value, sub_category: '' }))}
-                                    className="w-full h-11 px-4 bg-zinc-950 border border-zinc-800 rounded-xl text-xs text-white focus:outline-none focus:border-zinc-600"
+                                    className="w-full h-11  bg-zinc-950 border border-zinc-800 rounded-xl text-xs text-white focus:outline-none focus:border-zinc-600"
                                 >
                                     <option value="Suplemento">Suplemento</option>
                                     <option value="Acessório">Acessório</option>
@@ -1035,7 +1035,7 @@ function ProductEditorModal({ isOpen, onClose, product, onSave, onImport, onDele
                                     <select
                                         value={form.sub_category}
                                         onChange={e => setForm(prev => ({ ...prev, sub_category: e.target.value }))}
-                                        className="w-full h-11 px-4 bg-zinc-950 border border-zinc-800 rounded-xl text-xs text-white focus:outline-none focus:border-zinc-600"
+                                        className="w-full h-11  bg-zinc-950 border border-zinc-800 rounded-xl text-xs text-white focus:outline-none focus:border-zinc-600"
                                     >
                                         <option value="">Geral</option>
                                         {supplementSubs.map(s => <option key={s} value={s}>{s}</option>)}
@@ -1131,7 +1131,7 @@ function AppSettingsEditor({ settings, onSave, isPending }: {
                             value={geminiKey}
                             onChange={e => setGeminiKey(e.target.value)}
                             placeholder={settings.gemini_api_key ? '•••••••• (deixe em branco para manter)' : 'Cole a chave Gemini para importação de PDF'}
-                            className="w-full h-12 px-4 bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-zinc-600 font-mono"
+                            className="w-full h-12  bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-zinc-600 font-mono"
                         />
                     </div>
                     <div className="space-y-2">
@@ -1143,7 +1143,7 @@ function AppSettingsEditor({ settings, onSave, isPending }: {
                             value={stripeKey}
                             onChange={e => setStripeKey(e.target.value)}
                             placeholder={settings.stripe_secret_key ? '•••••••• (deixe em branco para manter)' : 'Cole sk_... para checkout'}
-                            className="w-full h-12 px-4 bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-zinc-600 font-mono"
+                            className="w-full h-12  bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-zinc-600 font-mono"
                         />
                     </div>
                 </div>
@@ -1187,7 +1187,7 @@ function PlanEditor({ tier, pricing, onSave, isPending }: {
                 <Button
                     onClick={() => onSave(monthly, qDiscount, aDiscount)}
                     disabled={isPending}
-                    className="h-8 px-4 rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 text-[10px] font-black uppercase tracking-widest"
+                    className="h-8  rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 text-[10px] font-black uppercase tracking-widest"
                 >
                     <Save className="w-3 h-3 mr-1.5" />
                     Salvar
@@ -1197,19 +1197,19 @@ function PlanEditor({ tier, pricing, onSave, isPending }: {
                 <div className="space-y-1.5">
                     <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Preco Mensal (R$)</label>
                     <input type="number" step="0.01" value={monthly} onChange={e => setMonthly(Number(e.target.value))}
-                        className="w-full h-11 px-4 bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white focus:outline-none focus:border-zinc-600 font-mono" />
+                        className="w-full h-11  bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white focus:outline-none focus:border-zinc-600 font-mono" />
                     <p className="text-[9px] text-zinc-600 font-bold">Mensal: R$ {monthly.toFixed(2)}/mes</p>
                 </div>
                 <div className="space-y-1.5">
                     <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Desconto Trimestral (%)</label>
                     <input type="number" min="0" max="50" value={qDiscount} onChange={e => setQDiscount(Number(e.target.value))}
-                        className="w-full h-11 px-4 bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white focus:outline-none focus:border-zinc-600 font-mono" />
+                        className="w-full h-11  bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white focus:outline-none focus:border-zinc-600 font-mono" />
                     <p className="text-[9px] text-zinc-600 font-bold">Trimestral: R$ {qPrice.toFixed(2)} total - R$ {(qPrice / 3).toFixed(2)}/mes</p>
                 </div>
                 <div className="space-y-1.5">
                     <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Desconto Anual (%)</label>
                     <input type="number" min="0" max="50" value={aDiscount} onChange={e => setADiscount(Number(e.target.value))}
-                        className="w-full h-11 px-4 bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white focus:outline-none focus:border-zinc-600 font-mono" />
+                        className="w-full h-11  bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white focus:outline-none focus:border-zinc-600 font-mono" />
                     <p className="text-[9px] text-zinc-600 font-bold">Anual: R$ {aPrice.toFixed(2)} total - R$ {(aPrice / 12).toFixed(2)}/mes</p>
                 </div>
             </div>
@@ -1233,7 +1233,7 @@ function OnDemandEditor({ pricing, onSave, isPending }: {
                 <Button
                     onClick={() => onSave(pricePerStudent, freeLimit, proThreshold)}
                     disabled={isPending}
-                    className="h-8 px-4 rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 text-[10px] font-black uppercase tracking-widest"
+                    className="h-8  rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 text-[10px] font-black uppercase tracking-widest"
                 >
                     <Save className="w-3 h-3 mr-1.5" />
                     Salvar
@@ -1243,19 +1243,19 @@ function OnDemandEditor({ pricing, onSave, isPending }: {
                 <div className="space-y-1.5">
                     <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Preço por Aluno (R$)</label>
                     <input type="number" step="0.50" value={pricePerStudent} onChange={e => setPricePerStudent(Number(e.target.value))}
-                        className="w-full h-11 px-4 bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white focus:outline-none focus:border-zinc-600 font-mono" />
+                        className="w-full h-11  bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white focus:outline-none focus:border-zinc-600 font-mono" />
                     <p className="text-[9px] text-zinc-600 font-bold">Custo por aluno ativo</p>
                 </div>
                 <div className="space-y-1.5">
                     <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Limite Gratuito (Alunos)</label>
                     <input type="number" min="0" value={freeLimit} onChange={e => setFreeLimit(Number(e.target.value))}
-                        className="w-full h-11 px-4 bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white focus:outline-none focus:border-zinc-600 font-mono" />
+                        className="w-full h-11  bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white focus:outline-none focus:border-zinc-600 font-mono" />
                     <p className="text-[9px] text-zinc-600 font-bold">Até X alunos é grátis</p>
                 </div>
                 <div className="space-y-1.5">
                     <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Gatilho Plano PRO (Alunos)</label>
                     <input type="number" min="0" value={proThreshold} onChange={e => setProThreshold(Number(e.target.value))}
-                        className="w-full h-11 px-4 bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white focus:outline-none focus:border-zinc-600 font-mono" />
+                        className="w-full h-11  bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white focus:outline-none focus:border-zinc-600 font-mono" />
                     <p className="text-[9px] text-zinc-600 font-bold">Libera recursos PRO com X alunos</p>
                 </div>
             </div>

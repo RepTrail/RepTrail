@@ -43,19 +43,19 @@ export function GuaranteeSection() {
                         </div>
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
-                            <div className="flex items-center gap-3 text-zinc-300">
+                            <div className="flex items-center gap-3 pb-4 text-zinc-300">
                                 <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
                                 <span className="text-sm font-bold uppercase tracking-wide italic">Cancelamento Instantâneo</span>
                             </div>
-                            <div className="flex items-center gap-3 text-zinc-300">
+                            <div className="flex items-center gap-3 pb-4 text-zinc-300">
                                 <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
                                 <span className="text-sm font-bold uppercase tracking-wide italic">Reembolso sem Burocracia</span>
                             </div>
-                            <div className="flex items-center gap-3 text-zinc-300">
+                            <div className="flex items-center gap-3 pb-4 text-zinc-300">
                                 <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
                                 <span className="text-sm font-bold uppercase tracking-wide italic">Acesso Total Liberado</span>
                             </div>
-                            <div className="flex items-center gap-3 text-zinc-300">
+                            <div className="flex items-center gap-3 pb-4 text-zinc-300">
                                 <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
                                 <span className="text-sm font-bold uppercase tracking-wide italic">Suporte VIP Incluso</span>
                             </div>

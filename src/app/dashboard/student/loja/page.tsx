@@ -53,38 +53,35 @@ export default function StudentStorePage() {
     }
 
     return (
-        <div className="space-y-12 pb-20 animate-in fade-in duration-700">
+        <div className="space-y-12 animate-in fade-in duration-700 ">
             {/* Header Section */}
-            <div className="flex items-center gap-3 mb-8">
-                <div className="p-2 bg-orange-500 rounded-xl">
-                    <ShoppingBag className="w-5 h-5 text-zinc-950" />
+            <div className="space-y-2 sm:space-y-5">
+                <div className="flex items-center gap-3">
+                    <h1 className="text-3xl font-black text-white italic uppercase tracking-tighter">
+                        Minha <span className="text-orange-500">Loja</span>
+                    </h1>
                 </div>
-                <h1 className="text-4xl font-black text-white italic uppercase tracking-tighter">
-                    Minha <span className="text-orange-500">Loja</span>
-                </h1>
-            </div>
-            {/* Subtítulo com Search */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
-                <div className="space-y-2">
+                {/* Subtítulo com Search */}
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
                     <p className="text-zinc-500 text-sm font-medium max-w-md leading-relaxed">
                         Suplementos de alta performance selecionados criteriosamente para acelerar seus resultados.
                     </p>
-                </div>
 
-                <div className="relative w-full md:w-96 group">
-                    <div className="absolute inset-0 bg-orange-500/5 blur-2xl group-focus-within:bg-orange-500/10 transition-all" />
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-600 group-focus-within:text-orange-500 transition-colors z-20" />
-                    <Input
-                        placeholder="O que você precisa hoje? (Ex: Creatina)"
-                        value={search}
-                        onChange={e => setSearch(e.target.value)}
-                        className="h-14 pl-12 bg-zinc-900/50 border-zinc-800/50 rounded-2xl focus:border-orange-500/50 transition-all font-bold text-xs backdrop-blur-sm relative z-10"
-                    />
+                    <div className="relative w-full md:w-96 group">
+                        <div className="absolute inset-0 bg-orange-500/5 blur-2xl group-focus-within:bg-orange-500/10 transition-all" />
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-600 group-focus-within:text-orange-500 transition-colors z-20" />
+                        <Input
+                            placeholder="O que você precisa hoje? (Ex: Creatina)"
+                            value={search}
+                            onChange={e => setSearch(e.target.value)}
+                            className="h-14 pl-12 bg-zinc-900/50 border-zinc-800/50 rounded-2xl focus:border-orange-500/50 transition-all font-bold text-xs backdrop-blur-sm relative z-10"
+                        />
+                    </div>
                 </div>
             </div>
 
             {/* Featured Hero Card */}
-            <div className="relative group overflow-hidden rounded-[3.5rem] bg-zinc-900 border border-zinc-800/50 shadow-2xl">
+            <div className="relative group overflow-hidden rounded-[2rem] sm:rounded-[3rem] bg-zinc-900 border border-zinc-800/80 shadow-2xl shadow-black/50">
                 <div className="absolute inset-0 bg-gradient-to-r from-zinc-950 via-zinc-950/60 to-transparent z-10" />
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(249,115,22,0.1),transparent_50%)]" />
 
@@ -94,7 +91,7 @@ export default function StudentStorePage() {
                     className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-[4s]"
                 />
 
-                <div className="relative z-20 p-12 md:p-16 flex flex-col justify-center max-w-2xl space-y-8">
+                <div className="relative z-20 p-6 sm:p-12 md:p-16 flex flex-col justify-center max-w-2xl space-y-8">
                     <div className="flex items-center gap-2 px-3 py-1 bg-zinc-950/80 border border-zinc-800 w-fit rounded-full">
                         <Flame className="w-3 h-3 text-orange-500" />
                         <span className="text-[10px] font-black text-white uppercase tracking-widest">Growth Supplements • Parceiro Oficial</span>
@@ -109,8 +106,8 @@ export default function StudentStorePage() {
                         </p>
                     </div>
 
-                    <Link href={explorePath}>
-                        <Button className="w-fit h-14 px-10 rounded-2xl bg-orange-500 hover:bg-orange-400 text-zinc-950 font-black uppercase italic tracking-wide shadow-xl shadow-orange-500/20 active:scale-95 transition-all">
+                    <Link href={explorePath} className="w-full sm:w-fit">
+                        <Button className="w-full sm:w-fit h-auto min-h-[3.5rem] py-4 px-10 rounded-2xl bg-orange-500 hover:bg-orange-400 text-zinc-950 font-black uppercase italic tracking-wide shadow-xl shadow-orange-500/20 active:scale-95 transition-all">
                             Explorar Coleção
                             <ArrowRight className="w-5 h-5 ml-2" />
                         </Button>
@@ -211,7 +208,7 @@ export default function StudentStorePage() {
             </div>
 
             {!loading && filteredProducts.length === 0 && (
-                <div className="py-24 text-center space-y-6 bg-zinc-900/20 border border-zinc-800/50 border-dashed rounded-[3rem] animate-in slide-in-from-bottom-4 duration-500">
+                <div className="py-12 sm:py-24 text-center space-y-6 bg-zinc-900/20 border border-zinc-800/50 border-dashed rounded-[2rem] sm:rounded-[3rem] animate-in slide-in-from-bottom-4 duration-500">
                     <div className="w-20 h-20 bg-zinc-900 rounded-full flex items-center justify-center border border-zinc-800 mx-auto shadow-2xl">
                         <ShoppingBag className="w-8 h-8 text-zinc-800" />
                     </div>

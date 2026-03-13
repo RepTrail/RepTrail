@@ -59,7 +59,7 @@ export function WorkoutCard({ userId }: WorkoutCardProps) {
 
     if (isLoading || (workout && isLoadingStatus)) {
         return (
-            <div className="bg-zinc-900/40 border border-zinc-800/50 shadow-xl p-8 rounded-[2.5rem] backdrop-blur-sm overflow-hidden h-[280px] relative animate-pulse">
+            <div className="bg-zinc-900/40 border border-zinc-800/50 shadow-xl p-6 sm:p-10 rounded-3xl backdrop-blur-sm overflow-hidden h-[280px] relative animate-pulse">
                 <div className="absolute top-0 right-0 p-8 opacity-[0.02]">
                     <Dumbbell className="w-32 h-32" />
                 </div>
@@ -76,7 +76,7 @@ export function WorkoutCard({ userId }: WorkoutCardProps) {
 
     if (!workout) {
         return (
-            <div className="bg-zinc-900/20 border border-zinc-800/50 border-dashed rounded-[2.5rem] py-16 flex flex-col items-center justify-center text-center space-y-4">
+            <div className="bg-zinc-900/20 border border-zinc-800/50 border-dashed rounded-3xl py-12 sm:py-16 flex flex-col items-center justify-center text-center space-y-4">
                 <Dumbbell className="w-8 h-8 text-zinc-700" />
                 <p className="text-zinc-400 text-sm font-black uppercase tracking-tight italic">Dia de Descanso</p>
             </div>
@@ -92,7 +92,7 @@ export function WorkoutCard({ userId }: WorkoutCardProps) {
 
     return (
         <Link href={href}>
-            <div className={`group relative p-8 rounded-[2.5rem] backdrop-blur-sm overflow-hidden transition-all duration-500 shadow-xl border cursor-pointer ${status === 'completed'
+            <div className={`group relative p-6 sm:p-10 rounded-3xl backdrop-blur-sm overflow-hidden transition-all duration-500 shadow-xl border cursor-pointer ${status === 'completed'
                 ? 'bg-emerald-950/20 border-emerald-500/20'
                 : status === 'in_progress'
                     ? 'bg-amber-500/10 border-amber-500/20 hover:border-amber-500/40'

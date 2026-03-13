@@ -47,7 +47,7 @@ export function PublicStudentGallery({ photos }: PublicStudentGalleryProps) {
                         key={f.value}
                         onClick={() => setActiveFilter(f.value)}
                         className={`
-                            px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap
+                             py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap
                             ${activeFilter === f.value
                                 ? 'bg-emerald-500 text-zinc-950 shadow-lg shadow-emerald-500/20'
                                 : 'bg-zinc-900 text-zinc-500 hover:text-white border border-white/5'}

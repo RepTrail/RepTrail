@@ -41,7 +41,7 @@ export default async function StudentErgogenicsPage({ params }: { params: { id: 
 
     return (
         <div className="space-y-10 pb-10">
-            <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 px-4">
+            <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 ">
                 <div className="space-y-4">
                     <Link
                         href={`/dashboard/trainer/students/${id}`}
@@ -63,7 +63,7 @@ export default async function StudentErgogenicsPage({ params }: { params: { id: 
                     </div>
                 </div>
 
-                <div className="flex items-center gap-3 w-full sm:w-auto self-end md:self-center">
+                <div className="flex items-center gap-3 pb-4 w-full sm:w-auto self-end md:self-center">
                     <UnifiedCreationDialog
                         title="Nova Substância"
                         description={`Defina uma nova substância para o protocolo de ${studentName}.`}

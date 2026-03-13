@@ -27,7 +27,7 @@ export default async function StudentAutoTrainingSuccessPage() {
 
                 <Link
                     href="/dashboard/student"
-                    className="inline-flex items-center gap-3 px-8 py-4 bg-white hover:bg-zinc-100 text-zinc-950 font-black uppercase tracking-widest rounded-2xl transition-all hover:scale-105 active:scale-95"
+                    className="inline-flex items-center gap-3 pb-4 px-8 py-4 bg-white hover:bg-zinc-100 text-zinc-950 font-black uppercase tracking-widest rounded-2xl transition-all hover:scale-105 active:scale-95"
                 >
                     Ir para o Dashboard
                     <ArrowRight className="w-5 h-5" />

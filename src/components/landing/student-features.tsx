@@ -1,7 +1,8 @@
 
 import { Button } from "@/components/ui/button";
-import { Check, Flame, Dumbbell, Utensils, Activity, ArrowRight, Zap, Target, Smartphone, Search } from "lucide-react";
+import { Check, Flame, Dumbbell, Utensils, Activity, ArrowRight, Zap, Target, Smartphone, Search, ShieldCheck } from "lucide-react";
 import Link from "next/link";
+import { SectionHeader } from "./section-header";
 
 const features = [
     { icon: Smartphone, text: "Experiência Mobile-First" },
@@ -43,22 +44,15 @@ export function StudentFeatures() {
                 </div>
 
                 {/* Text Content (Right Side on Desktop) */}
-                <div className="flex flex-col gap-[30px] md:gap-[50px] text-left w-full lg:w-[calc(50%-25px)] animate-in fade-in slide-in-from-right-8 duration-1000 delay-200">
-                    <div className="flex flex-col gap-[20px] items-start text-left">
-                        <div className="inline-flex items-center rounded-full border border-orange-500/20 bg-orange-500/5 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-orange-500">
-                            <Flame className="w-3 h-3 mr-2" />
-                            Para Alunos
-                        </div>
-
-                        <h2 className="text-4xl md:text-5xl font-black text-white italic uppercase tracking-tighter leading-tight">
-                            Execute com <br className="hidden md:block" />
-                            <span className="text-orange-500">Maestria.</span>
-                        </h2>
-
-                        <p className="text-zinc-400 text-lg leading-relaxed w-full">
-                            Seu plano está traçado. Sua dieta está calculada. Seu único trabalho é executar. Acompanhe cada série, cada refeição e cada quilo perdido com precisão cirúrgica.
-                        </p>
-                    </div>
+                <div className="order-2 flex flex-col gap-[30px] md:gap-[50px] w-full lg:w-[calc(50%-25px)] animate-in fade-in slide-in-from-right-8 duration-1000">
+                    <SectionHeader 
+                        align="left"
+                        badgeIcon={ShieldCheck}
+                        badgeText="Para Alunos"
+                        badgeVariant="orange"
+                        title={<>A Experiência que seu <span className="text-orange-500">Aluno merece.</span></>}
+                        subtitle="Ofereça um aplicativo intuitivo onde seu aluno visualiza treinos, dietas e evolução física de forma profissional, aumentando a fidelização."
+                    />
 
                     <div className="flex flex-col sm:flex-row flex-wrap gap-[20px] text-left">
                         {features.map((item, idx) => (
@@ -76,11 +70,11 @@ export function StudentFeatures() {
                     <div className="flex w-full">
                         <Button
                             asChild
-                            className="w-full h-14 bg-orange-500 hover:bg-orange-400 text-zinc-950 font-black uppercase italic tracking-wide rounded-xl shadow-xl shadow-orange-500/10 transition-all hover:-translate-y-1 hover:shadow-orange-500/20"
+                            className="w-full h-auto min-h-[3.5rem] py-4 px-6 text-sm md:text-lg bg-orange-500 hover:bg-orange-400 text-zinc-950 font-black uppercase italic tracking-wide rounded-xl shadow-xl shadow-orange-500/10 transition-all hover:-translate-y-1 hover:shadow-orange-500/20 whitespace-normal"
                         >
-                            <a href="#marketplace">
-                                Encontrar meu Treinador
-                                <Search className="ml-2 w-5 h-5" />
+                            <a href="#marketplace" className="flex flex-col sm:flex-row items-center justify-center text-center leading-tight">
+                                <span>Encontrar meu Treinador</span>
+                                <Search className="mt-2 sm:mt-0 sm:ml-2 w-5 h-5 shrink-0" />
                             </a>
                         </Button>
                     </div>

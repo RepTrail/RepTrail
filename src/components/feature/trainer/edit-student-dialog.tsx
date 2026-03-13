@@ -99,7 +99,7 @@ export function EditStudentDialog({ relationshipId, studentId, trainerId, initia
                         Atualize as métricas e dados financeiros.
                     </DialogDescription>
                 </DialogHeader>
-                <div className="grid gap-6 py-4">
+                <div className="grid gap-6">
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <Label htmlFor="weight" className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Peso (kg)</Label>

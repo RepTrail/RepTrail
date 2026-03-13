@@ -6,7 +6,7 @@ import { Home, ArrowLeft, Search } from 'lucide-react'
 
 export default function NotFound() {
     return (
-        <div className="min-h-screen bg-zinc-950 text-white flex items-center justify-center px-4 relative overflow-hidden">
+        <div className="min-h-screen bg-zinc-950 text-white flex items-center justify-center  relative overflow-hidden">
             {/* Background Spot */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-emerald-500/5 rounded-full blur-[128px] pointer-events-none" />
 

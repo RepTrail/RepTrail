@@ -10,7 +10,7 @@ export default function StudentsLoading() {
                     <Skeleton className="h-10 w-48" />
                     <Skeleton className="h-4 w-64" />
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 pb-4">
                     <Skeleton className="h-10 w-32 rounded-xl" />
                     <Skeleton className="h-10 w-32 rounded-xl" />
                 </div>
@@ -40,7 +40,7 @@ export default function StudentsLoading() {
                 <div className="p-0">
                     <div className="space-y-1">
                         {/* Table Header like skeleton */}
-                        <div className="hidden md:flex bg-zinc-900/30 px-4 py-3 border-b border-zinc-900 gap-4">
+                        <div className="hidden md:flex bg-zinc-900/30  py-3 border-b border-zinc-900 gap-4">
                             <Skeleton className="h-4 flex-1" />
                             <Skeleton className="h-4 flex-1" />
                             <Skeleton className="h-4 flex-1" />
@@ -49,9 +49,9 @@ export default function StudentsLoading() {
 
                         {/* Rows */}
                         {[1, 2, 3, 4, 5].map((i) => (
-                            <div key={i} className="px-4 py-4 border-b border-zinc-900/50 flex flex-col md:flex-row md:items-center gap-4">
+                            <div key={i} className=" py-4 border-b border-zinc-900/50 flex flex-col md:flex-row md:items-center gap-4">
                                 {/* Mobile view mimics */}
-                                <div className="flex items-center gap-3 flex-1">
+                                <div className="flex items-center gap-3 pb-4 flex-1">
                                     <Skeleton className="h-9 w-9 rounded-full shrink-0" />
                                     <div className="space-y-2 w-full">
                                         <Skeleton className="h-4 w-32" />

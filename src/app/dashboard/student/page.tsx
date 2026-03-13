@@ -62,13 +62,13 @@ export default async function StudentDashboardPage() {
     // Case: Trainer Inactive (plan_tier === 'none')
     if (trainerRel && trainerRel.trainer.plan_tier === 'none' && !hasAutoTraining) {
         return (
-            <div className="space-y-12 pb-20 animate-in fade-in duration-700">
+            <div className="flex flex-col gap-section-gap animate-in fade-in duration-700">
                 <header className="space-y-8">
-                    <div className="relative group overflow-hidden p-10 md:p-16 bg-zinc-900 border border-zinc-800 rounded-[3.5rem] shadow-2xl">
+                    <div className="relative group overflow-hidden p-6 sm:p-12 bg-zinc-900 border border-zinc-800 rounded-3xl shadow-2xl">
                         <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 via-transparent to-transparent opacity-50" />
                         <div className="relative z-10 flex flex-col md:flex-row gap-12 items-center">
                             <div className="flex-1 space-y-6 text-center md:text-left">
-                                <div className="space-y-2">
+                                <div className="space-y-5">
                                     <h2 className="text-3xl md:text-5xl font-black text-white italic uppercase tracking-tighter leading-tight">
                                         Seu Personal <br /><span className="text-red-500">ficou Inativo</span>
                                     </h2>
@@ -106,13 +106,13 @@ export default async function StudentDashboardPage() {
     // Case: Trial Expired
     if (!trainerRel && isTrialExpired && !hasAutoTraining) {
         return (
-            <div className="space-y-12 pb-20 animate-in fade-in duration-700">
+            <div className="flex flex-col gap-section-gap animate-in fade-in duration-700">
                 <header className="space-y-8">
-                    <div className="relative group overflow-hidden p-10 md:p-16 bg-zinc-900 border border-zinc-800 rounded-[3.5rem] shadow-2xl mt-12">
+                    <div className="relative group overflow-hidden p-6 sm:p-12 bg-zinc-900 border border-zinc-800 rounded-3xl shadow-2xl mt-12">
                         <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 via-transparent to-transparent opacity-50" />
                         <div className="relative z-10 flex flex-col md:flex-row gap-12 items-center">
                             <div className="flex-1 space-y-6 text-center md:text-left">
-                                <div className="space-y-2">
+                                <div className="space-y-5">
                                     <div className="inline-flex items-center gap-2 px-3 py-1 bg-zinc-950 rounded-full border border-emerald-500/30 mb-2">
                                         <div className="w-2 h-2 rounded-full bg-emerald-500 animate-[pulse_2s_ease-in-out_infinite]" />
                                         <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Plano Pro</span>
@@ -155,13 +155,13 @@ export default async function StudentDashboardPage() {
         const topTrainers = ranking.slice(0, 3)
 
         return (
-            <div className="space-y-12 pb-20 animate-in fade-in duration-700 mt-12">
+            <div className="flex flex-col gap-section-gap animate-in fade-in duration-700 mt-12">
                 <header className="space-y-8">
-                    <div className="relative group overflow-hidden p-10 md:p-16 bg-zinc-900 border border-zinc-800 rounded-[3.5rem] shadow-2xl">
+                    <div className="relative group overflow-hidden p-6 sm:p-12 bg-zinc-900 border border-zinc-800 rounded-3xl shadow-2xl">
                         <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 via-transparent to-transparent opacity-50" />
                         <div className="relative z-10 flex flex-col md:flex-row gap-12 items-center">
                             <div className="flex-1 space-y-6 text-center md:text-left">
-                                <div className="space-y-2">
+                                <div className="space-y-2 sm:space-y-5">
                                     <h2 className="text-3xl md:text-5xl font-black text-white italic uppercase tracking-tighter leading-tight">
                                         Desbloqueie seu <br /><span className="text-orange-500">Potencial Máximo</span>
                                     </h2>
@@ -193,9 +193,9 @@ export default async function StudentDashboardPage() {
 
                 <section className="space-y-8">
                     <div className="flex items-center justify-between px-2">
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3 pb-4">
                             <div className="w-2 h-4 bg-amber-500 rounded-full" />
-                            <h2 className="text-[10px] font-black text-white flex items-center gap-2 uppercase tracking-[0.18em] sm:tracking-[0.3em] flex-wrap">
+                            <h2 className="text-[10px] font-black text-white flex items-center gap-2 uppercase tracking-widest flex-wrap">
                                 <Trophy className="w-3.5 h-3.5 text-amber-500" />
                                 Elite RepTrail • Ranking Global
                             </h2>
@@ -209,7 +209,7 @@ export default async function StudentDashboardPage() {
                     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                         {topTrainers.map((trainer: any, index: number) => {
                             const CardContent = (
-                                <Card className={`group bg-zinc-900 shadow-2xl rounded-[2.5rem] border-zinc-800/80 ${trainer.trainer_code ? 'hover:border-amber-500/30' : 'opacity-70'} transition-all duration-500 p-8 space-y-6 overflow-hidden relative h-full`}>
+                                <Card className={`group bg-zinc-900 shadow-2xl rounded-3xl border-zinc-800/80 ${trainer.trainer_code ? 'hover:border-amber-500/30' : 'opacity-70'} transition-all duration-500 p-8 space-y-6 overflow-hidden relative h-full`}>
                                     <div className="absolute top-0 right-0 p-6 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity">
                                         <Trophy className="w-32 h-32 text-amber-500" />
                                     </div>
@@ -255,7 +255,7 @@ export default async function StudentDashboardPage() {
                     </div>
                 </section>
 
-                <section className="p-12 bg-zinc-900 border border-zinc-800 rounded-[3rem] text-center space-y-6 group overflow-hidden relative">
+                <section className="p-6 sm:p-12 bg-zinc-900 border border-zinc-800 rounded-3xl text-center space-y-6 group overflow-hidden relative">
                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(249,115,22,0.05),transparent_70%)] opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
                     <div className="relative z-10 space-y-6">
                         <div className="w-16 h-16 bg-zinc-950 rounded-2xl flex items-center justify-center border border-zinc-800 mx-auto shadow-2xl rotate-3">
@@ -267,8 +267,8 @@ export default async function StudentDashboardPage() {
                                 Acesse mais de 400 produtos na nossa loja oficial para potencializar seus ganhos.
                             </p>
                         </div>
-                        <Link href="/dashboard/student/loja">
-                            <Button className="h-14 px-10 rounded-2xl bg-zinc-100 hover:bg-orange-500 hover:text-zinc-950 text-zinc-950 font-black uppercase italic tracking-wide transition-all shadow-xl">
+                        <Link href="/dashboard/student/loja" className="w-full sm:w-fit mx-auto">
+                            <Button className="w-full sm:w-fit h-auto min-h-[3.5rem] py-4 px-10 rounded-2xl bg-zinc-100 hover:bg-orange-500 hover:text-zinc-950 text-zinc-950 font-black uppercase italic tracking-wide transition-all shadow-xl">
                                 Acessar Loja RepTrail
                             </Button>
                         </Link>
@@ -291,14 +291,14 @@ export default async function StudentDashboardPage() {
     }
 
     return (
-        <div className="flex flex-col gap-section-gap px-container-padding animate-in fade-in duration-500">
+        <div className="max-w-7xl mx-auto flex flex-col gap-section-gap animate-in fade-in duration-500 ">
             <PaymentWarning relationship={trainerRel} />
 
             {/* Welcome Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-header-gap">
-                <div className="flex flex-col gap-subtitle-gap">
+                <div className="space-y-2 sm:space-y-5">
                     <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-                        <h1 className="text-4xl font-black text-white italic uppercase tracking-tighter">
+                        <h1 className="text-3xl font-black text-white italic uppercase tracking-tighter">
                             Dashboard
                         </h1>
                     </div>
@@ -317,7 +317,7 @@ export default async function StudentDashboardPage() {
                     </p>
                 </div>
                 <div className="flex items-center gap-4 bg-zinc-900/50 p-2 rounded-2xl border border-zinc-800/50">
-                    <div className="px-4 py-2 bg-zinc-950 rounded-xl border border-zinc-800">
+                    <div className=" py-2 bg-zinc-950 rounded-xl border border-zinc-800 px-4 w-full px-4">
                         <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest block">Hoje</span>
                         <span className="text-xs font-black text-white italic uppercase">
                             {tzNow.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' })}
@@ -345,7 +345,7 @@ export default async function StudentDashboardPage() {
                     <div className="lg:col-span-8 flex flex-col gap-section-gap">
                         <div className="flex flex-col gap-header-gap">
                             <div className="flex items-center justify-between px-2">
-                                <h2 className="text-[12px] font-black text-zinc-100 flex items-center gap-2 uppercase tracking-[0.2em]">
+                                <h2 className="text-[10px] font-black text-zinc-100 flex items-center gap-2 uppercase tracking-widest">
                                     <Dumbbell className="w-4 h-4 text-emerald-500" />
                                     Treino de Hoje
                                 </h2>
@@ -359,7 +359,7 @@ export default async function StudentDashboardPage() {
 
                         <div className="flex flex-col gap-header-gap">
                             <div className="flex items-center justify-between px-2">
-                                <h2 className="text-[12px] font-black text-zinc-100 flex items-center gap-2 uppercase tracking-[0.2em]">
+                                <h2 className="text-[10px] font-black text-zinc-100 flex items-center gap-2 uppercase tracking-widest">
                                     <Activity className="w-4 h-4 text-orange-500" />
                                     Cardio do Dia
                                 </h2>
@@ -373,7 +373,7 @@ export default async function StudentDashboardPage() {
                     {/* Sidebar (Metrics & Diet) */}
                     <div className="lg:col-span-4 flex flex-col gap-section-gap">
                         <div className="flex flex-col gap-header-gap">
-                            <h2 className="text-[12px] font-black text-zinc-100 flex items-center gap-2 uppercase tracking-[0.2em] px-2">
+                            <h2 className="text-[10px] font-black text-zinc-100 flex items-center gap-2 uppercase tracking-widest px-2">
                                 <Utensils className="w-4 h-4 text-emerald-500" />
                                 Sua Dieta
                             </h2>

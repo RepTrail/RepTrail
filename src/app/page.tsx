@@ -45,7 +45,7 @@ export default async function LandingPage() {
       <AffiliateTracker />
       <header className="h-20 flex items-center border-b border-zinc-900/50 backdrop-blur-md sticky top-0 z-50 bg-zinc-950/80 supports-[backdrop-filter]:bg-zinc-950/60">
         {/* Header */}
-        <div className="container mx-auto px-4 flex items-center justify-between">
+        <div className="container mx-auto flex items-center justify-between px-5 sm:px-6 md:px-8">
           <Link href="/" className="flex items-center gap-2 group">
             <Logo size="md" className="md:hidden group-hover:scale-105 transition-transform" />
             <Logo size="lg" className="hidden md:flex group-hover:scale-105 transition-transform" />
@@ -123,8 +123,8 @@ export default async function LandingPage() {
 
       <main className="flex-1">
         {/* Urgency Banner */}
-        <div className="bg-emerald-500 py-2 px-4 text-center">
-          <p className="text-[10px] md:text-xs font-black uppercase italic tracking-widest text-zinc-950">
+        <div className="bg-emerald-500 py-2  text-center">
+          <p className="text-[10px] md:text-xs font-black uppercase italic tracking-widest text-zinc-950 leading-none">
             ⚡️ Implementação assistida: Restam apenas <span className="underline">4 vagas</span> para este mês. ⚡️
           </p>
         </div>
@@ -143,7 +143,7 @@ export default async function LandingPage() {
       </main>
 
       <footer className="py-12 bg-zinc-950 border-t border-zinc-900">
-        <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-8 md:gap-6">
+        <div className="container mx-auto  flex flex-col md:flex-row items-center justify-between gap-8 md:gap-6">
           <Link href="/" className="opacity-50 hover:opacity-100 transition-opacity block">
             <Logo size="md" />
           </Link>

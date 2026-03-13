@@ -19,11 +19,11 @@ import { Dumbbell, Clock } from 'lucide-react'
  */
 export default function StudentWorkoutsLoading() {
     return (
-        <div className="space-y-12 pb-20 animate-pulse">
+        <div className="space-y-12 animate-pulse">
             {/* Header — neutral (no CTA buttons) */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 px-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 ">
                 <div className="space-y-4">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 pb-4">
                         <div className="p-2 bg-zinc-900 rounded-xl">
                             <Dumbbell className="w-5 h-5 text-zinc-800" />
                         </div>
@@ -32,14 +32,14 @@ export default function StudentWorkoutsLoading() {
                     <Skeleton className="h-4 w-80 max-w-full bg-zinc-800/30 rounded-md" />
                 </div>
                 {/* Placeholder for optional buttons (auto-training) */}
-                <div className="hidden sm:flex items-center gap-3">
+                <div className="hidden sm:flex items-center gap-3 pb-4">
                     <Skeleton className="h-12 w-32 rounded-xl bg-zinc-800/30" />
                     <Skeleton className="h-12 w-32 rounded-xl bg-zinc-800/40" />
                 </div>
             </div>
 
             {/* 3-column workout card grid — matches trainer assignment card structure */}
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 px-4">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 ">
                 {[1, 2, 3].map((i) => (
                     <Card key={i} className="bg-zinc-900/40 border-zinc-800/50 shadow-2xl rounded-3xl overflow-hidden">
                         <CardHeader className="p-8 pb-4 space-y-6">

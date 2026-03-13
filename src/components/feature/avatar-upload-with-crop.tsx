@@ -172,7 +172,7 @@ export function AvatarUploadWithCrop({
             }}>
                 <DialogContent className="sm:max-w-[500px] bg-zinc-950 border-zinc-800 p-0 overflow-hidden rounded-[2.5rem]">
                     <DialogHeader className="p-6 border-b border-zinc-900">
-                        <DialogTitle className="text-xl font-black text-white italic uppercase tracking-tight flex items-center gap-3">
+                        <DialogTitle className="text-xl font-black text-white italic uppercase tracking-tight flex items-center gap-3 pb-4">
                             <Camera className={`w-5 h-5 ${accentColor === 'emerald' ? 'text-emerald-500' : 'text-orange-500'}`} />
                             Ajustar Foto
                         </DialogTitle>

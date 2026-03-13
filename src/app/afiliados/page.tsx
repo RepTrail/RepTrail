@@ -17,7 +17,7 @@ export default function AffiliadosPage() {
 
             {/* Header */}
             <header className="h-20 flex items-center border-b border-zinc-900/50 backdrop-blur-md sticky top-0 z-50 bg-zinc-950/80">
-                <div className="container mx-auto px-4 flex items-center justify-between">
+                <div className="container mx-auto  flex items-center justify-between">
                     <Link href="/" className="flex items-center gap-2 group">
                         <Logo size="lg" className="group-hover:scale-105 transition-transform" />
                     </Link>
@@ -36,14 +36,14 @@ export default function AffiliadosPage() {
 
             <main className="flex-1">
                 {/* ── HERO ─────────────────────────────────────────── */}
-                <section className="relative py-24 md:py-36 px-4 overflow-hidden">
+                <section className="relative py-24 md:py-36  overflow-hidden">
                     {/* Glow BG */}
                     <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-amber-900/20 via-zinc-950 to-zinc-950" />
                     <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-amber-500/10 blur-[120px] rounded-full" />
 
                     <div className="container mx-auto text-center relative z-10 max-w-4xl space-y-8">
                         {/* Badge */}
-                        <div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 rounded-full px-4 py-2">
+                        <div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 rounded-full  py-2">
                             <Megaphone className="w-4 h-4 text-amber-400" />
                             <span className="text-[11px] font-black text-amber-400 uppercase tracking-widest">Programa de Afiliados RepTrail</span>
                         </div>
@@ -98,7 +98,7 @@ export default function AffiliadosPage() {
                 </section>
 
                 {/* ── COMO FUNCIONA ─────────────────────────────────── */}
-                <section className="py-24 px-4 border-t border-zinc-900 relative">
+                <section className="py-24  border-t border-zinc-900 relative">
                     <div className="absolute inset-0 bg-zinc-900/20" />
                     <div className="container mx-auto relative z-10">
                         <div className="text-center max-w-2xl mx-auto mb-16 space-y-4">
@@ -164,7 +164,7 @@ export default function AffiliadosPage() {
                 </section>
 
                 {/* ── DEPOIMENTO ────────────────────────────────────── */}
-                <section className="py-16 px-4">
+                <section className="py-16 ">
                     <div className="container mx-auto max-w-3xl">
                         <div className="bg-gradient-to-br from-amber-500/5 to-zinc-900 border border-amber-500/20 rounded-3xl p-10 text-center space-y-6 relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-40 h-40 bg-amber-500/5 blur-3xl rounded-full" />
@@ -194,7 +194,7 @@ export default function AffiliadosPage() {
                 </section>
 
                 {/* ── BENEFÍCIOS ────────────────────────────────────── */}
-                <section className="py-24 px-4 border-t border-zinc-900">
+                <section className="py-24  border-t border-zinc-900">
                     <div className="container mx-auto max-w-5xl">
                         <div className="text-center mb-16 space-y-4">
                             <span className="text-[11px] font-black text-amber-500 uppercase tracking-widest">Por que se tornar afiliado?</span>
@@ -251,11 +251,11 @@ export default function AffiliadosPage() {
                 </section>
 
                 {/* ── FAQ ───────────────────────────────────────────── */}
-                <section className="py-24 px-4 border-t border-zinc-900 bg-zinc-900/20">
+                <section className="py-24  border-t border-zinc-900 bg-zinc-900/20">
                     <div className="container mx-auto max-w-2xl">
                         <div className="text-center mb-16 space-y-4">
                             <span className="text-[11px] font-black text-amber-500 uppercase tracking-widest">Dúvidas Frequentes</span>
-                            <h2 className="text-3xl md:text-4xl font-black text-white italic uppercase tracking-tighter">
+                            <h2 className="text-3xl md:text-3xl font-black text-white italic uppercase tracking-tighter">
                                 Perguntas & <span className="text-amber-400">Respostas</span>
                             </h2>
                         </div>
@@ -298,10 +298,10 @@ export default function AffiliadosPage() {
                 </section>
 
                 {/* ── CTA FINAL ─────────────────────────────────────── */}
-                <section className="py-24 px-4 relative overflow-hidden">
+                <section className="py-24  relative overflow-hidden">
                     <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-amber-900/20 via-zinc-950 to-zinc-950" />
                     <div className="container mx-auto text-center relative z-10 max-w-3xl space-y-8">
-                        <div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 rounded-full px-4 py-2">
+                        <div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 rounded-full  py-2">
                             <span className="text-[11px] font-black text-amber-400 uppercase tracking-widest">🚀 Não espere mais</span>
                         </div>
                         <h2 className="text-4xl md:text-6xl font-black text-white italic uppercase tracking-tighter">
@@ -332,7 +332,7 @@ export default function AffiliadosPage() {
 
             {/* Footer */}
             <footer className="py-10 bg-zinc-950 border-t border-zinc-900">
-                <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-6">
+                <div className="container mx-auto  flex flex-col md:flex-row items-center justify-between gap-6">
                     <Link href="/" className="opacity-50 hover:opacity-100 transition-opacity block">
                         <Logo size="sm" />
                     </Link>

@@ -24,24 +24,24 @@ export function CTASection() {
                         Não espere mais. Junte-se a treinadores Elite que já escalaram seus resultados com o RepTrail.
                     </p>                </div>
 
-                <div className="flex flex-col items-center gap-[20px] w-full max-w-xl mx-auto pt-8">
-                    <div className="flex flex-col md:flex-row gap-[20px] w-full justify-center px-4 md:px-0">
+                <div className="flex flex-col items-center gap-[20px] w-full max-w-2xl mx-auto pt-8">
+                    <div className="flex flex-col gap-[20px] w-full justify-center  md:px-0">
                         <Button
                             asChild
-                            className="w-full md:w-auto h-auto min-h-[4rem] py-4 px-10 text-lg bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase italic tracking-wide rounded-2xl shadow-xl shadow-emerald-500/10 hover:shadow-emerald-500/20 transition-all hover:-translate-y-1"
+                            className="w-full h-auto min-h-[4rem] py-4 px-10 text-sm md:text-lg bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase italic tracking-tight md:tracking-wide rounded-2xl shadow-xl shadow-emerald-500/10 hover:shadow-emerald-500/20 transition-all hover:-translate-y-1 whitespace-normal"
                         >
-                            <Link href="/auth/signup">
-                                Quero transformar minha consultoria agora
-                                <ArrowRight className="ml-2 h-5 w-5" />
+                            <Link href="/auth/signup" className="flex flex-col sm:flex-row items-center justify-center text-center leading-[1.1] sm:leading-tight py-1">
+                                <span>Quero transformar minha consultoria agora</span>
+                                <ArrowRight className="mt-2 sm:mt-0 sm:ml-2 h-5 w-5 shrink-0" />
                             </Link>
                         </Button>
                         <Button
                             asChild
                             variant="outline"
-                            className="w-full md:w-auto h-16 px-10 text-lg border-zinc-800 bg-zinc-900/50 text-zinc-400 hover:bg-zinc-800 hover:text-white hover:border-zinc-700 font-black uppercase italic tracking-widest rounded-2xl transition-all hover:-translate-y-1 shadow-2xl backdrop-blur-sm"
+                            className="w-full h-16 px-10 text-sm md:text-lg border-zinc-800 bg-zinc-900/50 text-zinc-400 hover:bg-zinc-800 hover:text-white hover:border-zinc-700 font-black uppercase italic tracking-widest rounded-2xl transition-all hover:-translate-y-1 shadow-2xl backdrop-blur-sm"
                         >
-                            <a href="#marketplace">
-                                <Search className="mr-2 h-5 w-5" />
+                            <a href="#marketplace" className="flex items-center justify-center">
+                                <Search className="mr-2 h-5 w-5 shrink-0" />
                                 Buscar Personal
                             </a>
                         </Button>

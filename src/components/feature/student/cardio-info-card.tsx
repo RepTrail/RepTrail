@@ -11,12 +11,12 @@ export function CardioInfoCard({ assignment }: CardioInfoCardProps) {
     const dayNamesShort = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"]
 
     return (
-        <Card className="group relative bg-zinc-900/40 border-zinc-800/50 shadow-2xl rounded-[2.5rem] overflow-hidden backdrop-blur-sm border-t-zinc-700/10 hover:border-orange-500/20 transition-all duration-500">
+        <Card className="group relative bg-zinc-900/40 border-zinc-800/50 shadow-2xl rounded-3xl overflow-hidden backdrop-blur-sm border-t-zinc-700/10 hover:border-orange-500/20 transition-all duration-500">
 
-            <CardContent className="p-8 relative z-10 space-y-6">
+            <CardContent className="p-6 sm:p-10 relative z-10 space-y-6">
                 <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
                     <div className="space-y-4">
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3 pb-4">
                             <div className="p-2.5 bg-zinc-950 rounded-2xl border border-zinc-800 group-hover:border-orange-500/30 transition-colors">
                                 <Activity className="w-6 h-6 text-orange-500" />
                             </div>

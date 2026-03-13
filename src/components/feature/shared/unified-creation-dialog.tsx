@@ -224,15 +224,15 @@ export function UnifiedCreationDialog({
                     </Button>
                 )}
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[480px] p-0 overflow-hidden">
-                <DialogHeader className="p-6 sm:p-10 pr-14 sm:pr-14 pb-6 sm:pb-8 bg-zinc-900/40 border-b border-zinc-900/50 relative">
+            <DialogContent className="max-w-md">
+                <DialogHeader className="relative">
                     <DialogTitle className="text-xl sm:text-3xl font-black italic uppercase tracking-tighter leading-tight">{title}</DialogTitle>
                     <DialogDescription className="text-zinc-500 text-[10px] font-black uppercase tracking-[0.2em] mt-3">
                         {description}
                     </DialogDescription>
                 </DialogHeader>
 
-                <form onSubmit={onSubmit} className="p-6 sm:p-10 space-y-6 sm:space-y-8">
+                <form onSubmit={onSubmit} className="space-y-10">
                     <div className="space-y-6">
                         {fields.map((field) => (
                             <div key={field.name} className="space-y-3">
@@ -252,7 +252,7 @@ export function UnifiedCreationDialog({
                                 ) : field.type === 'select' ? (
                                     <div className="space-y-4">
                                         <Select name={field.name} defaultValue={initialValues?.[field.name] || field.defaultValue} required={field.required}>
-                                            <SelectTrigger className={cn("flex h-14 w-full rounded-2xl border border-zinc-800 bg-zinc-900/50 hover:bg-zinc-900 px-4 py-2 text-sm transition-all font-bold text-white text-left group", s.ring, s.border)}>
+                                            <SelectTrigger className={cn("flex h-14 w-full rounded-2xl border border-zinc-800 bg-zinc-900/50 hover:bg-zinc-900  py-2 text-sm transition-all font-bold text-white text-left group", s.ring, s.border)}>
                                                 <SelectValue placeholder={field.placeholder || "Selecione..."} />
                                             </SelectTrigger>
                                             <SelectContent position="popper" className="bg-zinc-900 border-zinc-800 text-white rounded-2xl p-2 shadow-2xl border-white/5 animate-in fade-in zoom-in duration-200">
@@ -262,7 +262,7 @@ export function UnifiedCreationDialog({
                                                         value={opt.value}
                                                         className={cn("rounded-xl px-3 py-2.5 font-bold transition-all cursor-pointer mb-1 last:mb-0 focus:bg-white/5", `focus:text-${s.accent}`)}
                                                     >
-                                                        <div className="flex items-center gap-3">
+                                                        <div className="flex items-center gap-3 pb-4">
                                                             {opt.color && (
                                                                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: opt.color, boxShadow: `0 0 8px ${opt.color}66` }} />
                                                             )}
@@ -299,7 +299,7 @@ export function UnifiedCreationDialog({
                                         placeholder={field.placeholder}
                                         required={field.required}
                                         defaultValue={initialValues?.[field.name] ? (field.type === 'date' ? initialValues[field.name].split('T')[0] : initialValues[field.name]) : undefined}
-                                        className={cn("bg-zinc-900/50 border-zinc-800 h-14 rounded-2xl transition-all font-bold px-4", s.ring, "focus:border-transparent")}
+                                        className={cn("bg-zinc-900/50 border-zinc-800 h-14 rounded-2xl transition-all font-bold ", s.ring, "focus:border-transparent")}
                                     />
                                 )}
                             </div>

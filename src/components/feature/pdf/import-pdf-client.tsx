@@ -19,7 +19,7 @@ export function ImportPdfClient({ students, role = 'trainer' }: { students?: any
     return (
         <div className="space-y-10 pb-10" suppressHydrationWarning>
             {/* Header Section */}
-            <div className="flex flex-col gap-2 pb-2 border-b border-zinc-800/50" suppressHydrationWarning>
+            <div className="space-y-2 sm:space-y-5 pb-2 border-b border-zinc-800/50" suppressHydrationWarning>
                 <h1 className="text-4xl font-black tracking-tight text-white font-sans italic uppercase">
                     Importação Inteligente
                 </h1>
@@ -34,7 +34,7 @@ export function ImportPdfClient({ students, role = 'trainer' }: { students?: any
                         value="workout"
                         className="rounded-xl group data-[state=active]:bg-zinc-900 data-[state=active]:border-zinc-700 border border-transparent transition-all h-full"
                     >
-                        <div className="flex items-center gap-2 h-full px-4 font-bold uppercase tracking-widest text-[10px] text-zinc-500 group-hover:text-zinc-200 group-data-[state=active]:text-white">
+                        <div className="flex items-center gap-2 h-full  font-bold uppercase tracking-widest text-[10px] text-zinc-500 group-hover:text-zinc-200 group-data-[state=active]:text-white">
                             <Activity className="w-3 h-3 text-zinc-500 group-hover:text-zinc-400 group-data-[state=active]:text-white" />
                             Treino
                         </div>
@@ -43,7 +43,7 @@ export function ImportPdfClient({ students, role = 'trainer' }: { students?: any
                         value="diet"
                         className="rounded-xl group data-[state=active]:bg-zinc-900 data-[state=active]:border-zinc-700 border border-transparent transition-all h-full"
                     >
-                        <div className="flex items-center gap-2 h-full px-4 font-bold uppercase tracking-widest text-[10px] text-zinc-500 group-hover:text-zinc-200 group-data-[state=active]:text-white">
+                        <div className="flex items-center gap-2 h-full  font-bold uppercase tracking-widest text-[10px] text-zinc-500 group-hover:text-zinc-200 group-data-[state=active]:text-white">
                             <Utensils className="w-3 h-3 text-zinc-500 group-hover:text-zinc-400 group-data-[state=active]:text-white" />
                             Dieta
                         </div>

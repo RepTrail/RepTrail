@@ -61,12 +61,12 @@ function DialogContent({
       <DialogPrimitive.Content
         data-slot="dialog-content"
         className={cn(
-          "bg-zinc-950/95 backdrop-blur-2xl fixed top-1/2 left-1/2 z-[99999] grid w-[90%] max-w-lg -translate-x-1/2 -translate-y-1/2 gap-6 rounded-[2.5rem] border border-zinc-800/50 p-4 sm:p-8 shadow-2xl outline-none max-h-[80vh] overflow-y-auto scrollbar-hide data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]",
+          "bg-zinc-950/95 backdrop-blur-2xl fixed top-1/2 left-1/2 z-[99999] flex flex-col w-[90%] max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-[2rem] sm:rounded-[2.5rem] border border-zinc-800/50 p-6 sm:p-10 shadow-2xl outline-none max-h-[85vh] overflow-y-auto scrollbar-hide data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]",
           className
         )}
         {...props}
       >
-        <div className="relative h-full flex flex-col gap-6">
+        <div className="relative flex flex-col gap-8 h-full">
           {children}
         </div>
         {showCloseButton && (

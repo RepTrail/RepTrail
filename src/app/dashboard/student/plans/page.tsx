@@ -39,9 +39,9 @@ export default async function StudentPlansPage() {
     }
 
     return (
-        <div className="max-w-5xl mx-auto space-y-16 py-10 px-4">
+        <div className="max-w-5xl mx-auto space-y-16 py-10 ">
             {/* Header Section */}
-            <div className="text-center space-y-6 relative">
+            <div className="text-center space-y-5 relative">
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 bg-emerald-500/10 blur-[120px] rounded-full pointer-events-none" />
 
                 <h1 className="text-4xl md:text-6xl font-black italic uppercase tracking-tighter text-white leading-none">
@@ -102,7 +102,7 @@ export default async function StudentPlansPage() {
                                     'Métricas de Performance Avançadas',
                                     'Personalização de Rotinas Solitárias'
                                 ].map((item, i) => (
-                                    <li key={i} className="flex items-center gap-3 group/item">
+                                    <li key={i} className="flex items-center gap-3 pb-4 group/item">
                                         <div className="w-5 h-5 rounded-full bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 group-hover/item:bg-emerald-500/20 transition-colors">
                                             <Check className="w-3 h-3 text-emerald-500" strokeWidth={4} />
                                         </div>
@@ -164,7 +164,7 @@ export default async function StudentPlansPage() {
                                     'Chat & Suporte Individual (Opcional)',
                                     'Gestão Profissional do seu Personal'
                                 ].map((item, i) => (
-                                    <li key={i} className="flex items-center gap-3">
+                                    <li key={i} className="flex items-center gap-3 pb-4">
                                         <div className="w-5 h-5 rounded-full bg-orange-500/10 flex items-center justify-center border border-orange-500/20">
                                             <Trophy className="w-3 h-3 text-orange-500" />
                                         </div>
@@ -186,7 +186,7 @@ export default async function StudentPlansPage() {
 
             {/* Footer Trust Section */}
             <div className="pt-8 flex flex-col sm:flex-row items-center justify-center gap-8 md:gap-16 border-t border-zinc-900/50">
-                <div className="flex items-center gap-3 group cursor-default">
+                <div className="flex items-center gap-3 pb-4 group cursor-default">
                     <div className="p-3 bg-zinc-900 rounded-xl border border-zinc-800 group-hover:border-emerald-500/30 transition-colors">
                         <ShieldCheck className="w-5 h-5 text-emerald-500" />
                     </div>
@@ -196,7 +196,7 @@ export default async function StudentPlansPage() {
                     </div>
                 </div>
 
-                <div className="flex items-center gap-3 group cursor-default">
+                <div className="flex items-center gap-3 pb-4 group cursor-default">
                     <div className="p-3 bg-zinc-900 rounded-xl border border-zinc-800 group-hover:border-orange-500/30 transition-colors">
                         <CreditCard className="w-5 h-5 text-orange-500" />
                     </div>
@@ -206,7 +206,7 @@ export default async function StudentPlansPage() {
                     </div>
                 </div>
 
-                <div className="flex items-center gap-3 group cursor-default">
+                <div className="flex items-center gap-3 pb-4 group cursor-default">
                     <div className="p-3 bg-zinc-900 rounded-xl border border-zinc-800 group-hover:border-amber-500/30 transition-colors">
                         <Target className="w-5 h-5 text-amber-500" />
                     </div>

@@ -11,7 +11,7 @@ export default async function DietEditPage({ params }: { params: { id: string } 
     }
 
     return (
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-5xl mx-auto  sm:px-6 lg:px-8 py-8">
             <DietBuilder diet={diet as any} />
         </div>
     )

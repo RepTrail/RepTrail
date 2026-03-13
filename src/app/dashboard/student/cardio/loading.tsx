@@ -15,11 +15,11 @@ import { Activity, Flame, History } from 'lucide-react'
  */
 export default function StudentCardioLoading() {
     return (
-        <div className="space-y-12 pb-20 animate-pulse">
+        <div className="space-y-12 animate-pulse">
             {/* Header - same for trainer & auto-training */}
-            <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 px-4">
+            <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 ">
                 <div className="space-y-4">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 pb-4">
                         <div className="p-2 bg-zinc-900 rounded-xl">
                             <Activity className="w-5 h-5 text-zinc-800" />
                         </div>
@@ -31,7 +31,7 @@ export default function StudentCardioLoading() {
                 <Skeleton className="h-12 w-36 rounded-xl bg-zinc-800/40 hidden sm:block" />
             </header>
 
-            <div className="grid gap-10 lg:grid-cols-12 px-4">
+            <div className="grid gap-10 lg:grid-cols-12 ">
                 {/* Main content col — mirrors trainer's "Sessões Pendentes" layout */}
                 <div className="lg:col-span-8 space-y-8">
                     {/* Section title */}
@@ -49,7 +49,7 @@ export default function StudentCardioLoading() {
                                     <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
                                         <div className="space-y-4 flex-1">
                                             {/* Name + intensity bar */}
-                                            <div className="flex items-center gap-3">
+                                            <div className="flex items-center gap-3 pb-4">
                                                 <div className="p-2.5 bg-zinc-950 rounded-2xl border border-zinc-800">
                                                     <Activity className="w-6 h-6 text-zinc-800" />
                                                 </div>

@@ -67,7 +67,7 @@ export function AddStudentDialog() {
                     </div>
                 </DialogHeader>
 
-                <form onSubmit={onSubmit} className="space-y-6 pt-4">
+                <form onSubmit={onSubmit} className="space-y-6">
                     <div className="space-y-4">
                         <div className="space-y-2">
                             <Label htmlFor="email" className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-2">

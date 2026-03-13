@@ -5,10 +5,10 @@ import { ShieldCheck, User, Settings, Calendar, Ruler, Activity, Target, Phone, 
 
 export default function StudentProfileLoading() {
     return (
-        <div className="space-y-12 pb-20 animate-pulse">
+        <div className="space-y-12 animate-pulse">
             {/* Header matches StudentProfilePage header */}
             <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                <div className="flex items-center gap-3 mb-2">
+                <div className="flex items-center gap-3 pb-4 mb-2">
                     <div className="p-2 bg-zinc-900 rounded-xl">
                         <ShieldCheck className="w-5 h-5 text-zinc-800" />
                     </div>
@@ -51,7 +51,7 @@ export default function StudentProfileLoading() {
                     <div className="lg:col-span-8 space-y-8">
                         <Card className="bg-zinc-900/40 border-zinc-800/50 rounded-[3rem] backdrop-blur-sm shadow-2xl overflow-hidden">
                             <CardHeader className="p-10 border-b border-zinc-800/50">
-                                <div className="flex items-center gap-3">
+                                <div className="flex items-center gap-3 pb-4">
                                     <Settings className="w-5 h-5 text-zinc-800" />
                                     <Skeleton className="h-6 w-48 bg-zinc-800/50 rounded-lg" />
                                 </div>

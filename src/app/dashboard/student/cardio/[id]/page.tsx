@@ -26,7 +26,7 @@ export default async function StudentCardioDetailPage({ params }: Props) {
     if (!cardio || cardio.trainer_id !== user.id) return notFound()
 
     return (
-        <div className="max-w-3xl mx-auto py-6 px-4 space-y-8">
+        <div className="max-w-3xl mx-auto py-6  space-y-8">
             <CardioBuilder cardio={cardio as any} backHref="/dashboard/student/cardio" />
         </div>
     )

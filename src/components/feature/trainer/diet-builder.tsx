@@ -312,7 +312,7 @@ function MealItemRow({
 
             {/* Substitution Row */}
             {hasSubstitute && (
-                <div className="px-4 pb-4 pt-1 grid grid-cols-1 lg:grid-cols-12 gap-4 items-end bg-orange-500/5 border-t border-orange-500/10 transition-all duration-300">
+                <div className=" pb-4 pt-1 grid grid-cols-1 lg:grid-cols-12 gap-4 items-end bg-orange-500/5 border-t border-orange-500/10 transition-all duration-300">
                     <div className="lg:col-span-3 space-y-1.5">
                         <div className="flex items-center gap-2 mb-1">
                             <div className="w-1.5 h-1.5 rounded-full bg-orange-500" />
@@ -618,7 +618,7 @@ export function DietBuilder({ diet, backHref = '/dashboard/trainer/diets' }: Die
                                 <Button
                                     onClick={handleSaveName}
                                     disabled={isSavingName || !editName.trim()}
-                                    className="h-9 px-4 bg-green-600 hover:bg-green-500 text-white font-black uppercase tracking-widest text-[10px] rounded-xl shadow-lg shadow-green-500/20"
+                                    className="h-9  bg-green-600 hover:bg-green-500 text-white font-black uppercase tracking-widest text-[10px] rounded-xl shadow-lg shadow-green-500/20"
                                 >
                                     {isSavingName ? <Loader2 className="w-3 h-3 animate-spin" /> : <><Check className="w-3 h-3 mr-1.5" />Salvar</>}
                                 </Button>
@@ -626,7 +626,7 @@ export function DietBuilder({ diet, backHref = '/dashboard/trainer/diets' }: Die
                                     onClick={handleCancelName}
                                     disabled={isSavingName}
                                     variant="ghost"
-                                    className="h-9 px-4 bg-zinc-800/60 hover:bg-zinc-700/60 text-zinc-400 hover:text-white font-black uppercase tracking-widest text-[10px] rounded-xl border border-zinc-700/50 hover:border-zinc-600"
+                                    className="h-9  bg-zinc-800/60 hover:bg-zinc-700/60 text-zinc-400 hover:text-white font-black uppercase tracking-widest text-[10px] rounded-xl border border-zinc-700/50 hover:border-zinc-600"
                                 >
                                     <X className="w-3 h-3 mr-1.5" />Cancelar
                                 </Button>
@@ -634,7 +634,7 @@ export function DietBuilder({ diet, backHref = '/dashboard/trainer/diets' }: Die
                         </div>
                     ) : (
                         <div
-                            className="group flex items-center gap-3 cursor-pointer w-fit"
+                            className="group flex items-center gap-3 pb-4 cursor-pointer w-fit"
                             onClick={() => setIsEditingName(true)}
                         >
                             <h1 className="text-3xl font-bold text-white font-sans group-hover:text-green-400 border-b border-transparent group-hover:border-green-400/40 pb-0.5">
@@ -714,7 +714,7 @@ export function DietBuilder({ diet, backHref = '/dashboard/trainer/diets' }: Die
                                             <Utensils className="w-4 h-4 text-green-400" />
                                         </div>
                                         <div className="space-y-0.5">
-                                            <div className="flex items-center gap-3">
+                                            <div className="flex items-center gap-3 pb-4">
                                                 <h3 className="font-bold text-zinc-100 italic">Refeição {index + 1}</h3>
                                                 {meal.name && !meal.name.toLowerCase().includes('refeição') && (
                                                     <span className="text-sm font-medium text-zinc-500">

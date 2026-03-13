@@ -49,24 +49,21 @@ export default async function StudentCardioPage() {
     }, {})
 
     return (
-        <div className="space-y-12 pb-20">
-            <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 px-4">
-                <div className="space-y-4">
+        <div className="max-w-7xl mx-auto flex flex-col gap-section-gap">
+            <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 px-2">
+                <div className="space-y-5">
                     <div className="flex items-center gap-3">
-                        <div className="p-2 bg-orange-500 rounded-xl">
-                            <Activity className="w-5 h-5 text-zinc-950" />
-                        </div>
-                        <h1 className="text-4xl font-black text-white italic uppercase tracking-tighter">
+                        <h1 className="text-3xl font-black text-white italic uppercase tracking-tighter">
                             Meus <span className="text-orange-500">Cardios</span>
                         </h1>
                     </div>
                     <p className="text-zinc-500 text-sm font-medium max-w-md">
-                        Gerencie suas sessões de cardio, queime calorias e acompanhe sua evolução cardiovascular.
+                        Acompanhe e registre suas sessões de treinamento aeróbico.
                     </p>
                 </div>
 
                 {isAutoTrainingActive && !trainerRel && (
-                    <div className="flex items-center gap-3 w-full sm:w-auto">
+                    <div className="flex items-center gap-3 pb-4 w-full sm:w-auto">
                         <UnifiedCreationDialog
                             title="Novo Modelo de Cardio"
                             description="Crie um template (ex: Esteira 45min) para agendar para seus auto-treinos."
@@ -97,7 +94,7 @@ export default async function StudentCardioPage() {
                 )}
             </header>
 
-            <div className="grid gap-10 lg:grid-cols-12 px-4">
+            <div className="grid gap-10 lg:grid-cols-12 ">
                 <div className="lg:col-span-8 space-y-10">
                     {trainerRel ? (
                         /* Trainer View: read-only sessions */
@@ -133,7 +130,7 @@ export default async function StudentCardioPage() {
                                                 const dayNames = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"]
 
                                                 return (
-                                                    <Card key={cardio.id} className="bg-zinc-900/50 border-zinc-800 text-zinc-100 hover:border-orange-500/30 transition-all group rounded-[2rem] overflow-hidden">
+                                                    <Card key={cardio.id} className="bg-zinc-900/50 border-zinc-800 text-zinc-100 hover:border-orange-500/30 transition-all group rounded-3xl overflow-hidden">
                                                         <CardHeader className="pb-2">
                                                             <div className="flex items-start justify-between">
                                                                 <div className="bg-zinc-800 p-2 rounded-lg text-zinc-400 group-hover:text-orange-500 transition-colors">
@@ -173,14 +170,14 @@ export default async function StudentCardioPage() {
                                                                     initialDays={Array.from(new Set(assignedDays))}
                                                                     trigger={
                                                                         <Button
-                                                                            className="flex-1 min-w-0 h-9 bg-orange-500 hover:bg-orange-400 text-zinc-950 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-1.5 px-3"
+                                                                            className="flex-1 min-w-0 h-9 bg-orange-500 hover:bg-orange-400 text-zinc-950 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-1.5 px-6"
                                                                         >
                                                                             <Calendar className="w-3.5 h-3.5" />
                                                                             <span className="truncate">Agendar</span>
                                                                         </Button>
                                                                     }
                                                                 />
-                                                                <Button asChild variant="outline" className="flex-1 min-w-0 h-9 bg-zinc-800 border-zinc-700 text-zinc-100 hover:bg-zinc-700 flex items-center justify-center gap-1.5 rounded-xl font-black text-[10px] uppercase italic tracking-widest border-white/5 px-3">
+                                                                <Button asChild variant="outline" className="flex-1 min-w-0 h-9 bg-zinc-800 border-zinc-700 text-zinc-100 hover:bg-zinc-700 flex items-center justify-center gap-1.5 rounded-xl font-black text-[10px] uppercase italic tracking-widest border-white/5 px-6">
                                                                     <Link href={`/dashboard/student/cardio/${cardio.id}`}>
                                                                         <span className="truncate">Editar</span>
                                                                     </Link>
@@ -209,7 +206,7 @@ export default async function StudentCardioPage() {
                             <History className="w-4 h-4 text-emerald-500" />
                             Dicas de Cardio
                         </h2>
-                        <Card className="bg-zinc-900/40 border-zinc-800/50 rounded-[2.5rem] p-8 backdrop-blur-sm shadow-xl">
+                        <Card className="bg-zinc-900/40 border-zinc-800/50 rounded-3xl p-6 sm:p-10 backdrop-blur-sm shadow-xl">
                             <div className="space-y-6">
                                 <div className="space-y-2">
                                     <p className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Intensidade</p>

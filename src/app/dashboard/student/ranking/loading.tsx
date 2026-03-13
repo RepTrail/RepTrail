@@ -4,7 +4,7 @@ import { Trophy, Crown, Medal, User } from 'lucide-react'
 
 export default function StudentRankingLoading() {
     return (
-        <div className="space-y-12 pb-20 animate-pulse">
+        <div className="space-y-12 animate-pulse">
             {/* Header Section */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 pb-8 border-b border-zinc-800/50">
                 <div className="space-y-4">
@@ -57,7 +57,7 @@ export default function StudentRankingLoading() {
 
             {/* General List */}
             <div className="space-y-6">
-                <div className="flex items-center gap-3 px-2">
+                <div className="flex items-center gap-3 pb-4 px-2">
                     <User className="w-4 h-4 text-zinc-800" />
                     <Skeleton className="h-4 w-48 bg-zinc-800/50 rounded-md" />
                 </div>
@@ -75,7 +75,7 @@ export default function StudentRankingLoading() {
                                         <Skeleton className="h-3 w-24 bg-zinc-800/30" />
                                     </div>
                                 </div>
-                                <div className="hidden md:flex flex-col items-center gap-2 px-4 border-l border-zinc-800/50">
+                                <div className="hidden md:flex flex-col items-center gap-2  border-l border-zinc-800/50">
                                     <Skeleton className="h-2 w-10 bg-zinc-800/50" />
                                     <Skeleton className="h-6 w-12 bg-zinc-800/30" />
                                 </div>

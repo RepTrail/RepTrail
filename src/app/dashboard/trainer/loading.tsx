@@ -13,7 +13,7 @@ export default function TrainerDashboardLoading() {
                     <Skeleton className="h-10 w-48" />
                     <Skeleton className="h-4 w-64" />
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 pb-4">
                     <Skeleton className="h-11 w-32 rounded-xl" />
                 </div>
             </div>

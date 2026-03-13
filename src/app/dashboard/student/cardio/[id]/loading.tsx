@@ -4,10 +4,10 @@ import { Activity, ArrowLeft, AlignLeft, Clock, Zap } from 'lucide-react'
 
 export default function CardioBuilderLoading() {
     return (
-        <div className="max-w-3xl mx-auto py-6 px-4 space-y-10 animate-pulse">
+        <div className="max-w-3xl mx-auto py-6  space-y-10 animate-pulse">
             {/* Header */}
             <div className="flex flex-col gap-4">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 pb-4">
                     <div className="p-2.5 bg-zinc-900 border border-zinc-800 rounded-2xl">
                         <Activity className="w-5 h-5 text-zinc-800" />
                     </div>
@@ -42,7 +42,7 @@ export default function CardioBuilderLoading() {
             </div>
 
             {/* Info Box */}
-            <div className="bg-zinc-900/20 border border-zinc-800/30 rounded-2xl p-4 flex items-center gap-3">
+            <div className="bg-zinc-900/20 border border-zinc-800/30 rounded-2xl p-4 flex items-center gap-3 pb-4">
                 <div className="p-2 bg-zinc-900 rounded-lg">
                     <Activity className="w-4 h-4 text-zinc-800" />
                 </div>

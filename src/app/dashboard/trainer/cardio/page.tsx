@@ -16,8 +16,8 @@ export default async function TrainerCardioPage() {
     return (
         <div className="space-y-10">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-2 border-b border-zinc-800/50">
-                <div className="space-y-1">
-                    <h1 className="text-4xl font-black text-white italic uppercase tracking-tighter">
+                <div className="space-y-2 sm:space-y-5">
+                    <h1 className="text-3xl font-black text-white italic uppercase tracking-tighter">
                         Biblioteca de Cardio
                     </h1>
                     <p className="text-zinc-500 font-bold uppercase tracking-widest text-[10px] flex items-center gap-2">
@@ -25,7 +25,7 @@ export default async function TrainerCardioPage() {
                         Gerencie seus modelos de cardio e atribua aos seus alunos
                     </p>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 pb-4">
                     <UnifiedCreationDialog
                         title="Novo Modelo de Cardio"
                         description="Crie um template (ex: Esteira 45min) para agendar para seus alunos."

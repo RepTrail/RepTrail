@@ -1,7 +1,7 @@
 import { getTrainerWorkouts } from "@/actions/workout-actions"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Dumbbell, Calendar, ChevronRight, FileUp } from "lucide-react"
+import { Dumbbell, Calendar, ChevronRight, FileUp, Plus } from "lucide-react"
 import Link from "next/link"
 import { UnifiedDeleteButton } from "@/components/feature/shared/unified-delete-button"
 import { UnifiedAssignDialog } from "@/components/feature/shared/unified-assign-dialog"
@@ -20,7 +20,7 @@ export default async function TrainerWorkoutsPage() {
     return (
         <div className="space-y-6" suppressHydrationWarning>
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-2 border-b border-zinc-800/50">
-                <div className="space-y-1">
+                <div className="space-y-2 sm:space-y-5">
                     <h1 className="text-4xl font-black tracking-tight text-white font-sans italic uppercase">
                         Biblioteca de Treinos
                     </h1>
@@ -28,9 +28,9 @@ export default async function TrainerWorkoutsPage() {
                         Gerencie seus modelos de treino e atribua-os aos seus alunos.
                     </p>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto pb-4">
                     {!betaTesterMode && (
-                        <Button asChild variant="outline" className="h-11 px-5 bg-zinc-900 border-zinc-800 text-zinc-100 hover:bg-zinc-800 hover:text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg flex items-center gap-2 border-white/5">
+                        <Button asChild className="h-11 px-5 bg-emerald-500 border-emerald-400 text-zinc-950 hover:bg-emerald-400 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2 w-full sm:w-auto">
                             <Link href="/dashboard/trainer/import-pdf">
                                 <FileUp className="w-4 h-4" />
                                 Importar PDF
@@ -40,7 +40,12 @@ export default async function TrainerWorkoutsPage() {
                     <UnifiedCreationDialog
                         title="Novo Modelo de Treino"
                         description="Crie um template que poderá ser atribuído para vários alunos."
-                        triggerLabel="Criar Manualmente"
+                        trigger={
+                            <Button className="h-11 px-5 bg-gradient-to-r from-emerald-600 to-emerald-400 hover:from-emerald-500 hover:to-emerald-300 text-zinc-950 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2 w-full sm:w-auto shadow-emerald-500/20 active:scale-95 italic">
+                                <Plus className="w-4 h-4" />
+                                Criar Manualmente
+                            </Button>
+                        }
                         fields={[
                             { name: 'name', label: 'Nome do Treino', placeholder: 'Ex: Hipertrofia A - Peito/Tríceps', required: true },
                             { name: 'description', label: 'Descrição (Opcional)', placeholder: 'Instruções gerais, foco do treino, etc.', type: 'textarea' }

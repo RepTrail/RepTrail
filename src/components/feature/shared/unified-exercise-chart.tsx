@@ -152,7 +152,7 @@ export function UnifiedExerciseChart({
                     ref={scrollContainerRef}
                     className="w-full overflow-x-auto scrollbar-hide"
                 >
-                    <div className="min-w-max flex items-end gap-10 h-56 pt-10 px-4">
+                    <div className="min-w-max flex items-end gap-10 h-56 pt-10 ">
                         {points.map((p, i) => {
                             const h = maxWeightTotal === minWeightTotal ? 50 : ((p.val - minWeightTotal) / (maxWeightTotal - minWeightTotal)) * 100
                             return (

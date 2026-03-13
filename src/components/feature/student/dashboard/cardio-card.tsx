@@ -36,10 +36,10 @@ export function CardioCard({ userId }: CardioCardProps) {
 
     if (isLoading || isLoadingLogs) {
         return (
-            <div className="bg-zinc-900/40 border border-zinc-800/50 shadow-2xl border-t-zinc-700/10 p-8 rounded-[2.5rem] overflow-hidden backdrop-blur-sm space-y-8 min-h-[400px] animate-pulse">
+            <div className="bg-zinc-900/40 border border-zinc-800/50 shadow-2xl border-t-zinc-700/10 p-6 sm:p-10 rounded-3xl overflow-hidden backdrop-blur-sm space-y-8 min-h-[400px] animate-pulse">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div className="space-y-3">
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3 pb-4">
                             <div className="p-2 bg-zinc-950 rounded-xl border border-zinc-800">
                                 <Activity className="w-5 h-5 text-zinc-800" />
                             </div>
@@ -92,7 +92,7 @@ export function CardioCard({ userId }: CardioCardProps) {
 
     if (cardios.length === 0) {
         return (
-            <div className="bg-zinc-900/20 border border-zinc-800/50 border-dashed rounded-[2.5rem] py-16 flex flex-col items-center justify-center text-center space-y-4">
+            <div className="bg-zinc-900/20 border border-zinc-800/50 border-dashed rounded-3xl py-12 sm:py-16 flex flex-col items-center justify-center text-center space-y-4">
                 <Activity className="w-8 h-8 text-zinc-700" />
                 <p className="text-zinc-400 text-sm font-black uppercase tracking-tight italic">Nenhum cardio pendente</p>
             </div>

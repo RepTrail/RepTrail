@@ -20,10 +20,10 @@ import { Utensils, Flame } from 'lucide-react'
  */
 export default function StudentDietLoading() {
     return (
-        <div className="space-y-12 pb-20 animate-pulse">
+        <div className="space-y-12 animate-pulse">
             {/* Header — neutral, covers both views */}
-            <header className="px-4">
-                <div className="flex items-center gap-3">
+            <header className="">
+                <div className="flex items-center gap-3 pb-4">
                     <div className="p-2 bg-zinc-900 rounded-xl">
                         <Utensils className="w-5 h-5 text-zinc-800" />
                     </div>
@@ -33,7 +33,7 @@ export default function StudentDietLoading() {
             </header>
 
             {/* DietAdherence Skeleton — max-w-3xl centered, mirrors trainer view */}
-            <div className="max-w-3xl mx-auto px-4">
+            <div className="max-w-3xl mx-auto ">
                 <Card className="bg-zinc-900/40 border-zinc-800/50 shadow-2xl rounded-[2.5rem] overflow-hidden">
                     <CardContent className="p-8 space-y-8">
                         {/* Card header: diet name + % progress */}
@@ -121,7 +121,7 @@ export default function StudentDietLoading() {
             </div>
 
             {/* Hydration card — present in both layouts */}
-            <div className="px-4">
+            <div className="">
                 <div className="p-8 bg-zinc-900/40 backdrop-blur-sm rounded-3xl border border-zinc-800/50 text-center space-y-4">
                     <div className="flex items-center justify-center gap-4">
                         <div className="flex items-center gap-2">

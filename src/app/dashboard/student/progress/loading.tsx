@@ -4,11 +4,11 @@ import { TrendingUp, Camera, Images, History } from 'lucide-react'
 
 export default function StudentProgressLoading() {
     return (
-        <div className="max-w-7xl mx-auto space-y-10 pb-32 px-4 sm:px-6 md:px-8 animate-pulse">
+        <div className="max-w-7xl mx-auto space-y-10 pb-32  sm:px-6 md:px-8 animate-pulse">
             {/* Header matches StudentProgressPage header */}
             <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div className="space-y-4">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 pb-4">
                         <div className="p-2 bg-zinc-900 rounded-xl">
                             <TrendingUp className="w-5 h-5 text-zinc-800" />
                         </div>
@@ -36,9 +36,9 @@ export default function StudentProgressLoading() {
             </div>
 
             {/* Photo Upload Section */}
-            <div className="bg-zinc-900/40 border border-zinc-800/50 shadow-2xl rounded-[3rem] p-10 space-y-8">
+            <div className="bg-zinc-900/40 border border-zinc-800/50 shadow-2xl rounded-[3rem] p-6 space-y-8">
                 <div className="space-y-3">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 pb-4">
                         <Camera className="w-6 h-6 text-zinc-800" />
                         <Skeleton className="h-6 w-48 bg-zinc-800/50" />
                     </div>
@@ -48,9 +48,9 @@ export default function StudentProgressLoading() {
             </div>
 
             {/* Gallery Section */}
-            <div className="bg-zinc-900/40 border border-zinc-800/50 shadow-2xl rounded-[2.5rem] p-10 space-y-8">
+            <div className="bg-zinc-900/40 border border-zinc-800/50 shadow-2xl rounded-[2.5rem] p-6 space-y-8">
                 <div className="space-y-3">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 pb-4">
                         <Images className="w-6 h-6 text-zinc-800" />
                         <Skeleton className="h-6 w-32 bg-zinc-800/50" />
                     </div>
@@ -64,9 +64,9 @@ export default function StudentProgressLoading() {
             </div>
 
             {/* Workout History Card */}
-            <div className="bg-zinc-900/40 border border-zinc-800/50 shadow-2xl rounded-[2.5rem] p-10 space-y-8">
+            <div className="bg-zinc-900/40 border border-zinc-800/50 shadow-2xl rounded-[2.5rem] p-6 space-y-8">
                 <div className="space-y-3">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 pb-4">
                         <History className="w-6 h-6 text-zinc-800" />
                         <Skeleton className="h-6 w-56 bg-zinc-800/50" />
                     </div>

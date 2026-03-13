@@ -41,7 +41,7 @@ export function ToggleStudentStatusButton({ relationshipId, isActive }: { relati
     return (
         <Button
             variant="outline"
-            className={`w-full sm:w-auto border-red-500/20 bg-red-500/5 text-red-500 hover:bg-red-500 hover:text-white rounded-xl font-bold h-10 px-4 text-xs gap-2 transition-all ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+            className={`w-full sm:w-auto border-red-500/20 bg-red-500/5 text-red-500 hover:bg-red-500 hover:text-white rounded-xl font-bold h-10  text-xs gap-2 transition-all ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
             onClick={handleToggle}
             disabled={loading}
         >

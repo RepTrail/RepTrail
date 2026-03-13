@@ -72,7 +72,7 @@ export function AutoTrainingOnboardingModal({ isOpen, onAccept, onReject, onClos
                             const Icon = feature.icon
                             return (
                                 <div key={index} className="p-4 rounded-2xl bg-zinc-800/50 border border-zinc-700/50 space-y-3">
-                                    <div className="flex items-center gap-3">
+                                    <div className="flex items-center gap-3 pb-4">
                                         <div className="p-2 bg-orange-500/10 rounded-lg">
                                             <Icon className="w-5 h-5 text-orange-500" />
                                         </div>
