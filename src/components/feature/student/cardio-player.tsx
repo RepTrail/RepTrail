@@ -331,7 +331,7 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
                 <div className="flex flex-col items-center justify-center space-y-4">
                     <Skeleton className="h-2 w-24 bg-zinc-800/50" />
                     <Skeleton className="h-16 w-40 rounded-2xl bg-zinc-800/50" />
-                    <Skeleton className="h-2 w-full max-w-[200px] rounded-full bg-zinc-800/50" />
+                    <Skeleton className="h-2 w-full max-w-fullrounded-full bg-zinc-800/50" />
                 </div>
 
                 <div className="flex items-center justify-center gap-6">

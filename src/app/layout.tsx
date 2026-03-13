@@ -53,13 +53,13 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-zinc-950`}
         suppressHydrationWarning
       >
+        <ImpersonationBar />
         <NextTopLoader color="#f97316" showSpinner={false} shadow="0 0 10px #f97316,0 0 5px #f97316" zIndex={1600} />
         <QueryProvider>
           <SplashManager>
             {children}
           </SplashManager>
         </QueryProvider>
-        <ImpersonationBar />
         <Toaster />
         <PWAClient />
         <ForceReload />

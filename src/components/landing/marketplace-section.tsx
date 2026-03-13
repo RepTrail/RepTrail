@@ -98,7 +98,7 @@ export function MarketplaceSection({ initialTrainers }: MarketplaceSectionProps)
                 </div>
 
                 {/* Results Grid / Carousel */}
-                <div className="w-full relative overflow-hidden flex justify-start md:justify-center p-4 -m-4">
+                <div className="w-full relative overflow-hidden flex justify-start md:justify-center">
 
                     <div className={`flex transition-transform duration-500 ease-out ${isCarousel ? 'flex-nowrap w-full gap-[20px]' : 'flex-wrap justify-center w-full gap-[20px]'}`}
                         style={{ 
@@ -112,9 +112,7 @@ export function MarketplaceSection({ initialTrainers }: MarketplaceSectionProps)
                                 key={`${trainer.id}-${index}`}
                                 className={`
                                     bg-zinc-900/40 border-zinc-800/50 hover:border-orange-500/30 transition-all duration-300 group flex flex-col p-6 gap-[20px] relative shrink-0
-                                    ${isCarousel 
-                                        ? 'w-full sm:w-[calc(50%-10px)] md:w-[calc(33.333%-13.33px)]' 
-                                        : 'w-full sm:w-[calc(50%-10px)] md:w-[calc(33.333%-13.33px)]'}
+                                    w-full sm:w-[calc(50%-10px)] md:w-[calc(33.333%-13.33px)]
                                 `}
                             >
 

@@ -180,7 +180,7 @@ export default async function WorkoutPlayerPage({ params }: { params: Promise<{ 
                 <div className="space-y-1 sm:space-y-5">
                     <div className="flex items-center gap-4">
                         <div className="w-1.5 h-6 bg-emerald-500 rounded-full shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
-                        <h1 className="text-xl font-black text-white uppercase italic tracking-tight truncate max-w-[200px] sm:max-w-none">{workout.name}</h1>
+                        <h1 className="text-xl font-black text-white uppercase italic tracking-tight truncate max-w-fullsm:max-w-none">{workout.name}</h1>
                     </div>
                     <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest leading-none">
                         Player de Treino • Foco e Intensidade

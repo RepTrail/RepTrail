@@ -85,8 +85,8 @@ export function PayoutsManagement({ initialPayouts }: { initialPayouts: Payout[]
                                         <div className="space-y-3">
                                             <div className="flex justify-between items-start">
                                                 <div className="space-y-1">
-                                                    <p className="text-sm font-bold text-white max-w-[200px] truncate">{payout.profiles?.full_name || 'Usuário Desconhecido'}</p>
-                                                    <p className="text-[10px] text-zinc-500 max-w-[200px] truncate">{payout.profiles?.email}</p>
+                                                    <p className="text-sm font-bold text-white max-w-fulltruncate">{payout.profiles?.full_name || 'Usuário Desconhecido'}</p>
+                                                    <p className="text-[10px] text-zinc-500 max-w-fulltruncate">{payout.profiles?.email}</p>
                                                 </div>
                                                 <Badge className="bg-amber-500/10 text-amber-500 hover:bg-amber-500/20 text-[10px] font-bold tracking-wider">
                                                     PENDENTE

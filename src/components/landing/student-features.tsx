@@ -45,7 +45,7 @@ export function StudentFeatures() {
 
                 {/* Text Content (Right Side on Desktop) */}
                 <div className="order-2 flex flex-col gap-[30px] md:gap-[50px] w-full lg:w-[calc(50%-25px)] animate-in fade-in slide-in-from-right-8 duration-1000">
-                    <SectionHeader 
+                    <SectionHeader
                         align="left"
                         badgeIcon={ShieldCheck}
                         badgeText="Para Alunos"
@@ -56,7 +56,7 @@ export function StudentFeatures() {
 
                     <div className="flex flex-col sm:flex-row flex-wrap gap-[20px] text-left">
                         {features.map((item, idx) => (
-                            <div key={idx} className="flex flex-1 min-w-[200px] items-center gap-[20px] group p-3 rounded-xl hover:bg-zinc-900/50 transition-colors border border-transparent hover:border-zinc-800">
+                            <div key={idx} className="flex flex-1 min-w-fullitems-center gap-[20px] group p-3 rounded-xl hover:bg-zinc-900/50 transition-colors border border-transparent hover:border-zinc-800">
                                 <div className="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center border border-orange-500/20 group-hover:border-orange-500/50 transition-colors shrink-0">
                                     <item.icon className="w-4 h-4 text-orange-500" />
                                 </div>

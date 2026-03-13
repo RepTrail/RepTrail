@@ -273,14 +273,14 @@ export default function AdminDashboardPage() {
 
             <div className="flex">
                 {/* Sidebar — desktop only */}
-                <aside className="hidden md:flex md:flex-col w-56 shrink-0 h-[calc(100vh-64px)] sticky top-16 border-r border-zinc-900 p-4 space-y-1">
+                <aside className="hidden md:flex md:flex-col w-64 shrink-0 h-[calc(100vh-64px)] sticky top-16 border-r border-zinc-900 px-6 py-10 space-y-2">
                     {tabs.map(t => (
                         <button
                             key={t.id}
                             onClick={() => setTab(t.id)}
-                            className={`w-full flex items-center gap-3 pb-4  py-3 rounded-2xl text-left transition-all ${tab === t.id
-                                ? 'bg-white text-zinc-950'
-                                : 'text-zinc-500 hover:text-white hover:bg-zinc-900'
+                            className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl text-left transition-all ${tab === t.id
+                                ? 'bg-white text-zinc-950 shadow-xl scale-[1.02]'
+                                : 'text-zinc-500 hover:text-white hover:bg-zinc-900/50'
                                 }`}
                         >
                             <t.icon className="w-4 h-4 shrink-0" />
@@ -684,7 +684,7 @@ function TrainerRow({ trainer, onPlanChange, onEliteToggle, onExemptToggle, onEl
 
     return (
         <div className="flex flex-col sm:flex-row sm:items-center gap-3 p-4 bg-zinc-900/40 border border-zinc-800/50 rounded-2xl hover:bg-zinc-900/60 transition-all">
-            <div className="flex items-center gap-3 pb-4 flex-1 min-w-0">
+            <div className="flex items-center gap-3 flex-1 min-w-0">
                 <Avatar className="w-10 h-10 shrink-0">
                     <AvatarImage src={trainer.avatar_url} />
                     <AvatarFallback className="bg-zinc-800 text-zinc-500 text-xs font-black">

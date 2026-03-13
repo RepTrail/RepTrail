@@ -1,99 +1,168 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Search, Users, Trophy, Star, ShieldCheck } from "lucide-react";
+import { ArrowRight, Search, Users, Trophy, Star, ShieldCheck, CheckCircle2 } from "lucide-react";
 import { LandingBadge } from "./landing-badge";
 
 export function HeroSection() {
     return (
-        <section className="w-full py-[50px] md:py-[100px] px-[20px] relative overflow-hidden bg-zinc-950 flex flex-col items-center justify-center border-b border-zinc-900">
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-emerald-900/20 via-zinc-950 to-zinc-950" />
+        <section className="w-full pt-[80px] md:pt-[140px] pb-[60px] md:pb-[100px] px-[20px] relative overflow-hidden bg-zinc-950 flex flex-col items-center justify-center border-b border-zinc-900/50">
+            {/* Dynamic Background Effects */}
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-emerald-500/10 via-zinc-950/50 to-zinc-950 pointer-events-none" />
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[url('/grid.svg')] bg-center [mask-image:radial-gradient(ellipse_at_center,white,transparent_80%)] opacity-20 pointer-events-none" />
 
-            {/* Animated Grid Background */}
-            <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
+            {/* Floating Orbs for depth */}
+            <div className="absolute top-[10%] left-[5%] w-[300px] h-[300px] bg-emerald-500/5 rounded-full blur-[120px] animate-pulse pointer-events-none" />
+            <div className="absolute bottom-[20%] right-[5%] w-[400px] h-[400px] bg-emerald-500/5 rounded-full blur-[150px] animate-pulse delay-1000 pointer-events-none" />
 
-            <div className="w-full max-w-[1100px] mx-auto relative z-10 flex flex-col items-center text-center gap-[30px] md:gap-[50px] animate-in fade-in slide-in-from-bottom-8 duration-1000">
+            <div className="w-full max-w-[1300px] mx-auto relative z-10 flex flex-col-reverse lg:grid lg:grid-cols-[1.1fr_0.9fr] items-center gap-[30px] lg:gap-[40px] animate-in fade-in slide-in-from-bottom-8 duration-1000">
 
-                <div className="flex flex-col items-center gap-[12px] w-full">
-                    <div className="flex flex-wrap items-center justify-center gap-2">
-                        <LandingBadge icon={Users} className="hover:border-emerald-500/30 transition-colors">
-                            <span className="text-emerald-400 font-bold mr-1">+500</span> treinadores ativos hoje
+                {/* Left Content: The Message */}
+                <div className="flex flex-col items-center lg:items-start text-center lg:text-left w-full max-w-2xl">
+                    <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 mb-8">
+                        <LandingBadge icon={Users} variant="emerald" className="bg-emerald-500/5 border-emerald-500/10 py-1.5 px-4">
+                            <span className="text-emerald-400 font-bold mr-1">+500</span> treinadores ativos
                         </LandingBadge>
-                        <LandingBadge icon={ShieldCheck} variant="emerald" className="hover:border-emerald-500/30 transition-colors">
-                            <span className="text-emerald-400 font-bold mr-1">Grátis</span> até 5 alunos
+                        <LandingBadge icon={ShieldCheck} variant="emerald" className="bg-white/5 border-white/10 py-1.5 px-4 text-zinc-400">
+                            Foco total em <span className="text-white font-bold ml-1">Performance</span>
                         </LandingBadge>
                     </div>
 
-                    <div className="flex flex-col items-center gap-[20px] w-full">
-                        <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-[5rem] xl:text-[6rem] font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-b from-white via-zinc-200 to-zinc-600 pb-2 leading-[0.85] uppercase italic text-center">
-                            Transforme sua <span className="text-emerald-500">Consultoria</span> <br />
-                            <span className="text-white">de Educação Física.</span>
+                    <div className="flex flex-col gap-8 mb-12">
+                        <h1 className="text-3xl sm:text-3xl lg:text-[3.2rem] xl:text-[3.8rem] font-black tracking-normal leading-[1.1] uppercase italic">
+                            <span className="block text-white drop-shadow-2xl">Transforme sua</span>
+                            <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 via-emerald-500 to-emerald-600 drop-shadow-[0_0_35px_rgba(16,185,129,0.4)]">
+                                Consultoria.
+                            </span>
                         </h1>
-                        <p className="mx-auto max-w-3xl text-zinc-400 text-lg md:text-xl lg:text-2xl font-medium leading-relaxed">
-                            Aumente a <span className="text-white font-bold">retenção dos seus alunos</span> e <span className="text-emerald-500 font-bold">simplifique sua gestão</span> com o RepTrail. <br />
-                            A plataforma mais completa para profissionais de alta performance.
+                        <p className="text-zinc-400 text-lg md:text-xl font-medium leading-relaxed max-w-2xl">
+                            Aumente a <span className="text-white font-bold border-b-2 border-emerald-500/30">retenção dos seus alunos</span> e simplifique sua gestão com a plataforma preferida dos profissionais de elite.
                         </p>
                     </div>
 
-                    <div className="flex flex-col items-center gap-[20px] w-full pt-8">
-                        <div className="flex flex-col gap-[16px] w-full max-w-2xl mx-auto items-center ">
+                    <div className="flex flex-col items-center lg:items-start gap-8 w-full">
+                        <div className="flex flex-col sm:flex-row gap-4 w-full lg:max-w-xl items-stretch sm:items-center">
                             <Button
                                 asChild
-                                suppressHydrationWarning
-                                className="w-full h-auto min-h-[4.5rem] py-4 px-8 text-sm md:text-lg bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase italic tracking-wide rounded-2xl shadow-xl shadow-emerald-500/20 hover:shadow-emerald-500/40 transition-all hover:-translate-y-1 hover:scale-[1.01] whitespace-normal"
+                                className="group relative overflow-hidden w-full sm:w-auto h-auto py-5 px-10 text-lg bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase italic tracking-wider rounded-2xl shadow-[0_20px_40px_-15px_rgba(16,185,129,0.4)] transition-all hover:-translate-y-1 active:scale-95"
                             >
-                                <Link href="/auth/signup" suppressHydrationWarning className="flex flex-col sm:flex-row items-center justify-center h-full text-center leading-[1.1] sm:leading-tight py-1">
-                                    <span className="px-1">Quero transformar minha consultoria agora</span>
-                                    <ArrowRight className="mt-2 sm:mt-0 sm:ml-2 h-5 w-5 shrink-0" />
+                                <Link href="/auth/signup" className="flex items-center justify-center gap-3">
+                                    <span>Começar Agora</span>
+                                    <ArrowRight className="h-6 w-6 group-hover:translate-x-1 transition-transform" />
                                 </Link>
                             </Button>
+
                             <Button
                                 asChild
                                 variant="outline"
-                                suppressHydrationWarning
-                                className="w-full h-auto min-h-[4rem] py-4 px-6 text-sm md:text-lg border-zinc-800 bg-zinc-900/50 text-zinc-400 hover:bg-zinc-800 hover:text-white hover:border-zinc-700 font-black uppercase italic tracking-wide rounded-2xl backdrop-blur-sm transition-all hover:-translate-y-1 shadow-2xl"
+                                className="w-full sm:w-auto h-auto py-5 px-8 text-lg border-zinc-800 bg-zinc-900/50 text-zinc-300 hover:bg-zinc-800 hover:text-white hover:border-zinc-700 font-black uppercase italic tracking-wider rounded-2xl backdrop-blur-md transition-all hover:-translate-y-1 shadow-2xl"
                             >
-                                <a href="#marketplace" suppressHydrationWarning className="flex items-center justify-center h-full text-center">
-                                    <Search className="mr-2 h-4 w-4 shrink-0" />
-                                    Buscar Treinador
+                                <a href="#marketplace" className="flex items-center justify-center gap-3">
+                                    <Search className="h-5 w-5" />
+                                    Marketplace
                                 </a>
                             </Button>
                         </div>
-                        <div className="flex items-center gap-2 text-[10px] text-zinc-500 font-black uppercase tracking-[0.2em] opacity-80">
-                            <div className="w-8 h-[1px] bg-zinc-800" />
-                            A escolha de +500 treinadores de alta performance
-                            <div className="w-8 h-[1px] bg-zinc-800" />
+
+                        <div className="flex flex-wrap items-center justify-center lg:justify-start gap-6 opacity-60">
+                            <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-zinc-400">
+                                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" /> Montagem em 2min
+                            </div>
+                            <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-zinc-400">
+                                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" /> Grátis até 5 alunos
+                            </div>
+                            <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-zinc-400">
+                                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" /> Suporte VIP
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Right Content: The Visual Proof */}
+                <div className="w-full relative group perspective-1000 mb-0 lg:mb-0">
+                    {/* Background Shine */}
+                    <div className="absolute -inset-20 bg-emerald-500/10 rounded-full blur-[120px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none" />
+
+                    {/* The Laptop */}
+                    <div className="relative animate-float scale-90 sm:scale-100 transition-transform duration-700 hover:scale-[1.02]">
+                        {/* Upper Screen Frame */}
+                        <div className="relative mx-auto rounded-t-[1.5rem] p-[2px] bg-gradient-to-b from-zinc-700 to-zinc-900 shadow-2xl">
+                            <div className="relative bg-zinc-950 rounded-t-[1.4rem] overflow-hidden border-[6px] border-zinc-900 aspect-video w-full">
+                                {/* Camera Dot */}
+                                <div className="absolute top-2 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-zinc-800 z-50 ring-1 ring-white/10" />
+
+                                <video
+                                    src="/Videos/desktop video.mp4"
+                                    autoPlay
+                                    loop
+                                    muted
+                                    playsInline
+                                    className="w-full h-full object-top object-cover opacity-95 group-hover:opacity-100 transition-opacity duration-500"
+                                />
+
+                                {/* Glass Reflection overlay */}
+                                <div className="absolute inset-0 bg-gradient-to-tr from-white/5 via-transparent to-transparent pointer-events-none" />
+
+                                {/* Inner Screen Shadow */}
+                                <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_100px_rgba(0,0,0,0.6)]" />
+                            </div>
+                        </div>
+
+                        {/* Bottom Case / Keyboard Area */}
+                        <div className="relative mx-auto h-[12px] md:h-[18px] w-[108%] -left-[4%] bg-gradient-to-b from-zinc-800 to-zinc-900 rounded-b-xl border-t border-zinc-700/30">
+                            {/* MacBook Notch Area */}
+                            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/4 h-[4px] bg-zinc-900 rounded-b-lg" />
                         </div>
                     </div>
 
-                    {/* Metrics Preview */}
-                    <div className="mt-[30px] md:mt-[50px] grid grid-cols-2 sm:grid-cols-4 gap-[30px] w-full border-t border-zinc-800/50 pt-[50px] md:pt-[100px] items-center">
-                        <div className="flex flex-col items-center justify-center gap-[4px] w-full">
-                            <p className="text-3xl md:text-5xl font-black text-white italic">10k+</p>
-                            <p className="text-[10px] uppercase font-bold text-zinc-600 tracking-widest flex items-center justify-center gap-2">
-                                <Trophy className="w-4 h-4 text-emerald-500" /> Treinos
-                            </p>
+                    {/* Floating Tech Elements */}
+                    <div className="absolute -top-12 -left-4 p-4 bg-zinc-900/80 backdrop-blur-xl border border-white/5 rounded-2xl shadow-2xl animate-float-slow hidden md:block">
+                        <div className="flex flex-col gap-1">
+                            <span className="text-[10px] font-bold text-zinc-500 uppercase">Faturamento Mensal</span>
+                            <span className="text-lg font-black text-emerald-500 italic">R$ 12.450,00</span>
                         </div>
-                        <div className="flex flex-col items-center justify-center gap-[4px] w-full">
-                            <p className="text-3xl md:text-5xl font-black text-white italic">R$ 18k</p>
-                            <p className="text-[10px] uppercase font-bold text-zinc-600 tracking-widest flex items-center justify-center gap-2">
-                                <Star className="w-4 h-4 text-emerald-500" /> Faturamento Médio
-                            </p>
-                        </div>
-                        <div className="flex flex-col items-center justify-center gap-[4px] w-full">
-                            <p className="text-3xl md:text-5xl font-black text-white italic">98%</p>
-                            <p className="text-[10px] uppercase font-bold text-zinc-600 tracking-widest flex items-center justify-center gap-2">
-                                <Users className="w-4 h-4 text-emerald-500" /> Retenção
-                            </p>
-                        </div>
-                        <div className="flex flex-col items-center justify-center gap-[4px] w-full">
-                            <p className="text-3xl md:text-5xl font-black text-white italic">4.9</p>
-                            <p className="text-[10px] uppercase font-bold text-zinc-600 tracking-widest flex items-center justify-center gap-2">
-                                <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" /> Avaliação
-                            </p>
+                    </div>
+
+                    <div className="absolute -bottom-6 -right-4 p-4 bg-emerald-500/10 backdrop-blur-xl border border-emerald-500/20 rounded-2xl shadow-2xl animate-float hidden md:block delay-300">
+                        <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center">
+                                <Users className="w-4 h-4 text-zinc-950" />
+                            </div>
+                            <div className="flex flex-col">
+                                <span className="text-[10px] font-bold text-emerald-400 uppercase">Novos Alunos</span>
+                                <span className="text-sm font-black text-white">+12 hoje</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+            {/* Premium Social Proof / Numbers - Integrated 100% Width of Container */}
+            <div className="w-full max-w-[1300px] mx-auto mt-[80px] md:mt-[120px] relative z-10">
+                <div className="absolute inset-0 bg-zinc-900/30 border border-zinc-800/50 rounded-[3rem] -z-10 backdrop-blur-sm" />
+                
+                <div className="grid grid-cols-2 lg:grid-cols-4 py-10 md:py-16 px-6 gap-8 items-center divide-x-0 lg:divide-x divide-zinc-800/50">
+                    <NumberItem label="Consultorias Ativas" value="500+" icon={Trophy} />
+                    <NumberItem label="Treinos Prescritos" value="100k+" icon={Star} />
+                    <NumberItem label="Taxa de Retenção" value="98%" icon={ArrowRight} />
+                    <NumberItem label="Média de Avaliação" value="4.9/5" icon={Star} />
+                </div>
+            </div>
+
+            <div className="mt-12 flex items-center gap-2 text-[10px] text-zinc-600 font-bold uppercase tracking-[0.3em] animate-pulse">
+                SCROLL PARA EXPLORAR O FUTURO
+            </div>
         </section>
+    );
+}
+
+function NumberItem({ label, value, icon: Icon }: { label: string, value: string, icon: any }) {
+    return (
+        <div className="flex flex-col items-center justify-center gap-2 group transition-all duration-300 hover:transform hover:scale-105">
+            <div className="p-2 rounded-xl bg-zinc-900 border border-zinc-800 group-hover:border-emerald-500/30 transition-colors">
+                <Icon className="w-5 h-5 text-emerald-500" />
+            </div>
+            <p className="text-4xl md:text-5xl font-black text-white italic tracking-tighter group-hover:text-emerald-400 transition-colors">{value}</p>
+            <p className="text-[10px] uppercase font-bold text-zinc-500 tracking-widest text-center">{label}</p>
+        </div>
     );
 }

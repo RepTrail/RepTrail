@@ -110,7 +110,7 @@ export default function StoreExplorePage() {
                                     <ChevronDown className="w-4 h-4 opacity-50" />
                                 </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent className="bg-zinc-950 border-zinc-800 text-white min-w-[200px] rounded-2xl p-2">
+                            <DropdownMenuContent className="bg-zinc-950 border-zinc-800 text-white min-w-fullrounded-2xl p-2">
                                 <DropdownMenuItem onClick={() => { setCategory(null); setSubCategory(null); }} className="font-bold uppercase tracking-widest text-[10px] py-3 cursor-pointer rounded-xl">
                                     Todas as Categorias
                                 </DropdownMenuItem>
@@ -133,7 +133,7 @@ export default function StoreExplorePage() {
                                         <ChevronDown className="w-4 h-4 opacity-50" />
                                     </Button>
                                 </DropdownMenuTrigger>
-                                <DropdownMenuContent className="bg-zinc-950 border-zinc-800 text-white min-w-[200px] rounded-2xl p-2">
+                                <DropdownMenuContent className="bg-zinc-950 border-zinc-800 text-white min-w-fullrounded-2xl p-2">
                                     <DropdownMenuItem onClick={() => setSubCategory(null)} className="font-bold uppercase tracking-widest text-[10px] py-3 cursor-pointer rounded-xl">
                                         Todos os Tipos
                                     </DropdownMenuItem>

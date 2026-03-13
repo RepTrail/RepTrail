@@ -78,34 +78,32 @@ export default async function TrainerLayout({
     return (
         <div className="flex h-screen w-full bg-zinc-950 text-zinc-100 font-sans">
             {/* Desktop Sidebar */}
-            <aside className="hidden md:flex w-72 bg-zinc-900 border-r border-zinc-800 p-6 flex-col justify-between shadow-2xl z-20">
-                <div>
-                    <div className="mb-10 flex items-center justify-start ">
-                        <Link href="/">
-                            <Logo size="md" color="emerald" />
-                        </Link>
-                    </div>
-
-                    <nav className="space-y-2">
-                        <TrainerNavLink href="/dashboard/trainer" icon={<Home className="w-5 h-5" />} exact>Visão Geral</TrainerNavLink>
-                        <TrainerNavLink href="/dashboard/trainer/students" icon={<Users className="w-5 h-5" />}>Alunos</TrainerNavLink>
-                        <TrainerNavLink href="/dashboard/trainer/workouts" icon={<Dumbbell className="w-5 h-5" />}>Treinos</TrainerNavLink>
-                        <TrainerNavLink href="/dashboard/trainer/diets" icon={<Utensils className="w-5 h-5" />}>Dietas</TrainerNavLink>
-                        <TrainerNavLink href="/dashboard/trainer/cardio" icon={<Activity className="w-5 h-5" />}>Cardio</TrainerNavLink>
-                        <TrainerNavLink href="/dashboard/trainer/ergogenics" icon={<FlaskConical className="w-5 h-5" />}>Ergogênicos</TrainerNavLink>
-                        {!betaTesterMode && <TrainerNavLink href="/dashboard/trainer/import-pdf" icon={<FileUp className="w-5 h-5" />}>Importar PDF</TrainerNavLink>}
-                        <TrainerNavLink href="/dashboard/trainer/loja" icon={<ShoppingBag className="w-5 h-5" />}>Loja</TrainerNavLink>
-                        <TrainerNavLink href="/dashboard/trainer/plans" icon={<CreditCard className="w-5 h-5" />}>Planos &amp; Assinatura</TrainerNavLink>
-                        <TrainerNavLink href="/dashboard/trainer/ranking" icon={<Trophy className="w-5 h-5" />}>Ranking Geral</TrainerNavLink>
-
-                        <div className="border-t border-zinc-800 my-4 pt-4">
-                            <div className=" text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Conta</div>
-                            <TrainerNavLink href="/dashboard/trainer/profile" icon={<User className="w-5 h-5" />}>Meu Perfil</TrainerNavLink>
-                        </div>
-                    </nav>
+            <aside className="hidden md:flex w-72 h-screen sticky top-0 bg-zinc-900 border-r border-zinc-800 p-6 flex-col shadow-2xl z-20">
+                <div className="flex-shrink-0 mb-10">
+                    <Link href="/">
+                        <Logo size="md" color="emerald" />
+                    </Link>
                 </div>
 
-                <div className="border-t border-zinc-800 pt-6">
+                <nav className="flex-1 space-y-2 overflow-y-auto pr-2 -mr-2 scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent">
+                    <TrainerNavLink href="/dashboard/trainer" icon={<Home className="w-5 h-5" />} exact>Visão Geral</TrainerNavLink>
+                    <TrainerNavLink href="/dashboard/trainer/students" icon={<Users className="w-5 h-5" />}>Alunos</TrainerNavLink>
+                    <TrainerNavLink href="/dashboard/trainer/workouts" icon={<Dumbbell className="w-5 h-5" />}>Treinos</TrainerNavLink>
+                    <TrainerNavLink href="/dashboard/trainer/diets" icon={<Utensils className="w-5 h-5" />}>Dietas</TrainerNavLink>
+                    <TrainerNavLink href="/dashboard/trainer/cardio" icon={<Activity className="w-5 h-5" />}>Cardio</TrainerNavLink>
+                    <TrainerNavLink href="/dashboard/trainer/ergogenics" icon={<FlaskConical className="w-5 h-5" />}>Ergogênicos</TrainerNavLink>
+                    {!betaTesterMode && <TrainerNavLink href="/dashboard/trainer/import-pdf" icon={<FileUp className="w-5 h-5" />}>Importar PDF</TrainerNavLink>}
+                    <TrainerNavLink href="/dashboard/trainer/loja" icon={<ShoppingBag className="w-5 h-5" />}>Loja</TrainerNavLink>
+                    <TrainerNavLink href="/dashboard/trainer/plans" icon={<CreditCard className="w-5 h-5" />}>Planos &amp; Assinatura</TrainerNavLink>
+                    <TrainerNavLink href="/dashboard/trainer/ranking" icon={<Trophy className="w-5 h-5" />}>Ranking Geral</TrainerNavLink>
+
+                    <div className="border-t border-zinc-800 my-4 pt-4">
+                        <div className=" text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Conta</div>
+                        <TrainerNavLink href="/dashboard/trainer/profile" icon={<User className="w-5 h-5" />}>Meu Perfil</TrainerNavLink>
+                    </div>
+                </nav>
+
+                <div className="border-t border-zinc-800 pt-6 mt-6 flex-shrink-0">
                     <div className="flex items-center gap-3 pb-4 mb-4 px-2">
                         <div className="relative w-10 h-10 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-900 font-bold border border-zinc-300 overflow-hidden">
                             {profile?.avatar_url ? (
@@ -125,7 +123,10 @@ export default async function TrainerLayout({
                         </div>
                     </div>
                     <form action={signOutAction}>
-                        <Button variant="outline" className="w-full bg-zinc-900 border-zinc-700 text-zinc-400 hover:text-white hover:bg-zinc-800 hover:border-zinc-600 flex items-center gap-2 transition-all">
+                        <Button 
+                            variant="outline" 
+                            className="w-full bg-zinc-900 border-zinc-700 text-zinc-400 hover:text-white hover:bg-zinc-800 hover:border-zinc-600 flex items-center gap-2 transition-all font-black uppercase italic tracking-wider py-6 rounded-xl shadow-lg border-2"
+                        >
                             <LogOut className="w-4 h-4" />
                             Sair
                         </Button>
