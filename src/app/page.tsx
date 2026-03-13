@@ -47,8 +47,7 @@ export default async function LandingPage() {
         {/* Header */}
         <div className="container mx-auto flex items-center justify-between px-5 sm:px-6 md:px-8">
           <Link href="/" className="flex items-center gap-2 group">
-            <Logo size="md" className="md:hidden group-hover:scale-105 transition-transform" />
-            <Logo size="lg" className="hidden md:flex group-hover:scale-105 transition-transform" />
+            <Logo size="md" className="group-hover:scale-105 transition-transform" />
           </Link>
 
           <nav className="hidden md:flex gap-6 items-center">

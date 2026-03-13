@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -42,8 +42,33 @@ export function MarketplaceSection({ initialTrainers }: MarketplaceSectionProps)
         setIsModalOpen(true);
     };
 
-    const isCarousel = filteredTrainers.length > 3;
-    const displayTrainers = filteredTrainers;
+    const displayTrainers = searchTerm.trim() === '' 
+        ? filteredTrainers.slice(0, 3) 
+        : filteredTrainers;
+    const isCarousel = displayTrainers.length > 3;
+
+    const [isMobile, setIsMobile] = useState(false);
+    const [isTablet, setIsTablet] = useState(false);
+
+    useEffect(() => {
+        const checkScreen = () => {
+            setIsMobile(window.innerWidth < 640);
+            setIsTablet(window.innerWidth >= 640 && window.innerWidth < 1024);
+        };
+        checkScreen();
+        window.addEventListener('resize', checkScreen);
+        return () => window.removeEventListener('resize', checkScreen);
+    }, []);
+
+    const itemsVisible = isMobile ? 1 : (isTablet ? 2 : 3);
+    const maxIndex = Math.max(0, displayTrainers.length - itemsVisible);
+
+    // Reset activeIndex if it exceeds maxIndex (e.g. after search or resize)
+    useEffect(() => {
+        if (activeIndex > maxIndex) {
+            setActiveIndex(maxIndex);
+        }
+    }, [maxIndex, activeIndex]);
 
     return (
         <section id="marketplace" className="py-[50px] md:py-[100px] px-[20px] bg-zinc-950 w-full border-b border-zinc-900 relative">
@@ -73,17 +98,23 @@ export function MarketplaceSection({ initialTrainers }: MarketplaceSectionProps)
                 </div>
 
                 {/* Results Grid / Carousel */}
-                <div className="w-full relative overflow-hidden flex justify-start md:justify-center">
+                <div className="w-full relative overflow-hidden flex justify-start md:justify-center p-4 -m-4">
 
-                    <div className={`flex transition-transform duration-500 ease-out md:transition-none ${isCarousel ? 'flex-nowrap w-full md:w-max md:!transform-none gap-[20px]' : 'flex-wrap justify-center w-full gap-[20px]'}`}
-                        style={{ transform: `translateX(calc(-${activeIndex * 100}% - ${activeIndex * 20}px))` }}
+                    <div className={`flex transition-transform duration-500 ease-out ${isCarousel ? 'flex-nowrap w-full gap-[20px]' : 'flex-wrap justify-center w-full gap-[20px]'}`}
+                        style={{ 
+                            transform: isCarousel 
+                                ? `translateX(calc(-${activeIndex} * (100% / ${itemsVisible}) - ${activeIndex * (20 / itemsVisible)}px))` 
+                                : 'none' 
+                        }}
                     >
-                        {displayTrainers.slice(0, isCarousel ? 12 : 3).map((trainer, index) => (
+                        {displayTrainers.slice(0, 12).map((trainer, index) => (
                             <Card
                                 key={`${trainer.id}-${index}`}
                                 className={`
                                     bg-zinc-900/40 border-zinc-800/50 hover:border-orange-500/30 transition-all duration-300 group flex flex-col p-6 gap-[20px] relative shrink-0
-                                    ${isCarousel ? 'w-full sm:w-[280px] md:w-[calc(1100px/3-13.33px)]' : 'w-full md:w-[calc(50%-10px)] lg:w-[calc(33.333%-13.33px)]'}
+                                    ${isCarousel 
+                                        ? 'w-full sm:w-[calc(50%-10px)] md:w-[calc(33.333%-13.33px)]' 
+                                        : 'w-full sm:w-[calc(50%-10px)] md:w-[calc(33.333%-13.33px)]'}
                                 `}
                             >
 
@@ -149,16 +180,20 @@ export function MarketplaceSection({ initialTrainers }: MarketplaceSectionProps)
                     </div>
                 )}
 
-                {filteredTrainers.length > 3 && (
-                    <div className="flex md:hidden items-center justify-center gap-3 mt-8">
-                        {filteredTrainers.slice(0, 12).map((_, idx) => (
-                            <button
-                                key={idx}
-                                onClick={() => setActiveIndex(idx)}
-                                className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${activeIndex === idx ? 'bg-orange-500 w-8' : 'bg-zinc-700 hover:bg-zinc-500'}`}
-                                aria-label={`Ir para treinador ${idx + 1}`}
-                            />
-                        ))}
+                {isCarousel && (
+                    <div className="flex items-center justify-center gap-3 mt-8">
+                        {displayTrainers.slice(0, 12).map((_, idx) => {
+                            // Only show dots up to the point where the last item is visible
+                            if (idx > maxIndex) return null;
+                            return (
+                                <button
+                                    key={idx}
+                                    onClick={() => setActiveIndex(idx)}
+                                    className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${activeIndex === idx ? 'bg-orange-500 w-8' : 'bg-zinc-700 hover:bg-zinc-500'}`}
+                                    aria-label={`Ir para treinador ${idx + 1}`}
+                                />
+                            );
+                        })}
                     </div>
                 )}
             </div>
