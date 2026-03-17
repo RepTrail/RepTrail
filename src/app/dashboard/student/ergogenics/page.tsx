@@ -73,12 +73,12 @@ export default async function ErgogenicsPage() {
                             }
                             fields={[
                                 { name: 'name', label: 'Nome da Substância', placeholder: 'Ex: Enantato de Testosterona', required: true },
-                                { name: 'weekly_dosage', label: 'Dosagem Semanal Total', placeholder: '250', type: 'number', required: true },
+                                { name: 'weekly_dosage', label: 'Dosagem Semanal Total', placeholder: '250', type: 'number', required: true, gridCols: 2 },
                                 {
-                                    name: 'unit', label: 'Unidade', type: 'select', defaultValue: 'mg', options: [
-                                        { label: 'mg (Miligramas)', value: 'mg' },
-                                        { label: 'ml (Mililitros)', value: 'ml' }
-                                    ], required: true
+                                    name: 'unit', label: 'Unidade', type: 'switch', defaultValue: 'mg', options: [
+                                        { label: 'mg', value: 'mg' },
+                                        { label: 'ml', value: 'ml' }
+                                    ], required: true, gridCols: 2
                                 },
                                 { name: 'application_days', label: 'Dias de Aplicação', type: 'days', required: true },
                                 { name: 'notes', label: 'Instruções / Notas (Opcional)', placeholder: 'Ex: Aplicar no glúteo...', type: 'textarea' }

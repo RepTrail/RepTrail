@@ -58,7 +58,7 @@ export function ScheduleCardioDialog({ cardioId }: ScheduleCardioDialogProps) {
         if (selectedDays.length === 0) return alert('Selecione pelo menos um dia.')
 
         setLoading(true)
-        const result = await assignCardioToStudent(cardioId, {
+        const result = await assignCardioToStudent(cardioId, undefined, {
             duration: parseInt(duration),
             intensity: intensity,
             daysOfWeek: selectedDays

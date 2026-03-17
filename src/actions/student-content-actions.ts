@@ -396,7 +396,7 @@ export async function deleteStudentErgogenic(ergogenicId: string) {
     }
 }
 
-export async function assignCardioToStudent(cardioId: string, studentId: string, data: {
+export async function assignCardioToStudent(cardioId: string, studentId: string | undefined | null, data: {
     duration?: number
     intensity?: string
     daysOfWeek: number[]
@@ -418,15 +418,17 @@ export async function assignCardioToStudent(cardioId: string, studentId: string,
         const duration = data.duration ?? template.duration_minutes ?? 30
         const intensity = data.intensity ?? template.suggested_intensity ?? 'Moderada'
 
+        const finalStudentId = studentId || user.id
+        
         await supabase
             .from('assigned_cardios')
             .update({ active: false })
             .eq('cardio_id', cardioId)
-            .eq('student_id', studentId)
+            .eq('student_id', finalStudentId)
 
         // Create assignments for each selected day
         const assignments = data.daysOfWeek.map(day => ({
-            student_id: studentId,
+            student_id: finalStudentId,
             cardio_id: cardioId,
             duration_minutes: duration,
             suggested_intensity: intensity,

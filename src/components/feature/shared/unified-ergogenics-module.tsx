@@ -64,12 +64,12 @@ const WEEKDAYS_FULL = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sext
 const WEEKDAYS_SHORT = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SAB']
 const ERGOGENIC_FIELDS = [
     { name: 'name', label: 'Nome da Substância', placeholder: 'Ex: Enantato de Testosterona', required: true },
-    { name: 'weekly_dosage', label: 'Dosagem Semanal Total', placeholder: '250', type: 'number' as const, required: true },
+    { name: 'weekly_dosage', label: 'Dosagem Semanal Total', placeholder: '250', type: 'number' as const, required: true, gridCols: 2 as const },
     {
-        name: 'unit', label: 'Unidade', type: 'select' as const, defaultValue: 'mg', options: [
-            { label: 'mg (Miligramas)', value: 'mg' },
-            { label: 'ml (Mililitros)', value: 'ml' }
-        ], required: true
+        name: 'unit', label: 'Unidade', type: 'switch' as const, defaultValue: 'mg', options: [
+            { label: 'mg', value: 'mg' },
+            { label: 'ml', value: 'ml' }
+        ], required: true, gridCols: 2 as const
     },
     { name: 'application_days', label: 'Dias de Aplicação', type: 'days' as const, required: true },
     { name: 'start_date', label: 'Data de Início', type: 'date' as const, required: true },
