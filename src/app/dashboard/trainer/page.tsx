@@ -104,7 +104,7 @@ export default async function TrainerDashboard() {
                     </p>
                 </div>
                 <div className="flex items-center gap-3 pb-4">
-                    <Button asChild className="bg-white text-zinc-950 hover:bg-zinc-200 rounded-xl font-bold h-11 px-6 shadow-xl active:scale-95 transition-all gap-2">
+                    <Button asChild className="bg-white text-zinc-950 hover:bg-zinc-200 rounded-xl font-bold h-11 px-6 shadow-none active:scale-95 transition-all gap-2">
                         <Link href="/dashboard/trainer/students">
                             <UserPlus className="w-4 h-4" />
                             Novo Aluno

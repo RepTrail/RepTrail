@@ -16,6 +16,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { Switch } from "@/components/ui/switch"
 import { Plus, Loader2, ChevronDown, Calendar, X } from "lucide-react"
 import {
     Select,
@@ -32,10 +33,11 @@ interface FieldConfig {
     name: string
     label: string
     placeholder?: string
-    type?: 'text' | 'textarea' | 'number' | 'days' | 'select' | 'date'
+    type?: 'text' | 'textarea' | 'number' | 'days' | 'select' | 'date' | 'switch'
     required?: boolean
     options?: { label: string, value: string, color?: string }[]
     defaultValue?: string
+    gridCols?: 1 | 2
 }
 
 interface UnifiedCreationDialogProps {
@@ -80,17 +82,134 @@ export function UnifiedCreationDialog({
     const [open, setOpen] = useState(false)
     const [loading, setLoading] = useState(false)
 
-    // Find if there's a days field and get its default value from initialValues if it exists
+    // State for non-native fields (days, switch)
     const daysField = fields.find(f => f.type === 'days')
     const initialDays = initialValues?.[daysField?.name || 'application_days'] || [0, 1, 2, 3, 4, 5, 6]
-
     const [selectedDays, setSelectedDays] = useState<number[]>(initialDays)
+
+    // Initial custom values for switches
+    const initialCustomFields = fields.reduce((acc, f) => {
+        if (f.type === 'switch') {
+            acc[f.name] = initialValues?.[f.name] || f.defaultValue || (f.options?.[0]?.value || '')
+        }
+        return acc
+    }, {} as Record<string, any>)
+    const [customFields, setCustomFields] = useState<Record<string, any>>(initialCustomFields)
+
     const router = useRouter()
     const { toast } = useToast()
 
     const toggleDay = (day: number) => {
         setSelectedDays(prev =>
             prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day].sort()
+        )
+    }
+
+    const renderField = (field: FieldConfig) => {
+        return (
+            <div key={field.name} className="space-y-3">
+                <Label htmlFor={field.name} className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-1">
+                    {field.label} {field.required && <span className="text-red-500">*</span>}
+                </Label>
+
+                {field.type === 'textarea' ? (
+                    <Textarea
+                        id={field.name}
+                        name={field.name}
+                        placeholder={field.placeholder}
+                        required={field.required}
+                        defaultValue={initialValues?.[field.name]}
+                        className={cn("bg-zinc-900/50 border-zinc-800 rounded-2xl min-h-[120px] transition-all", s.ring, "focus:border-transparent")}
+                    />
+                ) : field.type === 'select' ? (
+                    <div className="space-y-4">
+                        <Select name={field.name} defaultValue={initialValues?.[field.name] || field.defaultValue} required={field.required}>
+                            <SelectTrigger className={cn("flex h-14 w-full rounded-2xl border border-zinc-800 bg-zinc-900/50 hover:bg-zinc-900  py-2 text-sm transition-all font-bold text-white text-left group", s.ring, s.border)}>
+                                <SelectValue placeholder={field.placeholder || "Selecione..."} />
+                            </SelectTrigger>
+                            <SelectContent position="popper" className="bg-zinc-900 border-zinc-800 text-white rounded-2xl p-2 shadow-2xl border-white/5 animate-in fade-in zoom-in duration-200">
+                                {field.options?.map(opt => (
+                                    <SelectItem
+                                        key={opt.value}
+                                        value={opt.value}
+                                        className={cn("rounded-xl px-3 py-2.5 font-bold transition-all cursor-pointer mb-1 last:mb-0 focus:bg-white/5", `focus:text-${s.accent}`)}
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            {opt.color && (
+                                                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: opt.color, boxShadow: `0 0 8px ${opt.color}66` }} />
+                                            )}
+                                            {opt.label}
+                                        </div>
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+                ) : field.type === 'days' ? (
+                    <div className="flex justify-between gap-1.5 h-12 p-1.5 bg-zinc-900/40 rounded-[1.2rem] border border-zinc-800/50 shadow-inner">
+                        {WEEKDAYS.map((day) => (
+                            <button
+                                key={day.value}
+                                type="button"
+                                onClick={() => toggleDay(day.value)}
+                                className={cn(
+                                    "flex-1 rounded-[0.8rem] text-[10px] font-black transition-all active:scale-90",
+                                    selectedDays.includes(day.value)
+                                        ? s.daySelected
+                                        : "text-zinc-600 hover:text-white hover:bg-zinc-800"
+                                )}
+                            >
+                                {day.label}
+                            </button>
+                        ))}
+                    </div>
+                ) : field.type === 'switch' ? (
+                    <div className="flex items-center justify-between h-14 px-4 bg-zinc-900/40 rounded-2xl border border-zinc-800/50 shadow-inner group transition-all">
+                        <div className="flex items-center gap-3">
+                            <span className={cn(
+                                "text-[9px] font-black uppercase tracking-widest transition-all",
+                                customFields[field.name] === field.options?.[0]?.value ? `text-${s.accent}` : "text-zinc-600"
+                            )}>
+                                {field.options?.[0]?.label || 'OFF'}
+                            </span>
+                            
+                            <Switch
+                                id={field.name}
+                                checked={customFields[field.name] === field.options?.[1]?.value}
+                                onCheckedChange={(checked) => {
+                                    setCustomFields(prev => ({
+                                        ...prev,
+                                        [field.name]: checked ? field.options?.[1]?.value : field.options?.[0]?.value
+                                    }))
+                                }}
+                                className={cn(
+                                    "data-[state=checked]:bg-emerald-500 data-[state=unchecked]:bg-zinc-800",
+                                    colorScheme === 'orange' && "data-[state=checked]:bg-orange-500",
+                                    colorScheme === 'purple' && "data-[state=checked]:bg-purple-500",
+                                    colorScheme === 'cyan' && "data-[state=checked]:bg-cyan-500"
+                                )}
+                            />
+
+                            <span className={cn(
+                                "text-[9px] font-black uppercase tracking-widest transition-all",
+                                customFields[field.name] === field.options?.[1]?.value ? `text-${s.accent}` : "text-zinc-600"
+                            )}>
+                                {field.options?.[1]?.label || 'ON'}
+                            </span>
+                        </div>
+                    </div>
+                ) : (
+                    <Input
+                        id={field.name}
+                        name={field.name}
+                        type={field.type === 'date' ? 'date' : field.type === 'number' ? 'number' : 'text'}
+                        placeholder={field.placeholder}
+                        required={field.required}
+                        defaultValue={initialValues?.[field.name] ? (field.type === 'date' ? initialValues[field.name].split('T')[0] : initialValues[field.name]) : undefined}
+                        className={cn("bg-zinc-900/50 border-zinc-800 h-14 rounded-2xl transition-all font-bold ", s.ring, "focus:border-transparent")}
+                    />
+                )}
+            </div>
         )
     }
 
@@ -142,6 +261,13 @@ export function UnifiedCreationDialog({
         if (daysField) {
             formData.append(daysField.name || 'daysOfWeek', JSON.stringify(selectedDays))
         }
+
+        // Add custom field values (switches)
+        Object.keys(customFields).forEach(key => {
+            if (!formData.has(key)) {
+                formData.append(key, customFields[key])
+            }
+        })
 
         try {
             let result;
@@ -234,76 +360,37 @@ export function UnifiedCreationDialog({
 
                 <form onSubmit={onSubmit} className="space-y-10">
                     <div className="space-y-6">
-                        {fields.map((field) => (
-                            <div key={field.name} className="space-y-3">
-                                <Label htmlFor={field.name} className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-1">
-                                    {field.label} {field.required && <span className="text-red-500">*</span>}
-                                </Label>
+                        {(() => {
+                            const groupedFields: (FieldConfig | FieldConfig[])[] = [];
+                            let currentGroup: FieldConfig[] = [];
 
-                                {field.type === 'textarea' ? (
-                                    <Textarea
-                                        id={field.name}
-                                        name={field.name}
-                                        placeholder={field.placeholder}
-                                        required={field.required}
-                                        defaultValue={initialValues?.[field.name]}
-                                        className={cn("bg-zinc-900/50 border-zinc-800 rounded-2xl min-h-[120px] transition-all", s.ring, "focus:border-transparent")}
-                                    />
-                                ) : field.type === 'select' ? (
-                                    <div className="space-y-4">
-                                        <Select name={field.name} defaultValue={initialValues?.[field.name] || field.defaultValue} required={field.required}>
-                                            <SelectTrigger className={cn("flex h-14 w-full rounded-2xl border border-zinc-800 bg-zinc-900/50 hover:bg-zinc-900  py-2 text-sm transition-all font-bold text-white text-left group", s.ring, s.border)}>
-                                                <SelectValue placeholder={field.placeholder || "Selecione..."} />
-                                            </SelectTrigger>
-                                            <SelectContent position="popper" className="bg-zinc-900 border-zinc-800 text-white rounded-2xl p-2 shadow-2xl border-white/5 animate-in fade-in zoom-in duration-200">
-                                                {field.options?.map(opt => (
-                                                    <SelectItem
-                                                        key={opt.value}
-                                                        value={opt.value}
-                                                        className={cn("rounded-xl px-3 py-2.5 font-bold transition-all cursor-pointer mb-1 last:mb-0 focus:bg-white/5", `focus:text-${s.accent}`)}
-                                                    >
-                                                        <div className="flex items-center gap-3 pb-4">
-                                                            {opt.color && (
-                                                                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: opt.color, boxShadow: `0 0 8px ${opt.color}66` }} />
-                                                            )}
-                                                            {opt.label}
-                                                        </div>
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-                                ) : field.type === 'days' ? (
-                                    <div className="flex justify-between gap-1.5 h-12 p-1.5 bg-zinc-900/40 rounded-[1.2rem] border border-zinc-800/50 shadow-inner">
-                                        {WEEKDAYS.map((day) => (
-                                            <button
-                                                key={day.value}
-                                                type="button"
-                                                onClick={() => toggleDay(day.value)}
-                                                className={cn(
-                                                    "flex-1 rounded-[0.8rem] text-[10px] font-black transition-all active:scale-90",
-                                                    selectedDays.includes(day.value)
-                                                        ? s.daySelected
-                                                        : "text-zinc-600 hover:text-white hover:bg-zinc-800"
-                                                )}
-                                            >
-                                                {day.label}
-                                            </button>
-                                        ))}
-                                    </div>
-                                ) : (
-                                    <Input
-                                        id={field.name}
-                                        name={field.name}
-                                        type={field.type || 'text'}
-                                        placeholder={field.placeholder}
-                                        required={field.required}
-                                        defaultValue={initialValues?.[field.name] ? (field.type === 'date' ? initialValues[field.name].split('T')[0] : initialValues[field.name]) : undefined}
-                                        className={cn("bg-zinc-900/50 border-zinc-800 h-14 rounded-2xl transition-all font-bold ", s.ring, "focus:border-transparent")}
-                                    />
-                                )}
-                            </div>
-                        ))}
+                            fields.forEach((field, idx) => {
+                                if (field.gridCols === 2) {
+                                    currentGroup.push(field);
+                                    if (currentGroup.length === 2 || idx === fields.length - 1) {
+                                        groupedFields.push([...currentGroup]);
+                                        currentGroup = [];
+                                    }
+                                } else {
+                                    if (currentGroup.length > 0) {
+                                        groupedFields.push([...currentGroup]);
+                                        currentGroup = [];
+                                    }
+                                    groupedFields.push(field);
+                                }
+                            });
+
+                            return groupedFields.map((group, idx) => {
+                                if (Array.isArray(group)) {
+                                    return (
+                                        <div key={`group-${idx}`} className="grid grid-cols-2 gap-4">
+                                            {group.map(f => renderField(f))}
+                                        </div>
+                                    );
+                                }
+                                return renderField(group);
+                            });
+                        })()}
                     </div>
 
                     <DialogFooter className="pt-4">

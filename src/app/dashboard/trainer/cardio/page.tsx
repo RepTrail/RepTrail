@@ -30,7 +30,7 @@ export default async function TrainerCardioPage() {
                         title="Novo Modelo de Cardio"
                         description="Crie um template (ex: Esteira 45min) para agendar para seus alunos."
                         trigger={
-                            <Button className="h-11 px-5 border-emerald-500/20 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/30 hover:border-emerald-500/50 hover:text-emerald-400 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border flex items-center justify-center gap-2 active:scale-95 italic">
+                            <Button variant="outline" className="h-11 px-5 border-emerald-500/20 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/30 hover:border-emerald-500/50 hover:text-emerald-400 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all w-full sm:w-auto flex items-center justify-center gap-2 active:scale-95 italic shadow-lg shadow-emerald-500/10">
                                 <Plus className="w-4 h-4" />
                                 Criar Modelo
                             </Button>
@@ -107,7 +107,7 @@ export default async function TrainerCardioPage() {
                                 actionType="create-student-cardio"
                                 successMessage="Modelo de cardio criado!"
                                 footerLabel="Salvar Modelo"
-                                colorScheme="orange"
+                                colorScheme="emerald"
                             />
                         </div>
                     </Card>

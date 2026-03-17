@@ -13,6 +13,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
 import {
     Select,
     SelectContent,
@@ -21,7 +22,7 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
-import { UserPlus, Loader2, Calendar, X } from "lucide-react"
+import { UserPlus, Loader2, Calendar, X, Timer, Activity } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { useRouter } from 'next/navigation'
 
@@ -67,6 +68,8 @@ export function UnifiedAssignDialog({
     const [selectedStudent, setSelectedStudent] = useState<string>(fixedStudentId || '')
     const [selectedItem, setSelectedItem] = useState<string>(itemId || '')
     const [selectedDays, setSelectedDays] = useState<number[]>(initialDays)
+    const [duration, setDuration] = useState('30')
+    const [intensity, setIntensity] = useState('Moderada')
 
     // Sync initialDays when dialog opens
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -162,7 +165,9 @@ export function UnifiedAssignDialog({
             if (type === 'cardio') {
                 const { assignCardioToStudent } = await import('@/actions/student-content-actions')
                 res = await assignCardioToStudent(selectedItem, selectedStudent, {
-                    daysOfWeek: selectedDays
+                    daysOfWeek: selectedDays,
+                    duration: parseInt(duration),
+                    intensity: intensity
                 })
             } else if (type === 'workout') {
                 const { assignWorkout } = await import('@/actions/workout-actions')
@@ -206,62 +211,114 @@ export function UnifiedAssignDialog({
                     </DialogDescription>
                 </DialogHeader>
 
-                <div className="space-y-10">
-                    {items.length > 0 && !itemId && (
+                <div className="space-y-8 py-2">
+                    {/* Item/Student Section */}
+                    {((items.length > 0 && !itemId) || !fixedStudentId) && (
                         <div className="space-y-4">
-                            <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 ml-1">Selecione o Item</Label>
-                            <Select onValueChange={setSelectedItem} value={selectedItem}>
-                                <SelectTrigger className={cn("w-full bg-zinc-900/50 border-zinc-800 !h-14 rounded-2xl hover:border-zinc-700 transition-all font-bold", config.color === 'emerald' ? "focus:ring-emerald-500/20" : "focus:ring-orange-500/20")}>
-                                    <SelectValue placeholder="Escolha um protocolo..." />
-                                </SelectTrigger>
-                                <SelectContent position="popper" className="bg-zinc-900 border-zinc-800 text-white rounded-2xl p-2 shadow-2xl border-white/5 animate-in fade-in zoom-in duration-200 z-[100001]">
-                                    {items.map((i) => (
-                                        <SelectItem key={i.id} value={i.id} className={cn("rounded-xl px-3 py-2.5 font-bold transition-all mb-1 last:mb-0", config.color === 'emerald' ? "focus:bg-emerald-500/10 focus:text-emerald-500" : "focus:bg-orange-500/10 focus:text-orange-500")}>
-                                            {i.name}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                             <div className="flex items-center gap-2 px-1">
+                                <UserPlus className="w-3.5 h-3.5 text-zinc-500" />
+                                <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Destinatário & Protocolo</span>
+                            </div>
+                            
+                            <div className="space-y-4">
+                                {items.length > 0 && !itemId && (
+                                    <div className="space-y-2">
+                                        <Label className="text-[10px] font-black uppercase tracking-widest text-zinc-600 ml-1">Protocolo</Label>
+                                        <Select onValueChange={setSelectedItem} value={selectedItem}>
+                                            <SelectTrigger className={cn("w-full bg-zinc-900/50 border-zinc-800 !h-14 rounded-2xl hover:border-zinc-700 transition-all font-bold", config.color === 'emerald' ? "focus:ring-emerald-500/20" : "focus:ring-orange-500/20")}>
+                                                <SelectValue placeholder="Escolha um protocolo..." />
+                                            </SelectTrigger>
+                                            <SelectContent position="popper" className="bg-zinc-900 border-zinc-800 text-white rounded-2xl p-2 shadow-2xl border-white/5 animate-in fade-in zoom-in duration-200 z-[100001]">
+                                                {items.map((i) => (
+                                                    <SelectItem key={i.id} value={i.id} className={cn("rounded-xl px-3 py-2.5 font-bold transition-all mb-1 last:mb-0", config.color === 'emerald' ? "focus:bg-emerald-500/10 focus:text-emerald-500" : "focus:bg-orange-500/10 focus:text-orange-500")}>
+                                                        {i.name}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                )}
+
+                                {!fixedStudentId && (
+                                    <div className="space-y-2">
+                                        <Label className="text-[10px] font-black uppercase tracking-widest text-zinc-600 ml-1">Aluno</Label>
+                                        {(students || []).length > 0 ? (
+                                            <Select value={selectedStudent} onValueChange={setSelectedStudent}>
+                                                <SelectTrigger className={cn("w-full h-14 bg-zinc-900/50 border-zinc-800 rounded-2xl text-white font-bold text-xs ring-offset-zinc-950 transition-all flex items-center justify-between px-4", config.color === 'emerald' ? "focus:ring-emerald-500/20" : "focus:ring-orange-500/20")}>
+                                                    <SelectValue placeholder="Selecione o aluno" />
+                                                </SelectTrigger>
+                                                <SelectContent className="bg-zinc-900 border-zinc-800 rounded-2xl z-[100001]" position="popper" sideOffset={5}>
+                                                    {(students || []).map((s) => (
+                                                        <SelectItem
+                                                            key={s.student_id}
+                                                            value={s.student_id}
+                                                            className={cn("text-zinc-300 rounded-xl py-3 focus:bg-zinc-800 focus:text-white", config.color === 'emerald' ? "focus:bg-emerald-500/10 focus:text-white" : "focus:bg-orange-500/10 focus:text-white")}
+                                                        >
+                                                            <span className="font-bold text-xs uppercase tracking-tight">{s.student?.full_name || 'Aluno sem nome'}</span>
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        ) : (
+                                            <div className="p-4 rounded-2xl border border-dashed border-zinc-800 bg-zinc-900/30 flex flex-col items-center justify-center gap-2">
+                                                <span className="text-zinc-500 text-[10px] uppercase font-black tracking-widest">Nenhum aluno ativo</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     )}
 
-                {!fixedStudentId && (
-                    <div className="space-y-3">
-                        <Label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-1">Para qual aluno?</Label>
-                        {(students || []).length > 0 ? (
-                            <Select value={selectedStudent} onValueChange={setSelectedStudent}>
-                                <SelectTrigger className={cn("w-full h-14 bg-zinc-900 border-zinc-800 rounded-2xl text-white font-bold text-xs ring-offset-zinc-950 transition-all flex items-center justify-between px-4", config.color === 'emerald' ? "focus:ring-emerald-500/50" : "focus:ring-orange-500/50")}>
-                                    <SelectValue placeholder="Selecione o aluno" />
-                                </SelectTrigger>
-                                <SelectContent className="bg-zinc-900 border-zinc-800 rounded-2xl z-[100001]" position="popper" sideOffset={5}>
-                                    {(students || []).map((s) => (
-                                        <SelectItem
-                                            key={s.student_id}
-                                            value={s.student_id}
-                                            className={cn("text-zinc-300 rounded-xl py-3 focus:bg-zinc-800 focus:text-white", config.color === 'emerald' ? "focus:bg-emerald-500/10 focus:text-white" : "focus:bg-orange-500/10 focus:text-white")}
-                                        >
-                                            <span className="font-bold text-xs uppercase tracking-tight">{s.student?.full_name || 'Aluno sem nome'}</span>
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        ) : (
-                            <div className="p-4 rounded-2xl border border-dashed border-zinc-800 bg-zinc-900/30 flex flex-col items-center justify-center gap-2">
-                                <span className="text-zinc-500 text-[10px] uppercase font-black tracking-widest">Nenhum aluno ativo encontrado</span>
-                                <p className="text-[9px] text-zinc-600 text-center px-4">Convide seus alunos para que eles apareçam nesta lista.</p>
+                    {/* Cardio Specific Metrics */}
+                    {type === 'cardio' && (
+                        <div className="space-y-4">
+                            <div className="flex items-center gap-2 px-1">
+                                <Activity className="w-3.5 h-3.5 text-orange-500" />
+                                <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Configuração do Cardio</span>
                             </div>
-                        )}
-                    </div>
-                )}
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label className="text-[10px] font-bold uppercase tracking-widest text-zinc-600 ml-1">Duração (min)</Label>
+                                    <div className="relative group">
+                                        <Timer className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-600 group-focus-within:text-orange-500 transition-colors" />
+                                        <Input
+                                            type="number"
+                                            value={duration}
+                                            onChange={(e) => setDuration(e.target.value)}
+                                            className="bg-zinc-900/50 border-zinc-800 !h-14 rounded-2xl text-white font-bold pl-11 focus:border-orange-500/50 focus:ring-orange-500/10"
+                                            placeholder="30"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label className="text-[10px] font-bold uppercase tracking-widest text-zinc-600 ml-1">Intensidade</Label>
+                                    <Select value={intensity} onValueChange={setIntensity}>
+                                        <SelectTrigger className="w-full !h-14 bg-zinc-900/50 border-zinc-800 rounded-2xl text-white font-bold text-xs ring-offset-zinc-950 transition-all focus:border-orange-500/50 focus:ring-orange-500/10">
+                                            <SelectValue placeholder="Moderada" />
+                                        </SelectTrigger>
+                                        <SelectContent className="bg-zinc-900 border-zinc-800 rounded-2xl z-[100001]">
+                                            {['Leve', 'Moderada', 'Intensa', 'HIIT'].map(opt => (
+                                                <SelectItem key={opt} value={opt} className="text-zinc-300 rounded-xl py-3 focus:bg-orange-500/10 focus:text-white font-bold text-xs uppercase">
+                                                    {opt}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            </div>
+                        </div>
+                    )}
 
-
-
-                    <div className="space-y-5">
-                        <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 ml-1 flex items-center gap-2">
-                            <Calendar className="w-3.5 h-3.5" />
-                            {type === 'workout' ? 'Dia Programado' : 'Dias da Semana'}
-                        </Label>
-                        <div className="flex justify-between gap-1.5 sm:gap-2 h-14 p-1.5 sm:p-2 bg-zinc-900/40 rounded-[1.5rem] border border-zinc-800/50 shadow-inner">
+                    {/* Scheduling Section */}
+                    <div className="space-y-4">
+                        <div className="flex items-center gap-2 px-1">
+                            <Calendar className="w-3.5 h-3.5 text-zinc-500" />
+                            <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">
+                                {type === 'workout' ? 'Dia Programado' : 'Dias da Semana'}
+                            </span>
+                        </div>
+                        <div className="flex justify-between gap-1.5 h-14 p-1.5 bg-zinc-900/40 rounded-[1.2rem] border border-zinc-800/50 shadow-inner">
                             {WEEKDAYS.map((day) => {
                                 const isSelected = selectedDays.includes(day.value)
                                 return (
@@ -270,7 +327,7 @@ export function UnifiedAssignDialog({
                                         type="button"
                                         onClick={() => toggleDay(day.value)}
                                         className={cn(
-                                            "flex-1 rounded-[1rem] text-[10px] sm:text-[11px] font-black transition-all active:scale-90",
+                                            "flex-1 rounded-[0.8rem] text-[10px] font-black transition-all active:scale-90",
                                             isSelected
                                                 ? config.daySelected
                                                 : "text-zinc-600 hover:text-white hover:bg-zinc-800"
@@ -283,12 +340,12 @@ export function UnifiedAssignDialog({
                         </div>
                     </div>
 
-                    <DialogFooter className="pt-4 sm:pt-6">
+                    <DialogFooter className="pt-4">
                         <Button
                             onClick={handleAssign}
                             disabled={loading}
                             className={cn(
-                                "w-full h-14 sm:h-16 rounded-2xl font-black uppercase italic tracking-widest transition-all active:scale-[0.98] shadow-none group overflow-hidden relative",
+                                "w-full h-16 rounded-2xl font-black uppercase italic tracking-widest transition-all active:scale-[0.98] shadow-2xl group overflow-hidden relative",
                                 "bg-gradient-to-r text-zinc-950",
                                 config.btnGradient,
                                 config.btnHover,

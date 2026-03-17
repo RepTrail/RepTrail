@@ -179,7 +179,7 @@ export function AuthForm({ view }: AuthFormProps) {
                     <CardContent className="p-8" suppressHydrationWarning>
                         <form onSubmit={handleSubmit} className="space-y-5">
                             {error && (
-                                <Alert className="bg-red-500/10 border-red-500/20 text-red-500 rounded-2xl">
+                                <Alert className="bg-red-500/10 border-red-500/20 text-red-500 rounded-2xl px-4">
                                     <AlertDescription className="text-xs font-bold uppercase tracking-wide">{error}</AlertDescription>
                                 </Alert>
                             )}

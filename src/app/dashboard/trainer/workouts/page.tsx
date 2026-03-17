@@ -30,7 +30,7 @@ export default async function TrainerWorkoutsPage() {
                 </div>
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto pb-4">
                     {!betaTesterMode && (
-                        <Button asChild className="h-11 px-5 border-emerald-500/20 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/30 hover:border-emerald-500/50 hover:text-emerald-400 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border w-full sm:w-auto flex items-center justify-center gap-2">
+                        <Button asChild variant="outline" className="h-11 px-5 border-orange-500/20 bg-orange-500/10 text-orange-500 hover:bg-orange-500/30 hover:border-orange-500/50 hover:text-orange-400 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all w-full sm:w-auto flex items-center justify-center gap-2 shadow-lg shadow-orange-500/10">
                             <Link href="/dashboard/trainer/import-pdf">
                                 <FileUp className="w-4 h-4" />
                                 Importar PDF
@@ -41,7 +41,7 @@ export default async function TrainerWorkoutsPage() {
                         title="Novo Modelo de Treino"
                         description="Crie um template que poderá ser atribuído para vários alunos."
                         trigger={
-                            <Button className="h-11 px-5 border-emerald-500/20 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/30 hover:border-emerald-500/50 hover:text-emerald-400 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border w-full sm:w-auto flex items-center justify-center gap-2 active:scale-95 italic">
+                            <Button variant="outline" className="h-11 px-5 border-emerald-500/20 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/30 hover:border-emerald-500/50 hover:text-emerald-400 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all w-full sm:w-auto flex items-center justify-center gap-2 active:scale-95 italic shadow-lg shadow-emerald-500/10">
                                 <Plus className="w-4 h-4" />
                                 Criar Manualmente
                             </Button>
@@ -53,7 +53,7 @@ export default async function TrainerWorkoutsPage() {
                         actionType="create-manual-workout"
                         successMessage="Template de treino criado!"
                         footerLabel="Salvar Template"
-                        colorScheme="orange"
+                        colorScheme="emerald"
                     />
                 </div>
             </div>
@@ -112,7 +112,7 @@ export default async function TrainerWorkoutsPage() {
                                 </p>
                             </div>
                             {!betaTesterMode && (
-                                <Button asChild className="bg-orange-500 hover:bg-orange-400 text-zinc-950 font-bold rounded-xl">
+                                <Button asChild className="bg-orange-500 hover:bg-orange-400 text-zinc-950 font-bold rounded-xl shadow-lg shadow-orange-500/20">
                                     <Link href="/dashboard/trainer/import-pdf">Importar Primeiro PDF</Link>
                                 </Button>
                             )}

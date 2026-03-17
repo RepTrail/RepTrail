@@ -166,7 +166,7 @@ export function PdfUploader({ type, students = [], role = 'trainer' }: { type: '
                                         <h3 className="text-lg font-bold text-white tracking-tight">Arraste seu arquivo aqui</h3>
                                         <p className="text-sm text-zinc-500">Ou clique para navegar pelo computador</p>
                                     </div>
-                                    <Button className="bg-white text-zinc-950 hover:bg-zinc-200 rounded-xl font-bold h-12 px-8 shadow-xl transition-all relative">
+                                    <Button className="bg-white text-zinc-950 hover:bg-zinc-200 rounded-2xl font-bold h-12 px-8 shadow-none transition-all relative">
                                         Selecionar Arquivo
                                         <input
                                             type="file"

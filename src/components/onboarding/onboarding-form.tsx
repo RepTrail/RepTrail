@@ -29,16 +29,15 @@ const initialState = {
     errors: {}
 }
 
-function SteroidUseField() {
-    const [checked, setChecked] = useState(false)
+function SteroidUseField({ checked, onCheckedChange }: { checked: boolean, onCheckedChange: (v: boolean) => void }) {
     return (
         <>
             {checked && <input type="hidden" name="steroidUse" value="on" />}
             <Checkbox
                 id="steroidUse"
                 checked={checked}
-                onCheckedChange={(v) => setChecked(!!v)}
-                className="border-zinc-800 data-[state=checked]:bg-emerald-500 data-[state=checked]:text-zinc-950"
+                onCheckedChange={(v) => onCheckedChange(!!v)}
+                className="size-5 border-zinc-700 data-[state=checked]:bg-emerald-500 data-[state=checked]:text-zinc-950 transition-all shrink-0"
             />
         </>
     )
@@ -78,6 +77,7 @@ export function OnboardingForm({ defaultTrainerCode = '' }: { defaultTrainerCode
     const [birthDate, setBirthDate] = useState('')
     const [goal, setGoal] = useState('')
     const [trainerCode, setTrainerCode] = useState(defaultTrainerCode)
+    const [steroidUse, setSteroidUse] = useState(false)
 
     const handleBirthDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         let value = e.target.value.replace(/\D/g, '')
@@ -290,12 +290,12 @@ export function OnboardingForm({ defaultTrainerCode = '' }: { defaultTrainerCode
                     {/* STEP 3: Sensitive & Trainer */}
                     <div className={step === 3 ? 'block space-y-6' : 'hidden'}>
                         <div className="space-y-6">
-                            <div className="p-5 rounded-2xl bg-zinc-950 border border-emerald-500/20 space-y-4">
-                                <div className="flex items-center gap-3 pb-4">
-                                    <SteroidUseField />
+                            <div className={`p-5 rounded-2xl border transition-all duration-300 ${steroidUse ? 'bg-emerald-500/10 border-emerald-500/40 shadow-[0_0_20px_rgba(16,185,129,0.05)]' : 'bg-zinc-950 border-emerald-500/10'}`}>
+                                <div className="flex items-center gap-4">
+                                    <SteroidUseField checked={steroidUse} onCheckedChange={setSteroidUse} />
                                     <div className="space-y-1">
-                                        <Label htmlFor="steroidUse" className="text-xs font-black text-white italic uppercase tracking-tight cursor-pointer">Uso de recursos ergogênicos?</Label>
-                                        <p className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest leading-relaxed">Informação confidencial para ajuste de volume.</p>
+                                        <Label htmlFor="steroidUse" className={`text-xs font-black italic uppercase tracking-tight cursor-pointer transition-colors ${steroidUse ? 'text-emerald-500' : 'text-white'}`}>Uso de recursos ergogênicos?</Label>
+                                        <p className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest leading-relaxed transition-colors">Informação confidencial para ajuste de volume.</p>
                                     </div>
                                 </div>
                             </div>

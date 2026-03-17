@@ -131,7 +131,7 @@ export default function SearchPersonalPage() {
                                             key={s}
                                             onClick={() => setFilters(f => ({ ...f, specialty: f.specialty === s ? '' : s }))}
                                             className={`
-                                                w-full  py-3 rounded-xl text-left text-[10px] font-black uppercase tracking-[0.2em] border transition-all relative overflow-hidden group/btn
+                                                w-full px-6 py-3 rounded-xl text-left text-[10px] font-black uppercase tracking-[0.2em] border transition-all relative overflow-hidden group/btn
                                                 ${filters.specialty === s
                                                     ? 'bg-orange-500 border-orange-400 text-zinc-950 shadow-lg shadow-orange-500/10'
                                                     : 'bg-zinc-950 border-zinc-900 text-zinc-600 hover:border-zinc-700 hover:text-zinc-300'}
@@ -150,7 +150,7 @@ export default function SearchPersonalPage() {
                                 <select
                                     value={filters.sortBy}
                                     onChange={e => setFilters(f => ({ ...f, sortBy: e.target.value }))}
-                                    className="w-full h-12  rounded-xl bg-zinc-950 border-zinc-800 text-[10px] font-black uppercase tracking-widest text-zinc-400 outline-none focus:border-orange-500/50 appearance-none cursor-pointer hover:border-zinc-700 transition-colors"
+                                    className="w-full h-12 px-5 rounded-xl bg-zinc-950 border-zinc-800 text-[10px] font-black uppercase tracking-widest text-zinc-400 outline-none focus:border-orange-500/50 appearance-none cursor-pointer hover:border-zinc-700 transition-colors"
                                 >
                                     <option value="rating">Melhor Avaliação</option>
                                     <option value="popular">Maior número de alunos</option>
@@ -230,7 +230,7 @@ function TrainerCard({ trainer }: any) {
     return (
         <Card className="group relative bg-zinc-900/30 border-zinc-800/50 hover:border-orange-500/40 transition-all duration-700 rounded-[3.5rem] overflow-hidden backdrop-blur-sm shadow-xl hover:shadow-[0_30px_60px_-15px_rgba(249,115,22,0.1)]">
             {trainer.is_elite && (
-                <div className="absolute top-8 right-8 z-30  py-1.5 bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl flex items-center gap-2 shadow-2xl shadow-orange-500/20 rotate-3 group-hover:rotate-0 transition-transform">
+                <div className="absolute top-8 right-8 z-30 px-3 py-1.5 bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl flex items-center gap-2 shadow-2xl shadow-orange-500/20 rotate-3 group-hover:rotate-0 transition-transform">
                     <ShieldCheck className="w-3.5 h-3.5 text-zinc-950" />
                     <span className="text-[10px] font-black text-zinc-950 uppercase tracking-widest">Elite</span>
                 </div>
@@ -259,20 +259,20 @@ function TrainerCard({ trainer }: any) {
                     </div>
                 </div>
 
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2 justify-center">
                     {trainer.specialty && (
-                        <Badge variant="outline" className=" py-1.5 bg-zinc-950 border-zinc-800 text-[9px] font-black text-zinc-400 uppercase tracking-widest italic rounded-xl">
+                        <Badge variant="outline" className="px-3 py-1.5 bg-zinc-950 border-zinc-800 text-[9px] font-black text-zinc-400 uppercase tracking-widest italic rounded-xl">
                             {trainer.specialty}
                         </Badge>
                     )}
-                    <div className="flex items-center gap-1.5  py-1.5 bg-orange-500/5 border border-orange-500/20 rounded-xl">
+                    <div className="flex items-center gap-1.5 px-3 py-1.5 bg-orange-500/5 border border-orange-500/20 rounded-xl">
                         <Star className="w-3.5 h-3.5 text-orange-500 fill-orange-500" />
                         <span className="text-xs font-black text-orange-500 leading-none">{Number(trainer.average_rating || 0).toFixed(1)}</span>
                     </div>
                 </div>
 
                 <div className="space-y-4">
-                    <p className="text-zinc-500 text-[11px] font-medium leading-relaxed line-clamp-2 italic">
+                    <p className="text-zinc-500 text-[11px] font-medium leading-relaxed line-clamp-2 italic text-center">
                         "{trainer.bio || 'Treinador focado em resultados de alta performance e acompanhamento 24/7.'}"
                     </p>
                 </div>

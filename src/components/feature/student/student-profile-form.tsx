@@ -296,7 +296,7 @@ export function StudentProfileForm({ profile, hasTrainer = false }: StudentProfi
                                                 id="steroid_use"
                                                 checked={formData.steroid_use}
                                                 onCheckedChange={(checked) => setFormData(f => ({ ...f, steroid_use: checked === true }))}
-                                                className="border-zinc-700 data-[state=checked]:bg-orange-500 data-[state=checked]:text-zinc-950"
+                                                className="border-zinc-700 data-[state=checked]:bg-emerald-500 data-[state=checked]:text-white h-5 w-5 rounded-md"
                                             />
                                             <div className="grid gap-1.5 leading-none">
                                                 <label

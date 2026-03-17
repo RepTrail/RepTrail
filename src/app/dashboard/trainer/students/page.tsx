@@ -122,7 +122,7 @@ export default async function StudentsPage() {
                         title="Vincular Novo Aluno"
                         description="O aluno deve possuir uma conta no RepTrail. Insira o email abaixo."
                         trigger={
-                            <Button className="border-emerald-500/20 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/30 hover:border-emerald-500/50 hover:text-emerald-400 rounded-xl font-bold h-11 px-6 gap-2 transition-all duration-200 border w-full sm:w-auto">
+                            <Button variant="outline" className="border-emerald-500/20 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/30 hover:border-emerald-500/50 hover:text-emerald-400 rounded-xl font-bold h-11 px-6 gap-2 transition-all duration-200 w-full sm:w-auto shadow-lg shadow-emerald-500/10">
                                 <Plus className="w-4 h-4" /> Vincular Aluno
                             </Button>
                         }
