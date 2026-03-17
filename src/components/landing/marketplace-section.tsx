@@ -111,13 +111,11 @@ export function MarketplaceSection({ initialTrainers }: MarketplaceSectionProps)
                             <Card
                                 key={`${trainer.id}-${index}`}
                                 className={`
-                                    bg-zinc-900/40 border-zinc-800/50 hover:border-orange-500/30 transition-all duration-300 group flex flex-col p-6 gap-[20px] relative shrink-0
+                                    bg-zinc-900/40 border-zinc-800/50 hover:border-orange-500/40 transition-all duration-300 group flex flex-col p-6 gap-[20px] relative shrink-0
                                     w-full sm:w-[calc(50%-10px)] md:w-[calc(33.333%-13.33px)]
                                 `}
                             >
 
-                                {/* Hover Glow */}
-                                <div className="absolute inset-0 bg-orange-500/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
 
                                 <div className="flex items-start justify-between relative z-10 w-full">
                                     <Avatar className="h-16 w-16 border-2 border-zinc-800 group-hover:border-orange-500 transition-colors shrink-0">

@@ -396,7 +396,7 @@ export async function deleteStudentErgogenic(ergogenicId: string) {
     }
 }
 
-export async function assignCardioToStudent(cardioId: string, data: {
+export async function assignCardioToStudent(cardioId: string, studentId: string, data: {
     duration?: number
     intensity?: string
     daysOfWeek: number[]
@@ -418,16 +418,15 @@ export async function assignCardioToStudent(cardioId: string, data: {
         const duration = data.duration ?? template.duration_minutes ?? 30
         const intensity = data.intensity ?? template.suggested_intensity ?? 'Moderada'
 
-        // Deactivate previous day assignments for this cardio
         await supabase
             .from('assigned_cardios')
             .update({ active: false })
             .eq('cardio_id', cardioId)
-            .eq('student_id', user.id)
+            .eq('student_id', studentId)
 
         // Create assignments for each selected day
         const assignments = data.daysOfWeek.map(day => ({
-            student_id: user.id,
+            student_id: studentId,
             cardio_id: cardioId,
             duration_minutes: duration,
             suggested_intensity: intensity,
@@ -451,7 +450,7 @@ export async function assignCardioToStudent(cardioId: string, data: {
     }
 }
 
-export async function assignErgogenic(ergogenicId: string, daysOfWeek: number[]) {
+export async function assignErgogenic(ergogenicId: string, studentId: string, daysOfWeek: number[]) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { error: 'Unauthorized' }
@@ -463,7 +462,7 @@ export async function assignErgogenic(ergogenicId: string, daysOfWeek: number[])
                 application_days: daysOfWeek
             })
             .eq('id', ergogenicId)
-            .eq('student_id', user.id)
+            .eq('student_id', studentId)
 
         if (error) throw error
 

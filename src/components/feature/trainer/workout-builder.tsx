@@ -9,16 +9,18 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import {
     Plus,
+    PlusCircle,
     Trash2,
     GripVertical,
-    Search,
     Save,
     Loader2,
-    ArrowLeft,
     Pencil,
     Check,
-    X
+    X,
+    Calendar,
+    ArrowLeft
 } from "lucide-react"
+import { UnifiedAssignDialog } from "@/components/feature/shared/unified-assign-dialog"
 import {
     addExerciseToWorkout,
     removeExerciseFromWorkout,
@@ -28,10 +30,17 @@ import {
     updateWorkoutMeta,
     updateWorkoutExercisesOrder
 } from "@/actions/workout-actions"
+import { getBetaTesterMode } from "@/actions/app-settings-actions"
 
 interface Exercise {
     id: string
     name: string
+}
+
+interface Workout {
+    id: string
+    name: string
+    description: string
 }
 
 interface WorkoutExercise {
@@ -53,27 +62,23 @@ interface WorkoutExercise {
 }
 
 interface WorkoutBuilderProps {
-    workout: {
-        id: string
-        name: string
-        description: string
-        exercises: WorkoutExercise[]
-    }
+    workout: Workout & { workout_exercises: WorkoutExercise[] }
+    students?: any[]
     backHref?: string
 }
 
-export function WorkoutBuilder({ workout, backHref = '/dashboard/trainer/workouts' }: WorkoutBuilderProps) {
+export function WorkoutBuilder({ workout, students = [], backHref = '/dashboard/trainer/workouts' }: WorkoutBuilderProps) {
     const [searchQuery, setSearchQuery] = useState('')
     const [searchResults, setSearchResults] = useState<Exercise[]>([])
     const [isSearching, setIsSearching] = useState(false)
     const [loadingMap, setLoadingMap] = useState<Record<string, boolean>>({})
 
-    const [exercises, setExercises] = useState(workout.exercises)
+    const [exercises, setExercises] = useState((workout as any).workout_exercises || (workout as any).exercises || [])
     const [draggedId, setDraggedId] = useState<string | null>(null)
 
     useEffect(() => {
-        setExercises(workout.exercises)
-    }, [workout.exercises])
+        setExercises((workout as any).workout_exercises || (workout as any).exercises || [])
+    }, [workout])
 
     function handleDragStart(e: React.DragEvent, id: string) {
         setDraggedId(id)
@@ -108,7 +113,7 @@ export function WorkoutBuilder({ workout, backHref = '/dashboard/trainer/workout
         const res = await updateWorkoutExercisesOrder(workout.id, orderedIds)
         if (res?.error) {
             alert("Erro ao reordenar exercícios.")
-            setExercises(workout.exercises)
+            setExercises(workout.workout_exercises)
         }
         setLoadingMap(prev => ({ ...prev, 'reorder': false }))
     }
@@ -196,69 +201,88 @@ export function WorkoutBuilder({ workout, backHref = '/dashboard/trainer/workout
     return (
         <div className="space-y-8">
             {/* Header / Meta */}
-            <div className="flex flex-col gap-3">
-                {isEditingMeta ? (
-                    <div className="animate-in fade-in slide-in-from-top-2 duration-200 bg-zinc-900/60 border border-zinc-700/60 rounded-2xl p-5 space-y-3 shadow-xl">
-                        <div className="space-y-1.5">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Nome do Treino</label>
-                            <Input
-                                ref={nameInputRef}
-                                value={editName}
-                                onChange={e => setEditName(e.target.value)}
-                                onKeyDown={e => { if (e.key === 'Enter') handleSaveMeta(); if (e.key === 'Escape') handleCancelMeta() }}
-                                className="bg-zinc-950 border-zinc-700 text-white text-lg font-black h-12 rounded-xl focus-visible:ring-blue-500/30 focus-visible:border-blue-500/50"
-                                placeholder="Nome do treino..."
-                            />
+            <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
+                <div className="flex flex-col gap-3 flex-1">
+                    {isEditingMeta ? (
+                        <div className="animate-in fade-in slide-in-from-top-2 duration-200 bg-zinc-900/60 border border-zinc-700/60 rounded-2xl p-5 space-y-3 shadow-xl">
+                            <div className="space-y-1.5">
+                                <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Nome do Treino</label>
+                                <Input
+                                    ref={nameInputRef}
+                                    value={editName}
+                                    onChange={e => setEditName(e.target.value)}
+                                    onKeyDown={e => { if (e.key === 'Enter') handleSaveMeta(); if (e.key === 'Escape') handleCancelMeta() }}
+                                    className="bg-zinc-950 border-zinc-700 text-white text-lg font-black h-12 rounded-xl focus-visible:ring-blue-500/30 focus-visible:border-blue-500/50"
+                                    placeholder="Nome do treino..."
+                                />
+                            </div>
+                            <div className="space-y-1.5">
+                                <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Descrição (opcional)</label>
+                                <Input
+                                    value={editDesc}
+                                    onChange={e => setEditDesc(e.target.value)}
+                                    onKeyDown={e => { if (e.key === 'Escape') handleCancelMeta() }}
+                                    className="bg-zinc-950 border-zinc-700 text-zinc-300 h-10 rounded-xl focus-visible:ring-blue-500/30 focus-visible:border-blue-500/50"
+                                    placeholder="Qual é o foco desse treino?"
+                                />
+                            </div>
+                            <div className="flex items-center gap-2 pt-1">
+                                <Button
+                                    onClick={handleSaveMeta}
+                                    disabled={isSavingMeta || !editName.trim()}
+                                    className="h-9  bg-blue-600 hover:bg-blue-500 text-white font-black uppercase tracking-widest text-[10px] rounded-xl transition-all shadow-lg shadow-blue-500/20 active:scale-95"
+                                >
+                                    {isSavingMeta ? <Loader2 className="w-3 h-3 animate-spin" /> : <><Check className="w-3 h-3 mr-1.5" />Salvar</>}
+                                </Button>
+                                <Button
+                                    onClick={handleCancelMeta}
+                                    disabled={isSavingMeta}
+                                    variant="ghost"
+                                    className="h-9  bg-zinc-800/60 hover:bg-zinc-700/60 text-zinc-400 hover:text-white font-black uppercase tracking-widest text-[10px] rounded-xl transition-all border border-zinc-700/50 hover:border-zinc-600"
+                                >
+                                    <X className="w-3 h-3 mr-1.5" />Cancelar
+                                </Button>
+                            </div>
                         </div>
-                        <div className="space-y-1.5">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Descrição (opcional)</label>
-                            <Input
-                                value={editDesc}
-                                onChange={e => setEditDesc(e.target.value)}
-                                onKeyDown={e => { if (e.key === 'Escape') handleCancelMeta() }}
-                                className="bg-zinc-950 border-zinc-700 text-zinc-300 h-10 rounded-xl focus-visible:ring-blue-500/30 focus-visible:border-blue-500/50"
-                                placeholder="Qual é o foco desse treino?"
-                            />
-                        </div>
-                        <div className="flex items-center gap-2 pt-1">
-                            <Button
-                                onClick={handleSaveMeta}
-                                disabled={isSavingMeta || !editName.trim()}
-                                className="h-9  bg-blue-600 hover:bg-blue-500 text-white font-black uppercase tracking-widest text-[10px] rounded-xl transition-all shadow-lg shadow-blue-500/20 active:scale-95"
-                            >
-                                {isSavingMeta ? <Loader2 className="w-3 h-3 animate-spin" /> : <><Check className="w-3 h-3 mr-1.5" />Salvar</>}
-                            </Button>
-                            <Button
-                                onClick={handleCancelMeta}
-                                disabled={isSavingMeta}
-                                variant="ghost"
-                                className="h-9  bg-zinc-800/60 hover:bg-zinc-700/60 text-zinc-400 hover:text-white font-black uppercase tracking-widest text-[10px] rounded-xl transition-all border border-zinc-700/50 hover:border-zinc-600"
-                            >
-                                <X className="w-3 h-3 mr-1.5" />Cancelar
-                            </Button>
-                        </div>
-                    </div>
-                ) : (
-                    <div
-                        className="group flex items-start gap-3 cursor-pointer"
-                        onClick={() => setIsEditingMeta(true)}
-                    >
-                        <div className="flex-1 min-w-0">
-                            <h1 className="text-3xl font-bold text-white font-sans group-hover:text-blue-400 transition-colors duration-200 border-b border-transparent group-hover:border-blue-400/40 pb-0.5 inline-block">
-                                {editName}
-                            </h1>
-                            <p className="text-zinc-500 mt-1 group-hover:text-zinc-400 transition-colors">
-                                {editDesc || 'Builder de Treino'}
-                            </p>
-                        </div>
-                        <button
-                            className="mt-1 p-2 rounded-xl text-zinc-600 hover:text-blue-400 hover:bg-blue-400/10 transition-all border border-transparent hover:border-blue-400/20 active:scale-90"
-                            title="Editar nome do treino"
+                    ) : (
+                        <div
+                            className="group flex items-start gap-3 cursor-pointer"
+                            onClick={() => setIsEditingMeta(true)}
                         >
-                            <Pencil className="w-4 h-4" />
-                        </button>
-                    </div>
-                )}
+                            <div className="flex-1 min-w-0">
+                                <h1 className="text-3xl font-bold text-white font-sans group-hover:text-blue-400 transition-colors duration-200 border-b border-transparent group-hover:border-blue-400/40 pb-0.5 inline-block">
+                                    {editName}
+                                </h1>
+                                <p className="text-zinc-500 mt-1 group-hover:text-zinc-400 transition-colors">
+                                    {editDesc || 'Builder de Treino'}
+                                </p>
+                            </div>
+                            <button
+                                className="mt-1 p-2 rounded-xl text-zinc-600 hover:text-blue-400 hover:bg-blue-400/10 transition-all border border-transparent hover:border-blue-400/20 active:scale-90"
+                                title="Editar nome do treino"
+                            >
+                                <Pencil className="w-4 h-4" />
+                            </button>
+                        </div>
+                    )}
+                </div>
+
+                <div className="shrink-0">
+                    <UnifiedAssignDialog
+                        itemId={workout.id}
+                        students={students}
+                        type="workout"
+                        title="Atribuir Treino"
+                        description="Escolha um aluno e o dia da semana para este treino."
+                        colorScheme="emerald"
+                        trigger={
+                            <Button className="h-[68px] px-8 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-none flex flex-col items-center justify-center gap-1 group transition-all active:scale-95 italic">
+                                <Calendar className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                                <span>Atribuir</span>
+                            </Button>
+                        }
+                    />
+                </div>
             </div>
 
             {/* Exercise List */}
@@ -447,10 +471,10 @@ export function WorkoutBuilder({ workout, backHref = '/dashboard/trainer/workout
             {/* Selector */}
             <div className="bg-zinc-900/50 p-6 rounded-xl border border-zinc-800 space-y-4">
                 <h3 className="text-lg font-semibold text-zinc-100 flex items-center gap-2">
-                    <Plus className="w-5 h-5 text-blue-500" /> Adicionar Exercício
+                    <PlusCircle className="w-5 h-5 text-blue-500" /> Adicionar Exercício
                 </h3>
                 <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
                     <Input
                         placeholder="Busque por exercícios (ex: Supino, Agachamento...)"
                         className="pl-10 bg-zinc-950 border-zinc-800 h-12 text-zinc-100"
@@ -485,9 +509,9 @@ export function WorkoutBuilder({ workout, backHref = '/dashboard/trainer/workout
                             <span className="text-sm text-zinc-400 truncate">
                                 "<span className="text-white font-bold">{searchQuery}</span>" não encontrado na biblioteca.
                             </span>
-                            <span className="text-[10px] text-zinc-600 uppercase tracking-widest font-bold">
-                                Clique para criar um novo exercício com esse nome
-                            </span>
+                            <p className="text-zinc-500 text-[10px] font-black uppercase tracking-[0.2em] mt-1">
+                                {workout.description || "Template de treino pronto para edição"}
+                            </p>
                         </div>
                         <Button
                             variant="outline"

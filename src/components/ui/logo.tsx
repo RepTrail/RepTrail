@@ -51,8 +51,8 @@ export function Logo({
             text: 'text-emerald-500'
         },
         amber: {
-            bg: 'bg-amber-500 shadow-amber-500/20',
-            text: 'text-amber-500'
+            bg: 'bg-orange-500 shadow-orange-500/20',
+            text: 'text-orange-500'
         }
     }
 

@@ -37,22 +37,22 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
         switch (type) {
             case 'workout':
                 if (subType === 'started') return { icon: <Dumbbell className="w-4 h-4" />, color: 'bg-blue-500/10 text-blue-500', label: 'Iniciou' }
-                if (subType === 'success') return { icon: <CheckCircle2 className="w-4 h-4" />, color: 'bg-emerald-500/10 text-emerald-500', label: 'Sucesso' }
-                if (subType === 'partial') return { icon: <ActivityIcon className="w-4 h-4" />, color: 'bg-amber-500/10 text-amber-500', label: 'Parcial' }
+                if (subType === 'success') return { icon: <CheckCircle2 className="w-4 h-4" />, color: 'bg-orange-500/10 text-orange-500', label: 'Sucesso' }
+                if (subType === 'partial') return { icon: <ActivityIcon className="w-4 h-4" />, color: 'bg-orange-500/10 text-orange-500', label: 'Parcial' }
                 if (subType === 'fail') return { icon: <XCircle className="w-4 h-4" />, color: 'bg-red-500/10 text-red-500', label: 'Falhou' }
                 if (subType === 'note') return { icon: <Zap className="w-4 h-4" />, color: 'bg-purple-500/10 text-purple-500', label: 'Nota' }
-                return { icon: <Dumbbell className="w-4 h-4" />, color: 'bg-emerald-500/10 text-emerald-500', label: 'Treinou' }
+                return { icon: <Dumbbell className="w-4 h-4" />, color: 'bg-orange-500/10 text-orange-500', label: 'Treinou' }
             case 'meal':
                 return { icon: <Utensils className="w-4 h-4" />, color: 'bg-orange-500/10 text-orange-500', label: 'Dieta' }
             case 'cardio':
                 if (subType === 'started') return { icon: <ActivityIcon className="w-4 h-4" />, color: 'bg-blue-500/10 text-blue-500', label: 'Iniciou' }
-                return { icon: <Zap className="w-4 h-4" />, color: 'bg-emerald-500/10 text-emerald-500', label: 'Cardio' }
+                return { icon: <Zap className="w-4 h-4" />, color: 'bg-orange-500/10 text-orange-500', label: 'Cardio' }
             case 'weight':
                 return { icon: <TrendingUp className="w-4 h-4" />, color: 'bg-indigo-500/10 text-indigo-500', label: 'Peso' }
             case 'photo':
                 return { icon: <Camera className="w-4 h-4" />, color: 'bg-pink-500/10 text-pink-500', label: 'Foto' }
             case 'ergogenic':
-                return { icon: <Sparkles className="w-4 h-4" />, color: 'bg-amber-500/10 text-amber-500', label: 'Ergo' }
+                return { icon: <Sparkles className="w-4 h-4" />, color: 'bg-orange-500/10 text-orange-500', label: 'Ergo' }
             case 'milestone':
                 return { icon: <Trophy className="w-4 h-4" />, color: 'bg-yellow-500/10 text-yellow-500', label: 'Meta 100%' }
             case 'alert':

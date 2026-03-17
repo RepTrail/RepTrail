@@ -34,9 +34,9 @@ export default async function StudentLayout({
     const profile = profileRes.data
     const details = detailsRes.data
 
-    if (profile?.role === 'trainer') {
-        redirect('/dashboard/trainer')
-    }
+    // Note: Cross-dashboard protection is handled by middleware.
+    // Do NOT redirect trainers here — middleware already does it, and doing it
+    // in both places creates an infinite redirect loop.
 
     const now = new Date()
     let isAutoTrainingActive = false;
@@ -112,4 +112,4 @@ export default async function StudentLayout({
         </div>
     )
 }
-// Force rebuild 2026-02-25
+// Force rebuild 2026-03-16-v1

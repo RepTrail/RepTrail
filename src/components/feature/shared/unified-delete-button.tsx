@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Trash2, Loader2, AlertTriangle } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { useRouter } from 'next/navigation'
+import { cn } from '@/lib/utils'
 import {
     Dialog,
     DialogContent,
@@ -107,9 +108,12 @@ export function UnifiedDeleteButton({
                     variant={variant}
                     size={size}
                     disabled={loading}
-                    className={className || "text-zinc-500 hover:text-red-400 hover:bg-red-400/10 rounded-xl transition-all"}
+                    className={cn(
+                        "h-9 w-9 bg-zinc-800/60 border-zinc-700/50 text-zinc-500 hover:text-red-400 hover:bg-red-400/10 rounded-xl transition-all border hover:border-red-400/30 shrink-0",
+                        className
+                    )}
                 >
-                    {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                    {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[400px] bg-zinc-950 border-zinc-800 rounded-[2.5rem] shadow-2xl p-0 border-white/5 overflow-hidden">

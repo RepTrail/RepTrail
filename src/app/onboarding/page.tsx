@@ -23,6 +23,12 @@ export default async function OnboardingPage() {
         .eq('id', user.id)
         .single()
 
+    const role = profile?.role || user.user_metadata?.role
+    
+    if (role === 'trainer') {
+        redirect('/dashboard/trainer')
+    }
+
     if (details) {
         redirect('/dashboard/student')
     }

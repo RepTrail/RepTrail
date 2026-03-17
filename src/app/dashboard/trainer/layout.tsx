@@ -34,8 +34,17 @@ export default async function TrainerLayout({
         .eq('id', user.id)
         .single()
 
-    // If not a trainer, they shouldn't be here. 
-    if (!profile || profile.role !== 'trainer') {
+    // Determine effective role using metadata as the source of truth for the cross-dashboard check.
+    // Metadata is set at signup time and is always reliable, while DB role can be corrupted.
+    const metaRole = user.user_metadata?.role
+
+    // Auto-fix: if metadata says 'trainer' but DB has wrong/missing role, correct the DB now.
+    if (metaRole === 'trainer' && profile?.role !== 'trainer') {
+        await supabase.from('profiles').update({ role: 'trainer' }).eq('id', user.id)
+    }
+
+    const effectiveRole = metaRole || profile?.role
+    if (effectiveRole !== 'trainer') {
         redirect('/dashboard/student')
     }
 

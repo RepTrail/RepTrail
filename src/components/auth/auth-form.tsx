@@ -85,14 +85,17 @@ export function AuthForm({ view }: AuthFormProps) {
                 })
                 if (error) throw error
 
-                // Guarantee the profile has the name saved — some environments have
-                // trigger constraints that silently drop the name. This upsert ensures it.
+                // Guarantee the profile has the correct data — use upsert because the
+                // DB trigger may not have created the row yet when this runs (race condition).
                 if (signUpData?.user?.id) {
                     await supabase
                         .from('profiles')
-                        .update({
+                        .upsert({
+                            id: signUpData.user.id,
+                            email: email,
                             full_name: fullName,
                             whatsapp: whatsapp,
+                            role: role,
                             // Only students get automatic trial/auto-training status
                             ...(role === 'student' ? {
                                 auto_training_status: 'trial',
@@ -101,8 +104,7 @@ export function AuthForm({ view }: AuthFormProps) {
                                 plan_tier: 'none' // Trainers start without a plan and must subscribe
                             }),
                             saw_auto_training_onboarding_modal: false
-                        })
-                        .eq('id', signUpData.user.id)
+                        }, { onConflict: 'id' })
                 }
 
                 // Clear affiliate cookie after successful registration
@@ -128,7 +130,18 @@ export function AuthForm({ view }: AuthFormProps) {
                         .eq('id', user.id)
                         .single()
 
-                    if (profile?.role === 'trainer') {
+                    // Use metadata as fallback if DB role is null
+                    const effectiveRole = profile?.role || user.user_metadata?.role
+
+                    // Auto-fix: if role missing from DB, write it now
+                    if (!profile?.role && user.user_metadata?.role) {
+                        await supabase
+                            .from('profiles')
+                            .update({ role: user.user_metadata.role })
+                            .eq('id', user.id)
+                    }
+
+                    if (effectiveRole === 'trainer') {
                         router.push('/dashboard/trainer')
                     } else {
                         router.push('/dashboard/student')
@@ -263,7 +276,7 @@ export function AuthForm({ view }: AuthFormProps) {
                                     <button
                                         type="button"
                                         onClick={() => setIsAffiliate(!isAffiliate)}
-                                        className={`w-full flex items-center justify-between h-12 rounded-xl border  transition-all ${isAffiliate ? 'bg-amber-500/10 border-amber-500/50 text-amber-400' : 'bg-zinc-950 border-zinc-800 text-zinc-500 hover:border-zinc-700'}`}
+                                        className={`w-full flex items-center justify-between h-12 px-5 rounded-xl border transition-all ${isAffiliate ? 'bg-amber-500/10 border-amber-500/50 text-amber-400' : 'bg-zinc-950 border-zinc-800 text-zinc-500 hover:border-zinc-700'}`}
                                     >
                                         <span className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest">
                                             <Megaphone className="w-4 h-4" />

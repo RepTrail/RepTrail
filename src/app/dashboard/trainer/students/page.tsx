@@ -45,8 +45,8 @@ export default async function StudentsPage() {
     const tierColors = {
         on_demand: 'text-zinc-500',
         start: 'text-blue-500',
-        pro: 'text-emerald-500',
-        elite: 'text-amber-500'
+        pro: 'text-orange-500',
+        elite: 'text-orange-500'
     }
     const tierIcons = {
         on_demand: Activity,
@@ -255,7 +255,7 @@ export default async function StudentsPage() {
 
                                                             if (isPaidThisMonth) {
                                                                 return (
-                                                                    <Badge variant="outline" className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 text-[9px] font-black uppercase tracking-widest px-1.5 py-0 rounded-full flex gap-1 items-center w-fit">
+                                                                    <Badge variant="outline" className="bg-orange-500/10 text-orange-500 border-orange-500/20 text-[9px] font-black uppercase tracking-widest px-1.5 py-0 rounded-full flex gap-1 items-center w-fit">
                                                                         <CheckCircle className="w-2.5 h-2.5" /> Pago
                                                                     </Badge>
                                                                 )
@@ -265,7 +265,7 @@ export default async function StudentsPage() {
 
                                                             if (today === paymentDay) {
                                                                 return (
-                                                                    <Badge variant="outline" className="bg-amber-500/10 text-amber-500 border-amber-500/20 text-[9px] font-black uppercase tracking-widest px-1.5 py-0 rounded-full flex gap-1 items-center w-fit">
+                                                                    <Badge variant="outline" className="bg-orange-500/10 text-orange-500 border-orange-500/20 text-[9px] font-black uppercase tracking-widest px-1.5 py-0 rounded-full flex gap-1 items-center w-fit">
                                                                         <AlertCircle className="w-2.5 h-2.5" /> Hoje
                                                                     </Badge>
                                                                 )
@@ -287,7 +287,7 @@ export default async function StudentsPage() {
                                                     </div>
                                                 </TableCell>
                                                 <TableCell className="py-4 text-right">
-                                                    <Button asChild variant="ghost" size="sm" className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-white hover:bg-zinc-900 h-9 rounded-xl gap-2">
+                                                    <Button asChild variant="ghost" size="sm" className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-white hover:bg-zinc-900 h-9 rounded-xl gap-2 px-4">
                                                         <Link href={`/dashboard/trainer/students/${item.id}`}>
                                                             Perfil
                                                             <ArrowUpRight className="h-3 w-3" />
@@ -329,7 +329,7 @@ export default async function StudentsPage() {
                                                         )}
                                                     </div>
                                                     <div className="flex flex-col">
-                                                        <span className="font-bold text-sm text-zinc-100 group-hover:text-emerald-500 transition-colors">{item.student?.full_name}</span>
+                                                        <span className="font-bold text-sm text-zinc-100 group-hover:text-orange-500 transition-colors">{item.student?.full_name}</span>
                                                         <span className="text-[10px] text-zinc-600 font-medium">Desde {new Date(item.created_at).toLocaleDateString('pt-BR')}</span>
                                                     </div>
                                                 </div>
@@ -350,12 +350,12 @@ export default async function StudentsPage() {
                                                     <div className="flex flex-col items-end gap-1">
                                                         <div className={`
                                                             inline-flex items-center px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest border
-                                                            ${item.active ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-zinc-800 text-zinc-500 border-zinc-700/50'}
+                                                            ${item.active ? 'bg-orange-500/10 text-orange-500 border-orange-500/20' : 'bg-zinc-800 text-zinc-500 border-zinc-700/50'}
                                                         `}>
                                                             {item.active ? 'Ativo' : 'Inativo'}
                                                         </div>
                                                         {isPaidThisMonth ? (
-                                                            <Badge variant="outline" className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 text-[8px] font-black uppercase tracking-widest px-1.5 py-0 rounded-full flex gap-1 items-center">
+                                                            <Badge variant="outline" className="bg-orange-500/10 text-orange-500 border-orange-500/20 text-[8px] font-black uppercase tracking-widest px-1.5 py-0 rounded-full flex gap-1 items-center">
                                                                 <CheckCircle className="w-2 h-2" /> Pago
                                                             </Badge>
                                                         ) : isLate ? (
@@ -363,7 +363,7 @@ export default async function StudentsPage() {
                                                                 <AlertCircle className="w-2 h-2" /> Atrasado
                                                             </Badge>
                                                         ) : paymentDay === today ? (
-                                                            <Badge variant="outline" className="bg-amber-500/10 text-amber-500 border-amber-500/20 text-[8px] font-black uppercase tracking-widest px-1.5 py-0 rounded-full flex gap-1 items-center">
+                                                            <Badge variant="outline" className="bg-orange-500/10 text-orange-500 border-orange-500/20 text-[8px] font-black uppercase tracking-widest px-1.5 py-0 rounded-full flex gap-1 items-center">
                                                                 <AlertCircle className="w-2 h-2" /> Hoje
                                                             </Badge>
                                                         ) : null}

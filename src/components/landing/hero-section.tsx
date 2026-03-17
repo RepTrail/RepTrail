@@ -7,19 +7,19 @@ export function HeroSection() {
     return (
         <section className="w-full pt-[80px] md:pt-[140px] pb-[60px] md:pb-[100px] px-[20px] relative overflow-hidden bg-zinc-950 flex flex-col items-center justify-center border-b border-zinc-900/50">
             {/* Dynamic Background Effects */}
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-emerald-500/10 via-zinc-950/50 to-zinc-950 pointer-events-none" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-orange-500/10 via-zinc-950/50 to-zinc-950 pointer-events-none" />
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[url('/grid.svg')] bg-center [mask-image:radial-gradient(ellipse_at_center,white,transparent_80%)] opacity-20 pointer-events-none" />
 
             {/* Floating Orbs for depth */}
-            <div className="absolute top-[10%] left-[5%] w-[300px] h-[300px] bg-emerald-500/5 rounded-full blur-[120px] animate-pulse pointer-events-none" />
-            <div className="absolute bottom-[20%] right-[5%] w-[400px] h-[400px] bg-emerald-500/5 rounded-full blur-[150px] animate-pulse delay-1000 pointer-events-none" />
+            <div className="absolute top-[10%] left-[5%] w-[300px] h-[300px] bg-orange-500/5 rounded-full blur-[120px] animate-pulse pointer-events-none" />
+            <div className="absolute bottom-[20%] right-[5%] w-[400px] h-[400px] bg-orange-500/5 rounded-full blur-[150px] animate-pulse delay-1000 pointer-events-none" />
 
             <div className="w-full max-w-[1300px] mx-auto relative z-10 flex flex-col-reverse lg:grid lg:grid-cols-[1.1fr_0.9fr] items-center gap-[30px] lg:gap-[40px] animate-in fade-in slide-in-from-bottom-8 duration-1000">
 
                 {/* Left Content: The Message */}
                 <div className="flex flex-col items-center lg:items-start text-center lg:text-left w-full max-w-2xl">
                     <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 mb-8">
-                        <LandingBadge icon={Users} variant="emerald" className="bg-emerald-500/5 border-emerald-500/10 py-1.5 px-4">
+                        <LandingBadge icon={Users} variant="emerald" className="bg-orange-500/5 border-emerald-500/10 py-1.5 px-4">
                             <span className="text-emerald-400 font-bold mr-1">+500</span> treinadores ativos
                         </LandingBadge>
                         <LandingBadge icon={ShieldCheck} variant="emerald" className="bg-white/5 border-white/10 py-1.5 px-4 text-zinc-400">
@@ -43,7 +43,7 @@ export function HeroSection() {
                         <div className="flex flex-col sm:flex-row gap-4 w-full lg:max-w-xl items-stretch sm:items-center">
                             <Button
                                 asChild
-                                className="group relative overflow-hidden w-full sm:w-auto h-auto py-5 px-10 text-lg bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase italic tracking-wider rounded-2xl shadow-[0_20px_40px_-15px_rgba(16,185,129,0.4)] transition-all hover:-translate-y-1 active:scale-95"
+                                className="group relative overflow-hidden w-full sm:w-auto h-auto py-5 px-10 text-lg bg-orange-500 hover:bg-orange-400 text-zinc-950 font-black uppercase italic tracking-wider rounded-2xl shadow-[0_20px_40px_-15px_rgba(16,185,129,0.4)] transition-all hover:-translate-y-1 active:scale-95"
                             >
                                 <Link href="/auth/signup" className="flex items-center justify-center gap-3">
                                     <span>Começar Agora</span>
@@ -65,13 +65,13 @@ export function HeroSection() {
 
                         <div className="flex flex-wrap items-center justify-center lg:justify-start gap-6 opacity-60">
                             <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-zinc-400">
-                                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" /> Montagem em 2min
+                                <CheckCircle2 className="w-3.5 h-3.5 text-orange-500" /> Montagem em 2min
                             </div>
                             <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-zinc-400">
-                                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" /> Grátis até 5 alunos
+                                <CheckCircle2 className="w-3.5 h-3.5 text-orange-500" /> Grátis até 5 alunos
                             </div>
                             <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-zinc-400">
-                                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" /> Suporte VIP
+                                <CheckCircle2 className="w-3.5 h-3.5 text-orange-500" /> Suporte VIP
                             </div>
                         </div>
                     </div>
@@ -80,7 +80,7 @@ export function HeroSection() {
                 {/* Right Content: The Visual Proof */}
                 <div className="w-full relative group perspective-1000 mb-0 lg:mb-0">
                     {/* Background Shine */}
-                    <div className="absolute -inset-20 bg-emerald-500/10 rounded-full blur-[120px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none" />
+                    <div className="absolute -inset-20 bg-orange-500/10 rounded-full blur-[120px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none" />
 
                     {/* The Laptop */}
                     <div className="relative animate-float scale-90 sm:scale-100 transition-transform duration-700 hover:scale-[1.02]">
@@ -118,13 +118,13 @@ export function HeroSection() {
                     <div className="absolute -top-12 -left-4 p-4 bg-zinc-900/80 backdrop-blur-xl border border-white/5 rounded-2xl shadow-2xl animate-float-slow hidden md:block">
                         <div className="flex flex-col gap-1">
                             <span className="text-[10px] font-bold text-zinc-500 uppercase">Faturamento Mensal</span>
-                            <span className="text-lg font-black text-emerald-500 italic">R$ 12.450,00</span>
+                            <span className="text-lg font-black text-orange-500 italic">R$ 12.450,00</span>
                         </div>
                     </div>
 
-                    <div className="absolute -bottom-6 -right-4 p-4 bg-emerald-500/10 backdrop-blur-xl border border-emerald-500/20 rounded-2xl shadow-2xl animate-float hidden md:block delay-300">
+                    <div className="absolute -bottom-6 -right-4 p-4 bg-orange-500/10 backdrop-blur-xl border border-orange-500/20 rounded-2xl shadow-2xl animate-float hidden md:block delay-300">
                         <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center">
+                            <div className="w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center">
                                 <Users className="w-4 h-4 text-zinc-950" />
                             </div>
                             <div className="flex flex-col">
@@ -159,7 +159,7 @@ function NumberItem({ label, value, icon: Icon }: { label: string, value: string
     return (
         <div className="flex flex-col items-center justify-center gap-2 group transition-all duration-300 hover:transform hover:scale-105">
             <div className="p-2 rounded-xl bg-zinc-900 border border-zinc-800 group-hover:border-emerald-500/30 transition-colors">
-                <Icon className="w-5 h-5 text-emerald-500" />
+                <Icon className="w-5 h-5 text-orange-500" />
             </div>
             <p className="text-4xl md:text-5xl font-black text-white italic tracking-tighter group-hover:text-emerald-400 transition-colors">{value}</p>
             <p className="text-[10px] uppercase font-bold text-zinc-500 tracking-widest text-center">{label}</p>

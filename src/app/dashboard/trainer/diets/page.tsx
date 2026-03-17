@@ -46,7 +46,7 @@ export default async function TrainerDietsPage() {
                 </div>
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto pb-4">
                     {!betaTesterMode && (
-                        <Button asChild className="h-11 px-5 bg-emerald-500 border-emerald-400 text-zinc-950 hover:bg-emerald-400 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2 w-full sm:w-auto">
+                        <Button asChild className="h-11 px-5 border-emerald-500/20 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/30 hover:border-emerald-500/50 hover:text-emerald-400 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border w-full sm:w-auto flex items-center justify-center gap-2">
                             <Link href="/dashboard/trainer/import-pdf">
                                 <FileUp className="w-4 h-4" />
                                 Importar PDF
@@ -57,7 +57,7 @@ export default async function TrainerDietsPage() {
                         title="Novo Modelo de Dieta"
                         description="Crie um template de dieta (Cutting, Bulking, etc) para atribuir aos seus alunos."
                         trigger={
-                            <Button className="h-11 px-5 bg-gradient-to-r from-emerald-600 to-emerald-400 hover:from-emerald-500 hover:to-emerald-300 text-zinc-950 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2 w-full sm:w-auto shadow-emerald-500/20 active:scale-95 italic">
+                            <Button className="h-11 px-5 border-emerald-500/20 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/30 hover:border-emerald-500/50 hover:text-emerald-400 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border w-full sm:w-auto flex items-center justify-center gap-2 active:scale-95 italic">
                                 <Plus className="w-4 h-4" />
                                 Criar Manualmente
                             </Button>
@@ -68,7 +68,7 @@ export default async function TrainerDietsPage() {
                         actionType="create-manual-diet"
                         successMessage="Template de dieta criado!"
                         footerLabel="Salvar Template"
-                        colorScheme="emerald"
+                        colorScheme="orange"
                     />
                 </div>
             </div>
@@ -80,11 +80,11 @@ export default async function TrainerDietsPage() {
                         const uniqueDays = (Array.from(new Set(assignedDays)) as number[]).sort((a, b) => a - b)
 
                         return (
-                            <Card key={diet.id} className="bg-zinc-900/50 border-zinc-800 text-zinc-100 hover:border-emerald-500/30 transition-all group rounded-[2rem] overflow-hidden flex flex-col">
+                            <Card key={diet.id} className="bg-zinc-900/50 border-zinc-800 text-zinc-100 transition-all group rounded-[2rem] overflow-hidden flex flex-col">
                                 <CardHeader className="p-6 pb-4">
                                     <div className="flex items-start justify-between">
-                                        <div className="bg-zinc-800 p-2 rounded-lg text-zinc-400 group-hover:text-emerald-500 transition-colors">
-                                            <Utensils className="w-5 h-5 text-emerald-500" />
+                                        <div className="bg-zinc-800 p-2 rounded-lg text-zinc-400 group-hover:text-orange-500 transition-colors">
+                                            <Utensils className="w-5 h-5 text-orange-500" />
                                         </div>
                                         <div className="flex gap-1">
                                             <DuplicateButton id={diet.id} type="diet" />
@@ -92,7 +92,6 @@ export default async function TrainerDietsPage() {
                                                 id={diet.id}
                                                 actionType="diet"
                                                 itemName={diet.name}
-                                                className="text-zinc-600 hover:text-red-400 hover:bg-red-400/10 rounded-xl transition-all"
                                             />
                                         </div>
                                     </div>
@@ -106,7 +105,7 @@ export default async function TrainerDietsPage() {
                                     {uniqueDays.length > 0 ? (
                                         <div className="flex flex-wrap gap-1.5 mb-6">
                                             {uniqueDays.map((day) => (
-                                                <span key={day} className="flex items-center shrink-0 gap-1 px-2 py-1 bg-emerald-500/10 text-emerald-400 text-[9px] font-black uppercase rounded-[0.5rem] border border-emerald-500/20">
+                                                <span key={day} className="flex items-center shrink-0 gap-1 px-2 py-1 bg-orange-500/10 text-orange-400 text-[9px] font-black uppercase rounded-[0.5rem] border border-orange-500/20">
                                                     <Calendar className="w-2.5 h-2.5" />
                                                     {dayNamesShort[day]}
                                                 </span>
@@ -125,25 +124,10 @@ export default async function TrainerDietsPage() {
                                         <span>{new Date(diet.created_at).toLocaleDateString('pt-BR')}</span>
                                     </div>
 
-                                    {/* Action buttons */}
-                                    <div className="mt-auto pt-6 border-t border-zinc-800/50 flex items-center gap-2">
-                                        <UnifiedAssignDialog
-                                            itemId={diet.id}
-                                            students={students}
-                                            type="diet"
-                                            title="Atribuir Dieta"
-                                            description="Escolha um aluno e os dias da semana para este plano alimentar."
-                                            colorScheme="emerald"
-                                            trigger={
-                                                <Button className="flex-1 min-w-0 h-9 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-1.5 px-3">
-                                                    <Calendar className="w-3.5 h-3.5" />
-                                                    <span className="truncate">Atribuir</span>
-                                                </Button>
-                                            }
-                                        />
-                                        <Button asChild variant="outline" className="flex-1 min-w-0 h-9 bg-zinc-800 border-zinc-700 text-zinc-100 hover:bg-zinc-700 flex items-center justify-center gap-1.5 rounded-xl font-black text-[10px] uppercase italic tracking-widest border-white/5 px-3">
+                                    <div className="mt-auto pt-6 border-t border-zinc-800/50 flex items-center justify-center">
+                                        <Button asChild variant="outline" className="w-full h-11 bg-zinc-800 border-zinc-700 text-zinc-100 hover:bg-zinc-700 flex items-center justify-center gap-1.5 rounded-xl font-black text-[10px] uppercase italic tracking-widest border-white/5 px-6">
                                             <Link href={`/dashboard/trainer/diets/${diet.id}`}>
-                                                <span className="truncate">Editar</span>
+                                                Editar Dieta
                                             </Link>
                                         </Button>
                                     </div>
@@ -164,7 +148,7 @@ export default async function TrainerDietsPage() {
                                 </p>
                             </div>
                             {!betaTesterMode && (
-                                <Button asChild className="bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold rounded-xl">
+                                <Button asChild className="bg-orange-500 hover:bg-orange-400 text-zinc-950 font-bold rounded-xl">
                                     <Link href="/dashboard/trainer/import-pdf">Importar Primeira Dieta</Link>
                                 </Button>
                             )}

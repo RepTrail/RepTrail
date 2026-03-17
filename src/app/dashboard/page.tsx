@@ -10,21 +10,28 @@ export default async function DashboardPage() {
         redirect('/auth/login')
     }
 
-    // Read from profiles to get is_affiliate (not available in user_metadata for existing users)
     const { data: profile } = await supabase
         .from('profiles')
         .select('role, is_affiliate')
         .eq('id', user.id)
         .single()
 
-    // Redirect based on role
-    // Affiliates should access their dashboard via sidebar link, not forced redirect
+    // Use user_metadata as fallback if DB role is null (edge case for some accounts)
+    const effectiveRole = profile?.role || user.user_metadata?.role
 
-    if (profile?.role === 'admin') {
+    // Auto-fix if role is missing from DB
+    if (!profile?.role && user.user_metadata?.role) {
+        await supabase
+            .from('profiles')
+            .update({ role: user.user_metadata.role })
+            .eq('id', user.id)
+    }
+
+    if (effectiveRole === 'admin') {
         redirect('/admin/dashboard')
     }
 
-    if (profile?.role === 'trainer') {
+    if (effectiveRole === 'trainer') {
         redirect('/dashboard/trainer')
     }
 

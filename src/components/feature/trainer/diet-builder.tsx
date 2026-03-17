@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { UnifiedAssignDialog } from "@/components/feature/shared/unified-assign-dialog"
 import {
     Plus,
     Trash2,
@@ -20,7 +21,8 @@ import {
     Repeat2,
     ListRestart,
     Save,
-    GripVertical
+    GripVertical,
+    Calendar
 } from "lucide-react"
 import { cn } from '@/lib/utils'
 import {
@@ -71,6 +73,7 @@ interface DietBuilderProps {
         name: string
         meals: Meal[]
     }
+    students?: any[]
     backHref?: string
 }
 
@@ -218,7 +221,7 @@ function MealItemRow({
                         <Input
                             value={foodName}
                             onChange={(e) => handleChange(setFoodName, e.target.value)}
-                            className="bg-zinc-900 border-zinc-700 text-sm h-9 text-white focus:border-green-500/50 rounded-xl w-full"
+                            className="bg-zinc-900 border-zinc-700 text-sm h-9 text-white focus:border-orange-500/50 rounded-xl w-full"
                         />
                     </div>
                     <div className="col-span-4 lg:col-span-2 space-y-1.5">
@@ -227,7 +230,7 @@ function MealItemRow({
                             value={quantity}
                             onChange={(e) => handleChange(setQuantity, e.target.value)}
                             placeholder="Ex: 100g"
-                            className="bg-zinc-900 border-zinc-700 text-sm h-9 text-center text-white focus:border-green-500/50 rounded-xl"
+                            className="bg-zinc-900 border-zinc-700 text-sm h-9 text-center text-white focus:border-orange-500/50 rounded-xl"
                         />
                     </div>
                     <div className="col-span-8 lg:col-span-3 grid grid-cols-3 gap-1.5">
@@ -252,13 +255,13 @@ function MealItemRow({
                             />
                         </div>
                         <div className="space-y-1.5">
-                            <Label className="text-[10px] text-yellow-500/50 uppercase font-bold tracking-tight">Gord</Label>
+                            <Label className="text-[10px] text-orange-500/50 uppercase font-bold tracking-tight">Gord</Label>
                             <Input
                                 type="number"
                                 step="0.1"
                                 value={fat}
                                 onChange={(e) => handleChange(setFat, parseFloat(e.target.value) || 0)}
-                                className="bg-zinc-900 border-zinc-700 text-xs h-9 text-center text-yellow-500 font-medium rounded-xl px-1"
+                                className="bg-zinc-900 border-zinc-700 text-xs h-9 text-center text-orange-500 font-medium rounded-xl px-1"
                             />
                         </div>
                     </div>
@@ -268,7 +271,7 @@ function MealItemRow({
                             size="icon"
                             disabled={loading.estimate || !foodName}
                             onClick={handleEstimateMain}
-                            className="text-zinc-600 hover:text-emerald-400 h-9 w-8 hover:bg-emerald-400/5 border border-zinc-800 rounded-xl"
+                            className="text-zinc-600 hover:text-orange-400 h-9 w-8 hover:bg-orange-400/5 border border-zinc-800 rounded-xl"
                             title="Calcular macros com IA"
                         >
                             {loading.estimate ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
@@ -300,7 +303,7 @@ function MealItemRow({
                                 "h-9 w-8 border transition-all rounded-xl",
                                 isSaved
                                     ? "bg-zinc-800 text-zinc-500 border-zinc-700 opacity-50 cursor-not-allowed"
-                                    : "bg-orange-500 text-zinc-950 border-orange-400 hover:bg-orange-400 animate-pulse shadow-[0_0_15px_rgba(249,115,22,0.3)]"
+                                    : "bg-orange-500 text-zinc-950 border-orange-400 hover:bg-orange-400"
                             )}
                             title="Salvar alterações"
                         >
@@ -312,7 +315,7 @@ function MealItemRow({
 
             {/* Substitution Row */}
             {hasSubstitute && (
-                <div className=" pb-4 pt-1 grid grid-cols-1 lg:grid-cols-12 gap-4 items-end bg-orange-500/5 border-t border-orange-500/10 transition-all duration-300">
+                <div className=" pb-4 px-4 pt-1 grid grid-cols-1 lg:grid-cols-12 gap-4 items-end bg-orange-500/5 border-t border-orange-500/10 transition-all duration-300">
                     <div className="lg:col-span-3 space-y-1.5">
                         <div className="flex items-center gap-2 mb-1">
                             <div className="w-1.5 h-1.5 rounded-full bg-orange-500" />
@@ -356,13 +359,13 @@ function MealItemRow({
                             />
                         </div>
                         <div className="space-y-1.5">
-                            <Label className="text-[10px] text-yellow-500/50 uppercase font-bold tracking-tight text-center">Gord</Label>
+                            <Label className="text-[10px] text-orange-500/50 uppercase font-bold tracking-tight text-center">Gord</Label>
                             <Input
                                 type="number"
                                 step="0.1"
                                 value={subFat}
                                 onChange={(e) => handleChange(setSubFat, parseFloat(e.target.value) || 0)}
-                                className="bg-zinc-950 border-zinc-700 text-xs h-9 text-center text-yellow-500/80 font-medium"
+                                className="bg-zinc-950 border-zinc-700 text-xs h-9 text-center text-orange-500/80 font-medium"
                             />
                         </div>
                     </div>
@@ -402,10 +405,10 @@ function MealItemRow({
                             onClick={handleSave}
                             disabled={loading.save || (isSaved && !loading.save)}
                             className={cn(
-                                "h-9 w-9 border transition-all shadow-lg",
+                                "h-9 w-9 border transition-all shadow-none",
                                 isSaved
                                     ? "bg-zinc-800/50 text-zinc-600 border-zinc-800"
-                                    : "bg-emerald-500 text-white border-emerald-400 hover:bg-emerald-400"
+                                    : "bg-orange-500 text-white border-orange-400 hover:bg-orange-400"
                             )}
                             title="Salvar Alterações"
                         >
@@ -418,7 +421,7 @@ function MealItemRow({
     )
 }
 
-export function DietBuilder({ diet, backHref = '/dashboard/trainer/diets' }: DietBuilderProps) {
+export function DietBuilder({ diet, students = [], backHref = '/dashboard/trainer/diets' }: DietBuilderProps) {
     const [loadingMap, setLoadingMap] = useState<Record<string, boolean>>({})
     const [newMealName, setNewMealName] = useState('')
     const [newMealTime, setNewMealTime] = useState('')
@@ -618,7 +621,7 @@ export function DietBuilder({ diet, backHref = '/dashboard/trainer/diets' }: Die
                                 <Button
                                     onClick={handleSaveName}
                                     disabled={isSavingName || !editName.trim()}
-                                    className="h-9  bg-green-600 hover:bg-green-500 text-white font-black uppercase tracking-widest text-[10px] rounded-xl shadow-lg shadow-green-500/20"
+                                    className="h-9  bg-orange-500 hover:bg-orange-500 text-white font-black uppercase tracking-widest text-[10px] rounded-xl shadow-none"
                                 >
                                     {isSavingName ? <Loader2 className="w-3 h-3 animate-spin" /> : <><Check className="w-3 h-3 mr-1.5" />Salvar</>}
                                 </Button>
@@ -637,11 +640,11 @@ export function DietBuilder({ diet, backHref = '/dashboard/trainer/diets' }: Die
                             className="group flex items-center gap-3 pb-4 cursor-pointer w-fit"
                             onClick={() => setIsEditingName(true)}
                         >
-                            <h1 className="text-3xl font-bold text-white font-sans group-hover:text-green-400 border-b border-transparent group-hover:border-green-400/40 pb-0.5">
+                            <h1 className="text-3xl font-bold text-white font-sans group-hover:text-orange-400 border-b border-transparent group-hover:border-orange-400/40 pb-0.5">
                                 {editName}
                             </h1>
                             <button
-                                className="p-2 rounded-xl text-zinc-600 hover:text-green-400 hover:bg-green-400/10 border border-transparent hover:border-green-400/20"
+                                className="p-2 rounded-xl text-zinc-600 hover:text-orange-400 hover:bg-orange-400/10 border border-transparent hover:border-orange-400/20"
                                 title="Editar nome da dieta"
                             >
                                 <Pencil className="w-4 h-4" />
@@ -663,7 +666,7 @@ export function DietBuilder({ diet, backHref = '/dashboard/trainer/diets' }: Die
                         </div>
                         <div className="bg-zinc-900/50 border border-zinc-800 p-3 rounded-xl min-w-[80px] text-center">
                             <span className="block text-[10px] text-zinc-500 uppercase font-bold mb-1">Gordura</span>
-                            <span className="text-xl font-bold text-yellow-500">{Math.round(totals.f)}<small className="text-[10px] ml-0.5">g</small></span>
+                            <span className="text-xl font-bold text-orange-500">{Math.round(totals.f)}<small className="text-[10px] ml-0.5">g</small></span>
                         </div>
                         <div className="bg-blue-500/10 border border-blue-500/20 p-3 rounded-xl min-w-[100px] text-center shadow-[0_0_15px_-5px_rgba(59,130,246,0.2)]">
                             <span className="block text-[10px] text-blue-400 uppercase font-bold mb-1">Total Kcal</span>
@@ -671,20 +674,37 @@ export function DietBuilder({ diet, backHref = '/dashboard/trainer/diets' }: Die
                         </div>
                     </div>
 
-                    <Button
-                        onClick={handleEstimateAll}
-                        disabled={isEstimatingAll}
-                        className="w-full sm:w-auto h-[68px] px-6 bg-emerald-600/10 hover:bg-emerald-600/20 text-emerald-500 border border-emerald-500/20 rounded-xl font-black uppercase tracking-widest text-[10px] flex flex-col items-center justify-center gap-1 group shadow-xl"
-                    >
-                        {isEstimatingAll ? (
-                            <Loader2 className="w-5 h-5 animate-spin" />
-                        ) : (
-                            <>
-                                <Sparkles className="w-5 h-5" />
-                                <span>Calcular Tudo</span>
-                            </>
-                        )}
-                    </Button>
+                    <div className="flex items-center gap-3">
+                        <UnifiedAssignDialog
+                            itemId={diet.id}
+                            students={students}
+                            type="diet"
+                            title="Atribuir Dieta"
+                            description="Escolha um aluno e os dias da semana para este plano alimentar."
+                            colorScheme="orange"
+                            trigger={
+                                <Button className="h-[68px] px-8 bg-orange-500 hover:bg-orange-400 text-zinc-950 rounded-xl font-black uppercase tracking-widest text-[10px] shadow-none flex flex-col items-center justify-center gap-1 transition-all active:scale-95 italic">
+                                    <Calendar className="w-5 h-5" />
+                                    <span>Atribuir</span>
+                                </Button>
+                            }
+                        />
+
+                        <Button
+                            onClick={handleEstimateAll}
+                            disabled={isEstimatingAll}
+                            className="w-full sm:w-auto h-[68px] px-6 bg-orange-600/10 hover:bg-orange-600/20 text-orange-500 border border-orange-500/20 rounded-xl font-black uppercase tracking-widest text-[10px] flex flex-col items-center justify-center gap-1 group shadow-none"
+                        >
+                            {isEstimatingAll ? (
+                                <Loader2 className="w-5 h-5 animate-spin" />
+                            ) : (
+                                <>
+                                    <Sparkles className="w-5 h-5" />
+                                    <span>Calcular Tudo</span>
+                                </>
+                            )}
+                        </Button>
+                    </div>
                 </div>
             </div>
 
@@ -711,7 +731,7 @@ export function DietBuilder({ diet, backHref = '/dashboard/trainer/diets' }: Die
                                 <div className="p-4 bg-zinc-900/40 border-b border-zinc-800/50 flex items-center justify-between">
                                     <div className="flex items-center gap-4">
                                         <div className="bg-zinc-800 p-2.5 rounded-xl border border-zinc-700/50 cursor-move">
-                                            <Utensils className="w-4 h-4 text-green-400" />
+                                            <Utensils className="w-4 h-4 text-orange-400" />
                                         </div>
                                         <div className="space-y-0.5">
                                             <div className="flex items-center gap-3 pb-4">
@@ -731,7 +751,7 @@ export function DietBuilder({ diet, backHref = '/dashboard/trainer/diets' }: Die
                                         <div className="hidden md:flex gap-3 mr-4 text-[10px] uppercase font-bold">
                                             <span className="text-blue-400/80">P: {Math.round(mealP)}g</span>
                                             <span className="text-orange-400/80">C: {Math.round(mealC)}g</span>
-                                            <span className="text-yellow-500/80">G: {Math.round(mealF)}g</span>
+                                            <span className="text-orange-500/80">G: {Math.round(mealF)}g</span>
                                             {loadingMap[`reorder-items-${meal.id}`] && <Loader2 className="w-3 h-3 animate-spin text-zinc-600" />}
                                         </div>
                                         <Button

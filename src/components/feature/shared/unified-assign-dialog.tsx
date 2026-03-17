@@ -88,31 +88,31 @@ export function UnifiedAssignDialog({
             btnGradient: 'from-orange-600 to-orange-400',
             btnHover: 'hover:from-orange-500 hover:to-orange-300',
             btnShadow: 'shadow-orange-500/20',
-            daySelected: 'bg-orange-500 text-zinc-950 shadow-orange-500/30'
+            daySelected: 'bg-orange-500 text-zinc-950 shadow-none'
         },
         diet: {
-            color: 'emerald',
-            primary: 'emerald-500',
-            btnGradient: 'from-emerald-600 to-emerald-400',
-            btnHover: 'hover:from-emerald-500 hover:to-emerald-300',
-            btnShadow: 'shadow-emerald-500/20',
-            daySelected: 'bg-emerald-500 text-zinc-950 shadow-emerald-500/30'
+            color: 'orange',
+            primary: 'orange-500',
+            btnGradient: 'from-orange-600 to-orange-400',
+            btnHover: 'hover:from-orange-500 hover:to-orange-300',
+            btnShadow: 'shadow-none',
+            daySelected: 'bg-orange-500 text-zinc-950 shadow-none'
         },
         cardio: {
             color: 'orange',
             primary: 'orange-500',
             btnGradient: 'from-orange-600 to-orange-400',
             btnHover: 'hover:from-orange-500 hover:to-orange-300',
-            btnShadow: 'shadow-orange-500/20',
-            daySelected: 'bg-orange-500 text-zinc-950 shadow-orange-500/30'
+            btnShadow: 'shadow-none',
+            daySelected: 'bg-orange-500 text-zinc-950 shadow-none'
         },
         ergogenic: {
-            color: 'emerald',
-            primary: 'emerald-500',
-            btnGradient: 'from-emerald-600 to-emerald-400',
-            btnHover: 'hover:from-emerald-500 hover:to-emerald-300',
-            btnShadow: 'shadow-emerald-500/20',
-            daySelected: 'bg-emerald-500 text-zinc-950 shadow-emerald-500/30'
+            color: 'orange',
+            primary: 'orange-500',
+            btnGradient: 'from-orange-600 to-orange-400',
+            btnHover: 'hover:from-orange-500 hover:to-orange-300',
+            btnShadow: 'shadow-none',
+            daySelected: 'bg-orange-500 text-zinc-950 shadow-none'
         }
     }
 
@@ -136,7 +136,8 @@ export function UnifiedAssignDialog({
 
     const toggleDay = (day: number) => {
         if (type === 'workout') {
-            setSelectedDays([day])
+            // Se clicar no já selecionado, deseleciona (opcional, mas evita confusão)
+            setSelectedDays(prev => prev.includes(day) ? [] : [day])
         } else {
             setSelectedDays(prev =>
                 prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day].sort()
@@ -160,7 +161,7 @@ export function UnifiedAssignDialog({
 
             if (type === 'cardio') {
                 const { assignCardioToStudent } = await import('@/actions/student-content-actions')
-                res = await assignCardioToStudent(selectedItem, {
+                res = await assignCardioToStudent(selectedItem, selectedStudent, {
                     daysOfWeek: selectedDays
                 })
             } else if (type === 'workout') {
@@ -171,7 +172,7 @@ export function UnifiedAssignDialog({
                 res = await assignDiet(selectedItem, selectedStudent, selectedDays)
             } else if (type === 'ergogenic') {
                 const { assignErgogenic } = await import('@/actions/student-content-actions')
-                res = await assignErgogenic(selectedItem, selectedDays)
+                res = await assignErgogenic(selectedItem, selectedStudent, selectedDays)
             }
 
             if (res?.success || !res?.error) {
@@ -200,7 +201,7 @@ export function UnifiedAssignDialog({
             <DialogContent className="sm:max-w-[450px]">
                 <DialogHeader className="relative">
                     <DialogTitle className="text-xl sm:text-3xl font-black italic uppercase tracking-tighter leading-tight">{title}</DialogTitle>
-                    <DialogDescription className="text-zinc-500 text-[10px] font-black uppercase tracking-[0.2em] mt-3">
+                    <DialogDescription className="text-zinc-500 text-[10px] font-black mt-3">
                         {description}
                     </DialogDescription>
                 </DialogHeader>
@@ -210,12 +211,12 @@ export function UnifiedAssignDialog({
                         <div className="space-y-4">
                             <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 ml-1">Selecione o Item</Label>
                             <Select onValueChange={setSelectedItem} value={selectedItem}>
-                                <SelectTrigger className={cn("w-full bg-zinc-900/50 border-zinc-800 !h-14 rounded-2xl hover:border-zinc-700 transition-all font-bold ", config.color === 'orange' ? 'focus:ring-orange-500/20' : 'focus:ring-emerald-500/20')}>
+                                <SelectTrigger className={cn("w-full bg-zinc-900/50 border-zinc-800 !h-14 rounded-2xl hover:border-zinc-700 transition-all font-bold", config.color === 'emerald' ? "focus:ring-emerald-500/20" : "focus:ring-orange-500/20")}>
                                     <SelectValue placeholder="Escolha um protocolo..." />
                                 </SelectTrigger>
-                                <SelectContent position="popper" className="bg-zinc-900 border-zinc-800 text-white rounded-2xl p-2 shadow-2xl border-white/5 animate-in fade-in zoom-in duration-200">
+                                <SelectContent position="popper" className="bg-zinc-900 border-zinc-800 text-white rounded-2xl p-2 shadow-2xl border-white/5 animate-in fade-in zoom-in duration-200 z-[100001]">
                                     {items.map((i) => (
-                                        <SelectItem key={i.id} value={i.id} className={cn("rounded-xl px-3 py-2.5 font-bold transition-all mb-1 last:mb-0", config.color === 'orange' ? 'focus:bg-orange-500/10 focus:text-orange-500' : 'focus:bg-emerald-500/10 focus:text-emerald-500')}>
+                                        <SelectItem key={i.id} value={i.id} className={cn("rounded-xl px-3 py-2.5 font-bold transition-all mb-1 last:mb-0", config.color === 'emerald' ? "focus:bg-emerald-500/10 focus:text-emerald-500" : "focus:bg-orange-500/10 focus:text-orange-500")}>
                                             {i.name}
                                         </SelectItem>
                                     ))}
@@ -224,23 +225,34 @@ export function UnifiedAssignDialog({
                         </div>
                     )}
 
-                    {students.length > 0 && !fixedStudentId && (
-                        <div className="space-y-3">
-                            <Label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-1">Selecione o Aluno</Label>
-                            <Select onValueChange={setSelectedStudent} value={selectedStudent}>
-                                <SelectTrigger className={cn("w-full bg-zinc-900/50 border-zinc-800 !h-14 rounded-2xl hover:border-zinc-700 transition-all font-bold ", config.color === 'orange' ? 'focus:ring-orange-500/20' : 'focus:ring-emerald-500/20')}>
-                                    <SelectValue placeholder="Escolha um aluno da lista..." />
+                {!fixedStudentId && (
+                    <div className="space-y-3">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-1">Para qual aluno?</Label>
+                        {(students || []).length > 0 ? (
+                            <Select value={selectedStudent} onValueChange={setSelectedStudent}>
+                                <SelectTrigger className={cn("w-full h-14 bg-zinc-900 border-zinc-800 rounded-2xl text-white font-bold text-xs ring-offset-zinc-950 transition-all flex items-center justify-between px-4", config.color === 'emerald' ? "focus:ring-emerald-500/50" : "focus:ring-orange-500/50")}>
+                                    <SelectValue placeholder="Selecione o aluno" />
                                 </SelectTrigger>
-                                <SelectContent position="popper" className="bg-zinc-900 border-zinc-800 text-white rounded-2xl p-2 shadow-2xl border-white/5 animate-in fade-in zoom-in duration-200">
-                                    {students.map((s) => (
-                                        <SelectItem key={s.student_id} value={s.student_id} className={cn("rounded-xl px-3 py-2.5 font-bold transition-all mb-1 last:mb-0", config.color === 'orange' ? 'focus:bg-orange-500/10 focus:text-orange-500' : 'focus:bg-emerald-500/10 focus:text-emerald-500')}>
-                                            {s.student?.full_name || s.student?.email}
+                                <SelectContent className="bg-zinc-900 border-zinc-800 rounded-2xl z-[100001]" position="popper" sideOffset={5}>
+                                    {(students || []).map((s) => (
+                                        <SelectItem
+                                            key={s.student_id}
+                                            value={s.student_id}
+                                            className={cn("text-zinc-300 rounded-xl py-3 focus:bg-zinc-800 focus:text-white", config.color === 'emerald' ? "focus:bg-emerald-500/10 focus:text-white" : "focus:bg-orange-500/10 focus:text-white")}
+                                        >
+                                            <span className="font-bold text-xs uppercase tracking-tight">{s.student?.full_name || 'Aluno sem nome'}</span>
                                         </SelectItem>
                                     ))}
                                 </SelectContent>
                             </Select>
-                        </div>
-                    )}
+                        ) : (
+                            <div className="p-4 rounded-2xl border border-dashed border-zinc-800 bg-zinc-900/30 flex flex-col items-center justify-center gap-2">
+                                <span className="text-zinc-500 text-[10px] uppercase font-black tracking-widest">Nenhum aluno ativo encontrado</span>
+                                <p className="text-[9px] text-zinc-600 text-center px-4">Convide seus alunos para que eles apareçam nesta lista.</p>
+                            </div>
+                        )}
+                    </div>
+                )}
 
 
 
@@ -276,7 +288,7 @@ export function UnifiedAssignDialog({
                             onClick={handleAssign}
                             disabled={loading}
                             className={cn(
-                                "w-full h-14 sm:h-16 rounded-2xl font-black uppercase italic tracking-widest transition-all active:scale-[0.98] shadow-2xl group overflow-hidden relative",
+                                "w-full h-14 sm:h-16 rounded-2xl font-black uppercase italic tracking-widest transition-all active:scale-[0.98] shadow-none group overflow-hidden relative",
                                 "bg-gradient-to-r text-zinc-950",
                                 config.btnGradient,
                                 config.btnHover,

@@ -26,9 +26,10 @@ export default async function DashboardLayout({
     // Check if user is a student and if they have completed onboarding
     // to avoid flashing the terms modal before the redirect to /onboarding
     const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
+    const effectiveRole = profile?.role || user.user_metadata?.role
     let skipTerms = false
 
-    if (profile?.role === 'student') {
+    if (effectiveRole === 'student') {
         const { data: details } = await supabase.from('student_details').select('id').eq('id', user.id).single()
         if (!details) {
             skipTerms = true

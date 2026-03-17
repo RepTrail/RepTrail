@@ -18,7 +18,7 @@ export function RankingHeader() {
             </p>
         </div>
             <Link href="/buscar-personal" className="w-full md:w-fit">
-                <Button className="w-full md:w-fit h-auto min-h-[3.5rem] py-4 px-8 rounded-2xl bg-white hover:bg-zinc-200 text-zinc-950 font-black uppercase italic tracking-wide group shadow-xl transition-all active:scale-95">
+                <Button className="w-full md:w-fit h-auto min-h-[3.5rem] py-4 px-8 rounded-2xl bg-white hover:bg-zinc-200 text-zinc-950 font-black uppercase italic tracking-wide group shadow-none transition-all active:scale-95 border border-zinc-200">
                     Ver Todos os Profissionais
                     <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>

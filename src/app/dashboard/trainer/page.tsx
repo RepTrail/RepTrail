@@ -75,8 +75,8 @@ export default async function TrainerDashboard() {
     const tierColors: Record<string, string> = {
         on_demand: 'text-zinc-500',
         start: 'text-blue-500',
-        pro: 'text-emerald-500',
-        elite: 'text-amber-500'
+        pro: 'text-orange-500',
+        elite: 'text-orange-500'
     }
     const tierIcons: Record<string, any> = {
         on_demand: Activity,
@@ -128,7 +128,7 @@ export default async function TrainerDashboard() {
                     value={`R$ ${monthlyRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} `}
                     icon={<DollarSign className="w-5 h-5" />}
                     description={`Total Est.: R$ ${totalRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
-                    accentColor="text-emerald-500"
+                    accentColor="text-orange-500"
                     trend="TAXA ZERO 🔥"
                 />
                 <MetricCard
@@ -164,7 +164,7 @@ export default async function TrainerDashboard() {
                         <QuickActionCard
                             title="Plano Alimentar"
                             description="Crie e ajuste dietas para seus alunos."
-                            icon={<Sparkles className="w-6 h-6 text-emerald-500" />}
+                            icon={<Sparkles className="w-6 h-6 text-orange-500" />}
                             href="/dashboard/trainer/diets"
                             label="Acessar Dietas"
                         />
@@ -177,7 +177,7 @@ export default async function TrainerDashboard() {
                         <TrainerCodeCard initialCode={profile?.trainer_code} />
 
                         {profile?.is_affiliate ? (
-                            <Button asChild variant="ghost" className="w-full text-amber-500/70 hover:text-amber-400 hover:bg-amber-500/5 text-[10px] uppercase font-bold tracking-widest h-9 transition-all duration-200 border border-amber-500/10 rounded-xl">
+                            <Button asChild variant="ghost" className="w-full text-orange-500/70 hover:text-orange-400 hover:bg-orange-500/5 text-[10px] uppercase font-bold tracking-widest h-9 transition-all duration-200 border border-orange-500/10 rounded-xl">
                                 <Link href="/dashboard/affiliate">
                                     ⭐ Meu Painel de Afiliado
                                 </Link>
@@ -208,8 +208,8 @@ export default async function TrainerDashboard() {
 
                     {!betaTesterMode && (
                         <Card className="bg-zinc-950 border-zinc-800 shadow-2xl rounded-2xl overflow-hidden group">
-                            <CardHeader className="bg-green-500/5 border-b border-green-500/10 py-4">
-                                <CardTitle className="text-sm font-bold text-green-500 flex items-center gap-2">
+                            <CardHeader className="bg-orange-500/5 border-b border-orange-500/10 py-4">
+                                <CardTitle className="text-sm font-bold text-orange-500 flex items-center gap-2">
                                     <FileUp className="w-4 h-4" />
                                     Importação Inteligente
                                 </CardTitle>
@@ -218,7 +218,7 @@ export default async function TrainerDashboard() {
                                 <p className="text-zinc-400 text-xs leading-relaxed">
                                     Tem uma planilha ou PDF? Nossa IA pode ler o arquivo e criar o treino ou dieta em segundos.
                                 </p>
-                                <Button asChild className="w-full bg-emerald-500 border border-emerald-400 text-zinc-950 hover:bg-emerald-400 rounded-xl h-11 font-bold shadow-lg shadow-emerald-500/10 transition-all active:scale-[0.98]">
+                                <Button asChild className="w-full bg-orange-500 border border-orange-400 text-zinc-950 hover:bg-orange-400 rounded-xl h-11 font-bold shadow-lg shadow-orange-500/10 transition-all active:scale-[0.98]">
                                     <Link href="/dashboard/trainer/import-pdf">
                                         Importar via PDF
                                     </Link>

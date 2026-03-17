@@ -37,7 +37,7 @@ export default async function TrainerErgogenicsHubPage() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-2 border-b border-zinc-800/50">
                 <div className="space-y-2 sm:space-y-5">
                     <h1 className="text-4xl font-black tracking-tight text-white font-sans italic uppercase flex items-center gap-3 pb-4">
-                        <FlaskConical className="w-8 h-8 text-emerald-500" />
+                        <FlaskConical className="w-8 h-8 text-orange-500" />
                         Ergogênicos
                     </h1>
                     <p className="text-zinc-500 text-sm font-medium">
@@ -52,14 +52,14 @@ export default async function TrainerErgogenicsHubPage() {
                         <Card key={item.id} className="bg-zinc-900/40 border-zinc-800/50 hover:border-zinc-700 transition-all group overflow-hidden rounded-3xl">
                             <CardContent className="p-6 flex items-center justify-between">
                                 <div className="flex items-center gap-4">
-                                    <Avatar className="h-12 w-12 border-2 border-zinc-800 group-hover:border-emerald-500/30 transition-all">
+                                    <Avatar className="h-12 w-12 border-2 border-zinc-800 group-hover:border-orange-500/30 transition-all">
                                         <AvatarImage src={item.student.avatar_url} />
                                         <AvatarFallback className="bg-zinc-950 text-zinc-500 font-bold uppercase italic text-xs">
                                             {item.student.full_name?.substring(0, 2)}
                                         </AvatarFallback>
                                     </Avatar>
                                     <div className="space-y-0.5">
-                                        <h3 className="text-sm font-black text-white uppercase italic tracking-wide group-hover:text-emerald-500 transition-colors">
+                                        <h3 className="text-sm font-black text-white uppercase italic tracking-wide group-hover:text-orange-500 transition-colors">
                                             {item.student.full_name}
                                         </h3>
                                         <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest leading-none">
@@ -67,7 +67,7 @@ export default async function TrainerErgogenicsHubPage() {
                                         </p>
                                     </div>
                                 </div>
-                                <Button asChild variant="ghost" size="icon" className="rounded-2xl bg-zinc-950 border border-zinc-800 group-hover:bg-emerald-500 group-hover:text-zinc-950 transition-all active:scale-95">
+                                <Button asChild variant="ghost" size="icon" className="rounded-2xl bg-zinc-950 border border-zinc-800 group-hover:bg-orange-500 group-hover:text-zinc-950 transition-all active:scale-95">
                                     <Link href={`/dashboard/trainer/students/${item.id}/ergogenics`}>
                                         <ArrowUpRight className="w-5 h-5" />
                                     </Link>

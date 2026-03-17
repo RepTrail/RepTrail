@@ -15,8 +15,10 @@ import {
     AlignLeft,
     Save,
     Clock,
-    Zap
+    Zap,
+    Calendar
 } from 'lucide-react'
+import { UnifiedAssignDialog } from '@/components/feature/shared/unified-assign-dialog'
 import {
     Select,
     SelectContent,
@@ -35,10 +37,11 @@ interface CardioBuilderProps {
         suggested_intensity?: string | null
         created_at: string
     }
+    students?: any[]
     backHref?: string
 }
 
-export function CardioBuilder({ cardio, backHref = '/dashboard/trainer/cardio' }: CardioBuilderProps) {
+export function CardioBuilder({ cardio, students = [], backHref = '/dashboard/trainer/cardio' }: CardioBuilderProps) {
     // Inline name editing
     const [isEditingName, setIsEditingName] = useState(false)
     const [editName, setEditName] = useState(cardio.name)
@@ -149,6 +152,23 @@ export function CardioBuilder({ cardio, backHref = '/dashboard/trainer/cardio' }
                 <p className="text-zinc-600 text-[10px] font-black uppercase tracking-widest">
                     Template de Cardio • Criado em {new Date(cardio.created_at).toLocaleDateString('pt-BR')}
                 </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+                <UnifiedAssignDialog
+                    itemId={cardio.id}
+                    students={students}
+                    type="cardio"
+                    title="Atribuir Cardio"
+                    description="Escolha um aluno e os dias da semana para este protocolo."
+                    colorScheme="emerald"
+                    trigger={
+                        <Button className="h-[68px] px-8 bg-orange-500 hover:bg-orange-400 text-zinc-950 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-none flex flex-col items-center justify-center gap-1 group transition-all active:scale-95 italic">
+                            <Calendar className="w-5 h-5" />
+                            <span>Atribuir</span>
+                        </Button>
+                    }
+                />
             </div>
 
             {/* Description / Instructions */}

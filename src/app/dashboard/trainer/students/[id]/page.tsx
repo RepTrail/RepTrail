@@ -245,7 +245,7 @@ export default async function StudentDetailPage({ params }: { params: { id: stri
                         </div>
                     )}
 
-                    <div className="hidden lg:flex items-center gap-3 pb-4">
+                    <div className="hidden lg:flex items-center gap-3">
                         {isPaidThisMonth && (
                             <Badge variant="outline" className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full flex gap-1 items-center">
                                 <CheckCircle className="w-3 h-3" /> Pago • TAXA ZERO
@@ -344,7 +344,7 @@ export default async function StudentDetailPage({ params }: { params: { id: stri
             <div className="grid gap-6 md:grid-cols-3">
 
                 {/* Profile Info - Secondary Data */}
-                <Card className="md:col-span-1 bg-zinc-900/40 border-zinc-800/50 shadow-2xl rounded-3xl overflow-hidden backdrop-blur-sm">
+                <Card className="md:col-span-1 bg-zinc-900/40 border-zinc-800/50 shadow-none rounded-3xl overflow-hidden backdrop-blur-sm">
                     <CardHeader className="bg-zinc-900/60 border-b border-zinc-800/50 py-5">
                         <CardTitle className="text-[10px] font-black text-emerald-500 flex items-center gap-2 uppercase tracking-[0.2em]">
                             <Info className="w-3.5 h-3.5" />
@@ -543,7 +543,7 @@ export default async function StudentDetailPage({ params }: { params: { id: stri
                         <StudentRecentActivities activities={recentActivities} />
 
                         {/* Photo History Card */}
-                        <Card className="bg-zinc-900/40 border-zinc-800/50 shadow-2xl rounded-3xl overflow-hidden backdrop-blur-sm">
+                        <Card className="bg-zinc-900/40 border-zinc-800/50 shadow-none rounded-3xl overflow-hidden backdrop-blur-sm">
                             <CardHeader className="bg-zinc-900/60 border-b border-zinc-800/50 py-5 flex flex-row items-center justify-between gap-4">
                                 <CardTitle className="text-[10px] font-black text-purple-500 flex items-center gap-2 uppercase tracking-[0.2em]">
                                     <Camera className="w-3.5 h-3.5" />
@@ -640,10 +640,10 @@ function InfoField({ label, value, sub }: any) {
 
 function ContentCard({ icon, label, subLabel, actionLabel, href, unassignProps }: any) {
     return (
-        <div className="bg-zinc-900/40 border border-zinc-800/50 shadow-xl rounded-3xl overflow-hidden backdrop-blur-sm group/card hover:border-zinc-700/50 transition-all duration-300">
+        <div className="bg-zinc-900/40 border border-zinc-800/50 shadow-none rounded-3xl overflow-hidden backdrop-blur-sm group/card hover:border-zinc-700/50 transition-all duration-300">
             <div className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
                 <div className="flex items-center gap-4">
-                    <div className="w-11 h-11 shrink-0 rounded-2xl bg-zinc-900 flex items-center justify-center border border-zinc-800 group-hover/card:border-zinc-700 group-hover/card:shadow-[0_0_20px_rgba(255,255,255,0.02)] transition-all">
+                    <div className="w-11 h-11 shrink-0 rounded-2xl bg-zinc-900 flex items-center justify-center border border-zinc-800 group-hover/card:border-zinc-700 transition-all">
                         {icon}
                     </div>
                     <div>
@@ -651,7 +651,7 @@ function ContentCard({ icon, label, subLabel, actionLabel, href, unassignProps }
                         {subLabel && <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mt-0.5">{subLabel}</p>}
                     </div>
                 </div>
-                <div className="flex items-center gap-3 pb-4">
+                <div className="flex items-center gap-3">
                     {unassignProps && (
                         <UnassignButton {...unassignProps} />
                     )}

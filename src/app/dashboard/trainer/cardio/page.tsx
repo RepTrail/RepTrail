@@ -1,7 +1,7 @@
 import { getCardioLibrary } from '@/actions/cardio-actions'
 import { getTrainerStudents } from '@/actions/trainer-actions'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Activity, Calendar } from 'lucide-react'
+import { Activity, Calendar, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { UnifiedDeleteButton } from '@/components/feature/shared/unified-delete-button'
@@ -21,7 +21,7 @@ export default async function TrainerCardioPage() {
                         Biblioteca de Cardio
                     </h1>
                     <p className="text-zinc-500 font-bold uppercase tracking-widest text-[10px] flex items-center gap-2">
-                        <Activity className="w-3.5 h-3.5 text-emerald-500" />
+                        <Activity className="w-3.5 h-3.5 text-orange-500" />
                         Gerencie seus modelos de cardio e atribua aos seus alunos
                     </p>
                 </div>
@@ -29,7 +29,12 @@ export default async function TrainerCardioPage() {
                     <UnifiedCreationDialog
                         title="Novo Modelo de Cardio"
                         description="Crie um template (ex: Esteira 45min) para agendar para seus alunos."
-                        triggerLabel="Criar Modelo"
+                        trigger={
+                            <Button className="h-11 px-5 border-emerald-500/20 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/30 hover:border-emerald-500/50 hover:text-emerald-400 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border flex items-center justify-center gap-2 active:scale-95 italic">
+                                <Plus className="w-4 h-4" />
+                                Criar Modelo
+                            </Button>
+                        }
                         fields={[
                             { name: 'name', label: 'Nome do Cardio', placeholder: 'Ex: Corrida na Esteira', required: true },
                             { name: 'description', label: 'Descrição (Opcional)', placeholder: 'Ex: Manter batimentos entre 130-140...', type: 'textarea' }
@@ -45,10 +50,10 @@ export default async function TrainerCardioPage() {
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {cardios.length > 0 ? (
                     cardios.map((cardio: any) => (
-                        <Card key={cardio.id} className="bg-zinc-900/50 border-zinc-800 text-zinc-100 hover:border-emerald-500/30 transition-all group rounded-[2rem] overflow-hidden flex flex-col">
+                        <Card key={cardio.id} className="bg-zinc-900/50 border-zinc-800 text-zinc-100 transition-all group rounded-[2rem] overflow-hidden flex flex-col">
                             <CardHeader className="p-6 pb-4">
                                 <div className="flex items-start justify-between">
-                                    <div className="bg-zinc-800 p-2 rounded-lg text-zinc-400 group-hover:text-emerald-500 transition-colors">
+                                    <div className="bg-zinc-800 p-2 rounded-lg text-zinc-400 group-hover:text-orange-500 transition-colors">
                                         <Activity className="w-5 h-5" />
                                     </div>
                                     <div className="flex gap-1">
@@ -57,7 +62,6 @@ export default async function TrainerCardioPage() {
                                             id={cardio.id}
                                             actionType="cardio"
                                             itemName={cardio.name}
-                                            className="text-zinc-600 hover:text-red-400 hover:bg-red-400/10 rounded-xl transition-all"
                                         />
                                     </div>
                                 </div>
@@ -72,24 +76,10 @@ export default async function TrainerCardioPage() {
                                     <span>{new Date(cardio.created_at).toLocaleDateString('pt-BR')}</span>
                                 </div>
 
-                                <div className="mt-auto pt-6 border-t border-zinc-800/50 flex items-center gap-2">
-                                    <UnifiedAssignDialog
-                                        itemId={cardio.id}
-                                        students={students}
-                                        type="cardio"
-                                        title="Atribuir Cardio"
-                                        description="Escolha um aluno e os dias da semana para este protocolo."
-                                        colorScheme="emerald"
-                                        trigger={
-                                            <Button className="flex-1 min-w-0 h-9 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-1.5 px-3">
-                                                <Calendar className="w-3.5 h-3.5" />
-                                                <span className="truncate">Atribuir</span>
-                                            </Button>
-                                        }
-                                    />
-                                    <Button asChild variant="outline" className="flex-1 min-w-0 h-9 bg-zinc-800 border-zinc-700 text-zinc-100 hover:bg-zinc-700 flex items-center justify-center gap-1.5 rounded-xl font-black text-[10px] uppercase italic tracking-widest border-white/5 px-3">
+                                <div className="mt-auto pt-6 border-t border-zinc-800/50 flex items-center justify-center">
+                                    <Button asChild variant="outline" className="w-full h-11 bg-zinc-800 border-zinc-700 text-zinc-100 hover:bg-zinc-700 flex items-center justify-center gap-1.5 rounded-xl font-black text-[10px] uppercase italic tracking-widest border-white/5 px-6 shadow-none">
                                         <Link href={`/dashboard/trainer/cardio/${cardio.id}`}>
-                                            <span className="truncate">Editar</span>
+                                            Editar Protocolo
                                         </Link>
                                     </Button>
                                 </div>
@@ -117,7 +107,7 @@ export default async function TrainerCardioPage() {
                                 actionType="create-student-cardio"
                                 successMessage="Modelo de cardio criado!"
                                 footerLabel="Salvar Modelo"
-                                colorScheme="emerald"
+                                colorScheme="orange"
                             />
                         </div>
                     </Card>

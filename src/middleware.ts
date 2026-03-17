@@ -50,6 +50,14 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL('/dashboard', request.url))
     }
 
+    // Block trainers from accessing /onboarding
+    if (request.nextUrl.pathname.startsWith('/onboarding') && user) {
+        const metaRole = user.user_metadata?.role
+        if (metaRole === 'trainer') {
+            return NextResponse.redirect(new URL('/dashboard/trainer', request.url))
+        }
+    }
+
     // Paywall checks for Dashboard
     if (user && request.nextUrl.pathname.startsWith('/dashboard')) {
         const { data: profile } = await supabase
@@ -58,12 +66,15 @@ export async function middleware(request: NextRequest) {
             .eq('id', user.id)
             .single()
 
+        const effectiveRole = profile?.role || user.user_metadata?.role
+        console.log(`[Middleware] Path: ${request.nextUrl.pathname}, Role: ${effectiveRole}`)
+
         // --- TRAINER PAYWALL ---
-        if (profile?.role === 'trainer' && request.nextUrl.pathname.startsWith('/dashboard/trainer') && !request.nextUrl.pathname.includes('/plans')) {
+        if (effectiveRole === 'trainer' && request.nextUrl.pathname.startsWith('/dashboard/trainer') && !request.nextUrl.pathname.includes('/plans')) {
             const now = new Date()
-            const isEliteTrial = profile.plan_tier === 'elite' && !!profile.elite_until
-            const isTrialExpired = isEliteTrial && new Date(profile.elite_until) <= now
-            const hasPlan = !!profile.plan_tier && profile.plan_tier !== 'none' && !isTrialExpired
+            const isEliteTrial = profile?.plan_tier === 'elite' && !!profile?.elite_until
+            const isTrialExpired = isEliteTrial && profile?.elite_until && new Date(profile.elite_until) <= now
+            const hasPlan = !!profile?.plan_tier && profile?.plan_tier !== 'none' && !isTrialExpired
 
             if (!hasPlan) {
                 return NextResponse.redirect(new URL('/dashboard/trainer/plans', request.url))
@@ -71,7 +82,7 @@ export async function middleware(request: NextRequest) {
         }
 
         // --- STUDENT AUTO-TRAINING PAYWALL ---
-        if (profile?.role === 'student' && request.nextUrl.pathname.startsWith('/dashboard/student')) {
+        if (effectiveRole === 'student' && request.nextUrl.pathname.startsWith('/dashboard/student')) {
             const pathUrl = request.nextUrl.pathname;
             const isProtectedAutoTrainingRoute =
                 pathUrl.startsWith('/dashboard/student/workouts') ||
@@ -94,9 +105,9 @@ export async function middleware(request: NextRequest) {
                     const now = new Date()
                     let activeAutoTraining = false;
 
-                    if (profile.auto_training_status === 'active') {
+                    if (profile?.auto_training_status === 'active') {
                         activeAutoTraining = true;
-                    } else if (profile.auto_training_status === 'trial' && profile.auto_training_trial_end) {
+                    } else if (profile?.auto_training_status === 'trial' && profile?.auto_training_trial_end) {
                         const trialEnd = new Date(profile.auto_training_trial_end)
                         if (now <= trialEnd) {
                             activeAutoTraining = true;
@@ -110,6 +121,9 @@ export async function middleware(request: NextRequest) {
                 }
             }
         }
+
+        // Cross-dashboard protection is handled by individual layouts, not middleware.
+        // Relying on role here (DB or metadata) caused redirect loops when roles were mismatched.
     }
 
     return response

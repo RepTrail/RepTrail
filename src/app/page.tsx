@@ -41,7 +41,7 @@ export default async function LandingPage() {
       '/dashboard/student'
 
   return (
-    <div className="flex flex-col min-h-screen bg-zinc-950 text-white font-sans selection:bg-emerald-500/30" suppressHydrationWarning>
+    <div className="flex flex-col min-h-screen bg-zinc-950 text-white font-sans selection:bg-orange-500/30" suppressHydrationWarning>
       <AffiliateTracker />
       <header className="h-20 flex items-center border-b border-zinc-900/50 backdrop-blur-md sticky top-0 z-50 bg-zinc-950/80 supports-[backdrop-filter]:bg-zinc-950/60">
         {/* Header */}
@@ -51,13 +51,13 @@ export default async function LandingPage() {
           </Link>
 
           <nav className="hidden md:flex gap-6 items-center">
-            <Link href="#marketplace" className="text-xs font-black text-zinc-400 hover:text-emerald-500 uppercase tracking-[0.2em] transition-colors">
+            <Link href="#marketplace" className="text-xs font-black text-zinc-400 hover:text-orange-500 uppercase tracking-[0.2em] transition-colors">
               Encontrar Personal
             </Link>
 
             {!user ? (
               <>
-                <Link href="/auth/login" className="text-xs font-black text-zinc-400 hover:text-emerald-500 uppercase tracking-[0.2em] transition-colors">
+                <Link href="/auth/login" className="text-xs font-black text-zinc-400 hover:text-orange-500 uppercase tracking-[0.2em] transition-colors">
                   Login
                 </Link>
                 <Link href="/auth/signup">
@@ -78,14 +78,14 @@ export default async function LandingPage() {
 
                 {isAffiliate && (
                   <Link href="/afiliados/login">
-                    <Button variant="ghost" className="text-xs font-black text-amber-500/80 hover:text-amber-500 uppercase tracking-widest hover:bg-amber-500/10">
+                    <Button variant="ghost" className="text-xs font-black text-orange-500/80 hover:text-orange-500 uppercase tracking-widest hover:bg-orange-500/10">
                       Painel Afiliado
                     </Button>
                   </Link>
                 )}
 
                 <Link href={dashboardUrl}>
-                  <Button className="bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase italic tracking-widest rounded-xl text-xs px-6 h-10 shadow-lg shadow-emerald-500/20 transition-all hover:scale-105 active:scale-95">
+                  <Button className="bg-emerald-500 hover:bg-orange-400 text-zinc-950 font-black uppercase italic tracking-widest rounded-xl text-xs px-6 h-10 shadow-lg shadow-orange-500/20 transition-all hover:scale-105 active:scale-95">
                     Acessar Dashboard
                   </Button>
                 </Link>
@@ -96,7 +96,7 @@ export default async function LandingPage() {
           {/* Mobile Login/Dashboard Link */}
           <div className="md:hidden flex items-center gap-3">
             {!user ? (
-              <Link href="/auth/login" className="text-[10px] font-black text-zinc-400 hover:text-emerald-500 uppercase tracking-[0.2em] transition-colors bg-zinc-900 px-4 py-2 rounded-xl border border-zinc-800 select-none active:scale-95 transition-all">
+              <Link href="/auth/login" className="text-[10px] font-black text-zinc-400 hover:text-orange-500 uppercase tracking-[0.2em] transition-colors bg-zinc-900 px-4 py-2 rounded-xl border border-zinc-800 select-none active:scale-95 transition-all">
                 Login
               </Link>
             ) : (
@@ -107,11 +107,11 @@ export default async function LandingPage() {
                   </Link>
                 )}
                 {isAffiliate && (
-                  <Link href="/afiliados/login" className="p-2 bg-amber-500/10 rounded-xl border border-amber-500/20 text-amber-500">
+                  <Link href="/afiliados/login" className="p-2 bg-orange-500/10 rounded-xl border border-orange-500/20 text-orange-500">
                     <span className="text-[10px] font-black uppercase">Afiliado</span>
                   </Link>
                 )}
-                <Link href={dashboardUrl} className="text-[10px] font-black text-zinc-950 bg-emerald-500 uppercase tracking-widest transition-colors px-4 py-2 rounded-xl border border-emerald-400 select-none active:scale-95 transition-all shadow-lg shadow-emerald-500/20">
+                <Link href={dashboardUrl} className="text-[10px] font-black text-zinc-950 bg-emerald-500 uppercase tracking-widest transition-colors px-4 py-2 rounded-xl border border-orange-400 select-none active:scale-95 transition-all shadow-lg shadow-orange-500/20">
                   Dashboard
                 </Link>
               </>
@@ -151,7 +151,7 @@ export default async function LandingPage() {
           </p>
           <div className="flex flex-wrap justify-center gap-6 order-2 md:order-3">
             <Link href="/afiliados/login" className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest hover:text-zinc-400 transition-colors" suppressHydrationWarning>Sou afiliado</Link>
-            <Link href="/afiliados" className="text-[10px] font-bold text-amber-500/60 uppercase tracking-widest hover:text-amber-500 transition-colors" suppressHydrationWarning>Quero me tornar afiliado</Link>
+            <Link href="/afiliados" className="text-[10px] font-bold text-orange-500/60 uppercase tracking-widest hover:text-orange-500 transition-colors" suppressHydrationWarning>Quero me tornar afiliado</Link>
             <Link href="#" className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest hover:text-zinc-400 transition-colors">Termos</Link>
             <Link href="#" className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest hover:text-zinc-400 transition-colors">Privacidade</Link>
           </div>

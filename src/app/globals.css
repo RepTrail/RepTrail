@@ -60,12 +60,12 @@
   --foreground: oklch(0.985 0 0);
 
   /* Branding */
-  --brand-primary: oklch(0.696 0.17 162.48);
-  /* Emerald-500 */
+  --brand-primary: oklch(0.769 0.188 70.08);
+  /* Orange-500 (was Emerald) */
   --brand-secondary: oklch(0.769 0.188 70.08);
   /* Orange-500 */
-  --brand-accent: oklch(0.85 0.15 90);
-  /* Amber/Yellow accent */
+  --brand-accent: oklch(0.6 0.15 40);
+  /* Deeper Orange (was Amber/Yellow) */
 
   /* Shadcn Overrides */
   --primary: var(--brand-primary);

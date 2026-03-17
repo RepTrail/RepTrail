@@ -34,7 +34,7 @@ export default async function StudentRankingPage() {
             {/* General List */}
             <div className="space-y-6">
                 <div className="flex items-center gap-3 pb-4 px-2">
-                    <TrendingUp className="w-4 h-4 text-emerald-500" />
+                    <TrendingUp className="w-4 h-4 text-orange-500" />
                     <h2 className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.3em]">Classificação Geral</h2>
                 </div>
 
@@ -58,7 +58,7 @@ export default async function StudentRankingPage() {
 
 function PodiumCard({ trainer, rank }: { trainer: any, rank: number }) {
     const colors = [
-        "from-amber-500 to-amber-200 text-amber-500 border-amber-500/30", // 1st
+        "from-orange-500 to-orange-200 text-orange-500 border-orange-500/30", // 1st
         "from-zinc-400 to-zinc-100 text-zinc-400 border-zinc-400/30",    // 2nd
         "from-orange-600 to-orange-300 text-orange-600 border-orange-600/30" // 3rd
     ]
@@ -70,7 +70,7 @@ function PodiumCard({ trainer, rank }: { trainer: any, rank: number }) {
     }
 
     return (
-        <Card className={`group relative bg-zinc-900 border-zinc-800 shadow-2xl rounded-3xl overflow-hidden transition-all duration-700 hover:border-amber-500/40 h-full`}>
+        <Card className={`group relative bg-zinc-900 border-zinc-800 shadow-2xl rounded-3xl overflow-hidden transition-all duration-700 hover:border-orange-500/40 h-full`}>
             <div className={`absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity`}>
                 <Trophy className={`w-32 h-32 ${colors[rank - 1].split(' ')[2]}`} />
             </div>
@@ -91,7 +91,7 @@ function PodiumCard({ trainer, rank }: { trainer: any, rank: number }) {
 
                 <div className="space-y-3">
                     <div className="space-y-1">
-                        <h3 className="text-2xl font-black text-white italic uppercase tracking-tight line-clamp-1 group-hover:text-amber-500 transition-colors">
+                        <h3 className="text-2xl font-black text-white italic uppercase tracking-tight line-clamp-1 group-hover:text-orange-500 transition-colors">
                             {trainer.full_name}
                         </h3>
                         <div className="flex items-center justify-center gap-2 text-[10px] font-black text-zinc-500 uppercase tracking-widest">
@@ -101,9 +101,9 @@ function PodiumCard({ trainer, rank }: { trainer: any, rank: number }) {
                     </div>
 
                     <div className="flex items-center justify-center gap-2">
-                        <div className="flex items-center gap-1.5 px-3 py-0.5 bg-amber-500/5 border border-amber-500/20 rounded-lg">
-                            <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
-                            <span className="text-xs font-black text-amber-500">{Number(trainer.rating || 0).toFixed(1)}</span>
+                        <div className="flex items-center gap-1.5 px-3 py-0.5 bg-orange-500/5 border border-orange-500/20 rounded-lg">
+                            <Star className="w-3 h-3 text-orange-500 fill-orange-500" />
+                            <span className="text-xs font-black text-orange-500">{Number(trainer.rating || 0).toFixed(1)}</span>
                         </div>
                     </div>
                 </div>
@@ -115,13 +115,13 @@ function PodiumCard({ trainer, rank }: { trainer: any, rank: number }) {
                     </div>
                     <div className="space-y-1 text-right">
                         <p className="text-[9px] font-bold text-zinc-600 uppercase tracking-widest leading-none">Impacto</p>
-                        <p className="text-2xl font-black text-emerald-500 italic">Score {Math.round(trainer.score / 10)}</p>
+                        <p className="text-2xl font-black text-orange-500 italic">Score {Math.round(trainer.score / 10)}</p>
                     </div>
                 </div>
 
                 {trainer.trainer_code ? (
                     <Link href={`/personal/${trainer.trainer_code.toUpperCase().trim()}`} className="w-full pt-4">
-                        <Button className="w-full h-auto min-h-[3.5rem] py-4 rounded-2xl bg-white hover:bg-amber-500 hover:text-zinc-950 text-zinc-950 font-black uppercase italic tracking-wide transition-all shadow-xl active:scale-95">
+                        <Button className="w-full h-auto min-h-[3.5rem] py-4 rounded-2xl bg-white hover:bg-orange-500 hover:text-zinc-950 text-zinc-950 font-black uppercase italic tracking-wide transition-all shadow-xl active:scale-95">
                             Ver Perfil
                             <ArrowRight className="w-5 h-5 ml-2" />
                         </Button>
@@ -141,7 +141,7 @@ function PodiumCard({ trainer, rank }: { trainer: any, rank: number }) {
 function RankingRow({ trainer, rank }: { trainer: any, rank: number }) {
     return (
         <div className="flex items-center p-4 md:p-8 hover:bg-zinc-800/20 transition-all group">
-            <div className="w-8 md:w-16 flex-shrink-0 text-zinc-700 font-black italic text-lg md:text-2xl group-hover:text-amber-500/50 transition-colors">
+            <div className="w-8 md:w-16 flex-shrink-0 text-zinc-700 font-black italic text-lg md:text-2xl group-hover:text-orange-500/50 transition-colors">
                 #{rank}
             </div>
 
@@ -153,12 +153,12 @@ function RankingRow({ trainer, rank }: { trainer: any, rank: number }) {
                     </AvatarFallback>
                 </Avatar>
                 <div className="overflow-hidden space-y-1 min-w-0 flex-1">
-                    <p className="text-sm md:text-xl font-black text-white italic uppercase truncate group-hover:text-amber-500 transition-colors tracking-tight pr-2">
+                    <p className="text-sm md:text-xl font-black text-white italic uppercase truncate group-hover:text-orange-500 transition-colors tracking-tight pr-2">
                         {trainer.full_name}
                     </p>
                     <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
                         <div className="flex items-center gap-1.5 flex-shrink-0">
-                            <Star className="w-3 h-3 text-amber-500/50 fill-amber-500/50" />
+                            <Star className="w-3 h-3 text-orange-500/50 fill-orange-500/50" />
                             <span className="text-[9px] md:text-[11px] font-black text-zinc-500 tracking-widest uppercase">{Number(trainer.rating || 0).toFixed(1)} Rating</span>
                         </div>
                     </div>

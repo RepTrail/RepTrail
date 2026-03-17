@@ -30,7 +30,7 @@ export default async function TrainerWorkoutsPage() {
                 </div>
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto pb-4">
                     {!betaTesterMode && (
-                        <Button asChild className="h-11 px-5 bg-emerald-500 border-emerald-400 text-zinc-950 hover:bg-emerald-400 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2 w-full sm:w-auto">
+                        <Button asChild className="h-11 px-5 border-emerald-500/20 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/30 hover:border-emerald-500/50 hover:text-emerald-400 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border w-full sm:w-auto flex items-center justify-center gap-2">
                             <Link href="/dashboard/trainer/import-pdf">
                                 <FileUp className="w-4 h-4" />
                                 Importar PDF
@@ -41,7 +41,7 @@ export default async function TrainerWorkoutsPage() {
                         title="Novo Modelo de Treino"
                         description="Crie um template que poderá ser atribuído para vários alunos."
                         trigger={
-                            <Button className="h-11 px-5 bg-gradient-to-r from-emerald-600 to-emerald-400 hover:from-emerald-500 hover:to-emerald-300 text-zinc-950 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2 w-full sm:w-auto shadow-emerald-500/20 active:scale-95 italic">
+                            <Button className="h-11 px-5 border-emerald-500/20 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/30 hover:border-emerald-500/50 hover:text-emerald-400 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border w-full sm:w-auto flex items-center justify-center gap-2 active:scale-95 italic">
                                 <Plus className="w-4 h-4" />
                                 Criar Manualmente
                             </Button>
@@ -53,7 +53,7 @@ export default async function TrainerWorkoutsPage() {
                         actionType="create-manual-workout"
                         successMessage="Template de treino criado!"
                         footerLabel="Salvar Template"
-                        colorScheme="emerald"
+                        colorScheme="orange"
                     />
                 </div>
             </div>
@@ -61,10 +61,10 @@ export default async function TrainerWorkoutsPage() {
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {workouts.length > 0 ? (
                     workouts.map((workout: any) => (
-                        <Card key={workout.id} className="bg-zinc-900/50 border-zinc-800 text-zinc-100 hover:border-emerald-500/30 transition-all group rounded-[2rem] overflow-hidden flex flex-col">
+                        <Card key={workout.id} className="bg-zinc-900/50 border-zinc-800 text-zinc-100 transition-all group rounded-[2rem] overflow-hidden flex flex-col">
                             <CardHeader className="p-6 pb-4 flex-1">
                                 <div className="flex items-start justify-between">
-                                    <div className="bg-zinc-800 p-2 rounded-lg text-zinc-400 group-hover:text-emerald-500 transition-colors">
+                                    <div className="bg-zinc-800 p-2 rounded-lg text-zinc-400 group-hover:text-orange-500 transition-colors">
                                         <Dumbbell className="w-5 h-5" />
                                     </div>
                                     <div className="flex gap-1">
@@ -73,7 +73,6 @@ export default async function TrainerWorkoutsPage() {
                                             id={workout.id}
                                             actionType="workout"
                                             itemName={workout.name}
-                                            className="text-zinc-600 hover:text-red-400 hover:bg-red-400/10 rounded-xl transition-all"
                                         />
                                     </div>
                                 </div>
@@ -90,27 +89,12 @@ export default async function TrainerWorkoutsPage() {
                                     <span>{new Date(workout.created_at).toLocaleDateString('pt-BR')}</span>
                                 </div>
 
-                                <div className="mt-auto pt-6 border-t border-zinc-800/50 flex items-center gap-2">
-                                    <UnifiedAssignDialog
-                                        itemId={workout.id}
-                                        students={students}
-                                        type="workout"
-                                        title="Atribuir Treino"
-                                        description="Escolha um aluno e o dia da semana para este treino."
-                                        colorScheme="emerald"
-                                        trigger={
-                                            <Button className="flex-1 min-w-0 h-9 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-1.5 px-3">
-                                                <Calendar className="w-3.5 h-3.5" />
-                                                <span className="truncate">Atribuir</span>
-                                            </Button>
-                                        }
-                                    />
-                                    <Button asChild variant="outline" className="flex-1 min-w-0 h-9 bg-zinc-800 border-zinc-700 text-zinc-100 hover:bg-zinc-700 flex items-center justify-center gap-1.5 rounded-xl font-black text-[10px] uppercase italic tracking-widest border-white/5 px-3">
-                                        <Link href={`/dashboard/trainer/workouts/${workout.id}`}>
-                                            <span className="truncate">Editar</span>
-                                        </Link>
-                                    </Button>
-                                    <DuplicateButton id={workout.id} type="workout" className="h-9 w-9" />
+                                <div className="mt-auto pt-6 border-t border-zinc-800/50 flex items-center justify-center">
+                                        <Button asChild variant="outline" className="w-full h-11 bg-zinc-800 border-zinc-700 text-zinc-100 hover:bg-zinc-700 flex items-center justify-center gap-1.5 rounded-xl font-black text-[10px] uppercase italic tracking-widest border-white/5 px-6 shadow-none transition-all active:scale-[0.98]">
+                                            <Link href={`/dashboard/trainer/workouts/${workout.id}`}>
+                                                Editar Treino
+                                            </Link>
+                                        </Button>
                                 </div>
                             </CardContent>
                         </Card>
@@ -128,7 +112,7 @@ export default async function TrainerWorkoutsPage() {
                                 </p>
                             </div>
                             {!betaTesterMode && (
-                                <Button asChild className="bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold rounded-xl">
+                                <Button asChild className="bg-orange-500 hover:bg-orange-400 text-zinc-950 font-bold rounded-xl">
                                     <Link href="/dashboard/trainer/import-pdf">Importar Primeiro PDF</Link>
                                 </Button>
                             )}
