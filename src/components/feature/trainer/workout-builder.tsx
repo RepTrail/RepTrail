@@ -91,7 +91,7 @@ export function WorkoutBuilder({ workout, students = [], backHref = '/dashboard/
 
         if (!draggedId || draggedId === targetId) return
 
-        setExercises((prev) => {
+        setExercises((prev: any[]) => {
             const draggedIndex = prev.findIndex(ex => ex.id === draggedId)
             const targetIndex = prev.findIndex(ex => ex.id === targetId)
             if (draggedIndex === -1 || targetIndex === -1) return prev
@@ -298,7 +298,7 @@ export function WorkoutBuilder({ workout, students = [], backHref = '/dashboard/
                 </div>
 
                 {exercises.length > 0 ? (
-                    exercises.map((item) => (
+                    exercises.map((item: any) => (
                         <div
                             key={item.id}
                             draggable
