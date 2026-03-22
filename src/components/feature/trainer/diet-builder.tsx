@@ -72,6 +72,7 @@ interface DietBuilderProps {
         id: string
         name: string
         meals: Meal[]
+        assignments?: any[]
     }
     students?: any[]
     backHref?: string
@@ -603,78 +604,72 @@ export function DietBuilder({ diet, students = [], backHref = '/dashboard/traine
 
     return (
         <div className="space-y-8" suppressHydrationWarning>
-            {/* Header / Totals */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                <div className="space-y-2 flex-1">
-                    {isEditingName ? (
-                        <div className="bg-zinc-900/60 border border-zinc-700/60 rounded-2xl p-5 space-y-3 shadow-xl">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Nome da Dieta</label>
-                            <Input
-                                ref={nameInputRef}
-                                value={editName}
-                                onChange={e => setEditName(e.target.value)}
-                                onKeyDown={e => { if (e.key === 'Enter') handleSaveName(); if (e.key === 'Escape') handleCancelName() }}
-                                className="bg-zinc-950 border-zinc-700 text-white text-lg font-black h-12 rounded-xl"
-                                placeholder="Nome da dieta..."
-                            />
-                            <div className="flex items-center gap-2 pt-1">
-                                <Button
-                                    onClick={handleSaveName}
-                                    disabled={isSavingName || !editName.trim()}
-                                    className="h-9  bg-orange-500 hover:bg-orange-500 text-white font-black uppercase tracking-widest text-[10px] rounded-xl shadow-none"
-                                >
-                                    {isSavingName ? <Loader2 className="w-3 h-3 animate-spin" /> : <><Check className="w-3 h-3 mr-1.5" />Salvar</>}
-                                </Button>
-                                <Button
-                                    onClick={handleCancelName}
-                                    disabled={isSavingName}
-                                    variant="ghost"
-                                    className="h-9  bg-zinc-800/60 hover:bg-zinc-700/60 text-zinc-400 hover:text-white font-black uppercase tracking-widest text-[10px] rounded-xl border border-zinc-700/50 hover:border-zinc-600"
-                                >
-                                    <X className="w-3 h-3 mr-1.5" />Cancelar
-                                </Button>
+            {/* Header / Meta */}
+            <div className="space-y-6">
+                <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
+                    <div className="space-y-4 flex-1">
+                        {isEditingName ? (
+                            <div className="bg-zinc-900/60 border border-zinc-700/60 rounded-[1.5rem] sm:rounded-3xl p-4 sm:p-6 space-y-4 shadow-2xl max-w-2xl">
+                                <div className="space-y-1.5">
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Nome da Dieta</label>
+                                    <Input
+                                        ref={nameInputRef}
+                                        value={editName}
+                                        onChange={e => setEditName(e.target.value)}
+                                        onKeyDown={e => { if (e.key === 'Enter') handleSaveName(); if (e.key === 'Escape') handleCancelName() }}
+                                        className="bg-zinc-950 border-zinc-700 text-white text-lg sm:text-xl font-black h-12 sm:h-14 rounded-xl sm:rounded-2xl focus:ring-orange-500/30"
+                                        placeholder="Nome da dieta..."
+                                    />
+                                </div>
+                                <div className="flex items-center gap-2 sm:gap-3">
+                                    <Button
+                                        onClick={handleSaveName}
+                                        disabled={isSavingName || !editName.trim()}
+                                        className="h-10 bg-orange-500 hover:bg-orange-400 text-zinc-950 font-black uppercase tracking-widest text-[10px] rounded-xl px-4 sm:px-6"
+                                    >
+                                        {isSavingName ? <Loader2 className="w-3 h-3 animate-spin" /> : <><Check className="w-4 h-4 mr-2" />Salvar</>}
+                                    </Button>
+                                    <Button
+                                        onClick={handleCancelName}
+                                        disabled={isSavingName}
+                                        variant="ghost"
+                                        className="h-10 text-zinc-400 hover:text-white font-black uppercase tracking-widest text-[10px]"
+                                    >
+                                        Cancelar
+                                    </Button>
+                                </div>
                             </div>
-                        </div>
-                    ) : (
-                        <div
-                            className="group flex items-center gap-3 pb-4 cursor-pointer w-fit"
-                            onClick={() => setIsEditingName(true)}
-                        >
-                            <h1 className="text-3xl font-bold text-white font-sans group-hover:text-orange-400 border-b border-transparent group-hover:border-orange-400/40 pb-0.5">
-                                {editName}
-                            </h1>
-                            <button
-                                className="p-2 rounded-xl text-zinc-600 hover:text-orange-400 hover:bg-orange-400/10 border border-transparent hover:border-orange-400/20"
-                                title="Editar nome da dieta"
-                            >
-                                <Pencil className="w-4 h-4" />
-                            </button>
-                        </div>
-                    )}
-                    <p className="text-zinc-500 uppercase tracking-widest text-[10px] font-bold">Resumo Nutricional do Plano</p>
-                </div>
+                        ) : (
+                            <div className="space-y-4">
+                                <div
+                                    className="group flex flex-wrap items-center gap-3 sm:gap-4 cursor-pointer w-fit"
+                                    onClick={() => setIsEditingName(true)}
+                                >
+                                    <h1 className="text-2xl sm:text-4xl font-black text-white font-sans italic uppercase tracking-tight group-hover:text-orange-400 transition-colors leading-tight break-words">
+                                        {editName}
+                                    </h1>
+                                    <button className="p-2 sm:p-2.5 rounded-xl sm:rounded-2xl text-zinc-700 hover:text-orange-400 bg-zinc-900/50 border border-zinc-800 transition-all active:scale-95 shrink-0">
+                                        <Pencil className="w-4 h-4 sm:w-5 sm:h-5" />
+                                    </button>
+                                </div>
 
-                <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full sm:w-auto">
-                        <div className="bg-zinc-900/50 border border-zinc-800 p-3 rounded-xl min-w-[80px] text-center">
-                            <span className="block text-[10px] text-zinc-500 uppercase font-bold mb-1">Proteína</span>
-                            <span className="text-xl font-bold text-blue-400">{Math.round(totals.p)}<small className="text-[10px] ml-0.5">g</small></span>
-                        </div>
-                        <div className="bg-zinc-900/50 border border-zinc-800 p-3 rounded-xl min-w-[80px] text-center">
-                            <span className="block text-[10px] text-zinc-500 uppercase font-bold mb-1">Carbs</span>
-                            <span className="text-xl font-bold text-orange-400">{Math.round(totals.c)}<small className="text-[10px] ml-0.5">g</small></span>
-                        </div>
-                        <div className="bg-zinc-900/50 border border-zinc-800 p-3 rounded-xl min-w-[80px] text-center">
-                            <span className="block text-[10px] text-zinc-500 uppercase font-bold mb-1">Gordura</span>
-                            <span className="text-xl font-bold text-orange-500">{Math.round(totals.f)}<small className="text-[10px] ml-0.5">g</small></span>
-                        </div>
-                        <div className="bg-blue-500/10 border border-blue-500/20 p-3 rounded-xl min-w-[100px] text-center shadow-[0_0_15px_-5px_rgba(59,130,246,0.2)]">
-                            <span className="block text-[10px] text-blue-400 uppercase font-bold mb-1">Total Kcal</span>
-                            <span className="text-xl font-bold text-white">{totalKcal}</span>
-                        </div>
+                                {diet.assignments && diet.assignments.length > 0 ? (
+                                    <div className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-orange-500/10 border border-orange-500/20 rounded-xl sm:rounded-2xl w-fit animate-in fade-in slide-in-from-left-4 duration-500">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse shrink-0" />
+                                        <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-orange-500">
+                                            Atribuído para: <span className="text-white italic ml-1">{diet.assignments[0]?.student?.full_name || 'Aluno'}</span>
+                                        </span>
+                                    </div>
+                                ) : (
+                                    <div className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-zinc-900/50 border border-zinc-800 rounded-xl sm:rounded-2xl w-fit">
+                                        <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-zinc-500 italic">Template de Biblioteca</span>
+                                    </div>
+                                )}
+                            </div>
+                        )}
                     </div>
 
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
                         <UnifiedAssignDialog
                             itemId={diet.id}
                             students={students}
@@ -682,10 +677,12 @@ export function DietBuilder({ diet, students = [], backHref = '/dashboard/traine
                             title="Atribuir Dieta"
                             description="Escolha um aluno e os dias da semana para este plano alimentar."
                             colorScheme="orange"
+                            initialStudentId={diet.assignments?.[0]?.student_id}
+                            initialDays={diet.assignments?.[0]?.days_of_week}
                             trigger={
-                                <Button className="h-[68px] px-8 bg-orange-500 hover:bg-orange-400 text-zinc-950 rounded-xl font-black uppercase tracking-widest text-[10px] shadow-none flex flex-col items-center justify-center gap-1 transition-all active:scale-95 italic">
-                                    <Calendar className="w-5 h-5" />
-                                    <span>Atribuir</span>
+                                <Button className="h-[56px] sm:h-[64px] px-6 sm:px-8 bg-orange-500 hover:bg-orange-400 text-zinc-950 rounded-xl sm:rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-none flex flex-row sm:flex-col items-center justify-center gap-2 sm:gap-1 transition-all active:scale-95 italic">
+                                    <Calendar className="w-4 h-4 sm:w-5 sm:h-5" />
+                                    <span className="text-center">{diet.assignments?.length ? "Gerenciar Atribuição" : "Atribuir Dieta"}</span>
                                 </Button>
                             }
                         />
@@ -693,17 +690,49 @@ export function DietBuilder({ diet, students = [], backHref = '/dashboard/traine
                         <Button
                             onClick={handleEstimateAll}
                             disabled={isEstimatingAll}
-                            className="w-full sm:w-auto h-[68px] px-6 bg-orange-600/10 hover:bg-orange-600/20 text-orange-500 border border-orange-500/20 rounded-xl font-black uppercase tracking-widest text-[10px] flex flex-col items-center justify-center gap-1 group shadow-none"
+                            className="h-[56px] sm:h-[64px] px-6 bg-zinc-900 hover:bg-zinc-800 text-orange-400 border border-zinc-800 rounded-xl sm:rounded-2xl font-black uppercase tracking-widest text-[10px] flex flex-row sm:flex-col items-center justify-center gap-2 sm:gap-1 group shadow-none transition-all"
                         >
                             {isEstimatingAll ? (
-                                <Loader2 className="w-5 h-5 animate-spin" />
+                                <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" />
                             ) : (
                                 <>
-                                    <Sparkles className="w-5 h-5" />
+                                    <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform" />
                                     <span>Calcular Tudo</span>
                                 </>
                             )}
                         </Button>
+                    </div>
+                </div>
+
+                {/* Macro Summary Bar */}
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-8 lg:gap-4 bg-zinc-900/40 border border-zinc-800/60 p-6 rounded-[1.5rem] sm:rounded-[2.5rem] shadow-inner overflow-hidden">
+                    <div className="space-y-1">
+                        <span className="block text-[8px] sm:text-[10px] text-zinc-500 uppercase font-black tracking-widest mb-0.5 sm:mb-1">Proteína</span>
+                        <div className="flex items-baseline gap-1">
+                            <span className="text-2xl sm:text-3xl font-black text-blue-400">{Math.round(totals.p)}</span>
+                            <small className="text-[10px] sm:text-xs font-bold text-zinc-600">g</small>
+                        </div>
+                    </div>
+                    <div className="space-y-1 lg:pl-6 lg:border-l-2 lg:border-zinc-800">
+                        <span className="block text-[8px] sm:text-[10px] text-zinc-500 uppercase font-black tracking-widest mb-0.5 sm:mb-1">Carboidratos</span>
+                        <div className="flex items-baseline gap-1">
+                            <span className="text-2xl sm:text-3xl font-black text-orange-400">{Math.round(totals.c)}</span>
+                            <small className="text-[10px] sm:text-xs font-bold text-zinc-600">g</small>
+                        </div>
+                    </div>
+                    <div className="space-y-1 lg:pl-6 lg:border-l-2 lg:border-zinc-800">
+                        <span className="block text-[8px] sm:text-[10px] text-zinc-500 uppercase font-black tracking-widest mb-0.5 sm:mb-1">Gorduras</span>
+                        <div className="flex items-baseline gap-1">
+                            <span className="text-2xl sm:text-3xl font-black text-orange-500">{Math.round(totals.f)}</span>
+                            <small className="text-[10px] sm:text-xs font-bold text-zinc-600">g</small>
+                        </div>
+                    </div>
+                    <div className="space-y-1 lg:pl-6 lg:border-l-2 lg:border-zinc-800">
+                        <span className="block text-[10px] sm:text-[12px] text-white uppercase font-black tracking-widest mb-0.5 sm:mb-1">Total Kcal</span>
+                        <div className="flex items-baseline gap-1">
+                            <span className="text-2xl sm:text-3xl font-black text-white italic underline decoration-blue-500 decoration-4 underline-offset-4 leading-none">{totalKcal}</span>
+                            <small className="text-[10px] sm:text-xs font-bold text-zinc-600 italic">kcal</small>
+                        </div>
                     </div>
                 </div>
             </div>

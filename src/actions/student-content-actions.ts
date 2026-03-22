@@ -307,6 +307,7 @@ export async function createStudentErgogenic(formData: FormData) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { error: 'Unauthorized' }
 
+    const student_id = formData.get('student_id')?.toString() || user.id
     const name = formData.get('name')?.toString().trim() || ''
     const dosage = formData.get('dosage')?.toString().trim() || ''
     const weekly_dosage = parseInt(formData.get('weekly_dosage')?.toString() || '0')
@@ -319,7 +320,7 @@ export async function createStudentErgogenic(formData: FormData) {
             .from('ergogenics')
             .insert({
                 trainer_id: user.id,
-                student_id: user.id,
+                student_id: student_id,
                 name,
                 dosage,
                 weekly_dosage,
@@ -334,12 +335,13 @@ export async function createStudentErgogenic(formData: FormData) {
         if (error) throw error
 
         revalidatePath('/dashboard/student/ergogenics')
+        revalidatePath(`/dashboard/trainer/students/${student_id}/ergogenics`)
+        
         return { success: true, ergogenicId: data.id }
     } catch (e: any) {
         return { error: e.message }
     }
 }
-
 export async function updateStudentErgogenic(ergogenicId: string, formData: FormData) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()

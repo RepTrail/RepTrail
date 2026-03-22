@@ -1,4 +1,3 @@
-
 'use client'
 
 import * as React from 'react'
@@ -26,6 +25,11 @@ import { UserPlus, Loader2, Calendar, X, Timer, Activity } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { useRouter } from 'next/navigation'
 
+import { assignCardio, removeCardioAssignment } from '@/actions/cardio-actions'
+import { assignDiet, unassignDiet } from '@/actions/diet-actions'
+import { assignWorkout, unassignWorkout } from '@/actions/workout-actions'
+import { assignErgogenic } from '@/actions/student-content-actions'
+
 import { cn } from '@/lib/utils'
 
 interface UnifiedAssignDialogProps {
@@ -35,6 +39,9 @@ interface UnifiedAssignDialogProps {
     items?: any[]
     itemId?: string
     fixedStudentId?: string
+    initialStudentId?: string
+    initialStudentName?: string
+    assignmentId?: string
     type: 'workout' | 'diet' | 'cardio' | 'ergogenic'
     trigger?: React.ReactNode
     initialDays?: number[]
@@ -60,25 +67,34 @@ export function UnifiedAssignDialog({
     type,
     trigger,
     fixedStudentId,
+    initialStudentId,
+    initialStudentName,
+    assignmentId: providedAssignmentId,
     initialDays = [],
     colorScheme: providedColorScheme
 }: UnifiedAssignDialogProps) {
     const [open, setOpen] = useState(false)
-    const [loading, setLoading] = useState(false)
-    const [selectedStudent, setSelectedStudent] = useState<string>(fixedStudentId || '')
+    const [isSubmitting, setIsSubmitting] = useState(false)
+    const [selectedStudent, setSelectedStudent] = useState<string>(initialStudentId || fixedStudentId || '')
     const [selectedItem, setSelectedItem] = useState<string>(itemId || '')
-    const [selectedDays, setSelectedDays] = useState<number[]>(initialDays)
+    const [selectedDays, setSelectedDays] = useState<number[]>((initialDays as number[]) || [])
+    const [assignmentId, setAssignmentId] = useState<string>(providedAssignmentId || '')
     const [duration, setDuration] = useState('30')
     const [intensity, setIntensity] = useState('Moderada')
 
-    // Sync initialDays when dialog opens
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // Sync initial values when dialog opens or when specific props change
+    const initialDaysStr = JSON.stringify(initialDays || [])
+    
     React.useEffect(() => {
         if (open) {
-            setSelectedDays(initialDays || [])
+            setSelectedStudent(initialStudentId || fixedStudentId || '')
+            setSelectedItem(itemId || '')
+            setAssignmentId(providedAssignmentId || '')
+            const daysValues = Array.isArray(initialDays) ? initialDays : (initialDays ? [initialDays] : [])
+            const numericDays = (daysValues || []).map((d: any) => parseInt(d.toString())).filter((n: any) => !isNaN(n))
+            setSelectedDays(numericDays as number[])
         }
-        // JSON.stringify prevents infinite loop from array reference changing every render
-    }, [open, JSON.stringify(initialDays)])
+    }, [open, initialStudentId, fixedStudentId, itemId, initialDaysStr, providedAssignmentId])
 
     const { toast } = useToast()
     const router = useRouter()
@@ -138,13 +154,14 @@ export function UnifiedAssignDialog({
     }
 
     const toggleDay = (day: number) => {
+        const currentDays = selectedDays || []
         if (type === 'workout') {
-            // Se clicar no já selecionado, deseleciona (opcional, mas evita confusão)
-            setSelectedDays(prev => prev.includes(day) ? [] : [day])
+            setSelectedDays(currentDays.includes(day) ? [] : [day])
         } else {
-            setSelectedDays(prev =>
-                prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day].sort()
-            )
+            setSelectedDays(prev => {
+                const p = prev || []
+                return p.includes(day) ? p.filter(d => d !== day) : [...p, day].sort()
+            })
         }
     }
 
@@ -158,25 +175,23 @@ export function UnifiedAssignDialog({
             return
         }
 
-        setLoading(true)
+        setIsSubmitting(true)
         try {
             let res: any
 
             if (type === 'cardio') {
-                const { assignCardioToStudent } = await import('@/actions/student-content-actions')
-                res = await assignCardioToStudent(selectedItem, selectedStudent, {
+                res = await assignCardio({
+                    cardioId: selectedItem,
+                    studentId: selectedStudent,
                     daysOfWeek: selectedDays,
                     duration: parseInt(duration),
-                    intensity: intensity
+                    intensity
                 })
             } else if (type === 'workout') {
-                const { assignWorkout } = await import('@/actions/workout-actions')
                 res = await assignWorkout(selectedItem, selectedStudent, selectedDays[0])
             } else if (type === 'diet') {
-                const { assignDiet } = await import('@/actions/diet-actions')
                 res = await assignDiet(selectedItem, selectedStudent, selectedDays)
             } else if (type === 'ergogenic') {
-                const { assignErgogenic } = await import('@/actions/student-content-actions')
                 res = await assignErgogenic(selectedItem, selectedStudent, selectedDays)
             }
 
@@ -188,9 +203,9 @@ export function UnifiedAssignDialog({
                 toast({ variant: 'destructive', title: 'Erro', description: res?.error || 'Algo deu errado.' })
             }
         } catch (error: any) {
-            toast({ variant: 'destructive', title: 'Erro', description: error.message })
+            toast({ variant: 'destructive', title: 'Erro', description: error.message || 'Erro ao realizar atribuição' })
         } finally {
-            setLoading(false)
+            setIsSubmitting(false)
         }
     }
 
@@ -243,11 +258,18 @@ export function UnifiedAssignDialog({
                                     <div className="space-y-2">
                                         <Label className="text-[10px] font-black uppercase tracking-widest text-zinc-600 ml-1">Aluno</Label>
                                         {(students || []).length > 0 ? (
-                                            <Select value={selectedStudent} onValueChange={setSelectedStudent}>
+                                            <Select key={`${initialStudentId}-${initialDaysStr}-${open}`} value={selectedStudent} onValueChange={setSelectedStudent}>
                                                 <SelectTrigger className={cn("w-full h-14 bg-zinc-900/50 border-zinc-800 rounded-2xl text-white font-bold text-xs ring-offset-zinc-950 transition-all flex items-center justify-between px-4", config.color === 'emerald' ? "focus:ring-emerald-500/20" : "focus:ring-orange-500/20")}>
                                                     <SelectValue placeholder="Selecione o aluno" />
                                                 </SelectTrigger>
                                                 <SelectContent className="bg-zinc-900 border-zinc-800 rounded-2xl z-[100001]" position="popper" sideOffset={5}>
+                                                    {initialStudentId && !students.some(s => s.student_id === initialStudentId) && (
+                                                       <SelectItem value={initialStudentId} className="focus:bg-zinc-800 focus:text-white">
+                                                           <span className="font-bold text-xs uppercase tracking-tight text-zinc-400">
+                                                               {initialStudentName || initialStudentId} (Inativo/Outro)
+                                                           </span>
+                                                       </SelectItem>
+                                                    )}
                                                     {(students || []).map((s) => (
                                                         <SelectItem
                                                             key={s.student_id}
@@ -270,7 +292,6 @@ export function UnifiedAssignDialog({
                         </div>
                     )}
 
-                    {/* Cardio Specific Metrics */}
                     {type === 'cardio' && (
                         <div className="space-y-4">
                             <div className="flex items-center gap-2 px-1">
@@ -310,7 +331,6 @@ export function UnifiedAssignDialog({
                         </div>
                     )}
 
-                    {/* Scheduling Section */}
                     <div className="space-y-4">
                         <div className="flex items-center gap-2 px-1">
                             <Calendar className="w-3.5 h-3.5 text-zinc-500" />
@@ -320,7 +340,7 @@ export function UnifiedAssignDialog({
                         </div>
                         <div className="flex justify-between gap-1.5 h-14 p-1.5 bg-zinc-900/40 rounded-[1.2rem] border border-zinc-800/50 shadow-inner">
                             {WEEKDAYS.map((day) => {
-                                const isSelected = selectedDays.includes(day.value)
+                                const isSelected = (selectedDays || []).includes(day.value)
                                 return (
                                     <button
                                         key={day.value}
@@ -340,21 +360,20 @@ export function UnifiedAssignDialog({
                         </div>
                     </div>
 
-                    <DialogFooter className="pt-4">
+                    <DialogFooter className="mt-4">
                         <Button
                             onClick={handleAssign}
-                            disabled={loading}
-                            className={cn(
-                                "w-full h-16 rounded-2xl font-black uppercase italic tracking-widest transition-all active:scale-[0.98] shadow-2xl group overflow-hidden relative",
-                                "bg-gradient-to-r text-zinc-950",
-                                config.btnGradient,
-                                config.btnHover,
-                                config.btnShadow
-                            )}
+                            disabled={isSubmitting}
+                            className={cn("h-14 w-full rounded-2xl font-black uppercase tracking-wider text-[11px] italic transition-all active:scale-95 shadow-lg", config.color === 'emerald' ? "bg-emerald-500 text-zinc-950 hover:bg-emerald-400 shadow-emerald-500/20" : "bg-orange-500 text-zinc-950 hover:bg-orange-400 shadow-orange-500/20")}
                         >
-                            <div className="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-                            {loading ? <Loader2 className="w-5 h-5 animate-spin mr-3" /> : <UserPlus className="w-5 h-5 mr-3" />}
-                            <span className="relative z-10">Confirmar Atribuição</span>
+                            {isSubmitting ? (
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                                <div className="flex items-center gap-2">
+                                    <UserPlus className="w-4 h-4" />
+                                    Confirmar Atribuição
+                                </div>
+                            )}
                         </Button>
                     </DialogFooter>
                 </div>

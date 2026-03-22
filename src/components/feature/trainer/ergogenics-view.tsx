@@ -10,6 +10,7 @@ import { Plus, Trash2, Edit2, Loader2, Sparkles, Calendar, FlaskConical, Zap } f
 import { addErgogenic, updateErgogenic, deleteErgogenic } from "@/actions/ergogenics-actions"
 import { Switch } from "@/components/ui/switch"
 import { UnifiedDeleteButton } from "@/components/feature/shared/unified-delete-button"
+import { cn } from '@/lib/utils'
 
 interface Ergogenic {
     id: string
@@ -138,23 +139,35 @@ export function TrainerErgogenicsView({ studentId, initialData }: TrainerErgogen
 
                                 <div className="space-y-2">
                                     <Label className="text-[10px] text-zinc-500 uppercase font-bold tracking-widest ml-1">Dosagem Semanal Total</Label>
-                                    <div className="flex items-center gap-4 bg-zinc-900/50 border border-zinc-800 p-2 rounded-xl h-12">
-                                        <Input
-                                            type="number"
-                                            step="0.1"
-                                            value={formData.weekly_dosage || ''}
-                                            onChange={e => setFormData({ ...formData, weekly_dosage: parseFloat(e.target.value) || 0 })}
-                                            placeholder="Ex: 1.2"
-                                            className="bg-transparent border-0 text-sm h-8 rounded-lg text-white pr-2 focus-visible:ring-0 focus-visible:ring-offset-0"
-                                        />
-                                        <div className="flex items-center gap-2 pr-2 border-l border-zinc-800 pl-4">
-                                            <span className={`text-[10px] font-black uppercase tracking-widest transition-colors ${formData.unit === 'mg' ? 'text-zinc-500' : 'text-emerald-500'}`}>ml</span>
+                                    <div className={cn(
+                                        "flex items-center bg-zinc-900/50 border border-zinc-800 rounded-2xl h-14 pr-2 focus-within:ring-2 focus-within:ring-emerald-500/20 focus-within:border-emerald-500/50 transition-all overflow-hidden"
+                                    )}>
+                                        <div className="flex-1">
+                                            <Input
+                                                type="number"
+                                                step="0.1"
+                                                value={formData.weekly_dosage || ''}
+                                                onChange={e => setFormData({ ...formData, weekly_dosage: parseFloat(e.target.value) || 0 })}
+                                                placeholder="Ex: 1.2"
+                                                className="bg-transparent border-0 h-12 focus-visible:ring-0 focus-visible:ring-offset-0 font-bold px-4 text-white"
+                                            />
+                                        </div>
+                                        
+                                        {/* Minimal Unit Switch inside input */}
+                                        <div className="flex items-center gap-3 px-4 border-l border-zinc-800/50 h-8">
+                                            <span className={cn(
+                                                "text-[9px] font-black uppercase tracking-widest transition-all",
+                                                formData.unit === 'ml' ? "text-emerald-500" : "text-zinc-600"
+                                            )}>ML</span>
                                             <Switch
                                                 checked={formData.unit === 'mg'}
                                                 onCheckedChange={(checked) => setFormData({ ...formData, unit: checked ? 'mg' : 'ml' })}
-                                                className="data-[state=checked]:bg-emerald-600 data-[state=unchecked]:bg-emerald-600/20"
+                                                className="h-4 w-8 data-[state=checked]:bg-emerald-500 data-[state=unchecked]:bg-zinc-800"
                                             />
-                                            <span className={`text-[10px] font-black uppercase tracking-widest transition-colors ${formData.unit === 'ml' ? 'text-zinc-500' : 'text-emerald-500'}`}>mg</span>
+                                            <span className={cn(
+                                                "text-[9px] font-black uppercase tracking-widest transition-all",
+                                                formData.unit === 'mg' ? "text-emerald-500" : "text-zinc-600"
+                                            )}>MG</span>
                                         </div>
                                     </div>
                                 </div>

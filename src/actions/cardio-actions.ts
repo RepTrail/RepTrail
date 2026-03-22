@@ -26,13 +26,51 @@ export async function getCardioLibrary() {
 
         const { data, error } = await supabase
             .from('cardios')
-            .select('id, name, description, trainer_id, created_at, duration_minutes, suggested_intensity')
+            .select(`
+                id, name, description, trainer_id, created_at, duration_minutes, suggested_intensity,
+                assignments:assigned_cardios(
+                    id,
+                    student_id,
+                    student:profiles(full_name),
+                    day_of_week,
+                    days_of_week,
+                    active
+                )
+            `)
             .in('trainer_id', trainerIds)
             .order('name', { ascending: true })
             .limit(100)
 
         if (error) throw error
-        return data || []
+        
+        // Group by student and merge days
+    const grouped = (data || []).map(cardio => {
+        const studentMap: Record<string, any> = {}
+        
+        ;(cardio.assignments || []).forEach((a: any) => {
+            if (!a.active || a.student_id === user?.id) return
+            
+            if (!studentMap[a.student_id]) {
+                studentMap[a.student_id] = { 
+                    ...a, 
+                    days_of_week: Array.isArray(a.days_of_week) ? [...a.days_of_week] : [] 
+                }
+            }
+            // Merge singular day_of_week if present
+            if (a.day_of_week !== null && a.day_of_week !== undefined) {
+                if (!studentMap[a.student_id].days_of_week.includes(a.day_of_week)) {
+                    studentMap[a.student_id].days_of_week.push(a.day_of_week)
+                }
+            }
+        })
+
+        return {
+            ...cardio,
+            assignments: Object.values(studentMap)
+        }
+    })
+
+    return grouped || []
     } catch (e) {
         console.error('Error fetching cardio library:', e)
         return []
@@ -85,11 +123,47 @@ export async function getCardioDetails(cardioId: string) {
     const supabase = await createClient()
     const { data, error } = await supabase
         .from('cardios')
-        .select('*')
+        .select(`
+            *,
+            assignments:assigned_cardios(
+                id,
+                student_id,
+                student:profiles!student_id(full_name),
+                day_of_week,
+                days_of_week,
+                active
+            )
+        `)
         .eq('id', cardioId)
-        .single()
-    if (error) return null
-    return data
+        .maybeSingle()
+
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (error || !data) return null
+
+    // Grouping logic for details
+    const studentMap: Record<string, any> = {}
+    ;(data.assignments || []).forEach((a: any) => {
+        if (!a.active || a.student_id === user?.id) return
+        
+        if (!studentMap[a.student_id]) {
+            studentMap[a.student_id] = { 
+                ...a, 
+                days_of_week: Array.isArray(a.days_of_week) ? [...a.days_of_week] : 
+                               (typeof a.days_of_week === 'string' ? JSON.parse(a.days_of_week) : []) 
+            }
+        }
+        if (a.day_of_week !== null && a.day_of_week !== undefined) {
+             if (!studentMap[a.student_id].days_of_week.includes(a.day_of_week)) {
+                 studentMap[a.student_id].days_of_week.push(a.day_of_week)
+             }
+        }
+    })
+
+    return {
+        ...data,
+        assignments: Object.values(studentMap)
+    }
 }
 
 export async function updateCardioMeta(cardioId: string, name: string, description?: string, duration?: number, intensity?: string) {

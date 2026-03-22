@@ -10,16 +10,50 @@ export async function getTrainerWorkouts() {
 
     if (!user) return []
 
-    const { data } = await supabase
+    const { data, error } = await supabase
         .from('workouts')
         .select(`
             *,
-            exercises:workout_exercises(count)
+            exercises:workout_exercises(count),
+            assignments:assigned_workouts(
+                id,
+                student_id,
+                day_of_week,
+                active,
+                student:profiles(full_name)
+            )
         `)
         .eq('trainer_id', user.id)
         .order('created_at', { ascending: false })
 
-    return data || []
+    if (error) {
+        console.error('Error in getTrainerWorkouts:', error)
+        return []
+    }
+    if (!data) return []
+
+    // Grouping logic
+    const grouped = (data || []).map(workout => {
+        const studentMap: Record<string, any> = {}
+        ;(workout.assignments || []).forEach((a: any) => {
+            if (!a.active || (user && a.student_id === user.id)) return
+            
+            if (!studentMap[a.student_id]) {
+                studentMap[a.student_id] = { 
+                    ...a, 
+                    days_of_week: [] 
+                }
+            }
+            if (a.day_of_week !== null && a.day_of_week !== undefined) {
+                 if (!studentMap[a.student_id].days_of_week.includes(a.day_of_week)) {
+                     studentMap[a.student_id].days_of_week.push(a.day_of_week)
+                 }
+            }
+        })
+        return { ...workout, assignments: Object.values(studentMap) }
+    })
+
+    return grouped || []
 }
 
 export async function createManualWorkout(formData: FormData) {
@@ -217,11 +251,47 @@ export async function getWorkoutDetails(workoutId: string) {
     const supabase = await createClient()
 
     // 1. Get Workout Info
-    const { data: workout } = await supabase
+    const { data: workout, error } = await supabase
         .from('workouts')
-        .select('*')
+        .select(`
+            *,
+            assignments:assigned_workouts(
+                id,
+                student_id,
+                day_of_week,
+                active
+            )
+        `)
         .eq('id', workoutId)
-        .single()
+        .maybeSingle()
+
+    if (error) {
+        console.error('Error in getWorkoutDetails:', error)
+        return null
+    }
+
+    if (!workout) return null
+
+    const { data: { user } } = await supabase.auth.getUser()
+
+    // Grouping logic for details
+    const studentMap: Record<string, any> = {}
+    ;(workout.assignments || []).forEach((a: any) => {
+        if (!a.active || (user && a.student_id === user.id)) return
+        
+        if (!studentMap[a.student_id]) {
+            studentMap[a.student_id] = { 
+                ...a, 
+                days_of_week: [] 
+            }
+        }
+        if (a.day_of_week !== null && a.day_of_week !== undefined) {
+             if (!studentMap[a.student_id].days_of_week.includes(a.day_of_week)) {
+                 studentMap[a.student_id].days_of_week.push(a.day_of_week)
+             }
+        }
+    })
+    workout.assignments = Object.values(studentMap)
 
     if (!workout) return null
 

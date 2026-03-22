@@ -75,17 +75,18 @@ export default async function StudentErgogenicsPage({ params }: { params: { id: 
                         }
                         fields={[
                             { name: 'name', label: 'Nome da Substância', placeholder: 'Ex: Enantato de Testosterona', required: true },
-                            { name: 'weekly_dosage', label: 'Dosagem Semanal Total', placeholder: '250', type: 'number', required: true, gridCols: 2 },
+                            { name: 'weekly_dosage', label: 'Dosagem Semanal Total', placeholder: '250', type: 'number', required: true, gridCols: 2, merged: true } as any,
                             {
                                 name: 'unit', label: 'Unidade', type: 'switch', defaultValue: 'mg', options: [
                                     { label: 'mg', value: 'mg' },
                                     { label: 'ml', value: 'ml' }
-                                ], required: true, gridCols: 2
-                            },
+                                ], required: true, gridCols: 2, merged: true
+                            } as any,
                             { name: 'application_days', label: 'Dias de Aplicação', type: 'days', required: true },
                             { name: 'notes', label: 'Instruções / Notas (Opcional)', placeholder: 'Ex: Aplicar no glúteo...', type: 'textarea' }
                         ]}
                         actionType="create-student-ergogenic"
+                        parentId={relationship.student_id}
                         successMessage="Substância adicionada ao protocolo!"
                         colorScheme="orange"
                     />
@@ -95,7 +96,7 @@ export default async function StudentErgogenicsPage({ params }: { params: { id: 
             <UnifiedErgogenicsModule
                 studentId={relationship.student_id}
                 mode="trainer"
-                initialErgogenics={ergogenics || []}
+                initialErgogenics={ergogenics ?? []}
                 studentName={studentName}
                 colorScheme="orange"
             />

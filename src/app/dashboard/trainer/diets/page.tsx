@@ -20,19 +20,6 @@ export default async function TrainerDietsPage() {
         getBetaTesterMode()
     ])
 
-    // Fetch assigned days for each diet across all students
-    const supabase = await createClient()
-    const { data: assignments } = await supabase
-        .from('assigned_diets')
-        .select('diet_id, days_of_week')
-        .eq('active', true)
-
-    const dietDaysMap = (assignments || []).reduce((acc: any, curr: any) => {
-        if (!acc[curr.diet_id]) acc[curr.diet_id] = []
-        if (curr.days_of_week) acc[curr.diet_id].push(...curr.days_of_week)
-        return acc
-    }, {})
-
     return (
         <div className="space-y-6" suppressHydrationWarning>
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-2 border-b border-zinc-800/50">
@@ -76,17 +63,25 @@ export default async function TrainerDietsPage() {
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {diets.length > 0 ? (
                     diets.map((diet: any) => {
-                        const assignedDays = dietDaysMap[diet.id] || []
-                        const uniqueDays = (Array.from(new Set(assignedDays)) as number[]).sort((a, b) => a - b)
+                        const studentAssignments = (diet.assignments || []).reduce((acc: any, curr: any) => {
+                            const name = curr.student?.full_name || 'Aluno'
+                            if (!acc[name]) acc[name] = new Set<number>()
+                            if (curr.days_of_week) {
+                                curr.days_of_week.forEach((d: number) => acc[name].add(d))
+                            }
+                            return acc
+                        }, {})
+
+                        const studentsList = Object.keys(studentAssignments)
 
                         return (
-                            <Card key={diet.id} className="bg-zinc-900/50 border-zinc-800 text-zinc-100 transition-all group rounded-[2rem] overflow-hidden flex flex-col">
-                                <CardHeader className="p-6 pb-4">
+                            <Card key={diet.id} className="bg-zinc-900/50 border-zinc-800 text-zinc-100 transition-all group rounded-[2rem] overflow-hidden flex flex-col hover:border-orange-500/30">
+                                <CardHeader className="p-6 pb-2">
                                     <div className="flex items-start justify-between">
                                         <div className="bg-zinc-800 p-2 rounded-lg text-zinc-400 group-hover:text-orange-500 transition-colors">
                                             <Utensils className="w-5 h-5 text-orange-500" />
                                         </div>
-                                        <div className="flex gap-1">
+                                        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                             <DuplicateButton id={diet.id} type="diet" />
                                             <UnifiedDeleteButton
                                                 id={diet.id}
@@ -95,37 +90,57 @@ export default async function TrainerDietsPage() {
                                             />
                                         </div>
                                     </div>
-                                    <CardTitle className="mt-4 text-xl font-black italic uppercase tracking-tighter text-white">
+                                    <CardTitle className="mt-4 text-xl font-black italic uppercase tracking-tighter text-zinc-100 group-hover:text-white transition-colors">
                                         {diet.name}
                                     </CardTitle>
                                 </CardHeader>
 
-                                <CardContent className="p-6 pt-0 flex-1 flex flex-col">
-                                    {/* Assigned days badges */}
-                                    {uniqueDays.length > 0 ? (
-                                        <div className="flex flex-wrap gap-1.5 mb-6">
-                                            {uniqueDays.map((day) => (
-                                                <span key={day} className="flex items-center shrink-0 gap-1 px-2 py-1 bg-orange-500/10 text-orange-400 text-[9px] font-black uppercase rounded-[0.5rem] border border-orange-500/20">
-                                                    <Calendar className="w-2.5 h-2.5" />
-                                                    {dayNamesShort[day]}
-                                                </span>
-                                            ))}
+                                <CardContent className="p-6 pt-2 flex-1 flex flex-col">
+                                    {/* Assignments Section */}
+                                    {studentsList.length > 0 ? (
+                                        <div className="space-y-3 mb-6 bg-zinc-950/50 border border-zinc-800/50 p-3 rounded-2xl">
+                                            <p className="text-[9px] font-black uppercase tracking-widest text-zinc-600">Atribuído para:</p>
+                                            <div className="space-y-2">
+                                                {studentsList.map(studentName => {
+                                                    const daysSet = studentAssignments[studentName]
+                                                    const sortedDays = Array.from(daysSet as Set<number>).sort((a, b) => a - b)
+                                                    return (
+                                                        <div key={studentName} className="flex flex-col gap-1.5">
+                                                            <div className="flex items-center gap-1.5">
+                                                                <div className="w-1 h-1 rounded-full bg-orange-500" />
+                                                                <span className="text-[10px] font-black italic uppercase text-zinc-400 leading-none">{studentName}</span>
+                                                            </div>
+                                                            <div className="flex flex-wrap gap-1 pl-2.5">
+                                                                {sortedDays.map(day => (
+                                                                    <span key={day} className="px-1.5 py-0.5 bg-zinc-900 border border-zinc-800 rounded text-[8px] font-bold text-zinc-500 uppercase tracking-tighter">
+                                                                        {dayNamesShort[day]}
+                                                                    </span>
+                                                                ))}
+                                                            </div>
+                                                        </div>
+                                                    )
+                                                })}
+                                            </div>
                                         </div>
                                     ) : (
-                                        <div className="flex items-center gap-1 px-2 py-1 bg-zinc-800 text-zinc-500 text-[9px] font-black uppercase rounded-[0.5rem] mb-6 w-fit">
-                                            <Calendar className="w-2.5 h-2.5" />
-                                            Não atribuído
+                                        <div className="mb-6 h-[40px] flex items-center">
+                                            <span className="text-[10px] bg-zinc-800/50 text-zinc-600 px-3 py-1 rounded-full font-bold uppercase tracking-widest italic border border-zinc-800/30">
+                                                Livre (Biblioteca)
+                                            </span>
                                         </div>
                                     )}
 
                                     {/* Meal count + date row */}
-                                    <div className="flex items-center justify-between text-[10px] text-zinc-500 font-bold uppercase tracking-widest mb-6">
-                                        <span>{diet.meals?.[0]?.count || 0} Refeições</span>
+                                    <div className="flex items-center justify-between text-[10px] text-zinc-600 font-bold uppercase tracking-widest mt-auto">
+                                        <div className="flex items-center gap-2">
+                                            <Utensils className="w-3 h-3 text-zinc-700" />
+                                            <span>{diet.meals?.[0]?.count || 0} Refeições</span>
+                                        </div>
                                         <span>{new Date(diet.created_at).toLocaleDateString('pt-BR')}</span>
                                     </div>
 
-                                    <div className="mt-auto pt-6 border-t border-zinc-800/50 flex items-center justify-center">
-                                        <Button asChild variant="outline" className="w-full h-11 bg-zinc-800 border-zinc-700 text-zinc-100 hover:bg-zinc-700 flex items-center justify-center gap-1.5 rounded-xl font-black text-[10px] uppercase italic tracking-widest border-white/5 px-6">
+                                    <div className="pt-4 mt-4 border-t border-zinc-800/50 flex items-center justify-center">
+                                        <Button asChild variant="outline" className="w-full h-11 bg-zinc-800/50 border-zinc-800 text-zinc-400 hover:text-white hover:bg-orange-600 hover:border-orange-500 flex items-center justify-center gap-1.5 rounded-xl font-black text-[10px] uppercase italic tracking-widest border-white/5 px-6 transition-all active:scale-95">
                                             <Link href={`/dashboard/trainer/diets/${diet.id}`}>
                                                 Editar Dieta
                                             </Link>

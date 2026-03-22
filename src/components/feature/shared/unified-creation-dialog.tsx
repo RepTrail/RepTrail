@@ -269,6 +269,11 @@ export function UnifiedCreationDialog({
             }
         })
 
+        if (parentId) {
+            formData.append('student_id', parentId)
+            formData.append('parentId', parentId)
+        }
+
         try {
             let result;
 
@@ -382,6 +387,68 @@ export function UnifiedCreationDialog({
 
                             return groupedFields.map((group, idx) => {
                                 if (Array.isArray(group)) {
+                                    // Special logic for merged fields (like dosage + unit)
+                                    const hasMergedField = group.some(f => (f as any).merged);
+                                    
+                                    if (hasMergedField) {
+                                        return (
+                                            <div key={`group-${idx}`} className="space-y-3">
+                                                <Label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-1">
+                                                    {group[0].label} {group[0].required && <span className="text-red-500">*</span>}
+                                                </Label>
+                                                <div className={cn(
+                                                    "flex items-center bg-zinc-900/50 border border-zinc-800 rounded-2xl h-14 pr-2 transition-all overflow-hidden focus-within:ring-2 focus-within:ring-offset-0",
+                                                    s.ring,
+                                                    s.border
+                                                )}>
+                                                    <div className="flex-1">
+                                                        <Input
+                                                            id={group[0].name}
+                                                            name={group[0].name}
+                                                            type={group[0].type === 'number' ? 'number' : 'text'}
+                                                            placeholder={group[0].placeholder}
+                                                            required={group[0].required}
+                                                            defaultValue={initialValues?.[group[0].name]}
+                                                            className="bg-transparent border-0 h-12 focus-visible:ring-0 focus-visible:ring-offset-0 font-bold px-4"
+                                                        />
+                                                    </div>
+                                                    
+                                                    {/* The Inline Switch */}
+                                                    <div className="flex items-center gap-3 px-4 border-l border-zinc-800/50 h-8">
+                                                        <span className={cn(
+                                                            "text-[9px] font-black uppercase tracking-widest transition-all",
+                                                            customFields[group[1].name] === group[1].options?.[0]?.value ? `text-${s.accent}` : "text-zinc-600"
+                                                        )}>
+                                                            {group[1].options?.[0]?.label}
+                                                        </span>
+                                                        <Switch
+                                                            id={group[1].name}
+                                                            checked={customFields[group[1].name] === group[1].options?.[1]?.value}
+                                                            onCheckedChange={(checked) => {
+                                                                setCustomFields(prev => ({
+                                                                    ...prev,
+                                                                    [group[1].name]: checked ? group[1].options?.[1]?.value : group[1].options?.[0]?.value
+                                                                }))
+                                                            }}
+                                                            className={cn(
+                                                                "h-4 w-8 data-[state=checked]:bg-emerald-500 data-[state=unchecked]:bg-zinc-800",
+                                                                colorScheme === 'orange' && "data-[state=checked]:bg-orange-500",
+                                                                colorScheme === 'purple' && "data-[state=checked]:bg-purple-500",
+                                                                colorScheme === 'cyan' && "data-[state=checked]:bg-cyan-500"
+                                                            )}
+                                                        />
+                                                        <span className={cn(
+                                                            "text-[9px] font-black uppercase tracking-widest transition-all",
+                                                            customFields[group[1].name] === group[1].options?.[1]?.value ? `text-${s.accent}` : "text-zinc-600"
+                                                        )}>
+                                                            {group[1].options?.[1]?.label}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        );
+                                    }
+
                                     return (
                                         <div key={`group-${idx}`} className="grid grid-cols-2 gap-4">
                                             {group.map(f => renderField(f))}

@@ -36,6 +36,7 @@ interface CardioBuilderProps {
         duration_minutes?: number | null
         suggested_intensity?: string | null
         created_at: string
+        assignments?: any[]
     }
     students?: any[]
     backHref?: string
@@ -59,6 +60,11 @@ export function CardioBuilder({ cardio, students = [], backHref = '/dashboard/tr
     const [editIntensity, setEditIntensity] = useState(cardio.suggested_intensity || 'Moderada')
     const [isSavingMeta, setIsSavingMeta] = useState(false)
 
+    // Debug assignments
+    useEffect(() => {
+        console.log('[CARDIO_BUILDER] Assignments:', cardio.assignments)
+    }, [cardio.assignments])
+    
     useEffect(() => { if (isEditingName) nameInputRef.current?.focus() }, [isEditingName])
     useEffect(() => { if (isEditingDesc) descRef.current?.focus() }, [isEditingDesc])
 
@@ -95,80 +101,86 @@ export function CardioBuilder({ cardio, students = [], backHref = '/dashboard/tr
 
     return (
         <div className="space-y-10">
-            {/* Header */}
-            <div className="flex flex-col gap-4">
-                {/* Name */}
-                {isEditingName ? (
-                    <div className="animate-in fade-in slide-in-from-top-2 duration-200 bg-zinc-900/60 border border-zinc-700/60 rounded-2xl p-5 space-y-3 shadow-xl">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Nome do Cardio</label>
-                        <Input
-                            ref={nameInputRef}
-                            value={editName}
-                            onChange={e => setEditName(e.target.value)}
-                            onKeyDown={e => { if (e.key === 'Enter') handleSaveName(); if (e.key === 'Escape') handleCancelName() }}
-                            className="bg-zinc-950 border-zinc-700 text-white text-lg font-black h-12 rounded-xl focus-visible:ring-orange-500/30 focus-visible:border-orange-500/50"
-                            placeholder="Nome do cardio..."
-                        />
-                        <div className="flex items-center gap-2 pt-1">
-                            <Button
-                                onClick={handleSaveName}
-                                disabled={isSavingName || !editName.trim()}
-                                className="h-9  bg-orange-500 hover:bg-orange-400 text-white font-black uppercase tracking-widest text-[10px] rounded-xl transition-all shadow-lg shadow-orange-500/20 active:scale-95"
-                            >
-                                {isSavingName ? <Loader2 className="w-3 h-3 animate-spin" /> : <><Check className="w-3 h-3 mr-1.5" />Salvar</>}
-                            </Button>
-                            <Button
-                                onClick={handleCancelName}
-                                disabled={isSavingName}
-                                variant="ghost"
-                                className="h-9  bg-zinc-800/60 hover:bg-zinc-700/60 text-zinc-400 hover:text-white font-black uppercase tracking-widest text-[10px] rounded-xl transition-all border border-zinc-700/50 hover:border-zinc-600"
-                            >
-                                <X className="w-3 h-3 mr-1.5" />Cancelar
-                            </Button>
-                        </div>
-                    </div>
-                ) : (
-                    <div
-                        className="group flex items-center gap-3 pb-4 cursor-pointer w-fit"
-                        onClick={() => setIsEditingName(true)}
-                    >
-                        <div className="flex items-center gap-3 pb-4">
-                            <div className="p-2.5 bg-orange-500/10 border border-orange-500/20 rounded-2xl">
-                                <Activity className="w-5 h-5 text-orange-500" />
+            {/* Header with Title and Assign Button */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div className="space-y-4">
+                    {/* Name */}
+                    {isEditingName ? (
+                        <div className="animate-in fade-in slide-in-from-top-2 duration-200 bg-zinc-900/60 border border-zinc-700/60 rounded-2xl p-5 space-y-3 shadow-xl max-w-xl">
+                            <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Nome do Cardio</label>
+                            <Input
+                                ref={nameInputRef}
+                                value={editName}
+                                onChange={e => setEditName(e.target.value)}
+                                onKeyDown={(e: React.KeyboardEvent) => { if (e.key === 'Enter') handleSaveName(); if (e.key === 'Escape') handleCancelName() }}
+                                className="bg-zinc-950 border-zinc-700 text-white text-lg font-black h-12 rounded-xl focus-visible:ring-orange-500/30 focus-visible:border-orange-500/50"
+                                placeholder="Nome do cardio..."
+                            />
+                            <div className="flex items-center gap-2 pt-1">
+                                <Button
+                                    onClick={handleSaveName}
+                                    disabled={isSavingName || !editName.trim()}
+                                    className="h-9  bg-orange-500 hover:bg-orange-400 text-white font-black uppercase tracking-widest text-[10px] rounded-xl transition-all shadow-lg shadow-orange-500/20 active:scale-95"
+                                >
+                                    {isSavingName ? <Loader2 className="w-3 h-3 animate-spin" /> : <><Check className="w-3 h-3 mr-1.5" />Salvar</>}
+                                </Button>
+                                <Button
+                                    onClick={handleCancelName}
+                                    disabled={isSavingName}
+                                    variant="ghost"
+                                    className="h-9  bg-zinc-800/60 hover:bg-zinc-700/60 text-zinc-400 hover:text-white font-black uppercase tracking-widest text-[10px] rounded-xl transition-all border border-zinc-700/50 hover:border-zinc-600"
+                                >
+                                    <X className="w-3 h-3 mr-1.5" />Cancelar
+                                </Button>
                             </div>
-                            <h1 className="text-3xl font-bold text-white group-hover:text-orange-400 transition-colors duration-200 border-b border-transparent group-hover:border-orange-400/40 pb-0.5">
-                                {editName}
-                            </h1>
                         </div>
-                        <button
-                            className="p-2 rounded-xl text-zinc-600 hover:text-orange-400 hover:bg-orange-400/10 transition-all border border-transparent hover:border-orange-400/20 active:scale-90"
-                            title="Editar nome"
+                    ) : (
+                        <div
+                            className="group flex items-center gap-3 cursor-pointer w-fit"
+                            onClick={() => setIsEditingName(true)}
                         >
-                            <Pencil className="w-4 h-4" />
-                        </button>
-                    </div>
-                )}
+                            <div className="flex items-center gap-3">
+                                <div className="p-2.5 bg-orange-500/10 border border-orange-500/20 rounded-2xl">
+                                    <Activity className="w-5 h-5 text-orange-500" />
+                                </div>
+                                <h1 className="text-3xl font-bold text-white group-hover:text-orange-400 transition-colors duration-200 border-b border-transparent group-hover:border-orange-400/40 pb-0.5 whitespace-nowrap">
+                                    {editName}
+                                </h1>
+                            </div>
+                            <button
+                                className="p-2 rounded-xl text-zinc-600 hover:text-orange-400 hover:bg-orange-400/10 transition-all border border-transparent hover:border-orange-400/20 active:scale-90"
+                                title="Editar nome"
+                            >
+                                <Pencil className="w-4 h-4" />
+                            </button>
+                        </div>
+                    )}
 
-                <p className="text-zinc-600 text-[10px] font-black uppercase tracking-widest">
-                    Template de Cardio • Criado em {new Date(cardio.created_at).toLocaleDateString('pt-BR')}
-                </p>
-            </div>
+                    <p className="text-zinc-600 text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-orange-500/50" />
+                        Template de Cardio • Criado em {new Date(cardio.created_at).toLocaleDateString('pt-BR')}
+                    </p>
+                </div>
 
-            <div className="flex items-center gap-3">
-                <UnifiedAssignDialog
-                    itemId={cardio.id}
-                    students={students}
-                    type="cardio"
-                    title="Atribuir Cardio"
-                    description="Escolha um aluno e os dias da semana para este protocolo."
-                    colorScheme="emerald"
-                    trigger={
-                        <Button className="h-[68px] px-8 bg-orange-500 hover:bg-orange-400 text-zinc-950 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-none flex flex-col items-center justify-center gap-1 group transition-all active:scale-95 italic">
-                            <Calendar className="w-5 h-5" />
-                            <span>Atribuir</span>
-                        </Button>
-                    }
-                />
+                <div className="flex items-center gap-3">
+                    <UnifiedAssignDialog
+                        itemId={cardio.id}
+                        students={students}
+                        type="cardio"
+                        title="Atribuir Cardio"
+                        description="Escolha um aluno e os dias da semana para este protocolo."
+                        colorScheme="emerald"
+                        initialStudentId={cardio.assignments?.[0]?.student_id}
+                        initialStudentName={cardio.assignments?.[0]?.student?.full_name}
+                        initialDays={cardio.assignments?.[0]?.days_of_week}
+                        trigger={
+                            <Button className="h-[58px] px-8 bg-orange-500 hover:bg-orange-400 text-zinc-950 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-none flex flex-row items-center justify-center gap-3 group transition-all active:scale-95 italic">
+                                <Calendar className="w-5 h-5" />
+                                <span>{cardio.assignments?.length ? "Gerenciar Atribuição" : "Atribuir"}</span>
+                            </Button>
+                        }
+                    />
+                </div>
             </div>
 
             {/* Description / Instructions */}
@@ -235,7 +247,7 @@ export function CardioBuilder({ cardio, students = [], backHref = '/dashboard/tr
                         <Clock className="w-4 h-4 text-orange-500" />
                         <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Duração Padrão (min)</span>
                     </div>
-                    <div className="flex items-center gap-3 pb-4">
+                    <div className="flex items-center gap-3">
                         <Input
                             type="number"
                             value={editDuration}
@@ -276,7 +288,7 @@ export function CardioBuilder({ cardio, students = [], backHref = '/dashboard/tr
                                     value={opt.value}
                                     className="rounded-xl px-3 py-2.5 font-bold focus:bg-orange-500/10 focus:text-orange-500 transition-all cursor-pointer mb-1 last:mb-0"
                                 >
-                                    <div className="flex items-center gap-3 pb-4">
+                                    <div className="flex items-center gap-3">
                                         <div className="w-2 h-2 rounded-full" style={{ backgroundColor: opt.color, boxShadow: `0 0 8px ${opt.color}66` }} />
                                         {opt.label}
                                     </div>
@@ -288,7 +300,7 @@ export function CardioBuilder({ cardio, students = [], backHref = '/dashboard/tr
             </div>
 
             {/* Template Info */}
-            <div className="bg-zinc-900/20 border border-zinc-800/30 rounded-2xl p-4 flex items-center gap-3 pb-4">
+            <div className="bg-zinc-900/20 border border-zinc-800/30 rounded-2xl p-4 flex items-center gap-3">
                 <div className="p-2 bg-orange-500/10 rounded-lg">
                     <Activity className="w-4 h-4 text-orange-500" />
                 </div>

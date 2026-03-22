@@ -89,6 +89,21 @@ export function UnifiedErgogenicsModule({
     const [loading, setLoading] = useState<Record<string, boolean>>({})
     const { toast } = useToast()
 
+    // Sync with server props safely to avoid infinite loops
+    React.useEffect(() => {
+        const hasChanged = JSON.stringify(initialErgogenics) !== JSON.stringify(ergogenics);
+        if (hasChanged) {
+            setErgogenics(initialErgogenics);
+        }
+    }, [initialErgogenics]);
+
+    React.useEffect(() => {
+        const hasChanged = JSON.stringify(initialLogs) !== JSON.stringify(logs);
+        if (hasChanged) {
+            setLogs(initialLogs);
+        }
+    }, [initialLogs]);
+
     const today = new Date().getDay()
     const todayName = WEEKDAYS_FULL[today]
     const { start, end } = useMemo(() => getTodayRangeBrazil(), [])

@@ -32,22 +32,51 @@ export async function getTrainerDiets() {
 
     if (!user) return []
 
-    const { data } = await supabase
+    const { data, error } = await supabase
         .from('diets')
         .select(`
             *,
             meals(count),
-            assigned_diets(days_of_week)
+            assignments:assigned_diets(
+                id,
+                student_id,
+                days_of_week,
+                active,
+                student:profiles(full_name)
+            )
         `)
         .eq('trainer_id', user.id)
         .order('created_at', { ascending: false })
 
+    if (error) {
+        console.error('Error in getTrainerDiets:', error)
+        return []
+    }
     if (!data) return []
 
-    return data.map((diet: any) => ({
-        ...diet,
-        daysOfWeek: diet.assigned_diets?.[0]?.days_of_week || []
-    }))
+    // Grouping logic
+    const grouped = (data || []).map(diet => {
+        const studentMap: Record<string, any> = {}
+        ;(diet.assignments || []).forEach((a: any) => {
+            if (!a.active || a.student_id === user?.id) return
+            
+            if (!studentMap[a.student_id]) {
+                studentMap[a.student_id] = { 
+                    ...a, 
+                    days_of_week: Array.isArray(a.days_of_week) ? [...a.days_of_week] : 
+                                   (typeof a.days_of_week === 'string' ? JSON.parse(a.days_of_week) : []) 
+                }
+            }
+            if (a.day_of_week !== null && a.day_of_week !== undefined) {
+                 if (!studentMap[a.student_id].days_of_week.includes(a.day_of_week)) {
+                     studentMap[a.student_id].days_of_week.push(a.day_of_week)
+                 }
+            }
+        })
+        return { ...diet, assignments: Object.values(studentMap) }
+    })
+
+    return grouped || []
 }
 
 export async function createManualDiet(formData: FormData) {
@@ -265,19 +294,52 @@ export async function unassignDiet(dietId: string, studentId: string) {
 export async function getDietDetails(dietId: string) {
     const supabase = await createClient()
 
-    const { data: diet } = await supabase
+    const { data: diet, error } = await supabase
         .from('diets')
         .select(`
             *,
+            assignments:assigned_diets(
+                id,
+                student_id,
+                days_of_week,
+                active,
+                student:profiles(full_name)
+            ),
             meals(
                 *,
                 meal_items(*)
             )
         `)
         .eq('id', dietId)
-        .single()
+        .maybeSingle()
+
+    if (error) {
+        console.error('Error in getDietDetails:', error)
+        return null
+    }
 
     if (!diet) return null
+
+    if (diet) {
+        const studentMap: Record<string, any> = {}
+        ;(diet.assignments || []).forEach((a: any) => {
+            if (!a.active) return // Only process active assignments
+
+            if (!studentMap[a.student_id]) {
+                studentMap[a.student_id] = {
+                    ...a,
+                    days_of_week: Array.isArray(a.days_of_week) ? [...a.days_of_week] :
+                                   (typeof a.days_of_week === 'string' ? JSON.parse(a.days_of_week) : [])
+                }
+            }
+            if (a.day_of_week !== null && a.day_of_week !== undefined) {
+                 if (!studentMap[a.student_id].days_of_week.includes(a.day_of_week)) {
+                     studentMap[a.student_id].days_of_week.push(a.day_of_week)
+                 }
+            }
+        })
+        diet.assignments = Object.values(studentMap)
+    }
 
     // Sort meals and items by order_index
     if (diet.meals) {

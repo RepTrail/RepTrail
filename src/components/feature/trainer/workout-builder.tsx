@@ -41,6 +41,7 @@ interface Workout {
     id: string
     name: string
     description: string
+    assignments?: any[]
 }
 
 interface WorkoutExercise {
@@ -202,16 +203,16 @@ export function WorkoutBuilder({ workout, students = [], backHref = '/dashboard/
         <div className="space-y-8">
             {/* Header / Meta */}
             <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
-                <div className="flex flex-col gap-3 flex-1">
+                <div className="flex flex-col gap-3 flex-1 text-center sm:text-left">
                     {isEditingMeta ? (
-                        <div className="animate-in fade-in slide-in-from-top-2 duration-200 bg-zinc-900/60 border border-zinc-700/60 rounded-2xl p-5 space-y-3 shadow-xl">
+                        <div className="animate-in fade-in slide-in-from-top-2 duration-200 bg-zinc-900/60 border border-zinc-700/60 rounded-2xl p-5 space-y-3 shadow-xl max-w-xl mx-auto sm:mx-0">
                             <div className="space-y-1.5">
                                 <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Nome do Treino</label>
                                 <Input
                                     ref={nameInputRef}
                                     value={editName}
                                     onChange={e => setEditName(e.target.value)}
-                                    onKeyDown={e => { if (e.key === 'Enter') handleSaveMeta(); if (e.key === 'Escape') handleCancelMeta() }}
+                                    onKeyDown={(e: React.KeyboardEvent) => { if (e.key === 'Enter') handleSaveMeta(); if (e.key === 'Escape') handleCancelMeta() }}
                                     className="bg-zinc-950 border-zinc-700 text-white text-lg font-black h-12 rounded-xl focus-visible:ring-blue-500/30 focus-visible:border-blue-500/50"
                                     placeholder="Nome do treino..."
                                 />
@@ -221,12 +222,12 @@ export function WorkoutBuilder({ workout, students = [], backHref = '/dashboard/
                                 <Input
                                     value={editDesc}
                                     onChange={e => setEditDesc(e.target.value)}
-                                    onKeyDown={e => { if (e.key === 'Escape') handleCancelMeta() }}
+                                    onKeyDown={(e: React.KeyboardEvent) => { if (e.key === 'Escape') handleCancelMeta() }}
                                     className="bg-zinc-950 border-zinc-700 text-zinc-300 h-10 rounded-xl focus-visible:ring-blue-500/30 focus-visible:border-blue-500/50"
                                     placeholder="Qual é o foco desse treino?"
                                 />
                             </div>
-                            <div className="flex items-center gap-2 pt-1">
+                            <div className="flex items-center justify-center sm:justify-start gap-2 pt-1">
                                 <Button
                                     onClick={handleSaveMeta}
                                     disabled={isSavingMeta || !editName.trim()}
@@ -246,11 +247,11 @@ export function WorkoutBuilder({ workout, students = [], backHref = '/dashboard/
                         </div>
                     ) : (
                         <div
-                            className="group flex items-start gap-3 cursor-pointer"
+                            className="group flex items-center justify-center sm:justify-start gap-4 cursor-pointer w-fit mx-auto sm:mx-0"
                             onClick={() => setIsEditingMeta(true)}
                         >
-                            <div className="flex-1 min-w-0">
-                                <h1 className="text-3xl font-bold text-white font-sans group-hover:text-blue-400 transition-colors duration-200 border-b border-transparent group-hover:border-blue-400/40 pb-0.5 inline-block">
+                            <div className="flex flex-col">
+                                <h1 className="text-3xl font-bold text-white font-sans group-hover:text-blue-400 transition-colors duration-200 border-b border-transparent group-hover:border-blue-400/40 pb-0.5 whitespace-nowrap">
                                     {editName}
                                 </h1>
                                 <p className="text-zinc-500 mt-1 group-hover:text-zinc-400 transition-colors">
@@ -258,7 +259,7 @@ export function WorkoutBuilder({ workout, students = [], backHref = '/dashboard/
                                 </p>
                             </div>
                             <button
-                                className="mt-1 p-2 rounded-xl text-zinc-600 hover:text-blue-400 hover:bg-blue-400/10 transition-all border border-transparent hover:border-blue-400/20 active:scale-90"
+                                className="p-2 rounded-xl text-zinc-600 hover:text-blue-400 hover:bg-blue-400/10 transition-all border border-blue-400/20 active:scale-90"
                                 title="Editar nome do treino"
                             >
                                 <Pencil className="w-4 h-4" />
@@ -267,7 +268,7 @@ export function WorkoutBuilder({ workout, students = [], backHref = '/dashboard/
                     )}
                 </div>
 
-                <div className="shrink-0">
+                <div className="shrink-0 flex justify-center">
                     <UnifiedAssignDialog
                         itemId={workout.id}
                         students={students}
@@ -275,10 +276,12 @@ export function WorkoutBuilder({ workout, students = [], backHref = '/dashboard/
                         title="Atribuir Treino"
                         description="Escolha um aluno e o dia da semana para este treino."
                         colorScheme="emerald"
+                        initialStudentId={(workout as any).assignments?.[0]?.student_id}
+                        initialDays={(workout as any).assignments?.[0]?.day_of_week !== undefined ? [(workout as any).assignments?.[0]?.day_of_week] : []}
                         trigger={
-                            <Button className="h-[68px] px-8 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-none flex flex-col items-center justify-center gap-1 group transition-all active:scale-95 italic">
+                            <Button className="h-[58px] px-8 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-none flex flex-row items-center justify-center gap-3 group transition-all active:scale-95 italic text-center">
                                 <Calendar className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                                <span>Atribuir</span>
+                                <span>{(workout as any).assignments?.length > 0 ? "Gerenciar Atribuição" : "Atribuir"}</span>
                             </Button>
                         }
                     />
