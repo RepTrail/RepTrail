@@ -231,7 +231,7 @@ export function WorkoutBuilder({ workout, students = [], backHref = '/dashboard/
                                 <Button
                                     onClick={handleSaveMeta}
                                     disabled={isSavingMeta || !editName.trim()}
-                                    className="h-9  bg-blue-600 hover:bg-blue-500 text-white font-black uppercase tracking-widest text-[10px] rounded-xl transition-all shadow-lg shadow-blue-500/20 active:scale-95"
+                                    className="h-9  bg-blue-600 hover:bg-blue-500 text-white font-black uppercase tracking-widest text-[10px] rounded-xl transition-all active:scale-95"
                                 >
                                     {isSavingMeta ? <Loader2 className="w-3 h-3 animate-spin" /> : <><Check className="w-3 h-3 mr-1.5" />Salvar</>}
                                 </Button>
@@ -403,7 +403,7 @@ export function WorkoutBuilder({ workout, students = [], backHref = '/dashboard/
                                             </div>
 
                                             {/* WORKING */}
-                                            <div className="space-y-4 p-4 rounded-xl bg-blue-500/5 border border-blue-500/20 shadow-[0_0_20px_-10px_rgba(59,130,246,0.3)] ring-1 ring-blue-500/10">
+                                            <div className="space-y-4 p-4 rounded-xl bg-blue-500/5 border border-blue-500/20 ring-1 ring-blue-500/10">
                                                 <div className="flex items-center justify-between border-b border-blue-500/20 pb-2">
                                                     <Label className="text-[11px] text-blue-400 uppercase tracking-widest font-bold">Séries Validadas</Label>
                                                 </div>

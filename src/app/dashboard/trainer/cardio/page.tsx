@@ -1,5 +1,4 @@
 import { getCardioLibrary } from '@/actions/cardio-actions'
-import { getTrainerStudents } from '@/actions/trainer-actions'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Activity, Calendar, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -7,12 +6,13 @@ import Link from 'next/link'
 import { UnifiedDeleteButton } from '@/components/feature/shared/unified-delete-button'
 import { UnifiedAssignDialog } from '@/components/feature/shared/unified-assign-dialog'
 import { UnifiedCreationDialog } from '@/components/feature/shared/unified-creation-dialog'
-import { DuplicateButton } from '@/components/feature/trainer/duplicate-button'
+import { UnifiedLibraryCard } from "@/components/feature/shared/unified-library-card"
+import { getTrainerStudents } from "@/actions/trainer-actions"
+import { DuplicateButton } from "@/components/feature/trainer/duplicate-button"
 
 export default async function TrainerCardioPage() {
     const cardios = await getCardioLibrary()
     const students = await getTrainerStudents()
-    const dayNamesShort = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
 
     return (
         <div className="space-y-10">
@@ -31,7 +31,7 @@ export default async function TrainerCardioPage() {
                         title="Novo Modelo de Cardio"
                         description="Crie um template (ex: Esteira 45min) para agendar para seus alunos."
                         trigger={
-                            <Button variant="outline" className="h-11 px-5 border-emerald-500/20 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/30 hover:border-emerald-500/50 hover:text-emerald-400 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all w-full sm:w-auto flex items-center justify-center gap-2 active:scale-95 italic shadow-lg shadow-emerald-500/10">
+                            <Button variant="outline" className="h-11 px-5 border-emerald-500/20 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/30 hover:border-emerald-500/50 hover:text-emerald-400 rounded-full text-[10px] font-black uppercase tracking-widest transition-all w-full sm:w-auto flex items-center justify-center gap-2 active:scale-95 italic shadow-none">
                                 <Plus className="w-4 h-4" />
                                 Criar Modelo
                             </Button>
@@ -50,93 +50,26 @@ export default async function TrainerCardioPage() {
 
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {cardios.length > 0 ? (
-                    cardios.map((cardio: any) => {
-                        const studentAssignments = (cardio.assignments || []).reduce((acc: any, curr: any) => {
-                            const name = curr.student?.full_name || 'Aluno'
-                            if (!acc[name]) acc[name] = new Set<number>()
-                            if (curr.days_of_week) {
-                                curr.days_of_week.forEach((d: number) => acc[name].add(d))
-                            }
-                            return acc
-                        }, {})
-
-                        const studentsList = Object.keys(studentAssignments)
-
-                        return (
-                            <Card key={cardio.id} className="bg-zinc-900/50 border-zinc-800 text-zinc-100 transition-all group rounded-[2rem] overflow-hidden flex flex-col hover:border-emerald-500/30">
-                                <CardHeader className="p-6 pb-4">
-                                    <div className="flex items-start justify-between">
-                                        <div className="bg-zinc-800 p-2 rounded-lg text-zinc-400 group-hover:text-emerald-500 transition-colors">
-                                            <Activity className="w-5 h-5" />
-                                        </div>
-                                        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <DuplicateButton id={cardio.id} type="cardio" />
-                                            <UnifiedDeleteButton
-                                                id={cardio.id}
-                                                actionType="cardio"
-                                                itemName={cardio.name}
-                                            />
-                                        </div>
-                                    </div>
-                                    <CardTitle className="mt-4 text-lg font-black italic uppercase tracking-tight group-hover:text-white transition-colors">
-                                        {cardio.name}
-                                    </CardTitle>
-                                    <CardDescription className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest line-clamp-2">
-                                        {cardio.description || "Sem descrição."}
-                                    </CardDescription>
-                                </CardHeader>
-
-                                <CardContent className="p-6 pt-2 flex-1 flex flex-col">
-                                    <div className="flex items-center justify-between text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-4">
-                                        <span>Template</span>
-                                        <span>{new Date(cardio.created_at).toLocaleDateString('pt-BR')}</span>
-                                    </div>
-
-                                    {/* Assignments Section */}
-                                    {studentsList.length > 0 ? (
-                                        <div className="space-y-3 mb-6 bg-zinc-950/50 border border-zinc-800/50 p-3 rounded-2xl">
-                                            <p className="text-[9px] font-black uppercase tracking-widest text-zinc-600">Atribuído para:</p>
-                                            <div className="space-y-2">
-                                                {studentsList.map(studentName => {
-                                                    const daysSet = studentAssignments[studentName]
-                                                    const sortedDays = Array.from(daysSet as Set<number>).sort((a, b) => a - b)
-                                                    return (
-                                                        <div key={studentName} className="flex flex-col gap-1.5">
-                                                            <div className="flex items-center gap-1.5">
-                                                                <div className="w-1 h-1 rounded-full bg-emerald-500" />
-                                                                <span className="text-[10px] font-black italic uppercase text-zinc-400 leading-none">{studentName}</span>
-                                                            </div>
-                                                            <div className="flex flex-wrap gap-1 pl-2.5">
-                                                                {sortedDays.map(day => (
-                                                                    <span key={day} className="px-1.5 py-0.5 bg-zinc-900 border border-zinc-800 rounded text-[8px] font-bold text-zinc-500 uppercase tracking-tighter">
-                                                                        {dayNamesShort[day]}
-                                                                    </span>
-                                                                ))}
-                                                            </div>
-                                                        </div>
-                                                    )
-                                                })}
-                                            </div>
-                                        </div>
-                                    ) : (
-                                        <div className="mb-6 h-[40px] flex items-center">
-                                            <span className="text-[10px] bg-zinc-800/50 text-zinc-600 px-3 py-1 rounded-full font-bold uppercase tracking-widest italic border border-zinc-800/30">
-                                                Livre (Biblioteca)
-                                            </span>
-                                        </div>
-                                    )}
-
-                                    <div className="mt-auto pt-6 border-t border-zinc-800/50 flex items-center justify-center">
-                                        <Button asChild variant="outline" className="w-full h-11 bg-zinc-800 border-zinc-700 text-zinc-100 hover:bg-zinc-700 flex items-center justify-center gap-1.5 rounded-xl font-black text-[10px] uppercase italic tracking-widest border-white/5 px-6 shadow-none">
-                                            <Link href={`/dashboard/trainer/cardio/${cardio.id}`}>
-                                                Editar Protocolo
-                                            </Link>
-                                        </Button>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        )
-                    })
+                    cardios.map((cardio: any) => (
+                        <UnifiedLibraryCard
+                            key={cardio.id}
+                            id={cardio.id}
+                            name={cardio.name}
+                            description={cardio.description}
+                            icon={<Activity className="w-5 h-5" />}
+                            type="cardio"
+                            created_at={cardio.created_at}
+                            assignments={cardio.assignments}
+                            stats={{
+                                label: 'Template',
+                                value: '',
+                                icon: null
+                            }}
+                            href={`/dashboard/trainer/cardio/${cardio.id}`}
+                            colorScheme="emerald"
+                            onEditLabel="Editar Protocolo"
+                        />
+                    ))
                 ) : (
                     <Card className="col-span-full bg-zinc-900/40 border-dashed border-zinc-800 rounded-[3rem] p-20 text-center">
                         <div className="flex flex-col items-center gap-6">

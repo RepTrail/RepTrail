@@ -87,7 +87,7 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
                 <Button
                     variant="ghost"
                     size="sm"
-                    className="text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-white hover:bg-zinc-800"
+                    className="text-[10px] font-black uppercase italic tracking-widest bg-zinc-800/50 hover:bg-zinc-800 text-zinc-300 hover:text-white px-4 rounded-full transition-all"
                     onClick={() => setIsExpanded(!isExpanded)}
                 >
                     {isExpanded ? 'Ver Menos' : 'Ver Todos'}

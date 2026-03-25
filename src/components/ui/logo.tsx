@@ -20,22 +20,22 @@ export function Logo({
 }: LogoProps) {
     const sizeMap = {
         sm: {
-            container: 'p-2 rounded-lg shadow-md',
+            container: 'p-2 rounded-lg',
             icon: 'w-4 h-4',
             text: 'text-2xl'
         },
         md: {
-            container: 'p-2.5 rounded-xl shadow-lg',
+            container: 'p-2.5 rounded-xl',
             icon: 'w-5 h-5',
             text: 'text-3xl'
         },
         lg: {
-            container: 'p-4 rounded-2xl shadow-lg',
+            container: 'p-4 rounded-2xl',
             icon: 'w-8 h-8',
             text: 'text-5xl md:text-6xl'
         },
         xl: {
-            container: 'p-6 rounded-[2.5rem] shadow-2xl',
+            container: 'p-6 rounded-[2.5rem]',
             icon: 'w-14 h-14',
             text: 'text-8xl md:text-[10rem]'
         }
@@ -43,15 +43,15 @@ export function Logo({
 
     const colorMap = {
         orange: {
-            bg: 'bg-orange-500 shadow-orange-500/20',
+            bg: 'bg-orange-500',
             text: 'text-orange-500'
         },
         emerald: {
-            bg: 'bg-emerald-500 shadow-emerald-500/20',
+            bg: 'bg-emerald-500',
             text: 'text-emerald-500'
         },
         amber: {
-            bg: 'bg-orange-500 shadow-orange-500/20',
+            bg: 'bg-orange-500',
             text: 'text-orange-500'
         }
     }

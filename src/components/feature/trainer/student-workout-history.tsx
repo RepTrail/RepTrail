@@ -153,7 +153,7 @@ export function StudentWorkoutHistory({ history, isBlocked, mode = 'student' }: 
                             onClick={() => toggleLog(log.id)}
                         >
                             <div className="flex items-center gap-4 sm:gap-5">
-                                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-zinc-900 flex items-center justify-center border border-zinc-800 group-hover:border-emerald-500/30 transition-all shadow-lg shrink-0">
+                                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-zinc-900 flex items-center justify-center border border-zinc-800 group-hover:border-emerald-500/30 transition-all shrink-0">
                                     <Dumbbell className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-500" />
                                 </div>
                                 <div className="space-y-1 sm:space-y-1.5 min-w-0">
@@ -178,7 +178,7 @@ export function StudentWorkoutHistory({ history, isBlocked, mode = 'student' }: 
                                 <div className="flex flex-col items-start sm:items-end gap-0.5">
                                     <span className="text-[8px] sm:text-[9px] font-black text-zinc-600 uppercase tracking-widest">Status</span>
                                     <span className="text-[8px] sm:text-[9px] font-black text-emerald-500 uppercase tracking-widest flex items-center gap-1">
-                                        <div className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_5px_rgba(16,185,129,0.5)]" />
+                                        <div className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
                                         Concluído
                                     </span>
                                 </div>
@@ -213,9 +213,9 @@ export function StudentWorkoutHistory({ history, isBlocked, mode = 'student' }: 
                                                     <span className="text-[8px] sm:text-[9px] font-black text-zinc-600 uppercase tracking-widest whitespace-nowrap">Nível de Esforço</span>
                                                     <span className={`
                                                         px-3 py-1 rounded-lg text-[10px] sm:text-xs font-black border italic shrink-0
-                                                        ${log.perceived_effort >= 8 ? 'bg-red-500/10 text-red-500 border-red-500/20 shadow-[0_0_10px_rgba(239,68,68,0.1)]' :
-                                                            log.perceived_effort >= 5 ? 'bg-amber-500/10 text-amber-500 border-amber-500/20 shadow-[0_0_10px_rgba(245,158,11,0.1)]' :
-                                                                'bg-emerald-500/10 text-emerald-500 border-emerald-500/20 shadow-[0_0_10px_rgba(16,185,129,0.1)]'}
+                                                        ${log.perceived_effort >= 8 ? 'bg-red-500/10 text-red-500 border-red-500/20' :
+                                                            log.perceived_effort >= 5 ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' :
+                                                                'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'}
                                                     `}>
                                                         {log.perceived_effort}/10
                                                     </span>
@@ -261,7 +261,7 @@ export function StudentWorkoutHistory({ history, isBlocked, mode = 'student' }: 
                                                             onClick={() => toggleExercise(logExId)}
                                                         >
                                                             <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-center shadow-inner shrink-0 transition-transform group-hover:scale-105">
-                                                                <div className={`w-2 h-2 rounded-full ${isExExpanded ? 'bg-emerald-500 animate-pulse shadow-[0_0_15px_rgba(16,185,129,0.5)]' : 'bg-zinc-800'}`} />
+                                                                <div className={`w-2 h-2 rounded-full ${isExExpanded ? 'bg-emerald-500 animate-pulse' : 'bg-zinc-800'}`} />
                                                             </div>
 
                                                             <div className="min-w-0 flex flex-col justify-center">
@@ -279,7 +279,7 @@ export function StudentWorkoutHistory({ history, isBlocked, mode = 'student' }: 
                                                             <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
                                                                 <div className={`
                                                                     w-9 h-9 sm:w-10 sm:h-10 rounded-xl border flex items-center justify-center transition-all duration-300
-                                                                    ${isExExpanded ? 'bg-zinc-100 text-zinc-950 border-white shadow-lg shadow-white/10' : 'bg-zinc-900 border-zinc-800 text-zinc-500'}
+                                                                    ${isExExpanded ? 'bg-zinc-100 text-zinc-950 border-white' : 'bg-zinc-900 border-zinc-800 text-zinc-500'}
                                                                 `}>
                                                                     {isExExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                                                                 </div>
@@ -295,7 +295,7 @@ export function StudentWorkoutHistory({ history, isBlocked, mode = 'student' }: 
                                                                                 key={idx}
                                                                                 onClick={() => setActiveParts(prev => ({ ...prev, [logExId]: idx }))}
                                                                                 className={`flex-1 py-2 px-3 rounded-lg text-[10px] font-black uppercase tracking-tighter transition-all ${activePartIdx === idx
-                                                                                    ? "bg-emerald-500 text-zinc-950 shadow-lg"
+                                                                                    ? "bg-emerald-500 text-zinc-950"
                                                                                     : "text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800"
                                                                                     }`}
                                                                                 type="button"
@@ -470,7 +470,7 @@ function DeleteWorkoutDialog({ logId, workoutName }: { logId: string, workoutNam
                         <Button
                             onClick={handleDelete}
                             disabled={loading}
-                            className="flex-1 h-12 rounded-xl bg-red-500 hover:bg-red-600 text-zinc-950 font-black uppercase tracking-widest text-[10px] italic transition-all shadow-[0_0_20px_rgba(239,68,68,0.2)] active:scale-95"
+                            className="flex-1 h-12 rounded-xl bg-red-500 hover:bg-red-600 text-zinc-950 font-black uppercase tracking-widest text-[10px] italic transition-all active:scale-95"
                         >
                             {loading ? "Apagando..." : "Confirmar Exclusão"}
                         </Button>

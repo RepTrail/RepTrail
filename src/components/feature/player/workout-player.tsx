@@ -655,7 +655,7 @@ export function WorkoutPlayer({
                                             <p className="text-2xl md:text-3xl font-black text-orange-500 uppercase italic tracking-tighter text-center max-w-[90vw] break-words">
                                                 {nextSet.nextExerciseName}
                                             </p>
-                                            <div className="mt-4 bg-zinc-900 border border-zinc-800 rounded-xl  py-2 text-center">
+                                            <div className="mt-4 bg-zinc-900 border border-zinc-800 rounded-xl py-2 px-6 text-center">
                                                 <p className="text-zinc-500 text-[9px] font-black uppercase tracking-widest">Primeira Série</p>
                                                 <p className={`text-sm font-black uppercase italic tracking-tighter ${nextSet.color}`}>
                                                     {nextSet.label} {nextSet.type !== 'SUMMARY' && nextSet.set}
@@ -676,7 +676,7 @@ export function WorkoutPlayer({
                         <Button
                             variant="ghost"
                             onClick={handleRestEnd}
-                            className="bg-zinc-900/50 text-zinc-500 hover:text-white hover:bg-zinc-900 rounded-2xl h-12 px-8 font-black uppercase italic tracking-widest text-[10px] border border-zinc-800/50 transition-all"
+                            className="bg-zinc-900/50 text-zinc-500 hover:text-white hover:bg-zinc-900 rounded-full h-12 px-8 font-black uppercase italic tracking-widest text-[10px] border border-zinc-800/50 transition-all shadow-none"
                         >
                             <SkipForward className="w-4 h-4 mr-2" /> Pular Descanso
                         </Button>
@@ -773,9 +773,9 @@ export function WorkoutPlayer({
                         {/* Action Button - Massive Icon */}
                         <Button
                             size="lg"
-                            className={`w-full h-auto min-h-[7rem] py-6 text-zinc-950 font-black italic uppercase tracking-tighter text-2xl md:text-3xl rounded-[2.5rem] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.5)] active:scale-95 transition-all whitespace-normal leading-none group flex items-center justify-between px-8 gap-6 overflow-hidden relative ${setType === 'WARMUP' ? 'bg-orange-500 hover:bg-orange-400 shadow-orange-500/20' :
-                                setType === 'FEEDER' ? 'bg-blue-500 hover:bg-blue-400 shadow-blue-500/20' :
-                                    'bg-emerald-500 hover:bg-emerald-400 shadow-emerald-500/20'
+                            className={`w-full h-auto min-h-[7rem] py-6 text-zinc-950 font-black italic uppercase tracking-tighter text-2xl md:text-3xl rounded-full shadow-none active:scale-95 transition-all whitespace-normal leading-none group flex items-center justify-between px-10 gap-6 overflow-hidden relative ${setType === 'WARMUP' ? 'bg-orange-500 hover:bg-orange-400' :
+                                setType === 'FEEDER' ? 'bg-blue-500 hover:bg-blue-400' :
+                                    'bg-emerald-500 hover:bg-emerald-400'
                                 }`}
                             onClick={handleSetAction}
                             disabled={loading}

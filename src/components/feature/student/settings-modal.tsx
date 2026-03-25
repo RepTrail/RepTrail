@@ -214,7 +214,7 @@ export function SettingsModal({ hasTrainer = false }: SettingsModalProps) {
                             <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] px-1">Privacidade & Notificações</p>
                             <div className="space-y-2">
                                 <div className="flex items-center justify-between p-4 bg-zinc-900/50 rounded-2xl border border-zinc-800">
-                                    <div className="flex items-center gap-3 pb-4">
+                                    <div className="flex items-center gap-3">
                                         <div className="w-10 h-10 bg-emerald-500/10 rounded-xl flex items-center justify-center">
                                             <ImageIcon className="w-5 h-5 text-emerald-500" />
                                         </div>
@@ -240,7 +240,7 @@ export function SettingsModal({ hasTrainer = false }: SettingsModalProps) {
                                     }}
                                     className="w-full flex items-center justify-between p-4 bg-zinc-900/50 rounded-2xl border border-zinc-800 hover:bg-zinc-900 transition-colors group"
                                 >
-                                    <div className="flex items-center gap-3 pb-4">
+                                    <div className="flex items-center gap-3">
                                         <div className="w-10 h-10 bg-blue-500/10 rounded-xl flex items-center justify-center">
                                             <Bell className="w-5 h-5 text-blue-500" />
                                         </div>
@@ -261,7 +261,7 @@ export function SettingsModal({ hasTrainer = false }: SettingsModalProps) {
                                 onClick={openTerms}
                                 className="w-full flex items-center justify-between p-4 bg-zinc-900/50 rounded-2xl border border-zinc-800 hover:bg-zinc-900 transition-colors group"
                             >
-                                <div className="flex items-center gap-3 pb-4">
+                                <div className="flex items-center gap-3">
                                     <div className="w-10 h-10 bg-amber-500/10 rounded-xl flex items-center justify-center">
                                         <FileText className="w-5 h-5 text-amber-500" />
                                     </div>
@@ -281,7 +281,7 @@ export function SettingsModal({ hasTrainer = false }: SettingsModalProps) {
                                 onClick={requestDeletion}
                                 className="w-full flex items-center justify-between p-4 bg-red-500/5 rounded-2xl border border-red-500/10 hover:bg-red-500/10 transition-colors group"
                             >
-                                <div className="flex items-center gap-3 pb-4">
+                                <div className="flex items-center gap-3">
                                     <div className="w-10 h-10 bg-red-500/10 rounded-xl flex items-center justify-center">
                                         <Trash2 className="w-5 h-5 text-red-500" />
                                     </div>

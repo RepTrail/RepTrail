@@ -85,7 +85,7 @@ export function MarketplaceSection({ initialTrainers }: MarketplaceSectionProps)
 
                 {/* Search Bar */}
                 <div className="w-full relative group max-w-2xl mx-auto">
-                    <div className="absolute inset-0 bg-orange-500/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <div className="absolute inset-0 bg-transparent" />
                     <div className="relative flex items-center bg-zinc-900 border border-zinc-800 rounded-2xl px-4 py-2 shadow-2xl transition-all focus-within:border-orange-500/50">
                         <Search className="w-5 h-5 text-zinc-500 mr-2" />
                         <Input
@@ -126,7 +126,7 @@ export function MarketplaceSection({ initialTrainers }: MarketplaceSectionProps)
                                     </Avatar>
 
                                     <div className="flex flex-col items-end gap-1 shrink-0">
-                                        <div className="bg-orange-500/10 border border-orange-500/20 text-orange-500 px-2.5 py-1 rounded text-[10px] font-black uppercase tracking-widest flex items-center gap-1 shadow-[0_0_10px_rgba(249,115,22,0.15)] leading-none">
+                                        <div className="bg-orange-500/10 border border-orange-500/20 text-orange-500 px-2.5 py-1 rounded text-[10px] font-black uppercase tracking-widest flex items-center gap-1 leading-none">
                                             <ShieldCheck className="w-3 h-3 shrink-0" />
                                             Verificado
                                         </div>
@@ -159,7 +159,7 @@ export function MarketplaceSection({ initialTrainers }: MarketplaceSectionProps)
                                 </div>
 
                                 <Button
-                                    className="w-full h-auto min-h-[2.75rem] py-3 bg-orange-500 hover:bg-orange-400 text-zinc-950 font-black uppercase text-[10px] tracking-widest mt-4 shadow-lg shadow-orange-500/10 group-hover:shadow-orange-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] relative z-10 shrink-0"
+                                    className="w-full h-auto min-h-[2.75rem] py-3 bg-orange-500 hover:bg-orange-400 text-zinc-950 font-black uppercase text-[10px] tracking-widest mt-4 transition-all hover:scale-[1.02] active:scale-[0.98] relative z-10 shrink-0"
                                     onClick={() => handleContact(trainer)}
                                 >
                                     <MessageCircle className="w-4 h-4 mr-2 shrink-0" />

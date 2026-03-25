@@ -19,18 +19,18 @@ export function HeroSection() {
                 {/* Left Content: The Message */}
                 <div className="flex flex-col items-center lg:items-start text-center lg:text-left w-full max-w-2xl">
                     <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 mb-8">
-                        <LandingBadge icon={Users} variant="emerald" className="bg-orange-500/5 border-emerald-500/10 py-1.5 px-4">
+                        <LandingBadge icon={Users} variant="emerald" className="py-1.5 px-4">
                             <span className="text-emerald-400 font-bold mr-1">+500</span> treinadores ativos
                         </LandingBadge>
-                        <LandingBadge icon={ShieldCheck} variant="emerald" className="bg-white/5 border-white/10 py-1.5 px-4 text-zinc-400">
+                        <LandingBadge icon={ShieldCheck} variant="emerald" className="py-1.5 px-4 text-zinc-400">
                             Foco total em <span className="text-white font-bold ml-1">Performance</span>
                         </LandingBadge>
                     </div>
 
                     <div className="flex flex-col gap-8 mb-12">
                         <h1 className="text-3xl sm:text-3xl lg:text-[3.2rem] xl:text-[3.8rem] font-black tracking-normal leading-[1.1] uppercase italic">
-                            <span className="block text-white drop-shadow-2xl">Transforme sua</span>
-                            <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 via-emerald-500 to-emerald-600 drop-shadow-[0_0_35px_rgba(16,185,129,0.4)]">
+                            <span className="block text-white">Transforme sua</span>
+                            <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 via-emerald-500 to-emerald-600">
                                 Consultoria.
                             </span>
                         </h1>
@@ -43,7 +43,7 @@ export function HeroSection() {
                         <div className="flex flex-col sm:flex-row gap-4 w-full lg:max-w-xl items-stretch sm:items-center">
                             <Button
                                 asChild
-                                className="group relative overflow-hidden w-full sm:w-auto h-auto py-5 px-10 text-lg bg-orange-500 hover:bg-orange-400 text-zinc-950 font-black uppercase italic tracking-wider rounded-2xl shadow-[0_20px_40px_-15px_rgba(16,185,129,0.4)] transition-all hover:-translate-y-1 active:scale-95"
+                                className="group relative overflow-hidden w-full sm:w-auto h-auto py-5 px-10 text-lg bg-orange-500 hover:bg-orange-400 text-zinc-950 font-black uppercase italic tracking-wider rounded-2xl transition-all hover:-translate-y-1 active:scale-95"
                             >
                                 <Link href="/auth/signup" className="flex items-center justify-center gap-3">
                                     <span>Começar Agora</span>
@@ -54,7 +54,7 @@ export function HeroSection() {
                             <Button
                                 asChild
                                 variant="outline"
-                                className="w-full sm:w-auto h-auto py-5 px-8 text-lg border-zinc-800 bg-zinc-900/50 text-zinc-300 hover:bg-zinc-800 hover:text-white hover:border-zinc-700 font-black uppercase italic tracking-wider rounded-2xl backdrop-blur-md transition-all hover:-translate-y-1 shadow-2xl"
+                                className="w-full sm:w-auto h-auto py-5 px-8 text-lg border-zinc-800 bg-zinc-900/50 text-zinc-300 hover:bg-zinc-800 hover:text-white hover:border-zinc-700 font-black uppercase italic tracking-wider rounded-2xl backdrop-blur-md transition-all hover:-translate-y-1"
                             >
                                 <a href="#marketplace" className="flex items-center justify-center gap-3">
                                     <Search className="h-5 w-5" />
@@ -136,7 +136,6 @@ export function HeroSection() {
                 </div>
             </div>
 
-            {/* Premium Social Proof / Numbers - Integrated 100% Width of Container */}
             <div className="w-full max-w-[1300px] mx-auto mt-[80px] md:mt-[120px] relative z-10">
                 <div className="absolute inset-0 bg-zinc-900/30 border border-zinc-800/50 rounded-[3rem] -z-10 backdrop-blur-sm" />
                 

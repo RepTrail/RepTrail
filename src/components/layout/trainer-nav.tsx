@@ -21,14 +21,14 @@ export function TrainerNavLink({ href, icon, children, exact = false }: TrainerN
             className={cn(
                 'flex items-center gap-3 pb-4 px-5 py-3.5 rounded-xl transition-all duration-300 group border-2',
                 isActive
-                    ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 shadow-[0_8px_32px_rgba(16,185,129,0.1)]'
-                    : 'text-zinc-500 hover:bg-zinc-800 hover:text-white border-transparent hover:border-zinc-700 hover:shadow-xl'
+                    ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
+                    : 'text-zinc-500 hover:bg-zinc-800 hover:text-white border-transparent hover:border-zinc-700'
             )}
         >
             <span className={cn(
                 'transition-all duration-300',
                 isActive
-                    ? 'text-emerald-500 scale-110 drop-shadow-[0_0_8px_rgba(16,185,129,0.3)]'
+                    ? 'text-emerald-500 scale-110'
                     : 'group-hover:scale-110 group-hover:text-white'
             )}>
                 {icon}

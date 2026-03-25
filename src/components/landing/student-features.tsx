@@ -70,7 +70,7 @@ export function StudentFeatures() {
                     <div className="flex w-full">
                         <Button
                             asChild
-                            className="w-full h-auto min-h-[3.5rem] py-4 px-6 text-sm md:text-lg bg-orange-500 hover:bg-orange-400 text-zinc-950 font-black uppercase italic tracking-wide rounded-xl shadow-xl shadow-orange-500/10 transition-all hover:-translate-y-1 hover:shadow-orange-500/20 whitespace-normal"
+                            className="w-full h-auto min-h-[3.5rem] py-4 px-6 text-sm md:text-lg bg-orange-500 hover:bg-orange-400 text-zinc-950 font-black uppercase italic tracking-wide rounded-xl transition-all hover:-translate-y-1 whitespace-normal"
                         >
                             <a href="#marketplace" className="flex flex-col sm:flex-row items-center justify-center text-center leading-tight">
                                 <span>Encontrar meu Treinador</span>

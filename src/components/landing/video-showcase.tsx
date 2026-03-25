@@ -25,13 +25,13 @@ export function VideoShowcase() {
     const [activeIndex, setActiveIndex] = useState(0);
 
     return (
-        <section className="py-[100px] md:py-[200px] px-[20px] bg-zinc-950 w-full relative overflow-hidden border-b border-zinc-900/50">
+        <section className="py-[100px] px-[20px] bg-zinc-950 w-full relative overflow-hidden border-b border-zinc-900/50">
             {/* Main Background Light - Top Right */}
             <div className="absolute -top-[20%] -right-[10%] w-[70%] h-[80%] bg-[radial-gradient(circle_at_center,rgba(249,115,22,0.15),transparent_70%)] blur-[120px] pointer-events-none" />
-            
+
             {/* Subtle Texture - Light Dots */}
             <div className="absolute inset-0 bg-[radial-gradient(#ffffff08_1px,transparent_1px)] [background-size:32px_32px] pointer-events-none" />
-            
+
             {/* Secondary Bottom Glow for contrast */}
             <div className="absolute -bottom-[10%] -left-[10%] w-[40%] h-[40%] bg-orange-500/[0.02] rounded-full blur-[120px] pointer-events-none" />
 
@@ -42,7 +42,7 @@ export function VideoShowcase() {
                         RepTrail em Ação
                     </div>
                     <h2 className="text-4xl md:text-6xl font-black text-white italic uppercase tracking-tighter leading-[0.95]">
-                        Tecnologia <span className="text-orange-500 drop-shadow-[0_0_20px_rgba(249,115,22,0.3)]">Imersiva.</span>
+                        Tecnologia <span className="text-orange-500">Imersiva.</span>
                     </h2>
                     <p className="text-zinc-500 text-lg md:text-xl max-w-xl">
                         Veja na prática como a plataforma revoluciona a experiência de treino, engajamento e acompanhamento dos seus alunos.
@@ -60,7 +60,7 @@ export function VideoShowcase() {
                                     {/* Background Glow on Hover */}
                                     <div className="absolute -inset-10 bg-orange-500/0 group-hover:bg-orange-500/10 rounded-[4rem] blur-[80px] transition-all duration-1000 pointer-events-none" />
 
-                                    <div className="relative w-full aspect-[1170/2532] bg-zinc-950 border-[10px] border-zinc-900 rounded-[3rem] shadow-[0_50px_100px_-20px_rgba(0,0,0,0.8)] overflow-hidden ring-1 ring-white/5 transition-all duration-500 group-hover:scale-[1.03] group-hover:border-zinc-800/80 group-hover:shadow-orange-500/10">
+                                    <div className="relative w-full aspect-[1170/2532] bg-zinc-950 border-[10px] border-zinc-900 rounded-[3rem] shadow-2xl overflow-hidden ring-1 ring-white/5 transition-all duration-500 group-hover:scale-[1.03] group-hover:border-zinc-800/80">
                                         {/* Notch */}
                                         <div className="absolute top-0 inset-x-0 h-6 bg-zinc-900 z-20 rounded-b-2xl mx-auto w-[40%] flex justify-center items-end pb-1.5">
                                             <div className="w-10 h-1.5 bg-zinc-800 rounded-full"></div>
@@ -86,7 +86,7 @@ export function VideoShowcase() {
                                         {/* Screen Reflection */}
                                         <div className="absolute inset-0 bg-gradient-to-tr from-white/5 via-transparent to-transparent pointer-events-none" />
                                     </div>
-                                    
+
                                     <div className="text-center space-y-2 mt-8 relative z-10 transition-transform duration-500 group-hover:translate-y-2">
                                         <h3 className="text-xl font-black text-white italic uppercase tracking-wider group-hover:text-orange-500 transition-colors">
                                             {vid.title}
@@ -106,7 +106,7 @@ export function VideoShowcase() {
                             <button
                                 key={idx}
                                 onClick={() => setActiveIndex(idx)}
-                                className={`h-2.5 rounded-full transition-all duration-500 ${activeIndex === idx ? 'bg-orange-500 w-10 shadow-[0_0_15px_rgba(249,115,22,0.5)]' : 'bg-zinc-800 w-2.5 hover:bg-zinc-700'}`}
+                                className={`h-2.5 rounded-full transition-all duration-500 ${activeIndex === idx ? 'bg-orange-500 w-10' : 'bg-zinc-800 w-2.5 hover:bg-zinc-700'}`}
                                 aria-label={`Ir para a demonstração ${idx + 1}`}
                             />
                         ))}

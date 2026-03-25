@@ -54,11 +54,11 @@ export function StudentNav({ hasTrainer, steroidUse, autoTrainingActive = false 
                         className={`
                             flex items-center gap-3 pb-4 px-5 py-3.5 rounded-xl transition-all duration-300 group
                             ${isActive
-                                ? 'bg-orange-500/10 border-orange-500/30 text-white shadow-[0_8px_32px_rgba(249,115,22,0.1)] border-2'
-                                : 'text-zinc-500 hover:bg-zinc-800 hover:text-white border-2 border-transparent hover:border-zinc-700 hover:shadow-xl'}
+                                ? 'bg-orange-500/10 border-orange-500/30 text-white border-2'
+                                : 'text-zinc-500 hover:bg-zinc-800 hover:text-white border-2 border-transparent hover:border-zinc-700'}
                         `}
                     >
-                        <div className={`transition-all duration-300 ${isActive ? 'scale-110 text-orange-500 drop-shadow-[0_0_8px_rgba(249,115,22,0.3)]' : 'group-hover:scale-110'}`}>
+                        <div className={`transition-all duration-300 ${isActive ? 'scale-110 text-orange-500' : 'group-hover:scale-110'}`}>
                             {link.icon}
                         </div>
                         <span className="text-[10px] font-black uppercase tracking-[0.2em]">{link.label}</span>
@@ -69,7 +69,7 @@ export function StudentNav({ hasTrainer, steroidUse, autoTrainingActive = false 
             <button
                 type="button"
                 onClick={() => window.dispatchEvent(new CustomEvent('open-settings'))}
-                className="flex items-center gap-3 pb-4 px-5 py-3.5 rounded-xl transition-all duration-300 group text-zinc-500 hover:bg-zinc-800 hover:text-white border border-transparent hover:border-zinc-700 hover:shadow-xl w-full"
+                className="flex items-center gap-3 pb-4 px-5 py-3.5 rounded-xl transition-all duration-300 group text-zinc-500 hover:bg-zinc-800 hover:text-white border border-transparent hover:border-zinc-700 w-full"
             >
                 <div className="transition-all duration-300 group-hover:scale-110">
                     <Settings className="w-4 h-4" />
@@ -92,21 +92,21 @@ export function MobileStudentNav({ hasTrainer, steroidUse, autoTrainingActive = 
             <Link
                 href="/dashboard/student"
                 prefetch={false}
-                className={`z-10 relative p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student' ? 'bg-orange-500 text-zinc-950 shadow-lg shadow-orange-500/20' : 'text-zinc-500 hover:text-zinc-300'}`}
+                className={`z-10 relative p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student' ? 'bg-orange-500 text-zinc-950' : 'text-zinc-500 hover:text-zinc-300'}`}
             >
                 <Home className="w-5 h-5" />
             </Link>
             <Link
                 href="/dashboard/student/loja"
                 prefetch={false}
-                className={`z-10 relative p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student/loja' ? 'bg-orange-500 text-zinc-950 shadow-lg shadow-orange-500/20' : 'text-zinc-500 hover:text-zinc-300'}`}
+                className={`z-10 relative p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student/loja' ? 'bg-orange-500 text-zinc-950' : 'text-zinc-500 hover:text-zinc-300'}`}
             >
                 <ShoppingBag className="w-5 h-5" />
             </Link>
             <Link
                 href="/dashboard/student/ranking"
                 prefetch={false}
-                className={`z-10 relative p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student/ranking' ? 'bg-orange-500 text-zinc-950 shadow-lg shadow-orange-500/20' : 'text-zinc-500 hover:text-zinc-300'}`}
+                className={`z-10 relative p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student/ranking' ? 'bg-orange-500 text-zinc-950' : 'text-zinc-500 hover:text-zinc-300'}`}
             >
                 <Trophy className="w-5 h-5" />
             </Link>
@@ -114,7 +114,7 @@ export function MobileStudentNav({ hasTrainer, steroidUse, autoTrainingActive = 
                 <Link
                     href="/dashboard/student/meu-personal"
                     prefetch={false}
-                    className={`z-10 relative p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student/meu-personal' ? 'bg-orange-500 text-zinc-950 shadow-lg shadow-orange-500/20' : 'text-zinc-500 hover:text-zinc-300'}`}
+                    className={`z-10 relative p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student/meu-personal' ? 'bg-orange-500 text-zinc-950' : 'text-zinc-500 hover:text-zinc-300'}`}
                 >
                     <UserCheck className="w-5 h-5" />
                 </Link>
@@ -122,7 +122,7 @@ export function MobileStudentNav({ hasTrainer, steroidUse, autoTrainingActive = 
                 <Link
                     href="/buscar-personal"
                     prefetch={false}
-                    className={`z-10 relative p-2.5 rounded-xl transition-all ${pathname === '/buscar-personal' ? 'bg-orange-500 text-zinc-950 shadow-lg shadow-orange-500/20' : 'text-zinc-500 hover:text-zinc-300'}`}
+                    className={`z-10 relative p-2.5 rounded-xl transition-all ${pathname === '/buscar-personal' ? 'bg-orange-500 text-zinc-950' : 'text-zinc-500 hover:text-zinc-300'}`}
                 >
                     <Search className="w-5 h-5" />
                 </Link>
@@ -130,7 +130,7 @@ export function MobileStudentNav({ hasTrainer, steroidUse, autoTrainingActive = 
             <Link
                 href="/dashboard/student/profile"
                 prefetch={false}
-                className={`z-10 relative p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student/profile' ? 'bg-orange-500 text-zinc-950 shadow-lg shadow-orange-500/20' : 'text-zinc-500 hover:text-zinc-300'}`}
+                className={`z-10 relative p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student/profile' ? 'bg-orange-500 text-zinc-950' : 'text-zinc-500 hover:text-zinc-300'}`}
             >
                 <User className="w-5 h-5" />
             </Link>

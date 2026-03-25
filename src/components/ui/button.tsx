@@ -9,11 +9,11 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-brand-primary text-zinc-950 hover:bg-brand-primary/90 shadow-lg shadow-brand-primary/20",
+        default: "bg-brand-primary text-zinc-950 hover:bg-brand-primary/90",
         destructive: "bg-destructive text-white hover:bg-destructive/90",
         outline: "border border-zinc-800 bg-zinc-950/50 text-zinc-400 hover:bg-zinc-900 hover:text-white hover:border-zinc-700",
-        secondary: "bg-brand-secondary text-zinc-950 hover:bg-brand-secondary/90 shadow-lg shadow-brand-secondary/20",
-        accent: "bg-brand-accent text-zinc-950 hover:bg-brand-accent/90 shadow-lg shadow-brand-accent/20",
+        secondary: "bg-brand-secondary text-zinc-950 hover:bg-brand-secondary/90",
+        accent: "bg-brand-accent text-zinc-950 hover:bg-brand-accent/90",
         ghost: "hover:bg-zinc-900 hover:text-zinc-100",
         link: "text-brand-primary underline-offset-4 hover:underline",
       },

@@ -75,7 +75,7 @@ export function TrialWarningPopup({ eliteUntil }: TrialWarningPopupProps) {
                         <a
                             href="/dashboard/trainer/plans"
                             onClick={() => setIsOpen(false)}
-                            className="w-full h-14 bg-white hover:bg-zinc-200 text-zinc-950 rounded-2xl flex items-center justify-center gap-3 font-black uppercase italic tracking-wide transition-all shadow-xl active:scale-95 group"
+                            className="w-full h-14 bg-white hover:bg-zinc-200 text-zinc-950 rounded-2xl flex items-center justify-center gap-3 font-black uppercase italic tracking-wide transition-all active:scale-95 group"
                         >
                             Ver Planos de Upgrade
                         </a>
@@ -84,7 +84,7 @@ export function TrialWarningPopup({ eliteUntil }: TrialWarningPopupProps) {
                             href={whatsappUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="w-full h-14 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 rounded-2xl flex items-center justify-center gap-3 font-black uppercase italic tracking-wide transition-all shadow-xl shadow-emerald-500/20 active:scale-95 group"
+                            className="w-full h-14 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 rounded-2xl flex items-center justify-center gap-3 font-black uppercase italic tracking-wide transition-all active:scale-95 group"
                         >
                             <MessageCircle className="w-5 h-5 group-hover:scale-110 transition-transform" />
                             Falar no WhatsApp

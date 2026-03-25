@@ -107,9 +107,31 @@ export default async function StudentCardioPage() {
                             </div>
                             {assignments.length > 0 ? (
                                 <div className="space-y-6">
-                                    {assignments.map((assignment: any) => (
-                                        <CardioInfoCard key={assignment.id} assignment={assignment} />
-                                    ))}
+                                    {(() => {
+                                        const grouped = assignments.reduce((acc: any, curr: any) => {
+                                            const key = curr.cardio_id || curr.id;
+                                            if (!acc[key]) {
+                                                acc[key] = { ...curr, days_of_week: [] };
+                                            }
+                                            if (curr.day_of_week !== null && curr.day_of_week !== undefined) {
+                                                if (!acc[key].days_of_week.includes(curr.day_of_week)) {
+                                                    acc[key].days_of_week.push(curr.day_of_week);
+                                                }
+                                            }
+                                            if (curr.days_of_week && Array.isArray(curr.days_of_week)) {
+                                                curr.days_of_week.forEach((d: number) => {
+                                                    if (!acc[key].days_of_week.includes(d)) {
+                                                        acc[key].days_of_week.push(d);
+                                                    }
+                                                });
+                                            }
+                                            return acc;
+                                        }, {});
+
+                                        return Object.values(grouped).map((assignment: any) => (
+                                            <CardioInfoCard key={assignment.id} assignment={assignment} />
+                                        ));
+                                    })()}
                                 </div>
                             ) : (
                                 <div className="py-20 text-center border-dashed border border-zinc-800 rounded-3xl">

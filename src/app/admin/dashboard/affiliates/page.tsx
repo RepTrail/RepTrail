@@ -57,7 +57,7 @@ export default async function AdminAffiliatesPage() {
                     <TabsTrigger value="payouts" className="text-xs font-black uppercase tracking-widest px-6 data-[state=active]:bg-emerald-500/20 data-[state=active]:text-emerald-500 data-[state=active]:shadow-xl relative overflow-visible">
                         Saques PIX
                         {(payouts || []).filter(p => p.status === 'requested' || p.status === 'pending').length > 0 && (
-                            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-amber-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(245,158,11,0.5)]" />
+                            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-amber-500 rounded-full animate-pulse" />
                         )}
                     </TabsTrigger>
                 </TabsList>

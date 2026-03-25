@@ -221,7 +221,7 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName }:
                                                             className="h-8 w-36 px-3 text-[11px] bg-zinc-900 border-zinc-800 text-white rounded-xl focus:ring-emerald-500/20"
                                                         />
                                                         <div className="flex gap-1">
-                                                            <Button size="sm" onClick={() => handleDateSave(set.id)} disabled={isPending} className="h-8 bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-black uppercase text-[10px] tracking-widest  rounded-xl">
+                                                            <Button size="sm" onClick={() => handleDateSave(set.id)} disabled={isPending} className="h-8 px-5 gap-1.5 bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-black uppercase text-[10px] tracking-widest rounded-full">
                                                                 Salvar
                                                             </Button>
                                                             <Button size="icon" variant="ghost" onClick={() => setEditingSetId(null)} disabled={isPending} className="h-8 w-8 text-zinc-500 hover:text-white hover:bg-zinc-800 rounded-xl">
@@ -235,7 +235,7 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName }:
                                                             variant="outline"
                                                             size="sm"
                                                             onClick={() => startEditing(set.id, set.created_at)}
-                                                            className="h-8 border-zinc-800 bg-zinc-900 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-xl text-[10px] font-black uppercase tracking-widest gap-2"
+                                                            className="h-8 px-5 border-zinc-800 bg-zinc-900 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-full text-[10px] font-black uppercase tracking-widest gap-1.5"
                                                         >
                                                             <Pencil className="w-3.5 h-3.5" />
                                                             Editar Data
@@ -244,7 +244,7 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName }:
                                                             variant="outline"
                                                             size="sm"
                                                             onClick={() => handleDelete(set.id)}
-                                                            className="h-8 border-zinc-800 bg-zinc-900 text-zinc-400 hover:text-red-500 hover:bg-red-500/10 rounded-xl text-[10px] font-black uppercase tracking-widest group"
+                                                            className="h-8 w-8 p-0 border-zinc-800 bg-zinc-900 text-zinc-400 hover:text-red-500 hover:bg-red-500/10 rounded-full text-[10px] font-black uppercase tracking-widest group flex items-center justify-center"
                                                         >
                                                             <X className="w-3.5 h-3.5 group-hover:scale-110 transition-transform" />
                                                         </Button>

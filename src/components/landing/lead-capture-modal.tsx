@@ -151,7 +151,7 @@ export function LeadCaptureModal({ isOpen, onOpenChange, trainerName, trainerCod
                             <div className="pt-4">
                                 <Button
                                     type="submit"
-                                    className="w-full h-12 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase tracking-[0.1em] rounded-xl shadow-lg shadow-emerald-500/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                                    className="w-full h-12 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase tracking-[0.1em] rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
                                     disabled={loading}
                                 >
                                     {loading ? (
@@ -177,7 +177,7 @@ export function LeadCaptureModal({ isOpen, onOpenChange, trainerName, trainerCod
                     </>
                 ) : (
                     <div className="py-12 flex flex-col items-center justify-center space-y-6 animate-in fade-in zoom-in duration-500">
-                        <div className="w-20 h-20 bg-emerald-500 rounded-full flex items-center justify-center shadow-2xl shadow-emerald-500/20 scale-110">
+                        <div className="w-20 h-20 bg-emerald-500 rounded-full flex items-center justify-center scale-110">
                             <ArrowRight className="w-10 h-10 text-zinc-950 -rotate-45" />
                         </div>
                         <div className="text-center space-y-2">

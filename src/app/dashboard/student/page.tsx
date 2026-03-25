@@ -186,7 +186,7 @@ export default async function StudentDashboardPage() {
                                 Elite RepTrail • Ranking Global
                             </h2>
                         </div>
-                        <Link href="/dashboard/student/ranking" className="text-[9px] font-black text-zinc-500 hover:text-white uppercase tracking-widest transition-colors flex items-center gap-2">
+                        <Link href="/dashboard/student/ranking" className="text-[9px] font-black bg-zinc-800/50 hover:bg-zinc-800 text-zinc-400 hover:text-white uppercase italic tracking-widest transition-all flex items-center gap-2 px-4 py-1.5 rounded-full">
                             Ver Todos
                             <ArrowRight className="w-3 h-3" />
                         </Link>
@@ -335,7 +335,7 @@ export default async function StudentDashboardPage() {
                                     <Dumbbell className="w-4 h-4 text-emerald-500" />
                                     Treino de Hoje
                                 </h2>
-                                <Link href="/dashboard/student/workouts" className="text-[9px] font-black text-zinc-500 hover:text-white uppercase tracking-widest transition-colors flex items-center gap-2">
+                                <Link href="/dashboard/student/workouts" className="text-[9px] font-black bg-zinc-800/50 hover:bg-zinc-800 text-zinc-400 hover:text-white uppercase italic tracking-widest transition-all flex items-center gap-2 px-4 py-1.5 rounded-full">
                                     Ver biblioteca
                                     <ArrowRight className="w-3 h-3" />
                                 </Link>

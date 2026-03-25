@@ -66,7 +66,7 @@ function DialogContent({
         )}
         {...props}
       >
-        <div className="relative flex flex-col gap-8 h-full">
+        <div className="relative flex flex-col gap-4 h-full">
           {children}
         </div>
         {showCloseButton && (

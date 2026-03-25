@@ -480,7 +480,7 @@ export default function AdminDashboardPage() {
                                 <TabsTrigger value="payouts" className="text-xs font-black uppercase tracking-widest px-6 data-[state=active]:bg-emerald-500/20 data-[state=active]:text-emerald-500 data-[state=active]:shadow-xl relative overflow-visible">
                                     Saques PIX
                                     {payouts.filter(p => p.status === 'requested' || p.status === 'pending').length > 0 && (
-                                        <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-amber-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(245,158,11,0.5)]" />
+                                        <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-amber-500 rounded-full animate-pulse" />
                                     )}
                                 </TabsTrigger>
                             </TabsList>
@@ -659,7 +659,7 @@ function SearchBar({ value, onChange, placeholder }: { value: string; onChange: 
                 value={value}
                 onChange={e => onChange(e.target.value)}
                 placeholder={placeholder}
-                className="w-full h-12 pl-11 pr-4 bg-zinc-900 border border-zinc-800 rounded-2xl text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-zinc-600 font-medium"
+                className="w-full h-12 pl-11 pr-4 bg-zinc-900 border border-zinc-800 rounded-full text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-zinc-600 font-medium"
             />
         </div>
     )
@@ -738,7 +738,7 @@ function TrainerRow({ trainer, onPlanChange, onEliteToggle, onExemptToggle, onEl
                 <button
                     onClick={onExemptToggle}
                     disabled={isPending}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border transition-all text-[9px] font-black uppercase tracking-widest ${trainer.is_billing_exempt
+                    className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full border transition-all text-[9px] font-black uppercase tracking-widest ${trainer.is_billing_exempt
                         ? 'bg-amber-500/20 border-amber-500/50 text-amber-500 hover:bg-amber-500/30'
                         : 'bg-zinc-800 border-zinc-700 text-zinc-500 hover:text-white hover:border-zinc-500'
                         }`}
@@ -752,7 +752,7 @@ function TrainerRow({ trainer, onPlanChange, onEliteToggle, onExemptToggle, onEl
                 <button
                     onClick={onImpersonate}
                     disabled={isPending}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-blue-500/30 bg-blue-500/10 text-blue-500 hover:bg-blue-500/20 hover:border-blue-500/50 text-[9px] font-black uppercase tracking-widest transition-all"
+                    className="flex items-center gap-1.5 px-4 py-1.5 rounded-full border border-blue-500/30 bg-blue-500/10 text-blue-500 hover:bg-blue-500/20 hover:border-blue-500/50 text-[9px] font-black uppercase tracking-widest transition-all"
                     title="Inspecionar conta"
                 >
                     <Eye className="w-3 h-3" />
@@ -763,7 +763,7 @@ function TrainerRow({ trainer, onPlanChange, onEliteToggle, onExemptToggle, onEl
                 <button
                     onClick={onDelete}
                     disabled={isPending}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-red-500/30 bg-red-500/10 text-red-500 hover:bg-red-500/20 hover:border-red-500/50 text-[9px] font-black uppercase tracking-widest transition-all"
+                    className="flex items-center gap-1.5 px-4 py-1.5 rounded-full border border-red-500/30 bg-red-500/10 text-red-500 hover:bg-red-500/20 hover:border-red-500/50 text-[9px] font-black uppercase tracking-widest transition-all"
                 >
                     <Trash2 className="w-3 h-3" />
                     Deletar
@@ -1067,24 +1067,21 @@ function ProductEditorModal({ isOpen, onClose, product, onSave, onImport, onDele
 }
 
 function AppSettingsEditor({ settings, onSave, isPending }: {
-    settings: { beta_tester_mode: boolean; gemini_api_key: string; stripe_secret_key: string } | null
-    onSave: (data: { beta_tester_mode?: boolean; gemini_api_key?: string | null; stripe_secret_key?: string | null }) => void
+    settings: { beta_tester_mode: boolean; gemini_api_key: string } | null
+    onSave: (data: { beta_tester_mode?: boolean; gemini_api_key?: string | null }) => void
     isPending: boolean
 }) {
     const [betaMode, setBetaMode] = useState(settings?.beta_tester_mode ?? false)
     const [geminiKey, setGeminiKey] = useState('')
-    const [stripeKey, setStripeKey] = useState('')
 
     useEffect(() => {
         setBetaMode(settings?.beta_tester_mode ?? false)
         setGeminiKey('')
-        setStripeKey('')
     }, [settings])
 
     const handleSave = () => {
-        const data: { beta_tester_mode: boolean; gemini_api_key?: string | null; stripe_secret_key?: string | null } = { beta_tester_mode: betaMode }
+        const data: { beta_tester_mode: boolean; gemini_api_key?: string | null } = { beta_tester_mode: betaMode }
         if (geminiKey.trim()) data.gemini_api_key = geminiKey.trim()
-        if (stripeKey.trim()) data.stripe_secret_key = stripeKey.trim()
         onSave(data)
     }
 
@@ -1131,18 +1128,6 @@ function AppSettingsEditor({ settings, onSave, isPending }: {
                             value={geminiKey}
                             onChange={e => setGeminiKey(e.target.value)}
                             placeholder={settings.gemini_api_key ? '•••••••• (deixe em branco para manter)' : 'Cole a chave Gemini para importação de PDF'}
-                            className="w-full h-12  bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-zinc-600 font-mono"
-                        />
-                    </div>
-                    <div className="space-y-2">
-                        <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest flex items-center gap-2">
-                            <CreditCard className="w-3 h-3" /> Stripe Secret Key
-                        </label>
-                        <input
-                            type="password"
-                            value={stripeKey}
-                            onChange={e => setStripeKey(e.target.value)}
-                            placeholder={settings.stripe_secret_key ? '•••••••• (deixe em branco para manter)' : 'Cole sk_... para checkout'}
                             className="w-full h-12  bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-zinc-600 font-mono"
                         />
                     </div>

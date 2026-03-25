@@ -19,7 +19,7 @@ export default function AffiliadosPage() {
             <header className="h-20 flex items-center border-b border-zinc-900/50 backdrop-blur-md sticky top-0 z-50 bg-zinc-950/80">
                 <div className="container mx-auto  flex items-center justify-between">
                     <Link href="/" className="flex items-center gap-2 group">
-                        <Logo size="lg" className="group-hover:scale-105 transition-transform" />
+                        <Logo size="md" className="group-hover:scale-105 transition-transform" />
                     </Link>
                     <div className="flex items-center gap-4">
                         <Link href="/afiliados/login" className="text-[10px] font-black text-zinc-400 hover:text-amber-400 uppercase tracking-[0.2em] transition-colors hidden md:block">
@@ -43,7 +43,7 @@ export default function AffiliadosPage() {
 
                     <div className="container mx-auto text-center relative z-10 max-w-4xl space-y-8">
                         {/* Badge */}
-                        <div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 rounded-full  py-2">
+                        <div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 rounded-full  py-2 px-4">
                             <Megaphone className="w-4 h-4 text-amber-400" />
                             <span className="text-[11px] font-black text-amber-400 uppercase tracking-widest">Programa de Afiliados RepTrail</span>
                         </div>
@@ -66,7 +66,7 @@ export default function AffiliadosPage() {
                             <span className="text-zinc-200 font-semibold">Transforme sua rede de contatos em uma renda recorrente hoje mesmo.</span>
                         </p>
 
-                        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 w-full">
+                        <div className="flex flex-col items-center justify-center gap-4 pt-4 w-full">
                             <Link href="/afiliados/cadastro" className="w-full sm:w-auto">
                                 <Button className="w-full sm:w-auto h-14 px-10 bg-amber-500 hover:bg-amber-400 text-zinc-950 font-black uppercase italic tracking-[0.1em] rounded-2xl shadow-2xl shadow-amber-500/30 transition-all hover:scale-105 active:scale-95 text-base gap-3">
                                     Quero me tornar afiliado
@@ -301,7 +301,7 @@ export default function AffiliadosPage() {
                 <section className="py-24  relative overflow-hidden">
                     <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-amber-900/20 via-zinc-950 to-zinc-950" />
                     <div className="container mx-auto text-center relative z-10 max-w-3xl space-y-8">
-                        <div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 rounded-full  py-2">
+                        <div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 rounded-full  py-2 px-4">
                             <span className="text-[11px] font-black text-amber-400 uppercase tracking-widest">🚀 Não espere mais</span>
                         </div>
                         <h2 className="text-4xl md:text-6xl font-black text-white italic uppercase tracking-tighter">
@@ -334,7 +334,7 @@ export default function AffiliadosPage() {
             <footer className="py-10 bg-zinc-950 border-t border-zinc-900">
                 <div className="container mx-auto  flex flex-col md:flex-row items-center justify-between gap-6">
                     <Link href="/" className="opacity-50 hover:opacity-100 transition-opacity block">
-                        <Logo size="sm" />
+                        <Logo size="md" />
                     </Link>
                     <p className="text-[10px] uppercase font-bold text-zinc-600 tracking-widest text-center">
                         Comissão válida em todos os planos · Sem limite · Registrada automaticamente

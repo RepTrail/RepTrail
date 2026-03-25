@@ -49,7 +49,7 @@ function SubmitButton() {
         <Button
             type="submit"
             disabled={pending}
-            className="w-full sm:flex-1 order-1 sm:order-2 bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-black italic uppercase tracking-tight rounded-xl h-12  sm:px-8 shadow-xl shadow-emerald-500/30 group transition-all disabled:opacity-70 disabled:cursor-not-allowed min-w-0"
+            className="w-full sm:flex-1 order-1 sm:order-2 bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-black italic uppercase tracking-tight rounded-xl h-12  sm:px-8 group transition-all disabled:opacity-70 disabled:cursor-not-allowed min-w-0"
         >
             {pending ? (
                 <>
@@ -112,7 +112,7 @@ export function OnboardingForm({ defaultTrainerCode = '' }: { defaultTrainerCode
             {[1, 2, 3].map((s) => (
                 <div
                     key={s}
-                    className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${s <= current ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)]' : 'bg-zinc-800'
+                    className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${s <= current ? 'bg-emerald-500' : 'bg-zinc-800'
                         }`}
                 />
             ))}
@@ -220,7 +220,7 @@ export function OnboardingForm({ defaultTrainerCode = '' }: { defaultTrainerCode
                                 type="button"
                                 onClick={nextStep}
                                 disabled={!height || !startingWeight || !birthDate}
-                                className="bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-black italic uppercase tracking-tight rounded-xl h-12 px-8 shadow-lg shadow-emerald-500/20 group transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-black italic uppercase tracking-tight rounded-xl h-12 px-8 group transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 Próximo <ChevronRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                             </Button>
@@ -280,7 +280,7 @@ export function OnboardingForm({ defaultTrainerCode = '' }: { defaultTrainerCode
                                 type="button"
                                 onClick={nextStep}
                                 disabled={!goal || goal.trim().length < 3}
-                                className="w-full sm:flex-1 order-1 sm:order-2 bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-black italic uppercase tracking-tight rounded-xl h-12  sm:px-8 shadow-lg shadow-emerald-500/20 group transition-all min-w-0 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="w-full sm:flex-1 order-1 sm:order-2 bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-black italic uppercase tracking-tight rounded-xl h-12  sm:px-8 group transition-all min-w-0 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 Próximo <ChevronRight className="ml-2 h-4 w-4 shrink-0 group-hover:translate-x-1 transition-transform" />
                             </Button>
@@ -290,7 +290,7 @@ export function OnboardingForm({ defaultTrainerCode = '' }: { defaultTrainerCode
                     {/* STEP 3: Sensitive & Trainer */}
                     <div className={step === 3 ? 'block space-y-6' : 'hidden'}>
                         <div className="space-y-6">
-                            <div className={`p-5 rounded-2xl border transition-all duration-300 ${steroidUse ? 'bg-emerald-500/10 border-emerald-500/40 shadow-[0_0_20px_rgba(16,185,129,0.05)]' : 'bg-zinc-950 border-emerald-500/10'}`}>
+                            <div className={`p-5 rounded-2xl border transition-all duration-300 ${steroidUse ? 'bg-emerald-500/10 border-emerald-500/40' : 'bg-zinc-950 border-emerald-500/10'}`}>
                                 <div className="flex items-center gap-4">
                                     <SteroidUseField checked={steroidUse} onCheckedChange={setSteroidUse} />
                                     <div className="space-y-1">

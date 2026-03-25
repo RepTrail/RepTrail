@@ -21,7 +21,7 @@ export function GuaranteeSection() {
                             </div>
 
                             {/* Orbital Icon */}
-                            <div className="absolute -top-2 -right-2 w-10 h-10 md:w-14 md:h-14 rounded-full bg-emerald-500 flex items-center justify-center shadow-lg shadow-emerald-500/30">
+                            <div className="absolute -top-2 -right-2 w-10 h-10 md:w-14 md:h-14 rounded-full bg-emerald-500 flex items-center justify-center">
                                 <ShieldCheck className="w-5 h-5 md:w-7 md:h-7 text-zinc-950" />
                             </div>
                         </div>

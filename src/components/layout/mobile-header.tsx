@@ -111,8 +111,8 @@ export function MobileHeader({ role, hasTrainer, steroidUse, hideImportPdf, auto
                                                 flex items-center gap-4 p-4 rounded-2xl transition-all font-bold uppercase italic tracking-widest text-xs border-2
                                                 ${isActive
                                                     ? role === 'trainer'
-                                                        ? 'bg-emerald-500/10 border-emerald-500/30 text-white shadow-[0_8px_32px_rgba(16,185,129,0.1)]'
-                                                        : 'bg-orange-500/10 border-orange-500/30 text-white shadow-[0_8px_32px_rgba(249,115,22,0.1)]'
+                                                        ? 'bg-emerald-500/10 border-emerald-500/30 text-white'
+                                                        : 'bg-orange-500/10 border-orange-500/30 text-white'
                                                     : 'bg-zinc-900/40 border-transparent text-zinc-500 hover:text-zinc-300'
                                                 }
                                             `}

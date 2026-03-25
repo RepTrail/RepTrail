@@ -44,7 +44,7 @@ export function UnifiedDeleteButton({
         setLoading(true)
         try {
             let result;
-            
+
             // Call the appropriate server action based on actionType
             switch (actionType) {
                 case 'workout':
@@ -74,7 +74,7 @@ export function UnifiedDeleteButton({
                 default:
                     throw new Error('Invalid action type')
             }
-            
+
             if (result.success || !result.error) {
                 setOpen(false)
                 toast({
@@ -117,7 +117,7 @@ export function UnifiedDeleteButton({
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[400px] bg-zinc-950 border-zinc-800 rounded-[2.5rem] shadow-2xl p-0 border-white/5 overflow-hidden">
-                <div className="p-8 pb-0 flex flex-col items-center">
+                <div className="flex flex-col items-center">
                     <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mb-6 border border-red-500/20">
                         <AlertTriangle className="w-8 h-8 text-red-500" />
                     </div>
@@ -131,7 +131,7 @@ export function UnifiedDeleteButton({
                     </DialogHeader>
                 </div>
 
-                <div className="p-8 pt-10 grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-4">
                     <Button
                         variant="outline"
                         onClick={() => setOpen(false)}

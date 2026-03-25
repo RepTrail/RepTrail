@@ -14,6 +14,11 @@
   --color-brand-primary: var(--brand-primary);
   --color-brand-secondary: var(--brand-secondary);
   --color-brand-accent: var(--brand-accent);
+  --color-gold: #D4AF37;
+  --color-gold-hover: #B8962E;
+  --color-success: oklch(0.696 0.17 162.48); /* emerald-500 */
+  --color-warning: oklch(0.769 0.188 70.08);  /* orange-500 */
+  --color-neutral: oklch(0.708 0 0);           /* zinc-500 */
 
   /* Surface Tokens */
   --color-surface-950: oklch(0.145 0 0);

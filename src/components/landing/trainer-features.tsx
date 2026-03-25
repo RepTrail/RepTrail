@@ -52,7 +52,7 @@ export function TrainerFeatures() {
                     </div>
 
                     <div className="flex w-full">
-                        <Button asChild className="w-full h-auto min-h-[3.5rem] py-4 px-6 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase italic tracking-wide rounded-xl shadow-lg shadow-emerald-500/10 transition-all hover:scale-105 whitespace-normal text-sm md:text-lg">
+                        <Button asChild className="w-full h-auto min-h-[3.5rem] py-4 px-6 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase italic tracking-wide rounded-xl transition-all hover:scale-105 whitespace-normal text-sm md:text-lg">
                             <Link href="/auth/signup" className="flex flex-col sm:flex-row items-center justify-center text-center leading-tight">
                                 <span>Quero simplificar minha gestão agora</span>
                                 <ArrowRight className="mt-2 sm:mt-0 sm:ml-2 w-5 h-5 shrink-0" />

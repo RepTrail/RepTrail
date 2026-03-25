@@ -134,7 +134,7 @@ export function AffiliatesManagement({ initialAffiliates, allUsers = [] }: Affil
                 </div>
                 <Button
                     onClick={() => setIsAddModalOpen(true)}
-                    className="bg-emerald-500 hover:bg-emerald-600 text-black font-bold uppercase text-xs tracking-wide rounded-xl h-10  gap-2"
+                    className="bg-emerald-500 hover:bg-emerald-600 text-black font-bold uppercase text-xs tracking-wide rounded-full h-10 px-6 gap-2"
                 >
                     <UserPlus className="w-4 h-4" />
                     Novo Afiliado
@@ -223,7 +223,7 @@ export function AffiliatesManagement({ initialAffiliates, allUsers = [] }: Affil
                                                         size="sm"
                                                         onClick={() => saveCommission(affiliate.id)}
                                                         disabled={loading === affiliate.id}
-                                                        className="h-8 bg-emerald-500 hover:bg-emerald-600 text-black font-bold uppercase text-[9px] tracking-widest rounded-lg"
+                                                        className="h-8 bg-emerald-500 hover:bg-emerald-600 text-black font-bold uppercase text-[9px] tracking-widest rounded-full px-4"
                                                     >
                                                         <Save className="w-3 h-3 mr-1.5" />
                                                         Salvar
@@ -233,7 +233,7 @@ export function AffiliatesManagement({ initialAffiliates, allUsers = [] }: Affil
                                                     size="icon"
                                                     variant="ghost"
                                                     onClick={() => handleRemoveAffiliate(affiliate.id)}
-                                                    className="h-8 w-8 text-zinc-600 hover:text-red-500 hover:bg-red-500/10 rounded-lg"
+                                                    className="h-8 w-8 text-zinc-600 hover:text-red-500 hover:bg-red-500/10 rounded-full"
                                                 >
                                                     <Trash2 className="w-4 h-4" />
                                                 </Button>

@@ -6,7 +6,6 @@ export type Profile = {
     avatar_url: string | null;
     role: 'trainer' | 'student';
     trainer_code?: string | null;
-    stripe_account_id?: string | null;
     bio?: string | null;
     specialties?: string[] | null;
     rating?: number;
@@ -36,15 +35,6 @@ export type TrainerStudent = {
     student?: Profile;
 };
 
-export type PdfUpload = {
-    id: string;
-    uploader_id: string;
-    file_url: string;
-    original_filename: string | null;
-    status: 'pending' | 'processing' | 'completed' | 'failed';
-    type: 'workout' | 'diet';
-    created_at: string;
-};
 
 export type Workout = {
     id: string;

@@ -61,7 +61,7 @@ export default async function LandingPage() {
                   Login
                 </Link>
                 <Link href="/auth/signup">
-                  <Button className="bg-white hover:bg-zinc-200 text-zinc-950 font-black uppercase italic tracking-widest rounded-xl text-xs px-6 h-10 shadow-lg shadow-white/5 transition-all hover:scale-105 active:scale-95 leading-none">
+                  <Button className="bg-white hover:bg-zinc-200 text-zinc-950 font-black uppercase italic tracking-widest rounded-xl text-xs px-6 h-10 transition-all hover:scale-105 active:scale-95 leading-none">
                     Começar Agora
                   </Button>
                 </Link>
@@ -85,7 +85,7 @@ export default async function LandingPage() {
                 )}
 
                 <Link href={dashboardUrl}>
-                  <Button className="bg-emerald-500 hover:bg-orange-400 text-zinc-950 font-black uppercase italic tracking-widest rounded-xl text-xs px-6 h-10 shadow-lg shadow-orange-500/20 transition-all hover:scale-105 active:scale-95">
+                  <Button className="bg-emerald-500 hover:bg-orange-400 text-zinc-950 font-black uppercase italic tracking-widest rounded-xl text-xs px-6 h-10 transition-all hover:scale-105 active:scale-95">
                     Acessar Dashboard
                   </Button>
                 </Link>
@@ -111,7 +111,7 @@ export default async function LandingPage() {
                     <span className="text-[10px] font-black uppercase">Afiliado</span>
                   </Link>
                 )}
-                <Link href={dashboardUrl} className="text-[10px] font-black text-zinc-950 bg-emerald-500 uppercase tracking-widest transition-colors px-4 py-2 rounded-xl border border-orange-400 select-none active:scale-95 transition-all shadow-lg shadow-orange-500/20">
+                <Link href={dashboardUrl} className="text-[10px] font-black text-zinc-950 bg-emerald-500 uppercase tracking-widest transition-colors px-4 py-2 rounded-xl border border-orange-400 select-none active:scale-95 transition-all">
                   Dashboard
                 </Link>
               </>

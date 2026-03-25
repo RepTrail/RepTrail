@@ -59,7 +59,7 @@ export async function PhotosAndTransformation({ studentId, isOwner, studentName,
 
                     <div className="space-y-4">
                         <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500">Status Atual</span>
-                        <div className="aspect-[3/4] relative rounded-3xl overflow-hidden border border-emerald-500/30 bg-zinc-900 shadow-[0_0_30px_rgba(16,185,129,0.1)] group">
+                        <div className="aspect-[3/4] relative rounded-3xl overflow-hidden border border-emerald-500/30 bg-zinc-900 group">
                             {newestPhoto ? (
                                 <Image src={newestPhoto.front_url} alt="Depois" fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
                             ) : (
