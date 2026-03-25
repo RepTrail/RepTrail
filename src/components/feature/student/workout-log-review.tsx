@@ -111,7 +111,7 @@ export function WorkoutLogReview({ logId, workoutName, completedAt, loads }: Wor
                 {Object.entries(grouped).map(([exerciseName, exerciseLoads]) => (
                     <div key={exerciseName} className="bg-zinc-900/50 border border-zinc-800/60 rounded-2xl overflow-hidden">
                         {/* Exercise title */}
-                        <div className="flex items-center gap-3 pb-4  py-2 border-b border-zinc-800/40">
+                        <div className="flex items-center gap-3 pb-4 py-2 border-b border-zinc-800/40">
                             <Dumbbell className="w-4 h-4 text-orange-500/70 flex-shrink-0" />
                             <p className="text-sm font-black text-white italic uppercase tracking-tight">
                                 {exerciseName}
@@ -125,7 +125,7 @@ export function WorkoutLogReview({ logId, workoutName, completedAt, loads }: Wor
                                 const edit = edits[load.id] || { weight: '0', reps: '0' }
 
                                 return (
-                                    <div key={load.id} className="flex items-center gap-3 pb-4  py-2">
+                                    <div key={load.id} className="flex items-center gap-3 pb-4 py-2">
                                         {/* Set type badge */}
                                         <span className={`flex-shrink-0 text-[9px] font-black px-2 py-0.5 rounded-md border uppercase ${cfg.color} ${cfg.bg} ${cfg.border}`}>
                                             {cfg.label}

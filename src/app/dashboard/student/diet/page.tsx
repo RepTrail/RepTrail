@@ -59,7 +59,7 @@ export default async function StudentDietPage() {
             <div className="max-w-7xl mx-auto flex flex-col gap-section-gap" suppressHydrationWarning>
                 <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 px-2">
                     <div className="space-y-2 sm:space-y-5">
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3 pb-4">
                             <h1 className="text-3xl font-black text-white italic uppercase tracking-tighter">
                                 Minha <span className="text-orange-500">Dieta</span>
                             </h1>
@@ -69,7 +69,7 @@ export default async function StudentDietPage() {
                         </p>
                     </div>
 
-                    <div className="flex items-center gap-3 pb-4 w-full sm:w-auto">
+                    <div className="flex items-center gap-3 pb-4w-full sm:w-auto">
                         <Button asChild variant="outline" className="flex-1 sm:flex-none h-11 px-6 bg-zinc-900 border-zinc-800 text-zinc-100 hover:bg-zinc-800 hover:text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2 border-white/5">
                             <Link href="/dashboard/student/import-pdf">
                                 <FileUp className="w-4 h-4" />
@@ -179,7 +179,7 @@ export default async function StudentDietPage() {
     return (
         <div className="max-w-7xl mx-auto flex flex-col gap-section-gap">
             <header className="px-2 space-y-2 sm:space-y-5">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 pb-4">
                     <h1 className="text-3xl font-black text-white italic uppercase tracking-tighter">
                         Minha <span className="text-orange-500">Dieta</span>
                     </h1>

@@ -23,7 +23,7 @@ export default async function StudentProfilePage() {
         <div className="max-w-7xl mx-auto flex flex-col gap-section-gap">
             {/* Header */}
             <header className="space-y-5">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 pb-4">
                     <h1 className="text-3xl font-black text-white italic uppercase tracking-tighter">
                         Meu <span className="text-orange-500">Perfil</span>
                     </h1>

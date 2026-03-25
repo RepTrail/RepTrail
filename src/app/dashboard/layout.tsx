@@ -49,7 +49,7 @@ function NavLink({ href, children, icon }: { href: string; children: React.React
     return (
         <Link
             href={href}
-            className="flex items-center gap-3 pb-4  py-3 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/80 transition-all duration-200 group"
+            className="flex items-center gap-3 pb-4 py-3 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/80 transition-all duration-200 group"
         >
             <span className="group-hover:text-white transition-colors text-zinc-500">{icon}</span>
             <span className="font-medium">{children}</span>

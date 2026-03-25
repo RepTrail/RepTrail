@@ -100,7 +100,7 @@ export function RankingRow({ trainer, rank }: { trainer: TrainerRanking, rank: n
                 #{rank}
             </div>
 
-            <div className="flex-1 flex items-center gap-3 md:gap-6 min-w-0">
+            <div className="flex-1 flex items-center gap-3 pb-4 md:gap-6 min-w-0">
                 <Avatar className="h-10 w-10 md:h-16 md:w-16 border border-zinc-800 shrink-0 shadow-xl group-hover:scale-110 transition-transform">
                     <AvatarImage src={trainer.avatar_url} className="object-cover" />
                     <AvatarFallback className="bg-zinc-900 text-zinc-500 font-bold text-lg md:text-xl uppercase">

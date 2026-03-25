@@ -48,7 +48,7 @@ export default async function ErgogenicsPage() {
         <div className="max-w-7xl mx-auto space-y-10">
             <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 ">
                 <div className="space-y-5">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 pb-4">
                         <h1 className="text-3xl font-black text-white italic uppercase tracking-tighter">
                             Meus <span className="text-orange-500">Ergogênicos</span>
                         </h1>

@@ -64,7 +64,7 @@ export function CardioBuilder({ cardio, students = [], backHref = '/dashboard/tr
     useEffect(() => {
         console.log('[CARDIO_BUILDER] Assignments:', cardio.assignments)
     }, [cardio.assignments])
-    
+
     useEffect(() => { if (isEditingName) nameInputRef.current?.focus() }, [isEditingName])
     useEffect(() => { if (isEditingDesc) descRef.current?.focus() }, [isEditingDesc])
 
@@ -136,10 +136,10 @@ export function CardioBuilder({ cardio, students = [], backHref = '/dashboard/tr
                         </div>
                     ) : (
                         <div
-                            className="group flex items-center gap-3 cursor-pointer w-fit"
+                            className="group flex items-center gap-3 pb-4 cursor-pointer w-fit"
                             onClick={() => setIsEditingName(true)}
                         >
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-3 pb-4">
                                 <div className="p-2.5 bg-orange-500/10 border border-orange-500/20 rounded-2xl">
                                     <Activity className="w-5 h-5 text-orange-500" />
                                 </div>
@@ -162,7 +162,7 @@ export function CardioBuilder({ cardio, students = [], backHref = '/dashboard/tr
                     </p>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 pb-4">
                     <UnifiedAssignDialog
                         itemId={cardio.id}
                         students={students}
@@ -247,7 +247,7 @@ export function CardioBuilder({ cardio, students = [], backHref = '/dashboard/tr
                         <Clock className="w-4 h-4 text-orange-500" />
                         <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Duração Padrão (min)</span>
                     </div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 pb-4">
                         <Input
                             type="number"
                             value={editDuration}
@@ -288,7 +288,7 @@ export function CardioBuilder({ cardio, students = [], backHref = '/dashboard/tr
                                     value={opt.value}
                                     className="rounded-xl px-3 py-2.5 font-bold focus:bg-orange-500/10 focus:text-orange-500 transition-all cursor-pointer mb-1 last:mb-0"
                                 >
-                                    <div className="flex items-center gap-3">
+                                    <div className="flex items-center gap-3 pb-4">
                                         <div className="w-2 h-2 rounded-full" style={{ backgroundColor: opt.color, boxShadow: `0 0 8px ${opt.color}66` }} />
                                         {opt.label}
                                     </div>
@@ -300,7 +300,7 @@ export function CardioBuilder({ cardio, students = [], backHref = '/dashboard/tr
             </div>
 
             {/* Template Info */}
-            <div className="bg-zinc-900/20 border border-zinc-800/30 rounded-2xl p-4 flex items-center gap-3">
+            <div className="bg-zinc-900/20 border border-zinc-800/30 rounded-2xl p-4 flex items-center gap-3 pb-4">
                 <div className="p-2 bg-orange-500/10 rounded-lg">
                     <Activity className="w-4 h-4 text-orange-500" />
                 </div>

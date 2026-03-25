@@ -2,9 +2,10 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { LogOut } from 'lucide-react'
+import { Dumbbell, Utensils, Activity, User, Home, ShoppingBag, Trophy, Search, UserCheck, Sparkles, LogOut, TrendingUp, ClipboardList, Syringe } from 'lucide-react'
 import { StudentNav } from '@/components/layout/student-nav'
 import { ConditionalMobileNav } from '@/components/layout/conditional-mobile-nav'
+import { UnifiedSidebar } from '@/components/layout/sidebar-unified'
 import { signOutAction } from '@/actions/auth-actions'
 import { getStudentTrainer } from '@/actions/student-actions'
 import { Logo } from '@/components/ui/logo'
@@ -26,7 +27,7 @@ export default async function StudentLayout({
 
     // Fetch profile, details and trainer status in parallel to avoid waterfalls
     const [profileRes, detailsRes, trainerRel] = await Promise.all([
-        supabase.from('profiles').select('role, auto_training_status, auto_training_trial_end').eq('id', user.id).single(),
+        supabase.from('profiles').select('role, full_name, avatar_url, auto_training_status, auto_training_trial_end').eq('id', user.id).single(),
         supabase.from('student_details').select('id, steroid_use').eq('id', user.id).single(),
         getStudentTrainer(user.id)
     ])
@@ -57,33 +58,45 @@ export default async function StudentLayout({
     const steroidUse = !!details.steroid_use
     const hasTrainer = !!trainerRel
 
+    const allLinks = [
+        { href: '/dashboard/student', icon: <Home className="w-4 h-4" />, label: 'Home', exact: true },
+        { href: '/dashboard/student/workouts', icon: <Dumbbell className="w-4 h-4" />, label: 'Meus Treinos', requiresTrainer: true },
+        { href: '/dashboard/student/cardio', icon: <Activity className="w-4 h-4" />, label: 'Cardio', requiresTrainer: true },
+        { href: '/dashboard/student/diet', icon: <Utensils className="w-4 h-4" />, label: 'Minha Dieta', requiresTrainer: true },
+        { href: '/dashboard/student/ergogenics', icon: <Syringe className="w-4 h-4" />, label: 'Ergogênicos', requiresTrainer: true, showOnlyIfSteroidUse: true },
+        { href: '/dashboard/student/progress', icon: <TrendingUp className="w-4 h-4" />, label: 'Evolução', requiresTrainer: true },
+        { href: '/dashboard/student/import-pdf', icon: <Sparkles className="w-4 h-4" />, label: 'Importar PDF', requiresTrainer: true, hideIfHasTrainer: true },
+        { href: '/dashboard/student/anamnese', icon: <ClipboardList className="w-4 h-4" />, label: 'Anamnese' },
+        { href: '/buscar-personal', icon: <Search className="w-4 h-4" />, label: 'Buscar Personal', hideIfHasTrainer: true },
+        { href: '/dashboard/student/feed', icon: <UserCheck className="w-4 h-4" />, label: 'Feed de Alunos' },
+        { href: '/dashboard/student/ranking', icon: <Trophy className="w-4 h-4" />, label: 'Ranking' },
+        { href: '/dashboard/student/loja', icon: <ShoppingBag className="w-4 h-4" />, label: 'Loja' },
+        { href: '/dashboard/student/meu-personal', icon: <UserCheck className="w-4 h-4" />, label: 'Meu Personal', requiresTrainer: true, showOnlyIfHasTrainer: true },
+        { href: '/dashboard/student/profile', icon: <User className="w-4 h-4" />, label: 'Meu Perfil' },
+    ]
+
+    const filteredLinks = allLinks.filter((link: any) => {
+        if (link.hideIfHasTrainer && hasTrainer) return false
+        if (link.showOnlyIfHasTrainer && !hasTrainer) return false
+        if (link.showOnlyIfSteroidUse && !steroidUse) return false
+        if (link.href === '/buscar-personal' && isAutoTrainingActive) return false
+        if (link.requiresTrainer && !hasTrainer && !isAutoTrainingActive) return false
+        return true
+    })
+
     return (
-        <div className="flex h-screen w-full bg-zinc-950 text-white selection:bg-emerald-500/30">
-            {/* Desktop Sidebar */}
-            <aside className="hidden md:flex w-72 bg-zinc-950 border-r border-zinc-900/50 p-6 flex-col justify-between shadow-2xl z-20">
-                <div>
-                    {/* Logo Container */}
-                    <div className="mb-10 flex items-center justify-start ">
-                        <Link href="/">
-                            <Logo size="md" />
-                        </Link>
-                    </div>
-
-                    <StudentNav hasTrainer={hasTrainer} steroidUse={steroidUse} autoTrainingActive={isAutoTrainingActive} />
-                </div>
-
-                <div className="pt-6 border-t border-zinc-800 space-y-4">
-                    <form action={signOutAction}>
-                        <Button
-                            variant="ghost"
-                            className="w-full justify-start gap-3 text-zinc-500 hover:text-red-400 hover:bg-red-400/10 h-12 rounded-xl transition-all group "
-                        >
-                            <LogOut className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                            <span className="font-bold uppercase tracking-widest text-[10px]">Sair da Conta</span>
-                        </Button>
-                    </form>
-                </div>
-            </aside>
+        <div className="flex h-screen w-full bg-zinc-950 text-white selection:bg-orange-500/30 font-sans">
+            <UnifiedSidebar 
+                brandColor="orange"
+                logoColor="orange"
+                user={{
+                    name: profile?.full_name,
+                    email: user.email,
+                    avatar_url: profile?.avatar_url
+                }}
+                links={filteredLinks}
+                showSettings={true}
+            />
 
             {/* Mobile Top Header */}
             <MobileHeader role="student" hasTrainer={hasTrainer} steroidUse={steroidUse} autoTrainingActive={isAutoTrainingActive} />
@@ -91,7 +104,7 @@ export default async function StudentLayout({
             {/* Main Content Area */}
             <main className="flex-1 overflow-x-hidden overflow-y-auto bg-zinc-950 relative custom-scrollbar">
                 {/* Background Glow - Optimized for mobile performance */}
-                <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-emerald-500/10 blur-[80px] rounded-full -mr-32 -mt-32 pointer-events-none gpu-accelerated" />
+                <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-orange-500/10 blur-[80px] rounded-full -mr-32 -mt-32 pointer-events-none gpu-accelerated" />
 
                 <div className="pt-24 md:pt-[50px] px-5 sm:px-6 md:px-8 pb-32 md:pb-10 relative z-10 page-entry">
                     <div className="max-w-7xl mx-auto">

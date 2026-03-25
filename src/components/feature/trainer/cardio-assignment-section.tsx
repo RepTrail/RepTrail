@@ -86,7 +86,7 @@ export function CardioAssignmentSection({ studentId, relationshipId }: CardioAss
                                     <div className="space-y-0.5">
                                         <p className="text-zinc-100 text-sm font-black uppercase italic tracking-wide">{a.cardio?.name}</p>
                                         <div className="flex flex-col gap-2">
-                                            <div className="flex items-center gap-3">
+                                            <div className="flex items-center gap-3 pb-4">
                                                 <span className="flex items-center gap-1 text-[9px] font-black text-zinc-500 uppercase">
                                                     <Timer className="w-3 h-3" /> {a.duration_minutes} min
                                                 </span>

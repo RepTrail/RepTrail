@@ -57,7 +57,7 @@ export default function StudentRankingLoading() {
 
             {/* General List */}
             <div className="space-y-6">
-                <div className="flex items-center gap-3 pb-4 px-2">
+                <div className="flex items-center gap-3 pb-4px-2">
                     <User className="w-4 h-4 text-zinc-800" />
                     <Skeleton className="h-4 w-48 bg-zinc-800/50 rounded-md" />
                 </div>

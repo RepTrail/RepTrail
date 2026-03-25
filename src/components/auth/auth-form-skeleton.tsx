@@ -8,7 +8,7 @@ export function AuthFormSkeleton() {
         <div className="w-full max-w-[440px] space-y-8">
             <div className="flex flex-col items-center text-center space-y-4">
                 {/* Logo Skeleton */}
-                <div className="flex items-center gap-3 pb-4 mb-4">
+                <div className="flex items-center gap-3 pb-4mb-4">
                     <Skeleton className="w-12 h-12 rounded-2xl rotate-3" />
                     <Skeleton className="w-32 h-10 rounded-xl" />
                 </div>

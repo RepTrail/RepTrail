@@ -60,7 +60,7 @@ export function Logo({
     const currentColor = colorMap[color]
 
     return (
-        <div className={cn("flex items-center gap-3", className)} suppressHydrationWarning>
+        <div className={cn("flex items-center gap-3 pb-4", className)} suppressHydrationWarning>
             <div className={cn(
                 "rotate-3 transition-transform group-hover:rotate-0",
                 currentColor.bg,

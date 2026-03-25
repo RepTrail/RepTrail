@@ -168,7 +168,7 @@ export function ProgressPhotoUpload({ studentId }: ProgressPhotoUploadProps) {
                 />
             </div>
 
-            <div className="flex items-center gap-3 pb-4 p-4 rounded-2xl bg-zinc-900/40 border border-zinc-800">
+            <div className="flex items-center gap-3 pb-4p-4 rounded-2xl bg-zinc-900/40 border border-zinc-800">
                 <input
                     type="checkbox"
                     id="allow-public"

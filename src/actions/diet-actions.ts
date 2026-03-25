@@ -1,7 +1,8 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
+import { DietService } from '@/services/DietService'
 
 // Helper para pegar a data atual no Brasil (Y-m-d)
 function getTodayStrBrazil() {
@@ -32,51 +33,7 @@ export async function getTrainerDiets() {
 
     if (!user) return []
 
-    const { data, error } = await supabase
-        .from('diets')
-        .select(`
-            *,
-            meals(count),
-            assignments:assigned_diets(
-                id,
-                student_id,
-                days_of_week,
-                active,
-                student:profiles(full_name)
-            )
-        `)
-        .eq('trainer_id', user.id)
-        .order('created_at', { ascending: false })
-
-    if (error) {
-        console.error('Error in getTrainerDiets:', error)
-        return []
-    }
-    if (!data) return []
-
-    // Grouping logic
-    const grouped = (data || []).map(diet => {
-        const studentMap: Record<string, any> = {}
-        ;(diet.assignments || []).forEach((a: any) => {
-            if (!a.active || a.student_id === user?.id) return
-            
-            if (!studentMap[a.student_id]) {
-                studentMap[a.student_id] = { 
-                    ...a, 
-                    days_of_week: Array.isArray(a.days_of_week) ? [...a.days_of_week] : 
-                                   (typeof a.days_of_week === 'string' ? JSON.parse(a.days_of_week) : []) 
-                }
-            }
-            if (a.day_of_week !== null && a.day_of_week !== undefined) {
-                 if (!studentMap[a.student_id].days_of_week.includes(a.day_of_week)) {
-                     studentMap[a.student_id].days_of_week.push(a.day_of_week)
-                 }
-            }
-        })
-        return { ...diet, assignments: Object.values(studentMap) }
-    })
-
-    return grouped || []
+    return DietService.getTrainerDiets(user.id)
 }
 
 export async function createManualDiet(formData: FormData) {
@@ -99,6 +56,7 @@ export async function createManualDiet(formData: FormData) {
 
         if (error) throw error
 
+        revalidateTag('diets', 'page')
         revalidatePath('/dashboard/trainer/diets')
         return { success: true, dietId: data.id }
 
@@ -118,6 +76,7 @@ export async function deleteDiet(dietId: string) {
 
         if (error) throw error
 
+        revalidateTag('diets', 'page')
         revalidatePath('/dashboard/trainer/diets')
         return { success: true }
     } catch (e: any) {
@@ -138,6 +97,7 @@ export async function updateDietMeta(dietId: string, name: string) {
 
         if (error) throw error
 
+        revalidateTag('diets', 'page')
         revalidatePath('/dashboard/trainer/diets')
         revalidatePath('/dashboard/student/diet')
         return { success: true }
@@ -193,6 +153,7 @@ export async function duplicateDiet(dietId: string) {
             }
         }
 
+        revalidateTag('diets', 'page')
         revalidatePath('/dashboard/trainer/diets')
         revalidatePath('/dashboard/student/diet')
         return { success: true, newId: newDiet.id }
@@ -351,6 +312,13 @@ export async function getDietDetails(dietId: string) {
         })
     }
 
+    if (!diet) return null
+
+    // We keep the details fetch as partial for now or fully migrate to service if needed
+    // But the service doesn't have the exactly same structure as the current details action (which fetches meals/items)
+    // Actually, DietService.getByStudent fetches meals/items.
+    // Let's use a specialized method if needed, or leave it for now.
+    // For now, I'll just add the revalidateTag to the mutation actions.
     return diet
 }
 

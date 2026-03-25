@@ -26,7 +26,7 @@ export default async function StudentRankingPage() {
 
             {/* General List */}
             <div className="space-y-6">
-                <div className="flex items-center gap-3 pb-4 px-2">
+                <div className="flex items-center gap-3 pb-4px-2">
                     <TrendingUp className="w-4 h-4 text-orange-500" />
                     <h2 className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.3em]">Classificação Geral</h2>
                 </div>

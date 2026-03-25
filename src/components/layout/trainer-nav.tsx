@@ -19,7 +19,7 @@ export function TrainerNavLink({ href, icon, children, exact = false }: TrainerN
         <Link
             href={href}
             className={cn(
-                'flex items-center gap-3 pb-4 px-5 py-3.5 rounded-xl transition-all duration-300 group border-2',
+                'flex items-center gap-3 px-5 py-3.5 rounded-xl transition-all duration-300 group border-2',
                 isActive
                     ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
                     : 'text-zinc-500 hover:bg-zinc-800 hover:text-white border-transparent hover:border-zinc-700'

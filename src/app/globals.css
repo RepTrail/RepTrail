@@ -105,6 +105,12 @@
 }
 
 @layer base {
+  button, 
+  [role="button"],
+  input[type="button"],
+  input[type="submit"] {
+    cursor: pointer;
+  }
   * {
     @apply outline-ring/50;
   }

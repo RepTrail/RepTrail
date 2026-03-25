@@ -102,7 +102,7 @@ export function EditErgogenicDialog({ ergogenic }: EditErgogenicDialogProps) {
                         </div>
                         <div className="space-y-2">
                             <Label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-1">Unidade</Label>
-                            <div className="flex items-center gap-3 pb-4 h-12  bg-zinc-900 border-zinc-800 rounded-xl">
+                            <div className="flex items-center gap-3 pb-4h-12  bg-zinc-900 border-zinc-800 rounded-xl">
                                 <span className={`text-sm font-medium transition-colors ${unit === 'ml' ? 'text-emerald-500' : 'text-zinc-400'}`}>ml</span>
                                 <Switch
                                     checked={unit === 'mg'}

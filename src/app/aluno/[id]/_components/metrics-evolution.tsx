@@ -14,7 +14,7 @@ export async function MetricsAndEvolution({ studentId, steroidUse }: { studentId
         <div className="flex flex-col gap-12">
             {/* Consistência Section */}
             <div className="space-y-6">
-                <div className="flex items-center gap-3 pb-4 px-2">
+                <div className="flex items-center gap-3 pb-4px-2">
                     <Target className="w-6 h-6 text-emerald-500" />
                     <h2 className="text-xl font-black italic uppercase tracking-tight">Consistência (30D)</h2>
                 </div>
@@ -53,7 +53,7 @@ export async function MetricsAndEvolution({ studentId, steroidUse }: { studentId
 
             {/* Evolution Stats */}
             <div className="space-y-6">
-                <div className="flex items-center gap-3 pb-4 px-2">
+                <div className="flex items-center gap-3 pb-4px-2">
                     <TrendingUp className="w-6 h-6 text-emerald-500" />
                     <h2 className="text-xl font-black italic uppercase tracking-tight text-white">Evolução Analítica</h2>
                 </div>

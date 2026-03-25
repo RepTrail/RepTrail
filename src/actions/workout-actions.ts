@@ -1,8 +1,9 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { redirect } from 'next/navigation'
+import { WorkoutService } from '@/services/WorkoutService'
 
 export async function getTrainerWorkouts() {
     const supabase = await createClient()
@@ -10,50 +11,7 @@ export async function getTrainerWorkouts() {
 
     if (!user) return []
 
-    const { data, error } = await supabase
-        .from('workouts')
-        .select(`
-            *,
-            exercises:workout_exercises(count),
-            assignments:assigned_workouts(
-                id,
-                student_id,
-                day_of_week,
-                active,
-                student:profiles(full_name)
-            )
-        `)
-        .eq('trainer_id', user.id)
-        .order('created_at', { ascending: false })
-
-    if (error) {
-        console.error('Error in getTrainerWorkouts:', error)
-        return []
-    }
-    if (!data) return []
-
-    // Grouping logic
-    const grouped = (data || []).map(workout => {
-        const studentMap: Record<string, any> = {}
-        ;(workout.assignments || []).forEach((a: any) => {
-            if (!a.active || (user && a.student_id === user.id)) return
-            
-            if (!studentMap[a.student_id]) {
-                studentMap[a.student_id] = { 
-                    ...a, 
-                    days_of_week: [] 
-                }
-            }
-            if (a.day_of_week !== null && a.day_of_week !== undefined) {
-                 if (!studentMap[a.student_id].days_of_week.includes(a.day_of_week)) {
-                     studentMap[a.student_id].days_of_week.push(a.day_of_week)
-                 }
-            }
-        })
-        return { ...workout, assignments: Object.values(studentMap) }
-    })
-
-    return grouped || []
+    return WorkoutService.getTrainerWorkouts(user.id)
 }
 
 export async function createManualWorkout(formData: FormData) {
@@ -97,6 +55,7 @@ export async function deleteWorkout(workoutId: string) {
 
         if (error) throw error
 
+        revalidateTag('workouts', 'page')
         revalidatePath('/dashboard/trainer/workouts')
         revalidatePath('/dashboard/student/workouts')
         return { success: true }
@@ -167,6 +126,7 @@ export async function duplicateWorkout(workoutId: string) {
             if (exErr) throw exErr
         }
 
+        revalidateTag('workouts', 'page')
         revalidatePath('/dashboard/trainer/workouts')
         return { success: true, newId: copy.id }
     } catch (e: any) {
@@ -274,38 +234,9 @@ export async function getWorkoutDetails(workoutId: string) {
 
     const { data: { user } } = await supabase.auth.getUser()
 
-    // Grouping logic for details
-    const studentMap: Record<string, any> = {}
-    ;(workout.assignments || []).forEach((a: any) => {
-        if (!a.active || (user && a.student_id === user.id)) return
-        
-        if (!studentMap[a.student_id]) {
-            studentMap[a.student_id] = { 
-                ...a, 
-                days_of_week: [] 
-            }
-        }
-        if (a.day_of_week !== null && a.day_of_week !== undefined) {
-             if (!studentMap[a.student_id].days_of_week.includes(a.day_of_week)) {
-                 studentMap[a.student_id].days_of_week.push(a.day_of_week)
-             }
-        }
-    })
-    workout.assignments = Object.values(studentMap)
-
     if (!workout) return null
 
-    // 2. Get exercises linked to this workout
-    const { data: exercises } = await supabase
-        .from('workout_exercises')
-        .select(`
-            *,
-            exercise:exercises(*)
-        `)
-        .eq('workout_id', workoutId)
-        .order('order_index', { ascending: true })
-
-    return { ...workout, exercises: exercises || [] }
+    return WorkoutService.getWorkoutDetails(workoutId, user?.id)
 }
 
 export async function addExerciseToWorkout(workoutId: string, exerciseId: string) {

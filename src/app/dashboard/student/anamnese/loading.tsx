@@ -7,7 +7,7 @@ export default function AnamnesisLoading() {
     return (
         <div className="space-y-10 pb-20 animate-pulse">
             {/* Header matches AnamnesisPage header */}
-            <div className="flex items-center gap-3 pb-4 mb-2">
+            <div className="flex items-center gap-3 pb-4mb-2">
                 <div className="p-2 bg-zinc-900 rounded-xl">
                     <ClipboardList className="w-5 h-5 text-zinc-800" />
                 </div>

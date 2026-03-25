@@ -14,10 +14,11 @@ import {
 } from "@/components/ui/table"
 import { UnifiedCreationDialog } from '@/components/feature/shared/unified-creation-dialog'
 import { createStudent } from '@/actions/trainer-actions'
-import { CopyInviteButton } from '@/components/feature/trainer/copy-invite-button'
+import { getTrainerRanking, getTrainerStudents } from '@/actions/trainer-actions'
+import { PillButton } from '@/components/ui/pill-button'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import Link from 'next/link'
-import { getTrainerRanking } from '@/actions/trainer-actions'
+import { CopyInviteButton } from '@/components/feature/trainer/copy-invite-button'
 
 export default async function StudentsPage() {
     const supabase = await createClient()
@@ -122,9 +123,9 @@ export default async function StudentsPage() {
                         title="Vincular Novo Aluno"
                         description="O aluno deve possuir uma conta no RepTrail. Insira o email abaixo."
                         trigger={
-                            <Button variant="outline" className="border-emerald-500/20 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/30 hover:border-emerald-500/50 hover:text-emerald-400 rounded-xl font-bold h-11 px-6 gap-2 transition-all duration-200 w-full sm:w-auto shadow-lg shadow-emerald-500/10">
+                            <PillButton variant="emerald" className="w-full sm:w-auto shadow-lg shadow-emerald-500/10">
                                 <Plus className="w-4 h-4" /> Vincular Aluno
-                            </Button>
+                            </PillButton>
                         }
                         fields={[
                             { name: 'email', label: 'Email da Conta', placeholder: 'ex: aluno@email.com', type: 'text', required: true },

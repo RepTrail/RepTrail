@@ -311,7 +311,7 @@ export function DietAdherence({ diet, allowEstimation = false, hasTrainer = fals
                                             {meal.meal_items?.length > 0 ? (
                                                 meal.meal_items.map((item: any) => (
                                                     <div key={item.id} className="flex items-center justify-between p-3 rounded-xl bg-zinc-900/30 border border-zinc-800/50 hover:bg-zinc-900/50 transition-colors gap-3">
-                                                        <div className="flex items-center gap-3 pb-4 min-w-0">
+                                                        <div className="flex items-center gap-3 pb-4min-w-0">
                                                             <Button
                                                                 variant="ghost"
                                                                 size="icon"

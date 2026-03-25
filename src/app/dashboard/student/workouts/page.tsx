@@ -83,7 +83,7 @@ export default async function StudentWorkoutsPage() {
             {/* Header Section */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 px-2">
                 <div className="space-y-2 sm:space-y-5">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 pb-4">
                         <h1 className="text-3xl font-black text-white italic uppercase tracking-tighter">
                             Meus <span className="text-orange-500">Treinos</span>
                         </h1>
@@ -100,7 +100,7 @@ export default async function StudentWorkoutsPage() {
                 </div>
 
                 {allowManualWorkouts && (
-                    <div className="flex items-center gap-3 pb-4 w-full sm:w-auto">
+                    <div className="flex items-center gap-3 pb-4w-full sm:w-auto">
                         <Button asChild variant="outline" className="flex-1 sm:flex-none h-12 px-6 bg-zinc-900 border-zinc-700 hover:bg-zinc-800 hover:text-white rounded-xl text-[10px] font-black uppercase tracking-widest text-zinc-300 transition-all flex items-center justify-center gap-2">
                             <Link href="/dashboard/student/import-pdf">
                                 <FileUp className="w-4 h-4 text-orange-500" />

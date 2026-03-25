@@ -8,7 +8,7 @@ export default function StudentProfileLoading() {
         <div className="space-y-12 animate-pulse">
             {/* Header matches StudentProfilePage header */}
             <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                <div className="flex items-center gap-3 pb-4 mb-2">
+                <div className="flex items-center gap-3 pb-4mb-2">
                     <div className="p-2 bg-zinc-900 rounded-xl">
                         <ShieldCheck className="w-5 h-5 text-zinc-800" />
                     </div>

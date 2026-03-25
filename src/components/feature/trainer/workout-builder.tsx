@@ -477,7 +477,7 @@ export function WorkoutBuilder({ workout, students = [], backHref = '/dashboard/
                     <PlusCircle className="w-5 h-5 text-blue-500" /> Adicionar Exercício
                 </h3>
                 <div className="relative">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></svg>
                     <Input
                         placeholder="Busque por exercícios (ex: Supino, Agachamento...)"
                         className="pl-10 bg-zinc-950 border-zinc-800 h-12 text-zinc-100"

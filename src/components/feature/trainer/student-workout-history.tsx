@@ -160,7 +160,7 @@ export function StudentWorkoutHistory({ history, isBlocked, mode = 'student' }: 
                                     <h4 className="text-sm sm:text-base font-black text-white italic uppercase tracking-tight leading-none truncate">
                                         {log.workout?.name || 'Treino Avulso'}
                                     </h4>
-                                    <div className="flex items-center gap-3 pb-4 sm:gap-4 flex-wrap">
+                                    <div className="flex items-center gap-3 pb-4sm:gap-4 flex-wrap">
                                         <span className="text-[9px] sm:text-[10px] font-black text-zinc-500 flex items-center gap-1.5 uppercase tracking-widest whitespace-nowrap">
                                             <Calendar className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-zinc-700" />
                                             {new Date(log.started_at).toLocaleDateString('pt-BR')}
@@ -202,7 +202,7 @@ export function StudentWorkoutHistory({ history, isBlocked, mode = 'student' }: 
                                 {(log.perceived_effort || log.feedback) && (
                                     <div className="mt-6 p-4 sm:p-5 bg-zinc-950/50 rounded-3xl border border-zinc-800/50 space-y-4">
                                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                                            <div className="flex items-center gap-3 pb-4">
+                                            <div className="flex items-center gap-3">
                                                 <div className="p-2 bg-zinc-900 rounded-xl border border-zinc-800 shrink-0">
                                                     <Activity className="w-4 h-4 text-emerald-500" />
                                                 </div>
@@ -237,7 +237,7 @@ export function StudentWorkoutHistory({ history, isBlocked, mode = 'student' }: 
                                 )}
 
                                 <div className="mt-6 space-y-5">
-                                    <div className="flex items-center gap-3 pb-4 border-b border-zinc-800/50 pb-3">
+                                    <div className="flex items-center gap-3 pb-4border-b border-zinc-800/50 pb-3">
                                         <Activity className="w-3.5 h-3.5 text-zinc-700" />
                                         <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] italic">Ganhos de Carga</p>
                                     </div>

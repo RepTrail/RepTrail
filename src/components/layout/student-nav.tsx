@@ -52,7 +52,7 @@ export function StudentNav({ hasTrainer, steroidUse, autoTrainingActive = false 
                         href={link.href}
                         prefetch={false}
                         className={`
-                            flex items-center gap-3 pb-4 px-5 py-3.5 rounded-xl transition-all duration-300 group
+                            flex items-center gap-3 pb-4px-5 py-3.5 rounded-xl transition-all duration-300 group
                             ${isActive
                                 ? 'bg-orange-500/10 border-orange-500/30 text-white border-2'
                                 : 'text-zinc-500 hover:bg-zinc-800 hover:text-white border-2 border-transparent hover:border-zinc-700'}
@@ -69,7 +69,7 @@ export function StudentNav({ hasTrainer, steroidUse, autoTrainingActive = false 
             <button
                 type="button"
                 onClick={() => window.dispatchEvent(new CustomEvent('open-settings'))}
-                className="flex items-center gap-3 pb-4 px-5 py-3.5 rounded-xl transition-all duration-300 group text-zinc-500 hover:bg-zinc-800 hover:text-white border border-transparent hover:border-zinc-700 w-full"
+                className="flex items-center gap-3 pb-4px-5 py-3.5 rounded-xl transition-all duration-300 group text-zinc-500 hover:bg-zinc-800 hover:text-white border border-transparent hover:border-zinc-700 w-full"
             >
                 <div className="transition-all duration-300 group-hover:scale-110">
                     <Settings className="w-4 h-4" />

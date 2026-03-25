@@ -179,7 +179,7 @@ export function PlansClient({ currentTier, studentCount, profile }: PlansClientP
 
                     {/* CTA */}
                     {profile?.is_billing_exempt ? (
-                        <div className="flex items-center gap-3 pb-4 p-6 rounded-2xl bg-amber-500/10 border border-amber-500/20 shadow-xl shadow-amber-950/20">
+                        <div className="flex items-center gap-3 pb-4p-6 rounded-2xl bg-amber-500/10 border border-amber-500/20 shadow-xl shadow-amber-950/20 p-4">
                             <Sparkles className="w-5 h-5 text-amber-500 animate-pulse" />
                             <div className="space-y-0.5">
                                 <p className="text-amber-500 font-black text-sm uppercase italic tracking-tighter">Acesso VIP Ilimitado</p>
@@ -187,7 +187,7 @@ export function PlansClient({ currentTier, studentCount, profile }: PlansClientP
                             </div>
                         </div>
                     ) : isActive ? (
-                        <div className="flex items-center gap-3 pb-4 p-4 rounded-2xl bg-emerald-500/5 border border-emerald-500/20">
+                        <div className="flex items-center gap-3 pb-4p-4 rounded-2xl bg-emerald-500/5 border border-emerald-500/20">
                             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                             <span className="text-emerald-400 font-bold text-sm">Plano ativo — você está sendo cobrado conforme o uso</span>
                         </div>

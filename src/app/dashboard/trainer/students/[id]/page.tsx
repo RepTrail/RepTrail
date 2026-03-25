@@ -245,7 +245,7 @@ export default async function StudentDetailPage({ params }: { params: { id: stri
                         </div>
                     )}
 
-                    <div className="hidden lg:flex items-center gap-3">
+                    <div className="hidden lg:flex items-center gap-3 pb-4">
                         {isPaidThisMonth && (
                             <Badge variant="outline" className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full flex gap-1 items-center">
                                 <CheckCircle className="w-3 h-3" /> Pago • TAXA ZERO
@@ -660,7 +660,7 @@ function ContentCard({ icon, label, subLabel, actionLabel, href, unassignProps }
                         {subLabel && <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mt-0.5">{subLabel}</p>}
                     </div>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 pb-4">
                     {unassignProps && (
                         <UnassignButton {...unassignProps} />
                     )}

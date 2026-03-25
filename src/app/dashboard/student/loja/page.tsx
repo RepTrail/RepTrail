@@ -56,7 +56,7 @@ export default function StudentStorePage() {
         <div className="space-y-12 animate-in fade-in duration-700 ">
             {/* Header Section */}
             <div className="space-y-2 sm:space-y-5">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 pb-4">
                     <h1 className="text-3xl font-black text-white italic uppercase tracking-tighter">
                         Minha <span className="text-orange-500">Loja</span>
                     </h1>

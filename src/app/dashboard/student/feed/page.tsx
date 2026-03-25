@@ -58,7 +58,7 @@ export default async function StudentFeedPage() {
             {/* Header */}
             <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div className="space-y-5">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 pb-4">
                         <h1 className="text-3xl font-black text-white italic uppercase tracking-tighter">
                             Feed de <span className="text-orange-500">Alunos</span>
                         </h1>

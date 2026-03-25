@@ -152,13 +152,13 @@ export function PWAInstallPrompt() {
                                     Configuração iOS:
                                 </p>
                                 <ol className="space-y-3 md:space-y-4">
-                                    <li className="flex items-center gap-3 pb-4 md:gap-4 text-white text-[10px] md:text-xs font-black uppercase italic tracking-widest">
+                                    <li className="flex items-center gap-3 pb-4md:gap-4 text-white text-[10px] md:text-xs font-black uppercase italic tracking-widest">
                                         <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl bg-zinc-950 border border-zinc-900 flex items-center justify-center shrink-0 shadow-2xl">
                                             <Share className="w-4 h-4 md:w-5 md:h-5 text-emerald-500" />
                                         </div>
                                         1. Clique em Compartilhar
                                     </li>
-                                    <li className="flex items-center gap-3 pb-4 md:gap-4 text-white text-[10px] md:text-xs font-black uppercase italic tracking-widest">
+                                    <li className="flex items-center gap-3 pb-4md:gap-4 text-white text-[10px] md:text-xs font-black uppercase italic tracking-widest">
                                         <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl bg-zinc-950 border border-zinc-900 flex items-center justify-center shrink-0 shadow-2xl">
                                             <PlusSquare className="w-4 h-4 md:w-5 md:h-5 text-emerald-500" />
                                         </div>

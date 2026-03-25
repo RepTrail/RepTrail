@@ -56,7 +56,7 @@ export default function StudentStoreLoading() {
     return (
         <div className="space-y-12 animate-pulse">
             {/* Header Section */}
-            <div className="flex items-center gap-3 ">
+            <div className="flex items-center gap-3 pb-4 ">
                 <div className="p-2 bg-orange-500 rounded-xl">
                     <ShoppingBag className="w-5 h-5 text-zinc-950/20" />
                 </div>

@@ -645,7 +645,7 @@ export function DietBuilder({ diet, students = [], backHref = '/dashboard/traine
                                     className="group flex flex-wrap items-center gap-3 sm:gap-4 cursor-pointer w-fit"
                                     onClick={() => setIsEditingName(true)}
                                 >
-                                    <h1 className="text-2xl sm:text-4xl font-black text-white font-sans italic uppercase tracking-tight group-hover:text-orange-400 transition-colors leading-tight break-words">
+                                    <h1 className="text-2xl sm:text-4xl font-black text-white font-sans italic uppercase tracking-tight group-hover:text-orange-400 transition-colors leading-tight break-words w-[85%]">
                                         {editName}
                                     </h1>
                                     <button className="p-2 sm:p-2.5 rounded-xl sm:rounded-2xl text-zinc-700 hover:text-orange-400 bg-zinc-900/50 border border-zinc-800 transition-all active:scale-95 shrink-0">

@@ -52,7 +52,7 @@ export default async function StudentCardioPage() {
         <div className="max-w-7xl mx-auto flex flex-col gap-section-gap">
             <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 px-2">
                 <div className="space-y-5">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 pb-4">
                         <h1 className="text-3xl font-black text-white italic uppercase tracking-tighter">
                             Meus <span className="text-orange-500">Cardios</span>
                         </h1>
@@ -63,7 +63,7 @@ export default async function StudentCardioPage() {
                 </div>
 
                 {isAutoTrainingActive && !trainerRel && (
-                    <div className="flex items-center gap-3 pb-4 w-full sm:w-auto">
+                    <div className="flex items-center gap-3 pb-4w-full sm:w-auto">
                         <UnifiedCreationDialog
                             title="Novo Modelo de Cardio"
                             description="Crie um template (ex: Esteira 45min) para agendar para seus auto-treinos."

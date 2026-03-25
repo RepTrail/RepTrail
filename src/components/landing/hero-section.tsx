@@ -123,7 +123,7 @@ export function HeroSection() {
                     </div>
 
                     <div className="absolute -bottom-6 -right-4 p-4 bg-orange-500/10 backdrop-blur-xl border border-orange-500/20 rounded-2xl shadow-2xl animate-float hidden md:block delay-300">
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3 pb-4">
                             <div className="w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center">
                                 <Users className="w-4 h-4 text-zinc-950" />
                             </div>
@@ -138,7 +138,7 @@ export function HeroSection() {
 
             <div className="w-full max-w-[1300px] mx-auto mt-[80px] md:mt-[120px] relative z-10">
                 <div className="absolute inset-0 bg-zinc-900/30 border border-zinc-800/50 rounded-[3rem] -z-10 backdrop-blur-sm" />
-                
+
                 <div className="grid grid-cols-2 lg:grid-cols-4 py-10 md:py-16 px-6 gap-8 items-center divide-x-0 lg:divide-x divide-zinc-800/50">
                     <NumberItem label="Consultorias Ativas" value="500+" icon={Trophy} />
                     <NumberItem label="Treinos Prescritos" value="100k+" icon={Star} />

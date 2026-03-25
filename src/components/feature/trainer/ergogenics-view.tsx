@@ -152,9 +152,9 @@ export function TrainerErgogenicsView({ studentId, initialData }: TrainerErgogen
                                                 className="bg-transparent border-0 h-12 focus-visible:ring-0 focus-visible:ring-offset-0 font-bold px-4 text-white"
                                             />
                                         </div>
-                                        
+
                                         {/* Minimal Unit Switch inside input */}
-                                        <div className="flex items-center gap-3 px-4 border-l border-zinc-800/50 h-8">
+                                        <div className="flex items-center gap-3 pb-4 px-4 border-l border-zinc-800/50 h-8">
                                             <span className={cn(
                                                 "text-[9px] font-black uppercase tracking-widest transition-all",
                                                 formData.unit === 'ml' ? "text-emerald-500" : "text-zinc-600"

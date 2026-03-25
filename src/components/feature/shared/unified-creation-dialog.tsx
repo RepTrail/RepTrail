@@ -134,7 +134,7 @@ export function UnifiedCreationDialog({
                                         value={opt.value}
                                         className={cn("rounded-xl px-3 py-2.5 font-bold transition-all cursor-pointer mb-1 last:mb-0 focus:bg-white/5", `focus:text-${s.accent}`)}
                                     >
-                                        <div className="flex items-center gap-3">
+                                        <div className="flex items-center gap-3 pb-4">
                                             {opt.color && (
                                                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: opt.color, boxShadow: `0 0 8px ${opt.color}66` }} />
                                             )}
@@ -165,14 +165,14 @@ export function UnifiedCreationDialog({
                     </div>
                 ) : field.type === 'switch' ? (
                     <div className="flex items-center justify-between h-14 px-4 bg-zinc-900/40 rounded-2xl border border-zinc-800/50 shadow-inner group transition-all">
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3 pb-4">
                             <span className={cn(
                                 "text-[9px] font-black uppercase tracking-widest transition-all",
                                 customFields[field.name] === field.options?.[0]?.value ? `text-${s.accent}` : "text-zinc-600"
                             )}>
                                 {field.options?.[0]?.label || 'OFF'}
                             </span>
-                            
+
                             <Switch
                                 id={field.name}
                                 checked={customFields[field.name] === field.options?.[1]?.value}
@@ -389,7 +389,7 @@ export function UnifiedCreationDialog({
                                 if (Array.isArray(group)) {
                                     // Special logic for merged fields (like dosage + unit)
                                     const hasMergedField = group.some(f => (f as any).merged);
-                                    
+
                                     if (hasMergedField) {
                                         return (
                                             <div key={`group-${idx}`} className="space-y-3">
@@ -412,9 +412,9 @@ export function UnifiedCreationDialog({
                                                             className="bg-transparent border-0 h-12 focus-visible:ring-0 focus-visible:ring-offset-0 font-bold px-4"
                                                         />
                                                     </div>
-                                                    
+
                                                     {/* The Inline Switch */}
-                                                    <div className="flex items-center gap-3 px-4 border-l border-zinc-800/50 h-8">
+                                                    <div className="flex items-center gap-3 pb-4 px-4 border-l border-zinc-800/50 h-8">
                                                         <span className={cn(
                                                             "text-[9px] font-black uppercase tracking-widest transition-all",
                                                             customFields[group[1].name] === group[1].options?.[0]?.value ? `text-${s.accent}` : "text-zinc-600"

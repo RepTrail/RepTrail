@@ -125,7 +125,7 @@ export function UnifiedAdherenceChart({ history, showErgogenics = false, noCard 
     return (
         <Card className="bg-zinc-900/40 border-zinc-800/50 rounded-3xl overflow-hidden backdrop-blur-sm shadow-2xl transition-all hover:border-zinc-700/50">
             <CardHeader className="px-8 pt-8 pb-4">
-                <CardTitle className="flex items-center gap-3 pb-4 text-lg font-black text-white italic uppercase tracking-tighter">
+                <CardTitle className="flex items-center gap-3 pb-4text-lg font-black text-white italic uppercase tracking-tighter">
                     <Activity className="w-6 h-6 text-purple-500 animate-pulse" />
                     Adesão Consolidada <span className="text-zinc-500 text-xs ml-2 not-italic">(30 Dias)</span>
                 </CardTitle>

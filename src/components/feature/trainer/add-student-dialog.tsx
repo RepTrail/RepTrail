@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Button } from "@/components/ui/button"
+import { PillButton } from "@/components/ui/pill-button"
 import {
     Dialog,
     DialogContent,
@@ -48,9 +49,9 @@ export function AddStudentDialog() {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button className="border-emerald-500/20 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/30 hover:border-emerald-500/50 hover:text-emerald-400 rounded-xl font-bold h-11 px-6 gap-2 transition-all duration-200 border">
+                <PillButton variant="emerald" className="w-full sm:w-auto">
                     <Plus className="w-4 h-4" /> Vincular Aluno
-                </Button>
+                </PillButton>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader className="space-y-3">

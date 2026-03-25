@@ -1,7 +1,7 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { redirect } from 'next/navigation'
 
 // === WORKOUTS ===
@@ -51,6 +51,8 @@ export async function createStudentWorkout(formData: FormData) {
             console.error('[STUDENT] Failed to auto-assign workout:', assignErr)
         }
 
+
+        revalidateTag('workouts', 'page')
         revalidatePath('/dashboard/student/workouts')
         redirect('/dashboard/student/workouts')
     } catch (e: any) {
@@ -144,6 +146,8 @@ export async function createStudentDiet(formData: FormData) {
             console.error('[STUDENT] Failed to auto-assign diet:', assignResult.error)
         }
 
+
+        revalidateTag('diets', 'page')
         revalidatePath('/dashboard/student/diet')
         return { success: true, dietId: data.id }
     } catch (e: any) {
