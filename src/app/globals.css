@@ -65,12 +65,12 @@
   --foreground: oklch(0.985 0 0);
 
   /* Branding */
-  --brand-primary: oklch(0.769 0.188 70.08);
-  /* Orange-500 (was Emerald) */
-  --brand-secondary: oklch(0.769 0.188 70.08);
-  /* Orange-500 */
-  --brand-accent: oklch(0.6 0.15 40);
-  /* Deeper Orange (was Amber/Yellow) */
+  --brand-primary: oklch(0.65 0.25 45);
+  /* True Orange (Tailwind orange-500 equivalent) */
+  --brand-secondary: oklch(0.7 0.2 165);
+  /* Emerald-500 */
+  --brand-accent: oklch(0.55 0.2 35);
+  /* Deeper Orange */
 
   /* Shadcn Overrides */
   --primary: var(--brand-primary);

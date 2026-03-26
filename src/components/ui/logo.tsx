@@ -7,7 +7,7 @@ interface LogoProps {
     iconContainerClassName?: string
     iconClassName?: string
     size?: 'sm' | 'md' | 'lg' | 'xl'
-    color?: 'orange' | 'emerald' | 'amber'
+    color?: 'orange' | 'emerald' | 'amber' | 'red'
 }
 
 export function Logo({
@@ -53,6 +53,10 @@ export function Logo({
         amber: {
             bg: 'bg-orange-500',
             text: 'text-orange-500'
+        },
+        red: {
+            bg: 'bg-red-500',
+            text: 'text-red-500'
         }
     }
 
@@ -60,7 +64,7 @@ export function Logo({
     const currentColor = colorMap[color]
 
     return (
-        <div className={cn("flex items-center gap-3 pb-4", className)} suppressHydrationWarning>
+        <div className={cn("flex items-center gap-3", className)} suppressHydrationWarning>
             <div className={cn(
                 "rotate-3 transition-transform group-hover:rotate-0",
                 currentColor.bg,
