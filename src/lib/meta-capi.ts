@@ -1,7 +1,8 @@
 import crypto from "crypto";
 
-const FB_PIXEL_ID = process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID;
+const FB_PIXEL_ID = process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID?.trim();
 const FB_ACCESS_TOKEN = process.env.FACEBOOK_ACCESS_TOKEN;
+const FB_TEST_EVENT_CODE = process.env.FACEBOOK_TEST_EVENT_CODE;
 const API_VERSION = "v19.0";
 
 type MetaEvent = {
@@ -9,7 +10,7 @@ type MetaEvent = {
   event_time: number;
   action_source: "website" | "app" | "physical_store" | "system_generated" | "other";
   event_source_url?: string;
-  user_data: {
+  user_data?: {
     em?: string | string[]; // hashed email
     ph?: string | string[]; // hashed phone number
     fn?: string | string[]; // hashed first name
@@ -29,12 +30,20 @@ type MetaEvent = {
 };
 
 /**
- * Normaliza e faz o hash SHA256 de um campo de dado do usuário antes de enviar.
+ * Normaliza e faz hash SHA256 (quando necessário) para user_data.
  */
 function hashData(data: string | undefined): string | undefined {
   if (!data) return undefined;
   const normalized = data.trim().toLowerCase();
+  // Avoid double hashing values already in SHA256 format.
+  if (/^[a-f0-9]{64}$/i.test(normalized)) return normalized;
   return crypto.createHash("sha256").update(normalized).digest("hex");
+}
+
+function normalizePhone(phone: string | undefined): string | undefined {
+  if (!phone) return undefined;
+  const digits = phone.replace(/\D/g, "");
+  return digits || undefined;
 }
 
 /**
@@ -56,8 +65,14 @@ export async function sendServerEvent(event: Partial<MetaEvent>) {
     event_source_url: event.event_source_url,
     user_data: {
       ...event.user_data,
-      em: hashData(event.user_data?.em as string),
-      ph: hashData(event.user_data?.ph as string),
+      em: hashData(
+        Array.isArray(event.user_data?.em) ? event.user_data?.em[0] : (event.user_data?.em as string)
+      ),
+      ph: hashData(
+        normalizePhone(
+          Array.isArray(event.user_data?.ph) ? event.user_data?.ph[0] : (event.user_data?.ph as string)
+        )
+      ),
     },
     custom_data: event.custom_data,
   };
@@ -70,9 +85,11 @@ export async function sendServerEvent(event: Partial<MetaEvent>) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          data: [payload],
-        }),
+        body: JSON.stringify(
+          FB_TEST_EVENT_CODE
+            ? { data: [payload], test_event_code: FB_TEST_EVENT_CODE }
+            : { data: [payload] }
+        ),
       }
     );
 
@@ -83,7 +100,7 @@ export async function sendServerEvent(event: Partial<MetaEvent>) {
       return false;
     }
 
-    console.log(`✅ Evento CAPI [${payload.event_name}] enviado com sucesso.`);
+    console.log(`[META CAPI] Evento '${payload.event_name}' enviado com sucesso.`);
     return true;
   } catch (error) {
     console.error("❌ Erro ao chamar Meta Conversions API:", error);

@@ -179,6 +179,12 @@ export function PaymentModal({ isOpen, onClose, tier, currentCpf, currentName, m
             )
 
             if (res.success) {
+                fbqEvent("Purchase", {
+                    currency: "BRL",
+                    value: monthlyTotal,
+                    content_name: tier,
+                    status: "success"
+                })
                 toast({ title: 'Sucesso!', description: 'Seu plano foi ativado com sucesso.' })
                 setTimeout(() => window.location.href = '/dashboard/student/plans', 1500)
             } else {

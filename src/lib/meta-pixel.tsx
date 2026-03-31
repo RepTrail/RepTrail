@@ -6,22 +6,24 @@ import { useEffect, Suspense } from "react";
 
 declare global {
   interface Window {
-    fbq: any;
-    _fbq: any;
+    fbq?: (...args: unknown[]) => void;
+    _fbq?: (...args: unknown[]) => void;
   }
 }
 
-export const FB_PIXEL_ID = process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID;
+export const FB_PIXEL_ID = process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID?.trim();
+const META_PIXEL_DISABLED = process.env.NEXT_PUBLIC_DISABLE_META_PIXEL === "true";
+const META_PIXEL_ENABLED = Boolean(FB_PIXEL_ID) && !META_PIXEL_DISABLED;
 
 // Função para disparar eventos de conversão (Padrão ou Customizado)
 export const fbqEvent = (name: string, options = {}) => {
-  if (typeof window !== "undefined" && window.fbq) {
+  if (typeof window !== "undefined" && window.fbq && META_PIXEL_ENABLED) {
     window.fbq("track", name, options);
   }
 };
 
 export const fbqCustomEvent = (name: string, options = {}) => {
-  if (typeof window !== "undefined" && window.fbq) {
+  if (typeof window !== "undefined" && window.fbq && META_PIXEL_ENABLED) {
     window.fbq("trackCustom", name, options);
   }
 };
@@ -31,13 +33,15 @@ function FacebookPixelInner() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    // Dispara 'PageView' em toda mudança de rota
-    if (typeof window !== "undefined" && window.fbq && FB_PIXEL_ID) {
-      window.fbq("track", "PageView");
+    // Dispara PageView em mudanças de rota sem duplicar no bootstrap.
+    if (typeof window !== "undefined" && window.fbq && META_PIXEL_ENABLED) {
+      const query = searchParams.toString();
+      const pagePath = query ? `${pathname}?${query}` : pathname;
+      window.fbq("track", "PageView", { page_path: pagePath });
     }
   }, [pathname, searchParams]);
 
-  if (!FB_PIXEL_ID) return null;
+  if (!META_PIXEL_ENABLED) return null;
 
   return (
     <>
@@ -55,7 +59,6 @@ function FacebookPixelInner() {
             s.parentNode.insertBefore(t,s)}(window, document,'script',
             'https://connect.facebook.net/en_US/fbevents.js');
             fbq('init', '${FB_PIXEL_ID}');
-            fbq('track', 'PageView');
           `,
         }}
       />
