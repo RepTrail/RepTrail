@@ -14,6 +14,7 @@ import { CreditCard, User, ShieldCheck } from 'lucide-react'
 import { createAsaasSubscription, searchAsaasCustomer } from '@/actions/asaas-actions'
 import { useToast } from '@/hooks/use-toast'
 import { useEffect } from 'react'
+import { fbqEvent } from '@/lib/meta-pixel'
 
 interface PaymentModalProps {
     isOpen: boolean
@@ -39,6 +40,12 @@ export function PaymentModal({ isOpen, onClose, tier, currentCpf, currentName, m
     const [fetchingName, setFetchingName] = useState(false)
     const [loading, setLoading] = useState(false)
     const { toast } = useToast()
+
+    useEffect(() => {
+        if (isOpen) {
+            fbqEvent("InitiateCheckout", { currency: 'BRL', value: monthlyTotal });
+        }
+    }, [isOpen, monthlyTotal])
 
     const maskCpfCnpj = (value: string) => {
         const clean = value.replace(/\D/g, '')

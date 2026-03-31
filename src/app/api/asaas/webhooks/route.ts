@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { sendServerEvent } from '@/lib/meta-capi'
 
 export async function POST(req: Request) {
     // Verify Webhook Token for security
@@ -59,6 +60,34 @@ export async function POST(req: Request) {
                         .eq('id', userId)
 
                     if (error) console.error('[ASAAS WEBHOOK] Error updating profile:', error)
+                        
+                    // Fire Meta CAPI Subscribe Event
+                    const { data: profile } = await (admin as any)
+                        .from('profiles')
+                        .select('email, whatsapp')
+                        .eq('id', userId)
+                        .single()
+                    
+                    if (profile) {
+                        try {
+                            await sendServerEvent({
+                                event_name: 'Subscribe',
+                                action_source: 'system_generated',
+                                user_data: {
+                                    em: profile.email,
+                                    ph: profile.whatsapp
+                                },
+                                custom_data: {
+                                    content_name: tier,
+                                    currency: 'BRL',
+                                    value: body.payment?.value || body.subscription?.value || 0
+                                }
+                            })
+                        } catch (e) {
+                            console.error('[CAPI] Failed to trigger event', e)
+                        }
+                    }
+                    
                 } else {
                     // Fallback to customer ID lookup
                     const { error } = await (admin as any)

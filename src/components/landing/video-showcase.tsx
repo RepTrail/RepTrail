@@ -1,7 +1,8 @@
 'use client';
 
 import { PlayCircle } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { fbqEvent } from "@/lib/meta-pixel";
 
 const videos = [
     {
@@ -23,6 +24,10 @@ const videos = [
 
 export function VideoShowcase() {
     const [activeIndex, setActiveIndex] = useState(0);
+
+    useEffect(() => {
+        fbqEvent("ViewContent", { content_name: "Video Showcase Landing" });
+    }, []);
 
     return (
         <section className="py-[100px] px-[20px] bg-zinc-950 w-full relative overflow-hidden border-b border-zinc-900/50">

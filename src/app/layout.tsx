@@ -41,6 +41,7 @@ export const viewport: Viewport = {
 
 import { QueryProvider } from "@/components/providers/query-provider";
 import NextTopLoader from 'nextjs-toploader';
+import FacebookPixel from "@/lib/meta-pixel";
 
 export default function RootLayout({
   children,
@@ -55,6 +56,7 @@ export default function RootLayout({
       >
         <ImpersonationBar />
         <NextTopLoader color="#f97316" showSpinner={false} shadow="0 0 10px #f97316,0 0 5px #f97316" zIndex={1600} />
+        <FacebookPixel />
         <QueryProvider>
           <SplashManager>
             {children}

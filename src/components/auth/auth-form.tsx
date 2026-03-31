@@ -15,6 +15,7 @@ import { Logo } from '@/components/ui/logo'
 import { useSearchParams } from 'next/navigation'
 import { useEffect } from 'react'
 import { AuthLoadingScreen } from './auth-loading-screen'
+import { fbqEvent } from '@/lib/meta-pixel'
 
 interface AuthFormProps {
     view: 'login' | 'signup'
@@ -110,6 +111,12 @@ export function AuthForm({ view }: AuthFormProps) {
                 // Clear affiliate cookie after successful registration
                 if (affiliateToken) {
                     document.cookie = 'rt_affiliate_token=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;'
+                }
+
+                // Fire Meta Pixel Events
+                fbqEvent("CompleteRegistration", { content_name: role, status: "success" });
+                if (role === 'student') {
+                    fbqEvent("StartTrial", { predicted_ltv: 0 });
                 }
 
                 alert('Cadastro realizado! Verifique seu email ou faça login.')
