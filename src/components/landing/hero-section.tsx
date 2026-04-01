@@ -1,7 +1,10 @@
+"use client";
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Search, Users, Trophy, Star, ShieldCheck, CheckCircle2 } from "lucide-react";
 import { LandingBadge } from "./landing-badge";
+import { fbqEvent } from "@/lib/meta-pixel";
 
 export function HeroSection() {
     return (
@@ -43,6 +46,7 @@ export function HeroSection() {
                         <div className="flex flex-col sm:flex-row gap-4 w-full lg:max-w-xl items-stretch sm:items-center">
                             <Button
                                 asChild
+                                onClick={() => fbqEvent("Lead", { content_name: "Hero Start Now", content_category: "Landing Page" })}
                                 className="group relative overflow-hidden w-full sm:w-auto h-auto py-5 px-10 text-lg bg-orange-500 hover:bg-orange-400 text-zinc-950 font-black uppercase italic tracking-wider rounded-2xl transition-all hover:-translate-y-1 active:scale-95"
                             >
                                 <Link href="/auth/signup" className="flex items-center justify-center gap-3">

@@ -25,6 +25,7 @@ import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Logo } from '@/components/ui/logo'
 import Link from 'next/link'
+import { fbqEvent } from '@/lib/meta-pixel'
 
 export default function SearchPersonalPage() {
     const [trainers, setTrainers] = useState<any[]>([])
@@ -48,6 +49,16 @@ export default function SearchPersonalPage() {
         const results = await searchTrainers(filters)
         setTrainers(results)
         setLoading(false)
+
+        // Track Lead event when search is performed with intent (query or filters)
+        if (filters.query || filters.region || filters.specialty) {
+            fbqEvent("Lead", { 
+                content_category: "Trainer Search",
+                search_string: filters.query,
+                region: filters.region,
+                specialty: filters.specialty
+            });
+        }
     }
 
     const specialties = ['Hipertrofia', 'Emagrecimento', 'Atletas', 'Mobilidade', 'Saúde']

@@ -11,7 +11,7 @@ declare global {
   }
 }
 
-export const FB_PIXEL_ID = process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID?.trim();
+export const FB_PIXEL_ID = process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID?.trim() || "795120573646319";
 const META_PIXEL_DISABLED = process.env.NEXT_PUBLIC_DISABLE_META_PIXEL === "true";
 const META_PIXEL_ENABLED = Boolean(FB_PIXEL_ID) && !META_PIXEL_DISABLED;
 
@@ -33,7 +33,7 @@ function FacebookPixelInner() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    // Dispara PageView em mudanças de rota sem duplicar no bootstrap.
+    // Dispara PageView em mudanças de rota
     if (typeof window !== "undefined" && window.fbq && META_PIXEL_ENABLED) {
       const query = searchParams.toString();
       const pagePath = query ? `${pathname}?${query}` : pathname;
@@ -59,6 +59,7 @@ function FacebookPixelInner() {
             s.parentNode.insertBefore(t,s)}(window, document,'script',
             'https://connect.facebook.net/en_US/fbevents.js');
             fbq('init', '${FB_PIXEL_ID}');
+            fbq('track', 'PageView');
           `,
         }}
       />

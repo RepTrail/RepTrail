@@ -1,7 +1,9 @@
+"use client";
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Search, Zap, CheckCircle2 } from "lucide-react";
+import { fbqEvent } from "@/lib/meta-pixel";
 
 export function CTASection() {
     return (
@@ -28,6 +30,7 @@ export function CTASection() {
                     <div className="flex flex-col gap-[20px] w-full justify-center  md:px-0">
                         <Button
                             asChild
+                            onClick={() => fbqEvent("Lead", { content_name: "Footer Start Now", content_category: "Landing Page" })}
                             className="w-full h-auto min-h-[4rem] py-4 px-10 text-sm md:text-lg bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase italic tracking-tight md:tracking-wide rounded-2xl transition-all hover:-translate-y-1 whitespace-normal"
                         >
                             <Link href="/auth/signup" className="flex flex-col sm:flex-row items-center justify-center text-center leading-[1.1] sm:leading-tight py-1">
