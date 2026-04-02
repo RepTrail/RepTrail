@@ -1,6 +1,7 @@
 import { getAffiliateData } from '@/actions/affiliate-actions'
 import { redirect } from 'next/navigation'
 import { AffiliateClientDashboard } from '@/components/feature/affiliate/affiliate-client-dashboard'
+import { AffiliateMetaPixel } from './meta-pixel'
 
 export default async function AffiliateDashboard() {
     const data = await getAffiliateData()
@@ -9,5 +10,10 @@ export default async function AffiliateDashboard() {
         redirect('/auth/login')
     }
 
-    return <AffiliateClientDashboard data={data} />
+    return (
+        <>
+            <AffiliateMetaPixel />
+            <AffiliateClientDashboard data={data} />
+        </>
+    )
 }

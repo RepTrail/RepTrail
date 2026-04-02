@@ -3,6 +3,7 @@ import { getStudentTrainer, getStudentDetails } from '@/actions/student-actions'
 import { getStudentAutoTrainingStatus } from '@/actions/auto-training-actions'
 import { getTrainerRanking } from '@/actions/trainer-actions'
 import { checkStudentHasProtocol } from '@/actions/ai-protocol-actions'
+import { StudentMetaPixel } from './meta-pixel'
 
 import { WorkoutCard } from '@/components/feature/student/dashboard/workout-card'
 import { CardioCard } from '@/components/feature/student/dashboard/cardio-card'
@@ -48,7 +49,9 @@ export default async function StudentDashboardPage() {
     // Case: Trainer Inactive (plan_tier === 'none')
     if (trainerRel && trainerRel.trainer.plan_tier === 'none' && !hasAutoTraining) {
         return (
-            <div className="flex flex-col gap-section-gap animate-in fade-in duration-700">
+            <>
+                <StudentMetaPixel />
+                <div className="flex flex-col gap-section-gap animate-in fade-in duration-700">
                 <header className="space-y-8">
                     <div className="relative group overflow-hidden p-6 sm:p-12 bg-zinc-900 border border-zinc-800 rounded-3xl shadow-2xl">
                         <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 via-transparent to-transparent opacity-50" />
@@ -86,13 +89,16 @@ export default async function StudentDashboardPage() {
                     </div>
                 </header>
             </div>
+            </>
         )
     }
 
     // Case: Trial Expired
     if (!trainerRel && isTrialExpired && !hasAutoTraining) {
         return (
-            <div className="flex flex-col gap-section-gap animate-in fade-in duration-700">
+            <>
+                <StudentMetaPixel />
+                <div className="flex flex-col gap-section-gap animate-in fade-in duration-700">
                 <header className="space-y-8">
                     <div className="relative group overflow-hidden p-6 sm:p-12 bg-zinc-900 border border-zinc-800 rounded-3xl shadow-2xl mt-12">
                         <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 via-transparent to-transparent opacity-50" />
@@ -132,6 +138,7 @@ export default async function StudentDashboardPage() {
                     </div>
                 </header>
             </div>
+            </>
         )
     }
 
@@ -141,7 +148,9 @@ export default async function StudentDashboardPage() {
         const topTrainers = ranking.slice(0, 3)
 
         return (
-            <div className="flex flex-col gap-section-gap animate-in fade-in duration-700 mt-12">
+            <>
+                <StudentMetaPixel />
+                <div className="flex flex-col gap-section-gap animate-in fade-in duration-700 mt-12">
                 <header className="space-y-8">
                     <div className="relative group overflow-hidden p-6 sm:p-12 bg-zinc-900 border border-zinc-800 rounded-3xl shadow-2xl">
                         <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 via-transparent to-transparent opacity-50" />
@@ -263,6 +272,7 @@ export default async function StudentDashboardPage() {
 
                 <StudentDashboardModals userId={user.id} showModal={showAutoTrainingModal} hasTrainer={false} />
             </div>
+            </>
         )
     }
 
@@ -277,7 +287,9 @@ export default async function StudentDashboardPage() {
     }
 
     return (
-        <div className="max-w-7xl mx-auto flex flex-col gap-section-gap animate-in fade-in duration-500 ">
+        <>
+            <StudentMetaPixel />
+            <div className="max-w-7xl mx-auto flex flex-col gap-section-gap animate-in fade-in duration-500 ">
             <PaymentWarning relationship={trainerRel} />
 
             {/* Welcome Header */}
@@ -371,5 +383,6 @@ export default async function StudentDashboardPage() {
 
             <StudentDashboardModals userId={user.id} showModal={showAutoTrainingModal} hasTrainer={!!trainerRel} />
         </div>
+        </>
     )
 }

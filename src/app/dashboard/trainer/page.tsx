@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge"
 import { getBetaTesterMode } from '@/actions/app-settings-actions'
 import { BecomeAffiliateCard } from '@/components/feature/affiliate/become-affiliate-card'
 import { ActivityFeed } from '@/components/feature/trainer/activity-feed'
+import { TrainerMetaPixel } from './meta-pixel'
 
 export default async function TrainerDashboard() {
     const supabase = await createClient()
@@ -91,7 +92,9 @@ export default async function TrainerDashboard() {
     const displayValue = `${activeStudents || 0}`
 
     return (
-        <div className="space-y-10 pb-10" suppressHydrationWarning>
+        <>
+            <TrainerMetaPixel />
+            <div className="space-y-10 pb-10" suppressHydrationWarning>
             <CodeAutoGenerator hasCode={!!profile?.trainer_code} />
             {/* Hero Section */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-2 border-b border-zinc-800/50">
@@ -228,7 +231,7 @@ export default async function TrainerDashboard() {
                     )}
                 </div>
             </div>
-        </div>
+        </>
     )
 }
 

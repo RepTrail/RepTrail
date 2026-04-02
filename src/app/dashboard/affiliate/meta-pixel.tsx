@@ -1,12 +1,11 @@
-import { AuthForm } from '@/components/auth/auth-form'
-import { Suspense } from 'react'
-import { AuthFormSkeleton } from '@/components/auth/auth-form-skeleton'
+'use client'
+
 import Script from 'next/script'
 
-export default function LoginPage() {
+export function AffiliateMetaPixel() {
     return (
         <>
-            <Script id="meta-pixel-login" strategy="afterInteractive">
+            <Script id="meta-pixel-affiliate" strategy="afterInteractive">
                 {`
                     !function(f,b,e,v,n,t,s)
                     {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -23,11 +22,6 @@ export default function LoginPage() {
             <noscript>
                 <img height="1" width="1" style={{display: 'none'}} src="https://www.facebook.com/tr?id=795120573646319&ev=PageView&noscript=1" />
             </noscript>
-            <div className="flex min-h-screen w-full items-center justify-center bg-zinc-950 p-4" suppressHydrationWarning>
-                <Suspense fallback={<AuthFormSkeleton />}>
-                    <AuthForm view="login" />
-                </Suspense>
-            </div>
         </>
     )
 }
