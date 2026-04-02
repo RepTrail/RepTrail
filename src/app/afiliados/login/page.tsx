@@ -196,6 +196,7 @@ export default function AffiliadosLoginPage() {
                     </p>
                 </div>
             </div>
+            </div>
         </>
     )
 }

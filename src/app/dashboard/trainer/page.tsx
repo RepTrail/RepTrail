@@ -231,6 +231,7 @@ export default async function TrainerDashboard() {
                     )}
                 </div>
             </div>
+            </div>
         </>
     )
 }
