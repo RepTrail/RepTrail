@@ -7,7 +7,7 @@ interface LogoProps {
     iconContainerClassName?: string
     iconClassName?: string
     size?: 'sm' | 'md' | 'lg' | 'xl'
-    color?: 'orange' | 'emerald' | 'amber' | 'red'
+    color?: 'orange' | 'emerald' | 'amber' | 'red' | 'white'
 }
 
 export function Logo({
@@ -51,12 +51,16 @@ export function Logo({
             text: 'text-emerald-500'
         },
         amber: {
-            bg: 'bg-orange-500',
-            text: 'text-orange-500'
+            bg: 'bg-amber-500',
+            text: 'text-amber-500'
         },
         red: {
             bg: 'bg-red-500',
             text: 'text-red-500'
+        },
+        white: {
+            bg: 'bg-white',
+            text: 'text-white'
         }
     }
 
@@ -67,19 +71,24 @@ export function Logo({
         <div className={cn("flex items-center gap-3", className)} suppressHydrationWarning>
             <div className={cn(
                 "rotate-3 transition-transform group-hover:rotate-0",
-
-                currentColor?.bg ?? '',
+                currentColor?.bg,
                 currentSize.container,
                 iconContainerClassName
             )}>
-                <Zap className={cn("text-zinc-950 -rotate-3 transition-transform group-hover:rotate-0", currentSize.icon, iconClassName)} />
+                <Zap className={cn(
+                    "transition-transform group-hover:rotate-0",
+                    "text-zinc-950",
+                    "-rotate-3",
+                    currentSize.icon, 
+                    iconClassName
+                )} />
             </div>
             <h1 className={cn(
                 "font-black text-white italic uppercase tracking-tighter leading-none",
                 currentSize.text,
                 textClassName
             )}>
-                REP<span className={currentColor?.text ?? ''}>TRAIL</span>
+                REP<span className={currentColor?.text}>{color === 'white' ? 'TRAIL' : 'TRAIL'}</span>
             </h1>
         </div>
     )
