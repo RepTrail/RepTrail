@@ -32,6 +32,9 @@ const setTypeConfig: Record<string, { label: string; color: string; bg: string; 
     WORKING: { label: 'Trab.', color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' },
 }
 
+// Fallback configuration when set_type is unknown
+const DEFAULT_SET_TYPE = { label: 'Desconhecido', color: 'text-gray-400', bg: 'bg-gray-500/10', border: 'border-gray-500/20' };
+
 export function WorkoutLogReview({ logId, workoutName, completedAt, loads }: WorkoutLogReviewProps) {
     const { toast } = useToast()
     const router = useRouter()
@@ -121,13 +124,16 @@ export function WorkoutLogReview({ logId, workoutName, completedAt, loads }: Wor
                         {/* Sets */}
                         <div className="divide-y divide-zinc-800/30">
                             {exerciseLoads.map((load, setIdx) => {
-                                const cfg = setTypeConfig[load.set_type] || setTypeConfig.WORKING
+                                const cfg = setTypeConfig[load.set_type] ?? DEFAULT_SET_TYPE
+
+// later in JSX
+
                                 const edit = edits[load.id] || { weight: '0', reps: '0' }
 
                                 return (
                                     <div key={load.id} className="flex items-center gap-3 pb-4 py-2">
                                         {/* Set type badge */}
-                                        <span className={`flex-shrink-0 text-[9px] font-black px-2 py-0.5 rounded-md border uppercase ${cfg.color} ${cfg.bg} ${cfg.border}`}>
+                                        <span className={`flex-shrink-0 text-[9px] font-black px-2 py-0.5 rounded-md border uppercase ${cfg?.color ?? ''} ${cfg?.bg ?? ''} ${cfg?.border ?? ''}`}>
                                             {cfg.label}
                                         </span>
 

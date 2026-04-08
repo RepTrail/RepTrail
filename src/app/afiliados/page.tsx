@@ -148,7 +148,7 @@ export default function AffiliadosPage() {
                                     border: 'border-emerald-500/20',
                                 },
                             ].map((item) => (
-                                <div key={item.step} className={`relative bg-gradient-to-b ${item.bg} border ${item.border} rounded-3xl p-6 space-y-4 group hover:scale-[1.02] transition-transform`}>
+                                <div key={item.step} className={`relative bg-gradient-to-b ${item?.bg ?? ''} border ${item?.border ?? ''} rounded-3xl p-6 space-y-4 group hover:scale-[1.02] transition-transform`}>
                                     <div className="flex items-start justify-between">
                                         <div className={`p-3 bg-zinc-900 rounded-2xl border border-zinc-800 ${item.color}`}>
                                             {item.icon}

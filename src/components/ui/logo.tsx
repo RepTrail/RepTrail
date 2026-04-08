@@ -68,6 +68,7 @@ export function Logo({
             <div className={cn(
                 "rotate-3 transition-transform group-hover:rotate-0",
                 currentColor.bg,
+                currentColor?.bg ?? '',
                 currentSize.container,
                 iconContainerClassName
             )}>
@@ -78,7 +79,7 @@ export function Logo({
                 currentSize.text,
                 textClassName
             )}>
-                REP<span className={currentColor.text}>TRAIL</span>
+                REP<span className={currentColor?.text ?? ''}>TRAIL</span>
             </h1>
         </div>
     )
