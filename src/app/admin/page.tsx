@@ -28,6 +28,7 @@ import { useToast } from '@/hooks/use-toast'
 import { Logo } from '@/components/ui/logo'
 import { OperationalCosts } from '@/components/feature/admin/operational-costs'
 import { UnifiedSidebar } from '@/components/layout/sidebar-unified'
+import { createClient } from '@/lib/supabase/client'
 
 type Tab = 'overview' | 'trainers' | 'students' | 'affiliates' | 'store' | 'logs'
 
@@ -45,6 +46,7 @@ export default function AdminDashboardPage() {
     const [operationalCosts, setOperationalCosts] = useState<any[]>([])
     const [planPricing, setPlanPricing] = useState<any>(null)
     const [appSettings, setAppSettings] = useState<any>(null)
+    const [adminUser, setAdminUser] = useState<any>(null)
     const [loading, setLoading] = useState(true)
     const [search, setSearch] = useState('')
     const [productModalOpen, setProductModalOpen] = useState(false)
@@ -78,6 +80,14 @@ export default function AdminDashboardPage() {
         setTopProducts(tp)
         setActivityFeed(af)
         setOperationalCosts(costs)
+
+        const supabase = createClient()
+        const { data: { user: authUser } } = await supabase.auth.getUser()
+        if (authUser) {
+            const { data: profile } = await supabase.from('profiles').select('*').eq('id', authUser.id).single()
+            setAdminUser(profile || authUser)
+        }
+        
         setLoading(false)
     }
 
@@ -228,80 +238,81 @@ export default function AdminDashboardPage() {
 
     return (
         <div className="min-h-screen bg-zinc-950 text-white overflow-x-hidden">
-            {/* Top Bar */}
-            <header className="sticky top-0 z-50 bg-zinc-950/90 backdrop-blur-md border-b border-zinc-900">
-                <div className="flex items-center justify-between  sm:px-8 h-14 sm:h-16">
-                    <div className="flex items-center gap-2 sm:gap-4">
-                        <Logo size="sm" />
-                        <div className="w-px h-6 bg-zinc-800 hidden sm:block" />
-                        <div className="flex items-center gap-2 px-2 sm:px-3 py-1 bg-red-500/10 border border-red-500/20 rounded-full">
-                            <Shield className="w-3 h-3 text-red-500" />
-                            <span className="text-[10px] font-black text-red-500 uppercase tracking-widest">Super Admin</span>
-                        </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <Button
-                            onClick={handleRepairBiSets}
-                            variant="ghost"
-                            className="h-9 px-3 text-zinc-500 hover:text-cyan-500 gap-2 border border-transparent hover:border-cyan-500/20 hover:bg-cyan-500/5 transition-all"
-                            title="Reparar Bi-sets"
-                        >
-                            <Layers className="w-4 h-4" />
-                            <span className="text-[10px] font-black uppercase tracking-widest hidden lg:inline">Bi-sets</span>
-                        </Button>
-
-                        <Button
-                            onClick={handleRepairData}
-                            variant="ghost"
-                            className="h-9 px-3 text-zinc-500 hover:text-amber-500 gap-2 border border-transparent hover:border-amber-500/20 hover:bg-amber-500/5 transition-all"
-                            title="Reparar Dados de Treino"
-                        >
-                            <Wrench className="w-4 h-4" />
-                            <span className="text-[10px] font-black uppercase tracking-widest hidden lg:inline">Reparar Dados</span>
-                        </Button>
-
-                        <Button
-                            onClick={loadAll}
-                            variant="ghost"
-                            className="h-9 px-3 sm: text-zinc-500 hover:text-white gap-2"
-                        >
-                            <RefreshCw className={`w-4 h-4 ${isPending ? 'animate-spin' : ''}`} />
-                            <span className="text-[10px] font-black uppercase tracking-widest hidden sm:inline">Atualizar</span>
-                        </Button>
-                    </div>
+            <div className="flex min-h-screen">
+                <div className="hidden md:block w-72 shrink-0">
+                    <UnifiedSidebar 
+                        brandColor="red"
+                        logoColor="red"
+                        user={{
+                            name: adminUser?.full_name || "Admin RepTrail",
+                            email: adminUser?.email || "admin@reptrail.com.br",
+                            avatar_url: adminUser?.avatar_url || null
+                        }}
+                        links={tabs.map(t => ({
+                            label: t.label,
+                            icon: <t.icon className="w-4 h-4" />,
+                            onClick: () => {
+                                setTab(t.id)
+                                window.scrollTo({ top: 0, behavior: 'smooth' })
+                            },
+                            isActive: tab === t.id
+                        }))}
+                        showSettings={false}
+                    />
                 </div>
-            </header>
 
-            <div className="flex">
-                <UnifiedSidebar 
-                    brandColor="zinc"
-                    logoColor="white"
-                    tagline="Super Admin"
-                    user={{
-                        name: "Admin RepTrail",
-                        email: "admin@reptrail.com.br",
-                        avatar_url: null
-                    }}
-                    links={tabs.map(t => ({
-                        label: t.label,
-                        icon: <t.icon className="w-4 h-4" />,
-                        onClick: () => setTab(t.id),
-                        isActive: tab === t.id
-                    }))}
-                    showSettings={false}
-                />
+                <div className="flex-1 flex flex-col min-w-0">
+                    <header className="sticky top-0 z-40 bg-zinc-950/90 backdrop-blur-md border-b border-zinc-900">
+                        <div className="flex items-center justify-between px-4 sm:px-8 h-14 sm:h-16">
+                            <div className="flex items-center gap-2 sm:gap-4">
+                                <div className="flex items-center gap-2 px-2 sm:px-3 py-1 bg-red-500/10 border border-red-500/20 rounded-full">
+                                    <Shield className="w-3 h-3 text-red-500" />
+                                    <span className="text-[10px] font-black text-red-500 uppercase tracking-widest">Super Admin</span>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <Button
+                                    onClick={handleRepairBiSets}
+                                    variant="ghost"
+                                    className="h-9 px-3 text-zinc-500 hover:text-cyan-500 gap-2 border border-transparent hover:border-cyan-500/20 hover:bg-cyan-500/5 transition-all"
+                                    title="Reparar Bi-sets"
+                                >
+                                    <Layers className="w-4 h-4" />
+                                    <span className="text-[10px] font-black uppercase tracking-widest hidden lg:inline">Bi-sets</span>
+                                </Button>
 
-                {/* Main Content */}
-                <main className="flex-1 p-4 sm:p-8 space-y-6 sm:space-y-8 pb-24 md:pb-8 min-w-0">
-                    {/* Page Header */}
-                    <div className="space-y-1">
-                        <h1 className="text-2xl sm:text-3xl font-black text-white italic uppercase tracking-tighter">
-                            {tabs.find(t => t.id === tab)?.label}
-                        </h1>
-                        <p className="text-[10px] font-black text-zinc-600 uppercase tracking-[0.3em]">
-                            Painel de Controle RepTrail
-                        </p>
-                    </div>
+                                <Button
+                                    onClick={handleRepairData}
+                                    variant="ghost"
+                                    className="h-9 px-3 text-zinc-500 hover:text-amber-500 gap-2 border border-transparent hover:border-amber-500/20 hover:bg-amber-500/5 transition-all"
+                                    title="Reparar Dados de Treino"
+                                >
+                                    <Wrench className="w-4 h-4" />
+                                    <span className="text-[10px] font-black uppercase tracking-widest hidden lg:inline">Reparar Dados</span>
+                                </Button>
+
+                                <Button
+                                    onClick={loadAll}
+                                    variant="ghost"
+                                    className="h-9 px-3 text-zinc-500 hover:text-white gap-2"
+                                >
+                                    <RefreshCw className={`w-4 h-4 ${isPending ? 'animate-spin' : ''}`} />
+                                    <span className="text-[10px] font-black uppercase tracking-widest hidden sm:inline">Atualizar</span>
+                                </Button>
+                            </div>
+                        </div>
+                    </header>
+
+                    <main className="flex-1 p-4 sm:p-8 space-y-6 sm:space-y-8 pb-24 md:pb-8">
+                        {/* Page Header */}
+                        <div className="space-y-1">
+                            <h1 className="text-2xl sm:text-3xl font-black text-white italic uppercase tracking-tighter">
+                                {tabs.find(t => t.id === tab)?.label}
+                            </h1>
+                            <p className="text-[10px] font-black text-zinc-600 uppercase tracking-[0.3em]">
+                                Painel de Controle RepTrail
+                            </p>
+                        </div>
 
                     {/* OVERVIEW TAB */}
                     {tab === 'overview' && (
@@ -610,27 +621,27 @@ export default function AdminDashboardPage() {
                     )}
                 </main>
             </div>
-
-            {/* Mobile Bottom Tab Bar */}
-            <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-zinc-950/95 backdrop-blur-md border-t border-zinc-900 flex">
-                {tabs.map(t => (
-                    <button
-                        key={t.id}
-                        onClick={() => setTab(t.id)}
-                        className={`flex-1 flex flex-col items-center justify-center gap-1 py-3 transition-all ${tab === t.id
-                            ? 'text-white'
-                            : 'text-zinc-600 hover:text-zinc-400'
-                            }`}
-                    >
-                        <t.icon className="w-4 h-4" />
-                        <span className="text-[8px] font-black uppercase tracking-widest">{t.label}</span>
-                    </button>
-                ))}
-            </nav>
         </div>
+
+        {/* Mobile Bottom Tab Bar */}
+        <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-zinc-950/95 backdrop-blur-md border-t border-zinc-900 flex">
+            {tabs.map(t => (
+                <button
+                    key={t.id}
+                    onClick={() => setTab(t.id)}
+                    className={`flex-1 flex flex-col items-center justify-center gap-1 py-3 transition-all ${tab === t.id
+                        ? 'text-white'
+                        : 'text-zinc-600 hover:text-zinc-400'
+                        }`}
+                >
+                    <t.icon className="w-4 h-4" />
+                    <span className="text-[8px] font-black uppercase tracking-widest">{t.label}</span>
+                </button>
+            ))}
+        </nav>
+    </div>
     )
 }
-
 
 // ─── Sub Components ───────────────────────────────────────────────────────────
 

@@ -20,6 +20,7 @@ const sidebarLinkVariants = cva(
         orange: "text-zinc-500 hover:bg-zinc-800 hover:text-white border-transparent hover:border-zinc-700 data-[active=true]:bg-orange-500/10 data-[active=true]:border-orange-500/30 data-[active=true]:text-orange-400",
         amber: "text-zinc-500 hover:bg-zinc-800 hover:text-white border-transparent hover:border-zinc-700 data-[active=true]:bg-amber-500/10 data-[active=true]:border-amber-500/30 data-[active=true]:text-amber-400",
         zinc: "text-zinc-500 hover:bg-zinc-800 hover:text-white border-transparent hover:border-zinc-700 data-[active=true]:bg-zinc-800 data-[active=true]:border-zinc-700 data-[active=true]:text-white",
+        red: "text-zinc-500 hover:bg-zinc-800 hover:text-white border-transparent hover:border-zinc-700 data-[active=true]:bg-red-500/10 data-[active=true]:border-red-500/30 data-[active=true]:text-red-500",
       }
     },
     defaultVariants: {
@@ -37,6 +38,7 @@ const sidebarIconVariants = cva(
         orange: "group-data-[active=true]:text-orange-500 group-data-[active=true]:scale-110 group-hover:text-orange-400",
         amber: "group-data-[active=true]:text-amber-500 group-data-[active=true]:scale-110 group-hover:text-amber-400",
         zinc: "group-data-[active=true]:text-white group-data-[active=true]:scale-110 group-hover:text-white",
+        red: "group-data-[active=true]:text-red-500 group-data-[active=true]:scale-110 group-hover:text-red-500",
       }
     },
     defaultVariants: {
@@ -62,8 +64,8 @@ export interface UnifiedSidebarProps extends VariantProps<typeof sidebarLinkVari
     email?: string | null
     avatar_url?: string | null
   }
-  brandColor?: 'emerald' | 'orange' | 'amber' | 'zinc'
-  logoColor?: "emerald" | "amber" | "orange" | "white"
+  brandColor?: 'emerald' | 'orange' | 'amber' | 'zinc' | 'red'
+  logoColor?: "emerald" | "amber" | "orange" | "white" | "red"
   tagline?: string
   extraLinks?: {
     title: string
@@ -131,7 +133,7 @@ export function UnifiedSidebar({
   }
 
   return (
-    <aside className="hidden md:flex w-72 h-screen sticky top-0 bg-zinc-900 border-r border-zinc-800 p-6 flex-col shadow-2xl z-20 overflow-hidden">
+    <aside className="hidden md:flex w-72 h-screen fixed top-0 left-0 bg-zinc-900 border-r border-zinc-800 p-6 flex-col shadow-2xl z-20 overflow-hidden">
       {/* Brand Logo */}
       <div className="flex-shrink-0 mb-10">
         <Link href="/">
@@ -143,7 +145,8 @@ export function UnifiedSidebar({
                 "text-[10px] font-black uppercase tracking-widest flex items-center gap-2 italic",
                 brandColor === 'emerald' ? 'text-emerald-500' : 
                 brandColor === 'orange' ? 'text-orange-500' : 
-                brandColor === 'amber' ? 'text-amber-500' : 'text-zinc-500'
+                brandColor === 'amber' ? 'text-amber-500' : 
+                brandColor === 'red' ? 'text-red-500' : 'text-zinc-500'
             )}>
               {tagline}
             </span>
@@ -171,6 +174,7 @@ export function UnifiedSidebar({
               brandColor === 'emerald' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' :
               brandColor === 'orange' ? 'bg-orange-500/10 text-orange-400 border-orange-500/30' :
               brandColor === 'amber' ? 'bg-amber-500/10 text-amber-400 border-amber-500/30' :
+              brandColor === 'red' ? 'bg-red-500/10 text-red-500 border-red-500/30' :
               'bg-zinc-800 text-zinc-400 border-zinc-700'
           )}>
             {user.avatar_url ? (
