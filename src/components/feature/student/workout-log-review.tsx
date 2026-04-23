@@ -48,9 +48,13 @@ export function WorkoutLogReview({ logId, userId, workoutName, completedAt, load
     // Local state: map of loadId -> { weight, reps }
     const [edits, setEdits] = useState<Record<string, { weight: string; reps: string }>>(() => {
         const init: Record<string, { weight: string; reps: string }> = {}
-        loads.forEach(l => {
-            init[l.id] = { weight: String(l.weight_kg), reps: String(l.reps_performed) }
-        })
+        if (Array.isArray(loads)) {
+            loads.forEach(l => {
+                if (l && l.id) {
+                    init[l.id] = { weight: String(l.weight_kg ?? 0), reps: String(l.reps_performed ?? 0) }
+                }
+            })
+        }
         return init
     })
 
@@ -62,7 +66,8 @@ export function WorkoutLogReview({ logId, userId, workoutName, completedAt, load
     })
 
     // Group loads by exercise name
-    const grouped = loads.reduce((acc, load) => {
+    const grouped = (Array.isArray(loads) ? loads : []).reduce((acc, load) => {
+        if (!load) return acc
         const name = load.exercise?.name || 'Exercício'
         if (!acc[name]) acc[name] = []
         acc[name].push(load)
@@ -107,7 +112,7 @@ export function WorkoutLogReview({ logId, userId, workoutName, completedAt, load
                         </h1>
                         <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest flex items-center gap-2">
                             <CheckCircle className="w-3.5 h-3.5 text-emerald-500" />
-                            Revisado em {date} às {time} • {loads.length} séries
+                            Revisado em {date} às {time} • {Array.isArray(loads) ? loads.length : 0} séries
                         </p>
                     </div>
                 </div>

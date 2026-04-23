@@ -129,10 +129,14 @@ async function StudentDashboardContent({ userId }: { userId: string }) {
             queryFn: () => import('@/actions/cardio-actions').then(m => m.getActiveCardioSession())
         }),
 
-        // Metrics & Misc
+        // Metrics & Profile
         queryClient.prefetchQuery({ 
             queryKey: QUERY_KEYS.student.metricsSummary(userId), 
             queryFn: () => getMetricsSummary(userId) 
+        }),
+        queryClient.prefetchQuery({ 
+            queryKey: QUERY_KEYS.student.details(userId), 
+            queryFn: () => getStudentProfile(userId) 
         })
     ])
 
@@ -363,8 +367,8 @@ function StudentDashboardSkeleton() {
                 </div>
                 <div className="h-16 w-32 bg-zinc-900 rounded-xl" />
             </div>
-            <div className="grid gap-8 lg:grid-cols-12">
-                <div className="lg:col-span-8 flex flex-col gap-8">
+            <div className="grid gap-section-gap lg:grid-cols-12">
+                <div className="lg:col-span-8 flex flex-col gap-section-gap">
                     <div className="h-[280px] bg-zinc-900 rounded-[2.5rem]" />
                     <div className="h-[300px] bg-zinc-900 rounded-[2.5rem]" />
                     <div className="h-[200px] bg-zinc-900 rounded-[2.5rem]" />

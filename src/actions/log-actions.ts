@@ -635,14 +635,17 @@ export async function getWorkoutLogForReview(logId: string) {
                 )
             `)
             .eq('id', logId)
-            .eq('student_id', user.id)
-            .single()
+            .maybeSingle()
 
-        if (error) throw error
-        if (!log) return null
+        if (error || !log) {
+            if (error) console.error('Error fetching workout log:', error)
+            return null
+        }
 
-        const workout = Array.isArray(log.workout) ? log.workout[0] : log.workout
-        const loads = (log.loads || []).map((l: any) => ({
+        const workoutData = log.workout
+        const workout = Array.isArray(workoutData) ? workoutData[0] : workoutData
+        const rawLoads = Array.isArray(log.loads) ? log.loads : []
+        const loads = rawLoads.map((l: any) => ({
             ...l,
             exercise: Array.isArray(l.exercise) ? l.exercise[0] : (l.exercise || { name: 'Exercício', id: l.exercise_id })
         }))
