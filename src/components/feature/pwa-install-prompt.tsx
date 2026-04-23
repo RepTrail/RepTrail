@@ -73,16 +73,25 @@ export function PWAInstallPrompt() {
     }, [isStandalone, isStudentPath])
 
     const handleInstallClick = async () => {
-        if (deferredPrompt) {
+        if (!deferredPrompt) {
+            alert('Para instalar, abra o menu do seu navegador e escolha "Adicionar à Tela Inicial" ou "Instalar Aplicativo".')
+            setShowPrompt(false)
+            return
+        }
+
+        try {
             deferredPrompt.prompt()
             const { outcome } = await deferredPrompt.userChoice
             if (outcome === 'accepted') {
                 console.log('User accepted the install prompt')
             }
             setDeferredPrompt(null)
+        } catch (err) {
+            console.error('Erro ao instalar PWA:', err)
+        } finally {
             setShowPrompt(false)
+            localStorage.setItem('pwa_prompt_shown_v1', 'true')
         }
-        localStorage.setItem('pwa_prompt_shown_v1', 'true')
     }
 
     const closePrompt = () => {
@@ -104,29 +113,29 @@ export function PWAInstallPrompt() {
                     </DialogClose>
                 </div>
 
-                <div className="relative p-6 pt-16 md:p-10 md:pt-20 space-y-8 overflow-y-auto flex-1 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+                <div className="relative p-5 pt-10 md:p-10 md:pt-20 space-y-5 flex-1">
                     {/* Visual Decor */}
                     <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none">
                         <Smartphone className="w-48 h-48 text-emerald-500" />
                     </div>
 
-                    <DialogHeader className="relative z-10 text-left space-y-6">
-                        <div className="w-20 h-20 bg-emerald-500/10 border border-emerald-500/20 rounded-[2rem] flex items-center justify-center shadow-xl shadow-emerald-500/10">
-                            <Download className="w-10 h-10 text-emerald-500" />
+                    <DialogHeader className="relative z-10 text-left space-y-4">
+                        <div className="w-16 h-16 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl flex items-center justify-center shadow-xl shadow-emerald-500/10">
+                            <Download className="w-8 h-8 text-emerald-500" />
                         </div>
                         <div>
-                            <DialogTitle className="text-3xl md:text-5xl font-black text-white italic uppercase tracking-tighter leading-tight">
+                            <DialogTitle className="text-2xl md:text-5xl font-black text-white italic uppercase tracking-tighter leading-tight">
                                 RepTrail no seu <span className="text-emerald-500">Celular</span>
                             </DialogTitle>
-                            <DialogDescription className="text-zinc-500 font-bold uppercase tracking-widest text-[10px] mt-4">
+                            <DialogDescription className="text-zinc-500 font-bold uppercase tracking-widest text-[10px] mt-2">
                                 Performance máxima em tela cheia
                             </DialogDescription>
                         </div>
                     </DialogHeader>
 
-                    <div className="space-y-8 relative z-10">
-                        <div className="grid gap-4 pb-4">
-                            <div className="flex items-center gap-4 md:gap-5 p-4 md:p-6 bg-white/5 rounded-[1.5rem] md:rounded-[2rem] border border-white/5 backdrop-blur-sm group hover:bg-white/10 transition-colors">
+                    <div className="space-y-4 relative z-10">
+                        <div className="grid gap-3 pb-2">
+                            <div className="flex items-center gap-3 md:gap-5 p-3 md:p-6 bg-white/5 rounded-2xl md:rounded-[2rem] border border-white/5 backdrop-blur-sm group hover:bg-white/10 transition-colors">
                                 <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-emerald-500/20 flex items-center justify-center border border-emerald-500/20 group-hover:scale-110 transition-transform shrink-0">
                                     <CheckCircle2 className="w-5 h-5 md:w-6 md:h-6 text-emerald-500" />
                                 </div>
@@ -135,7 +144,7 @@ export function PWAInstallPrompt() {
                                     <p className="text-[9px] md:text-[10px] text-zinc-500 font-bold uppercase tracking-widest">Navegação Full Screen</p>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-4 md:gap-5 p-4 md:p-6 bg-white/5 rounded-[1.5rem] md:rounded-[2rem] border border-white/5 backdrop-blur-sm group hover:bg-white/10 transition-colors">
+                            <div className="flex items-center gap-3 md:gap-5 p-3 md:p-6 bg-white/5 rounded-2xl md:rounded-[2rem] border border-white/5 backdrop-blur-sm group hover:bg-white/10 transition-colors">
                                 <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-emerald-500/20 flex items-center justify-center border border-emerald-500/20 group-hover:scale-110 transition-transform shrink-0">
                                     <CheckCircle2 className="w-5 h-5 md:w-6 md:h-6 text-emerald-500" />
                                 </div>
@@ -147,18 +156,18 @@ export function PWAInstallPrompt() {
                         </div>
 
                         {isIOS ? (
-                            <div className="bg-emerald-500/10 border border-emerald-500/20 p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] space-y-4 md:space-y-6">
+                            <div className="bg-emerald-500/10 border border-emerald-500/20 p-5 md:p-8 rounded-2xl md:rounded-[2.5rem] space-y-3 md:space-y-6">
                                 <p className="text-[10px] md:text-xs font-black text-emerald-500 uppercase tracking-[0.3em] flex items-center gap-2 mb-2 md:mb-4">
                                     Configuração iOS:
                                 </p>
                                 <ol className="space-y-3 md:space-y-4">
-                                    <li className="flex items-center gap-3 pb-4md:gap-4 text-white text-[10px] md:text-xs font-black uppercase italic tracking-widest">
+                                    <li className="flex items-center gap-3 md:gap-4 text-white text-[10px] md:text-xs font-black uppercase italic tracking-widest">
                                         <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl bg-zinc-950 border border-zinc-900 flex items-center justify-center shrink-0 shadow-2xl">
                                             <Share className="w-4 h-4 md:w-5 md:h-5 text-emerald-500" />
                                         </div>
                                         1. Clique em Compartilhar
                                     </li>
-                                    <li className="flex items-center gap-3 pb-4md:gap-4 text-white text-[10px] md:text-xs font-black uppercase italic tracking-widest">
+                                    <li className="flex items-center gap-3 md:gap-4 text-white text-[10px] md:text-xs font-black uppercase italic tracking-widest">
                                         <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl bg-zinc-950 border border-zinc-900 flex items-center justify-center shrink-0 shadow-2xl">
                                             <PlusSquare className="w-4 h-4 md:w-5 md:h-5 text-emerald-500" />
                                         </div>
