@@ -1,11 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 import { AutoTrainingOnboardingModal } from '@/components/feature/student/auto-training-onboarding-modal'
-import { dismissAutoTrainingForSession, resetAutoTrainingOnboardingModal, enableAutoTrainingTrialForCurrentUser } from '@/actions/auto-training-actions'
-import { useQueryClient } from '@tanstack/react-query'
+import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
 import { QUERY_KEYS } from '@/lib/query-keys'
+import { ENTITIES } from '@/lib/outbox-db'
 
 interface StudentDashboardModalProps {
     userId: string
@@ -15,8 +14,6 @@ interface StudentDashboardModalProps {
 
 export function StudentDashboardModals({ userId, showModal, hasTrainer }: StudentDashboardModalProps) {
     const [isModalOpen, setIsModalOpen] = useState(false)
-    const router = useRouter()
-    const queryClient = useQueryClient()
 
     useEffect(() => {
         if (showModal && !hasTrainer) {
@@ -30,21 +27,33 @@ export function StudentDashboardModals({ userId, showModal, hasTrainer }: Studen
         return () => window.removeEventListener('open-auto-training-onboarding', handleOpen)
     }, [])
 
-    const handleAccept = async () => {
-        await enableAutoTrainingTrialForCurrentUser()
-        setIsModalOpen(false)
-        queryClient.invalidateQueries({ queryKey: QUERY_KEYS.student.details(userId) })
-    }
+    const { mutate: acceptMutate } = useOptimisticMutation({
+        actionName: 'enable-auto-training-trial',
+        entity: ENTITIES.USER,
+        entityId: userId,
+        queryKey: QUERY_KEYS.student.all(userId),
+        mutationFn: async () => {
+             const { enableAutoTrainingTrialForCurrentUser } = await import('@/actions/auto-training-actions')
+             return await enableAutoTrainingTrialForCurrentUser()
+        },
+        onMutate: () => setIsModalOpen(false)
+    })
 
-    const handleReject = async () => {
-        await dismissAutoTrainingForSession(userId)
-        setIsModalOpen(false)
-        queryClient.invalidateQueries({ queryKey: QUERY_KEYS.student.details(userId) })
-    }
+    const { mutate: rejectMutate } = useOptimisticMutation({
+        actionName: 'dismiss-auto-training',
+        entity: ENTITIES.USER,
+        entityId: userId,
+        queryKey: QUERY_KEYS.student.all(userId),
+        mutationFn: async () => {
+             const { dismissAutoTrainingForSession } = await import('@/actions/auto-training-actions')
+             return await dismissAutoTrainingForSession(userId)
+        },
+        onMutate: () => setIsModalOpen(false)
+    })
 
-    const handleClose = () => {
-        setIsModalOpen(false)
-    }
+    const handleAccept = async () => acceptMutate(undefined)
+    const handleReject = async () => rejectMutate(undefined)
+    const handleClose = () => setIsModalOpen(false)
 
     return (
         <AutoTrainingOnboardingModal

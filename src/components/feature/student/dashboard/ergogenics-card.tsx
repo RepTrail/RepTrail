@@ -84,10 +84,10 @@ export function ErgogenicsCard({ userId }: ErgogenicsCardProps) {
 
     const tzNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }))
     const today = tzNow.getDay()
-    
+
     const { start, end } = getTodayRangeBrazil()
     const logs = Array.isArray(ergoLogs) ? ergoLogs : []
-    
+
     // Filter logs for today only
     const loggedErgoIds = new Set(
         logs
@@ -111,7 +111,7 @@ export function ErgogenicsCard({ userId }: ErgogenicsCardProps) {
             </div>
 
             {todaysErgogenics.length > 0 ? (
-                <div className="grid gap-6 md:grid-cols-2">
+                <div className="grid gap-6 md:grid-cols-1">
                     {todaysErgogenics.map((erg: any) => (
                         <div key={erg.id} className="bg-zinc-900/40 border border-zinc-800/50 p-6 sm:p-10 rounded-3xl backdrop-blur-sm space-y-4 hover:border-orange-500/30 transition-all duration-300">
                             <div className="flex items-center justify-between">

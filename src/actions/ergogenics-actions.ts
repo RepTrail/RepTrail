@@ -199,7 +199,7 @@ export async function getTodayErgogenicLogs(studentId: string) {
     const { start, end } = getTodayRangeBrazil()
     const { data, error } = await supabase
         .from('ergogenic_logs')
-        .select('ergogenic_id')
+        .select('ergogenic_id, created_at')
         .eq('student_id', studentId)
         .gte('created_at', start)
         .lte('created_at', end)

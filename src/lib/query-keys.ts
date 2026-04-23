@@ -17,6 +17,7 @@ export const QUERY_KEYS = {
         trainer: (studentId: string) => ['profile', studentId, 'trainer'],
     },
     student: {
+        all: (userId: string) => ['student', userId],
         details: (userId: string) => ['student', userId, 'details'],
         metrics: (userId: string) => ['student', userId, 'metrics'],
         anamnesis: (userId: string) => ['student', userId, 'anamnesis'],
@@ -91,5 +92,12 @@ export const QUERY_KEYS = {
     },
     public: {
         feed: ['public', 'feed']
+    },
+    affiliate: {
+        all: ['affiliate'],
+        data: ['affiliate', 'data'],
+        earnings: ['affiliate', 'earnings'],
+        referrals: ['affiliate', 'referrals'],
+        stats: ['affiliate', 'stats'],
     }
 } as const

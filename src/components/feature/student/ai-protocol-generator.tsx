@@ -11,7 +11,11 @@ import {
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useQueryClient } from '@tanstack/react-query'
+import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
 import { QUERY_KEYS } from '@/lib/query-keys'
+import { ENTITIES } from '@/lib/outbox-db'
+
+import { useToast } from '@/hooks/use-toast'
 
 // ── Types ──────────────────────────────────────────────────────────────────
 type Step = 'workout' | 'frequency' | 'cardio' | 'diet' | 'confirm'
@@ -120,6 +124,7 @@ function TextArea({ placeholder, value, onChange }: { placeholder: string, value
 // ── Main Component ──────────────────────────────────────────────────────────
 
 export function AIProtocolGenerator() {
+    const { toast } = useToast()
     const router = useRouter()
     const queryClient = useQueryClient()
     const [step, setStep] = useState<Step>('workout')
@@ -151,10 +156,36 @@ export function AIProtocolGenerator() {
         return true
     }
 
-    const handleGenerate = async () => {
-        setLoading(true)
-        setError(null)
+    const { mutate: generateMutate } = useOptimisticMutation({
+        actionName: 'generate-ai-protocol',
+        entity: ENTITIES.USER,
+        entityId: 'me',
+        queryKey: QUERY_KEYS.student.all('me'),
+        mutationFn: async (variables: any) => {
+            const result = await generateAIProtocol(variables.preferences)
+            if (result.error) throw new Error(result.error)
+            return result
+        },
+        onMutate: () => {
+            // Instant feedback
+            toast({
+                title: "✨ Gerando seu protocolo...",
+                description: "Nossa IA está trabalhando. Você pode fechar esta janela, o processo continuará em segundo plano."
+            })
+            // Reset success screen or close if it was a modal (it's embedded here)
+            setLoading(true)
+        },
+        onSuccess: (result) => {
+            setLoading(false)
+            setSuccess(result.summary)
+        },
+        onError: (err) => {
+            setLoading(false)
+            setError(err.message)
+        }
+    })
 
+    const handleGenerate = () => {
         const preferences: AIProtocolPreferences = {
             workoutSplit: workoutSplit === 'other' ? customSplit : workoutSplit,
             trainingVolume,
@@ -167,15 +198,7 @@ export function AIProtocolGenerator() {
             foodDislikes,
             dietaryRestrictions,
         }
-
-        const result = await generateAIProtocol(preferences)
-        setLoading(false)
-
-        if (result.error) {
-            setError(result.error)
-        } else {
-            setSuccess(result.summary)
-        }
+        generateMutate({ preferences })
     }
 
     // ── Success Screen ────────────────────────────────────────────────────

@@ -45,7 +45,8 @@ export function AutoTrainingErgogenicsManager({
                     fields={[
                         { name: 'name', label: 'Nome', type: 'text', placeholder: 'Ex: Testosterona' },
                         { name: 'weekly_dosage', label: 'Dosagem Semanal', type: 'number', placeholder: 'Ex: 250' },
-                        { name: 'unit', label: 'Unidade', type: 'text', placeholder: 'Ex: mg' }
+                        { name: 'unit', label: 'Unidade', type: 'text', placeholder: 'Ex: mg' },
+                        { name: 'application_days', label: 'Dias de Aplicação', type: 'days', required: true }
                     ]}
                 />
             </div>
@@ -98,7 +99,8 @@ export function AutoTrainingErgogenicsManager({
                         fields={[
                             { name: 'name', label: 'Nome', type: 'text', placeholder: 'Ex: Testosterona' },
                             { name: 'weekly_dosage', label: 'Dosagem Semanal', type: 'number', placeholder: 'Ex: 250' },
-                            { name: 'unit', label: 'Unidade', type: 'text', placeholder: 'Ex: mg' }
+                            { name: 'unit', label: 'Unidade', type: 'text', placeholder: 'Ex: mg' },
+                            { name: 'application_days', label: 'Dias de Aplicação', type: 'days', required: true }
                         ]}
                     />
                 </div>

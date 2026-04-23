@@ -35,7 +35,7 @@ import {
 } from '@/actions/diet-actions';
 
 import { createStudent, toggleStudentStatus, updateTrainerProfile } from '@/actions/trainer-actions';
-import { toggleMealItem, toggleMealGroup, toggleSubstitution } from '@/actions/tracking-actions';
+import { toggleMealItem, toggleMealGroup, toggleSubstitution, substituteMealItem } from '@/actions/tracking-actions';
 
 import {
   toggleErgogenicLog,
@@ -100,8 +100,10 @@ import {
   addOperationalCost, 
   deleteOperationalCost 
 } from '@/actions/admin-actions';
-import { enableAffiliate } from '@/actions/affiliate-actions';
+import { enableAffiliate, requestPayout } from '@/actions/affiliate-actions';
+import { dismissAutoTrainingForSession } from '@/actions/auto-training-actions';
 import { deleteErgogenic } from '@/actions/ergogenics-actions';
+import { generateAIProtocol } from '@/actions/ai-protocol-actions';
 
 
 // Define the type for an action function
@@ -203,6 +205,8 @@ export const ACTION_REGISTRY: Record<string, ActionFn> = {
   'toggle-meal-item': (p: any) => wrap(toggleMealItem(p.itemId, p.status)),
   'toggle-meal-group': (p: any) => wrap(toggleMealGroup(p.mealId, p.status)),
   'toggle-substitution': (p: any) => wrap(toggleSubstitution(p.itemId, p.date)),
+  'substitute-item': (p: any) => wrap(substituteMealItem(p.itemId, p.substituteData, p.date)),
+  'generate-ai-protocol': (p: any) => wrap(generateAIProtocol(p.preferences)),
   
   'update-meals-order': (p: any) => wrap(updateMealsOrder(p.dietId, p.orderedIds)),
   'update-meal-items-order': (p: any) => wrap(updateMealItemsOrder(p.mealId, p.orderedIds)),
@@ -249,8 +253,10 @@ export const ACTION_REGISTRY: Record<string, ActionFn> = {
     const { enableAutoTrainingTrialForCurrentUser } = await import('@/actions/auto-training-actions')
     return wrap(enableAutoTrainingTrialForCurrentUser())
   },
+  'dismiss-auto-training': (p: any) => wrap(dismissAutoTrainingForSession(p.userId)),
   'save-parsed-data': (p: any) => wrap(saveParsedData(p.type, p.data, p.studentId)),
   'enable-affiliate': () => wrap(enableAffiliate()),
+  'request-payout': (p: any) => wrap(requestPayout(p.amount, p.method, p.details)),
   'update-affiliate-commission': (p: any) => wrap(updateAffiliateCommission(p.affiliateId, p.rate)),
   'toggle-affiliate-status': (p: any) => wrap(toggleAffiliateStatus(p.userId, p.isAffiliate)),
   'update-payout-status': (p: any) => wrap(updatePayoutStatus(p.payoutId, p.status)),

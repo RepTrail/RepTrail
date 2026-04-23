@@ -6,8 +6,10 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useToast } from '@/hooks/use-toast'
-import { requestPayout } from '@/actions/affiliate-actions'
 import { Banknote, AlertCircle, ArrowRight } from 'lucide-react'
+import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { ENTITIES } from '@/lib/outbox-db'
+import { QUERY_KEYS } from '@/lib/query-keys'
 
 interface RequestPayoutModalProps {
     isOpen: boolean
@@ -17,15 +19,36 @@ interface RequestPayoutModalProps {
 
 export function RequestPayoutModal({ isOpen, onClose, availableBalance }: RequestPayoutModalProps) {
     const { toast } = useToast()
-    const [loading, setLoading] = useState(false)
     const [amount, setAmount] = useState<string>('')
     const [pixKey, setPixKey] = useState<string>('')
+
+    const { mutate, isPending } = useOptimisticMutation({
+        actionName: 'request-payout',
+        entity: ENTITIES.PAYOUT,
+        entityId: 'new',
+        queryKey: QUERY_KEYS.affiliate.earnings,
+        mutationFn: async (variables: { amount: number, method: string, details: string }) => {
+            const { requestPayout } = await import('@/actions/affiliate-actions')
+            const res = await requestPayout(variables.amount, variables.method, variables.details)
+            if (res.error) throw new Error(res.error)
+            return res
+        },
+        onMutate: () => {
+             toast({ title: 'Solicitação registrada!', description: 'Sua solicitação foi salva e será sincronizada.' })
+             onClose()
+             setAmount('')
+             setPixKey('')
+        },
+        onSuccess: () => {
+            toast({ title: 'Saque solicitado!', description: 'Nossa equipe processará o pagamento em breve.' })
+        }
+    })
 
     const handleMaxAmount = () => {
         setAmount(availableBalance.toFixed(2))
     }
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
 
         const val = parseFloat(amount.replace(',', '.'))
@@ -42,20 +65,7 @@ export function RequestPayoutModal({ isOpen, onClose, availableBalance }: Reques
             return
         }
 
-        setLoading(true)
-        try {
-            const res = await requestPayout(val, 'PIX', pixKey.trim())
-            if (res.error) throw new Error(res.error)
-
-            toast({ title: 'Solicitação de saque enviada!', description: 'Nossa equipe processará o pagamento em breve.' })
-            onClose()
-            setAmount('')
-            setPixKey('')
-        } catch (error: any) {
-            toast({ variant: 'destructive', title: 'Erro ao solicitar', description: error.message })
-        } finally {
-            setLoading(false)
-        }
+        mutate({ amount: val, method: 'PIX', details: pixKey.trim() })
     }
 
     return (
@@ -93,7 +103,7 @@ export function RequestPayoutModal({ isOpen, onClose, availableBalance }: Reques
                                     min="50"
                                     max={availableBalance}
                                     className="pl-9 bg-zinc-900 border-zinc-800 h-12 text-lg font-black"
-                                    /* ❌ UI BLOCKING REMOVED */ disabled={false}
+                                    disabled={isPending}
                                     required
                                 />
                                 <Button
@@ -101,7 +111,7 @@ export function RequestPayoutModal({ isOpen, onClose, availableBalance }: Reques
                                     variant="ghost"
                                     className="absolute right-2 top-1/2 -translate-y-1/2 h-8 text-[10px] font-black uppercase text-emerald-500 hover:text-emerald-400 hover:bg-emerald-500/10"
                                     onClick={handleMaxAmount}
-                                    /* ❌ UI BLOCKING REMOVED */ disabled={false}
+                                    disabled={isPending}
                                 >
                                     SAQUE TOTAL
                                 </Button>
@@ -121,7 +131,7 @@ export function RequestPayoutModal({ isOpen, onClose, availableBalance }: Reques
                                 onChange={(e) => setPixKey(e.target.value)}
                                 placeholder="CPF, Celular, E-mail ou Aleatória"
                                 className="bg-zinc-900 border-zinc-800 h-12 text-sm font-medium focus-visible:ring-emerald-500"
-                                /* ❌ UI BLOCKING REMOVED */ disabled={false}
+                                disabled={isPending}
                                 required
                             />
                         </div>
@@ -133,16 +143,16 @@ export function RequestPayoutModal({ isOpen, onClose, availableBalance }: Reques
                             variant="outline"
                             className="flex-1 border-zinc-800 hover:bg-zinc-800 text-xs font-black uppercase tracking-widest h-12"
                             onClick={onClose}
-                            /* ❌ UI BLOCKING REMOVED */ disabled={false}
+                            disabled={isPending}
                         >
                             Cancelar
                         </Button>
                         <Button
                             type="submit"
                             className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-black text-xs font-black uppercase tracking-widest h-12 gap-2"
-                            disabled={loading || availableBalance < 50}
+                            disabled={isPending || availableBalance < 50}
                         >
-                            {loading ? 'Processando...' : 'Confirmar'}
+                            {isPending ? 'Processando...' : 'Confirmar'}
                             <ArrowRight className="w-4 h-4" />
                         </Button>
                     </div>

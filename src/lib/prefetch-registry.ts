@@ -22,7 +22,7 @@ export const PREFETCH_REGISTRY: Record<string, (userId: string) => PrefetchConfi
         { queryKey: QUERY_KEYS.cardio.all(userId), queryFn: () => getAssignedCardios(userId) },
         { queryKey: QUERY_KEYS.diets.today(userId), queryFn: () => getStudentDailyDiet(userId) },
         { queryKey: QUERY_KEYS.diets.all(userId), queryFn: () => getAssignedDiets(userId) },
-        { queryKey: QUERY_KEYS.ergogenics.all(userId), queryFn: () => getStudentErgogenics(userId) },
+        { queryKey: QUERY_KEYS.ergogenics.all(userId), queryFn: async () => (await getStudentErgogenics(userId)).data || [] },
         { queryKey: QUERY_KEYS.ergogenics.logs(userId), queryFn: () => getTodayErgogenicLogs(userId) },
         { queryKey: QUERY_KEYS.student.details(userId), queryFn: () => getStudentProfile(userId) },
         { queryKey: QUERY_KEYS.student.metricsSummary(userId), queryFn: () => getMetricsSummary(userId) },
@@ -42,7 +42,7 @@ export const PREFETCH_REGISTRY: Record<string, (userId: string) => PrefetchConfi
         { queryKey: QUERY_KEYS.diets.library(userId), queryFn: () => getTrainerDiets() },
     ],
     '/dashboard/student/ergogenics': (userId) => [
-        { queryKey: QUERY_KEYS.ergogenics.all(userId), queryFn: () => getStudentErgogenics(userId) },
+        { queryKey: QUERY_KEYS.ergogenics.all(userId), queryFn: async () => (await getStudentErgogenics(userId)).data || [] },
         { queryKey: QUERY_KEYS.ergogenics.logs(userId), queryFn: () => getTodayErgogenicLogs(userId) },
     ],
     '/dashboard/student/profile': (userId) => [

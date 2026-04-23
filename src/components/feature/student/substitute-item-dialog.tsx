@@ -1,4 +1,3 @@
-
 'use client'
 
 import { useState } from 'react'
@@ -13,9 +12,13 @@ import {
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Repeat2, Loader2 } from "lucide-react"
+import { Repeat2 } from "lucide-react"
 import { substituteMealItem } from '@/actions/tracking-actions'
 import { useToast } from '@/hooks/use-toast'
+import { useQueryClient } from '@tanstack/react-query'
+import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { QUERY_KEYS } from '@/lib/query-keys'
+import { ENTITIES } from '@/lib/outbox-db'
 
 interface SubstituteItemDialogProps {
     item: any
@@ -25,48 +28,70 @@ interface SubstituteItemDialogProps {
 export function SubstituteItemDialog({ item, onSuccess }: SubstituteItemDialogProps) {
     const { toast } = useToast()
     const [open, setOpen] = useState(false)
-    const [loading, setLoading] = useState(false)
     const [foodName, setFoodName] = useState('')
     const [quantity, setQuantity] = useState('')
 
-    async function handleSubstitute() {
-        if (!foodName || !quantity) return
+    const queryClient = useQueryClient()
+    const queryKey = QUERY_KEYS.diets.today(item.user_id || 'me')
 
-        setLoading(true)
-        try {
-            // Estimate macros for the custom substitution
+    const { mutate: substituteMutate } = useOptimisticMutation({
+        actionName: 'substitute-item',
+        entity: ENTITIES.MEAL_ITEM,
+        entityId: item.id,
+        queryKey,
+        mutationFn: async (variables: any) => {
+            // Background AI macro estimation
             const { estimateMacros } = await import('@/actions/diet-actions')
-            const estRes = await estimateMacros(foodName, quantity)
+            const estRes = await estimateMacros(variables.substituteData.food_name, variables.substituteData.quantity)
             const macros = estRes.success ? (estRes.macros as any) : { protein: 0, carbs: 0, fat: 0, fiber: 0 }
-
-            const res = await substituteMealItem(item.id, {
-                food_name: foodName,
-                quantity,
+            
+            const res = await substituteMealItem(variables.itemId, {
+                ...variables.substituteData,
                 ...macros
             })
-
-            if (res.success) {
-                toast({ title: 'Item substituído!' })
-                onSuccess({
-                    ...item,
-                    is_checked: true,
-                    is_substituted: true,
-                    substituted_food_name: foodName,
-                    substituted_quantity: quantity,
-                    substituted_protein: macros.protein,
-                    substituted_carbs: macros.carbs,
-                    substituted_fat: macros.fat,
-                    substituted_fiber: macros.fiber
-                })
-                setOpen(false)
-            } else {
-                toast({ variant: 'destructive', title: 'Erro', description: res.error })
-            }
-        } catch (e: any) {
-            toast({ variant: 'destructive', title: 'Erro', description: 'Erro inesperado' })
-        } finally {
-            setLoading(false)
+            
+            if (!res.success) throw new Error(res.error)
+            return { ...variables.substituteData, ...macros }
+        },
+        onMutate: () => {
+            setOpen(false)
+        },
+        onSuccess: (data) => {
+            toast({
+                title: "Substituição salva!",
+                description: "O item foi atualizado no seu plano de hoje."
+            })
+            onSuccess({
+                ...item,
+                is_checked: true,
+                is_substituted: true,
+                substituted_food_name: data.food_name,
+                substituted_quantity: data.quantity,
+                substituted_protein: data.protein,
+                substituted_carbs: data.carbs,
+                substituted_fat: data.fat,
+                substituted_fiber: data.fiber
+            })
         }
+    })
+
+    const handleSave = () => {
+        if (!foodName || !quantity) {
+             toast({
+                variant: "destructive",
+                title: "Campos obrigatórios",
+                description: "Preencha o nome e a quantidade do alimento."
+            })
+            return
+        }
+
+        substituteMutate({
+            itemId: item.id,
+            substituteData: {
+                food_name: foodName,
+                quantity
+            }
+        })
     }
 
     return (
@@ -108,11 +133,10 @@ export function SubstituteItemDialog({ item, onSuccess }: SubstituteItemDialogPr
                 </div>
                 <DialogFooter>
                     <Button
-                        onClick={handleSubstitute}
-                        disabled={loading || !foodName || !quantity}
+                        onClick={handleSave}
+                        disabled={!foodName || !quantity}
                         className="w-full bg-white text-zinc-950 hover:bg-zinc-200 font-black uppercase italic tracking-widest rounded-xl"
                     >
-                        {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
                         Confirmar Substituição
                     </Button>
                 </DialogFooter>
