@@ -2,14 +2,11 @@
 
 import { useState } from 'react'
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Plus, Trash2, Edit2, Loader2, Sparkles, Calendar, FlaskConical, Zap } from "lucide-react"
-import { addErgogenic, updateErgogenic, deleteErgogenic } from "@/actions/ergogenics-actions"
-import { Switch } from "@/components/ui/switch"
+import { Plus, FlaskConical } from "lucide-react"
 import { UnifiedDeleteButton } from "@/components/feature/shared/unified-delete-button"
+import { ErgogenicForm } from "@/components/feature/shared/ergogenic-form"
 import { cn } from '@/lib/utils'
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query'
 import { useToast } from '@/hooks/use-toast'
@@ -47,15 +44,6 @@ export function TrainerErgogenicsView({ studentId, initialData }: TrainerErgogen
     const { toast } = useToast()
     const queryClient = useQueryClient()
     const [isAdding, setIsAdding] = useState(false)
-    const [formData, setFormData] = useState({
-        name: '',
-        weekly_dosage: 0,
-        unit: 'ml' as 'ml' | 'mg',
-        application_days: [] as number[],
-        notes: '',
-        start_date: new Date().toISOString().split('T')[0],
-        end_date: ''
-    })
 
     // Local-First: Consume from cache
     const { data: ergogenics = initialData } = useQuery({
@@ -81,45 +69,13 @@ export function TrainerErgogenicsView({ studentId, initialData }: TrainerErgogen
                 }
                 return [newItem, ...(old || [])]
             })
-
             setIsAdding(false)
-            setFormData({
-                name: '',
-                weekly_dosage: 0,
-                unit: 'ml',
-                application_days: [],
-                notes: '',
-                start_date: new Date().toISOString().split('T')[0],
-                end_date: ''
-            })
-
             return { previous }
         },
         onSuccess: () => {
             toast({ title: 'Adicionado com sucesso!', description: 'Substância adicionada ao protocolo.' })
         }
     })
-
-    function handleAdd() {
-        if (formData.application_days.length === 0) {
-            toast({ variant: 'destructive', title: 'Atenção', description: 'Selecione pelo menos um dia de aplicação' })
-            return
-        }
-        addMutate({ ...formData, student_id: studentId })
-    }
-
-    const toggleDay = (day: number) => {
-        setFormData(prev => ({
-            ...prev,
-            application_days: prev.application_days.includes(day)
-                ? prev.application_days.filter(d => d !== day)
-                : [...prev.application_days, day].sort()
-        }))
-    }
-
-    const dosagePerDay = formData.application_days.length > 0
-        ? (formData.weekly_dosage / formData.application_days.length).toFixed(2)
-        : '0'
 
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
