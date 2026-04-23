@@ -96,36 +96,42 @@ export function ErgogenicsCard({ userId }: ErgogenicsCardProps) {
             </div>
 
             {todaysErgogenics.length > 0 ? (
-                <div className="grid gap-6 md:grid-cols-1">
-                    {todaysErgogenics.map((erg: any) => (
-                        <div key={erg.id} className="bg-zinc-900/40 border border-zinc-800/50 p-6 sm:p-10 rounded-3xl backdrop-blur-sm space-y-4 hover:border-orange-500/30 transition-all duration-300">
-                            <div className="flex items-center justify-between">
-                                <div className="space-y-1">
-                                    <h3 className="text-lg font-black text-white italic uppercase tracking-tight line-clamp-1">
-                                        {erg.name}
-                                    </h3>
-                                    <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
-                                        {(erg.weekly_dosage / (erg.application_days?.length || 1)).toFixed(2)} {erg.unit}
-                                    </p>
+                    <div className="flex flex-col gap-3">
+                        {todaysErgogenics.map((erg: any) => {
+                            const isChecked = loggedErgoIds.has(erg.id)
+                            return (
+                                <div key={erg.id} className={`group relative rounded-3xl border transition-all duration-300 overflow-hidden ${
+                                    isChecked 
+                                        ? 'bg-emerald-500/5 border-emerald-500/20' 
+                                        : 'bg-zinc-950/20 border-zinc-900 hover:border-zinc-800'
+                                }`}>
+                                    <div className="p-5 flex items-center justify-between">
+                                        <div className="flex items-center gap-4">
+                                            <ErgogenicCheckButton
+                                                studentId={userId}
+                                                ergogenicId={erg.id}
+                                                initialChecked={isChecked}
+                                            />
+                                            <div>
+                                                <h4 className="text-sm font-black text-zinc-100 uppercase italic tracking-wide">{erg.name}</h4>
+                                                <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-0.5">
+                                                    DOSAGEM: {(erg.weekly_dosage / (erg.application_days?.length || 1)).toFixed(2)} {erg.unit}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {erg.notes && (
+                                        <div className="px-5 pb-5 pt-0">
+                                            <div className="h-px w-full bg-zinc-800/50 mb-3" />
+                                            <p className="text-[10px] text-zinc-400 font-medium italic line-clamp-2">
+                                                "{erg.notes}"
+                                            </p>
+                                        </div>
+                                    )}
                                 </div>
-                                <div className="flex-shrink-0">
-                                    <ErgogenicCheckButton
-                                        studentId={userId}
-                                        ergogenicId={erg.id}
-                                        initialChecked={loggedErgoIds.has(erg.id)}
-                                    />
-                                </div>
-                            </div>
-                            {erg.notes && (
-                                <div className="pt-4 border-t border-zinc-800/50">
-                                    <p className="text-[10px] text-zinc-400 font-medium italic line-clamp-2">
-                                        "{erg.notes}"
-                                    </p>
-                                </div>
-                            )}
-                        </div>
-                    ))}
-                </div>
+                            )
+                        })}
+                    </div>
             ) : (
                 <div className="bg-zinc-900/20 border border-zinc-800/50 border-dashed rounded-3xl py-16 flex flex-col items-center justify-center text-center space-y-4">
                     <Syringe className="w-8 h-8 text-zinc-700" />
@@ -150,19 +156,18 @@ ErgogenicsCard.Skeleton = function ErgogenicsCardSkeleton() {
                     Ergogênicos do Dia
                 </h2>
             </div>
-            <div className="grid gap-6 md:grid-cols-1">
+            <div className="flex flex-col gap-3">
                 {[1, 2].map((i) => (
-                    <div key={i} className="bg-zinc-900/40 border border-zinc-800/50 p-6 sm:p-10 rounded-3xl backdrop-blur-sm space-y-4">
-                        <div className="flex items-center justify-between">
-                            <div className="space-y-2">
-                                <Skeleton className="h-6 w-48 bg-zinc-800/50" />
-                                <Skeleton className="h-3 w-24 bg-zinc-800/50" />
+                    <div key={i} className="flex flex-col p-3 rounded-xl bg-zinc-900/30 border border-zinc-800/50 gap-3">
+                        <div className="flex items-center gap-3 min-w-0">
+                            <Skeleton className="w-8 h-8 rounded-xl bg-zinc-800/50 flex-shrink-0" />
+                            <div className="flex flex-col min-w-0 space-y-1 w-full">
+                                <Skeleton className="h-[14px] w-32 bg-zinc-800/50" />
+                                <Skeleton className="h-[10px] w-16 bg-zinc-800/50" />
                             </div>
-                            <Skeleton className="h-12 w-12 rounded-xl bg-zinc-800/50" />
                         </div>
-                        <div className="pt-4 border-t border-zinc-800/50">
-                            <Skeleton className="h-3 w-full max-w-sm bg-zinc-800/50" />
-                            <Skeleton className="h-3 w-2/3 bg-zinc-800/50 mt-1" />
+                        <div className="pl-11 pr-2 pb-1">
+                            <Skeleton className="h-[10px] w-full max-w-[200px] bg-zinc-800/50" />
                         </div>
                     </div>
                 ))}

@@ -163,8 +163,8 @@ class SyncEngine {
               ));
 
               // Explicit refetch for critical active sessions
-              this.queryClient.refetchQueries({ queryKey: QUERY_KEYS.workouts.activeSession(userId) });
-              this.queryClient.refetchQueries({ queryKey: QUERY_KEYS.cardio.activeSession(userId) });
+              this.queryClient.refetchQueries({ queryKey: QUERY_KEYS.workouts.session });
+              this.queryClient.refetchQueries({ queryKey: QUERY_KEYS.cardio.session });
           }
         }
 
