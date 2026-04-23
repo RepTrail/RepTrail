@@ -42,20 +42,7 @@ export function WorkoutCard({ userId }: WorkoutCardProps) {
 
     // Skeleton Fallback: Only show if truly loading AND no cache available
     if (isLoadingWorkout && !workout) {
-        return (
-            <div className="bg-zinc-900/40 border border-zinc-800/50 shadow-xl p-6 sm:p-10 rounded-3xl backdrop-blur-sm overflow-hidden h-[280px] relative animate-pulse">
-                <div className="absolute top-0 right-0 p-8 opacity-[0.02]">
-                    <Dumbbell className="w-32 h-32" />
-                </div>
-                <div className="relative space-y-8">
-                    <div className="space-y-3">
-                        <Skeleton className="h-8 w-3/4 rounded-xl bg-zinc-800/50" />
-                        <Skeleton className="h-3 w-48 rounded-md bg-zinc-800/50" />
-                    </div>
-                    <Skeleton className="h-12 w-40 rounded-xl bg-zinc-800/50" />
-                </div>
-            </div>
-        )
+        return <WorkoutCard.Skeleton />
     }
 
     if (!workout) {
@@ -115,5 +102,22 @@ export function WorkoutCard({ userId }: WorkoutCardProps) {
                 </div>
             </div>
         </Link>
+    )
+}
+
+WorkoutCard.Skeleton = function WorkoutCardSkeleton() {
+    return (
+        <div className="bg-zinc-900/40 border border-zinc-800/50 shadow-xl p-6 sm:p-10 rounded-3xl backdrop-blur-sm overflow-hidden relative animate-pulse">
+            <div className="absolute top-0 right-0 p-8 opacity-[0.02]">
+                <Dumbbell className="w-32 h-32" />
+            </div>
+            <div className="relative space-y-6">
+                <div className="space-y-1">
+                    <Skeleton className="h-[36px] w-3/4 rounded-xl bg-zinc-800/50" />
+                    <Skeleton className="h-[16px] w-48 rounded-md bg-zinc-800/50 mt-1" />
+                </div>
+                <Skeleton className="h-12 w-40 rounded-xl bg-zinc-800/50" />
+            </div>
+        </div>
     )
 }

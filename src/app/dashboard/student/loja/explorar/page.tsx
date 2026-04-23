@@ -62,9 +62,9 @@ export default function StoreExplorePage() {
         return matchesSearch && matchesCategory && matchesSub
     })
 
-    async function handleBuy(product: any) {
-        await logProductClick(product.id)
+    function handleBuy(product: any) {
         window.open(product.link_url, '_blank')
+        logProductClick(product.id)
     }
 
     return (

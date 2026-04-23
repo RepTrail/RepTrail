@@ -56,29 +56,7 @@ export function ErgogenicsCard({ userId }: ErgogenicsCardProps) {
 
     // ── Skeleton while loading ────────────────────────────────────────────────
     if ((isLoading || isLoadingLogs) && !rawErgogenics?.length) {
-        return (
-            <div className="space-y-6 animate-pulse">
-                <div className="flex items-center justify-between px-2">
-                    <div className="flex items-center gap-2">
-                        <Syringe className="w-4 h-4 text-zinc-800" />
-                        <Skeleton className="h-4 w-32 bg-zinc-800/50" />
-                    </div>
-                </div>
-                <div className="grid gap-6 md:grid-cols-2">
-                    {[1, 2].map((i) => (
-                        <div key={i} className="bg-zinc-900/40 border border-zinc-800/50 shadow-xl p-6 sm:p-10 rounded-3xl backdrop-blur-sm space-y-4">
-                            <div className="flex items-center justify-between">
-                                <div className="space-y-2">
-                                    <Skeleton className="h-5 w-32 bg-zinc-800/50" />
-                                    <Skeleton className="h-3 w-20 bg-zinc-800/50" />
-                                </div>
-                                <Skeleton className="h-10 w-10 rounded-xl bg-zinc-800/50" />
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        )
+        return <ErgogenicsCard.Skeleton />
     }
 
     // ── Day/Log Calculation ───────────────────────────────────────────────────
@@ -159,6 +137,36 @@ export function ErgogenicsCard({ userId }: ErgogenicsCardProps) {
                     </div>
                 </div>
             )}
+        </div>
+    )
+}
+
+ErgogenicsCard.Skeleton = function ErgogenicsCardSkeleton() {
+    return (
+        <div className="space-y-6 animate-pulse">
+            <div className="flex items-center justify-between px-2">
+                <h2 className="text-[12px] font-black text-zinc-100 flex items-center gap-2 uppercase tracking-[0.2em] opacity-50">
+                    <Syringe className="w-4 h-4 text-orange-500/50" />
+                    Ergogênicos do Dia
+                </h2>
+            </div>
+            <div className="grid gap-6 md:grid-cols-1">
+                {[1, 2].map((i) => (
+                    <div key={i} className="bg-zinc-900/40 border border-zinc-800/50 p-6 sm:p-10 rounded-3xl backdrop-blur-sm space-y-4">
+                        <div className="flex items-center justify-between">
+                            <div className="space-y-2">
+                                <Skeleton className="h-6 w-48 bg-zinc-800/50" />
+                                <Skeleton className="h-3 w-24 bg-zinc-800/50" />
+                            </div>
+                            <Skeleton className="h-12 w-12 rounded-xl bg-zinc-800/50" />
+                        </div>
+                        <div className="pt-4 border-t border-zinc-800/50">
+                            <Skeleton className="h-3 w-full max-w-sm bg-zinc-800/50" />
+                            <Skeleton className="h-3 w-2/3 bg-zinc-800/50 mt-1" />
+                        </div>
+                    </div>
+                ))}
+            </div>
         </div>
     )
 }

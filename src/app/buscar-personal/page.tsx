@@ -79,7 +79,7 @@ export default function SearchPersonalPage() {
                     <div className="space-y-6">
                         <Link href="/dashboard/student" className="group w-fit text-[10px] font-black text-zinc-500 uppercase tracking-[0.3em] hover:text-white transition-all flex items-center gap-2">
                             <ArrowRight className="w-3 h-3 rotate-180 group-hover:-translate-x-1 transition-transform" />
-                            Voltar ao Dashboard
+                            Voltar
                         </Link>
                         <Logo size="lg" className="max-md:scale-90" />
                     </div>

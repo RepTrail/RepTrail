@@ -86,7 +86,7 @@ export function WorkoutLogReview({ logId, userId, workoutName, completedAt, load
     const time = new Date(completedAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
 
     return (
-        <div className="max-w-lg mx-auto  space-y-4">
+        <div className="max-w-lg mx-auto space-y-4 md:pb-32">
             {/* Header */}
             <div className="space-y-3">
                 <Link
@@ -118,7 +118,7 @@ export function WorkoutLogReview({ logId, userId, workoutName, completedAt, load
                 {Object.entries(grouped).map(([exerciseName, exerciseLoads]) => (
                     <div key={exerciseName} className="bg-zinc-900/50 border border-zinc-800/60 rounded-2xl overflow-hidden">
                         {/* Exercise title */}
-                        <div className="flex items-center gap-3 pb-4 py-2 border-b border-zinc-800/40">
+                        <div className="flex items-center gap-3 px-4 py-3 border-b border-zinc-800/40 bg-zinc-900/80">
                             <Dumbbell className="w-4 h-4 text-orange-500/70 flex-shrink-0" />
                             <p className="text-sm font-black text-white italic uppercase tracking-tight">
                                 {exerciseName}
@@ -135,7 +135,7 @@ export function WorkoutLogReview({ logId, userId, workoutName, completedAt, load
                                 const edit = edits[load.id] || { weight: '0', reps: '0' }
 
                                 return (
-                                    <div key={load.id} className="flex items-center gap-3 pb-4 py-2">
+                                    <div key={load.id} className="flex items-center gap-3 px-4 py-3">
                                         {/* Set type badge */}
                                         <span className={`flex-shrink-0 text-[9px] font-black px-2 py-0.5 rounded-md border uppercase ${cfg?.color ?? ''} ${cfg?.bg ?? ''} ${cfg?.border ?? ''}`}>
                                             {cfg.label}

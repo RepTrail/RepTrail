@@ -63,13 +63,13 @@ export default async function TrainerPublicProfile({ params }: { params: Promise
         <div className="min-h-screen bg-zinc-950 text-white selection:bg-emerald-500/30">
             {/* Header */}
             <header className="fixed top-0 left-0 right-0 z-50 bg-zinc-950/80 backdrop-blur-md border-b border-zinc-900">
-                <div className="container mx-auto  md:px-6 h-20 flex items-center justify-between">
+                <div className="container mx-auto px-4 md:px-6 h-20 flex items-center justify-between">
                     <Logo />
                     <div className="flex items-center gap-6">
                         {user && (
                             <Link href="/dashboard/student" className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors group">
                                 <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-                                <span className="text-sm font-medium">Voltar ao Dashboard</span>
+                                <span className="text-sm font-medium">Voltar</span>
                             </Link>
                         )}
                         {!user && (
@@ -83,7 +83,7 @@ export default async function TrainerPublicProfile({ params }: { params: Promise
                 </div>
             </header>
 
-            <main className="container mx-auto  md:px-6 pt-32 pb-20">
+            <main className="container mx-auto px-4 md:px-6 pt-32 pb-20">
                 <div className="max-w-4xl mx-auto space-y-12">
 
                     {/* Hero Section */}

@@ -19,18 +19,7 @@ export function MetricsSummary({ userId }: MetricsSummaryProps) {
 
     // Skeleton Fallback: Only if loading AND no cache available
     if (isLoading && !metrics) {
-        return (
-            <div className="grid grid-cols-2 gap-4 animate-pulse">
-                <div className="bg-zinc-900/30 border border-zinc-800/50 rounded-3xl p-5 space-y-2">
-                    <Skeleton className="h-2 w-10 bg-zinc-800/50" />
-                    <Skeleton className="h-6 w-16 bg-zinc-800/50" />
-                </div>
-                <div className="bg-zinc-900/30 border border-zinc-800/50 rounded-3xl p-5 space-y-2">
-                    <Skeleton className="h-2 w-10 bg-zinc-800/50" />
-                    <Skeleton className="h-6 w-16 bg-zinc-800/50" />
-                </div>
-            </div>
-        )
+        return <MetricsSummary.Skeleton />
     }
 
     return (
@@ -52,3 +41,19 @@ export function MetricsSummary({ userId }: MetricsSummaryProps) {
         </div>
     )
 }
+
+MetricsSummary.Skeleton = function MetricsSummarySkeleton() {
+    return (
+        <div className="grid grid-cols-2 gap-4 animate-pulse">
+            <div className="bg-zinc-900/30 border border-zinc-800/50 rounded-3xl p-5 space-y-1">
+                <Skeleton className="h-[14px] w-12 bg-zinc-800/50" />
+                <Skeleton className="h-8 w-16 bg-zinc-800/50" />
+            </div>
+            <div className="bg-zinc-900/30 border border-zinc-800/50 rounded-3xl p-5 space-y-1">
+                <Skeleton className="h-[14px] w-12 bg-zinc-800/50" />
+                <Skeleton className="h-8 w-16 bg-zinc-800/50" />
+            </div>
+        </div>
+    )
+}
+
