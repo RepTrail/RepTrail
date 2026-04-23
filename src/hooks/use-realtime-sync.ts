@@ -22,6 +22,11 @@ interface RealtimeSyncOptions {
  * 3. On UPDATE: only apply if the cache item is not flagged as _optimistic.
  * 4. On DELETE: always apply (server is authoritative on deletions).
  */
+// ─── MODULE-LEVEL MUTEX ───────────────────────────────────────────────────────
+// Shared across all hook instances to prevent race conditions where two
+// simultaneous async guards both pass before the first one finishes processing.
+const processingIds = new Set<string>()
+
 export function useRealtimeSync({
     table,
     queryKey,
@@ -38,73 +43,87 @@ export function useRealtimeSync({
             if (!incoming?.[idField]) return
 
             const entityId = incoming[idField]
-            const mutationId = incoming.client_mutation_id
-            
-            // ─── IDENTITY ─────────────────────────────────────────────────────────────
-            const localClientId = typeof window !== 'undefined' ? localStorage.getItem('reptrail_client_id') : null
 
-            // ─── LAYER 1: SAME CLIENT REJECTION ─────────────────────────────────────
-            if (incoming.client_id && incoming.client_id === localClientId) {
+            // ─── MUTEX GUARD (prevents async race between simultaneous events) ──────
+            const mutexKey = `${table}:${entityId}`
+            if (processingIds.has(mutexKey)) {
+                console.log(`[RealtimeSync] 🔒 Mutex: Skipping ${mutexKey} — already processing.`)
                 return
             }
+            processingIds.add(mutexKey)
 
-            // ─── LAYER 2: PROCESSED ID REJECTION (IDEMPOTENCY) ──────────────────────
-            const isProcessed = mutationId ? await outboxDB.isProcessed(mutationId) : false
-            if (isProcessed) return
+            try {
+                const mutationId = incoming.client_mutation_id
+                
+                // ─── IDENTITY ─────────────────────────────────────────────────────────────
+                const localClientId = typeof window !== 'undefined' ? localStorage.getItem('reptrail_client_id') : null
 
-            // ─── LAYER 3 & 4: PENDING MUTATION REJECTION ───────────────────────────
-            const pending = await outboxDB.getPending()
-            const isBlocked = pending.some(p =>
-                (mutationId && p.clientMutationId === mutationId) ||
-                (p.entity === table && p.entityId === entityId)
-            )
+                // ─── LAYER 1: SAME CLIENT REJECTION ─────────────────────────────────────
+                if (incoming.client_id && incoming.client_id === localClientId) {
+                    return
+                }
 
-            if (isBlocked) {
-                console.log(`[RealtimeSync] 🛡️ Guard: Blocked ${table}:${entityId} - Local mutation in progress.`)
-                return
+                // ─── LAYER 2: PROCESSED ID REJECTION (IDEMPOTENCY) ──────────────────────
+                const isProcessed = mutationId ? await outboxDB.isProcessed(mutationId) : false
+                if (isProcessed) return
+
+                // ─── LAYER 3 & 4: PENDING MUTATION REJECTION ───────────────────────────
+                const pending = await outboxDB.getPending()
+                const isBlocked = pending.some(p =>
+                    (mutationId && p.clientMutationId === mutationId) ||
+                    (p.entity === table && p.entityId === entityId)
+                )
+
+                if (isBlocked) {
+                    console.log(`[RealtimeSync] 🛡️ Guard: Blocked ${table}:${entityId} - Local mutation in progress.`)
+                    return
+                }
+
+                // ─── DETERMINISTIC RECONCILIATION ────────────────────────────────────────
+                queryClient.setQueryData(queryKey, (oldData: any) => {
+                    if (!oldData) return oldData
+
+                    // Handle List Views (Array)
+                    if (Array.isArray(oldData)) {
+                        if (payload.eventType === 'DELETE') {
+                            return oldData.filter((i: any) => i[idField] !== entityId)
+                        }
+
+                        // Map-based Deterministic Merge (ULTRA-SAFE)
+                        const map = new Map(oldData.map((i: any) => [i[idField], i]))
+                        const prev = map.get(entityId)
+
+                        // Overlay Pattern: Local Base + Server Overlay
+                        map.set(entityId, {
+                            ...prev,
+                            ...incoming,
+                            _optimistic: prev?._optimistic ?? false,
+                            _pending: prev?._pending ?? false,
+                            _error: undefined
+                        })
+
+                        return Array.from(map.values())
+                    }
+
+                    // Handle Detail Views (Object)
+                    if (typeof oldData === 'object' && oldData[idField] === entityId) {
+                        if (payload.eventType === 'DELETE') return null
+                        
+                        return {
+                            ...oldData,
+                            ...incoming,
+                            _optimistic: oldData?._optimistic ?? false,
+                            _pending: oldData?._pending ?? false,
+                            _error: undefined
+                        }
+                    }
+
+                    return oldData
+                })
+            } finally {
+                // ─── MUTEX RELEASE ──────────────────────────────────────────────────────
+                processingIds.delete(mutexKey)
             }
-
-            // ─── DETERMINISTIC RECONCILIATION ────────────────────────────────────────
-            queryClient.setQueryData(queryKey, (oldData: any) => {
-                if (!oldData) return oldData
-
-                // Handle List Views (Array)
-                if (Array.isArray(oldData)) {
-                    if (payload.eventType === 'DELETE') {
-                        return oldData.filter((i: any) => i[idField] !== entityId)
-                    }
-
-                    // Map-based Deterministic Merge (ULTRA-SAFE)
-                    const map = new Map(oldData.map((i: any) => [i[idField], i]))
-                    const prev = map.get(entityId)
-
-                    // Overlay Pattern: Local Base + Server Overlay
-                    map.set(entityId, {
-                        ...prev,
-                        ...incoming,
-                        _optimistic: prev?._optimistic ?? false,
-                        _pending: prev?._pending ?? false,
-                        _error: undefined
-                    })
-
-                    return Array.from(map.values())
-                }
-
-                // Handle Detail Views (Object)
-                if (typeof oldData === 'object' && oldData[idField] === entityId) {
-                    if (payload.eventType === 'DELETE') return null
-                    
-                    return {
-                        ...oldData,
-                        ...incoming,
-                        _optimistic: oldData?._optimistic ?? false,
-                        _pending: oldData?._pending ?? false,
-                        _error: undefined
-                    }
-                }
-
-                return oldData
-            })
         }
 
         let channelConfig = supabase

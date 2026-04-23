@@ -1,6 +1,6 @@
 import { openDB, IDBPDatabase } from 'idb';
 
-export type OutboxStatus = 'pending' | 'conflict' | 'processing' | 'processed';
+export type OutboxStatus = 'pending' | 'conflict' | 'processing' | 'processed' | 'failed';
 
 export const ENTITIES = {
   WORKOUT: 'workouts',
@@ -120,6 +120,26 @@ export const outboxDB = {
 
   async markConflict(id: string): Promise<void> {
     await this.updateStatus(id, 'conflict');
+  },
+
+  async markFailed(id: string): Promise<void> {
+    await this.updateStatus(id, 'failed');
+  },
+
+  async getFailed(): Promise<OutboxRecord[]> {
+    const db = await getDB();
+    const all = await db.getAll(STORE_NAME);
+    return all.filter((r: OutboxRecord) => r.status === 'failed');
+  },
+
+  async retryFailed(): Promise<void> {
+    const db = await getDB();
+    const all = await db.getAll(STORE_NAME);
+    const failed = all.filter((r: OutboxRecord) => r.status === 'failed');
+    for (const record of failed) {
+      record.status = 'pending';
+      await db.put(STORE_NAME, record);
+    }
   },
 
   async clear(): Promise<void> {

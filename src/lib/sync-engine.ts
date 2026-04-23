@@ -214,12 +214,22 @@ class SyncEngine {
       
       this.retryCounts[record.id] = (this.retryCounts[record.id] || 0) + 1;
       
-      // PHASE 3: CAP RETRIES AT 5
+      // ─── CAP RETRIES: move to FAILED (auditable, not silently discarded) ──────
       if (this.retryCounts[record.id] >= 5) {
-          console.error(`🔥 Mutation ${record.id} failed after 5 retries. Marking as FAILED.`);
-          await outboxDB.updateStatus(record.id, 'processed'); // Move to processed store or similar if we had a failed store
-          // We can use 'processed' or a new 'failed' status if we add it. 
-          // For now, let's mark it so it stops looping.
+          console.error(`🔥 Mutation ${record.id} failed after 5 retries. Moving to FAILED queue.`);
+          await outboxDB.markFailed(record.id);
+          delete this.retryCounts[record.id];
+
+          // Notify the UI — surface a recovery option (toast / recovery banner)
+          if (typeof window !== 'undefined') {
+              window.dispatchEvent(new CustomEvent('reptrail:sync-failed', {
+                  detail: {
+                      id: record.id,
+                      action: record.action,
+                      entity: record.entity,
+                  }
+              }));
+          }
       }
     }
   }

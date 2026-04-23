@@ -117,6 +117,18 @@ async function StudentDashboardContent({ userId }: { userId: string }) {
             queryFn: () => getStudentErgogenics(userId) 
         }),
 
+        // Diet Chain (Fix #3: explicit Stage 2 prefetch — eliminates DietCard skeleton)
+        queryClient.prefetchQuery({
+            queryKey: QUERY_KEYS.diets.today(userId),
+            queryFn: () => getStudentDailyDiet(userId)
+        }),
+
+        // Cardio Session (prefetch eliminates CardioPlayer skeleton)
+        queryClient.prefetchQuery({
+            queryKey: QUERY_KEYS.cardio.session,
+            queryFn: () => import('@/actions/cardio-actions').then(m => m.getActiveCardioSession())
+        }),
+
         // Metrics & Misc
         queryClient.prefetchQuery({ 
             queryKey: QUERY_KEYS.student.metricsSummary(userId), 

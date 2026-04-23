@@ -190,7 +190,9 @@ export async function getErgogenicLogs(studentId: string) {
 }
 export async function getAssignedErgogenics(studentId: string) {
     const result = await getStudentErgogenics(studentId)
-    return result.data || []
+    // getStudentErgogenics returns any[] directly, or { error: string } on failure
+    if (Array.isArray(result)) return result
+    return []
 }
 
 export async function getTodayErgogenicLogs(studentId: string) {

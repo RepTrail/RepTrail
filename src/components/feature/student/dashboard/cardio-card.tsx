@@ -21,9 +21,8 @@ export function CardioCard({ userId }: CardioCardProps) {
 
     useRealtimeSync({
         table: 'cardio_logs',
-        queryKey: QUERY_KEYS.cardio.all(userId),
-        filter: `student_id=eq.${userId}`,
-        exact: false
+        queryKey: QUERY_KEYS.cardio.logs(userId),
+        filter: `student_id=eq.${userId}`
     })
 
     const { data: cardios, isLoading } = useQuery({

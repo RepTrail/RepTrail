@@ -41,17 +41,29 @@ export function QueryProvider({ children }: { children: ReactNode }) {
                 dehydrateOptions: {
                     shouldDehydrateQuery: (query) => {
                         const key = query.queryKey[0] as string
-                        
-                        // 🔴 FIX: Blacklist volatile session/player data from IndexedDB persistence
-                        // Blacklist ONLY highly transient OR extremely large sensitive data
-                        const blacklist = [
-                            'cardioSession', 'workoutSession', 'player', 'live', 'temp',
-                            'auth', 'admin'
-                        ]
-                        
+
+                        // 🔒 DATA ISOLATION: Exclude sensitive/non-student data from IndexedDB.
+                        // This prevents admin/trainer data from persisting on a student's device
+                        // and stops ephemeral data from growing the IndexedDB unboundedly.
+                        const blacklist = new Set([
+                            // Session / transient (highly volatile, no value storing)
+                            'active-cardio-session',
+                            'active-workout-session',
+                            'player',
+                            'live',
+                            'temp',
+                            // Security: never persist on student devices
+                            'admin',
+                            'trainer',
+                            // Ephemeral / public (large, not needed offline)
+                            'search',
+                            'public',
+                            'affiliate',
+                        ])
+
                         const isLargePayload = JSON.stringify(query.state.data || '').length > 1_000_000 // 1MB limit
-                        
-                        return !blacklist.includes(key) && !isLargePayload
+
+                        return !blacklist.has(key) && !isLargePayload
                     }
                 }
             }}

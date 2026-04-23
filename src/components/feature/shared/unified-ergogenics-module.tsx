@@ -105,8 +105,8 @@ export function UnifiedErgogenicsModule({
         queryKey: QUERY_KEYS.ergogenics.logs(studentId),
         queryFn: async () => {
             const res = await getErgogenicLogs(studentId)
-            if ('error' in res && res.error) throw new Error(res.error)
-            return (res as any).data || []
+            // getErgogenicLogs returns any[] directly (never wrapped in { data })
+            return Array.isArray(res) ? res : []
         },
         initialData: initialLogs,
         staleTime: 1000 * 60 * 5

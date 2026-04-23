@@ -235,7 +235,7 @@ export function WorkoutPlayer({
                 console.log('Day changed! Refreshing stale data...')
                 // Local-First: invalidate stale today data without destroying the active session
                 queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workouts.today(userId) })
-                queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workouts.status(userId) })
+                queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workouts.all(userId) })
             }
         }, 60000)
 

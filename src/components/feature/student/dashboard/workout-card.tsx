@@ -1,7 +1,6 @@
 'use client'
 
 import { getTodayWorkout } from '@/actions/workout-actions'
-import { getWorkoutStatus } from '@/actions/log-actions'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Dumbbell, CheckCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -36,16 +35,13 @@ export function WorkoutCard({ userId }: WorkoutCardProps) {
         refetchOnWindowFocus: false,
     })
 
-    const { data: statusData, isLoading: isLoadingStatus } = useQuery({
-        queryKey: QUERY_KEYS.workouts.status(userId, workout?.id ?? 'no-workout'),
-        queryFn: () => workout ? getWorkoutStatus(userId, workout.id) : Promise.resolve({ status: 'empty', logId: null }),
-        staleTime: 1000 * 60 * 5,
-        refetchOnMount: false,
-        refetchOnWindowFocus: false,
-    })
+    // Status and logId are pre-injected server-side into the workout object by
+    // getTodayWorkout — no second network round-trip needed (0ms card render).
+    const status = (workout as any)?.status || 'not_started'
+    const logId = (workout as any)?.logId || null
 
     // Skeleton Fallback: Only show if truly loading AND no cache available
-    if ((isLoadingWorkout || (workout && isLoadingStatus)) && !workout) {
+    if (isLoadingWorkout && !workout) {
         return (
             <div className="bg-zinc-900/40 border border-zinc-800/50 shadow-xl p-6 sm:p-10 rounded-3xl backdrop-blur-sm overflow-hidden h-[280px] relative animate-pulse">
                 <div className="absolute top-0 right-0 p-8 opacity-[0.02]">
@@ -70,10 +66,6 @@ export function WorkoutCard({ userId }: WorkoutCardProps) {
             </div>
         )
     }
-
-    // Sync status: Prioritize statusData, but fallback to optimistic decor on workout object
-    const status = statusData?.status || (workout as any)?.status || 'not_started'
-    const logId = statusData?.logId
 
     const href = status === 'completed' && logId
         ? `/dashboard/student/workout-log/${logId}/review`

@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Check } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
@@ -19,11 +20,24 @@ export function ErgogenicCheckButton({ studentId, ergogenicId, initialChecked }:
     const { toast } = useToast()
     const queryClient = useQueryClient()
 
+    // ─── LOCAL STATE (prevents double-tap race condition) ────────────────────────
+    // Using local state derived from the prop means that the toggle always
+    // operates on the CURRENT checked state, not the stale prop value.
+    const [checked, setChecked] = useState(initialChecked)
+
+    // ─── MULTI-DEVICE SYNC ────────────────────────────────────────────────────────
+    // useState ignores prop changes after initial mount. If another device toggles
+    // this ergogenic and realtime updates the parent cache, we must sync here.
+    // This effect only runs when the parent's authoritative value genuinely changes.
+    useEffect(() => {
+        setChecked(initialChecked)
+    }, [initialChecked])
+
     const { mutate } = useOptimisticMutation({
         queryKey: QUERY_KEYS.ergogenics.logs(studentId),
         actionName: 'toggle-ergogenic-log',
         entity: ENTITIES.ERGOGENIC_LOG,
-        entityId: ergogenicId, // Log is usually tied to ergogenicId for today
+        entityId: ergogenicId,
         mutationFn: async (variables) => variables, // 🔴 HARD BLOCK
         updateFn: (oldData: any, variables: any) => {
             // Standardize: always work with a flat array
@@ -50,6 +64,8 @@ export function ErgogenicCheckButton({ studentId, ergogenicId, initialChecked }:
             })
         },
         onError: (error) => {
+            // ─── ROLLBACK local state on error ───────────────────────────────────
+            setChecked(prev => !prev)
             toast({
                 variant: 'destructive',
                 title: 'Erro',
@@ -59,10 +75,14 @@ export function ErgogenicCheckButton({ studentId, ergogenicId, initialChecked }:
     })
 
     const handleToggle = () => {
+        // Toggle local state FIRST (0ms, synchronous)
+        const next = !checked
+        setChecked(next)
+
         mutate({
             student_id: studentId,
             ergogenic_id: ergogenicId,
-            status: !initialChecked
+            status: next
         })
     }
 
@@ -72,14 +92,14 @@ export function ErgogenicCheckButton({ studentId, ergogenicId, initialChecked }:
             variant="ghost"
             className={cn(
                 "w-12 h-12 rounded-xl flex items-center justify-center border transition-all p-0 shadow-lg active:scale-95 group",
-                initialChecked
+                checked
                     ? "bg-emerald-500 border-emerald-400 text-zinc-950 hover:bg-emerald-400 shadow-[0_0_25px_rgba(16,185,129,0.5)]"
                     : "bg-zinc-900/50 border-zinc-800 text-zinc-400 hover:text-emerald-500 hover:border-emerald-500/50"
             )}
         >
             <Check className={cn(
                 "w-6 h-6 transition-all",
-                initialChecked ? "scale-110 opacity-100" : "scale-100 opacity-50 group-hover:opacity-100"
+                checked ? "scale-110 opacity-100" : "scale-100 opacity-50 group-hover:opacity-100"
             )} strokeWidth={4} />
         </Button>
     )
