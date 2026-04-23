@@ -113,7 +113,7 @@ export function PWAInstallPrompt() {
                     </DialogClose>
                 </div>
 
-                <div className="relative p-5 pt-10 md:p-10 md:pt-20 space-y-5 flex-1">
+                <div className="relative p-5 pt-10 md:p-10 md:pt-20 space-y-5 overflow-y-auto flex-1 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
                     {/* Visual Decor */}
                     <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none">
                         <Smartphone className="w-48 h-48 text-emerald-500" />
