@@ -354,21 +354,22 @@ async function StudentDashboardContent({ userId }: { userId: string }) {
  */
 function StudentDashboardSkeleton() {
     return (
-        <div className="space-y-10 animate-pulse">
-            <div className="h-12 w-full bg-zinc-900 rounded-xl" />
-            <div className="flex justify-between items-end">
+        <div className="space-y-10 animate-pulse pb-20">
+            <div className="h-12 w-full bg-zinc-900/50 border border-zinc-800/50 rounded-xl" />
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div className="space-y-4">
                     <div className="h-10 w-48 bg-zinc-900 rounded-xl" />
                     <div className="h-4 w-64 bg-zinc-900 rounded-md" />
                 </div>
-                <div className="h-16 w-40 bg-zinc-900 rounded-xl" />
+                <div className="h-16 w-32 bg-zinc-900 rounded-xl" />
             </div>
-            <div className="grid grid-cols-12 gap-8">
-                <div className="col-span-8 space-y-10">
+            <div className="grid gap-8 lg:grid-cols-12">
+                <div className="lg:col-span-8 flex flex-col gap-8">
                     <div className="h-[280px] bg-zinc-900 rounded-[2.5rem]" />
-                    <div className="h-[400px] bg-zinc-900 rounded-[2.5rem]" />
+                    <div className="h-[300px] bg-zinc-900 rounded-[2.5rem]" />
+                    <div className="h-[200px] bg-zinc-900 rounded-[2.5rem]" />
                 </div>
-                <div className="col-span-4 h-[600px] bg-zinc-900 rounded-[2.5rem]" />
+                <div className="lg:col-span-4 h-[600px] bg-zinc-900 rounded-[2.5rem]" />
             </div>
         </div>
     )
