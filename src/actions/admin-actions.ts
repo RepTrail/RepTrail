@@ -468,11 +468,15 @@ export async function deleteUser(userId: string) {
     const { supabase, userId: adminId } = await checkAdmin()
     const admin = createAdminClient()
     try {
-        const { data: profile } = await supabase.from('profiles').select('avatar_url').eq('id', userId).single()
+        // 1. STORAGE CLEANUP
+        // Avatar
+        const { data: profile } = await supabase.from('profiles').select('avatar_url').eq('id', userId).maybeSingle()
         if (profile?.avatar_url) {
             const avatarPath = profile.avatar_url.split('/').slice(-2).join('/')
             if (avatarPath) await supabase.storage.from('avatars').remove([avatarPath])
         }
+        
+        // Progress Photos
         const { data: progressPhotos } = await supabase.from('progress_photos').select('front_url, back_url, side_left_url, side_right_url').eq('student_id', userId)
         if (progressPhotos) {
             const photoPaths: string[] = []
@@ -487,6 +491,8 @@ export async function deleteUser(userId: string) {
             })
             if (photoPaths.length > 0) await supabase.storage.from('progress-photos').remove(photoPaths)
         }
+
+        // PDF Uploads
         const { data: pdfUploads } = await supabase.from('pdf_uploads').select('file_url').eq('uploader_id', userId)
         if (pdfUploads) {
             const pdfPaths: string[] = []
@@ -498,16 +504,77 @@ export async function deleteUser(userId: string) {
             })
             if (pdfPaths.length > 0) await supabase.storage.from('pdf-uploads').remove(pdfPaths)
         }
-        await supabase.from('admin_logs').insert({ admin_id: adminId, action: 'delete_user', target_id: userId, details: { deleted_at: new Date().toISOString() } })
+
+        // 2. DATABASE CLEANUP (Child tables first to satisfy constraints)
+        
+        // User Activity & Logs
+        await supabase.from('workout_logs').delete().eq('student_id', userId)
+        await supabase.from('cardio_logs').delete().eq('student_id', userId)
+        await supabase.from('cardio_sessions').delete().eq('student_id', userId)
+        await supabase.from('ergogenic_logs').delete().eq('student_id', userId)
+        await supabase.from('meal_item_logs').delete().eq('user_id', userId)
+        await supabase.from('daily_tracking').delete().eq('user_id', userId)
+        
+        // History & Metrics
+        await supabase.from('weight_history').delete().eq('student_id', userId)
+        await supabase.from('bf_history').delete().eq('student_id', userId)
+        await supabase.from('metrics_summary').delete().eq('student_id', userId)
+        await supabase.from('progress_photos').delete().eq('student_id', userId)
+        await supabase.from('ai_protocol_status').delete().eq('student_id', userId)
+        
+        // Assignments & Relationships
+        await supabase.from('assigned_workouts').delete().eq('student_id', userId)
+        await supabase.from('assigned_diets').delete().eq('student_id', userId)
+        await supabase.from('assigned_cardios').delete().eq('student_id', userId)
+        await supabase.from('assigned_ergogenics').delete().eq('student_id', userId)
+        await supabase.from('trainer_students').delete().or(`student_id.eq.${userId},trainer_id.eq.${userId}`)
+        await supabase.from('trainer_reviews').delete().or(`student_id.eq.${userId},trainer_id.eq.${userId}`)
+        
+        // Trainer Libraries (Workouts depend on these, so we delete them after logs)
+        await supabase.from('workouts').delete().eq('trainer_id', userId)
+        await supabase.from('diets').delete().eq('trainer_id', userId)
+        await supabase.from('cardios').delete().eq('trainer_id', userId)
+        await supabase.from('ergogenics').delete().eq('trainer_id', userId)
+        await supabase.from('exercises').delete().eq('trainer_id', userId)
+        
+        // Metadata & Misc
+        await supabase.from('notifications').delete().eq('user_id', userId)
+        await supabase.from('outbox').delete().eq('user_id', userId)
+        await supabase.from('pdf_uploads').delete().eq('uploader_id', userId)
+        await supabase.from('student_details').delete().eq('id', userId)
+        await supabase.from('product_clicks').delete().eq('user_id', userId)
+        
+        // 3. FINAL LOGGING AND DELETION
+        await supabase.from('admin_logs').insert({ 
+            admin_id: adminId, 
+            action: 'delete_user', 
+            target_id: userId, 
+            details: { deleted_at: new Date().toISOString(), type: 'hard_delete' } 
+        })
+        
+        // Delete from profiles (last DB step)
         const { error: profileError } = await supabase.from('profiles').delete().eq('id', userId)
-        if (profileError) return { error: `Erro ao deletar dados: ${profileError.message}` }
-        if (!admin) return { success: true, warning: 'Dados coletados e removidos do banco, mas a conta de LOGIN ainda existe.' }
+        if (profileError) {
+            console.error('Profile deletion error:', profileError)
+            return { error: `Erro ao deletar perfil: ${profileError.message}` }
+        }
+        
+        // Delete from auth.users (requires service role)
+        if (!admin) {
+            return { success: true, warning: 'Dados removidos do banco, mas o login Auth não pôde ser excluído (Configuração de Admin ausente).' }
+        }
+        
         const { error: authError } = await admin.auth.admin.deleteUser(userId)
-        if (authError) return { success: true, warning: `Dados apagados, mas houve erro no login: ${authError.message}` }
+        if (authError) {
+            console.warn('Auth deletion error:', authError)
+            return { success: true, warning: `Dados apagados do banco, mas houve erro ao remover conta de login: ${authError.message}` }
+        }
+        
         revalidatePath('/admin')
         return { success: true }
     } catch (e: any) {
-        return { error: `Erro inesperado: ${e.message}` }
+        console.error('Delete User Hard Crash:', e)
+        return { error: `Erro inesperado durante a exclusão: ${e.message}` }
     }
 }
 
