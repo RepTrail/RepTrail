@@ -37,7 +37,9 @@ export function WorkoutCard({ userId }: WorkoutCardProps) {
     const { data: statusData, isLoading: isLoadingStatus } = useQuery({
         queryKey: QUERY_KEYS.workouts.status(userId, workout?.id),
         enabled: !!userId && !!workout,
-        queryFn: () => getWorkoutStatus(userId, workout!.id)
+        queryFn: () => getWorkoutStatus(userId, workout!.id),
+        staleTime: 1000 * 15, // 15s stale time for status ensures optimistic data sticks
+        refetchOnMount: false, // Don't refetch on mount if data is in cache
     })
 
     // Skeleton Fallback: Only show if truly loading AND no cache available
@@ -67,7 +69,8 @@ export function WorkoutCard({ userId }: WorkoutCardProps) {
         )
     }
 
-    const status = statusData?.status ?? 'not_started'
+    // Sync status: Prioritize statusData, but fallback to optimistic decor on workout object
+    const status = statusData?.status || (workout as any)?.status || 'not_started'
     const logId = statusData?.logId
 
     const href = status === 'completed' && logId

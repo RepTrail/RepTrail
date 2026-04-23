@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { upsertDailyTracking } from '@/actions/tracking-actions'
+import { getTodayRangeBrazil } from '@/lib/date-utils'
 
 export async function startWorkoutLog(workoutId: string) {
     const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
@@ -721,9 +722,4 @@ export async function getWorkoutStatus(userId: string, workoutId: string) {
     return { status: 'not_started', logId: null }
 }
 
-function getTodayRangeBrazil() {
-    const now = new Date()
-    const start = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0).toISOString()
-    const end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999).toISOString()
-    return { start, end }
-}
+// Logic moved to @/lib/date-utils
