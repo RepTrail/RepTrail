@@ -17,6 +17,17 @@ export function QueryProvider({ children }: { children: ReactNode }) {
     useEffect(() => {
         syncEngine.setQueryClient(queryClient)
         syncEngine.start()
+
+        // 🧠 INVARIANT ELITE: Runtime fetch guard
+        // Detects any query that fires a fetch without pre-existing data (unexpected waterfall/missing prefetch)
+        if (process.env.NODE_ENV === 'development') {
+            const unsubscribe = queryClient.getQueryCache().subscribe((event: any) => {
+                if (event.type === 'updated' && event.action?.type === 'fetch' && !event.query.state.data) {
+                    console.error('🚨 UNEXPECTED FETCH (UNPREFETCHED KEY):', event.query.queryKey);
+                }
+            });
+            return () => unsubscribe();
+        }
     }, [queryClient])
 
     return (

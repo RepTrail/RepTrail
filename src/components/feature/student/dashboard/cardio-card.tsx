@@ -15,26 +15,29 @@ interface CardioCardProps {
 export function CardioCard({ userId }: CardioCardProps) {
     useRealtimeSync({
         table: 'assigned_cardios',
-        queryKey: QUERY_KEYS.cardio.today(userId),
+        queryKey: QUERY_KEYS.cardio.all(userId),
         filter: `student_id=eq.${userId}`
     })
 
     useRealtimeSync({
         table: 'cardio_logs',
-        queryKey: QUERY_KEYS.cardio.today(userId),
-        filter: `student_id=eq.${userId}`
+        queryKey: QUERY_KEYS.cardio.all(userId),
+        filter: `student_id=eq.${userId}`,
+        exact: false
     })
 
     const { data: cardios, isLoading } = useQuery({
         queryKey: QUERY_KEYS.cardio.today(userId),
         queryFn: () => getTodayCardio(userId),
-        enabled: !!userId,
+        staleTime: 1000 * 60 * 5,
+        refetchOnMount: false,
     })
 
     const { data: cardioLogs, isLoading: isLoadingLogs } = useQuery({
-        queryKey: QUERY_KEYS.cardio.logs(userId), // Kept for status mapping
-        enabled: !!userId,
-        queryFn: () => getCardioStatus(userId)
+        queryKey: QUERY_KEYS.cardio.logs(userId),
+        queryFn: () => getCardioStatus(userId),
+        staleTime: 1000 * 60 * 5,
+        refetchOnMount: false,
     })
 
     // Skeleton Fallback: Only if loading AND no cache available

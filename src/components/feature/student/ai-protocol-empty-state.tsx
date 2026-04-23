@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { AIProtocolGenerator } from './ai-protocol-generator'
 import { Sparkles, Dumbbell, Utensils, Zap, X } from 'lucide-react'
 
-export function AIProtocolEmptyState() {
+export function AIProtocolEmptyState({ userId }: { userId: string }) {
     const [showForm, setShowForm] = useState(false)
 
     if (showForm) {
@@ -35,7 +35,7 @@ export function AIProtocolEmptyState() {
                     </Button>
                 </div>
 
-                <AIProtocolGenerator />
+                <AIProtocolGenerator userId={userId} />
             </div>
         )
     }

@@ -26,15 +26,17 @@ export const QUERY_KEYS = {
         activeSession: (userId: string) => ['student', userId, 'activeSession'],
         activity: (userId: string) => ['student', userId, 'activity'],
         photos: (userId: string) => ['student', userId, 'photos'],
+        hasProtocol: (userId: string) => ['student', userId, 'hasProtocol'],
     },
     workouts: {
         all: (userId: string) => ['workouts', userId],
         assignments: (userId: string) => ['workouts', userId],
         today: (userId: string) => ['workouts', userId, 'today'],
         detail: (workoutId: string) => ['workouts', workoutId],
-        status: (userId: string, workoutId?: string) => ['workouts', userId, 'status', workoutId],
+        status: (userId: string, workoutId: string) => ['workouts', userId, 'status', workoutId],
         logs: (userId: string) => ['workouts', userId, 'logs'],
         library: (userId: string) => ['workouts', userId, 'library'],
+        activeSession: (userId: string) => ['student', userId, 'activeSession'],
         session: ['active-workout-session'],
     },
     diets: {
@@ -51,6 +53,7 @@ export const QUERY_KEYS = {
         detail: (cardioId: string) => ['cardio', cardioId],
         logs: (userId: string) => ['cardio', userId, 'logs'],
         library: (userId: string) => ['cardio', userId, 'library'],
+        activeSession: (userId: string) => ['cardio', userId, 'activeSession'],
         session: ['active-cardio-session'],
     },
     ergogenics: {

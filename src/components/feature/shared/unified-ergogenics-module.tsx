@@ -94,8 +94,8 @@ export function UnifiedErgogenicsModule({
         queryKey: QUERY_KEYS.ergogenics.all(studentId),
         queryFn: async () => {
             const res = await getStudentErgogenics(studentId)
-            if ('error' in res && res.error) throw new Error(res.error)
-            return (res as any).data || []
+            if (res && 'error' in (res as any)) throw new Error((res as any).error)
+            return (res as any[]) || []
         },
         initialData: initialErgogenics,
         staleTime: 1000 * 60 * 5
@@ -112,8 +112,8 @@ export function UnifiedErgogenicsModule({
         staleTime: 1000 * 60 * 5
     })
 
-    const ergogenics = Array.isArray(ergogenicsData) ? ergogenicsData : (Array.isArray((ergogenicsData as any)?.data) ? (ergogenicsData as any).data : [])
-    const logs = Array.isArray(logsData) ? logsData : (Array.isArray((logsData as any)?.data) ? (logsData as any).data : [])
+    const ergogenics = Array.isArray(ergogenicsData) ? ergogenicsData : []
+    const logs = Array.isArray(logsData) ? logsData : []
 
     const today = new Date().getDay()
     const todayName = WEEKDAYS_FULL[today]

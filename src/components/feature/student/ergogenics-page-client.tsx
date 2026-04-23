@@ -39,8 +39,7 @@ export function ErgogenicsPageClient({ userId }: ErgogenicsPageClientProps) {
         queryKey: QUERY_KEYS.ergogenics.all(userId),
         queryFn: async () => {
             const res = await getStudentErgogenics(userId)
-            if ('error' in res) throw new Error(res.error)
-            return res.data || []
+            return (res as any[]) || []
         },
         staleTime: 1000 * 60 * 5
     })
@@ -49,8 +48,7 @@ export function ErgogenicsPageClient({ userId }: ErgogenicsPageClientProps) {
         queryKey: QUERY_KEYS.ergogenics.logs(userId),
         queryFn: async () => {
             const res = await getErgogenicLogs(userId)
-            if ('error' in res) throw new Error(res.error)
-            return res.data || []
+            return (res as any[]) || []
         },
         staleTime: 1000 * 60 * 5
     })

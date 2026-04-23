@@ -1,6 +1,6 @@
 'use client'
 
-import { getStudentErgogenics, getErgogenicLogs } from '@/actions/ergogenics-actions'
+import { getStudentErgogenics, getTodayErgogenicLogs } from '@/actions/ergogenics-actions'
 import { getTodayRangeBrazil } from '@/lib/date-utils'
 import { getStudentProfile } from '@/actions/student-actions'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -15,48 +15,47 @@ interface ErgogenicsCardProps {
 }
 
 export function ErgogenicsCard({ userId }: ErgogenicsCardProps) {
+    // ── Realtime Sync ──────────────────────────────────────────────────────────
     useRealtimeSync({
         table: 'ergogenics',
         queryKey: QUERY_KEYS.ergogenics.all(userId),
         filter: `student_id=eq.${userId}`
     })
-
     useRealtimeSync({
         table: 'ergogenic_logs',
         queryKey: QUERY_KEYS.ergogenics.logs(userId),
         filter: `student_id=eq.${userId}`
     })
 
+    // ── Data Fetching ──────────────────────────────────────────────────────────
     const { data: profile } = useQuery({
         queryKey: QUERY_KEYS.student.details(userId),
         queryFn: () => getStudentProfile(userId),
-        enabled: !!userId,
+        staleTime: 1000 * 60 * 60,
+        refetchOnMount: false,
+        refetchOnWindowFocus: false,
     })
 
-    const { data: rawErgogenics = [], isLoading } = useQuery({
+    const { data: rawErgogenics, isLoading } = useQuery({
         queryKey: QUERY_KEYS.ergogenics.all(userId),
-        enabled: !!userId && !!profile?.details?.steroid_use,
         queryFn: async () => {
             const res = await getStudentErgogenics(userId)
-            if ('error' in res) throw new Error(res.error)
-            return res.data || []
+            return (res as any[]) || []
         },
+        staleTime: 1000 * 60,
     })
 
     const { data: ergoLogs = [], isLoading: isLoadingLogs } = useQuery({
         queryKey: QUERY_KEYS.ergogenics.logs(userId),
-        enabled: !!userId && !!profile?.details?.steroid_use,
-        queryFn: async () => {
-            const res = await getErgogenicLogs(userId)
-            if ('error' in res) throw new Error(res.error)
-            return res.data || []
-        }
+        queryFn: () => getTodayErgogenicLogs(userId),
+        staleTime: 1000 * 60,
     })
 
-    if (profile && !profile.details?.steroid_use) return null
+    // ── Steroid guard (hide card if user doesn't use steroids) ────────────────
+    if (profile && profile.details && !profile.details?.steroid_use) return null
 
-    // Skeleton Fallback: Only show if loading AND no cache available
-    if ((isLoading || isLoadingLogs) && (!rawErgogenics || (Array.isArray(rawErgogenics) && rawErgogenics.length === 0))) {
+    // ── Skeleton while loading ────────────────────────────────────────────────
+    if ((isLoading || isLoadingLogs) && !rawErgogenics?.length) {
         return (
             <div className="space-y-6 animate-pulse">
                 <div className="flex items-center justify-between px-2">
@@ -82,13 +81,19 @@ export function ErgogenicsCard({ userId }: ErgogenicsCardProps) {
         )
     }
 
-    const tzNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }))
-    const today = tzNow.getDay()
+    // ── Day/Log Calculation ───────────────────────────────────────────────────
+    const today = (() => {
+        try {
+            const brazilTime = new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' })
+            return new Date(brazilTime).getDay()
+        } catch {
+            return new Date().getDay()
+        }
+    })()
 
     const { start, end } = getTodayRangeBrazil()
     const logs = Array.isArray(ergoLogs) ? ergoLogs : []
 
-    // Filter logs for today only
     const loggedErgoIds = new Set(
         logs
             .filter((l: any) => l.created_at >= start && l.created_at <= end)
@@ -96,11 +101,13 @@ export function ErgogenicsCard({ userId }: ErgogenicsCardProps) {
     )
 
     const ergogenicsList = Array.isArray(rawErgogenics) ? rawErgogenics : []
-    const todaysErgogenics = ergogenicsList.filter((e: any) =>
-        e.application_days && Array.isArray(e.application_days) && e.application_days.includes(today)
-    )
 
+    const todaysErgogenics = ergogenicsList.filter((e: any) => {
+        const days = Array.isArray(e.application_days) ? e.application_days : []
+        return days.map((d: any) => Number(d)).includes(today)
+    })
 
+    // ── Render ────────────────────────────────────────────────────────────────
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between px-2">

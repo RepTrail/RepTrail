@@ -25,6 +25,14 @@ import {
 import { useToast } from '@/hooks/use-toast'
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
 import { ENTITIES } from '@/lib/outbox-db'
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogDescription,
+    DialogFooter,
+} from "@/components/ui/dialog"
 
 interface CardioPlayerProps {
     assignment: any
@@ -39,6 +47,9 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
     const [logId, setLogId] = useState<string | null>(null)
     const [wakeLock, setWakeLock] = useState<any>(null)
     const [userId, setUserId] = useState<string | null>(null)
+    
+    // Dialog state
+    const [showStopConfirm, setShowStopConfirm] = useState(false)
 
     // Fetch active session via TanStack Query for Local-First reconciliation
     const { data: activeSession, isLoading: isLoadingSession } = useQuery({
@@ -280,17 +291,16 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
     }, [remainingSeconds, status, logId])
 
     function handleStop(isAuto: boolean = false) {
+        if (!isAuto) {
+            setShowStopConfirm(true)
+            return
+        }
+        executeFinish()
+    }
+
+    function executeFinish() {
         let percentage = progress
         if (percentage > 100) percentage = 100
-
-        if (!isAuto) {
-            if (remainingSeconds > 0) {
-                const confirmMsg = `Você completou apenas ${percentage.toFixed(0)}% do tempo!\n\nSeu progresso será registrado como Parcial. Tem certeza que deseja parar?`
-                if (!confirm(confirmMsg)) return
-            } else {
-                if (!confirm('Deseja finalizar este cardio?')) return
-            }
-        }
 
         if (logId) {
             // OPTIMISTIC UPDATE: Stop UI immediately
@@ -309,6 +319,7 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
             stopTimer()
             if (syncRef.current) clearInterval(syncRef.current)
             releaseWakeLock()
+            setShowStopConfirm(false)
 
             toast({
                 title: percentage >= 100 ? 'Parabéns!' : 'Cardio Finalizado',
@@ -479,6 +490,39 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
                         <span className="text-sm font-black text-white italic">{assignment.suggested_intensity}</span>
                     </div>
                 </div>
+
+                <Dialog open={showStopConfirm} onOpenChange={setShowStopConfirm}>
+                    <DialogContent className="bg-zinc-950 border-zinc-900 rounded-[2.5rem] p-10">
+                        <DialogHeader className="space-y-4">
+                            <div className="w-16 h-16 bg-orange-500/10 rounded-full flex items-center justify-center border border-orange-500/20 mx-auto">
+                                <Activity className="w-8 h-8 text-orange-500" />
+                            </div>
+                            <DialogTitle className="text-2xl font-black text-white uppercase italic tracking-tighter text-center">
+                                Finalizar Cardio?
+                            </DialogTitle>
+                            <DialogDescription className="text-zinc-500 font-bold uppercase tracking-widest text-[10px] text-center leading-relaxed">
+                                {remainingSeconds > 0 
+                                    ? `Você completou apenas ${Math.round(progress)}% do tempo planejado. Deseja encerrar agora?`
+                                    : "Parabéns por completar o objetivo! Deseja registrar a sessão?"}
+                            </DialogDescription>
+                        </DialogHeader>
+                        <DialogFooter className="flex flex-col gap-3 mt-4">
+                            <Button 
+                                onClick={executeFinish}
+                                className="h-14 bg-white hover:bg-zinc-200 text-zinc-950 font-black italic uppercase tracking-widest rounded-2xl shadow-xl active:scale-95 transition-all text-sm w-full"
+                            >
+                                {remainingSeconds > 0 ? "Encerrar Mesmo Assim" : "Confirmar e Salvar"}
+                            </Button>
+                            <Button 
+                                variant="ghost" 
+                                onClick={() => setShowStopConfirm(false)}
+                                className="h-12 text-zinc-500 hover:text-white font-bold uppercase tracking-widest text-[10px] w-full"
+                            >
+                                Continuar Treinando
+                            </Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
             </CardContent>
         </Card>
     )

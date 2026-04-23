@@ -7,34 +7,33 @@ import { upsertDailyTracking } from '@/actions/tracking-actions'
 
 export async function getStudentErgogenics(studentId: string) {
     const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
+    // Efficiently fetch ergogenics and trainer links in parallel or filtered
     const { data: records, error } = await supabase
         .from('ergogenics')
-        .select('*')
+        .select(`
+            *,
+            trainer:profiles!trainer_id(id, full_name)
+        `)
         .eq('student_id', studentId)
         .order('created_at', { ascending: false })
 
     if (error) return { error: error.message }
 
-    // Data Pruning: Filter by active trainer link
-    const filteredRecords = []
-    for (const record of (records || [])) {
-        if (record.trainer_id && record.trainer_id !== studentId) {
-            const { data: link } = await supabase
-                .from('trainer_students')
-                .select('id')
-                .eq('trainer_id', record.trainer_id)
-                .eq('student_id', studentId)
-                .eq('active', true)
-                .maybeSingle()
+    // Fetch active trainer links for this student
+    const { data: activeLinks } = await supabase
+        .from('trainer_students')
+        .select('trainer_id')
+        .eq('student_id', studentId)
+        .eq('active', true)
 
-            if (link) filteredRecords.push(record)
-        } else {
-            // Se foi o próprio aluno que adicionou (Auto-Treino), mantém
-            filteredRecords.push(record)
-        }
-    }
+    const activeTrainerIds = new Set(activeLinks?.map(l => l.trainer_id) || [])
 
-    return { data: filteredRecords }
+    return (records || []).filter(record => {
+        // Keep if added by student (trainer_id === student_id or null)
+        if (!record.trainer_id || record.trainer_id === studentId) return true
+        // Keep if added by an active trainer
+        return activeTrainerIds.has(record.trainer_id)
+    })
 }
 
 export async function addErgogenic(data: {
@@ -186,8 +185,8 @@ export async function getErgogenicLogs(studentId: string) {
         .eq('student_id', studentId)
         .order('created_at', { ascending: false })
 
-    if (error) return { error: error.message }
-    return { data }
+    if (error) return []
+    return data || []
 }
 export async function getAssignedErgogenics(studentId: string) {
     const result = await getStudentErgogenics(studentId)

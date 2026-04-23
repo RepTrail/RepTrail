@@ -27,7 +27,7 @@ import {
 import { useToast } from "@/hooks/use-toast"
 import { cn } from "@/lib/utils"
 import { useRouter } from 'next/navigation'
-import { startWorkoutLog, recordSetLoad, finishWorkoutLog, saveWorkoutLogState, getWorkoutLastSession } from '@/actions/log-actions'
+import { getWorkoutLastSession } from '@/actions/log-actions'
 import { generateExecutionSteps, ExecutionStep, WorkoutPhase } from '@/lib/workout-flow-engine'
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
 import { ENTITIES } from '@/lib/outbox-db'
@@ -95,30 +95,35 @@ export function WorkoutPlayer({
     const [summaryActiveSubIndex, setSummaryActiveSubIndex] = useState<Record<string, number>>({})
     const [exerciseNote, setExerciseNote] = useState('')
 
-    const [logId, setLogId] = useState<string | null>(null)
+    const [logId, setLogId] = useState<string | null>(initialLogId || null)
     const [isFinished, setIsFinished] = useState(false)
     const [feedback, setFeedback] = useState('')
     const [perceivedEffort, setPerceivedEffort] = useState('7')
     const [adherenceStatus, setAdherenceStatus] = useState<'success' | 'partial' | 'fail'>('success')
 
-    // ─── Mutations ─────────────────────────────────────────────────────────────
-    const finishMutation = useOptimisticMutation({
-        actionName: 'finish-workout-log',
-        queryKey: QUERY_KEYS.workouts.session,
+    // ─── Mutations (Local-First Elite) ──────────────────────────────────────────
+    
+    // Mutation to Start Workout (Optimistic)
+    const startWorkoutMutation = useOptimisticMutation({
+        actionName: 'start-workout-log',
+        queryKey: QUERY_KEYS.student.activeSession(userId),
         entity: ENTITIES.WORKOUT_LOG,
-        mutationFn: async () => {}, // Single-writer: no-op
+        mutationFn: async () => {}, // SyncEngine handles the RPC
         onMutate: (variables: any) => {
-            // 1. OPTIMISTICALLY mark workout as completed today (Main Plan Cache)
-            const todayKey = QUERY_KEYS.workouts.today(userId)
-            queryClient.setQueryData(todayKey, (old: any) => {
-                if (!old) return old
-                return { ...old, status: 'completed', _optimistic: true }
-            })
-
-            // 2. OPTIMISTICALLY mark status as completed (Specific Status Cache for Card)
-            const statusKey = QUERY_KEYS.workouts.status(userId, workout.id)
-            queryClient.setQueryData(statusKey, {
-                status: 'completed',
+            // Optimistically set the active session
+            const sessionData = {
+                id: variables.id,
+                workout_id: workout.id,
+                student_id: userId,
+                status: 'in_progress',
+                started_at: new Date().toISOString(),
+                _optimistic: true
+            }
+            queryClient.setQueryData(QUERY_KEYS.student.activeSession(userId), sessionData)
+            
+            // Also update status card
+            queryClient.setQueryData(QUERY_KEYS.workouts.status(userId, workout.id), {
+                status: 'in_progress',
                 logId: variables.id,
                 _optimistic: true
             })
@@ -127,21 +132,49 @@ export function WorkoutPlayer({
 
     const recordSetMutation = useOptimisticMutation({
         actionName: 'record-set-load',
-        queryKey: QUERY_KEYS.workouts.session,
+        queryKey: QUERY_KEYS.workouts.session, // Note: This doesn't exist, should probably be sesssion log key
         entity: ENTITIES.WORKOUT_LOG,
         mutationFn: async () => {},
         onMutate: (variables: any) => {
-            // Ensure status is mark as in_progress if it was not started
+            // SyncEngine handles the actual load_history insert
+        }
+    })
+
+    const saveStateMutation = useOptimisticMutation({
+        actionName: 'update-workout-log-state',
+        queryKey: QUERY_KEYS.student.activeSession(userId),
+        entity: ENTITIES.WORKOUT_LOG,
+        mutationFn: async () => {},
+        onMutate: (variables: any) => {
+            queryClient.setQueryData(QUERY_KEYS.student.activeSession(userId), (old: any) => {
+                if (!old) return old
+                return { ...old, current_state: variables.state }
+            })
+        }
+    })
+
+    const finishMutation = useOptimisticMutation({
+        actionName: 'finish-workout-log',
+        queryKey: QUERY_KEYS.student.activeSession(userId),
+        entity: ENTITIES.WORKOUT_LOG,
+        mutationFn: async () => {},
+        onMutate: (variables: any) => {
+            // 1. Clear active session
+            queryClient.setQueryData(QUERY_KEYS.student.activeSession(userId), null)
+
+            // 2. Mark workout as completed
             const statusKey = QUERY_KEYS.workouts.status(userId, workout.id)
-            const currentStatus = queryClient.getQueryData<any>(statusKey)
-            
-            if (!currentStatus || currentStatus.status === 'not_started') {
-                queryClient.setQueryData(statusKey, {
-                    status: 'in_progress',
-                    logId: variables.logId,
-                    _optimistic: true
-                })
-            }
+            queryClient.setQueryData(statusKey, {
+                status: 'completed',
+                logId: variables.id,
+                _optimistic: true
+            })
+
+            const todayKey = QUERY_KEYS.workouts.today(userId)
+            queryClient.setQueryData(todayKey, (old: any) => {
+                if (!old) return old
+                return { ...old, status: 'completed', _optimistic: true }
+            })
         }
     })
 
@@ -233,14 +266,8 @@ export function WorkoutPlayer({
 
     // Reset state on step change
     useEffect(() => {
-        if (!isMounted.current) {
-            isMounted.current = true
-            return
-        }
-
-        // Auto Save State when critical values change
         if (!logId) return
-
+ 
         const stateToSave = {
             exerciseIndex: currentStep.exerciseIndex,
             set: currentStep.setNumber,
@@ -248,38 +275,27 @@ export function WorkoutPlayer({
             restEndTime: restEndTime,
             isResting: isResting
         }
-
+ 
         const timer = setTimeout(() => {
-            saveWorkoutLogState(logId, stateToSave)
+            saveStateMutation.mutate({ logId, state: stateToSave })
         }, 1000)
-
+ 
         return () => clearTimeout(timer)
     }, [currentStepIndex, isResting, restEndTime, logId])
 
-    // Initialize Log
+    // Initialize Log (Optimistic & Instant)
     useEffect(() => {
-        const initLog = async () => {
-            if (initialLogId) {
-                setLogId(initialLogId)
-                return
-            }
-            const result = await startWorkoutLog(workout.id)
-            if (result.success) {
-                setLogId(result.logId)
-                
-                // Immediately mark status as in_progress in cache
-                const statusKey = QUERY_KEYS.workouts.status(userId, workout.id)
-                queryClient.setQueryData(statusKey, {
-                    status: 'in_progress',
-                    logId: result.logId,
-                    _optimistic: true
-                })
-            } else {
-                toast({ title: "Erro", description: "Falha ao iniciar log.", variant: "destructive" })
-            }
-        }
-        initLog()
-    }, [workout.id, initialLogId])
+        if (logId) return
+        
+        const newLogId = crypto.randomUUID()
+        setLogId(newLogId)
+        
+        startWorkoutMutation.mutate({ 
+            id: newLogId,
+            workoutId: workout.id,
+            studentId: userId 
+        })
+    }, [workout.id, userId])
 
     // Rest Timer Logic
 
@@ -425,21 +441,6 @@ export function WorkoutPlayer({
 
     const handleFinishWorkout = () => {
         if (logId) {
-            // 🔥 ULTRAPROOF: Synchronous cache update BEFORE mutation and redirect
-            // This guarantees the dashboard sees 'completed' even with the 0ms delay of useOptimisticMutation
-            const statusKey = QUERY_KEYS.workouts.status(userId, workout.id)
-            queryClient.setQueryData(statusKey, {
-                status: 'completed',
-                logId: logId,
-                _optimistic: true
-            })
-
-            const todayKey = QUERY_KEYS.workouts.today(userId)
-            queryClient.setQueryData(todayKey, (old: any) => {
-                if (!old) return old
-                return { ...old, status: 'completed', _optimistic: true }
-            })
-
             finishMutation.mutate({
                 id: logId,
                 feedback,

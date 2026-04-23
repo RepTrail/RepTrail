@@ -188,25 +188,11 @@ ${preferences.mealsPerDay === 4 ? `  • 4 refeições: Refeição 1 = leve (~15
       return { error: 'A IA retornou um formato inesperado. Tente novamente.' }
     }
 
-    // Save workouts
-    if (parsedData.workouts?.length) {
-      const wResult = await saveParsedData('workout', parsedData)
-      if (wResult.error) return { error: 'Erro ao salvar treinos: ' + wResult.error }
-    }
-
-    // Save diet (extract diet portion only)
-    if (parsedData.diets?.length) {
-      const dResult = await saveParsedData('diet', { diets: parsedData.diets })
-      if (dResult.error) return { error: 'Erro ao salvar dieta: ' + dResult.error }
-    }
-
-    revalidatePath('/dashboard/student')
-    revalidatePath('/dashboard/student/workouts')
-    revalidatePath('/dashboard/student/diet')
-    revalidatePath('/dashboard/student/cardio')
-
+    // 🧠 ELITE AI PROTOCOL: No direct saving on server. 
+    // We return the raw protocol so the client can handle persistence (Outbox/Cache)
     return {
       success: true,
+      data: parsedData,
       summary: {
         workoutsCount: parsedData.workouts?.length || 0,
         cardiosCount: parsedData.cardios?.length || 0,

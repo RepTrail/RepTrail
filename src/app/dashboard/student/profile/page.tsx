@@ -19,16 +19,17 @@ export default async function StudentProfilePage() {
 
     const queryClient = getQueryClient()
 
-    // Non-blocking background warming
-    void queryClient.prefetchQuery({
-        queryKey: QUERY_KEYS.student.details(user.id),
-        queryFn: () => getStudentProfile(user.id)
-    })
-
-    void queryClient.prefetchQuery({
-        queryKey: QUERY_KEYS.profile.trainer(user.id),
-        queryFn: () => getStudentTrainer(user.id)
-    })
+    // Parallel prefetch for hydration
+    await Promise.all([
+        queryClient.prefetchQuery({
+            queryKey: QUERY_KEYS.student.details(user.id),
+            queryFn: () => getStudentProfile(user.id)
+        }),
+        queryClient.prefetchQuery({
+            queryKey: QUERY_KEYS.profile.trainer(user.id),
+            queryFn: () => getStudentTrainer(user.id)
+        })
+    ])
 
 
     return (

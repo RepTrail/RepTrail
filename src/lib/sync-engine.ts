@@ -2,6 +2,7 @@ import { outboxDB, OutboxRecord, ENTITIES } from './outbox-db';
 import { executeAction } from './action-registry';
 import { conflictStore } from './conflict-store';
 import { QueryClient } from '@tanstack/react-query';
+import { QUERY_KEYS } from './query-keys';
 
 class SyncEngine {
   private isProcessing = false;
@@ -106,27 +107,64 @@ class SyncEngine {
         if (this.queryClient && result.data) {
           const incoming = result.data;
           const queryKey = this.getQueryKeyForEntity(record.entity, record.payload, record.entityId);
+          const userId = record.payload.userId || record.payload.studentId || record.payload.student_id;
           
           if (queryKey) {
-            this.queryClient.setQueryData(queryKey, (old: any = []) => {
+            this.queryClient.setQueryData(queryKey, (old: any) => {
               if (!incoming?.id) return old;
-              
-              // Map-based Deterministic Merge (ULTRA-SAFE)
-              const map = new Map(Array.isArray(old) ? old.map((i: any) => [i.id, i]) : []);
-              const prev = map.get(incoming.id);
 
-              // ─── PHASE 10: ITEM-LEVEL FLAG PROTECTION ───────────────────
-              // We mark it as false here because we ARE the sync engine finishing the job
-              map.set(incoming.id, {
-                ...prev,
-                ...incoming,
-                _optimistic: false,
-                _pending: false,
-                _error: undefined
-              });
+              // CASE A: Array-based Cache (Most entities)
+              if (Array.isArray(old)) {
+                const map = new Map(old.map((i: any) => [i.id, i]));
+                
+                // RECONCILIATION: If record.payload.id (local UUID) exists, delete it
+                if (record.payload.id && record.payload.id !== incoming.id) {
+                    map.delete(record.payload.id);
+                }
 
-              return Array.from(map.values());
+                map.set(incoming.id, {
+                  ...incoming,
+                  _optimistic: false,
+                  _pending: false
+                });
+                return Array.from(map.values());
+              }
+
+              // CASE B: Single-Object Cache (activeSession, status, profile)
+              if (old && typeof old === 'object' && !Array.isArray(old)) {
+                  // If IDs match OR it's a known single-instance cache
+                  return {
+                      ...old,
+                      ...incoming,
+                      _optimistic: false,
+                      _pending: false
+                  };
+              }
+
+              return old;
             });
+          }
+
+          // 🚨 ADDITIONAL KEYS INVALIDATION (Precision Consistency)
+          if (userId) {
+              const rootKeys = [
+                QUERY_KEYS.workouts.all(userId),
+                QUERY_KEYS.cardio.all(userId),
+                QUERY_KEYS.ergogenics.all(userId),
+                QUERY_KEYS.student.all(userId)
+              ];
+
+              await Promise.all(rootKeys.map(key => 
+                this.queryClient!.invalidateQueries({ 
+                    queryKey: key, 
+                    exact: false, 
+                    refetchType: 'active' 
+                })
+              ));
+
+              // Explicit refetch for critical active sessions
+              this.queryClient.refetchQueries({ queryKey: QUERY_KEYS.workouts.activeSession(userId) });
+              this.queryClient.refetchQueries({ queryKey: QUERY_KEYS.cardio.activeSession(userId) });
           }
         }
 
@@ -191,35 +229,35 @@ class SyncEngine {
 
     switch (entity) {
       case ENTITIES.WORKOUT: 
-        return entityId ? ['workouts', entityId] : (userId ? ['workouts', userId] : ['workouts']);
+        return entityId ? QUERY_KEYS.workouts.detail(entityId) : (userId ? QUERY_KEYS.workouts.all(userId) : null);
       case ENTITIES.DIET: 
-        return entityId ? ['diets', entityId] : (userId ? ['diets', userId] : ['diets']);
+        return entityId ? QUERY_KEYS.diets.detail(entityId) : (userId ? QUERY_KEYS.diets.all(userId) : null);
       case ENTITIES.WORKOUT_LOG: 
-        return userId ? ['workouts', userId, 'logs'] : ['workouts', 'logs'];
+        return userId ? QUERY_KEYS.workouts.logs(userId) : null;
       case ENTITIES.PROGRESS_PHOTO: 
-        return userId ? ['student', userId, 'photos'] : ['student', 'photos'];
+        return userId ? QUERY_KEYS.student.photos(userId) : null;
       case ENTITIES.STUDENT_DETAIL: 
-        return userId ? ['student', userId, 'details'] : ['student', 'details'];
+        return userId ? QUERY_KEYS.student.details(userId) : null;
       case ENTITIES.TRAINER_STUDENT: 
-        return userId ? ['trainer', 'student', userId] : ['trainer'];
+        return userId ? QUERY_KEYS.trainer.studentDetail(userId) : null;
       case ENTITIES.ASSIGNED_WORKOUT: 
-        return userId ? ['workouts', userId] : ['workouts'];
+        return userId ? QUERY_KEYS.workouts.all(userId) : null;
       case ENTITIES.WEIGHT_HISTORY: 
-        return userId ? ['student', userId, 'metrics'] : ['student', 'metrics'];
+        return userId ? QUERY_KEYS.student.metrics(userId) : null;
       case ENTITIES.BF_HISTORY: 
-        return userId ? ['student', userId, 'metrics'] : ['student', 'metrics'];
+        return userId ? QUERY_KEYS.student.metrics(userId) : null;
       case ENTITIES.CARDIO: 
-        return entityId ? ['cardio', entityId] : (userId ? ['cardio', userId] : ['cardio']);
+        return entityId ? QUERY_KEYS.cardio.detail(entityId) : (userId ? QUERY_KEYS.cardio.all(userId) : null);
       case ENTITIES.ERGOGENIC: 
-        return userId ? ['ergogenics', userId] : ['ergogenics'];
+        return userId ? QUERY_KEYS.ergogenics.all(userId) : null;
       case ENTITIES.ERGOGENIC_LOG:
-        return userId ? ['ergogenics', userId, 'logs'] : ['ergogenics', 'logs'];
+        return userId ? QUERY_KEYS.ergogenics.logs(userId) : null;
       case ENTITIES.USER: 
-        return userId ? ['profile', userId] : ['profile'];
+        return userId ? QUERY_KEYS.profile.detail(userId) : null;
       case ENTITIES.SUBSCRIPTION:
         return ['subscription'];
       case ENTITIES.OPERATIONAL_COST:
-        return ['admin', 'operational-costs'];
+        return [...QUERY_KEYS.admin.costs];
       default: 
         return [entity as any];
     }

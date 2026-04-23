@@ -24,22 +24,24 @@ export function WorkoutCard({ userId }: WorkoutCardProps) {
 
     useRealtimeSync({
         table: 'workout_logs',
-        queryKey: QUERY_KEYS.workouts.status(userId),
+        queryKey: QUERY_KEYS.workouts.all(userId),
         filter: `student_id=eq.${userId}`
     })
 
     const { data: workout, isLoading: isLoadingWorkout } = useQuery({
         queryKey: QUERY_KEYS.workouts.today(userId),
         queryFn: () => getTodayWorkout(userId),
-        enabled: !!userId,
+        staleTime: 1000 * 60 * 5,
+        refetchOnMount: false,
+        refetchOnWindowFocus: false,
     })
 
     const { data: statusData, isLoading: isLoadingStatus } = useQuery({
-        queryKey: QUERY_KEYS.workouts.status(userId, workout?.id),
-        enabled: !!userId && !!workout,
-        queryFn: () => getWorkoutStatus(userId, workout!.id),
-        staleTime: 1000 * 15, // 15s stale time for status ensures optimistic data sticks
-        refetchOnMount: false, // Don't refetch on mount if data is in cache
+        queryKey: QUERY_KEYS.workouts.status(userId, workout?.id ?? 'no-workout'),
+        queryFn: () => workout ? getWorkoutStatus(userId, workout.id) : Promise.resolve({ status: 'empty', logId: null }),
+        staleTime: 1000 * 60 * 5,
+        refetchOnMount: false,
+        refetchOnWindowFocus: false,
     })
 
     // Skeleton Fallback: Only show if truly loading AND no cache available

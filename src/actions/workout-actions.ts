@@ -482,7 +482,16 @@ export async function getTodayWorkout(studentId: string) {
             workout.workout_exercises.sort((a: any, b: any) => a.order_index - b.order_index)
         }
 
-        return workout
+        // 🚨 ELITE: Inject status into today's workout object to prevent card flicker
+        // We do this server-side to ensure 0ms UI readiness
+        const { getWorkoutStatus } = await import('@/actions/log-actions')
+        const statusData = await getWorkoutStatus(studentId, workout.id)
+        
+        return {
+            ...workout,
+            status: statusData.status,
+            logId: statusData.logId
+        }
     } catch (e) {
         console.error('Error fetching today workout:', e)
         return null

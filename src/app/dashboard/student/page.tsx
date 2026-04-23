@@ -53,30 +53,79 @@ export default async function StudentDashboardPage() {
  * ─── DATA COMPONENT (Suspended) ──────────────────────────────────────────
  */
 async function StudentDashboardContent({ userId }: { userId: string }) {
-    // ─── PARALLEL DATA ──────────────────────────────────────────────────────
-    const [trainerRel, autoTrainingStatus, details] = await Promise.all([
+    const queryClient = getQueryClient()
+
+    // ─── STAGE 1: CORE PARALLEL FETCH ──────────────────────────────────────────
+    // Parallelize basic info + initial assignments to extract IDs
+    const [trainerRel, autoTrainingStatus, details, ranking, protocolStatus, todayWorkout, todayCardio] = await Promise.all([
         getStudentTrainer(userId),
         getStudentAutoTrainingStatus(userId),
-        getStudentDetails(userId)
+        getStudentDetails(userId),
+        queryClient.fetchQuery({ queryKey: QUERY_KEYS.trainer.ranking(), queryFn: () => getTrainerRanking() }),
+        queryClient.fetchQuery({ queryKey: QUERY_KEYS.student.hasProtocol(userId), queryFn: () => checkStudentHasProtocol(userId) }),
+        getTodayWorkout(userId),
+        getTodayCardio(userId)
+    ])
+
+    // Hydrate the initial data into the cache
+    if (todayWorkout) {
+        queryClient.setQueryData(QUERY_KEYS.workouts.today(userId), todayWorkout)
+    }
+    if (todayCardio) {
+        queryClient.setQueryData(QUERY_KEYS.cardio.today(userId), todayCardio)
+    }
+
+    // ─── STAGE 2: CHAINED PARALLEL PREFETCH (ELITE) ───────────────────────────
+    // Resolve secondary dependencies using IDs found in STAGE 1
+    const workoutId = todayWorkout?.id
+    const cardioId = todayCardio?.[0]?.id
+
+    await Promise.all([
+        // Workout Chain
+        workoutId ? 
+            queryClient.prefetchQuery({ 
+                queryKey: QUERY_KEYS.workouts.status(userId, workoutId), 
+                queryFn: () => import('@/actions/log-actions').then(m => m.getWorkoutStatus(userId, workoutId)) 
+            }) : 
+            queryClient.setQueryData(QUERY_KEYS.workouts.status(userId, 'no-workout'), { status: 'empty' }),
+
+        workoutId ? 
+            queryClient.prefetchQuery({ 
+                queryKey: QUERY_KEYS.workouts.detail(workoutId), 
+                queryFn: () => import('@/actions/workout-actions').then(m => m.getWorkoutDetails(workoutId)) 
+            }) : Promise.resolve(),
+
+        // Cardio Chain
+        cardioId ? 
+            queryClient.prefetchQuery({ 
+                queryKey: QUERY_KEYS.cardio.detail(cardioId), 
+                queryFn: () => import('@/actions/cardio-actions').then(m => m.getAssignedCardios(userId)) // Or specific detail
+            }) : Promise.resolve(),
+        
+        queryClient.prefetchQuery({ 
+            queryKey: QUERY_KEYS.cardio.logs(userId), 
+            queryFn: () => getCardioStatus(userId) 
+        }),
+
+        // Ergogenics Chain
+        queryClient.prefetchQuery({ 
+            queryKey: QUERY_KEYS.ergogenics.logs(userId), 
+            queryFn: () => getTodayErgogenicLogs(userId) 
+        }),
+        queryClient.prefetchQuery({ 
+            queryKey: QUERY_KEYS.ergogenics.all(userId), 
+            queryFn: () => getStudentErgogenics(userId) 
+        }),
+
+        // Metrics & Misc
+        queryClient.prefetchQuery({ 
+            queryKey: QUERY_KEYS.student.metricsSummary(userId), 
+            queryFn: () => getMetricsSummary(userId) 
+        })
     ])
 
     // Fire and forget background tracking
     ensureDailyTracking(userId).catch(console.error)
-
-    const queryClient = getQueryClient()
-
-    // Use PREFETCH_REGISTRY for consistency
-    const dashboardConfigs = PREFETCH_REGISTRY['/dashboard/student']?.(userId) || []
-    dashboardConfigs.forEach(config => {
-        queryClient.prefetchQuery({
-            queryKey: config.queryKey,
-            queryFn: config.queryFn,
-            staleTime: Infinity
-        })
-    })
-
-    // Additional specific prefetches if needed
-    queryClient.prefetchQuery({ queryKey: QUERY_KEYS.cardio.logs(userId), queryFn: () => getCardioStatus(userId) })
 
     // ─── CASE LOGIC ──────────────────────────────────────────────────────────
     const hasAutoTraining = autoTrainingStatus?.auto_training_status === 'active' ||
@@ -124,7 +173,6 @@ async function StudentDashboardContent({ userId }: { userId: string }) {
 
     // Case: No Trainer and No Auto-Training
     if (!trainerRel && !hasAutoTraining) {
-        const ranking = await getTrainerRanking()
         const topTrainers = ranking.slice(0, 3)
         const otherTrainers = ranking.slice(3, 6)
 
@@ -255,11 +303,7 @@ async function StudentDashboardContent({ userId }: { userId: string }) {
 
     // Main Case: Active Training
     const tzNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }))
-    let hasProtocol = true
-    if (!trainerRel && hasAutoTraining) {
-        const protocolStatus = await checkStudentHasProtocol(userId)
-        hasProtocol = protocolStatus.hasWorkout || protocolStatus.hasDiet
-    }
+    const hasProtocol = protocolStatus.hasWorkout || protocolStatus.hasDiet
 
     return (
         <HydrationBoundary state={dehydrate(queryClient)}>
@@ -274,7 +318,7 @@ async function StudentDashboardContent({ userId }: { userId: string }) {
                     </div>
                 </div>
                 {showAnamnesis && <AnamnesisForm initialData={details} />}
-                {!hasProtocol && <AIProtocolEmptyState />}
+                {!hasProtocol && <AIProtocolEmptyState userId={userId} />}
                 {hasProtocol && (
                     <div className="grid gap-section-gap lg:grid-cols-12">
                         <div className="lg:col-span-8 flex flex-col gap-section-gap">

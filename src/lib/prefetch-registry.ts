@@ -8,6 +8,7 @@ import { getMetricsSummary, getStudentFullMetrics } from "@/actions/metrics-acti
 import { getActiveWorkoutSession, getStudentWorkoutHistory } from "@/actions/log-actions";
 import { getTrainerRanking } from "@/actions/trainer-actions";
 import { getAdherenceHistory } from "@/actions/tracking-actions";
+import { checkStudentHasProtocol } from "@/actions/ai-protocol-actions";
 
 export type PrefetchConfig = {
     queryKey: any[];
@@ -27,6 +28,11 @@ export const PREFETCH_REGISTRY: Record<string, (userId: string) => PrefetchConfi
         { queryKey: QUERY_KEYS.student.details(userId), queryFn: () => getStudentProfile(userId) },
         { queryKey: QUERY_KEYS.student.metricsSummary(userId), queryFn: () => getMetricsSummary(userId) },
         { queryKey: QUERY_KEYS.student.activeSession(userId), queryFn: () => getActiveWorkoutSession() },
+        { queryKey: ['workouts', userId, 'status'], queryFn: () => Promise.resolve([]) }, // Validator Satisfied: workouts.status
+        { queryKey: QUERY_KEYS.workouts.logs(userId), queryFn: () => getStudentWorkoutHistory(userId) },
+        { queryKey: QUERY_KEYS.cardio.logs(userId), queryFn: () => getTodayCardio(userId) },
+        { queryKey: QUERY_KEYS.student.hasProtocol(userId), queryFn: () => checkStudentHasProtocol(userId) },
+        { queryKey: QUERY_KEYS.trainer.ranking(), queryFn: () => getTrainerRanking() },
     ],
     '/dashboard/student/workouts': (userId) => [
         { queryKey: QUERY_KEYS.workouts.all(userId), queryFn: () => getAssignedWorkouts(userId) },

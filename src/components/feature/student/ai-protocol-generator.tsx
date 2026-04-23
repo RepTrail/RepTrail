@@ -10,7 +10,7 @@ import {
     RotateCcw, Zap
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useQueryClient } from '@tanstack/react-query'
+import { useQueryClient, useMutation } from '@tanstack/react-query'
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { ENTITIES } from '@/lib/outbox-db'
@@ -123,7 +123,7 @@ function TextArea({ placeholder, value, onChange }: { placeholder: string, value
 
 // ── Main Component ──────────────────────────────────────────────────────────
 
-export function AIProtocolGenerator() {
+export function AIProtocolGenerator({ userId = 'me' }: { userId?: string }) {
     const { toast } = useToast()
     const router = useRouter()
     const queryClient = useQueryClient()
@@ -156,32 +156,58 @@ export function AIProtocolGenerator() {
         return true
     }
 
-    const { mutate: generateMutate } = useOptimisticMutation({
-        actionName: 'generate-ai-protocol',
+    const { mutate: saveProtocolMutate } = useOptimisticMutation({
+        actionName: 'save-parsed-data',
         entity: ENTITIES.USER,
-        entityId: 'me',
-        queryKey: QUERY_KEYS.student.all('me'),
+        entityId: userId,
+        queryKey: QUERY_KEYS.student.all(userId),
+        mutationFn: async (vars) => vars,
+        onMutate: (variables) => {
+            // OPTIMISTIC CACHE PATCH (The 0ms feeling)
+            const { type, data } = variables
+            if (type === 'workout') {
+                queryClient.setQueryData(QUERY_KEYS.workouts.today(userId), data.workouts[0])
+            }
+            if (type === 'diet') {
+                queryClient.setQueryData(QUERY_KEYS.diets.today(userId), data.diets[0])
+            }
+        }
+    })
+
+    const { mutate: generateMutate } = useMutation({
         mutationFn: async (variables: any) => {
             const result = await generateAIProtocol(variables.preferences)
             if (result.error) throw new Error(result.error)
             return result
         },
         onMutate: () => {
-            // Instant feedback
+            setLoading(true)
             toast({
                 title: "✨ Gerando seu protocolo...",
-                description: "Nossa IA está trabalhando. Você pode fechar esta janela, o processo continuará em segundo plano."
+                description: "Nossa IA está trabalhando. Isso pode levar até 60 segundos."
             })
-            // Reset success screen or close if it was a modal (it's embedded here)
-            setLoading(true)
         },
         onSuccess: (result) => {
             setLoading(false)
-            setSuccess(result.summary)
+            if (result.data) {
+                // 🧠 PERSISTENCE-FIRST: Save to Outbox immediately
+                if (result.data.workouts?.length) {
+                    saveProtocolMutate({ type: 'workout', data: result.data, studentId: userId })
+                }
+                if (result.data.diets?.length) {
+                    saveProtocolMutate({ type: 'diet', data: result.data, studentId: userId })
+                }
+                setSuccess(result.summary)
+            }
         },
         onError: (err) => {
             setLoading(false)
             setError(err.message)
+            toast({
+                variant: "destructive",
+                title: "Erro na geração",
+                description: err.message
+            })
         }
     })
 
@@ -235,10 +261,11 @@ export function AIProtocolGenerator() {
                 </div>
                 <Button
                     onClick={() => {
-                        queryClient.invalidateQueries({ queryKey: ['workouts'] })
-                        queryClient.invalidateQueries({ queryKey: ['cardio'] })
-                        queryClient.invalidateQueries({ queryKey: ['diets'] })
-                        queryClient.invalidateQueries({ queryKey: ['student'] })
+                        queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workouts.all(userId) })
+                        queryClient.invalidateQueries({ queryKey: QUERY_KEYS.cardio.all(userId) })
+                        queryClient.invalidateQueries({ queryKey: QUERY_KEYS.diets.all(userId) })
+                        queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ergogenics.all(userId) })
+                        queryClient.invalidateQueries({ queryKey: QUERY_KEYS.student.all(userId) })
                         router.push('/dashboard/student')
                     }}
                     className="h-12 px-10 rounded-2xl bg-orange-500 hover:bg-orange-400 text-zinc-950 font-black uppercase italic tracking-wide transition-all shadow-xl"

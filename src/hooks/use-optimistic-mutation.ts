@@ -7,7 +7,7 @@ interface UseOptimisticMutationOptions<TData, TVariables, TContext> {
     actionName: string
     entity: EntityType
     entityId?: string
-    mutationFn: (variables: TVariables) => Promise<TData>
+    mutationFn?: (variables: TVariables) => Promise<TData>
     updateFn?: (oldData: any, variables: TVariables) => any
     onMutate?: (variables: TVariables) => Promise<TContext> | TContext
     onSuccess?: (data: TData, variables: TVariables, context: any) => void
