@@ -6,7 +6,7 @@ import { createAsaasTransfer } from './asaas-actions'
 
 /** Get full list of affiliates for admin panel */
 export async function getAdminAffiliates() {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     // Check if user is admin
@@ -92,7 +92,7 @@ export async function getAdminAffiliates() {
 
 /** Update commission rate for a specific affiliate */
 export async function updateAffiliateCommission(affiliateId: string, rate: number) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     // Auth check (admin)
     const { data: { user } } = await supabase.auth.getUser()
@@ -114,7 +114,7 @@ export async function updateAffiliateCommission(affiliateId: string, rate: numbe
 
 /** Reassign a student to a different affiliate (or no affiliate) */
 export async function reassignReferral(studentEmail: string, newAffiliateToken: string | null) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     // Auth check (admin)
     const { data: { user } } = await supabase.auth.getUser()
@@ -158,7 +158,7 @@ export async function reassignReferral(studentEmail: string, newAffiliateToken: 
 
 /** Promote or Demote a user as Affiliate */
 export async function toggleAffiliateStatus(userId: string, isAffiliate: boolean) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     // Auth check
     const { data: { user } } = await supabase.auth.getUser()
@@ -215,7 +215,7 @@ function getPixType(key: string): 'CPF' | 'CNPJ' | 'EMAIL' | 'PHONE' | 'EVP' {
 
 /** Obter solicitações de saque dos afiliados */
 export async function getAdminPayouts() {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     // Auth check (admin)
     const { data: { user } } = await supabase.auth.getUser()
@@ -231,12 +231,16 @@ export async function getAdminPayouts() {
         .order('created_at', { ascending: false })
 
     if (error) return { error: error.message }
-    return { data: payouts || [] }
+    const formatted = (payouts || []).map((p: any) => ({
+        ...p,
+        profiles: Array.isArray(p.profiles) ? p.profiles[0] : p.profiles
+    }))
+    return { data: formatted }
 }
 
 /** Atualizar status de uma solicitação de saque (admin) */
 export async function updatePayoutStatus(payoutId: string, status: 'completed' | 'rejected') {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     // Auth check (admin)
     const { data: { user } } = await supabase.auth.getUser()
@@ -262,7 +266,7 @@ export async function updatePayoutStatus(payoutId: string, status: 'completed' |
             return { error: 'Detalhes do saque (Chave PIX) não encontrados' }
         }
 
-        const transferRes = await createAsaasTransfer({
+        const transferRes = /* ❌ OUTBOX VIOLATION */ await createAsaasTransfer({
             amount: payout.amount,
             pixAddressKey: detailsValue,
             pixAddressKeyType: getPixType(detailsValue),

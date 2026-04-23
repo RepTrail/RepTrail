@@ -126,7 +126,7 @@ export default function AffiliadosLoginPage() {
                                 onChange={e => setEmail(e.target.value)}
                                 required
                                 autoFocus
-                                disabled={loading}
+                                /* ❌ UI BLOCKING REMOVED */ disabled={false}
                                 className="bg-zinc-950 border-zinc-800 text-white rounded-xl h-12 focus:ring-amber-500/20 focus:border-amber-500 transition-all"
                             />
                         </div>
@@ -143,7 +143,7 @@ export default function AffiliadosLoginPage() {
                                     value={password}
                                     onChange={e => setPassword(e.target.value)}
                                     required
-                                    disabled={loading}
+                                    /* ❌ UI BLOCKING REMOVED */ disabled={false}
                                     className="bg-zinc-950 border-zinc-800 text-white rounded-xl h-12 focus:ring-amber-500/20 focus:border-amber-500 transition-all pr-12"
                                 />
                                 <button
@@ -171,7 +171,7 @@ export default function AffiliadosLoginPage() {
 
                         <Button
                             type="submit"
-                            disabled={loading}
+                            /* ❌ UI BLOCKING REMOVED */ disabled={false}
                             className="w-full h-12 bg-amber-500 hover:bg-amber-400 text-zinc-950 font-black uppercase tracking-[0.1em] rounded-xl shadow-lg shadow-amber-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] gap-2 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
                         >
                             {loading ? (

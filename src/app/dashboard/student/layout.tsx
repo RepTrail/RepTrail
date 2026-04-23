@@ -1,62 +1,141 @@
-import { createClient } from '@/lib/supabase/server'
+import { Suspense } from 'react'
+import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { Dumbbell, Utensils, Activity, User, Home, ShoppingBag, Trophy, Search, UserCheck, Sparkles, LogOut, TrendingUp, ClipboardList, Syringe } from 'lucide-react'
-import { StudentNav } from '@/components/layout/student-nav'
+import { 
+    Dumbbell, Utensils, Activity, User, Home, ShoppingBag, Trophy, 
+    Search, UserCheck, Sparkles, TrendingUp, ClipboardList, Syringe 
+} from 'lucide-react'
 import { ConditionalMobileNav } from '@/components/layout/conditional-mobile-nav'
 import { UnifiedSidebar } from '@/components/layout/sidebar-unified'
-import { signOutAction } from '@/actions/auth-actions'
-import { getStudentTrainer } from '@/actions/student-actions'
-import { Logo } from '@/components/ui/logo'
 import { MobileHeader } from '@/components/layout/mobile-header'
 import { SettingsModal } from '@/components/feature/student/settings-modal'
 import { NotificationRequestModal } from '@/components/feature/student/notification-request-modal'
+import { createClient } from '@/lib/supabase/server'
+import { getStudentTrainer } from '@/actions/student-actions'
 
 export default async function StudentLayout({
     children,
 }: {
     children: React.ReactNode
 }) {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    // ─── OPTIMIZED IDENTITY (0ms) ──────────────────────────────────────────
+    // Get identity from header set by middleware to avoid Auth network hit
+    const headerList = await headers()
+    const userId = headerList.get('x-user-id')
 
-    if (!user) {
+    if (!userId) {
         redirect('/auth/login')
     }
 
-    // Fetch profile, details and trainer status in parallel to avoid waterfalls
+    return (
+        <div className="flex h-screen w-full bg-zinc-950 text-white selection:bg-orange-500/30 font-sans">
+            {/* 
+                CORE SHELL 10/10: 
+                The layout returns this structure IMMEDIATELY.
+                Specific navigation links/profile info are filled in via Suspense.
+            */}
+            <Suspense fallback={<div className="hidden md:flex w-72 h-screen bg-zinc-900 border-r border-zinc-800 animate-pulse" />}>
+                <DashboardSidebarLoader userId={userId} />
+            </Suspense>
+
+            <Suspense fallback={<div className="h-16 w-full bg-zinc-950 border-b border-zinc-900 md:hidden animate-pulse" />}>
+                <DashboardNavLoader userId={userId} />
+            </Suspense>
+
+            <main className="flex-1 overflow-x-hidden overflow-y-auto bg-zinc-950 relative custom-scrollbar">
+                <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-orange-500/10 blur-[80px] rounded-full -mr-32 -mt-32 pointer-events-none gpu-accelerated" />
+
+                <div className="pt-24 md:pt-[50px] px-5 sm:px-6 md:px-8 pb-32 md:pb-10 relative z-10 page-entry">
+                    <div className="max-w-7xl mx-auto">
+                        {children}
+                    </div>
+                </div>
+            </main>
+
+            <Suspense fallback={null}>
+                <MobileNavLoader userId={userId} />
+            </Suspense>
+
+            <SettingsModal hasTrainer={true} /* Modal logic handles its own state */ />
+            <NotificationRequestModal />
+        </div>
+    )
+}
+
+/**
+ * ─── ASYNCHRONOUS DATA LOADERS (Deferred) ─────────────────────────────
+ * These components handle the actual DB hits without blocking the initial shell.
+ */
+
+async function DashboardSidebarLoader({ userId }: { userId: string }) {
+    const supabase = await createClient()
+    
     const [profileRes, detailsRes, trainerRel] = await Promise.all([
-        supabase.from('profiles').select('role, full_name, avatar_url, auto_training_status, auto_training_trial_end').eq('id', user.id).single(),
-        supabase.from('student_details').select('id, steroid_use').eq('id', user.id).single(),
-        getStudentTrainer(user.id)
+        supabase.from('profiles').select('role, full_name, avatar_url, auto_training_status, auto_training_trial_end').eq('id', userId).single(),
+        supabase.from('student_details').select('id, steroid_use').eq('id', userId).single(),
+        getStudentTrainer(userId)
     ])
 
     const profile = profileRes.data
     const details = detailsRes.data
 
-    // Note: Cross-dashboard protection is handled by middleware.
-    // Do NOT redirect trainers here — middleware already does it, and doing it
-    // in both places creates an infinite redirect loop.
+    if (!details) redirect('/onboarding')
 
+    const { steroidUse, hasTrainer, isAutoTrainingActive, filteredLinks } = calculateNavContext(profile, details, !!trainerRel)
+
+    return (
+        <UnifiedSidebar 
+            brandColor="orange"
+            logoColor="orange"
+            user={{
+                id: userId,
+                name: profile?.full_name,
+                email: '', // Email not needed for sidebar rendering usually, or fetch from auth if critical
+                avatar_url: profile?.avatar_url
+            }}
+            links={filteredLinks}
+            showSettings={true}
+        />
+    )
+}
+
+async function DashboardNavLoader({ userId }: { userId: string }) {
+    const supabase = await createClient()
+    const [profileRes, detailsRes, trainerRel] = await Promise.all([
+        supabase.from('profiles').select('role, auto_training_status, auto_training_trial_end').eq('id', userId).single(),
+        supabase.from('student_details').select('steroid_use').eq('id', userId).single(),
+        getStudentTrainer(userId)
+    ])
+
+    const { steroidUse, hasTrainer, isAutoTrainingActive } = calculateNavContext(profileRes.data, detailsRes.data, !!trainerRel)
+
+    return <MobileHeader role="student" hasTrainer={hasTrainer} steroidUse={steroidUse} autoTrainingActive={isAutoTrainingActive} />
+}
+
+async function MobileNavLoader({ userId }: { userId: string }) {
+    const supabase = await createClient()
+    const [profileRes, trainerRel] = await Promise.all([
+        supabase.from('profiles').select('role, auto_training_status, auto_training_trial_end').eq('id', userId).single(),
+        getStudentTrainer(userId)
+    ])
+
+    const { hasTrainer, isAutoTrainingActive } = calculateNavContext(profileRes.data, null, !!trainerRel)
+
+    return <ConditionalMobileNav userId={userId} hasTrainer={hasTrainer} steroidUse={false} autoTrainingActive={isAutoTrainingActive} />
+}
+
+/**
+ * ─── SHARED NAV LOGIC ──────────────────────────────────────────────────
+ */
+function calculateNavContext(profile: any, details: any, hasTrainer: boolean) {
     const now = new Date()
-    let isAutoTrainingActive = false;
-
-    if (profile?.auto_training_status === 'active') {
-        isAutoTrainingActive = true;
-    } else if (profile?.auto_training_status === 'trial' && profile?.auto_training_trial_end) {
-        const trialEnd = new Date(profile.auto_training_trial_end)
-        if (now <= trialEnd) {
-            isAutoTrainingActive = true;
-        }
+    let isAutoTrainingActive = false
+    if (profile?.auto_training_status === 'active') isAutoTrainingActive = true
+    else if (profile?.auto_training_status === 'trial' && profile?.auto_training_trial_end) {
+        if (now <= new Date(profile.auto_training_trial_end)) isAutoTrainingActive = true
     }
 
-    if (!details) {
-        redirect('/onboarding')
-    }
-
-    const steroidUse = !!details.steroid_use
-    const hasTrainer = !!trainerRel
+    const steroidUse = !!details?.steroid_use
 
     const allLinks = [
         { href: '/dashboard/student', icon: <Home className="w-4 h-4" />, label: 'Home', exact: true },
@@ -84,45 +163,5 @@ export default async function StudentLayout({
         return true
     })
 
-    return (
-        <div className="flex h-screen w-full bg-zinc-950 text-white selection:bg-orange-500/30 font-sans">
-            <UnifiedSidebar 
-                brandColor="orange"
-                logoColor="orange"
-                user={{
-                    name: profile?.full_name,
-                    email: user.email,
-                    avatar_url: profile?.avatar_url
-                }}
-                links={filteredLinks}
-                showSettings={true}
-            />
-
-            {/* Mobile Top Header */}
-            <MobileHeader role="student" hasTrainer={hasTrainer} steroidUse={steroidUse} autoTrainingActive={isAutoTrainingActive} />
-
-            {/* Main Content Area */}
-            <main className="flex-1 overflow-x-hidden overflow-y-auto bg-zinc-950 relative custom-scrollbar">
-                {/* Background Glow - Optimized for mobile performance */}
-                <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-orange-500/10 blur-[80px] rounded-full -mr-32 -mt-32 pointer-events-none gpu-accelerated" />
-
-                <div className="pt-24 md:pt-[50px] px-5 sm:px-6 md:px-8 pb-32 md:pb-10 relative z-10 page-entry">
-                    <div className="max-w-7xl mx-auto">
-                        {children}
-                    </div>
-                </div>
-            </main>
-
-            {/* Mobile Navigation (Floating Bottom Bar) */}
-            <ConditionalMobileNav
-                hasTrainer={hasTrainer}
-                steroidUse={steroidUse}
-                autoTrainingActive={isAutoTrainingActive}
-            />
-
-            <SettingsModal hasTrainer={hasTrainer} />
-            <NotificationRequestModal />
-        </div>
-    )
+    return { steroidUse, hasTrainer, isAutoTrainingActive, filteredLinks }
 }
-// Force rebuild 2026-03-16-v1

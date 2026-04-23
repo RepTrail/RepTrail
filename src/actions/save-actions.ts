@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 
 export async function saveParsedData(type: 'workout' | 'diet', data: any, studentId?: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) return { error: 'Unauthorized' }
@@ -230,6 +230,15 @@ export async function saveParsedData(type: 'workout' | 'diet', data: any, studen
 
             // 2. Save Cardios
             if (data.cardios && Array.isArray(data.cardios)) {
+                if (isStudentMode && targetStudentId) {
+                    console.log(`[SAVE] Student mode: deactivating previous cardios for ${targetStudentId}`);
+                    await supabase
+                        .from('assigned_cardios')
+                        .update({ active: false })
+                        .eq('student_id', targetStudentId)
+                        .eq('active', true);
+                }
+
                 for (const cData of data.cardios) {
                     const { data: cardio, error: cError } = await supabase
                         .from('cardios')

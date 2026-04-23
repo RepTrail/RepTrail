@@ -6,7 +6,7 @@ import { getTodayRangeBrazil } from '@/lib/date-utils'
 import { upsertDailyTracking } from '@/actions/tracking-actions'
 
 export async function getStudentErgogenics(studentId: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: records, error } = await supabase
         .from('ergogenics')
         .select('*')
@@ -47,15 +47,16 @@ export async function addErgogenic(data: {
     start_date: string
     end_date?: string
 }) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { error: 'Unauthorized' }
 
-    // Clean dates to avoid invalid syntax errors
+    // Clean dates and remove sync metadata to avoid Supabase schema errors
+    const { clientId, clientMutationId, parentId, ...filteredData } = data as any
     const cleanedData = {
-        ...data,
-        start_date: data.start_date || new Date().toISOString().split('T')[0],
-        end_date: data.end_date === '' ? null : data.end_date
+        ...filteredData,
+        start_date: filteredData.start_date || new Date().toISOString().split('T')[0],
+        end_date: filteredData.end_date === '' ? null : filteredData.end_date
     }
 
     const { data: ergogenic, error } = await supabase
@@ -74,12 +75,13 @@ export async function addErgogenic(data: {
 }
 
 export async function updateErgogenic(id: string, studentId: string, data: any) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
-    // Clean dates if they exist in the update payload
-    const cleanedData = { ...data }
-    if (data.start_date === '') delete cleanedData.start_date
-    if (data.end_date === '') cleanedData.end_date = null
+    // Clean data and remove sync metadata to avoid Supabase schema errors
+    const { clientId, clientMutationId, parentId, ...filteredData } = data as any
+    const cleanedData = { ...filteredData }
+    if (filteredData.start_date === '') delete cleanedData.start_date
+    if (filteredData.end_date === '') cleanedData.end_date = null
 
     const { error } = await supabase
         .from('ergogenics')
@@ -93,7 +95,7 @@ export async function updateErgogenic(id: string, studentId: string, data: any) 
 }
 
 export async function deleteErgogenic(id: string, studentId: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { error } = await supabase
         .from('ergogenics')
         .delete()
@@ -108,7 +110,7 @@ export async function deleteErgogenic(id: string, studentId: string) {
 
 
 export async function toggleErgogenicLog(studentId: string, ergogenicId: string, status: boolean) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     let logData = null
 
     if (status) {
@@ -177,7 +179,7 @@ export async function logErgogenicIntake(data: {
 }
 
 export async function getErgogenicLogs(studentId: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data, error } = await supabase
         .from('ergogenic_logs')
         .select('*, ergogenics(name)')
@@ -186,4 +188,22 @@ export async function getErgogenicLogs(studentId: string) {
 
     if (error) return { error: error.message }
     return { data }
+}
+export async function getAssignedErgogenics(studentId: string) {
+    const result = await getStudentErgogenics(studentId)
+    return result.data || []
+}
+
+export async function getTodayErgogenicLogs(studentId: string) {
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
+    const { start, end } = getTodayRangeBrazil()
+    const { data, error } = await supabase
+        .from('ergogenic_logs')
+        .select('ergogenic_id')
+        .eq('student_id', studentId)
+        .gte('created_at', start)
+        .lte('created_at', end)
+
+    if (error) throw error
+    return data || []
 }

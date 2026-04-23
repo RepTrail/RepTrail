@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { ExerciseLoadChart } from './exercise-load-chart'
 import { getExerciseProgress } from '@/actions/log-actions'
+import { useQuery } from '@tanstack/react-query'
 import {
     Select,
     SelectContent,
@@ -26,26 +27,15 @@ export function ExerciseProgressSection({ studentId, exercises }: ExerciseProgre
     const [selectedExerciseId, setSelectedExerciseId] = useState<string | null>(
         exercises.length > 0 ? exercises[0].id : null
     )
-    const [progressData, setProgressData] = useState<any[]>([])
-    const [loading, setLoading] = useState(false)
 
-    useEffect(() => {
-        if (selectedExerciseId) {
-            fetchProgress(selectedExerciseId)
-        }
-    }, [selectedExerciseId])
-
-    const fetchProgress = async (exerciseId: string) => {
-        setLoading(true)
-        try {
-            const data = await getExerciseProgress(studentId, exerciseId)
-            setProgressData(data)
-        } catch (error) {
-            console.error(error)
-        } finally {
-            setLoading(false)
-        }
-    }
+    const { data: progressData = [], isFetching: loading } = useQuery({
+        queryKey: ['exercise-logs', studentId, selectedExerciseId],
+        queryFn: async () => {
+            if (!selectedExerciseId) return []
+            return await getExerciseProgress(studentId, selectedExerciseId)
+        },
+        enabled: !!selectedExerciseId
+    })
 
     const selectedExerciseName = exercises.find(e => e.id === selectedExerciseId)?.name || ''
 

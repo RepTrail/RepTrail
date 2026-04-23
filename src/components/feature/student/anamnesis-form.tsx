@@ -18,9 +18,14 @@ import { Ruler, Weight, User, Activity, Calculator, ArrowRight, Target, Check } 
 import { updateStudentProfile } from '@/actions/student-actions'
 import { Badge } from '@/components/ui/badge'
 
+import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { useQueryClient } from '@tanstack/react-query'
+import { QUERY_KEYS } from '@/lib/query-keys'
+import { ENTITIES } from '@/lib/outbox-db'
+
 export function AnamnesisForm({ initialData }: { initialData?: any }) {
     const { toast } = useToast()
-    const [loading, setLoading] = useState(false)
+    const queryClient = useQueryClient()
 
     // Calculate Age helper
     const calculateAge = (birthDate: string) => {
@@ -42,7 +47,7 @@ export function AnamnesisForm({ initialData }: { initialData?: any }) {
         sex: initialData?.sex || 'male',
         activity_level: initialData?.activity_level || 'moderate',
         height: initialData?.height || '',
-        weight: initialData?.weight || initialData?.current_weight || '',
+        weight: initialData?.weight || initialData?.current_weight || initialData?.starting_weight || '',
         // Measurements for Navy Seal
         neck_cm: initialData?.neck_cm || '',
         waist_cm: initialData?.waist_cm || '',
@@ -77,28 +82,36 @@ export function AnamnesisForm({ initialData }: { initialData?: any }) {
         }
     }, [formData])
 
-    async function handleSubmit(e: React.FormEvent) {
-        e.preventDefault()
-        setLoading(true)
+    const { mutate } = useOptimisticMutation({
+        actionName: 'update-student-profile',
+        entity: ENTITIES.STUDENT_DETAIL,
+        entityId: initialData?.id || 'me',
+        queryKey: QUERY_KEYS.student.metrics(initialData?.id || 'me'),
+        mutationFn: async (variables: { obj: any }) => variables, // 🔴 NO-OP: Logic moves to registry
+        onMutate: (variables) => {
+            const previousMetrics = queryClient.getQueryData(QUERY_KEYS.student.metrics(initialData?.id))
+            queryClient.setQueryData(QUERY_KEYS.student.metrics(initialData?.id), (old: any) => {
+                if(!old) return old
+                return { ...old, ...variables.obj, _optimistic: true }
+            })
+            return { previousMetrics }
+        },
+        onSuccess: () => {
+            toast({ title: "Protocolo Atualizado!", description: "Suas métricas de elite foram calculadas e salvas." })
+        },
+        onError: (err, variables, ctx) => {
+            queryClient.setQueryData(QUERY_KEYS.student.metrics(initialData?.id), ctx?.previousMetrics)
+            toast({ variant: "destructive", title: "Erro inesperado", description: "Falha ao sincronizar métricas." })
+        }
+    })
 
-        const res = await updateStudentProfile({
+    function handleSubmit(e: React.FormEvent) {
+        e.preventDefault()
+        const obj = {
             ...formData,
             body_fat: calculatedBF
-        })
-
-        if (res.success) {
-            toast({
-                title: "Protocolo Atualizado!",
-                description: "Suas métricas de elite foram calculadas e salvas.",
-            })
-        } else {
-            toast({
-                variant: "destructive",
-                title: "Falha na sincronização",
-                description: res.error || "Ocorreu um erro ao salvar os dados.",
-            })
         }
-        setLoading(false)
+        mutate({ obj })
     }
 
     return (
@@ -297,8 +310,8 @@ export function AnamnesisForm({ initialData }: { initialData?: any }) {
 
                             <Button
                                 type="submit"
-                                disabled={loading || !calculatedBF}
-                                className="w-full relative h-auto py-4 sm:py-5  sm:px-8 rounded-2xl sm:rounded-3xl bg-white hover:bg-emerald-500 hover:text-white text-zinc-950 transition-all shadow-xl active:scale-95 group overflow-hidden"
+                                disabled={!calculatedBF}
+                                className="w-full relative h-auto py-4 sm:py-5 sm:px-8 rounded-2xl sm:rounded-3xl bg-white hover:bg-emerald-500 hover:text-white text-zinc-950 transition-all shadow-xl active:scale-95 group overflow-hidden"
                             >
                                 {/* Efeito de Shimmer */}
                                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent translate-x-[-100%] transition-transform duration-1000 group-hover:translate-x-[100%]" />
@@ -306,13 +319,11 @@ export function AnamnesisForm({ initialData }: { initialData?: any }) {
                                 <div className="flex flex-col items-center justify-center w-full relative z-10 sm:flex-row sm:justify-between gap-2 sm:gap-4">
                                     <div className="flex flex-col items-center sm:items-start text-center sm:text-left">
                                         <span className="font-black uppercase italic tracking-widest text-sm sm:text-base md:text-lg leading-none">
-                                            {loading ? "Processando..." : "Salvar Dados"}
+                                            Salvar Dados
                                         </span>
-                                        {!loading && (
-                                            <span className="font-bold uppercase tracking-[0.2em] text-[9px] sm:text-[10px] text-zinc-500 group-hover:text-emerald-100 transition-colors mt-1">
-                                                Antropométricos
-                                            </span>
-                                        )}
+                                        <span className="font-bold uppercase tracking-[0.2em] text-[9px] sm:text-[10px] text-zinc-500 group-hover:text-emerald-100 transition-colors mt-1">
+                                            Antropométricos
+                                        </span>
                                     </div>
                                     <div className="w-10 h-10 rounded-full bg-zinc-100 group-hover:bg-white/20 flex items-center justify-center shrink-0 transition-colors">
                                         <ArrowRight className="w-5 h-5 text-zinc-900 group-hover:text-white group-hover:translate-x-0.5 transition-transform" />

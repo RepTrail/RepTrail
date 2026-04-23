@@ -12,6 +12,14 @@ interface ProgressPhotoUploadProps {
     studentId: string
 }
 
+import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { ENTITIES } from '@/lib/outbox-db'
+import { QUERY_KEYS } from '@/lib/query-keys'
+
+interface ProgressPhotoUploadProps {
+    studentId: string
+}
+
 export function ProgressPhotoUpload({ studentId }: ProgressPhotoUploadProps) {
     const [uploading, setUploading] = useState(false)
     const [photos, setPhotos] = useState<{
@@ -40,6 +48,47 @@ export function ProgressPhotoUpload({ studentId }: ProgressPhotoUploadProps) {
 
     const { toast } = useToast()
 
+    const { mutate } = useOptimisticMutation({
+        actionName: 'save-progress-photos',
+        entity: ENTITIES.PROGRESS_PHOTO,
+        queryKey: QUERY_KEYS.student.photos(studentId),
+        mutationFn: async () => {}, // Sync Engine handles binary upload
+        updateFn: (oldData: any, variables: any) => {
+            const list = Array.isArray(oldData) ? oldData : (oldData?.data || [])
+            const optimisticId = crypto.randomUUID()
+            
+            // Create object URLs for local preview
+            const newRecord = {
+                id: optimisticId,
+                student_id: studentId,
+                front_url: variables.front ? URL.createObjectURL(variables.front) : null,
+                back_url: variables.back ? URL.createObjectURL(variables.back) : null,
+                side_left_url: variables.side_left ? URL.createObjectURL(variables.side_left) : null,
+                side_right_url: variables.side_right ? URL.createObjectURL(variables.side_right) : null,
+                is_private: !variables.allowPublic,
+                created_at: new Date().toISOString(),
+                _optimistic: true
+            }
+            return [newRecord, ...list]
+        },
+        onSuccess: () => {
+            toast({
+                title: 'Sucesso!',
+                description: 'Suas fotos estão sendo enviadas.',
+            })
+            // Reset local state if successful (optimistic)
+            setPhotos({ front: null, back: null, side_left: null, side_right: null })
+            setPreviews({ front: null, back: null, side_left: null, side_right: null })
+        },
+        onError: (err: any) => {
+            toast({
+                title: 'Erro no envio',
+                description: err.message || 'Ocorreu uma falha ao enviar as fotos.',
+                variant: 'destructive'
+            })
+        }
+    })
+
     const handleFileChange = (type: keyof typeof photos, file: File | null) => {
         if (!file) {
             setPhotos(prev => ({ ...prev, [type]: null }))
@@ -55,7 +104,7 @@ export function ProgressPhotoUpload({ studentId }: ProgressPhotoUploadProps) {
         reader.readAsDataURL(file)
     }
 
-    const handleSubmit = async () => {
+    const handleSubmit = () => {
         if (!photos.front || !photos.back || !photos.side_left || !photos.side_right) {
             toast({
                 title: 'Fotos Faltando',
@@ -65,78 +114,11 @@ export function ProgressPhotoUpload({ studentId }: ProgressPhotoUploadProps) {
             return
         }
 
-        setUploading(true)
-        try {
-            const supabase = createBrowserClient()
-            const { data: { user } } = await supabase.auth.getUser()
-
-            if (!user) throw new Error('Sessão expirada. Faça login novamente.')
-
-            const urls: Record<string, string> = {}
-            const timestamp = Date.now()
-            const photoEntries = Object.entries(photos) as [keyof typeof photos, File][]
-
-            // Step 1: Upload each photo directly to Supabase Storage
-            for (const [key, file] of photoEntries) {
-                if (file) {
-                    const fileExt = file.name?.split('.').pop() || 'jpg'
-                    const fileName = `${user.id}/${timestamp}-${key}.${fileExt}`
-                    const filePath = `${fileName}` // In the bucket
-
-                    const { error: uploadError } = await supabase.storage
-                        .from('progress-photos')
-                        .upload(filePath, file, {
-                            cacheControl: '3600',
-                            upsert: true
-                        })
-
-                    if (uploadError) {
-                        console.error(`Error uploading ${key}:`, uploadError)
-                        throw new Error(`Erro ao enviar foto (${key}): ${uploadError.message}`)
-                    }
-
-                    const { data } = supabase.storage
-                        .from('progress-photos')
-                        .getPublicUrl(filePath)
-
-                    if (!data?.publicUrl) {
-                        throw new Error(`Erro ao gerar URL para ${key}`)
-                    }
-
-                    urls[`${key}_url`] = data.publicUrl
-                }
-            }
-
-            // Step 2: Save metadata to DB via Server Action
-            const result = await saveProgressPhotosMetadata({
-                urls,
-                allowPublic
-            })
-
-            if (result.success) {
-                toast({
-                    title: 'Sucesso!',
-                    description: 'Suas fotos de progresso foram enviadas.',
-                })
-                setPhotos({ front: null, back: null, side_left: null, side_right: null })
-                setPreviews({ front: null, back: null, side_left: null, side_right: null })
-            } else {
-                toast({
-                    title: 'Erro no registro',
-                    description: result.error,
-                    variant: 'destructive'
-                })
-            }
-        } catch (error: any) {
-            console.error('Submit error:', error)
-            toast({
-                title: 'Erro no processamento',
-                description: error.message || 'Ocorreu uma falha ao enviar as fotos.',
-                variant: 'destructive'
-            })
-        } finally {
-            setUploading(false)
-        }
+        mutate({
+            studentId,
+            ...photos,
+            allowPublic
+        })
     }
 
     return (

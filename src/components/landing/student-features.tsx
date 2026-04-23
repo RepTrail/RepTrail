@@ -50,8 +50,8 @@ export function StudentFeatures() {
                         badgeIcon={ShieldCheck}
                         badgeText="Para Alunos"
                         badgeVariant="orange"
-                        title={<>A Experiência que seu <span className="text-orange-500">Aluno merece.</span></>}
-                        subtitle="Ofereça um aplicativo intuitivo onde seu aluno visualiza treinos, dietas e evolução física de forma profissional, aumentando a fidelização."
+                        title={<>A Experiência que <span className="text-orange-500">Você merece.</span></>}
+                        subtitle="Visualize seus treinos, acompanhe sua dieta e monitore sua evolução física com um aplicativo profissional feito para acelerar seus resultados."
                     />
 
                     <div className="grid grid-cols-2 gap-[10px] sm:gap-[20px] text-left">

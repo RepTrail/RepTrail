@@ -9,7 +9,7 @@ export default async function EditStudentWorkoutPage({
     params: Promise<{ id: string }>
 }) {
     const { id } = await params
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) {
         console.log('[EDIT] No user found')
@@ -73,7 +73,7 @@ export default async function EditStudentWorkoutPage({
         <div className="max-w-5xl mx-auto  sm:px-6 lg:px-8 py-8">
             {assignment?.id ? (
                 <div className="flex justify-end pb-6">
-                    <WorkoutDaySelector assignmentId={assignment.id} dayOfWeek={assignment.day_of_week ?? null} />
+                    <WorkoutDaySelector userId={user.id} assignmentId={assignment.id} dayOfWeek={assignment.day_of_week ?? null} />
                 </div>
             ) : null}
             <WorkoutBuilder workout={workoutWithExercises as any} backHref="/dashboard/student/workouts" />

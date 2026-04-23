@@ -6,7 +6,7 @@ import { redirect } from 'next/navigation'
 import { WorkoutService } from '@/services/WorkoutService'
 
 export async function getTrainerWorkouts() {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) return []
@@ -14,14 +14,18 @@ export async function getTrainerWorkouts() {
     return WorkoutService.getTrainerWorkouts(user.id)
 }
 
-export async function createManualWorkout(formData: FormData) {
+export async function createManualWorkout(payload: any) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) return { error: 'Unauthorized' }
 
-    const name = formData.get('name')?.toString().trim() || 'Novo Treino'
-    const description = formData.get('description')?.toString().trim()
+    const { 
+        name = 'Novo Treino', 
+        description, 
+        clientMutationId, 
+        clientId 
+    } = payload
 
     try {
         const { data, error } = await supabase
@@ -29,23 +33,34 @@ export async function createManualWorkout(formData: FormData) {
             .insert({
                 trainer_id: user.id,
                 name,
-                description
+                description,
+                client_mutation_id: clientMutationId,
+                client_id: clientId
             })
-            .select('id')
-            .single()
+            .select()
+            .maybeSingle()
 
         if (error) throw error
-
-        revalidatePath('/dashboard/trainer/workouts')
-        return { success: true, workoutId: data.id }
+        return { success: true, data }
 
     } catch (e: any) {
+        // 🔥 ULTRAPROOF: Atomic Recovery on Unique Violation (Code 23505)
+        if (e.code === '23505') {
+            console.log(`[Idempotency] Duplicate detected for ${clientMutationId}. Recovering...`)
+            const { data } = await supabase
+                .from('workouts')
+                .select()
+                .eq('client_mutation_id', clientMutationId)
+                .maybeSingle()
+            
+            return { success: true, data }
+        }
         return { error: e.message }
     }
 }
 
 export async function deleteWorkout(workoutId: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     try {
         const { error } = await supabase
@@ -55,7 +70,11 @@ export async function deleteWorkout(workoutId: string) {
 
         if (error) throw error
 
-        revalidateTag('workouts', 'page')
+        const { data: { user } } = await supabase.auth.getUser()
+        if (user) {
+            revalidateTag(`trainer-${user.id}`, 'page')
+        }
+
         revalidatePath('/dashboard/trainer/workouts')
         revalidatePath('/dashboard/student/workouts')
         return { success: true }
@@ -64,16 +83,47 @@ export async function deleteWorkout(workoutId: string) {
     }
 }
 
-export async function updateWorkoutMeta(workoutId: string, name: string, description?: string) {
-    const supabase = await createClient()
+export async function updateWorkoutMeta(workoutId: string, name: string, description?: string, lastUpdatedAt?: string) {
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     try {
+        if (lastUpdatedAt) {
+            // OCC: Fetch current state before update
+            const { data: current, error: fetchErr } = await supabase
+                .from('workouts')
+                .select('updated_at')
+                .eq('id', workoutId)
+                .single()
+
+            if (fetchErr || !current) throw fetchErr || new Error('Workout not found')
+
+            if (current.updated_at > lastUpdatedAt) {
+                // Conflict detected!
+                const { data: remoteData } = await supabase
+                    .from('workouts')
+                    .select('*')
+                    .eq('id', workoutId)
+                    .single()
+                
+                return { 
+                    conflict: true, 
+                    error: 'Conflito detectado: O item foi alterado por outro usuário ou dispositivo.',
+                    remote: remoteData 
+                }
+            }
+        }
+
         const { error } = await supabase
             .from('workouts')
             .update({ name: name.trim(), description: description?.trim() ?? null })
             .eq('id', workoutId)
 
         if (error) throw error
+
+        const { data: { user } } = await supabase.auth.getUser()
+        if (user) {
+            revalidateTag(`trainer-${user.id}`, 'page')
+        }
 
         revalidatePath('/dashboard/trainer/workouts')
         revalidatePath(`/dashboard/trainer/workouts/${workoutId}`)
@@ -84,7 +134,7 @@ export async function updateWorkoutMeta(workoutId: string, name: string, descrip
 }
 
 export async function duplicateWorkout(workoutId: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { error: 'Unauthorized' }
 
@@ -126,7 +176,11 @@ export async function duplicateWorkout(workoutId: string) {
             if (exErr) throw exErr
         }
 
-        revalidateTag('workouts', 'page')
+        const { data: { user: curUser } } = await supabase.auth.getUser()
+        if (curUser) {
+            revalidateTag(`trainer-${curUser.id}`, 'page')
+        }
+
         revalidatePath('/dashboard/trainer/workouts')
         return { success: true, newId: copy.id }
     } catch (e: any) {
@@ -135,7 +189,7 @@ export async function duplicateWorkout(workoutId: string) {
 }
 
 export async function assignWorkout(workoutId: string, studentId: string, dayOfWeek: number) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     try {
         // First, deactivate any existing day assignments for this workout and student
@@ -180,7 +234,13 @@ export async function assignWorkout(workoutId: string, studentId: string, dayOfW
             if (error) throw error
         }
 
+        const { data: { user } } = await supabase.auth.getUser()
+        if (user) {
+            revalidateTag(`trainer-${user.id}`, 'page')
+        }
+
         revalidatePath('/dashboard/trainer/students')
+        revalidatePath('/dashboard/trainer/workouts')
         return { success: true }
     } catch (e: any) {
         return { error: e.message }
@@ -188,7 +248,7 @@ export async function assignWorkout(workoutId: string, studentId: string, dayOfW
 }
 
 export async function unassignWorkout(workoutId: string, studentId: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     try {
         const { error } = await supabase
@@ -200,7 +260,13 @@ export async function unassignWorkout(workoutId: string, studentId: string) {
 
         if (error) throw error
 
+        const { data: { user } } = await supabase.auth.getUser()
+        if (user) {
+            revalidateTag(`trainer-${user.id}`, 'page')
+        }
+
         revalidatePath('/dashboard/trainer/students')
+        revalidatePath('/dashboard/trainer/workouts')
         return { success: true }
     } catch (e: any) {
         return { error: e.message }
@@ -208,7 +274,7 @@ export async function unassignWorkout(workoutId: string, studentId: string) {
 }
 
 export async function getWorkoutDetails(workoutId: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     // 1. Get Workout Info
     const { data: workout, error } = await supabase
@@ -240,7 +306,7 @@ export async function getWorkoutDetails(workoutId: string) {
 }
 
 export async function addExerciseToWorkout(workoutId: string, exerciseId: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     try {
         // Get current max index
@@ -253,7 +319,7 @@ export async function addExerciseToWorkout(workoutId: string, exerciseId: string
 
         const nextIndex = (existing?.[0]?.order_index ?? -1) + 1
 
-        const { error } = await supabase
+        const { data: newRow, error } = await supabase
             .from('workout_exercises')
             .insert({
                 workout_id: workoutId,
@@ -269,18 +335,19 @@ export async function addExerciseToWorkout(workoutId: string, exerciseId: string
                 reps: '10-12',
                 rest_seconds: 60
             })
+            .select('*, exercise:exercises(id, name)')
+            .single()
 
         if (error) throw error
 
-        revalidatePath(`/dashboard/trainer/workouts/${workoutId}`)
-        return { success: true }
+        return { success: true, data: newRow }
     } catch (e: any) {
         return { error: e.message }
     }
 }
 
 export async function updateWorkoutExercise(id: string, workoutId: string, data: any) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     try {
         const { error } = await supabase
@@ -298,7 +365,7 @@ export async function updateWorkoutExercise(id: string, workoutId: string, data:
 }
 
 export async function removeExerciseFromWorkout(id: string, workoutId: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     try {
         const { error } = await supabase
@@ -316,7 +383,7 @@ export async function removeExerciseFromWorkout(id: string, workoutId: string) {
 }
 
 export async function updateWorkoutExercisesOrder(workoutId: string, orderedIds: string[]) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     try {
         const promises = orderedIds.map((id, index) =>
@@ -336,7 +403,7 @@ export async function updateWorkoutExercisesOrder(workoutId: string, orderedIds:
 }
 
 export async function searchExercises(query: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     const { data } = await supabase
         .from('exercises')
@@ -348,7 +415,7 @@ export async function searchExercises(query: string) {
 }
 
 export async function createNewExercise(name: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) return { error: 'Unauthorized' }
@@ -371,7 +438,7 @@ export async function createNewExercise(name: string) {
     }
 }
 export async function getTodayWorkout(studentId: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const dayOfWeek = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' })).getDay() // 0=Dom ... 6=Sab, no fuso de Brasília
 
     try {
@@ -385,7 +452,7 @@ export async function getTodayWorkout(studentId: string) {
                     workout:workouts!inner(
                         *,
                         trainer_id,
-                        exercises:workout_exercises(
+                        workout_exercises:workout_exercises(
                             *,
                             exercise:exercises(*)
                         )
@@ -411,13 +478,46 @@ export async function getTodayWorkout(studentId: string) {
             const isLinked = trainerLinks?.some(l => l.trainer_id === workout.trainer_id)
             if (!isLinked) return null // Unlinked trainer's data is hidden
         }
-        if (workout.exercises) {
-            workout.exercises.sort((a: any, b: any) => a.order_index - b.order_index)
+        if (workout.workout_exercises) {
+            workout.workout_exercises.sort((a: any, b: any) => a.order_index - b.order_index)
         }
 
         return workout
     } catch (e) {
         console.error('Error fetching today workout:', e)
         return null
+    }
+}
+export async function getAssignedWorkouts(studentId: string) {
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
+
+    try {
+        const { data, error } = await supabase
+            .from('assigned_workouts')
+            .select(`
+                id,
+                day_of_week,
+                active,
+                workout:workouts(
+                    *,
+                    workout_exercises:workout_exercises(
+                        id,
+                        order_index,
+                        warmup_sets,
+                        feeder_sets,
+                        working_sets,
+                        reps,
+                        exercise:exercises(name)
+                    )
+                )
+            `)
+            .eq('student_id', studentId)
+            .eq('active', true)
+
+        if (error) throw error
+        return data || []
+    } catch (e) {
+        console.error('Error fetching assigned workouts:', e)
+        return []
     }
 }

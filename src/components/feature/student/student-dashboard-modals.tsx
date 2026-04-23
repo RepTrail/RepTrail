@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { AutoTrainingOnboardingModal } from '@/components/feature/student/auto-training-onboarding-modal'
 import { dismissAutoTrainingForSession, resetAutoTrainingOnboardingModal, enableAutoTrainingTrialForCurrentUser } from '@/actions/auto-training-actions'
+import { useQueryClient } from '@tanstack/react-query'
+import { QUERY_KEYS } from '@/lib/query-keys'
 
 interface StudentDashboardModalProps {
     userId: string
@@ -14,6 +16,7 @@ interface StudentDashboardModalProps {
 export function StudentDashboardModals({ userId, showModal, hasTrainer }: StudentDashboardModalProps) {
     const [isModalOpen, setIsModalOpen] = useState(false)
     const router = useRouter()
+    const queryClient = useQueryClient()
 
     useEffect(() => {
         if (showModal && !hasTrainer) {
@@ -30,13 +33,13 @@ export function StudentDashboardModals({ userId, showModal, hasTrainer }: Studen
     const handleAccept = async () => {
         await enableAutoTrainingTrialForCurrentUser()
         setIsModalOpen(false)
-        router.refresh()
+        queryClient.invalidateQueries({ queryKey: QUERY_KEYS.student.details(userId) })
     }
 
     const handleReject = async () => {
         await dismissAutoTrainingForSession(userId)
         setIsModalOpen(false)
-        router.refresh()
+        queryClient.invalidateQueries({ queryKey: QUERY_KEYS.student.details(userId) })
     }
 
     const handleClose = () => {

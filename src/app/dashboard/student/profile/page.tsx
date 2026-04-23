@@ -1,8 +1,11 @@
+import { Suspense } from 'react'
 import { createClient } from '@/lib/supabase/server'
-import { getStudentProfile, getStudentTrainer } from '@/actions/student-actions'
-import { ShieldCheck } from 'lucide-react'
-import { StudentProfileForm } from '@/components/feature/student/student-profile-form'
 import { redirect } from 'next/navigation'
+import { getQueryClient } from '@/lib/get-query-client'
+import { HydrationBoundary, dehydrate } from '@tanstack/react-query'
+import { QUERY_KEYS } from '@/lib/query-keys'
+import { getStudentProfile, getStudentTrainer } from '@/actions/student-actions'
+import { StudentProfileClient } from '@/components/feature/student/student-profile-client'
 
 export const revalidate = 0
 
@@ -14,27 +17,26 @@ export default async function StudentProfilePage() {
         redirect('/auth/login')
     }
 
-    const profile = await getStudentProfile(user.id)
-    const trainerRel = await getStudentTrainer(user.id)
+    const queryClient = getQueryClient()
 
-    if (!profile) return null
+    // Non-blocking background warming
+    void queryClient.prefetchQuery({
+        queryKey: QUERY_KEYS.student.details(user.id),
+        queryFn: () => getStudentProfile(user.id)
+    })
+
+    void queryClient.prefetchQuery({
+        queryKey: QUERY_KEYS.profile.trainer(user.id),
+        queryFn: () => getStudentTrainer(user.id)
+    })
+
 
     return (
-        <div className="max-w-7xl mx-auto flex flex-col gap-section-gap">
-            {/* Header */}
-            <header className="space-y-5">
-                <div className="flex items-center gap-3 pb-4">
-                    <h1 className="text-3xl font-black text-white italic uppercase tracking-tighter">
-                        Meu <span className="text-orange-500">Perfil</span>
-                    </h1>
-                </div>
-                <p className="text-zinc-500 text-sm font-medium max-w-md flex items-center gap-2">
-                    <ShieldCheck className="w-3 h-3 text-emerald-500" />
-                    Configurações da conta e dados físicos
-                </p>
-            </header>
-
-            <StudentProfileForm profile={profile} hasTrainer={!!trainerRel} />
-        </div>
+        <HydrationBoundary state={dehydrate(queryClient)}>
+            <Suspense fallback={null}>
+                <StudentProfileClient userId={user.id} />
+            </Suspense>
+        </HydrationBoundary>
     )
 }
+

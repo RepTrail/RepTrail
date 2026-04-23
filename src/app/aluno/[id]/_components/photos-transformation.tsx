@@ -14,7 +14,7 @@ interface Props {
 }
 
 export async function PhotosAndTransformation({ studentId, isOwner, studentName, photos }: Props) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     const oldestPhoto = photos && photos.length > 0 ? photos[photos.length - 1] : null;
     const newestPhoto = photos && photos.length > 0 ? photos[0] : null;

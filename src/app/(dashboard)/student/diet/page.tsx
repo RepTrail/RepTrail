@@ -6,7 +6,7 @@ import { Progress } from "@/components/ui/progress"
 import { Apple, Utensils, CheckCircle } from 'lucide-react'
 
 export default async function StudentDietPage() {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     // 1. Get Assigned Diet

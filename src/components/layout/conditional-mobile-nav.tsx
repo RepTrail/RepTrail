@@ -7,6 +7,7 @@ interface ConditionalMobileNavProps {
     hasTrainer: boolean
     steroidUse?: boolean
     autoTrainingActive?: boolean
+    userId: string
 }
 
 export function ConditionalMobileNav(props: ConditionalMobileNavProps) {

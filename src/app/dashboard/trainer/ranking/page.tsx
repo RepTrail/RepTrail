@@ -1,3 +1,6 @@
+import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
+import { getQueryClient } from '@/lib/get-query-client'
+import { QUERY_KEYS } from '@/lib/query-keys'
 import { getTrainerRanking } from '@/actions/trainer-actions'
 import { Card, CardContent } from "@/components/ui/card"
 import { TrendingUp } from "lucide-react"
@@ -7,10 +10,18 @@ import { PodiumCard, RankingRow } from '@/components/feature/shared/ranking-card
 export const revalidate = 0
 
 export default async function RankingPage() {
+    const queryClient = getQueryClient()
+
+    await queryClient.prefetchQuery({
+        queryKey: QUERY_KEYS.trainer.ranking(),
+        queryFn: getTrainerRanking
+    })
+
     const ranking = await getTrainerRanking()
 
     return (
-        <div className="max-w-7xl mx-auto space-y-12 animate-in fade-in duration-700 pb-10" suppressHydrationWarning>
+        <HydrationBoundary state={dehydrate(queryClient)}>
+            <div className="max-w-7xl mx-auto space-y-12 animate-in fade-in duration-700 pb-10" suppressHydrationWarning>
             {/* Header Section */}
             <RankingHeader />
 
@@ -52,5 +63,6 @@ export default async function RankingPage() {
                 </Card>
             </div>
         </div>
+        </HydrationBoundary>
     )
 }

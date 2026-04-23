@@ -70,6 +70,7 @@ export function PublicStudentGallery({ photos }: PublicStudentGalleryProps) {
                             src={item.url}
                             alt="Progresso"
                             fill
+                            sizes="(max-width: 768px) 33vw, 25vw"
                             className="object-cover"
                         />
                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
@@ -102,6 +103,7 @@ export function PublicStudentGallery({ photos }: PublicStudentGalleryProps) {
                                     src={filteredItems[selectedPhotoIndex].url}
                                     alt="Foto em destaque"
                                     fill
+                                    sizes="95vw"
                                     className="object-contain"
                                     priority
                                 />

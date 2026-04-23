@@ -1,7 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
 import { Button } from "@/components/ui/button"
+import { Plus } from "lucide-react"
+import { useState } from 'react'
 import {
     Dialog,
     DialogContent,
@@ -14,26 +16,51 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Plus, Loader2 } from "lucide-react"
-import { createManualWorkout } from '@/actions/workout-actions'
+import { useToast } from '@/hooks/use-toast'
+import { QUERY_KEYS } from '@/lib/query-keys'
+import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { ENTITIES } from '@/lib/outbox-db'
 
 export function CreateWorkoutDialog() {
     const [open, setOpen] = useState(false)
-    const [loading, setLoading] = useState(false)
+    const { toast } = useToast()
 
-    async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
-        event.preventDefault()
-        setLoading(true)
-        const formData = new FormData(event.currentTarget)
-
-        const result = await createManualWorkout(formData)
-        setLoading(false)
-
-        if (result.success) {
-            setOpen(false)
-        } else {
-            alert(result.error || "Erro ao criar treino.")
+    const { mutate } = useOptimisticMutation({
+        queryKey: ['workouts'], // Using standard workout list key
+        actionName: 'create-manual-workout',
+        entity: ENTITIES.WORKOUT,
+        mutationFn: async (variables) => variables, // 🔴 HARD BLOCK
+        updateFn: (old: any, variables: any) => {
+            const list = old?.data || old || []
+            const newItem = {
+                ...variables,
+                id: crypto.randomUUID(),
+                created_at: new Date().toISOString(),
+                _optimistic: true
+            }
+            return Array.isArray(old) ? [newItem, ...old] : { ...old, data: [newItem, ...list] }
+        },
+        onMutate: () => {
+            setOpen(false) // 🚀 0ms UI: close instantly
+        },
+        onSuccess: () => {
+            toast({ title: 'Treino criado com sucesso!' })
+        },
+        onError: (err: any) => {
+            toast({ variant: 'destructive', title: 'Erro', description: err.message })
         }
+    })
+
+    function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+        event.preventDefault()
+        const formData = new FormData(event.currentTarget)
+        
+        const payload: Record<string, any> = {}
+        formData.forEach((value, key) => {
+            payload[key] = value
+        })
+
+        mutate(payload)
     }
 
     return (
@@ -60,8 +87,7 @@ export function CreateWorkoutDialog() {
                         <Textarea id="description" name="description" placeholder="Instruções gerais, foco do treino, etc." className="bg-zinc-900 border-zinc-800" />
                     </div>
                     <DialogFooter>
-                        <Button type="submit" disabled={loading} className="w-full bg-zinc-100 text-zinc-900 hover:bg-white">
-                            {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                        <Button type="submit" className="w-full bg-zinc-100 text-zinc-900 hover:bg-white">
                             Salvar Template
                         </Button>
                     </DialogFooter>

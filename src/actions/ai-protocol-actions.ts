@@ -21,7 +21,7 @@ export interface AIProtocolPreferences {
 }
 
 export async function generateAIProtocol(preferences: AIProtocolPreferences) {
-  const supabase = await createClient()
+  const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Não autorizado.' }
 
@@ -225,7 +225,7 @@ ${preferences.mealsPerDay === 4 ? `  • 4 refeições: Refeição 1 = leve (~15
 }
 
 export async function checkStudentHasProtocol(userId: string) {
-  const supabase = await createClient()
+  const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
   const [{ data: workouts }, { data: diets }] = await Promise.all([
     supabase.from('assigned_workouts').select('id').eq('student_id', userId).eq('active', true).limit(1),

@@ -7,7 +7,7 @@ import { UnifiedErgogenicsModule } from '@/components/feature/shared/unified-erg
 
 export default async function StudentErgogenicsPage({ params }: { params: { id: string } }) {
     const { id } = await params
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     const { data: { user } } = await supabase.auth.getUser()
 
@@ -89,6 +89,7 @@ export default async function StudentErgogenicsPage({ params }: { params: { id: 
                         parentId={relationship.student_id}
                         successMessage="Substância adicionada ao protocolo!"
                         colorScheme="orange"
+                        queryKey={['ergogenics', relationship.student_id]}
                     />
                 </div>
             </header>

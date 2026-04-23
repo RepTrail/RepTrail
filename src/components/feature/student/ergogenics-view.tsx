@@ -2,11 +2,13 @@
 
 import { useState, useMemo } from 'react'
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Check, Clock, Calendar, FlaskConical, Loader2, History, X } from "lucide-react"
-import { toggleErgogenicLog } from "@/actions/ergogenics-actions"
+import { Card, CardContent } from "@/components/ui/card"
+import { Check, Clock, Calendar, FlaskConical, History, X } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { getTodayRangeBrazil } from '@/lib/date-utils'
+import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { QUERY_KEYS } from '@/lib/query-keys'
+import { ENTITIES } from '@/lib/outbox-db'
 
 interface Ergogenic {
     id: string
@@ -32,19 +34,16 @@ interface StudentLog {
 interface StudentErgogenicsViewProps {
     studentId: string
     ergogenics: Ergogenic[]
-    initialLogs: StudentLog[]
+    logs: StudentLog[] // Changed from initialLogs to just logs (expecting it to be fresh from query)
 }
 
-export function StudentErgogenicsView({ studentId, ergogenics, initialLogs }: StudentErgogenicsViewProps) {
-    const [logs, setLogs] = useState<StudentLog[]>(initialLogs)
-    const [loading, setLoading] = useState<Record<string, boolean>>({})
+export function StudentErgogenicsView({ studentId, ergogenics, logs }: StudentErgogenicsViewProps) {
     const { toast } = useToast()
-
     const today = new Date().getDay() // 0-6
     const todayName = WEEKDAYS[today]
-
-    // Determine which ergogenics are logged today
     const { start, end } = useMemo(() => getTodayRangeBrazil(), [])
+
+    const queryKey = QUERY_KEYS.ergogenics.logs(studentId)
 
     const todaysLogsMap = useMemo(() => {
         const map: Record<string, boolean> = {}
@@ -64,58 +63,47 @@ export function StudentErgogenicsView({ studentId, ergogenics, initialLogs }: St
     const todaysErgogenics = safeErgogenics.filter((e) => e.application_days.some((d: number) => Number(d) === today))
     const otherErgogenics = safeErgogenics.filter((e) => !e.application_days.some((d: number) => Number(d) === today))
 
-    async function handleToggle(ergogenicId: string) {
-        const isLogged = todaysLogsMap[ergogenicId]
-        const newStatus = !isLogged
-
-        setLoading(prev => ({ ...prev, [ergogenicId]: true }))
-
-        try {
-            const res = await toggleErgogenicLog(studentId, ergogenicId, newStatus)
-
-            if (res.success) {
-                if (newStatus) {
-                    // Added log
-                    const erg = ergogenics.find((e: Ergogenic) => e.id === ergogenicId)
-                    const newLog = {
-                        ...res.data,
-                        ergogenic_id: ergogenicId,
-                        ergogenics: { name: erg?.name || 'Substância' }
-                    } as StudentLog
-                    setLogs(prev => [newLog, ...prev])
-                } else {
-                    // Removed logs for today
-                    setLogs(prev => prev.filter(log => {
-                        const isTodayLog = log.created_at >= start && log.created_at <= end
-                        const isSameErg = log.ergogenic_id === ergogenicId
-                        return !(isTodayLog && isSameErg)
-                    }))
+    const { mutate: toggleMutate } = useOptimisticMutation({
+        queryKey,
+        entity: ENTITIES.ERGOGENIC_LOG,
+        actionName: 'toggle-ergogenic-log',
+        mutationFn: async () => {}, // Single-writer: no-op
+        updateFn: (old: any = [], variables: any) => {
+            const { ergogenicId, status } = variables
+            if (status) {
+                const erg = ergogenics.find((e: Ergogenic) => e.id === ergogenicId)
+                const optimisticLog = {
+                    id: `temp-${Date.now()}`,
+                    created_at: new Date().toISOString(),
+                    ergogenic_id: ergogenicId,
+                    ergogenics: { name: erg?.name || 'Substância' },
+                    _optimistic: true
                 }
-
-                toast({
-                    title: newStatus ? "Registrado!" : "Removido",
-                    description: newStatus ? "Sua aplicação foi salva." : "O registro de hoje foi removido."
-                })
+                return [optimisticLog, ...old]
             } else {
-                throw new Error(res.error)
+                return old.filter((log: any) => {
+                    const isTodayLog = log.created_at >= start && log.created_at <= end
+                    const isSameErg = log.ergogenic_id === ergogenicId
+                    return !(isTodayLog && isSameErg)
+                })
             }
-        } catch (error: any) {
-            toast({
-                variant: "destructive",
-                title: "Erro",
-                description: error.message || "Não foi possível atualizar o registro."
+        },
+        onMutate: (variables) => {
+            toast({ 
+                title: variables.status ? "Registrado!" : "Removido", 
+                description: variables.status ? "Sua aplicação foi salva." : "Registro de hoje foi removido." 
             })
-        } finally {
-            setLoading(prev => ({ ...prev, [ergogenicId]: false }))
         }
+    })
+
+    function handleToggle(ergogenicId: string) {
+        const isLogged = todaysLogsMap[ergogenicId]
+        toggleMutate({ ergogenicId, status: !isLogged, student_id: studentId })
     }
 
     const renderErgogenicCard = (e: Ergogenic & { application_days: number[] }, isToday: boolean) => {
         if (!e) return null
-
         const isDone = todaysLogsMap[e.id]
-
-        // Calculate dosage per application safely
         const appDaysCount = Array.isArray(e.application_days) ? e.application_days.length : 0
         const dosagePerApp = appDaysCount > 0 ? (e.weekly_dosage / appDaysCount).toFixed(2) : (e.weekly_dosage || 0).toFixed(2)
 
@@ -132,15 +120,12 @@ export function StudentErgogenicsView({ studentId, ergogenics, initialLogs }: St
                         {isToday && (
                             <Button
                                 onClick={() => handleToggle(e.id)}
-                                disabled={loading[e.id]}
                                 className={`h-12 w-12 rounded-2xl shadow-lg active:scale-95 transition-all p-0 ${isDone
                                         ? "bg-zinc-800 hover:bg-zinc-700 text-emerald-500 border border-emerald-500/20"
                                         : "bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-500/20"
                                     }`}
                             >
-                                {loading[e.id] ? (
-                                    <Loader2 className="w-5 h-5 animate-spin" />
-                                ) : isDone ? (
+                                {isDone ? (
                                     <X className="w-5 h-5" />
                                 ) : (
                                     <Check className="w-6 h-6" />

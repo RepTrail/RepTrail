@@ -1,7 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import { updateStudentFullProfile, uploadAvatar } from '@/actions/student-actions'
+import { updateStudentProfile, uploadAvatar } from '@/actions/student-actions'
+import { useQueryClient } from '@tanstack/react-query'
+import { QUERY_KEYS } from '@/lib/query-keys'
+import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { ENTITIES } from '@/lib/outbox-db'
 import {
     User,
     Settings,
@@ -31,23 +35,12 @@ interface StudentProfileFormProps {
 }
 
 export function StudentProfileForm({ profile, hasTrainer = false }: StudentProfileFormProps) {
-    const [saving, setSaving] = useState(false)
+    const queryClient = useQueryClient()
     const [avatarUrl, setAvatarUrl] = useState(profile?.avatar_url || '')
     const [displayBirthDate, setDisplayBirthDate] = useState(() => {
         if (!profile?.details?.birth_date) return ''
         const [year, month, day] = profile.details.birth_date.split('-')
         return `${day}/${month}/${year}`
-    })
-    const [formData, setFormData] = useState({
-        full_name: profile?.full_name || '',
-        birth_date: profile?.details?.birth_date || '',
-        height: profile?.details?.height?.toString() || '',
-        body_fat: profile?.details?.body_fat?.toString() || '',
-        goal: profile?.details?.goal || '',
-        activity_level: profile?.details?.activity_level || 'sedentary',
-        observations: profile?.details?.observations || '',
-        steroid_use: profile?.details?.steroid_use || false,
-        whatsapp: profile?.whatsapp || ''
     })
 
     const handleBirthDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,49 +56,69 @@ export function StudentProfileForm({ profile, hasTrainer = false }: StudentProfi
         }
 
         setDisplayBirthDate(formatted)
-
-        if (value.length === 8) {
-            const day = value.slice(0, 2)
-            const month = value.slice(2, 4)
-            const year = value.slice(4, 8)
-            setFormData(prev => ({ ...prev, birth_date: `${year}-${month}-${day}` }))
-        } else {
-            setFormData(prev => ({ ...prev, birth_date: '' }))
-        }
     }
 
-    async function handleSubmit(e: React.FormEvent) {
-        e.preventDefault()
-        setSaving(true)
+    const { mutate } = useOptimisticMutation({
+        actionName: 'update-student-profile',
+        entity: ENTITIES.STUDENT_DETAIL,
+        entityId: profile?.id || 'me',
+        queryKey: QUERY_KEYS.student.details(profile?.id || 'me'),
+        mutationFn: async () => {}, // Single-writer: no-op
+        onMutate: (variables) => {
+            const previousDetails = queryClient.getQueryData(QUERY_KEYS.student.details(profile?.id))
+            const previousDetail = queryClient.getQueryData(QUERY_KEYS.trainer.studentDetail(profile?.id))
 
-        try {
-            const result = await updateStudentFullProfile({
-                ...formData,
-                height: parseFloat(formData.height) || 0,
-                body_fat: parseFloat(formData.body_fat) || 0
+            queryClient.setQueryData(QUERY_KEYS.student.details(profile?.id), (old: any) => {
+                if(!old) return old
+                return { ...old, ...variables.obj, _optimistic: true }
+            })
+            
+            queryClient.setQueryData(QUERY_KEYS.trainer.studentDetail(profile?.id), (old: any) => {
+                if(!old) return old
+                return { ...old, ...variables.obj, _optimistic: true }
             })
 
-            if (result.success) {
-                toast({
-                    title: 'Perfil Atualizado',
-                    description: 'Suas informações foram salvas com sucesso.',
-                })
-            } else {
-                toast({
-                    title: 'Erro ao salvar',
-                    description: result.error,
-                    variant: 'destructive'
-                })
-            }
-        } catch (error: any) {
-            toast({
-                title: 'Erro inesperado',
-                description: 'Tente novamente em instantes.',
-                variant: 'destructive'
-            })
-        } finally {
-            setSaving(false)
+            return { previousDetails, previousDetail }
+        },
+        onSuccess: () => {
+            toast({ title: 'Perfil Atualizado', description: 'Suas informações foram salvas e estão sendo sincronizadas.' })
+        },
+        onError: (err, variables, ctx) => {
+            queryClient.setQueryData(QUERY_KEYS.student.details(profile?.id), ctx?.previousDetails)
+            queryClient.setQueryData(QUERY_KEYS.trainer.studentDetail(profile?.id), ctx?.previousDetail)
+            toast({ title: 'Erro inesperado', description: 'Tente novamente.', variant: 'destructive' })
         }
+    })
+
+    function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+        e.preventDefault()
+        const formDataObj = new FormData(e.currentTarget)
+        
+        // Extract birth date from DD/MM/AAAA to YYYY-MM-DD
+        const bDateRaw = (formDataObj.get('birth_date_display') as string)?.replace(/\D/g, '')
+        let birth_date = profile?.details?.birth_date
+        if (bDateRaw?.length === 8) {
+            const day = bDateRaw.slice(0, 2)
+            const month = bDateRaw.slice(2, 4)
+            const year = bDateRaw.slice(4, 8)
+            birth_date = `${year}-${month}-${day}`
+        }
+
+        const obj = {
+            data: {
+                full_name: formDataObj.get('full_name') as string,
+                whatsapp: formDataObj.get('whatsapp') as string,
+                height: parseFloat(formDataObj.get('height') as string) || 0,
+                body_fat: parseFloat(formDataObj.get('body_fat') as string) || 0,
+                goal: formDataObj.get('goal') as string,
+                activity_level: formDataObj.get('activity_level') as string,
+                observations: formDataObj.get('observations') as string,
+                steroid_use: formDataObj.get('steroid_use') === 'on',
+                birth_date
+            },
+            studentId: profile?.id
+        }
+        mutate({ ...obj, userId: profile?.id })
     }
 
     const getStatusLabel = (status: string) => {
@@ -137,14 +150,14 @@ export function StudentProfileForm({ profile, hasTrainer = false }: StudentProfi
                         <CardContent className="p-6 sm:p-10 text-center space-y-6">
                             <AvatarUploadWithCrop
                                 currentImageUrl={avatarUrl}
-                                userName={formData.full_name}
+                                userName={profile?.full_name}
                                 onUploadSuccess={(url) => setAvatarUrl(url)}
                                 uploadAction={uploadAvatar}
                                 accentColor="orange"
                             />
 
                             <div className="space-y-1">
-                                <h2 className="text-2xl font-black text-white italic uppercase">{formData.full_name || 'Seu Nome'}</h2>
+                                <h2 className="text-2xl font-black text-white italic uppercase">{profile?.full_name || 'Seu Nome'}</h2>
                                 <p className="text-zinc-500 text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2">
                                     {profile?.email}
                                 </p>
@@ -161,8 +174,16 @@ export function StudentProfileForm({ profile, hasTrainer = false }: StudentProfi
                                 <div className="pt-6 border-t border-zinc-800/50">
                                     <div className="p-4 bg-zinc-950/50 rounded-3xl border border-zinc-800 text-center w-full">
                                         <span className="text-[9px] font-black text-zinc-600 uppercase tracking-widest block mb-1">Status Auto-Treino</span>
-                                        <span className={`text-xs font-black uppercase italic ${profile?.auto_training_status === 'active' ? 'text-emerald-500' : 'text-amber-500'}`}>
-                                            {getStatusLabel(profile.auto_training_status)}
+                                        <span className={`text-xs font-black uppercase italic ${
+                                            profile.auto_training_status === 'active' 
+                                                ? 'text-emerald-500' 
+                                                : (profile.auto_training_status === 'trial' && profile.auto_training_trial_end && new Date(profile.auto_training_trial_end) < new Date())
+                                                    ? 'text-red-500'
+                                                    : 'text-amber-500'
+                                        }`}>
+                                            {(profile.auto_training_status === 'trial' && profile.auto_training_trial_end && new Date(profile.auto_training_trial_end) < new Date())
+                                                ? 'Teste Expirado'
+                                                : getStatusLabel(profile.auto_training_status)}
                                         </span>
                                     </div>
                                 </div>
@@ -195,8 +216,8 @@ export function StudentProfileForm({ profile, hasTrainer = false }: StudentProfi
                                             Nome Completo
                                         </label>
                                         <Input
-                                            value={formData.full_name}
-                                            onChange={e => setFormData(f => ({ ...f, full_name: e.target.value }))}
+                                            name="full_name"
+                                            defaultValue={profile?.full_name}
                                             placeholder="Ex: João Silva"
                                             className="h-14 bg-zinc-950 border-zinc-800 rounded-2xl focus:border-orange-500/50 font-bold italic text-white"
                                         />
@@ -208,6 +229,7 @@ export function StudentProfileForm({ profile, hasTrainer = false }: StudentProfi
                                             Data de Nascimento
                                         </label>
                                         <Input
+                                            name="birth_date_display"
                                             id="displayBirthDate"
                                             type="text"
                                             placeholder="DD/MM/AAAA"
@@ -223,9 +245,9 @@ export function StudentProfileForm({ profile, hasTrainer = false }: StudentProfi
                                             Altura (cm)
                                         </label>
                                         <Input
+                                            name="height"
                                             type="number"
-                                            value={formData.height}
-                                            onChange={e => setFormData(f => ({ ...f, height: e.target.value }))}
+                                            defaultValue={profile?.details?.height}
                                             placeholder="Ex: 180"
                                             className="h-14 bg-zinc-950 border-zinc-800 rounded-2xl focus:border-orange-500/50 font-bold italic text-white"
                                         />
@@ -237,10 +259,10 @@ export function StudentProfileForm({ profile, hasTrainer = false }: StudentProfi
                                             Percentual de Gordura (BF %)
                                         </label>
                                         <Input
+                                            name="body_fat"
                                             type="number"
                                             step="0.1"
-                                            value={formData.body_fat}
-                                            onChange={e => setFormData(f => ({ ...f, body_fat: e.target.value }))}
+                                            defaultValue={profile?.details?.body_fat}
                                             placeholder="Ex: 15.5"
                                             className="h-14 bg-zinc-950 border-zinc-800 rounded-2xl focus:border-orange-500/50 font-bold italic text-white"
                                         />
@@ -252,8 +274,8 @@ export function StudentProfileForm({ profile, hasTrainer = false }: StudentProfi
                                             Objetivo principal
                                         </label>
                                         <Input
-                                            value={formData.goal}
-                                            onChange={e => setFormData(f => ({ ...f, goal: e.target.value }))}
+                                            name="goal"
+                                            defaultValue={profile?.details?.goal}
                                             placeholder="Ex: Hipertrofia Máxima"
                                             className="h-14 bg-zinc-950 border-zinc-800 rounded-2xl focus:border-orange-500/50 font-bold italic text-white"
                                         />
@@ -265,8 +287,8 @@ export function StudentProfileForm({ profile, hasTrainer = false }: StudentProfi
                                             WhatsApp (com DDD)
                                         </label>
                                         <Input
-                                            value={formData.whatsapp}
-                                            onChange={e => setFormData(f => ({ ...f, whatsapp: e.target.value }))}
+                                            name="whatsapp"
+                                            defaultValue={profile?.whatsapp}
                                             placeholder="Ex: 55 11 99999-9999"
                                             className="h-14 bg-zinc-950 border-zinc-800 rounded-2xl focus:border-orange-500/50 font-bold italic text-white"
                                         />
@@ -278,8 +300,8 @@ export function StudentProfileForm({ profile, hasTrainer = false }: StudentProfi
                                             Nível de Atividade
                                         </label>
                                         <select
-                                            value={formData.activity_level}
-                                            onChange={e => setFormData(f => ({ ...f, activity_level: e.target.value }))}
+                                            name="activity_level"
+                                            defaultValue={profile?.details?.activity_level || 'sedentary'}
                                             className="w-full h-14 px-6 bg-zinc-950 border border-zinc-800 rounded-2xl focus:border-orange-500/50 font-bold text-white uppercase outline-none"
                                         >
                                             <option value="sedentary">Sedentário</option>
@@ -294,8 +316,8 @@ export function StudentProfileForm({ profile, hasTrainer = false }: StudentProfi
                                         <div className="flex items-center space-x-3 p-6 bg-zinc-950 border border-zinc-800 rounded-3xl group-hover:border-orange-500/30 transition-all">
                                             <Checkbox
                                                 id="steroid_use"
-                                                checked={formData.steroid_use}
-                                                onCheckedChange={(checked) => setFormData(f => ({ ...f, steroid_use: checked === true }))}
+                                                name="steroid_use"
+                                                defaultChecked={profile?.details?.steroid_use}
                                                 className="border-zinc-700 data-[state=checked]:bg-emerald-500 data-[state=checked]:text-white h-5 w-5 rounded-md"
                                             />
                                             <div className="grid gap-1.5 leading-none">
@@ -319,8 +341,8 @@ export function StudentProfileForm({ profile, hasTrainer = false }: StudentProfi
                                         </label>
                                         <button type="button" /> {/* Dummy to avoid autofocus issues */}
                                         <Textarea
-                                            value={formData.observations}
-                                            onChange={e => setFormData(f => ({ ...f, observations: e.target.value }))}
+                                            name="observations"
+                                            defaultValue={profile?.details?.observations}
                                             placeholder="Ex: Lesão no ombro direito, asma..."
                                             className="min-h-[120px] bg-zinc-950 border-zinc-800 rounded-3xl focus:border-orange-500/50 font-bold italic text-white p-6"
                                         />
@@ -333,17 +355,10 @@ export function StudentProfileForm({ profile, hasTrainer = false }: StudentProfi
                                     </p>
                                     <Button
                                         type="submit"
-                                        disabled={saving}
                                         className="h-16 px-10 rounded-2xl bg-orange-500 hover:bg-orange-400 text-zinc-950 font-black uppercase italic tracking-wide shadow-xl shadow-orange-500/10 active:scale-95 transition-all group"
                                     >
-                                        {saving ? (
-                                            <div className="w-5 h-5 border-2 border-zinc-950 border-t-transparent animate-spin rounded-full" />
-                                        ) : (
-                                            <>
-                                                Salvar Alterações
-                                                <Save className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                                            </>
-                                        )}
+                                        Salvar Alterações
+                                        <Save className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                                     </Button>
                                 </div>
                             </form>

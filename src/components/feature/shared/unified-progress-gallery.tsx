@@ -7,7 +7,11 @@ import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { deleteProgressPhoto, updateProgressPhotoDate } from '@/actions/student-actions'
+import { useQueryClient } from '@tanstack/react-query'
+import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
 import { useToast } from '@/hooks/use-toast'
+import { ENTITIES } from '@/lib/outbox-db'
+import { QUERY_KEYS } from '@/lib/query-keys'
 import { cn } from '@/lib/utils'
 import Image from 'next/image'
 
@@ -26,9 +30,10 @@ interface UnifiedProgressGalleryProps {
     photos: PhotoSet[]
     mode?: 'student' | 'trainer' | 'public'
     studentName?: string
+    studentId?: string
 }
 
-export function UnifiedProgressGallery({ photos, mode = 'public', studentName }: UnifiedProgressGalleryProps) {
+export function UnifiedProgressGallery({ photos, mode = 'public', studentName, studentId }: UnifiedProgressGalleryProps) {
     const [activeFilter, setActiveFilter] = useState<PhotoType | 'all'>('all')
     const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(null)
     const [hoveredSetId, setHoveredSetId] = useState<string | null>(null)
@@ -71,36 +76,68 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName }:
         ? allItems
         : allItems.filter(item => item.type === activeFilter)
 
-    async function handleDelete(setId: string) {
-        if (!confirm('Tem certeza que deseja remover este registro de fotos?')) return
+    const queryClient = useQueryClient()
 
-        const res = await deleteProgressPhoto(setId)
-        if (res.success) {
-            toast({ title: "Removido!", description: "O registro de fotos foi removido." })
-            window.location.reload()
-        } else {
-            toast({ variant: "destructive", title: "Erro", description: res.error })
+    const { mutate: deleteMutate } = useOptimisticMutation({
+        actionName: 'delete-progress-photo',
+        entity: ENTITIES.PROGRESS_PHOTO,
+        entityId: 'delete-photo',
+        queryKey: QUERY_KEYS.student.photos(studentId || 'me'),
+        mutationFn: async (variables: { photoId: string }) => variables,
+        onMutate: (variables) => {
+            const previous = queryClient.getQueryData(QUERY_KEYS.student.photos(studentId || 'me'))
+            queryClient.setQueryData(QUERY_KEYS.student.photos(studentId || 'me'), (old: any) => 
+                Array.isArray(old) ? old.filter((item: any) => item.id !== variables.photoId) : old
+            )
+            return { previous }
+        },
+        onSuccess: () => {
+            toast({ title: "Removido!", description: "O registro de fotos está sendo removido." })
+        },
+        onError: (err, variables, ctx) => {
+            queryClient.setQueryData(QUERY_KEYS.student.photos(studentId || 'me'), ctx?.previous)
+            toast({ variant: "destructive", title: "Erro", description: "Falha ao remover." })
         }
+    })
+
+    const { mutate: updateDateMutate } = useOptimisticMutation({
+        actionName: 'update-progress-photo-date',
+        entity: ENTITIES.PROGRESS_PHOTO,
+        entityId: 'update-photo',
+        queryKey: QUERY_KEYS.student.photos(studentId || 'me'),
+        mutationFn: async (variables: { photoId: string, newDate: string }) => variables,
+        onMutate: (variables) => {
+            const previous = queryClient.getQueryData(QUERY_KEYS.student.photos(studentId || 'me'))
+            queryClient.setQueryData(QUERY_KEYS.student.photos(studentId || 'me'), (old: any) => 
+                Array.isArray(old) ? old.map((item: any) => item.id === variables.photoId ? { ...item, created_at: variables.newDate } : item) : old
+            )
+            setEditingSetId(null)
+            return { previous }
+        },
+        onSuccess: () => {
+            toast({ title: "Data atualizada!", description: "A data será refletida em todo o sistema em instantes." })
+        },
+        onError: (err, variables, ctx) => {
+            queryClient.setQueryData(QUERY_KEYS.student.photos(studentId || 'me'), ctx?.previous)
+            toast({ variant: "destructive", title: "Erro", description: "Falha ao atualizar data." })
+        }
+    })
+
+    function handleDelete(setId: string) {
+        if (!confirm('Tem certeza que deseja remover este registro de fotos?')) return
+        deleteMutate({ photoId: setId })
     }
 
-    async function handleDateSave(setId: string) {
+    function handleDateSave(setId: string) {
         if (!editDate) return
-        startTransition(async () => {
-            const res = await updateProgressPhotoDate(setId, new Date(editDate).toISOString())
-            if (res.success) {
-                toast({ title: "Data atualizada!" })
-                setEditingSetId(null)
-                window.location.reload()
-            } else {
-                toast({ variant: "destructive", title: "Erro", description: res.error })
-            }
-        })
+        updateDateMutate({ photoId: setId, newDate: new Date(editDate).toISOString() })
     }
 
     function startEditing(id: string, currentDate: string) {
         setEditingSetId(id)
         setEditDate(new Date(currentDate).toISOString().split('T')[0])
     }
+
 
     const canEdit = mode === 'student'
 
@@ -132,6 +169,7 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName }:
                         src={item.url}
                         alt="Progresso"
                         fill
+                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                         className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
                     />
                     <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-3 translate-y-2 group-hover:translate-y-0 transition-transform">
@@ -221,10 +259,10 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName }:
                                                             className="h-8 w-36 px-3 text-[11px] bg-zinc-900 border-zinc-800 text-white rounded-xl focus:ring-emerald-500/20"
                                                         />
                                                         <div className="flex gap-1">
-                                                            <Button size="sm" onClick={() => handleDateSave(set.id)} disabled={isPending} className="h-8 px-5 gap-1.5 bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-black uppercase text-[10px] tracking-widest rounded-full">
+                                                            <Button size="sm" onClick={() => handleDateSave(set.id)} /* ❌ UI BLOCKING REMOVED */ disabled={false} className="h-8 px-5 gap-1.5 bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-black uppercase text-[10px] tracking-widest rounded-full">
                                                                 Salvar
                                                             </Button>
-                                                            <Button size="icon" variant="ghost" onClick={() => setEditingSetId(null)} disabled={isPending} className="h-8 w-8 text-zinc-500 hover:text-white hover:bg-zinc-800 rounded-xl">
+                                                            <Button size="icon" variant="ghost" onClick={() => setEditingSetId(null)} /* ❌ UI BLOCKING REMOVED */ disabled={false} className="h-8 w-8 text-zinc-500 hover:text-white hover:bg-zinc-800 rounded-xl">
                                                                 <X className="w-4 h-4" />
                                                             </Button>
                                                         </div>
@@ -286,10 +324,10 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName }:
                                                     className="h-7 px-2 text-[10px] bg-zinc-900 border-zinc-800 text-white rounded-lg"
                                                 />
                                                 <div className="flex gap-1">
-                                                    <Button size="icon" variant="ghost" onClick={() => handleDateSave(item.setId)} disabled={isPending} className="h-7 w-7 p-0 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white rounded-lg transition-all">
+                                                    <Button size="icon" variant="ghost" onClick={() => handleDateSave(item.setId)} /* ❌ UI BLOCKING REMOVED */ disabled={false} className="h-7 w-7 p-0 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white rounded-lg transition-all">
                                                         <Check className="w-3.5 h-3.5" />
                                                     </Button>
-                                                    <Button size="icon" variant="ghost" onClick={() => setEditingSetId(null)} disabled={isPending} className="h-7 w-7 p-0 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white rounded-lg transition-all">
+                                                    <Button size="icon" variant="ghost" onClick={() => setEditingSetId(null)} /* ❌ UI BLOCKING REMOVED */ disabled={false} className="h-7 w-7 p-0 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white rounded-lg transition-all">
                                                         <X className="w-3.5 h-3.5" />
                                                     </Button>
                                                 </div>
@@ -332,6 +370,7 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName }:
                                     src={filteredItems[selectedPhotoIndex].url}
                                     alt="Visualização"
                                     fill
+                                    sizes="95vw"
                                     className="object-contain"
                                     priority
                                 />

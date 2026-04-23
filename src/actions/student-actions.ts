@@ -16,7 +16,7 @@ export async function updateStudentData(
         whatsapp?: string
     }
 ) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     try {
         // Update WhatsApp in profiles table if provided
@@ -97,7 +97,7 @@ export async function updateStudentData(
 }
 
 export async function markPaymentAsReceived(studentId: string, trainerId: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     try {
         const { error } = await supabase
@@ -129,7 +129,7 @@ export async function markPaymentAsReceived(studentId: string, trainerId: string
     }
 }
 export async function getStudentTrainer(studentId: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     try {
         const { data, error } = await supabase
@@ -179,11 +179,13 @@ export async function searchTrainers(filters: {
     minRating?: number,
     sortBy?: 'rating' | 'price_asc' | 'price_desc' | 'popular'
 }) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     let query = supabase
         .from('profiles')
         .select('*')
         .eq('role', 'trainer')
+        .not('trainer_code', 'is', null)
+        .neq('trainer_code', '')
 
     if (filters.query) {
         query = query.ilike('full_name', `%${filters.query}%`)
@@ -225,23 +227,58 @@ export async function searchTrainers(filters: {
     console.log('--- SEARCH TRAINERS DEBUG ---')
     console.log('Filters:', JSON.stringify(filters, null, 2))
 
-    const { data, error } = await query.limit(20)
+    const { data: rawProfiles, error } = await query.limit(40)
+    if (error || !rawProfiles) return []
 
-    if (error) {
-        console.error('Supabase Error:', error)
-        return []
+    // ─── HARD FILTER (Bypass potential DB filter mismatch) ────────────────────
+    const profiles = rawProfiles.filter(p => p.trainer_code && p.trainer_code.trim() !== '')
+    if (profiles.length === 0) return []
+
+    // ─── ENRICH DATA (Elite metrics) ──────────────────────────────────────────
+    // Fetch REAL student counts for all active trainers to ensure consistency with ranking
+    const [
+        { data: allActiveCounts, error: countsError }
+    ] = await Promise.all([
+        supabase.from('trainer_students').select('trainer_id').eq('active', true)
+    ])
+
+    if (countsError) console.error('Enrichment: Student Counts Error:', countsError)
+
+    // Group counts by trainer_id
+    const countMap: Record<string, number> = {}
+    allActiveCounts?.forEach(c => {
+        countMap[c.trainer_id] = (countMap[c.trainer_id] || 0) + 1
+    })
+
+    const tierPoints: Record<string, number> = {
+        'none': 0,
+        'start': 0,
+        'on_demand': 50,
+        'pro': 100,
+        'elite': 500
     }
 
-    console.log('Results Count:', data?.length || 0)
-    if (data && data.length > 0) {
-        console.log('Sample Result Name:', data[0].full_name)
-    }
-    console.log('-----------------------------')
-    return data || []
+    const enrichedProfiles = profiles.map(p => {
+        const studentCount = countMap[p.id] || 0
+        const rating = Number(p.average_rating || 0)
+        const prestigePoints = tierPoints[p.plan_tier as string] || 0
+        
+        // Exact same score formula as in trainer-actions.ts
+        const score = prestigePoints + (studentCount * 20) + (rating * 50)
+
+        return {
+            ...p,
+            rating,
+            studentCount,
+            score: Math.round(score)
+        }
+    })
+
+    return enrichedProfiles
 }
 
 export async function getTrainerByCode(code: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     try {
         const { data, error } = await supabase
@@ -259,7 +296,7 @@ export async function getTrainerByCode(code: string) {
     }
 }
 export async function getStudentProfile(studentId: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     try {
         const [
@@ -280,25 +317,31 @@ export async function getStudentProfile(studentId: string) {
     }
 }
 
-export async function updateStudentFullProfile(data: {
+export async function updateStudentProfile(data: {
     full_name?: string
     birth_date?: string
+    age?: number
+    sex?: string
     height?: number
+    weight?: number
     body_fat?: number
     goal?: string
     activity_level?: string
     observations?: string
     steroid_use?: boolean
     whatsapp?: string
+    neck_cm?: number
+    waist_cm?: number
+    hip_cm?: number
 }) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) return { success: false, error: 'Unauthorized' }
 
     try {
-        // Update profile
-        if (data.full_name || data.whatsapp) {
+        // 1. Update Profile (profiles table)
+        if (data.full_name !== undefined || data.whatsapp !== undefined) {
             const { error: profileError } = await supabase
                 .from('profiles')
                 .update({
@@ -309,47 +352,75 @@ export async function updateStudentFullProfile(data: {
             if (profileError) throw profileError
         }
 
-        // Update student details
+        // 2. Update Details (student_details table)
+        const detailsUpdate: any = {
+            updated_at: new Date().toISOString()
+        }
+
+        if (data.birth_date !== undefined) detailsUpdate.birth_date = data.birth_date
+        if (data.age !== undefined) detailsUpdate.age = typeof data.age === 'string' ? parseInt(data.age) : data.age
+        if (data.sex !== undefined) detailsUpdate.sex = data.sex
+        if (data.height !== undefined) detailsUpdate.height = typeof data.height === 'string' ? parseFloat(data.height) : data.height
+        if (data.weight !== undefined) detailsUpdate.current_weight = typeof data.weight === 'string' ? parseFloat(data.weight) : data.weight
+        if (data.body_fat !== undefined) detailsUpdate.body_fat = typeof data.body_fat === 'string' ? parseFloat(data.body_fat) : data.body_fat
+        if (data.goal !== undefined) detailsUpdate.goal = data.goal
+        if (data.activity_level !== undefined) detailsUpdate.activity_level = data.activity_level
+        if (data.observations !== undefined) detailsUpdate.observations = data.observations
+        if (data.steroid_use !== undefined) detailsUpdate.steroid_use = data.steroid_use
+        if (data.neck_cm !== undefined) detailsUpdate.neck_cm = typeof data.neck_cm === 'string' ? parseFloat(data.neck_cm) : data.neck_cm
+        if (data.waist_cm !== undefined) detailsUpdate.waist_cm = typeof data.waist_cm === 'string' ? parseFloat(data.waist_cm) : data.waist_cm
+        if (data.hip_cm !== undefined) detailsUpdate.hip_cm = typeof data.hip_cm === 'string' ? parseFloat(data.hip_cm) : data.hip_cm
+
         const { error: detailsError } = await supabase
             .from('student_details')
-            .update({
-                birth_date: data.birth_date,
-                height: data.height,
-                body_fat: data.body_fat,
-                goal: data.goal,
-                activity_level: data.activity_level,
-                observations: data.observations,
-                steroid_use: data.steroid_use,
-                updated_at: new Date().toISOString()
-            })
+            .update(detailsUpdate)
             .eq('id', user.id)
 
         if (detailsError) throw detailsError
 
-        // Save BF History if provided
-        if (data.body_fat !== undefined) {
-            try {
-                await supabase.from('bf_history').insert({
+        // 3. Save History (optional logs)
+        const historyPromises = []
+
+        if (data.weight !== undefined) {
+            const weightVal = typeof data.weight === 'string' ? parseFloat(data.weight) : data.weight
+            historyPromises.push(
+                supabase.from('weight_history').insert({
                     student_id: user.id,
-                    bf_percentage: data.body_fat,
+                    weight_kg: weightVal,
                     recorded_at: new Date().toISOString()
                 })
-            } catch (e) {
-                console.error('Error saving BF history:', e)
-            }
+            )
         }
 
+        if (data.body_fat !== undefined) {
+            const bfVal = typeof data.body_fat === 'string' ? parseFloat(data.body_fat) : data.body_fat
+            historyPromises.push(
+                supabase.from('bf_history').insert({
+                    student_id: user.id,
+                    bf_percentage: bfVal,
+                    recorded_at: new Date().toISOString()
+                })
+            )
+        }
+
+        if (historyPromises.length > 0) {
+            await Promise.all(historyPromises)
+        }
+
+        revalidatePath('/dashboard/student')
         revalidatePath('/dashboard/student/profile')
+        revalidatePath('/dashboard/student/progress')
+        
         return { success: true }
     } catch (e: any) {
-        console.error('Error updating profile:', e)
+        console.error('Error updating student profile:', e)
         return { success: false, error: e.message }
     }
 }
 
 export async function uploadAvatar(formData: FormData) {
     try {
-        const supabase = await createClient()
+        const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
         const { data: { user } } = await supabase.auth.getUser()
 
         if (!user) return { success: false, error: 'Usuário não autenticado' }
@@ -413,7 +484,7 @@ export async function saveProgressPhotosMetadata(data: {
     allowPublic: boolean
 }) {
     try {
-        const supabase = await createClient()
+        const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
         const { data: { user } } = await supabase.auth.getUser()
 
         if (!user) return { success: false, error: 'Usuário não autenticado' }
@@ -442,7 +513,7 @@ export async function saveProgressPhotosMetadata(data: {
 
 export async function uploadProgressPhotos(formData: FormData) {
     try {
-        const supabase = await createClient()
+        const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
         const { data: { user } } = await supabase.auth.getUser()
 
         if (!user) return { success: false, error: 'Usuário não autenticado' }
@@ -546,7 +617,7 @@ export async function uploadProgressPhotos(formData: FormData) {
 
 export async function deleteProgressPhoto(photoId: string) {
     try {
-        const supabase = await createClient()
+        const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
         const { data: { user } } = await supabase.auth.getUser()
 
         if (!user) return { success: false, error: 'Não autorizado' }
@@ -558,7 +629,8 @@ export async function deleteProgressPhoto(photoId: string) {
             .single()
 
         if (fetchError || !photo) {
-            return { success: false, error: 'Foto não encontrada' }
+            // Idempotency: If already gone, it's a success
+            return { success: true, message: 'Foto já removida' }
         }
 
         // Check ownership - strictly restricted to student as requested
@@ -613,7 +685,7 @@ export async function submitTrainerReview(data: {
     rating: number,
     comment?: string
 }) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) return { success: false, error: 'Unauthorized' }
@@ -643,7 +715,7 @@ export async function submitTrainerReview(data: {
 }
 
 export async function updateProgressPhotoDate(photoId: string, newDate: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) {
@@ -690,60 +762,10 @@ export async function updateProgressPhotoDate(photoId: string, newDate: string) 
     }
 }
 
-export async function updateStudentProfile(data: any) {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-
-    if (!user) return { success: false, error: 'Não autorizado' }
-
-    try {
-        const { error: detailError } = await supabase
-            .from('student_details')
-            .update({
-                age: data.age ? parseInt(data.age) : undefined,
-                sex: data.sex,
-                height: data.height ? parseFloat(data.height) : undefined,
-                activity_level: data.activity_level,
-                current_weight: data.weight ? parseFloat(data.weight) : undefined,
-                body_fat: data.body_fat ? parseFloat(data.body_fat) : undefined,
-                neck_cm: data.neck_cm ? parseFloat(data.neck_cm) : undefined,
-                waist_cm: data.waist_cm ? parseFloat(data.waist_cm) : undefined,
-                hip_cm: data.hip_cm ? parseFloat(data.hip_cm) : undefined,
-                updated_at: new Date().toISOString()
-            })
-            .eq('id', user.id)
-
-        if (detailError) throw detailError
-
-        // Save Weight History
-        if (data.weight) {
-            await supabase.from('weight_history').insert({
-                student_id: user.id,
-                weight_kg: parseFloat(data.weight),
-                recorded_at: new Date().toISOString()
-            })
-        }
-
-        // Save BF History
-        if (data.body_fat) {
-            await supabase.from('bf_history').insert({
-                student_id: user.id,
-                bf_percentage: parseFloat(data.body_fat),
-                recorded_at: new Date().toISOString()
-            })
-        }
-
-        revalidatePath('/dashboard/student')
-        revalidatePath('/dashboard/student/progress')
-        return { success: true }
-    } catch (e: any) {
-        console.error('Error updating student profile:', e)
-        return { success: false, error: e.message }
-    }
-}
+// Redundant updateStudentProfile removed and consolidated at line 283
 
 export async function getPublicStudentProfile(studentId: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     try {
         // Fetch all student profile data in parallel
@@ -812,12 +834,73 @@ export async function getPublicStudentProfile(studentId: string) {
     }
 }
 
+
+export async function getProgressPhotos(studentId: string) {
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
+    const { data, error } = await supabase
+        .from('progress_photos')
+        .select('id, front_url, back_url, side_right_url, side_left_url, created_at, is_private')
+        .eq('student_id', studentId)
+        .order('created_at', { ascending: false })
+    
+    if (error) throw error
+    return data || []
+}
+
 export async function getStudentDetails(userId: string) {
-    const supabase = await createClient()
-    const { data } = await supabase
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
+    const { data, error } = await supabase
         .from('student_details')
         .select('*')
         .eq('id', userId)
-        .single()
+        .maybeSingle()
+    
+    if (error) throw error
     return data
+}
+
+export async function getPublicFeed() {
+    const supabase = await createClient()
+
+    try {
+        const { data, error } = await supabase
+            .from('progress_photos')
+            .select(`
+                id,
+                front_url,
+                side_right_url,
+                back_url,
+                created_at,
+                student_id,
+                profiles!inner (
+                    full_name,
+                    avatar_url,
+                    allow_public_feed,
+                    allow_image_disclosure
+                )
+            `)
+            .eq('is_private', false)
+            .or('allow_public_feed.eq.true,allow_image_disclosure.eq.true', { foreignTable: 'profiles' })
+            .order('created_at', { ascending: false })
+            .limit(30)
+
+        if (error) throw error
+
+        const studentPhotos = new Map<string, any>()
+        if (data) {
+            data.forEach((p: any) => {
+                if (!studentPhotos.has(p.student_id)) {
+                    studentPhotos.set(p.student_id, {
+                        ...p,
+                        student: p.profiles
+                    })
+                }
+            })
+        }
+
+        return { success: true, data: Array.from(studentPhotos.values()) }
+    } catch (e: any) {
+        console.error('Error fetching public feed:', e)
+        return { success: false, error: e.message }
+    }
 }

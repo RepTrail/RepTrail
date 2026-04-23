@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { ENTITIES } from '@/lib/outbox-db'
 import { createClient } from '@/lib/supabase/client'
 import { Badge } from "@/components/ui/badge"
 import { Button } from '@/components/ui/button'
@@ -10,6 +11,7 @@ import { parseUploadedPdf } from '@/actions/pdf-actions'
 import { saveParsedData } from '@/actions/save-actions'
 import { useToast } from '@/hooks/use-toast'
 import { PdfDataView } from './pdf-data-view'
+import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
 
 import {
     Select,
@@ -22,10 +24,27 @@ import {
 export function PdfUploader({ type, students = [], role = 'trainer' }: { type: 'workout' | 'diet', students?: any[], role?: 'trainer' | 'student' }) {
     const [uploading, setUploading] = useState(false)
     const [parsing, setParsing] = useState(false)
-    const [saving, setSaving] = useState(false)
     const [parsedData, setParsedData] = useState<any>(null)
     const [selectedStudentId, setSelectedStudentId] = useState<string>('')
     const [selectedOptionIndex, setSelectedOptionIndex] = useState<number>(0)
+    
+    // ─── Mutations ─────────────────────────────────────────────────────────────
+    const saveMutation = useOptimisticMutation({
+        actionName: 'save-parsed-data',
+        queryKey: type === 'workout' ? ['workouts'] : ['diets'],
+        entity: type === 'workout' ? ENTITIES.WORKOUT : ENTITIES.DIET,
+        mutationFn: async (variables) => variables, // NO-OP
+        onMutate: () => {
+            // Close preview instantly
+            setParsedData(null)
+            setSelectedStudentId('')
+            setSelectedOptionIndex(0)
+            toast({ 
+                title: "Enviado!", 
+                description: `O processamento do ${type === 'workout' ? 'treino' : 'dieta'} continuará em segundo plano.` 
+            })
+        }
+    })
     const { toast } = useToast()
     const supabase = createClient()
 
@@ -74,7 +93,7 @@ export function PdfUploader({ type, students = [], role = 'trainer' }: { type: '
         }
     }
 
-    const handleSave = async () => {
+    const handleSave = () => {
         if (role === 'trainer' && type === 'workout' && parsedData?.parsed_data?.ergogenics?.length > 0 && !selectedStudentId) {
             toast({
                 variant: "destructive",
@@ -83,8 +102,6 @@ export function PdfUploader({ type, students = [], role = 'trainer' }: { type: '
             })
             return
         }
-
-        setSaving(true)
 
         let dataToSave = parsedData.parsed_data
 
@@ -99,17 +116,8 @@ export function PdfUploader({ type, students = [], role = 'trainer' }: { type: '
             }
         }
 
-        const result = await saveParsedData(type, dataToSave, selectedStudentId)
-        setSaving(false)
-
-        if (result.success) {
-            toast({ title: "Sucesso!", description: `${type === 'workout' ? 'Treino' : 'Dieta'} salvo${selectedStudentId ? ' e vinculado ao aluno' : ''}.` })
-            setParsedData(null)
-            setSelectedStudentId('')
-            setSelectedOptionIndex(0)
-        } else {
-            toast({ variant: "destructive", title: "Erro ao salvar", description: result.error })
-        }
+        // ✅ OPTIMISTIC (0ms) - No direct await, no saving state
+        saveMutation.mutate({ type, data: dataToSave, studentId: selectedStudentId })
     }
 
     return (
@@ -261,14 +269,13 @@ export function PdfUploader({ type, students = [], role = 'trainer' }: { type: '
                         </div>
 
                         {/* Actions */}
-                        <div className="flex justify-end gap-3 pt-6 border-t border-zinc-900/50">
+                        <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-6 border-t border-zinc-900/50">
                             <Button
                                 variant="ghost"
                                 onClick={() => {
                                     setParsedData(null)
                                     setSelectedStudentId('')
                                 }}
-                                disabled={saving}
                                 className="text-zinc-500 hover:text-white rounded-xl h-12 px-6 font-bold uppercase tracking-widest text-[10px]"
                             >
                                 <X className="w-4 h-4 mr-2" />
@@ -276,14 +283,9 @@ export function PdfUploader({ type, students = [], role = 'trainer' }: { type: '
                             </Button>
                             <Button
                                 onClick={handleSave}
-                                disabled={saving}
                                 className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl h-12 px-10 font-bold shadow-lg shadow-emerald-500/10 transition-all active:scale-95 flex gap-2"
                             >
-                                {saving ? (
-                                    <><Loader2 className="w-4 h-4 animate-spin" /> SALVANDO...</>
-                                ) : (
-                                    <><Check className="w-4 h-4" /> SALVAR {type === 'workout' ? 'TREINO' : 'DIETA'}</>
-                                )}
+                                <Check className="w-4 h-4" /> SALVAR {type === 'workout' ? 'TREINO' : 'DIETA'}
                             </Button>
                         </div>
                     </div>

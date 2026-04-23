@@ -6,7 +6,7 @@ import { revalidatePath } from 'next/cache'
 import { upsertDailyTracking } from '@/actions/tracking-actions'
 
 export async function getCardioLibrary() {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return []
 
@@ -78,7 +78,7 @@ export async function getCardioLibrary() {
 }
 
 export async function createCardio(nameOrData: string | FormData, description?: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { error: 'Unauthorized' }
 
@@ -120,7 +120,7 @@ export async function createCardio(nameOrData: string | FormData, description?: 
 }
 
 export async function getCardioDetails(cardioId: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data, error } = await supabase
         .from('cardios')
         .select(`
@@ -167,7 +167,7 @@ export async function getCardioDetails(cardioId: string) {
 }
 
 export async function updateCardioMeta(cardioId: string, name: string, description?: string, duration?: number, intensity?: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     try {
         const updateData: any = {
             name: name.trim(),
@@ -192,7 +192,7 @@ export async function updateCardioMeta(cardioId: string, name: string, descripti
 }
 
 export async function duplicateCardio(cardioId: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { error: 'Unauthorized' }
 
@@ -226,7 +226,7 @@ export async function assignCardio(data: {
     intensity?: string,
     daysOfWeek?: number[]
 }) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     try {
         // Fetch cardio defaults from template if not provided
@@ -261,7 +261,7 @@ export async function assignCardio(data: {
 }
 
 export async function removeCardioAssignment(assignmentId: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     try {
         const { error } = await supabase
@@ -303,7 +303,7 @@ export async function getStudentCardioAssignments(studentId: string) {
 }
 
 export async function startCardioSession(assignmentId: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { error: 'Unauthorized' }
 
@@ -330,7 +330,7 @@ export async function startCardioSession(assignmentId: string) {
 }
 
 export async function updateCardioSession(logId: string, seconds: number, running: boolean) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     try {
         const updateData: any = {
@@ -358,7 +358,7 @@ export async function updateCardioSession(logId: string, seconds: number, runnin
 }
 
 export async function finishCardioSession(logId: string, feedback?: string, intensity?: string, percentage?: number) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     try {
         const { error } = await supabase
@@ -394,7 +394,7 @@ export async function finishCardioSession(logId: string, feedback?: string, inte
 }
 
 export async function getActiveCardioSession() {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return null
 
@@ -440,7 +440,7 @@ export async function getActiveCardioSession() {
 }
 
 export async function deleteCardio(cardioId: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     try {
         const { error } = await supabase
             .from('cardios')
@@ -455,3 +455,115 @@ export async function deleteCardio(cardioId: string) {
         return { error: e.message }
     }
 }
+export async function getAssignedCardios(studentId: string) {
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
+
+    try {
+        // Get active trainer for filtering
+        const { data: trainerRel } = await supabase
+            .from('trainer_students')
+            .select('trainer_id')
+            .eq('student_id', studentId)
+            .eq('active', true)
+            .maybeSingle()
+
+        const activeTrainerId = trainerRel?.trainer_id
+
+        const { data, error } = await supabase
+            .from('assigned_cardios')
+            .select(`
+                *,
+                cardio:cardios(*)
+            `)
+            .eq('student_id', studentId)
+            .eq('active', true)
+            .order('created_at', { ascending: false })
+
+        if (error) throw error
+
+        // Filter: only active trainer or student themselves (AI/Personal)
+        const filtered = (data || []).filter((a: any) => {
+            const templateTrainerId = a.cardio?.trainer_id
+            return templateTrainerId === studentId || (activeTrainerId && templateTrainerId === activeTrainerId)
+        })
+
+        return filtered
+    } catch (e) {
+        console.error('Error fetching assigned cardios:', e)
+        return []
+    }
+}
+
+export async function getTodayCardio(studentId: string) {
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
+    const tzNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }))
+    const today = tzNow.getDay()
+
+    try {
+        // Get active trainer for filtering
+        const { data: trainerRel } = await supabase
+            .from('trainer_students')
+            .select('trainer_id')
+            .eq('student_id', studentId)
+            .eq('active', true)
+            .maybeSingle()
+
+        const activeTrainerId = trainerRel?.trainer_id
+
+        const { data, error } = await supabase
+            .from('assigned_cardios')
+            .select(`
+                *,
+                cardio:cardios(*)
+            `)
+            .eq('student_id', studentId)
+            .eq('active', true)
+            .order('created_at', { ascending: false })
+
+        if (error) throw error
+
+        // Filter by day of week AND active relationship
+        const filtered = (data || []).filter((a: any) => {
+            // 1. Ownership check: Only active trainer or self can show
+            const templateTrainerId = a.cardio?.trainer_id
+            const isAllowedTrainer = templateTrainerId === studentId || (activeTrainerId && templateTrainerId === activeTrainerId)
+            if (!isAllowedTrainer) return false
+
+            // 2. Day check
+            const hasDaysArray = a.days_of_week && Array.isArray(a.days_of_week) && a.days_of_week.length > 0;
+            const hasDaySingular = a.day_of_week !== undefined && a.day_of_week !== null;
+
+            if (hasDaysArray) return a.days_of_week.includes(today);
+            if (hasDaySingular) return a.day_of_week === today;
+
+            return true;
+        })
+
+        return filtered
+    } catch (e) {
+        console.error('Error in getTodayCardio:', e)
+        return []
+    }
+}
+
+export async function getCardioStatus(userId: string) {
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
+    const { start, end } = getTodayRangeBrazil()
+    
+    try {
+        const { data, error } = await supabase
+            .from('cardio_logs')
+            .select('assigned_cardio_id, status')
+            .eq('student_id', userId)
+            .gte('started_at', start)
+            .lte('started_at', end)
+
+        if (error) throw error
+        return data || []
+    } catch (e) {
+        console.error('Error in getCardioStatus:', e)
+        return []
+    }
+}
+
+import { getTodayRangeBrazil } from '@/lib/date-utils'

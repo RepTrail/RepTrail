@@ -10,7 +10,7 @@ export async function updateTrainerProfile(data: {
     whatsapp?: string
     trainer_code?: string
 }) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) {
@@ -42,7 +42,7 @@ export async function updateTrainerProfile(data: {
 }
 
 export async function updateLastSeen() {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) return

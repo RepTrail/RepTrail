@@ -63,7 +63,7 @@ function FacebookPixelInner() {
           `,
         }}
       />
-      <noscript>
+      <noscript suppressHydrationWarning>
         <img
           height="1"
           width="1"

@@ -28,7 +28,7 @@ function getTodayRangeBrazil() {
 }
 
 export async function getTrainerDiets() {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) return []
@@ -36,37 +36,44 @@ export async function getTrainerDiets() {
     return DietService.getTrainerDiets(user.id)
 }
 
-export async function createManualDiet(formData: FormData) {
+export async function createManualDiet(payload: any) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) return { error: 'Unauthorized' }
 
-    const name = formData.get('name')?.toString().trim() || 'Nova Dieta'
+    const { name = 'Nova Dieta', clientMutationId, clientId } = payload
 
     try {
         const { data, error } = await supabase
             .from('diets')
             .insert({
                 trainer_id: user.id,
-                name
+                name,
+                client_mutation_id: clientMutationId,
+                client_id: clientId
             })
-            .select('id')
-            .single()
+            .select()
+            .maybeSingle()
 
         if (error) throw error
-
-        revalidateTag('diets', 'page')
-        revalidatePath('/dashboard/trainer/diets')
-        return { success: true, dietId: data.id }
+        return { success: true, dietId: data.id, data }
 
     } catch (e: any) {
+        if (e.code === '23505') {
+            const { data } = await supabase
+                .from('diets')
+                .select()
+                .eq('client_mutation_id', clientMutationId)
+                .maybeSingle()
+            return { success: true, dietId: data?.id, data }
+        }
         return { error: e.message }
     }
 }
 
 export async function deleteDiet(dietId: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     try {
         const { error } = await supabase
@@ -85,7 +92,7 @@ export async function deleteDiet(dietId: string) {
 }
 
 export async function updateDietMeta(dietId: string, name: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     try {
         const { error } = await supabase
@@ -107,7 +114,7 @@ export async function updateDietMeta(dietId: string, name: string) {
 }
 
 export async function duplicateDiet(dietId: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { error: 'Unauthorized' }
 
@@ -163,7 +170,7 @@ export async function duplicateDiet(dietId: string) {
 }
 
 export async function assignDiet(dietId: string, studentId: string, daysOfWeek: number[] = [0, 1, 2, 3, 4, 5, 6]) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     try {
         // 1. Handle conflicts: remove these days from all other active diets for this student
@@ -233,7 +240,7 @@ export async function assignDiet(dietId: string, studentId: string, daysOfWeek: 
 }
 
 export async function unassignDiet(dietId: string, studentId: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     try {
         const { error } = await supabase
@@ -253,7 +260,7 @@ export async function unassignDiet(dietId: string, studentId: string) {
 }
 
 export async function getDietDetails(dietId: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     const { data: diet, error } = await supabase
         .from('diets')
@@ -322,69 +329,92 @@ export async function getDietDetails(dietId: string) {
     return diet
 }
 
-export async function addMealToDiet(dietId: string, name: string, timeOfDay: string) {
+export async function addMealToDiet(dietId: string, name: string, timeOfDay: string, clientMutationId?: string, clientId?: string) {
     const supabase = await createClient()
 
     try {
-        const { data: existing } = await supabase
+        const { data: existingJobs } = await supabase
             .from('meals')
             .select('order_index')
             .eq('diet_id', dietId)
             .order('order_index', { ascending: false })
             .limit(1)
 
-        const nextIndex = (existing?.[0]?.order_index ?? -1) + 1
+        const nextIndex = (existingJobs?.[0]?.order_index ?? -1) + 1
 
-        const { error } = await supabase
+        const { data: newRow, error } = await supabase
             .from('meals')
             .insert({
                 diet_id: dietId,
                 name,
                 time_of_day: timeOfDay,
-                order_index: nextIndex
+                order_index: nextIndex,
+                client_mutation_id: clientMutationId,
+                client_id: clientId
             })
+            .select()
+            .maybeSingle()
 
         if (error) throw error
 
-        revalidatePath(`/dashboard/trainer/diets/${dietId}`)
-        return { success: true }
+        return { success: true, data: { ...newRow, meal_items: [] } }
     } catch (e: any) {
+        if (e.code === '23505' && clientMutationId) {
+            const { data } = await supabase
+                .from('meals')
+                .select()
+                .eq('client_mutation_id', clientMutationId)
+                .maybeSingle()
+            return { success: true, data: { ...data, meal_items: [] } }
+        }
         return { error: e.message }
     }
 }
 
 export async function addMealItem(mealId: string, dietId: string, data: any) {
     const supabase = await createClient()
+    const { clientMutationId, clientId, ...fields } = data
 
     try {
-        const { data: existing } = await supabase
+        const { data: existingItems } = await supabase
             .from('meal_items')
             .select('order_index')
             .eq('meal_id', mealId)
             .order('order_index', { ascending: false })
             .limit(1)
 
-        const nextIndex = (existing?.[0]?.order_index ?? -1) + 1
+        const nextIndex = (existingItems?.[0]?.order_index ?? -1) + 1
 
-        const { error } = await supabase
+        const { data: newRow, error } = await supabase
             .from('meal_items')
             .insert({
                 meal_id: mealId,
-                ...data,
-                order_index: nextIndex
+                ...fields,
+                order_index: nextIndex,
+                client_mutation_id: clientMutationId,
+                client_id: clientId
             })
+            .select()
+            .maybeSingle()
 
         if (error) throw error
 
-        revalidatePath(`/dashboard/trainer/diets/${dietId}`)
-        return { success: true }
+        return { success: true, data: newRow }
     } catch (e: any) {
+        if (e.code === '23505' && clientMutationId) {
+            const { data: existing } = await supabase
+                .from('meal_items')
+                .select()
+                .eq('client_mutation_id', clientMutationId)
+                .maybeSingle()
+            return { success: true, data: existing }
+        }
         return { error: e.message }
     }
 }
 
 export async function updateMealItem(id: string, dietId: string, data: any) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     try {
         const { error } = await supabase
@@ -402,7 +432,7 @@ export async function updateMealItem(id: string, dietId: string, data: any) {
 }
 
 export async function removeMealItem(id: string, dietId: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     try {
         const { error } = await supabase
@@ -420,7 +450,7 @@ export async function removeMealItem(id: string, dietId: string) {
 }
 
 export async function removeMeal(id: string, dietId: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     try {
         const { error } = await supabase
@@ -502,7 +532,7 @@ Ensure the macros returned are calculated specifically for the suggested quantit
 
 export async function estimateAllDietMacros(dietId: string) {
     console.log(`[MACRO_ESTIMATE] Starting for diet: ${dietId}`)
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     try {
         // 1. Get all items
@@ -596,7 +626,7 @@ Return ONLY a JSON array of objects with this exact structure (no markdown):
     }
 }
 export async function logMealCheck(mealId: string, status: boolean = true) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { error: 'Unauthorized' }
 
@@ -630,7 +660,7 @@ export async function logMealCheck(mealId: string, status: boolean = true) {
 }
 
 export async function getStudentDailyDiet(studentId: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     try {
         const todayDow = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' })).getDay()
@@ -743,7 +773,7 @@ export async function getStudentDailyDiet(studentId: string) {
 }
 
 export async function updateMealsOrder(dietId: string, orderedIds: string[]) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     try {
         for (let i = 0; i < orderedIds.length; i++) {
             await supabase
@@ -761,7 +791,7 @@ export async function updateMealsOrder(dietId: string, orderedIds: string[]) {
 }
 
 export async function updateMealItemsOrder(mealId: string, orderedIds: string[]) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     try {
         for (let i = 0; i < orderedIds.length; i++) {
             await supabase
@@ -776,5 +806,36 @@ export async function updateMealItemsOrder(mealId: string, orderedIds: string[])
         return { success: true }
     } catch (e: any) {
         return { error: e.message }
+    }
+}
+export async function getAssignedDiets(studentId: string) {
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
+
+    try {
+        const { data, error } = await supabase
+            .from('assigned_diets')
+            .select(`
+                id,
+                diet_id,
+                days_of_week,
+                active,
+                diet:diets(
+                    id,
+                    name,
+                    created_at,
+                    meals(count)
+                )
+            `)
+            .eq('student_id', studentId)
+            .eq('active', true)
+
+        if (error) {
+            console.error('Supabase Query Error (assigned_diets):', error)
+            throw error
+        }
+        return data || []
+    } catch (e: any) {
+        console.error('Error fetching assigned diets (Full Error):', e)
+        return []
     }
 }

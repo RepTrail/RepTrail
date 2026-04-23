@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { UserCircle, Sparkles, X, Plus } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import {
     Dialog,
@@ -16,7 +17,10 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
 import { updateTrainerProfile } from '@/actions/profile-actions'
-import { UserCircle, Sparkles, X, Plus } from 'lucide-react'
+import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { ENTITIES } from '@/lib/outbox-db'
+import { useQueryClient } from '@tanstack/react-query'
+import { QUERY_KEYS } from '@/lib/query-keys'
 
 interface EditProfileDialogProps {
     profile: {
@@ -40,6 +44,7 @@ export function EditProfileDialog({ profile }: EditProfileDialogProps) {
     const [specialties, setSpecialties] = useState<string[]>(profile.specialties || [])
     const [newSpecialty, setNewSpecialty] = useState('')
 
+    const queryClient = useQueryClient()
     const { toast } = useToast()
 
     const handleAddSpecialty = () => {
@@ -53,38 +58,25 @@ export function EditProfileDialog({ profile }: EditProfileDialogProps) {
         setSpecialties(specialties.filter(s => s !== spec))
     }
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
-        setLoading(true)
-
-        try {
-            const result = await updateTrainerProfile({
-                ...formData,
-                specialties
-            })
-
-            if (result.success) {
-                toast({
-                    title: "Perfil atualizado!",
-                    description: "Suas informações foram salvas com sucesso.",
-                })
-                setOpen(false)
-            } else {
-                toast({
-                    variant: "destructive",
-                    title: "Erro ao atualizar",
-                    description: result.error,
-                })
-            }
-        } catch (error) {
-            toast({
-                variant: "destructive",
-                title: "Erro inesperado",
-                description: "Tente novamente em instantes.",
-            })
-        } finally {
-            setLoading(false)
+    const { mutate } = useOptimisticMutation({
+        actionName: 'update-trainer-profile',
+        entity: ENTITIES.TRAINER_DETAIL,
+        queryKey: ['profile'],
+        mutationFn: async () => {}, // Single-writer: no-op
+        onMutate: (variables) => {
+            queryClient.invalidateQueries({ queryKey: ['profile'] })
+            toast({ title: "Perfil atualizado!", description: "Suas informações foram salvas com sucesso." })
         }
+    })
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault()
+
+        setOpen(false)
+        mutate({
+            ...formData,
+            specialties
+        })
     }
 
     return (
@@ -189,8 +181,8 @@ export function EditProfileDialog({ profile }: EditProfileDialogProps) {
                     </div>
 
                     <DialogFooter>
-                        <Button type="submit" disabled={loading} className="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-black uppercase tracking-widest h-12 rounded-xl shadow-[0_0_20px_-5px_rgba(16,185,129,0.3)]">
-                            {loading ? "Salvando..." : "Salvar Alterações"}
+                        <Button type="submit" className="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-black uppercase tracking-widest h-12 rounded-xl shadow-[0_0_20px_-5px_rgba(16,185,129,0.3)]">
+                            Salvar Alterações
                         </Button>
                     </DialogFooter>
                 </form>

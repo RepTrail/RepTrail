@@ -58,7 +58,7 @@ export function BecomeAffiliateCard() {
 
                 <Button
                     onClick={handleEnable}
-                    disabled={loading}
+                    /* ❌ UI BLOCKING REMOVED */ disabled={false}
                     className="w-full h-11 bg-amber-500 hover:bg-amber-600 text-zinc-950 font-black uppercase tracking-widest text-xs rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98] gap-2"
                 >
                     {loading ? (

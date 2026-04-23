@@ -1,0 +1,45 @@
+﻿    const { data: ergogenicsData } = useQuery({
+    const { data: logsData } = useQuery({
+    const { data: cardios, isLoading } = useQuery({
+    const { data: cardioLogs, isLoading: isLoadingLogs } = useQuery({
+    const { data: diet, isLoading } = useQuery({
+    const { data: profile } = useQuery({
+    const { data: rawErgogenics, isLoading } = useQuery({
+    const { data: ergoLogs, isLoading: isLoadingLogs } = useQuery({
+    const { data: metrics, isLoading } = useQuery({
+    const { data: workout, isLoading: isLoadingWorkout } = useQuery({
+    const { data: statusData, isLoading: isLoadingStatus } = useQuery({
+    const { data: cardio } = useQuery({
+    const { data: profile } = useQuery({
+    const { data: trainerRel } = useQuery({
+    const { data: assignments = [] } = useQuery({
+    const { data: cardios = [] } = useQuery({
+    const { data: diet } = useQuery({
+    const { data: profile } = useQuery({
+    const { data: trainerLink } = useQuery({
+    const { data: studentDailyDiet } = useQuery({
+    const { data: assignments = [] } = useQuery({
+    const { data: diets = [] } = useQuery({
+    const { data: profile } = useQuery({
+    const { data: trainerLink } = useQuery({
+    const { data: ergogenicsData } = useQuery({
+    const { data: logsData } = useQuery({
+    const { data: cardioSession } = useQuery({
+    const { data: workoutSession } = useQuery({
+    const { data: fullMetrics } = useQuery({
+    const { data: workoutHistory = [] } = useQuery({
+    const { data: adherenceHistory = [] } = useQuery({
+    const { data: progressPhotos = [] } = useQuery({
+    const { data: termsStatus, isLoading: loadingTerms } = useQuery({
+    const { data: trialData, isLoading: loadingTrial } = useQuery({
+    const { data: workout } = useQuery({
+    const { data: profile } = useQuery({
+    const { data: trainerLink } = useQuery({
+    const { data: workouts = [] } = useQuery({
+    const { data: libraryWorkouts = [] } = useQuery({
+    const { data: activities = [] } = useQuery({
+    const { data: assignments = [], isLoading } = useQuery({
+    const { data: dietData } = useQuery({
+    const { data: ergogenics = initialData } = useQuery({
+    const { data: progressData = [], isFetching: loading } = useQuery({
+    const { data: workoutData } = useQuery({

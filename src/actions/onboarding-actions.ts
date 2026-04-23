@@ -26,7 +26,7 @@ export type OnboardingState = {
 }
 
 export async function submitOnboarding(prevState: OnboardingState, formData: FormData) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) {

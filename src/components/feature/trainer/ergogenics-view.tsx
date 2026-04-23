@@ -11,6 +11,11 @@ import { addErgogenic, updateErgogenic, deleteErgogenic } from "@/actions/ergoge
 import { Switch } from "@/components/ui/switch"
 import { UnifiedDeleteButton } from "@/components/feature/shared/unified-delete-button"
 import { cn } from '@/lib/utils'
+import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query'
+import { useToast } from '@/hooks/use-toast'
+import { QUERY_KEYS } from '@/lib/query-keys'
+import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { ENTITIES } from '@/lib/outbox-db'
 
 interface Ergogenic {
     id: string
@@ -39,8 +44,8 @@ interface TrainerErgogenicsViewProps {
 }
 
 export function TrainerErgogenicsView({ studentId, initialData }: TrainerErgogenicsViewProps) {
-    const [ergogenics, setErgogenics] = useState<Ergogenic[]>(initialData)
-    const [loading, setLoading] = useState<Record<string, boolean>>({})
+    const { toast } = useToast()
+    const queryClient = useQueryClient()
     const [isAdding, setIsAdding] = useState(false)
     const [formData, setFormData] = useState({
         name: '',
@@ -52,16 +57,31 @@ export function TrainerErgogenicsView({ studentId, initialData }: TrainerErgogen
         end_date: ''
     })
 
-    async function handleAdd() {
-        if (formData.application_days.length === 0) {
-            alert('Selecione pelo menos um dia de aplicação')
-            return
-        }
-        setLoading({ add: true })
-        const res = await addErgogenic({ ...formData, student_id: studentId })
-        setLoading({})
-        if (res.success) {
-            setErgogenics([res.data as Ergogenic, ...ergogenics])
+    // Local-First: Consume from cache
+    const { data: ergogenics = initialData } = useQuery({
+        queryKey: QUERY_KEYS.ergogenics.all(studentId),
+        queryFn: async () => initialData, // In a real app this would fetch, here we rely on initial + cache updates
+        initialData
+    })
+
+    const { mutate: addMutate } = useOptimisticMutation({
+        actionName: 'add-ergogenic',
+        entity: ENTITIES.ERGOGENIC,
+        entityId: 'new',
+        queryKey: QUERY_KEYS.ergogenics.all(studentId),
+        mutationFn: async (variables) => variables, // 🔴 HARD BLOCK
+        onMutate: (variables) => {
+            const previous = queryClient.getQueryData(QUERY_KEYS.ergogenics.all(studentId))
+            queryClient.setQueryData(QUERY_KEYS.ergogenics.all(studentId), (old: any) => {
+                const newItem = {
+                    id: crypto.randomUUID(),
+                    ...variables,
+                    created_at: new Date().toISOString(),
+                    _optimistic: true
+                }
+                return [newItem, ...(old || [])]
+            })
+
             setIsAdding(false)
             setFormData({
                 name: '',
@@ -72,21 +92,20 @@ export function TrainerErgogenicsView({ studentId, initialData }: TrainerErgogen
                 start_date: new Date().toISOString().split('T')[0],
                 end_date: ''
             })
-        } else {
-            alert(res.error)
-        }
-    }
 
-    async function handleDelete(id: string) {
-        if (!confirm('Excluir esta substância?')) return
-        setLoading({ [id]: true })
-        const res = await deleteErgogenic(id, studentId)
-        setLoading({})
-        if (res.success) {
-            setErgogenics(prev => prev.filter(e => e.id !== id))
-        } else {
-            alert(res.error)
+            return { previous }
+        },
+        onSuccess: () => {
+            toast({ title: 'Adicionado com sucesso!', description: 'Substância adicionada ao protocolo.' })
         }
+    })
+
+    function handleAdd() {
+        if (formData.application_days.length === 0) {
+            toast({ variant: 'destructive', title: 'Atenção', description: 'Selecione pelo menos um dia de aplicação' })
+            return
+        }
+        addMutate({ ...formData, student_id: studentId })
     }
 
     const toggleDay = (day: number) => {
@@ -124,115 +143,12 @@ export function TrainerErgogenicsView({ studentId, initialData }: TrainerErgogen
                     <CardHeader className="bg-emerald-500/[0.03] border-b border-zinc-900/50 pb-6">
                         <CardTitle className="text-sm font-bold text-emerald-500 uppercase tracking-widest">Nova Substância</CardTitle>
                     </CardHeader>
-                    <CardContent className="p-8 space-y-8">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div className="space-y-4">
-                                <div className="space-y-2">
-                                    <Label className="text-[10px] text-zinc-500 uppercase font-bold tracking-widest ml-1">Nome da Substância</Label>
-                                    <Input
-                                        value={formData.name}
-                                        onChange={e => setFormData({ ...formData, name: e.target.value })}
-                                        placeholder="Ex: Testosterona Enantato"
-                                        className="bg-zinc-900/50 border-zinc-800 text-sm h-12 rounded-xl text-white"
-                                    />
-                                </div>
-
-                                <div className="space-y-2">
-                                    <Label className="text-[10px] text-zinc-500 uppercase font-bold tracking-widest ml-1">Dosagem Semanal Total</Label>
-                                    <div className={cn(
-                                        "flex items-center bg-zinc-900/50 border border-zinc-800 rounded-2xl h-14 pr-2 focus-within:ring-2 focus-within:ring-emerald-500/20 focus-within:border-emerald-500/50 transition-all overflow-hidden"
-                                    )}>
-                                        <div className="flex-1">
-                                            <Input
-                                                type="number"
-                                                step="0.1"
-                                                value={formData.weekly_dosage || ''}
-                                                onChange={e => setFormData({ ...formData, weekly_dosage: parseFloat(e.target.value) || 0 })}
-                                                placeholder="Ex: 1.2"
-                                                className="bg-transparent border-0 h-12 focus-visible:ring-0 focus-visible:ring-offset-0 font-bold px-4 text-white"
-                                            />
-                                        </div>
-
-                                        {/* Minimal Unit Switch inside input */}
-                                        <div className="flex items-center gap-3 pb-4 px-4 border-l border-zinc-800/50 h-8">
-                                            <span className={cn(
-                                                "text-[9px] font-black uppercase tracking-widest transition-all",
-                                                formData.unit === 'ml' ? "text-emerald-500" : "text-zinc-600"
-                                            )}>ML</span>
-                                            <Switch
-                                                checked={formData.unit === 'mg'}
-                                                onCheckedChange={(checked) => setFormData({ ...formData, unit: checked ? 'mg' : 'ml' })}
-                                                className="h-4 w-8 data-[state=checked]:bg-emerald-500 data-[state=unchecked]:bg-zinc-800"
-                                            />
-                                            <span className={cn(
-                                                "text-[9px] font-black uppercase tracking-widest transition-all",
-                                                formData.unit === 'mg' ? "text-emerald-500" : "text-zinc-600"
-                                            )}>MG</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="space-y-4">
-                                <Label className="text-[10px] text-zinc-500 uppercase font-bold tracking-widest ml-1">Dias de Aplicação</Label>
-                                <div className="grid grid-cols-4 gap-2">
-                                    {DAYS.map((day) => (
-                                        <Button
-                                            key={day.value}
-                                            type="button"
-                                            onClick={() => toggleDay(day.value)}
-                                            className={`
-                                                h-11 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all active:scale-95 border-2
-                                                ${formData.application_days.includes(day.value)
-                                                    ? 'bg-emerald-500 text-zinc-950 border-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.4)] scale-105'
-                                                    : 'bg-zinc-900/50 text-zinc-500 border-zinc-800 hover:bg-zinc-800 hover:text-zinc-100 hover:border-emerald-500/30'}
-                                            `}
-                                        >
-                                            {day.label}
-                                        </Button>
-                                    ))}
-                                </div>
-                                {formData.application_days.length > 0 && (
-                                    <div className="p-4 bg-emerald-500/5 border border-emerald-500/10 rounded-2xl flex items-center justify-between">
-                                        <div className="space-y-0.5">
-                                            <p className="text-[10px] text-zinc-500 uppercase font-bold tracking-widest">Dose por aplicação</p>
-                                            <p className="text-xl font-black text-white italic italic uppercase">
-                                                {dosagePerDay} <span className="text-emerald-500">{formData.unit}</span>
-                                            </p>
-                                        </div>
-                                        <Sparkles className="w-5 h-5 text-emerald-500/30" />
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="space-y-2">
-                                <Label className="text-[10px] text-zinc-500 uppercase font-bold tracking-widest ml-1">Início</Label>
-                                <Input type="date" value={formData.start_date} onChange={e => setFormData({ ...formData, start_date: e.target.value })} className="bg-zinc-900/50 border-zinc-800 text-sm h-12 rounded-xl text-white" />
-                            </div>
-                            <div className="space-y-2">
-                                <Label className="text-[10px] text-zinc-500 uppercase font-bold tracking-widest ml-1">Previsão Término</Label>
-                                <Input type="date" value={formData.end_date} onChange={e => setFormData({ ...formData, end_date: e.target.value })} className="bg-zinc-900/50 border-zinc-800 text-sm h-12 rounded-xl text-white" />
-                            </div>
-                        </div>
-
-                        <div className="space-y-2">
-                            <Label className="text-[10px] text-zinc-500 uppercase font-bold tracking-widest ml-1">Notas / Instruções</Label>
-                            <Textarea
-                                value={formData.notes}
-                                onChange={e => setFormData({ ...formData, notes: e.target.value })}
-                                placeholder="Horários preferenciais, cuidados com a aplicação..."
-                                className="bg-zinc-900/50 border-zinc-800 text-sm rounded-xl min-h-[100px] text-white"
-                            />
-                        </div>
-
-                        <div className="flex justify-end gap-3 pt-6 border-t border-zinc-900">
-                            <Button variant="ghost" onClick={() => setIsAdding(false)} className="text-zinc-500 hover:text-white rounded-xl h-11 px-6 font-bold uppercase tracking-widest text-[10px]">Cancelar</Button>
-                            <Button onClick={handleAdd} disabled={loading.add || !formData.name || formData.weekly_dosage <= 0} className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl h-11 px-8 font-bold shadow-lg transition-all active:scale-95">
-                                {loading.add ? <Loader2 className="w-4 h-4 animate-spin" /> : 'DEFINIR PROTOCOLO'}
-                            </Button>
-                        </div>
+                    <CardContent className="p-8">
+                        <ErgogenicForm 
+                            onSubmit={(data) => addMutate({ ...data, student_id: studentId })}
+                            onCancel={() => setIsAdding(false)}
+                            colorScheme="emerald"
+                        />
                     </CardContent>
                 </Card>
             )}
@@ -250,10 +166,15 @@ export function TrainerErgogenicsView({ studentId, initialData }: TrainerErgogen
                                         </div>
                                     </div>
                                 </div>
-                                <UnifiedDeleteButton
+                                 <UnifiedDeleteButton
                                     id={e.id}
                                     actionType="ergogenic"
                                     itemName={e.name}
+                                    onSuccess={() => {
+                                        queryClient.setQueryData(QUERY_KEYS.ergogenics.all(studentId), (old: any) => 
+                                            (old || []).filter((item: any) => item.id !== e.id)
+                                        )
+                                    }}
                                 />
                             </div>
 

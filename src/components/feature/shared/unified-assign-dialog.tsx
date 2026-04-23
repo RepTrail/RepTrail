@@ -24,11 +24,14 @@ import { Label } from "@/components/ui/label"
 import { UserPlus, Loader2, Calendar, X, Timer, Activity } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { useRouter } from 'next/navigation'
+import { useQueryClient, QueryKey } from '@tanstack/react-query'
 
 import { assignCardio, removeCardioAssignment } from '@/actions/cardio-actions'
 import { assignDiet, unassignDiet } from '@/actions/diet-actions'
 import { assignWorkout, unassignWorkout } from '@/actions/workout-actions'
 import { assignErgogenic } from '@/actions/student-content-actions'
+import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { ENTITIES } from '@/lib/outbox-db'
 
 import { cn } from '@/lib/utils'
 
@@ -46,6 +49,7 @@ interface UnifiedAssignDialogProps {
     trigger?: React.ReactNode
     initialDays?: number[]
     colorScheme?: 'orange' | 'emerald'
+    queryKey?: QueryKey
 }
 
 const WEEKDAYS = [
@@ -71,10 +75,10 @@ export function UnifiedAssignDialog({
     initialStudentName,
     assignmentId: providedAssignmentId,
     initialDays = [],
-    colorScheme: providedColorScheme
+    colorScheme: providedColorScheme,
+    queryKey
 }: UnifiedAssignDialogProps) {
     const [open, setOpen] = useState(false)
-    const [isSubmitting, setIsSubmitting] = useState(false)
     const [selectedStudent, setSelectedStudent] = useState<string>(initialStudentId || fixedStudentId || '')
     const [selectedItem, setSelectedItem] = useState<string>(itemId || '')
     const [selectedDays, setSelectedDays] = useState<number[]>((initialDays as number[]) || [])
@@ -82,7 +86,10 @@ export function UnifiedAssignDialog({
     const [duration, setDuration] = useState('30')
     const [intensity, setIntensity] = useState('Moderada')
 
-    // Sync initial values when dialog opens or when specific props change
+    const queryClient = useQueryClient()
+    const router = useRouter()
+    const { toast } = useToast()
+
     const initialDaysStr = JSON.stringify(initialDays || [])
     
     React.useEffect(() => {
@@ -96,14 +103,11 @@ export function UnifiedAssignDialog({
         }
     }, [open, initialStudentId, fixedStudentId, itemId, initialDaysStr, providedAssignmentId])
 
-    const { toast } = useToast()
-    const router = useRouter()
-
     // Config based on type
     const configs = {
         workout: {
             color: 'orange',
-            primary: 'emerald-500', // Accent for days
+            primary: 'emerald-500',
             btnGradient: 'from-orange-600 to-orange-400',
             btnHover: 'hover:from-orange-500 hover:to-orange-300',
             btnShadow: 'shadow-orange-500/20',
@@ -135,7 +139,6 @@ export function UnifiedAssignDialog({
         }
     }
 
-    // Override color scheme if provided
     const config = { ...configs[type] }
     if (providedColorScheme === 'orange') {
         config.color = 'orange'
@@ -165,7 +168,35 @@ export function UnifiedAssignDialog({
         }
     }
 
-    async function handleAssign() {
+    const { mutate } = useOptimisticMutation({
+        queryKey: queryKey || [type],
+        actionName: `assign-${type}`,
+        entity: type === 'workout' ? ENTITIES.ASSIGNED_WORKOUT : type === 'diet' ? ENTITIES.DIET : type === 'cardio' ? ENTITIES.CARDIO : ENTITIES.ERGOGENIC,
+        entityId: 'new',
+        mutationFn: async (variables) => variables, // 🔴 HARD BLOCK
+        updateFn: (oldData: any, variables: any) => {
+            if (!queryKey) return oldData
+            const optimisticItem = {
+                ...variables,
+                id: crypto.randomUUID(),
+                _optimistic: true,
+                created_at: new Date().toISOString()
+            }
+            if (Array.isArray(oldData)) return [optimisticItem, ...oldData]
+            return oldData
+        },
+        onMutate: () => {
+            setOpen(false) // 🚀 LOCAL-FIRST: close instantly
+        },
+        onSuccess: () => {
+            toast({ title: "Sucesso!", description: "Atribuição realizada com sucesso." })
+        },
+        onError: (err) => {
+            toast({ variant: 'destructive', title: 'Erro', description: err.message })
+        }
+    })
+
+    function handleAssign() {
         if (!selectedStudent) {
             toast({ variant: 'destructive', title: 'Erro', description: 'Selecione um aluno.' })
             return
@@ -175,38 +206,25 @@ export function UnifiedAssignDialog({
             return
         }
 
-        setIsSubmitting(true)
-        try {
-            let res: any
-
-            if (type === 'cardio') {
-                res = await assignCardio({
-                    cardioId: selectedItem,
-                    studentId: selectedStudent,
-                    daysOfWeek: selectedDays,
-                    duration: parseInt(duration),
-                    intensity
-                })
-            } else if (type === 'workout') {
-                res = await assignWorkout(selectedItem, selectedStudent, selectedDays[0])
-            } else if (type === 'diet') {
-                res = await assignDiet(selectedItem, selectedStudent, selectedDays)
-            } else if (type === 'ergogenic') {
-                res = await assignErgogenic(selectedItem, selectedStudent, selectedDays)
-            }
-
-            if (res?.success || !res?.error) {
-                setOpen(false)
-                toast({ title: "Sucesso!", description: "Atribuição realizada com sucesso." })
-                router.refresh()
-            } else {
-                toast({ variant: 'destructive', title: 'Erro', description: res?.error || 'Algo deu errado.' })
-            }
-        } catch (error: any) {
-            toast({ variant: 'destructive', title: 'Erro', description: error.message || 'Erro ao realizar atribuição' })
-        } finally {
-            setIsSubmitting(false)
+        const payload: Record<string, any> = {
+            student_id: selectedStudent,
+            daysOfWeek: selectedDays,
         }
+
+        if (type === 'cardio') {
+            payload.cardio_id = selectedItem
+            payload.duration = parseInt(duration)
+            payload.intensity = intensity
+        } else if (type === 'workout') {
+            payload.workout_id = selectedItem
+            payload.day_of_week = selectedDays[0]
+        } else if (type === 'diet') {
+            payload.diet_id = selectedItem
+        } else if (type === 'ergogenic') {
+            payload.ergogenic_id = selectedItem
+        }
+
+        mutate(payload)
     }
 
     return (
@@ -227,7 +245,6 @@ export function UnifiedAssignDialog({
                 </DialogHeader>
 
                 <div className="space-y-8 py-2">
-                    {/* Item/Student Section */}
                     {((items.length > 0 && !itemId) || !fixedStudentId) && (
                         <div className="space-y-4">
                              <div className="flex items-center gap-2 px-1">
@@ -363,17 +380,12 @@ export function UnifiedAssignDialog({
                     <DialogFooter className="mt-4">
                         <Button
                             onClick={handleAssign}
-                            disabled={isSubmitting}
                             className={cn("h-14 w-full rounded-2xl font-black uppercase tracking-wider text-[11px] italic transition-all active:scale-95 shadow-lg", config.color === 'emerald' ? "bg-emerald-500 text-zinc-950 hover:bg-emerald-400 shadow-emerald-500/20" : "bg-orange-500 text-zinc-950 hover:bg-orange-400 shadow-orange-500/20")}
                         >
-                            {isSubmitting ? (
-                                <Loader2 className="w-4 h-4 animate-spin" />
-                            ) : (
-                                <div className="flex items-center gap-2">
-                                    <UserPlus className="w-4 h-4" />
-                                    Confirmar Atribuição
-                                </div>
-                            )}
+                            <div className="flex items-center gap-2">
+                                <UserPlus className="w-4 h-4" />
+                                Confirmar Atribuição
+                            </div>
                         </Button>
                     </DialogFooter>
                 </div>

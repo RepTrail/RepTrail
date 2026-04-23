@@ -9,7 +9,7 @@ import { StudentPaymentButtons } from '@/components/feature/student/payment-butt
 export const dynamic = 'force-dynamic'
 
 export default async function StudentPlansPage() {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) redirect('/auth/login')

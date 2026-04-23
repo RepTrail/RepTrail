@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { parseWorkoutLocally, parseDietLocally } from '@/lib/pdf-parser-local'
 
 export async function parseUploadedPdf(filePath: string, type: 'workout' | 'diet') {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) return { error: 'Unauthorized' }

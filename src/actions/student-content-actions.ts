@@ -6,17 +6,19 @@ import { redirect } from 'next/navigation'
 
 // === WORKOUTS ===
 export async function createStudentWorkout(formData: FormData) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
 
+    const providedId = formData.get('id')?.toString()
     const name = formData.get('name')?.toString().trim() || 'Novo Treino'
     const description = formData.get('description')?.toString().trim() || ''
 
     try {
         const { data, error } = await supabase
             .from('workouts')
-            .insert({
+            .upsert({
+                ...(providedId ? { id: providedId } : {}),
                 trainer_id: user.id,
                 name,
                 description,
@@ -61,7 +63,7 @@ export async function createStudentWorkout(formData: FormData) {
 }
 
 export async function updateStudentWorkout(workoutId: string, formData: FormData) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
 
@@ -86,7 +88,7 @@ export async function updateStudentWorkout(workoutId: string, formData: FormData
 }
 
 export async function deleteStudentWorkout(workoutId: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
 
@@ -118,10 +120,11 @@ import { assignDiet } from './diet-actions'
 
 // === DIETS ===
 export async function createStudentDiet(formData: FormData) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { error: 'Unauthorized' }
 
+    const providedId = formData.get('id')?.toString()
     const name = formData.get('name')?.toString().trim() || 'Nova Dieta'
     const daysOfWeekJson = formData.get('daysOfWeek')?.toString()
     const daysOfWeek = daysOfWeekJson ? JSON.parse(daysOfWeekJson) : [0, 1, 2, 3, 4, 5, 6]
@@ -129,7 +132,8 @@ export async function createStudentDiet(formData: FormData) {
     try {
         const { data, error } = await supabase
             .from('diets')
-            .insert({
+            .upsert({
+                ...(providedId ? { id: providedId } : {}),
                 trainer_id: user.id,
                 name,
             })
@@ -140,7 +144,7 @@ export async function createStudentDiet(formData: FormData) {
         const dietId = data.id
 
         // Use the unified assignDiet function which handles overlaps
-        const assignResult = await assignDiet(dietId, user.id, daysOfWeek)
+        const assignResult = /* ❌ OUTBOX VIOLATION */ await assignDiet(dietId, user.id, daysOfWeek)
 
         if (assignResult.error) {
             console.error('[STUDENT] Failed to auto-assign diet:', assignResult.error)
@@ -156,7 +160,7 @@ export async function createStudentDiet(formData: FormData) {
 }
 
 export async function updateStudentDiet(dietId: string, formData: FormData) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { error: 'Unauthorized' }
 
@@ -180,7 +184,7 @@ export async function updateStudentDiet(dietId: string, formData: FormData) {
 }
 
 export async function deleteStudentDiet(dietId: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { error: 'Unauthorized' }
 
@@ -210,20 +214,26 @@ export async function deleteStudentDiet(dietId: string) {
 
 // === CARDIO ===
 export async function createStudentCardio(formData: FormData) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { error: 'Unauthorized' }
 
+    const providedId = formData.get('id')?.toString()
     const name = formData.get('name')?.toString().trim() || 'Novo Cardio'
     const description = formData.get('description')?.toString().trim() || ''
+    const duration = parseInt(formData.get('duration_minutes')?.toString() || '30')
+    const intensity = formData.get('suggested_intensity')?.toString() || 'Moderada'
 
     try {
         const { data, error } = await supabase
             .from('cardios')
-            .insert({
+            .upsert({
+                ...(providedId ? { id: providedId } : {}),
                 trainer_id: user.id,
                 name,
                 description,
+                duration_minutes: duration,
+                suggested_intensity: intensity,
             })
             .select('id')
             .single()
@@ -236,8 +246,8 @@ export async function createStudentCardio(formData: FormData) {
             .insert({
                 student_id: user.id,
                 cardio_id: data.id,
-                duration_minutes: 30,
-                suggested_intensity: 'Moderado',
+                duration_minutes: duration,
+                suggested_intensity: intensity,
                 active: true,
             })
 
@@ -253,7 +263,7 @@ export async function createStudentCardio(formData: FormData) {
 }
 
 export async function updateStudentCardio(cardioId: string, formData: FormData) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { error: 'Unauthorized' }
 
@@ -276,10 +286,12 @@ export async function updateStudentCardio(cardioId: string, formData: FormData) 
     }
 }
 
-export async function deleteStudentCardio(cardioId: string) {
-    const supabase = await createClient()
+export async function deleteStudentCardio(cardioId: string, studentId?: string) {
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { error: 'Unauthorized' }
+
+    const targetStudentId = studentId || user.id
 
     try {
         // Unassign first
@@ -287,18 +299,12 @@ export async function deleteStudentCardio(cardioId: string) {
             .from('assigned_cardios')
             .update({ active: false })
             .eq('cardio_id', cardioId)
-            .eq('student_id', user.id)
+            .eq('student_id', targetStudentId)
 
-        // Delete cardio
-        const { error } = await supabase
-            .from('cardios')
-            .delete()
-            .eq('id', cardioId)
-            .eq('trainer_id', user.id)
-
-        if (error) throw error
-
+        // revalidate paths
         revalidatePath('/dashboard/student/cardio')
+        if (studentId) revalidatePath(`/dashboard/trainer/students/${studentId}/cardio`)
+        
         return { success: true }
     } catch (e: any) {
         return { error: e.message }
@@ -307,10 +313,11 @@ export async function deleteStudentCardio(cardioId: string) {
 
 // === ERGOGENICS ===
 export async function createStudentErgogenic(formData: FormData) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { error: 'Unauthorized' }
 
+    const providedId = formData.get('id')?.toString()
     const student_id = formData.get('student_id')?.toString() || user.id
     const name = formData.get('name')?.toString().trim() || ''
     const dosage = formData.get('dosage')?.toString().trim() || ''
@@ -322,7 +329,8 @@ export async function createStudentErgogenic(formData: FormData) {
     try {
         const { data, error } = await supabase
             .from('ergogenics')
-            .insert({
+            .upsert({
+                ...(providedId ? { id: providedId } : {}),
                 trainer_id: user.id,
                 student_id: student_id,
                 name,
@@ -347,7 +355,7 @@ export async function createStudentErgogenic(formData: FormData) {
     }
 }
 export async function updateStudentErgogenic(ergogenicId: string, formData: FormData) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { error: 'Unauthorized' }
 
@@ -382,7 +390,7 @@ export async function updateStudentErgogenic(ergogenicId: string, formData: Form
 }
 
 export async function deleteStudentErgogenic(ergogenicId: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { error: 'Unauthorized' }
 
@@ -407,7 +415,7 @@ export async function assignCardioToStudent(cardioId: string, studentId: string 
     intensity?: string
     daysOfWeek: number[]
 }) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { error: 'Unauthorized' }
 
@@ -459,7 +467,7 @@ export async function assignCardioToStudent(cardioId: string, studentId: string 
 }
 
 export async function assignErgogenic(ergogenicId: string, studentId: string, daysOfWeek: number[]) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { error: 'Unauthorized' }
 
@@ -480,3 +488,6 @@ export async function assignErgogenic(ergogenicId: string, studentId: string, da
         return { error: e.message || 'Failed to assign ergogenic' }
     }
 }
+
+// Alias for registry compatibility
+export const createManualCardio = createStudentCardio;

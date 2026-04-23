@@ -74,7 +74,7 @@ export default async function TrainerWorkoutsPage() {
                             assignments={workout.assignments}
                             stats={{
                                 label: 'Exercícios',
-                                value: workout.exercises?.[0]?.count || 0,
+                                value: workout.workout_exercises?.[0]?.count || 0,
                                 icon: <Dumbbell className="w-3 h-3 text-zinc-700" />
                             }}
                             href={`/dashboard/trainer/workouts/${workout.id}`}

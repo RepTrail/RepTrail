@@ -5,13 +5,17 @@ import { usePathname } from 'next/navigation'
 import { Dumbbell, Utensils, Activity, User, Home, ShoppingBag, Trophy, Search, UserCheck, Sparkles, LogOut, TrendingUp, ClipboardList, Settings, Syringe } from 'lucide-react'
 import { signOutAction } from '@/actions/auth-actions'
 
+import { SmartLink } from '@/components/shared/smart-link'
+import { PREFETCH_REGISTRY } from '@/lib/prefetch-registry'
+
 interface StudentNavProps {
     hasTrainer: boolean
     steroidUse?: boolean
     autoTrainingActive?: boolean
+    userId: string
 }
 
-export function StudentNav({ hasTrainer, steroidUse, autoTrainingActive = false }: StudentNavProps) {
+export function StudentNav({ hasTrainer, steroidUse, autoTrainingActive = false, userId }: StudentNavProps) {
     const pathname = usePathname()
 
     const allLinks = [
@@ -45,12 +49,14 @@ export function StudentNav({ hasTrainer, steroidUse, autoTrainingActive = false 
         <nav className="space-y-1.5">
             {links.map((link) => {
                 const isActive = pathname === link.href
+                const prefetchConfigs = PREFETCH_REGISTRY[link.href]?.(userId) || []
 
                 return (
-                    <Link
+                    <SmartLink
                         key={link.href}
                         href={link.href}
-                        prefetch={false}
+                        prefetch={true}
+                        prefetchConfigs={prefetchConfigs}
                         className={`
                             flex items-center gap-3 pb-4px-5 py-3.5 rounded-xl transition-all duration-300 group
                             ${isActive
@@ -62,7 +68,7 @@ export function StudentNav({ hasTrainer, steroidUse, autoTrainingActive = false 
                             {link.icon}
                         </div>
                         <span className="text-[10px] font-black uppercase tracking-[0.2em]">{link.label}</span>
-                    </Link>
+                    </SmartLink>
                 )
             })}
 
@@ -80,7 +86,7 @@ export function StudentNav({ hasTrainer, steroidUse, autoTrainingActive = false 
     )
 }
 
-export function MobileStudentNav({ hasTrainer, steroidUse, autoTrainingActive = false }: StudentNavProps) {
+export function MobileStudentNav({ hasTrainer, steroidUse, autoTrainingActive = false, userId }: StudentNavProps) {
     const pathname = usePathname()
 
     // Mobile: Home, Loja, Ranking, Encontre/Meu Personal, Perfil, Logout
@@ -89,51 +95,56 @@ export function MobileStudentNav({ hasTrainer, steroidUse, autoTrainingActive = 
             className="bg-zinc-900/80 backdrop-blur-xl border border-zinc-800/50 p-1.5 rounded-2xl flex items-center justify-around shadow-2xl gap-1 gpu-accelerated touch-manipulation"
             style={{ paddingBottom: 'max(0.375rem, env(safe-area-inset-bottom, 0px))' }}
         >
-            <Link
+            <SmartLink
                 href="/dashboard/student"
-                prefetch={false}
+                prefetch={true}
+                prefetchConfigs={PREFETCH_REGISTRY['/dashboard/student']?.(userId) || []}
                 className={`z-10 relative p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student' ? 'bg-orange-500 text-zinc-950' : 'text-zinc-500 hover:text-zinc-300'}`}
             >
                 <Home className="w-5 h-5" />
-            </Link>
-            <Link
+            </SmartLink>
+            <SmartLink
                 href="/dashboard/student/loja"
-                prefetch={false}
+                prefetch={true}
+                prefetchConfigs={PREFETCH_REGISTRY['/dashboard/student/loja']?.(userId) || []}
                 className={`z-10 relative p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student/loja' ? 'bg-orange-500 text-zinc-950' : 'text-zinc-500 hover:text-zinc-300'}`}
             >
                 <ShoppingBag className="w-5 h-5" />
-            </Link>
-            <Link
+            </SmartLink>
+            <SmartLink
                 href="/dashboard/student/ranking"
-                prefetch={false}
+                prefetch={true}
+                prefetchConfigs={PREFETCH_REGISTRY['/dashboard/student/ranking']?.(userId) || []}
                 className={`z-10 relative p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student/ranking' ? 'bg-orange-500 text-zinc-950' : 'text-zinc-500 hover:text-zinc-300'}`}
             >
                 <Trophy className="w-5 h-5" />
-            </Link>
+            </SmartLink>
             {hasTrainer ? (
-                <Link
+                <SmartLink
                     href="/dashboard/student/meu-personal"
-                    prefetch={false}
+                    prefetch={true}
+                    prefetchConfigs={PREFETCH_REGISTRY['/dashboard/student/meu-personal']?.(userId) || []}
                     className={`z-10 relative p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student/meu-personal' ? 'bg-orange-500 text-zinc-950' : 'text-zinc-500 hover:text-zinc-300'}`}
                 >
                     <UserCheck className="w-5 h-5" />
-                </Link>
+                </SmartLink>
             ) : !autoTrainingActive ? (
-                <Link
+                <SmartLink
                     href="/buscar-personal"
-                    prefetch={false}
+                    prefetch={true}
                     className={`z-10 relative p-2.5 rounded-xl transition-all ${pathname === '/buscar-personal' ? 'bg-orange-500 text-zinc-950' : 'text-zinc-500 hover:text-zinc-300'}`}
                 >
                     <Search className="w-5 h-5" />
-                </Link>
+                </SmartLink>
             ) : null}
-            <Link
+            <SmartLink
                 href="/dashboard/student/profile"
-                prefetch={false}
+                prefetch={true}
+                prefetchConfigs={PREFETCH_REGISTRY['/dashboard/student/profile']?.(userId) || []}
                 className={`z-10 relative p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student/profile' ? 'bg-orange-500 text-zinc-950' : 'text-zinc-500 hover:text-zinc-300'}`}
             >
                 <User className="w-5 h-5" />
-            </Link>
+            </SmartLink>
             <form action={signOutAction} className="flex">
                 <button
                     type="submit"

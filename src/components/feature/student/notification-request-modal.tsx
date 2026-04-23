@@ -155,7 +155,7 @@ export function NotificationRequestModal() {
                 <DialogFooter className="mt-4 sm:mt-6">
                     <Button
                         onClick={isGranted ? () => setIsOpen(false) : handleRequest}
-                        disabled={loading}
+                        /* ❌ UI BLOCKING REMOVED */ disabled={false}
                         className={`w-full font-black uppercase italic tracking-widest rounded-2xl h-12 sm:h-14 text-xs sm:text-sm shadow-xl transition-all active:scale-95 hover:scale-[1.02] ${isDenied ? 'bg-zinc-800 text-zinc-400' :
                             isGranted ? 'bg-zinc-100 text-zinc-950 hover:bg-white' :
                                 'bg-amber-500 hover:bg-amber-400 text-zinc-950'

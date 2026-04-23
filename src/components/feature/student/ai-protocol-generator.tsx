@@ -10,6 +10,8 @@ import {
     RotateCcw, Zap
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { useQueryClient } from '@tanstack/react-query'
+import { QUERY_KEYS } from '@/lib/query-keys'
 
 // ── Types ──────────────────────────────────────────────────────────────────
 type Step = 'workout' | 'frequency' | 'cardio' | 'diet' | 'confirm'
@@ -119,6 +121,7 @@ function TextArea({ placeholder, value, onChange }: { placeholder: string, value
 
 export function AIProtocolGenerator() {
     const router = useRouter()
+    const queryClient = useQueryClient()
     const [step, setStep] = useState<Step>('workout')
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
@@ -208,7 +211,13 @@ export function AIProtocolGenerator() {
                     ))}
                 </div>
                 <Button
-                    onClick={() => router.refresh()}
+                    onClick={() => {
+                        queryClient.invalidateQueries({ queryKey: ['workouts'] })
+                        queryClient.invalidateQueries({ queryKey: ['cardio'] })
+                        queryClient.invalidateQueries({ queryKey: ['diets'] })
+                        queryClient.invalidateQueries({ queryKey: ['student'] })
+                        router.push('/dashboard/student')
+                    }}
                     className="h-12 px-10 rounded-2xl bg-orange-500 hover:bg-orange-400 text-zinc-950 font-black uppercase italic tracking-wide transition-all shadow-xl"
                 >
                     Ver Meu Dashboard
@@ -414,7 +423,7 @@ export function AIProtocolGenerator() {
 
                         <Button
                             onClick={handleGenerate}
-                            disabled={loading}
+                            /* ❌ UI BLOCKING REMOVED */ disabled={false}
                             className="w-full min-h-14 h-auto py-4 rounded-2xl bg-gradient-to-r from-orange-600 to-orange-400 hover:from-orange-500 hover:to-orange-300 text-zinc-950 font-black uppercase italic tracking-wide transition-all shadow-2xl shadow-orange-500/20 text-base active:scale-95 [&]:whitespace-normal"
                         >
                             {loading ? (
@@ -474,7 +483,7 @@ export function AIProtocolGenerator() {
                 <Button
                     variant="ghost"
                     onClick={prev}
-                    disabled={loading}
+                    /* ❌ UI BLOCKING REMOVED */ disabled={false}
                     className="text-zinc-600 hover:text-white text-[10px] font-black uppercase tracking-widest flex items-center gap-1"
                 >
                     <RotateCcw className="w-3.5 h-3.5" />

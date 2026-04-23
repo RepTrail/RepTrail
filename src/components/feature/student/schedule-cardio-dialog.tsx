@@ -20,11 +20,15 @@ import {
 } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
-import { Calendar, Loader2 } from "lucide-react"
-import { assignCardioToStudent } from '@/actions/student-content-actions'
-import { useRouter } from 'next/navigation'
+import { Calendar } from "lucide-react"
+import { useQueryClient } from '@tanstack/react-query'
+import { QUERY_KEYS } from '@/lib/query-keys'
+import { useToast } from '@/hooks/use-toast'
+import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { ENTITIES } from '@/lib/outbox-db'
 
 interface ScheduleCardioDialogProps {
+    userId: string
     cardioId: string
 }
 
@@ -38,13 +42,38 @@ const DAYS = [
     { value: '6', label: 'Sábado' },
 ]
 
-export function ScheduleCardioDialog({ cardioId }: ScheduleCardioDialogProps) {
+export function ScheduleCardioDialog({ userId, cardioId }: ScheduleCardioDialogProps) {
     const [open, setOpen] = useState(false)
-    const [loading, setLoading] = useState(false)
     const [duration, setDuration] = useState('30')
     const [intensity, setIntensity] = useState('Moderada')
     const [selectedDays, setSelectedDays] = useState<number[]>([1]) // Monday default
-    const router = useRouter()
+    const queryClient = useQueryClient()
+    const { toast } = useToast()
+
+    const { mutate } = useOptimisticMutation({
+        queryKey: QUERY_KEYS.cardio.all(userId),
+        actionName: 'assign-cardio',
+        entity: ENTITIES.CARDIO,
+        entityId: 'new',
+        mutationFn: async (variables) => variables, // 🔴 HARD BLOCK
+        updateFn: (oldData: any = [], variables: any) => {
+            const newItem = {
+                ...variables,
+                id: variables.id || crypto.randomUUID(),
+                _optimistic: true
+            }
+            return Array.isArray(oldData) ? [newItem, ...oldData] : oldData
+        },
+        onMutate: () => {
+            setOpen(false) // 🚀 LOCAL-FIRST: close instantly
+        },
+        onSuccess: () => {
+            toast({ title: 'Agendado!', description: 'Cardio agendado com sucesso.' })
+        },
+        onError: (err) => {
+            toast({ variant: 'destructive', title: 'Erro', description: err.message })
+        }
+    })
 
     const toggleDay = (day: number) => {
         setSelectedDays(prev =>
@@ -54,24 +83,18 @@ export function ScheduleCardioDialog({ cardioId }: ScheduleCardioDialogProps) {
         )
     }
 
-    async function handleSchedule() {
-        if (selectedDays.length === 0) return alert('Selecione pelo menos um dia.')
-
-        setLoading(true)
-        const result = await assignCardioToStudent(cardioId, undefined, {
+    function handleSchedule() {
+        if (selectedDays.length === 0) return toast({ variant: 'destructive', title: 'Erro', description: 'Selecione pelo menos um dia.' })
+        
+        const payload = {
+            cardio_id: cardioId,
+            student_id: userId,
             duration: parseInt(duration),
             intensity: intensity,
             daysOfWeek: selectedDays
-        })
-        setLoading(false)
-
-        if (result.success) {
-            setOpen(false)
-            router.refresh()
-            alert('Cardio agendado com sucesso!')
-        } else {
-            alert(result.error || "Erro ao agendar cardio.")
         }
+        
+        mutate(payload)
     }
 
     return (
@@ -119,36 +142,29 @@ export function ScheduleCardioDialog({ cardioId }: ScheduleCardioDialogProps) {
                             </Select>
                         </div>
                     </div>
-
-                    <div className="space-y-3">
-                        <Label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-1">Dias da Semana</Label>
-                        <div className="grid grid-cols-4 gap-2">
-                            {DAYS.map((day) => (
-                                <Button
-                                    key={day.value}
-                                    type="button"
-                                    onClick={() => toggleDay(parseInt(day.value))}
-                                    className={`
-                                        h-11 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all duration-200 border-2 cursor-pointer
-                                        ${selectedDays.includes(parseInt(day.value))
-                                            ? 'bg-emerald-500 text-zinc-950 border-emerald-400 shadow-lg shadow-emerald-500/25 scale-105'
-                                            : 'bg-zinc-900/50 text-zinc-400 border-zinc-700/50 hover:bg-zinc-800/70 hover:text-zinc-200 hover:border-zinc-600'}
-                                    `}
-                                >
-                                    {day.label.substring(0, 3)}
-                                </Button>
-                            ))}
-                        </div>
+                </div>
+                <div className="py-6 space-y-6">
+                    <div className="grid grid-cols-4 gap-2">
+                        {DAYS.map((day) => (
+                            <Button
+                                key={day.value}
+                                type="button"
+                                onClick={() => toggleDay(parseInt(day.value))}
+                                className={`
+                                    h-11 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all duration-200 border-2
+                                    ${selectedDays.includes(parseInt(day.value))
+                                        ? 'bg-emerald-500 text-zinc-950 border-emerald-400 shadow-lg shadow-emerald-500/25 scale-105'
+                                        : 'bg-zinc-900/50 text-zinc-400 border-zinc-700/50 hover:bg-zinc-800/70 hover:text-zinc-200 hover:border-zinc-600'}
+                                `}
+                            >
+                                {day.label}
+                            </Button>
+                        ))}
                     </div>
                 </div>
                 <DialogFooter>
-                    <Button 
-                        onClick={handleSchedule} 
-                        disabled={loading} 
-                        className="w-full bg-emerald-500 text-zinc-950 hover:bg-emerald-600 font-black uppercase italic rounded-xl h-12 transition-all"
-                    >
-                        {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-                        Confirmar Agendamento
+                    <Button onClick={handleSchedule} className="w-full bg-emerald-500 text-zinc-950 hover:bg-emerald-600 font-black uppercase italic rounded-xl h-12 transition-all">
+                        Salvar Cronograma
                     </Button>
                 </DialogFooter>
             </DialogContent>

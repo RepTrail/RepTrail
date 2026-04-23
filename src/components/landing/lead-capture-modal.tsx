@@ -152,7 +152,7 @@ export function LeadCaptureModal({ isOpen, onOpenChange, trainerName, trainerCod
                                 <Button
                                     type="submit"
                                     className="w-full h-12 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase tracking-[0.1em] rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
-                                    disabled={loading}
+                                    /* ❌ UI BLOCKING REMOVED */ disabled={false}
                                 >
                                     {loading ? (
                                         <div className="flex items-center gap-2">

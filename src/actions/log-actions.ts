@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache'
 import { upsertDailyTracking } from '@/actions/tracking-actions'
 
 export async function startWorkoutLog(workoutId: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) return { error: 'Unauthorized' }
@@ -59,7 +59,7 @@ export async function recordSetLoad(data: {
     subIndex?: number,
     groupId?: string
 }) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) return { error: 'Unauthorized' }
@@ -88,7 +88,7 @@ export async function recordSetLoad(data: {
 }
 
 export async function finishWorkoutLog(id: string, feedback?: string, perceivedEffort?: number, adherenceStatus: 'success' | 'partial' | 'fail' = 'success') {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     const { data: { user } = {} } = await supabase.auth.getUser()
 
@@ -140,7 +140,7 @@ export async function finishWorkoutLog(id: string, feedback?: string, perceivedE
 }
 
 export async function deleteWorkoutLog(logId: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     const { data: { user } } = await supabase.auth.getUser()
 
@@ -169,7 +169,7 @@ export async function deleteWorkoutLog(logId: string) {
 }
 
 export async function getStudentWorkoutHistory(studentId: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     // Basic validation to prevent UUID type errors in Supabase
     if (!studentId || studentId.length < 30) {
@@ -235,7 +235,7 @@ export async function getStudentWorkoutHistory(studentId: string) {
 }
 
 export async function saveWorkoutLogState(logId: string, state: any) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     try {
         const { error } = await supabase
             .from('workout_logs')
@@ -250,7 +250,7 @@ export async function saveWorkoutLogState(logId: string, state: any) {
 }
 
 export async function getStudentLastActivity(studentId: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     try {
         // Fetch latest activity from all sources for this specific student
@@ -372,7 +372,7 @@ export async function getStudentLastActivity(studentId: string) {
 }
 
 export async function getStudentRecentActivities(studentId: string, limit: number = 10) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     try {
         const [workoutRes, mealRes, cardioRes, weightRes, photoRes] = await Promise.all([
@@ -475,7 +475,7 @@ function getRelativeTime(date: Date): string {
 }
 
 export async function getExerciseProgress(studentId: string, exerciseId: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     try {
         const { data, error } = await supabase
@@ -500,7 +500,7 @@ export async function getExerciseProgress(studentId: string, exerciseId: string)
 }
 
 export async function getWorkoutLastSession(studentId: string, workoutId: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     try {
         const { data: log, error } = await supabase
@@ -530,7 +530,7 @@ export async function getWorkoutLastSession(studentId: string, workoutId: string
     }
 }
 export async function getActiveWorkoutSession() {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return null
 
@@ -591,7 +591,7 @@ export async function getActiveWorkoutSession() {
 }
 
 export async function getWorkoutCurrentSessionLoads(logId: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     try {
         const { data, error } = await supabase
             .from('load_history')
@@ -607,7 +607,7 @@ export async function getWorkoutCurrentSessionLoads(logId: string) {
 }
 
 export async function getWorkoutLogForReview(logId: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return null
 
@@ -616,6 +616,7 @@ export async function getWorkoutLogForReview(logId: string) {
             .from('workout_logs')
             .select(`
                 id,
+                student_id,
                 completed_at,
                 feedback,
                 perceived_effort,
@@ -662,7 +663,7 @@ export async function getWorkoutLogForReview(logId: string) {
 }
 
 export async function updateLoadEntry(loadId: string, weightKg: number, repsPerformed: number) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { error: 'Não autorizado.' }
 
@@ -680,3 +681,49 @@ export async function updateLoadEntry(loadId: string, weightKg: number, repsPerf
     }
 }
 
+
+export async function getWorkoutStatus(userId: string, workoutId: string) {
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
+    const { start, end } = getTodayRangeBrazil()
+
+    // 1. Check Completed Logs for today
+    const { data: completed } = await supabase
+        .from('workout_logs')
+        .select('id, status')
+        .eq('workout_id', workoutId)
+        .eq('student_id', userId)
+        .eq('status', 'completed')
+        .gte('completed_at', start)
+        .lte('completed_at', end)
+        .order('completed_at', { ascending: false })
+        .limit(1)
+
+    if (completed && completed.length > 0) {
+        return { status: 'completed', logId: completed[0].id }
+    }
+
+    // 2. Check In Progress Logs (within 12h)
+    const twelveHoursAgo = new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString()
+    const { data: inProgress } = await supabase
+        .from('workout_logs')
+        .select('id, status')
+        .eq('workout_id', workoutId)
+        .eq('student_id', userId)
+        .eq('status', 'in_progress')
+        .gt('started_at', twelveHoursAgo)
+        .order('started_at', { ascending: false })
+        .limit(1)
+
+    if (inProgress && inProgress.length > 0) {
+        return { status: 'in_progress', logId: inProgress[0].id }
+    }
+
+    return { status: 'not_started', logId: null }
+}
+
+function getTodayRangeBrazil() {
+    const now = new Date()
+    const start = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0).toISOString()
+    const end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999).toISOString()
+    return { start, end }
+}

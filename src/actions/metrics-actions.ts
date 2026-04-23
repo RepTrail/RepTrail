@@ -12,7 +12,7 @@ export async function getAdherenceForDates(
 ): Promise<{ date: string; adherence: number }[]> {
     if (dateStrings.length === 0) return []
 
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     // 1. Determine Effective Start Date in parallel
     const [
@@ -182,7 +182,7 @@ export async function getAdherenceForDates(
 }
 
 export async function getStudentMetricsHistory(studentId: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     const [
         { data: weights },
@@ -199,7 +199,7 @@ export async function getStudentMetricsHistory(studentId: string) {
 }
 
 export async function getWeeklyVolume(studentId: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const sevenDaysAgo = new Date()
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
 
@@ -216,7 +216,7 @@ export async function getWeeklyVolume(studentId: string) {
 }
 
 export async function getStudentStreak(studentId: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: logs } = await supabase
         .from('workout_logs')
         .select('started_at')
@@ -256,7 +256,7 @@ export async function getStudentStreak(studentId: string) {
 }
 
 export async function getMonthlyWorkoutCount(studentId: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const startOfMonth = new Date()
     startOfMonth.setDate(1)
     startOfMonth.setHours(0, 0, 0, 0)
@@ -272,7 +272,7 @@ export async function getMonthlyWorkoutCount(studentId: string) {
 }
 
 export async function getTrainingFrequency(studentId: string, weeks: number = 4) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const now = new Date()
     const startDate = subWeeks(now, weeks)
 
@@ -305,7 +305,7 @@ export async function getTrainingFrequency(studentId: string, weeks: number = 4)
 }
 
 export async function getLoadProgression(studentId: string, exerciseId?: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     let query = supabase
         .from('load_history')
@@ -388,7 +388,7 @@ export async function getStudentChartData(studentId: string) {
 }
 
 export async function getStudentFullMetrics(studentId: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     // getStudentChartData already calls getStudentMetricsHistory internally
     const chartData = await getStudentChartData(studentId)
@@ -406,5 +406,25 @@ export async function getStudentFullMetrics(studentId: string) {
         frequency: chartData.frequency,
         loadProgression,
         details
+    }
+}
+
+export async function getMetricsSummary(studentId: string) {
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
+    
+    // Fetch History & Details
+    const [
+        { data: weights },
+        { data: bfs },
+        { data: details }
+    ] = await Promise.all([
+        supabase.from('weight_history').select('weight_kg').eq('student_id', studentId).order('recorded_at', { ascending: false }).limit(1),
+        supabase.from('bf_history').select('bf_percentage').eq('student_id', studentId).order('recorded_at', { ascending: false }).limit(1),
+        supabase.from('student_details').select('body_fat').eq('id', studentId).single()
+    ])
+
+    return {
+        latestWeight: weights?.[0]?.weight_kg || null,
+        latestBF: bfs?.[0]?.bf_percentage || details?.body_fat || null
     }
 }

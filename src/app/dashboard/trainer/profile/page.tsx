@@ -11,7 +11,7 @@ export const dynamic = 'force-dynamic'
 
 export default async function TrainerProfilePage() {
     const profile = await getTrainerProfile()
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     // Fetch Real Stats for Gamification
     const { count: activeStudents } = await supabase

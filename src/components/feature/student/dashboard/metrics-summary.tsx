@@ -1,9 +1,10 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
-import { getStudentMetricsHistory } from '@/actions/metrics-actions'
-import { createClient } from '@/lib/supabase/client'
+import { getMetricsSummary } from '@/actions/metrics-actions'
 import { Skeleton } from '@/components/ui/skeleton'
+
+import { QUERY_KEYS } from '@/lib/query-keys'
+import { useQuery } from '@tanstack/react-query'
 
 interface MetricsSummaryProps {
     userId: string
@@ -11,25 +12,13 @@ interface MetricsSummaryProps {
 
 export function MetricsSummary({ userId }: MetricsSummaryProps) {
     const { data: metrics, isLoading } = useQuery({
-        queryKey: ['student-metrics', userId],
-        queryFn: async () => {
-            const history = await getStudentMetricsHistory(userId)
-            const supabase = createClient()
-            const { data: details } = await supabase
-                .from('student_details')
-                .select('body_fat')
-                .eq('id', userId)
-                .single()
-
-            return {
-                latestWeight: history.weights[history.weights.length - 1]?.weight_kg,
-                latestBF: history.bfs[history.bfs.length - 1]?.bf_percentage || details?.body_fat
-            }
-        },
-        staleTime: 1000 * 60 * 60, // 1 hour
+        queryKey: QUERY_KEYS.student.metricsSummary(userId),
+        enabled: !!userId,
+        queryFn: () => getMetricsSummary(userId),
     })
 
-    if (isLoading) {
+    // Skeleton Fallback: Only if loading AND no cache available
+    if (isLoading && !metrics) {
         return (
             <div className="grid grid-cols-2 gap-4 animate-pulse">
                 <div className="bg-zinc-900/30 border border-zinc-800/50 rounded-3xl p-5 space-y-2">

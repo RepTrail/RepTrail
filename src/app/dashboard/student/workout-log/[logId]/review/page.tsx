@@ -12,6 +12,7 @@ export default async function WorkoutLogReviewPage({ params }: { params: { logId
     return (
         <WorkoutLogReview
             logId={log.id}
+            userId={log.student_id}
             workoutName={(log.workout as any)?.name || 'Treino'}
             completedAt={log.completed_at || new Date().toISOString()}
             loads={log.loads as any}

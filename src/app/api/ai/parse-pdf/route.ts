@@ -4,7 +4,7 @@ import { createOpenRouterClient, callAI, DEFAULT_AI_MODEL } from '@/lib/ai-clien
 
 export async function POST(req: NextRequest) {
     try {
-        const supabase = await createClient();
+        const supabase = /* ❌ OUTBOX VIOLATION */ await createClient();
         const { data: { user } } = await supabase.auth.getUser();
 
         if (!user) {

@@ -28,27 +28,22 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
+import { useQuery } from '@tanstack/react-query'
+import { QUERY_KEYS } from '@/lib/query-keys'
+
 export default function StoreExplorePage() {
     const pathname = usePathname()
     const isTrainer = pathname.includes('/dashboard/trainer')
     const backPath = isTrainer ? '/dashboard/trainer/loja' : '/dashboard/student/loja'
 
-    const [products, setProducts] = useState<any[]>([])
-    const [loading, setLoading] = useState(true)
     const [search, setSearch] = useState('')
     const [category, setCategory] = useState<string | null>(null)
     const [subCategory, setSubCategory] = useState<string | null>(null)
 
-    useEffect(() => {
-        loadProducts()
-    }, [])
-
-    async function loadProducts() {
-        setLoading(true)
-        const data = await getStoreProducts()
-        setProducts(data)
-        setLoading(false)
-    }
+    const { data: products = [], isLoading: loading } = useQuery({
+        queryKey: QUERY_KEYS.store.products,
+        queryFn: getStoreProducts,
+    })
 
     const categories = Array.from(new Set(products.map(p => p.category).filter(Boolean)))
 

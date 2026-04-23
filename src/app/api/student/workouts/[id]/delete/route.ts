@@ -13,7 +13,7 @@ export async function POST(
             return NextResponse.json({ error: 'Workout ID is required' }, { status: 400 })
         }
 
-        await deleteStudentWorkout(id)
+        /* ❌ OUTBOX VIOLATION */ await deleteStudentWorkout(id)
         return NextResponse.redirect(new URL('/dashboard/student/workouts', request.url))
     } catch (error: any) {
         console.error('[API] Delete workout error:', error)

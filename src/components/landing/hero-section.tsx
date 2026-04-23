@@ -55,16 +55,6 @@ export function HeroSection() {
                                 </Link>
                             </Button>
 
-                            <Button
-                                asChild
-                                variant="outline"
-                                className="w-full sm:w-auto h-auto py-5 px-8 text-lg border-zinc-800 bg-zinc-900/50 text-zinc-300 hover:bg-zinc-800 hover:text-white hover:border-zinc-700 font-black uppercase italic tracking-wider rounded-2xl backdrop-blur-md transition-all hover:-translate-y-1"
-                            >
-                                <a href="#marketplace" className="flex items-center justify-center gap-3">
-                                    <Search className="h-5 w-5" />
-                                    Marketplace
-                                </a>
-                            </Button>
                         </div>
 
                         <div className="flex flex-wrap items-center justify-center lg:justify-start gap-6 opacity-60">
@@ -127,7 +117,7 @@ export function HeroSection() {
                     </div>
 
                     <div className="absolute -bottom-6 -right-4 p-4 bg-orange-500/10 backdrop-blur-xl border border-orange-500/20 rounded-2xl shadow-2xl animate-float hidden md:block delay-300">
-                        <div className="flex items-center gap-3 pb-4">
+                        <div className="flex items-center gap-3">
                             <div className="w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center">
                                 <Users className="w-4 h-4 text-zinc-950" />
                             </div>

@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button'
 import { updatePayoutStatus } from '@/actions/admin-affiliate-actions'
 import { CheckCircle2, XCircle, Clock, Banknote } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
+import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { ENTITIES } from '@/lib/outbox-db'
 
 interface Payout {
     id: string
@@ -25,23 +27,28 @@ interface Payout {
 export function PayoutsManagement({ initialPayouts }: { initialPayouts: Payout[] }) {
     const { toast } = useToast()
     const [payouts, setPayouts] = useState<Payout[]>(initialPayouts)
-    const [loadingId, setLoadingId] = useState<string | null>(null)
-
-    const handleUpdateStatus = async (id: string, status: 'completed' | 'rejected') => {
-        if (!confirm(`Deseja marcar este saque como ${status === 'completed' ? 'PAGO' : 'REJEITADO'}?`)) return
-
-        setLoadingId(id)
-        try {
-            const res = await updatePayoutStatus(id, status)
-            if (res.error) throw new Error(res.error)
-
-            setPayouts(prev => prev.map(p => p.id === id ? { ...p, status } : p))
-            toast({ title: 'Status do saque atualizado com sucesso!' })
-        } catch (e: any) {
-            toast({ variant: 'destructive', title: 'Erro', description: e.message })
-        } finally {
-            setLoadingId(null)
+    const { mutate: updateStatusMutate } = useOptimisticMutation({
+        actionName: 'update-payout-status',
+        entity: ENTITIES.PAYOUT,
+        queryKey: ['admin', 'payouts'],
+        mutationFn: async (variables: { id: string, status: 'completed' | 'rejected' }) => variables,
+        onMutate: (variables) => {
+            const previousPayouts = [...payouts]
+            setPayouts(prev => prev.map(p => p.id === variables.id ? { ...p, status: variables.status } : p))
+            return { previousPayouts }
+        },
+        onSuccess: () => {
+            toast({ title: 'Status do saque atualizado!', description: 'A alteração está sendo sincronizada.' })
+        },
+        onError: (err, variables, ctx) => {
+            setPayouts(ctx?.previousPayouts || [])
+            toast({ variant: 'destructive', title: 'Erro', description: 'Erro ao atualizar status.' })
         }
+    })
+
+    const handleUpdateStatus = (id: string, status: 'completed' | 'rejected') => {
+        if (!confirm(`Deseja marcar este saque como ${status === 'completed' ? 'PAGO' : 'REJEITADO'}?`)) return
+        updateStatusMutate({ id, status })
     }
 
     const formatPixKey = (details: any) => {
@@ -109,14 +116,12 @@ export function PayoutsManagement({ initialPayouts }: { initialPayouts: Payout[]
                                                 variant="outline"
                                                 className="border-red-500/30 text-red-500 hover:bg-red-500/10 hover:text-red-400 text-xs font-black uppercase tracking-widest h-9"
                                                 onClick={() => handleUpdateStatus(payout.id, 'rejected')}
-                                                disabled={loadingId === payout.id}
                                             >
                                                 <XCircle className="w-4 h-4 mr-1.5" /> Rejeitar
                                             </Button>
                                             <Button
                                                 className="bg-emerald-500 text-black hover:bg-emerald-600 text-xs font-black uppercase tracking-widest h-9"
                                                 onClick={() => handleUpdateStatus(payout.id, 'completed')}
-                                                disabled={loadingId === payout.id}
                                             >
                                                 <CheckCircle2 className="w-4 h-4 mr-1.5" /> Pago (Pix)
                                             </Button>

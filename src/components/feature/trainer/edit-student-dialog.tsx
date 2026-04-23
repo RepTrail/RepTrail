@@ -13,10 +13,13 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Settings as SettingsIcon, Loader2, Phone, TrendingUp, DollarSign, Calendar } from 'lucide-react'
+import { Settings as SettingsIcon, Phone, TrendingUp, DollarSign } from 'lucide-react'
 import { updateStudentData } from '@/actions/student-actions'
 import { useToast } from '@/hooks/use-toast'
-import { useRouter } from 'next/navigation'
+import { useQueryClient, useMutation } from '@tanstack/react-query'
+import { QUERY_KEYS } from '@/lib/query-keys'
+import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { ENTITIES } from '@/lib/outbox-db'
 import { Checkbox } from '@/components/ui/checkbox'
 import { cn } from '@/lib/utils'
 
@@ -37,51 +40,63 @@ interface EditStudentDialogProps {
 
 export function EditStudentDialog({ relationshipId, studentId, trainerId, initialData, children }: EditStudentDialogProps) {
     const [open, setOpen] = useState(false)
-    const [loading, setLoading] = useState(false)
     const [weight, setWeight] = useState(initialData.weight?.toString() || '')
     const [bodyFat, setBodyFat] = useState(initialData.body_fat?.toString() || '')
     const [monthlyFee, setMonthlyFee] = useState(initialData.monthly_fee?.toString() || '')
     const [paymentDay, setPaymentDay] = useState(initialData.payment_day?.toString() || '')
     const [steroidUse, setSteroidUse] = useState(initialData.steroid_use || false)
     const [whatsapp, setWhatsapp] = useState(initialData.whatsapp || '')
-    const router = useRouter()
     const { toast } = useToast()
+    const queryClient = useQueryClient()
 
-    const handleSave = async () => {
-        setLoading(true)
-        try {
-            const result = await updateStudentData(relationshipId, studentId, trainerId, {
+    const { mutate } = useOptimisticMutation({
+        actionName: 'update-student-data',
+        entity: ENTITIES.STUDENT_DETAIL,
+        entityId: studentId,
+        queryKey: QUERY_KEYS.trainer.studentDetail(relationshipId),
+        mutationFn: async () => {}, // Single-writer: no-op
+        onMutate: (variables) => {
+            // Updated detail cache
+            const previousDetail = queryClient.getQueryData(QUERY_KEYS.trainer.studentDetail(relationshipId))
+            queryClient.setQueryData(QUERY_KEYS.trainer.studentDetail(relationshipId), (old: any) => {
+                if(!old) return old;
+                return { ...old, ...variables, _optimistic: true }
+            })
+            
+            // Updated list cache
+            const previousList = queryClient.getQueryData(QUERY_KEYS.trainer.students(trainerId))
+            queryClient.setQueryData(QUERY_KEYS.trainer.students(trainerId), (old: any) => {
+                if(!old) return old;
+                return (old as any[]).map(student => student.id === studentId ? { ...student, ...variables, _optimistic: true } : student)
+            })
+
+            setOpen(false)
+            return { previousDetail, previousList }
+        },
+        onSuccess: () => {
+            toast({ title: 'Sucesso!', description: 'Alterações enviadas para sincronização.' })
+        },
+        onError: (err, variables, ctx) => {
+            queryClient.setQueryData(QUERY_KEYS.trainer.studentDetail(relationshipId), ctx?.previousDetail)
+            queryClient.setQueryData(QUERY_KEYS.trainer.students(trainerId), ctx?.previousList)
+            toast({ title: 'Erro inesperado', description: 'Tente novamente em breve.', variant: 'destructive' })
+        }
+    })
+
+    const handleSave = () => {
+        mutate({
+            relationshipId,
+            studentId,
+            trainerId,
+            data: {
                 weight: weight ? parseFloat(weight) : undefined,
                 body_fat: bodyFat ? parseFloat(bodyFat) : undefined,
                 monthly_fee: monthlyFee ? parseFloat(monthlyFee) : undefined,
                 payment_day: paymentDay ? parseInt(paymentDay) : undefined,
                 steroid_use: steroidUse,
                 whatsapp: whatsapp
-            })
-
-            if (result.success) {
-                toast({
-                    title: 'Sucesso!',
-                    description: 'Informações do aluno atualizadas.',
-                })
-                setOpen(false)
-                router.refresh()
-            } else {
-                toast({
-                    title: 'Erro ao atualizar',
-                    description: result.error,
-                    variant: 'destructive'
-                })
             }
-        } catch (error) {
-            toast({
-                title: 'Erro inesperado',
-                description: 'Tente novamente em breve.',
-                variant: 'destructive'
-            })
-        } finally {
-            setLoading(false)
-        }
+        })
     }
 
     return (
@@ -227,15 +242,14 @@ export function EditStudentDialog({ relationshipId, studentId, trainerId, initia
                     </div>
                 </div>
                 <DialogFooter className="pt-2">
-                    <Button
-                        type="submit"
-                        disabled={loading}
-                        onClick={handleSave}
-                        className="bg-zinc-100 text-zinc-950 hover:bg-white font-black uppercase italic tracking-widest h-14 px-8 w-full transition-all shadow-xl active:scale-95 rounded-2xl relative overflow-hidden group"
-                    >
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-                        {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Salvar Alterações'}
-                    </Button>
+                        <Button
+                            type="submit"
+                            onClick={handleSave}
+                            className="bg-zinc-100 text-zinc-950 hover:bg-white font-black uppercase italic tracking-widest h-14 px-8 w-full transition-all shadow-xl active:scale-95 rounded-2xl relative overflow-hidden group"
+                        >
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                            Salvar Alterações
+                        </Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

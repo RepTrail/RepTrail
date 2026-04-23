@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 
 export async function seedCommonExercises() {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     const exercises = [
         'Supino Reto com Barra', 'Supino Inclinado com Halteres', 'Crossover', 'Crucifixo Reto',

@@ -5,9 +5,13 @@ import { Button } from '@/components/ui/button'
 import { Check, Users, Zap, ArrowRight, Sparkles, CreditCard, QrCode, FileText } from 'lucide-react'
 import { createAsaasSubscription } from "@/actions/asaas-actions"
 import { useToast } from "@/hooks/use-toast"
+import { useQueryClient } from '@tanstack/react-query'
 import { PaymentModal } from "../asaas/payment-modal"
 
 import { FREE_STUDENTS_LIMIT, ON_DEMAND_PRICE_PER_STUDENT } from '@/lib/constants'
+
+import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { ENTITIES } from '@/lib/outbox-db'
 
 interface PlansClientProps {
     currentTier: string
@@ -17,35 +21,46 @@ interface PlansClientProps {
 
 export function PlansClient({ currentTier, studentCount, profile }: PlansClientProps) {
     const [simStudents, setSimStudents] = useState(studentCount || FREE_STUDENTS_LIMIT)
-    const [loading, setLoading] = useState(false)
     const [isModalOpen, setIsModalOpen] = useState(false)
     const { toast } = useToast()
+    const queryClient = useQueryClient()
+
+    const { mutate } = useOptimisticMutation({
+        actionName: 'create-asaas-subscription',
+        entity: ENTITIES.SUBSCRIPTION,
+        queryKey: ['profile'], // Update profile after subscription
+        mutationFn: async () => { }, // Sync Engine will handle it
+        onSuccess: () => {
+            toast({ title: 'Plano Ativado!', description: 'Seu plano on-demand foi ativado com sucesso.' })
+            queryClient.invalidateQueries({ queryKey: ['trainer'] })
+            queryClient.invalidateQueries({ queryKey: ['profile'] })
+        },
+        onError: (err: any) => {
+            toast({ variant: 'destructive', title: 'Erro', description: err.message || 'Erro ao ativar plano.' })
+        }
+    })
 
     const isActive = currentTier && currentTier !== 'none'
 
     const billableStudents = Math.max(0, simStudents - FREE_STUDENTS_LIMIT)
     const monthlyTotal = billableStudents * ON_DEMAND_PRICE_PER_STUDENT
 
-    const handleSubscribeAsaas = async (type: 'PIX' | 'BOLETO' | 'CREDIT_CARD') => {
-        setLoading(true)
-
+    const handleSubscribeAsaas = (type: 'PIX' | 'BOLETO' | 'CREDIT_CARD') => {
         if (monthlyTotal === 0) {
             toast({
                 title: "Ativando plano...",
                 description: "Como você tem até 5 alunos, seu plano será ativado sem custo agora."
             })
-            const res = await createAsaasSubscription('on_demand', type, profile?.cpf_cnpj, profile?.full_name)
-            setLoading(false)
 
-            if (res.success) {
-                toast({ title: 'Plano Ativado!', description: 'Seu plano on-demand foi ativado com sucesso.' })
-                setTimeout(() => window.location.reload(), 2000)
-            } else if (res.error) {
-                toast({ variant: 'destructive', title: 'Erro', description: res.error })
-            }
+            mutate({
+                tier: 'on_demand',
+                paymentMethod: type,
+                cpfCnpj: profile?.cpf_cnpj,
+                fullName: profile?.full_name,
+                userId: profile?.id // For query key reconciliation
+            })
         } else {
             setIsModalOpen(true)
-            setLoading(false)
         }
     }
 
@@ -54,7 +69,7 @@ export function PlansClient({ currentTier, studentCount, profile }: PlansClientP
     }
 
     return (
-        <div className="max-w-2xl mx-auto space-y-10" suppressHydrationWarning>
+        <div className="w-full mx-auto space-y-10" suppressHydrationWarning>
             <PaymentModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
@@ -70,21 +85,23 @@ export function PlansClient({ currentTier, studentCount, profile }: PlansClientP
                 {/* Top gradient glow */}
                 <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent" />
 
-                {/* Badge */}
-                <div className="absolute top-5 right-5">
-                    <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-black uppercase tracking-widest">
-                        <Sparkles className="w-3 h-3" />
-                        Plano único
-                    </span>
-                </div>
-
-                <div className="p-8 space-y-8">
+                <div className="p-4 space-y-8">
                     {/* Title */}
-                    <div className="space-y-2 pr-28">
-                        <h2 className="text-3xl font-black text-white italic uppercase tracking-tight">RepTrail</h2>
-                        <p className="text-zinc-400 text-sm leading-relaxed">
-                            Comece grátis e cresça no seu ritmo. Sem contratos, sem mensalidade fixa.
-                        </p>
+                    <div className="space-y-4 md:pr-28">
+                        {/* Badge */}
+                        <div className="md:absolute md:top-5 md:right-5">
+                            <span className="flex items-center w-fit gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-black uppercase tracking-widest">
+                                <Sparkles className="w-3 h-3" />
+                                Plano único
+                            </span>
+                        </div>
+
+                        <div className="space-y-2">
+                            <h2 className="text-3xl font-black text-white italic uppercase tracking-tight">RepTrail</h2>
+                            <p className="text-zinc-400 text-sm leading-relaxed">
+                                Comece grátis e cresça no seu ritmo. Sem contratos, sem mensalidade fixa.
+                            </p>
+                        </div>
                     </div>
 
                     {/* Pricing Display */}
@@ -187,7 +204,7 @@ export function PlansClient({ currentTier, studentCount, profile }: PlansClientP
                             </div>
                         </div>
                     ) : isActive ? (
-                        <div className="flex items-center gap-3 pb-4p-4 rounded-2xl bg-emerald-500/5 border border-emerald-500/20">
+                        <div className="flex items-center gap-3 p-4 rounded-2xl bg-emerald-500/5 border border-emerald-500/20">
                             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                             <span className="text-emerald-400 font-bold text-sm">Plano ativo — você está sendo cobrado conforme o uso</span>
                         </div>
@@ -196,7 +213,7 @@ export function PlansClient({ currentTier, studentCount, profile }: PlansClientP
                             {monthlyTotal === 0 ? (
                                 <Button
                                     onClick={() => handleSubscribeAsaas('PIX')}
-                                    disabled={loading}
+                                    /* ❌ UI BLOCKING REMOVED */ disabled={false}
                                     className="w-full h-14 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-black uppercase tracking-widest text-sm gap-3 transition-all hover:scale-[1.02] active:scale-[0.98]"
                                 >
                                     <Zap className="w-5 h-5 fill-current" />
@@ -205,7 +222,7 @@ export function PlansClient({ currentTier, studentCount, profile }: PlansClientP
                             ) : (
                                 <Button
                                     onClick={() => setIsModalOpen(true)}
-                                    disabled={loading}
+                                    /* ❌ UI BLOCKING REMOVED */ disabled={false}
                                     className="w-full h-14 rounded-2xl bg-white hover:bg-zinc-100 text-zinc-950 font-black uppercase tracking-widest text-sm gap-3 transition-all hover:scale-[1.02] active:scale-[0.98]"
                                 >
                                     <Zap className="w-5 h-5 fill-current" />

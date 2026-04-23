@@ -14,7 +14,7 @@ export default async function AffiliateLayout({
 }: {
     children: React.ReactNode
 }) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) {
@@ -38,6 +38,7 @@ export default async function AffiliateLayout({
                 logoColor="amber"
                 tagline="Programa Afiliados"
                 user={{
+                    id: user.id,
                     name: profile?.full_name,
                     email: user.email,
                     avatar_url: profile?.avatar_url

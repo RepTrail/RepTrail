@@ -10,7 +10,7 @@ export class WorkoutService {
                     .from('workouts')
                     .select(`
                         *,
-                        exercises:workout_exercises(count),
+                        workout_exercises:workout_exercises(count),
                         assignments:assigned_workouts(
                             id,
                             student_id,
@@ -30,21 +30,21 @@ export class WorkoutService {
                 // Grouping logic for trainer view
                 const grouped = (data || []).map(workout => {
                     const studentMap: Record<string, any> = {}
-                    ;(workout.assignments || []).forEach((a: any) => {
-                        if (!a.active || a.student_id === trainerId) return
-                        
-                        if (!studentMap[a.student_id]) {
-                            studentMap[a.student_id] = { 
-                                ...a, 
-                                days_of_week: [] 
+                        ; (workout.assignments || []).forEach((a: any) => {
+                            if (!a.active) return
+
+                            if (!studentMap[a.student_id]) {
+                                studentMap[a.student_id] = {
+                                    ...a,
+                                    days_of_week: []
+                                }
                             }
-                        }
-                        if (a.day_of_week !== null && a.day_of_week !== undefined) {
-                             if (!studentMap[a.student_id].days_of_week.includes(a.day_of_week)) {
-                                 studentMap[a.student_id].days_of_week.push(a.day_of_week)
-                             }
-                        }
-                    })
+                            if (a.day_of_week !== null && a.day_of_week !== undefined) {
+                                if (!studentMap[a.student_id].days_of_week.includes(a.day_of_week)) {
+                                    studentMap[a.student_id].days_of_week.push(a.day_of_week)
+                                }
+                            }
+                        })
                     return { ...workout, assignments: Object.values(studentMap) }
                 })
 
@@ -66,8 +66,10 @@ export class WorkoutService {
                             id,
                             student_id,
                             day_of_week,
-                            active
+                            active,
+                            student:profiles(full_name)
                         )
+
                     `)
                     .eq('id', workoutId)
                     .maybeSingle()
@@ -79,21 +81,21 @@ export class WorkoutService {
 
                 // Grouping logic
                 const studentMap: Record<string, any> = {}
-                ;(workout.assignments || []).forEach((a: any) => {
-                    if (!a.active || (userId && a.student_id === userId)) return
-                    
-                    if (!studentMap[a.student_id]) {
-                        studentMap[a.student_id] = { 
-                            ...a, 
-                            days_of_week: [] 
+                    ; (workout.assignments || []).forEach((a: any) => {
+                        if (!a.active || (userId && a.student_id === userId)) return
+
+                        if (!studentMap[a.student_id]) {
+                            studentMap[a.student_id] = {
+                                ...a,
+                                days_of_week: []
+                            }
                         }
-                    }
-                    if (a.day_of_week !== null && a.day_of_week !== undefined) {
-                         if (!studentMap[a.student_id].days_of_week.includes(a.day_of_week)) {
-                             studentMap[a.student_id].days_of_week.push(a.day_of_week)
-                         }
-                    }
-                })
+                        if (a.day_of_week !== null && a.day_of_week !== undefined) {
+                            if (!studentMap[a.student_id].days_of_week.includes(a.day_of_week)) {
+                                studentMap[a.student_id].days_of_week.push(a.day_of_week)
+                            }
+                        }
+                    })
                 workout.assignments = Object.values(studentMap)
 
                 const { data: exercises } = await adminClient
@@ -105,7 +107,7 @@ export class WorkoutService {
                     .eq('workout_id', workoutId)
                     .order('order_index', { ascending: true })
 
-                return { ...workout, exercises: exercises || [] }
+                return { ...workout, workout_exercises: exercises || [] }
             },
             [`workout-details-${workoutId}`],
             { tags: ['workouts', `workout-details-${workoutId}`] }
@@ -128,7 +130,7 @@ export class WorkoutService {
                                 workout:workouts!inner(
                                     *,
                                     trainer_id,
-                                    exercises:workout_exercises(
+                                    workout_exercises:workout_exercises(
                                         *,
                                         exercise:exercises(*)
                                     )
@@ -153,9 +155,9 @@ export class WorkoutService {
                         const isLinked = trainerLinks?.some(l => l.trainer_id === workout.trainer_id)
                         if (!isLinked) return null
                     }
-                    
-                    if (workout.exercises) {
-                        workout.exercises.sort((a: any, b: any) => a.order_index - b.order_index)
+
+                    if (workout.workout_exercises) {
+                        workout.workout_exercises.sort((a: any, b: any) => a.order_index - b.order_index)
                     }
 
                     return workout

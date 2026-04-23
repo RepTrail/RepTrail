@@ -8,6 +8,10 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { deleteProgressPhoto, updateProgressPhotoDate } from '@/actions/student-actions'
 import { useToast } from '@/hooks/use-toast'
+import { useQueryClient } from '@tanstack/react-query'
+import { QUERY_KEYS } from '@/lib/query-keys'
+import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { ENTITIES } from '@/lib/outbox-db'
 
 interface PhotoSet {
     id: string
@@ -27,8 +31,8 @@ export function StudentProgressGallery({ photos }: StudentProgressGalleryProps) 
     const [hoveredId, setHoveredId] = useState<string | null>(null)
     const [editingId, setEditingId] = useState<string | null>(null)
     const [editDate, setEditDate] = useState('')
-    const [isPending, startTransition] = useTransition()
     const { toast } = useToast()
+    const queryClient = useQueryClient()
 
     const sortedPhotos = [...photos].sort((a, b) =>
         new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
@@ -42,36 +46,53 @@ export function StudentProgressGallery({ photos }: StudentProgressGalleryProps) 
         { url: set.side_left_url, label: 'Lado E', type: 'side_left_url', date: set.created_at, id: set.id },
     ].filter(p => !!p.url))) as any[]
 
-    async function handleDelete(photoId: string) {
-        if (!confirm('Tem certeza que deseja remover este registro de fotos?')) return
-
-        const res = await deleteProgressPhoto(photoId)
-        if (res.success) {
-            toast({ title: "Removido!", description: "O registro de fotos foi removido." })
-            // The parent component should refetch the data
-            window.location.reload()
-        } else {
-            toast({ variant: "destructive", title: "Erro", description: res.error })
+    const { mutate: deleteMutate } = useOptimisticMutation({
+        actionName: 'delete-progress-photo',
+        entity: ENTITIES.PROGRESS_PHOTO,
+        entityId: 'delete',
+        queryKey: ['student'],
+        mutationFn: async () => {}, // Single-writer: no-op
+        onMutate: () => {
+            const previous = queryClient.getQueryData(['student'])
+            // Ideally we'd remove the item from cache here for 0ms visual deletion
+            return { previous }
+        },
+        onSuccess: () => {
+            toast({ title: "Removido!", description: "O registro de fotos está sendo removido." })
+        },
+        onError: (err, variables, ctx) => {
+            queryClient.setQueryData(['student'], ctx?.previous)
+            toast({ variant: "destructive", title: "Erro", description: "Ocorreu um erro." })
         }
+    })
+
+    const { mutate: updateDateMutate } = useOptimisticMutation({
+        actionName: 'update-progress-photo-date',
+        entity: ENTITIES.PROGRESS_PHOTO,
+        entityId: 'update',
+        queryKey: ['student'],
+        mutationFn: async () => {}, // Single-writer: no-op
+        onMutate: () => {
+            setEditingId(null)
+            return {}
+        },
+        onSuccess: () => {
+            toast({ title: "Data atualizada!", description: "A data será refletida em todo o sistema em instantes." })
+        },
+        onError: (err, variables, ctx) => {
+            queryClient.setQueryData(['student'], ctx?.previous)
+            toast({ variant: "destructive", title: "Erro", description: "Ocorreu um erro." })
+        }
+    })
+
+    function handleDelete(photoId: string) {
+        if (!confirm('Tem certeza que deseja remover este registro de fotos?')) return
+        deleteMutate({ photoId })
     }
 
-    async function handleDateSave(photoId: string) {
+    function handleDateSave(photoId: string) {
         if (!editDate) return
-
-        startTransition(async () => {
-            const res = await updateProgressPhotoDate(photoId, new Date(editDate).toISOString())
-            if (res.success) {
-                toast({ title: "Data atualizada!" })
-                setEditingId(null)
-                // window.location.reload() // Next.js revalidatePath handle this? Usually yes if server component re-renders. But this is client component receiving props.
-                // We might need to full reload or router.refresh() if revalidatePath doesn't work on client component props update instantly
-                // Actually revalidatePath works on next fetch. But props are passed from server component.
-                // So we need to refresh the router.
-                window.location.reload()
-            } else {
-                toast({ variant: "destructive", title: "Erro", description: res.error })
-            }
-        })
+        updateDateMutate({ photoId, newDate: new Date(editDate).toISOString() })
     }
 
     function startEditing(id: string, currentDate: string) {
@@ -123,10 +144,10 @@ export function StudentProgressGallery({ photos }: StudentProgressGalleryProps) 
                                                     onChange={(e) => setEditDate(e.target.value)}
                                                     className="h-6 w-32 px-2 text-[10px] bg-zinc-950 border-zinc-700 focus:ring-purple-500/50 text-white [color-scheme:dark]"
                                                 />
-                                                <Button size="sm" variant="ghost" onClick={() => handleDateSave(set.id)} disabled={isPending} className="h-6 w-6 p-0 hover:bg-emerald-500/20 text-emerald-500">
+                                                <Button size="sm" variant="ghost" onClick={() => handleDateSave(set.id)} className="h-6 w-6 p-0 hover:bg-emerald-500/20 text-emerald-500">
                                                     <Check className="w-3 h-3" />
                                                 </Button>
-                                                <Button size="sm" variant="ghost" onClick={() => setEditingId(null)} disabled={isPending} className="h-6 w-6 p-0 hover:bg-red-500/20 text-red-500">
+                                                <Button size="sm" variant="ghost" onClick={() => setEditingId(null)} className="h-6 w-6 p-0 hover:bg-red-500/20 text-red-500">
                                                     <X className="w-3 h-3" />
                                                 </Button>
                                             </div>

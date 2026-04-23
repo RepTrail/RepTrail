@@ -3,7 +3,7 @@ import { AnamnesisForm } from '@/components/feature/student/anamnesis-form'
 import { ClipboardList } from 'lucide-react'
 
 export default async function AnamnesisPage() {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) return null

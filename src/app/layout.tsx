@@ -3,7 +3,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { PWAClient } from "@/components/layout/pwa-client";
-import { ForceReload } from "@/components/layout/force-reload";
 import { SplashManager } from "@/components/layout/splash-manager";
 import { ImpersonationBar } from "@/components/feature/admin/impersonation-bar";
 
@@ -49,10 +48,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" suppressHydrationWarning className="dark" style={{ colorScheme: 'dark' }}>
+    <html lang="pt-BR" suppressHydrationWarning className="dark" style={{ colorScheme: 'dark' }} data-scroll-behavior="smooth">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-zinc-950`}
         suppressHydrationWarning
+        data-scroll-behavior="smooth"
       >
         <ImpersonationBar />
         <NextTopLoader color="#f97316" showSpinner={false} shadow="0 0 10px #f97316,0 0 5px #f97316" zIndex={1600} />
@@ -64,7 +64,6 @@ export default function RootLayout({
         </QueryProvider>
         <Toaster />
         <PWAClient />
-        <ForceReload />
       </body>
     </html>
   );

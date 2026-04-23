@@ -7,46 +7,58 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { MapPin } from "lucide-react"
 import { updateTrainerProfile, uploadTrainerAvatar } from "@/actions/trainer-actions"
+import { useQueryClient, useMutation } from '@tanstack/react-query'
+import { QUERY_KEYS } from '@/lib/query-keys'
 import { useToast } from "@/hooks/use-toast"
 import { AvatarUploadWithCrop } from '@/components/feature/avatar-upload-with-crop'
+
+import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { ENTITIES } from '@/lib/outbox-db'
 
 interface ClientProfileFormProps {
     profile: any
 }
 
 export function ClientProfileForm({ profile }: ClientProfileFormProps) {
-    const [loading, setLoading] = useState(false)
     const [avatarUrl, setAvatarUrl] = useState(profile?.avatar_url || '')
     const { toast } = useToast()
+    const queryClient = useQueryClient()
+    
+    // We assume profile.id exists. If not, profile might be the actual user session id.
+    const queryKey = QUERY_KEYS.trainer.profile(profile?.id || '')
 
-    const handleSubmit = async (formData: FormData) => {
-        setLoading(true)
-        // Add the avatarUrl to form data just in case the input wasn't updated
-        formData.set('avatar_url', avatarUrl)
-
-        try {
-            const result = await updateTrainerProfile(formData)
-            if (result.success) {
-                toast({
-                    title: "Perfil atualizado!",
-                    description: "Suas informações foram salvas com sucesso.",
-                })
-            } else {
-                toast({
-                    variant: "destructive",
-                    title: "Erro ao atualizar",
-                    description: result.error,
-                })
-            }
-        } catch (error) {
-            toast({
-                variant: "destructive",
-                title: "Erro inesperado",
-                description: "Tente novamente em instantes.",
-            })
-        } finally {
-            setLoading(false)
+    const { mutate } = useOptimisticMutation({
+        actionName: 'update-trainer-profile',
+        entity: ENTITIES.TRAINER_DETAIL,
+        entityId: profile?.id || 'me',
+        queryKey,
+        mutationFn: async (variables: { formData: FormData, obj: any }) => variables, // 🔴 NO-OP: Logic moves to registry
+        onMutate: (variables) => {
+            const previous = queryClient.getQueryData(queryKey)
+            queryClient.setQueryData(queryKey, (old: any) => ({ ...old, ...variables.obj, avatar_url: avatarUrl, _optimistic: true }))
+            return { previous }
+        },
+        onSuccess: () => {
+            toast({ title: "Perfil atualizado!", description: "Suas informações foram salvas." })
+        },
+        onError: (err, variables, ctx) => {
+            queryClient.setQueryData(queryKey, ctx?.previous)
+            toast({ variant: "destructive", title: "Erro", description: "Ocorreu uma falha ao sincronizar." })
         }
+    })
+
+    const handleSubmit = (formData: FormData) => {
+        const obj = {
+            full_name: formData.get('full_name') as string,
+            whatsapp: formData.get('whatsapp') as string,
+            instagram: formData.get('instagram') as string,
+            cref: formData.get('cref') as string,
+            location: formData.get('location') as string,
+            specialties: (formData.get('specialties') as string)?.split(',').map(s => s.trim()),
+            bio: formData.get('bio') as string
+        }
+        // 🚀 Instant feedback, no await
+        mutate({ formData, obj })
     }
 
     return (
@@ -172,10 +184,9 @@ export function ClientProfileForm({ profile }: ClientProfileFormProps) {
 
             <Button
                 type="submit"
-                disabled={loading}
                 className="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-black uppercase tracking-widest h-14 rounded-2xl shadow-[0_0_20px_-5px_rgba(16,185,129,0.3)] transition-all active:scale-95"
             >
-                {loading ? "Salvando..." : "Salvar Alterações do Perfil"}
+                Salvar Alterações do Perfil
             </Button>
         </form>
     )

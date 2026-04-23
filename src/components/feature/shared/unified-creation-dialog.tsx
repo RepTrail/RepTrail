@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
-import { Plus, Loader2, ChevronDown, Calendar, X } from "lucide-react"
+import { Plus, ChevronDown, Calendar, X } from "lucide-react"
 import {
     Select,
     SelectContent,
@@ -25,9 +25,12 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { useRouter } from 'next/navigation'
 import { useToast } from "@/hooks/use-toast"
 import { cn } from '@/lib/utils'
+import { useQueryClient, QueryKey } from '@tanstack/react-query'
+import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { ENTITIES } from '@/lib/outbox-db'
+import { nanoid } from 'nanoid'
 
 interface FieldConfig {
     name: string
@@ -38,6 +41,7 @@ interface FieldConfig {
     options?: { label: string, value: string, color?: string }[]
     defaultValue?: string
     gridCols?: 1 | 2
+    merged?: boolean
 }
 
 interface UnifiedCreationDialogProps {
@@ -53,6 +57,7 @@ interface UnifiedCreationDialogProps {
     successMessage?: string
     footerLabel?: string
     colorScheme?: 'orange' | 'emerald' | 'purple' | 'cyan'
+    queryKey?: QueryKey
 }
 
 const WEEKDAYS = [
@@ -64,6 +69,120 @@ const WEEKDAYS = [
     { label: 'S', value: 5 },
     { label: 'S', value: 6 },
 ]
+
+const schemes = {
+    orange: {
+        btn: 'bg-gradient-to-r from-orange-600 to-orange-400 hover:from-orange-500 hover:to-orange-300 text-zinc-950 shadow-orange-500/20',
+        accent: 'orange-500',
+        ring: 'focus:ring-orange-500/20',
+        border: 'focus:border-orange-500/50',
+        daySelected: 'bg-orange-500 border-orange-400 text-zinc-950 shadow-orange-500/10'
+    },
+    emerald: {
+        btn: 'bg-gradient-to-r from-emerald-600 to-emerald-400 hover:from-emerald-500 hover:to-emerald-300 text-zinc-950 shadow-emerald-500/20',
+        accent: 'emerald-500',
+        ring: 'focus:ring-emerald-500/20',
+        border: 'focus:border-emerald-500/50',
+        daySelected: 'bg-emerald-500 border-emerald-400 text-zinc-950 shadow-emerald-500/10'
+    },
+    purple: {
+        btn: 'bg-gradient-to-r from-purple-600 to-purple-400 hover:from-purple-500 hover:to-purple-300 text-zinc-950 shadow-purple-500/20',
+        accent: 'purple-500',
+        ring: 'focus:ring-purple-500/20',
+        border: 'focus:border-purple-500/50',
+        daySelected: 'bg-purple-500 border-purple-400 text-zinc-950 shadow-purple-500/10'
+    },
+    cyan: {
+        btn: 'bg-gradient-to-r from-cyan-600 to-cyan-400 hover:from-cyan-500 hover:to-cyan-300 text-zinc-950 shadow-cyan-500/20',
+        accent: 'cyan-500',
+        ring: 'focus:ring-cyan-500/20',
+        border: 'focus:border-cyan-500/50',
+        daySelected: 'bg-cyan-500 border-cyan-400 text-zinc-950 shadow-cyan-500/10'
+    }
+}
+
+// Build the mutation action for a given actionType
+async function executeCreateAction(actionType: string, payload: any): Promise<any> {
+    switch (actionType) {
+        case 'create-student-workout': {
+            const { createStudentWorkout } = await import('@/actions/student-content-actions')
+            const fd = objectToFormData(payload)
+            return createStudentWorkout(fd)
+        }
+        case 'create-student-diet': {
+            const { createStudentDiet } = await import('@/actions/student-content-actions')
+            const fd = objectToFormData(payload)
+            return createStudentDiet(fd)
+        }
+        case 'create-student-cardio': {
+            const { createStudentCardio } = await import('@/actions/student-content-actions')
+            const fd = objectToFormData(payload)
+            return createStudentCardio(fd)
+        }
+        case 'create-student-ergogenic': {
+            const { createStudentErgogenic } = await import('@/actions/student-content-actions')
+            const fd = objectToFormData(payload)
+            return createStudentErgogenic(fd)
+        }
+        case 'create-manual-workout': {
+            const { createManualWorkout } = await import('@/actions/workout-actions')
+            const fd = objectToFormData(payload)
+            return createManualWorkout(fd)
+        }
+        case 'create-manual-diet': {
+            const { createManualDiet } = await import('@/actions/diet-actions')
+            const fd = objectToFormData(payload)
+            return createManualDiet(fd)
+        }
+        case 'create-student': {
+            const { createStudent } = await import('@/actions/trainer-actions')
+            const fd = objectToFormData(payload)
+            return createStudent(null, fd)
+        }
+        case 'update-student-ergogenic': {
+            const { updateErgogenic } = await import('@/actions/ergogenics-actions')
+            return updateErgogenic(payload.id, payload.student_id, payload)
+        }
+        case 'duplicate-student-ergogenic': {
+            const { addErgogenic } = await import('@/actions/ergogenics-actions')
+            return addErgogenic(payload)
+        }
+        default:
+            throw new Error(`Invalid actionType: ${actionType}`)
+    }
+}
+
+const ACTION_TO_ENTITY: Record<string, any> = {
+    'create-student-workout': ENTITIES.WORKOUT,
+    'create-student-diet': ENTITIES.DIET,
+    'create-student-cardio': ENTITIES.CARDIO,
+    'create-student-ergogenic': ENTITIES.ERGOGENIC,
+    'create-manual-workout': ENTITIES.WORKOUT,
+    'create-manual-diet': ENTITIES.DIET,
+    'create-student': ENTITIES.TRAINER_STUDENT,
+    'update-student-ergogenic': ENTITIES.ERGOGENIC,
+    'duplicate-student-ergogenic': ENTITIES.ERGOGENIC,
+}
+
+function objectToFormData(obj: Record<string, any>): FormData {
+    const fd = new FormData()
+    for (const [key, value] of Object.entries(obj)) {
+        if (value !== undefined && value !== null) {
+            fd.append(key, typeof value === 'object' ? JSON.stringify(value) : String(value))
+        }
+    }
+    return fd
+}
+
+// Build a create optimistic item from payload
+function buildOptimisticItem(payload: any, optimisticId?: string): any {
+    return {
+        ...payload,
+        id: optimisticId || payload.id || (typeof crypto !== 'undefined' ? crypto.randomUUID() : 'temp-' + Date.now()), 
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+    }
+}
 
 export function UnifiedCreationDialog({
     trigger,
@@ -77,17 +196,20 @@ export function UnifiedCreationDialog({
     parentId,
     successMessage = 'Criado com sucesso!',
     footerLabel = 'Salvar',
-    colorScheme = 'orange'
+    colorScheme = 'orange',
+    queryKey
 }: UnifiedCreationDialogProps) {
     const [open, setOpen] = useState(false)
-    const [loading, setLoading] = useState(false)
+    const { toast } = useToast()
+    const queryClient = useQueryClient()
+
+    const s = schemes[colorScheme]
 
     // State for non-native fields (days, switch)
     const daysField = fields.find(f => f.type === 'days')
-    const initialDays = initialValues?.[daysField?.name || 'application_days'] || [0, 1, 2, 3, 4, 5, 6]
+    const initialDays = initialValues?.[daysField?.name || 'application_days'] || []
     const [selectedDays, setSelectedDays] = useState<number[]>(initialDays)
 
-    // Initial custom values for switches
     const initialCustomFields = fields.reduce((acc, f) => {
         if (f.type === 'switch') {
             acc[f.name] = initialValues?.[f.name] || f.defaultValue || (f.options?.[0]?.value || '')
@@ -96,13 +218,93 @@ export function UnifiedCreationDialog({
     }, {} as Record<string, any>)
     const [customFields, setCustomFields] = useState<Record<string, any>>(initialCustomFields)
 
-    const router = useRouter()
-    const { toast } = useToast()
-
     const toggleDay = (day: number) => {
         setSelectedDays(prev =>
             prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day].sort()
         )
+    }
+
+    // ─── LOCAL-FIRST MUTATION ─────────────────────────────────────────────────────
+    const { mutate } = useOptimisticMutation({
+        queryKey: queryKey ?? ['__noop__'],
+        actionName: actionType,
+        entity: ACTION_TO_ENTITY[actionType] || ENTITIES.WORKOUT,
+        mutationFn: async (payload: any) => payload, // 🔴 HARD BLOCK: No direct server calls
+        // Optimistic update: inject tempId item into cache immediately
+        updateFn: (oldData: any, variables: any) => {
+            if (!queryKey) return oldData
+            const optimisticItem = buildOptimisticItem(variables, variables.id)
+            
+            if (Array.isArray(oldData)) {
+                // Check if we are updating an existing item or adding a new one
+                const exists = oldData.some((item: any) => item.id === variables.id)
+                if (exists) {
+                    return oldData.map((item: any) => 
+                        item.id === variables.id ? { ...item, ...optimisticItem } : item
+                    )
+                }
+                return [optimisticItem, ...oldData]
+            }
+            return oldData
+        },
+        onSuccess: (data: any, variables: any) => {
+            // Toast is enough. SyncEngine handles reconciliation in background.
+            toast({ title: successMessage })
+        },
+        onError: (err: Error, variables: any) => {
+            // Rollback: remove optimistic item from cache
+            if (queryKey) {
+                queryClient.setQueryData(queryKey, (oldData: any) => {
+                    if (!Array.isArray(oldData)) return oldData
+                    return oldData.filter((item: any) => item.id !== variables.id)
+                })
+            }
+            toast({ variant: 'destructive', title: 'Erro', description: err.message })
+        },
+    })
+
+    async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+        event.preventDefault()
+
+        if (daysField && selectedDays.length === 0) {
+            toast({ variant: 'destructive', title: 'Erro', description: 'Selecione pelo menos um dia.' })
+            return
+        }
+
+        const formData = new FormData(event.currentTarget)
+
+        // Build plain object payload (serializable for Outbox)
+        const payload: Record<string, any> = {}
+        fields.forEach(f => {
+            const val = formData.get(f.name)
+            if (val !== null) {
+                payload[f.name] = f.type === 'number' ? Number(val) : String(val)
+            }
+        })
+
+        if (daysField) {
+            payload[daysField.name || 'daysOfWeek'] = selectedDays
+        }
+
+        // Merge switch state (not captured by FormData)
+        Object.assign(payload, customFields)
+
+        if (parentId) {
+            payload.student_id = parentId
+            payload.parentId = parentId
+        }
+
+        if (id) {
+            payload.id = id
+        }
+
+        // Remove legacy _optimisticId injection
+        // Let useOptimisticMutation handle UUID generation if missing
+        // 🚀 LOCAL-FIRST: close modal IMMEDIATELY, no await, no loading
+        setOpen(false)
+
+        // Fire mutation (optimistic update happens inside useOptimisticMutation.onMutate)
+        mutate(payload)
     }
 
     const renderField = (field: FieldConfig) => {
@@ -134,7 +336,7 @@ export function UnifiedCreationDialog({
                                         value={opt.value}
                                         className={cn("rounded-xl px-3 py-2.5 font-bold transition-all cursor-pointer mb-1 last:mb-0 focus:bg-white/5", `focus:text-${s.accent}`)}
                                     >
-                                        <div className="flex items-center gap-3 pb-4">
+                                        <div className="flex items-center gap-3">
                                             {opt.color && (
                                                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: opt.color, boxShadow: `0 0 8px ${opt.color}66` }} />
                                             )}
@@ -165,7 +367,7 @@ export function UnifiedCreationDialog({
                     </div>
                 ) : field.type === 'switch' ? (
                     <div className="flex items-center justify-between h-14 px-4 bg-zinc-900/40 rounded-2xl border border-zinc-800/50 shadow-inner group transition-all">
-                        <div className="flex items-center gap-3 pb-4">
+                        <div className="flex items-center gap-3">
                             <span className={cn(
                                 "text-[9px] font-black uppercase tracking-widest transition-all",
                                 customFields[field.name] === field.options?.[0]?.value ? `text-${s.accent}` : "text-zinc-600"
@@ -213,139 +415,6 @@ export function UnifiedCreationDialog({
         )
     }
 
-    const schemes = {
-        orange: {
-            btn: 'bg-gradient-to-r from-orange-600 to-orange-400 hover:from-orange-500 hover:to-orange-300 text-zinc-950 shadow-orange-500/20',
-            accent: 'orange-500',
-            ring: 'focus:ring-orange-500/20',
-            border: 'focus:border-orange-500/50',
-            daySelected: 'bg-orange-500 border-orange-400 text-zinc-950 shadow-orange-500/10'
-        },
-        emerald: {
-            btn: 'bg-gradient-to-r from-emerald-600 to-emerald-400 hover:from-emerald-500 hover:to-emerald-300 text-zinc-950 shadow-emerald-500/20',
-            accent: 'emerald-500',
-            ring: 'focus:ring-emerald-500/20',
-            border: 'focus:border-emerald-500/50',
-            daySelected: 'bg-emerald-500 border-emerald-400 text-zinc-950 shadow-emerald-500/10'
-        },
-        purple: {
-            btn: 'bg-gradient-to-r from-purple-600 to-purple-400 hover:from-purple-500 hover:to-purple-300 text-zinc-950 shadow-purple-500/20',
-            accent: 'purple-500',
-            ring: 'focus:ring-purple-500/20',
-            border: 'focus:border-purple-500/50',
-            daySelected: 'bg-purple-500 border-purple-400 text-zinc-950 shadow-purple-500/10'
-        },
-        cyan: {
-            btn: 'bg-gradient-to-r from-cyan-600 to-cyan-400 hover:from-cyan-500 hover:to-cyan-300 text-zinc-950 shadow-cyan-500/20',
-            accent: 'cyan-500',
-            ring: 'focus:ring-cyan-500/20',
-            border: 'focus:border-cyan-500/50',
-            daySelected: 'bg-cyan-500 border-cyan-400 text-zinc-950 shadow-cyan-500/10'
-        }
-    }
-
-    const s = schemes[colorScheme]
-
-    async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
-        event.preventDefault()
-
-        const daysField = fields.find(f => f.type === 'days')
-        if (daysField && selectedDays.length === 0) {
-            toast({ variant: 'destructive', title: 'Erro', description: 'Selecione pelo menos um dia.' })
-            return
-        }
-
-        setLoading(true)
-        const formData = new FormData(event.currentTarget)
-
-        if (daysField) {
-            formData.append(daysField.name || 'daysOfWeek', JSON.stringify(selectedDays))
-        }
-
-        // Add custom field values (switches)
-        Object.keys(customFields).forEach(key => {
-            if (!formData.has(key)) {
-                formData.append(key, customFields[key])
-            }
-        })
-
-        if (parentId) {
-            formData.append('student_id', parentId)
-            formData.append('parentId', parentId)
-        }
-
-        try {
-            let result;
-
-            switch (actionType) {
-                case 'create-student-workout':
-                    const { createStudentWorkout } = await import('@/actions/student-content-actions')
-                    await createStudentWorkout(formData)
-                    break
-                case 'create-student-diet':
-                    const { createStudentDiet } = await import('@/actions/student-content-actions')
-                    result = await createStudentDiet(formData)
-                    break
-                case 'create-student-cardio':
-                    const { createStudentCardio } = await import('@/actions/student-content-actions')
-                    result = await createStudentCardio(formData)
-                    break
-                case 'create-student-ergogenic':
-                    const { createStudentErgogenic } = await import('@/actions/student-content-actions')
-                    result = await createStudentErgogenic(formData)
-                    break
-                case 'create-manual-workout':
-                    const { createManualWorkout } = await import('@/actions/workout-actions')
-                    result = await createManualWorkout(formData)
-                    break
-                case 'create-manual-diet':
-                    const { createManualDiet } = await import('@/actions/diet-actions')
-                    result = await createManualDiet(formData)
-                    break
-                case 'create-student':
-                    const { createStudent } = await import('@/actions/trainer-actions')
-                    result = await createStudent(null, formData)
-                    break
-                case 'update-student-ergogenic':
-                    if (!id) throw new Error('ID is required for update')
-                    const { updateErgogenic } = await import('@/actions/ergogenics-actions')
-                    const updateData: any = {}
-                    fields.forEach(f => {
-                        const val = formData.get(f.name)
-                        if (val !== null) updateData[f.name] = f.type === 'number' ? Number(val) : val
-                    })
-                    if (daysField) updateData[daysField.name] = selectedDays
-                    result = await updateErgogenic(id, parentId || '', updateData)
-                    break
-                case 'duplicate-student-ergogenic':
-                    const { addErgogenic } = await import('@/actions/ergogenics-actions')
-                    const duplicateData: any = {}
-                    fields.forEach(f => {
-                        const val = formData.get(f.name)
-                        if (val !== null) duplicateData[f.name] = f.type === 'number' ? Number(val) : val
-                    })
-                    if (daysField) duplicateData[daysField.name] = selectedDays
-                    duplicateData.student_id = parentId
-                    result = await addErgogenic(duplicateData)
-                    break
-                default:
-                    throw new Error('Invalid action type')
-            }
-
-            if (result && (result.success || (result && !('error' in result)))) {
-                setOpen(false)
-                toast({ title: successMessage })
-                router.refresh()
-            } else if (result && 'error' in result) {
-                toast({ variant: 'destructive', title: 'Erro', description: result.error || 'Algo deu errado.' })
-            }
-        } catch (error: any) {
-            toast({ variant: 'destructive', title: 'Erro', description: error.message })
-        } finally {
-            setLoading(false)
-        }
-    }
-
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
@@ -366,29 +435,28 @@ export function UnifiedCreationDialog({
                 <form onSubmit={onSubmit} className="space-y-10">
                     <div className="space-y-6">
                         {(() => {
-                            const groupedFields: (FieldConfig | FieldConfig[])[] = [];
-                            let currentGroup: FieldConfig[] = [];
+                            const groupedFields: (FieldConfig | FieldConfig[])[] = []
+                            let currentGroup: FieldConfig[] = []
 
                             fields.forEach((field, idx) => {
                                 if (field.gridCols === 2) {
-                                    currentGroup.push(field);
+                                    currentGroup.push(field)
                                     if (currentGroup.length === 2 || idx === fields.length - 1) {
-                                        groupedFields.push([...currentGroup]);
-                                        currentGroup = [];
+                                        groupedFields.push([...currentGroup])
+                                        currentGroup = []
                                     }
                                 } else {
                                     if (currentGroup.length > 0) {
-                                        groupedFields.push([...currentGroup]);
-                                        currentGroup = [];
+                                        groupedFields.push([...currentGroup])
+                                        currentGroup = []
                                     }
-                                    groupedFields.push(field);
+                                    groupedFields.push(field)
                                 }
-                            });
+                            })
 
                             return groupedFields.map((group, idx) => {
                                 if (Array.isArray(group)) {
-                                    // Special logic for merged fields (like dosage + unit)
-                                    const hasMergedField = group.some(f => (f as any).merged);
+                                    const hasMergedField = group.some(f => (f as any).merged)
 
                                     if (hasMergedField) {
                                         return (
@@ -414,7 +482,7 @@ export function UnifiedCreationDialog({
                                                     </div>
 
                                                     {/* The Inline Switch */}
-                                                    <div className="flex items-center gap-3 pb-4 px-4 border-l border-zinc-800/50 h-8">
+                                                    <div className="flex items-center gap-3 px-4 border-l border-zinc-800/50 h-8">
                                                         <span className={cn(
                                                             "text-[9px] font-black uppercase tracking-widest transition-all",
                                                             customFields[group[1].name] === group[1].options?.[0]?.value ? `text-${s.accent}` : "text-zinc-600"
@@ -446,28 +514,27 @@ export function UnifiedCreationDialog({
                                                     </div>
                                                 </div>
                                             </div>
-                                        );
+                                        )
                                     }
 
                                     return (
                                         <div key={`group-${idx}`} className="grid grid-cols-2 gap-4">
                                             {group.map(f => renderField(f))}
                                         </div>
-                                    );
+                                    )
                                 }
-                                return renderField(group);
-                            });
+                                return renderField(group)
+                            })
                         })()}
                     </div>
 
                     <DialogFooter className="pt-4">
                         <Button
                             type="submit"
-                            disabled={loading}
                             className={cn("w-full h-16 rounded-2xl font-black uppercase italic tracking-widest transition-all active:scale-[0.98] shadow-2xl relative overflow-hidden group", s.btn)}
                         >
                             <div className="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-                            {loading ? <Loader2 className="w-5 h-5 animate-spin mr-3" /> : <Plus className="w-5 h-5 mr-3" />}
+                            <Plus className="w-5 h-5 mr-3 relative z-10" />
                             <span className="relative z-10">{footerLabel}</span>
                         </Button>
                     </DialogFooter>

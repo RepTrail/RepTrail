@@ -130,7 +130,7 @@ export function UpdatePasswordForm() {
                         <Button
                             type="submit"
                             className="w-full h-12 bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-black uppercase tracking-[0.1em] rounded-xl shadow-lg shadow-emerald-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] mt-4"
-                            disabled={loading}
+                            /* ❌ UI BLOCKING REMOVED */ disabled={false}
                         >
                             {loading ? (
                                 <div className="flex items-center gap-2">

@@ -12,7 +12,7 @@ import {
 import { RatingModal } from '@/components/feature/student/RatingModal'
 
 export default async function MeuPersonalPage() {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) redirect('/auth/login')
 

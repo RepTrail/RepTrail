@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
 import { cancelAsaasSubscription } from "@/actions/asaas-actions"
+import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { ENTITIES } from '@/lib/outbox-db'
 import {
     Dialog,
     DialogContent,
@@ -16,36 +18,42 @@ import {
 import { XCircle, AlertTriangle, ShieldAlert, ArrowRight } from 'lucide-react'
 
 export function CancelSubscriptionButton() {
-    const [loading, setLoading] = useState(false)
     const [open, setOpen] = useState(false)
     const { toast } = useToast()
 
-    const handleAction = async () => {
-        setLoading(true)
-        try {
-            const result = await cancelAsaasSubscription()
-            if (result.success) {
+    const { mutate: cancelMutate, isPending } = useOptimisticMutation({
+        actionName: 'cancel-asaas-subscription',
+        entity: ENTITIES.SUBSCRIPTION,
+        queryKey: ['subscription'], // broad invalidation if needed
+        mutationFn: async (variables: any) => variables,
+        onMutate: () => {
+             setOpen(false)
+        },
+        onSuccess: (res) => {
+            if (res.success) {
                 toast({
                     title: "Plano Cancelado",
                     description: "Sua assinatura foi encerrada.",
                 })
-                setOpen(false)
             } else {
                 toast({
                     variant: "destructive",
                     title: "Erro ao processar",
-                    description: result.error,
+                    description: res.error,
                 })
             }
-        } catch (error) {
+        },
+        onError: () => {
             toast({
                 variant: "destructive",
                 title: "Erro inesperado",
                 description: "Tente novamente mais tarde.",
             })
-        } finally {
-            setLoading(false)
         }
+    })
+
+    const handleAction = () => {
+        cancelMutate({})
     }
 
     return (
@@ -105,10 +113,10 @@ export function CancelSubscriptionButton() {
                         </Button>
                         <Button
                             onClick={handleAction}
-                            disabled={loading}
+                            /* ❌ UI BLOCKING REMOVED */ disabled={false}
                             className="flex-1 h-14 bg-red-600 hover:bg-red-500 text-white font-black uppercase italic tracking-widest text-xs rounded-2xl shadow-xl shadow-red-900/20 transition-all hover:scale-[1.02] active:scale-95 group"
                         >
-                            {loading ? 'Processando...' : (
+                            {isPending ? 'Processando...' : (
                                 <span className="flex items-center gap-2">
                                     Confirmar Cancelamento
                                     <XCircle className="w-4 h-4 opacity-50 group-hover:opacity-100" />

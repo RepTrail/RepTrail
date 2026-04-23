@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
     Activity,
     Clock,
@@ -11,12 +11,11 @@ import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import {
     getCardioLibrary,
-    assignCardio,
-    removeCardioAssignment,
     getStudentCardioAssignments
 } from '@/actions/cardio-actions'
 import { Badge } from '@/components/ui/badge'
 import { UnifiedDeleteButton } from '@/components/feature/shared/unified-delete-button'
+import { QUERY_KEYS } from '@/lib/query-keys'
 
 interface CardioAssignmentSectionProps {
     studentId: string
@@ -34,29 +33,12 @@ const DAYS_MAP = [
 ]
 
 export function CardioAssignmentSection({ studentId, relationshipId }: CardioAssignmentSectionProps) {
-    const [assignments, setAssignments] = useState<any[]>([])
-    const [library, setLibrary] = useState<any[]>([])
-    const [loading, setLoading] = useState(true)
-
-    useEffect(() => {
-        loadData()
-    }, [])
-
-    async function loadData() {
-        setLoading(true)
-        try {
-            const [a, l] = await Promise.all([
-                getStudentCardioAssignments(studentId),
-                getCardioLibrary()
-            ])
-            setAssignments(a)
-            setLibrary(l)
-        } catch (error) {
-            console.error('CRITICAL: Error in CardioAssignmentSection loadData:', error)
-        } finally {
-            setLoading(false)
-        }
-    }
+    // 🚀 LOCAL-FIRST: data comes from TanStack cache (supports Realtime + Outbox)
+    const { data: assignments = [], isLoading } = useQuery({
+        queryKey: QUERY_KEYS.cardio.assignments(studentId),
+        queryFn: () => getStudentCardioAssignments(studentId),
+        staleTime: 1000 * 60 * 5, // 5 min
+    })
 
     return (
         <div className="space-y-5">
@@ -67,13 +49,13 @@ export function CardioAssignmentSection({ studentId, relationshipId }: CardioAss
                 </h3>
             </div>
 
-            {loading ? (
+            {isLoading ? (
                 <div className="h-40 flex items-center justify-center animate-pulse">
                     <div className="w-8 h-8 rounded-full border-4 border-orange-500/20 border-t-orange-500 animate-spin" />
                 </div>
             ) : assignments.length > 0 ? (
                 <div className="space-y-4">
-                    {assignments.map((a) => (
+                    {assignments.map((a: any) => (
                         <div
                             key={a.id}
                             className="bg-zinc-900/40 border border-zinc-800/50 shadow-none rounded-3xl overflow-hidden backdrop-blur-sm group hover:border-orange-500/30 transition-all duration-300"
@@ -110,6 +92,7 @@ export function CardioAssignmentSection({ studentId, relationshipId }: CardioAss
                                     id={a.id}
                                     actionType="cardio"
                                     itemName={a.cardio?.name}
+                                    queryKey={QUERY_KEYS.cardio.assignments(studentId)}
                                 />
                             </div>
                         </div>

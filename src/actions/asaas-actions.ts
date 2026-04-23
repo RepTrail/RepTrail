@@ -27,7 +27,7 @@ export async function searchAsaasCustomer(cpfCnpj: string) {
 }
 
 export async function getOrCreateAsaasCustomer(cpfCnpj?: string, fullName?: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) throw new Error('Não autorizado')
 
@@ -98,7 +98,7 @@ export async function createAsaasSubscription(
         addressNumber: string
     }
 ) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { error: 'Não autorizado' }
 
@@ -215,7 +215,7 @@ export async function createAsaasSubscription(
 }
 
 export async function cancelAsaasSubscription() {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { success: false, error: 'Não autorizado' }
 

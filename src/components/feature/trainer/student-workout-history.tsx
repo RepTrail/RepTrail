@@ -27,7 +27,11 @@ import {
     DialogFooter,
 } from "@/components/ui/dialog"
 import { deleteWorkoutLog } from '@/actions/log-actions'
+import { useQueryClient } from '@tanstack/react-query'
+import { QUERY_KEYS } from '@/lib/query-keys'
 import { useToast } from '@/hooks/use-toast'
+import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { ENTITIES } from '@/lib/outbox-db'
 
 interface WorkoutLog {
     id: string
@@ -184,7 +188,7 @@ export function StudentWorkoutHistory({ history, isBlocked, mode = 'student' }: 
                                 </div>
                                 <div className="flex items-center gap-2 sm:gap-3">
                                     {mode === 'student' && (
-                                        <DeleteWorkoutDialog logId={log.id} workoutName={log.workout?.name || 'Treino Avulso'} />
+                                        <DeleteWorkoutDialog logId={log.id} workoutName={log.workout?.name || 'Treino Avulso'} studentId={log.student_id} />
                                     )}
                                     <div className={`
                                         w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl border flex items-center justify-center transition-all duration-300
@@ -393,33 +397,37 @@ export function StudentWorkoutHistory({ history, isBlocked, mode = 'student' }: 
 }
 
 
-function DeleteWorkoutDialog({ logId, workoutName }: { logId: string, workoutName: string }) {
-    const [loading, setLoading] = useState(false)
+function DeleteWorkoutDialog({ logId, workoutName, studentId }: { logId: string, workoutName: string, studentId: string }) {
     const [open, setOpen] = useState(false)
     const { toast } = useToast()
+    const queryClient = useQueryClient()
 
-    const handleDelete = async () => {
-        setLoading(true)
-        try {
-            const result = await deleteWorkoutLog(logId)
-            if (result.success) {
-                toast({
-                    title: "Treino Apagado",
-                    description: "O registro foi removido com sucesso."
-                })
-                setOpen(false)
-            } else {
-                toast({
-                    title: "Erro ao Apagar",
-                    description: result.error,
-                    variant: "destructive"
-                })
-            }
-        } catch (error) {
-            console.error(error)
-        } finally {
-            setLoading(false)
+    const { mutate } = useOptimisticMutation({
+        actionName: 'delete-workout-log',
+        entity: ENTITIES.WORKOUT_LOG,
+        entityId: logId,
+        queryKey: QUERY_KEYS.workouts.logs(studentId),
+        mutationFn: async (variables) => variables,
+        onMutate: () => {
+            const previous = queryClient.getQueryData(QUERY_KEYS.workouts.logs(studentId))
+            queryClient.setQueryData(QUERY_KEYS.workouts.logs(studentId), (old: any) => 
+                Array.isArray(old) ? old.filter((item: any) => item.id !== logId) : old
+            )
+            setOpen(false)
+            return { previous }
+        },
+        onSuccess: (result: any) => {
+            // success is assumed in 10/10 Local-First for the UI
+            toast({ title: "Treino Apagado", description: "O registro foi removido com sucesso." })
+        },
+        onError: (err, variables, ctx) => {
+            queryClient.setQueryData(QUERY_KEYS.workouts.logs(studentId), ctx?.previous)
+            toast({ title: "Erro na Sincronização", description: 'Ocorreu um erro ao processar em segundo plano.', variant: "destructive" })
         }
+    })
+
+    const handleDelete = () => {
+        mutate({})
     }
 
     return (
@@ -469,10 +477,9 @@ function DeleteWorkoutDialog({ logId, workoutName }: { logId: string, workoutNam
                         </DialogClose>
                         <Button
                             onClick={handleDelete}
-                            disabled={loading}
                             className="flex-1 h-12 rounded-xl bg-red-500 hover:bg-red-600 text-zinc-950 font-black uppercase tracking-widest text-[10px] italic transition-all active:scale-95"
                         >
-                            {loading ? "Apagando..." : "Confirmar Exclusão"}
+                            Confirmar Exclusão
                         </Button>
                     </div>
                 </div>

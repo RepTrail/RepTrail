@@ -14,7 +14,7 @@ function getTodayStr() {
 }
 
 export async function upsertDailyTracking(userId: string, updates: any, dateStr?: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const targetDate = dateStr || getTodayStr()
 
     try {
@@ -47,7 +47,7 @@ export async function upsertDailyTracking(userId: string, updates: any, dateStr?
 }
 
 export async function ensureDailyTracking(userId: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const today = getTodayStr()
     const dow = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' })).getDay()
 
@@ -95,7 +95,7 @@ export async function ensureDailyTracking(userId: string) {
 }
 
 export async function toggleMealItem(itemId: string, status: boolean, date?: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { error: 'Unauthorized' }
 
@@ -135,7 +135,7 @@ export async function toggleMealItem(itemId: string, status: boolean, date?: str
 }
 
 export async function toggleMealGroup(mealId: string, status: boolean, date?: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { error: 'Unauthorized' }
 
@@ -194,7 +194,7 @@ export async function substituteMealItem(itemId: string, substituteData: {
     fat?: number,
     fiber?: number
 }, date?: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { error: 'Unauthorized' }
 
@@ -229,7 +229,7 @@ export async function substituteMealItem(itemId: string, substituteData: {
 }
 
 export async function toggleSubstitution(itemId: string, date?: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { error: 'Unauthorized' }
 
@@ -299,7 +299,7 @@ export async function toggleSubstitution(itemId: string, date?: string) {
 }
 
 export async function getDetailedAdherence(date?: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return null
 
@@ -329,7 +329,7 @@ export async function getDetailedAdherence(date?: string) {
 }
 
 export async function getAdherenceHistory(days: number = 30) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return []
 
@@ -505,7 +505,7 @@ export async function getAdherenceHistory(days: number = 30) {
 
 // Trainer-side version: fetch adherence history for any student by ID
 export async function getStudentAdherenceHistory(studentId: string, days: number = 30) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     const todayStr = getTodayStr()
     const startDate = new Date(todayStr + 'T12:00:00')

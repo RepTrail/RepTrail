@@ -3,7 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 
 export async function getTermsStatus(): Promise<{ accepted: boolean; allowImageDisclosure?: boolean; imagePublicationAuthorized?: boolean } | null> {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) return null
@@ -29,7 +29,7 @@ export async function getTermsStatus(): Promise<{ accepted: boolean; allowImageD
 }
 
 export async function acceptTerms(allowImageDisclosure: boolean) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) return { success: false, error: 'Não autenticado' }
@@ -39,8 +39,11 @@ export async function acceptTerms(allowImageDisclosure: boolean) {
         .from('profiles')
         .update({
             terms_accepted_at: new Date().toISOString(),
-            allow_image_disclosure: allowImageDisclosure
+            allow_image_disclosure: allowImageDisclosure,
+            allow_public_feed: allowImageDisclosure,
+            public_profile_enabled: allowImageDisclosure
         })
+
         .eq('id', user.id)
 
     if (profileError) return { success: false, error: profileError.message }

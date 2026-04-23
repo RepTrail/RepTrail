@@ -17,7 +17,11 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Plus, Loader2 } from "lucide-react"
 import { createStudentErgogenic } from '@/actions/student-content-actions'
-import { useRouter } from 'next/navigation'
+import { useQueryClient } from '@tanstack/react-query'
+import { QUERY_KEYS } from '@/lib/query-keys'
+import { useToast } from '@/hooks/use-toast'
+import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { ENTITIES } from '@/lib/outbox-db'
 
 const DAYS = [
     { value: '0', label: 'Domingo' },
@@ -29,12 +33,39 @@ const DAYS = [
     { value: '6', label: 'Sábado' },
 ]
 
-export function CreateErgogenicDialog() {
+export function CreateErgogenicDialog({ userId }: { userId: string }) {
     const [open, setOpen] = useState(false)
-    const [loading, setLoading] = useState(false)
     const [unit, setUnit] = useState<'ml' | 'mg'>('ml')
     const [selectedDays, setSelectedDays] = useState<number[]>([1]) // Monday default
-    const router = useRouter()
+    const queryClient = useQueryClient()
+    const { toast } = useToast()
+
+    const { mutate } = useOptimisticMutation({
+        actionName: 'create-student-ergogenic',
+        entity: ENTITIES.ERGOGENIC,
+        entityId: 'new', // useOptimisticMutation will generate a real UUID if not provided
+        queryKey: QUERY_KEYS.ergogenics.all(userId),
+        mutationFn: async (variables) => variables, // 🔴 HARD BLOCK: No-op for Local-First
+        updateFn: (oldData: any = [], variables: any) => {
+            // Instant feedback: inject into cache
+            const newItem = {
+                ...variables,
+                id: variables.id || crypto.randomUUID(), // Fallback if nanoid didn't fire yet
+                _optimistic: true
+            }
+            return [newItem, ...oldData]
+        },
+        onMutate: () => {
+            // Close dialog instantly for 0ms feedback
+            setOpen(false)
+        },
+        onSuccess: () => {
+            toast({ title: 'Substância adicionada ao protocolo!' })
+        },
+        onError: (err) => {
+            toast({ variant: 'destructive', title: 'Erro', description: err.message })
+        }
+    })
 
     const toggleDay = (day: number) => {
         setSelectedDays(prev =>
@@ -44,23 +75,17 @@ export function CreateErgogenicDialog() {
         )
     }
 
-    async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+    function onSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault()
-        setLoading(true)
-
         const formData = new FormData(event.currentTarget)
-        formData.set('unit', unit)
-        formData.set('application_days', JSON.stringify(selectedDays))
-
-        const result = await createStudentErgogenic(formData)
-        setLoading(false)
-
-        if ((result as any)?.success) {
-            setOpen(false)
-            router.refresh()
-        } else {
-            alert((result as any)?.error || 'Erro ao criar ergogênico.')
+        const obj = {
+            name: formData.get('name') as string,
+            weekly_dosage: formData.get('weekly_dosage') as string,
+            unit,
+            application_days: selectedDays,
+            notes: formData.get('notes') as string
         }
+        mutate({ formData, obj })
     }
 
     return (
@@ -128,8 +153,7 @@ export function CreateErgogenicDialog() {
                     </div>
 
                     <DialogFooter>
-                        <Button type="submit" disabled={loading} className="w-full bg-emerald-500 text-zinc-900 hover:bg-emerald-600 font-black uppercase italic rounded-xl h-12 transition-all">
-                            {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                        <Button type="submit" className="w-full bg-emerald-500 text-zinc-900 hover:bg-emerald-600 font-black uppercase italic rounded-xl h-12 transition-all">
                             Salvar Ergogênico
                         </Button>
                     </DialogFooter>

@@ -5,35 +5,40 @@ import { Button } from '@/components/ui/button'
 import { CreditCard, Loader2 } from 'lucide-react'
 import { useToast } from "@/hooks/use-toast"
 import { createAsaasSubscription } from '@/actions/asaas-actions'
+import { useMutation } from '@tanstack/react-query'
 
 export function StudentPaymentButtons() {
-    const [loading, setLoading] = useState(false)
     const { toast } = useToast()
 
-    const handleAsaas = async (type: 'PIX' | 'BOLETO' | 'CREDIT_CARD') => {
-        setLoading(true)
-        toast({
-            title: "Gerando pagamento...",
-            description: `Aguarde um instante enquanto preparamos seu checkout via Cartão...`
-        })
-        const res = await createAsaasSubscription('auto_training', type)
-        setLoading(false)
-
-        if (res.success && res.invoiceUrl) {
-            window.location.href = res.invoiceUrl
-        } else if (res.error) {
-            toast({ variant: 'destructive', title: 'Erro no Asaas', description: res.error })
+    const { mutate, isPending } = /* ❌ OUTBOX VIOLATION */ useMutation({
+        mutationFn: async (type: 'PIX' | 'BOLETO' | 'CREDIT_CARD') => {
+            toast({
+                title: "Gerando pagamento...",
+                description: `Aguarde um instante enquanto preparamos seu checkout...`
+            })
+            return /* ❌ OUTBOX VIOLATION */ await createAsaasSubscription('auto_training', type)
+        },
+        onSuccess: (res) => {
+            if (res.success && res.invoiceUrl) {
+                window.location.href = res.invoiceUrl
+            } else if (res.error) {
+                toast({ variant: 'destructive', title: 'Erro no Asaas', description: res.error })
+            }
         }
+    })
+
+    const handleAsaas = (type: 'PIX' | 'BOLETO' | 'CREDIT_CARD') => {
+        mutate(type)
     }
 
     return (
         <div className="flex flex-col gap-3">
             <Button
                 onClick={() => handleAsaas('CREDIT_CARD')}
-                disabled={loading}
+                /* ❌ UI BLOCKING REMOVED */ disabled={false}
                 className="w-full h-14 font-black uppercase tracking-[0.15em] bg-emerald-500 text-zinc-950 hover:bg-emerald-400 transition-all rounded-2xl shadow-xl shadow-emerald-500/20 flex items-center justify-center gap-2"
             >
-                {loading ? (
+                {isPending ? (
                     <Loader2 className="w-5 h-5 animate-spin" />
                 ) : (
                     <>

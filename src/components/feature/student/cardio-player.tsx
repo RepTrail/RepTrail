@@ -1,6 +1,8 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { QUERY_KEYS } from '@/lib/query-keys'
 import {
     Play,
     Pause,
@@ -21,8 +23,8 @@ import {
     getActiveCardioSession
 } from '@/actions/cardio-actions'
 import { useToast } from '@/hooks/use-toast'
-
-import { useQueryClient } from '@tanstack/react-query'
+import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { ENTITIES } from '@/lib/outbox-db'
 
 interface CardioPlayerProps {
     assignment: any
@@ -35,8 +37,66 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
     const [status, setStatus] = useState<'idle' | 'running' | 'paused'>('idle')
     const [seconds, setSeconds] = useState(0)
     const [logId, setLogId] = useState<string | null>(null)
-    const [loading, setLoading] = useState(true)
     const [wakeLock, setWakeLock] = useState<any>(null)
+    const [userId, setUserId] = useState<string | null>(null)
+
+    // Fetch active session via TanStack Query for Local-First reconciliation
+    const { data: activeSession, isLoading: isLoadingSession } = useQuery({
+        queryKey: QUERY_KEYS.cardio.session,
+        queryFn: () => getActiveCardioSession(),
+        enabled: !isCompleted,
+        staleTime: 1000 * 30 // 30s stale time
+    })
+
+    // ─── Mutations ─────────────────────────────────────────────────────────────
+    const startMutation = useOptimisticMutation({
+        queryKey: QUERY_KEYS.cardio.session,
+        entity: ENTITIES.CARDIO,
+        actionName: 'start-cardio-session',
+        mutationFn: async (variables) => variables, // NO-OP: Handled by Sync Engine
+        onMutate: (variables: any) => {
+            // OPTIMISTICALLY set active session
+            queryClient.setQueryData(QUERY_KEYS.cardio.session, {
+                id: variables.logId,
+                assigned_cardio_id: assignment.id,
+                is_running: true,
+                elapsed_seconds: 0,
+                last_resumed_at: new Date().toISOString()
+            })
+        }
+    })
+
+    const updateMutation = useOptimisticMutation({
+        queryKey: QUERY_KEYS.cardio.session,
+        entity: ENTITIES.CARDIO,
+        actionName: 'update-cardio-session',
+        mutationFn: async (variables) => variables,
+    })
+
+    const finishMutation = useOptimisticMutation({
+        queryKey: QUERY_KEYS.cardio.session,
+        entity: ENTITIES.CARDIO,
+        actionName: 'finish-cardio-session',
+        mutationFn: async (variables) => variables,
+        onMutate: (variables: any) => {
+            // 1. OPTIMISTICALLY clear active session
+            queryClient.setQueryData(QUERY_KEYS.cardio.session, null)
+
+            // 2. OPTIMISTICALLY mark as completed in logs view
+            if (assignment.student_id) {
+                const logsKey = QUERY_KEYS.cardio.logs(assignment.student_id)
+                queryClient.setQueryData(logsKey, (old: any) => {
+                    const newLog = {
+                        assigned_cardio_id: assignment.id,
+                        status: 'completed',
+                        id: variables.logId,
+                        _optimistic: true
+                    }
+                    return Array.isArray(old) ? [...old, newLog] : [newLog]
+                })
+            }
+        }
+    })
 
     const timerRef = useRef<NodeJS.Timeout | null>(null)
     const syncRef = useRef<NodeJS.Timeout | null>(null)
@@ -49,18 +109,18 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
     const progress = Math.min((seconds / targetSeconds) * 100, 100)
 
     useEffect(() => {
-        if (!isCompleted) {
-            checkActiveSession()
-        } else {
-            setLoading(false)
+        // Sync local state with activeSession query
+        if (activeSession && activeSession.assigned_cardio_id === assignment.id && status === 'idle' && !isCompleted) {
+            syncStateWithSession(activeSession)
         }
 
-        // Midnight check: if day changes, refresh everything
+        // Midnight check: if day changes, invalidate stale data
         const currentDay = new Date().toDateString()
         const interval = setInterval(() => {
             if (new Date().toDateString() !== currentDay) {
-                console.log('Day changed! Resetting cardio player...')
-                window.location.reload() // Simplest way to force lazy closure logic
+                console.log('Day changed! Refreshing stale cardio data...')
+                queryClient.invalidateQueries({ queryKey: QUERY_KEYS.cardio.session })
+                queryClient.invalidateQueries({ queryKey: ['cardio'] })
             }
         }, 60000)
 
@@ -70,7 +130,7 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
             if (syncRef.current) clearInterval(syncRef.current)
             releaseWakeLock()
         }
-    }, [isCompleted])
+    }, [activeSession, isCompleted])
 
     // --- Helper Functions ---
 
@@ -111,39 +171,27 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
         }
     }
 
-    async function checkActiveSession() {
-        setLoading(true)
-        const active = await getActiveCardioSession()
+    function syncStateWithSession(active: any) {
+        setLogId(active.id)
+        let currentElapsed = active.elapsed_seconds
 
-        if (active && active.assigned_cardio_id === assignment.id) {
-            setLogId(active.id)
-
-            let currentElapsed = active.elapsed_seconds
-
-            if (active.is_running) {
-                // Calculation based on DB timestamp (last_resumed_at)
-                // This is the most precise way to resume the timer
-                const lastResumed = new Date(active.last_resumed_at || active.last_heartbeat_at).getTime()
-                const now = Date.now()
-                const diff = Math.floor((now - lastResumed) / 1000)
-
-                currentElapsed += Math.max(0, diff)
-
-                // Cap at target if reached
-                if (currentElapsed > targetSeconds) currentElapsed = targetSeconds
-            }
-
-            setSeconds(currentElapsed)
-            setStatus(active.is_running ? 'running' : 'paused')
-
-            if (active.is_running) {
-                const virtualStart = Date.now() - (currentElapsed * 1000)
-                startTimer(virtualStart)
-                startSync()
-                requestWakeLock()
-            }
+        if (active.is_running) {
+            const lastResumed = new Date(active.last_resumed_at || active.last_heartbeat_at).getTime()
+            const now = Date.now()
+            const diff = Math.floor((now - lastResumed) / 1000)
+            currentElapsed += Math.max(0, diff)
+            if (currentElapsed > targetSeconds) currentElapsed = targetSeconds
         }
-        setLoading(false)
+
+        setSeconds(currentElapsed)
+        setStatus(active.is_running ? 'running' : 'paused')
+
+        if (active.is_running) {
+            const virtualStart = Date.now() - (currentElapsed * 1000)
+            startTimer(virtualStart)
+            startSync()
+            requestWakeLock()
+        }
     }
 
     function startTimer(virtualStart: number) {
@@ -175,13 +223,13 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
     useEffect(() => {
         if (!logId || status === 'idle') return
 
-        const syncInterval = setInterval(async () => {
+        const syncInterval = setInterval(() => {
             // Only sync if values changed significantly or every X seconds
             const hasStatusChanged = lastSyncRef.current.status !== status
             const hasTimeProgressed = Math.abs(lastSyncRef.current.seconds - seconds) >= 10
 
             if (hasStatusChanged || hasTimeProgressed) {
-                await updateCardioSession(logId, seconds, status === 'running')
+                updateMutation.mutate({ logId, seconds, running: status === 'running' })
                 lastSyncRef.current = { seconds, status }
             }
         }, 10000) // Sync every 10s
@@ -189,26 +237,22 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
         return () => clearInterval(syncInterval)
     }, [logId, status, seconds])
 
-    async function handleStart() {
+    function handleStart() {
         if (!logId) {
-            const res = await startCardioSession(assignment.id)
-            if (res.success && res.logId) {
-                setLogId(res.logId)
-                setStatus('running')
-
-                queryClient.invalidateQueries({ queryKey: ['active-cardio-session'] })
-
-                startTimer(Date.now())
-                startSync()
-                requestWakeLock()
-            } else {
-                toast({ variant: 'destructive', title: 'Erro', description: 'Erro ao iniciar sessão' })
-            }
+            const generatedId = crypto.randomUUID()
+            setLogId(generatedId)
+            setStatus('running')
+            
+            startMutation.mutate({ assignmentId: assignment.id, logId: generatedId })
+            startTimer(Date.now())
+            startSync()
+            requestWakeLock()
         } else {
             // Resuming
             setStatus('running')
             if (logId) {
-                await updateCardioSession(logId, seconds, true)
+                // ✅ OPTIMISTIC (0ms) - No direct await
+                updateMutation.mutate({ logId, seconds, running: true })
             }
             const virtualStart = Date.now() - (seconds * 1000)
             queryClient.invalidateQueries({ queryKey: ['active-cardio-session'] })
@@ -218,13 +262,12 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
         }
     }
 
-    async function handlePause() {
+    function handlePause() {
         setStatus('paused')
         stopTimer()
         releaseWakeLock()
         if (logId) {
-            await updateCardioSession(logId, seconds, false)
-            queryClient.invalidateQueries({ queryKey: ['active-cardio-session'] })
+            updateMutation.mutate({ logId, seconds, running: false })
         }
     }
 
@@ -236,7 +279,7 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
         }
     }, [remainingSeconds, status, logId])
 
-    async function handleStop(isAuto: boolean = false) {
+    function handleStop(isAuto: boolean = false) {
         let percentage = progress
         if (percentage > 100) percentage = 100
 
@@ -250,20 +293,27 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
         }
 
         if (logId) {
-            const res = await finishCardioSession(logId, undefined, undefined, percentage)
-            if (res.success) {
-                toast({
-                    title: percentage >= 100 ? 'Parabéns!' : 'Cardio Finalizado',
-                    description: percentage >= 100 ? 'Cardio finalizado com sucesso!' : 'Cardio finalizado parcialmente.'
-                })
-                queryClient.invalidateQueries({ queryKey: ['active-cardio-session'] })
-                queryClient.invalidateQueries({ queryKey: ['today-cardio-logs'] })
-                setStatus('idle')
-                setSeconds(0)
-                setLogId(null)
-                stopTimer()
-                if (syncRef.current) clearInterval(syncRef.current)
-            }
+            // OPTIMISTIC UPDATE: Stop UI immediately
+            const cachedLogId = logId
+            
+            finishMutation.mutate({
+                logId: cachedLogId,
+                feedback: undefined,
+                intensity: undefined,
+                percentage
+            })
+
+            setStatus('idle')
+            setSeconds(0)
+            setLogId(null)
+            stopTimer()
+            if (syncRef.current) clearInterval(syncRef.current)
+            releaseWakeLock()
+
+            toast({
+                title: percentage >= 100 ? 'Parabéns!' : 'Cardio Finalizado',
+                description: percentage >= 100 ? 'Cardio finalizado com sucesso!' : 'Cardio finalizado parcialmente.'
+            })
         }
     }
 
@@ -310,7 +360,7 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
         )
     }
 
-    if (loading) return (
+    if (isLoadingSession) return (
         <Card className="bg-zinc-900/40 border-zinc-800/50 shadow-2xl rounded-3xl overflow-hidden backdrop-blur-sm animate-pulse border-t-zinc-700/10">
             <CardContent className="p-6 space-y-8">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">

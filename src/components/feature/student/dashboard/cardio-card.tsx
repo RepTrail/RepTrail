@@ -1,40 +1,44 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
-import { getStudentCardioAssignments } from '@/actions/cardio-actions'
-import { createClient } from '@/lib/supabase/client'
+import { getTodayCardio, getCardioStatus } from '@/actions/cardio-actions'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Flame, Activity } from 'lucide-react'
 import { CardioPlayer } from '@/components/feature/student/cardio-player'
-import { getTodayRangeBrazil } from '@/lib/date-utils'
+import { QUERY_KEYS } from '@/lib/query-keys'
+import { useRealtimeSync } from '@/hooks/use-realtime-sync'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 interface CardioCardProps {
     userId: string
 }
 
 export function CardioCard({ userId }: CardioCardProps) {
-    const { data: rawCardios, isLoading } = useQuery({
-        queryKey: ['cardio-assignments', userId],
-        queryFn: () => getStudentCardioAssignments(userId),
-        staleTime: 1000 * 30, // 30 seconds
+    useRealtimeSync({
+        table: 'assigned_cardios',
+        queryKey: QUERY_KEYS.cardio.today(userId),
+        filter: `student_id=eq.${userId}`
+    })
+
+    useRealtimeSync({
+        table: 'cardio_logs',
+        queryKey: QUERY_KEYS.cardio.today(userId),
+        filter: `student_id=eq.${userId}`
+    })
+
+    const { data: cardios, isLoading } = useQuery({
+        queryKey: QUERY_KEYS.cardio.today(userId),
+        queryFn: () => getTodayCardio(userId),
+        enabled: !!userId,
     })
 
     const { data: cardioLogs, isLoading: isLoadingLogs } = useQuery({
-        queryKey: ['today-cardio-logs', userId],
-        queryFn: async () => {
-            const supabase = createClient()
-            const { start, end } = getTodayRangeBrazil()
-            const { data } = await supabase
-                .from('cardio_logs')
-                .select('assigned_cardio_id, status')
-                .eq('student_id', userId)
-                .gte('started_at', start)
-                .lte('started_at', end)
-            return data || []
-        }
+        queryKey: QUERY_KEYS.cardio.logs(userId), // Kept for status mapping
+        enabled: !!userId,
+        queryFn: () => getCardioStatus(userId)
     })
 
-    if (isLoading || isLoadingLogs) {
+    // Skeleton Fallback: Only if loading AND no cache available
+    if ((isLoading || isLoadingLogs) && (!cardios || cardios.length === 0)) {
         return (
             <div className="bg-zinc-900/40 border border-zinc-800/50 shadow-2xl border-t-zinc-700/10 p-6 sm:p-10 rounded-3xl overflow-hidden backdrop-blur-sm space-y-8 min-h-[400px] animate-pulse">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -77,20 +81,7 @@ export function CardioCard({ userId }: CardioCardProps) {
         )
     }
 
-    const tzNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }))
-    const today = tzNow.getDay()
-
-    const cardios = rawCardios?.filter((a: any) => {
-        const hasDaysArray = a.days_of_week && Array.isArray(a.days_of_week) && a.days_of_week.length > 0;
-        const hasDaySingular = a.day_of_week !== undefined && a.day_of_week !== null;
-
-        if (hasDaysArray) return a.days_of_week.includes(today);
-        if (hasDaySingular) return a.day_of_week === today;
-
-        return true; // Show by default if no specific day constraint
-    }) || []
-
-    if (cardios.length === 0) {
+    if (!cardios || cardios.length === 0) {
         return (
             <div className="bg-zinc-900/20 border border-zinc-800/50 border-dashed rounded-3xl py-12 sm:py-16 flex flex-col items-center justify-center text-center space-y-4">
                 <Activity className="w-8 h-8 text-zinc-700" />

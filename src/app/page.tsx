@@ -22,7 +22,7 @@ export const dynamic = 'force-dynamic'
 
 export default async function LandingPage() {
   const trainers = await getTrainerRanking()
-  const supabase = await createClient()
+  const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
   let role = null
@@ -51,10 +51,6 @@ export default async function LandingPage() {
           </Link>
 
           <nav className="hidden md:flex gap-6 items-center">
-            <Link href="#marketplace" className="text-xs font-black text-zinc-400 hover:text-orange-500 uppercase tracking-[0.2em] transition-colors">
-              Encontrar Personal
-            </Link>
-
             {!user ? (
               <>
                 <Link href="/auth/login" className="text-xs font-black text-zinc-400 hover:text-orange-500 uppercase tracking-[0.2em] transition-colors">
@@ -94,7 +90,7 @@ export default async function LandingPage() {
           </nav>
 
           {/* Mobile Login/Dashboard Link */}
-          <div className="md:hidden flex items-center gap-3 pb-4">
+          <div className="md:hidden flex items-center gap-3">
             {!user ? (
               <Link href="/auth/login" className="text-[10px] font-black text-zinc-400 hover:text-orange-500 uppercase tracking-[0.2em] transition-colors bg-zinc-900 px-4 py-2 rounded-xl border border-zinc-800 select-none active:scale-95 transition-all">
                 Login
@@ -133,9 +129,7 @@ export default async function LandingPage() {
         <AuthoritySection />
         <SocialProofSection />
         <TrainerFeatures />
-        <StudentFeatures />
         <DifferentialsSection />
-        <MarketplaceSection initialTrainers={trainers} />
         <GuaranteeSection />
         <FAQSection />
         <CTASection />

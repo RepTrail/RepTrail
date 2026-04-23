@@ -14,7 +14,7 @@ if (process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_VAPID_KEY) {
 }
 
 export async function sendPushNotification(userId: string, title: string, body: string, url?: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     const { data: subs, error } = await supabase
         .from('push_subscriptions')

@@ -1,7 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
 import { Button } from "@/components/ui/button"
+import { Plus } from "lucide-react"
+import { useState } from 'react'
 import {
     Dialog,
     DialogContent,
@@ -13,26 +15,51 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Plus, Loader2 } from "lucide-react"
-import { createManualDiet } from '@/actions/diet-actions'
+import { useToast } from '@/hooks/use-toast'
+import { QUERY_KEYS } from '@/lib/query-keys'
+import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { ENTITIES } from '@/lib/outbox-db'
 
 export function CreateDietDialog() {
     const [open, setOpen] = useState(false)
-    const [loading, setLoading] = useState(false)
+    const { toast } = useToast()
 
-    async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
-        event.preventDefault()
-        setLoading(true)
-        const formData = new FormData(event.currentTarget)
-
-        const result = await createManualDiet(formData)
-        setLoading(false)
-
-        if (result.success) {
-            setOpen(false)
-        } else {
-            alert(result.error || "Erro ao criar dieta.")
+    const { mutate } = useOptimisticMutation({
+        queryKey: ['diets'], // Standard diet list key
+        actionName: 'create-manual-diet',
+        entity: ENTITIES.DIET,
+        mutationFn: async (variables) => variables, // 🔴 HARD BLOCK
+        updateFn: (old: any, variables: any) => {
+            const list = old?.data || old || []
+            const newItem = {
+                ...variables,
+                id: crypto.randomUUID(),
+                created_at: new Date().toISOString(),
+                _optimistic: true
+            }
+            return Array.isArray(old) ? [newItem, ...old] : { ...old, data: [newItem, ...list] }
+        },
+        onMutate: () => {
+            setOpen(false) // 🚀 0ms UI: close instantly
+        },
+        onSuccess: () => {
+            toast({ title: 'Dieta criada com sucesso!' })
+        },
+        onError: (err: any) => {
+            toast({ variant: 'destructive', title: 'Erro', description: err.message })
         }
+    })
+
+    function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+        event.preventDefault()
+        const formData = new FormData(event.currentTarget)
+        
+        const payload: Record<string, any> = {}
+        formData.forEach((value, key) => {
+            payload[key] = value
+        })
+
+        mutate(payload)
     }
 
     return (
@@ -55,8 +82,7 @@ export function CreateDietDialog() {
                         <Input id="name" name="name" placeholder="Ex: Dieta para Secar (Low Carb)" required className="bg-zinc-900 border-zinc-800" />
                     </div>
                     <DialogFooter>
-                        <Button type="submit" disabled={loading} className="w-full bg-zinc-100 text-zinc-900 hover:bg-white">
-                            {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                        <Button type="submit" className="w-full bg-zinc-100 text-zinc-900 hover:bg-white">
                             Salvar Template
                         </Button>
                     </DialogFooter>

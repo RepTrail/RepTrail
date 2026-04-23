@@ -34,11 +34,7 @@ export function PerformanceAnalysisSection({
                             Peso, BF e Frequência
                         </p>
                     </div>
-                    {!isStudentView && !isBlocked && (
-                        <div className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest border bg-emerald-500/10 text-emerald-500 border-emerald-500/20`}>
-                            Pro / Elite
-                        </div>
-                    )}
+
                 </div>
             </CardHeader>
             <CardContent className="p-8 md:p-12 pt-0">

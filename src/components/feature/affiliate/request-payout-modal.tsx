@@ -93,7 +93,7 @@ export function RequestPayoutModal({ isOpen, onClose, availableBalance }: Reques
                                     min="50"
                                     max={availableBalance}
                                     className="pl-9 bg-zinc-900 border-zinc-800 h-12 text-lg font-black"
-                                    disabled={loading}
+                                    /* ❌ UI BLOCKING REMOVED */ disabled={false}
                                     required
                                 />
                                 <Button
@@ -101,7 +101,7 @@ export function RequestPayoutModal({ isOpen, onClose, availableBalance }: Reques
                                     variant="ghost"
                                     className="absolute right-2 top-1/2 -translate-y-1/2 h-8 text-[10px] font-black uppercase text-emerald-500 hover:text-emerald-400 hover:bg-emerald-500/10"
                                     onClick={handleMaxAmount}
-                                    disabled={loading}
+                                    /* ❌ UI BLOCKING REMOVED */ disabled={false}
                                 >
                                     SAQUE TOTAL
                                 </Button>
@@ -121,7 +121,7 @@ export function RequestPayoutModal({ isOpen, onClose, availableBalance }: Reques
                                 onChange={(e) => setPixKey(e.target.value)}
                                 placeholder="CPF, Celular, E-mail ou Aleatória"
                                 className="bg-zinc-900 border-zinc-800 h-12 text-sm font-medium focus-visible:ring-emerald-500"
-                                disabled={loading}
+                                /* ❌ UI BLOCKING REMOVED */ disabled={false}
                                 required
                             />
                         </div>
@@ -133,7 +133,7 @@ export function RequestPayoutModal({ isOpen, onClose, availableBalance }: Reques
                             variant="outline"
                             className="flex-1 border-zinc-800 hover:bg-zinc-800 text-xs font-black uppercase tracking-widest h-12"
                             onClick={onClose}
-                            disabled={loading}
+                            /* ❌ UI BLOCKING REMOVED */ disabled={false}
                         >
                             Cancelar
                         </Button>

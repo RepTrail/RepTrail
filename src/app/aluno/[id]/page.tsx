@@ -19,7 +19,7 @@ export const metadata = {
 
 export default async function StudentPublicProfilePage({ params }: { params: Promise<{ id: string }> }) {
     const { id: studentId } = await params
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user: authUser } } = await supabase.auth.getUser()
     const isOwner = authUser?.id === studentId
 

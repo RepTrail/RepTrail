@@ -70,7 +70,7 @@ export function Logo({
     return (
         <div className={cn("flex items-center gap-3", className)} suppressHydrationWarning>
             <div className={cn(
-                "rotate-3 transition-transform group-hover:rotate-0",
+                "rotate-3 transition-transform group-hover:rotate-0 flex-shrink-0 aspect-square flex items-center justify-center",
                 currentColor?.bg,
                 currentSize.container,
                 iconContainerClassName

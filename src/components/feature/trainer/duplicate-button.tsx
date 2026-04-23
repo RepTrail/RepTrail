@@ -3,10 +3,11 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Copy, CheckCheck, Loader2 } from 'lucide-react'
-import { duplicateWorkout } from '@/actions/workout-actions'
-import { duplicateDiet } from '@/actions/diet-actions'
-import { duplicateCardio } from '@/actions/cardio-actions'
 import { cn } from '@/lib/utils'
+import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { useQueryClient } from '@tanstack/react-query'
+import { useToast } from '@/hooks/use-toast'
+import { ENTITIES } from '@/lib/outbox-db'
 
 type DuplicateType = 'workout' | 'diet' | 'cardio'
 
@@ -17,25 +18,29 @@ interface DuplicateButtonProps {
 }
 
 export function DuplicateButton({ id, type, className }: DuplicateButtonProps) {
+    const queryClient = useQueryClient()
+    const { toast } = useToast()
     const [state, setState] = useState<'idle' | 'loading' | 'done'>('idle')
 
-    async function handleDuplicate(e: React.MouseEvent) {
+    const { mutate } = useOptimisticMutation({
+        actionName: type === 'workout' ? 'duplicate-workout' : type === 'diet' ? 'duplicate-diet' : 'duplicate-cardio',
+        queryKey: [type === 'workout' ? 'workouts' : type === 'diet' ? 'diets' : 'cardios'],
+        entity: type === 'workout' ? ENTITIES.WORKOUT : type === 'diet' ? ENTITIES.DIET : ENTITIES.CARDIO,
+        mutationFn: async () => {}, // Single-writer: no-op
+        onMutate: () => {
+            setState('done')
+            toast({ title: "Duplicando...", description: "O template está sendo processado." })
+            // Invalidate based on type
+            const baseKey = type === 'workout' ? 'workouts' : type === 'diet' ? 'diets' : 'cardios'
+            queryClient.invalidateQueries({ queryKey: [baseKey] })
+            setTimeout(() => setState('idle'), 2000)
+        }
+    })
+
+    function handleDuplicate(e: React.MouseEvent) {
         e.preventDefault()
         e.stopPropagation()
-        setState('loading')
-
-        let res: any
-        if (type === 'workout') res = await duplicateWorkout(id)
-        else if (type === 'diet') res = await duplicateDiet(id)
-        else res = await duplicateCardio(id)
-
-        if (res?.success) {
-            setState('done')
-            setTimeout(() => setState('idle'), 2000)
-        } else {
-            setState('idle')
-            alert(res?.error || 'Erro ao duplicar')
-        }
+        mutate({ id })
     }
 
     return (
@@ -43,7 +48,7 @@ export function DuplicateButton({ id, type, className }: DuplicateButtonProps) {
             variant="ghost"
             size="icon"
             onClick={handleDuplicate}
-            disabled={state === 'loading'}
+            disabled={state === 'done'}
             title="Duplicar template"
             className={cn(`
                 h-9 w-9 rounded-xl border transition-all shrink-0
@@ -53,7 +58,6 @@ export function DuplicateButton({ id, type, className }: DuplicateButtonProps) {
                 }
             `, className)}
         >
-            {state === 'loading' && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
             {state === 'done' && <CheckCheck className="w-3.5 h-3.5" />}
             {state === 'idle' && <Copy className="w-3.5 h-3.5" />}
         </Button>

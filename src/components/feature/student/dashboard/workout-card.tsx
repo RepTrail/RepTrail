@@ -1,63 +1,47 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
 import { getTodayWorkout } from '@/actions/workout-actions'
-import { createClient } from '@/lib/supabase/client'
+import { getWorkoutStatus } from '@/actions/log-actions'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Dumbbell, CheckCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { getTodayRangeBrazil } from '@/lib/date-utils'
+import { QUERY_KEYS } from '@/lib/query-keys'
+import { useRealtimeSync } from '@/hooks/use-realtime-sync'
+import { useQuery } from '@tanstack/react-query'
 
 interface WorkoutCardProps {
     userId: string
 }
 
 export function WorkoutCard({ userId }: WorkoutCardProps) {
-    const { data: workout, isLoading } = useQuery({
-        queryKey: ['today-workout', userId],
+    // Realtime Sync for Assigned Workouts and Logs
+    useRealtimeSync({
+        table: 'assigned_workouts',
+        queryKey: QUERY_KEYS.workouts.today(userId),
+        filter: `student_id=eq.${userId}`
+    })
+
+    useRealtimeSync({
+        table: 'workout_logs',
+        queryKey: QUERY_KEYS.workouts.status(userId),
+        filter: `student_id=eq.${userId}`
+    })
+
+    const { data: workout, isLoading: isLoadingWorkout } = useQuery({
+        queryKey: QUERY_KEYS.workouts.today(userId),
         queryFn: () => getTodayWorkout(userId),
-        staleTime: 1000 * 30, // 30 seconds
+        enabled: !!userId,
     })
 
     const { data: statusData, isLoading: isLoadingStatus } = useQuery({
-        queryKey: ['workout-status', userId, workout?.id],
-        enabled: !!workout,
-        queryFn: async () => {
-            const supabase = createClient()
-            const { start, end } = getTodayRangeBrazil()
-
-            // Check Completed
-            const { data: completed } = await supabase
-                .from('workout_logs')
-                .select('id, status')
-                .eq('workout_id', workout!.id)
-                .eq('student_id', userId)
-                .eq('status', 'completed')
-                .gte('completed_at', start)
-                .lte('completed_at', end)
-                .order('completed_at', { ascending: false })
-                .limit(1)
-
-            if (completed && completed.length > 0) return { status: 'completed', logId: completed[0].id }
-
-            // Check In Progress
-            const twelveHoursAgo = new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString()
-            const { data: inProgress } = await supabase
-                .from('workout_logs')
-                .select('id, status')
-                .eq('workout_id', workout!.id)
-                .eq('student_id', userId)
-                .eq('status', 'in_progress')
-                .gt('started_at', twelveHoursAgo)
-                .order('started_at', { ascending: false })
-                .limit(1)
-
-            return (inProgress && inProgress.length > 0) ? { status: 'in_progress', logId: inProgress[0].id } : { status: 'not_started', logId: null }
-        }
+        queryKey: QUERY_KEYS.workouts.status(userId, workout?.id),
+        enabled: !!userId && !!workout,
+        queryFn: () => getWorkoutStatus(userId, workout!.id)
     })
 
-    if (isLoading || (workout && isLoadingStatus)) {
+    // Skeleton Fallback: Only show if truly loading AND no cache available
+    if ((isLoadingWorkout || (workout && isLoadingStatus)) && !workout) {
         return (
             <div className="bg-zinc-900/40 border border-zinc-800/50 shadow-xl p-6 sm:p-10 rounded-3xl backdrop-blur-sm overflow-hidden h-[280px] relative animate-pulse">
                 <div className="absolute top-0 right-0 p-8 opacity-[0.02]">
@@ -119,7 +103,7 @@ export function WorkoutCard({ userId }: WorkoutCardProps) {
                             {workout.name}
                         </h3>
                         <p className="text-zinc-500 text-xs font-bold uppercase tracking-widest">
-                            {workout.exercises?.length || 0} Exercícios • {status === 'completed' ? 'Treino concluído' : 'Foco do dia'}
+                            {workout.workout_exercises?.length || 0} Exercícios • {status === 'completed' ? 'Treino concluído' : 'Foco do dia'}
                         </p>
                     </div>
 

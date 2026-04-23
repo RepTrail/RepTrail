@@ -22,6 +22,8 @@ import {
 } from "@/components/ui/select"
 import { addOperationalCost, deleteOperationalCost } from '@/actions/admin-actions'
 import { useToast } from '@/hooks/use-toast'
+import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { ENTITIES } from '@/lib/outbox-db'
 
 interface OperationalCost {
     id: string
@@ -41,49 +43,63 @@ export function OperationalCosts({ initialCosts, totalMonthly, totalAllTime }: O
     const { toast } = useToast()
     const [costs, setCosts] = useState<OperationalCost[]>(initialCosts)
     const [isOpen, setIsOpen] = useState(false)
-    const [isLoading, setIsLoading] = useState(false)
-
-    // Form State
     const [description, setDescription] = useState('')
     const [amount, setAmount] = useState('')
     const [type, setType] = useState<'fixed' | 'variable'>('fixed')
 
-    async function handleAddCost() {
-        if (!description || !amount) return toast({ title: 'Erro', description: 'Preencha todos os campos', variant: 'destructive' })
-
-        setIsLoading(true)
-        const numericAmount = parseFloat(amount.replace(',', '.'))
-
-        const res = await addOperationalCost({
-            description,
-            amount: numericAmount,
-            type
-        })
-
-        if (res.error) {
-            toast({ title: 'Erro', description: res.error, variant: 'destructive' })
-        } else {
-            toast({ title: 'Sucesso', description: 'Custo adicionado com sucesso!' })
+    const { mutate: addCostMutate } = useOptimisticMutation({
+        actionName: 'add-operational-cost',
+        entity: ENTITIES.OPERATIONAL_COST,
+        queryKey: ['admin', 'operational-costs'],
+        mutationFn: async (variables: { obj: any }) => (await addOperationalCost(variables.obj)) as any,
+        onMutate: (variables) => {
+            const tempId = crypto.randomUUID()
+            const newCost = { ...variables.obj, id: tempId, created_at: new Date().toISOString() }
+            setCosts(prev => [newCost, ...prev])
             setIsOpen(false)
             setDescription('')
             setAmount('')
             setType('fixed')
-            window.location.reload()
+            return { tempId }
+        },
+        onSuccess: () => {
+            toast({ title: 'Sucesso', description: 'Custo adicionado localmente e sendo sincronizado.' })
+        },
+        onError: (err, variables, ctx) => {
+            setCosts(prev => prev.filter(c => c.id !== ctx?.tempId))
+            toast({ title: 'Erro', description: 'Erro ao adicionar custo.', variant: 'destructive' })
         }
-        setIsLoading(false)
+    })
+
+    const { mutate: deleteCostMutate } = useOptimisticMutation({
+        actionName: 'delete-operational-cost',
+        entity: ENTITIES.OPERATIONAL_COST,
+        queryKey: ['admin', 'operational-costs'],
+        mutationFn: async (variables: { id: string }) => (await deleteOperationalCost(variables.id)) as any,
+        onMutate: (variables) => {
+            const previousCosts = [...costs]
+            setCosts(prev => prev.filter(c => c.id !== variables.id))
+            return { previousCosts }
+        },
+        onSuccess: () => {
+            toast({ title: 'Sucesso', description: 'Custo removido localmente.' })
+        },
+        onError: (err, variables, ctx) => {
+            setCosts(ctx?.previousCosts || [])
+            toast({ title: 'Erro', description: 'Erro ao deletar custo.', variant: 'destructive' })
+        }
+    })
+
+    function handleAddCost() {
+        if (!description || !amount) return toast({ title: 'Erro', description: 'Preencha todos os campos', variant: 'destructive' })
+        
+        const numericAmount = parseFloat(amount.replace(',', '.'))
+        addCostMutate({ obj: { description, amount: numericAmount, type } })
     }
 
-    async function handleDelete(id: string) {
+    function handleDelete(id: string) {
         if (!confirm('Tem certeza que deseja apagar este custo?')) return
-
-        const res = await deleteOperationalCost(id)
-        if (res.error) {
-            toast({ title: 'Erro', description: res.error, variant: 'destructive' })
-        } else {
-            toast({ title: 'Sucesso', description: 'Custo removido' })
-            setCosts(prev => prev.filter(c => c.id !== id))
-            window.location.reload()
-        }
+        deleteCostMutate({ id })
     }
 
     return (
@@ -148,8 +164,8 @@ export function OperationalCosts({ initialCosts, totalMonthly, totalAllTime }: O
                                         </Select>
                                     </div>
                                 </div>
-                                <Button className="w-full mt-4 bg-red-600 hover:bg-red-700 text-white border-0" onClick={handleAddCost} disabled={isLoading}>
-                                    {isLoading ? 'Salvando...' : 'Salvar Custo'}
+                                <Button className="w-full mt-4 bg-red-600 hover:bg-red-700 text-white border-0" onClick={handleAddCost}>
+                                    Salvar Custo
                                 </Button>
                             </div>
                         </DialogContent>

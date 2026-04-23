@@ -8,7 +8,7 @@ import { MissionCompletedView } from '@/components/feature/student/mission-compl
 
 export default async function WorkoutPlayerPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) {

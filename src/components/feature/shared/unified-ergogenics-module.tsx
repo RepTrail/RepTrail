@@ -22,9 +22,15 @@ import {
     Edit2,
     Calendar as CalendarIcon
 } from "lucide-react"
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { QUERY_KEYS } from '../../../lib/query-keys'
+import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { ENTITIES } from '@/lib/outbox-db'
 import {
     toggleErgogenicLog,
-    addErgogenic
+    addErgogenic,
+    getStudentErgogenics,
+    getErgogenicLogs
 } from "@/actions/ergogenics-actions"
 import { UnifiedDeleteButton } from '@/components/feature/shared/unified-delete-button'
 import { UnifiedAssignDialog } from '@/components/feature/shared/unified-assign-dialog'
@@ -64,15 +70,14 @@ const WEEKDAYS_FULL = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sext
 const WEEKDAYS_SHORT = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SAB']
 const ERGOGENIC_FIELDS = [
     { name: 'name', label: 'Nome da Substância', placeholder: 'Ex: Enantato de Testosterona', required: true },
-    { name: 'weekly_dosage', label: 'Dosagem Semanal Total', placeholder: '250', type: 'number' as const, required: true, gridCols: 2 as const },
+    { name: 'weekly_dosage', label: 'Dosagem Semanal Total', placeholder: '250', type: 'number' as const, required: true, gridCols: 2 as const, merged: true },
     {
         name: 'unit', label: 'Unidade', type: 'switch' as const, defaultValue: 'mg', options: [
             { label: 'mg', value: 'mg' },
             { label: 'ml', value: 'ml' }
-        ], required: true, gridCols: 2 as const
+        ], required: true, gridCols: 2 as const, merged: true
     },
     { name: 'application_days', label: 'Dias de Aplicação', type: 'days' as const, required: true },
-    { name: 'start_date', label: 'Data de Início', type: 'date' as const, required: true },
     { name: 'notes', label: 'Instruções / Notas (Opcional)', placeholder: 'Ex: Aplicar no glúteo...', type: 'textarea' as const }
 ]
 
@@ -84,25 +89,31 @@ export function UnifiedErgogenicsModule({
     studentName,
     colorScheme = 'emerald'
 }: UnifiedErgogenicsModuleProps) {
-    const [ergogenics, setErgogenics] = useState<Ergogenic[]>(initialErgogenics)
-    const [logs, setLogs] = useState<StudentLog[]>(initialLogs)
-    const [loading, setLoading] = useState<Record<string, boolean>>({})
     const { toast } = useToast()
+    const { data: ergogenicsData = [] } = useQuery({
+        queryKey: QUERY_KEYS.ergogenics.all(studentId),
+        queryFn: async () => {
+            const res = await getStudentErgogenics(studentId)
+            if ('error' in res && res.error) throw new Error(res.error)
+            return (res as any).data || []
+        },
+        initialData: initialErgogenics,
+        staleTime: 1000 * 60 * 5
+    })
 
-    // Sync with server props safely to avoid infinite loops
-    React.useEffect(() => {
-        const hasChanged = JSON.stringify(initialErgogenics) !== JSON.stringify(ergogenics);
-        if (hasChanged) {
-            setErgogenics(initialErgogenics);
-        }
-    }, [initialErgogenics]);
+    const { data: logsData = [] } = useQuery({
+        queryKey: QUERY_KEYS.ergogenics.logs(studentId),
+        queryFn: async () => {
+            const res = await getErgogenicLogs(studentId)
+            if ('error' in res && res.error) throw new Error(res.error)
+            return (res as any).data || []
+        },
+        initialData: initialLogs,
+        staleTime: 1000 * 60 * 5
+    })
 
-    React.useEffect(() => {
-        const hasChanged = JSON.stringify(initialLogs) !== JSON.stringify(logs);
-        if (hasChanged) {
-            setLogs(initialLogs);
-        }
-    }, [initialLogs]);
+    const ergogenics = Array.isArray(ergogenicsData) ? ergogenicsData : (Array.isArray((ergogenicsData as any)?.data) ? (ergogenicsData as any).data : [])
+    const logs = Array.isArray(logsData) ? logsData : (Array.isArray((logsData as any)?.data) ? (logsData as any).data : [])
 
     const today = new Date().getDay()
     const todayName = WEEKDAYS_FULL[today]
@@ -110,7 +121,7 @@ export function UnifiedErgogenicsModule({
 
     const todaysLogsMap = useMemo(() => {
         const map: Record<string, boolean> = {}
-        logs.forEach(log => {
+        logs.forEach((log: any) => {
             if (log.created_at >= start && log.created_at <= end && log.ergogenic_id) {
                 map[log.ergogenic_id] = true
             }
@@ -118,49 +129,78 @@ export function UnifiedErgogenicsModule({
         return map
     }, [logs, start, end])
 
-    const safeErgogenics = useMemo(() => ergogenics.map(e => ({
+    const safeErgogenics = useMemo(() => ergogenics.map((e: any) => ({
         ...e,
         application_days: Array.isArray(e.application_days) ? e.application_days : []
     })), [ergogenics])
 
-    const todaysErgogenics = safeErgogenics.filter(e => e.application_days.some(d => Number(d) === today))
+    const todaysErgogenics = safeErgogenics.filter((e: any) => e.application_days.some((d: any) => Number(d) === today))
     const otherErgogenics = mode === 'student'
-        ? safeErgogenics.filter(e => !e.application_days.some(d => Number(d) === today))
+        ? safeErgogenics.filter((e: any) => !e.application_days.some((d: any) => Number(d) === today))
         : safeErgogenics
 
     // Handlers
-    async function handleToggle(ergogenicId: string) {
-        if (mode !== 'student') return
-
-        const isLogged = todaysLogsMap[ergogenicId]
-        const newStatus = !isLogged
-
-        setLoading(prev => ({ ...prev, [ergogenicId]: true }))
-
-        try {
-            const res = await toggleErgogenicLog(studentId, ergogenicId, newStatus)
-            if (res.success) {
-                if (newStatus) {
-                    const erg = ergogenics.find(e => e.id === ergogenicId)
-                    const newLog = {
-                        ...res.data,
-                        ergogenic_id: ergogenicId,
-                        ergogenics: { name: erg?.name || 'Substância' }
-                    } as StudentLog
-                    setLogs(prev => [newLog, ...prev])
-                } else {
-                    setLogs(prev => prev.filter(log => {
-                        const isTodayLog = log.created_at >= start && log.created_at <= end
-                        return !(isTodayLog && log.ergogenic_id === ergogenicId)
-                    }))
+    const { mutate: toggleLog } = useOptimisticMutation({
+        queryKey: QUERY_KEYS.ergogenics.logs(studentId),
+        actionName: 'toggle-ergogenic-log',
+        entity: ENTITIES.ERGOGENIC_LOG,
+        mutationFn: async (vars) => vars, // 🔴 HARD BLOCK
+        updateFn: (oldData: any, variables: any) => {
+            const currentLogs = Array.isArray(oldData) ? oldData : (oldData?.data || [])
+            
+            if (variables.status) {
+                const newLog = {
+                    id: crypto.randomUUID(),
+                    ergogenic_id: variables.ergogenic_id,
+                    created_at: new Date().toISOString(),
+                    _optimistic: true,
+                    ergogenics: { name: (ergogenics as any[]).find((e: any) => e.id === variables.ergogenic_id)?.name || 'Substância' }
                 }
-                toast({ title: newStatus ? "Registrado!" : "Removido" })
+                return [newLog, ...currentLogs]
+            } else {
+                return currentLogs.filter((l: any) => l.ergogenic_id !== variables.ergogenic_id)
             }
-        } catch (error: any) {
-            toast({ variant: "destructive", title: "Erro", description: error.message })
-        } finally {
-            setLoading(prev => ({ ...prev, [ergogenicId]: false }))
+        },
+        onSuccess: (vars) => {
+            toast({ title: vars.status ? "Registrado!" : "Removido" })
+        },
+        onError: (err) => {
+            toast({ variant: "destructive", title: "Erro", description: err.message })
         }
+    })
+
+    function handleToggle(ergogenicId: string) {
+        if (mode !== 'student') return
+        const isLogged = todaysLogsMap[ergogenicId]
+        toggleLog({ student_id: studentId, ergogenic_id: ergogenicId, status: !isLogged })
+    }
+
+    const { mutate: performDuplicate } = useOptimisticMutation({
+        queryKey: QUERY_KEYS.ergogenics.all(studentId),
+        actionName: 'add-ergogenic',
+        entity: ENTITIES.ERGOGENIC,
+        mutationFn: async (vars) => vars,
+        updateFn: (oldData: any, variables: any) => {
+            const currentItems = Array.isArray(oldData) ? oldData : (oldData?.data || [])
+            const newItem = {
+                ...variables,
+                id: variables.id || crypto.randomUUID(),
+                _optimistic: true,
+                application_days: variables.application_days || []
+            }
+            return [newItem, ...currentItems]
+        },
+        onSuccess: () => toast({ title: "Substância duplicada!" }),
+        onError: (err) => toast({ variant: "destructive", title: "Erro na duplicação", description: err.message })
+    })
+
+    function handleDuplicate(e: Ergogenic) {
+        const { id, ...dataToCopy } = e
+        performDuplicate({
+            ...dataToCopy,
+            student_id: studentId,
+            name: `${e.name} (Cópia)`
+        })
     }
 
     // Render Helpers
@@ -172,21 +212,25 @@ export function UnifiedErgogenicsModule({
 
         const colors = {
             orange: {
-                border: "hover:border-orange-500/30",
-                activeBg: "border-orange-500/40 bg-orange-500/5",
+                border: "hover:border-orange-500/10",
+                activeBg: "border-orange-500/20 bg-orange-500/5",
                 icon: "text-orange-500",
                 badge: "bg-orange-500/10 text-orange-400 border-orange-500/20",
-                button: "bg-orange-500 hover:bg-orange-400 text-zinc-950 shadow-orange-500/20",
-                buttonActive: "bg-zinc-800 border-orange-500/20 text-orange-500"
+                button: "bg-orange-500 hover:bg-orange-500/90 text-zinc-950",
+                buttonActive: "bg-orange-500/10 border-orange-500/20 text-orange-500 hover:bg-orange-500/20"
+
             },
+
             emerald: {
-                border: "hover:border-emerald-500/30",
-                activeBg: "border-emerald-500/40 bg-emerald-500/5",
+                border: "hover:border-emerald-500/10",
+                activeBg: "border-emerald-500/20 bg-emerald-500/5",
                 icon: "text-emerald-500",
                 badge: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
-                button: "bg-emerald-500 hover:bg-emerald-400 text-zinc-950 shadow-emerald-500/20",
-                buttonActive: "bg-zinc-800 border-emerald-500/20 text-emerald-500"
+                button: "bg-emerald-500 hover:bg-emerald-500/90 text-zinc-950",
+                buttonActive: "bg-emerald-500/10 border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/20"
+
             }
+
         }[colorScheme]
 
         return (
@@ -202,28 +246,19 @@ export function UnifiedErgogenicsModule({
                         </div>
                         {mode === 'trainer' && (
                             <div className="flex items-center gap-2">
-                                <UnifiedCreationDialog
-                                    title="Duplicar Substância"
-                                    description={`Crie uma cópia de ${e.name} para este protocolo.`}
-                                    actionType="duplicate-student-ergogenic"
-                                    parentId={studentId}
-                                    initialValues={{
-                                        ...e,
-                                        name: `${e.name} (Cópia)`
-                                    }}
-                                    fields={ERGOGENIC_FIELDS}
-                                    colorScheme={colorScheme}
-                                    trigger={
-                                        <Button variant="ghost" size="icon" className={cn("h-8 w-8 text-zinc-500 rounded-lg transition-colors", colorScheme === 'orange' ? 'hover:text-orange-500' : 'hover:text-emerald-500')}>
-                                            <Copy className="w-4 h-4" />
-                                        </Button>
-                                    }
-                                />
+                                <Button 
+                                    variant="ghost" 
+                                    size="icon" 
+                                    onClick={() => handleDuplicate(e)}
+                                    className={cn("h-8 w-8 text-zinc-500 rounded-lg transition-colors", colorScheme === 'orange' ? 'hover:text-orange-500' : 'hover:text-emerald-500')}
+                                >
+                                    <Copy className="w-4 h-4" />
+                                </Button>
                                 <UnifiedDeleteButton
                                     id={e.id}
                                     actionType="ergogenic"
                                     itemName={e.name}
-                                    onSuccess={() => setErgogenics(prev => prev.filter(item => item.id !== e.id))}
+                                    queryKey={['ergogenics', studentId]}
                                 />
                             </div>
                         )}
@@ -262,15 +297,12 @@ export function UnifiedErgogenicsModule({
                         {mode === 'student' && isToday ? (
                             <Button
                                 onClick={() => handleToggle(e.id)}
-                                disabled={loading[e.id]}
                                 className={cn(
                                     "flex-1 h-9 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all gap-1.5 shadow-lg",
                                     isDone ? colors.buttonActive : colors.button
                                 )}
                             >
-                                {loading[e.id] ? (
-                                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                                ) : isDone ? (
+                                {isDone ? (
                                     <>
                                         <Check className="w-3.5 h-3.5" />
                                         Registrado
@@ -310,6 +342,7 @@ export function UnifiedErgogenicsModule({
                                     initialValues={e}
                                     fields={ERGOGENIC_FIELDS}
                                     colorScheme={colorScheme}
+                                    queryKey={['ergogenics', studentId]}
                                     footerLabel="Salvar Alterações"
                                     trigger={
                                         <Button variant="outline" className="flex-1 min-w-0 h-9 bg-zinc-800 border-zinc-700 text-zinc-100 hover:bg-zinc-700 flex items-center justify-center gap-1.5 rounded-xl font-black text-[10px] uppercase italic tracking-widest border-white/5 px-3">
@@ -338,7 +371,8 @@ export function UnifiedErgogenicsModule({
                             </h2>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {todaysErgogenics.map(e => renderErgogenicCard(e, true))}
+                            {todaysErgogenics.map((e: any) => renderErgogenicCard(e, true))}
+
                         </div>
                     </div>
                 )}
@@ -352,7 +386,8 @@ export function UnifiedErgogenicsModule({
                             </h2>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {otherErgogenics.map(e => renderErgogenicCard(e, false))}
+                            {otherErgogenics.map((e: any) => renderErgogenicCard(e, false))}
+
                         </div>
                     </div>
                 )}
@@ -376,8 +411,9 @@ export function UnifiedErgogenicsModule({
                     <Card className="bg-zinc-900/40 border-zinc-800/50 rounded-3xl overflow-hidden shadow-2xl backdrop-blur-sm">
                         <CardContent className="p-0">
                             <div className="divide-y divide-zinc-900/50">
-                                {logs.map(log => (
-                                    <div key={log.id} className="p-6 flex items-center justify-between hover:bg-zinc-800/30 transition-all group">
+                                {logs.map((log: any, index: number) => (
+                                    <div key={log.id || `log-${index}`} className="p-6 flex items-center justify-between hover:bg-zinc-800/30 transition-all group">
+
                                         <div className="flex items-center gap-4">
                                             <div className={cn("p-3 bg-zinc-950 rounded-2xl border border-zinc-800 transition-all", colorScheme === 'orange' ? 'group-hover:bg-orange-500/10 group-hover:border-orange-500/20' : 'group-hover:bg-emerald-500/10 group-hover:border-emerald-500/20')}>
                                                 <Syringe className={cn("w-4 h-4 text-zinc-700 transition-colors", colorScheme === 'orange' ? 'group-hover:text-orange-500' : 'group-hover:text-emerald-500')} />

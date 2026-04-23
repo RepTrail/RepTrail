@@ -1,11 +1,14 @@
 
 'use client'
 
-import { useState } from 'react'
-import { ActivityItem } from '@/actions/trainer-actions'
+import { useState, useEffect } from 'react'
+import { ActivityItem, getTrainerActivityFeed } from '@/actions/trainer-actions'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { QUERY_KEYS } from '@/lib/query-keys'
+import { createClient, removeChannelWithGrace } from '@/lib/supabase/client'
 import {
     Dumbbell,
     Utensils,
@@ -16,20 +19,56 @@ import {
     Zap,
     Sparkles,
     Trophy,
-    AlertTriangle,
+    BedDouble,
     CheckCircle2,
     XCircle,
-    Clock,
-    BedDouble
+    Clock
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface ActivityFeedProps {
-    activities: ActivityItem[]
+    userId: string
+    initialData?: ActivityItem[]
 }
 
-export function ActivityFeed({ activities }: ActivityFeedProps) {
+export function ActivityFeed({ userId, initialData }: ActivityFeedProps) {
     const [isExpanded, setIsExpanded] = useState(false)
+    const queryClient = useQueryClient()
+    const supabase = createClient()
+
+    const { data: activities = [] } = useQuery({
+        queryKey: QUERY_KEYS.trainer.activity(userId),
+        queryFn: getTrainerActivityFeed,
+        initialData
+    })
+
+    // ─── Realtime Logic ──────────────────────────────────────────────────────
+    // For a composite feed, we listen to core activity tables and invalidate
+    // to trigger a clean background refetch when something happens.
+    useEffect(() => {
+        const channel = supabase
+            .channel('trainer-activity-refetch')
+            .on(
+                'postgres_changes',
+                { event: '*', schema: 'public', table: 'workout_logs' },
+                () => queryClient.invalidateQueries({ queryKey: QUERY_KEYS.trainer.activity(userId) })
+            )
+            .on(
+                'postgres_changes',
+                { event: '*', schema: 'public', table: 'meal_logs' },
+                () => queryClient.invalidateQueries({ queryKey: QUERY_KEYS.trainer.activity(userId) })
+            )
+            .on(
+                'postgres_changes',
+                { event: '*', schema: 'public', table: 'cardio_logs' },
+                () => queryClient.invalidateQueries({ queryKey: QUERY_KEYS.trainer.activity(userId) })
+            )
+            .subscribe()
+
+        return () => {
+            removeChannelWithGrace(supabase, channel)
+        }
+    }, [supabase, queryClient, userId])
 
     const visibleActivities = isExpanded ? activities : activities.slice(0, 8)
 

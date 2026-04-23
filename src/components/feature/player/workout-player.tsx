@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useMemo } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
+import { QUERY_KEYS } from '@/lib/query-keys'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
@@ -28,6 +29,8 @@ import { cn } from "@/lib/utils"
 import { useRouter } from 'next/navigation'
 import { startWorkoutLog, recordSetLoad, finishWorkoutLog, saveWorkoutLogState, getWorkoutLastSession } from '@/actions/log-actions'
 import { generateExecutionSteps, ExecutionStep, WorkoutPhase } from '@/lib/workout-flow-engine'
+import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { ENTITIES } from '@/lib/outbox-db'
 
 export function WorkoutPlayer({
     userId,
@@ -93,11 +96,54 @@ export function WorkoutPlayer({
     const [exerciseNote, setExerciseNote] = useState('')
 
     const [logId, setLogId] = useState<string | null>(null)
-    const [loading, setLoading] = useState(false)
     const [isFinished, setIsFinished] = useState(false)
     const [feedback, setFeedback] = useState('')
     const [perceivedEffort, setPerceivedEffort] = useState('7')
     const [adherenceStatus, setAdherenceStatus] = useState<'success' | 'partial' | 'fail'>('success')
+
+    // ─── Mutations ─────────────────────────────────────────────────────────────
+    const finishMutation = useOptimisticMutation({
+        actionName: 'finish-workout-log',
+        queryKey: QUERY_KEYS.workouts.session,
+        entity: ENTITIES.WORKOUT_LOG,
+        mutationFn: async () => {}, // Single-writer: no-op
+        onMutate: (variables: any) => {
+            // 1. OPTIMISTICALLY mark workout as completed today (Main Plan Cache)
+            const todayKey = QUERY_KEYS.workouts.today(userId)
+            queryClient.setQueryData(todayKey, (old: any) => {
+                if (!old) return old
+                return { ...old, status: 'completed', _optimistic: true }
+            })
+
+            // 2. OPTIMISTICALLY mark status as completed (Specific Status Cache for Card)
+            const statusKey = QUERY_KEYS.workouts.status(userId, workout.id)
+            queryClient.setQueryData(statusKey, {
+                status: 'completed',
+                logId: variables.id,
+                _optimistic: true
+            })
+        }
+    })
+
+    const recordSetMutation = useOptimisticMutation({
+        actionName: 'record-set-load',
+        queryKey: QUERY_KEYS.workouts.session,
+        entity: ENTITIES.WORKOUT_LOG,
+        mutationFn: async () => {},
+        onMutate: (variables: any) => {
+            // Ensure status is mark as in_progress if it was not started
+            const statusKey = QUERY_KEYS.workouts.status(userId, workout.id)
+            const currentStatus = queryClient.getQueryData<any>(statusKey)
+            
+            if (!currentStatus || currentStatus.status === 'not_started') {
+                queryClient.setQueryData(statusKey, {
+                    status: 'in_progress',
+                    logId: variables.logId,
+                    _optimistic: true
+                })
+            }
+        }
+    })
 
     const { toast } = useToast()
     const router = useRouter()
@@ -149,12 +195,14 @@ export function WorkoutPlayer({
             }
         }
 
-        // Midnight check: if day changes, refresh everything
+        // Midnight check: if day changes, invalidate stale data instead of reloading
         const currentDay = new Date().toDateString()
         const interval = setInterval(() => {
             if (new Date().toDateString() !== currentDay) {
-                console.log('Day changed! Resetting workout player...')
-                window.location.reload()
+                console.log('Day changed! Refreshing stale data...')
+                // Local-First: invalidate stale today data without destroying the active session
+                queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workouts.today(userId) })
+                queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workouts.status(userId) })
             }
         }, 60000)
 
@@ -213,13 +261,19 @@ export function WorkoutPlayer({
         const initLog = async () => {
             if (initialLogId) {
                 setLogId(initialLogId)
-                queryClient.invalidateQueries({ queryKey: ['active-workout-session'] })
                 return
             }
             const result = await startWorkoutLog(workout.id)
             if (result.success) {
                 setLogId(result.logId)
-                queryClient.invalidateQueries({ queryKey: ['active-workout-session'] })
+                
+                // Immediately mark status as in_progress in cache
+                const statusKey = QUERY_KEYS.workouts.status(userId, workout.id)
+                queryClient.setQueryData(statusKey, {
+                    status: 'in_progress',
+                    logId: result.logId,
+                    _optimistic: true
+                })
             } else {
                 toast({ title: "Erro", description: "Falha ao iniciar log.", variant: "destructive" })
             }
@@ -335,75 +389,67 @@ export function WorkoutPlayer({
         }
 
         if (logId) {
-            setLoading(true)
-            try {
-                // Batch Save in parallel for better performance
-                const savePromises = setsLog.map((set, i) => {
-                    const input = summaryInputs[i]
-                    // If it's a split exercise part, include the part name in the notes for clarity in history
-                    const recordNotes = set.subIndex !== undefined && set.subIndex > 0 || (setsLog.some(s => s.groupId === set.groupId && s.subIndex !== undefined && s.subIndex > 0))
-                        ? `[${set.exerciseName}] ${i === setsLog.length - 1 ? exerciseNote : ''}`
-                        : (i === setsLog.length - 1 ? exerciseNote : '')
+            // OPTIMISTIC ADVANCE: Move UI forward immediately
+            const cachedCurrentStep = currentStep
+            const cachedCurrentStepIndex = currentStepIndex
 
-                    return recordSetLoad({
-                        logId,
-                        exerciseId: set.exerciseId,
-                        weight: parseFloat(input.weight),
-                        reps: parseInt(input.reps),
-                        setType: set.type as any,
-                        notes: recordNotes,
-                        subIndex: set.subIndex,
-                        groupId: set.groupId
-                    })
-                })
-
-                const results = await Promise.all(savePromises)
-                const failed = results.filter(r => !r.success)
-
-                if (failed.length > 0) {
-                    console.error('Failed to save some sets:', failed)
-                }
-
-                if (currentStep.restSeconds > 0 && currentStepIndex < steps.length - 1) {
-                    setShowSummary(false)
-                    setRestTimeLeft(currentStep.restSeconds)
-                    setRestEndTime(Date.now() + currentStep.restSeconds * 1000)
-                    setIsResting(true)
-                } else {
-                    advanceExercise()
-                }
-            } catch (error) {
-                console.error('Error saving exercise sets:', error)
-                toast({ variant: 'destructive', title: 'Erro ao Salvar', description: 'Ocorreu um erro ao salvar os dados.' })
-            } finally {
-                setLoading(false)
+            if (cachedCurrentStep.restSeconds > 0 && cachedCurrentStepIndex < steps.length - 1) {
+                setShowSummary(false)
+                setRestTimeLeft(cachedCurrentStep.restSeconds)
+                setRestEndTime(Date.now() + cachedCurrentStep.restSeconds * 1000)
+                setIsResting(true)
+            } else {
+                advanceExercise()
             }
+
+            // Fire and forget recording (Local-First Style)
+            setsLog.forEach((set, i) => {
+                const input = summaryInputs[i]
+                const recordNotes = set.subIndex !== undefined && set.subIndex > 0 || (setsLog.some(s => s.groupId === set.groupId && s.subIndex !== undefined && s.subIndex > 0))
+                    ? `[${set.exerciseName}] ${i === setsLog.length - 1 ? exerciseNote : ''}`
+                    : (i === setsLog.length - 1 ? exerciseNote : '')
+
+                recordSetMutation.mutate({
+                    logId,
+                    exerciseId: set.exerciseId,
+                    weight: parseFloat(input.weight),
+                    reps: parseInt(input.reps),
+                    setType: set.type as any,
+                    notes: recordNotes,
+                    subIndex: set.subIndex,
+                    groupId: set.groupId
+                })
+            })
         }
     }
 
-    const handleFinishWorkout = async () => {
-        setLoading(true)
-        try {
-            if (logId) {
-                const res = await finishWorkoutLog(logId, feedback, parseInt(perceivedEffort), adherenceStatus)
-                if (res?.error) {
-                    toast({ variant: 'destructive', title: 'Erro ao Finalizar', description: res.error })
-                    setLoading(false)
-                    return
-                }
-                queryClient.invalidateQueries({ queryKey: ['active-workout-session'] })
-            }
-            queryClient.invalidateQueries({ queryKey: ['today-workout'] })
-            queryClient.invalidateQueries({ queryKey: ['workout-status'] })
-            toast({ title: "MISSÃO CUMPRIDA!", description: "Treino registrado com sucesso." })
-            router.refresh()
-            router.push('/dashboard/student')
-        } catch (error) {
-            console.error('Error finishing workout:', error)
-            toast({ variant: 'destructive', title: 'Erro ao Finalizar', description: 'Ocorreu um erro ao salvar seu treino.' })
-        } finally {
-            setLoading(false)
+    const handleFinishWorkout = () => {
+        if (logId) {
+            // 🔥 ULTRAPROOF: Synchronous cache update BEFORE mutation and redirect
+            // This guarantees the dashboard sees 'completed' even with the 0ms delay of useOptimisticMutation
+            const statusKey = QUERY_KEYS.workouts.status(userId, workout.id)
+            queryClient.setQueryData(statusKey, {
+                status: 'completed',
+                logId: logId,
+                _optimistic: true
+            })
+
+            const todayKey = QUERY_KEYS.workouts.today(userId)
+            queryClient.setQueryData(todayKey, (old: any) => {
+                if (!old) return old
+                return { ...old, status: 'completed', _optimistic: true }
+            })
+
+            finishMutation.mutate({
+                id: logId,
+                feedback,
+                perceivedEffort: parseInt(perceivedEffort),
+                adherenceStatus
+            })
         }
+        
+        toast({ title: "MISSÃO CUMPRIDA!", description: "Treino registrado com sucesso." })
+        router.push('/dashboard/student')
     }
 
     const setTypeColor = ({
@@ -501,8 +547,8 @@ export function WorkoutPlayer({
                         <textarea value={feedback} onChange={(e) => setFeedback(e.target.value)} placeholder="Comentários sobre o treino..." className="w-full bg-zinc-950 border border-zinc-800 text-zinc-300 rounded-2xl p-4 text-sm font-medium min-h-[120px] outline-none" />
                     </div>
                 </div>
-                <Button onClick={handleFinishWorkout} disabled={loading} className="w-full h-auto min-h-[4rem] py-4 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black italic uppercase tracking-tight rounded-2xl text-lg md:text-xl shadow-2xl active:scale-95 transition-all whitespace-normal leading-tight flex items-center justify-center gap-4">
-                    {loading ? "Salvando..." : "Confirmar e Sair"}
+                <Button onClick={handleFinishWorkout} className="w-full h-auto min-h-[4rem] py-4 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black italic uppercase tracking-tight rounded-2xl text-lg md:text-xl shadow-2xl active:scale-95 transition-all whitespace-normal leading-tight flex items-center justify-center gap-4">
+                    Confirmar e Sair
                 </Button>
             </div>
         )
@@ -627,9 +673,8 @@ export function WorkoutPlayer({
                         <Button
                             className="w-full h-auto min-h-[5rem] py-4 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black italic uppercase tracking-tighter text-lg md:text-xl rounded-[2rem] shadow-2xl active:scale-95 transition-all whitespace-normal leading-tight flex items-center justify-center gap-4"
                             onClick={handleSaveExercise}
-                            disabled={loading}
                         >
-                            {loading ? "Salvando..." : "Concluir Exercício"}
+                            Concluir Exercício
                             <CheckCircle className="w-8 h-8 md:w-10 md:h-10 shrink-0" />
                         </Button>
                     </div>
@@ -778,7 +823,6 @@ export function WorkoutPlayer({
                                     'bg-emerald-500 hover:bg-emerald-400'
                                 }`}
                             onClick={handleSetAction}
-                            disabled={loading}
                         >
                             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
 

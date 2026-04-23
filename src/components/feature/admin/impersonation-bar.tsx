@@ -57,7 +57,7 @@ export function ImpersonationBar() {
             <div className="flex items-center gap-2">
                 <Button
                     onClick={handleReturn}
-                    disabled={loading}
+                    /* ❌ UI BLOCKING REMOVED */ disabled={false}
                     size="sm"
                     className="h-9 px-4 bg-zinc-950 hover:bg-zinc-900 text-white border-none rounded-2xl text-[10px] font-black uppercase tracking-widest gap-2 shadow-lg transition-transform active:scale-95"
                 >

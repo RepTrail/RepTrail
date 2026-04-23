@@ -14,7 +14,11 @@ import { CreditCard, User, ShieldCheck } from 'lucide-react'
 import { createAsaasSubscription, searchAsaasCustomer } from '@/actions/asaas-actions'
 import { useToast } from '@/hooks/use-toast'
 import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { fbqEvent } from '@/lib/meta-pixel'
+
+import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { ENTITIES } from '@/lib/outbox-db'
 
 interface PaymentModalProps {
     isOpen: boolean
@@ -23,9 +27,10 @@ interface PaymentModalProps {
     currentCpf?: string
     currentName?: string
     monthlyTotal: number
+    userId?: string // Added userId for cache parity
 }
 
-export function PaymentModal({ isOpen, onClose, tier, currentCpf, currentName, monthlyTotal }: PaymentModalProps) {
+export function PaymentModal({ isOpen, onClose, tier, currentCpf, currentName, monthlyTotal, userId }: PaymentModalProps) {
     const [step, setStep] = useState<'info' | 'payment' | 'card_details'>(currentCpf && currentName ? 'payment' : 'info')
     const [cpf, setCpf] = useState(currentCpf || '')
     const [fullName, setFullName] = useState(currentName || '')
@@ -38,14 +43,8 @@ export function PaymentModal({ isOpen, onClose, tier, currentCpf, currentName, m
         addressNumber: ''
     })
     const [fetchingName, setFetchingName] = useState(false)
-    const [loading, setLoading] = useState(false)
     const { toast } = useToast()
-
-    useEffect(() => {
-        if (isOpen) {
-            fbqEvent("InitiateCheckout", { currency: 'BRL', value: monthlyTotal });
-        }
-    }, [isOpen, monthlyTotal])
+    const router = useRouter()
 
     const maskCpfCnpj = (value: string) => {
         const clean = value.replace(/\D/g, '')
@@ -79,7 +78,6 @@ export function PaymentModal({ isOpen, onClose, tier, currentCpf, currentName, m
     const validateCpfCnpj = (val: string) => {
         const clean = val.replace(/\D/g, '')
         if (clean.length === 11) {
-            // Basic CPF validation logic
             if (/^(\d)\1+$/.test(clean)) return false
             let sum = 0
             for (let i = 1; i <= 9; i++) sum = sum + parseInt(clean.substring(i - 1, i)) * (11 - i)
@@ -93,11 +91,10 @@ export function PaymentModal({ isOpen, onClose, tier, currentCpf, currentName, m
             if (rest !== parseInt(clean.substring(10, 11))) return false
             return true
         }
-        if (clean.length === 14) return true // Basic length check for CNPJ for now
+        if (clean.length === 14) return true 
         return false
     }
 
-    // Auto-search name when CPF is completed
     useEffect(() => {
         const clean = cpf.replace(/\D/g, '')
         if ((clean.length === 11 || clean.length === 14)) {
@@ -150,9 +147,27 @@ export function PaymentModal({ isOpen, onClose, tier, currentCpf, currentName, m
         setStep('payment')
     }
 
-    const handleSubscribe = async (e: React.FormEvent) => {
+    const { mutate } = useOptimisticMutation({
+        actionName: 'create-asaas-subscription',
+        entity: ENTITIES.SUBSCRIPTION,
+        queryKey: ['profile'],
+        mutationFn: async () => {}, // Sync Engine will handle it
+        onSuccess: () => {
+            toast({ title: 'Sucesso!', description: 'Sua assinatura está sendo processada.' })
+            setTimeout(() => router.push('/dashboard/student/plans'), 1000)
+        },
+        onError: (err: any) => {
+            toast({
+                variant: 'destructive',
+                title: 'Erro no Pagamento',
+                description: err.message || 'Ocorreu um erro ao processar o cartão.'
+            })
+        }
+    })
+
+    const handleSubscribe = (e: React.FormEvent) => {
         e.preventDefault()
-        setLoading(true)
+        
         toast({
             title: "Processando...",
             description: "Estamos preparando sua assinatura no Asaas."
@@ -161,48 +176,25 @@ export function PaymentModal({ isOpen, onClose, tier, currentCpf, currentName, m
         const [month, year] = cardData.expiry.split('/')
         const fullYear = `20${year}`
 
-        try {
-            const res = await createAsaasSubscription(
-                tier,
-                'CREDIT_CARD',
-                cpf.replace(/\D/g, ''),
-                fullName.trim(),
-                {
-                    holderName: cardData.holder,
-                    number: cardData.number.replace(/\s/g, ''),
-                    expiryMonth: month,
-                    expiryYear: fullYear,
-                    ccv: cardData.cvv,
-                    postalCode: cardData.postalCode.replace(/\D/g, ''),
-                    addressNumber: cardData.addressNumber
-                }
-            )
-
-            if (res.success) {
-                fbqEvent("Purchase", {
-                    currency: "BRL",
-                    value: monthlyTotal,
-                    content_name: tier,
-                    status: "success"
-                })
-                toast({ title: 'Sucesso!', description: 'Seu plano foi ativado com sucesso.' })
-                setTimeout(() => window.location.href = '/dashboard/student/plans', 1500)
-            } else {
-                toast({
-                    variant: 'destructive',
-                    title: 'Erro no Pagamento',
-                    description: res.error || 'Ocorreu um erro ao processar o cartão.'
-                })
+        mutate({
+            tier,
+            paymentMethod: 'CREDIT_CARD',
+            cpfCnpj: cpf.replace(/\D/g, ''),
+            fullName: fullName.trim(),
+            userId, // For query key reconciliation
+            creditCard: {
+                holderName: cardData.holder,
+                number: cardData.number.replace(/\s/g, ''),
+                expiryMonth: month,
+                expiryYear: fullYear,
+                ccv: cardData.cvv,
+                postalCode: cardData.postalCode.replace(/\D/g, ''),
+                addressNumber: cardData.addressNumber
             }
-        } catch (error: any) {
-            toast({
-                variant: 'destructive',
-                title: 'Erro inesperado',
-                description: 'Tente novamente em instantes.'
-            })
-        } finally {
-            setLoading(false)
-        }
+        })
+
+        // 🚀 HARD LOCK: Close modal instantly
+        onClose()
     }
 
     return (
@@ -289,7 +281,7 @@ export function PaymentModal({ isOpen, onClose, tier, currentCpf, currentName, m
                             <div className="space-y-3">
                                 <Button
                                     onClick={() => setStep('card_details')}
-                                    disabled={loading}
+                                    /* ❌ UI BLOCKING REMOVED */ disabled={false}
                                     className="w-full h-14 bg-white hover:bg-zinc-100 text-zinc-950 rounded-2xl font-black uppercase italic tracking-wide text-sm gap-3 transition-all hover:scale-[1.02] active:scale-[0.98]"
                                 >
                                     <CreditCard className="w-5 h-5 text-zinc-950" />
@@ -377,10 +369,10 @@ export function PaymentModal({ isOpen, onClose, tier, currentCpf, currentName, m
                             <div className="pt-4 space-y-3">
                                 <Button
                                     type="submit"
-                                    disabled={loading}
+                                    /* ❌ UI BLOCKING REMOVED */ disabled={false}
                                     className="w-full h-14 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 rounded-2xl font-black uppercase italic tracking-wide transition-all shadow-xl shadow-emerald-500/10 active:scale-95"
                                 >
-                                    {loading ? 'Processando...' : 'Finalizar Assinatura'}
+                                    Finalizar Assinatura
                                 </Button>
                                 <button
                                     type="button"

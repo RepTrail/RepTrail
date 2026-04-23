@@ -69,7 +69,7 @@ export function AutoTrainingErgogenicsManager({
                                     </div>
                                 </div>
                                 <div className="flex gap-1">
-                                    <EditErgogenicDialog ergogenic={e} />
+                                    <EditErgogenicDialog ergogenic={e} userId={studentId} />
                                     <UnifiedDeleteButton
                                         id={e.id}
                                         actionType="ergogenic"

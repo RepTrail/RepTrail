@@ -6,19 +6,37 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Utensils } from 'lucide-react'
 import { DietAdherence } from '@/components/feature/student/diet-adherence'
 
+import { QUERY_KEYS } from '@/lib/query-keys'
+import { useRealtimeSync } from '@/hooks/use-realtime-sync'
+
 interface DietCardProps {
     userId: string
     hasTrainer: boolean
 }
 
 export function DietCard({ userId, hasTrainer }: DietCardProps) {
-    const { data: diet, isLoading } = useQuery({
-        queryKey: ['daily-diet', userId],
-        queryFn: () => getStudentDailyDiet(userId),
-        staleTime: 1000 * 60 * 30, // 30 min
+    // Realtime Sync for Diet and Meal Logs
+    useRealtimeSync({
+        table: 'assigned_diets',
+        queryKey: QUERY_KEYS.diets.today(userId),
+        filter: `student_id=eq.${userId}`
     })
 
-    if (isLoading) {
+    useRealtimeSync({
+        table: 'meal_item_logs',
+        queryKey: QUERY_KEYS.diets.today(userId), 
+        filter: `user_id=eq.${userId}`
+    })
+
+
+    const { data: diet, isLoading } = useQuery({
+        queryKey: QUERY_KEYS.diets.today(userId),
+        queryFn: () => getStudentDailyDiet(userId),
+        enabled: !!userId,
+    })
+
+    // Skeleton Fallback: Only if loading AND no cache available
+    if (isLoading && !diet) {
         return (
             <div className="bg-zinc-900/40 border border-zinc-800/50 shadow-2xl border-t-zinc-700/10 rounded-3xl p-6 sm:p-6 space-y-8 min-h-[500px] animate-pulse">
                 <div className="space-y-6">

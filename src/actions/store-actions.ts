@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 
 export async function getStoreProducts() {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     try {
         const { data, error } = await supabase
@@ -22,7 +22,7 @@ export async function getStoreProducts() {
 }
 
 export async function logProductClick(productId: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     try {
@@ -42,7 +42,7 @@ export async function logProductClick(productId: string) {
 }
 
 export async function createStoreProduct(data: any) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     try {
         const { error } = await supabase

@@ -11,6 +11,8 @@ import { Users, ArrowRightLeft, Save, UserPlus, Search, Trash2 } from 'lucide-re
 import { useToast } from '@/hooks/use-toast'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { ENTITIES } from '@/lib/outbox-db'
 
 interface AffiliatesManagementProps {
     initialAffiliates: any[]
@@ -20,10 +22,6 @@ interface AffiliatesManagementProps {
 export function AffiliatesManagement({ initialAffiliates, allUsers = [] }: AffiliatesManagementProps) {
     const { toast } = useToast()
     const [affiliates, setAffiliates] = useState(initialAffiliates)
-    const [loading, setLoading] = useState<string | null>(null)
-    const [migrationLoading, setMigrationLoading] = useState(false)
-
-    // Add Affiliate Modal
     const [isAddModalOpen, setIsAddModalOpen] = useState(false)
     const [userSearch, setUserSearch] = useState('')
     const [addingUser, setAddingUser] = useState<string | null>(null)
@@ -39,75 +37,106 @@ export function AffiliatesManagement({ initialAffiliates, allUsers = [] }: Affil
         setCommissionDrafts(prev => ({ ...prev, [id]: parseFloat(val) }))
     }
 
-    const saveCommission = async (affiliateId: string) => {
-        const rate = commissionDrafts[affiliateId]
-        if (rate === undefined || isNaN(rate)) return
-
-        setLoading(affiliateId)
-        try {
-            const res = await updateAffiliateCommission(affiliateId, rate)
-            if (res.error) throw new Error(res.error)
-
-            setAffiliates(prev => prev.map(a => a.id === affiliateId ? { ...a, commission_rate: rate } : a))
+    const { mutate: saveCommissionMutate } = useOptimisticMutation({
+        actionName: 'update-affiliate-commission',
+        entity: ENTITIES.AFFILIATE,
+        queryKey: ['admin', 'affiliates'],
+        mutationFn: async (variables: { affiliateId: string, rate: number }) => variables,
+        onMutate: (variables) => {
+            const previousAffiliates = [...affiliates]
+            setAffiliates(prev => prev.map(a => a.id === variables.affiliateId ? { ...a, commission_rate: variables.rate } : a))
             setCommissionDrafts(prev => {
                 const draft = { ...prev }
-                delete draft[affiliateId]
+                delete draft[variables.affiliateId]
                 return draft
             })
-            toast({ title: 'Comissão atualizada!' })
-        } catch (e: any) {
-            toast({ variant: 'destructive', title: 'Erro', description: e.message })
-        } finally {
-            setLoading(null)
+            return { previousAffiliates }
+        },
+        onSuccess: () => {
+            toast({ title: 'Comissão atualizada!', description: 'A alteração está sendo sincronizada.' })
+        },
+        onError: (err, variables, ctx) => {
+            setAffiliates(ctx?.previousAffiliates || [])
+            toast({ variant: 'destructive', title: 'Erro', description: 'Erro ao atualizar comissão.' })
         }
+    })
+
+    const saveCommission = (affiliateId: string) => {
+        const rate = commissionDrafts[affiliateId]
+        if (rate === undefined || isNaN(rate)) return
+        saveCommissionMutate({ affiliateId, rate })
     }
 
-    const handleMigration = async (e: React.FormEvent) => {
-        e.preventDefault()
-        setMigrationLoading(true)
-        try {
-            const res = await reassignReferral(studentEmail, newAffiliateToken || null)
-            if (res.error) throw new Error(res.error)
-
-            toast({ title: 'Aluno movido com sucesso!', description: `Novo afiliado atribuído: ${newAffiliateToken || 'Nenhum'}` })
+    const { mutate: migrateMutate, isPending: migrationLoading } = useOptimisticMutation({
+        actionName: 'reassign-referral',
+        entity: ENTITIES.AFFILIATE,
+        queryKey: ['admin', 'affiliates'],
+        mutationFn: async (variables: { studentEmail: string, newAffiliateToken: string }) => variables,
+        onMutate: () => {
             setStudentEmail('')
             setNewAffiliateToken('')
-        } catch (e: any) {
-            toast({ variant: 'destructive', title: 'Erro na migração', description: e.message })
-        } finally {
-            setMigrationLoading(false)
+        },
+        onSuccess: (data, variables) => {
+            toast({ title: 'Aluno movido com sucesso!', description: `Novo afiliado atribuído: ${variables.newAffiliateToken || 'Nenhum'}` })
+        },
+        onError: () => {
+            toast({ variant: 'destructive', title: 'Erro', description: 'Falha na migração.' })
         }
+    })
+
+    const handleMigration = (e: React.FormEvent) => {
+        e.preventDefault()
+        migrateMutate({ studentEmail, newAffiliateToken })
     }
 
-    const handleAddAffiliate = async (userId: string) => {
-        setAddingUser(userId)
-        try {
-            const res = await toggleAffiliateStatus(userId, true)
-            if (res.error) throw new Error(res.error)
-
-            toast({ title: 'Afiliado adicionado com sucesso!' })
+    const { mutate: addAffiliateMutate } = useOptimisticMutation({
+        actionName: 'toggle-affiliate-status',
+        entity: ENTITIES.AFFILIATE,
+        queryKey: ['admin', 'affiliates'],
+        mutationFn: async (variables: { userId: string }) => variables,
+        onMutate: (variables) => {
+            const addedUser = allUsers?.find(u => u.id === variables.userId)
+            if (addedUser) setAffiliates(prev => [...prev, addedUser])
             setIsAddModalOpen(false)
-            window.location.reload()
-        } catch (e: any) {
-            toast({ variant: 'destructive', title: 'Erro', description: e.message })
-        } finally {
             setAddingUser(null)
+            return { addedUser }
+        },
+        onSuccess: () => {
+            toast({ title: 'Afiliado adicionado!', description: 'O novo afiliado está sendo processado.' })
+        },
+        onError: (err, variables, ctx) => {
+            setAffiliates(prev => prev.filter(a => a.id !== variables.userId))
+            toast({ title: 'Erro', description: 'Erro ao adicionar afiliado.', variant: 'destructive' })
         }
+    })
+
+    const handleAddAffiliate = (userId: string) => {
+        setAddingUser(userId)
+        addAffiliateMutate({ userId })
     }
 
-    const handleRemoveAffiliate = async (userId: string) => {
-        if (!confirm('Remover status de afiliado? Isso removerá o acesso ao painel de afiliado.')) return
-        setLoading(userId)
-        try {
-            const res = await toggleAffiliateStatus(userId, false)
-            if (res.error) throw new Error(res.error)
-            setAffiliates(prev => prev.filter(a => a.id !== userId))
-            toast({ title: 'Afiliado removido!' })
-        } catch (e: any) {
-            toast({ variant: 'destructive', title: 'Erro', description: e.message })
-        } finally {
-            setLoading(null)
+    const { mutate: removeAffiliateMutate } = useOptimisticMutation({
+        actionName: 'toggle-affiliate-status',
+        entity: ENTITIES.AFFILIATE,
+        queryKey: ['admin', 'affiliates'],
+        mutationFn: async (variables: { userId: string }) => variables,
+        onMutate: (variables) => {
+            const previousAffiliates = [...affiliates]
+            setAffiliates(prev => prev.filter(a => a.id !== variables.userId))
+            return { previousAffiliates }
+        },
+        onSuccess: () => {
+            toast({ title: 'Afiliado removido!', description: 'A alteração está sendo sincronizada.' })
+        },
+        onError: (err, variables, ctx) => {
+            setAffiliates(ctx?.previousAffiliates || [])
+            toast({ title: 'Erro', description: 'Erro ao remover.', variant: 'destructive' })
         }
+    })
+
+    const handleRemoveAffiliate = (userId: string) => {
+        if (!confirm('Remover status de afiliado? Isso removerá o acesso ao painel de afiliado.')) return
+        removeAffiliateMutate({ userId })
     }
 
     // Filter users for modal (exclude already affiliates)
@@ -222,7 +251,6 @@ export function AffiliatesManagement({ initialAffiliates, allUsers = [] }: Affil
                                                     <Button
                                                         size="sm"
                                                         onClick={() => saveCommission(affiliate.id)}
-                                                        disabled={loading === affiliate.id}
                                                         className="h-8 bg-emerald-500 hover:bg-emerald-600 text-black font-bold uppercase text-[9px] tracking-widest rounded-full px-4"
                                                     >
                                                         <Save className="w-3 h-3 mr-1.5" />
@@ -279,10 +307,9 @@ export function AffiliatesManagement({ initialAffiliates, allUsers = [] }: Affil
                         </div>
                         <Button
                             type="submit"
-                            disabled={migrationLoading}
                             className="bg-zinc-800 hover:bg-zinc-700 text-white font-bold h-10"
                         >
-                            {migrationLoading ? 'Movendo...' : 'Mover Aluno'}
+                            Mover Aluno
                         </Button>
                     </form>
                 </CardContent>

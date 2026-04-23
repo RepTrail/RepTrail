@@ -26,6 +26,7 @@ import {
 } from "lucide-react"
 import { cn } from '@/lib/utils'
 import {
+    getDietDetails,
     addMealToDiet,
     addMealItem,
     updateMealItem,
@@ -38,6 +39,11 @@ import {
     updateMealsOrder,
     updateMealItemsOrder
 } from "@/actions/diet-actions"
+import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query'
+import { useToast } from '@/hooks/use-toast'
+import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { QUERY_KEYS } from "@/lib/query-keys"
+import { ENTITIES } from '@/lib/outbox-db'
 
 interface MealItem {
     id: string
@@ -76,6 +82,8 @@ interface DietBuilderProps {
     }
     students?: any[]
     backHref?: string
+    canAssign?: boolean
+    showAssignmentBadge?: boolean
 }
 
 // Extracted Component to prevent lag
@@ -87,10 +95,11 @@ function MealItemRow({
 }: {
     item: MealItem;
     dietId: string;
-    onRemove: (id: string) => Promise<void>;
+    onRemove: (id: string) => void;
     draggableProps?: any;
 }) {
-    const [loading, setLoading] = useState<Record<string, boolean>>({})
+    const queryClient = useQueryClient()
+    const queryKey = QUERY_KEYS.diets.detail(dietId)
 
     // Local state for all fields to ensure zero-lag typing
     const [foodName, setFoodName] = useState(item.food_name)
@@ -106,6 +115,9 @@ function MealItemRow({
     const [subCarbs, setSubCarbs] = useState(item.sub_carbs || 0)
     const [subFat, setSubFat] = useState(item.sub_fat || 0)
     const [isSaved, setIsSaved] = useState(true)
+
+    // AI Estimated loading states (kept as local UI feedback)
+    const [estimating, setEstimating] = useState<Record<string, boolean>>({})
 
     // Sync from props if item data changes (like after "Estimate All")
     useEffect(() => {
@@ -123,23 +135,43 @@ function MealItemRow({
         setIsSaved(true)
     }, [item])
 
-    const handleSave = async () => {
-        setLoading(prev => ({ ...prev, save: true }))
-        const res = await updateMealItem(item.id, dietId, {
-            food_name: foodName,
-            quantity: quantity,
-            protein,
-            carbs,
-            fat,
-            has_substitute: hasSubstitute,
-            sub_food_name: subFoodName,
-            sub_quantity: subQuantity,
-            sub_protein: subProtein,
-            sub_carbs: subCarbs,
-            sub_fat: subFat
+    const { mutate: syncItem } = useOptimisticMutation({
+        actionName: 'update-meal-item',
+        entity: ENTITIES.MEAL_ITEM,
+        entityId: item.id,
+        queryKey,
+        mutationFn: async (variables: { id: string, data: any }) => variables,
+        onMutate: (variables) => {
+            const previous = queryClient.getQueryData(queryKey)
+            queryClient.setQueryData(queryKey, (old: any) => ({
+                ...old,
+                meals: (old?.meals || []).map((m: any) => ({
+                    ...m,
+                    meal_items: (m.meal_items || []).map((i: any) =>
+                        i.id === variables.id ? { ...i, ...variables.data } : i
+                    )
+                }))
+            }))
+            return { previous }
+        },
+        onSuccess: () => setIsSaved(true)
+    })
+
+    const handleSave = () => {
+        syncItem({
+            id: item.id,
+            data: {
+                food_name: foodName,
+                quantity: quantity,
+                protein, carbs, fat,
+                has_substitute: hasSubstitute,
+                sub_food_name: subFoodName,
+                sub_quantity: subQuantity,
+                sub_protein: subProtein,
+                sub_carbs: subCarbs,
+                sub_fat: subFat
+            }
         })
-        if (!res.error) setIsSaved(true)
-        setLoading(prev => ({ ...prev, save: false }))
     }
 
     const handleChange = (setter: any, val: any) => {
@@ -148,7 +180,7 @@ function MealItemRow({
     }
 
     const handleEstimateMain = async () => {
-        setLoading(prev => ({ ...prev, estimate: true }))
+        setEstimating(prev => ({ ...prev, main: true }))
         const res = await estimateMacros(foodName, quantity)
         if (res.success && res.macros) {
             setProtein(res.macros.protein)
@@ -156,11 +188,11 @@ function MealItemRow({
             setFat(res.macros.fat)
             setIsSaved(false)
         }
-        setLoading(prev => ({ ...prev, estimate: false }))
+        setEstimating(prev => ({ ...prev, main: false }))
     }
 
     const handleEstimateSub = async () => {
-        setLoading(prev => ({ ...prev, estimateSub: true }))
+        setEstimating(prev => ({ ...prev, sub: true }))
         const res = await estimateMacros(subFoodName, subQuantity)
         if (res.success && res.macros) {
             setSubProtein(res.macros.protein)
@@ -168,11 +200,11 @@ function MealItemRow({
             setSubFat(res.macros.fat)
             setIsSaved(false)
         }
-        setLoading(prev => ({ ...prev, estimateSub: false }))
+        setEstimating(prev => ({ ...prev, sub: false }))
     }
 
     const handleSuggestSub = async () => {
-        setLoading(prev => ({ ...prev, suggestSub: true }))
+        setEstimating(prev => ({ ...prev, suggest: true }))
         const res = await suggestSubstitution(foodName, quantity)
         if (res.success && res.suggestion) {
             setHasSubstitute(true)
@@ -183,7 +215,7 @@ function MealItemRow({
             setSubFat(res.suggestion.fat)
             setIsSaved(false)
         }
-        setLoading(prev => ({ ...prev, suggestSub: false }))
+        setEstimating(prev => ({ ...prev, suggest: false }))
     }
 
     const handleClearSub = () => {
@@ -270,12 +302,12 @@ function MealItemRow({
                         <Button
                             variant="ghost"
                             size="icon"
-                            disabled={loading.estimate || !foodName}
+                            disabled={estimating.main || !foodName}
                             onClick={handleEstimateMain}
                             className="text-zinc-600 hover:text-orange-400 h-9 w-8 hover:bg-orange-400/5 border border-zinc-800 rounded-xl"
                             title="Calcular macros com IA"
                         >
-                            {loading.estimate ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+                            {estimating.main ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
                         </Button>
                         <Button
                             variant="ghost"
@@ -299,7 +331,6 @@ function MealItemRow({
                             variant="ghost"
                             size="icon"
                             onClick={handleSave}
-                            disabled={loading.save || (isSaved && !loading.save)}
                             className={cn(
                                 "h-9 w-8 border transition-all rounded-xl",
                                 isSaved
@@ -308,7 +339,7 @@ function MealItemRow({
                             )}
                             title="Salvar alterações"
                         >
-                            {loading.save ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                            <Save className="w-4 h-4" />
                         </Button>
                     </div>
                 </div>
@@ -374,22 +405,22 @@ function MealItemRow({
                         <Button
                             variant="ghost"
                             size="icon"
-                            disabled={loading.estimateSub || !subFoodName}
+                            disabled={estimating.sub || !subFoodName}
                             onClick={handleEstimateSub}
                             className="text-zinc-600 hover:text-orange-400 h-9 w-9 border border-zinc-800 bg-zinc-900/50"
                             title="Calcular macros da substituição com IA"
                         >
-                            {loading.estimateSub ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+                            {estimating.sub ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
                         </Button>
                         <Button
                             variant="ghost"
                             size="icon"
-                            disabled={loading.suggestSub}
+                            disabled={estimating.suggest}
                             onClick={handleSuggestSub}
                             className="text-zinc-600 hover:text-purple-400 h-9 w-9 border border-zinc-800 bg-zinc-900/50"
                             title="Sugerir substituição similar com IA"
                         >
-                            {loading.suggestSub ? <Loader2 className="w-4 h-4 animate-spin" /> : <Utensils className="w-4 h-4" />}
+                            {estimating.suggest ? <Loader2 className="w-4 h-4 animate-spin" /> : <Utensils className="w-4 h-4" />}
                         </Button>
                         <Button
                             variant="ghost"
@@ -404,7 +435,6 @@ function MealItemRow({
                             variant="ghost"
                             size="icon"
                             onClick={handleSave}
-                            disabled={loading.save || (isSaved && !loading.save)}
                             className={cn(
                                 "h-9 w-9 border transition-all shadow-none",
                                 isSaved
@@ -413,7 +443,7 @@ function MealItemRow({
                             )}
                             title="Salvar Alterações"
                         >
-                            {loading.save ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+                            <Check className="w-4 h-4" />
                         </Button>
                     </div>
                 </div>
@@ -422,21 +452,176 @@ function MealItemRow({
     )
 }
 
-export function DietBuilder({ diet, students = [], backHref = '/dashboard/trainer/diets' }: DietBuilderProps) {
-    const [loadingMap, setLoadingMap] = useState<Record<string, boolean>>({})
-    const [newMealName, setNewMealName] = useState('')
-    const [newMealTime, setNewMealTime] = useState('')
+export function DietBuilder({ diet: initialDiet, students = [], backHref = '/dashboard/trainer/diets', canAssign = true, showAssignmentBadge = true }: DietBuilderProps) {
+    const { toast } = useToast()
+    const queryClient = useQueryClient()
+    const queryKey = QUERY_KEYS.diets.detail(initialDiet.id)
 
-    // Drag and Drop State
-    const [meals, setMeals] = useState<Meal[]>(diet.meals || [])
+    const { data: dietData } = useQuery({
+        queryKey,
+        queryFn: () => getDietDetails(initialDiet.id),
+        initialData: initialDiet,
+        staleTime: 1000 * 60 * 5
+    })
+
+    const diet = dietData as { id: string, name: string, meals: Meal[], assignments?: any[] }
+    const meals = diet.meals || []
+
+    const [newMealName, setNewMealName] = useState('')
+    const [isEstimatingAll, setIsEstimatingAll] = useState(false)
     const [draggedMealId, setDraggedMealId] = useState<string | null>(null)
     const [draggedItemId, setDraggedItemId] = useState<{ mealId: string, itemId: string } | null>(null)
 
-    useEffect(() => {
-        setMeals(diet.meals || [])
-    }, [diet.meals])
+    // Inline name editing
+    const [isEditingName, setIsEditingName] = useState(false)
+    const [editName, setEditName] = useState(diet.name)
+    const nameInputRef = useRef<HTMLInputElement>(null)
 
-    // Meal Reordering
+    useEffect(() => {
+        if (isEditingName) nameInputRef.current?.focus()
+    }, [isEditingName])
+
+    // --- MUTATIONS ---
+
+    const { mutate: reorderMealsMutate } = useOptimisticMutation({
+        actionName: 'update-meals-order',
+        entity: ENTITIES.MEAL,
+        entityId: diet.id,
+        queryKey,
+        mutationFn: async (variables: { mealIds: string[] }) => variables,
+        onMutate: (variables) => {
+            const previous = queryClient.getQueryData(queryKey)
+            queryClient.setQueryData(queryKey, (old: any) => {
+                const meals = [...(old?.meals || [])]
+                const sorted = variables.mealIds.map(id => meals.find(m => m.id === id)).filter(Boolean)
+                return { ...old, meals: sorted }
+            })
+            return { previous }
+        }
+    })
+
+    const { mutate: reorderItemsMutate } = useOptimisticMutation({
+        actionName: 'update-meal-items-order',
+        entity: ENTITIES.MEAL_ITEM,
+        entityId: 'reorder',
+        queryKey,
+        mutationFn: async (variables: { mealId: string, itemIds: string[] }) => variables,
+        onMutate: (variables) => {
+            const previous = queryClient.getQueryData(queryKey)
+            queryClient.setQueryData(queryKey, (old: any) => ({
+                ...old,
+                meals: (old?.meals || []).map((m: any) => {
+                    if (m.id !== variables.mealId) return m
+                    const items = [...(m.meal_items || [])]
+                    const sorted = variables.itemIds.map(id => items.find(i => i.id === id)).filter(Boolean)
+                    return { ...m, meal_items: sorted }
+                })
+            }))
+            return { previous }
+        }
+    })
+
+    const { mutate: mutateName } = useOptimisticMutation({
+        actionName: 'update-diet-meta',
+        entity: ENTITIES.DIET,
+        entityId: diet.id,
+        queryKey,
+        mutationFn: async (variables: { id: string, name: string }) => variables,
+        onMutate: (variables) => {
+            const previous = queryClient.getQueryData(queryKey)
+            queryClient.setQueryData(queryKey, (old: any) => ({ ...old, ...variables }))
+            return { previous }
+        },
+        onSuccess: () => setIsEditingName(false)
+    })
+
+    const { mutate: addMealMutate } = useOptimisticMutation({
+        actionName: 'add-meal',
+        entity: ENTITIES.DIET,
+        entityId: diet.id,
+        queryKey,
+        mutationFn: async (variables: { dietId: string, name: string }) => variables,
+        onMutate: (variables) => {
+            const previous = queryClient.getQueryData(queryKey)
+            queryClient.setQueryData(queryKey, (old: any) => ({
+                ...old,
+                meals: [...(old?.meals || []), {
+                    id: `temp-${Date.now()}`,
+                    diet_id: diet.id,
+                    name: variables.name,
+                    time_of_day: "08:00",
+                    meal_items: []
+                }]
+            }))
+            return { previous }
+        },
+        onSuccess: () => setNewMealName('')
+    })
+
+    const { mutate: addItemMutate } = useOptimisticMutation({
+        actionName: 'add-meal-item',
+        entity: ENTITIES.MEAL,
+        entityId: 'item-add',
+        queryKey,
+        mutationFn: async (variables: { mealId: string, dietId: string, foodId: string }) => variables,
+        onMutate: (variables) => {
+            const previous = queryClient.getQueryData(queryKey)
+            queryClient.setQueryData(queryKey, (old: any) => ({
+                ...old,
+                meals: (old?.meals || []).map((m: any) =>
+                    m.id === variables.mealId
+                        ? {
+                            ...m, meal_items: [...(m.meal_items || []), {
+                                id: `temp-item-${Date.now()}`,
+                                food_name: 'Novo Alimento',
+                                quantity: '100g',
+                                protein: 0, carbs: 0, fat: 0
+                            }]
+                        }
+                        : m
+                )
+            }))
+            return { previous }
+        }
+    })
+
+    const { mutate: removeMealMutate } = useOptimisticMutation({
+        actionName: 'remove-meal',
+        entity: ENTITIES.MEAL,
+        entityId: 'remove',
+        queryKey,
+        mutationFn: async (variables: { id: string, dietId: string }) => variables,
+        onMutate: (variables) => {
+            const previous = queryClient.getQueryData(queryKey)
+            queryClient.setQueryData(queryKey, (old: any) => ({
+                ...old,
+                meals: (old?.meals || []).filter((m: any) => m.id !== variables.id)
+            }))
+            return { previous }
+        }
+    })
+
+    const { mutate: removeItemMutate } = useOptimisticMutation({
+        actionName: 'remove-meal-item',
+        entity: ENTITIES.MEAL_ITEM,
+        entityId: 'remove',
+        queryKey,
+        mutationFn: async (variables: { id: string, dietId: string }) => variables,
+        onMutate: (variables) => {
+            const previous = queryClient.getQueryData(queryKey)
+            queryClient.setQueryData(queryKey, (old: any) => ({
+                ...old,
+                meals: (old?.meals || []).map((m: any) => ({
+                    ...m,
+                    meal_items: (m.meal_items || []).filter((i: any) => i.id !== variables.id)
+                }))
+            }))
+            return { previous }
+        }
+    })
+
+    // --- HANDLERS ---
+
     const handleMealDragStart = (e: React.DragEvent, id: string) => {
         setDraggedMealId(id)
         if (e.dataTransfer) e.dataTransfer.effectAllowed = 'move'
@@ -445,93 +630,53 @@ export function DietBuilder({ diet, students = [], backHref = '/dashboard/traine
     const handleMealDragOver = (e: React.DragEvent, targetId: string) => {
         e.preventDefault()
         if (!draggedMealId || draggedMealId === targetId) return
-
         const draggedIndex = meals.findIndex(m => m.id === draggedMealId)
         const targetIndex = meals.findIndex(m => m.id === targetId)
         if (draggedIndex === -1 || targetIndex === -1) return
-
         const newMeals = [...meals]
         const [removed] = newMeals.splice(draggedIndex, 1)
         newMeals.splice(targetIndex, 0, removed)
-        setMeals(newMeals)
+        queryClient.setQueryData(queryKey, (old: any) => ({ ...old, meals: newMeals }))
     }
 
-    const handleMealDragEnd = async () => {
+    function handleMealDragEnd() {
         if (!draggedMealId) return
-        const currentMeals = [...meals]
         setDraggedMealId(null)
-        setLoadingMap(prev => ({ ...prev, 'reorder-meals': true }))
-
-        const res = await updateMealsOrder(dietIdRef.current, currentMeals.map(m => m.id))
-        if (res.error) {
-            alert("Erro ao reordenar refeições")
-            setMeals(diet.meals)
-        }
-        setLoadingMap(prev => ({ ...prev, 'reorder-meals': false }))
+        reorderMealsMutate({ mealIds: meals.map(m => m.id) })
     }
 
-    // Item Reordering
     const handleItemDragStart = (e: React.DragEvent, mealId: string, itemId: string) => {
-        e.stopPropagation() // Prevent meal drag
+        e.stopPropagation()
         setDraggedItemId({ mealId, itemId })
-        if (e.dataTransfer) e.dataTransfer.effectAllowed = 'move'
     }
 
     const handleItemDragOver = (e: React.DragEvent, mealId: string, targetId: string) => {
         e.preventDefault()
         if (!draggedItemId || draggedItemId.mealId !== mealId || draggedItemId.itemId === targetId) return
-
         const mealIndex = meals.findIndex(m => m.id === mealId)
         if (mealIndex === -1) return
-
         const currentItems = meals[mealIndex].meal_items || []
         const draggedIndex = currentItems.findIndex(i => i.id === draggedItemId.itemId)
         const targetIndex = currentItems.findIndex(i => i.id === targetId)
         if (draggedIndex === -1 || targetIndex === -1) return
-
         const newMeals = [...meals]
         const newItems = [...currentItems]
         const [removed] = newItems.splice(draggedIndex, 1)
         newItems.splice(targetIndex, 0, removed)
         newMeals[mealIndex] = { ...newMeals[mealIndex], meal_items: newItems }
-        setMeals(newMeals)
+        queryClient.setQueryData(queryKey, (old: any) => ({ ...old, meals: newMeals }))
     }
 
-    const handleItemDragEnd = async (mealId: string) => {
+    function handleItemDragEnd(mealId: string) {
         if (!draggedItemId) return
-        const currentMeals = [...meals]
-        const meal = currentMeals.find(m => m.id === mealId)
+        const meal = meals.find(m => m.id === mealId)
         setDraggedItemId(null)
-
-        if (meal) {
-            setLoadingMap(prev => ({ ...prev, [`reorder-items-${mealId}`]: true }))
-            const res = await updateMealItemsOrder(mealId, (meal.meal_items || []).map(i => i.id))
-            if (res.error) {
-                alert("Erro ao reordenar itens")
-                setMeals(diet.meals)
-            }
-            setLoadingMap(prev => ({ ...prev, [`reorder-items-${mealId}`]: false }))
-        }
+        if (meal) reorderItemsMutate({ mealId, itemIds: (meal.meal_items || []).map(i => i.id) })
     }
 
-    // Inline name editing
-    const [isEditingName, setIsEditingName] = useState(false)
-    const [editName, setEditName] = useState(diet.name)
-    const [isSavingName, setIsSavingName] = useState(false)
-    const nameInputRef = useRef<HTMLInputElement>(null)
-
-    const dietIdRef = useRef(diet.id)
-
-    useEffect(() => {
-        if (isEditingName) nameInputRef.current?.focus()
-    }, [isEditingName])
-
-    async function handleSaveName() {
+    function handleSaveName() {
         if (!editName.trim()) return
-        setIsSavingName(true)
-        const res = await updateDietMeta(dietIdRef.current, editName)
-        setIsSavingName(false)
-        if (res.success) setIsEditingName(false)
+        mutateName({ id: diet.id, name: editName })
     }
 
     function handleCancelName() {
@@ -539,8 +684,7 @@ export function DietBuilder({ diet, students = [], backHref = '/dashboard/traine
         setIsEditingName(false)
     }
 
-    // Macro Calculations
-    const totals = diet.meals?.reduce((acc, meal) => {
+    const totals = meals?.reduce((acc, meal) => {
         meal.meal_items?.forEach(item => {
             acc.p += Number(item.protein) || 0
             acc.c += Number(item.carbs) || 0
@@ -550,56 +694,41 @@ export function DietBuilder({ diet, students = [], backHref = '/dashboard/traine
     }, { p: 0, c: 0, f: 0 }) || { p: 0, c: 0, f: 0 }
 
     const totalKcal = Math.round((totals.p * 4) + (totals.c * 4) + (totals.f * 9))
-    const isEstimatingAll = loadingMap['estimate-all']
+
+    function handleAddMeal() {
+        if (!newMealName) return
+        addMealMutate({ dietId: diet.id, name: newMealName })
+    }
+
+    function handleAddItem(mealId: string) {
+        addItemMutate({ mealId, dietId: diet.id, foodId: 'default' })
+    }
+
+    function handleRemoveMeal(id: string) {
+        if (!confirm('Remover esta refeição inteira?')) return
+        removeMealMutate({ id, dietId: diet.id })
+    }
+
+    function handleRemoveItem(id: string) {
+        removeItemMutate({ id, dietId: diet.id })
+    }
 
     async function handleEstimateAll() {
-        setLoadingMap(prev => ({ ...prev, 'estimate-all': true }))
-        const res = await estimateAllDietMacros(dietIdRef.current)
-        if (res.error) alert(`Erro ao calcular tudo: ${res.error}`)
-        setLoadingMap(prev => ({ ...prev, 'estimate-all': false }))
-    }
-
-    async function handleAddMeal() {
-        if (!newMealName) return
-        setLoadingMap(prev => ({ ...prev, 'add-meal': true }))
-        const res = await addMealToDiet(dietIdRef.current, newMealName, newMealTime || "08:00")
-        if (res?.error) {
-            alert(`Erro ao adicionar refeição: ${res.error}`)
-        } else {
-            setNewMealName('')
-            setNewMealTime('')
+        try {
+            setIsEstimatingAll(true)
+            toast({ title: "Calculando...", description: "A IA está analisando todos os itens da dieta. Isso pode levar alguns segundos." })
+            const res = await estimateAllDietMacros(diet.id)
+            if (res.success) {
+                toast({ title: "Concluído!", description: "Todos os macros foram calculados com sucesso." })
+                queryClient.invalidateQueries({ queryKey })
+            } else {
+                throw new Error(res.error)
+            }
+        } catch (error: any) {
+            toast({ variant: "destructive", title: "Erro", description: error.message || "Erro ao calcular macros." })
+        } finally {
+            setIsEstimatingAll(false)
         }
-        setLoadingMap(prev => ({ ...prev, 'add-meal': false }))
-    }
-
-    async function handleAddItem(mealId: string) {
-        setLoadingMap(prev => ({ ...prev, [`add-item-${mealId}`]: true }))
-        const res = await addMealItem(mealId, dietIdRef.current, {
-            food_name: 'Novo Alimento',
-            quantity: '',
-            approx_measure: '',
-            protein: 0,
-            carbs: 0,
-            fat: 0
-        })
-        if (res?.error) {
-            alert(`Erro ao adicionar item: ${res.error}`)
-        }
-        setLoadingMap(prev => ({ ...prev, [`add-item-${mealId}`]: false }))
-    }
-
-    async function handleRemoveItem(id: string) {
-        setLoadingMap(prev => ({ ...prev, [`delete-${id}`]: true }))
-        const res = await removeMealItem(id, dietIdRef.current)
-        if (res?.error) alert(`Erro ao remover item: ${res.error}`)
-    }
-
-    async function handleRemoveMeal(id: string) {
-        if (!confirm('Remover esta refeição inteira?')) return
-        setLoadingMap(prev => ({ ...prev, [`delete-meal-${id}`]: true }))
-        const res = await removeMeal(id, dietIdRef.current)
-        if (res?.error) alert(`Erro ao remover refeição: ${res.error}`)
-        setLoadingMap(prev => ({ ...prev, [`delete-meal-${id}`]: false }))
     }
 
     return (
@@ -624,14 +753,12 @@ export function DietBuilder({ diet, students = [], backHref = '/dashboard/traine
                                 <div className="flex items-center gap-2 sm:gap-3">
                                     <Button
                                         onClick={handleSaveName}
-                                        disabled={isSavingName || !editName.trim()}
                                         className="h-10 bg-orange-500 hover:bg-orange-400 text-zinc-950 font-black uppercase tracking-widest text-[10px] rounded-xl px-4 sm:px-6"
                                     >
-                                        {isSavingName ? <Loader2 className="w-3 h-3 animate-spin" /> : <><Check className="w-4 h-4 mr-2" />Salvar</>}
+                                        <Check className="w-4 h-4 mr-2" />Salvar
                                     </Button>
                                     <Button
                                         onClick={handleCancelName}
-                                        disabled={isSavingName}
                                         variant="ghost"
                                         className="h-10 text-zinc-400 hover:text-white font-black uppercase tracking-widest text-[10px]"
                                     >
@@ -642,65 +769,70 @@ export function DietBuilder({ diet, students = [], backHref = '/dashboard/traine
                         ) : (
                             <div className="space-y-4">
                                 <div
-                                    className="group flex flex-wrap items-center gap-3 sm:gap-4 cursor-pointer w-fit"
+                                    className="relative group cursor-pointer w-fit"
                                     onClick={() => setIsEditingName(true)}
                                 >
-                                    <h1 className="text-2xl sm:text-4xl font-black text-white font-sans italic uppercase tracking-tight group-hover:text-orange-400 transition-colors leading-tight break-words w-[85%]">
+                                    <h1 className="text-2xl font-black text-white font-sans italic uppercase tracking-tight group-hover:text-orange-400 transition-colors leading-tight break-words pr-8">
                                         {editName}
                                     </h1>
-                                    <button className="p-2 sm:p-2.5 rounded-xl sm:rounded-2xl text-zinc-700 hover:text-orange-400 bg-zinc-900/50 border border-zinc-800 transition-all active:scale-95 shrink-0">
-                                        <Pencil className="w-4 h-4 sm:w-5 sm:h-5" />
+                                    <button className="absolute top-0 -right-2 p-2 rounded-xl text-zinc-700 group-hover:text-orange-400 bg-zinc-900/50 border border-zinc-800 transition-all active:scale-95 shadow-lg">
+                                        <Pencil className="w-3.5 h-3.5" />
                                     </button>
                                 </div>
 
-                                {diet.assignments && diet.assignments.length > 0 ? (
-                                    <div className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-orange-500/10 border border-orange-500/20 rounded-xl sm:rounded-2xl w-fit animate-in fade-in slide-in-from-left-4 duration-500">
-                                        <div className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse shrink-0" />
-                                        <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-orange-500">
-                                            Atribuído para: <span className="text-white italic ml-1">{diet.assignments[0]?.student?.full_name || 'Aluno'}</span>
-                                        </span>
-                                    </div>
-                                ) : (
-                                    <div className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-zinc-900/50 border border-zinc-800 rounded-xl sm:rounded-2xl w-fit">
-                                        <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-zinc-500 italic">Template de Biblioteca</span>
-                                    </div>
+                                {showAssignmentBadge && (
+                                    <>
+                                        {diet.assignments && diet.assignments.length > 0 ? (
+                                            <div className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-orange-500/10 border border-orange-500/20 rounded-xl sm:rounded-2xl w-fit animate-in fade-in slide-in-from-left-4 duration-500">
+                                                <div className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse shrink-0" />
+                                                <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-orange-500">
+                                                    Atribuído para: <span className="text-white italic ml-1">{diet.assignments[0]?.student?.full_name || 'Aluno'}</span>
+                                                </span>
+                                            </div>
+                                        ) : (
+                                            <div className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-zinc-900/50 border border-zinc-800 rounded-xl sm:rounded-2xl w-fit">
+                                                <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-zinc-500 italic">Template de Biblioteca</span>
+                                            </div>
+                                        )}
+                                    </>
                                 )}
                             </div>
                         )}
                     </div>
 
                     <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
-                        <UnifiedAssignDialog
-                            itemId={diet.id}
-                            students={students}
-                            type="diet"
-                            title="Atribuir Dieta"
-                            description="Escolha um aluno e os dias da semana para este plano alimentar."
-                            colorScheme="orange"
-                            initialStudentId={diet.assignments?.[0]?.student_id}
-                            initialDays={diet.assignments?.[0]?.days_of_week}
-                            trigger={
-                                <Button className="h-[56px] sm:h-[64px] px-6 sm:px-8 bg-orange-500 hover:bg-orange-400 text-zinc-950 rounded-xl sm:rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-none flex flex-row sm:flex-col items-center justify-center gap-2 sm:gap-1 transition-all active:scale-95 italic">
-                                    <Calendar className="w-4 h-4 sm:w-5 sm:h-5" />
-                                    <span className="text-center">{diet.assignments?.length ? "Gerenciar Atribuição" : "Atribuir Dieta"}</span>
-                                </Button>
-                            }
-                        />
-
                         <Button
                             onClick={handleEstimateAll}
-                            disabled={isEstimatingAll}
-                            className="h-[56px] sm:h-[64px] px-6 bg-zinc-900 hover:bg-zinc-800 text-orange-400 border border-zinc-800 rounded-xl sm:rounded-2xl font-black uppercase tracking-widest text-[10px] flex flex-row sm:flex-col items-center justify-center gap-2 sm:gap-1 group shadow-none transition-all"
+                            disabled={isEstimatingAll || meals.length === 0}
+                            variant="outline"
+                            className="h-[56px] sm:h-[64px] px-6 sm:px-8 border-zinc-800 bg-zinc-900/50 hover:bg-zinc-800 text-orange-400 hover:text-orange-300 rounded-xl sm:rounded-2xl font-black uppercase tracking-widest text-[10px] flex flex-row sm:flex-col items-center justify-center gap-2 sm:gap-1 transition-all active:scale-95 italic text-center"
                         >
                             {isEstimatingAll ? (
                                 <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" />
                             ) : (
-                                <>
-                                    <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform" />
-                                    <span>Calcular Tudo</span>
-                                </>
+                                <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" />
                             )}
+                            <span className="text-center">{isEstimatingAll ? "Calculando..." : "Calcular Macros"}</span>
                         </Button>
+
+                        {canAssign && (
+                            <UnifiedAssignDialog
+                                itemId={diet.id}
+                                students={students}
+                                type="diet"
+                                title="Atribuir Dieta"
+                                description="Escolha um aluno e os dias da semana para este plano alimentar."
+                                colorScheme="orange"
+                                initialStudentId={diet.assignments?.[0]?.student_id}
+                                initialDays={diet.assignments?.[0]?.days_of_week}
+                                trigger={
+                                    <Button className="h-[56px] sm:h-[64px] px-6 sm:px-8 bg-orange-500 hover:bg-orange-400 text-zinc-950 rounded-xl sm:rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-none flex flex-row sm:flex-col items-center justify-center gap-2 sm:gap-1 transition-all active:scale-95 italic text-center">
+                                        <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-center" />
+                                        <span className="text-center">{diet.assignments?.length ? "Gerenciar Atribuição" : "Atribuir Dieta"}</span>
+                                    </Button>
+                                }
+                            />
+                        )}
                     </div>
                 </div>
 
@@ -781,13 +913,11 @@ export function DietBuilder({ diet, students = [], backHref = '/dashboard/traine
                                             <span className="text-blue-400/80">P: {Math.round(mealP)}g</span>
                                             <span className="text-orange-400/80">C: {Math.round(mealC)}g</span>
                                             <span className="text-orange-500/80">G: {Math.round(mealF)}g</span>
-                                            {loadingMap[`reorder-items-${meal.id}`] && <Loader2 className="w-3 h-3 animate-spin text-zinc-600" />}
                                         </div>
                                         <Button
                                             variant="ghost"
                                             size="icon"
                                             onClick={() => handleRemoveMeal(meal.id)}
-                                            disabled={loadingMap[`delete-meal-${meal.id}`]}
                                             className="text-zinc-600 hover:text-red-400 hover:bg-red-400/10 h-8 w-8"
                                         >
                                             <Trash2 className="w-4 h-4" />
@@ -824,11 +954,10 @@ export function DietBuilder({ diet, students = [], backHref = '/dashboard/traine
                                             variant="outline"
                                             size="sm"
                                             onClick={() => handleAddItem(meal.id)}
-                                            disabled={loadingMap[`add-item-${meal.id}`]}
-                                            className="w-full border-dashed border-zinc-800 bg-transparent hover:bg-zinc-900 hover:text-zinc-100 text-zinc-500 h-10 rounded-xl"
+                                            className="w-full border-dashed border-zinc-800 bg-transparent hover:bg-zinc-900 hover:text-zinc-100 text-zinc-500 h-10 rounded-xl p-4"
                                         >
-                                            {loadingMap[`add-item-${meal.id}`] ? <Loader2 className="w-3 h-3 animate-spin mr-2" /> : <PlusCircle className="w-3 h-3 mr-2" />}
-                                            Adicionar Item à Refeição
+                                            <PlusCircle className="w-3 h-3 mr-2" />
+                                            Adicionar Item
                                         </Button>
                                     </div>
                                 </CardContent>
@@ -850,10 +979,10 @@ export function DietBuilder({ diet, students = [], backHref = '/dashboard/traine
                     </div>
                     <Button
                         onClick={handleAddMeal}
-                        disabled={loadingMap['add-meal'] || !newMealName}
+                        disabled={!newMealName}
                         className="bg-white text-zinc-950 hover:bg-zinc-200 w-full md:w-auto h-11 px-8 rounded-xl font-bold shadow-lg flex items-center gap-2"
                     >
-                        {loadingMap['add-meal'] ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
+                        <Plus className="w-4 h-4" />
                         Adicionar Refeição
                     </Button>
                 </div>
@@ -863,11 +992,13 @@ export function DietBuilder({ diet, students = [], backHref = '/dashboard/traine
                     <Button
                         asChild
                         variant="ghost"
-                        className="text-zinc-500 hover:text-white hover:bg-zinc-900 gap-2 px-6 h-12 rounded-xl"
+                        className="text-zinc-500 hover:text-white hover:bg-zinc-900 gap-2 px-6 h-auto py-4 rounded-xl text-center"
                     >
                         <Link href={backHref || '/dashboard/trainer/diets'}>
-                            <ArrowLeft className="w-4 h-4" />
-                            Voltar para a Biblioteca de Dietas
+                            <ArrowLeft className="w-4 h-4 shrink-0" />
+                            <span>
+                                Voltar para a <br className="md:hidden" /> Biblioteca de Dietas
+                            </span>
                         </Link>
                     </Button>
                 </div>

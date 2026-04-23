@@ -5,9 +5,11 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { revalidatePath } from 'next/cache'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
+import { getGeminiApiKey } from './app-settings-actions'
+import { createOpenRouterClient, callAI } from '@/lib/ai-client'
 
 async function checkAdmin() {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) throw new Error('Unauthorized')
     const { data: profile } = await supabase.from('profiles').select('is_admin').eq('id', user.id).single()
@@ -329,12 +331,15 @@ export async function addStoreProduct(data: {
 
 export async function getAdminLogs() {
     const { supabase } = await checkAdmin()
-    const { data } = await supabase
-        .from('admin_logs')
-        .select('*, admin:profiles!admin_id(full_name, email)')
-        .order('created_at', { ascending: false })
-        .limit(50)
-    return data || []
+  const { data } = await supabase
+    .from('admin_logs')
+    .select('*, admin:profiles!admin_id(full_name, email)')
+    .order('created_at', { ascending: false })
+    .limit(50)
+  return (data || []).map((l: any) => ({
+    ...l,
+    admin: Array.isArray(l.admin) ? l.admin[0] : l.admin
+  }))
 }
 
 export async function getTopProductsByClicks() {
@@ -391,6 +396,11 @@ export async function getRecentStudentActivity() {
         workout: (c as any).cardio?.cardio
     }))
     return [...workoutActivities, ...cardioActivities]
+        .map((a: any) => ({
+            ...a,
+            student: Array.isArray(a.student) ? a.student[0] : a.student,
+            workout: Array.isArray(a.workout) ? a.workout[0] : a.workout
+        }))
         .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
         .slice(0, 20)
 }
@@ -402,7 +412,7 @@ const DEFAULT_PRICES: Record<string, { monthly: number; quarterly_discount: numb
 }
 
 export async function getPlanPricing() {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data } = await supabase
         .from('plan_features')
         .select('plan_tier, feature_key, limit_value')
@@ -519,7 +529,7 @@ export async function updateStoreProduct(id: string, data: any) {
 }
 
 export async function impersonateUser(targetUserId: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const cookieStore = await cookies()
     const isCurrentlyImpersonating = cookieStore.get('rt_impersonating')?.value === 'true'
     let adminId = ''
@@ -577,9 +587,9 @@ async function uploadImageFromUrl(url: string, prefix: string = 'product') {
         const contentType = response.headers.get('content-type') || 'image/jpeg'
         const ext = contentType.split('/')[1]?.split(';')[0] || 'jpg'
         const fileName = `${prefix}-${Date.now()}.${ext}`
-        const { data, error } = await supabase.storage.from('loja').upload(fileName, buffer, { contentType, cacheControl: '3600', upsert: true })
+        const { data, error } = await supabase.storage.from('store-products').upload(fileName, buffer, { contentType, cacheControl: '3600', upsert: true })
         if (error) throw error
-        const { data: { publicUrl } } = supabase.storage.from('loja').getPublicUrl(fileName)
+        const { data: { publicUrl } } = supabase.storage.from('store-products').getPublicUrl(fileName)
         return publicUrl
     } catch (e) {
         console.error('Upload error:', e)
@@ -590,23 +600,118 @@ async function uploadImageFromUrl(url: string, prefix: string = 'product') {
 export async function fetchProductFromUrl(url: string) {
     const { supabase } = await checkAdmin()
     try {
-        const response = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' } })
+        console.log('[SCRAPER] Fetching URL:', url)
+        const response = await fetch(url, { 
+            headers: { 
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+                'Accept-Language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7'
+            } 
+        })
         const html = await response.text()
+        
+        // 1. Try to extract basic meta tags as fallback
         const getMeta = (prop: string) => {
             const match = html.match(new RegExp(`<meta[^>]+property=["']${prop}["'][^>]+content=["']([^"']+)["']`, 'i')) ||
                 html.match(new RegExp(`<meta[^>]+content=["']([^"']+)["'][^>]+property=["']${prop}["']`, 'i')) ||
                 html.match(new RegExp(`<meta[^>]+name=["']${prop}["'][^>]+content=["']([^"']+)["']`, 'i'))
             return match ? match[1] : null
         }
-        const title = getMeta('og:title') || html.match(/<title>([^<]+)<\/title>/i)?.[1]
-        const description = getMeta('og:description') || getMeta('description')
-        const imageUrl = getMeta('og:image')
-        let price = null
+
+        const fallbackTitle = getMeta('og:title') || html.match(/<title>([^<]+)<\/title>/i)?.[1] || ''
+        const fallbackDescription = getMeta('og:description') || getMeta('description') || ''
+        const fallbackImage = getMeta('og:image') || ''
+        let fallbackPrice = 0
         const priceMatch = html.match(/R\$\s?([0-9.,]+)/i)
-        if (priceMatch) price = parseFloat(priceMatch[1].replace('.', '').replace(',', '.'))
-        return { name: title || '', description: description || '', image_url: imageUrl || '', official_price: price || 0, link_url: url }
+        if (priceMatch) fallbackPrice = parseFloat(priceMatch[1].replace('.', '').replace(',', '.'))
+
+        // Advanced Regex for ML Rating/Reviews if JSON-LD is hidden
+        let ratingMatch = html.match(/class=["']ui-pdp-review__rating["']>([\d.]+)<\/span>/i) || 
+                          html.match(/(\d\.\d)\s*estrela/i) || 
+                          html.match(/nota:\s*(\d\.\d)/i)
+        let fallbackRating = ratingMatch ? parseFloat(ratingMatch[1]) : 0
+        
+        let reviewMatch = html.match(/\((\d+)\)\s*(?:opin|avalia)/i) || html.match(/(\d+)\s*(?:opin|avalia)/i)
+        let fallbackReviews = reviewMatch ? parseInt(reviewMatch[1]) : 0
+
+        // 1.5 Try to extract JSON-LD for rating/reviews/better info
+        let jsonLdData: any = {}
+        const jsonLdMatch = html.match(/<script type=["']application\/ld\+json["']>([\s\S]*?)<\/script>/i)
+        if (jsonLdMatch) {
+            try {
+                const parsed = JSON.parse(jsonLdMatch[1])
+                const product = Array.isArray(parsed) ? parsed.find(i => i['@type'] === 'Product') : (parsed['@type'] === 'Product' ? parsed : null)
+                if (product) {
+                    jsonLdData = {
+                        title: product.name,
+                        image: Array.isArray(product.image) ? product.image[0] : product.image,
+                        price: product.offers?.price || product.offers?.[0]?.price,
+                        rating: product.aggregateRating?.ratingValue,
+                        reviews_count: product.aggregateRating?.reviewCount,
+                        description: product.description
+                    }
+                }
+            } catch (e) {}
+        }
+
+        let finalData: any = { 
+            title: jsonLdData.title || fallbackTitle, 
+            description: (jsonLdData.description || fallbackDescription).substring(0, 150), 
+            image: jsonLdData.image || fallbackImage, 
+            price: jsonLdData.price || fallbackPrice, 
+            rating: jsonLdData.rating || fallbackRating || 0,
+            reviews_count: jsonLdData.reviews_count || fallbackReviews || 0,
+            link_url: url 
+        }
+
+        // 2. Try IA if key is available
+        const geminiKey = await getGeminiApiKey()
+        if (geminiKey) {
+            console.log('[SCRAPER] Key found, using Gemini...')
+            try {
+                const cleanHtml = html
+                    .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '')
+                    .substring(0, 30000) 
+
+                const client = createOpenRouterClient(geminiKey)
+                const prompt = `
+                    Você é um extrator de dados de e-commerce. 
+                    Analise o HTML abaixo e retorne APENAS um JSON com os seguintes campos:
+                    {
+                        "title": "nome completo do produto",
+                        "description": "descrição curta (máximo 150 caracteres)",
+                        "image": "url da imagem principal",
+                        "price": 99.99,
+                        "rating": 4.5,
+                        "reviews_count": 120,
+                        "category": "supplement" | "accessory" | "clothing" | "equipment",
+                        "sub_category": "Whey" | "Pré-treino" | "Vitaminas" | "Outros" | ""
+                    }
+
+                    HTML:
+                    ${cleanHtml}
+                `
+                const aiData = await callAI(client, prompt)
+                finalData = { ...finalData, ...aiData }
+            } catch (aiError) {
+                console.error('[SCRAPER] Gemini failed:', aiError)
+            }
+        }
+
+        // 3. SECURE IMAGE (Download to Bucket)
+        if (finalData.image && finalData.image.startsWith('http')) {
+            console.log('[SCRAPER] Uploading image to bucket:', finalData.image)
+            const bucketUrl = await uploadImageFromUrl(finalData.image).catch(err => {
+                console.error('[SCRAPER] Bucket upload failed. Check if "store-products" bucket exists in Supabase Dashboard.', err)
+                return null
+            })
+            if (bucketUrl) finalData.image = bucketUrl
+        }
+
+        return { ...finalData, link_url: url }
     } catch (e) {
-        return { name: '', description: '', image_url: '', official_price: 0, link_url: url }
+        console.error('[SCRAPER] Fatal error:', e)
+        return { title: '', description: '', image: '', price: 0, link_url: url }
     }
 }
 

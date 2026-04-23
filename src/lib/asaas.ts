@@ -1,14 +1,16 @@
+import { getAsaasApiKey } from '@/actions/app-settings-actions'
+
 export async function fetchAsaas(endpoint: string, options: RequestInit = {}) {
-    const apiKey = process.env.ASAAS_API_KEY
+    // Priority: Database App Settings -> process.env.ASAAS_API_KEY
+    const apiKey = await getAsaasApiKey()
     const apiUrl = process.env.ASAAS_API_URL || 'https://sandbox.asaas.com/v3'
 
     console.log(`[ASAAS_DEBUG] Using URL: ${apiUrl}`)
     console.log(`[ASAAS_DEBUG] API Key present: ${!!apiKey} (len: ${apiKey?.length || 0})`)
 
     if (!apiKey) {
-        console.error('[ASAAS_ERROR] process.env.ASAAS_API_KEY is undefined!')
-        console.log('[ASAAS_DEBUG] All Env Keys:', Object.keys(process.env).filter(k => k.includes('ASAAS') || k.includes('SUPABASE')))
-        throw new Error('ASAAS_API_KEY is not set')
+        console.error('[ASAAS_ERROR] ASAAS_API_KEY is not set in DB or ENV!')
+        throw new Error('ASAAS_API_KEY is not set. Configure it in Admin -> Settings.')
     }
 
     const baseUrl = apiUrl.endsWith('/') ? apiUrl.slice(0, -1) : apiUrl

@@ -1,9 +1,12 @@
-import { createClient } from '@/lib/supabase/server'
-import { getStudentTrainer, getStudentDetails } from '@/actions/student-actions'
+import { headers } from 'next/headers'
+import { Suspense } from 'react'
+import { getStudentTrainer, getStudentDetails, getStudentProfile } from '@/actions/student-actions'
 import { getStudentAutoTrainingStatus } from '@/actions/auto-training-actions'
 import { getTrainerRanking } from '@/actions/trainer-actions'
 import { checkStudentHasProtocol } from '@/actions/ai-protocol-actions'
 import { StudentMetaPixel } from './meta-pixel'
+import { PodiumCard, RankingRow } from '@/components/feature/shared/ranking-cards'
+import { PREFETCH_REGISTRY } from '@/lib/prefetch-registry'
 
 import { WorkoutCard } from '@/components/feature/student/dashboard/workout-card'
 import { CardioCard } from '@/components/feature/student/dashboard/cardio-card'
@@ -15,374 +18,302 @@ import { PaymentWarning } from '@/components/feature/student/payment-warning'
 import { StudentDashboardModals } from '@/components/feature/student/student-dashboard-modals'
 import { AnamnesisForm } from '@/components/feature/student/anamnesis-form'
 
-import { Activity, Utensils, Dumbbell, Star, Search, Trophy, ArrowRight, Sparkles, Zap } from 'lucide-react'
+import { Activity, Utensils, Dumbbell, Star, Search, Trophy, ArrowRight, Sparkles, Zap, TrendingUp } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import Link from 'next/link'
 import { ShieldCheck } from 'lucide-react'
 import { ensureDailyTracking } from '@/actions/tracking-actions'
+import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
+import { getQueryClient } from '@/lib/get-query-client'
+import { QUERY_KEYS } from '@/lib/query-keys'
+import { getTodayWorkout, getAssignedWorkouts } from '@/actions/workout-actions'
+import { getTodayCardio, getAssignedCardios, getCardioStatus } from '@/actions/cardio-actions'
+import { getStudentDailyDiet, getAssignedDiets } from '@/actions/diet-actions'
+import { getStudentErgogenics, getTodayErgogenicLogs } from '@/actions/ergogenics-actions'
+import { getMetricsSummary } from '@/actions/metrics-actions'
+import { getActiveWorkoutSession } from '@/actions/log-actions'
 
 export default async function StudentDashboardPage() {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return null
+    // ─── OPTIMIZED IDENTITY (0ms) ──────────────────────────────────────────
+    const headerList = await headers()
+    const userId = headerList.get('x-user-id')
 
+    if (!userId) return null
 
-    // Ensure tracking is initialized for today
-    await ensureDailyTracking(user.id)
+    return (
+        <Suspense fallback={<StudentDashboardSkeleton />}>
+            <StudentDashboardContent userId={userId} />
+        </Suspense>
+    )
+}
 
-    // Fetch minimal core data for the shell
+/**
+ * ─── DATA COMPONENT (Suspended) ──────────────────────────────────────────
+ */
+async function StudentDashboardContent({ userId }: { userId: string }) {
+    // ─── PARALLEL DATA ──────────────────────────────────────────────────────
     const [trainerRel, autoTrainingStatus, details] = await Promise.all([
-        getStudentTrainer(user.id),
-        getStudentAutoTrainingStatus(user.id),
-        getStudentDetails(user.id)
+        getStudentTrainer(userId),
+        getStudentAutoTrainingStatus(userId),
+        getStudentDetails(userId)
     ])
 
+    // Fire and forget background tracking
+    ensureDailyTracking(userId).catch(console.error)
+
+    const queryClient = getQueryClient()
+
+    // Use PREFETCH_REGISTRY for consistency
+    const dashboardConfigs = PREFETCH_REGISTRY['/dashboard/student']?.(userId) || []
+    dashboardConfigs.forEach(config => {
+        queryClient.prefetchQuery({
+            queryKey: config.queryKey,
+            queryFn: config.queryFn,
+            staleTime: Infinity
+        })
+    })
+
+    // Additional specific prefetches if needed
+    queryClient.prefetchQuery({ queryKey: QUERY_KEYS.cardio.logs(userId), queryFn: () => getCardioStatus(userId) })
+
+    // ─── CASE LOGIC ──────────────────────────────────────────────────────────
     const hasAutoTraining = autoTrainingStatus?.auto_training_status === 'active' ||
         (autoTrainingStatus?.auto_training_status === 'trial' && autoTrainingStatus?.auto_training_trial_used && new Date() <= new Date(autoTrainingStatus?.auto_training_trial_end || Date.now() + 100000))
+
     const isTrialExpired = autoTrainingStatus?.auto_training_status === 'trial' && autoTrainingStatus?.auto_training_trial_used && new Date() > new Date(autoTrainingStatus?.auto_training_trial_end || Date.now() + 100000)
 
     const showAutoTrainingModal = !autoTrainingStatus?.saw_auto_training_onboarding_modal && !trainerRel
     const showAnamnesis = details?.body_fat === null || details?.body_fat === undefined
 
-    // Case: Trainer Inactive (plan_tier === 'none')
+    // ─── UI HANDLERS ─────────────────────────────────────────────────────────
+
+    // Case: Trainer Inactive
     if (trainerRel && trainerRel.trainer.plan_tier === 'none' && !hasAutoTraining) {
         return (
-            <>
+            <HydrationBoundary state={dehydrate(queryClient)}>
                 <StudentMetaPixel />
                 <div className="flex flex-col gap-section-gap animate-in fade-in duration-700">
-                <header className="space-y-8">
-                    <div className="relative group overflow-hidden p-6 sm:p-12 bg-zinc-900 border border-zinc-800 rounded-3xl shadow-2xl">
-                        <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 via-transparent to-transparent opacity-50" />
-                        <div className="relative z-10 flex flex-col md:flex-row gap-12 items-center">
-                            <div className="flex-1 space-y-6 text-center md:text-left">
-                                <div className="space-y-5">
-                                    <h2 className="text-3xl md:text-5xl font-black text-white italic uppercase tracking-tighter leading-tight">
-                                        Seu Personal <br /><span className="text-red-500">ficou Inativo</span>
-                                    </h2>
-                                    <p className="text-zinc-500 text-sm md:text-lg font-medium leading-relaxed max-w-md mx-auto md:mx-0">
-                                        Infelizmente, seu personal trainer {trainerRel.trainer.full_name} não utiliza mais a plataforma RepTrail.
-                                        Para continuar seus treinos, você pode procurar um novo personal ou ativar o Auto-Training.
-                                    </p>
-                                </div>
-                                <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-center md:justify-start">
-                                    <Link href="/buscar-personal">
-                                        <Button className="h-16 px-10 rounded-2xl bg-white hover:bg-orange-500 hover:text-zinc-950 text-zinc-950 font-black uppercase italic tracking-wide group shadow-xl transition-all active:scale-95 text-lg">
-                                            Procurar Novo Personal
-                                            <Search className="w-5 h-5 ml-2 group-hover:rotate-12 transition-transform" />
-                                        </Button>
-                                    </Link>
-                                    <Link href="/dashboard/student/plans">
-                                        <Button variant="outline" className="h-16 px-10 rounded-2xl border-orange-500/30 bg-orange-500/5 hover:bg-orange-500 hover:border-orange-500 text-orange-500 hover:text-zinc-950 font-black uppercase italic tracking-widest text-lg transition-all shadow-xl backdrop-blur-sm">
-                                            Ativar Auto-Training
-                                            <Zap className="w-5 h-5 ml-2" />
-                                        </Button>
-                                    </Link>
-                                </div>
-                            </div>
-                            <div className="hidden lg:block relative shrink-0">
-                                <div className="absolute inset-0 bg-red-500 blur-[80px] opacity-20" />
-                                <ShieldCheck className="w-48 h-48 text-zinc-800 relative z-10 opacity-50" />
-                            </div>
-                        </div>
-                    </div>
-                </header>
-            </div>
-            </>
-        )
-    }
-
-    // Case: Trial Expired
-    if (!trainerRel && isTrialExpired && !hasAutoTraining) {
-        return (
-            <>
-                <StudentMetaPixel />
-                <div className="flex flex-col gap-section-gap animate-in fade-in duration-700">
-                <header className="space-y-8">
-                    <div className="relative group overflow-hidden p-6 sm:p-12 bg-zinc-900 border border-zinc-800 rounded-3xl shadow-2xl mt-12">
-                        <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 via-transparent to-transparent opacity-50" />
-                        <div className="relative z-10 flex flex-col md:flex-row gap-12 items-center">
-                            <div className="flex-1 space-y-6 text-center md:text-left">
-                                <div className="space-y-5">
-                                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-zinc-950 rounded-full border border-emerald-500/30 mb-2">
-                                        <div className="w-2 h-2 rounded-full bg-emerald-500 animate-[pulse_2s_ease-in-out_infinite]" />
-                                        <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Plano Pro</span>
+                    <header className="space-y-8">
+                        <div className="relative group overflow-hidden p-6 sm:p-12 bg-zinc-900 border border-zinc-800 rounded-3xl shadow-2xl">
+                            <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 via-transparent to-transparent opacity-50" />
+                            <div className="relative z-10 flex flex-col md:flex-row gap-12 items-center">
+                                <div className="flex-1 space-y-6 text-center md:text-left">
+                                    <div className="space-y-5">
+                                        <h2 className="text-3xl md:text-5xl font-black text-white italic uppercase tracking-tighter leading-tight">
+                                            Seu Personal <br /><span className="text-red-500">ficou Inativo</span>
+                                        </h2>
+                                        <p className="text-zinc-500 text-sm md:text-lg font-medium leading-relaxed max-w-md mx-auto md:mx-0">
+                                            Infelizmente, seu personal trainer {trainerRel.trainer.full_name} não utiliza mais a plataforma RepTrail.
+                                            Para continuar seus treinos, você pode procurar um novo personal ou ativar o Auto-Training.
+                                        </p>
                                     </div>
-                                    <h2 className="text-3xl md:text-5xl font-black text-white italic uppercase tracking-tighter leading-tight">
-                                        Seu Teste <span className="text-zinc-500">Expirou!</span>
-                                    </h2>
-                                    <p className="text-zinc-400 text-sm md:text-lg font-medium leading-relaxed max-w-md mx-auto md:mx-0">
-                                        Os seus 7 dias gratuitos chegaram ao fim. Assine o Auto-Training Pro e não perca o seu histórico de evolução.
-                                    </p>
+                                    <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-center md:justify-start">
+                                        <Link href="/buscar-personal"><Button className="h-16 px-10 rounded-2xl bg-white text-zinc-950 font-black uppercase italic tracking-wide text-lg">Procurar Novo Personal</Button></Link>
+                                        <Link href="/dashboard/student/plans"><Button variant="outline" className="h-16 px-10 rounded-2xl text-orange-500 font-black uppercase italic tracking-widest text-lg">Ativar Auto-Training</Button></Link>
+                                    </div>
                                 </div>
-                                <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-center md:justify-start">
-                                    <Link href="/dashboard/student/plans">
-                                        <Button className="h-16 px-10 rounded-2xl bg-emerald-500 hover:bg-emerald-400 hover:text-zinc-950 text-zinc-950 font-black uppercase italic tracking-wide group shadow-xl transition-all active:scale-95 text-lg">
-                                            Assinar Agora
-                                            <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-                                        </Button>
-                                    </Link>
-                                    <Link href="/buscar-personal">
-                                        <Button variant="outline" className="h-16 px-10 rounded-2xl border-zinc-800 bg-zinc-950/50 hover:bg-zinc-800 hover:border-zinc-700 text-white font-black uppercase italic tracking-widest text-lg transition-all shadow-xl backdrop-blur-sm">
-                                            Procurar Personal
-                                        </Button>
-                                    </Link>
-                                </div>
-                            </div>
-                            <div className="hidden lg:block relative shrink-0">
-                                <div className="absolute inset-0 bg-emerald-500 blur-[80px] opacity-20" />
-                                <ShieldCheck className="w-48 h-48 text-emerald-500 relative z-10 opacity-70" />
                             </div>
                         </div>
-                    </div>
-                </header>
-            </div>
-            </>
+                    </header>
+                </div>
+            </HydrationBoundary>
         )
     }
 
-    // Case: No Trainer and No Auto-Training (Public/Newbie View)
+    // Case: No Trainer and No Auto-Training
     if (!trainerRel && !hasAutoTraining) {
         const ranking = await getTrainerRanking()
         const topTrainers = ranking.slice(0, 3)
+        const otherTrainers = ranking.slice(3, 6)
 
         return (
-            <>
+            <HydrationBoundary state={dehydrate(queryClient)}>
                 <StudentMetaPixel />
-                <div className="flex flex-col gap-section-gap animate-in fade-in duration-700 mt-12">
-                <header className="space-y-8">
-                    <div className="relative group overflow-hidden p-6 sm:p-12 bg-zinc-900 border border-zinc-800 rounded-3xl shadow-2xl">
-                        <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 via-transparent to-transparent opacity-50" />
-                        <div className="relative z-10 flex flex-col md:flex-row gap-12 items-center">
-                            <div className="flex-1 space-y-6 text-center md:text-left">
-                                <div className="space-y-2 sm:space-y-5">
-                                    <h2 className="text-3xl md:text-5xl font-black text-white italic uppercase tracking-tighter leading-tight">
+                <div className="flex flex-col gap-20 animate-in fade-in slide-in-from-bottom-4 duration-1000 mt-6">
+                    {/* Hero Section - Premium Marketplace Entry */}
+                    <header className="relative">
+                        <div className="absolute -inset-20 bg-gradient-to-br from-orange-500/20 via-orange-500/5 to-transparent blur-3xl opacity-50" />
+                        <div className="relative group overflow-hidden p-8 sm:p-16 bg-zinc-900/40 border border-zinc-800/50 rounded-[3rem] backdrop-blur-md shadow-2xl">
+                            <div className="relative z-10 flex flex-col lg:flex-row gap-12 items-center text-center lg:text-left">
+                                <div className="flex-1 space-y-8">
+                                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-500 text-[10px] font-black uppercase tracking-widest animate-pulse">
+                                        <Sparkles className="w-3.5 h-3.5" />
+                                        Plataforma Elite
+                                    </div>
+                                    <h2 className="text-4xl md:text-7xl font-black text-white italic uppercase tracking-tighter leading-[0.9]">
                                         Desbloqueie seu <br /><span className="text-orange-500">Potencial Máximo</span>
                                     </h2>
-                                    <p className="text-zinc-500 text-sm md:text-lg font-medium leading-relaxed max-w-md mx-auto md:mx-0">
-                                        Você ainda não possui um personal trainer. Conecte-se com a elite e receba treinos e dietas 100% personalizados.
+                                    <p className="text-zinc-500 text-sm md:text-xl font-medium leading-relaxed max-w-2xl mx-auto lg:mx-0">
+                                        Você ainda não possui um personal trainer. Conecte-se com a elite do treinamento físico e receba protocolos 100% personalizados.
                                     </p>
+                                    <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-center lg:justify-start">
+                                        <Link href="/buscar-personal">
+                                            <Button className="h-16 px-12 rounded-2xl bg-white hover:bg-orange-500 text-zinc-950 font-black uppercase italic tracking-wide text-lg transition-all shadow-2xl shadow-white/5 active:scale-95">
+                                                Encontrar Personal
+                                                <ArrowRight className="w-6 h-6 ml-2" />
+                                            </Button>
+                                        </Link>
+                                    </div>
                                 </div>
-                                <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-center md:justify-start">
-                                    <Link href="/buscar-personal">
-                                        <Button className="h-16 px-10 rounded-2xl bg-white hover:bg-orange-500 hover:text-zinc-950 text-zinc-950 font-black uppercase italic tracking-wide group shadow-xl transition-all active:scale-95 text-lg">
-                                            Encontrar Personal
-                                            <Search className="w-5 h-5 ml-2 group-hover:rotate-12 transition-transform" />
-                                        </Button>
-                                    </Link>
-                                    <Link href="/dashboard/student/ranking">
-                                        <Button variant="outline" className="h-16 px-10 rounded-2xl border-zinc-800 bg-zinc-950/50 hover:bg-zinc-800 hover:border-zinc-700 text-white font-black uppercase italic tracking-widest text-lg transition-all shadow-xl backdrop-blur-sm">
-                                            Ver Ranking Elite
-                                        </Button>
-                                    </Link>
+                                <div className="hidden lg:block relative shrink-0">
+                                    <div className="absolute -inset-10 bg-orange-500/20 rounded-full blur-[80px] opacity-20" />
+                                    <div className="w-80 h-80 rounded-[3rem] bg-gradient-to-br from-zinc-800 to-zinc-900 border border-zinc-700/50 relative overflow-hidden flex items-center justify-center rotate-3 group-hover:rotate-0 transition-transform duration-700">
+                                        <Zap className="w-32 h-32 text-orange-500/20" />
+                                        <div className="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-black/80 to-transparent">
+                                            <p className="text-xs font-black text-white uppercase italic tracking-widest">+500 Treinadores</p>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="hidden lg:block relative shrink-0">
-                                <div className="absolute inset-0 bg-orange-500 blur-[80px] opacity-20" />
-                                <Trophy className="w-48 h-48 text-zinc-800 relative z-10 animate-bounce transition-all duration-[3s]" />
                             </div>
                         </div>
-                    </div>
-                </header>
+                    </header>
 
-                <section className="space-y-8">
-                    <div className="flex items-center justify-between px-2">
-                        <div className="flex items-center gap-3 pb-4">
-                            <div className="w-2 h-4 bg-amber-500 rounded-full" />
-                            <h2 className="text-[10px] font-black text-white flex items-center gap-2 uppercase tracking-widest flex-wrap">
-                                <Trophy className="w-3.5 h-3.5 text-amber-500" />
-                                Elite RepTrail • Ranking Global
-                            </h2>
+                    {/* Auto-Training Promotion */}
+                    <section className="space-y-10">
+                        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 px-4">
+                            <div className="space-y-2">
+                                <h3 className="text-2xl font-black text-white italic uppercase tracking-tighter">
+                                    Treine de forma <span className="text-orange-500">Inteligente</span>
+                                </h3>
+                                <p className="text-sm font-bold text-zinc-500 uppercase tracking-widest">Sem tempo para um personal? Use o Auto-Training</p>
+                            </div>
+                            <Link href="/dashboard/student/plans">
+                                <Button variant="link" className="text-orange-500 font-black uppercase text-xs tracking-widest gap-2 group p-0 h-auto">
+                                    Ver Planos de IA
+                                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                                </Button>
+                            </Link>
                         </div>
-                        <Link href="/dashboard/student/ranking" className="text-[9px] font-black bg-zinc-800/50 hover:bg-zinc-800 text-zinc-400 hover:text-white uppercase italic tracking-widest transition-all flex items-center gap-2 px-4 py-1.5 rounded-full">
-                            Ver Todos
-                            <ArrowRight className="w-3 h-3" />
+                        
+                        <Link href="/dashboard/student/plans">
+                            <div className="relative group overflow-hidden p-8 sm:p-12 bg-gradient-to-r from-orange-500/5 to-orange-500/10 border border-orange-500/20 rounded-[3rem] shadow-2xl transition-all hover:border-orange-500/40">
+                                <div className="absolute top-0 right-0 p-12 opacity-5 translate-x-10 -translate-y-10 group-hover:translate-x-0 group-hover:translate-y-0 transition-transform duration-1000">
+                                    <Sparkles className="w-48 h-48 text-orange-500" />
+                                </div>
+                                <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-10">
+                                    <div className="space-y-4 text-center md:text-left">
+                                        <h4 className="text-2xl md:text-4xl font-black text-white italic uppercase tracking-tighter">Auto-Training com <span className="text-orange-500">RepTrail AI</span></h4>
+                                        <p className="text-zinc-500 text-sm md:text-lg max-w-xl font-medium">Protocolos gerados instantaneamente com base na sua rotina, objetivos e equipamentos disponíveis.</p>
+                                    </div>
+                                    <Button className="h-14 px-10 rounded-2xl bg-orange-500 hover:bg-orange-600 text-zinc-950 font-black uppercase italic tracking-wide text-sm whitespace-nowrap active:scale-95 transition-all">
+                                        Ativar por R$ 10,90/mês
+                                    </Button>
+                                </div>
+                            </div>
                         </Link>
-                    </div>
+                    </section>
 
-                    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                        {topTrainers.map((trainer: any, index: number) => {
-                            const CardContent = (
-                                <Card className={`group bg-zinc-900 shadow-2xl rounded-3xl border-zinc-800/80 ${trainer.trainer_code ? 'hover:border-amber-500/30' : 'opacity-70'} transition-all duration-500 p-8 space-y-6 overflow-hidden relative h-full`}>
-                                    <div className="absolute top-0 right-0 p-6 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity">
-                                        <Trophy className="w-32 h-32 text-amber-500" />
-                                    </div>
-                                    <div className="flex items-center gap-4 relative z-10">
-                                        <Avatar className="h-16 w-16 border-2 border-zinc-800 group-hover:scale-105 transition-transform">
-                                            <AvatarImage src={trainer.avatar_url} className="object-cover" />
-                                            <AvatarFallback className="bg-zinc-800 text-zinc-500 font-bold uppercase">
-                                                {trainer.full_name?.substring(0, 2) || 'TR'}
-                                            </AvatarFallback>
-                                        </Avatar>
-                                        <div className="space-y-0.5">
-                                            <h3 className="text-xl font-black text-white italic uppercase line-clamp-1 group-hover:text-amber-500 transition-colors">
-                                                {trainer.full_name}
-                                            </h3>
-                                            <div className="flex items-center gap-1.5">
-                                                <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
-                                                <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">{trainer.rating} Rating</span>
-                                            </div>
+                    {/* Top Trainers - Reusing Ranking Components */}
+                    <section className="space-y-10 pb-20">
+                        <div className="flex items-center gap-4 px-4 overflow-hidden">
+                            <div className="h-px bg-zinc-800 flex-1" />
+                            <h3 className="text-3xl font-black text-white italic uppercase tracking-tight shrink-0">
+                                Treinadores <span className="text-orange-500">Destaque</span>
+                            </h3>
+                            <div className="h-px bg-zinc-800 flex-1" />
+                        </div>
+
+                        <div className="grid gap-12 lg:grid-cols-3 px-2">
+                            {topTrainers.map((t: any, idx: number) => (
+                                <PodiumCard key={t.id} trainer={t} rank={idx + 1} />
+                            ))}
+                        </div>
+
+                        {otherTrainers.length > 0 && (
+                            <div className="space-y-6 pt-10">
+                                <div className="flex items-center gap-3 px-4">
+                                    <TrendingUp className="w-4 h-4 text-orange-500" />
+                                    <h2 className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.3em]">Outros Recomendados</h2>
+                                </div>
+
+                                <Card className="bg-zinc-900/30 border-zinc-800/50 shadow-2xl rounded-[2.5rem] overflow-hidden backdrop-blur-sm">
+                                    <CardContent className="p-0">
+                                        <div className="divide-y divide-zinc-800/30">
+                                            {otherTrainers.map((t: any, idx: number) => (
+                                                <RankingRow key={t.id} trainer={t} rank={idx + 4} />
+                                            ))}
                                         </div>
-                                    </div>
-                                    <div className="pt-6 border-t border-zinc-800/50 flex items-center justify-between relative z-10">
-                                        <div className="space-y-1">
-                                            <span className="text-[9px] font-black text-zinc-600 uppercase tracking-widest block leading-none">Foco</span>
-                                            <span className="text-xs font-black text-zinc-300 italic uppercase">{trainer.specialty || 'Alta Performance'}</span>
-                                        </div>
-                                        <div className="w-8 h-8 rounded-xl bg-zinc-950 flex items-center justify-center border border-zinc-800 text-amber-500 font-black italic text-xs">
-                                            #{index + 1}
-                                        </div>
-                                    </div>
+                                    </CardContent>
                                 </Card>
-                            )
-
-                            return trainer.trainer_code ? (
-                                <Link key={trainer.id} href={`/personal/${trainer.trainer_code.toUpperCase().trim()}`}>
-                                    {CardContent}
-                                </Link>
-                            ) : (
-                                <div key={trainer.id} className="h-full">
-                                    {CardContent}
-                                </div>
-                            )
-                        })}
-                    </div>
-                </section>
-
-                <section className="p-6 sm:p-12 bg-zinc-900 border border-zinc-800 rounded-3xl text-center space-y-6 group overflow-hidden relative">
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(249,115,22,0.05),transparent_70%)] opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
-                    <div className="relative z-10 space-y-6">
-                        <div className="w-16 h-16 bg-zinc-950 rounded-2xl flex items-center justify-center border border-zinc-800 mx-auto shadow-2xl rotate-3">
-                            <Search className="w-8 h-8 text-orange-500 -rotate-3" />
+                            </div>
+                        )}
+                        
+                        <div className="text-center pt-8">
+                            <Link href="/buscar-personal">
+                                <Button variant="outline" className="h-14 px-10 rounded-2xl border-zinc-800 bg-zinc-900/50 text-zinc-400 hover:text-white font-black uppercase italic tracking-widest text-xs">
+                                    Ver Todos os Treinadores
+                                </Button>
+                            </Link>
                         </div>
-                        <div className="space-y-2">
-                            <h3 className="text-2xl font-black text-white italic uppercase tracking-tight">O suporte que você merece</h3>
-                            <p className="text-zinc-500 text-sm font-medium max-w-sm mx-auto">
-                                Acesse mais de 400 produtos na nossa loja oficial para potencializar seus ganhos.
-                            </p>
-                        </div>
-                        <Link href="/dashboard/student/loja" className="w-full sm:w-fit mx-auto">
-                            <Button className="w-full sm:w-fit h-auto min-h-[3.5rem] py-4 px-10 rounded-2xl bg-zinc-100 hover:bg-orange-500 hover:text-zinc-950 text-zinc-950 font-black uppercase italic tracking-wide transition-all shadow-xl">
-                                Acessar Loja RepTrail
-                            </Button>
-                        </Link>
-                    </div>
-                </section>
-
-                <StudentDashboardModals userId={user.id} showModal={showAutoTrainingModal} hasTrainer={false} />
-            </div>
-            </>
+                    </section>
+                </div>
+            </HydrationBoundary>
         )
     }
 
-    // Main Case: Active Training (Personal or Auto-Training)
+    // Main Case: Active Training
     const tzNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }))
-
-    // Check if auto-training student has an active protocol
     let hasProtocol = true
     if (!trainerRel && hasAutoTraining) {
-        const protocolStatus = await checkStudentHasProtocol(user.id)
+        const protocolStatus = await checkStudentHasProtocol(userId)
         hasProtocol = protocolStatus.hasWorkout || protocolStatus.hasDiet
     }
 
     return (
-        <>
+        <HydrationBoundary state={dehydrate(queryClient)}>
             <StudentMetaPixel />
             <div className="max-w-7xl mx-auto flex flex-col gap-section-gap animate-in fade-in duration-500 ">
-            <PaymentWarning relationship={trainerRel} />
-
-            {/* Welcome Header */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-header-gap">
-                <div className="space-y-2 sm:space-y-5">
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-                        <h1 className="text-3xl font-black text-white italic uppercase tracking-tighter">
-                            Dashboard
-                        </h1>
-                    </div>
-                    <p className="text-zinc-600 font-bold uppercase tracking-widest text-[10px] flex items-center gap-2">
-                        {trainerRel ? (
-                            <>
-                                <ShieldCheck className="w-3 h-3 text-emerald-500" />
-                                Seu Personal: <span className="text-zinc-400">{trainerRel.trainer.full_name}</span>
-                            </>
-                        ) : (
-                            <>
-                                <Dumbbell className="w-3 h-3 text-orange-500" />
-                                Auto-Training Ativo
-                            </>
-                        )}
-                    </p>
-                </div>
-                <div className="flex items-center gap-4 bg-zinc-900/50 p-2 rounded-2xl border border-zinc-800/50">
-                    <div className=" py-2 bg-zinc-950 rounded-xl border border-zinc-800 px-4 w-full px-4">
+                <PaymentWarning relationship={trainerRel} />
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-header-gap">
+                    <h1 className="text-3xl font-black text-white italic uppercase tracking-tighter">Dashboard</h1>
+                    <div className="p-4 bg-zinc-950 rounded-xl border border-zinc-800">
                         <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest block">Hoje</span>
-                        <span className="text-xs font-black text-white italic uppercase">
-                            {tzNow.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' })}
-                        </span>
+                        <span className="text-xs font-black text-white italic uppercase">{tzNow.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' })}</span>
                     </div>
                 </div>
+                {showAnamnesis && <AnamnesisForm initialData={details} />}
+                {!hasProtocol && <AIProtocolEmptyState />}
+                {hasProtocol && (
+                    <div className="grid gap-section-gap lg:grid-cols-12">
+                        <div className="lg:col-span-8 flex flex-col gap-section-gap">
+                            <WorkoutCard userId={userId} />
+                            <CardioCard userId={userId} />
+                            <ErgogenicsCard userId={userId} />
+                        </div>
+                        <div className="lg:col-span-4 flex flex-col gap-section-gap">
+                            <DietCard userId={userId} hasTrainer={!!trainerRel} />
+                        </div>
+                    </div>
+                )}
+                <StudentDashboardModals userId={userId} showModal={showAutoTrainingModal} hasTrainer={!!trainerRel} />
             </div>
+        </HydrationBoundary>
+    )
+}
 
-            {showAnamnesis && (
-                <div className="animate-in fade-in slide-in-from-top-6 duration-1000">
-                    <AnamnesisForm initialData={details} />
+/**
+ * ─── SKELETON (0ms Nav Frame) ──────────────────────────────────────────
+ */
+function StudentDashboardSkeleton() {
+    return (
+        <div className="space-y-10 animate-pulse">
+            <div className="h-12 w-full bg-zinc-900 rounded-xl" />
+            <div className="flex justify-between items-end">
+                <div className="space-y-4">
+                    <div className="h-10 w-48 bg-zinc-900 rounded-xl" />
+                    <div className="h-4 w-64 bg-zinc-900 rounded-md" />
                 </div>
-            )}
-
-            {/* Empty state: auto-training student with NO protocol yet */}
-            {!hasProtocol && !trainerRel && (
-                <div className="animate-in fade-in slide-in-from-bottom-6 duration-700">
-                    <AIProtocolEmptyState />
+                <div className="h-16 w-40 bg-zinc-900 rounded-xl" />
+            </div>
+            <div className="grid grid-cols-12 gap-8">
+                <div className="col-span-8 space-y-10">
+                    <div className="h-[280px] bg-zinc-900 rounded-[2.5rem]" />
+                    <div className="h-[400px] bg-zinc-900 rounded-[2.5rem]" />
                 </div>
-            )}
-
-            {hasProtocol && (
-                <div className="grid gap-section-gap lg:grid-cols-12">
-                    {/* Async Sections */}
-                    <div className="lg:col-span-8 flex flex-col gap-section-gap">
-                        <div className="flex flex-col gap-header-gap">
-                            <div className="flex items-center justify-between px-2">
-                                <h2 className="text-[10px] font-black text-zinc-100 flex items-center gap-2 uppercase tracking-widest">
-                                    <Dumbbell className="w-4 h-4 text-emerald-500" />
-                                    Treino de Hoje
-                                </h2>
-                                <Link href="/dashboard/student/workouts" className="text-[9px] font-black bg-zinc-800/50 hover:bg-zinc-800 text-zinc-400 hover:text-white uppercase italic tracking-widest transition-all flex items-center gap-2 px-4 py-1.5 rounded-full">
-                                    Ver biblioteca
-                                    <ArrowRight className="w-3 h-3" />
-                                </Link>
-                            </div>
-                            <WorkoutCard userId={user.id} />
-                        </div>
-
-                        <div className="flex flex-col gap-header-gap">
-                            <div className="flex items-center justify-between px-2">
-                                <h2 className="text-[10px] font-black text-zinc-100 flex items-center gap-2 uppercase tracking-widest">
-                                    <Activity className="w-4 h-4 text-orange-500" />
-                                    Cardio do Dia
-                                </h2>
-                            </div>
-                            <CardioCard userId={user.id} />
-                        </div>
-
-                        <ErgogenicsCard userId={user.id} />
-                    </div>
-
-                    {/* Sidebar (Metrics & Diet) */}
-                    <div className="lg:col-span-4 flex flex-col gap-section-gap">
-                        <div className="flex flex-col gap-header-gap">
-                            <h2 className="text-[10px] font-black text-zinc-100 flex items-center gap-2 uppercase tracking-widest px-2">
-                                <Utensils className="w-4 h-4 text-emerald-500" />
-                                Sua Dieta
-                            </h2>
-                            <DietCard userId={user.id} hasTrainer={!!trainerRel} />
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            <StudentDashboardModals userId={user.id} showModal={showAutoTrainingModal} hasTrainer={!!trainerRel} />
+                <div className="col-span-4 h-[600px] bg-zinc-900 rounded-[2.5rem]" />
+            </div>
         </div>
-        </>
     )
 }

@@ -1,8 +1,10 @@
 'use client'
 
-import { useTransition } from 'react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { updateStudentWorkoutDay } from '@/actions/student-workout-schedule-actions'
+import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { QUERY_KEYS } from '@/lib/query-keys'
+import { useToast } from '@/hooks/use-toast'
+import { ENTITIES } from '@/lib/outbox-db'
 
 const dayNames = [
     { value: '0', label: 'Domingo' },
@@ -15,24 +17,50 @@ const dayNames = [
 ]
 
 export function WorkoutDaySelector({
+    userId,
     assignmentId,
     dayOfWeek,
 }: {
+    userId: string
     assignmentId: string
     dayOfWeek: number | null
 }) {
-    const [isPending, startTransition] = useTransition()
+    const { toast } = useToast()
+
+    const { mutate } = useOptimisticMutation({
+        queryKey: QUERY_KEYS.workouts.all(userId),
+        actionName: 'update-workout-day',
+        entity: ENTITIES.ASSIGNED_WORKOUT,
+        entityId: assignmentId,
+        mutationFn: async (variables) => variables, // 🔴 HARD BLOCK
+        updateFn: (oldData: any, variables: any) => {
+            const list = oldData?.data || oldData || []
+            if (!Array.isArray(list)) return oldData
+            return {
+                ...oldData,
+                data: list.map((item: any) =>
+                    item.id === assignmentId ? { ...item, day_of_week: variables.day_of_week } : item
+                )
+            }
+        },
+        onSuccess: () => {
+            toast({ title: 'Dia de treino atualizado!' })
+        },
+        onError: (err) => {
+            toast({ variant: 'destructive', title: 'Erro ao atualizar dia.', description: err.message })
+        }
+    })
 
     const value = dayOfWeek === null || dayOfWeek === undefined ? 'none' : String(dayOfWeek)
 
     return (
         <Select
             value={value}
-            disabled={isPending}
             onValueChange={(v) => {
-                startTransition(async () => {
-                    const next = v === 'none' ? null : parseInt(v)
-                    await updateStudentWorkoutDay(assignmentId, Number.isNaN(next as any) ? null : next)
+                const next = v === 'none' ? null : parseInt(v)
+                mutate({
+                    id: assignmentId,
+                    day_of_week: Number.isNaN(next as any) ? null : next
                 })
             }}
         >

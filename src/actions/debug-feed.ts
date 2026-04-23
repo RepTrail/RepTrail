@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 
 export async function debugFeedQuery() {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     // Test 1: Count total photos
     const { count: total, error: countErr } = await supabase

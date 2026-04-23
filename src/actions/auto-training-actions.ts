@@ -2,7 +2,7 @@
 
 export async function resetAutoTrainingOnboardingModal(userId: string) {
     const { createClient } = await import('@/lib/supabase/server')
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     return await supabase
         .from('profiles')
@@ -12,7 +12,7 @@ export async function resetAutoTrainingOnboardingModal(userId: string) {
 
 export async function dismissAutoTrainingForSession(userId: string) {
     const { createClient } = await import('@/lib/supabase/server')
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     return await supabase
         .from('profiles')
@@ -24,7 +24,7 @@ export async function dismissAutoTrainingForSession(userId: string) {
 
 export async function enableAutoTrainingTrialForCurrentUser() {
     const { createClient } = await import('@/lib/supabase/server')
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     const { data: { user } } = await supabase.auth.getUser()
 
@@ -76,7 +76,7 @@ export async function enableAutoTrainingTrialForCurrentUser() {
 
 export async function getAutoTrainingTrialInfoForCurrentUser() {
     const { createClient } = await import('@/lib/supabase/server')
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     const { data: { user } } = await supabase.auth.getUser()
 
@@ -99,7 +99,7 @@ export async function getAutoTrainingTrialInfoForCurrentUser() {
 
 export async function getStudentAutoTrainingStatus(userId: string) {
     const { createClient } = await import('@/lib/supabase/server')
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     const { data, error, status } = await supabase
         .from('profiles')

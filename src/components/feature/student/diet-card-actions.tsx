@@ -10,9 +10,10 @@ interface DietCardActionsProps {
     dietId: string
     userId: string
     assignedDays: number[]
+    queryKey?: import('@tanstack/react-query').QueryKey
 }
 
-export function DietCardActions({ dietId, userId, assignedDays }: DietCardActionsProps) {
+export function DietCardActions({ dietId, userId, assignedDays, queryKey }: DietCardActionsProps) {
     return (
         <div className="mt-auto pt-6 border-t border-zinc-800/50 flex items-center gap-2">
             <UnifiedAssignDialog
@@ -22,6 +23,7 @@ export function DietCardActions({ dietId, userId, assignedDays }: DietCardAction
                 fixedStudentId={userId}
                 type="diet"
                 initialDays={assignedDays}
+                queryKey={queryKey}
                 trigger={
                     <Button
                         className="flex-1 min-w-0 w-full h-9 bg-orange-500 hover:bg-orange-400 text-zinc-950 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-1.5 px-6"

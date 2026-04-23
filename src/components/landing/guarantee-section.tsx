@@ -1,5 +1,5 @@
 
-import { ShieldCheck, Calendar, RefreshCcw, CheckCircle2 } from "lucide-react";
+import { ShieldCheck, Calendar, RefreshCcw, CheckCircle2, Users } from "lucide-react";
 
 export function GuaranteeSection() {
     return (
@@ -16,13 +16,13 @@ export function GuaranteeSection() {
                         <div className="absolute inset-0 bg-emerald-500 blur-[40px] opacity-20 group-hover:opacity-40 transition-opacity duration-1000" />
                         <div className="relative w-32 h-32 md:w-48 md:h-48 rounded-full border-4 border-emerald-500/30 flex items-center justify-center bg-zinc-950 shadow-2xl">
                             <div className="flex flex-col items-center">
-                                <span className="text-4xl md:text-6xl font-black text-white italic leading-none">07</span>
-                                <span className="text-[10px] md:text-xs font-black text-emerald-500 uppercase tracking-[0.2em]">Dias</span>
+                                <span className="text-4xl md:text-6xl font-black text-white italic leading-none">05</span>
+                                <span className="text-[10px] md:text-xs font-black text-emerald-500 uppercase tracking-[0.2em]">Alunos</span>
                             </div>
 
                             {/* Orbital Icon */}
                             <div className="absolute -top-2 -right-2 w-10 h-10 md:w-14 md:h-14 rounded-full bg-emerald-500 flex items-center justify-center">
-                                <ShieldCheck className="w-5 h-5 md:w-7 md:h-7 text-zinc-950" />
+                                <Users className="w-5 h-5 md:w-7 md:h-7 text-zinc-950" />
                             </div>
                         </div>
                     </div>
@@ -31,31 +31,31 @@ export function GuaranteeSection() {
                     <div className="flex flex-col gap-6 text-left">
                         <div className="space-y-4 flex flex-col items-start">
                             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-500/20 bg-emerald-500/5 text-[10px] font-black uppercase tracking-widest text-emerald-500">
-                                <RefreshCcw className="w-3 h-3" />
-                                Risco Zero Garantido
+                                <ShieldCheck className="w-3 h-3" />
+                                Comece agora sem custos
                             </div>
                             <h2 className="text-3xl md:text-5xl font-black text-white uppercase italic tracking-tighter leading-tight text-left">
-                                Teste sem compromisso por <span className="text-emerald-500">7 dias.</span>
+                                Grátis até <span className="text-emerald-500">5 Alunos.</span>
                             </h2>
                             <p className="text-zinc-400 text-lg leading-relaxed max-w-xl text-left">
-                                Temos tanta confiança na nossa infraestrutura que oferecemos uma <span className="text-white font-bold">garantia incondicional</span>. Se em 7 dias você sentir que o RepTrail não é para você, devolvemos 100% do seu investimento. Sem perguntas.
+                                No RepTrail você começa sem pagar nada e escala junto com seu negócio. Use todas as ferramentas de gestão profissional e prescrição gratuitamente para seus primeiros <span className="text-white font-bold">5 alunos</span>. 
                             </p>
                         </div>
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
-                            <div className="flex items-center gap-3 pb-4text-zinc-300">
+                            <div className="flex items-center gap-3 text-zinc-300">
                                 <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
-                                <span className="text-sm font-bold uppercase tracking-wide italic">Cancelamento Instantâneo</span>
+                                <span className="text-sm font-bold uppercase tracking-wide italic">Ativação Instantânea</span>
                             </div>
-                            <div className="flex items-center gap-3 pb-4text-zinc-300">
+                            <div className="flex items-center gap-3 text-zinc-300">
                                 <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
-                                <span className="text-sm font-bold uppercase tracking-wide italic">Reembolso sem Burocracia</span>
+                                <span className="text-sm font-bold uppercase tracking-wide italic">Sem Cartão de Crédito</span>
                             </div>
-                            <div className="flex items-center gap-3 pb-4text-zinc-300">
+                            <div className="flex items-center gap-3 text-zinc-300">
                                 <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
                                 <span className="text-sm font-bold uppercase tracking-wide italic">Acesso Total Liberado</span>
                             </div>
-                            <div className="flex items-center gap-3 pb-4text-zinc-300">
+                            <div className="flex items-center gap-3 text-zinc-300">
                                 <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
                                 <span className="text-sm font-bold uppercase tracking-wide italic">Suporte VIP Incluso</span>
                             </div>

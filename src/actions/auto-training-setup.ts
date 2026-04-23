@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 
 export async function setupAutoTrainingForStudent(studentId: string, profileData: any) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     try {
         // 1. Mark profile with public feed permission if requested during onboarding

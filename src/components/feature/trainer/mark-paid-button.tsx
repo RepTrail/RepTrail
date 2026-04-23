@@ -1,62 +1,59 @@
 'use client'
 
-import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Check } from 'lucide-react'
 import { markPaymentAsReceived } from '@/actions/student-actions'
 import { useToast } from '@/hooks/use-toast'
+import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { QUERY_KEYS } from '@/lib/query-keys'
+import { ENTITIES } from '@/lib/outbox-db'
+
+import { Slot } from '@radix-ui/react-slot'
 
 interface MarkPaidButtonProps {
     studentId: string
     trainerId: string
+    relationshipId?: string
     className?: string
+    asChild?: boolean
+    children?: React.ReactNode
 }
 
-export function MarkPaidButton({ studentId, trainerId, className }: MarkPaidButtonProps) {
-    const [loading, setLoading] = useState(false)
+export function MarkPaidButton({ studentId, trainerId, relationshipId, className, asChild, children }: MarkPaidButtonProps) {
     const { toast } = useToast()
 
-    const handleMarkAsPaid = async () => {
-        setLoading(true)
-        try {
-            const result = await markPaymentAsReceived(studentId, trainerId)
-            if (result.success) {
-                toast({
-                    title: "Pagamento Confirmado!",
-                    description: "O status do aluno foi atualizado com sucesso.",
-                })
-            } else {
-                toast({
-                    variant: "destructive",
-                    title: "Erro ao confirmar",
-                    description: result.error,
-                })
-            }
-        } catch (error) {
+    const { mutate } = useOptimisticMutation({
+        queryKey: relationshipId ? QUERY_KEYS.trainer.studentDetail(relationshipId) : ['trainer', 'students'],
+        actionName: 'mark-payment-received',
+        entity: ENTITIES.TRAINER_STUDENT,
+        entityId: relationshipId || studentId,
+        mutationFn: () => markPaymentAsReceived(studentId, trainerId),
+        updateFn: (old: any) => {
+            if (!old) return old
+            const today = new Date().toISOString().split('T')[0]
+            return { ...old, last_payment_date: today }
+        },
+        onSuccess: () => {
             toast({
-                variant: "destructive",
-                title: "Erro inesperado",
-                description: "Tente novamente em instantes.",
+                title: "Pagamento Confirmado!",
+                description: "O status do aluno foi atualizado.",
             })
-        } finally {
-            setLoading(false)
-        }
-    }
+        },
+    })
+
+    const Comp = asChild ? Slot : Button
 
     return (
-        <Button
-            onClick={handleMarkAsPaid}
-            disabled={loading}
-            size="sm"
-            className={`bg-emerald-500 text-white hover:bg-emerald-400 font-bold rounded-lg h-8 text-[10px] uppercase tracking-widest flex items-center gap-2 ${className}`}
+        <Comp
+            onClick={() => mutate({ studentId, trainerId })}
+            className={className}
         >
-            {loading ? (
-                "Processando..."
-            ) : (
+            {children || (
                 <>
                     <Check className="w-3 h-3" /> Já recebi
                 </>
             )}
-        </Button>
+        </Comp>
     )
 }
+

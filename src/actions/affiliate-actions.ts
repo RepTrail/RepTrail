@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache'
 
 /** Login + auto-activate affiliate in a single server round-trip */
 export async function loginAndActivateAffiliate(email: string, password: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     // 1. Sign in
     const { data: { user }, error: signInError } = await supabase.auth.signInWithPassword({ email, password })
@@ -46,7 +46,7 @@ export async function loginAndActivateAffiliate(email: string, password: string)
 
 /** Full affiliate profile + stats */
 export async function getAffiliateData() {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return null
 
@@ -166,7 +166,7 @@ export async function getAffiliateData() {
 
 /** Enable affiliate for the current user & generate a token */
 export async function enableAffiliate() {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { error: 'Unauthorized' }
 
@@ -205,7 +205,7 @@ export async function enableAffiliate() {
 
 /** Request a payout */
 export async function requestPayout(amount: number, method: string, details: string) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { error: 'Unauthorized' }
 
@@ -244,7 +244,7 @@ export async function requestPayout(amount: number, method: string, details: str
 
 /** Get ALL referrals for the referrals page */
 export async function getAffiliateReferrals() {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return []
 
@@ -263,7 +263,7 @@ export async function getAffiliateReferrals() {
 
 /** Get ALL commissions and payouts for the earnings page */
 export async function getAffiliateTransactions() {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { commissions: [], payouts: [], checks: { available: 0, pending: 0, paid: 0 } }
 
@@ -307,7 +307,7 @@ export async function getAffiliateTransactions() {
 
 /** Get detailed stats for the stats page (30 days) */
 export async function getAffiliateStatsDetails() {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return null
 

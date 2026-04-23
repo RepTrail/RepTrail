@@ -45,10 +45,10 @@ export function UnifiedLibraryCard({
         const studentName = curr.student?.full_name || 'Aluno'
         if (!acc[studentName]) acc[studentName] = new Set<number>()
         
-        if (curr.day_of_week !== undefined) {
-            acc[studentName].add(curr.day_of_week)
-        } else if (curr.days_of_week) {
+        if (curr.days_of_week && Array.isArray(curr.days_of_week)) {
             curr.days_of_week.forEach((d: number) => acc[studentName].add(d))
+        } else if (curr.day_of_week !== undefined && curr.day_of_week !== null) {
+            acc[studentName].add(curr.day_of_week)
         }
         return acc
     }, {})

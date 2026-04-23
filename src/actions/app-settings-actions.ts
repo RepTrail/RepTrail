@@ -6,7 +6,7 @@ import { revalidatePath } from 'next/cache'
 
 /** Retorna beta_tester_mode via função RPC - seguro para qualquer autenticado */
 export async function getBetaTesterMode(): Promise<boolean> {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data, error } = await supabase.rpc('get_beta_tester_mode')
     if (error) return false
     return !!data
@@ -57,7 +57,7 @@ export async function getAsaasApiKey(): Promise<string | null> {
 
 /** Admin: obtém app_settings (beta_tester_mode, mascara chaves) */
 export async function getAppSettings() {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return null
 
@@ -97,7 +97,7 @@ export async function updateAppSettings(data: {
     gemini_api_key?: string | null
     asaas_api_key?: string | null
 }) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { error: 'Não autorizado' }
 

@@ -37,10 +37,20 @@ export async function middleware(request: NextRequest) {
 
     // IMPORTANT: Avoid calling getUser() if you don't need user data in middleware
     // to prevent unnecessary database hits on every request.
-    // However, since we protect /dashboard, we need it.
     const { data: { user } } = await supabase.auth.getUser()
 
-    // Protect /dashboard routes
+    if (user) {
+        requestHeaders.set('x-user-id', user.id)
+    }
+
+    // Prepare response with potentially updated headers
+    response = NextResponse.next({
+        request: {
+            headers: requestHeaders,
+        },
+    })
+
+    // Protect /dashboard routes - ONLY basic auth check for performance
     if (request.nextUrl.pathname.startsWith('/dashboard') && !user) {
         return NextResponse.redirect(new URL('/auth/login', request.url))
     }
@@ -50,81 +60,8 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL('/dashboard', request.url))
     }
 
-    // Block trainers from accessing /onboarding
-    if (request.nextUrl.pathname.startsWith('/onboarding') && user) {
-        const metaRole = user.user_metadata?.role
-        if (metaRole === 'trainer') {
-            return NextResponse.redirect(new URL('/dashboard/trainer', request.url))
-        }
-    }
-
-    // Paywall checks for Dashboard
-    if (user && request.nextUrl.pathname.startsWith('/dashboard')) {
-        const { data: profile } = await supabase
-            .from('profiles')
-            .select('role, plan_tier, elite_until, auto_training_status, auto_training_trial_end')
-            .eq('id', user.id)
-            .single()
-
-        const effectiveRole = profile?.role || user.user_metadata?.role
-        console.log(`[Middleware] Path: ${request.nextUrl.pathname}, Role: ${effectiveRole}`)
-
-        // --- TRAINER PAYWALL ---
-        if (effectiveRole === 'trainer' && request.nextUrl.pathname.startsWith('/dashboard/trainer') && !request.nextUrl.pathname.includes('/plans')) {
-            const now = new Date()
-            const isEliteTrial = profile?.plan_tier === 'elite' && !!profile?.elite_until
-            const isTrialExpired = isEliteTrial && profile?.elite_until && new Date(profile.elite_until) <= now
-            const hasPlan = !!profile?.plan_tier && profile?.plan_tier !== 'none' && !isTrialExpired
-
-            if (!hasPlan) {
-                return NextResponse.redirect(new URL('/dashboard/trainer/plans', request.url))
-            }
-        }
-
-        // --- STUDENT AUTO-TRAINING PAYWALL ---
-        if (effectiveRole === 'student' && request.nextUrl.pathname.startsWith('/dashboard/student')) {
-            const pathUrl = request.nextUrl.pathname;
-            const isProtectedAutoTrainingRoute =
-                pathUrl.startsWith('/dashboard/student/workouts') ||
-                pathUrl.startsWith('/dashboard/student/diet') ||
-                pathUrl.startsWith('/dashboard/student/cardio') ||
-                pathUrl.startsWith('/dashboard/student/ergogenics') ||
-                pathUrl.startsWith('/dashboard/student/import-pdf');
-
-            if (isProtectedAutoTrainingRoute) {
-                // Check if they have an active personal trainer
-                const { count } = await supabase
-                    .from('trainer_students')
-                    .select('*', { count: 'exact', head: true })
-                    .eq('student_id', user.id)
-                    .eq('active', true)
-
-                const hasTrainer = (count || 0) > 0;
-
-                if (!hasTrainer && !pathUrl.includes('/plans')) {
-                    const now = new Date()
-                    let activeAutoTraining = false;
-
-                    if (profile?.auto_training_status === 'active') {
-                        activeAutoTraining = true;
-                    } else if (profile?.auto_training_status === 'trial' && profile?.auto_training_trial_end) {
-                        const trialEnd = new Date(profile.auto_training_trial_end)
-                        if (now <= trialEnd) {
-                            activeAutoTraining = true;
-                        }
-                    }
-
-                    if (!activeAutoTraining) {
-                        // If no active auto training and no personal, block access.
-                        return NextResponse.redirect(new URL('/dashboard/student/plans', request.url))
-                    }
-                }
-            }
-        }
-
-        // Cross-dashboard protection is handled by individual layouts, not middleware.
-        // Relying on role here (DB or metadata) caused redirect loops when roles were mismatched.
-    }
+    // Redirect role-specific dashboard entries (Leads / Profile completeness)
+    // Detailed paywall/role logic is now handled in layouts for 0ms navigation feel.
 
     return response
 }

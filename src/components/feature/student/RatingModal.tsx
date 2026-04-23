@@ -13,6 +13,9 @@ import { Textarea } from "@/components/ui/textarea"
 import { Star, Send, Loader2 } from "lucide-react"
 import { submitTrainerReview } from '@/actions/student-actions'
 import { useToast } from '@/hooks/use-toast'
+import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { QUERY_KEYS } from '@/lib/query-keys'
+import { ENTITIES } from '@/lib/outbox-db'
 
 interface RatingModalProps {
     trainerId: string
@@ -27,10 +30,30 @@ export function RatingModal({ trainerId, trainerName, initialRating = 0, initial
     const [rating, setRating] = useState(initialRating)
     const [hover, setHover] = useState(0)
     const [comment, setComment] = useState(initialComment)
-    const [loading, setLoading] = useState(false)
     const [open, setOpen] = useState(false)
 
-    async function handleSubmit() {
+    const { mutate, isPending } = useOptimisticMutation({
+        queryKey: QUERY_KEYS.profile.detail(trainerId), // Or trainer specific key if applicable
+        actionName: 'submit-trainer-review',
+        entity: ENTITIES.USER, // Or a specific REVIEW entity if registered
+        mutationFn: async (variables) => variables, // 🔴 HARD BLOCK
+        onSuccess: () => {
+            toast({
+                title: 'Avaliação enviada!',
+                description: 'Obrigado pelo seu feedback.',
+            })
+            setOpen(false)
+        },
+        onError: (error) => {
+            toast({
+                title: 'Erro ao enviar',
+                description: error.message,
+                variant: 'destructive'
+            })
+        }
+    })
+
+    function handleSubmit() {
         if (rating === 0) {
             toast({
                 title: 'Nota obrigatória',
@@ -40,27 +63,11 @@ export function RatingModal({ trainerId, trainerName, initialRating = 0, initial
             return
         }
 
-        setLoading(true)
-        const result = await submitTrainerReview({
+        mutate({
             trainer_id: trainerId,
             rating,
             comment
         })
-
-        if (result.success) {
-            toast({
-                title: 'Avaliação enviada!',
-                description: 'Obrigado pelo seu feedback.',
-            })
-            setOpen(false)
-        } else {
-            toast({
-                title: 'Erro ao enviar',
-                description: result.error,
-                variant: 'destructive'
-            })
-        }
-        setLoading(false)
     }
 
     return (
@@ -117,10 +124,10 @@ export function RatingModal({ trainerId, trainerName, initialRating = 0, initial
 
                     <Button
                         onClick={handleSubmit}
-                        disabled={loading || rating === 0}
+                        disabled={isPending || rating === 0}
                         className="w-full h-16 rounded-2xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-black uppercase italic tracking-wide shadow-xl shadow-amber-500/20 active:scale-95 transition-all text-lg group"
                     >
-                        {loading ? (
+                        {isPending ? (
                             <Loader2 className="w-5 h-5 animate-spin mr-2" />
                         ) : (
                             <>

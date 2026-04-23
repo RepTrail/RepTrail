@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache'
 import { customAlphabet } from 'nanoid'
 
 export async function generateTrainerCode() {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) return { error: 'Unauthorized' }

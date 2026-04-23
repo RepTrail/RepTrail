@@ -22,25 +22,20 @@ import { Logo } from '@/components/ui/logo'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
+import { useQuery } from '@tanstack/react-query'
+import { QUERY_KEYS } from '@/lib/query-keys'
+
 export default function StudentStorePage() {
     const pathname = usePathname()
     const isTrainer = pathname.includes('/dashboard/trainer')
     const explorePath = isTrainer ? '/dashboard/trainer/loja/explorar' : '/dashboard/student/loja/explorar'
 
-    const [products, setProducts] = useState<any[]>([])
-    const [loading, setLoading] = useState(true)
     const [search, setSearch] = useState('')
 
-    useEffect(() => {
-        loadProducts()
-    }, [])
-
-    async function loadProducts() {
-        setLoading(true)
-        const data = await getStoreProducts()
-        setProducts(data)
-        setLoading(false)
-    }
+    const { data: products = [], isLoading: loading } = useQuery({
+        queryKey: QUERY_KEYS.store.products,
+        queryFn: getStoreProducts,
+    })
 
     const filteredProducts = products.filter(p =>
         p.name.toLowerCase().includes(search.toLowerCase()) ||

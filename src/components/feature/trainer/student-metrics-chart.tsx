@@ -1,6 +1,6 @@
-'use client'
+"use client"
 
-import { useMemo, useRef, useEffect } from 'react'
+import { useMemo, useRef, useEffect, useState } from 'react'
 import { format, differenceInDays, addDays, parseISO, isSameDay } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import {
@@ -22,6 +22,11 @@ interface StudentMetricsChartProps {
 
 export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsChartProps) {
     const scrollRef = useRef<HTMLDivElement>(null)
+    const [mounted, setMounted] = useState(false)
+
+    useEffect(() => {
+        setMounted(true)
+    }, [])
 
     // 1. Process Data
     const chartData = useMemo(() => {
@@ -165,103 +170,107 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
                 <LegendItem color="#ef4444" label="BF%" />
             </div>
 
-            <div className="h-[300px] w-full overflow-x-auto overflow-y-hidden" ref={scrollRef}>
-                <div style={{ minWidth: `${minChartWidth}px`, width: '100%', height: '100%' }}>
-                    <ResponsiveContainer width="100%" height="100%">
-                        <LineChart data={chartData} margin={{ top: 10, right: 0, left: -25, bottom: 0 }}>
-                            <CartesianGrid strokeDasharray="3 3" stroke="#27272a" vertical={false} />
-                            <XAxis
-                                dataKey="displayDate"
-                                stroke="#52525b"
-                                tick={{ fontSize: 10, fontWeight: 800, fill: '#71717a' }}
-                                tickLine={false}
-                                axisLine={false}
-                                interval="preserveStartEnd"
-                                minTickGap={30}
-                            />
+            <div className="h-[300px] w-full max-w-full overflow-x-auto overflow-y-hidden scrollbar-hide" ref={scrollRef}>
+                <div style={{ minWidth: mounted ? `${Math.max(100, chartData.length * 40)}px` : '100%', width: '100%', height: '100%' }} className="relative">
+                    {mounted ? (
+                        <ResponsiveContainer width="100%" height="100%">
+                            <LineChart data={chartData} margin={{ top: 10, right: 0, left: -25, bottom: 0 }}>
+                                <CartesianGrid strokeDasharray="3 3" stroke="#27272a" vertical={false} />
+                                <XAxis
+                                    dataKey="displayDate"
+                                    stroke="#52525b"
+                                    tick={{ fontSize: 10, fontWeight: 800, fill: '#71717a' }}
+                                    tickLine={false}
+                                    axisLine={false}
+                                    interval="preserveStartEnd"
+                                    minTickGap={30}
+                                />
 
-                            {/* Left Y Axis - Performance % */}
-                            <YAxis
-                                yAxisId="left"
-                                orientation="left"
-                                stroke="#10b981"
-                                tick={{ fontSize: 10, fontWeight: 800, fill: '#10b981' }}
-                                tickLine={false}
-                                axisLine={false}
-                                domain={[0, 100]}
-                                unit="%"
-                                width={35}
-                            />
+                                {/* Left Y Axis - Performance % */}
+                                <YAxis
+                                    yAxisId="left"
+                                    orientation="left"
+                                    stroke="#10b981"
+                                    tick={{ fontSize: 10, fontWeight: 800, fill: '#10b981' }}
+                                    tickLine={false}
+                                    axisLine={false}
+                                    domain={[0, 100]}
+                                    unit="%"
+                                    width={35}
+                                />
 
-                            {/* Right Y Axis - Weight */}
-                            <YAxis
-                                yAxisId="right"
-                                orientation="right"
-                                stroke="#eab308"
-                                tick={{ fontSize: 10, fontWeight: 800, fill: '#eab308' }}
-                                tickLine={false}
-                                axisLine={false}
-                                domain={weightDomain}
-                                unit="kg"
-                                width={35}
-                            />
+                                {/* Right Y Axis - Weight */}
+                                <YAxis
+                                    yAxisId="right"
+                                    orientation="right"
+                                    stroke="#eab308"
+                                    tick={{ fontSize: 10, fontWeight: 800, fill: '#eab308' }}
+                                    tickLine={false}
+                                    axisLine={false}
+                                    domain={weightDomain}
+                                    unit="kg"
+                                    width={35}
+                                />
 
-                            {/* Hidden Y Axis - BF (Keep it hidden but ensure it exists) */}
-                            <YAxis
-                                yAxisId="bf-axis"
-                                orientation="right"
-                                stroke="#ef4444"
-                                domain={bfDomain}
-                                unit="%"
-                                hide={true}
-                            />
+                                {/* Hidden Y Axis - BF (Keep it hidden but ensure it exists) */}
+                                <YAxis
+                                    yAxisId="bf-axis"
+                                    orientation="right"
+                                    stroke="#ef4444"
+                                    domain={bfDomain}
+                                    unit="%"
+                                    hide={true}
+                                />
 
-                            <Tooltip content={<CustomTooltip />} />
+                                <Tooltip content={<CustomTooltip />} />
 
-                            {/* Performance Line - Continuous */}
-                            <Line
-                                yAxisId="left"
-                                type="monotone"
-                                dataKey="performance"
-                                name="Performance"
-                                stroke="#10b981"
-                                strokeWidth={3}
-                                dot={false}
-                                activeDot={{ r: 4, fill: '#10b981', stroke: '#064e3b', strokeWidth: 2 }}
-                                connectNulls={true}
-                                unit="%"
-                            />
+                                {/* Performance Line - Continuous */}
+                                <Line
+                                    yAxisId="left"
+                                    type="monotone"
+                                    dataKey="performance"
+                                    name="Performance"
+                                    stroke="#10b981"
+                                    strokeWidth={3}
+                                    dot={false}
+                                    activeDot={{ r: 4, fill: '#10b981', stroke: '#064e3b', strokeWidth: 2 }}
+                                    connectNulls={true}
+                                    unit="%"
+                                />
 
-                            {/* Weight Line - Manual Points Only, Linear Interp */}
-                            <Line
-                                yAxisId="right"
-                                type="linear"
-                                dataKey="weight"
-                                name="Peso"
-                                stroke="#eab308"
-                                strokeWidth={2}
-                                dot={<CustomWeightDot />}
-                                activeDot={{ r: 6, fill: '#eab308' }}
-                                connectNulls={true}
-                                unit="kg"
-                            />
+                                {/* Weight Line - Manual Points Only, Linear Interp */}
+                                <Line
+                                    yAxisId="right"
+                                    type="linear"
+                                    dataKey="weight"
+                                    name="Peso"
+                                    stroke="#eab308"
+                                    strokeWidth={2}
+                                    dot={<CustomWeightDot />}
+                                    activeDot={{ r: 6, fill: '#eab308' }}
+                                    connectNulls={true}
+                                    unit="kg"
+                                />
 
-                            {/* BF Line - Manual Points Only, Linear Interp */}
-                            <Line
-                                yAxisId="bf-axis"
-                                type="linear"
-                                dataKey="bf"
-                                name="Gordura"
-                                stroke="#ef4444"
-                                strokeWidth={3}
-                                dot={<CustomBfDot />}
-                                activeDot={{ r: 6, fill: '#ef4444' }}
-                                connectNulls={true}
-                                unit="%"
-                            />
+                                {/* BF Line - Manual Points Only, Linear Interp */}
+                                <Line
+                                    yAxisId="bf-axis"
+                                    type="linear"
+                                    dataKey="bf"
+                                    name="Gordura"
+                                    stroke="#ef4444"
+                                    strokeWidth={3}
+                                    dot={<CustomBfDot />}
+                                    activeDot={{ r: 6, fill: '#ef4444' }}
+                                    connectNulls={true}
+                                    unit="%"
+                                />
 
-                        </LineChart>
-                    </ResponsiveContainer>
+                            </LineChart>
+                        </ResponsiveContainer>
+                    ) : (
+                        <div className="w-full h-full bg-zinc-900/10 animate-pulse rounded-3xl" />
+                    )}
                 </div>
             </div>
         </div>

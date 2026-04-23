@@ -9,6 +9,8 @@ import { usePathname } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
 import { cn } from '@/lib/utils'
 
+import { QUERY_KEYS } from '@/lib/query-keys'
+
 export function PersistentActiveSession() {
     const pathname = usePathname()
     const [dismissedSessionId, setDismissedSessionId] = useState<string | null>(null)
@@ -20,13 +22,13 @@ export function PersistentActiveSession() {
     if (!pathname.startsWith('/dashboard/student')) return null
 
     const { data: cardioSession } = useQuery({
-        queryKey: ['active-cardio-session'],
+        queryKey: QUERY_KEYS.cardio.session,
         queryFn: () => getActiveCardioSession(),
         refetchInterval: 5000
     })
 
     const { data: workoutSession } = useQuery({
-        queryKey: ['active-workout-session'],
+        queryKey: QUERY_KEYS.workouts.session,
         queryFn: () => getActiveWorkoutSession(),
         refetchInterval: 5000
     })

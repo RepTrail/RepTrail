@@ -27,6 +27,9 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { updateCardioMeta } from '@/actions/cardio-actions'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useToast } from '@/hooks/use-toast'
+import { QUERY_KEYS } from "@/lib/query-keys"
 
 interface CardioBuilderProps {
     cardio: {
@@ -40,9 +43,10 @@ interface CardioBuilderProps {
     }
     students?: any[]
     backHref?: string
+    canAssign?: boolean
 }
 
-export function CardioBuilder({ cardio, students = [], backHref = '/dashboard/trainer/cardio' }: CardioBuilderProps) {
+export function CardioBuilder({ cardio, students = [], backHref = '/dashboard/trainer/cardio', canAssign = true }: CardioBuilderProps) {
     // Inline name editing
     const [isEditingName, setIsEditingName] = useState(false)
     const [editName, setEditName] = useState(cardio.name)
@@ -58,7 +62,9 @@ export function CardioBuilder({ cardio, students = [], backHref = '/dashboard/tr
     // Duration and Intensity
     const [editDuration, setEditDuration] = useState(cardio.duration_minutes?.toString() || '30')
     const [editIntensity, setEditIntensity] = useState(cardio.suggested_intensity || 'Moderada')
-    const [isSavingMeta, setIsSavingMeta] = useState(false)
+
+    const queryClient = useQueryClient()
+    const { toast } = useToast()
 
     // Debug assignments
     useEffect(() => {
@@ -68,12 +74,30 @@ export function CardioBuilder({ cardio, students = [], backHref = '/dashboard/tr
     useEffect(() => { if (isEditingName) nameInputRef.current?.focus() }, [isEditingName])
     useEffect(() => { if (isEditingDesc) descRef.current?.focus() }, [isEditingDesc])
 
-    async function handleSaveName() {
+    const { mutate: mutateMeta, isPending: isSavingMeta } = /* ❌ OUTBOX VIOLATION */ useMutation({
+        mutationFn: async ({ duration, intensity }: { duration?: string, intensity?: string }) => {
+            return updateCardioMeta(
+                cardio.id,
+                editName,
+                editDesc,
+                parseInt(duration ?? editDuration),
+                intensity ?? editIntensity
+            )
+        },
+        onSuccess: (res) => {
+            if (res.success) {
+                setIsEditingName(false)
+                setIsEditingDesc(false)
+                queryClient.invalidateQueries({ queryKey: QUERY_KEYS.cardio.library('') })
+            } else {
+                toast({ variant: 'destructive', title: 'Erro', description: 'Não foi possível salvar o cardio.' })
+            }
+        }
+    })
+
+    function handleSaveName() {
         if (!editName.trim()) return
-        setIsSavingName(true)
-        const res = await updateCardioMeta(cardio.id, editName, editDesc, parseInt(editDuration), editIntensity)
-        setIsSavingName(false)
-        if (res.success) setIsEditingName(false)
+        mutateMeta({})
     }
 
     function handleCancelName() {
@@ -81,17 +105,12 @@ export function CardioBuilder({ cardio, students = [], backHref = '/dashboard/tr
         setIsEditingName(false)
     }
 
-    async function handleSaveDesc() {
-        setIsSavingDesc(true)
-        const res = await updateCardioMeta(cardio.id, editName, editDesc, parseInt(editDuration), editIntensity)
-        setIsSavingDesc(false)
-        if (res.success) setIsEditingDesc(false)
+    function handleSaveDesc() {
+        mutateMeta({})
     }
 
-    async function handleSaveQuickMeta(duration: string, intensity: string) {
-        setIsSavingMeta(true)
-        await updateCardioMeta(cardio.id, editName, editDesc, parseInt(duration), intensity)
-        setIsSavingMeta(false)
+    function handleSaveQuickMeta(duration: string, intensity: string) {
+        mutateMeta({ duration, intensity })
     }
 
     function handleCancelDesc() {
@@ -119,14 +138,14 @@ export function CardioBuilder({ cardio, students = [], backHref = '/dashboard/tr
                             <div className="flex items-center gap-2 pt-1">
                                 <Button
                                     onClick={handleSaveName}
-                                    disabled={isSavingName || !editName.trim()}
+                                    disabled={isSavingMeta || !editName.trim()}
                                     className="h-9  bg-orange-500 hover:bg-orange-400 text-white font-black uppercase tracking-widest text-[10px] rounded-xl transition-all shadow-lg shadow-orange-500/20 active:scale-95"
                                 >
-                                    {isSavingName ? <Loader2 className="w-3 h-3 animate-spin" /> : <><Check className="w-3 h-3 mr-1.5" />Salvar</>}
+                                    {isSavingMeta ? <Loader2 className="w-3 h-3 animate-spin" /> : <><Check className="w-3 h-3 mr-1.5" />Salvar</>}
                                 </Button>
                                 <Button
                                     onClick={handleCancelName}
-                                    disabled={isSavingName}
+                                    disabled={isSavingMeta}
                                     variant="ghost"
                                     className="h-9  bg-zinc-800/60 hover:bg-zinc-700/60 text-zinc-400 hover:text-white font-black uppercase tracking-widest text-[10px] rounded-xl transition-all border border-zinc-700/50 hover:border-zinc-600"
                                 >
@@ -136,10 +155,10 @@ export function CardioBuilder({ cardio, students = [], backHref = '/dashboard/tr
                         </div>
                     ) : (
                         <div
-                            className="group flex items-center gap-3 pb-4 cursor-pointer w-fit"
+                            className="group flex items-center gap-3 cursor-pointer w-fit"
                             onClick={() => setIsEditingName(true)}
                         >
-                            <div className="flex items-center gap-3 pb-4">
+                            <div className="flex items-center gap-3">
                                 <div className="p-2.5 bg-orange-500/10 border border-orange-500/20 rounded-2xl">
                                     <Activity className="w-5 h-5 text-orange-500" />
                                 </div>
@@ -162,24 +181,26 @@ export function CardioBuilder({ cardio, students = [], backHref = '/dashboard/tr
                     </p>
                 </div>
 
-                <div className="flex items-center gap-3 pb-4">
-                    <UnifiedAssignDialog
-                        itemId={cardio.id}
-                        students={students}
-                        type="cardio"
-                        title="Atribuir Cardio"
-                        description="Escolha um aluno e os dias da semana para este protocolo."
-                        colorScheme="emerald"
-                        initialStudentId={cardio.assignments?.[0]?.student_id}
-                        initialStudentName={cardio.assignments?.[0]?.student?.full_name}
-                        initialDays={cardio.assignments?.[0]?.days_of_week}
-                        trigger={
-                            <Button className="h-[58px] px-8 bg-orange-500 hover:bg-orange-400 text-zinc-950 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-none flex flex-row items-center justify-center gap-3 group transition-all active:scale-95 italic">
-                                <Calendar className="w-5 h-5" />
-                                <span>{cardio.assignments?.length ? "Gerenciar Atribuição" : "Atribuir"}</span>
-                            </Button>
-                        }
-                    />
+                <div className="flex items-center gap-3">
+                    {canAssign && (
+                        <UnifiedAssignDialog
+                            itemId={cardio.id}
+                            students={students}
+                            type="cardio"
+                            title="Atribuir Cardio"
+                            description="Escolha um aluno e os dias da semana para este protocolo."
+                            colorScheme="emerald"
+                            initialStudentId={cardio.assignments?.[0]?.student_id}
+                            initialStudentName={cardio.assignments?.[0]?.student?.full_name}
+                            initialDays={cardio.assignments?.[0]?.days_of_week}
+                            trigger={
+                                <Button className="h-[58px] px-8 bg-orange-500 hover:bg-orange-400 text-zinc-950 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-none flex flex-row items-center justify-center gap-3 group transition-all active:scale-95 italic text-center">
+                                    <Calendar className="w-5 h-5 text-center" />
+                                    <span className="text-center">{cardio.assignments?.length ? "Gerenciar Atribuição" : "Atribuir"}</span>
+                                </Button>
+                            }
+                        />
+                    )}
                 </div>
             </div>
 
@@ -204,14 +225,14 @@ export function CardioBuilder({ cardio, students = [], backHref = '/dashboard/tr
                         <div className="flex items-center gap-2">
                             <Button
                                 onClick={handleSaveDesc}
-                                disabled={isSavingDesc}
+                                disabled={isSavingMeta}
                                 className="h-9  bg-orange-500 hover:bg-orange-400 text-white font-black uppercase tracking-widest text-[10px] rounded-xl transition-all shadow-lg shadow-orange-500/20 active:scale-95"
                             >
-                                {isSavingDesc ? <Loader2 className="w-3 h-3 animate-spin" /> : <><Save className="w-3 h-3 mr-1.5" />Salvar</>}
+                                {isSavingMeta ? <Loader2 className="w-3 h-3 animate-spin" /> : <><Save className="w-3 h-3 mr-1.5" />Salvar</>}
                             </Button>
                             <Button
                                 onClick={handleCancelDesc}
-                                disabled={isSavingDesc}
+                                disabled={isSavingMeta}
                                 variant="ghost"
                                 className="h-9  bg-zinc-800/60 hover:bg-zinc-700/60 text-zinc-400 hover:text-white font-black uppercase tracking-widest text-[10px] rounded-xl transition-all border border-zinc-700/50 hover:border-zinc-600"
                             >
@@ -247,7 +268,7 @@ export function CardioBuilder({ cardio, students = [], backHref = '/dashboard/tr
                         <Clock className="w-4 h-4 text-orange-500" />
                         <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Duração Padrão (min)</span>
                     </div>
-                    <div className="flex items-center gap-3 pb-4">
+                    <div className="flex items-center gap-3">
                         <Input
                             type="number"
                             value={editDuration}
@@ -288,7 +309,7 @@ export function CardioBuilder({ cardio, students = [], backHref = '/dashboard/tr
                                     value={opt.value}
                                     className="rounded-xl px-3 py-2.5 font-bold focus:bg-orange-500/10 focus:text-orange-500 transition-all cursor-pointer mb-1 last:mb-0"
                                 >
-                                    <div className="flex items-center gap-3 pb-4">
+                                    <div className="flex items-center gap-3">
                                         <div className="w-2 h-2 rounded-full" style={{ backgroundColor: opt.color, boxShadow: `0 0 8px ${opt.color}66` }} />
                                         {opt.label}
                                     </div>
@@ -300,7 +321,7 @@ export function CardioBuilder({ cardio, students = [], backHref = '/dashboard/tr
             </div>
 
             {/* Template Info */}
-            <div className="bg-zinc-900/20 border border-zinc-800/30 rounded-2xl p-4 flex items-center gap-3 pb-4">
+            <div className="bg-zinc-900/20 border border-zinc-800/30 rounded-2xl p-4 flex items-center gap-3">
                 <div className="p-2 bg-orange-500/10 rounded-lg">
                     <Activity className="w-4 h-4 text-orange-500" />
                 </div>

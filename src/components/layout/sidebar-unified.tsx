@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Logo } from "@/components/ui/logo"
 import { signOutAction } from '@/actions/auth-actions'
+import { SmartLink } from "@/components/shared/smart-link"
 
 const sidebarLinkVariants = cva(
   "flex items-center gap-3 px-5 py-3.5 rounded-xl transition-all duration-300 group border-2 text-[10px] font-black uppercase tracking-[0.2em] italic",
@@ -60,6 +61,7 @@ export interface SidebarLink {
 export interface UnifiedSidebarProps extends VariantProps<typeof sidebarLinkVariants> {
   links: SidebarLink[]
   user: {
+    id: string
     name?: string | null
     email?: string | null
     avatar_url?: string | null
@@ -74,6 +76,14 @@ export interface UnifiedSidebarProps extends VariantProps<typeof sidebarLinkVari
   showSettings?: boolean
 }
 
+import { useQueryClient } from '@tanstack/react-query'
+import { QUERY_KEYS } from '@/lib/query-keys'
+import { getAssignedWorkouts } from '@/actions/workout-actions'
+import { getAssignedDiets } from '@/actions/diet-actions'
+import { getAssignedCardios } from '@/actions/cardio-actions'
+
+import { PREFETCH_REGISTRY } from "@/lib/prefetch-registry"
+
 export function UnifiedSidebar({
   links,
   user,
@@ -84,6 +94,7 @@ export function UnifiedSidebar({
   showSettings = true
 }: UnifiedSidebarProps) {
   const pathname = usePathname()
+  const queryClient = useQueryClient()
 
   const isLinkActive = (link: SidebarLink) => {
     if (link.isActive !== undefined) return link.isActive
@@ -93,9 +104,13 @@ export function UnifiedSidebar({
       : pathname === link.href || pathname.startsWith(link.href + '/')
   }
 
-  const renderLink = (link: SidebarLink) => {
+    const renderLink = (link: SidebarLink) => {
     const active = isLinkActive(link)
     const className = cn("w-full text-left", sidebarLinkVariants({ variant: brandColor }))
+    
+    // Use registry for prefetching
+    const prefetchConfigs = link.href ? (PREFETCH_REGISTRY[link.href]?.(user.id) || []) : []
+
     const content = (
       <>
         <div className={cn(sidebarIconVariants({ variant: brandColor }))}>
@@ -120,15 +135,16 @@ export function UnifiedSidebar({
     }
 
     return (
-      <Link
+      <SmartLink
         key={link.label}
         href={link.href || '#'}
-        prefetch={false}
+        prefetch={true}
+        prefetchConfigs={prefetchConfigs}
         data-active={active}
         className={className}
       >
         {content}
-      </Link>
+      </SmartLink>
     )
   }
 
@@ -170,7 +186,7 @@ export function UnifiedSidebar({
       <div className="border-t border-zinc-800 pt-6 mt-6 flex-shrink-0 flex flex-col gap-4">
         <div className="flex items-center gap-3 px-2">
           <div className={cn(
-              "relative w-10 h-10 rounded-full flex items-center justify-center font-bold border overflow-hidden",
+              "relative w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center font-bold border overflow-hidden",
               brandColor === 'emerald' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' :
               brandColor === 'orange' ? 'bg-orange-500/10 text-orange-400 border-orange-500/30' :
               brandColor === 'amber' ? 'bg-amber-500/10 text-amber-400 border-amber-500/30' :
@@ -182,6 +198,7 @@ export function UnifiedSidebar({
                 src={user.avatar_url}
                 alt={user.name || 'User'}
                 fill
+                sizes="40px"
                 className="object-cover"
               />
             ) : (

@@ -9,7 +9,7 @@ import { Dumbbell, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 
 export default async function CreateStudentWorkoutPage() {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) redirect('/auth/login')
 

@@ -52,8 +52,9 @@ export function UnifiedAdherenceChart({ history, showErgogenics = false, noCard 
     }
 
     const content = (
-        <div className={cn("space-y-6 overflow-x-auto scrollbar-hide", noCard ? "" : " pb-4 sm:px-8 sm:pb-8")}>
-            <div className="min-w-[500px] space-y-4">
+        <div className={cn("w-full space-y-6 overflow-x-auto scrollbar-hide", noCard ? "" : " pb-4 sm:px-8 sm:pb-8")}>
+            <div className="w-full min-w-[450px] sm:min-w-full space-y-4">
+
                 {rows.map(row => (
                     <div key={row.id} className="grid grid-cols-[90px_1fr] gap-4 items-center group">
                         <div className="flex items-center gap-2 text-[10px] font-black text-zinc-500 uppercase tracking-widest group-hover:text-white transition-colors">

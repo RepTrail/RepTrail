@@ -66,7 +66,7 @@ export function PodiumCard({ trainer, rank }: { trainer: TrainerRanking, rank: n
                 <div className="w-full pt-8 border-t border-zinc-900 grid grid-cols-2 gap-6">
                     <div className="space-y-1">
                         <p className="text-[9px] font-bold text-zinc-600 uppercase tracking-widest leading-none">Alunos</p>
-                        <p className="text-2xl font-black text-white italic">{trainer.studentCount}+</p>
+                        <p className="text-2xl font-black text-white italic">{trainer.studentCount}</p>
                     </div>
                     <div className="space-y-1 text-right">
                         <p className="text-[9px] font-bold text-zinc-600 uppercase tracking-widest leading-none">Impacto</p>

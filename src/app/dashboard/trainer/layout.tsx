@@ -18,7 +18,7 @@ export default async function TrainerLayout({
 }: {
     children: React.ReactNode
 }) {
-    const supabase = await createClient()
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     const {
         data: { user },
@@ -92,6 +92,7 @@ export default async function TrainerLayout({
                 brandColor="emerald"
                 logoColor="emerald"
                 user={{
+                    id: user.id,
                     name: profile?.full_name,
                     email: user.email,
                     avatar_url: profile?.avatar_url

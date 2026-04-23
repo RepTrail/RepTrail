@@ -1,6 +1,10 @@
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useState } from 'react'
+import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { useQueryClient } from '@tanstack/react-query'
+import { QUERY_KEYS } from '@/lib/query-keys'
+import { ENTITIES } from '@/lib/outbox-db'
 import { updateLoadEntry } from '@/actions/log-actions'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -21,6 +25,7 @@ interface Load {
 
 interface WorkoutLogReviewProps {
     logId: string
+    userId: string
     workoutName: string
     completedAt: string
     loads: Load[]
@@ -35,10 +40,10 @@ const setTypeConfig: Record<string, { label: string; color: string; bg: string; 
 // Fallback configuration when set_type is unknown
 const DEFAULT_SET_TYPE = { label: 'Desconhecido', color: 'text-gray-400', bg: 'bg-gray-500/10', border: 'border-gray-500/20' };
 
-export function WorkoutLogReview({ logId, workoutName, completedAt, loads }: WorkoutLogReviewProps) {
+export function WorkoutLogReview({ logId, userId, workoutName, completedAt, loads }: WorkoutLogReviewProps) {
     const { toast } = useToast()
     const router = useRouter()
-    const [isPending, startTransition] = useTransition()
+    const queryClient = useQueryClient()
 
     // Local state: map of loadId -> { weight, reps }
     const [edits, setEdits] = useState<Record<string, { weight: string; reps: string }>>(() => {
@@ -47,6 +52,13 @@ export function WorkoutLogReview({ logId, workoutName, completedAt, loads }: Wor
             init[l.id] = { weight: String(l.weight_kg), reps: String(l.reps_performed) }
         })
         return init
+    })
+
+    const { mutate: updateMutation } = useOptimisticMutation({
+        queryKey: QUERY_KEYS.workouts.logs(userId),
+        entity: ENTITIES.WORKOUT_LOG,
+        actionName: 'update-load-entry',
+        mutationFn: async () => {}, // Single-writer
     })
 
     // Group loads by exercise name
@@ -58,24 +70,16 @@ export function WorkoutLogReview({ logId, workoutName, completedAt, loads }: Wor
     }, {} as Record<string, Load[]>)
 
     const handleSaveAll = () => {
-        startTransition(async () => {
-            const updates = Object.entries(edits).map(async ([loadId, { weight, reps }]) => {
-                const w = parseFloat(weight)
-                const r = parseInt(reps)
-                if (isNaN(w) || isNaN(r)) return
-                return updateLoadEntry(loadId, w, r)
-            })
-
-            const results = await Promise.all(updates)
-            const hasError = results.some((r: any) => r?.error)
-
-            if (hasError) {
-                toast({ title: 'Erro ao salvar', description: 'Algumas alterações não foram salvas.', variant: 'destructive' })
-            } else {
-                toast({ title: 'Salvo!', description: 'Cargas e repetições atualizadas.' })
-                router.push('/dashboard/student')
-            }
+        Object.entries(edits).forEach(([loadId, { weight, reps }]) => {
+            const w = parseFloat(weight)
+            const r = parseInt(reps)
+            if (isNaN(w) || isNaN(r)) return
+            
+            updateMutation({ loadId, weightKg: w, repsPerformed: r })
         })
+
+        toast({ title: 'Salvo!', description: 'Alterações enviadas para sincronização.' })
+        router.push('/dashboard/student')
     }
 
     const date = new Date(completedAt).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' })
@@ -175,11 +179,10 @@ export function WorkoutLogReview({ logId, workoutName, completedAt, loads }: Wor
             <div className="fixed bottom-6 left-6 right-6 md:bottom-8 md:left-1/2 md:-translate-x-1/2 md:max-w-lg md:w-full z-50">
                 <Button
                     onClick={handleSaveAll}
-                    disabled={isPending}
                     className="w-full h-14 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black italic uppercase tracking-tight text-base rounded-2xl shadow-[0_8px_32px_rgba(16,185,129,0.3)] transition-all flex items-center justify-center gap-3 active:scale-[0.98] border-t border-emerald-400/20"
                 >
                     <Save className="w-5 h-5" />
-                    {isPending ? 'Salvando...' : 'Salvar Alterações'}
+                    Salvar Alterações
                 </Button>
             </div>
         </div>

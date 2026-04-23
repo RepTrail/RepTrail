@@ -14,36 +14,37 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { UserPlus, Plus, Loader2, Mail, DollarSign } from "lucide-react"
-import { createStudent } from '@/actions/trainer-actions'
+import { UserPlus, Plus, Mail, DollarSign } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
+import { useQueryClient } from '@tanstack/react-query'
+import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { ENTITIES } from '@/lib/outbox-db'
+import { QUERY_KEYS } from '@/lib/query-keys'
 
 export function AddStudentDialog() {
     const [open, setOpen] = useState(false)
-    const [loading, setLoading] = useState(false)
     const { toast } = useToast()
+    const queryClient = useQueryClient()
 
-    async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
-        event.preventDefault()
-        setLoading(true)
-        const formData = new FormData(event.currentTarget)
-
-        const result = await createStudent(null, formData)
-        setLoading(false)
-
-        if (result.success) {
-            setOpen(false)
-            toast({
-                title: "Aluno vinculado!",
-                description: "O aluno foi adicionado à sua lista com sucesso.",
-            })
-        } else {
-            toast({
-                variant: "destructive",
-                title: "Erro ao vincular",
-                description: result.message,
-            })
+    const { mutate } = useOptimisticMutation({
+        actionName: 'create-student',
+        queryKey: ['trainer'],
+        entity: ENTITIES.TRAINER_STUDENT,
+        mutationFn: async () => {}, // Single-writer: no-op
+        onMutate: () => {
+            queryClient.invalidateQueries({ queryKey: ['trainer'] })
+            toast({ title: "Aluno vinculado!", description: "O aluno foi adicionado à sua lista." })
         }
+    })
+
+    function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+        event.preventDefault()
+        const formData = new FormData(event.currentTarget)
+        const payload = Object.fromEntries(formData.entries())
+        
+        // 🚀 LOCAL-FIRST: close immediately
+        setOpen(false)
+        mutate(payload)
     }
 
     return (
@@ -104,14 +105,9 @@ export function AddStudentDialog() {
                     <DialogFooter className="pt-2">
                         <Button
                             type="submit"
-                            disabled={loading}
                             className="w-full bg-zinc-100 text-zinc-950 hover:bg-zinc-200 rounded-xl font-bold h-12 shadow-lg transition-all active:scale-95"
                         >
-                            {loading ? (
-                                <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Vinculando...</>
-                            ) : (
-                                'Finalizar Vínculo'
-                            )}
+                            Finalizar Vínculo
                         </Button>
                     </DialogFooter>
                 </form>

@@ -21,7 +21,7 @@ export function StudentErgogenicsViewWrapper({ studentId, ergogenics, initialLog
         <StudentErgogenicsView
             studentId={studentId}
             ergogenics={ergogenics}
-            initialLogs={initialLogs}
+            logs={initialLogs}
         />
     )
 }

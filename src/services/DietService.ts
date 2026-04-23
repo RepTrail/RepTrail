@@ -66,7 +66,7 @@ export class DietService {
                 const grouped = (data || []).map(diet => {
                     const studentMap: Record<string, any> = {}
                     ;(diet.assignments || []).forEach((a: any) => {
-                        if (!a.active || a.student_id === trainerId) return
+                        if (!a.active) return
                         
                         if (!studentMap[a.student_id]) {
                             studentMap[a.student_id] = { 

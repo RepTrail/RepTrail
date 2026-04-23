@@ -213,7 +213,7 @@ export default function AffiliadosCadastroPage() {
 
                             <Button
                                 type="submit"
-                                disabled={loading}
+                                /* ❌ UI BLOCKING REMOVED */ disabled={false}
                                 className="w-full h-12 bg-amber-500 hover:bg-amber-400 text-zinc-950 font-black uppercase tracking-[0.1em] rounded-xl shadow-lg shadow-amber-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] gap-2"
                             >
                                 {loading ? (

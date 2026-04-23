@@ -9,6 +9,7 @@ import {
     DialogDescription,
     DialogHeader,
     DialogTitle,
+    DialogFooter
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
@@ -22,11 +23,15 @@ import {
     MessageSquare,
     ShieldCheck,
     Zap,
-    X
+    X,
+    Loader2
 } from 'lucide-react'
 import { getTermsStatus, acceptTerms } from '@/actions/terms-actions'
 import { enableAutoTrainingTrialForCurrentUser, getAutoTrainingTrialInfoForCurrentUser } from '@/actions/auto-training-actions'
 import { useToast } from '@/hooks/use-toast'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { ENTITIES } from '@/lib/outbox-db'
 
 interface SettingsModalProps {
     hasTrainer?: boolean
@@ -34,54 +39,83 @@ interface SettingsModalProps {
 
 export function SettingsModal({ hasTrainer = false }: SettingsModalProps) {
     const [isOpen, setIsOpen] = useState(false)
-    const [allowImageDisclosure, setAllowImageDisclosure] = useState(true)
-    const [loading, setLoading] = useState(true)
-    const [updating, setUpdating] = useState(false)
-    const [trialInfo, setTrialInfo] = useState<any>(null)
+    const queryClient = useQueryClient()
     const { toast } = useToast()
     const router = useRouter()
+
+    const { data: termsStatus, isLoading: loadingTerms } = useQuery({
+        queryKey: ['terms-status'],
+        queryFn: async () => getTermsStatus(),
+        staleTime: 1000 * 60 * 5
+    })
+
+    const { data: trialData, isLoading: loadingTrial } = useQuery({
+        queryKey: ['auto-training-trial'],
+        queryFn: async () => getAutoTrainingTrialInfoForCurrentUser(),
+        enabled: isOpen && !hasTrainer,
+        staleTime: 1000 * 60 * 5
+    })
+
+    const { mutate: togglePhotos } = useOptimisticMutation({
+        actionName: 'accept-terms',
+        entity: ENTITIES.SETTINGS,
+        queryKey: ['terms-status'],
+        mutationFn: async (variables: { allowImageDisclosure: boolean }) => variables,
+        onMutate: (variables) => {
+            const previous = queryClient.getQueryData(['terms-status'])
+            queryClient.setQueryData(['terms-status'], (old: any) => ({ ...old, allowImageDisclosure: variables.allowImageDisclosure }))
+            return { previous }
+        },
+        onSuccess: () => {
+            toast({ title: "Configuração atualizada", description: "Sua preferência foi salva offline." })
+        },
+        onError: (err, variables, ctx) => {
+            queryClient.setQueryData(['terms-status'], ctx?.previous)
+            toast({ variant: "destructive", title: "Erro ao atualizar", description: "Falha ao sincronizar preferência." })
+        }
+    })
+
+    const { mutate: startTrial } = useOptimisticMutation({
+        actionName: 'enable-auto-training-trial',
+        entity: ENTITIES.SETTINGS,
+        queryKey: ['auto-training-trial'],
+        mutationFn: async () => ({}),
+        onMutate: () => {
+            const previous = queryClient.getQueryData(['auto-training-trial'])
+            queryClient.setQueryData(['auto-training-trial'], (old: any) => ({ 
+                ...old, 
+                auto_training_status: 'trial',
+                auto_training_trial_used: true,
+                auto_training_trial_end: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+            }))
+            return { previous }
+        },
+        onSuccess: () => {
+            toast({ title: "Trial Ativado!", description: "Aproveite seus 7 dias de Auto-Training." })
+            setIsOpen(false)
+            setTimeout(() => {
+                window.dispatchEvent(new CustomEvent('open-auto-training-onboarding'))
+            }, 100)
+        },
+        onError: (err, variables, ctx) => {
+            queryClient.setQueryData(['auto-training-trial'], ctx?.previous)
+            toast({ variant: "destructive", title: "Erro ao ativar trial", description: "Tente novamente em alguns instantes." })
+        }
+    })
 
     useEffect(() => {
         const handleOpen = () => setIsOpen(true)
         window.addEventListener('open-settings', handleOpen)
-
-        // Initial load of settings
-        getTermsStatus().then(status => {
-            if (status) {
-                setAllowImageDisclosure(status.allowImageDisclosure ?? true)
-            }
-            setLoading(false)
-        })
-
         return () => window.removeEventListener('open-settings', handleOpen)
     }, [])
 
-    useEffect(() => {
-        if (!isOpen || hasTrainer) return
-        getAutoTrainingTrialInfoForCurrentUser().then((info) => {
-            setTrialInfo(info)
-        })
-    }, [isOpen, hasTrainer])
+    const handleTogglePhotos = (checked: boolean) => {
+        togglePhotos({ allowImageDisclosure: checked })
+    }
 
-    const handleTogglePhotos = async (checked: boolean) => {
-        setUpdating(true)
-        setAllowImageDisclosure(checked)
-        const result = await acceptTerms(checked) // Re-using acceptTerms to update the flag
-        setUpdating(false)
-
-        if (result.success) {
-            toast({
-                title: "Configuração atualizada",
-                description: checked ? "Compartilhamento de fotos ativado." : "Compartilhamento de fotos desativado."
-            })
-        } else {
-            toast({
-                title: "Erro ao atualizar",
-                description: "Não foi possível salvar sua preferência.",
-                variant: "destructive"
-            })
-            setAllowImageDisclosure(!checked) // Revert on error
-        }
+    const enableAutoTrainingTrial = () => {
+        if (isTrialActive) return
+        startTrial({})
     }
 
     const openTerms = () => {
@@ -91,38 +125,29 @@ export function SettingsModal({ hasTrainer = false }: SettingsModalProps) {
         }, 100)
     }
 
+
     const requestDeletion = () => {
-        const message = encodeURIComponent("Olá, gostaria de solicitar a exclusão da minha conta no RepTrail.")
-        window.open(`https://wa.me/5541998364028?text=${message}`, '_blank')
-    }
-
-    const enableAutoTrainingTrial = async () => {
-        if (isTrialActive) return
-
-        setUpdating(true)
-        await enableAutoTrainingTrialForCurrentUser()
-        setUpdating(false)
-
-        // Close settings and trigger the onboarding popup directly
-        setIsOpen(false)
-        setTimeout(() => {
-            window.dispatchEvent(new CustomEvent('open-auto-training-onboarding'))
-        }, 100)
+        window.open('https://wa.me/5511999999999?text=Quero%20excluir%20minha%20conta', '_blank')
     }
 
     const now = Date.now()
+    const trialInfo = trialData
     const trialEndMs = trialInfo?.auto_training_trial_end ? new Date(trialInfo.auto_training_trial_end).getTime() : null
     const isTrialActive = trialInfo?.auto_training_status === 'trial' && !!trialEndMs && now <= trialEndMs
     const daysRemaining = isTrialActive && trialEndMs ? Math.max(0, Math.ceil((trialEndMs - now) / (1000 * 60 * 60 * 24))) : 0
     const hasUsedTrial = !!trialInfo?.auto_training_trial_used
 
-    // User can start trial if they haven't used it OR if they are still within the trial period of a previous activation
-    const canStartTrial = !hasUsedTrial || (!!trialEndMs && now <= trialEndMs)
+    const allowImageDisclosure = termsStatus?.allowImageDisclosure ?? true
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogContent showCloseButton={false} className="max-w-xl">
                 <div className="space-y-10">
+                    {(loadingTerms || loadingTrial) && (
+                        <div className="absolute inset-0 bg-black/20 backdrop-blur-[2px] z-[60] flex items-center justify-center rounded-[2rem]">
+                            <Loader2 className="w-8 h-8 text-emerald-500 animate-spin" />
+                        </div>
+                    )}
                     <DialogClose asChild>
                         <button
                             type="button"
@@ -145,7 +170,6 @@ export function SettingsModal({ hasTrainer = false }: SettingsModalProps) {
                     </DialogHeader>
 
                     <div className="space-y-6">
-                        {/* Auto-Training */}
                         {!hasTrainer && (
                             <div className="space-y-3">
                                 <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] px-1">Auto-Training</p>
@@ -153,7 +177,6 @@ export function SettingsModal({ hasTrainer = false }: SettingsModalProps) {
                                     {(isTrialActive || !hasUsedTrial) ? (
                                         <button
                                             onClick={isTrialActive ? undefined : enableAutoTrainingTrial}
-                                            disabled={updating || loading}
                                             className={`w-full flex items-center justify-between p-4 bg-zinc-900/50 rounded-2xl border border-zinc-800 transition-all group ${isTrialActive ? 'cursor-default' : 'hover:bg-zinc-900 hover:border-zinc-700 disabled:opacity-60 disabled:cursor-not-allowed'}`}
                                         >
                                             <div className="flex items-center gap-3 pb-4">
@@ -209,12 +232,11 @@ export function SettingsModal({ hasTrainer = false }: SettingsModalProps) {
                             </div>
                         )}
 
-                        {/* Notifications */}
                         <div className="space-y-3">
                             <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] px-1">Privacidade & Notificações</p>
                             <div className="space-y-2">
                                 <div className="flex items-center justify-between p-4 bg-zinc-900/50 rounded-2xl border border-zinc-800">
-                                    <div className="flex items-center gap-3 pb-4">
+                                    <div className="flex items-center gap-3">
                                         <div className="w-10 h-10 bg-emerald-500/10 rounded-xl flex items-center justify-center">
                                             <ImageIcon className="w-5 h-5 text-emerald-500" />
                                         </div>
@@ -226,7 +248,6 @@ export function SettingsModal({ hasTrainer = false }: SettingsModalProps) {
                                     <Switch
                                         checked={allowImageDisclosure}
                                         onCheckedChange={handleTogglePhotos}
-                                        disabled={updating || loading}
                                         className="data-[state=checked]:bg-emerald-500 data-[state=unchecked]:bg-zinc-800"
                                     />
                                 </div>
@@ -240,7 +261,7 @@ export function SettingsModal({ hasTrainer = false }: SettingsModalProps) {
                                     }}
                                     className="w-full flex items-center justify-between p-4 bg-zinc-900/50 rounded-2xl border border-zinc-800 hover:bg-zinc-900 transition-colors group"
                                 >
-                                    <div className="flex items-center gap-3 pb-4">
+                                    <div className="flex items-center gap-3">
                                         <div className="w-10 h-10 bg-blue-500/10 rounded-xl flex items-center justify-center">
                                             <Bell className="w-5 h-5 text-blue-500" />
                                         </div>
@@ -254,14 +275,13 @@ export function SettingsModal({ hasTrainer = false }: SettingsModalProps) {
                             </div>
                         </div>
 
-                        {/* Legal */}
                         <div className="space-y-3">
                             <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] px-1">Jurídico</p>
                             <button
                                 onClick={openTerms}
                                 className="w-full flex items-center justify-between p-4 bg-zinc-900/50 rounded-2xl border border-zinc-800 hover:bg-zinc-900 transition-colors group"
                             >
-                                <div className="flex items-center gap-3 pb-4">
+                                <div className="flex items-center gap-3">
                                     <div className="w-10 h-10 bg-amber-500/10 rounded-xl flex items-center justify-center">
                                         <FileText className="w-5 h-5 text-amber-500" />
                                     </div>
@@ -274,14 +294,13 @@ export function SettingsModal({ hasTrainer = false }: SettingsModalProps) {
                             </button>
                         </div>
 
-                        {/* Danger Zone */}
                         <div className="space-y-3 pt-2">
                             <p className="text-[10px] font-black text-red-500/50 uppercase tracking-[0.2em] px-1">Zona Crítica</p>
                             <button
                                 onClick={requestDeletion}
                                 className="w-full flex items-center justify-between p-4 bg-red-500/5 rounded-2xl border border-red-500/10 hover:bg-red-500/10 transition-colors group"
                             >
-                                <div className="flex items-center gap-3 pb-4">
+                                <div className="flex items-center gap-3">
                                     <div className="w-10 h-10 bg-red-500/10 rounded-xl flex items-center justify-center">
                                         <Trash2 className="w-5 h-5 text-red-500" />
                                     </div>
@@ -294,7 +313,6 @@ export function SettingsModal({ hasTrainer = false }: SettingsModalProps) {
                             </button>
                         </div>
                     </div>
-
                     <div className="pt-4 border-t border-zinc-900 flex justify-center">
                         <div className="flex items-center gap-2 text-zinc-600">
                             <ShieldCheck className="w-4 h-4" />
@@ -306,5 +324,4 @@ export function SettingsModal({ hasTrainer = false }: SettingsModalProps) {
         </Dialog>
     )
 }
-
 // Force rebuild 2026-03-13 00:58

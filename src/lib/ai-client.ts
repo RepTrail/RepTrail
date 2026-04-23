@@ -21,10 +21,15 @@ export function createOpenRouterClient(apiKey?: string | null) {
         throw new Error('OPENROUTER_API_KEY não configurada.')
     }
 
+    const isDirectGemini = key?.startsWith('AIza') || (key?.length === 39 || key?.length === 40);
+    const baseURL = isDirectGemini 
+        ? 'https://generativelanguage.googleapis.com/v1beta/openai/' 
+        : 'https://openrouter.ai/api/v1';
+
     const client = new OpenAI({
         apiKey: key,
-        baseURL: 'https://openrouter.ai/api/v1',
-        defaultHeaders: {
+        baseURL,
+        defaultHeaders: isDirectGemini ? {} : {
             'HTTP-Referer': process.env.NEXT_PUBLIC_SITE_URL || 'https://reptrail.app',
             'X-Title': 'RepTrail',
         },
@@ -57,8 +62,9 @@ export async function callAI<T = any>(
     const attempt = async (): Promise<T> => {
         try {
             console.log('DEBUG: Making AI request...')
+            const isDirectGemini = client.baseURL.includes('generativelanguage.googleapis.com');
             const completion = await client.chat.completions.create({
-                model,
+                model: isDirectGemini ? model.replace('google/', '') : model,
                 messages: [{ role: 'user', content: prompt }],
                 temperature: 0.1,
                 max_tokens: (arguments as any)[3] || undefined,
