@@ -208,7 +208,7 @@ class SyncEngine {
       }
 
     } catch (error: any) {
-      console.error(`❌ Failed to sync mutation ${record.id}:`, error.message);
+      console.error(`❌ Failed to sync mutation ${record.id} [Action: ${record.action}]:`, error.message);
       
       await outboxDB.updateStatus(record.id, 'pending');
       

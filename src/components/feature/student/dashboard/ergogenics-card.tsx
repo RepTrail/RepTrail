@@ -56,7 +56,7 @@ export function ErgogenicsCard({ userId }: ErgogenicsCardProps) {
 
     // ── Skeleton while loading ────────────────────────────────────────────────
     if ((isLoading || isLoadingLogs) && !rawErgogenics?.length) {
-        return <ErgogenicsCard.Skeleton />
+        return <ErgogenicsCardSkeleton />
     }
 
     // ── Day/Log Calculation ───────────────────────────────────────────────────
@@ -147,7 +147,7 @@ export function ErgogenicsCard({ userId }: ErgogenicsCardProps) {
     )
 }
 
-ErgogenicsCard.Skeleton = function ErgogenicsCardSkeleton() {
+export function ErgogenicsCardSkeleton() {
     return (
         <div className="space-y-6 animate-pulse">
             <div className="flex items-center justify-between px-2">
@@ -175,3 +175,6 @@ ErgogenicsCard.Skeleton = function ErgogenicsCardSkeleton() {
         </div>
     )
 }
+
+ErgogenicsCard.Skeleton = ErgogenicsCardSkeleton
+

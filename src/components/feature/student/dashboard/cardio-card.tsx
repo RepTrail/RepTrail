@@ -7,6 +7,7 @@ import { CardioPlayer } from '@/components/feature/student/cardio-player'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { useRealtimeSync } from '@/hooks/use-realtime-sync'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { outboxDB } from '@/lib/outbox-db'
 
 interface CardioCardProps {
     userId: string
@@ -34,14 +35,28 @@ export function CardioCard({ userId }: CardioCardProps) {
 
     const { data: cardioLogs, isLoading: isLoadingLogs } = useQuery({
         queryKey: QUERY_KEYS.cardio.logs(userId),
-        queryFn: () => getCardioStatus(userId),
+        queryFn: async () => {
+            const logs = await getCardioStatus(userId)
+            const pending = await outboxDB.getPending()
+            
+            // Merge pending completions from Outbox
+            const pendingCompletions = pending
+                .filter(p => p.action === 'finish-cardio-session' && p.payload.status === 'completed')
+                .map(p => ({
+                    assigned_cardio_id: p.payload.assignmentId,
+                    status: 'completed',
+                    _optimistic: true
+                }))
+
+            return [...(logs || []), ...pendingCompletions]
+        },
         staleTime: 1000 * 60 * 5,
         refetchOnMount: false,
     })
 
     // Skeleton Fallback: Only if loading AND no cache available
     if ((isLoading || isLoadingLogs) && (!cardios || cardios.length === 0)) {
-        return <CardioPlayer.Skeleton />
+        return <CardioCardSkeleton />
     }
 
     if (!cardios || cardios.length === 0) {
@@ -75,6 +90,8 @@ export function CardioCard({ userId }: CardioCardProps) {
     )
 }
 
-CardioCard.Skeleton = function CardioCardSkeleton() {
+export function CardioCardSkeleton() {
     return <CardioPlayer.Skeleton />
 }
+
+CardioCard.Skeleton = CardioCardSkeleton

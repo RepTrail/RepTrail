@@ -29,7 +29,7 @@ export default async function LandingPage() {
   let isAffiliate = false
 
   if (user) {
-    const { data: userData } = await supabase.from('users').select('role').eq('id', user.id).single()
+    const { data: userData } = await supabase.from('profiles').select('role').eq('id', user.id).maybeSingle()
     role = userData?.role
 
     const { count } = await supabase.from('affiliates').select('*', { count: 'exact', head: true }).eq('user_id', user.id)

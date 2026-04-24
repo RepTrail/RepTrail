@@ -339,7 +339,7 @@ const MealRow = memo(({ meal, isOpen, onToggleAccordion, onToggleItem, onToggleG
 })
 MealRow.displayName = 'MealRow'
 
-DietAdherence.Skeleton = function DietAdherenceSkeleton() {
+export function DietAdherenceSkeleton() {
     return (
         <Card className="bg-zinc-900 border-zinc-800 shadow-2xl rounded-3xl overflow-hidden border-t-zinc-700/10 animate-pulse">
             <CardContent className="p-6 space-y-8">
@@ -387,3 +387,6 @@ DietAdherence.Skeleton = function DietAdherenceSkeleton() {
         </Card>
     )
 }
+
+DietAdherence.Skeleton = DietAdherenceSkeleton
+

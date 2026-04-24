@@ -24,7 +24,7 @@ import {
 } from '@/actions/cardio-actions'
 import { useToast } from '@/hooks/use-toast'
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
-import { ENTITIES } from '@/lib/outbox-db'
+import { ENTITIES, outboxDB } from '@/lib/outbox-db'
 import {
     Dialog,
     DialogContent,
@@ -54,7 +54,15 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
     // Fetch active session via TanStack Query for Local-First reconciliation
     const { data: activeSession, isLoading: isLoadingSession } = useQuery({
         queryKey: QUERY_KEYS.cardio.session,
-        queryFn: () => getActiveCardioSession(),
+        queryFn: async () => {
+            // LAYER 1: Check Outbox for pending finish
+            const pending = await outboxDB.getPending()
+            const isFinishing = pending.some(p => p.action === 'finish-cardio-session' && p.payload.assignmentId === assignment.id)
+            if (isFinishing) return null
+
+            // LAYER 2: Fetch from server
+            return getActiveCardioSession()
+        },
         enabled: !isCompleted,
         staleTime: 1000 * 30 // 30s stale time
     })
@@ -308,9 +316,11 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
             
             finishMutation.mutate({
                 logId: cachedLogId,
+                assignmentId: assignment.id,
                 feedback: undefined,
                 intensity: undefined,
-                percentage
+                percentage,
+                status: 'completed'
             })
 
             setStatus('idle')
@@ -371,7 +381,7 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
         )
     }
 
-    if (isLoadingSession) return <CardioPlayer.Skeleton />
+    if (isLoadingSession) return <CardioPlayerSkeleton />
 
     return (
         <Card className="bg-zinc-900/40 border-zinc-800/50 shadow-2xl rounded-3xl overflow-hidden backdrop-blur-sm border-t-zinc-700/10">
@@ -390,7 +400,7 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
                         </div>
                     </div>
                     {status !== 'idle' && (
-                        <div className="self-start sm:self-center flex items-center gap-2  py-1.5 bg-orange-500/10 border border-orange-500/20 rounded-full animate-pulse shadow-[0_0_20px_rgba(249,115,22,0.1)]">
+                        <div className="self-start sm:self-center flex items-center gap-2 px-4 py-1.5 bg-orange-500/10 border border-orange-500/20 rounded-full animate-pulse shadow-[0_0_20px_rgba(249,115,22,0.1)]">
                             <div className="w-2 h-2 rounded-full bg-orange-500" />
                             <span className="text-[10px] font-black text-orange-500 uppercase tracking-widest italic">Sessão Ativa</span>
                         </div>
@@ -452,7 +462,7 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
 
                 <Dialog open={showStopConfirm} onOpenChange={setShowStopConfirm}>
                     <DialogContent className="bg-zinc-950 border-zinc-900 rounded-[2.5rem] p-10">
-                        <DialogHeader className="space-y-4">
+                        <DialogHeader className="space-y-4 sm:text-center">
                             <div className="w-16 h-16 bg-orange-500/10 rounded-full flex items-center justify-center border border-orange-500/20 mx-auto">
                                 <Activity className="w-8 h-8 text-orange-500" />
                             </div>
@@ -465,7 +475,7 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
                                     : "Parabéns por completar o objetivo! Deseja registrar a sessão?"}
                             </DialogDescription>
                         </DialogHeader>
-                        <DialogFooter className="flex flex-col gap-3 mt-4">
+                        <DialogFooter className="flex flex-col sm:flex-col gap-3 mt-4">
                             <Button 
                                 onClick={executeFinish}
                                 className="h-14 bg-white hover:bg-zinc-200 text-zinc-950 font-black italic uppercase tracking-widest rounded-2xl shadow-xl active:scale-95 transition-all text-sm w-full"
@@ -487,7 +497,7 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
     )
 }
 
-CardioPlayer.Skeleton = function CardioPlayerSkeleton() {
+export function CardioPlayerSkeleton() {
     return (
         <Card className="bg-zinc-900/40 border-zinc-800/50 shadow-2xl rounded-3xl overflow-hidden backdrop-blur-sm animate-pulse border-t-zinc-700/10">
             <CardContent className="p-6 space-y-8">
@@ -530,3 +540,6 @@ CardioPlayer.Skeleton = function CardioPlayerSkeleton() {
         </Card>
     )
 }
+
+CardioPlayer.Skeleton = CardioPlayerSkeleton
+

@@ -24,7 +24,7 @@ export default async function StudentLandingPage() {
   let role = null
 
   if (user) {
-    const { data: userData } = await supabase.from('users').select('role').eq('id', user.id).single()
+    const { data: userData } = await supabase.from('profiles').select('role').eq('id', user.id).maybeSingle()
     role = userData?.role
   }
 

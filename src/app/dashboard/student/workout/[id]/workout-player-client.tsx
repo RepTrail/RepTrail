@@ -35,7 +35,7 @@ export default function WorkoutPlayerClient({
     })
 
     const { data: activeSession, isLoading: activeLoading } = useQuery({
-        queryKey: QUERY_KEYS.student.activeSession(userId),
+        queryKey: QUERY_KEYS.workouts.session,
         queryFn: () => getActiveWorkoutSession(),
         enabled: !!userId
     })

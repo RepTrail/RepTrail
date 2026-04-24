@@ -35,7 +35,7 @@ export default async function WorkoutPlayerPage({ params }: { params: Promise<{ 
             queryFn: () => getWorkoutStatus(userId, workoutId)
         }),
         queryClient.prefetchQuery({
-            queryKey: QUERY_KEYS.student.activeSession(userId),
+            queryKey: QUERY_KEYS.workouts.session,
             queryFn: () => getActiveWorkoutSession()
         })
     ])

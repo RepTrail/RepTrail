@@ -52,6 +52,7 @@ import {
   startWorkoutLog,
   recordSetLoad,
   finishWorkoutLog,
+  saveWorkoutLogState,
   updateLoadEntry,
   deleteWorkoutLog
 } from '@/actions/log-actions';
@@ -271,6 +272,7 @@ export const ACTION_REGISTRY: Record<string, ActionFn> = {
   'start-cardio-session': (p: any) => wrap(startCardioSession(p.cardioId || p.assignmentId)),
   'update-cardio-session': (p: any) => wrap(updateCardioSession(p.id || p.logId, p.seconds || p.elapsed_seconds || 0, p.running || p.is_running || false)),
   'finish-cardio-session': (p: any) => wrap(finishCardioSession(p.logId, p.feedback, p.intensity, p.percentage)),
+  'update-workout-log-state': (p: any) => wrap(saveWorkoutLogState(p.logId, p.state)),
   'add-ergogenic': (p: any) => wrap(addErgogenic(p)),
   'update-ergogenic': (p: any) => wrap(updateErgogenic(p.id, p.studentId || p.student_id, p.data || p)),
   'update-student-ergogenic': (p: any) => wrap(updateErgogenic(p.id, p.student_id || p.studentId, p.data || p)),

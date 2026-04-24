@@ -129,6 +129,12 @@ async function StudentDashboardContent({ userId }: { userId: string }) {
             queryFn: () => import('@/actions/cardio-actions').then(m => m.getActiveCardioSession())
         }),
 
+        // Workout Session (Fix for 🚨 UNEXPECTED FETCH)
+        queryClient.prefetchQuery({
+            queryKey: QUERY_KEYS.workouts.session,
+            queryFn: () => getActiveWorkoutSession()
+        }),
+
         // Metrics & Profile
         queryClient.prefetchQuery({ 
             queryKey: QUERY_KEYS.student.metricsSummary(userId), 

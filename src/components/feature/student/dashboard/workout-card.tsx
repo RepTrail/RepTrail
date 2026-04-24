@@ -42,7 +42,7 @@ export function WorkoutCard({ userId }: WorkoutCardProps) {
 
     // Skeleton Fallback: Only show if truly loading AND no cache available
     if (isLoadingWorkout && !workout) {
-        return <WorkoutCard.Skeleton />
+        return <WorkoutCardSkeleton />
     }
 
     if (!workout) {
@@ -105,7 +105,7 @@ export function WorkoutCard({ userId }: WorkoutCardProps) {
     )
 }
 
-WorkoutCard.Skeleton = function WorkoutCardSkeleton() {
+export function WorkoutCardSkeleton() {
     return (
         <div className="bg-zinc-900/40 border border-zinc-800/50 shadow-xl p-6 sm:p-10 rounded-3xl backdrop-blur-sm overflow-hidden relative animate-pulse">
             <div className="absolute top-0 right-0 p-8 opacity-[0.02]">
@@ -121,3 +121,6 @@ WorkoutCard.Skeleton = function WorkoutCardSkeleton() {
         </div>
     )
 }
+
+WorkoutCard.Skeleton = WorkoutCardSkeleton
+

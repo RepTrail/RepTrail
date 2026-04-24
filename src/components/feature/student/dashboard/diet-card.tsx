@@ -37,7 +37,7 @@ export function DietCard({ userId, hasTrainer }: DietCardProps) {
 
     // Skeleton Fallback: Only if loading AND no cache available
     if (isLoading && !diet) {
-        return <DietAdherence.Skeleton />
+        return <DietCardSkeleton />
     }
 
     if (!diet) {
@@ -54,7 +54,9 @@ export function DietCard({ userId, hasTrainer }: DietCardProps) {
     return <DietAdherence diet={diet} hasTrainer={hasTrainer} />
 }
 
-DietCard.Skeleton = function DietCardSkeleton() {
+export function DietCardSkeleton() {
     return <DietAdherence.Skeleton />
 }
+
+DietCard.Skeleton = DietCardSkeleton
 

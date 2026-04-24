@@ -1,8 +1,8 @@
 import { Skeleton } from "@/components/ui/skeleton"
-import { WorkoutCard } from '@/components/feature/student/dashboard/workout-card'
-import { CardioCard } from '@/components/feature/student/dashboard/cardio-card'
-import { DietCard } from '@/components/feature/student/dashboard/diet-card'
-import { ErgogenicsCard } from '@/components/feature/student/dashboard/ergogenics-card'
+import { WorkoutCardSkeleton } from '@/components/feature/student/dashboard/workout-card'
+import { CardioCardSkeleton } from '@/components/feature/student/dashboard/cardio-card'
+import { DietCardSkeleton } from '@/components/feature/student/dashboard/diet-card'
+import { ErgogenicsCardSkeleton } from '@/components/feature/student/dashboard/ergogenics-card'
 
 export default function StudentDashboardLoading() {
     return (
@@ -24,14 +24,14 @@ export default function StudentDashboardLoading() {
             <div className="grid gap-section-gap lg:grid-cols-12">
                 {/* Main Content (Workout, Cardio & Ergos) */}
                 <div className="lg:col-span-8 flex flex-col gap-section-gap">
-                    <WorkoutCard.Skeleton />
-                    <CardioCard.Skeleton />
-                    <ErgogenicsCard.Skeleton />
+                    <WorkoutCardSkeleton />
+                    <CardioCardSkeleton />
+                    <ErgogenicsCardSkeleton />
                 </div>
 
                 {/* Sidebar (Diet) */}
                 <div className="lg:col-span-4 flex flex-col gap-section-gap">
-                    <DietCard.Skeleton />
+                    <DietCardSkeleton />
                 </div>
             </div>
         </div>

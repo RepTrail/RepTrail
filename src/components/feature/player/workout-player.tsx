@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useMemo } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { Input } from "@/components/ui/input"
@@ -106,7 +107,7 @@ export function WorkoutPlayer({
     // Mutation to Start Workout (Optimistic)
     const startWorkoutMutation = useOptimisticMutation({
         actionName: 'start-workout-log',
-        queryKey: QUERY_KEYS.student.activeSession(userId),
+        queryKey: QUERY_KEYS.workouts.session,
         entity: ENTITIES.WORKOUT_LOG,
         mutationFn: async () => {}, // SyncEngine handles the RPC
         onMutate: (variables: any) => {
@@ -119,7 +120,7 @@ export function WorkoutPlayer({
                 started_at: new Date().toISOString(),
                 _optimistic: true
             }
-            queryClient.setQueryData(QUERY_KEYS.student.activeSession(userId), sessionData)
+            queryClient.setQueryData(QUERY_KEYS.workouts.session, sessionData)
             
             // Also update status card
             queryClient.setQueryData(QUERY_KEYS.workouts.status(userId, workout.id), {
@@ -132,7 +133,7 @@ export function WorkoutPlayer({
 
     const recordSetMutation = useOptimisticMutation({
         actionName: 'record-set-load',
-        queryKey: QUERY_KEYS.workouts.session, // Note: This doesn't exist, should probably be sesssion log key
+        queryKey: QUERY_KEYS.workouts.session,
         entity: ENTITIES.WORKOUT_LOG,
         mutationFn: async () => {},
         onMutate: (variables: any) => {
@@ -142,11 +143,11 @@ export function WorkoutPlayer({
 
     const saveStateMutation = useOptimisticMutation({
         actionName: 'update-workout-log-state',
-        queryKey: QUERY_KEYS.student.activeSession(userId),
+        queryKey: QUERY_KEYS.workouts.session,
         entity: ENTITIES.WORKOUT_LOG,
         mutationFn: async () => {},
         onMutate: (variables: any) => {
-            queryClient.setQueryData(QUERY_KEYS.student.activeSession(userId), (old: any) => {
+            queryClient.setQueryData(QUERY_KEYS.workouts.session, (old: any) => {
                 if (!old) return old
                 return { ...old, current_state: variables.state }
             })
@@ -155,12 +156,12 @@ export function WorkoutPlayer({
 
     const finishMutation = useOptimisticMutation({
         actionName: 'finish-workout-log',
-        queryKey: QUERY_KEYS.student.activeSession(userId),
+        queryKey: QUERY_KEYS.workouts.session,
         entity: ENTITIES.WORKOUT_LOG,
         mutationFn: async () => {},
         onMutate: (variables: any) => {
             // 1. Clear active session
-            queryClient.setQueryData(QUERY_KEYS.student.activeSession(userId), null)
+            queryClient.setQueryData(QUERY_KEYS.workouts.session, null)
 
             // 2. Mark workout as completed
             const statusKey = QUERY_KEYS.workouts.status(userId, workout.id)
@@ -905,10 +906,4 @@ function SummarySetRow({ set, lastSessionSet, initialWeight, initialReps, onUpda
     )
 }
 
-function Badge({ children, variant, className }: any) {
-    return (
-        <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${className}`}>
-            {children}
-        </span>
-    )
-}
+

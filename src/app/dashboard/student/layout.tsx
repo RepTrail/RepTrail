@@ -8,10 +8,12 @@ import {
 import { ConditionalMobileNav } from '@/components/layout/conditional-mobile-nav'
 import { UnifiedSidebar } from '@/components/layout/sidebar-unified'
 import { MobileHeader } from '@/components/layout/mobile-header'
-import { SettingsModal } from '@/components/feature/student/settings-modal'
-import { NotificationRequestModal } from '@/components/feature/student/notification-request-modal'
+import { StudentGlobalModals } from '@/components/layout/student-global-modals'
 import { createClient } from '@/lib/supabase/server'
 import { getStudentTrainer } from '@/actions/student-actions'
+import { getQueryClient } from '@/lib/get-query-client'
+import { QUERY_KEYS } from '@/lib/query-keys'
+import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 
 export default async function StudentLayout({
     children,
@@ -56,8 +58,7 @@ export default async function StudentLayout({
                 <MobileNavLoader userId={userId} />
             </Suspense>
 
-            <SettingsModal hasTrainer={true} /* Modal logic handles its own state */ />
-            <NotificationRequestModal />
+            <StudentGlobalModals hasTrainer={true} />
         </div>
     )
 }
@@ -68,12 +69,20 @@ export default async function StudentLayout({
  */
 
 async function DashboardSidebarLoader({ userId }: { userId: string }) {
+    const queryClient = getQueryClient()
     const supabase = await createClient()
     
+    // ─── ELITE GLOBAL PREFETCH ──────────────────────────────────────────
+    // Prefetch session and profile keys globally in the layout to ensure 
+    // they are available for all sub-routes and sidebar SmartLinks.
     const [profileRes, detailsRes, trainerRel] = await Promise.all([
         supabase.from('profiles').select('role, full_name, avatar_url, auto_training_status, auto_training_trial_end').eq('id', userId).single(),
         supabase.from('student_details').select('id, steroid_use').eq('id', userId).single(),
-        getStudentTrainer(userId)
+        getStudentTrainer(userId),
+        // Prefetch active sessions
+        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.workouts.session, queryFn: () => import('@/actions/log-actions').then(m => m.getActiveWorkoutSession()) }),
+        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.cardio.session, queryFn: () => import('@/actions/cardio-actions').then(m => m.getActiveCardioSession()) }),
+        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.student.details(userId), queryFn: () => import('@/actions/student-actions').then(m => m.getStudentProfile(userId)) })
     ])
 
     const profile = profileRes.data
@@ -83,19 +92,25 @@ async function DashboardSidebarLoader({ userId }: { userId: string }) {
 
     const { steroidUse, hasTrainer, isAutoTrainingActive, filteredLinks } = calculateNavContext(profile, details, !!trainerRel)
 
-    return (
+    const sidebar = (
         <UnifiedSidebar 
             brandColor="orange"
             logoColor="orange"
             user={{
                 id: userId,
                 name: profile?.full_name,
-                email: '', // Email not needed for sidebar rendering usually, or fetch from auth if critical
+                email: '', 
                 avatar_url: profile?.avatar_url
             }}
             links={filteredLinks}
             showSettings={true}
         />
+    )
+
+    return (
+        <HydrationBoundary state={dehydrate(queryClient)}>
+            {sidebar}
+        </HydrationBoundary>
     )
 }
 
