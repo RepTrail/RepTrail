@@ -96,7 +96,11 @@ export function TrainerDashboardClient({ userId, betaTesterMode }: TrainerDashbo
 
     return (
         <div className="space-y-10 pb-10">
-            <TrainerOnboardingBanner userId={userId} stats={{ activeStudents, workoutsCount: 0, dietsCount: 0 }} />
+            <TrainerOnboardingBanner 
+                userId={userId} 
+                trainerCode={profile?.trainer_code}
+                stats={{ activeStudents, workoutsCount: 0, dietsCount: 0 }} 
+            />
             <CodeAutoGenerator hasCode={!!profile?.trainer_code} />
             
             {/* Hero Section */}

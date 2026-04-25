@@ -103,11 +103,15 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
             const savedStep = localStorage.getItem(`onboarding_step_${userId}`)
             if (savedStep === 'import_diet') {
                 localStorage.setItem(`onboarding_step_${userId}`, 'aha_moment')
+                
+                // Store ghost student data for personalization in the AHA banner
+                const ghostInfo = variables.createPlaceholder || { name: detectedStudentName || 'Aluno' };
+                localStorage.setItem(`onboarding_ghost_${userId}`, JSON.stringify(ghostInfo));
             }
 
             toast({ 
-                title: "Sucesso!", 
-                description: `${type === 'workout' ? 'Treino' : 'Dieta'} importada e vinculada com sucesso.` 
+                title: "✅ Plano importado com sucesso", 
+                description: `${type === 'workout' ? 'Treino' : 'Dieta'} processado e vinculado.` 
             });
         },
         onSettled: () => {
@@ -242,10 +246,11 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
         if (role === 'trainer' && bindingMode === 'create' && !placeholderEmail) {
             toast({
                 variant: "destructive",
-                title: "Email obrigatório!",
-                description: "Você deve informar o email do aluno para criar um novo registro."
+                title: "Atenção: Email não informado!",
+                description: "Sem o email você não consegue enviar o acesso automaticamente para o aluno."
             })
-            return
+            // We don't return here anymore, we let them save if they really want, 
+            // but the toast serves as a "friction-lite" warning.
         }
 
         let dataToSave = { ...parsedData.parsed_data }
@@ -656,7 +661,12 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
                         </div>
 
                         {/* Actions */}
-                        <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-6 border-t border-zinc-900/50">
+                        <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-3 pt-6 border-t border-zinc-900/50">
+                            {typeof window !== 'undefined' && localStorage.getItem(`onboarding_step_${userId}`) === 'import_diet' && bindingMode !== 'matched' && (
+                                <p className="text-[10px] font-black text-orange-500 uppercase tracking-widest animate-pulse mb-2 sm:mb-0">
+                                    ⚠️ Crie o aluno para vincular automaticamente
+                                </p>
+                            )}
                             <Button
                                 variant="ghost"
                                 onClick={() => {
