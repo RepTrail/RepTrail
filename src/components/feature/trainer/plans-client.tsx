@@ -34,6 +34,8 @@ export function PlansClient({ currentTier, studentCount, profile }: PlansClientP
             toast({ title: 'Plano Ativado!', description: 'Seu plano on-demand foi ativado com sucesso.' })
             queryClient.invalidateQueries({ queryKey: ['trainer'] })
             queryClient.invalidateQueries({ queryKey: ['profile'] })
+            // 🚀 REDIRECT TO DASHBOARD
+            setTimeout(() => window.location.href = '/dashboard/trainer', 1500)
         },
         onError: (err: any) => {
             toast({ variant: 'destructive', title: 'Erro', description: err.message || 'Erro ao ativar plano.' })

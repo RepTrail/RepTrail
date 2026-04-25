@@ -154,7 +154,8 @@ export function PaymentModal({ isOpen, onClose, tier, currentCpf, currentName, m
         mutationFn: async () => {}, // Sync Engine will handle it
         onSuccess: () => {
             toast({ title: 'Sucesso!', description: 'Sua assinatura está sendo processada.' })
-            setTimeout(() => router.push('/dashboard/student/plans'), 1000)
+            const target = tier === 'auto_training' ? '/dashboard/student' : '/dashboard/trainer'
+            setTimeout(() => window.location.href = target, 1500)
         },
         onError: (err: any) => {
             toast({
