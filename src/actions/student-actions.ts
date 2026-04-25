@@ -315,16 +315,18 @@ export async function getStudentProfile(studentId: string) {
             { data: profile, error: profileError },
             { data: details, error: detailsError }
         ] = await Promise.all([
-            supabase.from('profiles').select('*').eq('id', studentId).single(),
+            supabase.from('profiles').select('*').eq('id', studentId).maybeSingle(),
             supabase.from('student_details').select('*').eq('id', studentId).maybeSingle()
         ])
 
         if (profileError) throw profileError
         if (detailsError && detailsError.code !== 'PGRST116') throw detailsError
 
+        if (!profile) return null
+
         return { ...profile, details }
-    } catch (e) {
-        console.error('Error fetching student profile:', e)
+    } catch (e: any) {
+        console.error('Error fetching student profile:', e?.message ?? e?.code ?? JSON.stringify(e))
         return null
     }
 }
