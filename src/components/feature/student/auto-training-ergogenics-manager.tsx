@@ -44,9 +44,13 @@ export function AutoTrainingErgogenicsManager({
                     description="Registre um novo ergogênico ou suplemento."
                     actionType="create-student-ergogenic"
                     fields={[
-                        { name: 'name', label: 'Nome', type: 'text', placeholder: 'Ex: Testosterona' },
-                        { name: 'weekly_dosage', label: 'Dosagem Semanal', type: 'number', placeholder: 'Ex: 250' },
-                        { name: 'unit', label: 'Unidade', type: 'text', placeholder: 'Ex: mg' },
+                        { name: 'name', label: 'Nome', type: 'text', placeholder: 'Ex: Testosterona', required: true },
+                        { name: 'weekly_dosage', label: 'Dosagem Semanal', type: 'number', placeholder: 'Ex: 250', required: true, gridCols: 2, merged: true } as any,
+                        { name: 'unit', label: 'Unidade', type: 'select', defaultValue: 'mg', options: [
+                            { label: 'mg', value: 'mg' },
+                            { label: 'ml', value: 'ml' },
+                            { label: 'un', value: 'un' }
+                        ], required: true, gridCols: 2, merged: true } as any,
                         { name: 'application_days', label: 'Dias de Aplicação', type: 'days', required: true }
                     ]}
                 />
@@ -100,10 +104,14 @@ export function AutoTrainingErgogenicsManager({
                         description="Registre um novo ergogênico ou suplemento."
                         actionType="create-student-ergogenic"
                         fields={[
-                            { name: 'name', label: 'Nome', type: 'text', placeholder: 'Ex: Testosterona' },
-                            { name: 'weekly_dosage', label: 'Dosagem Semanal', type: 'number', placeholder: 'Ex: 250' },
-                            { name: 'unit', label: 'Unidade', type: 'text', placeholder: 'Ex: mg' },
-                            { name: 'application_days', label: 'Dias de Aplicação', type: 'days', required: true }
+                        { name: 'name', label: 'Nome', type: 'text', placeholder: 'Ex: Testosterona', required: true },
+                        { name: 'weekly_dosage', label: 'Dosagem Semanal', type: 'number', placeholder: 'Ex: 250', required: true, gridCols: 2, merged: true } as any,
+                        { name: 'unit', label: 'Unidade', type: 'select', defaultValue: 'mg', options: [
+                            { label: 'mg', value: 'mg' },
+                            { label: 'ml', value: 'ml' },
+                            { label: 'un', value: 'un' }
+                        ], required: true, gridCols: 2, merged: true } as any,
+                        { name: 'application_days', label: 'Dias de Aplicação', type: 'days', required: true }
                         ]}
                     />
                 </div>

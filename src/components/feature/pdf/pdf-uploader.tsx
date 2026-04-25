@@ -553,7 +553,7 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
                                                            studentMatch?.exact?.full_name || 
                                                            "Aluno Selecionado")
                                                         : (bindingMode === 'create' 
-                                                            ? (detectedStudentName || "Novo Aluno")
+                                                            ? (placeholderName || detectedStudentName || "Novo Aluno")
                                                             : "Somente Biblioteca")
                                                     }
                                                 </h3>

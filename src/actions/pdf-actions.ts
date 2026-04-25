@@ -109,7 +109,8 @@ JSON SCHEMA:
         { "type": "Esteira", "duration": "30min", "intensity": "Moderada", "frequency": "3x/sem", "application_days": [1,3,5] }
     ],
     "ergogenics": [
-        { "name": "Testo", "dosage": "250mg", "weekly_dosage": 250, "unit": "ml", "application_days": [1], "notes": "Segunda" }
+        { "name": "Testo", "dosage": "250mg", "weekly_dosage": 250, "unit": "mg", "application_days": [1], "notes": "Segunda" },
+        { "name": "Omega 3", "dosage": "4un", "weekly_dosage": 28, "unit": "un", "application_days": [1,2,3,4,5,6,0], "notes": "Cápsulas" }
     ]
 }
 
@@ -160,7 +161,8 @@ JSON SCHEMA:
         { "type": "Esteira", "duration": "30min", "intensity": "Moderada", "frequency": "3x/sem", "application_days": [1,3,5] }
     ],
     "ergogenics": [
-        { "name": "Testosterona", "dosage": "250mg", "weekly_dosage": 250, "unit": "ml", "application_days": [1,4], "notes": "Seg/Qui" }
+        { "name": "Testosterona", "dosage": "250mg", "weekly_dosage": 250, "unit": "mg", "application_days": [1,4], "notes": "Seg/Qui" },
+        { "name": "Omega 3", "dosage": "4un", "weekly_dosage": 28, "unit": "un", "application_days": [1,2,3,4,5,6,0], "notes": "Diário" }
     ]
 }
 

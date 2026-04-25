@@ -212,7 +212,7 @@ export async function saveParsedData(
                         name: eData.name, 
                         dosage: eData.dosage, 
                         weekly_dosage: eData.weekly_dosage || 0,
-                        unit: (eData.unit === 'mg' || eData.unit === 'ml') ? eData.unit : 'ml',
+                        unit: (eData.unit === 'mg' || eData.unit === 'ml' || eData.unit === 'un') ? eData.unit : 'ml',
                         application_days: eData.application_days || [], 
                         notes: eData.notes || '',
                         start_date: new Date().toISOString().split('T')[0]

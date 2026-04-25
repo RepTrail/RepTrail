@@ -12,7 +12,7 @@ import { cn } from '@/lib/utils'
 interface ErgogenicFormData {
     name: string
     weekly_dosage: number
-    unit: 'ml' | 'mg'
+    unit: 'ml' | 'mg' | 'un'
     application_days: number[]
     notes: string
     start_date: string
@@ -47,7 +47,7 @@ export function ErgogenicForm({
     const [formData, setFormData] = useState<ErgogenicFormData>({
         name: initialData?.name || '',
         weekly_dosage: initialData?.weekly_dosage || 0,
-        unit: initialData?.unit || 'ml',
+        unit: initialData?.unit || 'mg',
         application_days: initialData?.application_days || [],
         notes: initialData?.notes || '',
         start_date: initialData?.start_date || new Date().toISOString().split('T')[0],

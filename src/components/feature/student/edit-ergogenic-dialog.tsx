@@ -15,7 +15,14 @@ import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { Pencil } from "lucide-react"
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
+import { Pencil, Check } from "lucide-react"
 import { useQueryClient } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { useToast } from '@/hooks/use-toast'
@@ -52,7 +59,7 @@ export function EditErgogenicDialog({ userId, ergogenic }: EditErgogenicDialogPr
     const [dosage, setDosage] = useState(ergogenic.dosage || '')
     const [frequency, setFrequency] = useState(ergogenic.frequency || '')
     const [notes, setNotes] = useState(ergogenic.notes || '')
-    const [unit, setUnit] = useState<'ml' | 'mg'>((ergogenic.unit || 'ml') as 'ml' | 'mg')
+    const [unit, setUnit] = useState<'ml' | 'mg' | 'un'>((ergogenic.unit || 'ml') as any)
     const [selectedDays, setSelectedDays] = useState<number[]>(
         Array.isArray(ergogenic.application_days) ? ergogenic.application_days : []
     )
@@ -153,14 +160,30 @@ export function EditErgogenicDialog({ userId, ergogenic }: EditErgogenicDialogPr
 
                     <div className="space-y-2">
                         <Label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-1">Unidade</Label>
-                        <div className="flex items-center gap-4 h-11 px-4 bg-zinc-900/40 rounded-xl border border-zinc-800/50">
-                            <span className={`text-[10px] font-black uppercase ${unit === 'ml' ? 'text-emerald-500' : 'text-zinc-600'}`}>ML</span>
-                            <Switch
-                                checked={unit === 'mg'}
-                                onCheckedChange={(c) => setUnit(c ? 'mg' : 'ml')}
-                                className="data-[state=checked]:bg-emerald-500"
-                            />
-                            <span className={`text-[10px] font-black uppercase ${unit === 'mg' ? 'text-emerald-500' : 'text-zinc-600'}`}>MG</span>
+                        <div className="flex bg-zinc-950/50 p-1 rounded-xl border border-zinc-800/50 w-fit">
+                            {[
+                                { label: 'MG', value: 'mg' },
+                                { label: 'ML', value: 'ml' },
+                                { label: 'UN', value: 'un' }
+                            ].map((opt) => {
+                                const isActive = unit === opt.value
+                                return (
+                                    <button
+                                        key={opt.value}
+                                        type="button"
+                                        onClick={() => setUnit(opt.value as any)}
+                                        className={cn(
+                                            "px-4 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all active:scale-95 flex items-center gap-1.5",
+                                            isActive 
+                                                ? "bg-emerald-500 text-zinc-950 shadow-lg" 
+                                                : "text-zinc-600 hover:text-white"
+                                        )}
+                                    >
+                                        {isActive && <Check className="w-3 h-3" />}
+                                        {opt.label}
+                                    </button>
+                                )
+                            })}
                         </div>
                     </div>
 

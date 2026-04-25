@@ -42,7 +42,7 @@ interface Ergogenic {
     id: string
     name: string
     weekly_dosage: number
-    unit: 'ml' | 'mg'
+    unit: 'ml' | 'mg' | 'un'
     application_days: number[]
     notes?: string
     start_date: string
@@ -72,9 +72,10 @@ const ERGOGENIC_FIELDS = [
     { name: 'name', label: 'Nome da Substância', placeholder: 'Ex: Enantato de Testosterona', required: true },
     { name: 'weekly_dosage', label: 'Dosagem Semanal Total', placeholder: '250', type: 'number' as const, required: true, gridCols: 2 as const, merged: true },
     {
-        name: 'unit', label: 'Unidade', type: 'switch' as const, defaultValue: 'mg', options: [
+        name: 'unit', label: 'Unidade', type: 'select' as const, defaultValue: 'mg', options: [
             { label: 'mg', value: 'mg' },
-            { label: 'ml', value: 'ml' }
+            { label: 'ml', value: 'ml' },
+            { label: 'un', value: 'un' }
         ], required: true, gridCols: 2 as const, merged: true
     },
     { name: 'application_days', label: 'Dias de Aplicação', type: 'days' as const, required: true },

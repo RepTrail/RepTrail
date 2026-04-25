@@ -481,36 +481,61 @@ export function UnifiedCreationDialog({
                                                         />
                                                     </div>
 
-                                                    {/* The Inline Switch */}
-                                                    <div className="flex items-center gap-3 px-4 border-l border-zinc-800/50 h-8">
-                                                        <span className={cn(
-                                                            "text-[9px] font-black uppercase tracking-widest transition-all",
-                                                            customFields[group[1].name] === group[1].options?.[0]?.value ? `text-${s.accent}` : "text-zinc-600"
-                                                        )}>
-                                                            {group[1].options?.[0]?.label}
-                                                        </span>
-                                                        <Switch
-                                                            id={group[1].name}
-                                                            checked={customFields[group[1].name] === group[1].options?.[1]?.value}
-                                                            onCheckedChange={(checked) => {
-                                                                setCustomFields(prev => ({
-                                                                    ...prev,
-                                                                    [group[1].name]: checked ? group[1].options?.[1]?.value : group[1].options?.[0]?.value
-                                                                }))
-                                                            }}
-                                                            className={cn(
-                                                                "h-4 w-8 data-[state=checked]:bg-emerald-500 data-[state=unchecked]:bg-zinc-800",
-                                                                colorScheme === 'orange' && "data-[state=checked]:bg-orange-500",
-                                                                colorScheme === 'purple' && "data-[state=checked]:bg-purple-500",
-                                                                colorScheme === 'cyan' && "data-[state=checked]:bg-cyan-500"
-                                                            )}
-                                                        />
-                                                        <span className={cn(
-                                                            "text-[9px] font-black uppercase tracking-widest transition-all",
-                                                            customFields[group[1].name] === group[1].options?.[1]?.value ? `text-${s.accent}` : "text-zinc-600"
-                                                        )}>
-                                                            {group[1].options?.[1]?.label}
-                                                        </span>
+                                                    {/* The Inline Control (Switch or Select) */}
+                                                    <div className="flex items-center px-4 border-l border-zinc-800/50 h-8">
+                                                        {group[1].type === 'select' ? (
+                                                            <div className="flex bg-zinc-950/50 p-1 rounded-xl border border-zinc-800/50">
+                                                                {group[1].options?.map((opt: any) => {
+                                                                    const isActive = (customFields[group[1].name] || initialValues?.[group[1].name] || group[1].defaultValue) === opt.value
+                                                                    return (
+                                                                        <button
+                                                                            key={opt.value}
+                                                                            type="button"
+                                                                            onClick={() => setCustomFields(prev => ({ ...prev, [group[1].name]: opt.value }))}
+                                                                            className={cn(
+                                                                                "px-3 py-1.5 text-[9px] font-black uppercase tracking-widest rounded-lg transition-all active:scale-95",
+                                                                                isActive 
+                                                                                    ? `bg-${s.accent} text-zinc-950 shadow-lg` 
+                                                                                    : "text-zinc-600 hover:text-white"
+                                                                            )}
+                                                                        >
+                                                                            {opt.label}
+                                                                        </button>
+                                                                    )
+                                                                })}
+                                                            </div>
+                                                        ) : (
+                                                            <div className="flex items-center gap-3">
+                                                                <span className={cn(
+                                                                    "text-[9px] font-black uppercase tracking-widest transition-all",
+                                                                    customFields[group[1].name] === group[1].options?.[0]?.value ? `text-${s.accent}` : "text-zinc-600"
+                                                                )}>
+                                                                    {group[1].options?.[0]?.label}
+                                                                </span>
+                                                                <Switch
+                                                                    id={group[1].name}
+                                                                    checked={customFields[group[1].name] === group[1].options?.[1]?.value}
+                                                                    onCheckedChange={(checked) => {
+                                                                        setCustomFields(prev => ({
+                                                                            ...prev,
+                                                                            [group[1].name]: checked ? group[1].options?.[1]?.value : group[1].options?.[0]?.value
+                                                                        }))
+                                                                    }}
+                                                                    className={cn(
+                                                                        "h-4 w-8 data-[state=checked]:bg-emerald-500 data-[state=unchecked]:bg-zinc-800",
+                                                                        colorScheme === 'orange' && "data-[state=checked]:bg-orange-500",
+                                                                        colorScheme === 'purple' && "data-[state=checked]:bg-purple-500",
+                                                                        colorScheme === 'cyan' && "data-[state=checked]:bg-cyan-500"
+                                                                    )}
+                                                                />
+                                                                <span className={cn(
+                                                                    "text-[9px] font-black uppercase tracking-widest transition-all",
+                                                                    customFields[group[1].name] === group[1].options?.[1]?.value ? `text-${s.accent}` : "text-zinc-600"
+                                                                )}>
+                                                                    {group[1].options?.[1]?.label}
+                                                                </span>
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 </div>
                                             </div>

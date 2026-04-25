@@ -68,7 +68,7 @@ export async function addErgogenic(data: {
     student_id: string
     name: string
     weekly_dosage: number
-    unit: 'ml' | 'mg'
+    unit: 'ml' | 'mg' | 'un'
     application_days: number[]
     notes?: string
     start_date: string

@@ -95,9 +95,10 @@ export default async function StudentErgogenicsPage({ params }: { params: { id: 
                             { name: 'name', label: 'Nome da Substância', placeholder: 'Ex: Enantato de Testosterona', required: true },
                             { name: 'weekly_dosage', label: 'Dosagem Semanal Total', placeholder: '250', type: 'number', required: true, gridCols: 2, merged: true } as any,
                             {
-                                name: 'unit', label: 'Unidade', type: 'switch', defaultValue: 'mg', options: [
+                                name: 'unit', label: 'Unidade', type: 'select', defaultValue: 'mg', options: [
                                     { label: 'mg', value: 'mg' },
-                                    { label: 'ml', value: 'ml' }
+                                    { label: 'ml', value: 'ml' },
+                                    { label: 'un', value: 'un' }
                                 ], required: true, gridCols: 2, merged: true
                             } as any,
                             { name: 'application_days', label: 'Dias de Aplicação', type: 'days', required: true },

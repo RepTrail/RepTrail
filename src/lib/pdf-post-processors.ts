@@ -23,7 +23,7 @@ export interface ParsedCardio {
 export interface ParsedErgogenic {
     name: string
     dosage: string
-    unit: 'mg' | 'ml'
+    unit: 'mg' | 'ml' | 'un'
     weekly_dosage: number
     application_days: number[]
     notes: string
@@ -298,10 +298,13 @@ export function extractErgogenicsFromText(text: string): ParsedErgogenic[] {
             const dosageValue = dosageMatch[1].replace(',', '.')
             const rawUnit = dosageMatch[2].toLowerCase()
             
-            // Normalize unit for database (ml or mg)
-            let unit: 'mg' | 'ml' = 'mg'
-            if (rawUnit === 'ml' || rawUnit === 'gotas') {
+            // Normalize unit for database (mg, ml, or un)
+            let unit: 'mg' | 'ml' | 'un' = 'mg'
+            const lowUnit = rawUnit.toLowerCase()
+            if (lowUnit.startsWith('ml') || lowUnit.includes('gotas')) {
                 unit = 'ml'
+            } else if (lowUnit.includes('caps') || lowUnit.includes('comp') || lowUnit.includes('unid') || lowUnit === 'un' || lowUnit === 'u') {
+                unit = 'un'
             }
 
             // Normalize name
