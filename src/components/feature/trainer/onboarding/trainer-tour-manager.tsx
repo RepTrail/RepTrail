@@ -16,7 +16,14 @@ interface TrainerTourManagerProps {
 export function TrainerTourManager({ userId }: TrainerTourManagerProps) {
     const pathname = usePathname()
     
-    // Fetch profile to get real stats
+    // 1. Core State Hooks
+    const [currentStepIndex, setCurrentStepIndex] = useState(0)
+    const [isDesktop, setIsDesktop] = useState(false)
+    const [showBindingModes, setShowBindingModes] = useState(false)
+    const [isCreatingStudent, setIsCreatingStudent] = useState(false)
+    const [isParsed, setIsParsed] = useState(false)
+
+    // 2. Data Hooks
     const { data: profile } = useQuery({
         queryKey: QUERY_KEYS.profile.detail(userId),
         queryFn: () => getTrainerProfile()
@@ -28,9 +35,7 @@ export function TrainerTourManager({ userId }: TrainerTourManagerProps) {
         dietsCount: 0 
     })
 
-    const [currentStepIndex, setCurrentStepIndex] = useState(0)
-    const [isDesktop, setIsDesktop] = useState(false)
-
+    // 3. Effect Hooks
     // Only run on desktop (>= 1024px)
     useEffect(() => {
         const check = () => setIsDesktop(window.innerWidth >= 1024)
@@ -38,30 +43,35 @@ export function TrainerTourManager({ userId }: TrainerTourManagerProps) {
         window.addEventListener('resize', check)
         return () => window.removeEventListener('resize', check)
     }, [])
-    const [showBindingModes, setShowBindingModes] = useState(false)
-    const [isCreatingStudent, setIsCreatingStudent] = useState(false)
-    const [isParsed, setIsParsed] = useState(false)
 
-    // ⚡ RESET EFFECT: Reset tour index when significant state changes
-    // We use a single effect with a stable dependency array to satisfy React Hook rules.
+    // RESET EFFECT: Reset tour index when significant state changes
     useEffect(() => {
-        setCurrentStepIndex(0)
+        if (currentStepIndex !== 0) {
+            setCurrentStepIndex(0)
+        }
     }, [pathname, showBindingModes, isCreatingStudent, isParsed, onboardingStep])
 
+    // UI MONITORING EFFECT
     useEffect(() => {
         if (pathname !== '/dashboard/trainer/import-pdf') return
         const check = () => {
             const btn = document.querySelector('#tour-btn-create-student')
             const fields = document.querySelector('#tour-student-fields')
             const parsed = document.querySelector('#tour-parsed-status')
-            setShowBindingModes(!!btn)
-            setIsCreatingStudent(!!fields)
-            setIsParsed(!!parsed)
+            
+            const hasBtn = !!btn
+            const hasFields = !!fields
+            const hasParsed = !!parsed
+
+            if (hasBtn !== showBindingModes) setShowBindingModes(hasBtn)
+            if (hasFields !== isCreatingStudent) setIsCreatingStudent(hasFields)
+            if (hasParsed !== isParsed) setIsParsed(hasParsed)
         }
         const interval = setInterval(check, 500)
         return () => clearInterval(interval)
-    }, [pathname])
+    }, [pathname, showBindingModes, isCreatingStudent, isParsed])
 
+    // 4. Memoized Hooks
     const allSteps = useMemo(() => {
         const steps: (TourStep & { path: string, condition?: boolean })[] = [
             // PASSO 1: Dashboard
@@ -157,11 +167,10 @@ export function TrainerTourManager({ userId }: TrainerTourManagerProps) {
 
         return steps.filter(s => s.path === pathname || (s.path.includes('[id]') && pathname.includes('/students/')))
             .filter(s => s.condition === undefined || s.condition)
-    }, [pathname, onboardingStep, showBindingModes, isCreatingStudent])
+    }, [pathname, onboardingStep, showBindingModes, isCreatingStudent, isParsed])
 
-    // Progress mapping (Re-written for reliability)
+    // Progress mapping
     const globalStepIndex = useMemo(() => {
-        // Priority to later steps
         if (onboardingStep === 'aha_moment') {
             if (pathname.includes('/students/')) return 9;
             if (pathname === '/dashboard/trainer/students') return 8;
@@ -178,7 +187,7 @@ export function TrainerTourManager({ userId }: TrainerTourManagerProps) {
         }
 
         return 1;
-    }, [pathname, showBindingModes, isCreatingStudent, currentStepIndex, onboardingStep]);
+    }, [pathname, showBindingModes, isCreatingStudent, currentStepIndex, onboardingStep, isParsed]);
 
     if (!isDesktop || !isTourActive || allSteps.length === 0) return null
 
@@ -200,4 +209,5 @@ export function TrainerTourManager({ userId }: TrainerTourManagerProps) {
             onDismiss={dismissTour}
         />
     )
+
 }

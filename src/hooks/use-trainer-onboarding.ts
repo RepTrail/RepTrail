@@ -15,14 +15,17 @@ export function useTrainerOnboarding(userId: string, stats: { activeStudents: nu
     const [step, setStep] = useState<OnboardingStep>('idle')
     const [ghostData, setGhostData] = useState<{ name?: string, email?: string } | null>(null)
     const [isTourActive, setIsTourActive] = useState(false)
+    const [isMounted, setIsMounted] = useState(false)
     const pathname = usePathname()
     const router = useRouter()
 
     // Extract primitive values to avoid infinite loops when object reference changes
     const { activeStudents, workoutsCount, dietsCount } = stats;
 
-    // Initialize from LocalStorage
+    // 1. Initial Load and Hydration
     useEffect(() => {
+        setIsMounted(true)
+        
         const urlParams = new URLSearchParams(window.location.search)
         const forceReset = urlParams.get('reset_tour') === 'true'
 
@@ -30,7 +33,8 @@ export function useTrainerOnboarding(userId: string, stats: { activeStudents: nu
             localStorage.removeItem(`onboarding_step_${userId}`)
             localStorage.removeItem(`onboarding_ghost_${userId}`)
             localStorage.removeItem(`onboarding_tour_dismissed_${userId}`)
-            window.location.href = '/dashboard/trainer'
+            // Use router instead of location.href to prevent full reload if possible
+            router.replace('/dashboard/trainer')
             return
         }
 
@@ -58,8 +62,12 @@ export function useTrainerOnboarding(userId: string, stats: { activeStudents: nu
         if (!tourDismissed && saved !== 'completed') {
             setIsTourActive(true)
         }
+    }, [userId, activeStudents, workoutsCount, dietsCount, router])
 
-        // 🔄 SYNC: Listen for changes from other instances (e.g. Page updating Layout)
+    // 2. State Sync Logic
+    useEffect(() => {
+        if (!isMounted) return
+
         const handleStorage = (e: StorageEvent) => {
             if (e.key === `onboarding_step_${userId}` && e.newValue) {
                 setStep(e.newValue as OnboardingStep)
@@ -68,6 +76,7 @@ export function useTrainerOnboarding(userId: string, stats: { activeStudents: nu
                 setIsTourActive(false)
             }
         }
+        
         const handleCustomUpdate = (e: any) => {
             if (e.detail?.step) {
                 setStep(e.detail.step)
@@ -80,7 +89,7 @@ export function useTrainerOnboarding(userId: string, stats: { activeStudents: nu
             window.removeEventListener('storage', handleStorage)
             window.removeEventListener('onboarding_update', handleCustomUpdate)
         }
-    }, [userId, activeStudents, workoutsCount, dietsCount])
+    }, [userId, isMounted])
 
     // State transitions based on navigation/actions
     const nextStep = (next: OnboardingStep) => {
@@ -116,10 +125,12 @@ export function useTrainerOnboarding(userId: string, stats: { activeStudents: nu
         step,
         ghostData,
         isTourActive,
+        isMounted,
         nextStep,
         reset,
         complete,
         dismiss,
         dismissTour
     }
+
 }
