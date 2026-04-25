@@ -92,6 +92,8 @@ export function CardioAssignmentSection({ studentId, relationshipId }: CardioAss
                                     id={a.id}
                                     actionType="cardio"
                                     itemName={a.cardio?.name}
+                                    studentId={studentId}
+                                    relationshipId={relationshipId}
                                     queryKey={QUERY_KEYS.cardio.assignments(studentId)}
                                 />
                             </div>

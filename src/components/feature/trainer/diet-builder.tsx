@@ -461,7 +461,8 @@ export function DietBuilder({ diet: initialDiet, students = [], backHref = '/das
         queryKey,
         queryFn: () => getDietDetails(initialDiet.id),
         initialData: initialDiet,
-        staleTime: 1000 * 60 * 5
+        staleTime: 0,
+        refetchOnMount: 'always'
     })
 
     const diet = dietData as { id: string, name: string, meals: Meal[], assignments?: any[] }

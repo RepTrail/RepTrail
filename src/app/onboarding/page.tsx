@@ -12,14 +12,7 @@ export default async function OnboardingPage() {
 
     const { data: profile } = await supabase
         .from('profiles')
-        .select('role')
-        .eq('id', user.id)
-        .single()
-
-    // Check if already completed
-    const { data: details } = await supabase
-        .from('student_details')
-        .select('id')
+        .select('role, onboarding_completed')
         .eq('id', user.id)
         .single()
 
@@ -29,7 +22,7 @@ export default async function OnboardingPage() {
         redirect('/dashboard/trainer')
     }
 
-    if (details) {
+    if (profile?.onboarding_completed) {
         redirect('/dashboard/student')
     }
 

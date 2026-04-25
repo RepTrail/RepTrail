@@ -149,7 +149,7 @@ export function UnifiedSidebar({
   }
 
   return (
-    <aside className="hidden md:flex w-72 h-screen fixed top-0 left-0 bg-zinc-900 border-r border-zinc-800 p-6 flex-col shadow-2xl z-20 overflow-hidden">
+    <aside className="hidden md:flex w-72 h-screen bg-zinc-900 border-r border-zinc-800 p-6 flex-col shadow-2xl z-20 overflow-hidden shrink-0 sticky top-0">
       {/* Brand Logo */}
       <div className="flex-shrink-0 mb-10">
         <Link href="/">

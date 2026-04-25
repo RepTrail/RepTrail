@@ -123,11 +123,19 @@ export async function submitOnboarding(prevState: OnboardingState, formData: For
                 // If linked to a trainer, they are NOT auto-training
                 await supabase
                     .from('profiles')
-                    .update({ auto_training_status: 'inactive' })
+                    .update({ 
+                        auto_training_status: 'inactive',
+                        onboarding_completed: true
+                    })
                     .eq('id', user.id);
             }
         } else {
             console.warn(`[ONBOARDING] Trainer code not found: ${data.trainerCode}`);
+            // Still mark as completed even if trainer code fails
+            await supabase
+                .from('profiles')
+                .update({ onboarding_completed: true })
+                .eq('id', user.id);
         }
     } else {
         // If no personal trainer code, set them up with the Auto Training default plan
@@ -135,14 +143,14 @@ export async function submitOnboarding(prevState: OnboardingState, formData: For
 
         await supabase
             .from('profiles')
-            .update({ auto_training_status: 'none' })
+            .update({ 
+                auto_training_status: 'none',
+                onboarding_completed: true
+            })
             .eq('id', user.id);
 
         await setupAutoTrainingForStudent(user.id, data)
     }
-
-    // 4. Update Profile to set "onboarding_completed" (if we had that flag, or just check existing details)
-    // For now, we just redirect.
 
     redirect('/dashboard/student')
 }

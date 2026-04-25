@@ -13,6 +13,7 @@ interface UseOptimisticMutationOptions<TData, TVariables, TContext> {
     onSuccess?: (data: TData, variables: TVariables, context: any) => void
     onError?: (error: Error, variables: TVariables, context: any) => void
     onSettled?: (data: TData | undefined, error: Error | null, variables: TVariables, context: any) => void
+    additionalQueryKeys?: QueryKey[]
 }
 
 /**
@@ -29,6 +30,7 @@ export function useOptimisticMutation<TData = any, TVariables = any, TContext = 
     onSuccess,
     onError,
     onSettled,
+    additionalQueryKeys = [],
 }: UseOptimisticMutationOptions<TData, TVariables, TContext>) {
     const queryClient = useQueryClient()
 
@@ -71,18 +73,22 @@ export function useOptimisticMutation<TData = any, TVariables = any, TContext = 
                 queryClient.setQueryData(queryKey, (oldData: any) => updateFn(oldData, variables))
             }
 
+            // Perform Custom Side Effects (like toasts or manual cache updates) immediately
+            if (onMutate) {
+                onMutate(variables)
+            }
+
             // ─── PHASE 2: BACKGROUND SIDE EFFECTS ─────────────────────────────────
             // Offload database I/O and query cancellation to the next macro-task
-            // This ensures the browser can paint the checkbox state BEFORE doing work.
+            // This ensures the browser can paint BEFORE doing heavy work
             setTimeout(() => {
                 if (queryKey) {
                     queryClient.cancelQueries({ queryKey })
                 }
-
-                // Perform Custom Side Effects (like toasts)
-                if (onMutate) {
-                    onMutate(variables)
-                }
+                
+                additionalQueryKeys.forEach(key => {
+                    queryClient.cancelQueries({ queryKey: key })
+                })
 
                 // Outbox Enqueue (Background)
                 outboxDB.enqueue({

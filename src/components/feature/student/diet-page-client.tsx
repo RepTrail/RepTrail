@@ -136,6 +136,7 @@ export function DietPageClient({ userId }: DietPageClientProps) {
                                                 id={currentDiet.id}
                                                 actionType="diet"
                                                 itemName={currentDiet.name}
+                                                studentId={userId}
                                                 queryKey={QUERY_KEYS.diets.library(userId)}
                                             />
                                         </div>

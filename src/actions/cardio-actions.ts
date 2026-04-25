@@ -262,8 +262,51 @@ export async function assignCardio(data: {
 
 export async function removeCardioAssignment(assignmentId: string) {
     const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
 
     try {
+        // 🚀 CHECK IF PLACEHOLDER
+        if (assignmentId.startsWith('pc-')) {
+            if (!user) return { error: 'Unauthorized' }
+            const cardioId = assignmentId.replace('pc-', '')
+
+            // Find any pending link for this trainer that has this cardio
+            const { data: pending } = await supabase
+                .from('pending_student_links')
+                .select('*')
+                .contains('cardio_ids', [cardioId])
+                .eq('trainer_id', user.id)
+                .eq('status', 'pending')
+                .maybeSingle()
+
+            if (pending) {
+                const newCardioIds = (pending.cardio_ids || []).filter((id: string) => id !== cardioId)
+                
+                // Also clean up metadata
+                const ergo = (pending.ergogenic_data as any[]) || []
+                const metaIdx = ergo.findIndex(e => e.__metadata)
+                if (metaIdx !== -1) {
+                    const metadata = ergo[metaIdx]
+                    if (metadata.cardio_metadata) {
+                        metadata.cardio_metadata = metadata.cardio_metadata.filter((m: any) => m.id !== cardioId)
+                        ergo[metaIdx] = metadata
+                    }
+                }
+
+                const { error: pendingError } = await supabase
+                    .from('pending_student_links')
+                    .update({ 
+                        cardio_ids: newCardioIds,
+                        ergogenic_data: ergo
+                    })
+                    .eq('id', pending.id)
+
+                if (pendingError) throw pendingError
+                revalidatePath('/dashboard/trainer/students/[id]', 'page')
+                return { success: true }
+            }
+        }
+
         const { error } = await supabase
             .from('assigned_cardios')
             .delete()
@@ -282,7 +325,11 @@ export async function getStudentCardioAssignments(studentId: string) {
     const supabase = createAdminClient()
     if (!supabase) throw new Error('Admin client not initialized')
 
+    const clientSupabase = /* ❌ OUTBOX VIOLATION */ await createClient()
+    const { data: { user } } = await clientSupabase.auth.getUser()
+
     try {
+        // 1. Try to fetch from real assigned_cardios table
         const { data, error } = await supabase
             .from('assigned_cardios')
             .select(`
@@ -295,7 +342,44 @@ export async function getStudentCardioAssignments(studentId: string) {
             .limit(20)
 
         if (error) throw error
-        return data || []
+
+        if (data && data.length > 0) return data
+
+        // 2. If no data and we have a user (trainer), check placeholder link
+        if (user) {
+            const { data: pending } = await supabase
+                .from('pending_student_links')
+                .select('*')
+                .eq('id', studentId)
+                .eq('trainer_id', user.id)
+                .maybeSingle()
+
+            if (pending && pending.cardio_ids?.length) {
+                const { data: cardios } = await supabase
+                    .from('cardios')
+                    .select('*')
+                    .in('id', pending.cardio_ids)
+
+                const metadata = (pending.ergogenic_data as any[])?.find(e => e.__metadata) || {};
+                const cardioMeta = metadata.cardio_metadata || [];
+
+                return (cardios || []).map(c => {
+                    const meta = cardioMeta.find((m: any) => m.id === c.id);
+                    return {
+                        id: `pc-${c.id}`,
+                        active: true,
+                        student_id: studentId,
+                        cardio_id: c.id,
+                        duration_minutes: meta?.duration || c.duration_minutes || 30,
+                        suggested_intensity: meta?.intensity || c.suggested_intensity || 'Moderada',
+                        days_of_week: (meta?.days && meta.days.length > 0) ? meta.days : [0, 1, 2, 3, 4, 5, 6],
+                        cardio: c
+                    }
+                });
+            }
+        }
+
+        return []
     } catch (e) {
         console.error('Error fetching student cardios:', e)
         return []

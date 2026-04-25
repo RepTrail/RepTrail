@@ -21,55 +21,57 @@ export default async function StudentDetailPage({ params }: { params: { id: stri
 
     const queryClient = getQueryClient()
 
-    // ─── NON-BLOCKING PREFETCHING (0ms Nav) ─────────────────────────────
-    // Start by getting basic relationship (needed for studentId)
-    // Actually, in a high-speed system, we should prefetch everything in parallel.
-    // If we don't have studentId yet, we prefetch based on relationshipId.
-    
-    queryClient.prefetchQuery({
-        queryKey: QUERY_KEYS.trainer.studentDetail(id),
-        queryFn: () => getStudentRelationship(id)
-    })
-
-    // We fetch a minimal version to get the studentId for further prefetches
+    // ─── PARALLEL PREFETCHING (0ms Nav) ─────────────────────────────
+    // Start with basic relationship to get studentId
     const relationship = await getStudentRelationship(id)
     const studentId = relationship?.student_id
 
+    const prefetchPromises = [
+        queryClient.prefetchQuery({
+            queryKey: QUERY_KEYS.trainer.studentDetail(id),
+            queryFn: () => relationship // Reuse the already fetched data
+        }),
+        queryClient.prefetchQuery({
+            queryKey: QUERY_KEYS.profile.detail(user.id),
+            queryFn: () => getTrainerProfile()
+        })
+    ]
+
     if (studentId) {
-        queryClient.prefetchQuery({
-            queryKey: QUERY_KEYS.trainer.studentHistory(studentId),
-            queryFn: () => getStudentWorkoutHistory(studentId)
-        })
-        queryClient.prefetchQuery({
-            queryKey: QUERY_KEYS.trainer.studentMetrics(studentId),
-            queryFn: () => getStudentMetricsHistory(studentId)
-        })
-        queryClient.prefetchQuery({
-            queryKey: QUERY_KEYS.trainer.studentAdherence(studentId),
-            queryFn: () => getStudentAdherenceHistory(studentId, 30)
-        })
-        queryClient.prefetchQuery({
-            queryKey: QUERY_KEYS.trainer.studentChartData(studentId),
-            queryFn: () => getStudentChartData(studentId)
-        })
-        queryClient.prefetchQuery({
-            queryKey: ['student-recent-activities', studentId],
-            queryFn: () => getStudentRecentActivities(studentId, 50)
-        })
-        queryClient.prefetchQuery({
-            queryKey: QUERY_KEYS.cardio.assignments(studentId),
-            queryFn: () => getStudentCardioAssignments(studentId)
-        })
-        queryClient.prefetchQuery({
-            queryKey: ['student-ergogenics', studentId],
-            queryFn: () => getAssignedErgogenics(studentId)
-        })
+        prefetchPromises.push(
+            queryClient.prefetchQuery({
+                queryKey: QUERY_KEYS.trainer.studentHistory(studentId),
+                queryFn: () => getStudentWorkoutHistory(studentId)
+            }),
+            queryClient.prefetchQuery({
+                queryKey: QUERY_KEYS.trainer.studentMetrics(studentId),
+                queryFn: () => getStudentMetricsHistory(studentId)
+            }),
+            queryClient.prefetchQuery({
+                queryKey: QUERY_KEYS.trainer.studentAdherence(studentId),
+                queryFn: () => getStudentAdherenceHistory(studentId, 30)
+            }),
+            queryClient.prefetchQuery({
+                queryKey: QUERY_KEYS.trainer.studentChartData(studentId),
+                queryFn: () => getStudentChartData(studentId)
+            }),
+            queryClient.prefetchQuery({
+                queryKey: ['student-recent-activities', studentId],
+                queryFn: () => getStudentRecentActivities(studentId, 50)
+            }),
+            queryClient.prefetchQuery({
+                queryKey: QUERY_KEYS.cardio.assignments(studentId),
+                queryFn: () => getStudentCardioAssignments(studentId)
+            }),
+            queryClient.prefetchQuery({
+                queryKey: QUERY_KEYS.ergogenics.all(studentId),
+                queryFn: () => getAssignedErgogenics(studentId)
+            })
+        )
     }
 
-    queryClient.prefetchQuery({
-        queryKey: QUERY_KEYS.profile.detail(user.id),
-        queryFn: () => getTrainerProfile()
-    })
+    // Await everything before dehydration to ensure the client has the data
+    await Promise.all(prefetchPromises)
 
     return (
         <div className="max-w-7xl mx-auto" suppressHydrationWarning>

@@ -3,6 +3,8 @@
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import { normalizeDays } from '@/lib/utils'
+import { createAdminClient } from '@/lib/supabase/admin'
 
 export type ActivityItem = {
     id: string
@@ -142,85 +144,158 @@ export async function getTrainerProfile() {
     return data
 }
 
+export async function deactivateAndPurgeStudent(relationshipId: string, studentId: string) {
+    const { createAdminClient } = await import('@/lib/supabase/server')
+    const adminSupabase = await createAdminClient()
+    const { data: { user } } = await (await createClient()).auth.getUser()
+    const { revalidateTag } = await import('next/cache')
+
+    if (!user) return { error: 'Unauthorized' }
+
+    try {
+        // 1. Check if it's a placeholder (pending_student_links)
+        const { data: placeholder } = await adminSupabase
+            .from('pending_student_links')
+            .select('id')
+            .eq('id', relationshipId)
+            .eq('trainer_id', user.id)
+            .maybeSingle()
+
+        if (placeholder) {
+            await adminSupabase
+                .from('pending_student_links')
+                .update({ status: 'archived' }) // We don't delete to keep history if needed, but archived won't show
+                .eq('id', relationshipId)
+        } else {
+            // 2. Deactivate Real Relationship
+            await adminSupabase
+                .from('trainer_students')
+                .update({ active: false })
+                .eq('id', relationshipId)
+                .eq('trainer_id', user.id)
+        }
+
+        const purgeId = (studentId && studentId !== 'null' && studentId !== relationshipId) ? studentId : (placeholder ? relationshipId : null);
+
+        if (purgeId) {
+            console.log(`[PURGE] Wiping data for student/placeholder: ${purgeId}`);
+            await Promise.all([
+                adminSupabase.from('assigned_workouts').delete().eq('student_id', purgeId),
+                adminSupabase.from('assigned_diets').delete().eq('student_id', purgeId),
+                adminSupabase.from('assigned_cardios').delete().eq('student_id', purgeId),
+                adminSupabase.from('ergogenics').delete().eq('student_id', purgeId)
+            ])
+        }
+
+        // 4. Invalidate EVERYTHING to ensure libraries reflect the removal
+        revalidateTag(`trainer-students-${user.id}`, 'page')
+        revalidateTag(`trainer-diets-${user.id}`, 'page') // DietService.getTrainerDiets
+        revalidateTag(`trainer-${user.id}`, 'page')      // WorkoutService.getTrainerWorkouts
+        
+        revalidatePath('/dashboard/trainer/students')
+        revalidatePath('/dashboard/trainer/diets')
+        revalidatePath('/dashboard/trainer/workouts')
+        revalidatePath('/dashboard/trainer/cardio')
+        revalidatePath(`/dashboard/trainer/students/${relationshipId}`)
+        return { success: true }
+    } catch (e: any) {
+        console.error('[PURGE] Error deactivating student:', e)
+        return { error: e.message }
+    }
+}
+
 export async function createStudent(prevState: any, formData: FormData) {
-    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
+    const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) return { success: false, message: 'Unauthorized' }
 
     const email = formData.get('email')?.toString().trim().toLowerCase()
+    const name = formData.get('name')?.toString().trim()
     const monthlyFee = parseFloat(formData.get('monthlyFee')?.toString() || '0')
 
-    if (!email) return { success: false, message: 'Email is required' }
+    if (!email) return { success: false, message: 'O e-mail é obrigatório.' }
 
     try {
-        // 1. Find Student by Email
-        const { data: student, error: fetchError } = await supabase
+        // 1. Check if profile exists
+        let { data: student, error: fetchError } = await supabase
             .from('profiles')
             .select('id, role, auto_training_status')
             .eq('email', email)
-            .single()
-
-        if (fetchError || !student) {
-            return { success: false, message: 'Aluno não encontrado. Peça para ele criar uma conta no RepTrail primeiro.' }
-        }
-
-        if (student.role === 'trainer') {
-            return { success: false, message: 'Este email pertence a um treinador, não a um aluno.' }
-        }
-
-        // Restriction: Student cannot have active auto-training
-        if (student.auto_training_status === 'active' || student.auto_training_status === 'trial') {
-            return { success: false, message: 'Este aluno possui uma assinatura de Auto-Training ativa e não pode ser vinculado a um personal no momento.' }
-        }
-
-        // Restriction: Student cannot be linked to another trainer
-        const { data: existingTrainer } = await supabase
-            .from('trainer_students')
-            .select('trainer_id')
-            .eq('student_id', student.id)
-            .eq('active', true)
             .maybeSingle()
 
-        if (existingTrainer) {
-            return { success: false, message: 'Este aluno já está vinculado a outro personal trainer.' }
+        let studentId = student?.id
+
+        if (!student) {
+            // 🚀 GHOST PROFILE: Create a profile even if no auth account exists
+            console.log(`[CREATE-STUDENT] Creating Ghost Profile for ${email}`);
+            const { data: newProfile, error: createError } = await supabase
+                .from('profiles')
+                .insert({
+                    id: crypto.randomUUID(),
+                    email,
+                    full_name: name || 'Aluno',
+                    role: 'student',
+                    is_placeholder: true
+                })
+                .select('id')
+                .single()
+
+            if (createError) throw createError
+            studentId = newProfile.id
+        } else {
+            // Validate existing profile
+            if (student.role === 'trainer') {
+                return { success: false, message: 'Este email pertence a um treinador.' }
+            }
+
+            if (student.auto_training_status === 'active') {
+                return { success: false, message: 'Este aluno possui uma assinatura ativa de Auto-Training.' }
+            }
+
+            // Check if already linked to another trainer
+            const { data: existingLink } = await supabase
+                .from('trainer_students')
+                .select('trainer_id, active')
+                .eq('student_id', studentId)
+                .eq('active', true)
+                .maybeSingle()
+
+            if (existingLink && existingLink.trainer_id !== user.id) {
+                return { success: false, message: 'Este aluno já está vinculado a outro personal.' }
+            }
         }
 
-        // 2. Link Student to Trainer
+        // 2. Link/Update Student to Trainer (Unified Upsert)
         const { error: linkError } = await supabase
             .from('trainer_students')
-            .insert({
+            .upsert({
                 trainer_id: user.id,
-                student_id: student.id,
+                student_id: studentId,
                 monthly_fee: monthlyFee,
                 active: true,
                 billing_source: 'manual'
-            })
+            }, { onConflict: 'trainer_id,student_id' })
 
-        if (linkError) {
-            if (linkError.code === '23505') { // Unique violation
-                return { success: false, message: 'Este aluno já está vinculado a você.' }
-            }
-            throw linkError
-        }
+        if (linkError) throw linkError
 
         revalidatePath('/dashboard/trainer/students')
-        revalidatePath('/dashboard/trainer/ranking')
-        return { success: true, message: 'Aluno vinculado com sucesso!' }
+        return { success: true, message: 'Aluno vinculado com sucesso!', studentId }
 
     } catch (e: any) {
-        console.error(e)
+        console.error('[CREATE-STUDENT] Error:', e)
         return { success: false, message: 'Erro ao vincular aluno: ' + e.message }
     }
 }
 
 export async function getTrainerStudents() {
-    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
+    const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) return []
 
-    const { data } = await supabase
+    // 🚀 UNIFIED ARCHITECTURE: Fetch everything from trainer_students
+    const { data: results, error } = await supabase
         .from('trainer_students')
         .select(`
             id,
@@ -229,11 +304,36 @@ export async function getTrainerStudents() {
             active,
             payment_day,
             last_payment_date,
-            student:profiles!student_id(full_name, email, avatar_url)
+            student:profiles!student_id(
+                id,
+                full_name,
+                email,
+                avatar_url,
+                is_placeholder
+            )
         `)
         .eq('trainer_id', user.id)
+        .eq('active', true)
+        .order('created_at', { ascending: false })
 
-    return data || []
+    if (error) {
+        console.error('[GET-STUDENTS] Error:', error)
+        return []
+    }
+
+    return (results || []).map((s: any) => {
+        const profile = Array.isArray(s.student) ? s.student[0] : s.student
+        return {
+            ...s,
+            is_placeholder: !!profile?.is_placeholder,
+            student: {
+                id: profile?.id,
+                full_name: profile?.full_name || 'Sem nome',
+                email: profile?.email || '',
+                avatar_url: profile?.avatar_url || null
+            }
+        }
+    })
 }
 
 export async function getStudentRelationship(relationshipId: string) {
@@ -242,7 +342,8 @@ export async function getStudentRelationship(relationshipId: string) {
 
     if (!user) return null
 
-    const { data } = await supabase
+    // 1. Try real relationship
+    const { data, error } = await supabase
         .from('trainer_students')
         .select(`
             *,
@@ -253,6 +354,7 @@ export async function getStudentRelationship(relationshipId: string) {
                 assigned_workouts(
                     id,
                     active,
+                    day_of_week,
                     workout:workouts(id, name)
                 ),
                 assigned_diets(
@@ -260,14 +362,179 @@ export async function getStudentRelationship(relationshipId: string) {
                     active,
                     days_of_week,
                     diet:diets(id, name)
+                ),
+                assigned_cardios(
+                    id,
+                    active,
+                    duration_minutes,
+                    suggested_intensity,
+                    days_of_week,
+                    cardio:cardios(id, name)
                 )
             )
         `)
         .eq('id', relationshipId)
         .eq('trainer_id', user.id)
-        .single()
+        .maybeSingle()
 
-    return data
+    if (data) return data
+
+    const { data: { user: authUser } } = await supabase.auth.getUser();
+    console.log(`[TRAINER-ACTIONS] getStudentRelationship called for ID: ${relationshipId}. Auth User: ${authUser?.id}`);
+
+    // 2. Try pending link (placeholder)
+    const { data: pending, error: pendingError } = await supabase
+        .from('pending_student_links')
+        .select('*')
+        .eq('id', relationshipId)
+        .eq('trainer_id', user.id)
+        .maybeSingle()
+
+    if (pending) {
+        // Fetch specific entities for the placeholder
+        console.log(`[TRAINER-ACTIONS] Placeholder Found: ${pending.id} (${pending.student_name}). Diets=${pending.diet_ids?.length}, Cardios=${pending.cardio_ids?.length}, Ergos=${pending.ergogenic_data?.length}`);
+        if (pending.diet_ids?.length > 0) console.log(`[TRAINER-ACTIONS] Placeholder Diet IDs: ${JSON.stringify(pending.diet_ids)}`);
+        
+        const metadata = (pending.ergogenic_data as any[])?.find(e => e.__metadata) || {};
+
+        const [workouts, diets, cardios] = await Promise.all([
+            pending.workout_ids?.length ? supabase.from('workouts').select('*, workout_exercises(*, exercise:exercises(*))').in('id', pending.workout_ids) : Promise.resolve({ data: [], error: null }),
+            pending.diet_ids?.length ? supabase.from('diets').select('*, meals(*, items:meal_items(*))').in('id', pending.diet_ids) : Promise.resolve({ data: [], error: null }),
+            pending.cardio_ids?.length ? supabase.from('cardios').select('*').in('id', pending.cardio_ids) : Promise.resolve({ data: [], error: null })
+        ])
+
+        if (workouts.error) console.error("[TRAINER-ACTIONS] Workouts fetch error:", workouts.error.message)
+        if (diets.error) console.error("[TRAINER-ACTIONS] Diets fetch error:", diets.error.message)
+        if (cardios.error) console.error("[TRAINER-ACTIONS] Cardios fetch error:", cardios.error.message)
+
+        console.log(`[TRAINER-ACTIONS] RAW Data Results for ${pending.student_name}:`, {
+            id: pending.id,
+            workout_results: workouts.data?.length || 0,
+            diet_results: diets.data?.length || 0,
+            cardio_results: cardios.data?.length || 0,
+            requested_diet_ids: pending.diet_ids?.length || 0,
+            requested_cardio_ids: pending.cardio_ids?.length || 0
+        });
+
+        if (diets.data?.length === 0 && pending.diet_ids?.length > 0) {
+            console.warn(`[TRAINER-ACTIONS] WARNING: Diet IDs present in placeholder but query returned EMPTY. IDs: ${JSON.stringify(pending.diet_ids)}`);
+            // Debug check with Admin Client
+            const admin = createAdminClient();
+            const { data: adminDiets } = await admin.from('diets').select('id, trainer_id, name').in('id', pending.diet_ids);
+            console.log(`[TRAINER-ACTIONS] DEBUG ADMIN CHECK: Found ${adminDiets?.length || 0} diets with admin bypass.`, adminDiets);
+        }
+
+        if (cardios.data?.length === 0 && pending.cardio_ids?.length > 0) {
+            console.warn(`[TRAINER-ACTIONS] WARNING: Cardio IDs present in placeholder but query returned EMPTY. IDs: ${JSON.stringify(pending.cardio_ids)}`);
+            // Debug check with Admin Client
+            const admin = createAdminClient();
+            const { data: adminCardios } = await admin.from('cardios').select('id, trainer_id, name').in('id', pending.cardio_ids);
+            console.log(`[TRAINER-ACTIONS] DEBUG ADMIN CHECK: Found ${adminCardios?.length || 0} cardios with admin bypass.`, adminCardios);
+        }
+
+        const cardioMetadata = metadata.cardio_metadata || [];
+        console.log(`[TRAINER-ACTIONS] Placeholder Metadata Found: Diets=${(metadata.diet_metadata || []).length}, Cardios=${cardioMetadata.length}`);
+        if (cardioMetadata.length > 0) {
+            console.log(`[TRAINER-ACTIONS] Cardio Meta IDs: ${cardioMetadata.map((m: any) => m.id).join(', ')}`);
+        }
+
+        const mapped = {
+            id: pending.id,
+            trainer_id: pending.trainer_id,
+            student_id: pending.id, // Use link ID as student_id for placeholders
+            is_placeholder: true,
+            active: pending.status === 'pending',
+            monthly_fee: metadata.monthly_fee || 0,
+            payment_day: metadata.payment_day || null,
+            created_at: pending.created_at,
+            student: {
+                full_name: pending.student_name,
+                email: pending.student_email,
+                whatsapp: metadata.whatsapp || null,
+                avatar_url: null,
+                details: {
+                    starting_weight: metadata.weight,
+                    height: metadata.height,
+                    body_fat: metadata.body_fat,
+                    steroid_use: metadata.steroid_use || (pending.ergogenic_data as any[])?.some(e => !e.__metadata),
+                },
+                progress_photos: [],
+                ergogenics: (pending.ergogenic_data as any[])?.filter(e => e && typeof e === 'object' && !e.__metadata).map((e, idx) => {
+                    const days = e.application_days || e.days || [];
+                    console.log(`[TRAINER-ACTIONS] Mapping Placeholder Ergo #${idx} (${e.name}): Days=${JSON.stringify(days)}`);
+                    return {
+                        ...e,
+                        id: e.id || `pe-${idx}-${e.name}`,
+                        student_id: pending.id,
+                        start_date: new Date().toISOString(),
+                        application_days: days
+                    };
+                }) || [],
+                assigned_workouts: (workouts.data || []).map(w => {
+                    const meta = metadata.workout_days?.find((m: any) => m.id === w.id);
+                    return {
+                        id: `pw-${w.id}`,
+                        active: true,
+                        day_of_week: meta?.day ?? null,
+                        workout: w
+                    };
+                }),
+                assigned_diets: (diets.data || []).map(d => {
+                    const meta = (metadata?.diet_metadata || []).find((m: any) => m.id === d.id);
+                    const days = (meta?.days && meta.days.length > 0) ? normalizeDays(meta.days) : (metadata?.diet_days ? normalizeDays(metadata.diet_days) : [0, 1, 2, 3, 4, 5, 6]);
+                    console.log(`[TRAINER-ACTIONS] Mapping Placeholder Diet ${d.id} (${d.name}): Days=${JSON.stringify(days)}`);
+                    return {
+                        id: `pd-${d.id}`,
+                        active: true,
+                        days_of_week: days,
+                        diet: d
+                    };
+                }),
+                assigned_cardios: (cardios.data || []).map(c => {
+                    const meta = cardioMetadata.find((m: any) => m.id === c.id);
+                    const days = (meta?.days && meta.days.length > 0) ? normalizeDays(meta.days) : [0, 1, 2, 3, 4, 5, 6];
+                    console.log(`[TRAINER-ACTIONS] Mapping Placeholder Cardio ${c.id} (${c.name}): Meta Found? ${!!meta}, Days=${JSON.stringify(days)}`);
+                    return {
+                        id: `pc-${c.id}`,
+                        active: true,
+                        student_id: pending.id,
+                        cardio_id: c.id,
+                        duration_minutes: meta?.duration || c.duration_minutes || 30,
+                        suggested_intensity: meta?.intensity || c.suggested_intensity || 'Moderada',
+                        days_of_week: days,
+                        cardio: c
+                    }
+                })
+            }
+        }
+
+        // Final normalization check for consistency
+        if (mapped?.student) {
+            if (mapped.student.assigned_diets) {
+                mapped.student.assigned_diets = mapped.student.assigned_diets.map((d: any) => ({
+                    ...d,
+                    days_of_week: normalizeDays(d.days_of_week)
+                }));
+            }
+            if (mapped.student.assigned_cardios) {
+                mapped.student.assigned_cardios = mapped.student.assigned_cardios.map((c: any) => ({
+                    ...c,
+                    days_of_week: normalizeDays(c.days_of_week)
+                }));
+            }
+            if (mapped.student.ergogenics) {
+                mapped.student.ergogenics = mapped.student.ergogenics.map((e: any) => ({
+                    ...e,
+                    application_days: normalizeDays(e.application_days || (e as any).days)
+                }));
+            }
+        }
+
+        console.log(`[TRAINER-ACTIONS] Final Mapped Data: Diets=${mapped.student.assigned_diets.length}, Cardios=${mapped.student.assigned_cardios.length}, Ergos=${mapped.student.ergogenics.length}`);
+        return mapped;
+    }
+
+    return null
 }
 export async function getTrainerRanking() {
     const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
@@ -764,59 +1031,116 @@ export async function getPublicPlanPricing() {
 
 
 export async function toggleStudentStatus(relationshipId: string, isActive: boolean) {
-    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
+    const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
-    if (!user) return { success: false, message: 'Não autorizado' }
+    if (!user) return { success: false, error: 'Não autorizado' }
 
-    // 1. Get Trainer Profile and active students count
-    const { data: profile } = await supabase
-        .from('profiles')
-        .select('asaas_subscription_id, is_billing_exempt')
-        .eq('id', user.id)
-        .single()
-
-    // 2. If activating, check limits
-    if (isActive) {
-        const { count } = await supabase
-            .from('trainer_students')
-            .select('*', { count: 'exact', head: true })
-            .eq('trainer_id', user.id)
-            .eq('active', true)
-
-        const activeCount = count || 0
-
-        // If trainer is not exempt and doesn't have a sub, limit to 5
-        if (activeCount >= 5 && !profile?.asaas_subscription_id && !profile?.is_billing_exempt) {
-            return {
-                success: false,
-                message: 'Limite gratuito atingido. Para ter mais de 5 alunos ativos, você precisa configurar sua assinatura no menu Planos.'
-            }
-        }
-    }
-
-    // Verify ownership
+    // 1. Try to find in REAL students first
     const { data: rel } = await supabase
         .from('trainer_students')
         .select('trainer_id')
         .eq('id', relationshipId)
-        .single()
+        .maybeSingle()
 
-    if (!rel || rel.trainer_id !== user.id) {
-        return { success: false, message: 'Não autorizado' }
+    if (rel) {
+        if (rel.trainer_id !== user.id) {
+            return { success: false, error: 'Não autorizado' }
+        }
+
+        // Check limits if activating
+        if (isActive) {
+            const { data: profile } = await supabase
+                .from('profiles')
+                .select('asaas_subscription_id, is_billing_exempt')
+                .eq('id', user.id)
+                .single()
+
+            const { count } = await supabase
+                .from('trainer_students')
+                .select('*', { count: 'exact', head: true })
+                .eq('trainer_id', user.id)
+                .eq('active', true)
+
+            const activeCount = count || 0
+            if (activeCount >= 5 && !profile?.asaas_subscription_id && !profile?.is_billing_exempt) {
+                return {
+                    success: false,
+                    error: 'Limite gratuito atingido. Para ter mais de 5 alunos ativos, você precisa configurar sua assinatura no menu Planos.'
+                }
+            }
+        }
+
+        const { error } = await supabase
+            .from('trainer_students')
+            .update({ active: isActive })
+            .eq('id', relationshipId)
+
+        if (error) return { success: false, error: error.message }
+        
+        revalidatePath('/dashboard/trainer/students')
+        return { success: true }
     }
 
-    const { error } = await supabase
-        .from('trainer_students')
-        .update({ active: isActive })
+    // 2. If not found, try to find in PENDING links (Placeholders)
+    const { data: pending } = await supabase
+        .from('pending_student_links')
+        .select('trainer_id')
         .eq('id', relationshipId)
+        .maybeSingle()
 
-    if (error) {
-        console.error('Error toggling student status:', error)
-        return { success: false, message: error.message }
+    if (pending) {
+        if (pending.trainer_id !== user.id) {
+            return { success: false, error: 'Não autorizado' }
+        }
+
+        return { success: true }
     }
 
-    revalidatePath(`/dashboard/trainer/students/${relationshipId}`)
-    revalidatePath('/dashboard/trainer/students')
-    return { success: true }
+    return { success: false, error: 'Aluno não encontrado' }
+}
+
+export async function findStudentByName(name: string) {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user || !name) return { exact: null, suggestions: [] }
+
+    // 1. Search in profiles that are linked to this trainer
+    const { data: results, error } = await supabase
+        .from('trainer_students')
+        .select(`
+            student_id,
+            student:profiles!student_id(id, full_name, email, is_placeholder)
+        `)
+        .eq('trainer_id', user.id)
+        .eq('active', true)
+
+    if (error || !results) return { exact: null, suggestions: [] }
+
+    const normalizedTarget = name.toLowerCase().trim()
+    const suggestions: any[] = []
+    let exact: any = null
+
+    results.forEach((r: any) => {
+        const student = Array.isArray(r.student) ? r.student[0] : r.student
+        if (!student) return
+
+        const studentName = (student.full_name || '').toLowerCase().trim()
+        
+        const matchData = {
+            student_id: student.id,
+            full_name: student.full_name,
+            email: student.email,
+            is_placeholder: !!student.is_placeholder
+        }
+
+        if (studentName === normalizedTarget) {
+            exact = matchData
+        } else if (studentName.includes(normalizedTarget) || normalizedTarget.includes(studentName)) {
+            suggestions.push(matchData)
+        }
+    })
+
+    return { exact, suggestions: suggestions.slice(0, 5) }
 }

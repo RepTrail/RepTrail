@@ -251,7 +251,74 @@ export async function unassignWorkout(workoutId: string, studentId: string) {
     const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     try {
-        const { error } = await supabase
+        if (!workoutId || !studentId || workoutId === 'undefined' || studentId === 'undefined') {
+            console.error(`[WORKOUT-ACTIONS] Invalid IDs for unassignWorkout: workoutId=${workoutId}, studentId=${studentId}`);
+            return { error: 'IDs inválidos para desatribuir treino.' };
+        }
+
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) return { error: 'Unauthorized' }
+
+        // 🚀 CHECK IF PLACEHOLDER
+        const { data: placeholder } = await supabase
+            .from('pending_student_links')
+            .select('*')
+            .eq('id', studentId)
+            .eq('trainer_id', user.id)
+            .maybeSingle()
+
+        if (placeholder) {
+            console.log(`[WORKOUT-ACTIONS] Unassigning from placeholder: ${studentId}`)
+            if (!workoutId) {
+                console.warn(`[WORKOUT-ACTIONS] unassignWorkout called without workoutId for placeholder student: ${studentId}`);
+                return { success: true }; // Idempotent
+            }
+            const cleanId = workoutId.replace('pw-', '')
+            
+            // 1. Filter workout_ids
+            const newWorkoutIds = (placeholder.workout_ids || []).filter((id: string) => id !== cleanId)
+            
+            // 2. Filter metadata workout_days
+            const ergo = (placeholder.ergogenic_data as any[]) || []
+            const metaIdx = ergo.findIndex(e => e.__metadata)
+            if (metaIdx !== -1) {
+                const metadata = ergo[metaIdx]
+                if (metadata.workout_days) {
+                    metadata.workout_days = metadata.workout_days.filter((m: any) => m.id !== cleanId)
+                    ergo[metaIdx] = metadata
+                }
+            }
+
+            const { error: pendingError } = await supabase
+                .from('pending_student_links')
+                .update({ 
+                    workout_ids: newWorkoutIds,
+                    ergogenic_data: ergo
+                })
+                .eq('id', studentId)
+
+            if (pendingError) throw pendingError
+
+            revalidatePath('/dashboard/trainer/students')
+            return { success: true }
+        }
+
+        // 🚀 TRAINER AUTHORITY: Check if user is the student's trainer
+        const { data: link } = await supabase
+            .from('trainer_students')
+            .select('id')
+            .eq('trainer_id', user.id)
+            .eq('student_id', studentId)
+            .eq('active', true)
+            .maybeSingle()
+
+        const isTrainer = !!link
+
+        // 2. Use Admin Client to force deactivation regardless of owner
+        const { createAdminClient } = await import('@/lib/supabase/server')
+        const adminSupabase = await createAdminClient()
+
+        const { error } = await adminSupabase
             .from('assigned_workouts')
             .update({ active: false })
             .eq('workout_id', workoutId)
@@ -259,8 +326,7 @@ export async function unassignWorkout(workoutId: string, studentId: string) {
             .eq('active', true)
 
         if (error) throw error
-
-        const { data: { user } } = await supabase.auth.getUser()
+        
         if (user) {
             revalidateTag(`trainer-${user.id}`, 'page')
         }
@@ -443,7 +509,7 @@ export async function getTodayWorkout(studentId: string) {
 
     try {
         const [
-            { data: assignment },
+            { data: assignments },
             { data: trainerLinks }
         ] = await Promise.all([
             supabase
@@ -460,8 +526,7 @@ export async function getTodayWorkout(studentId: string) {
                 `)
                 .eq('student_id', studentId)
                 .eq('day_of_week', dayOfWeek)
-                .eq('active', true)
-                .maybeSingle(),
+                .eq('active', true),
             supabase
                 .from('trainer_students')
                 .select('trainer_id')
@@ -469,32 +534,38 @@ export async function getTodayWorkout(studentId: string) {
                 .eq('active', true)
         ])
 
-        if (!assignment || !assignment.workout) return null
+        if (!assignments || assignments.length === 0) return []
 
-        const workout = assignment.workout as any
+        const workouts: any[] = []
 
-        // Data Pruning: Check if trainer is still linked using pre-fetched links
-        if (workout.trainer_id && workout.trainer_id !== studentId) {
-            const isLinked = trainerLinks?.some(l => l.trainer_id === workout.trainer_id)
-            if (!isLinked) return null // Unlinked trainer's data is hidden
-        }
-        if (workout.workout_exercises) {
-            workout.workout_exercises.sort((a: any, b: any) => a.order_index - b.order_index)
+        for (const a of assignments) {
+            if (!a.workout) continue
+            const workout = a.workout as any
+
+            // Data Pruning: Check if trainer is still linked using pre-fetched links
+            if (workout.trainer_id && workout.trainer_id !== studentId) {
+                const isLinked = trainerLinks?.some(l => l.trainer_id === workout.trainer_id)
+                if (!isLinked) continue // Unlinked trainer's data is hidden
+            }
+            if (workout.workout_exercises) {
+                workout.workout_exercises.sort((a: any, b: any) => a.order_index - b.order_index)
+            }
+
+            // 🚨 ELITE: Inject status into today's workout object to prevent card flicker
+            const { getWorkoutStatus } = await import('@/actions/log-actions')
+            const statusData = await getWorkoutStatus(studentId, workout.id)
+            
+            workouts.push({
+                ...workout,
+                status: statusData.status,
+                logId: statusData.logId
+            })
         }
 
-        // 🚨 ELITE: Inject status into today's workout object to prevent card flicker
-        // We do this server-side to ensure 0ms UI readiness
-        const { getWorkoutStatus } = await import('@/actions/log-actions')
-        const statusData = await getWorkoutStatus(studentId, workout.id)
-        
-        return {
-            ...workout,
-            status: statusData.status,
-            logId: statusData.logId
-        }
+        return workouts
     } catch (e) {
         console.error('Error fetching today workout:', e)
-        return null
+        return []
     }
 }
 export async function getAssignedWorkouts(studentId: string) {

@@ -18,7 +18,8 @@ import {
     Sparkles, 
     Crown, 
     BedDouble, 
-    Plus 
+    Plus,
+    UserMinus
 } from 'lucide-react'
 import { Badge } from "@/components/ui/badge"
 import {
@@ -47,15 +48,21 @@ export function TrainerStudentsClient({ userId }: TrainerStudentsClientProps) {
     // ─── Queries ──────────────────────────────────────────────────────────
     const { data: students = [] } = useQuery({
         queryKey: QUERY_KEYS.trainer.students(userId),
-        queryFn: getTrainerStudents
+        queryFn: () => getTrainerStudents(),
+        staleTime: 0,
+        refetchOnMount: 'always'
     })
     const { data: profile } = useQuery({
         queryKey: QUERY_KEYS.profile.detail(userId),
-        queryFn: getTrainerProfile
+        queryFn: getTrainerProfile,
+        staleTime: 0,
+        refetchOnMount: 'always'
     })
     const { data: fullRanking = [] } = useQuery({
         queryKey: QUERY_KEYS.trainer.ranking(),
-        queryFn: getTrainerRanking
+        queryFn: getTrainerRanking,
+        staleTime: 0,
+        refetchOnMount: 'always'
     })
 
     // ─── Metrics ──────────────────────────────────────────────────────────
@@ -76,8 +83,10 @@ export function TrainerStudentsClient({ userId }: TrainerStudentsClientProps) {
     const totalRevenue = students.filter((s: any) => s.active).reduce((acc: number, curr: any) => acc + (Number(curr.monthly_fee) || 0), 0)
 
     const filteredStudents = students.filter((s: any) => 
-        (s.student?.full_name?.toLowerCase().includes(search.toLowerCase())) ||
-        (s.student?.email?.toLowerCase().includes(search.toLowerCase()))
+        s.active && (
+            (s.student?.full_name?.toLowerCase().includes(search.toLowerCase())) ||
+            (s.student?.email?.toLowerCase().includes(search.toLowerCase()))
+        )
     )
 
     // Tier Styling
@@ -112,7 +121,7 @@ export function TrainerStudentsClient({ userId }: TrainerStudentsClientProps) {
                     <CopyInviteButton trainerCode={profile?.trainer_code || ''} className="w-full sm:w-auto" />
                     <UnifiedCreationDialog
                         title="Vincular Novo Aluno"
-                        description="O aluno deve possuir uma conta no RepTrail. Insira o email abaixo."
+                        description="Insira o email que o aluno usará para criar a conta e sincronizar os dados. O email pode ser provisório e alterado depois."
                         trigger={
                             <PillButton variant="emerald" className="w-full sm:w-auto shadow-lg shadow-emerald-500/10">
                                 <Plus className="w-4 h-4" /> Vincular Aluno
@@ -218,18 +227,29 @@ export function TrainerStudentsClient({ userId }: TrainerStudentsClientProps) {
                                                                 {item.student?.full_name || 'Sem nome'}
                                                             </span>
                                                             <div className="flex items-center gap-2 mt-1">
-                                                                <div className={`
-                                                                    inline-flex items-center w-fit px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest border
-                                                                    ${item.active ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-zinc-800 text-zinc-500 border-zinc-700/50'}
-                                                                `}>
-                                                                    {item.active ? 'Ativo' : 'Inativo'}
-                                                                </div>
-                                                                {paymentStatus === 'overdue' && (
+                                                                {item.is_new && (
+                                                                    <div className="inline-flex items-center w-fit px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest bg-blue-500/10 text-blue-500 border border-blue-500/20">
+                                                                        Pendente
+                                                                    </div>
+                                                                )}
+                                                                {item.is_placeholder ? (
+                                                                    <div className="inline-flex items-center w-fit px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest bg-amber-500/10 text-amber-500 border border-amber-500/20">
+                                                                        Aguardando Cadastro
+                                                                    </div>
+                                                                ) : (
+                                                                    <div className={`
+                                                                        inline-flex items-center w-fit px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest border
+                                                                        ${item.active ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-zinc-800 text-zinc-500 border-zinc-700/50'}
+                                                                    `}>
+                                                                        {item.active ? 'Ativo' : 'Inativo'}
+                                                                    </div>
+                                                                )}
+                                                                {paymentStatus === 'overdue' && !item.is_placeholder && (
                                                                     <div className="inline-flex items-center w-fit px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest bg-red-500/10 text-red-500 border border-red-500/20">
                                                                         Atrasado
                                                                     </div>
                                                                 )}
-                                                                {paymentStatus === 'due_today' && (
+                                                                {paymentStatus === 'due_today' && !item.is_placeholder && (
                                                                     <div className="inline-flex items-center w-fit px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest bg-amber-500/10 text-amber-500 border border-amber-500/20">
                                                                         Vence Hoje
                                                                     </div>
@@ -252,12 +272,37 @@ export function TrainerStudentsClient({ userId }: TrainerStudentsClientProps) {
                                                     </div>
                                                 </TableCell>
                                                 <TableCell className="py-4 text-right">
-                                                    <Button asChild variant="ghost" size="sm" className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-white hover:bg-zinc-900 h-9 rounded-xl gap-2 px-4 shadow-none">
-                                                        <StudentPrefetchLink relationshipId={item.id} studentId={item.student_id} href={`/dashboard/trainer/students/${item.id}`}>
-                                                            Perfil
-                                                            <ArrowUpRight className="h-3.5 w-3.5" />
-                                                        </StudentPrefetchLink>
-                                                    </Button>
+                                                    <div className="flex items-center gap-1 justify-end">
+                                                        <Button asChild variant="ghost" size="sm" className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-white hover:bg-zinc-900 h-9 rounded-xl gap-2 px-4 shadow-none">
+                                                            <StudentPrefetchLink relationshipId={item.id} studentId={item.student_id} href={`/dashboard/trainer/students/${item.id}`}>
+                                                                Perfil
+                                                                <ArrowUpRight className="h-3.5 w-3.5" />
+                                                            </StudentPrefetchLink>
+                                                        </Button>
+
+                                                        {item.active && (
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                className="h-9 w-9 rounded-xl text-zinc-600 hover:text-red-500 hover:bg-red-500/10 transition-all"
+                                                                title="Desativar e Limpar Ficha"
+                                                                onClick={async () => {
+                                                                    if (confirm(`Tem certeza que deseja desativar ${item.student?.full_name}? Isso removerá todos os treinos, dietas e cardios atribuídos por você.`)) {
+                                                                        const { deactivateAndPurgeStudent } = await import('@/actions/trainer-actions')
+                                                                        const { useQueryClient } = await import('@tanstack/react-query')
+                                                                        
+                                                                        const result = await deactivateAndPurgeStudent(item.id, item.student_id)
+                                                                        if (result.success) {
+                                                                            // Force immediate UI update
+                                                                            window.location.reload()
+                                                                        }
+                                                                    }
+                                                                }}
+                                                            >
+                                                                <UserMinus className="h-4 w-4" />
+                                                            </Button>
+                                                        )}
+                                                    </div>
                                                 </TableCell>
                                             </TableRow>
                                         )

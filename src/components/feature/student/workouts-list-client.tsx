@@ -221,8 +221,9 @@ export function WorkoutsListClient({ userId }: WorkoutsListClientProps) {
                                                 </div>
                                                 <UnifiedDeleteButton
                                                     id={workout.id}
-                                                    actionType="workout"
+                                                    actionType="delete-workout"
                                                     itemName={workout.name}
+                                                    studentId={userId}
                                                     queryKey={QUERY_KEYS.workouts.library(userId)}
                                                 />
                                             </div>

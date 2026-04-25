@@ -41,30 +41,42 @@ export class DietService {
     static async getTrainerDiets(trainerId: string) {
         return unstable_cache(
             async () => {
-                const { data, error } = await adminClient
-                    .from('diets')
-                    .select(`
-                        *,
-                        meals(count),
-                        assignments:assigned_diets(
-                            id,
-                            student_id,
-                            days_of_week,
-                            active,
-                            student:profiles(full_name)
-                        )
-                    `)
-                    .eq('trainer_id', trainerId)
-                    .order('created_at', { ascending: false })
+                const [
+                    { data: diets, error: dError },
+                    { data: pendingLinks }
+                ] = await Promise.all([
+                    adminClient
+                        .from('diets')
+                        .select(`
+                            *,
+                            meals(count),
+                            assignments:assigned_diets(
+                                id,
+                                student_id,
+                                days_of_week,
+                                active,
+                                student:profiles(full_name)
+                            )
+                        `)
+                        .eq('trainer_id', trainerId)
+                        .order('created_at', { ascending: false }),
+                    adminClient
+                        .from('pending_student_links')
+                        .select('id, student_name, diet_ids')
+                        .eq('trainer_id', trainerId)
+                        .eq('status', 'pending')
+                ])
 
-                if (error) {
-                    console.error('Error in DietService.getTrainerDiets:', error)
+                if (dError) {
+                    console.error('Error in DietService.getTrainerDiets:', dError)
                     return []
                 }
                 
                 // Grouping logic for trainer view
-                const grouped = (data || []).map(diet => {
+                const grouped = (diets || []).map(diet => {
                     const studentMap: Record<string, any> = {}
+
+                    // 1. Process real assignments
                     ;(diet.assignments || []).forEach((a: any) => {
                         if (!a.active) return
                         
@@ -76,6 +88,24 @@ export class DietService {
                             }
                         }
                     })
+
+                    // 2. Process pending assignments (Placeholders)
+                    ;(pendingLinks || []).forEach(link => {
+                        if (link.diet_ids?.includes(diet.id)) {
+                            const placeholderId = `pending-${link.id}`
+                            if (!studentMap[placeholderId]) {
+                                studentMap[placeholderId] = {
+                                    id: link.id,
+                                    student_id: null,
+                                    active: true,
+                                    is_placeholder: true,
+                                    student: { full_name: link.student_name },
+                                    days_of_week: []
+                                }
+                            }
+                        }
+                    })
+
                     return { ...diet, assignments: Object.values(studentMap) }
                 })
 

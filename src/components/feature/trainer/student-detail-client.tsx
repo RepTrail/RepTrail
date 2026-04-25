@@ -1,6 +1,7 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useState, useEffect } from 'react'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { getStudentRelationship, getTrainerProfile } from '@/actions/trainer-actions'
 import { getStudentWorkoutHistory, getStudentRecentActivities } from '@/actions/log-actions'
@@ -39,7 +40,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { EditStudentDialog } from './edit-student-dialog'
 import { StudentGalleryDialog } from './student-gallery-dialog'
 import { MarkPaidButton } from './mark-paid-button'
-import { UnassignButton } from './unassign-button'
 import { StudentWorkoutHistory } from './student-workout-history'
 import { UnifiedAdherenceChart } from '@/components/feature/shared/unified-adherence-chart'
 import { UnifiedDeleteButton } from '@/components/feature/shared/unified-delete-button'
@@ -57,30 +57,64 @@ export function StudentDetailClient({ relationshipId, userId }: StudentDetailCli
     // ─── Queries ──────────────────────────────────────────────────────────
     const { data: relationship } = useQuery({
         queryKey: QUERY_KEYS.trainer.studentDetail(relationshipId),
-        queryFn: () => getStudentRelationship(relationshipId)
+        queryFn: () => getStudentRelationship(relationshipId),
+        staleTime: 0,
+        refetchOnMount: 'always'
     })
+
+    if (relationship) {
+        console.log(`[STUDENT-DETAIL] Relationship Data:`, {
+            id: relationship.id,
+            is_placeholder: relationship.is_placeholder,
+            student_name: relationship.student?.full_name,
+            diets: relationship.student?.assigned_diets?.length,
+            cardios: relationship.student?.assigned_cardios?.length,
+            ergos: relationship.student?.ergogenics?.length
+        });
+    }
+
+    const queryClient = useQueryClient()
+    const [hasCheckedLink, setHasCheckedLink] = useState(false)
+
+    // ─── Auto-sync on mount ──────────────────────────────────────────
+    useEffect(() => {
+        // Only trigger once to check for linking, avoid loop
+        if (relationship?.is_placeholder && !hasCheckedLink) {
+            console.log("[STUDENT-DETAIL] Placeholder detected, checking for link...")
+            setHasCheckedLink(true)
+            queryClient.invalidateQueries({ queryKey: QUERY_KEYS.trainer.studentDetail(relationshipId) })
+        }
+    }, [relationship?.is_placeholder, hasCheckedLink, relationshipId, queryClient])
 
     const studentId = relationship?.student_id
 
     const { data: history = [] } = useQuery({
         queryKey: QUERY_KEYS.trainer.studentHistory(studentId!),
         queryFn: () => getStudentWorkoutHistory(studentId!),
-        enabled: !!studentId
+        enabled: !!studentId,
+        staleTime: 0,
+        refetchOnMount: 'always'
     })
     const { data: metricsHistory = { weights: [], bfs: [] } } = useQuery({
         queryKey: QUERY_KEYS.trainer.studentMetrics(studentId!),
         queryFn: () => getStudentMetricsHistory(studentId!),
-        enabled: !!studentId
+        enabled: !!studentId,
+        staleTime: 0,
+        refetchOnMount: 'always'
     })
     const { data: chartData = { weights: [], bfs: [], frequency: [] } } = useQuery({
         queryKey: QUERY_KEYS.trainer.studentChartData(studentId!),
         queryFn: () => getStudentChartData(studentId!),
-        enabled: !!studentId
+        enabled: !!studentId,
+        staleTime: 0,
+        refetchOnMount: 'always'
     })
     const { data: adherenceHistory = [] } = useQuery({
         queryKey: QUERY_KEYS.trainer.studentAdherence(studentId!),
         queryFn: () => getStudentAdherenceHistory(studentId!, 30),
-        enabled: !!studentId
+        enabled: !!studentId,
+        staleTime: 0,
+        refetchOnMount: 'always'
     })
     const { data: trainerProfile } = useQuery({
         queryKey: QUERY_KEYS.profile.detail(userId),
@@ -89,17 +123,23 @@ export function StudentDetailClient({ relationshipId, userId }: StudentDetailCli
     const { data: recentActivities = [] } = useQuery({
         queryKey: ['student-recent-activities', studentId],
         queryFn: () => getStudentRecentActivities(studentId!, 50),
-        enabled: !!studentId
+        enabled: !!studentId,
+        staleTime: 0,
+        refetchOnMount: 'always'
     })
     const { data: cardioAssignments = [] } = useQuery({
         queryKey: QUERY_KEYS.cardio.assignments(studentId!),
         queryFn: () => getStudentCardioAssignments(studentId!),
-        enabled: !!studentId
+        enabled: !!studentId,
+        staleTime: 0,
+        refetchOnMount: 'always'
     })
     const { data: ergogenics = [] } = useQuery({
-        queryKey: ['student-ergogenics', studentId],
+        queryKey: QUERY_KEYS.ergogenics.all(studentId!),
         queryFn: () => getAssignedErgogenics(studentId!),
-        enabled: !!studentId
+        enabled: !!studentId,
+        staleTime: 0,
+        refetchOnMount: 'always'
     })
 
     if (!relationship) return null
@@ -111,9 +151,18 @@ export function StudentDetailClient({ relationshipId, userId }: StudentDetailCli
     const assignedWorkouts = student?.assigned_workouts?.filter((aw: any) => aw.active) || []
     const activeDiets = student?.assigned_diets?.filter((ad: any) => ad.active) || []
 
+    // Use data from relationship if placeholder, fallback to separate queries
+    const displayCardios = relationship.is_placeholder 
+        ? (student?.assigned_cardios || []) 
+        : (cardioAssignments.length > 0 ? cardioAssignments : (student?.assigned_cardios || []))
+    
+    const displayErgogenics = relationship.is_placeholder
+        ? (student?.ergogenics || [])
+        : (ergogenics.length > 0 ? ergogenics : (student?.ergogenics || []))
+
     // ─── Metrics Calculation ─────────────────────────────────────────────
     const weights = metricsHistory.weights || []
-    const lastWeight = weights[weights.length - 1]?.weight_kg
+    const lastWeight = weights[weights.length - 1]?.weight_kg ?? details?.starting_weight
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
     const weightBase30 = weights.filter((w: any) => new Date(w.recorded_at) <= thirtyDaysAgo).at(-1) ?? weights[0]
     const weightTrend = (lastWeight != null && weightBase30 && weightBase30.weight_kg !== lastWeight)
@@ -189,13 +238,22 @@ export function StudentDetailClient({ relationshipId, userId }: StudentDetailCli
                             </AvatarFallback>
                         </Avatar>
                         <div className="space-y-1 min-w-0 flex-1">
-                            <h1 className="text-2xl md:text-4xl font-black text-white italic uppercase truncate">{student?.full_name}</h1>
+                            <div className="flex items-center gap-3">
+                                <h1 className="text-2xl md:text-4xl font-black text-white italic uppercase truncate">{student?.full_name}</h1>
+                                {relationship.is_placeholder && (
+                                    <Badge variant="outline" className="bg-amber-500/10 text-amber-500 border-amber-500/20 text-[8px] font-black uppercase tracking-widest px-2 py-0.5">
+                                        Placeholder
+                                    </Badge>
+                                )}
+                            </div>
                             <div className="flex items-center gap-3">
                                 <span className="text-zinc-500 text-[10px] flex items-center gap-1.5 shrink-0">
-                                    <Calendar className="w-3 h-3" /> Desde {new Date(relationship.created_at).toLocaleDateString()}
+                                    <Calendar className="w-3 h-3" /> {relationship.is_placeholder ? 'Criado em' : 'Desde'} {new Date(relationship.created_at || Date.now()).toLocaleDateString()}
                                 </span>
                                 <div className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest border ${relationship.active ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-zinc-800 text-zinc-500 border-zinc-700/50'}`}>
-                                    {relationship.active ? 'Ativo' : 'Inativo'}
+                                    {relationship.is_placeholder 
+                                        ? (relationship.active ? 'Pendente' : 'Suspenso') 
+                                        : (relationship.active ? 'Ativo' : 'Inativo')}
                                 </div>
                             </div>
                         </div>
@@ -216,10 +274,16 @@ export function StudentDetailClient({ relationshipId, userId }: StudentDetailCli
                             initialData={{
                                 weight: lastWeight,
                                 body_fat: lastBF,
+                                height: details?.height,
+                                age: details?.age,
+                                sex: details?.sex,
+                                activity_level: details?.activity_level,
                                 monthly_fee: relationship.monthly_fee,
                                 payment_day: relationship.payment_day,
                                 steroid_use: details?.steroid_use,
-                                whatsapp: student?.whatsapp
+                                whatsapp: student?.whatsapp,
+                                email: student?.email,
+                                isPlaceholder: relationship.is_placeholder
                             }}
                         >
                             <Button className="flex-1 sm:flex-none bg-white text-zinc-950 font-black uppercase italic tracking-widest h-10 px-4 text-xs rounded-xl border border-transparent">
@@ -249,7 +313,7 @@ export function StudentDetailClient({ relationshipId, userId }: StudentDetailCli
                     <CardContent className="p-7 space-y-10">
                         <div className="grid grid-cols-2 gap-x-4 gap-y-8 md:gap-y-10">
                             <InfoField label="Altura" value={details?.height || '--'} sub="CM" />
-                            <InfoField label="Idade" value={calculateAge(student?.birth_date)} sub="ANOS" />
+                            <InfoField label="Idade" value={details?.age || calculateAge(details?.birth_date)} sub="ANOS" />
                             <InfoField label="Gênero" value={details?.sex ? sexLabels[details.sex].toUpperCase() : '--'} />
                             <InfoField label="Atividade" value={details?.activity_level ? activityLabels[details.activity_level].toUpperCase() : '--'} />
                             <InfoField label="Ergogênicos" value={details?.steroid_use ? 'SIM' : 'NÃO'} />
@@ -332,15 +396,24 @@ export function StudentDetailClient({ relationshipId, userId }: StudentDetailCli
                                     </Button>
                                 </div>
                                 {assignedWorkouts.length > 0 ? (
-                                    assignedWorkouts.map((aw: any) => (
+                                    assignedWorkouts.map((aw: any, idx: number) => (
                                         <ContentCard 
-                                            key={aw.id} 
+                                            key={aw.id || `workout-${idx}`} 
                                             icon={<Dumbbell className="w-4 h-4 text-orange-500" />} 
                                             label={aw.workout.name} 
                                             actionLabel="Editar" 
                                             href={`/dashboard/trainer/workouts/${aw.workout.id}`} 
                                             showAction={relationship.active} 
-                                            secondaryAction={<UnassignButton type="workout" contentId={aw.id} studentId={studentId!} revalidateKey={QUERY_KEYS.trainer.studentDetail(relationshipId)} />}
+                                            daysOfWeek={aw.day_of_week !== null ? [aw.day_of_week] : undefined}
+                                            secondaryAction={<UnifiedDeleteButton 
+                                                actionType="workout" 
+                                                id={aw.id} 
+                                                contentId={aw.workout.id}
+                                                studentId={studentId!} 
+                                                relationshipId={relationshipId}
+                                                itemName={aw.workout.name}
+                                                queryKey={QUERY_KEYS.workouts.assignments(studentId!)}
+                                             />}
                                         />
                                     ))
                                 ) : (
@@ -364,23 +437,15 @@ export function StudentDetailClient({ relationshipId, userId }: StudentDetailCli
                                         </Link>
                                     </Button>
                                 </div>
-                                {ergogenics.length > 0 ? (
-                                    ergogenics.map((e: any) => (
-                                        <ContentCard 
-                                            key={e.id} 
-                                            icon={<Sparkles className="w-4 h-4 text-purple-500" />} 
-                                            label={e.name}
-                                            subLabel={`${e.weekly_dosage}${e.unit} / SEMANA`}
-                                            showAction={relationship.active}
-                                            deleteProps={{
-                                                id: e.id,
-                                                actionType: 'ergogenic',
-                                                itemName: e.name,
-                                                studentId: studentId!,
-                                                queryKey: ['student-ergogenics', studentId!]
-                                            }}
-                                        />
-                                    ))
+                                {displayErgogenics.length > 0 ? (
+                                    <ContentCard 
+                                        icon={<Syringe className="w-4 h-4 text-purple-500" />} 
+                                        label={`${displayErgogenics.length} Substância${displayErgogenics.length > 1 ? 's' : ''} Prescrita${displayErgogenics.length > 1 ? 's' : ''}`}
+                                        subLabel="Protocolo Farmacológico Ativo"
+                                        actionLabel="Ver Protocolo"
+                                        href={`/dashboard/trainer/students/${studentId}/ergogenics`}
+                                        showAction={relationship.active}
+                                    />
                                 ) : (
                                     <EmptyStateCard 
                                         icon={<Syringe className="w-4 h-4" />} 
@@ -407,15 +472,24 @@ export function StudentDetailClient({ relationshipId, userId }: StudentDetailCli
                                     </Button>
                                 </div>
                                 {activeDiets.length > 0 ? (
-                                    activeDiets.map((ad: any) => (
+                                    activeDiets.map((ad: any, idx: number) => (
                                         <ContentCard 
-                                            key={ad.id} 
+                                            key={ad.id || `diet-${idx}`} 
                                             icon={<Utensils className="w-4 h-4 text-orange-500" />} 
                                             label={ad.diet.name} 
                                             actionLabel="Editar" 
                                             href={`/dashboard/trainer/diets/${ad.diet.id}`} 
                                             showAction={relationship.active} 
-                                            secondaryAction={<UnassignButton type="diet" contentId={ad.id} studentId={studentId!} revalidateKey={QUERY_KEYS.trainer.studentDetail(relationshipId)} />}
+                                            daysOfWeek={ad.days_of_week}
+                                            secondaryAction={<UnifiedDeleteButton 
+                                                actionType="diet" 
+                                                id={ad.id} 
+                                                contentId={ad.diet.id}
+                                                studentId={studentId!} 
+                                                relationshipId={relationshipId}
+                                                itemName={ad.diet.name}
+                                                queryKey={QUERY_KEYS.diets.assignments(studentId!)}
+                                             />}
                                         />
                                     ))
                                 ) : (
@@ -438,23 +512,30 @@ export function StudentDetailClient({ relationshipId, userId }: StudentDetailCli
                                             Gerenciar <ArrowRight className="w-2.5 h-2.5" />
                                         </Link>
                                     </Button>
-
                                 </div>
-                                {cardioAssignments.length > 0 ? (
+                                {displayCardios.length > 0 ? (
                                     <div className="space-y-4">
-                                        {cardioAssignments.map((a: any) => (
+                                        {displayCardios.map((a: any, idx: number) => (
                                             <ContentCard 
-                                                key={a.id} 
+                                                key={a.id || `cardio-${idx}`} 
                                                 icon={<Activity className="w-4 h-4 text-orange-500" />} 
                                                 label={a.cardio.name}
                                                 subLabel={`${a.duration_minutes} MIN`}
                                                 showAction={relationship.active}
+                                                daysOfWeek={a.days_of_week}
                                                 deleteProps={{
                                                     id: a.id,
                                                     actionType: 'cardio',
                                                     itemName: a.cardio.name,
                                                     studentId: studentId!,
-                                                    queryKey: QUERY_KEYS.cardio.assignments(studentId!)
+                                                    relationshipId: relationshipId,
+                                                    queryKey: QUERY_KEYS.cardio.assignments(studentId!),
+                                                    onMutate: (vars: { id: string }) => {
+                                                        queryClient.setQueryData(QUERY_KEYS.cardio.assignments(studentId!), (old: any) => {
+                                                            if (!old) return old
+                                                            return old.filter((c: any) => c.id !== vars.id)
+                                                        })
+                                                    }
                                                 }}
                                             />
                                         ))}
@@ -466,7 +547,6 @@ export function StudentDetailClient({ relationshipId, userId }: StudentDetailCli
                                         actionLabel="Atribuir Cardio" 
                                         href="/dashboard/trainer/cardio" 
                                     />
-
                                 )}
                             </div>
                         </div>
@@ -505,9 +585,27 @@ export function StudentDetailClient({ relationshipId, userId }: StudentDetailCli
                 </Card>
             </div>
             
-            <StudentWorkoutHistory history={history} isBlocked={trainerTier === 'start'} mode="trainer" />
-            <PerformanceAnalysisSection weights={chartData.weights} bfs={chartData.bfs} frequency={chartData.frequency} trainerTier={trainerTier} />
-            <UnifiedAdherenceChart history={adherenceHistory} showErgogenics={student.details?.steroid_use} noCard />
+            {!relationship.is_placeholder && (
+                <>
+                    <StudentWorkoutHistory history={history} isBlocked={trainerTier === 'start'} mode="trainer" />
+                    <PerformanceAnalysisSection weights={chartData.weights} bfs={chartData.bfs} frequency={chartData.frequency} trainerTier={trainerTier} />
+                    <UnifiedAdherenceChart history={adherenceHistory} showErgogenics={student.details?.steroid_use} noCard />
+                </>
+            )}
+            
+            {relationship.is_placeholder && (
+                <Card className="bg-zinc-950 border-zinc-800 rounded-[2rem] p-10 flex flex-col items-center justify-center text-center space-y-4">
+                    <div className="w-16 h-16 rounded-3xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-amber-500">
+                        <Sparkles className="w-8 h-8" />
+                    </div>
+                    <div className="space-y-2 max-w-sm">
+                        <h3 className="text-xl font-black text-white italic uppercase">Aguardando Cadastro</h3>
+                        <p className="text-zinc-500 text-sm">
+                            Este aluno foi criado como um <b>Placeholder</b>. Assim que ele criar uma conta usando o email <b>{student?.email}</b>, todos os dados serão vinculados automaticamente.
+                        </p>
+                    </div>
+                </Card>
+            )}
         </div>
     )
 }
@@ -527,13 +625,41 @@ function InfoField({ label, value, sub }: any) {
 }
 
 
-function ContentCard({ icon, label, subLabel, actionLabel, href, showAction = true, deleteProps, secondaryAction }: any) {
+const DAYS_SHORT = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S']
+
+function DayDisplay({ days }: { days: number[] | number | null | undefined }) {
+    if (days === null || days === undefined) return null;
+    
+    const dayArray = Array.isArray(days) ? days : [days];
+    if (dayArray.length === 0) return null;
+    
+    if (dayArray.length === 7) return (
+        <span className="text-[9px] font-black text-emerald-500 uppercase tracking-tighter bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20 shrink-0">
+            Diário
+        </span>
+    );
+
+    return (
+        <div className="flex gap-0.5 shrink-0">
+            {dayArray.map(d => (
+                <span key={d} className="w-4 h-4 flex items-center justify-center text-[8px] font-black bg-zinc-800 text-zinc-400 rounded-md border border-zinc-700">
+                    {DAYS_SHORT[d]}
+                </span>
+            ))}
+        </div>
+    );
+}
+
+function ContentCard({ icon, label, subLabel, actionLabel, href, showAction = true, deleteProps, secondaryAction, daysOfWeek }: any) {
     return (
         <div className="w-full bg-zinc-900 border border-zinc-800 rounded-3xl p-5 flex items-center justify-between group hover:border-zinc-700 transition-all gap-4">
             <div className="flex items-center gap-4 min-w-0 flex-1">
                 <div className="w-10 h-10 rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-center shrink-0">{icon}</div>
-                <div className="space-y-0.5 min-w-0">
-                    <p className="text-zinc-100 text-xs md:text-sm font-black uppercase italic truncate">{label}</p>
+                <div className="space-y-1 min-w-0">
+                    <div className="flex items-center gap-2 overflow-hidden">
+                        <p className="text-zinc-100 text-xs md:text-sm font-black uppercase italic truncate">{label}</p>
+                        <DayDisplay days={daysOfWeek} />
+                    </div>
                     {subLabel && <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest truncate">{subLabel}</p>}
                 </div>
             </div>
@@ -549,7 +675,7 @@ function ContentCard({ icon, label, subLabel, actionLabel, href, showAction = tr
                 ) }
             </div>
         </div>
-    )
+    );
 }
 
 

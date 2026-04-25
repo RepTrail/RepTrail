@@ -67,7 +67,7 @@ export async function callAI<T = any>(
                 model: isDirectGemini ? model.replace('google/', '') : model,
                 messages: [{ role: 'user', content: prompt }],
                 temperature: 0.1,
-                max_tokens: (arguments as any)[3] || undefined,
+                max_tokens: maxTokens || 4096,
             })
 
             console.log('DEBUG: AI response received:', {

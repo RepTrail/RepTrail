@@ -86,7 +86,8 @@ export function WorkoutBuilder({ workout: initialWorkout, students = [], backHre
         queryKey,
         queryFn: () => getWorkoutDetails(initialWorkout.id),
         initialData: initialWorkout,
-        staleTime: 1000 * 60 * 5
+        staleTime: 0,
+        refetchOnMount: 'always'
     })
 
     const workout = workoutData as Workout & { workout_exercises: WorkoutExercise[] }

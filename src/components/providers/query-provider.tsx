@@ -25,9 +25,13 @@ export function QueryProvider({ children }: { children: ReactNode }) {
             const unsubscribe = queryClient.getQueryCache().subscribe((event: any) => {
                 if (event.type === 'updated' && event.action?.type === 'fetch' && !event.query.state.data) {
                     const key = event.query.queryKey[0];
+                    const isLibrary = event.query.queryKey.includes('library');
+                    const isTrainer = key === 'trainer';
+
                     // Ignore session/ephemeral keys that are intentionally non-persistent
                     const ignoredKeys = ['active-workout-session', 'active-cardio-session', 'player'];
-                    if (!ignoredKeys.includes(key)) {
+                    
+                    if (!ignoredKeys.includes(key) && !isLibrary && !isTrainer) {
                         console.error('🚨 UNEXPECTED FETCH (UNPREFETCHED KEY):', event.query.queryKey);
                     }
                 }

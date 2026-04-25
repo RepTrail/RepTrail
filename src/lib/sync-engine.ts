@@ -67,10 +67,12 @@ class SyncEngine {
       const pending = await outboxDB.getPending();
 
       if (pending.length === 0) return;
-
+      
+      this.isProcessing = true;
       console.log(`🔄 [Tab ${lockValue}] Processing ${pending.length} pending mutations...`);
 
       for (const record of pending) {
+        console.log(`[SyncEngine] 📡 Syncing ${record.action} (${record.id}) - Payload:`, JSON.stringify(record.payload));
         await this.syncRecord(record);
         // Refresh lock during processing of long queues
         localStorage.setItem(lockKey, Date.now().toString());
@@ -165,6 +167,60 @@ class SyncEngine {
               // Explicit refetch for critical active sessions
               this.queryClient.refetchQueries({ queryKey: QUERY_KEYS.workouts.session });
               this.queryClient.refetchQueries({ queryKey: QUERY_KEYS.cardio.session });
+
+              // 🚨 NEW: Invalidate trainer students if a placeholder was created
+              if ((result.results?.placeholderId || result.data?.placeholderId) && record.payload.userId) {
+                  console.log(`[SyncEngine] Placeholder detected (${result.results?.placeholderId || result.data?.placeholderId}). Invalidating trainer students cache for ${record.payload.userId}`);
+                  this.queryClient.invalidateQueries({ queryKey: QUERY_KEYS.trainer.students(record.payload.userId) });
+              }
+
+              // 🚨 NEW: Handle student status toggle and unassign/delete invalidation
+              const studentContentActions = [
+                  'unassign-workout',
+                  'unassign-diet',
+                  'delete-workout',
+                  'delete-student-diet',
+                  'save-workout-assignment',
+                  'save-diet-assignment',
+                  'delete-student-cardio',
+                  'delete-student-ergogenic',
+                  'delete-cardio-assignment',
+                  'mark-student-paid',
+                  'toggle-student-status'
+              ];
+              
+              if (studentContentActions.includes(record.action)) {
+                  // 🚀 LOCAL-FIRST ELITE: Only invalidate if there are no more pending mutations for this relationship/student
+                  // This prevents "flickering" when processing multiple unassignments.
+                  const relationshipId = record.payload.relationshipId || record.entityId;
+                  const studentId = record.payload.studentId || record.payload.student_id;
+                  
+                  const pendingCount = await outboxDB.countPendingForStudent(relationshipId, studentId);
+                  
+                  if (pendingCount <= 1) { // 1 because we haven't marked this one as processed yet
+                      console.log(`[SyncEngine] Last mutation for student ${relationshipId}. Waiting for DB consistency...`);
+                      
+                      // 🚀 DB CONSISTENCY DELAY: Wait 500ms to ensure Supabase triggers/commits are finished
+                      await new Promise(resolve => setTimeout(resolve, 500));
+
+                      if (relationshipId) {
+                          await this.queryClient.invalidateQueries({ queryKey: QUERY_KEYS.trainer.studentDetail(relationshipId) });
+                      }
+                      if (studentId) {
+                          await Promise.all([
+                              this.queryClient.invalidateQueries({ queryKey: QUERY_KEYS.trainer.studentHistory(studentId) }),
+                              this.queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workouts.assignments(studentId) }),
+                              this.queryClient.invalidateQueries({ queryKey: QUERY_KEYS.diets.assignments(studentId) })
+                          ]);
+                      }
+                      const userId = record.payload.trainerId || record.payload.userId;
+                      if (userId) {
+                          await this.queryClient.invalidateQueries({ queryKey: QUERY_KEYS.trainer.students(userId) });
+                      }
+                  } else {
+                      console.log(`[SyncEngine] Skipping invalidation: ${pendingCount-1} more mutations pending for student.`);
+                  }
+              }
           }
         }
 
@@ -197,8 +253,13 @@ class SyncEngine {
         // ─── OBSOLETE STATE PROTECTION ─────────────────────────────────────
         // If the server says "Not Found", the entity might have been deleted 
         // by another mutation or previous attempt. We consider it obsolete.
-        if (lowerError.includes('encontrada') || lowerError.includes('not found')) {
-            console.warn(`⚠️ [SyncEngine] Obsolete mutation ${record.id}: ${errorMsg}. Dequeuing.`);
+        if (
+            lowerError.includes('encontrada') || 
+            lowerError.includes('not found') || 
+            lowerError.includes('id da substância é necessário') ||
+            lowerError.includes('substância é necessário')
+        ) {
+            console.warn(`⚠️ [SyncEngine] Obsolete/Unrecoverable mutation ${record.id}: ${errorMsg}. Dequeuing.`);
             await outboxDB.markMutationAsProcessed(record.clientMutationId);
             await outboxDB.dequeue(record.id);
             return;

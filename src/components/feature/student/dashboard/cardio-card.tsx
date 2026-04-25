@@ -13,7 +13,12 @@ interface CardioCardProps {
     userId: string
 }
 
+import { useState } from 'react'
+import { ChevronLeft, ChevronRight, CheckCircle, Sparkles } from 'lucide-react'
+
 export function CardioCard({ userId }: CardioCardProps) {
+    const [currentIndex, setCurrentIndex] = useState(0)
+
     useRealtimeSync({
         table: 'assigned_cardios',
         queryKey: QUERY_KEYS.cardio.all(userId),
@@ -68,23 +73,55 @@ export function CardioCard({ userId }: CardioCardProps) {
         )
     }
 
+    const currentAssignment = cardios[currentIndex] || cardios[0]
+    const isCompleted = cardioLogs?.some(
+        (l: any) => l.assigned_cardio_id === currentAssignment.id && l.status === 'completed'
+    )
+
+    const nextCardio = () => {
+        setCurrentIndex((prev) => (prev + 1) % cardios.length)
+    }
+
+    const prevCardio = () => {
+        setCurrentIndex((prev) => (prev - 1 + cardios.length) % cardios.length)
+    }
+
     return (
-        <div className="grid gap-6">
-            {cardios.map((assignment: any) => {
-                const isCompleted = cardioLogs?.some(
-                    (l: any) => l.assigned_cardio_id === assignment.id && l.status === 'completed'
-                )
-                return <CardioPlayer key={assignment.id} assignment={assignment} isCompleted={isCompleted} />
-            })}
-            {cardios.length > 1 && (
-                <div className="px-8 py-4 bg-zinc-900/30 border border-zinc-800/50 rounded-3xl flex items-center justify-between">
-                    <span className="text-[10px] font-black text-zinc-600 uppercase tracking-widest">
-                        Próximos Cardios: {cardios.length - 1} pendente(s)
-                    </span>
-                    <span className="text-[10px] font-black text-orange-500 uppercase tracking-widest italic animate-pulse">
-                        Execute um por vez
-                    </span>
+        <div className="relative group/carousel">
+            <div className="relative">
+                <div className="absolute top-2 right-6 z-10">
+                    {cardios.length > 1 && (
+                        <span className="text-[10px] font-black text-zinc-600 uppercase tracking-widest bg-black/20 backdrop-blur-md px-2 py-1 rounded-full border border-white/5">
+                            Cardio {currentIndex + 1} de {cardios.length}
+                        </span>
+                    )}
                 </div>
+                <CardioPlayer assignment={currentAssignment} isCompleted={isCompleted} />
+            </div>
+
+            {cardios.length > 1 && (
+                <>
+                    <button 
+                        onClick={(e) => { e.preventDefault(); prevCardio(); }}
+                        className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/60 backdrop-blur-md border border-white/10 flex items-center justify-center text-white/70 hover:text-white hover:bg-black/80 transition-all shadow-2xl z-20 group-hover/carousel:scale-110 active:scale-95"
+                    >
+                        <ChevronLeft className="w-5 h-5" />
+                    </button>
+                    <button 
+                        onClick={(e) => { e.preventDefault(); nextCardio(); }}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/60 backdrop-blur-md border border-white/10 flex items-center justify-center text-white/70 hover:text-white hover:bg-black/80 transition-all shadow-2xl z-20 group-hover/carousel:scale-110 active:scale-95"
+                    >
+                        <ChevronRight className="w-5 h-5" />
+                    </button>
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-20">
+                        {cardios.map((_, idx) => (
+                            <div 
+                                key={idx}
+                                className={`h-1 rounded-full transition-all duration-500 shadow-sm ${idx === currentIndex ? 'w-6 bg-orange-500' : 'w-1 bg-white/20'}`}
+                            />
+                        ))}
+                    </div>
+                </>
             )}
         </div>
     )

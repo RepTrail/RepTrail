@@ -11,7 +11,7 @@ export default async function TrainerErgogenicsHubPage() {
 
     if (!user) return null
 
-    // Fetch students of this trainer who have steroid_use = true
+    // 1. Fetch real students
     const { data: students } = await supabase
         .from('trainer_students')
         .select(`
@@ -28,8 +28,38 @@ export default async function TrainerErgogenicsHubPage() {
         .eq('trainer_id', user.id)
         .eq('active', true)
 
-    // Filter students who have steroid_use enabled
-    const ergogenicStudents = students?.filter((s: any) => s.student?.details?.steroid_use) || []
+    // 2. Fetch placeholder students
+    const { data: placeholders } = await supabase
+        .from('pending_student_links')
+        .select('*')
+        .eq('trainer_id', user.id)
+        .eq('status', 'pending')
+
+    // Filter real students
+    const realErgoStudents = (students || [])
+        .filter((s: any) => s.student?.details?.steroid_use)
+        .map((s: any) => ({
+            id: s.id,
+            full_name: s.student.full_name,
+            avatar_url: s.student.avatar_url,
+            is_placeholder: false
+        }))
+
+    // Filter placeholder students
+    const placeholderErgoStudents = (placeholders || [])
+        .filter((p: any) => {
+            const metadata = (p.ergogenic_data as any[])?.find(e => e.__metadata)
+            return metadata?.steroid_use === true
+        })
+        .map((p: any) => ({
+            id: p.id,
+            full_name: p.student_name,
+            avatar_url: null,
+            is_placeholder: true
+        }))
+
+    // Merge results
+    const ergogenicStudents = [...realErgoStudents, ...placeholderErgoStudents]
 
     return (
         <div className="space-y-10 pb-10">
@@ -53,17 +83,17 @@ export default async function TrainerErgogenicsHubPage() {
                             <CardContent className="p-6 flex items-center justify-between">
                                 <div className="flex items-center gap-4">
                                     <Avatar className="h-12 w-12 border-2 border-zinc-800 group-hover:border-orange-500/30 transition-all">
-                                        <AvatarImage src={item.student.avatar_url} />
+                                        <AvatarImage src={item.avatar_url} />
                                         <AvatarFallback className="bg-zinc-950 text-zinc-500 font-bold uppercase italic text-xs">
-                                            {item.student.full_name?.substring(0, 2)}
+                                            {item.full_name?.substring(0, 2)}
                                         </AvatarFallback>
                                     </Avatar>
                                     <div className="space-y-0.5">
                                         <h3 className="text-sm font-black text-white uppercase italic tracking-wide group-hover:text-orange-500 transition-colors">
-                                            {item.student.full_name}
+                                            {item.full_name}
                                         </h3>
                                         <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest leading-none">
-                                            Protocolo Ativo
+                                            Protocolo Ativo {item.is_placeholder && "(Pendente)"}
                                         </p>
                                     </div>
                                 </div>

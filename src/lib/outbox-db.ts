@@ -11,6 +11,7 @@ export const ENTITIES = {
   WORKOUT_LOG: 'workout_logs',
   TRAINER_STUDENT: 'trainer_students',
   ASSIGNED_WORKOUT: 'assigned_workouts',
+  ASSIGNED_DIET: 'assigned_diets',
   STUDENT_DETAIL: 'student_details',
   TRAINER_DETAIL: 'trainer_details',
   WEIGHT_HISTORY: 'weight_history',
@@ -145,6 +146,26 @@ export const outboxDB = {
   async clear(): Promise<void> {
     const db = await getDB();
     await db.clear(STORE_NAME);
+  },
+
+  async countPendingForEntity(entityId: string): Promise<number> {
+    const db = await getDB();
+    const all = await db.getAll(STORE_NAME);
+    return all.filter((r: OutboxRecord) => 
+      r.entityId === entityId && (r.status === 'pending' || r.status === 'processing')
+    ).length;
+  },
+
+  async countPendingForStudent(relationshipId?: string, studentId?: string): Promise<number> {
+    const db = await getDB();
+    const all = await db.getAll(STORE_NAME);
+    return all.filter((r: OutboxRecord) => {
+      if (r.status !== 'pending' && r.status !== 'processing') return false;
+      
+      const payloadId = r.payload?.relationshipId || r.payload?.studentId || r.payload?.student_id;
+      return (relationshipId && (r.entityId === relationshipId || payloadId === relationshipId)) ||
+             (studentId && (r.entityId === studentId || payloadId === studentId));
+    }).length;
   },
 
   // ─── Processed IDs Store (Idempotency) ───────────────────────────

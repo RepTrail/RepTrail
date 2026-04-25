@@ -1,153 +1,139 @@
 'use client'
 
-import { useState } from 'react'
-import { Button } from "@/components/ui/button"
-import { Trash2, AlertTriangle } from "lucide-react"
-import { useToast } from "@/hooks/use-toast"
+import { Trash2, Loader2 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { toast } from '@/hooks/use-toast'
+import { outboxDB, ENTITIES } from '@/lib/outbox-db'
+import { nanoid } from 'nanoid'
 import { cn } from '@/lib/utils'
-import { useQueryClient, QueryKey } from '@tanstack/react-query'
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog"
-import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
-import { ENTITIES } from '@/lib/outbox-db'
 
 interface UnifiedDeleteButtonProps {
-    id: string
-    actionType: 'workout' | 'diet' | 'cardio' | 'ergogenic' | 'workout-log' | 'cardio-assignment'
-    itemName?: string
-    variant?: 'ghost' | 'outline' | 'destructive'
-    size?: 'default' | 'sm' | 'lg' | 'icon'
+    actionType: 'workout' | 'diet' | 'cardio' | 'ergogenic' | 'delete-workout' | 'delete-diet'
+    id: string 
+    contentId?: string // The actual ID of the diet/workout/cardio (needed for some actions)
+    studentId: string 
+    relationshipId?: string // Optional for student-owned content
+    itemName: string
+    queryKey: any[]
     className?: string
-    onSuccess?: () => void
-    queryKey?: QueryKey
 }
 
-// Map actionType to action registry strings
-const ACTION_MAP: Record<string, string> = {
-    'workout': 'delete-workout',
-    'diet': 'delete-student-diet',
-    'cardio': 'delete-student-cardio',
-    'ergogenic': 'delete-student-ergogenic',
-    'cardio-assignment': 'delete-cardio-assignment',
-    'workout-log': 'delete-workout-log',
-}
+const ACTION_MAP = {
+    workout: 'unassign-workout',
+    diet: 'unassign-diet',
+    cardio: 'delete-student-cardio',
+    ergogenic: 'delete-student-ergogenic',
+    'delete-workout': 'delete-workout',
+    'delete-diet': 'delete-diet',
+    'delete-cardio': 'delete-cardio'
+} as const
 
-export function UnifiedDeleteButton({
-    id,
-    actionType,
-    itemName = 'este item',
-    variant = 'ghost',
-    size = 'icon',
-    className,
-    onSuccess,
+const ENTITY_MAP = {
+    workout: ENTITIES.ASSIGNED_WORKOUT,
+    diet: ENTITIES.ASSIGNED_DIET,
+    cardio: ENTITIES.CARDIO,
+    ergogenic: ENTITIES.ERGOGENIC,
+    'delete-workout': ENTITIES.WORKOUT,
+    'delete-diet': ENTITIES.DIET,
+    'delete-cardio': ENTITIES.CARDIO
+} as const
+
+export function UnifiedDeleteButton({ 
+    actionType, 
+    id, 
+    contentId,
+    studentId, 
+    relationshipId, 
+    itemName, 
     queryKey,
-    studentId
-}: UnifiedDeleteButtonProps & { studentId?: string }) {
-    const [open, setOpen] = useState(false)
-    const { toast } = useToast()
+    className 
+}: UnifiedDeleteButtonProps) {
     const queryClient = useQueryClient()
 
-    // Fallback queryKey from entity type if not provided
-    const entityMap: Record<string, string> = {
-        'workout': ENTITIES.WORKOUT,
-        'diet': ENTITIES.DIET,
-        'cardio': ENTITIES.CARDIO,
-        'ergogenic': ENTITIES.ERGOGENIC,
-        'cardio-assignment': ENTITIES.CARDIO,
-        'workout-log': ENTITIES.WORKOUT_LOG
-    }
-    const resolvedQueryKey: QueryKey = queryKey ?? [entityMap[actionType]]
+    const { mutate, isPending } = useMutation({
+        mutationFn: async (payload: { id: string; contentId: string; studentId: string; relationshipId?: string }) => {
+            const clientMutationId = nanoid()
+            
+            // 🚀 ELITE LOCAL-FIRST: Enqueue in Outbox
+            await outboxDB.enqueue({
+                id: nanoid(),
+                clientMutationId,
+                clientId: 'trainer-web',
+                action: ACTION_MAP[actionType],
+                entity: ENTITY_MAP[actionType],
+                entityId: relationshipId || studentId,
+                payload: {
+                    ...payload,
+                    clientMutationId
+                }
+            })
 
-    const deleteAction = async (payload: { id: string; studentId?: string }) => payload // 🔴 HARD BLOCK: Registry handles the call
+            // Trigger sync immediately
+            const { syncEngine } = await import('@/lib/sync-engine')
+            syncEngine.trigger()
+            
+            return { success: true }
+        },
+        onMutate: async () => {
+            // Cancel outgoing refetches
+            await queryClient.cancelQueries({ queryKey })
 
-    const { mutate, isPending } = useOptimisticMutation({
-        queryKey: resolvedQueryKey,
-        actionName: ACTION_MAP[actionType],
-        entity: entityMap[actionType] as any,
-        mutationFn: deleteAction,
-        // Optimistic update: remove from cache immediately
-        updateFn: (oldData: any, variables: { id: string }) => {
-            if (!oldData) return oldData
-            if (Array.isArray(oldData)) {
-                return oldData.filter((item: any) => item.id !== variables.id)
+            // Snapshot the previous value
+            const previousData = queryClient.getQueryData(queryKey)
+
+            // 🚀 INSTANT UPDATE (Elite UX)
+            if (queryKey) {
+                queryClient.setQueryData(queryKey, (old: any) => {
+                    if (Array.isArray(old)) {
+                        return old.filter((item: any) => item.id !== id)
+                    }
+                    return old
+                })
             }
-            return oldData
+
+            return { previousData }
+        },
+        onError: (err, variables, context) => {
+            if (context?.previousData) {
+                queryClient.setQueryData(queryKey, context.previousData)
+            }
+            toast({ 
+                variant: 'destructive',
+                title: 'Erro ao remover',
+                description: `Falha ao remover ${itemName}` 
+            })
         },
         onSuccess: () => {
-            toast({
-                title: "Excluído com sucesso",
-                description: `O item "${itemName}" foi removido.`,
+            toast({ 
+                title: 'Removido com sucesso',
+                description: `${itemName} foi removido da lista.` 
             })
-            if (onSuccess) onSuccess()
-        },
-        onError: (err) => {
-            // Rollback is handled by useOptimisticMutation for non-network errors
-            toast({
-                variant: "destructive",
-                title: "Erro ao excluir",
-                description: err.message || "Algo deu errado.",
-            })
-        },
+        }
     })
 
     function handleDelete() {
-        // 🚀 LOCAL-FIRST: close dialog instantly, no await, no spinner
-        setOpen(false)
-        mutate({ id, studentId })
+        if (!confirm(`Deseja realmente excluir "${itemName}"? Esta ação não pode ser desfeita.`)) return
+        mutate({ id, contentId: contentId || id, studentId, relationshipId })
     }
 
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-                <Button
-                    variant={variant}
-                    size={size}
-                    className={cn(
-                        "h-9 w-9 bg-zinc-800/60 border-zinc-700/50 text-zinc-500 hover:text-red-400 hover:bg-red-400/10 rounded-xl transition-all border hover:border-red-400/30 shrink-0",
-                        className
-                    )}
-                >
-                    <Trash2 className="w-3.5 h-3.5" />
-                </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[400px] bg-zinc-950 border-zinc-800 rounded-[2.5rem] shadow-2xl p-0 border-white/5 overflow-hidden">
-                <div className="flex flex-col items-center">
-                    <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mb-6 border border-red-500/20">
-                        <AlertTriangle className="w-8 h-8 text-red-500" />
-                    </div>
-                    <DialogHeader className="space-y-3">
-                        <DialogTitle className="text-2xl font-black italic uppercase tracking-tight text-white text-center">
-                            Confirmar Exclusão
-                        </DialogTitle>
-                        <DialogDescription className="text-zinc-500 text-sm font-medium text-center leading-relaxed">
-                            Você tem certeza que deseja excluir <strong>{itemName}</strong>? <br />Esta ação não pode ser desfeita.
-                        </DialogDescription>
-                    </DialogHeader>
-
-                    <DialogFooter className="grid grid-cols-2 gap-4 w-full mt-8">
-                        <Button
-                            variant="outline"
-                            onClick={() => setOpen(false)}
-                            className="bg-zinc-900 border-zinc-800 text-zinc-400 hover:bg-zinc-800 hover:text-white rounded-2xl h-14 font-black uppercase italic tracking-widest text-[10px]"
-                        >
-                            Cancelar
-                        </Button>
-                        <Button
-                            onClick={handleDelete}
-                            className="bg-red-600 hover:bg-red-700 text-white font-black uppercase italic rounded-2xl h-14 tracking-widest text-[10px] shadow-lg shadow-red-900/20"
-                        >
-                            Sim, Excluir
-                        </Button>
-                    </DialogFooter>
-                </div>
-            </DialogContent>
-        </Dialog>
+        <Button
+            variant="ghost"
+            size="icon"
+            onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                handleDelete()
+            }}
+            disabled={isPending}
+            className={cn("h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10", className)}
+        >
+            {isPending ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+                <Trash2 className="h-4 w-4" />
+            )}
+        </Button>
     )
 }

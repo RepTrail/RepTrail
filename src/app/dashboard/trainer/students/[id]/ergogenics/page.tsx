@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { UnifiedCreationDialog } from '@/components/feature/shared/unified-creation-dialog'
 import { UnifiedErgogenicsModule } from '@/components/feature/shared/unified-ergogenics-module'
+import { getStudentErgogenics } from '@/actions/ergogenics-actions'
 
 export default async function StudentErgogenicsPage({ params }: { params: { id: string } }) {
     const { id } = await params
@@ -15,8 +16,12 @@ export default async function StudentErgogenicsPage({ params }: { params: { id: 
         return <div className="p-10 text-center text-zinc-500 font-bold uppercase tracking-widest text-xs">Não autorizado.</div>
     }
 
-    // Get relationship to find student_id
-    // We try to find by ID (relationship id) OR student_id, but always restricted to this trainer
+    // 1. Try to find real student relationship
+    let effectiveStudentId = id
+    let studentName = 'Aluno'
+    let isPlaceholder = false
+    let ergoData: any[] = []
+
     const { data: relationship } = await supabase
         .from('trainer_students')
         .select(`
@@ -27,17 +32,30 @@ export default async function StudentErgogenicsPage({ params }: { params: { id: 
         .eq('trainer_id', user.id)
         .maybeSingle()
 
-    if (!relationship) {
-        return <div className="p-10 text-center text-zinc-500 font-bold uppercase tracking-widest text-xs">Dados não encontrados ou você não tem acesso a este aluno.</div>
+    if (relationship) {
+        effectiveStudentId = relationship.student_id
+        studentName = (relationship.student as any)?.full_name || 'Aluno'
+    } else {
+        // 2. Check for placeholder
+        const { data: placeholder } = await supabase
+            .from('pending_student_links')
+            .select('*')
+            .eq('id', id)
+            .eq('trainer_id', user.id)
+            .maybeSingle()
+        
+        if (placeholder) {
+            effectiveStudentId = placeholder.id
+            studentName = placeholder.student_name || 'Aluno (Pendente)'
+            isPlaceholder = true
+        } else {
+            return <div className="p-10 text-center text-zinc-500 font-bold uppercase tracking-widest text-xs">Dados não encontrados ou você não tem acesso a este aluno.</div>
+        }
     }
 
-    const { data: ergogenics } = await supabase
-        .from('ergogenics')
-        .select('*')
-        .eq('student_id', relationship.student_id)
-        .order('created_at', { ascending: false })
-
-    const studentName = (relationship.student as any)?.full_name || 'Aluno'
+    // Standardized fetch ensuring IDs
+    const ergoResult = await getStudentErgogenics(effectiveStudentId)
+    ergoData = Array.isArray(ergoResult) ? ergoResult : []
 
     return (
         <div className="space-y-10 pb-10">
@@ -86,18 +104,18 @@ export default async function StudentErgogenicsPage({ params }: { params: { id: 
                             { name: 'notes', label: 'Instruções / Notas (Opcional)', placeholder: 'Ex: Aplicar no glúteo...', type: 'textarea' }
                         ]}
                         actionType="create-student-ergogenic"
-                        parentId={relationship.student_id}
+                        parentId={effectiveStudentId}
                         successMessage="Substância adicionada ao protocolo!"
                         colorScheme="orange"
-                        queryKey={['ergogenics', relationship.student_id]}
+                        queryKey={['ergogenics', effectiveStudentId]}
                     />
                 </div>
             </header>
 
             <UnifiedErgogenicsModule
-                studentId={relationship.student_id}
+                studentId={effectiveStudentId}
                 mode="trainer"
-                initialErgogenics={ergogenics ?? []}
+                initialErgogenics={ergoData}
                 studentName={studentName}
                 colorScheme="orange"
             />

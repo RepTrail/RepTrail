@@ -29,6 +29,17 @@ export default async function StudentLayout({
         redirect('/auth/login')
     }
 
+    const supabase = await createClient()
+    const { data: profile } = await supabase
+        .from('profiles')
+        .select('onboarding_completed, role')
+        .eq('id', userId)
+        .single()
+
+    if (profile && !profile.onboarding_completed && profile.role === 'student') {
+        redirect('/onboarding')
+    }
+
     return (
         <div className="flex h-screen w-full bg-zinc-950 text-white selection:bg-orange-500/30 font-sans">
             {/* 
@@ -82,13 +93,16 @@ async function DashboardSidebarLoader({ userId }: { userId: string }) {
         // Prefetch active sessions
         queryClient.prefetchQuery({ queryKey: QUERY_KEYS.workouts.session, queryFn: () => import('@/actions/log-actions').then(m => m.getActiveWorkoutSession()) }),
         queryClient.prefetchQuery({ queryKey: QUERY_KEYS.cardio.session, queryFn: () => import('@/actions/cardio-actions').then(m => m.getActiveCardioSession()) }),
-        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.student.details(userId), queryFn: () => import('@/actions/student-actions').then(m => m.getStudentProfile(userId)) })
+        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.student.details(userId), queryFn: () => import('@/actions/student-actions').then(m => m.getStudentProfile(userId)) }),
+        // ELITE: Prefetch main lists for sidebar hover instant-load
+        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.workouts.all(userId), queryFn: () => import('@/actions/workout-actions').then(m => m.getAssignedWorkouts(userId)) }),
+        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.diets.all(userId), queryFn: () => import('@/actions/diet-actions').then(m => m.getAssignedDiets(userId)) }),
+        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.ergogenics.all(userId), queryFn: () => import('@/actions/ergogenics-actions').then(m => m.getAssignedErgogenics(userId)) }),
+        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.cardio.all(userId), queryFn: () => import('@/actions/cardio-actions').then(m => m.getAssignedCardios(userId)) })
     ])
 
     const profile = profileRes.data
     const details = detailsRes.data
-
-    if (!details) redirect('/onboarding')
 
     const { steroidUse, hasTrainer, isAutoTrainingActive, filteredLinks } = calculateNavContext(profile, details, !!trainerRel)
 

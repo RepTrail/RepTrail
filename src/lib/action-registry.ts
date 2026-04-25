@@ -61,7 +61,8 @@ import {
   startCardioSession,
   updateCardioSession,
   finishCardioSession,
-  duplicateCardio
+  duplicateCardio,
+  deleteCardio
 } from '@/actions/cardio-actions';
 
 import {
@@ -117,9 +118,11 @@ export type ActionFn = (payload: any) => Promise<{ success: boolean; error?: str
 async function wrap(promise: Promise<any>): Promise<{ success: boolean; error?: string; [key: string]: any }> {
     try {
         const res = await promise;
+        const error = res?.error || res?.message;
         return {
             ...res,
-            success: res?.success ?? (res?.error ? false : true)
+            success: res?.success ?? (error ? false : true),
+            error: error
         };
     } catch (e: any) {
         return { success: false, error: e.message || 'Action failed' };
@@ -150,8 +153,8 @@ export const ACTION_REGISTRY: Record<string, ActionFn> = {
   'create-student-cardio': withFormData(createStudentCardio as any),
   'create-student-ergogenic': withFormData(createStudentErgogenic as any),
   'delete-student-diet': (p: any) => wrap(deleteStudentDiet(p.id)),
-  'delete-student-cardio': (p: any) => wrap(deleteStudentCardio(p.id, p.studentId)),
-  'delete-student-ergogenic': (p: any) => wrap(deleteErgogenic(p.id, p.studentId || '')),
+  'delete-student-cardio': (p: any) => wrap(deleteStudentCardio(p.id, p.studentId || p.relationshipId)),
+  'delete-student-ergogenic': (p: any) => wrap(deleteErgogenic(p.id, p.studentId || p.relationshipId || '')),
 
   // ─── Workouts ─────────────────────────────────────────────────────────────────
   'create-manual-workout': (p: any) => wrap(createManualWorkout(p)),
@@ -160,7 +163,7 @@ export const ACTION_REGISTRY: Record<string, ActionFn> = {
   'delete-workout': (p: any) => wrap(deleteWorkout(p.id)),
   'update-workout-meta': (p: any) => wrap(updateWorkoutMeta(p.id, p.name)),
   'assign-workout': (p: any) => wrap(assignWorkout(p.workout_id || p.workoutId, p.student_id || p.studentId, p.day_of_week ?? (Array.isArray(p.daysOfWeek) ? p.daysOfWeek[0] : p.daysOfWeek))),
-  'unassign-workout': (p: any) => wrap(unassignWorkout(p.contentId || p.workout_id || p.workoutId, p.student_id || p.studentId)),
+  'unassign-workout': (p: any) => wrap(unassignWorkout(p.contentId || p.workout_id || p.workoutId || p.id, p.student_id || p.studentId || p.relationshipId)),
 
   // ─── Trainer ──────────────────────────────────────────────────────────────────
   'create-student': (p: any) => wrap(createStudent(null, p)),
@@ -232,6 +235,7 @@ export const ACTION_REGISTRY: Record<string, ActionFn> = {
   'add-meal-item': (p: any) => wrap(addMealItem(p.mealId, p.dietId, p)),
   'update-meal-item': (p: any) => wrap(updateMealItem(p.id, p.dietId, p.data)),
   'delete-diet': (p: any) => wrap(deleteDiet(p.id)),
+  'delete-cardio': (p: any) => wrap(deleteCardio(p.id)),
   'update-diet-meta': (p: any) => wrap(updateDietMeta(p.id, p.data)),
 
   // ─── Specialized Assignments ──────────────────────────────────────────────────
@@ -240,7 +244,7 @@ export const ACTION_REGISTRY: Record<string, ActionFn> = {
   'toggle-ergogenic-log': (p: any) => wrap(toggleErgogenicLog(p.student_id || p.studentId, p.ergogenic_id || p.ergogenicId, p.status)),
   'update-workout-day': (p: any) => wrap(updateStudentWorkoutDay(p.id, p.day_of_week)),
   'update-student-workout-day': (p: any) => wrap(updateStudentWorkoutDay(p.assignmentId, p.dayOfWeek)),
-  'unassign-diet': (p: any) => wrap(unassignDiet(p.contentId || p.diet_id || p.dietId, p.student_id || p.studentId)),
+  'unassign-diet': (p: any) => wrap(unassignDiet(p.contentId || p.diet_id || p.dietId || p.id, p.student_id || p.studentId || p.relationshipId)),
   'assign-diet': (p: any) => wrap(assignDiet(p.diet_id || p.dietId, p.student_id || p.studentId, p.daysOfWeek)),
   'assign-ergogenic': (p: any) => wrap(assignErgogenic(p.ergogenic_id || p.ergogenicId, p.student_id || p.studentId, p.daysOfWeek)),
   'mark-payment-received': (p: any) => wrap(markPaymentAsReceived(p.studentId, p.trainerId)),
@@ -255,7 +259,7 @@ export const ACTION_REGISTRY: Record<string, ActionFn> = {
     return wrap(enableAutoTrainingTrialForCurrentUser())
   },
   'dismiss-auto-training': (p: any) => wrap(dismissAutoTrainingForSession(p.userId)),
-  'save-parsed-data': (p: any) => wrap(saveParsedData(p.type, p.data, p.studentId)),
+  'save-parsed-data': (p: any) => wrap(saveParsedData(p.type, p.data, p.studentId, p.createPlaceholder)),
   'enable-affiliate': () => wrap(enableAffiliate()),
   'request-payout': (p: any) => wrap(requestPayout(p.amount, p.method, p.details)),
   'update-affiliate-commission': (p: any) => wrap(updateAffiliateCommission(p.affiliateId, p.rate)),

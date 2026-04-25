@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/client'
 import { useEffect, useState } from 'react'
 import { EditErgogenicDialog } from '@/components/feature/student/edit-ergogenic-dialog'
 import { UnifiedDeleteButton } from '@/components/feature/shared/unified-delete-button'
+import { QUERY_KEYS } from '@/lib/query-keys'
 
 export function AutoTrainingErgogenicsManager({
     ergogenics,
@@ -75,6 +76,8 @@ export function AutoTrainingErgogenicsManager({
                                         id={e.id}
                                         actionType="ergogenic"
                                         itemName={e.name}
+                                        studentId={studentId}
+                                        queryKey={QUERY_KEYS.ergogenics.all(studentId)}
                                     />
                                 </div>
                             </CardContent>

@@ -13,37 +13,61 @@ export async function updateStudentData(
         monthly_fee?: number,
         payment_day?: number,
         steroid_use?: boolean,
-        whatsapp?: string
+        whatsapp?: string,
+        email?: string,
+        height?: number,
+        age?: number,
+        sex?: string,
+        activity_level?: string,
+        observations?: string
     }
 ) {
-    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
+    const supabase = await createClient()
 
     try {
-        // Update WhatsApp in profiles table if provided
-        if (data.whatsapp !== undefined) {
+        // 1. Standard Profile updates (WhatsApp, Email)
+        if (data.whatsapp !== undefined || data.email !== undefined) {
+            const updateObj: any = {}
+            if (data.whatsapp !== undefined) updateObj.whatsapp = data.whatsapp
+            if (data.email !== undefined) updateObj.email = data.email.toLowerCase().trim()
+
             const { error: profileError } = await supabase
                 .from('profiles')
-                .update({ whatsapp: data.whatsapp })
+                .update(updateObj)
                 .eq('id', studentId)
 
             if (profileError) {
-                console.error('Error updating student whatsapp in profiles:', profileError)
-                // We don't necessarily want to block the whole update if this fails due to RLS, 
-                // but let's see. For now, let's keep it simple.
+                console.error('Error updating student profile:', profileError)
             }
         }
 
-        // Update physical data
-        if (data.weight !== undefined || data.body_fat !== undefined) {
+        // 2. Update physical data (student_details) - USE UPSERT for Ghost Profiles
+        if (
+            data.weight !== undefined || 
+            data.body_fat !== undefined || 
+            data.steroid_use !== undefined ||
+            data.height !== undefined ||
+            data.age !== undefined ||
+            data.sex !== undefined ||
+            data.activity_level !== undefined ||
+            data.observations !== undefined
+        ) {
+            const upsertDetails: any = { 
+                id: studentId,
+                updated_at: new Date().toISOString() 
+            }
+            if (data.weight !== undefined) upsertDetails.current_weight = data.weight
+            if (data.height !== undefined) upsertDetails.height = data.height
+            if (data.age !== undefined) upsertDetails.age = data.age
+            if (data.sex !== undefined) upsertDetails.sex = data.sex
+            if (data.activity_level !== undefined) upsertDetails.activity_level = data.activity_level
+            if (data.observations !== undefined) upsertDetails.observations = data.observations
+            if (data.body_fat !== undefined) upsertDetails.body_fat = data.body_fat
+            if (data.steroid_use !== undefined) upsertDetails.steroid_use = data.steroid_use
+
             const { error: detailsError } = await supabase
                 .from('student_details')
-                .update({
-                    starting_weight: data.weight,
-                    body_fat: data.body_fat,
-                    steroid_use: data.steroid_use,
-                    updated_at: new Date().toISOString()
-                })
-                .eq('id', studentId)
+                .upsert(upsertDetails, { onConflict: 'id' })
 
             if (detailsError) throw detailsError
 
@@ -59,23 +83,9 @@ export async function updateStudentData(
                     console.error('Error saving weight history:', e)
                 }
             }
-
-            // Save BF History
-            if (data.body_fat !== undefined) {
-                try {
-                    await supabase.from('bf_history').insert({
-                        student_id: studentId,
-                        bf_percentage: data.body_fat,
-                        recorded_at: new Date().toISOString()
-                    })
-                } catch (e) {
-                    // This will fail if table doesn't exist yet
-                    console.error('Error saving BF history:', e)
-                }
-            }
         }
 
-        // Update financial data
+        // 3. Update financial data
         if (data.monthly_fee !== undefined || data.payment_day !== undefined) {
             const { error: relationshipError } = await supabase
                 .from('trainer_students')
@@ -89,6 +99,8 @@ export async function updateStudentData(
         }
 
         revalidatePath(`/dashboard/trainer/students/${relationshipId}`)
+        revalidatePath('/dashboard/trainer/students')
+        revalidatePath('/dashboard/trainer/ergogenics')
         return { success: true }
     } catch (error: any) {
         console.error('Error updating student data:', error)

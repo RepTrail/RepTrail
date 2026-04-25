@@ -7,13 +7,15 @@ import { UnifiedDeleteButton } from "@/components/feature/shared/unified-delete-
 import Link from "next/link"
 import { ReactNode } from "react"
 import { cn } from "@/lib/utils"
+import { Calendar } from "lucide-react"
 
 interface UnifiedLibraryCardProps {
     id: string
     name: string
     description?: string
+    studentId: string
     icon: ReactNode
-    type: 'workout' | 'diet' | 'cardio'
+    type: 'workout' | 'diet' | 'cardio' | 'ergogenic'
     created_at: string
     assignments: any[]
     stats?: {
@@ -24,6 +26,7 @@ interface UnifiedLibraryCardProps {
     href: string
     colorScheme?: 'orange' | 'emerald' | 'zinc'
     onEditLabel?: string
+    queryKey: any[]
 }
 
 const dayNamesShort = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
@@ -32,6 +35,7 @@ export function UnifiedLibraryCard({
     id,
     name,
     description,
+    studentId,
     icon,
     type,
     created_at,
@@ -39,111 +43,103 @@ export function UnifiedLibraryCard({
     stats,
     href,
     colorScheme = 'orange',
-    onEditLabel
+    onEditLabel = 'Editar',
+    queryKey
 }: UnifiedLibraryCardProps) {
-    const studentAssignments = (assignments || []).reduce((acc: any, curr: any) => {
-        const studentName = curr.student?.full_name || 'Aluno'
-        if (!acc[studentName]) acc[studentName] = new Set<number>()
-        
+    const assignedDays = (assignments || []).reduce((acc: number[], curr: any) => {
+        if (curr.day_of_week !== null && curr.day_of_week !== undefined) {
+            acc.push(curr.day_of_week)
+        }
         if (curr.days_of_week && Array.isArray(curr.days_of_week)) {
-            curr.days_of_week.forEach((d: number) => acc[studentName].add(d))
-        } else if (curr.day_of_week !== undefined && curr.day_of_week !== null) {
-            acc[studentName].add(curr.day_of_week)
+            acc.push(...curr.days_of_week)
         }
         return acc
-    }, {})
+    }, [])
 
-    const studentsList = Object.keys(studentAssignments)
+    const uniqueDays = Array.from(new Set(assignedDays)).sort((a, b) => a - b)
 
-    const accentColor = colorScheme === 'emerald' ? 'text-emerald-500' : 'text-orange-500'
-    const borderColor = colorScheme === 'emerald' ? 'hover:border-emerald-500/30' : 'hover:border-orange-500/30'
-    const bulletColor = colorScheme === 'emerald' ? 'bg-emerald-500' : 'bg-orange-500'
+    const colors = {
+        orange: {
+            border: "hover:border-orange-500/30",
+            icon: "text-orange-500",
+            badge: "bg-orange-500/10 text-orange-400 border-orange-500/20",
+            button: "bg-orange-500 hover:bg-orange-400 text-zinc-950 shadow-orange-500/20"
+        },
+        emerald: {
+            border: "hover:border-emerald-500/30",
+            icon: "text-emerald-500",
+            badge: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+            button: "bg-emerald-500 hover:bg-emerald-400 text-zinc-950 shadow-emerald-500/20"
+        },
+        zinc: {
+            border: "hover:border-zinc-500/30",
+            icon: "text-zinc-500",
+            badge: "bg-zinc-500/10 text-zinc-400 border-zinc-500/20",
+            button: "bg-zinc-800 hover:bg-zinc-700 text-white"
+        }
+    }[colorScheme]
 
     return (
         <Card className={cn(
-            "bg-zinc-900/50 border-zinc-800 text-zinc-100 transition-all group rounded-[2rem] overflow-hidden flex flex-col",
-            borderColor
+            "bg-zinc-900/50 border-zinc-800 text-zinc-100 transition-all group rounded-3xl overflow-hidden flex flex-col h-full",
+            colors.border
         )}>
             <CardHeader className="p-6 pb-4">
                 <div className="flex items-start justify-between">
-                    <div className={cn(
-                        "bg-zinc-800 p-2 rounded-lg text-zinc-400 group-hover:transition-colors",
-                        colorScheme === 'emerald' ? "group-hover:text-emerald-500" : "group-hover:text-orange-500"
-                    )}>
+                    <div className={cn("bg-zinc-800 p-2 rounded-lg transition-colors", colors.icon)}>
                         {icon}
                     </div>
                     <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <DuplicateButton id={id} type={type} />
+                        <DuplicateButton id={id} type={type as any} />
                         <UnifiedDeleteButton
                             id={id}
-                            actionType={type}
+                            actionType={type === 'diet' ? 'delete-diet' : type === 'workout' ? 'delete-workout' : type === 'cardio' ? 'delete-cardio' : type as any}
                             itemName={name}
+                            studentId={studentId}
+                            queryKey={queryKey}
                         />
                     </div>
                 </div>
-                <CardTitle className="mt-4 text-lg font-black italic uppercase tracking-tight group-hover:text-white transition-colors">
+                <CardTitle className="mt-4 text-xl font-black italic uppercase tracking-tighter text-white group-hover:text-white transition-colors">
                     {name}
                 </CardTitle>
-                <CardDescription className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest line-clamp-2">
-                    {description || "Sem descrição."}
+                <CardDescription className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest line-clamp-2 mt-1">
+                    {description || "Sem descrição disponível."}
                 </CardDescription>
             </CardHeader>
-            <CardContent className="p-6 pt-2 flex-1 flex flex-col">
-                <div className="flex items-center justify-between text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-4">
-                    <span>
-                        {stats ? (
+            <CardContent className="p-6 pt-0 flex-1 flex flex-col">
+                <div className="flex-1">
+                    {uniqueDays.length > 0 ? (
+                        <div className="flex flex-wrap gap-1.5 mb-6">
+                            {uniqueDays.map((day) => (
+                                <span key={day} className={cn("flex items-center shrink-0 gap-1 px-2 py-1 text-[9px] font-black uppercase rounded-[0.5rem] border", colors.badge)}>
+                                    <Calendar className="w-2.5 h-2.5" />
+                                    {dayNamesShort[day]}
+                                </span>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="flex items-center gap-1 px-2 py-1 bg-zinc-800/50 text-zinc-500 text-[9px] font-black uppercase rounded-[0.5rem] border border-zinc-800 mb-6 w-fit">
+                            <Calendar className="w-2.5 h-2.5" />
+                            Não agendado
+                        </div>
+                    )}
+
+                    {stats && (
+                        <div className="flex items-center justify-between text-[10px] text-zinc-500 font-bold uppercase tracking-widest mb-6">
                             <div className="flex items-center gap-1.5">
                                 {stats.icon}
-                                {stats.value} {stats.label}
+                                <span>{stats.value} {stats.label}</span>
                             </div>
-                        ) : (
-                            "Template"
-                        )}
-                    </span>
-                    <span>{new Date(created_at).toLocaleDateString('pt-BR')}</span>
+                            <span>{created_at ? new Date(created_at).toLocaleDateString('pt-BR') : '-'}</span>
+                        </div>
+                    )}
                 </div>
 
-                {/* Assignments Section */}
-                {studentsList.length > 0 ? (
-                    <div className="space-y-3 mb-6 bg-zinc-950/50 border border-zinc-800/50 p-3 rounded-2xl">
-                        <p className="text-[9px] font-black uppercase tracking-widest text-zinc-600">Atribuído para:</p>
-                        <div className="space-y-2">
-                            {studentsList.map(studentName => {
-                                const daysSet = studentAssignments[studentName]
-                                const sortedDays = Array.from(daysSet as Set<number>).sort((a, b) => a - b)
-                                return (
-                                    <div key={studentName} className="flex flex-col gap-1.5">
-                                        <div className="flex items-center gap-1.5">
-                                            <div className={cn("w-1 h-1 rounded-full", bulletColor)} />
-                                            <span className="text-[10px] font-black italic uppercase text-zinc-400 leading-none">{studentName}</span>
-                                        </div>
-                                        <div className="flex flex-wrap gap-1 pl-2.5">
-                                            {sortedDays.map(day => (
-                                                <span key={day} className="px-1.5 py-0.5 bg-zinc-900 border border-zinc-800 rounded text-[8px] font-bold text-zinc-500 uppercase tracking-tighter">
-                                                    {dayNamesShort[day]}
-                                                </span>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )
-                            })}
-                        </div>
-                    </div>
-                ) : (
-                    <div className="mb-6 h-[40px] flex items-center">
-                        <span className="text-[10px] bg-zinc-800/50 text-zinc-600 px-3 py-1 rounded-full font-bold uppercase tracking-widest italic border border-zinc-800/30">
-                            Livre (Biblioteca)
-                        </span>
-                    </div>
-                )}
-
-                <div className="mt-auto pt-6 border-t border-zinc-800/50 flex items-center justify-center">
-                    <Button asChild variant="outline" className={cn(
-                        "w-full h-11 bg-zinc-800 border-zinc-700 text-zinc-100 flex items-center justify-center gap-1.5 rounded-full font-black text-[10px] uppercase italic tracking-widest border-white/5 px-6 shadow-none transition-all active:scale-[0.98]",
-                        colorScheme === 'emerald' ? "hover:bg-emerald-600 hover:border-emerald-500" : "hover:bg-orange-600 hover:border-orange-500"
-                    )}>
+                <div className="mt-auto pt-6 border-t border-zinc-800/50">
+                    <Button asChild className={cn("w-full h-10 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2", colors.button)}>
                         <Link href={href}>
-                            {onEditLabel || `Editar ${type === 'workout' ? 'Treino' : type === 'diet' ? 'Dieta' : 'Protocolo'}`}
+                            {onEditLabel}
                         </Link>
                     </Button>
                 </div>

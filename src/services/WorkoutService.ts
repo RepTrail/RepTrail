@@ -6,45 +6,83 @@ export class WorkoutService {
     static async getTrainerWorkouts(trainerId: string) {
         return unstable_cache(
             async () => {
-                const { data, error } = await adminClient
-                    .from('workouts')
-                    .select(`
-                        *,
-                        workout_exercises:workout_exercises(count),
-                        assignments:assigned_workouts(
-                            id,
-                            student_id,
-                            day_of_week,
-                            active,
-                            student:profiles(full_name)
-                        )
-                    `)
-                    .eq('trainer_id', trainerId)
-                    .order('created_at', { ascending: false })
+                const [
+                    { data: workouts, error: wError },
+                    { data: pendingLinks }
+                ] = await Promise.all([
+                    adminClient
+                        .from('workouts')
+                        .select(`
+                            *,
+                            workout_exercises:workout_exercises(count),
+                            assignments:assigned_workouts(
+                                id,
+                                student_id,
+                                day_of_week,
+                                active,
+                                student:profiles(full_name)
+                            )
+                        `)
+                        .eq('trainer_id', trainerId)
+                        .order('created_at', { ascending: false }),
+                    adminClient
+                        .from('pending_student_links')
+                        .select('id, student_name, workout_ids, ergogenic_data')
+                        .eq('trainer_id', trainerId)
+                        .eq('status', 'pending')
+                ])
 
-                if (error) {
-                    console.error('Error in WorkoutService.getTrainerWorkouts:', error)
+                if (wError) {
+                    console.error('Error in WorkoutService.getTrainerWorkouts:', wError)
                     return []
                 }
 
                 // Grouping logic for trainer view
-                const grouped = (data || []).map(workout => {
+                const grouped = (workouts || []).map((workout: any) => {
                     const studentMap: Record<string, any> = {}
-                        ; (workout.assignments || []).forEach((a: any) => {
-                            if (!a.active) return
 
-                            if (!studentMap[a.student_id]) {
-                                studentMap[a.student_id] = {
-                                    ...a,
+                    // 1. Process real assignments
+                    ;(workout.assignments || []).forEach((a: any) => {
+                        if (!a.active) return
+                        if (!studentMap[a.student_id]) {
+                            studentMap[a.student_id] = { ...a, days_of_week: [] }
+                        }
+                        if (a.day_of_week !== null && a.day_of_week !== undefined) {
+                            if (!studentMap[a.student_id].days_of_week.includes(a.day_of_week)) {
+                                studentMap[a.student_id].days_of_week.push(a.day_of_week)
+                            }
+                        }
+                    })
+
+                    // 2. Process pending assignments (Placeholders)
+                    ;(pendingLinks || []).forEach((link: any) => {
+                        if (link.workout_ids?.includes(workout.id)) {
+                            const placeholderId = `pending-${link.id}`
+                            
+                            // Find day metadata for this specific workout
+                            const metadata = (link.ergogenic_data || []).find((e: any) => e?.__metadata === true)
+                            const workoutMeta = metadata?.workout_days?.find((wd: any) => wd.id === workout.id)
+                            const dayOfWeek = workoutMeta?.day
+
+                            if (!studentMap[placeholderId]) {
+                                studentMap[placeholderId] = {
+                                    id: link.id,
+                                    student_id: null,
+                                    active: true,
+                                    is_placeholder: true,
+                                    student: { full_name: link.student_name },
                                     days_of_week: []
                                 }
                             }
-                            if (a.day_of_week !== null && a.day_of_week !== undefined) {
-                                if (!studentMap[a.student_id].days_of_week.includes(a.day_of_week)) {
-                                    studentMap[a.student_id].days_of_week.push(a.day_of_week)
+                            
+                            if (dayOfWeek !== null && dayOfWeek !== undefined) {
+                                if (!studentMap[placeholderId].days_of_week.includes(dayOfWeek)) {
+                                    studentMap[placeholderId].days_of_week.push(dayOfWeek)
                                 }
                             }
-                        })
+                        }
+                    })
+
                     return { ...workout, assignments: Object.values(studentMap) }
                 })
 
@@ -152,7 +190,7 @@ export class WorkoutService {
                     const workout = assignment.workout as any
 
                     if (workout.trainer_id && workout.trainer_id !== studentId) {
-                        const isLinked = trainerLinks?.some(l => l.trainer_id === workout.trainer_id)
+                        const isLinked = trainerLinks?.some((l: any) => l.trainer_id === workout.trainer_id)
                         if (!isLinked) return null
                     }
 

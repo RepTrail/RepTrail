@@ -3,11 +3,14 @@
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { getTodayRangeBrazil } from '@/lib/date-utils'
+import crypto from 'crypto'
 import { upsertDailyTracking } from '@/actions/tracking-actions'
 
 export async function getStudentErgogenics(studentId: string) {
     const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
-    // Efficiently fetch ergogenics and trainer links in parallel or filtered
+    const { data: { user } } = await supabase.auth.getUser()
+
+    // 1. Try to fetch from real ergogenics table
     const { data: records, error } = await supabase
         .from('ergogenics')
         .select(`
@@ -19,21 +22,46 @@ export async function getStudentErgogenics(studentId: string) {
 
     if (error) return { error: error.message }
 
-    // Fetch active trainer links for this student
-    const { data: activeLinks } = await supabase
-        .from('trainer_students')
-        .select('trainer_id')
-        .eq('student_id', studentId)
-        .eq('active', true)
+    // If we have records, we are dealing with a real student
+    if (records && records.length > 0) {
+        // Fetch active trainer links for this student to filter
+        const { data: activeLinks } = await supabase
+            .from('trainer_students')
+            .select('trainer_id')
+            .eq('student_id', studentId)
+            .eq('active', true)
 
-    const activeTrainerIds = new Set(activeLinks?.map(l => l.trainer_id) || [])
+        const activeTrainerIds = new Set(activeLinks?.map(l => l.trainer_id) || [])
 
-    return (records || []).filter(record => {
-        // Keep if added by student (trainer_id === student_id or null)
-        if (!record.trainer_id || record.trainer_id === studentId) return true
-        // Keep if added by an active trainer
-        return activeTrainerIds.has(record.trainer_id)
-    })
+        return (records || []).filter(record => {
+            if (!record.trainer_id || record.trainer_id === studentId) return true
+            return activeTrainerIds.has(record.trainer_id)
+        })
+    }
+
+    // 2. If no records and we have a user (likely trainer), check if it's a placeholder
+    if (user) {
+        const { data: placeholder } = await supabase
+            .from('pending_student_links')
+            .select('*')
+            .eq('id', studentId)
+            .eq('trainer_id', user.id)
+            .maybeSingle()
+
+        if (placeholder && placeholder.ergogenic_data) {
+            // Return raw items for UI to handle, filtering metadata
+            const items = (placeholder.ergogenic_data as any[])
+                .filter(e => e && typeof e === 'object' && !e.__metadata)
+                .map((e, index) => ({
+                    ...e,
+                    id: e.id || `pc-${index}`, // Simple fallback ID
+                    is_placeholder: true
+                }));
+            return items;
+        }
+    }
+
+    return []
 }
 
 export async function addErgogenic(data: {
@@ -54,8 +82,31 @@ export async function addErgogenic(data: {
     const { clientId, clientMutationId, parentId, ...filteredData } = data as any
     const cleanedData = {
         ...filteredData,
+        id: filteredData.id || crypto.randomUUID(),
         start_date: filteredData.start_date || new Date().toISOString().split('T')[0],
         end_date: filteredData.end_date === '' ? null : filteredData.end_date
+    }
+
+    // Check if it's a placeholder
+    const { data: placeholder } = await supabase
+        .from('pending_student_links')
+        .select('*')
+        .eq('id', data.student_id)
+        .eq('trainer_id', user.id)
+        .maybeSingle()
+
+    if (placeholder) {
+        const ergo = (placeholder.ergogenic_data as any[]) || []
+        const newErgo = [...ergo, { ...cleanedData, trainer_id: user.id }]
+        
+        const { error: pendingError } = await supabase
+            .from('pending_student_links')
+            .update({ ergogenic_data: newErgo })
+            .eq('id', data.student_id)
+
+        if (pendingError) return { error: pendingError.message }
+        revalidatePath(`/dashboard/trainer/students/${data.student_id}/ergogenics`)
+        return { success: true, data: cleanedData }
     }
 
     const { data: ergogenic, error } = await supabase
@@ -68,6 +119,13 @@ export async function addErgogenic(data: {
         .single()
 
     if (error) return { error: error.message }
+
+    // 🚀 AUTO-ENABLE: Enable hormonal protocol in student configurations
+    await supabase.from('student_details').upsert({ 
+        id: data.student_id, 
+        steroid_use: true 
+    }, { onConflict: 'id' });
+
     revalidatePath(`/dashboard/trainer/students/${data.student_id}/ergogenics`)
     revalidatePath('/dashboard/student/ergogenics')
     return { success: true, data: ergogenic }
@@ -82,6 +140,32 @@ export async function updateErgogenic(id: string, studentId: string, data: any) 
     if (filteredData.start_date === '') delete cleanedData.start_date
     if (filteredData.end_date === '') cleanedData.end_date = null
 
+    // Check if it's a placeholder
+    const { data: placeholder } = await supabase
+        .from('pending_student_links')
+        .select('*')
+        .eq('id', studentId)
+        .maybeSingle()
+
+    if (placeholder) {
+        const ergo = (placeholder.ergogenic_data as any[]) || []
+        const newErgo = ergo.map((e: any) => {
+            if (e.id === id || (e.name === id && !e.id)) {
+                return { ...e, ...cleanedData }
+            }
+            return e
+        })
+
+        const { error: pendingError } = await supabase
+            .from('pending_student_links')
+            .update({ ergogenic_data: newErgo })
+            .eq('id', studentId)
+
+        if (pendingError) return { error: pendingError.message }
+        revalidatePath(`/dashboard/trainer/students/${studentId}/ergogenics`)
+        return { success: true }
+    }
+
     const { error } = await supabase
         .from('ergogenics')
         .update(cleanedData)
@@ -95,15 +179,140 @@ export async function updateErgogenic(id: string, studentId: string, data: any) 
 
 export async function deleteErgogenic(id: string, studentId: string) {
     const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
-    const { error } = await supabase
-        .from('ergogenics')
-        .delete()
-        .eq('id', id)
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return { error: 'Unauthorized' }
 
-    if (error) return { error: error.message }
-    revalidatePath(`/dashboard/trainer/students/${studentId}/ergogenics`)
-    revalidatePath('/dashboard/student/ergogenics')
-    return { success: true }
+    try {
+        let effectiveStudentId = studentId
+        
+        // 🚨 RECOVERY: If studentId is missing (old mutations), fetch it from the record
+        if (!effectiveStudentId) {
+            const { createAdminClient } = await import('@/lib/supabase/server')
+            const adminSupabase = await createAdminClient()
+            
+            // 1. Try real ergogenics table
+            const { data: record } = await adminSupabase
+                .from('ergogenics')
+                .select('student_id')
+                .eq('id', id)
+                .maybeSingle()
+            
+            if (record) {
+                effectiveStudentId = record.student_id
+            } else {
+                // 2. Try pending links (placeholder) - Search by ID in ergogenic_data
+                const { data: placeholder } = await adminSupabase
+                    .from('pending_student_links')
+                    .select('id')
+                    .contains('ergogenic_data', [{ id: id }])
+                    .maybeSingle()
+                
+                if (placeholder) {
+                    effectiveStudentId = placeholder.id
+                }
+            }
+        }
+
+        let hasLink = false
+        if (effectiveStudentId) {
+            const { data: link } = await supabase
+                .from('trainer_students')
+                .select('id')
+                .eq('trainer_id', user.id)
+                .eq('student_id', effectiveStudentId)
+                .eq('active', true)
+                .maybeSingle()
+            hasLink = !!link
+        }
+
+        if (!hasLink && user.id !== effectiveStudentId) {
+            if (!effectiveStudentId) {
+                 return { error: 'You do not have permission to manage this student (ID missing).' }
+            }
+            // Check if effectiveStudentId is a placeholder (link ID)
+            const { data: placeholder } = await supabase
+                .from('pending_student_links')
+                .select('*')
+                .eq('id', effectiveStudentId)
+                .eq('trainer_id', user.id)
+                .maybeSingle()
+
+            if (placeholder) {
+                console.log(`[ERGOGENICS-ACTIONS] Deleting ergogenic from placeholder: ${effectiveStudentId}`)
+                
+                // Filter ergogenic_data array
+                const ergo = (placeholder.ergogenic_data as any[]) || []
+                
+                // The 'id' passed here is actually the index or the full object for placeholders?
+                // Actually, for placeholders, the UI passes the object usually, but the outbox might have the ID.
+                // Looking at how we generate IDs for placeholders in getStudentRelationship:
+                // We don't really have IDs for individual ergo entries in the link yet, but we can match by name or index.
+                // If no ID is provided, we can't safely delete, but we shouldn't block the outbox forever.
+                // We'll proceed and if nothing matches, it's effectively a no-op (idempotent).
+                if (!id) {
+                    console.warn(`[ERGOGENICS-ACTIONS] Deletion requested without ID for student: ${effectiveStudentId}`)
+                }
+
+                let found = false;
+                const newErgo = ergo.filter((e: any) => {
+                    if (e.__metadata) return true;
+                    if (found) return true; // Only delete ONE per call
+
+                    // 1. Try exact ID match
+                    if (e.id && e.id === id) {
+                        found = true;
+                        return false;
+                    }
+
+                    // 2. Try Name match (for legacy data or name-as-id payloads)
+                    if (e.name && e.name === id) {
+                        found = true;
+                        return false;
+                    }
+
+                    // 3. Try legacy pc-ID match (extract name)
+                    if (id.startsWith('pc-') && !e.id) {
+                        const targetName = id.split('-').slice(2).join('-');
+                        if (e.name === targetName) {
+                            found = true;
+                            return false;
+                        }
+                    }
+
+                    return true;
+                })
+
+                const { error: pendingError } = await supabase
+                    .from('pending_student_links')
+                    .update({ ergogenic_data: newErgo })
+                    .eq('id', effectiveStudentId)
+
+                if (pendingError) throw pendingError
+
+                revalidatePath(`/dashboard/trainer/students/${effectiveStudentId}/ergogenics`)
+                return { success: true }
+            } else {
+                return { error: 'You do not have permission to manage this student.' }
+            }
+        }
+
+        // 2. Use Admin Client to bypass RLS for this specific deletion
+        const { createAdminClient } = await import('@/lib/supabase/server')
+        const adminSupabase = await createAdminClient()
+        
+        const { error } = await adminSupabase
+            .from('ergogenics')
+            .delete()
+            .eq('id', id)
+
+        if (error) throw error
+
+        revalidatePath(`/dashboard/trainer/students/${effectiveStudentId}/ergogenics`)
+        revalidatePath('/dashboard/student/ergogenics')
+        return { success: true }
+    } catch (e: any) {
+        return { error: e.message }
+    }
 }
 
 

@@ -77,30 +77,30 @@ async function StudentDashboardContent({ userId }: { userId: string }) {
 
     // ─── STAGE 2: CHAINED PARALLEL PREFETCH (ELITE) ───────────────────────────
     // Resolve secondary dependencies using IDs found in STAGE 1
-    const workoutId = todayWorkout?.id
-    const cardioId = todayCardio?.[0]?.id
+    const workoutIds = (todayWorkout || []).map((w: any) => w.id)
+    const cardioIds = (todayCardio || []).map((c: any) => c.id)
 
     await Promise.all([
         // Workout Chain
-        workoutId ? 
+        ...workoutIds.flatMap(id => [
             queryClient.prefetchQuery({ 
-                queryKey: QUERY_KEYS.workouts.status(userId, workoutId), 
-                queryFn: () => import('@/actions/log-actions').then(m => m.getWorkoutStatus(userId, workoutId)) 
-            }) : 
-            queryClient.setQueryData(QUERY_KEYS.workouts.status(userId, 'no-workout'), { status: 'empty' }),
-
-        workoutId ? 
+                queryKey: QUERY_KEYS.workouts.status(userId, id), 
+                queryFn: () => import('@/actions/log-actions').then(m => m.getWorkoutStatus(userId, id)) 
+            }),
             queryClient.prefetchQuery({ 
-                queryKey: QUERY_KEYS.workouts.detail(workoutId), 
-                queryFn: () => import('@/actions/workout-actions').then(m => m.getWorkoutDetails(workoutId)) 
-            }) : Promise.resolve(),
+                queryKey: QUERY_KEYS.workouts.detail(id), 
+                queryFn: () => import('@/actions/workout-actions').then(m => m.getWorkoutDetails(id)) 
+            })
+        ]),
+        workoutIds.length === 0 ? queryClient.setQueryData(QUERY_KEYS.workouts.status(userId, 'no-workout'), { status: 'empty' }) : Promise.resolve(),
 
         // Cardio Chain
-        cardioId ? 
+        ...cardioIds.map(id => 
             queryClient.prefetchQuery({ 
-                queryKey: QUERY_KEYS.cardio.detail(cardioId), 
-                queryFn: () => import('@/actions/cardio-actions').then(m => m.getAssignedCardios(userId)) // Or specific detail
-            }) : Promise.resolve(),
+                queryKey: QUERY_KEYS.cardio.detail(id), 
+                queryFn: () => import('@/actions/cardio-actions').then(m => m.getAssignedCardios(userId))
+            })
+        ),
         
         queryClient.prefetchQuery({ 
             queryKey: QUERY_KEYS.cardio.logs(userId), 

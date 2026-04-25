@@ -1,5 +1,5 @@
 
-import { adminClient } from './src/lib/supabase/admin';
+import { adminClient } from '../src/lib/supabase/admin';
 
 async function run() {
     console.log('Checking assignments for TREINO C...');

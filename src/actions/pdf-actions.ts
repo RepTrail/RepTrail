@@ -83,32 +83,33 @@ You are a surgical Fitness Data Extraction AI. You translate messy Portuguese gy
  Your number one priority is to find PREPARATORY SETS (Aquecimento/Warmup/Feeder) and separate them from WORKING SETS.
 
 STRICT EXTRACTION PROTOCOL:
-1. **Analyze every line**: Look for numbers near words like "aquecimento", "manguito", "preparação", "mobilidade", "ativação", "feeder", "aproximação", "vão", "antes", "subindo carga".
-2. **Never Merge**: If the text says "2x15, 1x10, 3x8-12", the "3x8-12" are the ONLY ones that go into "sets". The others MUST go into "warmup_sets" or "feeder_sets".
-3. **REPS MUST BE NUMBERS**: The "reps" field MUST contain only the target number of repetitions. If it is a range (e.g., "10-12"), use the highest number (e.g., "12"). NEVER include text like "movimentos", "repetições", or descriptions.
-4. **Format**: warmup_sets and feeder_sets must be strings like "2x15". If multiple exist, join them like "2x15 + 1x10".
-5. **Name Fixing**: Correct names like "SUPINOINCLINADO" to "SUPINO INCLINADO".
-6. **Think First**: Use the "thought_process" field to explain your logic for each exercise before filling the data. This will help you find hidden warmup sets.
+1. **Identify Student**: Look for "Aluno", "Nome", "Atleta" or similar at the top of the text. Return it in a top-level field "detected_student_name".
+2. **Analyze every line**: Look for numbers near words like "aquecimento", "manguito", "preparação", "mobilidade", "ativação", "feeder", "aproximação", "vão", "antes", "subindo carga".
+3. **Day Mapping**: If you find "TREINO A", set "day_of_week": 1. "TREINO B" -> 2, "TREINO C" -> 3, etc. 
+   CRITICAL: Look for specific days like "SEGUNDA", "TERÇA", "SEG/QUA/SEX", "TER/QUI/SAB". Map them to numeric arrays [1,2,3,4,5,6,7] where 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri, 6=Sat, 7=Sun.
+   If "TODOS OS DIAS", "DIARIAMENTE" or "DAILY" is found, use [1,2,3,4,5,6,7]. 
+   If "SEG/QUA/SEX" is found, result MUST be [1,3,5]. If "TER/QUI" is found, result MUST be [2,4].
+4. **Never Merge**: If the text says "2x15, 1x10, 3x8-12", the "3x8-12" are the ONLY ones that go into "sets". The others MUST go into "warmup_sets" or "feeder_sets".
+5. **REPS/SETS MUST BE PRIMITIVES**: The "reps" and "sets" fields MUST be strings or numbers. NEVER use objects or arrays.
+6. **Format**: warmup_sets and feeder_sets must be strings like "2x15". 
+7. **No Hallucinated Objects**: Do not return data as {"reps": "10", "sets": 2} inside another field. Stick to the schema.
 
 JSON SCHEMA:
 {
     "thought_process": "...",
+    "detected_student_name": "Marcos Silva",
     "workouts": [
         {
-            "name": "TREINO A",
+            "name": "TREINO A - PEITO E TRÍCEPS",
             "day_of_week": 1,
-            "exercises": [
-                {
-                    "name": "Exercício",
-                    "sets": 3,
-                    "reps": "10",
-                    "rest": 60,
-                    "warmup_sets": "2x15",
-                    "feeder_sets": "1x10",
-                    "notes": "Explicação técnica aqui"
-                }
-            ]
+            "exercises": [...]
         }
+    ],
+    "cardios": [
+        { "type": "Esteira", "duration": "30min", "intensity": "Moderada", "frequency": "3x/sem", "application_days": [1,3,5] }
+    ],
+    "ergogenics": [
+        { "name": "Testo", "dosage": "250mg", "weekly_dosage": 250, "unit": "ml", "application_days": [1], "notes": "Segunda" }
     ]
 }
 
@@ -126,32 +127,40 @@ You are a High-Precision Nutrition Data Extraction AI. You translate messy, poor
 Your number one priority is to extract EVERY single meal and EVERY food item with its exact quantity and macros.
 
 SPECIAL INSTRUCTION FOR MULTIPLE MENUS/OPTIONS:
-If the PDF contains multiple distinct diet options or menus (e.g. "Cardápio 1", "Cardápio 2", "Opção A", "Opção B"), you MUST group them into an "options" array. Each option MUST have a descriptive name and its own set of meals. If there is only one menu, still use the "options" array with one element named "Cardápio Principal".
+If the PDF contains multiple distinct diet options or menus (e.g. "Cardápio 1", "Cardápio 2", "Opção A", "Opção B"), you MUST group them into an "options" array. Each option MUST have a descriptive name, its own set of meals, AND specific days of the week if mentioned (e.g. "Segunda a Sexta" -> [1,2,3,4,5]). If no days are mentioned, use [0,1,2,3,4,5,6].
 
 STRICT EXTRACTION PROTOCOL:
-1. **Handle Messy Text**: PDF extraction often interleaves columns. If you see "Rice 100g Chicken 120g", treat them as separate items.
-2. **Meal Identification**: Look for any meal headers: "Refeição", "Café", "Lanche", "Almoço", "Jantar", "Ceia", "Pré/Pós Treino", "Colação", "Desjejum".
-3. **Food & Quantity**: For every food, find its weight (g, kg) or measure (colher, unidade, xícara). If a quantity is missing, estimate based on common sense for the meal type.
-4. **Substitutions (OU/OR)**: If a line says "Alimento A OU Alimento B", you MUST extract Alimento A as the primary, and you can put "OU Alimento B" in the notes or simply ignore the substitute to keep it clean.
-5. **Ignore Supplemental Info**: Do NOT extract instructions like "Cook with olive oil", "Drink water", or "Don't skip meals". Only extract the protocol.
-6. **NO ERGOGENICS**: Absolutely ignore steroids, hormones, or medicine.
-7. **Thought Process**: Explain how you separated the meals/options if the text was interleaved.
+1. **Identify Student**: Find the name after "Aluno", "Paciente" or "Cliente". Return it in "detected_student_name".
+2. **Handle Messy Text**: PDF extraction often interleaves columns. Separate them.
+3. **Meal Identification**: Look for headers: "Refeição", "Café", "Almoço", "Jantar", "Ceia", etc.
+4. **Food & Quantity**: Extract weight (g, kg) or measure.
+5. **Ergogenics**: Extract steroids/supplements into the "ergogenics" array.
+6. **Days of Week**: Always look for "Segunda", "Terça", etc., or "Seg/Qua/Sex" and map to [1,2,3,4,5,6,7] (1=Mon, 7=Sun). 
+   CRITICAL: If you see "SEG/QUA/SEX", result MUST be [1,3,5]. If you see "TER/QUI/SAB", result MUST be [2,4,6]. If no days are mentioned but the context implies it's the main diet, use [1,2,3,4,5,6,7].
 
 JSON SCHEMA:
 {
-    "thought_process": "Analysis of the PDF structure and meal layout...",
+    "thought_process": "...",
+    "detected_student_name": "Marcos Silva",
     "options": [
         {
-            "name": "NOME DA OPÇÃO (ex: Cardápio 1 - Dia de Treino)",
+            "name": "Cardápio Principal",
+            "days_of_week": [1, 2, 3, 4, 5],
             "meals": [
                 {
-                    "meal_name": "NOME DA REFEIÇÃO",
+                    "meal_name": "Café da Manhã",
                     "foods": [
-                        { "name": "Alimento", "quantity": "Quantidade (ex: 100g)", "calories": 0, "protein": 0, "carbs": 0, "fat": 0 }
+                        { "name": "Ovos", "quantity": "3 un", "calories": 0, "protein": 18, "carbs": 2, "fat": 15 }
                     ]
                 }
             ]
         }
+    ],
+    "cardios": [
+        { "type": "Esteira", "duration": "30min", "intensity": "Moderada", "frequency": "3x/sem", "application_days": [1,3,5] }
+    ],
+    "ergogenics": [
+        { "name": "Testosterona", "dosage": "250mg", "weekly_dosage": 250, "unit": "ml", "application_days": [1,4], "notes": "Seg/Qui" }
     ]
 }
 
@@ -160,9 +169,10 @@ ${text}
 `
 
             console.log(`[PDF] Sending ${text.length} chars to AI. Sample: ${text.substring(0, 100)}...`)
-            parsedData = await callAI(client, prompt, DEFAULT_AI_MODEL, 8192)
+            parsedData = await callAI(client, prompt, DEFAULT_AI_MODEL, 4096)
             method = 'openrouter-ai'
-            console.log(`[PDF] AI parse complete. Meals found: ${parsedData?.meals?.length || 0}`)
+            const mealCount = parsedData?.meals?.length || (parsedData?.options || []).reduce((acc: number, opt: any) => acc + (opt.meals?.length || 0), 0)
+            console.log(`[PDF] AI parse complete. Meals found: ${mealCount}`)
         } catch (aiErr: any) {
             console.warn(`[PDF] AI parse failed (${aiErr.message}), falling back to local parser`)
         }
@@ -180,11 +190,73 @@ ${text}
         }
     }
 
+    // 5. Post-processing: extract cardio, ergogenics, and student name from raw text
+    const { extractStudentName, extractCardioFromText, extractErgogenicsFromText, ERGOGENIC_KEYWORDS } = await import('@/lib/pdf-post-processors')
+
+    const detectedStudentName = extractStudentName(text)
+    const detectedCardios = extractCardioFromText(text)
+    const detectedErgogenics = extractErgogenicsFromText(text)
+
+    console.log(`[PDF] Post-processing: name=${detectedStudentName}, cardios=${detectedCardios.length}, ergogenics=${detectedErgogenics.length}`)
+
+    // Merge: only fill in if parser/AI didn't already populate
+    if (!parsedData.cardios?.length && detectedCardios.length > 0) {
+        // Group similar cardios to avoid duplicates from different paragraphs
+        const uniqueCardios = Array.from(new Map(detectedCardios.map(c => [`${c.type}-${c.duration}`, c])).values());
+        parsedData.cardios = uniqueCardios
+    }
+    if (!parsedData.ergogenics?.length && detectedErgogenics.length > 0) {
+        // Deduplicate ergogenics by name (case insensitive)
+        const ergoMap = new Map();
+        detectedErgogenics.forEach(e => {
+            const key = e.name.toUpperCase().trim();
+            if (!ergoMap.has(key) || (e.dosage && !ergoMap.get(key).dosage)) {
+                ergoMap.set(key, e);
+            }
+        });
+        parsedData.ergogenics = Array.from(ergoMap.values());
+    }
+
+    // ─── DEDUPLICATION: Remove ergogenics from meals ─────────────────────────
+    // If an item was identified as an ergogenic, it shouldn't appear as a food item in the diet.
+    const ergoTerms = new Set([
+        ...(parsedData.ergogenics || []).map((e: any) => e.name.toUpperCase()),
+        ...Object.keys(ERGOGENIC_KEYWORDS)
+    ]);
+    
+    if (ergoTerms.size > 0) {
+        const cleanMeals = (meals: any[]) => {
+            return meals.map(meal => ({
+                ...meal,
+                foods: meal.foods?.filter((f: any) => {
+                    const foodName = (f.name || f.food || '').toUpperCase();
+                    // Block if exact match OR if the food name contains a known ergogenic keyword
+                    return !Array.from(ergoTerms).some(term => 
+                        foodName === term || 
+                        (term.length > 3 && foodName.includes(term))
+                    );
+                }) || []
+            })).filter(meal => meal.foods.length > 0);
+        };
+
+        if (type === 'diet') {
+            if (parsedData.options?.length > 0) {
+                parsedData.options = parsedData.options.map((opt: any) => ({
+                    ...opt,
+                    meals: cleanMeals(opt.meals || [])
+                }));
+            } else if (parsedData.meals?.length > 0) {
+                parsedData.meals = cleanMeals(parsedData.meals);
+            }
+        }
+    }
+
     const responseData = {
         type,
         raw_text_preview: text.substring(0, 200) + '...',
         parsed_data: parsedData,
         method,
+        detected_student_name: detectedStudentName || parsedData.detected_student_name,
     }
 
     console.log(`[PDF] Success! Method: ${method}`)

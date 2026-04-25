@@ -243,7 +243,60 @@ export async function unassignDiet(dietId: string, studentId: string) {
     const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     try {
-        const { error } = await supabase
+        if (!dietId || !studentId || dietId === 'undefined' || studentId === 'undefined') {
+            console.error(`[DIET-ACTIONS] Invalid IDs for unassignDiet: dietId=${dietId}, studentId=${studentId}`);
+            return { error: 'IDs inválidos para desatribuir dieta.' };
+        }
+
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) return { error: 'Unauthorized' }
+
+        // 🚀 CHECK IF PLACEHOLDER
+        const { data: placeholder } = await supabase
+            .from('pending_student_links')
+            .select('*')
+            .eq('id', studentId)
+            .eq('trainer_id', user.id)
+            .maybeSingle()
+
+        if (placeholder) {
+            console.log(`[DIET-ACTIONS] Unassigning from placeholder: ${studentId}`)
+            if (!dietId) {
+                console.warn(`[DIET-ACTIONS] unassignDiet called without dietId for placeholder student: ${studentId}`);
+                return { success: true }; // Idempotent
+            }
+            const cleanId = dietId.replace('pd-', '')
+            
+            // Filter diet_ids
+            const newDietIds = (placeholder.diet_ids || []).filter((id: string) => id !== cleanId)
+            
+            const { error: pendingError } = await supabase
+                .from('pending_student_links')
+                .update({ diet_ids: newDietIds })
+                .eq('id', studentId)
+
+            if (pendingError) throw pendingError
+
+            revalidatePath('/dashboard/trainer/students')
+            return { success: true }
+        }
+
+        // 🚀 TRAINER AUTHORITY: Check if user is the student's trainer
+        const { data: link } = await supabase
+            .from('trainer_students')
+            .select('id')
+            .eq('trainer_id', user.id)
+            .eq('student_id', studentId)
+            .eq('active', true)
+            .maybeSingle()
+
+        const isTrainer = !!link
+
+        // 2. Use Admin Client to force deactivation
+        const { createAdminClient } = await import('@/lib/supabase/server')
+        const adminSupabase = await createAdminClient()
+
+        const { error } = await adminSupabase
             .from('assigned_diets')
             .update({ active: false })
             .eq('diet_id', dietId)

@@ -205,6 +205,7 @@ export async function deleteStudentDiet(dietId: string) {
             .eq('trainer_id', user.id)
 
         revalidatePath('/dashboard/student/diet')
+        revalidatePath('/dashboard/trainer/diets')
         revalidatePath('/dashboard/student')
         return { success: true }
     } catch (e: any) {
@@ -286,27 +287,105 @@ export async function updateStudentCardio(cardioId: string, formData: FormData) 
     }
 }
 
-export async function deleteStudentCardio(cardioId: string, studentId?: string) {
-    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
+export async function deleteStudentCardio(assignmentId: string, studentId?: string) {
+    const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { error: 'Unauthorized' }
 
-    const targetStudentId = studentId || user.id
-
     try {
-        // Unassign first
-        await supabase
-            .from('assigned_cardios')
-            .update({ active: false })
-            .eq('cardio_id', cardioId)
-            .eq('student_id', targetStudentId)
+        // 1. Determine if we are deleting a template (Trainer mode) or an assignment (Student/Trainer-Student mode)
+        if (!studentId) {
+            // Template mode: delete the cardio template itself
+            const { error: delError } = await supabase
+                .from('cardios')
+                .delete()
+                .eq('id', assignmentId)
+                .eq('trainer_id', user.id)
+            
+            if (delError) throw delError
+            revalidatePath('/dashboard/trainer/cardio')
+            return { success: true }
+        }
 
-        // revalidate paths
+        // 2. Assignment mode: delete a specific assignment for a student
+        let effectiveStudentId = studentId
+
+        // Handle Placeholder Assignment (ID starts with pc-)
+        if (assignmentId.startsWith('pc-')) {
+            const cardioId = assignmentId.replace('pc-', '')
+            
+            // For placeholders, studentId is the ID of the pending_student_links record
+            const { data: placeholder } = await supabase
+                .from('pending_student_links')
+                .select('*')
+                .eq('id', effectiveStudentId)
+                .eq('trainer_id', user.id)
+                .maybeSingle()
+
+            if (!placeholder) {
+                throw new Error('You do not have permission to manage this placeholder student.')
+            }
+
+            // Clean up cardio_ids and metadata
+            const newCardioIds = (placeholder.cardio_ids || []).filter((id: string) => id !== cardioId)
+            const ergo = (placeholder.ergogenic_data as any[]) || []
+            const metaIdx = ergo.findIndex(e => e.__metadata)
+            if (metaIdx !== -1) {
+                const metadata = ergo[metaIdx]
+                if (metadata.cardio_metadata) {
+                    metadata.cardio_metadata = metadata.cardio_metadata.filter((m: any) => m.id !== cardioId)
+                    ergo[metaIdx] = metadata
+                }
+            }
+
+            const { error: pendingError } = await supabase
+                .from('pending_student_links')
+                .update({ 
+                    cardio_ids: newCardioIds,
+                    ergogenic_data: ergo
+                })
+                .eq('id', placeholder.id)
+
+            if (pendingError) throw pendingError
+        } else {
+            // Real Assignment Management
+            // Verify permission: user must be the student or the student's trainer
+            let hasPermission = false
+
+            if (user.id === effectiveStudentId) {
+                hasPermission = true
+            } else {
+                const { data: link } = await supabase
+                    .from('trainer_students')
+                    .select('id')
+                    .eq('trainer_id', user.id)
+                    .eq('student_id', effectiveStudentId)
+                    .eq('active', true)
+                    .maybeSingle()
+                
+                hasPermission = !!link
+            }
+
+            if (!hasPermission) {
+                throw new Error('You do not have permission to manage this student assignment.')
+            }
+
+            // 🚀 THE FIX: Actually delete the assignment
+            const { error: deleteError } = await supabase
+                .from('assigned_cardios')
+                .delete()
+                .eq('id', assignmentId)
+
+            if (deleteError) throw deleteError
+        }
+
         revalidatePath('/dashboard/student/cardio')
-        if (studentId) revalidatePath(`/dashboard/trainer/students/${studentId}/cardio`)
+        revalidatePath('/dashboard/trainer/cardio')
+        revalidatePath(`/dashboard/trainer/students/${effectiveStudentId}`)
         
         return { success: true }
     } catch (e: any) {
+        console.error('[STUDENT-CONTENT] Error deleting cardio:', e.message)
         return { error: e.message }
     }
 }

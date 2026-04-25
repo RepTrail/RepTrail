@@ -38,19 +38,27 @@ export function TrainerDashboardClient({ userId, betaTesterMode }: TrainerDashbo
     // ─── Queries ──────────────────────────────────────────────────────────
     const { data: profile } = useQuery({ 
         queryKey: QUERY_KEYS.profile.detail(userId), 
-        queryFn: getTrainerProfile 
+        queryFn: getTrainerProfile,
+        staleTime: 0,
+        refetchOnMount: 'always'
     })
     const { data: effectiveTier } = useQuery({ 
         queryKey: QUERY_KEYS.trainer.effectiveTier(userId), 
-        queryFn: getEffectiveTier 
+        queryFn: getEffectiveTier,
+        staleTime: 0,
+        refetchOnMount: 'always'
     })
     const { data: fullRanking = [] } = useQuery({ 
         queryKey: QUERY_KEYS.trainer.ranking(), 
-        queryFn: getTrainerRanking 
+        queryFn: getTrainerRanking,
+        staleTime: 0,
+        refetchOnMount: 'always'
     })
     const { data: activities = [] } = useQuery({ 
         queryKey: QUERY_KEYS.trainer.activity(userId), 
-        queryFn: getTrainerActivityFeed 
+        queryFn: getTrainerActivityFeed,
+        staleTime: 0,
+        refetchOnMount: 'always'
     })
 
     // ─── Derived State ───────────────────────────────────────────────────

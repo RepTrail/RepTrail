@@ -183,6 +183,7 @@ export function CardioPageClient({ userId }: CardioPageClientProps) {
                                                                     id={cardio.id}
                                                                     actionType="cardio"
                                                                     itemName={cardio.name}
+                                                                    studentId={userId}
                                                                     className="text-zinc-600 hover:text-red-400 hover:bg-red-400/10 rounded-xl transition-all"
                                                                     queryKey={QUERY_KEYS.cardio.library(userId)}
                                                                 />

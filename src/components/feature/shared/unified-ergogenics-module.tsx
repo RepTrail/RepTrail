@@ -144,7 +144,9 @@ export function UnifiedErgogenicsModule({
         queryKey: QUERY_KEYS.ergogenics.logs(studentId),
         actionName: 'toggle-ergogenic-log',
         entity: ENTITIES.ERGOGENIC_LOG,
-        mutationFn: async (vars) => vars, // 🔴 HARD BLOCK
+        mutationFn: async (variables) => {
+            return toggleErgogenicLog(variables.student_id, variables.ergogenic_id, variables.status)
+        },
         updateFn: (oldData: any, variables: any) => {
             const currentLogs = Array.isArray(oldData) ? oldData : (oldData?.data || [])
             
@@ -161,8 +163,8 @@ export function UnifiedErgogenicsModule({
                 return currentLogs.filter((l: any) => l.ergogenic_id !== variables.ergogenic_id)
             }
         },
-        onSuccess: (vars) => {
-            toast({ title: vars.status ? "Registrado!" : "Removido" })
+        onSuccess: (_data, variables) => {
+            toast({ title: variables.status ? "Registrado!" : "Removido" })
         },
         onError: (err) => {
             toast({ variant: "destructive", title: "Erro", description: err.message })
@@ -204,7 +206,7 @@ export function UnifiedErgogenicsModule({
     }
 
     // Render Helpers
-    const renderErgogenicCard = (e: Ergogenic, isToday: boolean) => {
+    const renderErgogenicCard = (e: Ergogenic, isToday: boolean, idx: number) => {
         const isDone = todaysLogsMap[e.id]
         const appDaysCount = e.application_days?.length || 0
         const weeklyDosage = e.weekly_dosage || 0
@@ -218,9 +220,7 @@ export function UnifiedErgogenicsModule({
                 badge: "bg-orange-500/10 text-orange-400 border-orange-500/20",
                 button: "bg-orange-500 hover:bg-orange-500/90 text-zinc-950",
                 buttonActive: "bg-orange-500/10 border-orange-500/20 text-orange-500 hover:bg-orange-500/20"
-
             },
-
             emerald: {
                 border: "hover:border-emerald-500/10",
                 activeBg: "border-emerald-500/20 bg-emerald-500/5",
@@ -228,13 +228,11 @@ export function UnifiedErgogenicsModule({
                 badge: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
                 button: "bg-emerald-500 hover:bg-emerald-500/90 text-zinc-950",
                 buttonActive: "bg-emerald-500/10 border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/20"
-
             }
-
         }[colorScheme]
 
         return (
-            <Card key={e.id} className={cn(
+            <Card key={e.id || `ergo-${idx}`} className={cn(
                 "bg-zinc-900/50 border-zinc-800 text-zinc-100 transition-all group rounded-3xl overflow-hidden flex flex-col h-full",
                 colors.border,
                 isToday && isDone && colors.activeBg
@@ -258,7 +256,8 @@ export function UnifiedErgogenicsModule({
                                     id={e.id}
                                     actionType="ergogenic"
                                     itemName={e.name}
-                                    queryKey={['ergogenics', studentId]}
+                                    studentId={studentId}
+                                    queryKey={QUERY_KEYS.ergogenics.all(studentId)}
                                 />
                             </div>
                         )}
@@ -371,8 +370,7 @@ export function UnifiedErgogenicsModule({
                             </h2>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {todaysErgogenics.map((e: any) => renderErgogenicCard(e, true))}
-
+                            {todaysErgogenics.map((e: any, idx: number) => renderErgogenicCard(e, true, idx))}
                         </div>
                     </div>
                 )}
@@ -386,8 +384,7 @@ export function UnifiedErgogenicsModule({
                             </h2>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {otherErgogenics.map((e: any) => renderErgogenicCard(e, false))}
-
+                            {otherErgogenics.map((e: any, idx: number) => renderErgogenicCard(e, false, idx))}
                         </div>
                     </div>
                 )}

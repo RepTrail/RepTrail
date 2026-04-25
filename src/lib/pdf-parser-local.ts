@@ -127,7 +127,8 @@ export function parseWorkoutLocally(text: string) {
 
     const dayMap: Record<string, number> = {
         'SEGUNDA': 1, 'TERÇA': 2, 'TERCA': 2, 'QUARTA': 3,
-        'QUINTA': 4, 'SEXTA': 5, 'SABADO': 6, 'SÁBADO': 6, 'DOMINGO': 7
+        'QUINTA': 4, 'SEXTA': 5, 'SABADO': 6, 'SÁBADO': 6, 'DOMINGO': 7,
+        'TREINO A': 1, 'TREINO B': 2, 'TREINO C': 3, 'TREINO D': 4, 'TREINO E': 5, 'TREINO F': 6
     }
 
     // Lines that are pure noise (not exercise names or metadata we care about)
@@ -164,12 +165,28 @@ export function parseWorkoutLocally(text: string) {
     const warmupPattern = /^(AQUECIMENTO|WARMUP|WARM.UP)[\s:]/i
     const workingSetPattern = /^(WORKING\s*SET|SÉRIE\s*PRINCIPAL|EXECUÇÃO)[\s:]/i
 
+    const cardios: any[] = []
+    
     for (const line of lines) {
         const upperLine = line.toUpperCase()
 
         // Skip pure noise
         if (noisePatterns.some(p => p.test(line))) continue
         if (upperLine.startsWith('(') && upperLine.endsWith(')') && line.length < 60) continue
+
+        // --- Detect cardio in workout ---
+        if (/ESTEIRA|BIKE|BICICLETA|CARDIO|AEROBICO|AERÓBICO/i.test(upperLine) && /(\d+)\s*(min|'|m\b)/i.test(upperLine)) {
+            const durMatch = upperLine.match(/(\d+)\s*(min|'|m\b)/i)
+            if (durMatch) {
+                cardios.push({
+                    type: upperLine.includes('ESTEIRA') ? 'Esteira' : (upperLine.includes('BIKE') || upperLine.includes('BICICLETA') ? 'Bike' : 'Cardio'),
+                    duration: durMatch[1] + ' min',
+                    intensity: 'Moderada',
+                    frequency: 'Diário'
+                })
+                continue
+            }
+        }
 
         // --- Detect day ---
         let detectedDay = 0
@@ -179,6 +196,19 @@ export function parseWorkoutLocally(text: string) {
                 break
             }
         }
+        
+        // Secondary day detection: "TREINO - A" or "DIA 1"
+        if (!detectedDay) {
+            const letterMatch = upperLine.match(/TREINO\s*[-–]?\s*([A-F])\b/);
+            if (letterMatch) {
+                detectedDay = letterMatch[1].charCodeAt(0) - 64; // A=1, B=2...
+            }
+            const numMatch = upperLine.match(/DIA\s*(\d)\b/);
+            if (numMatch) {
+                detectedDay = parseInt(numMatch[1]);
+            }
+        }
+
         if (detectedDay) currentDay = detectedDay
 
         // --- Detect workout header ---
@@ -274,13 +304,14 @@ export function parseWorkoutLocally(text: string) {
                 ex.name.length > 3
             )
         })).filter(w => w.exercises.length > 0),
-        cardios: [],
+        cardios,
         ergogenics: []
     }
 }
 
 export function parseDietLocally(text: string) {
     const diets: ParsedMeal[] = []
+    const cardios: any[] = []
     const lines = text.split('\n').map(l => l.trim()).filter(Boolean)
     let currentMeal: ParsedMeal | null = null
     let inDietSection = false
@@ -295,9 +326,36 @@ export function parseDietLocally(text: string) {
         'PRECISAM SER INGERIDOS', 'CASO NÃO TENHA', 'CONSUMIR 30 A', 'ANTES DA PRIMEIRA', 'OS MANIPULADOS PRECISAM'
     ]
 
+    const ergogenics: any[] = []
+    const ergoMarkers = ['PROTOCOLO ERGOGÊNICO', 'ERGO', 'PROTOCOLOS', 'CICLO', 'ESTEROIDES']
+    const ergoKeywords = [
+        'TESTOSTERONA', 'ENANTATO', 'CIPIONATO', 'PROPIONATO', 'DURATESTON',
+        'DECA', 'NANDROLONA', 'TREMBOLONA', 'BOLDENONA', 'MASTERON', 'PRIMOBOLAN',
+        'OXANDROLONA', 'STANOZOLOL', 'DIANABOL', 'HEMOGENIN', 'PROVIRON',
+        'ANASTROZOL', 'TAMOXIFENO', 'CLOMID', 'HCG', 'T3', 'T4', 'CLEMBUTEROL'
+    ]
+
     for (const line of lines) {
         const cleanedLine = line.replace(/^[^\w\d\s\(\)]+/, '').trim()
         const upperLine = cleanedLine.toUpperCase()
+
+        // --- Detect ergogenics ---
+        if (ergoKeywords.some(kw => upperLine.includes(kw)) && (upperLine.includes('MG') || upperLine.includes('ML') || /\d/.test(upperLine))) {
+            const nameMatch = upperLine.match(new RegExp(`(${ergoKeywords.join('|')})[^\\n]*`, 'i'))
+            if (nameMatch) {
+                const dosageMatch = upperLine.match(/(\d+)\s*(mg|ml)/i)
+                ergogenics.push({
+                    id: crypto.randomUUID(),
+                    name: cleanedLine.split('|')[0].trim(),
+                    dosage: dosageMatch ? dosageMatch[0] : 'Ver protocolo',
+                    weekly_dosage: dosageMatch ? parseInt(dosageMatch[1]) : 0,
+                    unit: dosageMatch ? dosageMatch[2].toLowerCase() : 'mg',
+                    application_days: [1, 4], // Default to Mon/Thu if not detected
+                    notes: cleanedLine
+                })
+                continue
+            }
+        }
 
         if (!inDietSection) {
             if (dietStartMarkers.some(marker => upperLine.includes(marker))) {
@@ -382,6 +440,7 @@ export function parseDietLocally(text: string) {
                 !f.name.includes('--')
             )
         })).filter(m => m.foods.length > 0),
-        ergogenics: []
+        cardios: [],
+        ergogenics
     }
 }

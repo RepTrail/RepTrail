@@ -1,9 +1,8 @@
-import { getTrainerProfile, getEffectiveTier, getTrainerRanking, getTrainerActivityFeed } from '@/actions/trainer-actions'
+import { PREFETCH_REGISTRY } from '@/lib/prefetch-registry'
 import { getBetaTesterMode } from '@/actions/app-settings-actions'
 import { createClient } from '@/lib/supabase/server'
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { getQueryClient } from '@/lib/get-query-client'
-import { QUERY_KEYS } from '@/lib/query-keys'
 import { TrainerDashboardClient } from '@/components/feature/trainer/trainer-dashboard-client'
 import { TrainerMetaPixel } from './meta-pixel'
 
@@ -15,22 +14,8 @@ export default async function TrainerDashboard() {
     const queryClient = getQueryClient()
 
     // ─── NON-BLOCKING PREFETCHING (0ms Nav) ─────────────────────────────
-    queryClient.prefetchQuery({ 
-        queryKey: QUERY_KEYS.profile.detail(user.id), 
-        queryFn: getTrainerProfile 
-    })
-    queryClient.prefetchQuery({ 
-        queryKey: QUERY_KEYS.trainer.effectiveTier(user.id), 
-        queryFn: getEffectiveTier 
-    })
-    queryClient.prefetchQuery({ 
-        queryKey: QUERY_KEYS.trainer.ranking(), 
-        queryFn: getTrainerRanking 
-    })
-    queryClient.prefetchQuery({ 
-        queryKey: QUERY_KEYS.trainer.activity(user.id), 
-        queryFn: getTrainerActivityFeed 
-    })
+    const configs = PREFETCH_REGISTRY['/dashboard/trainer'](user.id)
+    await Promise.all(configs.map(c => queryClient.prefetchQuery(c)))
 
     const betaTesterMode = await getBetaTesterMode()
 
