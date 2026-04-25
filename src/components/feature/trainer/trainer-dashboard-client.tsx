@@ -28,6 +28,7 @@ import { TrainerCodeCard } from './trainer-code-card'
 import { BecomeAffiliateCard } from '@/components/feature/affiliate/become-affiliate-card'
 import { EditProfileDialog } from './edit-profile-dialog'
 import { CodeAutoGenerator } from './code-auto-generator'
+import { TrainerOnboardingBanner } from './trainer-onboarding-banner'
 
 interface TrainerDashboardClientProps {
     userId: string
@@ -95,6 +96,7 @@ export function TrainerDashboardClient({ userId, betaTesterMode }: TrainerDashbo
 
     return (
         <div className="space-y-10 pb-10">
+            <TrainerOnboardingBanner userId={userId} stats={{ activeStudents, workoutsCount: 0, dietsCount: 0 }} />
             <CodeAutoGenerator hasCode={!!profile?.trainer_code} />
             
             {/* Hero Section */}

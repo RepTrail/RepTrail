@@ -15,16 +15,16 @@ export default async function StudentProgressPage() {
 
     // ─── NON-BLOCKING PREFETCHING ──────────────────────────────────────────
     const configs = PREFETCH_REGISTRY['/dashboard/student/progress']?.(userId) || []
-    configs.forEach(config => {
+    await Promise.all(configs.map(config => 
         queryClient.prefetchQuery({
             queryKey: config.queryKey,
             queryFn: config.queryFn,
             staleTime: Infinity
         })
-    })
+    ))
 
     return (
-        <Suspense fallback={<div className="animate-pulse space-y-10"><div className="h-10 w-48 bg-zinc-900 rounded-xl" /><div className="grid grid-cols-3 gap-6"><div className="h-32 bg-zinc-900 rounded-2xl" /><div className="h-32 bg-zinc-900 rounded-2xl" /><div className="h-32 bg-zinc-900 rounded-2xl" /></div></div>}>
+        <Suspense fallback={<div className="animate-pulse space-y-10"><div className="h-10 w-48 bg-zinc-900 rounded-xl" /><div className="grid grid-cols-1 md:grid-cols-3 gap-6"><div className="h-32 bg-zinc-900 rounded-2xl" /><div className="h-32 bg-zinc-900 rounded-2xl" /><div className="h-32 bg-zinc-900 rounded-2xl" /></div></div>}>
             <HydrationBoundary state={dehydrate(queryClient)}>
                 <StudentProgressPageContent userId={userId} />
             </HydrationBoundary>

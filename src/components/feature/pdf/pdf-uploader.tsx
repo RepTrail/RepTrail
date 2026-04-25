@@ -99,6 +99,12 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
                 queryClient.invalidateQueries({ queryKey: ['ergogenics'] });
             }, 800);
 
+            // Onboarding transition: If they just imported, move to AHA moment
+            const savedStep = localStorage.getItem(`onboarding_step_${userId}`)
+            if (savedStep === 'import_diet') {
+                localStorage.setItem(`onboarding_step_${userId}`, 'aha_moment')
+            }
+
             toast({ 
                 title: "Sucesso!", 
                 description: `${type === 'workout' ? 'Treino' : 'Dieta'} importada e vinculada com sucesso.` 

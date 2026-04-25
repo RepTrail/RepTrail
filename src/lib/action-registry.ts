@@ -156,6 +156,11 @@ export const ACTION_REGISTRY: Record<string, ActionFn> = {
   'delete-student-cardio': (p: any) => wrap(deleteStudentCardio(p.id, p.studentId || p.relationshipId)),
   'delete-student-ergogenic': (p: any) => wrap(deleteErgogenic(p.id, p.studentId || p.relationshipId || '')),
 
+  'delete-student-workout': (p: any) => {
+    const { deleteStudentWorkout } = require('@/actions/student-content-actions');
+    return wrap(deleteStudentWorkout(p.id));
+  },
+
   // ─── Workouts ─────────────────────────────────────────────────────────────────
   'create-manual-workout': (p: any) => wrap(createManualWorkout(p)),
   'create-manual-diet': (p: any) => wrap(createManualDiet(p)),

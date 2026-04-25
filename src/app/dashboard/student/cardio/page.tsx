@@ -15,13 +15,13 @@ export default async function StudentCardioPage() {
 
     // ─── NON-BLOCKING PREFETCHING (0ms Nav) ─────────────────────────────
     const configs = PREFETCH_REGISTRY['/dashboard/student/cardio']?.(userId) || []
-    configs.forEach(config => {
+    await Promise.all(configs.map(config => 
         queryClient.prefetchQuery({
             queryKey: config.queryKey,
             queryFn: config.queryFn,
             staleTime: Infinity
         })
-    })
+    ))
 
     return (
         <Suspense fallback={<div className="animate-pulse space-y-10"><div className="h-[400px] bg-zinc-900 rounded-[2.5rem]" /></div>}>

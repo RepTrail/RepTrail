@@ -9,7 +9,7 @@ import { nanoid } from 'nanoid'
 import { cn } from '@/lib/utils'
 
 interface UnifiedDeleteButtonProps {
-    actionType: 'workout' | 'diet' | 'cardio' | 'ergogenic' | 'delete-workout' | 'delete-diet'
+    actionType: 'workout' | 'diet' | 'cardio' | 'ergogenic' | 'delete-workout' | 'delete-diet' | 'delete-student-diet' | 'delete-student-cardio' | 'delete-student-workout'
     id: string 
     contentId?: string // The actual ID of the diet/workout/cardio (needed for some actions)
     studentId: string 
@@ -26,7 +26,10 @@ const ACTION_MAP = {
     ergogenic: 'delete-student-ergogenic',
     'delete-workout': 'delete-workout',
     'delete-diet': 'delete-diet',
-    'delete-cardio': 'delete-cardio'
+    'delete-cardio': 'delete-cardio',
+    'delete-student-diet': 'delete-student-diet',
+    'delete-student-cardio': 'delete-student-cardio',
+    'delete-student-workout': 'delete-student-workout'
 } as const
 
 const ENTITY_MAP = {
@@ -36,7 +39,10 @@ const ENTITY_MAP = {
     ergogenic: ENTITIES.ERGOGENIC,
     'delete-workout': ENTITIES.WORKOUT,
     'delete-diet': ENTITIES.DIET,
-    'delete-cardio': ENTITIES.CARDIO
+    'delete-cardio': ENTITIES.CARDIO,
+    'delete-student-diet': ENTITIES.DIET,
+    'delete-student-cardio': ENTITIES.CARDIO,
+    'delete-student-workout': ENTITIES.WORKOUT
 } as const
 
 export function UnifiedDeleteButton({ 

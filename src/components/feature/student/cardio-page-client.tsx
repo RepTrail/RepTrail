@@ -181,7 +181,7 @@ export function CardioPageClient({ userId }: CardioPageClientProps) {
                                                                 </div>
                                                                 <UnifiedDeleteButton
                                                                     id={cardio.id}
-                                                                    actionType="cardio"
+                                                                    actionType="delete-student-cardio"
                                                                     itemName={cardio.name}
                                                                     studentId={userId}
                                                                     className="text-zinc-600 hover:text-red-400 hover:bg-red-400/10 rounded-xl transition-all"

@@ -134,7 +134,7 @@ export function DietPageClient({ userId }: DietPageClientProps) {
                                             </div>
                                             <UnifiedDeleteButton
                                                 id={currentDiet.id}
-                                                actionType="diet"
+                                                actionType="delete-student-diet"
                                                 itemName={currentDiet.name}
                                                 studentId={userId}
                                                 queryKey={QUERY_KEYS.diets.library(userId)}
