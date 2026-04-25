@@ -29,7 +29,10 @@ export function ImportPdfClient({ students, role = 'trainer', userId }: { studen
             </div>
 
             <Tabs defaultValue="workout" className="w-full">
-                <TabsList className="bg-zinc-950 border border-zinc-800 p-1 h-14 rounded-2xl w-full max-w-md shadow-2xl">
+                <TabsList 
+                    id="tour-import-type"
+                    className="bg-zinc-950 border border-zinc-800 p-1 h-14 rounded-2xl w-full max-w-md shadow-2xl"
+                >
                     <TabsTrigger
                         value="workout"
                         className="rounded-xl group data-[state=active]:bg-zinc-900 data-[state=active]:border-zinc-700 border border-transparent transition-all h-full"

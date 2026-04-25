@@ -15,6 +15,7 @@ import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { getEffectiveTier, getTrainerProfile, getTrainerRanking } from '@/actions/trainer-actions'
 import { Suspense } from 'react'
 import { TrainerMobileNavLink } from '@/components/layout/trainer-nav'
+import { TrainerTourManager } from '@/components/feature/trainer/onboarding/trainer-tour-manager'
 
 export default async function TrainerLayout({
     children,
@@ -72,6 +73,7 @@ export default async function TrainerLayout({
     // 3. Full Layout with Sidebar and Navigation
     return (
         <div className="flex h-screen w-full bg-zinc-950 text-zinc-100 font-sans">
+            <TrainerTourManager userId={userId} />
             <Suspense fallback={<div className="hidden md:flex w-72 h-screen bg-zinc-900 border-r border-zinc-800 animate-pulse" />}>
                 <DashboardSidebarLoader userId={userId} />
             </Suspense>

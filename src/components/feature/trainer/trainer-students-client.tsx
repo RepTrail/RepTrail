@@ -193,7 +193,7 @@ export function TrainerStudentsClient({ userId }: TrainerStudentsClientProps) {
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {filteredStudents.map((item: any) => {
+                                    {filteredStudents.map((item: any, index: number) => {
                                         const todayDay = new Date().getDate()
                                         const paymentDay = item.payment_day
                                         const lastPayment = item.last_payment_date
@@ -273,7 +273,13 @@ export function TrainerStudentsClient({ userId }: TrainerStudentsClientProps) {
                                                 </TableCell>
                                                 <TableCell className="py-4 text-right">
                                                     <div className="flex items-center gap-1 justify-end">
-                                                        <Button asChild variant="ghost" size="sm" className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-white hover:bg-zinc-900 h-9 rounded-xl gap-2 px-4 shadow-none">
+                                                        <Button 
+                                                            id={index === 0 ? "tour-view-profile-0" : undefined}
+                                                            asChild 
+                                                            variant="ghost" 
+                                                            size="sm" 
+                                                            className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-white hover:bg-zinc-900 h-9 rounded-xl gap-2 px-4 shadow-none"
+                                                        >
                                                             <StudentPrefetchLink relationshipId={item.id} studentId={item.student_id} href={`/dashboard/trainer/students/${item.id}`}>
                                                                 Perfil
                                                                 <ArrowUpRight className="h-3.5 w-3.5" />

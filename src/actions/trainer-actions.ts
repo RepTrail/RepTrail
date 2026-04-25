@@ -212,6 +212,7 @@ export async function createStudent(prevState: any, formData: FormData) {
 
     const email = formData.get('email')?.toString().trim().toLowerCase()
     const name = formData.get('name')?.toString().trim()
+    const whatsapp = formData.get('whatsapp')?.toString().trim()
     const monthlyFee = parseFloat(formData.get('monthlyFee')?.toString() || '0')
 
     if (!email) return { success: false, message: 'O e-mail é obrigatório.' }
@@ -235,6 +236,7 @@ export async function createStudent(prevState: any, formData: FormData) {
                     id: crypto.randomUUID(),
                     email,
                     full_name: name || 'Aluno',
+                    whatsapp: whatsapp || null,
                     role: 'student',
                     is_placeholder: true
                 })

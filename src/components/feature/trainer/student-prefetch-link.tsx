@@ -9,12 +9,11 @@ import { getStudentMetricsHistory } from '@/actions/metrics-actions'
 import { getStudentAdherenceHistory } from '@/actions/tracking-actions'
 import { ReactNode } from 'react'
 
-interface StudentPrefetchLinkProps {
+interface StudentPrefetchLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
     relationshipId: string
     studentId: string
     href: string
     children: ReactNode
-    className?: string
 }
 
 export function StudentPrefetchLink({ 
@@ -22,7 +21,8 @@ export function StudentPrefetchLink({
     studentId, 
     href, 
     children, 
-    className 
+    className,
+    ...props
 }: StudentPrefetchLinkProps) {
     const queryClient = useQueryClient()
 
@@ -62,6 +62,7 @@ export function StudentPrefetchLink({
             className={className}
             onMouseEnter={handlePrefetch}
             onTouchStart={handlePrefetch}
+            {...props}
         >
             {children}
         </Link>

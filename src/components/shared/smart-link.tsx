@@ -12,6 +12,7 @@ interface PrefetchConfig {
 
 interface SmartLinkProps extends LinkProps {
     children: ReactNode
+    id?: string
     className?: string
     prefetchKey?: any[]
     prefetchFn?: () => Promise<any>
@@ -23,6 +24,7 @@ interface SmartLinkProps extends LinkProps {
  */
 export function SmartLink({ 
     children, 
+    id,
     className, 
     prefetchKey, 
     prefetchFn,
@@ -50,6 +52,7 @@ export function SmartLink({
     return (
         <Link 
             {...props} 
+            id={id}
             className={className}
             onMouseEnter={handleMouseEnter}
             onTouchStart={handleMouseEnter} // Better for mobile

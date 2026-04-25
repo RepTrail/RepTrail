@@ -89,18 +89,11 @@ const NAME_BLACKLIST = [
     'REFEIÇÃO', 'LANCHE', 'CAFÉ', 'ALMOÇO', 'JANTAR', 'CEIA', 'NTO',
 ]
 
-/**
- * Attempts to extract the student's name from raw PDF text.
- * Uses pattern matching on common Brazilian fitness PDF formats.
- * Returns null if no confident match is found.
- */
 export function extractStudentName(text: string): string | null {
-    // Only search in the first ~1500 chars (name is always near the top)
     const header = text.substring(0, 1500)
     const lines = header.split('\n').map(l => l.trim()).filter(Boolean)
 
     for (const line of lines) {
-        // Skip very short lines or common markers
         if (line.length < 3 || line === 'ALUNO' || line === 'NOME') continue
 
         for (const pattern of NAME_PATTERNS) {
@@ -111,24 +104,14 @@ export function extractStudentName(text: string): string | null {
                     .replace(/\s+/g, ' ')
                     .trim()
 
-                // Skip if it's just numbers or junk
                 if (/^[\d\s\-:|]+$/.test(candidate)) continue
-
-                // Skip if it's a blacklisted word
                 const upperCandidate = candidate.toUpperCase()
                 if (NAME_BLACKLIST.some(b => upperCandidate.includes(b))) continue
-
-                // Skip if too short or too long (likely not a name)
                 if (candidate.length < 3 || candidate.length > 50) continue
-
-                // Skip if it has too many words (likely a sentence)
                 const words = candidate.split(/\s+/)
                 if (words.length > 5) continue
-
-                // Heuristic: If it's a pure line match (Pattern 4), ensure it starts with an uppercase letter
                 if (pattern.source.includes('^') && !/^[A-ZÀ-Ü]/.test(candidate)) continue
 
-                // Title case the result
                 return candidate
                     .split(/\s+/)
                     .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
@@ -143,10 +126,10 @@ export function extractStudentName(text: string): string | null {
 // ─── CARDIO EXTRACTION ──────────────────────────────────────────────────────
 
 const CARDIO_KEYWORDS = [
-    'HIIT', 'LISS', 'ESTEIRA', 'BICICLETA', 'BIKE', 'ELÍPTICO', 'ELIPTICO',
+    'HIIT', 'ESTEIRA', 'BICICLETA', 'BIKE', 'ELÍPTICO', 'ELIPTICO',
     'CAMINHADA', 'CORRIDA', 'TRANSPORT', 'ESCADA', 'PULAR CORDA',
     'REMO', 'ERGÔMETRO', 'ERGOMETRO', 'SPINNING', 'AERÓBICO', 'AEROBICO',
-    'CARDIO', 'NATAÇÃO', 'NATACAO',
+    'CARDIO', 'NATAÇÃO', 'NATACAO', 'PEDALADA', 'BIKE'
 ]
 
 const DURATION_PATTERN = /(\d+)\s*(?:min(?:utos?)?|'|minutos|m\b)/i
@@ -166,63 +149,90 @@ const INTENSITY_KEYWORDS: Record<string, string> = {
 
 /**
  * Extracts cardio prescriptions from raw PDF text.
- * Only extracts if a cardio keyword is accompanied by a time/distance indicator.
- * This prevents false positives like "Esteira" mentioned as a location.
+ * NOW WITH ANTI-DUPLICATION AND EXAMPLE FILTERING.
  */
 export function extractCardioFromText(text: string): ParsedCardio[] {
     const results: ParsedCardio[] = []
-    const seen = new Set<string>()
-    const upperText = text.toUpperCase()
+    const seenDurations = new Set<string>()
+    
+    // Split text into paragraphs/sections to analyze context
+    const sections = text.split(/\n\s*\n/).map(s => s.trim()).filter(Boolean)
 
-    for (const keyword of CARDIO_KEYWORDS) {
-        let lastIndex = 0
-        while ((lastIndex = upperText.indexOf(keyword, lastIndex)) !== -1) {
-            // Found keyword, now look for duration nearby (50 chars before or 150 after)
-            const searchStart = Math.max(0, lastIndex - 50)
-            const searchEnd = Math.min(text.length, lastIndex + 150)
-            const surroundingText = text.substring(searchStart, searchEnd)
-            
-            const durationMatch = surroundingText.match(DURATION_PATTERN)
-            if (durationMatch) {
-                const duration = `${durationMatch[1]} min`
-                const type = keyword.charAt(0) + keyword.slice(1).toLowerCase()
-                
-                const key = `${type}-${duration}`
-                if (!seen.has(key)) {
-                    seen.add(key)
-                    
-                    // Intensity search in same window
-                    let intensity = 'Moderada'
-                    for (const [kw, val] of Object.entries(INTENSITY_KEYWORDS)) {
-                        if (surroundingText.toUpperCase().includes(kw)) {
-                            intensity = val
-                            break
-                        }
-                    }
-
-                    // Frequency/Days search in same window
-                    let frequency = ''
-                    const days = detectDaysFromText(surroundingText)
-                    if (days) {
-                        frequency = days.length === 7 ? 'Diário' : `${days.length}x/semana`
-                    } else {
-                        const freqMatch = surroundingText.match(FREQUENCY_PATTERN)
-                        if (freqMatch) {
-                            frequency = `${freqMatch[1]}x/semana`
-                        }
-                    }
-
-                    results.push({ 
-                        type, 
-                        duration, 
-                        intensity, 
-                        frequency: frequency || 'Diário', 
-                        application_days: days || [0, 1, 2, 3, 4, 5, 6] 
-                    })
-                }
+    for (const section of sections) {
+        const upperSection = section.toUpperCase()
+        
+        // 1. FILTER: Skip sections that are clearly EXAMPLES
+        // If "EX." or "EXEMPLO" appears near the beginning or frequently, skip it.
+        if (upperSection.includes('EXEMPLO') || upperSection.includes('EX.')) {
+            // Check if it's an instructional section rather than a prescription
+            if (upperSection.includes('MODALIDADE HIIT') || upperSection.includes('VELOCIDADE ENTRE')) {
+                continue;
             }
-            lastIndex += keyword.length
         }
+
+        // 2. Identify all cardio keywords and all durations in this section
+        const foundKeywords: string[] = []
+        for (const kw of CARDIO_KEYWORDS) {
+            if (upperSection.includes(kw)) {
+                foundKeywords.push(kw.charAt(0) + kw.slice(1).toLowerCase())
+            }
+        }
+
+        if (foundKeywords.length === 0) continue
+
+        // Find durations using global match
+        const durationMatches = Array.from(section.matchAll(new RegExp(DURATION_PATTERN.source, 'gi')))
+        
+        if (durationMatches.length === 0) continue
+
+        // 3. LOGIC: If we have multiple keywords and ONE common duration, it's an "OR" situation
+        const firstDurationVal = durationMatches[0][1]
+        const durationStr = `${firstDurationVal} min`
+        
+        // Skip if it's too short (likely a part of a HIIT example, like 1 min)
+        if (parseInt(firstDurationVal) < 5 && !upperSection.includes('HIIT')) continue
+
+        // Determine main type
+        let finalType = foundKeywords[0]
+        if (foundKeywords.length > 1) {
+            if (upperSection.includes(' OU ') || section.includes('/') || section.includes(',')) {
+                // Limit to max 3 keywords to keep it clean
+                finalType = foundKeywords.slice(0, 3).join(' ou ')
+            }
+        }
+
+        // Avoid adding the same duration twice in different sections unless they are different types
+        const key = `${finalType}-${durationStr}`
+        if (seenDurations.has(key)) continue
+        seenDurations.add(key)
+
+        // 4. Intensity & Frequency
+        let intensity = 'Moderada'
+        for (const [kw, val] of Object.entries(INTENSITY_KEYWORDS)) {
+            if (upperSection.includes(kw)) {
+                intensity = val
+                break
+            }
+        }
+
+        let frequency = ''
+        const days = detectDaysFromText(section)
+        if (days) {
+            frequency = days.length === 7 ? 'Diário' : `${days.length}x/semana`
+        } else {
+            const freqMatch = section.match(FREQUENCY_PATTERN)
+            if (freqMatch) {
+                frequency = `${freqMatch[1]}x/semana`
+            }
+        }
+
+        results.push({
+            type: finalType,
+            duration: durationStr,
+            intensity,
+            frequency: frequency || 'Diário',
+            application_days: days || [0, 1, 2, 3, 4, 5, 6]
+        })
     }
 
     return results
@@ -231,55 +241,21 @@ export function extractCardioFromText(text: string): ParsedCardio[] {
 // ─── ERGOGENIC EXTRACTION ───────────────────────────────────────────────────
 
 export const ERGOGENIC_KEYWORDS: Record<string, 'supplement' | 'hormonal'> = {
-    // Supplements
-    'CREATINA': 'supplement',
-    'WHEY': 'supplement',
-    'CAFEÍNA': 'supplement',
-    'CAFEINA': 'supplement',
-    'MELATONINA': 'supplement',
-    'ÔMEGA': 'supplement',
-    'OMEGA': 'supplement',
-    'GLUTAMINA': 'supplement',
-    'BCAA': 'supplement',
-    'HMB': 'supplement',
-    'COLÁGENO': 'supplement',
-    'COLAGENO': 'supplement',
-    'VITAMINA': 'supplement',
-    'ZINCO': 'supplement',
-    'MAGNÉSIO': 'supplement',
-    'MAGNESIO': 'supplement',
-    'MALTODEXTRINA': 'supplement',
-    'PALATINOSE': 'supplement',
-    'CASEÍNA': 'supplement',
-    'CASEINA': 'supplement',
+    'CREATINA': 'supplement', 'WHEY': 'supplement', 'CAFEÍNA': 'supplement', 'CAFEINA': 'supplement',
+    'MELATONINA': 'supplement', 'ÔMEGA': 'supplement', 'OMEGA': 'supplement', 'GLUTAMINA': 'supplement',
+    'BCAA': 'supplement', 'HMB': 'supplement', 'COLÁGENO': 'supplement', 'COLAGENO': 'supplement',
+    'VITAMINA': 'supplement', 'ZINCO': 'supplement', 'MAGNÉSIO': 'supplement', 'MAGNESIO': 'supplement',
+    'MALTODEXTRINA': 'supplement', 'PALATINOSE': 'supplement', 'CASEÍNA': 'supplement', 'CASEINA': 'supplement',
     'ALBUMINA': 'supplement',
-    // Hormonal / PED
-    'TESTOSTERONA': 'hormonal',
-    'ENANTATO': 'hormonal',
-    'CIPIONATO': 'hormonal',
-    'OXANDROLONA': 'hormonal',
-    'BOLDENONA': 'hormonal',
-    'TREMBOLONA': 'hormonal',
-    'PRIMOBOLAN': 'hormonal',
-    'STANOZOLOL': 'hormonal',
-    'DECA': 'hormonal',
-    'NANDROLONA': 'hormonal',
-    'DURATESTON': 'hormonal',
-    'MASTERON': 'hormonal',
-    'ANASTROZOL': 'hormonal',
-    'TAMOXIFENO': 'hormonal',
-    'CLOMIFENO': 'hormonal',
-    'HCG': 'hormonal',
+    'TESTOSTERONA': 'hormonal', 'ENANTATO': 'hormonal', 'CIPIONATO': 'hormonal', 'OXANDROLONA': 'hormonal',
+    'BOLDENONA': 'hormonal', 'TREMBOLONA': 'hormonal', 'PRIMOBOLAN': 'hormonal', 'STANOZOLOL': 'hormonal',
+    'DECA': 'hormonal', 'NANDROLONA': 'hormonal', 'DURATESTON': 'hormonal', 'MASTERON': 'hormonal',
+    'ANASTROZOL': 'hormonal', 'TAMOXIFENO': 'hormonal', 'CLOMIFENO': 'hormonal', 'HCG': 'hormonal',
     'GH': 'hormonal',
 }
 
 const DOSAGE_PATTERN = /(\d+(?:[.,]\d+)?)\s*(mg|ml|g|mcg|ui|iu|caps?|comp(?:rimido)?s?|gotas?|unid?)\b/i
 
-/**
- * Extracts ergogenic substances (supplements + PEDs) from raw PDF text.
- * Requires a keyword + dosage pattern to reduce false positives.
- * Does NOT remove items from the diet — only suggests in the preview.
- */
 export function extractErgogenicsFromText(text: string): ParsedErgogenic[] {
     const results: ParsedErgogenic[] = []
     const lines = text.split('\n').map(l => l.trim()).filter(Boolean)
@@ -291,14 +267,12 @@ export function extractErgogenicsFromText(text: string): ParsedErgogenic[] {
         for (const [keyword, _category] of Object.entries(ERGOGENIC_KEYWORDS)) {
             if (!upperLine.includes(keyword)) continue
 
-            // Must have dosage to avoid false positives (e.g. "Whey" as a food item)
             const dosageMatch = line.match(DOSAGE_PATTERN)
             if (!dosageMatch) continue
 
             const dosageValue = dosageMatch[1].replace(',', '.')
             const rawUnit = dosageMatch[2].toLowerCase()
             
-            // Normalize unit for database (mg, ml, or un)
             let unit: 'mg' | 'ml' | 'un' = 'mg'
             const lowUnit = rawUnit.toLowerCase()
             if (lowUnit.startsWith('ml') || lowUnit.includes('gotas')) {
@@ -307,45 +281,28 @@ export function extractErgogenicsFromText(text: string): ParsedErgogenic[] {
                 unit = 'un'
             }
 
-            // Normalize name
             const name = keyword.charAt(0) + keyword.slice(1).toLowerCase()
-
-            // Avoid duplicates (use name to avoid case issues)
             if (seen.has(name.toUpperCase())) continue
             seen.add(name.toUpperCase())
 
-            // Build dosage string
             const dosage = `${dosageValue}${rawUnit}`
+            const days = detectDaysFromText(line) || [0, 1, 2, 3, 4, 5, 6]
 
-            // Try to detect application days
-            const days = detectDaysFromText(line) || [0, 1, 2, 3, 4, 5, 6] // Default: DAILY if not specified
-
-            // Calculate weekly dosage correctly
             let weekly_dosage = 0
             const weeklyMatch = line.match(/(\d+)\s*(?:x|vezes)\s*(?:por\s*)?sem/i)
             if (weeklyMatch) {
                 weekly_dosage = parseFloat(dosageValue) * parseInt(weeklyMatch[1])
             } else {
-                // Default logic: if no "x per week" is found, use the length of detected days
-                // If days was null (defaulted to 0-6), this will be dosage * 7
                 weekly_dosage = parseFloat(dosageValue) * days.length
             }
 
-            // Extract any extra notes from the line (everything after the dosage)
             const dosageIdx = line.indexOf(dosageMatch[0])
             const afterDosage = line.substring(dosageIdx + dosageMatch[0].length).trim()
             const notes = afterDosage.length > 3 && afterDosage.length < 100
                 ? afterDosage.replace(/^[,\-–\s]+/, '').trim()
                 : ''
 
-            results.push({
-                name,
-                dosage,
-                unit,
-                weekly_dosage,
-                application_days: days,
-                notes,
-            })
+            results.push({ name, dosage, unit, weekly_dosage, application_days: days, notes })
         }
     }
 

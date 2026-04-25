@@ -134,9 +134,14 @@ export function UnifiedSidebar({
       )
     }
 
+    const tourId = link.label === "Importar PDF" ? "tour-import-pdf" : 
+                   link.label === "Alunos" ? "tour-sidebar-students" : 
+                   undefined
+
     return (
       <SmartLink
         key={link.label}
+        id={tourId}
         href={link.href || '#'}
         prefetch={true}
         prefetchConfigs={prefetchConfigs}

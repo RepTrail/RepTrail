@@ -8,7 +8,7 @@ export async function saveParsedData(
     type: 'workout' | 'diet', 
     data: any, 
     studentId?: string,
-    createPlaceholder?: { name: string, email?: string }
+    createPlaceholder?: { name: string, email?: string, whatsapp?: string }
 ) {
     console.log(`[SAVE-ACTIONS] Initiating save for type: ${type}, studentId: ${studentId}`);
     const supabase = await createClient()
@@ -31,6 +31,7 @@ export async function saveParsedData(
         const formData = new FormData();
         formData.append('name', createPlaceholder.name);
         if (createPlaceholder.email) formData.append('email', createPlaceholder.email);
+        if (createPlaceholder.whatsapp) formData.append('whatsapp', createPlaceholder.whatsapp);
         
         const result = await createStudent({}, formData);
         if (result.success && result.studentId) {

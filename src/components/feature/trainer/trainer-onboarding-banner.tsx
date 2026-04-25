@@ -166,7 +166,10 @@ export function TrainerOnboardingBanner({ userId, trainerCode, stats }: TrainerO
     return (
         <div className="relative group px-2 pt-2">
             <div className="absolute -inset-0.5 bg-gradient-to-r from-orange-500/20 via-orange-500/10 to-transparent rounded-[2rem] blur opacity-30 group-hover:opacity-50 transition duration-1000" />
-            <Card className="relative overflow-hidden bg-zinc-950/80 border-zinc-800/50 backdrop-blur-xl rounded-[2rem] shadow-2xl p-6 md:p-8">
+            <Card 
+                id="tour-aha-card"
+                className="relative overflow-hidden bg-zinc-950/80 border-zinc-800/50 backdrop-blur-xl rounded-[2rem] shadow-2xl p-6 md:p-8"
+            >
                 <div className="absolute top-0 right-0 p-8 opacity-5 -translate-x-10 translate-y-10">
                     <Sparkles className="w-32 h-32 text-orange-500" />
                 </div>

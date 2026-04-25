@@ -106,8 +106,12 @@ JSON SCHEMA:
         }
     ],
     "cardios": [
-        { "type": "Esteira", "duration": "30min", "intensity": "Moderada", "frequency": "3x/sem", "application_days": [1,3,5] }
+        { "type": "Esteira ou Bike", "duration": "30min", "intensity": "Moderada", "frequency": "3x/sem", "application_days": [1,3,5] }
     ],
+STRICT CARDIO PROTOCOL:
+1. **Handle Options**: If the text says "Esteira ou Bike", return ONE entry with type "Esteira ou Bike".
+2. **Ignore Examples**: Do NOT extract cardios from sections that are clearly examples (e.g. "ex. caminhada de 1 min"). Only extract the main prescription.
+3. **Deduplicate**: Do not repeat the same cardio multiple times.
     "ergogenics": [
         { "name": "Testo", "dosage": "250mg", "weekly_dosage": 250, "unit": "mg", "application_days": [1], "notes": "Segunda" },
         { "name": "Omega 3", "dosage": "4un", "weekly_dosage": 28, "unit": "un", "application_days": [1,2,3,4,5,6,0], "notes": "Cápsulas" }
@@ -158,8 +162,12 @@ JSON SCHEMA:
         }
     ],
     "cardios": [
-        { "type": "Esteira", "duration": "30min", "intensity": "Moderada", "frequency": "3x/sem", "application_days": [1,3,5] }
+        { "type": "Esteira ou Bike", "duration": "30min", "intensity": "Moderada", "frequency": "3x/sem", "application_days": [1,3,5] }
     ],
+STRICT CARDIO PROTOCOL:
+1. **Handle Options**: If the text says "Esteira ou Bike", return ONE entry with type "Esteira ou Bike".
+2. **Ignore Examples**: Do NOT extract cardios from sections that are clearly examples (e.g. "ex. caminhada de 1 min"). Only extract the main prescription.
+3. **Deduplicate**: Do not repeat the same cardio multiple times.
     "ergogenics": [
         { "name": "Testosterona", "dosage": "250mg", "weekly_dosage": 250, "unit": "mg", "application_days": [1,4], "notes": "Seg/Qui" },
         { "name": "Omega 3", "dosage": "4un", "weekly_dosage": 28, "unit": "un", "application_days": [1,2,3,4,5,6,0], "notes": "Diário" }

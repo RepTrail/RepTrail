@@ -9,7 +9,7 @@ import { createClient } from '@/lib/supabase/client'
 import { Badge } from "@/components/ui/badge"
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Upload, FileText, Check, Loader2, FileUp, X, Sparkles, User, Mail } from 'lucide-react'
+import { Upload, FileText, Check, Loader2, FileUp, X, Sparkles, User, Mail, Phone } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import { PdfDataView } from './pdf-data-view'
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
@@ -17,6 +17,7 @@ import { parseUploadedPdf } from '@/actions/pdf-actions'
 import { saveParsedData } from '@/actions/save-actions'
 import { normalizeDays } from '@/lib/utils'
 import { findStudentByName } from '@/actions/trainer-actions'
+import { useTrainerOnboarding } from '@/hooks/use-trainer-onboarding'
 import {
     Select,
     SelectContent,
@@ -37,6 +38,7 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
     const [bindingMode, setBindingMode] = useState<'matched' | 'create' | 'skip'>('skip')
     const [placeholderName, setPlaceholderName] = useState('')
     const [placeholderEmail, setPlaceholderEmail] = useState('')
+    const [placeholderWhatsapp, setPlaceholderWhatsapp] = useState('')
     
     // Selection state
     const [selectedCardioIndices, setSelectedCardioIndices] = useState<Set<number>>(new Set())
@@ -100,9 +102,8 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
             }, 800);
 
             // Onboarding transition: If they just imported, move to AHA moment
-            const savedStep = localStorage.getItem(`onboarding_step_${userId}`)
-            if (savedStep === 'import_diet') {
-                localStorage.setItem(`onboarding_step_${userId}`, 'aha_moment')
+            if (onboardingStep === 'import_diet') {
+                nextStep('aha_moment')
                 
                 // Store ghost student data for personalization in the AHA banner
                 const ghostInfo = variables.createPlaceholder || { name: detectedStudentName || 'Aluno' };
@@ -124,6 +125,11 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
     const { toast } = useToast()
     const supabase = createClient()
     const queryClient = useQueryClient()
+    const { step: onboardingStep, nextStep } = useTrainerOnboarding(userId, {
+        activeStudents: 0,
+        workoutsCount: 0,
+        dietsCount: 0
+    })
 
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files || e.target.files.length === 0) return
@@ -243,6 +249,27 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
             return
         }
 
+        // 🔒 TYPE LOCK: Prevent saving diet as workout or vice versa
+        const isActuallyDiet = (parsedData?.parsed_data?.meals?.length > 0 || parsedData?.parsed_data?.options?.length > 0);
+        const isActuallyWorkout = (parsedData?.parsed_data?.workouts?.length > 0 || parsedData?.parsed_data?.exercises?.length > 0);
+
+        if (type === 'workout' && isActuallyDiet && !isActuallyWorkout) {
+            toast({
+                variant: "destructive",
+                title: "Arquivo Incompatível",
+                description: "Este PDF parece ser uma DIETA. Use a aba de Dieta para importar."
+            })
+            return
+        }
+        if (type === 'diet' && isActuallyWorkout && !isActuallyDiet) {
+            toast({
+                variant: "destructive",
+                title: "Arquivo Incompatível",
+                description: "Este PDF parece ser um TREINO. Use a aba de Treino para importar."
+            })
+            return
+        }
+
         if (role === 'trainer' && bindingMode === 'create' && !placeholderEmail) {
             toast({
                 variant: "destructive",
@@ -288,7 +315,8 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
         if (role === 'trainer' && bindingMode === 'create' && !selectedStudentId) {
             createPlaceholderObj = {
                 name: placeholderName || detectedStudentName || "Novo Aluno",
-                email: placeholderEmail
+                email: placeholderEmail,
+                whatsapp: placeholderWhatsapp
             }
         }
 
@@ -314,7 +342,7 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
     }
 
     return (
-        <Card className="w-full bg-zinc-950 border-zinc-800 shadow-2xl rounded-2xl overflow-hidden border-t-zinc-700/50">
+        <Card id="tour-import-card" className="w-full bg-zinc-950 border-zinc-800 shadow-2xl rounded-2xl overflow-hidden border-t-zinc-700/50">
             <CardHeader className="bg-zinc-900/20 border-b border-zinc-900/50 pb-6">
                 <div className="flex items-center justify-between">
                     <div>
@@ -337,7 +365,9 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
             <CardContent className="p-8">
                 {!parsedData ? (
                     <div className="relative group">
-                        <div className={`
+                        <div 
+                            id="tour-dropzone"
+                            className={`
                             flex flex-col items-center justify-center p-12 lg:p-20 border-2 border-dashed rounded-3xl transition-all
                             ${uploading || parsing
                                 ? 'bg-zinc-900/20 border-zinc-800 pointer-events-none'
@@ -383,7 +413,7 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
                 ) : (
                     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                         {/* Status Message */}
-                        <div className="flex items-center gap-3 pb-4 text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-2xl">
+                        <div id="tour-parsed-status" className="flex items-center gap-3 pb-4 text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-2xl">
                             <div className="p-2 bg-emerald-500/20 rounded-full">
                                 <Check className="h-4 w-4" />
                             </div>
@@ -438,10 +468,15 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
                                             {detectedStudentName ? "Como deseja processar esta importação?" : "Quem deve receber este treino/dieta?"}
                                         </p>
                                         
-                                        <div className="flex flex-col md:flex-row items-stretch gap-4 w-full">
-                                            <Button 
-                                                type="button" 
-                                                variant={bindingMode === 'create' ? 'default' : 'outline'}
+                                        <div 
+                                            id="tour-binding-modes"
+                                            className="flex flex-col md:flex-row items-stretch gap-4 w-full"
+                                        >
+                                            <div id="tour-binding-container" className="flex-1">
+                                                <Button 
+                                                    id="tour-btn-create-student"
+                                                    type="button" 
+                                                    variant={bindingMode === 'create' ? 'default' : 'outline'}
                                                 className={cn(
                                                     "flex-1 rounded-2xl !h-[56px] w-full text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 border-2",
                                                     bindingMode === 'create' 
@@ -456,6 +491,7 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
                                             >
                                                 Criar Novo Aluno
                                             </Button>
+                                        </div>
                                             
                                             <div className="flex-1">
                                                 <Select value={selectedStudentId || undefined} onValueChange={(val) => { setSelectedStudentId(val); setBindingMode('matched'); }}>
@@ -502,7 +538,7 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
                                         </div>
 
                                         {bindingMode === 'create' && (
-                                            <div className="p-4 bg-zinc-950/50 border border-zinc-800 rounded-2xl space-y-4 animate-in slide-in-from-top-2">
+                                            <div id="tour-student-fields" className="p-4 bg-zinc-950/50 border border-zinc-800 rounded-2xl space-y-4 animate-in slide-in-from-top-2">
                                                 <div className="space-y-2">
                                                     <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest px-1">Nome do Novo Aluno</label>
                                                     <Input 
@@ -530,9 +566,24 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
                                                             onChange={(e) => setPlaceholderEmail(e.target.value)}
                                                         />
                                                     </div>
+
+                                                    <div className="space-y-2 pt-2">
+                                                        <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest px-1">WhatsApp do Aluno</label>
+                                                        <div className="relative">
+                                                            <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-600" />
+                                                            <Input 
+                                                                placeholder="(00) 00000-0000" 
+                                                                type="tel"
+                                                                className="bg-zinc-900 border-zinc-800 text-white h-12 rounded-xl pl-11"
+                                                                value={placeholderWhatsapp}
+                                                                onChange={(e) => setPlaceholderWhatsapp(e.target.value)}
+                                                            />
+                                                        </div>
+                                                    </div>
+
                                                     <div className="px-1 py-1">
                                                         <p className="text-[8px] font-black text-emerald-500/50 uppercase tracking-widest">
-                                                            * O email pode ser provisório e alterado pelo aluno depois.
+                                                            * O email e WhatsApp são fundamentais para o envio automático do acesso.
                                                         </p>
                                                     </div>
                                                 </div>
@@ -589,7 +640,7 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
                         )}
 
                         {/* Data Preview */}
-                        <div className="space-y-4">
+                        <div id="tour-parsed-data" className="space-y-4">
                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-900 pb-4">
                                 <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-2">
                                     <FileText className="w-3 h-3 text-emerald-500" />
@@ -679,8 +730,9 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
                                 Cancelar
                             </Button>
                             <Button
+                                id="tour-save-button"
                                 onClick={handleSave}
-                                disabled={isSaving || (bindingMode === 'create' && (!placeholderName && !detectedStudentName || !placeholderEmail))}
+                                disabled={isSaving || (role === 'trainer' && bindingMode === 'create' && (!placeholderName || !placeholderEmail))}
                                 className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl h-12 px-10 font-bold shadow-lg shadow-emerald-500/10 transition-all active:scale-95 flex gap-2 disabled:opacity-50 w-full sm:w-auto items-center justify-center"
                             >
                                 {isSaving ? (

@@ -4,6 +4,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState, useEffect } from 'react'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { getStudentRelationship, getTrainerProfile } from '@/actions/trainer-actions'
+import { useTrainerOnboarding } from '@/hooks/use-trainer-onboarding'
 import { getStudentWorkoutHistory, getStudentRecentActivities } from '@/actions/log-actions'
 import { getStudentMetricsHistory, getStudentChartData } from '@/actions/metrics-actions'
 import { getStudentAdherenceHistory } from '@/actions/tracking-actions'
@@ -47,6 +48,7 @@ import { ToggleStudentStatusButton } from './toggle-student-status-button'
 import { StatCard } from '@/components/feature/shared/stat-card'
 import { PerformanceAnalysisSection } from '@/components/feature/shared/performance-analysis-section'
 import { StudentRecentActivities } from './student-recent-activities'
+import { useToast } from '@/hooks/use-toast'
 
 interface StudentDetailClientProps {
     relationshipId: string
@@ -54,6 +56,7 @@ interface StudentDetailClientProps {
 }
 
 export function StudentDetailClient({ relationshipId, userId }: StudentDetailClientProps) {
+    const { toast } = useToast()
     // ─── Queries ──────────────────────────────────────────────────────────
     const { data: relationship } = useQuery({
         queryKey: QUERY_KEYS.trainer.studentDetail(relationshipId),
@@ -142,6 +145,12 @@ export function StudentDetailClient({ relationshipId, userId }: StudentDetailCli
         refetchOnMount: 'always'
     })
 
+    const { step: onboardingStep, complete } = useTrainerOnboarding(userId, {
+        activeStudents: 0,
+        workoutsCount: 0,
+        dietsCount: 0
+    })
+
     if (!relationship) return null
 
     const trainerTier = trainerProfile?.plan_tier || 'start'
@@ -224,6 +233,50 @@ export function StudentDetailClient({ relationshipId, userId }: StudentDetailCli
     return (
         <div className="space-y-10 pb-10 w-full">
 
+            {onboardingStep === 'aha_moment' && (
+                <div id="tour-aha-card" className="bg-emerald-500/10 border border-emerald-500/20 rounded-[2rem] p-6 mb-10 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
+                        <Sparkles className="w-24 h-24 text-emerald-500" />
+                    </div>
+                    <div className="space-y-2 relative z-10 text-center md:text-left">
+                        <h3 className="text-xl font-black text-white italic uppercase tracking-tight flex items-center justify-center md:justify-start gap-2">
+                            <CheckCircle className="w-6 h-6 text-emerald-500" />
+                            Protocolo Pronto! 🔥
+                        </h3>
+                        <p className="text-zinc-400 text-sm max-w-md">
+                            Tudo foi importado e o acesso do <b>{student?.full_name}</b> já está configurado. Envie agora pelo WhatsApp para ele começar!
+                        </p>
+                    </div>
+                    <div className="flex items-center gap-3 relative z-10 w-full md:w-auto">
+                        <Button
+                            onClick={() => {
+                                if (!student?.whatsapp) {
+                                    toast({
+                                        variant: "destructive",
+                                        title: "WhatsApp não cadastrado!",
+                                        description: "Adicione o número do aluno no perfil para enviar o acesso."
+                                    });
+                                    return;
+                                }
+                                const studentName = student?.full_name?.split(' ')[0];
+                                const trainerName = trainerProfile?.full_name?.split(' ')[0] || 'seu treinador';
+                                const msg = `Fala ${studentName}! Aqui é o ${trainerName}. Já montei seu protocolo no RepTrail! 🔥\n\nPara acessar seu treino e dieta, utilize o link abaixo:\n📲 https://reptrail.com.br\n\nUtilize seu e-mail para o cadastro:\n📧 ${student?.email}\n\nBora pra cima! 💪`;
+                                window.open(formatWhatsAppUrl(student?.whatsapp, msg), '_blank');
+                            }}
+                            className="flex-1 md:flex-none h-14 px-8 bg-emerald-600 hover:bg-emerald-500 text-white font-black uppercase italic tracking-widest text-sm rounded-2xl shadow-xl shadow-emerald-900/20 transition-all active:scale-95 flex items-center justify-center gap-3"
+                        >
+                            <MessageSquare className="w-5 h-5" /> Enviar Acesso
+                        </Button>
+                        <Button 
+                            onClick={complete}
+                            variant="ghost" 
+                            className="text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-white"
+                        >
+                            Concluir Tutorial
+                        </Button>
+                    </div>
+                </div>
+            )}
 
             <div className="flex flex-col gap-6 pb-2 border-b border-zinc-800/50">
                 <Link href="/dashboard/trainer/students" className="flex items-center gap-2 text-zinc-500 hover:text-white transition-colors text-[10px] font-bold uppercase tracking-widest">
