@@ -51,7 +51,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" suppressHydrationWarning className="dark" style={{ colorScheme: 'dark' }} data-scroll-behavior="smooth">
       <head>
-        {/* Hotjar Tracking Code for RepTrail */}
+        {/* Hotjar & Contentsquare Tracking Codes */}
         <Script id="hotjar-setup" strategy="afterInteractive">
           {`
             (function(h,o,t,j,a,r){
@@ -64,6 +64,7 @@ export default function RootLayout({
             })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
           `}
         </Script>
+        <Script src="https://t.contentsquare.net/uxa/ae89ba1e10417.js" strategy="afterInteractive" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-zinc-950`}
