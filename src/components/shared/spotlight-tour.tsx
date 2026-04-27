@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronDown, Sparkles } from 'lucide-react'
+import { ChevronDown, Sparkles, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 export interface TourStep {
@@ -13,6 +13,7 @@ export interface TourStep {
     position?: 'top' | 'bottom' | 'left' | 'right' | 'center' | 'top-right'
     actionType?: 'click' | 'none'
     showNextButton?: boolean
+    nextButtonLabel?: string
     noPulse?: boolean
     showArrow?: boolean
     isFixed?: boolean
@@ -33,7 +34,7 @@ export function SpotlightTour({ steps, currentPhase, totalPhases, stepIndex, onS
     const [mounted, setMounted] = useState(false)
     const [targetRect, setTargetRect] = useState<DOMRect | null>(null)
     const [windowSize, setWindowSize] = useState({ width: 0, height: 0 })
-    
+
     const lastRectRef = useRef<{ top: number, left: number, width: number, height: number } | null>(null)
 
     useEffect(() => {
@@ -53,7 +54,7 @@ export function SpotlightTour({ steps, currentPhase, totalPhases, stepIndex, onS
         const el = document.querySelector(currentStep.selector)
         if (el) {
             const rect = el.getBoundingClientRect()
-            const hasChanged = !lastRectRef.current || 
+            const hasChanged = !lastRectRef.current ||
                 Math.abs(lastRectRef.current.top - rect.top) > 0.5 ||
                 Math.abs(lastRectRef.current.left - rect.left) > 0.5 ||
                 Math.abs(lastRectRef.current.width - rect.width) > 0.5 ||
@@ -100,10 +101,10 @@ export function SpotlightTour({ steps, currentPhase, totalPhases, stepIndex, onS
         if (!currentStep) return { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }
         if (currentStep.position === 'top-right') return { top: 40, right: 40, transform: 'none' }
         if (!targetRect) return { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }
-        
+
         const padding = 24
         const pos = currentStep.position || 'bottom'
-        const cardWidth = 380 
+        const cardWidth = 380
         let style: any = {}
 
         switch (pos) {
@@ -145,7 +146,7 @@ export function SpotlightTour({ steps, currentPhase, totalPhases, stepIndex, onS
     const getPath = () => {
         const { width, height } = windowSize;
         if (!targetRect) return `M 0 0 h ${width} v ${height} h -${width} Z`;
-        
+
         const { left, top, width: w, height: h } = targetRect;
         const x = left - pad;
         const y = top - pad;
@@ -155,7 +156,7 @@ export function SpotlightTour({ steps, currentPhase, totalPhases, stepIndex, onS
 
         // Outer rect (clockwise)
         const outer = `M 0 0 h ${width} v ${height} h -${width} Z`;
-        
+
         // Inner rounded rect (counter-clockwise to create hole with even-odd)
         const inner = `
             M ${x + r} ${y}
@@ -169,12 +170,20 @@ export function SpotlightTour({ steps, currentPhase, totalPhases, stepIndex, onS
             a ${r} ${r} 0 0 1 ${r} -${r}
             Z
         `;
-        
+
         return `${outer} ${inner}`;
     }
 
     return createPortal(
         <div className="fixed inset-0 z-[9999] overflow-hidden pointer-events-none">
+            <button
+                onClick={onDismiss}
+                className="fixed top-8 right-8 z-[100] pointer-events-auto w-12 h-12 flex items-center justify-center bg-zinc-900/50 hover:bg-zinc-800 text-zinc-500 hover:text-white border border-zinc-800 rounded-2xl transition-all active:scale-95 group"
+                title="Fechar Tutorial"
+            >
+                <X className="w-6 h-6 transition-transform group-hover:scale-110" />
+            </button>
+
             {/* 
                 THE "SVG EVEN-ODD" STRATEGY (The Absolute Final Solution):
                 Instead of a mask (which is visual only), we use a single PATH 
@@ -183,20 +192,20 @@ export function SpotlightTour({ steps, currentPhase, totalPhases, stepIndex, onS
                 clicks on the hole will pass through to the element below NATIVELY.
                 This is how modern tour libraries (like Shepherd/Intro.js) do it.
             */}
-            <svg 
+            <svg
                 className="absolute inset-0 w-full h-full pointer-events-none"
                 style={{ zIndex: 10 }}
             >
-                <path 
+                <path
                     d={getPath()}
-                    fill="rgba(0, 0, 0, 0.85)"
+                    fill="rgba(0, 0, 0, 0.5)"
                     fillRule="evenodd"
                     className="pointer-events-auto"
                 />
             </svg>
 
             {targetRect && (
-                <div 
+                <div
                     style={{
                         position: 'fixed',
                         top: targetRect.top - pad,
@@ -213,7 +222,7 @@ export function SpotlightTour({ steps, currentPhase, totalPhases, stepIndex, onS
 
             <AnimatePresence>
                 {targetRect && !currentStep.noPulse && (
-                    <motion.div 
+                    <motion.div
                         key={`pulse-${stepIndex}`}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -254,21 +263,21 @@ export function SpotlightTour({ steps, currentPhase, totalPhases, stepIndex, onS
                 <motion.div 
                     key={`card-${stepIndex}`}
                     data-tour-card="true"
-                    className="absolute z-[60] pointer-events-auto w-full max-w-[320px] sm:max-w-[380px]"
-                    style={cardPosition() as any}
+                    className="absolute z-[60] pointer-events-auto w-full max-w-[320px] sm:max-w-[380px] flex flex-col"
+                    style={{ ...(cardPosition() as any), maxHeight: 'calc(100vh - 80px)' }}
                     initial={{ opacity: 0, scale: 0.9, y: 20 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.9, y: 20 }}
                 >
-                    <div className="bg-zinc-900/90 backdrop-blur-md border border-zinc-800 rounded-[2rem] shadow-2xl overflow-hidden p-8">
+                    <div className="bg-zinc-900/90 backdrop-blur-md border border-zinc-800 rounded-[2rem] shadow-2xl p-8 overflow-y-auto flex-1 min-h-0 scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent">
                         <div className="space-y-4">
                             <div className="flex items-center gap-2">
                                 <span className="text-[10px] font-black text-orange-500 uppercase tracking-widest bg-orange-500/10 px-3 py-1 rounded-full border border-orange-500/20">
                                     {currentPhase} de {totalPhases}
                                 </span>
                                 <div className="h-1 flex-1 bg-zinc-800 rounded-full overflow-hidden">
-                                    <div 
-                                        className="h-full bg-orange-500 transition-all duration-500" 
+                                    <div
+                                        className="h-full bg-orange-500 transition-all duration-500"
                                         style={{ width: `${(currentPhase / totalPhases) * 100}%` }}
                                     />
                                 </div>
@@ -283,18 +292,18 @@ export function SpotlightTour({ steps, currentPhase, totalPhases, stepIndex, onS
                                     {currentStep.content}
                                 </p>
                             </div>
-                            
+
                             <div className="pt-4 flex items-center justify-between">
                                 <p className="text-[9px] font-bold text-zinc-600 uppercase tracking-[0.2em] italic">
                                     {currentStep.showNextButton ? "Leia e confirme abaixo" : "⚡ Clique no item para avançar"}
                                 </p>
 
                                 {currentStep.showNextButton && (
-                                    <button 
+                                    <button
                                         onClick={handleNext}
                                         className="bg-orange-500 hover:bg-orange-400 text-zinc-950 font-black uppercase italic tracking-widest text-[10px] h-10 px-6 rounded-xl shadow-xl shadow-orange-500/20 transition-all active:scale-95 flex items-center gap-2"
                                     >
-                                        Entendido
+                                        {currentStep.nextButtonLabel || "Entendido"}
                                         <div className="w-4 h-4 rounded-full bg-zinc-950/20 flex items-center justify-center">
                                             <div className="w-1.5 h-1.5 bg-zinc-950 rounded-full" />
                                         </div>

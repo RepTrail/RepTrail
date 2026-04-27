@@ -5,7 +5,6 @@ import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Home, Users, Dumbbell, Utensils, FileUp, User, LogOut, Trophy, CreditCard } from 'lucide-react'
 import { signOutAction } from '@/actions/auth-actions'
-import { TermsAcceptanceModal } from '@/components/feature/terms-acceptance-modal'
 import { LastSeenTracker } from '@/components/layout/last-seen-tracker'
 
 export default async function DashboardLayout({
@@ -13,7 +12,7 @@ export default async function DashboardLayout({
 }: {
     children: React.ReactNode
 }) {
-    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
+    const supabase = await createClient()
 
     const {
         data: { user },
@@ -23,23 +22,9 @@ export default async function DashboardLayout({
         redirect('/auth/login')
     }
 
-    // Check if user is a student and if they have completed onboarding
-    // to avoid flashing the terms modal before the redirect to /onboarding
-    const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
-    const effectiveRole = profile?.role || user.user_metadata?.role
-    let skipTerms = false
-
-    if (effectiveRole === 'student') {
-        const { data: details } = await supabase.from('student_details').select('id').eq('id', user.id).single()
-        if (!details) {
-            skipTerms = true
-        }
-    }
-
     return (
         <div className="min-h-screen w-full bg-zinc-950">
             <LastSeenTracker />
-            {!skipTerms && <TermsAcceptanceModal />}
             {children}
         </div>
     )

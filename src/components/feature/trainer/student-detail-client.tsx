@@ -233,7 +233,7 @@ export function StudentDetailClient({ relationshipId, userId }: StudentDetailCli
     return (
         <div className="space-y-10 pb-10 w-full">
 
-            {onboardingStep === 'aha_moment' && (
+            {(onboardingStep === 'aha_moment' || relationship.is_placeholder) && (
                 <div id="tour-aha-card" className="bg-emerald-500/10 border border-emerald-500/20 rounded-[2rem] p-6 mb-10 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
                     <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
                         <Sparkles className="w-24 h-24 text-emerald-500" />
@@ -260,19 +260,12 @@ export function StudentDetailClient({ relationshipId, userId }: StudentDetailCli
                                 }
                                 const studentName = student?.full_name?.split(' ')[0];
                                 const trainerName = trainerProfile?.full_name?.split(' ')[0] || 'seu treinador';
-                                const msg = `Fala ${studentName}! Aqui é o ${trainerName}. Já montei seu protocolo no RepTrail! 🔥\n\nPara acessar seu treino e dieta, utilize o link abaixo:\n📲 https://reptrail.com.br\n\nUtilize seu e-mail para o cadastro:\n📧 ${student?.email}\n\nBora pra cima! 💪`;
+                                const msg = `Fala ${studentName}! Aqui é o ${trainerName}. Já montei seu protocolo no RepTrail!\n\nPara acessar seu treino e dieta, utilize o link abaixo:\nhttps://reptrail.com.br\n\nUtilize seu e-mail para o cadastro:\n${student?.email}\n\nBora pra cima!`;
                                 window.open(formatWhatsAppUrl(student?.whatsapp, msg), '_blank');
                             }}
                             className="flex-1 md:flex-none h-14 px-8 bg-emerald-600 hover:bg-emerald-500 text-white font-black uppercase italic tracking-widest text-sm rounded-2xl shadow-xl shadow-emerald-900/20 transition-all active:scale-95 flex items-center justify-center gap-3"
                         >
                             <MessageSquare className="w-5 h-5" /> Enviar Acesso
-                        </Button>
-                        <Button 
-                            onClick={complete}
-                            variant="ghost" 
-                            className="text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-white"
-                        >
-                            Concluir Tutorial
                         </Button>
                     </div>
                 </div>
@@ -367,8 +360,6 @@ export function StudentDetailClient({ relationshipId, userId }: StudentDetailCli
                         <div className="grid grid-cols-2 gap-x-4 gap-y-8 md:gap-y-10">
                             <InfoField label="Altura" value={details?.height || '--'} sub="CM" />
                             <InfoField label="Idade" value={details?.age || calculateAge(details?.birth_date)} sub="ANOS" />
-                            <InfoField label="Gênero" value={details?.sex ? sexLabels[details.sex].toUpperCase() : '--'} />
-                            <InfoField label="Atividade" value={details?.activity_level ? activityLabels[details.activity_level].toUpperCase() : '--'} />
                             <InfoField label="Ergogênicos" value={details?.steroid_use ? 'SIM' : 'NÃO'} />
                             <InfoField label="Visto" value={new Date().toLocaleDateString('en-US')} />
                         </div>

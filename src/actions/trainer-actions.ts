@@ -379,7 +379,12 @@ export async function getStudentRelationship(relationshipId: string) {
         .eq('trainer_id', user.id)
         .maybeSingle()
 
-    if (data) return data
+    if (data) {
+        return {
+            ...data,
+            is_placeholder: !!data.student?.is_placeholder
+        }
+    }
 
     const { data: { user: authUser } } = await supabase.auth.getUser();
     console.log(`[TRAINER-ACTIONS] getStudentRelationship called for ID: ${relationshipId}. Auth User: ${authUser?.id}`);

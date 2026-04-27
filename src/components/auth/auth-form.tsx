@@ -7,7 +7,14 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Checkbox } from '@/components/ui/checkbox'
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogDescription,
+} from '@/components/ui/dialog'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import Link from 'next/link'
 import { ShieldCheck, ArrowRight, User, Users, Megaphone, Eye, EyeOff } from 'lucide-react'
@@ -16,6 +23,7 @@ import { useSearchParams } from 'next/navigation'
 import { useEffect } from 'react'
 import { AuthLoadingScreen } from './auth-loading-screen'
 import { fbqEvent } from '@/lib/meta-pixel'
+import { TRAINER_TERMS, STUDENT_TERMS } from '@/lib/terms-content'
 
 interface AuthFormProps {
     view: 'login' | 'signup'
@@ -30,6 +38,8 @@ export function AuthForm({ view }: AuthFormProps) {
     const [isAffiliate, setIsAffiliate] = useState(false)
     const [showPassword, setShowPassword] = useState(false)
     const [loading, setLoading] = useState(false)
+    const [acceptedTerms, setAcceptedTerms] = useState(true)
+    const [showTermsDialog, setShowTermsDialog] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const router = useRouter()
     const searchParams = useSearchParams()
@@ -57,6 +67,12 @@ export function AuthForm({ view }: AuthFormProps) {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
+
+        if (view === 'signup' && !acceptedTerms) {
+            setError('Você precisa aceitar os termos de uso para continuar.')
+            return
+        }
+
         setLoading(true)
         setError(null)
         let isRedirecting = false
@@ -97,14 +113,15 @@ export function AuthForm({ view }: AuthFormProps) {
                             full_name: fullName,
                             whatsapp: whatsapp,
                             role: role,
+                            terms_accepted_at: new Date().toISOString(),
+                            saw_auto_training_onboarding_modal: true, // Disable auto onboarding popup as requested
                             // Only students get automatic trial/auto-training status
                             ...(role === 'student' ? {
                                 auto_training_status: 'trial',
                                 auto_training_trial_end: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
                             } : {
-                                plan_tier: 'none' // Trainers start without a plan and must subscribe
+                                plan_tier: 'on_demand' // Trainers now auto-activate On-Demand plan
                             }),
-                            saw_auto_training_onboarding_modal: false
                         }, { onConflict: 'id' })
                 }
 
@@ -279,6 +296,25 @@ export function AuthForm({ view }: AuthFormProps) {
                                         </div>
                                     </div>
 
+                                    <div className="flex items-center gap-3 py-2">
+                                        <Checkbox 
+                                            id="terms" 
+                                            checked={acceptedTerms}
+                                            onCheckedChange={(v) => setAcceptedTerms(!!v)}
+                                            className="border-zinc-700 data-[state=checked]:bg-emerald-500 data-[state=checked]:border-emerald-500"
+                                        />
+                                        <label htmlFor="terms" className="text-[10px] font-medium text-zinc-500 leading-none uppercase tracking-widest cursor-pointer">
+                                            Ao criar sua conta você aceita nossos{' '}
+                                            <button 
+                                                type="button" 
+                                                onClick={() => setShowTermsDialog(true)}
+                                                className="text-emerald-500 hover:text-emerald-400 underline underline-offset-2"
+                                            >
+                                                termos de uso
+                                            </button>
+                                        </label>
+                                    </div>
+
                                     {/* Affiliate option */}
                                     <button
                                         type="button"
@@ -304,7 +340,7 @@ export function AuthForm({ view }: AuthFormProps) {
                             <Button
                                 type="submit"
                                 className="w-full h-12 bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-black uppercase tracking-[0.1em] rounded-xl shadow-lg shadow-emerald-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] mt-4"
-                                /* ❌ UI BLOCKING REMOVED */ disabled={false}
+                                disabled={loading}
                             >
                                 {loading ? (
                                     <div className="flex items-center gap-2">
@@ -338,6 +374,32 @@ export function AuthForm({ view }: AuthFormProps) {
                     <span className="text-[10px] font-black uppercase tracking-widest">Acesso Seguro & Criptografado</span>
                 </div>
             </div>
+
+            <Dialog open={showTermsDialog} onOpenChange={setShowTermsDialog}>
+                <DialogContent className="max-w-xl">
+                    <DialogHeader>
+                        <DialogTitle className="text-xl font-black text-white uppercase tracking-tight">
+                            Termos de Uso - {role === 'trainer' ? 'Personal' : 'Aluno'}
+                        </DialogTitle>
+                        <DialogDescription className="text-zinc-400 text-left leading-relaxed">
+                            Leia atentamente os termos da plataforma RepTrail.
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    <div className="max-h-[50vh] overflow-y-auto rounded-xl bg-zinc-950 border border-zinc-800 p-6 text-sm text-zinc-300 whitespace-pre-wrap leading-relaxed [&>h3]:text-white [&>h3]:mt-4 [&>h3]:mb-2 [&>strong]:text-white">
+                        {role === 'trainer' ? TRAINER_TERMS : STUDENT_TERMS}
+                    </div>
+
+                    <div className="flex justify-end pt-4">
+                        <Button 
+                            onClick={() => setShowTermsDialog(false)}
+                            className="bg-zinc-800 hover:bg-zinc-700 text-white font-bold uppercase tracking-widest text-xs h-10 px-6 rounded-xl"
+                        >
+                            Fechar
+                        </Button>
+                    </div>
+                </DialogContent>
+            </Dialog>
         </>
     )
 }

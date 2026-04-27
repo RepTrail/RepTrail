@@ -63,8 +63,6 @@ export function EditStudentDialog({ relationshipId, studentId, trainerId, initia
     const [bodyFat, setBodyFat] = useState(initialData.body_fat?.toString() || '')
     const [height, setHeight] = useState(initialData.height?.toString() || '')
     const [age, setAge] = useState(initialData.age?.toString() || '')
-    const [sex, setSex] = useState(initialData.sex || 'male')
-    const [activityLevel, setActivityLevel] = useState(initialData.activity_level || 'moderate')
     const [monthlyFee, setMonthlyFee] = useState(initialData.monthly_fee?.toString() || '')
     const [paymentDay, setPaymentDay] = useState(initialData.payment_day?.toString() || '')
     const [steroidUse, setSteroidUse] = useState(initialData.steroid_use || false)
@@ -126,8 +124,6 @@ export function EditStudentDialog({ relationshipId, studentId, trainerId, initia
                 body_fat: bodyFat ? parseFloat(bodyFat) : undefined,
                 height: height ? parseFloat(height) : undefined,
                 age: age ? parseInt(age) : undefined,
-                sex,
-                activity_level: activityLevel,
                 monthly_fee: monthlyFee ? parseFloat(monthlyFee) : undefined,
                 payment_day: paymentDay ? parseInt(paymentDay) : undefined,
                 steroid_use: steroidUse,
@@ -213,34 +209,6 @@ export function EditStudentDialog({ relationshipId, studentId, trainerId, initia
                                     onChange={(e) => setAge(e.target.value)}
                                     className="bg-zinc-900/50 border-zinc-800 rounded-xl h-10 text-xs text-white font-bold"
                                 />
-                            </div>
-                            <div className="space-y-1.5">
-                                <Label className="text-[8px] font-bold uppercase tracking-widest text-zinc-500 ml-1">Gênero</Label>
-                                <Select value={sex} onValueChange={setSex}>
-                                    <SelectTrigger className="bg-zinc-900/50 border-zinc-800 rounded-xl h-10 text-xs text-white font-bold">
-                                        <SelectValue placeholder="Selecione" />
-                                    </SelectTrigger>
-                                    <SelectContent className="bg-zinc-900 border-zinc-800 text-white rounded-xl">
-                                        <SelectItem value="male">Masculino</SelectItem>
-                                        <SelectItem value="female">Feminino</SelectItem>
-                                        <SelectItem value="other">Outro</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <div className="space-y-1.5">
-                                <Label className="text-[8px] font-bold uppercase tracking-widest text-zinc-500 ml-1">Atividade</Label>
-                                <Select value={activityLevel} onValueChange={setActivityLevel}>
-                                    <SelectTrigger className="bg-zinc-900/50 border-zinc-800 rounded-xl h-10 text-xs text-white font-bold">
-                                        <SelectValue placeholder="Selecione" />
-                                    </SelectTrigger>
-                                    <SelectContent className="bg-zinc-900 border-zinc-800 text-white rounded-xl">
-                                        <SelectItem value="sedentary">Sedentário</SelectItem>
-                                        <SelectItem value="light">Leve</SelectItem>
-                                        <SelectItem value="moderate">Moderado</SelectItem>
-                                        <SelectItem value="active">Ativo</SelectItem>
-                                        <SelectItem value="athlete">Atleta</SelectItem>
-                                    </SelectContent>
-                                </Select>
                             </div>
                         </div>
                     </div>
