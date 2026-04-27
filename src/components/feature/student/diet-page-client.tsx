@@ -145,10 +145,14 @@ export function DietPageClient({ userId }: DietPageClientProps) {
                                     <CardContent className="p-6 pt-0 flex-1 flex flex-col">
                                         {assignedDays.length > 0 ? (
                                             <div className="flex flex-wrap gap-1.5 mb-6">
-                                                {(Array.from(new Set(assignedDays)) as number[]).sort((a: number, b: number) => a - b).map((day: number) => (
+                                                {(Array.from(new Set(assignedDays)) as number[]).sort((a: number, b: number) => {
+                                                    const valA = a === 0 ? 7 : a;
+                                                    const valB = b === 0 ? 7 : b;
+                                                    return valA - valB;
+                                                }).map((day: number) => (
                                                     <span key={day} className="flex items-center shrink-0 gap-1 px-2 py-1 bg-orange-500/10 text-orange-400 text-[9px] font-black uppercase rounded-[0.5rem] border border-orange-500/20">
                                                         <Calendar className="w-2.5 h-2.5" />
-                                                        {dayNamesShort[day]}
+                                                        {dayNamesShort[day % 7]}
                                                     </span>
                                                 ))}
                                             </div>

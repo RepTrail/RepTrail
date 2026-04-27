@@ -45,7 +45,7 @@ export function WorkoutCard({ userId }: WorkoutCardProps) {
         return <WorkoutCardSkeleton />
     }
 
-    if (!workouts || (workouts as any[]).length === 0) {
+    if (!workouts || !Array.isArray(workouts) || workouts.length === 0) {
         return (
             <div className="bg-zinc-900/20 border border-zinc-800/50 border-dashed rounded-3xl py-12 sm:py-16 flex flex-col items-center justify-center text-center space-y-4">
                 <Dumbbell className="w-8 h-8 text-zinc-700" />
@@ -59,16 +59,18 @@ export function WorkoutCard({ userId }: WorkoutCardProps) {
     const logId = currentWorkout?.logId || null
 
     const nextWorkout = () => {
+        if (!Array.isArray(workouts) || workouts.length === 0) return;
         setCurrentIndex((prev) => (prev + 1) % workouts.length)
     }
 
     const prevWorkout = () => {
+        if (!Array.isArray(workouts) || workouts.length === 0) return;
         setCurrentIndex((prev) => (prev - 1 + workouts.length) % workouts.length)
     }
 
-    const href = status === 'completed' && logId
+    const href = (status === 'completed' && logId)
         ? `/dashboard/student/workout-log/${logId}/review`
-        : `/dashboard/student/workout/${currentWorkout.id}`
+        : `/dashboard/student/workout/${currentWorkout?.id || 'new'}`
 
     return (
         <div className="relative group/carousel">

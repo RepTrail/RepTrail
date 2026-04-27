@@ -162,11 +162,9 @@ export function AIProtocolGenerator({ userId = 'me' }: { userId?: string }) {
         entityId: userId,
         queryKey: QUERY_KEYS.student.all(userId),
         mutationFn: async (vars) => vars,
-        onMutate: (variables) => {
-            // OPTIMISTIC CACHE PATCH (The 0ms feeling)
-            const { type, data } = variables
-            if (type === 'workout') {
-                // Ensure it's an array and add a mock ID to prevent crashes in detail links
+        onMutate: async ({ data, type }: { data: any, type: string }) => {
+            // 🧠 MULTI-SYNC: Update everything present in the payload
+            if (data.workouts?.length) {
                 const optimisticWorkouts = data.workouts.map((w: any) => ({
                     ...w,
                     id: w.id || `opt-w-${Math.random()}`,
@@ -178,24 +176,24 @@ export function AIProtocolGenerator({ userId = 'me' }: { userId?: string }) {
                     }))
                 }))
                 queryClient.setQueryData(QUERY_KEYS.workouts.today(userId), optimisticWorkouts)
-
-                // Also handle cardios if present in the same generation
-                if (data.cardios?.length) {
-                    const optimisticCardios = data.cardios.map((c: any) => ({
-                        ...c,
-                        id: c.id || `opt-c-${Math.random()}`,
-                        name: c.type || c.name || 'Cardio'
-                    }))
-                    queryClient.setQueryData(QUERY_KEYS.cardio.today(userId), optimisticCardios)
-                }
             }
-            if (type === 'diet') {
-                // Ensure it matches the expected structure of getStudentDailyDiet
+
+            if (data.cardios?.length) {
+                const optimisticCardios = data.cardios.map((c: any) => ({
+                    ...c,
+                    id: c.id || `opt-c-${Math.random()}`,
+                    name: c.type || c.name || 'Cardio'
+                }))
+                queryClient.setQueryData(QUERY_KEYS.cardio.today(userId), optimisticCardios)
+            }
+
+            if (data.diets?.length || data.meals?.length) {
+                const dietSource = data.diets?.[0] || data
                 const optimisticDiet = {
-                    ...data.diets[0],
-                    id: data.diets[0].id || `opt-d-${Math.random()}`,
+                    ...dietSource,
+                    id: dietSource.id || `opt-d-${Math.random()}`,
                     user_id: userId,
-                    meals: (data.diets[0].meals || []).map((m: any) => ({
+                    meals: (dietSource.meals || []).map((m: any) => ({
                         ...m,
                         id: `opt-m-${Math.random()}`,
                         name: m.meal_name || m.name,
@@ -228,12 +226,9 @@ export function AIProtocolGenerator({ userId = 'me' }: { userId?: string }) {
         onSuccess: (result) => {
             setLoading(false)
             if (result.data) {
-                // 🧠 PERSISTENCE-FIRST: Save to Outbox immediately
-                if (result.data.workouts?.length) {
+                // 🧠 PERSISTENCE-FIRST: Save to Outbox immediately (Unified single call to prevent duplication)
+                if (result.data) {
                     saveProtocolMutate({ type: 'workout', data: result.data, studentId: userId })
-                }
-                if (result.data.diets?.length) {
-                    saveProtocolMutate({ type: 'diet', data: result.data, studentId: userId })
                 }
                 setSuccess(result.summary)
             }

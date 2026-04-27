@@ -189,10 +189,10 @@ export function DietAdherence({ diet, allowEstimation = false, hasTrainer = fals
                 <div className="space-y-4">
                     {meals.map((meal: any) => (
                         <MealRow 
-                            key={meal.id} 
+                            key={meal?.id || Math.random()} 
                             meal={meal} 
-                            isOpen={!!openMeals[meal.id]} 
-                            onToggleAccordion={() => toggleMealAccordion(meal.id)}
+                            isOpen={!!openMeals[meal?.id]} 
+                            onToggleAccordion={() => toggleMealAccordion(meal?.id)}
                             onToggleItem={itemMutation.mutate}
                             onToggleGroup={groupMutation.mutate}
                             onSwap={swapMutation.mutate}

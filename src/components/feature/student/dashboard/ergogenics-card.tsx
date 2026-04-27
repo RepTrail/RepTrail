@@ -98,9 +98,9 @@ export function ErgogenicsCard({ userId }: ErgogenicsCardProps) {
             {todaysErgogenics.length > 0 ? (
                     <div className="flex flex-col gap-3">
                         {todaysErgogenics.map((erg: any) => {
-                            const isChecked = loggedErgoIds.has(erg.id)
+                            const isChecked = erg?.id ? loggedErgoIds.has(erg.id) : false
                             return (
-                                <div key={erg.id} className={`group relative rounded-3xl border transition-all duration-300 overflow-hidden ${
+                                <div key={erg?.id || Math.random()} className={`group relative rounded-3xl border transition-all duration-300 overflow-hidden ${
                                     isChecked 
                                         ? 'bg-emerald-500/5 border-emerald-500/20' 
                                         : 'bg-zinc-950/20 border-zinc-900 hover:border-zinc-800'

@@ -98,7 +98,8 @@ async function DashboardSidebarLoader({ userId }: { userId: string }) {
         queryClient.prefetchQuery({ queryKey: QUERY_KEYS.workouts.all(userId), queryFn: () => import('@/actions/workout-actions').then(m => m.getAssignedWorkouts(userId)) }),
         queryClient.prefetchQuery({ queryKey: QUERY_KEYS.diets.all(userId), queryFn: () => import('@/actions/diet-actions').then(m => m.getAssignedDiets(userId)) }),
         queryClient.prefetchQuery({ queryKey: QUERY_KEYS.ergogenics.all(userId), queryFn: () => import('@/actions/ergogenics-actions').then(m => m.getAssignedErgogenics(userId)) }),
-        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.cardio.all(userId), queryFn: () => import('@/actions/cardio-actions').then(m => m.getAssignedCardios(userId)) })
+        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.cardio.all(userId), queryFn: () => import('@/actions/cardio-actions').then(m => m.getAssignedCardios(userId)) }),
+        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.profile.trainer(userId), queryFn: () => getStudentTrainer(userId) }),
     ])
 
     const profile = profileRes.data

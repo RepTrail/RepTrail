@@ -53,11 +53,15 @@ export function CardioInfoCard({ assignment }: CardioInfoCardProps) {
                                         assignment.days_of_week.forEach((d: number) => days.add(d))
                                     }
 
-                                    return Array.from(days).sort((a, b) => a - b).map((d) => (
+                                    return Array.from(days).sort((a, b) => {
+                                        const valA = a === 0 ? 7 : a;
+                                        const valB = b === 0 ? 7 : b;
+                                        return valA - valB;
+                                    }).map((d) => (
                                         <div key={d} className="flex items-center gap-2 px-3 py-1.5 bg-orange-500/5 rounded-xl border border-orange-500/10">
                                             {days.size === 1 && <Calendar className="w-3.5 h-3.5 text-orange-500" />}
                                             <span className="text-[10px] font-black text-orange-500 uppercase tracking-widest leading-none">
-                                                {dayNamesShort[d]}
+                                                {dayNamesShort[d % 7]}
                                             </span>
                                         </div>
                                     ))

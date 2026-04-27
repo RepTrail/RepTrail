@@ -161,13 +161,13 @@ export function StudentDetailClient({ relationshipId, userId }: StudentDetailCli
     const activeDiets = student?.assigned_diets?.filter((ad: any) => ad.active) || []
 
     // Use data from relationship if placeholder, fallback to separate queries
-    const displayCardios = relationship.is_placeholder 
-        ? (student?.assigned_cardios || []) 
-        : (cardioAssignments.length > 0 ? cardioAssignments : (student?.assigned_cardios || []))
+    const displayCardios = cardioAssignments.length > 0 
+        ? cardioAssignments 
+        : (student?.assigned_cardios || [])
     
-    const displayErgogenics = relationship.is_placeholder
-        ? (student?.ergogenics || [])
-        : (ergogenics.length > 0 ? ergogenics : (student?.ergogenics || []))
+    const displayErgogenics = ergogenics.length > 0 
+        ? ergogenics 
+        : (student?.ergogenics || [])
 
     // ─── Metrics Calculation ─────────────────────────────────────────────
     const weights = metricsHistory.weights || []

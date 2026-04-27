@@ -129,7 +129,7 @@ Retorne SOMENTE um JSON válido com esta estrutura exata. Não adicione markdown
       "duration": "30",
       "intensity": "Moderado - 65-70% FCM",
       "frequency": "${preferences.trainingDaysPerWeek} vezes por semana",
-      "days_of_week": [2, 4, 6]
+      "days_of_week": [2, 4, 6] // IMPORTANTE: Array de números inteiros de 0 (Domingo) a 6 (Sábado)
     }
   ],
   "diets": [
@@ -169,7 +169,9 @@ ${preferences.mealsPerDay === 4 ? `  • 4 refeições: Refeição 1 = leve (~15
 - Use apenas alimentos que o atleta gosta: ${preferences.foodLikes || 'qualquer alimento'}
 - Evite: ${preferences.foodDislikes || 'nenhum'} e respeite as restrições: ${preferences.dietaryRestrictions || 'nenhuma'}
 - Macros total das refeições devem somar aproximadamente: ${proteinG}g proteína, ${carbG}g carbs, ${fatG}g gordura
-- day_of_week: 0=Dom, 1=Seg, 2=Ter, 3=Qua, 4=Qui, 5=Sex, 6=Sáb
+- day_of_week (Workouts): 0=Dom, 1=Seg, 2=Ter, 3=Qua, 4=Qui, 5=Sex, 6=Sáb.
+- DISTRIBUIÇÃO DOS DIAS: Se o aluno treina N dias por semana, ESPALHE os treinos ao longo da semana (ex: 3 dias = Seg/Qua/Sex [1,3,5]; 4 dias = Seg/Ter/Qui/Sex [1,2,4,5]). NÃO use dias consecutivos se não for necessário.
+- Cardios: Agrupe por tipo. Se um cardio deve ser feito 3x na semana, retorne UM objeto no array 'cardios' com 'days_of_week': [1, 3, 5].
 `
 
   try {

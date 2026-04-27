@@ -215,17 +215,17 @@ export function PdfDataView({
                                             <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mt-4">
                                                 {/* Warmup Sets */}
                                                 {ex.warmup_sets && (
-                                                    <div className="flex flex-col gap-1.5 p-3 rounded-xl bg-orange-500/5 border border-orange-500/10">
+                                                    <div className="hidden md:flex flex-col gap-1.5 p-3 rounded-xl bg-orange-500/5 border border-orange-500/10">
                                                         <div className="flex items-center gap-2 text-[9px] font-black text-orange-500 uppercase tracking-widest">
                                                             <Flame className="w-3 h-3" /> AQUECIMENTO
                                                         </div>
-                                                        <div className="flex items-center justify-between">
+                                                        <div className="flex flex-col gap-1">
                                                             <span className="text-xs font-bold text-zinc-100 italic">
                                                                 {safeString(ex.warmup_sets).includes('x')
                                                                     ? `${safeString(ex.warmup_sets).split('x')[0]} SÉRIES`
                                                                     : 'SÉRIES PROG.'}
                                                             </span>
-                                                            <span className="text-[10px] font-bold text-zinc-500 px-2 py-0.5 bg-zinc-950 rounded-lg">
+                                                            <span className="text-[10px] font-bold text-zinc-500 px-2 py-0.5 bg-zinc-950 rounded-lg w-fit">
                                                                 {safeString(ex.warmup_sets).includes('x')
                                                                     ? `${safeString(ex.warmup_sets).split('x')[1]} REPS`
                                                                     : safeString(ex.warmup_sets)}
@@ -240,13 +240,13 @@ export function PdfDataView({
                                                         <div className="flex items-center gap-2 text-[9px] font-black text-blue-500 uppercase tracking-widest">
                                                             <Timer className="w-3 h-3" /> FEEDER
                                                         </div>
-                                                        <div className="flex items-center justify-between">
+                                                        <div className="flex flex-col gap-1">
                                                             <span className="text-xs font-bold text-zinc-100 italic">
                                                                 {safeString(ex.feeder_sets).includes('x')
                                                                     ? `${safeString(ex.feeder_sets).split('x')[0]} SÉRIES`
                                                                     : 'SÉRIE ÚNICA'}
                                                             </span>
-                                                            <span className="text-[10px] font-bold text-zinc-500 px-2 py-0.5 bg-zinc-950 rounded-lg">
+                                                            <span className="text-[10px] font-bold text-zinc-500 px-2 py-0.5 bg-zinc-950 rounded-lg w-fit">
                                                                 {safeString(ex.feeder_sets).includes('x')
                                                                     ? `${safeString(ex.feeder_sets).split('x')[1]} REPS`
                                                                     : safeString(ex.feeder_sets)}
@@ -260,11 +260,11 @@ export function PdfDataView({
                                                     <div className="flex items-center gap-2 text-[9px] font-black text-emerald-500 uppercase tracking-widest">
                                                         <Activity className="w-3 h-3" /> TRABALHO
                                                     </div>
-                                                    <div className="flex items-center justify-between">
+                                                    <div className="flex flex-col gap-1">
                                                         <span className="text-xs font-bold text-white italic">
                                                             {safeString(ex.sets, 'sets')} SÉRIES
                                                         </span>
-                                                        <span className="text-[10px] font-bold text-emerald-500 px-2 py-0.5 bg-zinc-950 rounded-lg">
+                                                        <span className="text-[10px] font-bold text-emerald-500 px-2 py-0.5 bg-zinc-950 rounded-lg w-fit">
                                                             {safeString(ex.reps, 'reps')} REPS
                                                         </span>
                                                     </div>

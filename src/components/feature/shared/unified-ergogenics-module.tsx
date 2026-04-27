@@ -41,6 +41,7 @@ import { getTodayRangeBrazil } from '@/lib/date-utils'
 interface Ergogenic {
     id: string
     name: string
+    dosage?: string
     weekly_dosage: number
     unit: 'ml' | 'mg' | 'un'
     application_days: number[]
@@ -211,7 +212,11 @@ export function UnifiedErgogenicsModule({
         const isDone = todaysLogsMap[e.id]
         const appDaysCount = e.application_days?.length || 0
         const weeklyDosage = e.weekly_dosage || 0
-        const dosage = appDaysCount > 0 ? (weeklyDosage / appDaysCount).toFixed(2) : weeklyDosage.toFixed(2)
+        
+        // Priority: 1. Stored dosage string, 2. Calculated from weekly
+        const dosage = e.dosage && e.dosage !== '0' 
+            ? e.dosage 
+            : (appDaysCount > 0 ? (weeklyDosage / appDaysCount).toFixed(2) : weeklyDosage.toFixed(2))
 
         const colors = {
             orange: {
@@ -280,15 +285,29 @@ export function UnifiedErgogenicsModule({
                         })}
                     </div>
 
-                    <div className="flex items-center justify-between text-[10px] text-zinc-500 font-bold uppercase tracking-widest mb-6">
-                        <span>{dosage} {e.unit} / dose</span>
-                        <span>{appDaysCount}x semana</span>
+                    <div className="flex flex-col gap-4 mb-6">
+                        <div className="flex items-center justify-between">
+                            <span className="text-[9px] font-bold text-zinc-600 uppercase tracking-widest">Dosagem</span>
+                            <span className={cn("text-xs font-black uppercase italic", colorScheme === 'orange' ? 'text-orange-500' : 'text-emerald-500')}>
+                                {dosage}
+                                {(!dosage.toString().toLowerCase().includes(e.unit.toLowerCase()) && 
+                                  !/[a-zA-Z]/.test(dosage.toString())) && (
+                                    <span className="ml-1">{e.unit}</span>
+                                )}
+                            </span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                            <span className="text-[9px] font-bold text-zinc-600 uppercase tracking-widest">Frequência</span>
+                            <span className="text-[10px] font-black text-zinc-300 uppercase italic">
+                                {appDaysCount}x na semana
+                            </span>
+                        </div>
                     </div>
 
                     {e.notes && (
                         <div className="mb-6 p-4 bg-zinc-950/50 rounded-2xl border border-zinc-800/50">
                             <p className="text-[10px] text-zinc-400 leading-relaxed italic line-clamp-2">
-                                "{e.notes}"
+                                {e.notes}
                             </p>
                         </div>
                     )}

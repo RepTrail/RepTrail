@@ -113,10 +113,16 @@ STRICT CARDIO PROTOCOL:
 2. **Ignore Examples**: Do NOT extract cardios from sections that are clearly examples (e.g. "ex. caminhada de 1 min"). Only extract the main prescription.
 3. **Deduplicate**: Do not repeat the same cardio multiple times.
     "ergogenics": [
-        { "name": "Testo", "dosage": "250mg", "weekly_dosage": 250, "unit": "mg", "application_days": [1], "notes": "Segunda" },
-        { "name": "Omega 3", "dosage": "4un", "weekly_dosage": 28, "unit": "un", "application_days": [1,2,3,4,5,6,0], "notes": "Cápsulas" }
+        { "name": "Testo", "dosage": "250mg", "weekly_dosage": 250, "unit": "mg", "application_days": [1], "notes": "Aplicar no glúteo (NÃO REPITA OS DIAS AQUI)" },
+        { "name": "Omega 3", "dosage": "4un", "weekly_dosage": 28, "unit": "un", "application_days": [1,2,3,4,5,6,0], "notes": "Cápsulas (NÃO REPITA OS DIAS AQUI)" }
     ]
 }
+
+STRICT GROUPING PROTOCOL:
+1. **Mandatory Grouping**: All exercises belonging to the same workout session (e.g., "TREINO A", "TREINO B", or a specific muscle group block) MUST be grouped into a single workout object in the "workouts" array. 
+2. **Do NOT Fragment**: Never create a separate workout object for each individual exercise. A workout object should be a collection of exercises.
+3. **Headers as Names**: Use the workout headers found in the text (like "TREINO A - PEITO") as the "name" for the workout object.
+4. **Day Logic**: All exercises in "TREINO A" should share the same "day_of_week".
 
 STRICT INTENSITY TECHNIQUES PROTOCOL:
 1. **Identify Grouped Exercises**: Look for words like "CONJUGADO", "BI-SET", "TRI-SET", "GIGANT-SET", "SUPER-SET". If two exercises are linked, add a note to BOTH exercises stating they are part of a bi-set/conjugado.
@@ -249,6 +255,43 @@ ${text}
             })).filter(meal => meal.foods.length > 0);
         };
 
+        if (parsedData.ergogenics?.length > 0) {
+            parsedData.ergogenics = parsedData.ergogenics.map((e: any) => {
+                // Strictly sanitize unit to match database constraints (mg, ml, un, g, mcg)
+                let rawUnit = (e.unit || 'mg').toLowerCase().trim();
+                
+                // Common AI parsing patterns to clean up
+                if (rawUnit.includes('mg')) rawUnit = 'mg';
+                else if (rawUnit.includes('ml')) rawUnit = 'ml';
+                else if (rawUnit.includes('un')) rawUnit = 'un';
+                else if (rawUnit.includes('mcg')) rawUnit = 'mcg';
+                else if (rawUnit.includes('g')) rawUnit = 'g';
+                else rawUnit = 'mg'; // Default fallback that satisfies the constraint
+
+                let notes = (e.notes || '').replace(/^["']|["']$/g, '').trim();
+                const daysStr = (e.application_days || []).map((d: number) => ['dom','seg','ter','qua','qui','sex','sab'][d]).join('/');
+                
+                // If notes just repeat the days, clear them
+                const cleanNotes = notes.toLowerCase().replace(/\s/g, '');
+                const cleanDays = daysStr.replace(/\s/g, '');
+                
+                if (cleanNotes === cleanDays || 
+                    notes.toLowerCase() === 'diário' || 
+                    notes.toLowerCase() === 'diario' ||
+                    notes.toLowerCase() === 'todos os dias' ||
+                    notes.toLowerCase() === daysStr.toLowerCase() ||
+                    (notes.toLowerCase().includes('/') && cleanNotes === cleanDays.replace(/\//g, ''))) {
+                    notes = '';
+                }
+
+                return {
+                    ...e,
+                    unit: rawUnit,
+                    notes: notes
+                };
+            });
+        }
+
         if (type === 'diet') {
             if (parsedData.options?.length > 0) {
                 parsedData.options = parsedData.options.map((opt: any) => ({
@@ -257,6 +300,44 @@ ${text}
                 }));
             } else if (parsedData.meals?.length > 0) {
                 parsedData.meals = cleanMeals(parsedData.meals);
+            }
+        }
+    }
+
+    // ─── AUTO-CALCULATE MACROS FOR PREVIEW ──────────────────────────────────
+    if (type === 'diet' && parsedData) {
+        console.log(`[PDF] Triggering auto-macro calculation for preview...`);
+        const { estimateMacrosForFoodList } = await import('@/actions/diet-actions');
+        
+        const allFoods: any[] = [];
+        if (parsedData.options?.length > 0) {
+            parsedData.options.forEach((opt: any) => {
+                opt.meals?.forEach((meal: any) => {
+                    meal.foods?.forEach((food: any) => allFoods.push(food));
+                });
+            });
+        } else if (parsedData.meals?.length > 0) {
+            parsedData.meals.forEach((meal: any) => {
+                meal.foods?.forEach((food: any) => allFoods.push(food));
+            });
+        }
+
+        if (allFoods.length > 0) {
+            try {
+                const estimates = await estimateMacrosForFoodList(allFoods);
+                estimates.forEach((est: any) => {
+                    const food = allFoods[est.index];
+                    if (food) {
+                        food.protein = est.protein;
+                        food.carbs = est.carbs;
+                        food.fat = est.fat;
+                        food.fiber = est.fiber;
+                        food.calories = (est.protein * 4) + (est.carbs * 4) + (est.fat * 9);
+                    }
+                });
+                console.log(`[PDF] Preview macros calculated for ${allFoods.length} items.`);
+            } catch (err) {
+                console.error("[PDF] Macro calculation error:", err);
             }
         }
     }

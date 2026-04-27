@@ -29,7 +29,8 @@ import {
 import { getTermsStatus, acceptTerms } from '@/actions/terms-actions'
 import { enableAutoTrainingTrialForCurrentUser, getAutoTrainingTrialInfoForCurrentUser } from '@/actions/auto-training-actions'
 import { useToast } from '@/hooks/use-toast'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
+import { getQueryClient } from '@/lib/get-query-client'
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
 import { ENTITIES } from '@/lib/outbox-db'
 
@@ -39,7 +40,7 @@ interface SettingsModalProps {
 
 export function SettingsModal({ hasTrainer = false }: SettingsModalProps) {
     const [isOpen, setIsOpen] = useState(false)
-    const queryClient = useQueryClient()
+    const queryClient = getQueryClient()
     const { toast } = useToast()
     const router = useRouter()
 

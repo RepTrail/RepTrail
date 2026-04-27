@@ -76,7 +76,7 @@ export interface UnifiedSidebarProps extends VariantProps<typeof sidebarLinkVari
   showSettings?: boolean
 }
 
-import { useQueryClient } from '@tanstack/react-query'
+import { getQueryClient } from '@/lib/get-query-client'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { getAssignedWorkouts } from '@/actions/workout-actions'
 import { getAssignedDiets } from '@/actions/diet-actions'
@@ -94,7 +94,7 @@ export function UnifiedSidebar({
   showSettings = true
 }: UnifiedSidebarProps) {
   const pathname = usePathname()
-  const queryClient = useQueryClient()
+  const queryClient = getQueryClient()
 
   const isLinkActive = (link: SidebarLink) => {
     if (link.isActive !== undefined) return link.isActive

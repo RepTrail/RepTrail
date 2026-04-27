@@ -10,9 +10,9 @@ export function AIProtocolEmptyState({ userId }: { userId: string }) {
 
     if (showForm) {
         return (
-            <div className="relative bg-zinc-900/60 border border-zinc-800 rounded-[2.5rem] p-8">
+            <div className="relative bg-zinc-900/60 border border-zinc-800 rounded-[2rem] p-4">
                 {/* Background glow */}
-                <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 via-transparent to-transparent pointer-events-none rounded-[2.5rem]" />
+                <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 via-transparent to-transparent pointer-events-none rounded-[2rem]" />
 
                 {/* Header */}
                 <div className="flex items-start justify-between mb-8">

@@ -34,12 +34,12 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
     const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null)
     const [selectedOptionIndex, setSelectedOptionIndex] = useState<number>(0)
     const [detectedStudentName, setDetectedStudentName] = useState<string | null>(null)
-    const [studentMatch, setStudentMatch] = useState<{exact: any, suggestions: any[]} | null>(null)
+    const [studentMatch, setStudentMatch] = useState<{ exact: any, suggestions: any[] } | null>(null)
     const [bindingMode, setBindingMode] = useState<'matched' | 'create' | 'skip'>('skip')
     const [placeholderName, setPlaceholderName] = useState('')
     const [placeholderEmail, setPlaceholderEmail] = useState('')
     const [placeholderWhatsapp, setPlaceholderWhatsapp] = useState('')
-    
+
     // Selection state
     const [selectedCardioIndices, setSelectedCardioIndices] = useState<Set<number>>(new Set())
     const [selectedErgoIndices, setSelectedErgoIndices] = useState<Set<number>>(new Set())
@@ -63,9 +63,9 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
         mutationFn: async (variables: any) => {
             console.log(`[PDF-UPLOADER] Calling saveParsedData action...`);
             return await saveParsedData(
-                variables.type, 
-                variables.data, 
-                variables.studentId, 
+                variables.type,
+                variables.data,
+                variables.studentId,
                 variables.createPlaceholder
             );
         },
@@ -76,7 +76,7 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
             }
 
             console.log(`[PDF-UPLOADER] Save success. Invalidating queries for student: ${variables.studentId || 'library'}`);
-            
+
             // Close preview
             setParsedData(null);
             setSelectedStudentId(null);
@@ -86,13 +86,15 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
             setTimeout(() => {
                 const sid = variables.studentId || (result as any).data?.placeholderId || (result as any).results?.placeholderId;
                 console.log(`[PDF-UPLOADER] Triggering final invalidation for trainer and student ${sid}...`);
+
+                // Clear all student-related queries for the trainer to ensure sync
+                queryClient.invalidateQueries({ queryKey: ['trainer', 'student'] });
                 
-                // Clear the specific student detail query
                 if (sid) {
-                    queryClient.invalidateQueries({ queryKey: QUERY_KEYS.trainer.studentDetail(sid) });
-                    queryClient.invalidateQueries({ queryKey: ['trainer', 'student', sid] });
+                    queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ergogenics.all(sid) });
+                    queryClient.invalidateQueries({ queryKey: QUERY_KEYS.cardio.assignments(sid) });
                 }
-                
+
                 // Invalidate everything else - this only refetches ACTIVE queries, preventing unexpected fetch errors
                 queryClient.invalidateQueries({ queryKey: ['trainer'] });
                 queryClient.invalidateQueries({ queryKey: ['workouts'] });
@@ -104,15 +106,15 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
             // Onboarding transition: If they just imported, move to AHA moment
             if (onboardingStep === 'import_diet') {
                 nextStep('aha_moment')
-                
+
                 // Store ghost student data for personalization in the AHA banner
                 const ghostInfo = variables.createPlaceholder || { name: detectedStudentName || 'Aluno' };
                 localStorage.setItem(`onboarding_ghost_${userId}`, JSON.stringify(ghostInfo));
             }
 
-            toast({ 
-                title: "✅ Plano importado com sucesso", 
-                description: `${type === 'workout' ? 'Treino' : 'Dieta'} processado e vinculado.` 
+            toast({
+                title: "✅ Plano importado com sucesso",
+                description: `${type === 'workout' ? 'Treino' : 'Dieta'} processado e vinculado.`
             });
         },
         onSettled: () => {
@@ -168,26 +170,33 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
             if (result.data) {
                 const cardios = result.data.parsed_data?.cardios || []
                 const ergogenics = result.data.parsed_data?.ergogenics || []
-                
+
                 const initialCardios = new Set<number>()
-                const anyHasDays = cardios.some((c: any) => c.application_days && c.application_days.length > 0)
-                
+                const anyHasDays = cardios.some((c: any) => {
+                    const d = c.application_days || c.days_of_week || c.day_of_week;
+                    return d && (Array.isArray(d) ? d.length > 0 : true);
+                });
+
                 // Initialize cardio application_days if missing
+                const isStudent = role === 'student';
                 const updatedCardios = cardios.map((c: any, i: number) => {
-                    const hasDays = c.application_days && c.application_days.length > 0;
+                    const rawDays = c.application_days || c.days_of_week || c.day_of_week;
+                    const hasDays = rawDays && (Array.isArray(rawDays) ? rawDays.length > 0 : true);
+
                     if (anyHasDays) {
                         if (hasDays) {
                             initialCardios.add(i);
-                            return { ...c, application_days: normalizeDays(c.application_days) };
+                            return { ...c, application_days: normalizeDays(rawDays) };
                         }
                         return c;
                     } else {
-                        // If none have days, select the first one and make it daily
-                        if (i === 0) {
+                        // If none have days, only auto-select daily for student mode
+                        if (isStudent && i === 0) {
                             initialCardios.add(i);
                             return { ...c, application_days: [0, 1, 2, 3, 4, 5, 6] };
                         }
-                        return { ...c, application_days: [] };
+                        // For trainers, we keep it as is (empty) unless the AI specified it
+                        return { ...c, application_days: normalizeDays(rawDays || []) };
                     }
                 });
 
@@ -202,11 +211,11 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
                     application_days: normalizeDays(ergo.application_days)
                 }));
                 if (updatedErgos.length > 0) {
-                   result.data.parsed_data.ergogenics = updatedErgos;
+                    result.data.parsed_data.ergogenics = updatedErgos;
                 }
                 setSelectedErgoIndices(new Set(updatedErgos.map((_: any, i: number) => i)))
             }
-            
+
             if (role === 'trainer' && result.data?.detected_student_name) {
                 setDetectedStudentName(result.data.detected_student_name)
                 const match = await findStudentByName(result.data.detected_student_name)
@@ -302,8 +311,10 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
                 ...dataToSave,
                 diet_name: selectedOption.name,
                 meals: selectedOption.meals,
-                days_of_week: (selectedDietDays && selectedDietDays.length > 0) ? selectedDietDays : [0, 1, 2, 3, 4, 5, 6],
+                days_of_week: (selectedDietDays && selectedDietDays.length > 0) ? selectedDietDays : (role === 'student' ? [0, 1, 2, 3, 4, 5, 6] : []),
             }
+            // 🚨 DUPLICATION FIX: Remove all options to prevent save-actions from looping through them
+            delete dataToSave.options;
         } else if (type === 'diet') {
             dataToSave = {
                 ...dataToSave,
@@ -322,12 +333,12 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
 
         const finalStudentId = selectedStudentId || initialStudentId;
 
-        console.log(`[PDF-UPLOADER] 🚨 DEBUG SAVE:`, { 
-            type, 
-            finalStudentId, 
+        console.log(`[PDF-UPLOADER] 🚨 DEBUG SAVE:`, {
+            type,
+            finalStudentId,
             selectedStudentId,
             initialStudentId,
-            bindingMode, 
+            bindingMode,
             hasPlaceholder: !!createPlaceholderObj,
             email: placeholderEmail
         });
@@ -336,8 +347,8 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
             type,
             data: dataToSave,
             studentId: finalStudentId || undefined,
-            createPlaceholder: createPlaceholderObj, 
-            userId 
+            createPlaceholder: createPlaceholderObj,
+            userId
         })
     }
 
@@ -362,16 +373,16 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
                     )}
                 </div>
             </CardHeader>
-            <CardContent className="p-8">
+            <CardContent className="p-4">
                 {!parsedData ? (
                     <div className="relative group">
-                        <div 
+                        <div
                             id="tour-dropzone"
                             className={`
                             flex flex-col items-center justify-center p-12 lg:p-20 border-2 border-dashed rounded-3xl transition-all
                             ${uploading || parsing
-                                ? 'bg-zinc-900/20 border-zinc-800 pointer-events-none'
-                                : 'bg-transparent border-zinc-800 hover:border-emerald-500/50 hover:bg-emerald-500/[0.02] cursor-pointer group'}
+                                    ? 'bg-zinc-900/20 border-zinc-800 pointer-events-none'
+                                    : 'bg-transparent border-zinc-800 hover:border-emerald-500/50 hover:bg-emerald-500/[0.02] cursor-pointer group'}
                         `}>
                             {uploading || parsing ? (
                                 <div className="flex flex-col items-center gap-6">
@@ -442,16 +453,16 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
                                         </div>
                                     )}
                                 </div>
-                                
+
                                 {studentMatch?.exact && bindingMode === 'matched' ? (
                                     <div className="flex flex-col gap-3">
                                         <p className="text-xs text-zinc-500">
                                             Identificamos o aluno <strong className="text-emerald-400">{studentMatch.exact.full_name}</strong> automaticamente.
                                         </p>
                                         <div className="flex gap-2">
-                                            <Button 
-                                                variant="outline" 
-                                                size="sm" 
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
                                                 className="h-8 text-[10px] uppercase font-black px-4"
                                                 onClick={() => {
                                                     setBindingMode('skip');
@@ -467,39 +478,39 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
                                         <p className="text-xs text-zinc-400 font-bold uppercase tracking-widest">
                                             {detectedStudentName ? "Como deseja processar esta importação?" : "Quem deve receber este treino/dieta?"}
                                         </p>
-                                        
-                                        <div 
+
+                                        <div
                                             id="tour-binding-modes"
                                             className="flex flex-col md:flex-row items-stretch gap-4 w-full"
                                         >
                                             <div id="tour-binding-container" className="flex-1">
-                                                <Button 
+                                                <Button
                                                     id="tour-btn-create-student"
-                                                    type="button" 
+                                                    type="button"
                                                     variant={bindingMode === 'create' ? 'default' : 'outline'}
-                                                className={cn(
-                                                    "flex-1 rounded-2xl !h-[56px] w-full text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 border-2",
-                                                    bindingMode === 'create' 
-                                                        ? "bg-emerald-500 text-black border-emerald-400 hover:bg-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.3)] scale-[1.02]" 
-                                                        : "bg-zinc-900/50 border-zinc-800 hover:border-zinc-700 hover:bg-zinc-800 text-zinc-500"
-                                                )}
-                                                onClick={() => { 
-                                                    setBindingMode('create'); 
-                                                    setSelectedStudentId(null);
-                                                    if (detectedStudentName && !placeholderName) setPlaceholderName(detectedStudentName);
-                                                }}
-                                            >
-                                                Criar Novo Aluno
-                                            </Button>
-                                        </div>
-                                            
+                                                    className={cn(
+                                                        "flex-1 rounded-2xl !h-[56px] w-full text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 border-2",
+                                                        bindingMode === 'create'
+                                                            ? "bg-emerald-500 text-black border-emerald-400 hover:bg-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.3)] scale-[1.02]"
+                                                            : "bg-zinc-900/50 border-zinc-800 hover:border-zinc-700 hover:bg-zinc-800 text-zinc-500"
+                                                    )}
+                                                    onClick={() => {
+                                                        setBindingMode('create');
+                                                        setSelectedStudentId(null);
+                                                        if (detectedStudentName && !placeholderName) setPlaceholderName(detectedStudentName);
+                                                    }}
+                                                >
+                                                    Criar Novo Aluno
+                                                </Button>
+                                            </div>
+
                                             <div className="flex-1">
                                                 <Select value={selectedStudentId || undefined} onValueChange={(val) => { setSelectedStudentId(val); setBindingMode('matched'); }}>
-                                                    <SelectTrigger 
+                                                    <SelectTrigger
                                                         className={cn(
                                                             "w-full rounded-2xl !h-[56px] bg-zinc-900/50 text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 border-2 px-6 flex items-center justify-between",
-                                                            bindingMode === 'matched' 
-                                                                ? "border-emerald-500 text-white shadow-[0_0_20px_rgba(16,185,129,0.2)] scale-[1.02]" 
+                                                            bindingMode === 'matched'
+                                                                ? "border-emerald-500 text-white shadow-[0_0_20px_rgba(16,185,129,0.2)] scale-[1.02]"
                                                                 : "border-zinc-800 text-zinc-500 hover:border-zinc-700"
                                                         )}
                                                         style={{ height: '56px' }}
@@ -522,13 +533,13 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
                                                 </Select>
                                             </div>
 
-                                            <Button 
-                                                type="button" 
+                                            <Button
+                                                type="button"
                                                 variant={bindingMode === 'skip' ? 'default' : 'outline'}
                                                 className={cn(
                                                     "flex-1 rounded-2xl !h-[56px] w-full text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 border-2",
-                                                    bindingMode === 'skip' 
-                                                        ? "bg-zinc-700 text-white border-zinc-600 shadow-xl" 
+                                                    bindingMode === 'skip'
+                                                        ? "bg-zinc-700 text-white border-zinc-600 shadow-xl"
                                                         : "bg-zinc-900/50 border-zinc-800 hover:border-zinc-700 hover:bg-zinc-800 text-zinc-500"
                                                 )}
                                                 onClick={() => { setBindingMode('skip'); setSelectedStudentId(''); }}
@@ -541,8 +552,8 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
                                             <div id="tour-student-fields" className="p-4 bg-zinc-950/50 border border-zinc-800 rounded-2xl space-y-4 animate-in slide-in-from-top-2">
                                                 <div className="space-y-2">
                                                     <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest px-1">Nome do Novo Aluno</label>
-                                                    <Input 
-                                                        placeholder="Digite o nome completo..." 
+                                                    <Input
+                                                        placeholder="Digite o nome completo..."
                                                         className="bg-zinc-900 border-zinc-800 text-white h-12 rounded-xl"
                                                         value={placeholderName}
                                                         onChange={(e) => setPlaceholderName(e.target.value)}
@@ -557,8 +568,8 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
                                                     </div>
                                                     <div className="relative">
                                                         <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-600" />
-                                                        <Input 
-                                                            placeholder="email@aluno.com" 
+                                                        <Input
+                                                            placeholder="email@aluno.com"
                                                             type="email"
                                                             required
                                                             className="bg-zinc-900 border-zinc-800 text-white h-12 rounded-xl pl-11"
@@ -571,8 +582,8 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
                                                         <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest px-1">WhatsApp do Aluno</label>
                                                         <div className="relative">
                                                             <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-600" />
-                                                            <Input 
-                                                                placeholder="(00) 00000-0000" 
+                                                            <Input
+                                                                placeholder="(00) 00000-0000"
                                                                 type="tel"
                                                                 className="bg-zinc-900 border-zinc-800 text-white h-12 rounded-xl pl-11"
                                                                 value={placeholderWhatsapp}
@@ -609,12 +620,12 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
                                             <span className="block text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">Destinatário da Importação</span>
                                             <div className="flex flex-col sm:flex-row items-center gap-3">
                                                 <h3 className="text-lg sm:text-xl font-black text-white italic uppercase tracking-tight">
-                                                    {selectedStudentId 
-                                                        ? (students.find(s => s.student_id === selectedStudentId)?.student?.[0]?.full_name || 
-                                                           students.find(s => s.student_id === selectedStudentId)?.student?.full_name || 
-                                                           studentMatch?.exact?.full_name || 
-                                                           "Aluno Selecionado")
-                                                        : (bindingMode === 'create' 
+                                                    {selectedStudentId
+                                                        ? (students.find(s => s.student_id === selectedStudentId)?.student?.[0]?.full_name ||
+                                                            students.find(s => s.student_id === selectedStudentId)?.student?.full_name ||
+                                                            studentMatch?.exact?.full_name ||
+                                                            "Aluno Selecionado")
+                                                        : (bindingMode === 'create'
                                                             ? (placeholderName || detectedStudentName || "Novo Aluno")
                                                             : "Somente Biblioteca")
                                                     }
@@ -684,11 +695,11 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
                                 onToggleCardio={toggleCardio}
                                 onToggleErgo={toggleErgo}
                                 onUpdateCardioDays={(idx: number, days: number[]) => {
-                                    const newData = { 
+                                    const newData = {
                                         ...parsedData,
                                         parsed_data: {
                                             ...parsedData.parsed_data,
-                                            cardios: parsedData.parsed_data.cardios.map((c: any, i: number) => 
+                                            cardios: parsedData.parsed_data.cardios.map((c: any, i: number) =>
                                                 i === idx ? { ...c, application_days: days } : c
                                             )
                                         }
@@ -696,11 +707,11 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
                                     setParsedData(newData)
                                 }}
                                 onUpdateErgoDays={(idx: number, days: number[]) => {
-                                    const newData = { 
+                                    const newData = {
                                         ...parsedData,
                                         parsed_data: {
                                             ...parsedData.parsed_data,
-                                            ergogenics: parsedData.parsed_data.ergogenics.map((e: any, i: number) => 
+                                            ergogenics: parsedData.parsed_data.ergogenics.map((e: any, i: number) =>
                                                 i === idx ? { ...e, application_days: days } : e
                                             )
                                         }
@@ -713,11 +724,6 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
 
                         {/* Actions */}
                         <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-3 pt-6 border-t border-zinc-900/50">
-                            {typeof window !== 'undefined' && localStorage.getItem(`onboarding_step_${userId}`) === 'import_diet' && bindingMode !== 'matched' && (
-                                <p className="text-[10px] font-black text-orange-500 uppercase tracking-widest animate-pulse mb-2 sm:mb-0">
-                                    ⚠️ Crie o aluno para vincular automaticamente
-                                </p>
-                            )}
                             <Button
                                 variant="ghost"
                                 onClick={() => {
@@ -743,7 +749,7 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
                                 ) : (
                                     <>
                                         <Check className="w-4 h-4" />
-                                        {bindingMode === 'create' 
+                                        {bindingMode === 'create'
                                             ? `SALVAR E VINCULAR A ${placeholderName?.toUpperCase() || detectedStudentName?.toUpperCase() || 'NOVO ALUNO'}`
                                             : `SALVAR ${type === 'workout' ? 'TREINO' : 'DIETA'}`
                                         }

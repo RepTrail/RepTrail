@@ -60,11 +60,11 @@ export function CardioCard({ userId }: CardioCardProps) {
     })
 
     // Skeleton Fallback: Only if loading AND no cache available
-    if ((isLoading || isLoadingLogs) && (!cardios || cardios.length === 0)) {
+    if ((isLoading || isLoadingLogs) && (!cardios || !Array.isArray(cardios) || cardios.length === 0)) {
         return <CardioCardSkeleton />
     }
 
-    if (!cardios || cardios.length === 0) {
+    if (!cardios || !Array.isArray(cardios) || cardios.length === 0) {
         return (
             <div className="bg-zinc-900/20 border border-zinc-800/50 border-dashed rounded-3xl py-12 sm:py-16 flex flex-col items-center justify-center text-center space-y-4">
                 <Activity className="w-8 h-8 text-zinc-700" />
@@ -73,16 +73,18 @@ export function CardioCard({ userId }: CardioCardProps) {
         )
     }
 
-    const currentAssignment = cardios[currentIndex] || cardios[0]
+    const currentAssignment = (Array.isArray(cardios) && cardios.length > 0) ? (cardios[currentIndex] || cardios[0]) : null
     const isCompleted = cardioLogs?.some(
-        (l: any) => l.assigned_cardio_id === currentAssignment.id && l.status === 'completed'
+        (l: any) => l.assigned_cardio_id === currentAssignment?.id && l.status === 'completed'
     )
 
     const nextCardio = () => {
+        if (!Array.isArray(cardios) || cardios.length === 0) return
         setCurrentIndex((prev) => (prev + 1) % cardios.length)
     }
 
     const prevCardio = () => {
+        if (!Array.isArray(cardios) || cardios.length === 0) return
         setCurrentIndex((prev) => (prev - 1 + cardios.length) % cardios.length)
     }
 

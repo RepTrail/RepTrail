@@ -56,7 +56,7 @@ export function UnifiedLibraryCard({
         return acc
     }, [])
 
-    const uniqueDays = Array.from(new Set(assignedDays)).sort((a, b) => a - b)
+    const uniqueDays = Array.from(new Set(assignedDays)).sort((a: number, b: number) => a - b);
 
     const colors = {
         orange: {
@@ -114,7 +114,7 @@ export function UnifiedLibraryCard({
                             {uniqueDays.map((day) => (
                                 <span key={day} className={cn("flex items-center shrink-0 gap-1 px-2 py-1 text-[9px] font-black uppercase rounded-[0.5rem] border", colors.badge)}>
                                     <Calendar className="w-2.5 h-2.5" />
-                                    {dayNamesShort[day]}
+                                    {dayNamesShort[day % 7]}
                                 </span>
                             ))}
                         </div>

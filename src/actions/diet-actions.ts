@@ -583,6 +583,45 @@ Ensure the macros returned are calculated specifically for the suggested quantit
     }
 }
 
+export async function estimateMacrosForFoodList(allItems: any[]) {
+    if (allItems.length === 0) return [];
+
+    try {
+        const { createOpenRouterClient, callAI } = await import('@/lib/ai-client');
+        const client = createOpenRouterClient();
+
+        const itemsList = allItems.map((item, idx) => `${idx}: ${item.food_name || item.name} (${item.quantity || '1 portion'})`).join('\n')
+
+        const prompt = `
+You are a nutrition expert. Estimate the macronutrients (Protein, Carbs, Fat) AND Dietary Fiber for each food item in the list below. 
+It is very important to provide realistic fiber values for vegetables, grains, and fruits.
+
+Items:
+${itemsList}
+
+Return ONLY a JSON array of objects with this exact structure (no markdown):
+[
+  {"index": 0, "protein": number, "carbs": number, "fat": number, "fiber": number},
+  ...
+]
+`;
+
+        console.log(`[MACRO_ESTIMATE] Requesting AI calculation with Fiber for ${allItems.length} items...`)
+        const results = await callAI<any[]>(client, prompt);
+        console.log(`[MACRO_ESTIMATE] AI returned ${results?.length || 0} items with fiber data.`)
+
+        if (!results || !Array.isArray(results)) {
+            console.error(`[MACRO_ESTIMATE] Invalid AI response:`, results)
+            throw new Error('AI returned invalid format')
+        }
+
+        return results;
+    } catch (e: any) {
+        console.error(`[MACRO_ESTIMATE] Error:`, e.message);
+        throw e;
+    }
+}
+
 export async function estimateAllDietMacros(dietId: string) {
     console.log(`[MACRO_ESTIMATE] Starting for diet: ${dietId}`)
     const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
@@ -602,41 +641,21 @@ export async function estimateAllDietMacros(dietId: string) {
 
         const allItems: any[] = []
         diet.meals.forEach((m: any) => {
-            if (m.meal_items) allItems.push(...m.meal_items)
+            if (m.meal_items) {
+                // Ensure name is present for the helper
+                m.meal_items.forEach((mi: any) => {
+                    allItems.push({ ...mi, food_name: mi.food_name || mi.name });
+                });
+            }
         })
 
         console.log(`[MACRO_ESTIMATE] Found ${allItems.length} items.`)
         if (allItems.length === 0) return { success: true }
 
-        const { createOpenRouterClient, callAI } = await import('@/lib/ai-client');
-        const client = createOpenRouterClient();
+        // 2. Call the helper
+        const results = await estimateMacrosForFoodList(allItems);
 
-        const itemsList = allItems.map((item, idx) => `${idx}: ${item.food_name} (${item.quantity || '1 portion'})`).join('\n')
-
-        const prompt = `
-You are a nutrition expert. Estimate the macronutrients (Protein, Carbs, Fat) AND Dietary Fiber for each food item in the list below. 
-It is very important to provide realistic fiber values for vegetables, grains, and fruits.
-
-Items:
-${itemsList}
-
-Return ONLY a JSON array of objects with this exact structure (no markdown):
-[
-  {"index": 0, "protein": number, "carbs": number, "fat": number, "fiber": number},
-  ...
-]
-`;
-
-        console.log(`[MACRO_ESTIMATE] Requesting AI calculation with Fiber...`)
-        const results = await callAI<any[]>(client, prompt);
-        console.log(`[MACRO_ESTIMATE] AI returned ${results?.length || 0} items with fiber data.`)
-
-        if (!results || !Array.isArray(results)) {
-            console.error(`[MACRO_ESTIMATE] Invalid AI response:`, results)
-            throw new Error('AI returned invalid format')
-        }
-
-        // 2. Update database
+        // 3. Update database
         console.log(`[MACRO_ESTIMATE] AI Result Sample:`, JSON.stringify(results.slice(0, 2)))
 
         // Verify column
@@ -648,8 +667,9 @@ Return ONLY a JSON array of objects with this exact structure (no markdown):
             }
         }
 
-        console.log(`[MACRO_ESTIMATE] Starting database updates for ${results.length} items...`)
-        for (const res of results) {
+        console.log(`[MACRO_ESTIMATE] Starting parallel database updates for ${results.length} items...`)
+        
+        await Promise.all(results.map(async (res) => {
             const item = allItems[res.index]
             if (item) {
                 console.log(`[MACRO_ESTIMATE] Upd: ${item.food_name} -> P:${res.protein} C:${res.carbs} G:${res.fat} F:${res.fiber}`)
@@ -659,13 +679,14 @@ Return ONLY a JSON array of objects with this exact structure (no markdown):
                         protein: res.protein,
                         carbs: res.carbs,
                         fat: res.fat,
-                        fiber: res.fiber || 0
+                        fiber: res.fiber || 0,
+                        calories: (res.protein * 4) + (res.carbs * 4) + (res.fat * 9)
                     })
                     .eq('id', item.id)
 
                 if (upErr) console.error(`[MACRO_ESTIMATE] SQL Error for ${item.food_name}:`, upErr)
             }
-        }
+        }));
 
         console.log(`[MACRO_ESTIMATE] All updates finished.`)
         revalidatePath(`/dashboard/trainer/diets/${dietId}`)

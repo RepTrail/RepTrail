@@ -62,10 +62,10 @@ export function CardioPageClient({ userId }: CardioPageClientProps) {
         if (!acc[assignment.cardio_id]) {
             acc[assignment.cardio_id] = []
         }
-        if (assignment.day_of_week !== undefined && assignment.day_of_week !== null) {
-            acc[assignment.cardio_id].push(assignment.day_of_week)
-        } else if (assignment.days_of_week && Array.isArray(assignment.days_of_week)) {
+        if (assignment.days_of_week && Array.isArray(assignment.days_of_week) && assignment.days_of_week.length > 0) {
             acc[assignment.cardio_id].push(...assignment.days_of_week)
+        } else if (assignment.day_of_week !== undefined && assignment.day_of_week !== null) {
+            acc[assignment.cardio_id].push(assignment.day_of_week)
         }
         return acc
     }, {})
@@ -196,10 +196,14 @@ export function CardioPageClient({ userId }: CardioPageClientProps) {
                                                         <CardContent>
                                                             {assignedDays.length > 0 && (
                                                                 <div className="flex flex-wrap gap-1.5 mb-6">
-                                                                    {(Array.from(new Set(assignedDays)) as number[]).sort((a: number, b: number) => a - b).map((day: number) => (
+                                                                    {(Array.from(new Set(assignedDays)) as number[]).sort((a: number, b: number) => {
+                                                                        const valA = a === 0 ? 7 : a;
+                                                                        const valB = b === 0 ? 7 : b;
+                                                                        return valA - valB;
+                                                                    }).map((day: number) => (
                                                                         <span key={day} className="flex items-center shrink-0 gap-1 px-2 py-1 bg-orange-500/10 text-orange-400 text-[9px] font-black uppercase rounded-[0.5rem] border border-orange-500/20">
                                                                             <Calendar className="w-2.5 h-2.5" />
-                                                                            {dayNames[day]}
+                                                                            {dayNames[day % 7]}
                                                                         </span>
                                                                     ))}
                                                                 </div>

@@ -20,6 +20,7 @@ const getGlobalStudentConfigs = (userId: string): PrefetchConfig[] => [
     { queryKey: [...QUERY_KEYS.workouts.session], queryFn: () => getActiveWorkoutSession() },
     { queryKey: [...QUERY_KEYS.cardio.session], queryFn: () => import('@/actions/cardio-actions').then(m => m.getActiveCardioSession()) },
     { queryKey: QUERY_KEYS.student.details(userId), queryFn: () => getStudentProfile(userId) },
+    { queryKey: QUERY_KEYS.profile.trainer(userId), queryFn: () => getStudentTrainer(userId) },
 ];
 
 const getGlobalTrainerConfigs = (userId: string): PrefetchConfig[] => [
@@ -68,7 +69,6 @@ export const PREFETCH_REGISTRY: Record<string, (userId: string) => PrefetchConfi
     ],
     '/dashboard/student/profile': (userId) => [
         ...getGlobalStudentConfigs(userId),
-        { queryKey: QUERY_KEYS.profile.trainer(userId), queryFn: () => getStudentTrainer(userId) },
     ],
     '/dashboard/student/progress': (userId) => [
         ...getGlobalStudentConfigs(userId),
@@ -86,7 +86,6 @@ export const PREFETCH_REGISTRY: Record<string, (userId: string) => PrefetchConfi
     ],
     '/dashboard/student/meu-personal': (userId) => [
         ...getGlobalStudentConfigs(userId),
-        { queryKey: QUERY_KEYS.profile.trainer(userId), queryFn: () => getStudentTrainer(userId) }
     ],
     '/dashboard/student/loja': (userId) => [
         ...getGlobalStudentConfigs(userId),

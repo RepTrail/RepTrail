@@ -3,6 +3,8 @@
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath, revalidateTag } from 'next/cache'
 import crypto from 'crypto'
+import { estimateAllDietMacros } from '@/actions/diet-actions'
+import { normalizeDays } from '@/lib/utils'
 
 export async function saveParsedData(
     type: 'workout' | 'diet', 
@@ -48,7 +50,26 @@ export async function saveParsedData(
 
     try {
         // 1. Process Workouts
-        const workoutsToProcess = data.workouts || (data.exercises ? [{ name: data.workout_name || 'Treino Importado', exercises: data.exercises }] : []);
+        const rawWorkouts = data.workouts || (data.exercises ? [{ name: data.workout_name || 'Treino Importado', exercises: data.exercises }] : []);
+        let workoutsToProcess = (type === 'workout' || !type) ? rawWorkouts : [];
+        
+        // 🛡️ MERGE DEFENSE: If AI returned multiple workouts with the same name and day, merge them
+        if (Array.isArray(workoutsToProcess) && workoutsToProcess.length > 1) {
+            const merged: any[] = [];
+            workoutsToProcess.forEach(w => {
+                const existing = merged.find(m => 
+                    (m.name === w.name || m.workout_name === w.name || m.name === w.workout_name) && 
+                    m.day_of_week === w.day_of_week
+                );
+                if (existing) {
+                    existing.exercises = [...(existing.exercises || []), ...(w.exercises || w.items || [])];
+                } else {
+                    merged.push({ ...w });
+                }
+            });
+            workoutsToProcess = merged;
+        }
+
         if (workoutsToProcess.length > 0) {
             for (const wData of workoutsToProcess) {
                 const wName = wData.name || wData.workout_name || 'Treino Importado';
@@ -63,7 +84,8 @@ export async function saveParsedData(
                 }
                 results.workouts.push(workout.id);
 
-                const dayOfWeek = (wData.day_of_week !== undefined && wData.day_of_week !== null) ? parseInt(String(wData.day_of_week)) : null;
+                const dayRes = normalizeDays(wData.day_of_week);
+                const dayOfWeek = dayRes.length > 0 ? dayRes[0] : null;
                 workoutDays.push({ id: workout.id, day: dayOfWeek });
 
                 const exercisesArray = wData.exercises || wData.items || [];
@@ -120,7 +142,8 @@ export async function saveParsedData(
         }
 
         // 2. Process Diets
-        const dietsToProcess = data.options || data.diets || (data.meals ? [{ diet_name: data.diet_name || 'Dieta Importada', meals: data.meals, days_of_week: dietDays }] : []);
+        const rawDiets = data.options || data.diets || (data.meals ? [{ diet_name: data.diet_name || 'Dieta Importada', meals: data.meals, days_of_week: dietDays }] : []);
+        const dietsToProcess = (type === 'diet' || !type || (type === 'workout' && rawDiets.length > 0)) ? rawDiets : [];
         if (dietsToProcess.length > 0) {
             for (const dData of dietsToProcess) {
                 const { data: diet, error: dError } = await supabase
@@ -141,7 +164,7 @@ export async function saveParsedData(
                         diet_id: diet.id, 
                         student_id: targetStudentId, 
                         active: true, 
-                        days_of_week: (dData.days_of_week && dData.days_of_week.length > 0) ? dData.days_of_week : dietDays 
+                        days_of_week: normalizeDays((dData.days_of_week && dData.days_of_week.length > 0) ? dData.days_of_week : dietDays)
                     });
                 }
 
@@ -186,12 +209,16 @@ export async function saveParsedData(
                 if (!cError && cardio) {
                     results.cardios.push(cardio.id);
                     if (targetStudentId) {
+                        const rawDays = cData.application_days || cData.days_of_week;
+                        const numericDays = normalizeDays(rawDays);
+
                         await supabase.from('assigned_cardios').insert({
                             student_id: targetStudentId,
                             cardio_id: cardio.id,
                             duration_minutes: parseInt(cData.duration) || 30,
                             suggested_intensity: (cData.intensity || 'Moderado').toString(),
-                            days_of_week: (cData.application_days && cData.application_days.length > 0) ? cData.application_days : [0, 1, 2, 3, 4, 5, 6],
+                            days_of_week: numericDays,
+                            day_of_week: numericDays.length > 0 ? numericDays[0] : null, // 🚀 HYBRID FIX: Support both old and new UI components
                             active: true,
                         });
                     }
@@ -213,7 +240,12 @@ export async function saveParsedData(
                         name: eData.name, 
                         dosage: eData.dosage, 
                         weekly_dosage: eData.weekly_dosage || 0,
-                        unit: (eData.unit === 'mg' || eData.unit === 'ml' || eData.unit === 'un') ? eData.unit : 'ml',
+                        unit: (() => {
+                            const u = (eData.unit || 'mg').toLowerCase().trim();
+                            if (u === 'mg' || u === 'ml' || u === 'un' || u === 'g' || u === 'mcg') return u;
+                            if (u.startsWith('un') || u === 'uni') return 'un';
+                            return 'mg'; // Default to mg as it's safer for most substances than ml
+                        })(),
                         application_days: eData.application_days || [], 
                         notes: eData.notes || '',
                         start_date: new Date().toISOString().split('T')[0]
@@ -235,7 +267,26 @@ export async function saveParsedData(
             revalidatePath('/dashboard/student/ergogenics')
         }
 
-        return { success: true, results, data: results }
+        // 4. Final Revalidation and Auto-Calculation (Only if macros are missing)
+        const hasMacrosInPayload = dietsToProcess.some((d: any) => 
+            d.meals?.some((m: any) => 
+                m.foods?.some((f: any) => (f.protein || 0) > 0)
+            )
+        );
+
+        if (results.diets.length > 0 && !hasMacrosInPayload) {
+            console.log(`[SAVE-ACTIONS] Parallel auto-calculating macros for ${results.diets.length} diets (macros missing in payload)...`);
+            await Promise.all(results.diets.map(async (dietId: string) => {
+                try {
+                    await estimateAllDietMacros(dietId);
+                } catch (calcErr) {
+                    console.error(`[SAVE-ACTIONS] Failed to auto-calculate macros for diet ${dietId}:`, calcErr);
+                }
+            }));
+        }
+
+        revalidatePath('/')
+        return { success: true, results, data: { placeholderId: results.placeholderId } }
     } catch (e: any) {
         console.error("[SAVE-ACTIONS] Critical failure:", e.message);
         return { error: e.message }
