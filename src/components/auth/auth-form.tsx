@@ -119,7 +119,7 @@ export function AuthForm({ view }: AuthFormProps) {
                         full_name: fullName,
                         whatsapp: whatsapp,
                         role: role,
-                        is_placeholder: false, // Mark as real account
+                        is_placeholder: false,
                         terms_accepted_at: new Date().toISOString(),
                         saw_auto_training_onboarding_modal: true,
                         ...(role === 'student' ? {
@@ -131,20 +131,19 @@ export function AuthForm({ view }: AuthFormProps) {
                     }
 
                     if (placeholder) {
-                        // Overwrite existing placeholder. 
-                        // Note: If ID update fails due to FK constraints, we delete and re-insert,
-                        // but usually Supabase 'profiles' trigger handles this. 
-                        // Here we manually ensure the student "claims" the placeholder.
-                        const { error: claimError } = await supabase
-                            .from('profiles')
-                            .update(profileData)
-                            .eq('id', placeholder.id)
-                        
-                        if (claimError) {
-                            console.error('[AUTH] Error claiming placeholder:', claimError)
-                            // Fallback to upsert if update failed
-                            await supabase.from('profiles').upsert(profileData, { onConflict: 'id' })
+                        // 🚀 NEW SECURE MERGE: Call RPC to move all data
+                        // This bypasses FK and PK update issues by moving child rows and deleting the old parent
+                        const { error: mergeError } = await supabase.rpc('merge_ghost_data', {
+                            new_user_id: signUpData.user.id,
+                            user_email: email
+                        })
+
+                        if (mergeError) {
+                            console.error('[AUTH] RPC Merge Error:', mergeError)
                         }
+
+                        // Ensure profile data is updated/inserted for the new ID
+                        await supabase.from('profiles').upsert(profileData, { onConflict: 'id' })
                     } else {
                         await supabase
                             .from('profiles')

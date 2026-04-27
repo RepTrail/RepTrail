@@ -78,8 +78,8 @@ export function TrainerTourManager({ userId }: TrainerTourManagerProps) {
             {
                 path: '/dashboard/trainer',
                 selector: '#tour-import-pdf',
-                title: 'Passo 1: Começar',
-                content: 'Clique aqui para abrir o importador inteligente.',
+                title: 'Comece agora',
+                content: 'Abra o importador inteligente para transformar seus PDFs em protocolos digitais em segundos.',
                 position: 'right',
                 condition: onboardingStep === 'import_diet'
             },
@@ -87,8 +87,8 @@ export function TrainerTourManager({ userId }: TrainerTourManagerProps) {
             {
                 path: '/dashboard/trainer/import-pdf',
                 selector: '#tour-import-type',
-                title: 'Passo 2: Definir',
-                content: 'Escolha se vai importar um TREINO ou uma DIETA.',
+                title: 'Defina o objetivo',
+                content: 'Selecione se você vai digitalizar um treino ou uma dieta agora.',
                 position: 'bottom',
                 condition: onboardingStep === 'import_diet' && !isParsed,
                 showNextButton: true
@@ -97,8 +97,8 @@ export function TrainerTourManager({ userId }: TrainerTourManagerProps) {
             {
                 path: '/dashboard/trainer/import-pdf',
                 selector: '#tour-dropzone',
-                title: 'Passo 3: Importar',
-                content: 'Solte seu PDF aqui para começar a leitura.',
+                title: 'Upload inteligente',
+                content: 'Arraste o arquivo aqui. A gente lê e organiza tudo automaticamente.',
                 position: 'top',
                 condition: onboardingStep === 'import_diet' && !isParsed
             },
@@ -106,8 +106,8 @@ export function TrainerTourManager({ userId }: TrainerTourManagerProps) {
             {
                 path: '/dashboard/trainer/import-pdf',
                 selector: '#tour-student-fields',
-                title: 'Passo 4: Identificar',
-                content: 'Preencha o nome e email do seu novo aluno.',
+                title: 'Identifique o aluno',
+                content: 'Informe o nome e e-mail dele. Quando o aluno acessar, o plano já estará esperando por ele.',
                 position: 'top',
                 condition: onboardingStep === 'import_diet' && showBindingModes && isCreatingStudent,
                 showNextButton: true,
@@ -117,8 +117,8 @@ export function TrainerTourManager({ userId }: TrainerTourManagerProps) {
             {
                 path: '/dashboard/trainer/import-pdf',
                 selector: '#tour-import-card',
-                title: 'Passo 5: Conferir',
-                content: 'Revise os dados importados abaixo. Quando terminar, desça a tela e clique em Salvar e Atribuir.',
+                title: 'Quase pronto',
+                content: 'Revise os dados extraídos automaticamente. Se estiver tudo certo, confirme para salvar.',
                 position: 'top-right',
                 isFixed: true,
                 condition: onboardingStep === 'import_diet' && showBindingModes && isCreatingStudent,
@@ -129,8 +129,8 @@ export function TrainerTourManager({ userId }: TrainerTourManagerProps) {
             {
                 path: '/dashboard/trainer/import-pdf',
                 selector: '#tour-sidebar-students',
-                title: 'Passo 6: Ver Alunos',
-                content: 'Tudo pronto! Agora vamos conferir como o aluno recebeu esses dados. Clique em "Alunos" no menu lateral.',
+                title: 'Plano pronto',
+                content: 'Deu certo. Agora vamos ver como ele ficou na sua lista.',
                 position: 'right',
                 condition: onboardingStep === 'aha_moment'
             },
@@ -138,8 +138,8 @@ export function TrainerTourManager({ userId }: TrainerTourManagerProps) {
             {
                 path: '/dashboard/trainer/students',
                 selector: '#tour-view-profile-0',
-                title: 'Passo 7: Ver Perfil',
-                content: 'O aluno foi criado automaticamente. Clique em "Perfil" para ver o protocolo dele.',
+                title: 'Tudo organizado',
+                content: 'Veja como o aluno vai receber tudo pronto no perfil dele.',
                 position: 'left',
                 condition: onboardingStep === 'aha_moment'
             },
@@ -147,12 +147,12 @@ export function TrainerTourManager({ userId }: TrainerTourManagerProps) {
             {
                 path: '/dashboard/trainer/students/[id]', 
                 selector: '#tour-aha-card',
-                title: '🎉 Tutorial Concluído!',
-                content: 'Sensacional! O protocolo já está ativo. Agora é só pedir para o aluno se cadastrar usando o e-mail que você definiu. Quando ele entrar, tudo já estará lá!\n\nSinta-se livre para explorar a plataforma e transformar sua consultoria.',
+                title: '🎉 Protocolo entregue',
+                content: 'O plano já está no app. Agora é só o aluno entrar com o e-mail que você definiu para começar a treinar.\n\nVocê digitalizou seu primeiro plano em minutos. Agora sua consultoria está pronta para escalar.',
                 position: 'center',
                 condition: onboardingStep === 'aha_moment',
                 showNextButton: true,
-                nextButtonLabel: 'Concluir Tutorial',
+                nextButtonLabel: 'Finalizar',
                 noPulse: true
             }
         ]
@@ -182,7 +182,7 @@ export function TrainerTourManager({ userId }: TrainerTourManagerProps) {
     }, [pathname, showBindingModes, isCreatingStudent, currentStepIndex, onboardingStep, isParsed]);
 
     const handleDismiss = () => {
-        const confirmed = window.confirm('Este tutorial é essencial para você aprender a usar a plataforma e poupar horas de trabalho. Tem certeza que deseja fechar e não ver mais este guia?')
+        const confirmed = window.confirm('Isso leva menos de 1 minuto e já deixa seu primeiro aluno pronto. Quer sair agora?')
         if (confirmed) {
             complete()
         }
