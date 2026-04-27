@@ -51,8 +51,19 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" suppressHydrationWarning className="dark" style={{ colorScheme: 'dark' }} data-scroll-behavior="smooth">
       <head>
-        {/* Contentsquare (Hotjar) Tracking Code */}
-        <Script src="https://t.contentsquare.net/uxa/ae89ba1e10417.js" strategy="afterInteractive" />
+        {/* Hotjar Tracking Code for RepTrail */}
+        <Script id="hotjar-setup" strategy="afterInteractive">
+          {`
+            (function(h,o,t,j,a,r){
+                h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+                h._hjSettings={hjid:781788,hjsv:6};
+                a=o.getElementsByTagName('head')[0];
+                r=o.createElement('script');r.async=1;
+                r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+                a.appendChild(r);
+            })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+          `}
+        </Script>
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-zinc-950`}
