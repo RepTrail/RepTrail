@@ -41,6 +41,7 @@ export const viewport: Viewport = {
 import { QueryProvider } from "@/components/providers/query-provider";
 import NextTopLoader from 'nextjs-toploader';
 import FacebookPixel from "@/lib/meta-pixel";
+import Script from 'next/script';
 
 export default function RootLayout({
   children,
@@ -49,6 +50,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" suppressHydrationWarning className="dark" style={{ colorScheme: 'dark' }} data-scroll-behavior="smooth">
+      <head>
+        {/* Contentsquare (Hotjar) Tracking Code */}
+        <Script src="https://t.contentsquare.net/uxa/ae89ba1e10417.js" strategy="afterInteractive" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-zinc-950`}
         suppressHydrationWarning
