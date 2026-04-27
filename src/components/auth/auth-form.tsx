@@ -105,24 +105,51 @@ export function AuthForm({ view }: AuthFormProps) {
                 // Guarantee the profile has the correct data — use upsert because the
                 // DB trigger may not have created the row yet when this runs (race condition).
                 if (signUpData?.user?.id) {
-                    await supabase
+                    // Check for existing placeholder profile with this email
+                    const { data: placeholder } = await supabase
                         .from('profiles')
-                        .upsert({
-                            id: signUpData.user.id,
-                            email: email,
-                            full_name: fullName,
-                            whatsapp: whatsapp,
-                            role: role,
-                            terms_accepted_at: new Date().toISOString(),
-                            saw_auto_training_onboarding_modal: true, // Disable auto onboarding popup as requested
-                            // Only students get automatic trial/auto-training status
-                            ...(role === 'student' ? {
-                                auto_training_status: 'trial',
-                                auto_training_trial_end: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-                            } : {
-                                plan_tier: 'on_demand' // Trainers now auto-activate On-Demand plan
-                            }),
-                        }, { onConflict: 'id' })
+                        .select('id, is_placeholder')
+                        .eq('email', email)
+                        .eq('is_placeholder', true)
+                        .maybeSingle()
+
+                    const profileData = {
+                        id: signUpData.user.id,
+                        email: email,
+                        full_name: fullName,
+                        whatsapp: whatsapp,
+                        role: role,
+                        is_placeholder: false, // Mark as real account
+                        terms_accepted_at: new Date().toISOString(),
+                        saw_auto_training_onboarding_modal: true,
+                        ...(role === 'student' ? {
+                            auto_training_status: 'trial',
+                            auto_training_trial_end: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+                        } : {
+                            plan_tier: 'on_demand'
+                        }),
+                    }
+
+                    if (placeholder) {
+                        // Overwrite existing placeholder. 
+                        // Note: If ID update fails due to FK constraints, we delete and re-insert,
+                        // but usually Supabase 'profiles' trigger handles this. 
+                        // Here we manually ensure the student "claims" the placeholder.
+                        const { error: claimError } = await supabase
+                            .from('profiles')
+                            .update(profileData)
+                            .eq('id', placeholder.id)
+                        
+                        if (claimError) {
+                            console.error('[AUTH] Error claiming placeholder:', claimError)
+                            // Fallback to upsert if update failed
+                            await supabase.from('profiles').upsert(profileData, { onConflict: 'id' })
+                        }
+                    } else {
+                        await supabase
+                            .from('profiles')
+                            .upsert(profileData, { onConflict: 'id' })
+                    }
                 }
 
                 // Clear affiliate cookie after successful registration
