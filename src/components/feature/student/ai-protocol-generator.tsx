@@ -166,10 +166,48 @@ export function AIProtocolGenerator({ userId = 'me' }: { userId?: string }) {
             // OPTIMISTIC CACHE PATCH (The 0ms feeling)
             const { type, data } = variables
             if (type === 'workout') {
-                queryClient.setQueryData(QUERY_KEYS.workouts.today(userId), data.workouts[0])
+                // Ensure it's an array and add a mock ID to prevent crashes in detail links
+                const optimisticWorkouts = data.workouts.map((w: any) => ({
+                    ...w,
+                    id: w.id || `opt-w-${Math.random()}`,
+                    status: 'not_started',
+                    workout_exercises: (w.exercises || []).map((ex: any) => ({
+                        ...ex,
+                        id: `opt-ex-${Math.random()}`,
+                        exercise: { name: ex.name || ex.exercise }
+                    }))
+                }))
+                queryClient.setQueryData(QUERY_KEYS.workouts.today(userId), optimisticWorkouts)
+
+                // Also handle cardios if present in the same generation
+                if (data.cardios?.length) {
+                    const optimisticCardios = data.cardios.map((c: any) => ({
+                        ...c,
+                        id: c.id || `opt-c-${Math.random()}`,
+                        name: c.type || c.name || 'Cardio'
+                    }))
+                    queryClient.setQueryData(QUERY_KEYS.cardio.today(userId), optimisticCardios)
+                }
             }
             if (type === 'diet') {
-                queryClient.setQueryData(QUERY_KEYS.diets.today(userId), data.diets[0])
+                // Ensure it matches the expected structure of getStudentDailyDiet
+                const optimisticDiet = {
+                    ...data.diets[0],
+                    id: data.diets[0].id || `opt-d-${Math.random()}`,
+                    user_id: userId,
+                    meals: (data.diets[0].meals || []).map((m: any) => ({
+                        ...m,
+                        id: `opt-m-${Math.random()}`,
+                        name: m.meal_name || m.name,
+                        meal_items: (m.foods || m.items || []).map((i: any) => ({
+                            ...i,
+                            id: `opt-i-${Math.random()}`,
+                            food_name: i.name || i.food_name || i.food,
+                            is_checked: false
+                        }))
+                    }))
+                }
+                queryClient.setQueryData(QUERY_KEYS.diets.today(userId), optimisticDiet)
             }
         }
     })
