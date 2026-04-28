@@ -113,9 +113,9 @@ export function DietAdherence({ diet, allowEstimation = false, hasTrainer = fals
                         <div className="space-y-1" suppressHydrationWarning>
                             <div className="flex items-center gap-2" suppressHydrationWarning>
                                 <Utensils className="w-4 h-4 text-emerald-500" />
-                                <h3 className="text-xl font-black text-white italic uppercase">{diet.name}</h3>
+                                <h3 className="text-xl font-black text-white capitalize">{diet.name.toLowerCase()}</h3>
                             </div>
-                            <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
+                            <p className="text-[10px] font-bold text-zinc-500 capitalize">
                                 Progresso Diário • {completedItems}/{totalItems} Itens
                             </p>
                         </div>
@@ -210,7 +210,7 @@ export function DietAdherence({ diet, allowEstimation = false, hasTrainer = fals
 function MacroBox({ label, value, unit, color, className }: any) {
     return (
         <div className={cn("flex flex-col items-center justify-center p-3 sm:p-4 rounded-2xl bg-zinc-900/50 border border-zinc-800/50 shadow-inner", className)}>
-            <span className="text-[10px] font-black text-zinc-500 uppercase tracking-tighter mb-1">{label}</span>
+            <span className="text-[10px] font-black text-zinc-500 capitalize mb-1">{label}</span>
             <div className="flex items-baseline gap-1">
                 <span className={cn("text-xl sm:text-2xl font-black italic", color)}>{Math.round(value)}</span>
                 <span className="text-[10px] font-bold text-zinc-600 uppercase">{unit}</span>
@@ -257,6 +257,7 @@ const MealItem = memo(({ item, mealId, onToggle, onSwap, hasTrainer }: any) => {
                         <span>P: {Math.round(item.is_substituted ? (item.substituted_protein || 0) : (item.protein || 0))}</span>
                         <span>C: {Math.round(item.is_substituted ? (item.substituted_carbs || 0) : (item.carbs || 0))}</span>
                         <span>G: {Math.round(item.is_substituted ? (item.substituted_fat || 0) : (item.fat || 0))}</span>
+                        <span>F: {Math.round(item.is_substituted ? (item.substituted_fiber || 0) : (item.fiber || 0))}</span>
                     </div>
                 </div>
             </div>
@@ -287,8 +288,8 @@ const MealRow = memo(({ meal, isOpen, onToggleAccordion, onToggleItem, onToggleG
                         {isFullyComplete ? <CheckCircle2 className="w-6 h-6" /> : <Circle className="w-6 h-6" />}
                     </div>
                     <div>
-                        <h4 className="text-sm font-black text-zinc-100 uppercase italic tracking-wide">{meal.name}</h4>
-                        <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-0.5">{mealCompleted}/{mealTotal} Itens</p>
+                        <h4 className="text-sm font-black text-zinc-100 capitalize tracking-wide">{meal.name.toLowerCase()}</h4>
+                        <p className="text-[10px] text-zinc-500 font-bold capitalize mt-0.5">{mealCompleted}/{mealTotal} Itens</p>
                     </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -297,6 +298,7 @@ const MealRow = memo(({ meal, isOpen, onToggleAccordion, onToggleItem, onToggleG
                             <MacroMini label="P" value={meal.meal_items?.reduce((acc: any, i: any) => acc + (i.is_substituted ? (i.substituted_protein || 0) : (i.protein || 0)), 0)} />
                             <MacroMini label="C" value={meal.meal_items?.reduce((acc: any, i: any) => acc + (i.is_substituted ? (i.substituted_carbs || 0) : (i.carbs || 0)), 0)} />
                             <MacroMini label="G" value={meal.meal_items?.reduce((acc: any, i: any) => acc + (i.is_substituted ? (i.substituted_fat || 0) : (i.fat || 0)), 0)} />
+                            <MacroMini label="F" value={meal.meal_items?.reduce((acc: any, i: any) => acc + (i.is_substituted ? (i.substituted_fiber || 0) : (i.fiber || 0)), 0)} />
                         </div>
                     )}
                     <ChevronDown className={cn("w-5 h-5 text-zinc-600 transition-transform duration-300", isOpen && "rotate-180")} />

@@ -1,15 +1,7 @@
 import { QUERY_KEYS } from "./query-keys";
-import { getStudentProfile, getStudentTrainer, getStudentDetails } from "@/actions/student-actions";
-import { getTodayWorkout, getAssignedWorkouts, getTrainerWorkouts } from "@/actions/workout-actions";
-import { getTodayCardio, getAssignedCardios, getCardioLibrary, getCardioStatus, getActiveCardioSession } from "@/actions/cardio-actions";
-import { getStudentDailyDiet, getAssignedDiets, getTrainerDiets } from "@/actions/diet-actions";
-import { getStudentErgogenics, getTodayErgogenicLogs } from "@/actions/ergogenics-actions";
-import { getMetricsSummary, getStudentFullMetrics } from "@/actions/metrics-actions";
-import { getActiveWorkoutSession, getStudentWorkoutHistory } from "@/actions/log-actions";
-import { getTrainerRanking, getTrainerProfile, getEffectiveTier, getTrainerActivityFeed, getTrainerStudents } from "@/actions/trainer-actions";
-import { getAdherenceHistory } from "@/actions/tracking-actions";
-import { checkStudentHasProtocol } from "@/actions/ai-protocol-actions";
-import { getBetaTesterMode } from "@/actions/app-settings-actions";
+
+// 🧠 Dynamic imports used below in PREFETCH_REGISTRY to avoid Turbopack HMR errors
+// This prevents "Module factory not available" errors when server actions are imported statically in client contexts.
 
 export type PrefetchConfig = {
     queryKey: any[];
@@ -17,72 +9,86 @@ export type PrefetchConfig = {
 };
 
 const getGlobalStudentConfigs = (userId: string): PrefetchConfig[] => [
-    { queryKey: [...QUERY_KEYS.workouts.session], queryFn: () => getActiveWorkoutSession() },
+    { queryKey: [...QUERY_KEYS.workouts.session], queryFn: () => import('@/actions/log-actions').then(m => m.getActiveWorkoutSession()) },
     { queryKey: [...QUERY_KEYS.cardio.session], queryFn: () => import('@/actions/cardio-actions').then(m => m.getActiveCardioSession()) },
-    { queryKey: QUERY_KEYS.student.details(userId), queryFn: () => getStudentProfile(userId) },
-    { queryKey: QUERY_KEYS.profile.trainer(userId), queryFn: () => getStudentTrainer(userId) },
+    { queryKey: QUERY_KEYS.student.details(userId), queryFn: () => import('@/actions/student-actions').then(m => m.getStudentProfile(userId)) },
+    { queryKey: QUERY_KEYS.profile.trainer(userId), queryFn: () => import('@/actions/student-actions').then(m => m.getStudentTrainer(userId)) },
 ];
 
 const getGlobalTrainerConfigs = (userId: string): PrefetchConfig[] => [
-    { queryKey: QUERY_KEYS.profile.detail(userId), queryFn: () => getTrainerProfile() },
-    { queryKey: QUERY_KEYS.trainer.effectiveTier(userId), queryFn: () => getEffectiveTier() },
-    { queryKey: QUERY_KEYS.trainer.ranking(), queryFn: () => getTrainerRanking() },
+    { queryKey: QUERY_KEYS.profile.detail(userId), queryFn: () => import('@/actions/trainer-actions').then(m => m.getTrainerProfile()) },
+    { queryKey: QUERY_KEYS.trainer.effectiveTier(userId), queryFn: () => import('@/actions/trainer-actions').then(m => m.getEffectiveTier()) },
+    { queryKey: QUERY_KEYS.trainer.ranking(), queryFn: () => import('@/actions/trainer-actions').then(m => m.getTrainerRanking()) },
 ];
 
 export const PREFETCH_REGISTRY: Record<string, (userId: string) => PrefetchConfig[]> = {
     '/dashboard/student': (userId) => [
         ...getGlobalStudentConfigs(userId),
-        { queryKey: QUERY_KEYS.workouts.today(userId), queryFn: () => getTodayWorkout(userId) },
-        { queryKey: QUERY_KEYS.workouts.all(userId), queryFn: () => getAssignedWorkouts(userId) },
-        { queryKey: QUERY_KEYS.cardio.today(userId), queryFn: () => getTodayCardio(userId) },
-        { queryKey: QUERY_KEYS.cardio.all(userId), queryFn: () => getAssignedCardios(userId) },
-        { queryKey: QUERY_KEYS.diets.today(userId), queryFn: () => getStudentDailyDiet(userId) },
-        { queryKey: QUERY_KEYS.diets.all(userId), queryFn: () => getAssignedDiets(userId) },
-        { queryKey: QUERY_KEYS.ergogenics.all(userId), queryFn: async () => { const res = await getStudentErgogenics(userId); return Array.isArray(res) ? res : (res as any).data || []; } },
-        { queryKey: QUERY_KEYS.ergogenics.logs(userId), queryFn: () => getTodayErgogenicLogs(userId) },
-        { queryKey: QUERY_KEYS.student.metricsSummary(userId), queryFn: () => getMetricsSummary(userId) },
-        { queryKey: QUERY_KEYS.workouts.logs(userId), queryFn: () => getStudentWorkoutHistory(userId) },
-        { queryKey: QUERY_KEYS.cardio.logs(userId), queryFn: () => getCardioStatus(userId) },
-        { queryKey: QUERY_KEYS.student.hasProtocol(userId), queryFn: () => checkStudentHasProtocol(userId) },
-        { queryKey: QUERY_KEYS.trainer.ranking(), queryFn: () => getTrainerRanking() },
+        { queryKey: QUERY_KEYS.workouts.today(userId), queryFn: () => import('@/actions/workout-actions').then(m => m.getTodayWorkout(userId)) },
+        { queryKey: QUERY_KEYS.workouts.all(userId), queryFn: () => import('@/actions/workout-actions').then(m => m.getAssignedWorkouts(userId)) },
+        { queryKey: QUERY_KEYS.cardio.today(userId), queryFn: () => import('@/actions/cardio-actions').then(m => m.getTodayCardio(userId)) },
+        { queryKey: QUERY_KEYS.cardio.all(userId), queryFn: () => import('@/actions/cardio-actions').then(m => m.getAssignedCardios(userId)) },
+        { queryKey: QUERY_KEYS.diets.today(userId), queryFn: () => import('@/actions/diet-actions').then(m => m.getStudentDailyDiet(userId)) },
+        { queryKey: QUERY_KEYS.diets.all(userId), queryFn: () => import('@/actions/diet-actions').then(m => m.getAssignedDiets(userId)) },
+        { 
+            queryKey: QUERY_KEYS.ergogenics.all(userId), 
+            queryFn: async () => { 
+                const { getStudentErgogenics } = await import('@/actions/ergogenics-actions');
+                const res = await getStudentErgogenics(userId); 
+                return Array.isArray(res) ? res : (res as any).data || []; 
+            } 
+        },
+        { queryKey: QUERY_KEYS.ergogenics.logs(userId), queryFn: () => import('@/actions/ergogenics-actions').then(m => m.getTodayErgogenicLogs(userId)) },
+        { queryKey: QUERY_KEYS.student.metricsSummary(userId), queryFn: () => import('@/actions/metrics-actions').then(m => m.getMetricsSummary(userId)) },
+        { queryKey: QUERY_KEYS.workouts.logs(userId), queryFn: () => import('@/actions/log-actions').then(m => m.getStudentWorkoutHistory(userId)) },
+        { queryKey: QUERY_KEYS.cardio.logs(userId), queryFn: () => import('@/actions/cardio-actions').then(m => m.getCardioStatus(userId)) },
+        { queryKey: QUERY_KEYS.student.hasProtocol(userId), queryFn: () => import('@/actions/ai-protocol-actions').then(m => m.checkStudentHasProtocol(userId)) },
+        { queryKey: QUERY_KEYS.trainer.ranking(), queryFn: () => import('@/actions/trainer-actions').then(m => m.getTrainerRanking()) },
     ],
     '/dashboard/student/workouts': (userId) => [
         ...getGlobalStudentConfigs(userId),
-        { queryKey: QUERY_KEYS.workouts.all(userId), queryFn: () => getAssignedWorkouts(userId) },
-        { queryKey: QUERY_KEYS.workouts.library(userId), queryFn: () => getTrainerWorkouts() },
+        { queryKey: QUERY_KEYS.workouts.all(userId), queryFn: () => import('@/actions/workout-actions').then(m => m.getAssignedWorkouts(userId)) },
+        { queryKey: QUERY_KEYS.workouts.library(userId), queryFn: () => import('@/actions/workout-actions').then(m => m.getTrainerWorkouts()) },
     ],
     '/dashboard/student/cardio': (userId) => [
         ...getGlobalStudentConfigs(userId),
-        { queryKey: QUERY_KEYS.cardio.all(userId), queryFn: () => getAssignedCardios(userId) },
-        { queryKey: QUERY_KEYS.cardio.library(userId), queryFn: () => getCardioLibrary() },
+        { queryKey: QUERY_KEYS.cardio.all(userId), queryFn: () => import('@/actions/cardio-actions').then(m => m.getAssignedCardios(userId)) },
+        { queryKey: QUERY_KEYS.cardio.library(userId), queryFn: () => import('@/actions/cardio-actions').then(m => m.getCardioLibrary()) },
     ],
     '/dashboard/student/diet': (userId) => [
         ...getGlobalStudentConfigs(userId),
-        { queryKey: QUERY_KEYS.diets.today(userId), queryFn: () => getStudentDailyDiet(userId) },
-        { queryKey: QUERY_KEYS.diets.all(userId), queryFn: () => getAssignedDiets(userId) },
-        { queryKey: QUERY_KEYS.diets.library(userId), queryFn: () => getTrainerDiets() },
+        { queryKey: QUERY_KEYS.diets.today(userId), queryFn: () => import('@/actions/diet-actions').then(m => m.getStudentDailyDiet(userId)) },
+        { queryKey: QUERY_KEYS.diets.all(userId), queryFn: () => import('@/actions/diet-actions').then(m => m.getAssignedDiets(userId)) },
+        { queryKey: QUERY_KEYS.diets.library(userId), queryFn: () => import('@/actions/diet-actions').then(m => m.getTrainerDiets()) },
     ],
     '/dashboard/student/ergogenics': (userId) => [
         ...getGlobalStudentConfigs(userId),
-        { queryKey: QUERY_KEYS.ergogenics.all(userId), queryFn: async () => { const res = await getStudentErgogenics(userId); return Array.isArray(res) ? res : (res as any).data || []; } },
-        { queryKey: QUERY_KEYS.ergogenics.logs(userId), queryFn: () => getTodayErgogenicLogs(userId) },
+        { 
+            queryKey: QUERY_KEYS.ergogenics.all(userId), 
+            queryFn: async () => { 
+                const { getStudentErgogenics } = await import('@/actions/ergogenics-actions');
+                const res = await getStudentErgogenics(userId); 
+                return Array.isArray(res) ? res : (res as any).data || []; 
+            } 
+        },
+        { queryKey: QUERY_KEYS.ergogenics.logs(userId), queryFn: () => import('@/actions/ergogenics-actions').then(m => m.getTodayErgogenicLogs(userId)) },
     ],
     '/dashboard/student/profile': (userId) => [
         ...getGlobalStudentConfigs(userId),
     ],
     '/dashboard/student/progress': (userId) => [
         ...getGlobalStudentConfigs(userId),
-        { queryKey: QUERY_KEYS.student.metricsSummary(userId), queryFn: () => getMetricsSummary(userId) },
-        { queryKey: QUERY_KEYS.student.metrics(userId), queryFn: () => getStudentFullMetrics(userId) },
-        { queryKey: QUERY_KEYS.student.activity(userId), queryFn: () => getStudentWorkoutHistory(userId) },
-        { queryKey: ['adherence', 30], queryFn: () => getAdherenceHistory(30) }
+        { queryKey: QUERY_KEYS.student.metricsSummary(userId), queryFn: () => import('@/actions/metrics-actions').then(m => m.getMetricsSummary(userId)) },
+        { queryKey: QUERY_KEYS.student.metrics(userId), queryFn: () => import('@/actions/metrics-actions').then(m => m.getStudentFullMetrics(userId)) },
+        { queryKey: QUERY_KEYS.student.activity(userId), queryFn: () => import('@/actions/log-actions').then(m => m.getStudentWorkoutHistory(userId)) },
+        { queryKey: ['adherence', 30], queryFn: () => import('@/actions/tracking-actions').then(m => m.getAdherenceHistory(30)) }
     ],
     '/dashboard/student/anamnese': (userId) => [
         ...getGlobalStudentConfigs(userId),
     ],
     '/dashboard/student/ranking': (userId) => [
         ...getGlobalStudentConfigs(userId),
-        { queryKey: QUERY_KEYS.trainer.ranking(), queryFn: () => getTrainerRanking() }
+        { queryKey: QUERY_KEYS.trainer.ranking(), queryFn: () => import('@/actions/trainer-actions').then(m => m.getTrainerRanking()) }
     ],
     '/dashboard/student/meu-personal': (userId) => [
         ...getGlobalStudentConfigs(userId),
@@ -92,41 +98,40 @@ export const PREFETCH_REGISTRY: Record<string, (userId: string) => PrefetchConfi
     ],
     '/dashboard/trainer': (userId) => [
         ...getGlobalTrainerConfigs(userId),
-        { queryKey: QUERY_KEYS.trainer.activity(userId), queryFn: () => getTrainerActivityFeed() },
+        { queryKey: QUERY_KEYS.trainer.activity(userId), queryFn: () => import('@/actions/trainer-actions').then(m => m.getTrainerActivityFeed()) },
     ],
     '/dashboard/trainer/students': (userId) => [
         ...getGlobalTrainerConfigs(userId),
-        { queryKey: QUERY_KEYS.trainer.students(userId), queryFn: () => getTrainerStudents() },
+        { queryKey: QUERY_KEYS.trainer.students(userId), queryFn: () => import('@/actions/trainer-actions').then(m => m.getTrainerStudents()) },
     ],
     '/dashboard/trainer/workouts': (userId) => [
         ...getGlobalTrainerConfigs(userId),
-        { queryKey: QUERY_KEYS.workouts.library(userId), queryFn: () => getTrainerWorkouts() },
+        { queryKey: QUERY_KEYS.workouts.library(userId), queryFn: () => import('@/actions/workout-actions').then(m => m.getTrainerWorkouts()) },
     ],
     '/dashboard/trainer/diets': (userId) => [
         ...getGlobalTrainerConfigs(userId),
-        { queryKey: QUERY_KEYS.diets.library(userId), queryFn: () => getTrainerDiets() },
+        { queryKey: QUERY_KEYS.diets.library(userId), queryFn: () => import('@/actions/diet-actions').then(m => m.getTrainerDiets()) },
     ],
     '/dashboard/trainer/cardio': (userId) => [
         ...getGlobalTrainerConfigs(userId),
-        { queryKey: QUERY_KEYS.cardio.library(userId), queryFn: () => getCardioLibrary() },
+        { queryKey: QUERY_KEYS.cardio.library(userId), queryFn: () => import('@/actions/cardio-actions').then(m => m.getCardioLibrary()) },
     ],
     '/dashboard/trainer/ranking': (userId) => [
         ...getGlobalTrainerConfigs(userId),
     ],
     '/dashboard/trainer/import-pdf': (userId) => [
         ...getGlobalTrainerConfigs(userId),
-        { queryKey: QUERY_KEYS.trainer.students(userId), queryFn: () => getTrainerStudents() },
+        { queryKey: QUERY_KEYS.trainer.students(userId), queryFn: () => import('@/actions/trainer-actions').then(m => m.getTrainerStudents()) },
     ],
-    // Dynamic match for student details - handled by middleware/layout logic that picks the right config
     '/dashboard/trainer/students/[id]': (userId) => [
         ...getGlobalTrainerConfigs(userId),
-        { queryKey: QUERY_KEYS.workouts.today(userId), queryFn: () => getTodayWorkout(userId) },
-        { queryKey: QUERY_KEYS.workouts.all(userId), queryFn: () => getAssignedWorkouts(userId) },
-        { queryKey: QUERY_KEYS.diets.today(userId), queryFn: () => getStudentDailyDiet(userId) },
-        { queryKey: QUERY_KEYS.diets.all(userId), queryFn: () => getAssignedDiets(userId) },
-        { queryKey: QUERY_KEYS.cardio.today(userId), queryFn: () => getTodayCardio(userId) },
-        { queryKey: QUERY_KEYS.cardio.all(userId), queryFn: () => getAssignedCardios(userId) },
-        { queryKey: QUERY_KEYS.ergogenics.all(userId), queryFn: () => getStudentErgogenics(userId) },
-        { queryKey: QUERY_KEYS.ergogenics.logs(userId), queryFn: () => getTodayErgogenicLogs(userId) },
+        { queryKey: QUERY_KEYS.workouts.today(userId), queryFn: () => import('@/actions/workout-actions').then(m => m.getTodayWorkout(userId)) },
+        { queryKey: QUERY_KEYS.workouts.all(userId), queryFn: () => import('@/actions/workout-actions').then(m => m.getAssignedWorkouts(userId)) },
+        { queryKey: QUERY_KEYS.diets.today(userId), queryFn: () => import('@/actions/diet-actions').then(m => m.getStudentDailyDiet(userId)) },
+        { queryKey: QUERY_KEYS.diets.all(userId), queryFn: () => import('@/actions/diet-actions').then(m => m.getAssignedDiets(userId)) },
+        { queryKey: QUERY_KEYS.cardio.today(userId), queryFn: () => import('@/actions/cardio-actions').then(m => m.getTodayCardio(userId)) },
+        { queryKey: QUERY_KEYS.cardio.all(userId), queryFn: () => import('@/actions/cardio-actions').then(m => m.getAssignedCardios(userId)) },
+        { queryKey: QUERY_KEYS.ergogenics.all(userId), queryFn: () => import('@/actions/ergogenics-actions').then(m => m.getStudentErgogenics(userId)) },
+        { queryKey: QUERY_KEYS.ergogenics.logs(userId), queryFn: () => import('@/actions/ergogenics-actions').then(m => m.getTodayErgogenicLogs(userId)) },
     ]
 };

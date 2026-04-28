@@ -18,21 +18,23 @@ import { ENTITIES } from '@/lib/outbox-db'
 import { useToast } from '@/hooks/use-toast'
 
 // ── Types ──────────────────────────────────────────────────────────────────
-type Step = 'workout' | 'frequency' | 'cardio' | 'diet' | 'confirm'
+type Step = 'goal' | 'workout' | 'priorities' | 'cardio' | 'diet' | 'confirm'
 
-const STEPS: Step[] = ['workout', 'frequency', 'cardio', 'diet', 'confirm']
+const STEPS: Step[] = ['goal', 'workout', 'priorities', 'cardio', 'diet', 'confirm']
 
 const STEP_LABELS: Record<Step, string> = {
+    goal: 'Objetivo',
     workout: 'Divisão',
-    frequency: 'Frequência',
+    priorities: 'Pontos',
     cardio: 'Cardio',
-    diet: 'Alimentação',
+    diet: 'Dieta',
     confirm: 'Gerar'
 }
 
 const STEP_ICONS: Record<Step, typeof Dumbbell> = {
+    goal: Zap,
     workout: Dumbbell,
-    frequency: Clock,
+    priorities: Activity,
     cardio: Activity,
     diet: Utensils,
     confirm: Sparkles
@@ -64,11 +66,7 @@ function SelectCard({ label, sub, selected, onClick }: { label: string, sub?: st
                     : "border-zinc-800 bg-zinc-900/50 hover:border-zinc-700"
             )}
         >
-            {selected && (
-                <span className="absolute top-2 right-2 flex items-center justify-center w-5 h-5 rounded-full bg-orange-500">
-                    <Check className="w-3 h-3 text-zinc-950" />
-                </span>
-            )}
+            {/* Check icon removed */}
             <p className={cn("font-black text-sm uppercase italic tracking-tight", selected ? "text-orange-400" : "text-white")}>
                 {label}
             </p>
@@ -127,17 +125,18 @@ export function AIProtocolGenerator({ userId = 'me' }: { userId?: string }) {
     const { toast } = useToast()
     const router = useRouter()
     const queryClient = useQueryClient()
-    const [step, setStep] = useState<Step>('workout')
+    const [step, setStep] = useState<Step>('goal')
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const [success, setSuccess] = useState<any>(null)
 
     // Form state
+    const [goal, setGoal] = useState<'bulking' | 'cutting' | 'maintenance'>('bulking')
     const [workoutSplit, setWorkoutSplit] = useState('ppl')
     const [customSplit, setCustomSplit] = useState('')
     const [trainingVolume, setTrainingVolume] = useState<'low' | 'high'>('high')
-    const [trainingDays, setTrainingDays] = useState(4)
-    const [sessionDuration, setSessionDuration] = useState(60)
+    const [strongMuscles, setStrongMuscles] = useState('')
+    const [weakMuscles, setWeakMuscles] = useState('')
     const [cardioLikes, setCardioLikes] = useState<string[]>([])
     const [cardioDislikes, setCardioDislikes] = useState<string[]>([])
     const [mealsPerDay, setMealsPerDay] = useState(4)
@@ -151,8 +150,8 @@ export function AIProtocolGenerator({ userId = 'me' }: { userId?: string }) {
     const next = () => setStep(STEPS[stepIdx + 1])
 
     const canGoNext = () => {
-        if (step === 'workout') return workoutSplit !== ''
-        if (step === 'frequency') return trainingDays > 0 && sessionDuration > 0
+        if (step === 'goal') return !!goal
+        if (step === 'workout') return !!workoutSplit
         return true
     }
 
@@ -246,10 +245,11 @@ export function AIProtocolGenerator({ userId = 'me' }: { userId?: string }) {
 
     const handleGenerate = () => {
         const preferences: AIProtocolPreferences = {
+            goal,
             workoutSplit: workoutSplit === 'other' ? customSplit : workoutSplit,
             trainingVolume,
-            trainingDaysPerWeek: trainingDays,
-            sessionDurationMinutes: sessionDuration,
+            strongMuscles,
+            weakMuscles,
             cardioLikes: cardioLikes.join(', '),
             cardioDislikes: cardioDislikes.join(', '),
             mealsPerDay,
@@ -327,7 +327,7 @@ export function AIProtocolGenerator({ userId = 'me' }: { userId?: string }) {
                                     : isDone ? "text-orange-500/60"
                                         : "text-zinc-700"
                             )}>
-                                {isDone ? <Check className="w-3 h-3" /> : <Icon className="w-3 h-3" />}
+                                <Icon className="w-3 h-3" />
                                 <span className="hidden sm:block">{STEP_LABELS[s]}</span>
                             </div>
                             {i < STEPS.length - 1 && (
@@ -344,7 +344,37 @@ export function AIProtocolGenerator({ userId = 'me' }: { userId?: string }) {
             {/* Step content */}
             <div className="min-h-[240px] sm:min-h-[280px]">
 
-                {/* Step 1: Workout Split */}
+                {/* Step 1: Goal */}
+                {step === 'goal' && (
+                    <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
+                        <div>
+                            <h3 className="text-xl font-black italic uppercase tracking-tight text-white">Objetivo</h3>
+                            <p className="text-zinc-500 text-[11px] font-bold uppercase tracking-widest mt-1">O que buscamos agora?</p>
+                        </div>
+                        <div className="grid grid-cols-1 gap-3">
+                            <SelectCard 
+                                label="Bulking" 
+                                sub="Ganho de massa muscular e força" 
+                                selected={goal === 'bulking'} 
+                                onClick={() => setGoal('bulking')} 
+                            />
+                            <SelectCard 
+                                label="Cutting" 
+                                sub="Perda de gordura e definição" 
+                                selected={goal === 'cutting'} 
+                                onClick={() => setGoal('cutting')} 
+                            />
+                            <SelectCard 
+                                label="Manutenção" 
+                                sub="Manter o peso e melhorar qualidade" 
+                                selected={goal === 'maintenance'} 
+                                onClick={() => setGoal('maintenance')} 
+                            />
+                        </div>
+                    </div>
+                )}
+
+                {/* Step 2: Workout Split */}
                 {step === 'workout' && (
                     <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
                         <div>
@@ -372,7 +402,7 @@ export function AIProtocolGenerator({ userId = 'me' }: { userId?: string }) {
                             <div className="grid grid-cols-2 gap-3">
                                 <SelectCard
                                     label="Low Volume"
-                                    sub="Ménos séries, alta intensidade"
+                                    sub="Menos séries, alta intensidade"
                                     selected={trainingVolume === 'low'}
                                     onClick={() => setTrainingVolume('low')}
                                 />
@@ -387,29 +417,29 @@ export function AIProtocolGenerator({ userId = 'me' }: { userId?: string }) {
                     </div>
                 )}
 
-                {/* Step 2: Frequency */}
-                {step === 'frequency' && (
+                {/* Step 3: Priorities */}
+                {step === 'priorities' && (
                     <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
                         <div>
-                            <h3 className="text-xl font-black italic uppercase tracking-tight text-white">Frequência</h3>
-                            <p className="text-zinc-500 text-[11px] font-bold uppercase tracking-widest mt-1">Quantos dias e quanto tempo?</p>
+                            <h3 className="text-xl font-black italic uppercase tracking-tight text-white">Pontos Fortes e Fracos</h3>
+                            <p className="text-zinc-500 text-[11px] font-bold uppercase tracking-widest mt-1">Quais músculos precisamos focar?</p>
                         </div>
                         <div className="space-y-4">
                             <div>
-                                <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-3">Dias por semana</p>
-                                <div className="grid grid-cols-4 gap-2">
-                                    {DAYS_OPTIONS.map(d => (
-                                        <NumberCard key={d} value={d} label="dias" selected={trainingDays === d} onClick={() => setTrainingDays(d)} />
-                                    ))}
-                                </div>
+                                <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-3">💪 Pontos Fortes (Manutenção)</p>
+                                <TextArea 
+                                    placeholder="Ex: Peitoral, Braços..." 
+                                    value={strongMuscles} 
+                                    onChange={setStrongMuscles} 
+                                />
                             </div>
                             <div>
-                                <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-3">Duração por sessão (min)</p>
-                                <div className="grid grid-cols-5 gap-2">
-                                    {DURATION_OPTIONS.map(d => (
-                                        <NumberCard key={d} value={d} label="min" selected={sessionDuration === d} onClick={() => setSessionDuration(d)} />
-                                    ))}
-                                </div>
+                                <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-3">🎯 Pontos Fracos (Prioridade IA)</p>
+                                <TextArea 
+                                    placeholder="Ex: Dorsais, Pernas (Quadríceps)..." 
+                                    value={weakMuscles} 
+                                    onChange={setWeakMuscles} 
+                                />
                             </div>
                         </div>
                     </div>
@@ -484,8 +514,8 @@ export function AIProtocolGenerator({ userId = 'me' }: { userId?: string }) {
                         </div>
                         <div className="grid grid-cols-2 gap-3">
                             {[
+                                { label: 'Objetivo', value: goal === 'bulking' ? 'Bulking' : goal === 'cutting' ? 'Cutting' : 'Manutenção', icon: Zap },
                                 { label: 'Divisão', value: SPLITS.find(s => s.value === workoutSplit)?.label || customSplit, icon: Dumbbell },
-                                { label: 'Frequência', value: `${trainingDays}x / ${sessionDuration}min`, icon: Clock },
                                 { label: 'Cardio', value: cardioLikes.length > 0 ? cardioLikes.slice(0, 2).join(', ') : 'Qualquer', icon: Activity },
                                 { label: 'Refeições', value: `${mealsPerDay} por dia`, icon: Utensils },
                             ].map(({ label, value, icon: Icon }) => (

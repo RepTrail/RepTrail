@@ -100,7 +100,7 @@ export function TrainerDashboardClient({ userId, betaTesterMode }: TrainerDashbo
             {/* Hero Section */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-2 border-b border-zinc-800/50">
                 <div className="space-y-2 sm:space-y-5">
-                    <h1 className="text-4xl font-black tracking-tight text-white font-sans italic uppercase">
+                    <h1 className="text-4xl font-black text-white font-sans capitalize">
                         Visão Geral
                     </h1>
                     <p className="text-zinc-500 text-sm font-medium">
@@ -238,7 +238,7 @@ function MetricCard({ title, value, icon, description, accentColor, trend }: any
     return (
         <Card className="bg-zinc-950 border-zinc-800 shadow-xl rounded-2xl overflow-hidden border-t-zinc-700/50 transition-all hover:border-zinc-700">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">{title}</span>
+                <span className="text-[10px] font-bold text-zinc-500 capitalize">{title}</span>
                 <div className={`${accentColor} opacity-90`}>{icon}</div>
             </CardHeader>
             <CardContent>

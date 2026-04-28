@@ -185,7 +185,8 @@ export async function saveParsedData(
                         protein: Math.round(f.protein || 0),
                         carbs: Math.round(f.carbs || 0),
                         fat: Math.round(f.fat || 0),
-                        calories: Math.round(f.calories || 0)
+                        calories: Math.round(f.calories || 0),
+                        fiber: Math.round(f.fiber || 0)
                     }))
                     if (itemsToInsert.length > 0) {
                         await supabase.from('meal_items').insert(itemsToInsert)

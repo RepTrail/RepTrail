@@ -50,8 +50,7 @@ export async function createManualDiet(payload: any) {
             .insert({
                 trainer_id: user.id,
                 name,
-                client_mutation_id: clientMutationId,
-                client_id: clientId
+                client_mutation_id: clientMutationId
             })
             .select()
             .maybeSingle()
@@ -313,9 +312,10 @@ export async function unassignDiet(dietId: string, studentId: string) {
 }
 
 export async function getDietDetails(dietId: string) {
-    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
+    const { createAdminClient } = await import('@/lib/supabase/server')
+    const adminSupabase = await createAdminClient()
 
-    const { data: diet, error } = await supabase
+    const { data: diet, error } = await adminSupabase
         .from('diets')
         .select(`
             *,
@@ -335,7 +335,7 @@ export async function getDietDetails(dietId: string) {
         .maybeSingle()
 
     if (error) {
-        console.error('Error in getDietDetails:', error)
+        console.error('Error in getDietDetails:', error.message, error)
         return null
     }
 
@@ -402,8 +402,7 @@ export async function addMealToDiet(dietId: string, name: string, timeOfDay: str
                 name,
                 time_of_day: timeOfDay,
                 order_index: nextIndex,
-                client_mutation_id: clientMutationId,
-                client_id: clientId
+                client_mutation_id: clientMutationId
             })
             .select()
             .maybeSingle()
@@ -426,7 +425,7 @@ export async function addMealToDiet(dietId: string, name: string, timeOfDay: str
 
 export async function addMealItem(mealId: string, dietId: string, data: any) {
     const supabase = await createClient()
-    const { clientMutationId, clientId, ...fields } = data
+    const { clientMutationId, clientId, dietId: _d, mealId: _m, foodId: _f, ...fields } = data
 
     try {
         const { data: existingItems } = await supabase
@@ -443,9 +442,7 @@ export async function addMealItem(mealId: string, dietId: string, data: any) {
             .insert({
                 meal_id: mealId,
                 ...fields,
-                order_index: nextIndex,
-                client_mutation_id: clientMutationId,
-                client_id: clientId
+                order_index: nextIndex
             })
             .select()
             .maybeSingle()
@@ -454,25 +451,21 @@ export async function addMealItem(mealId: string, dietId: string, data: any) {
 
         return { success: true, data: newRow }
     } catch (e: any) {
-        if (e.code === '23505' && clientMutationId) {
-            const { data: existing } = await supabase
-                .from('meal_items')
-                .select()
-                .eq('client_mutation_id', clientMutationId)
-                .maybeSingle()
-            return { success: true, data: existing }
-        }
         return { error: e.message }
     }
 }
 
 export async function updateMealItem(id: string, dietId: string, data: any) {
-    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
+    const { createAdminClient } = await import('@/lib/supabase/server')
+    const adminSupabase = await createAdminClient()
+    
+    // Sanitize: remove known non-db fields
+    const { clientMutationId, clientId, dietId: _d, mealId: _m, foodId: _f, ...cleanData } = data
 
     try {
-        const { error } = await supabase
+        const { error } = await adminSupabase
             .from('meal_items')
-            .update(data)
+            .update(cleanData)
             .eq('id', id)
 
         if (error) throw error
@@ -734,7 +727,8 @@ export async function logMealCheck(mealId: string, status: boolean = true) {
 }
 
 export async function getStudentDailyDiet(studentId: string) {
-    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
+    const { createAdminClient } = await import('@/lib/supabase/server')
+    const adminSupabase = await createAdminClient()
 
     try {
         const todayDow = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' })).getDay()
@@ -742,14 +736,14 @@ export async function getStudentDailyDiet(studentId: string) {
         const todayStr = getTodayStrBrazil()
         const { start, end } = getTodayRangeBrazil()
 
-        // Fetch diet, logs and potential trainer links in parallel
+        // Fetch diet, logs and potential trainer links in parallel using admin client
         const [
             { data: assignments, error: assignErr },
             { data: logs },
             { data: itemLogs },
             { data: trainerLinks }
         ] = await Promise.all([
-            supabase
+            adminSupabase
                 .from('assigned_diets')
                 .select(`
                     diet:diets!inner(
@@ -766,18 +760,18 @@ export async function getStudentDailyDiet(studentId: string) {
                 .contains('days_of_week', [todayDow])
                 .order('created_at', { ascending: false })
                 .limit(1),
-            supabase
+            adminSupabase
                 .from('meal_logs')
                 .select('meal_id')
                 .eq('student_id', studentId)
                 .gte('consumed_at', start)
                 .lt('consumed_at', end),
-            supabase
+            adminSupabase
                 .from('meal_item_logs')
                 .select('*')
                 .eq('user_id', studentId)
                 .eq('date', todayStr),
-            supabase
+            adminSupabase
                 .from('trainer_students')
                 .select('trainer_id')
                 .eq('student_id', studentId)
@@ -883,10 +877,11 @@ export async function updateMealItemsOrder(mealId: string, orderedIds: string[])
     }
 }
 export async function getAssignedDiets(studentId: string) {
-    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
+    const { createAdminClient } = await import('@/lib/supabase/server')
+    const adminSupabase = await createAdminClient()
 
     try {
-        const { data, error } = await supabase
+        const { data, error } = await adminSupabase
             .from('assigned_diets')
             .select(`
                 id,
@@ -904,7 +899,7 @@ export async function getAssignedDiets(studentId: string) {
             .eq('active', true)
 
         if (error) {
-            console.error('Supabase Query Error (assigned_diets):', error)
+            console.error('Supabase Query Error (assigned_diets):', error.message, error)
             throw error
         }
         return data || []

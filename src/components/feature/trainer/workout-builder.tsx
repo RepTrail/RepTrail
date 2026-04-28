@@ -86,12 +86,12 @@ export function WorkoutBuilder({ workout: initialWorkout, students = [], backHre
         queryKey,
         queryFn: () => getWorkoutDetails(initialWorkout.id),
         initialData: initialWorkout,
-        staleTime: 0,
+        staleTime: 1000 * 60 * 5, // 5 minutes to prevent ghosting re-fetches
         refetchOnMount: 'always'
     })
 
-    const workout = workoutData as Workout & { workout_exercises: WorkoutExercise[] }
-    const exercises = workout.workout_exercises || []
+    const workout = workoutData as (Workout & { workout_exercises: WorkoutExercise[] }) | null
+    const exercises = workout?.workout_exercises || []
 
     const [searchQuery, setSearchQuery] = useState('')
     const [searchResults, setSearchResults] = useState<Exercise[]>([])
@@ -100,8 +100,17 @@ export function WorkoutBuilder({ workout: initialWorkout, students = [], backHre
 
     // Inline name/description editing state
     const [isEditingMeta, setIsEditingMeta] = useState(false)
-    const [editName, setEditName] = useState(workout.name)
-    const [editDesc, setEditDesc] = useState(workout.description || '')
+    const [editName, setEditName] = useState(workout?.name || '')
+    const [editDesc, setEditDesc] = useState(workout?.description || '')
+
+    // Sync local edit state when workout name/desc changes (e.g. after refetch)
+    useEffect(() => {
+        if (!isEditingMeta && workout) {
+            setEditName(workout.name)
+            setEditDesc(workout.description || '')
+        }
+    }, [workout?.name, workout?.description, isEditingMeta])
+
     const nameInputRef = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
@@ -113,7 +122,7 @@ export function WorkoutBuilder({ workout: initialWorkout, students = [], backHre
     const { mutate: reorderMutate } = useOptimisticMutation({
         actionName: 'update-workout-exercises-order',
         entity: ENTITIES.WORKOUT,
-        entityId: workout.id,
+        entityId: workout?.id || '',
         queryKey,
         mutationFn: async (variables: { orderedIds: string[] }) => variables,
         onMutate: (variables) => {
@@ -130,7 +139,7 @@ export function WorkoutBuilder({ workout: initialWorkout, students = [], backHre
     const { mutate: mutateMeta } = useOptimisticMutation({
         actionName: 'update-workout-meta',
         entity: ENTITIES.WORKOUT,
-        entityId: workout.id,
+        entityId: workout?.id || '',
         queryKey,
         mutationFn: async (variables: { id: string, name: string, description: string }) => variables,
         onMutate: (variables) => {
@@ -144,21 +153,18 @@ export function WorkoutBuilder({ workout: initialWorkout, students = [], backHre
     const { mutate: addExerciseMutate } = useOptimisticMutation({
         actionName: 'add-exercise-to-workout',
         entity: ENTITIES.WORKOUT,
-        entityId: workout.id,
+        entityId: workout?.id || '',
         queryKey,
         mutationFn: async (variables: { exerciseId: string, workoutId: string }) => variables,
         onMutate: (variables) => {
             const previous = queryClient.getQueryData(queryKey)
-            // Note: We don't have the full exercise object here easily for the optimistic update 
-            // unless we find it in searchResults. For simplicity, we just trigger the sync.
-            // Better: find in searchResults
             const exerciseToAdd = searchResults.find(ex => ex.id === variables.exerciseId)
             if (exerciseToAdd) {
                 queryClient.setQueryData(queryKey, (old: any) => ({
                     ...old,
                     workout_exercises: [...(old?.workout_exercises || []), {
                         id: `temp-${Date.now()}`,
-                        workout_id: workout.id,
+                        workout_id: workout?.id || '',
                         exercise_id: variables.exerciseId,
                         exercise: exerciseToAdd,
                         warmup_sets: 0, warmup_reps: '15', warmup_rest_seconds: 60,
@@ -179,7 +185,7 @@ export function WorkoutBuilder({ workout: initialWorkout, students = [], backHre
     const { mutate: addCustomMutate } = useOptimisticMutation({
         actionName: 'create-new-exercise',
         entity: ENTITIES.WORKOUT,
-        entityId: workout.id,
+        entityId: workout?.id || '',
         queryKey,
         mutationFn: async (variables: { name: string }) => variables,
         onSuccess: () => {
@@ -223,6 +229,19 @@ export function WorkoutBuilder({ workout: initialWorkout, students = [], backHre
         }
     })
 
+    // 10. Safety Guard: If workout is missing, show a loading state instead of crashing/blanking
+    if (!workout) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[400px] gap-6 animate-pulse">
+                <div className="w-12 h-12 rounded-full border-4 border-zinc-800 border-t-orange-500 animate-spin" />
+                <div className="space-y-2 text-center">
+                    <p className="text-white font-black capitalize text-lg">Sincronizando Dados...</p>
+                    <p className="text-zinc-500 text-sm">Preparando sua biblioteca de exercícios</p>
+                </div>
+            </div>
+        )
+    }
+
     // --- HANDLERS ---
 
     function handleDragStart(e: React.DragEvent, id: string) {
@@ -249,17 +268,21 @@ export function WorkoutBuilder({ workout: initialWorkout, students = [], backHre
     }
 
     function handleDragEnd() {
-        if (!draggedId) return
+        if (!draggedId || !workout) return
         setDraggedId(null)
-        reorderMutate({ orderedIds: exercises.map(ex => ex.id) })
+        reorderMutate({ 
+            orderedIds: exercises.map(ex => ex.id),
+            workoutId: workout.id 
+        })
     }
 
     function handleSaveMeta() {
-        if (!editName.trim()) return
+        if (!editName.trim() || !workout) return
         mutateMeta({ id: workout.id, name: editName, description: editDesc })
     }
 
     function handleCancelMeta() {
+        if (!workout) return
         setEditName(workout.name)
         setEditDesc(workout.description || '')
         setIsEditingMeta(false)
@@ -279,6 +302,7 @@ export function WorkoutBuilder({ workout: initialWorkout, students = [], backHre
     }
 
     function handleAddExercise(ex: Exercise) {
+        if (!workout) return
         addExerciseMutate({ exerciseId: ex.id, workoutId: workout.id })
     }
 
@@ -288,11 +312,12 @@ export function WorkoutBuilder({ workout: initialWorkout, students = [], backHre
     }
 
     function handleRemove(id: string) {
-        if (!confirm('Remover este exercício do treino?')) return
+        if (!workout || !confirm('Remover este exercício do treino?')) return
         removeMutate({ id, workoutId: workout.id })
     }
 
     function handleUpdate(id: string, data: any) {
+        if (!workout) return
         updateMutate({ id, data, workoutId: workout.id })
     }
 
@@ -304,7 +329,7 @@ export function WorkoutBuilder({ workout: initialWorkout, students = [], backHre
                     {isEditingMeta ? (
                         <div className="animate-in fade-in slide-in-from-top-2 duration-200 bg-zinc-900/60 border border-zinc-700/60 rounded-2xl p-5 space-y-3 shadow-xl max-w-xl mx-auto sm:mx-0">
                             <div className="space-y-1.5">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Nome do Treino</label>
+                                <label className="text-[10px] font-black text-zinc-500 capitalize">Nome do Treino</label>
                                 <Input
                                     ref={nameInputRef}
                                     value={editName}
@@ -315,7 +340,7 @@ export function WorkoutBuilder({ workout: initialWorkout, students = [], backHre
                                 />
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Descrição (opcional)</label>
+                                <label className="text-[10px] font-black text-zinc-500 capitalize">Descrição (opcional)</label>
                                 <Input
                                     value={editDesc}
                                     onChange={e => setEditDesc(e.target.value)}
@@ -327,14 +352,14 @@ export function WorkoutBuilder({ workout: initialWorkout, students = [], backHre
                             <div className="flex items-center justify-center sm:justify-start gap-2 pt-1">
                                 <Button
                                     onClick={handleSaveMeta}
-                                    className="h-9  bg-blue-600 hover:bg-blue-500 text-white font-black uppercase tracking-widest text-[10px] rounded-xl transition-all active:scale-95"
+                                    className="h-9  bg-blue-600 hover:bg-blue-500 text-white font-black capitalize text-[10px] rounded-xl transition-all active:scale-95"
                                 >
                                     <Check className="w-3 h-3 mr-1.5" />Salvar
                                 </Button>
                                 <Button
                                     onClick={handleCancelMeta}
                                     variant="ghost"
-                                    className="h-9  bg-zinc-800/60 hover:bg-zinc-700/60 text-zinc-400 hover:text-white font-black uppercase tracking-widest text-[10px] rounded-xl transition-all border border-zinc-700/50 hover:border-zinc-600"
+                                    className="h-9  bg-zinc-800/60 hover:bg-zinc-700/60 text-zinc-400 hover:text-white font-black capitalize text-[10px] rounded-xl transition-all border border-zinc-700/50 hover:border-zinc-600"
                                 >
                                     <X className="w-3 h-3 mr-1.5" />Cancelar
                                 </Button>
@@ -346,8 +371,8 @@ export function WorkoutBuilder({ workout: initialWorkout, students = [], backHre
                             onClick={() => setIsEditingMeta(true)}
                         >
                             <div className="flex flex-col">
-                                <h1 className="text-3xl font-bold text-white font-sans group-hover:text-blue-400 transition-colors duration-200 border-b border-transparent group-hover:border-blue-400/40 pb-0.5 whitespace-nowrap">
-                                    {editName}
+                                <h1 className="text-3xl font-bold text-white font-sans group-hover:text-blue-400 transition-colors duration-200 border-b border-transparent group-hover:border-blue-400/40 pb-0.5 whitespace-nowrap capitalize">
+                                    {editName.toLowerCase()}
                                 </h1>
                                 <p className="text-zinc-500 mt-1 group-hover:text-zinc-400 transition-colors">
                                     {editDesc || 'Builder de Treino'}
@@ -358,13 +383,13 @@ export function WorkoutBuilder({ workout: initialWorkout, students = [], backHre
                                         {workout.assignments && workout.assignments.length > 0 ? (
                                             <div className="flex items-center gap-2 px-3 sm:px-4 py-2 mt-4 bg-orange-500/10 border border-orange-500/20 rounded-xl sm:rounded-2xl w-fit animate-in fade-in slide-in-from-left-4 duration-500">
                                                 <div className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse shrink-0" />
-                                                <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-orange-500">
-                                                    Atribuído para: <span className="text-white italic ml-1">{workout.assignments[0]?.student?.full_name || 'Aluno'}</span>
+                                                <span className="text-[9px] sm:text-[10px] font-black capitalize text-orange-500">
+                                                    Atribuído para: <span className="text-white ml-1">{workout.assignments[0]?.student?.full_name || 'Aluno'}</span>
                                                 </span>
                                             </div>
                                         ) : (
                                             <div className="flex items-center gap-2 px-3 sm:px-4 py-2 mt-4 bg-zinc-900/50 border border-zinc-800 rounded-xl sm:rounded-2xl w-fit">
-                                                <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-zinc-500 italic">Template de Biblioteca</span>
+                                                <span className="text-[9px] sm:text-[10px] font-black capitalize text-zinc-500">Template de Biblioteca</span>
                                             </div>
                                         )}
                                     </>
@@ -392,7 +417,7 @@ export function WorkoutBuilder({ workout: initialWorkout, students = [], backHre
                             initialStudentId={workout.assignments?.[0]?.student_id}
                             initialDays={workout.assignments?.[0]?.day_of_week !== undefined ? [workout.assignments?.[0]?.day_of_week] : []}
                             trigger={
-                                <Button className="h-[58px] px-8 bg-orange-500 hover:bg-orange-400 text-zinc-950 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-none flex flex-row items-center justify-start gap-3 group transition-all active:scale-95 italic w-full">
+                                <Button className="h-[58px] px-8 bg-orange-500 hover:bg-orange-400 text-zinc-950 rounded-2xl font-black capitalize text-[10px] shadow-none flex flex-row items-center justify-start gap-3 group transition-all active:scale-95 w-full">
                                     <Calendar className="w-5 h-5 text-center" />
                                     <span className="text-center whitespace-normal leading-tight">{workout.assignments?.length ? "Gerenciar Atribuição" : "Atribuir"}</span>
                                 </Button>
@@ -428,7 +453,7 @@ export function WorkoutBuilder({ workout: initialWorkout, students = [], backHre
                                     <div className="p-4 border-b border-zinc-800 flex items-center justify-between">
                                         <div className="flex items-center gap-3 pb-4">
                                             <GripVertical className="text-zinc-600 cursor-move" />
-                                            <span className="font-semibold text-zinc-100">{item.exercise.name}</span>
+                                            <span className="font-semibold text-zinc-100 capitalize">{item.exercise.name.toLowerCase()}</span>
                                         </div>
                                         <Button
                                             variant="ghost"
@@ -445,11 +470,11 @@ export function WorkoutBuilder({ workout: initialWorkout, students = [], backHre
                                             {/* WARMUP */}
                                             <div className="space-y-4 p-4 rounded-xl bg-zinc-900/40 border border-zinc-800/80 hover:border-zinc-700/50 transition-colors">
                                                 <div className="flex items-center justify-between border-b border-zinc-800/50 pb-2">
-                                                    <Label className="text-[11px] text-zinc-400 uppercase tracking-widest font-bold">Aquecimento</Label>
+                                                    <Label className="text-[11px] text-zinc-400 capitalize font-bold">Aquecimento</Label>
                                                 </div>
                                                 <div className="grid grid-cols-3 gap-3">
                                                     <div className="space-y-1.5">
-                                                        <span className="text-[10px] text-zinc-500 uppercase font-medium">Séries</span>
+                                                        <span className="text-[10px] text-zinc-500 capitalize font-medium">Séries</span>
                                                         <Input
                                                             type="number"
                                                             defaultValue={item.warmup_sets}
@@ -458,7 +483,7 @@ export function WorkoutBuilder({ workout: initialWorkout, students = [], backHre
                                                         />
                                                     </div>
                                                     <div className="space-y-1.5">
-                                                        <span className="text-[10px] text-zinc-500 uppercase font-medium">Reps</span>
+                                                        <span className="text-[10px] text-zinc-500 capitalize font-medium">Reps</span>
                                                         <Input
                                                             defaultValue={item.warmup_reps}
                                                             onBlur={(e) => handleUpdate(item.id, { warmup_reps: e.target.value })}
@@ -467,7 +492,7 @@ export function WorkoutBuilder({ workout: initialWorkout, students = [], backHre
                                                         />
                                                     </div>
                                                     <div className="space-y-1.5">
-                                                        <span className="text-[10px] text-zinc-500 uppercase font-medium">Desc (s)</span>
+                                                        <span className="text-[10px] text-zinc-500 capitalize font-medium">Desc (s)</span>
                                                         <Input
                                                             type="number"
                                                             defaultValue={item.warmup_rest_seconds}
@@ -481,11 +506,11 @@ export function WorkoutBuilder({ workout: initialWorkout, students = [], backHre
                                             {/* FEEDER */}
                                             <div className="space-y-4 p-4 rounded-xl bg-zinc-900/40 border border-zinc-800/80 hover:border-zinc-700/50 transition-colors">
                                                 <div className="flex items-center justify-between border-b border-zinc-800/50 pb-2">
-                                                    <Label className="text-[11px] text-zinc-400 uppercase tracking-widest font-bold">Preparação (Feeder)</Label>
+                                                    <Label className="text-[11px] text-zinc-400 capitalize font-bold">Preparação (Feeder)</Label>
                                                 </div>
                                                 <div className="grid grid-cols-3 gap-3">
                                                     <div className="space-y-1.5">
-                                                        <span className="text-[10px] text-zinc-500 uppercase font-medium">Séries</span>
+                                                        <span className="text-[10px] text-zinc-500 capitalize font-medium">Séries</span>
                                                         <Input
                                                             type="number"
                                                             defaultValue={item.feeder_sets}
@@ -494,7 +519,7 @@ export function WorkoutBuilder({ workout: initialWorkout, students = [], backHre
                                                         />
                                                     </div>
                                                     <div className="space-y-1.5">
-                                                        <span className="text-[10px] text-zinc-500 uppercase font-medium">Reps</span>
+                                                        <span className="text-[10px] text-zinc-500 capitalize font-medium">Reps</span>
                                                         <Input
                                                             defaultValue={item.feeder_reps}
                                                             onBlur={(e) => handleUpdate(item.id, { feeder_reps: e.target.value })}
@@ -503,7 +528,7 @@ export function WorkoutBuilder({ workout: initialWorkout, students = [], backHre
                                                         />
                                                     </div>
                                                     <div className="space-y-1.5">
-                                                        <span className="text-[10px] text-zinc-500 uppercase font-medium">Desc (s)</span>
+                                                        <span className="text-[10px] text-zinc-500 capitalize font-medium">Desc (s)</span>
                                                         <Input
                                                             type="number"
                                                             defaultValue={item.feeder_rest_seconds}
@@ -517,11 +542,11 @@ export function WorkoutBuilder({ workout: initialWorkout, students = [], backHre
                                             {/* WORKING */}
                                             <div className="space-y-4 p-4 rounded-xl bg-blue-500/5 border border-blue-500/20 ring-1 ring-blue-500/10">
                                                 <div className="flex items-center justify-between border-b border-blue-500/20 pb-2">
-                                                    <Label className="text-[11px] text-blue-400 uppercase tracking-widest font-bold">Séries Validadas</Label>
+                                                    <Label className="text-[11px] text-blue-400 capitalize font-bold">Séries Validadas</Label>
                                                 </div>
                                                 <div className="grid grid-cols-3 gap-3">
                                                     <div className="space-y-1.5">
-                                                        <span className="text-[10px] text-blue-500/50 uppercase font-medium">Séries</span>
+                                                        <span className="text-[10px] text-blue-500/50 capitalize font-medium">Séries</span>
                                                         <Input
                                                             type="number"
                                                             defaultValue={item.working_sets}
@@ -530,7 +555,7 @@ export function WorkoutBuilder({ workout: initialWorkout, students = [], backHre
                                                         />
                                                     </div>
                                                     <div className="space-y-1.5">
-                                                        <span className="text-[10px] text-blue-500/50 uppercase font-medium">Reps</span>
+                                                        <span className="text-[10px] text-blue-500/50 capitalize font-medium">Reps</span>
                                                         <Input
                                                             defaultValue={item.reps}
                                                             onBlur={(e) => handleUpdate(item.id, { reps: e.target.value })}
@@ -539,7 +564,7 @@ export function WorkoutBuilder({ workout: initialWorkout, students = [], backHre
                                                         />
                                                     </div>
                                                     <div className="space-y-1.5">
-                                                        <span className="text-[10px] text-blue-500/50 uppercase font-medium">Desc (s)</span>
+                                                        <span className="text-[10px] text-blue-500/50 capitalize font-medium">Desc (s)</span>
                                                         <Input
                                                             type="number"
                                                             defaultValue={item.rest_seconds}
@@ -554,8 +579,8 @@ export function WorkoutBuilder({ workout: initialWorkout, students = [], backHre
                                         {/* NOTES SECTION */}
                                         <div className="flex flex-col">
                                             <div className="flex items-center justify-between bg-zinc-900/50 px-3 py-1.5 rounded-t-lg border-x border-t border-zinc-800">
-                                                <Label className="text-[10px] text-zinc-500 uppercase tracking-wider font-bold">Orientações e Observações Técnicas</Label>
-                                                <span className="text-[9px] text-zinc-600 italic">Salva automaticamente ao sair do campo</span>
+                                                <Label className="text-[10px] text-zinc-500 capitalize font-bold">Orientações e Observações Técnicas</Label>
+                                                <span className="text-[9px] text-zinc-600">Salva automaticamente ao sair do campo</span>
                                             </div>
                                             <Textarea
                                                 defaultValue={item.notes}
@@ -598,11 +623,11 @@ export function WorkoutBuilder({ workout: initialWorkout, students = [], backHre
                                 key={ex.id}
                                 variant="outline"
                                 onClick={() => handleAddExercise(ex)}
-                                className="justify-start bg-zinc-950 border-zinc-800 hover:border-zinc-700 hover:bg-zinc-900 h-auto py-3  text-zinc-300"
+                                className="justify-start bg-zinc-950 border-zinc-800 hover:border-zinc-700 hover:bg-zinc-900 h-auto py-3 px-4 text-zinc-300 rounded-xl"
                             >
-                                <div className="flex flex-col items-start gap-0.5">
-                                    <span className="font-semibold text-white">{ex.name}</span>
-                                    <span className="text-[10px] text-zinc-500 uppercase tracking-wider">Biblioteca</span>
+                                <div className="flex flex-col items-start gap-0.5 w-full text-left">
+                                    <span className="font-bold text-white capitalize tracking-normal">{ex.name.toLowerCase()}</span>
+                                    <span className="text-[10px] text-zinc-500 font-medium capitalize tracking-normal">Biblioteca</span>
                                 </div>
                             </Button>
                         ))}
@@ -620,7 +645,7 @@ export function WorkoutBuilder({ workout: initialWorkout, students = [], backHre
                             variant="outline"
                             size="sm"
                             onClick={handleAddCustom}
-                            className="shrink-0 bg-blue-500/10 border-blue-500/30 text-blue-400 hover:bg-blue-500/20 hover:text-blue-300 hover:border-blue-500/50 font-bold uppercase tracking-wide text-[10px] whitespace-nowrap"
+                            className="shrink-0 bg-blue-500/10 border-blue-500/30 text-blue-400 hover:bg-blue-500/20 hover:text-blue-300 hover:border-blue-500/50 font-bold capitalize text-[10px] whitespace-nowrap"
                         >
                             <Plus className="w-3 h-3 mr-1.5" />
                             Criar Novo Exercício

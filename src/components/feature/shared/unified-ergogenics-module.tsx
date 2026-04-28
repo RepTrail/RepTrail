@@ -100,7 +100,7 @@ export function UnifiedErgogenicsModule({
             return (res as any[]) || []
         },
         initialData: initialErgogenics,
-        staleTime: 1000 * 60 * 5
+        staleTime: 1000 * 30 // Reduced to 30s for more responsive updates
     })
 
     const { data: logsData = [] } = useQuery({
@@ -111,7 +111,7 @@ export function UnifiedErgogenicsModule({
             return Array.isArray(res) ? res : []
         },
         initialData: initialLogs,
-        staleTime: 1000 * 60 * 5
+        staleTime: 1000 * 30 // Reduced to 30s for more responsive updates
     })
 
     const ergogenics = Array.isArray(ergogenicsData) ? ergogenicsData : []
@@ -213,10 +213,15 @@ export function UnifiedErgogenicsModule({
         const appDaysCount = e.application_days?.length || 0
         const weeklyDosage = e.weekly_dosage || 0
         
-        // Priority: 1. Stored dosage string, 2. Calculated from weekly
-        const dosage = e.dosage && e.dosage !== '0' 
-            ? e.dosage 
-            : (appDaysCount > 0 ? (weeklyDosage / appDaysCount).toFixed(2) : weeklyDosage.toFixed(2))
+        const dosageValue = appDaysCount > 0 
+            ? (weeklyDosage / appDaysCount) 
+            : weeklyDosage
+
+        // If e.dosage matches exactly the old calculated value (approx), we should probably override it.
+        // But the simplest fix is to prefer the calculated value if it's non-zero.
+        const dosage = dosageValue > 0 
+            ? (Number.isInteger(dosageValue) ? dosageValue.toString() : dosageValue.toFixed(1))
+            : (e.dosage && e.dosage !== '0' ? e.dosage : '0')
 
         const colors = {
             orange: {

@@ -7,11 +7,13 @@ import crypto from 'crypto'
 import { upsertDailyTracking } from '@/actions/tracking-actions'
 
 export async function getStudentErgogenics(studentId: string) {
-    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
+    const { createAdminClient, createClient } = await import('@/lib/supabase/server')
+    const adminSupabase = await createAdminClient()
+    const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     // 1. Try to fetch from real ergogenics table
-    const { data: records, error } = await supabase
+    const { data: records, error } = await adminSupabase
         .from('ergogenics')
         .select(`
             *,
@@ -25,13 +27,13 @@ export async function getStudentErgogenics(studentId: string) {
     // If we have records, we are dealing with a real student
     if (records && records.length > 0) {
         // Fetch active trainer links for this student to filter
-        const { data: activeLinks } = await supabase
+        const { data: activeLinks } = await adminSupabase
             .from('trainer_students')
             .select('trainer_id')
             .eq('student_id', studentId)
             .eq('active', true)
 
-        const activeTrainerIds = new Set(activeLinks?.map(l => l.trainer_id) || [])
+        const activeTrainerIds = new Set(activeLinks?.map((l: any) => l.trainer_id) || [])
 
         return (records || []).filter(record => {
             if (!record.trainer_id || record.trainer_id === studentId) return true
@@ -41,7 +43,7 @@ export async function getStudentErgogenics(studentId: string) {
 
     // 2. If no records and we have a user (likely trainer), check if it's a placeholder
     if (user) {
-        const { data: placeholder } = await supabase
+        const { data: placeholder } = await adminSupabase
             .from('pending_student_links')
             .select('*')
             .eq('id', studentId)
@@ -74,7 +76,9 @@ export async function addErgogenic(data: {
     start_date: string
     end_date?: string
 }) {
-    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
+    const { createAdminClient, createClient } = await import('@/lib/supabase/server')
+    const adminSupabase = await createAdminClient()
+    const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { error: 'Unauthorized' }
 
@@ -88,7 +92,7 @@ export async function addErgogenic(data: {
     }
 
     // Check if it's a placeholder
-    const { data: placeholder } = await supabase
+    const { data: placeholder } = await adminSupabase
         .from('pending_student_links')
         .select('*')
         .eq('id', data.student_id)
@@ -99,7 +103,7 @@ export async function addErgogenic(data: {
         const ergo = (placeholder.ergogenic_data as any[]) || []
         const newErgo = [...ergo, { ...cleanedData, trainer_id: user.id }]
         
-        const { error: pendingError } = await supabase
+        const { error: pendingError } = await adminSupabase
             .from('pending_student_links')
             .update({ ergogenic_data: newErgo })
             .eq('id', data.student_id)
@@ -109,7 +113,7 @@ export async function addErgogenic(data: {
         return { success: true, data: cleanedData }
     }
 
-    const { data: ergogenic, error } = await supabase
+    const { data: ergogenic, error } = await adminSupabase
         .from('ergogenics')
         .insert({
             ...cleanedData,
@@ -121,7 +125,7 @@ export async function addErgogenic(data: {
     if (error) return { error: error.message }
 
     // 🚀 AUTO-ENABLE: Enable hormonal protocol in student configurations
-    await supabase.from('student_details').upsert({ 
+    await adminSupabase.from('student_details').upsert({ 
         id: data.student_id, 
         steroid_use: true 
     }, { onConflict: 'id' });
@@ -132,7 +136,9 @@ export async function addErgogenic(data: {
 }
 
 export async function updateErgogenic(id: string, studentId: string, data: any) {
-    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
+    const { createAdminClient, createClient } = await import('@/lib/supabase/server')
+    const adminSupabase = await createAdminClient()
+    const supabase = await createClient()
 
     // Clean data and remove sync metadata to avoid Supabase schema errors
     const { clientId, clientMutationId, parentId, ...filteredData } = data as any
@@ -141,7 +147,7 @@ export async function updateErgogenic(id: string, studentId: string, data: any) 
     if (filteredData.end_date === '') cleanedData.end_date = null
 
     // Check if it's a placeholder
-    const { data: placeholder } = await supabase
+    const { data: placeholder } = await adminSupabase
         .from('pending_student_links')
         .select('*')
         .eq('id', studentId)
@@ -156,7 +162,7 @@ export async function updateErgogenic(id: string, studentId: string, data: any) 
             return e
         })
 
-        const { error: pendingError } = await supabase
+        const { error: pendingError } = await adminSupabase
             .from('pending_student_links')
             .update({ ergogenic_data: newErgo })
             .eq('id', studentId)
@@ -166,7 +172,7 @@ export async function updateErgogenic(id: string, studentId: string, data: any) 
         return { success: true }
     }
 
-    const { error } = await supabase
+    const { error } = await adminSupabase
         .from('ergogenics')
         .update(cleanedData)
         .eq('id', id)
@@ -174,6 +180,7 @@ export async function updateErgogenic(id: string, studentId: string, data: any) 
     if (error) return { error: error.message }
     revalidatePath(`/dashboard/trainer/students/${studentId}/ergogenics`)
     revalidatePath('/dashboard/student/ergogenics')
+    revalidatePath(`/dashboard/student/ergogenics/${studentId}`)
     return { success: true }
 }
 

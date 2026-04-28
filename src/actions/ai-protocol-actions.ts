@@ -5,11 +5,13 @@ import { saveParsedData } from '@/actions/save-actions'
 import { revalidatePath } from 'next/cache'
 
 export interface AIProtocolPreferences {
+  // Goal
+  goal: 'bulking' | 'cutting' | 'maintenance'
   // Workout
   workoutSplit: string
-  trainingVolume: 'low' | 'high'   // NEW
-  trainingDaysPerWeek: number
-  sessionDurationMinutes: number
+  trainingVolume: 'low' | 'high'
+  strongMuscles?: string
+  weakMuscles?: string
   // Cardio
   cardioLikes: string
   cardioDislikes: string
@@ -56,10 +58,9 @@ export async function generateAIProtocol(preferences: AIProtocolPreferences) {
   const multiplier = activityMultipliers[details?.activity_level || ''] || 1.55
   const tdee = Math.round(bmr * multiplier)
 
-  const goal = details?.goal || 'Hipertrofia'
-  const goalLower = goal.toLowerCase()
-  const caloricAdjustment = goalLower.includes('emagre') || goalLower.includes('perda') ? -400
-    : goalLower.includes('massa') || goalLower.includes('hipertrofi') ? +300 : 0
+  const goal = preferences.goal || details?.goal || 'maintenance'
+  const caloricAdjustment = goal === 'cutting' ? -400
+    : goal === 'bulking' ? +400 : 0
   const targetCalories = tdee + caloricAdjustment
 
   // Macro split
@@ -92,10 +93,11 @@ Você é um Personal Trainer e Nutricionista de elite. Crie um protocolo complet
 - Proteína: ${proteinG}g | Carboidrato: ${carbG}g | Gordura: ${fatG}g
 
 ## PREFERÊNCIAS DO ATLETA
-- Divisão de treino: ${splitDisplay}
+- Objetivo: ${goal.toUpperCase()}
+- Divisão de treino preferida: ${splitDisplay}
 - Volume: ${volumeDisplay}
-- Dias de treino por semana: ${preferences.trainingDaysPerWeek}
-- Duração por sessão: ${preferences.sessionDurationMinutes} minutos
+- Pontos Fortes (Manutenção): ${preferences.strongMuscles || 'Não especificado'}
+- Pontos Fracos (Prioridade): ${preferences.weakMuscles || 'Não especificado'}
 - Cardio que GOSTA: ${preferences.cardioLikes || 'Todos'}
 - Cardio que NÃO gosta: ${preferences.cardioDislikes || 'Nenhum'}
 - Refeições por dia: ${preferences.mealsPerDay}
@@ -128,18 +130,18 @@ Retorne SOMENTE um JSON válido com esta estrutura exata. Não adicione markdown
       "type": "Esteira - Caminhada Inclinada",
       "duration": "30",
       "intensity": "Moderado - 65-70% FCM",
-      "frequency": "${preferences.trainingDaysPerWeek} vezes por semana",
+      "frequency": "Conforme sugerido pela IA",
       "days_of_week": [2, 4, 6] // IMPORTANTE: Array de números inteiros de 0 (Domingo) a 6 (Sábado)
     }
   ],
   "diets": [
     {
-      "diet_name": "Protocolo Alimentar - ${goal === 'muscle_gain' ? 'Superávit' : goal === 'fat_loss' ? 'Déficit' : 'Manutenção'}",
+      "diet_name": "Protocolo Alimentar - ${goal === 'bulking' ? 'Superávit' : goal === 'cutting' ? 'Déficit' : 'Manutenção'}",
       "meals": [
         {
           "meal_name": "Refeição 1",
           "foods": [
-            { "name": "Ovo inteiro", "quantity": "3 unidades", "calories": 210, "protein": 18, "carbs": 0, "fat": 15 }
+            { "name": "Ovo inteiro", "quantity": "3 unidades", "calories": 210, "protein": 18, "carbs": 0, "fat": 15, "fiber": 0 }
           ]
         }
       ]
@@ -148,7 +150,10 @@ Retorne SOMENTE um JSON válido com esta estrutura exata. Não adicione markdown
 }
 
 REGRAS:
-- Crie ${preferences.trainingDaysPerWeek} treinos, um para cada dia
+- FREQUÊNCIA E DURAÇÃO: Decida a frequência ideal (entre 3 a 6 dias) e duração (entre 45 a 90 min) baseada no perfil e objetivo.
+- PRIORIZAÇÃO MUSCULAR: Se houver "Pontos Fracos", garanta que esses grupos tenham maior volume semanal ou sejam treinados no início da sessão. Para "Pontos Fortes", mantenha um volume de manutenção.
+- MACRONUTRIENTES E FIBRAS: Seja extremamente preciso nos cálculos. Grãos (como aveia), vegetais e frutas DEVEM ter valores de fibras realistas. Não deixe fibras como 0 se o alimento for integral ou vegetal.
+- Crie um treino para cada dia de treino decidido.
 - Volume de treino: ${preferences.trainingVolume === 'low'
       ? 'LOW VOLUME — meta de ~4 séries diretas por grupo muscular por semana. Use 3-4 séries por exercício e selecione menos exercícios por sessão. Priorize alta intensidade e progressão de carga.'
       : 'HIGH VOLUME — meta de ~20 séries diretas por grupo muscular por semana. Use 4-5 séries por exercício e inclua mais exercícios por sessão, distribuídos ao longo da semana.'}
@@ -157,7 +162,6 @@ REGRAS:
   • Cada exercício de PUXAR (remada, puxada, serrote, pullover etc.) conta como 0,5 série para o BÍCEPS.
   • Séries diretas de bíceps (rosca direta, rosca alternada etc.) e tríceps (tríceps corda, barra etc.) contam como 1 série inteira.
   • Some todas as séries (diretas + sinergistas × 0,5) para garantir que o total semanal de bíceps e tríceps atinja a meta de volume.
-- Cada treino deve caber em ${preferences.sessionDurationMinutes} minutos
 - O cardio deve usar APENAS os tipos que o atleta gosta: ${preferences.cardioLikes || 'qualquer tipo'}
 - Evite os tipos que não gosta: ${preferences.cardioDislikes || 'nenhum'}
 - A dieta deve ter exatamente ${preferences.mealsPerDay} refeições
@@ -170,7 +174,7 @@ ${preferences.mealsPerDay === 4 ? `  • 4 refeições: Refeição 1 = leve (~15
 - Evite: ${preferences.foodDislikes || 'nenhum'} e respeite as restrições: ${preferences.dietaryRestrictions || 'nenhuma'}
 - Macros total das refeições devem somar aproximadamente: ${proteinG}g proteína, ${carbG}g carbs, ${fatG}g gordura
 - day_of_week (Workouts): 0=Dom, 1=Seg, 2=Ter, 3=Qua, 4=Qui, 5=Sex, 6=Sáb.
-- DISTRIBUIÇÃO DOS DIAS: Se o aluno treina N dias por semana, ESPALHE os treinos ao longo da semana (ex: 3 dias = Seg/Qua/Sex [1,3,5]; 4 dias = Seg/Ter/Qui/Sex [1,2,4,5]). NÃO use dias consecutivos se não for necessário.
+- DISTRIBUIÇÃO DOS DIAS: Espalhe os treinos ao longo da semana. NÃO use dias consecutivos se não for necessário.
 - Cardios: Agrupe por tipo. Se um cardio deve ser feito 3x na semana, retorne UM objeto no array 'cardios' com 'days_of_week': [1, 3, 5].
 `
 

@@ -100,10 +100,10 @@ export function UnifiedLibraryCard({
                         />
                     </div>
                 </div>
-                <CardTitle className="mt-4 text-xl font-black italic uppercase tracking-tighter text-white group-hover:text-white transition-colors">
+                <CardTitle className="mt-4 text-xl font-black text-white group-hover:text-white transition-colors capitalize text-left">
                     {name}
                 </CardTitle>
-                <CardDescription className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest line-clamp-2 mt-1">
+                <CardDescription className="text-zinc-500 text-[10px] font-bold capitalize line-clamp-2 mt-1 text-left">
                     {description || "Sem descrição disponível."}
                 </CardDescription>
             </CardHeader>

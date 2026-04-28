@@ -107,6 +107,7 @@ function MealItemRow({
     const [protein, setProtein] = useState(item.protein)
     const [carbs, setCarbs] = useState(item.carbs)
     const [fat, setFat] = useState(item.fat)
+    const [fiber, setFiber] = useState(item.fiber || 0)
 
     const [hasSubstitute, setHasSubstitute] = useState(item.has_substitute || false)
     const [subFoodName, setSubFoodName] = useState(item.sub_food_name || '')
@@ -114,6 +115,7 @@ function MealItemRow({
     const [subProtein, setSubProtein] = useState(item.sub_protein || 0)
     const [subCarbs, setSubCarbs] = useState(item.sub_carbs || 0)
     const [subFat, setSubFat] = useState(item.sub_fat || 0)
+    const [subFiber, setSubFiber] = useState(item.sub_fiber || 0)
     const [isSaved, setIsSaved] = useState(true)
 
     // AI Estimated loading states (kept as local UI feedback)
@@ -132,6 +134,8 @@ function MealItemRow({
         setSubProtein(item.sub_protein || 0)
         setSubCarbs(item.sub_carbs || 0)
         setSubFat(item.sub_fat || 0)
+        setSubFiber(item.sub_fiber || 0)
+        setFiber(item.fiber || 0)
         setIsSaved(true)
     }, [item])
 
@@ -163,13 +167,14 @@ function MealItemRow({
             data: {
                 food_name: foodName,
                 quantity: quantity,
-                protein, carbs, fat,
+                protein, carbs, fat, fiber,
                 has_substitute: hasSubstitute,
                 sub_food_name: subFoodName,
                 sub_quantity: subQuantity,
                 sub_protein: subProtein,
                 sub_carbs: subCarbs,
-                sub_fat: subFat
+                sub_fat: subFat,
+                sub_fiber: subFiber
             }
         })
     }
@@ -186,6 +191,7 @@ function MealItemRow({
             setProtein(res.macros.protein)
             setCarbs(res.macros.carbs)
             setFat(res.macros.fat)
+            setFiber(res.macros.fiber || 0)
             setIsSaved(false)
         }
         setEstimating(prev => ({ ...prev, main: false }))
@@ -198,6 +204,7 @@ function MealItemRow({
             setSubProtein(res.macros.protein)
             setSubCarbs(res.macros.carbs)
             setSubFat(res.macros.fat)
+            setSubFiber(res.macros.fiber || 0)
             setIsSaved(false)
         }
         setEstimating(prev => ({ ...prev, sub: false }))
@@ -213,6 +220,7 @@ function MealItemRow({
             setSubProtein(res.suggestion.protein)
             setSubCarbs(res.suggestion.carbs)
             setSubFat(res.suggestion.fat)
+            setSubFiber(res.suggestion.fiber || 0)
             setIsSaved(false)
         }
         setEstimating(prev => ({ ...prev, suggest: false }))
@@ -224,6 +232,7 @@ function MealItemRow({
         setSubProtein(0)
         setSubCarbs(0)
         setSubFat(0)
+        setSubFiber(0)
         setHasSubstitute(false)
         setIsSaved(false)
     }
@@ -266,7 +275,7 @@ function MealItemRow({
                             className="bg-zinc-900 border-zinc-700 text-sm h-9 text-center text-white focus:border-orange-500/50 rounded-xl"
                         />
                     </div>
-                    <div className="col-span-8 lg:col-span-3 grid grid-cols-3 gap-1.5">
+                    <div className="col-span-8 lg:col-span-3 grid grid-cols-4 gap-1.5">
                         <div className="space-y-1.5">
                             <Label className="text-[10px] text-blue-500/50 uppercase font-bold tracking-tight">Prot</Label>
                             <Input
@@ -295,6 +304,16 @@ function MealItemRow({
                                 value={fat}
                                 onChange={(e) => handleChange(setFat, parseFloat(e.target.value) || 0)}
                                 className="bg-zinc-900 border-zinc-700 text-xs h-9 text-center text-orange-500 font-medium rounded-xl px-1"
+                            />
+                        </div>
+                        <div className="space-y-1.5">
+                            <Label className="text-[10px] text-purple-500/50 uppercase font-bold tracking-tight">Fib</Label>
+                            <Input
+                                type="number"
+                                step="0.1"
+                                value={fiber}
+                                onChange={(e) => handleChange(setFiber, parseFloat(e.target.value) || 0)}
+                                className="bg-zinc-900 border-zinc-700 text-xs h-9 text-center text-purple-400 font-medium rounded-xl px-1"
                             />
                         </div>
                     </div>
@@ -369,7 +388,7 @@ function MealItemRow({
                             className="bg-zinc-950 border-zinc-700 text-sm h-9 text-center text-white focus:border-orange-500/50"
                         />
                     </div>
-                    <div className="lg:col-span-4 grid grid-cols-3 gap-2">
+                    <div className="lg:col-span-4 grid grid-cols-4 gap-2">
                         <div className="space-y-1.5">
                             <Label className="text-[10px] text-blue-500/50 uppercase font-bold tracking-tight text-center">Prot</Label>
                             <Input
@@ -398,6 +417,16 @@ function MealItemRow({
                                 value={subFat}
                                 onChange={(e) => handleChange(setSubFat, parseFloat(e.target.value) || 0)}
                                 className="bg-zinc-950 border-zinc-700 text-xs h-9 text-center text-orange-500/80 font-medium"
+                            />
+                        </div>
+                        <div className="space-y-1.5">
+                            <Label className="text-[10px] text-purple-500/50 uppercase font-bold tracking-tight text-center">Fib</Label>
+                            <Input
+                                type="number"
+                                step="0.1"
+                                value={subFiber}
+                                onChange={(e) => handleChange(setSubFiber, parseFloat(e.target.value) || 0)}
+                                className="bg-zinc-950 border-zinc-700 text-xs h-9 text-center text-purple-400/80 font-medium"
                             />
                         </div>
                     </div>
@@ -489,12 +518,12 @@ export function DietBuilder({ diet: initialDiet, students = [], backHref = '/das
         entity: ENTITIES.MEAL,
         entityId: diet.id,
         queryKey,
-        mutationFn: async (variables: { mealIds: string[] }) => variables,
+        mutationFn: async (variables: { orderedIds: string[] }) => variables,
         onMutate: (variables) => {
             const previous = queryClient.getQueryData(queryKey)
             queryClient.setQueryData(queryKey, (old: any) => {
                 const meals = [...(old?.meals || [])]
-                const sorted = variables.mealIds.map(id => meals.find(m => m.id === id)).filter(Boolean)
+                const sorted = variables.orderedIds.map(id => meals.find(m => m.id === id)).filter(Boolean)
                 return { ...old, meals: sorted }
             })
             return { previous }
@@ -506,7 +535,7 @@ export function DietBuilder({ diet: initialDiet, students = [], backHref = '/das
         entity: ENTITIES.MEAL_ITEM,
         entityId: 'reorder',
         queryKey,
-        mutationFn: async (variables: { mealId: string, itemIds: string[] }) => variables,
+        mutationFn: async (variables: { mealId: string, orderedIds: string[] }) => variables,
         onMutate: (variables) => {
             const previous = queryClient.getQueryData(queryKey)
             queryClient.setQueryData(queryKey, (old: any) => ({
@@ -514,7 +543,7 @@ export function DietBuilder({ diet: initialDiet, students = [], backHref = '/das
                 meals: (old?.meals || []).map((m: any) => {
                     if (m.id !== variables.mealId) return m
                     const items = [...(m.meal_items || [])]
-                    const sorted = variables.itemIds.map(id => items.find(i => i.id === id)).filter(Boolean)
+                    const sorted = variables.orderedIds.map(id => items.find(i => i.id === id)).filter(Boolean)
                     return { ...m, meal_items: sorted }
                 })
             }))
@@ -562,7 +591,7 @@ export function DietBuilder({ diet: initialDiet, students = [], backHref = '/das
     const { mutate: addItemMutate } = useOptimisticMutation({
         actionName: 'add-meal-item',
         entity: ENTITIES.MEAL,
-        entityId: 'item-add',
+        entityId: 'new',
         queryKey,
         mutationFn: async (variables: { mealId: string, dietId: string, foodId: string }) => variables,
         onMutate: (variables) => {
@@ -643,7 +672,10 @@ export function DietBuilder({ diet: initialDiet, students = [], backHref = '/das
     function handleMealDragEnd() {
         if (!draggedMealId) return
         setDraggedMealId(null)
-        reorderMealsMutate({ mealIds: meals.map(m => m.id) })
+        reorderMealsMutate({ 
+            orderedIds: meals.map(m => m.id),
+            dietId: diet.id 
+        })
     }
 
     const handleItemDragStart = (e: React.DragEvent, mealId: string, itemId: string) => {
@@ -672,7 +704,10 @@ export function DietBuilder({ diet: initialDiet, students = [], backHref = '/das
         if (!draggedItemId) return
         const meal = meals.find(m => m.id === mealId)
         setDraggedItemId(null)
-        if (meal) reorderItemsMutate({ mealId, itemIds: (meal.meal_items || []).map(i => i.id) })
+        if (meal) reorderItemsMutate({ 
+            mealId, 
+            orderedIds: (meal.meal_items || []).map(i => i.id) 
+        })
     }
 
     function handleSaveName() {
@@ -690,9 +725,10 @@ export function DietBuilder({ diet: initialDiet, students = [], backHref = '/das
             acc.p += Number(item.protein) || 0
             acc.c += Number(item.carbs) || 0
             acc.f += Number(item.fat) || 0
+            acc.fib += Number(item.fiber) || 0
         })
         return acc
-    }, { p: 0, c: 0, f: 0 }) || { p: 0, c: 0, f: 0 }
+    }, { p: 0, c: 0, f: 0, fib: 0 }) || { p: 0, c: 0, f: 0, fib: 0 }
 
     const totalKcal = Math.round((totals.p * 4) + (totals.c * 4) + (totals.f * 9))
 
@@ -773,8 +809,8 @@ export function DietBuilder({ diet: initialDiet, students = [], backHref = '/das
                                     className="relative group cursor-pointer w-fit"
                                     onClick={() => setIsEditingName(true)}
                                 >
-                                    <h1 className="text-2xl font-black text-white font-sans italic uppercase tracking-tight group-hover:text-orange-400 transition-colors leading-tight break-words pr-8">
-                                        {editName}
+                                    <h1 className="text-2xl font-black text-white font-sans capitalize group-hover:text-orange-400 transition-colors leading-tight break-words pr-8">
+                                        {editName.toLowerCase()}
                                     </h1>
                                     <button className="absolute top-0 -right-2 p-2 rounded-xl text-zinc-700 group-hover:text-orange-400 bg-zinc-900/50 border border-zinc-800 transition-all active:scale-95 shadow-lg">
                                         <Pencil className="w-3.5 h-3.5" />
@@ -786,8 +822,8 @@ export function DietBuilder({ diet: initialDiet, students = [], backHref = '/das
                                         {diet.assignments && diet.assignments.length > 0 ? (
                                             <div className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-orange-500/10 border border-orange-500/20 rounded-xl sm:rounded-2xl w-fit animate-in fade-in slide-in-from-left-4 duration-500">
                                                 <div className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse shrink-0" />
-                                                <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-orange-500">
-                                                    Atribuído para: <span className="text-white italic ml-1">{diet.assignments[0]?.student?.full_name || 'Aluno'}</span>
+                                                <span className="text-[9px] sm:text-[10px] font-black uppercase text-orange-500">
+                                                    Atribuído para: <span className="text-white ml-1">{diet.assignments[0]?.student?.full_name || 'Aluno'}</span>
                                                 </span>
                                             </div>
                                         ) : (
@@ -806,7 +842,7 @@ export function DietBuilder({ diet: initialDiet, students = [], backHref = '/das
                             onClick={handleEstimateAll}
                             disabled={isEstimatingAll || meals.length === 0}
                             variant="outline"
-                            className="h-[56px] sm:h-[64px] px-6 sm:px-8 border-zinc-800 bg-zinc-900/50 hover:bg-zinc-800 text-orange-400 hover:text-orange-300 rounded-xl sm:rounded-2xl font-black uppercase tracking-widest text-[10px] flex flex-row sm:flex-col items-center justify-center gap-2 sm:gap-1 transition-all active:scale-95 italic text-center"
+                            className="h-[56px] sm:h-[64px] px-6 sm:px-8 border-zinc-800 bg-zinc-900/50 hover:bg-zinc-800 text-orange-400 hover:text-orange-300 rounded-xl sm:rounded-2xl font-black capitalize text-[10px] flex flex-row sm:flex-col items-center justify-center gap-2 sm:gap-1 transition-all active:scale-95 text-center"
                         >
                             {isEstimatingAll ? (
                                 <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" />
@@ -827,7 +863,7 @@ export function DietBuilder({ diet: initialDiet, students = [], backHref = '/das
                                 initialStudentId={diet.assignments?.[0]?.student_id}
                                 initialDays={diet.assignments?.[0]?.days_of_week}
                                 trigger={
-                                    <Button className="h-[56px] sm:h-[64px] px-6 sm:px-8 bg-orange-500 hover:bg-orange-400 text-zinc-950 rounded-xl sm:rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-none flex flex-row sm:flex-col items-center justify-center gap-2 sm:gap-1 transition-all active:scale-95 italic text-center">
+                                    <Button className="h-[56px] sm:h-[64px] px-6 sm:px-8 bg-orange-500 hover:bg-orange-400 text-zinc-950 rounded-xl sm:rounded-2xl font-black capitalize text-[10px] shadow-none flex flex-row sm:flex-col items-center justify-center gap-2 sm:gap-1 transition-all active:scale-95 text-center">
                                         <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-center" />
                                         <span className="text-center">{diet.assignments?.length ? "Gerenciar Atribuição" : "Atribuir Dieta"}</span>
                                     </Button>
@@ -838,33 +874,40 @@ export function DietBuilder({ diet: initialDiet, students = [], backHref = '/das
                 </div>
 
                 {/* Macro Summary Bar */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-8 lg:gap-4 bg-zinc-900/40 border border-zinc-800/60 p-6 rounded-[1.5rem] sm:rounded-[2.5rem] shadow-inner overflow-hidden">
+                <div className="grid grid-cols-2 lg:grid-cols-5 gap-x-6 gap-y-8 lg:gap-4 bg-zinc-900/40 border border-zinc-800/60 p-6 rounded-[1.5rem] sm:rounded-[2.5rem] shadow-inner overflow-hidden">
                     <div className="space-y-1">
-                        <span className="block text-[8px] sm:text-[10px] text-zinc-500 uppercase font-black tracking-widest mb-0.5 sm:mb-1">Proteína</span>
+                        <span className="block text-[8px] sm:text-[10px] text-zinc-500 uppercase font-black mb-0.5 sm:mb-1">Proteína</span>
                         <div className="flex items-baseline gap-1">
                             <span className="text-2xl sm:text-3xl font-black text-blue-400">{Math.round(totals.p)}</span>
                             <small className="text-[10px] sm:text-xs font-bold text-zinc-600">g</small>
                         </div>
                     </div>
                     <div className="space-y-1 lg:pl-6 lg:border-l-2 lg:border-zinc-800">
-                        <span className="block text-[8px] sm:text-[10px] text-zinc-500 uppercase font-black tracking-widest mb-0.5 sm:mb-1">Carboidratos</span>
+                        <span className="block text-[8px] sm:text-[10px] text-zinc-500 uppercase font-black mb-0.5 sm:mb-1">Carboidratos</span>
                         <div className="flex items-baseline gap-1">
                             <span className="text-2xl sm:text-3xl font-black text-orange-400">{Math.round(totals.c)}</span>
                             <small className="text-[10px] sm:text-xs font-bold text-zinc-600">g</small>
                         </div>
                     </div>
                     <div className="space-y-1 lg:pl-6 lg:border-l-2 lg:border-zinc-800">
-                        <span className="block text-[8px] sm:text-[10px] text-zinc-500 uppercase font-black tracking-widest mb-0.5 sm:mb-1">Gorduras</span>
+                        <span className="block text-[8px] sm:text-[10px] text-zinc-500 uppercase font-black mb-0.5 sm:mb-1">Gorduras</span>
                         <div className="flex items-baseline gap-1">
                             <span className="text-2xl sm:text-3xl font-black text-orange-500">{Math.round(totals.f)}</span>
                             <small className="text-[10px] sm:text-xs font-bold text-zinc-600">g</small>
                         </div>
                     </div>
                     <div className="space-y-1 lg:pl-6 lg:border-l-2 lg:border-zinc-800">
-                        <span className="block text-[10px] sm:text-[12px] text-white uppercase font-black tracking-widest mb-0.5 sm:mb-1">Total Kcal</span>
+                        <span className="block text-[8px] sm:text-[10px] text-zinc-500 uppercase font-black mb-0.5 sm:mb-1">Fibras</span>
                         <div className="flex items-baseline gap-1">
-                            <span className="text-2xl sm:text-3xl font-black text-white italic underline decoration-blue-500 decoration-4 underline-offset-4 leading-none">{totalKcal}</span>
-                            <small className="text-[10px] sm:text-xs font-bold text-zinc-600 italic">kcal</small>
+                            <span className="text-2xl sm:text-3xl font-black text-purple-400">{Math.round(totals.fib)}</span>
+                            <small className="text-[10px] sm:text-xs font-bold text-zinc-600">g</small>
+                        </div>
+                    </div>
+                    <div className="space-y-1 lg:pl-6 lg:border-l-2 lg:border-zinc-800">
+                        <span className="block text-[10px] sm:text-[12px] text-white uppercase font-black mb-0.5 sm:mb-1">Total Kcal</span>
+                        <div className="flex items-baseline gap-1">
+                            <span className="text-2xl sm:text-3xl font-black text-white underline decoration-blue-500 decoration-4 underline-offset-4 leading-none">{totalKcal}</span>
+                            <small className="text-[10px] sm:text-xs font-bold text-zinc-600">kcal</small>
                         </div>
                     </div>
                 </div>
@@ -875,6 +918,7 @@ export function DietBuilder({ diet: initialDiet, students = [], backHref = '/das
                     const mealP = meal.meal_items?.reduce((s, i) => s + (Number(i.protein) || 0), 0)
                     const mealC = meal.meal_items?.reduce((s, i) => s + (Number(i.carbs) || 0), 0)
                     const mealF = meal.meal_items?.reduce((s, i) => s + (Number(i.fat) || 0), 0)
+                    const mealFib = meal.meal_items?.reduce((s, i) => s + (Number(i.fiber) || 0), 0)
                     const mealKcal = Math.round((mealP * 4) + (mealC * 4) + (mealF * 9))
 
                     return (
@@ -896,8 +940,8 @@ export function DietBuilder({ diet: initialDiet, students = [], backHref = '/das
                                             <Utensils className="w-4 h-4 text-orange-400" />
                                         </div>
                                         <div className="space-y-0.5">
-                                            <div className="flex items-center gap-3 pb-4">
-                                                <h3 className="font-bold text-zinc-100 italic">Refeição {index + 1}</h3>
+                                            <div className="flex items-center gap-3">
+                                                <h3 className="font-bold text-zinc-100">Refeição {index + 1}</h3>
                                                 {meal.name && !meal.name.toLowerCase().includes('refeição') && (
                                                     <span className="text-sm font-medium text-zinc-500">
                                                         {meal.name}
@@ -914,6 +958,7 @@ export function DietBuilder({ diet: initialDiet, students = [], backHref = '/das
                                             <span className="text-blue-400/80">P: {Math.round(mealP)}g</span>
                                             <span className="text-orange-400/80">C: {Math.round(mealC)}g</span>
                                             <span className="text-orange-500/80">G: {Math.round(mealF)}g</span>
+                                            <span className="text-purple-400/80">F: {Math.round(mealFib)}g</span>
                                         </div>
                                         <Button
                                             variant="ghost"
