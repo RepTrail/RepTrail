@@ -256,7 +256,10 @@ export async function saveParsedData(
         }
 
         // Revalidations
+        revalidateTag('workouts', 'page')
+        revalidateTag('diets', 'page')
         revalidateTag(`trainer-${user.id}`, 'page')
+        revalidateTag(`trainer-diets-${user.id}`, 'page')
         revalidatePath('/dashboard/trainer/students')
         revalidatePath('/dashboard/trainer/diets')
         revalidatePath('/dashboard/trainer/workouts')

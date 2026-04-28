@@ -37,6 +37,11 @@ export class WorkoutService {
                     return []
                 }
 
+                console.log(`[WorkoutService] Found ${workouts?.length || 0} workouts for trainer ${trainerId}`);
+                if (workouts && workouts.length > 0) {
+                    console.log(`[WorkoutService] First workout trainer_id: ${workouts[0].trainer_id}`);
+                }
+
                 // Grouping logic for trainer view
                 const grouped = (workouts || []).map((workout: any) => {
                     const studentMap: Record<string, any> = {}

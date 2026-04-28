@@ -44,6 +44,12 @@ export async function createManualWorkout(payload: any) {
             .maybeSingle()
 
         if (error) throw error
+        
+        revalidateTag('workouts', 'page')
+        revalidateTag(`trainer-${user.id}`, 'page')
+        revalidatePath('/dashboard/trainer/workouts')
+        revalidatePath('/dashboard/student/workouts')
+        
         return { success: true, data }
 
     } catch (e: any) {
@@ -75,11 +81,12 @@ export async function deleteWorkout(workoutId: string) {
 
         const { data: { user } } = await supabase.auth.getUser()
         if (user) {
+            revalidateTag('workouts', 'page')
             revalidateTag(`trainer-${user.id}`, 'page')
         }
-
         revalidatePath('/dashboard/trainer/workouts')
         revalidatePath('/dashboard/student/workouts')
+
         return { success: true }
     } catch (e: any) {
         return { error: e.message }
@@ -123,6 +130,7 @@ export async function updateWorkoutMeta(workoutId: string, name: string, descrip
 
         if (error) throw error
 
+        revalidateTag('workouts', 'page')
         const { data: { user } } = await supabase.auth.getUser()
         if (user) {
             revalidateTag(`trainer-${user.id}`, 'page')

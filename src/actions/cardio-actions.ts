@@ -2,7 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { upsertDailyTracking } from '@/actions/tracking-actions'
 
 export async function getCardioLibrary(userId?: string) {
@@ -115,7 +115,9 @@ export async function createCardio(nameOrData: string | FormData, description?: 
             .single()
 
         if (error) throw error
-
+        
+        revalidateTag('cardio', 'page')
+        revalidateTag(`trainer-cardio-${user.id}`, 'page')
         revalidatePath('/dashboard/trainer/cardio')
         revalidatePath('/dashboard/student/cardio')
         return { success: true, cardio: data }
@@ -412,6 +414,10 @@ export async function startCardioSession(assignmentId: string) {
             .single()
 
         if (error) throw error
+        
+        revalidatePath('/dashboard/trainer/cardio')
+        revalidatePath('/dashboard/student/cardio')
+        
         return { success: true, logId: data.id }
     } catch (e: any) {
         return { error: e.message }

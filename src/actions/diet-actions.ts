@@ -60,6 +60,12 @@ export async function createManualDiet(payload: any) {
             .maybeSingle()
 
         if (error) throw error
+
+        revalidateTag('diets', 'page')
+        revalidateTag(`trainer-diets-${user.id}`, 'page')
+        revalidatePath('/dashboard/trainer/diets')
+        revalidatePath('/dashboard/student/diet')
+
         return { success: true, dietId: data.id, data }
 
     } catch (e: any) {
@@ -87,7 +93,12 @@ export async function deleteDiet(dietId: string) {
         if (error) throw error
 
         revalidateTag('diets', 'page')
+        const { data: { user } } = await supabase.auth.getUser()
+        if (user) {
+            revalidateTag(`trainer-diets-${user.id}`, 'page')
+        }
         revalidatePath('/dashboard/trainer/diets')
+        revalidatePath('/dashboard/student/diet')
         return { success: true }
     } catch (e: any) {
         return { error: e.message }
