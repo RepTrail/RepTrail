@@ -5,21 +5,26 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { revalidatePath } from 'next/cache'
 import { upsertDailyTracking } from '@/actions/tracking-actions'
 
-export async function getCardioLibrary() {
-    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return []
+export async function getCardioLibrary(userId?: string) {
+    const supabase = await createClient()
+    let uid = userId
+
+    if (!uid) {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) return []
+        uid = user.id
+    }
 
     try {
         // Fetch student's trainer
         const { data: trainerRel } = await supabase
             .from('trainer_students')
             .select('trainer_id')
-            .eq('student_id', user.id)
+            .eq('student_id', uid)
             .eq('active', true)
             .maybeSingle()
 
-        const trainerIds = [user.id]
+        const trainerIds = [uid]
         if (trainerRel?.trainer_id) {
             trainerIds.push(trainerRel.trainer_id)
         }
@@ -48,7 +53,7 @@ export async function getCardioLibrary() {
         const studentMap: Record<string, any> = {}
         
         ;(cardio.assignments || []).forEach((a: any) => {
-            if (!a.active || a.student_id === user?.id) return
+            if (!a.active || a.student_id === uid) return
             
             if (!studentMap[a.student_id]) {
                 studentMap[a.student_id] = { 

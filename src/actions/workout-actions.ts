@@ -5,13 +5,17 @@ import { revalidatePath, revalidateTag } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { WorkoutService } from '@/services/WorkoutService'
 
-export async function getTrainerWorkouts() {
-    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+export async function getTrainerWorkouts(trainerId?: string) {
+    const supabase = await createClient()
+    let tid = trainerId
 
-    if (!user) return []
+    if (!tid) {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) return []
+        tid = user.id
+    }
 
-    return WorkoutService.getTrainerWorkouts(user.id)
+    return WorkoutService.getTrainerWorkouts(tid)
 }
 
 export async function createManualWorkout(payload: any) {

@@ -27,13 +27,17 @@ function getTodayRangeBrazil() {
     }
 }
 
-export async function getTrainerDiets() {
-    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+export async function getTrainerDiets(trainerId?: string) {
+    const supabase = await createClient()
+    let tid = trainerId
 
-    if (!user) return []
+    if (!tid) {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) return []
+        tid = user.id
+    }
 
-    return DietService.getTrainerDiets(user.id)
+    return DietService.getTrainerDiets(tid)
 }
 
 export async function createManualDiet(payload: any) {

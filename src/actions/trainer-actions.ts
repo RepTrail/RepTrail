@@ -127,19 +127,23 @@ export async function uploadTrainerAvatar(formData: FormData) {
     }
 }
 
-export async function getTrainerProfile() {
-    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+export async function getTrainerProfile(trainerId?: string) {
+    const supabase = await createClient()
+    let tid = trainerId
 
-    if (!user) return null
+    if (!tid) {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) return null
+        tid = user.id
+    }
 
     const { data } = await supabase
         .from('profiles')
         .select('*')
-        .eq('id', user.id)
+        .eq('id', tid)
         .single()
 
-    console.log(`[GET PROFILE] ${user.id} - asaas_subscription_id:`, data?.asaas_subscription_id)
+    console.log(`[GET PROFILE] ${tid} - asaas_subscription_id:`, data?.asaas_subscription_id)
 
     return data
 }
@@ -290,11 +294,15 @@ export async function createStudent(prevState: any, formData: FormData) {
     }
 }
 
-export async function getTrainerStudents() {
+export async function getTrainerStudents(trainerId?: string) {
     const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    let tid = trainerId
 
-    if (!user) return []
+    if (!tid) {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) return []
+        tid = user.id
+    }
 
     // 🚀 UNIFIED ARCHITECTURE: Fetch everything from trainer_students
     const { data: results, error } = await supabase
@@ -314,7 +322,7 @@ export async function getTrainerStudents() {
                 is_placeholder
             )
         `)
-        .eq('trainer_id', user.id)
+        .eq('trainer_id', tid)
         .eq('active', true)
         .order('created_at', { ascending: false })
 
@@ -651,32 +659,41 @@ export async function updateTrainerPlan(tier: 'start' | 'pro' | 'elite') {
     }
 }
 
-export async function getTrainerTier(): Promise<'none' | 'start' | 'on_demand' | 'pro' | 'elite'> {
-    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+export async function getTrainerTier(trainerId?: string): Promise<'none' | 'start' | 'on_demand' | 'pro' | 'elite'> {
+    const supabase = await createClient()
+    let tid = trainerId
 
-    if (!user) return 'none'
+    if (!tid) {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) return 'none'
+        tid = user.id
+    }
 
     const { data } = await supabase
         .from('profiles')
         .select('plan_tier')
-        .eq('id', user.id)
+        .eq('id', tid)
         .single()
 
     return (data?.plan_tier as 'none' | 'on_demand' | 'start' | 'pro' | 'elite') || 'none'
 }
 
-export async function getEffectiveTier(): Promise<'none' | 'start' | 'on_demand' | 'pro' | 'elite'> {
-    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return 'none'
+export async function getEffectiveTier(trainerId?: string): Promise<'none' | 'start' | 'on_demand' | 'pro' | 'elite'> {
+    const supabase = await createClient()
+    let tid = trainerId
+
+    if (!tid) {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) return 'none'
+        tid = user.id
+    }
 
     const [
         { data: profile },
         { count: activeStudentsCount }
     ] = await Promise.all([
-        supabase.from('profiles').select('plan_tier').eq('id', user.id).single(),
-        supabase.from('trainer_students').select('*', { count: 'exact', head: true }).eq('trainer_id', user.id).eq('active', true)
+        supabase.from('profiles').select('plan_tier').eq('id', tid).single(),
+        supabase.from('trainer_students').select('*', { count: 'exact', head: true }).eq('trainer_id', tid).eq('active', true)
     ])
 
     const tier = (profile?.plan_tier as 'none' | 'on_demand' | 'start' | 'pro' | 'elite') || 'none'
@@ -688,18 +705,22 @@ export async function getEffectiveTier(): Promise<'none' | 'start' | 'on_demand'
     return tier
 }
 
-export async function getTrainerActivityFeed(): Promise<ActivityItem[]> {
-    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+export async function getTrainerActivityFeed(trainerId?: string): Promise<ActivityItem[]> {
+    const supabase = await createClient()
+    let tid = trainerId
 
-    if (!user) return []
+    if (!tid) {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) return []
+        tid = user.id
+    }
 
     try {
         // 1. Get trainer's student IDs
         const { data: trainerStudents } = await supabase
             .from('trainer_students')
             .select('student_id')
-            .eq('trainer_id', user.id)
+            .eq('trainer_id', tid)
             .neq('active', false)
 
         if (!trainerStudents || trainerStudents.length === 0) return []
