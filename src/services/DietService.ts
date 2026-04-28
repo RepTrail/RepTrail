@@ -71,6 +71,11 @@ export class DietService {
                     console.error('Error in DietService.getTrainerDiets:', dError)
                     return []
                 }
+
+                console.log(`[DietService] Found ${diets?.length || 0} diets for trainer ${trainerId}`);
+                if (diets && diets.length > 0) {
+                    console.log(`[DietService] First diet trainer_id: ${diets[0].trainer_id}`);
+                }
                 
                 // Grouping logic for trainer view
                 const grouped = (diets || []).map(diet => {

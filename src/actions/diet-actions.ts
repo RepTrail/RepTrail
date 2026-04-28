@@ -33,10 +33,14 @@ export async function getTrainerDiets(trainerId?: string) {
 
     if (!tid) {
         const { data: { user } } = await supabase.auth.getUser()
-        if (!user) return []
+        if (!user) {
+            console.log('[getTrainerDiets] No user found, returning []');
+            return []
+        }
         tid = user.id
     }
 
+    console.log(`[getTrainerDiets] Fetching diets for trainerId: ${tid}`);
     return DietService.getTrainerDiets(tid)
 }
 
