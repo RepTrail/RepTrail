@@ -52,7 +52,7 @@ export function CardioPageClient({ userId }: CardioPageClientProps) {
 
     const { data: cardios = [] } = useQuery({
         queryKey: QUERY_KEYS.cardio.library(userId),
-        queryFn: () => getCardioLibrary(),
+        queryFn: () => getCardioLibrary(userId),
         enabled: isAutoTrainingActive,
         staleTime: 1000 * 60 * 5
     })

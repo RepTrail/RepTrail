@@ -60,7 +60,7 @@ export function DietPageClient({ userId }: DietPageClientProps) {
 
     const { data: diets = [] } = useQuery({
         queryKey: QUERY_KEYS.diets.library(userId),
-        queryFn: () => getTrainerDiets(),
+        queryFn: () => getTrainerDiets(userId),
         enabled: isAutoTrainingActive,
         staleTime: 1000 * 60 * 5
     })

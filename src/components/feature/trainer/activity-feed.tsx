@@ -38,7 +38,7 @@ export function ActivityFeed({ userId, initialData }: ActivityFeedProps) {
 
     const { data: activities = [] } = useQuery({
         queryKey: QUERY_KEYS.trainer.activity(userId),
-        queryFn: getTrainerActivityFeed,
+        queryFn: () => getTrainerActivityFeed(userId),
         initialData
     })
 

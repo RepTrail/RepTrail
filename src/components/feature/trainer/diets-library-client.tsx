@@ -28,7 +28,7 @@ export function DietsLibraryClient({
 }: DietsLibraryClientProps) {
     const { data: diets = initialDiets } = useQuery({
         queryKey: QUERY_KEYS.diets.library(userId),
-        queryFn: () => getTrainerDiets(),
+        queryFn: () => getTrainerDiets(userId),
         staleTime: 0,
         refetchOnMount: 'always'
     })

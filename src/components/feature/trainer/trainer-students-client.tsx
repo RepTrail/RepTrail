@@ -48,13 +48,13 @@ export function TrainerStudentsClient({ userId }: TrainerStudentsClientProps) {
     // ─── Queries ──────────────────────────────────────────────────────────
     const { data: students = [] } = useQuery({
         queryKey: QUERY_KEYS.trainer.students(userId),
-        queryFn: () => getTrainerStudents(),
+        queryFn: () => getTrainerStudents(userId),
         staleTime: 0,
         refetchOnMount: 'always'
     })
     const { data: profile } = useQuery({
-        queryKey: QUERY_KEYS.profile.detail(userId),
-        queryFn: getTrainerProfile,
+        queryKey: QUERY_KEYS.trainer.profile(userId),
+        queryFn: () => getTrainerProfile(userId),
         staleTime: 0,
         refetchOnMount: 'always'
     })

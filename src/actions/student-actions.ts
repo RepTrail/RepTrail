@@ -141,7 +141,7 @@ export async function markPaymentAsReceived(studentId: string, trainerId: string
     }
 }
 export async function getStudentTrainer(studentId: string) {
-    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
+    const supabase = await createClient()
 
     try {
         const { data, error } = await supabase
@@ -308,7 +308,7 @@ export async function getTrainerByCode(code: string) {
     }
 }
 export async function getStudentProfile(studentId: string) {
-    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
+    const supabase = await createClient()
 
     try {
         const [

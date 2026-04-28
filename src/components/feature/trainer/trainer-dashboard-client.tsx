@@ -38,13 +38,13 @@ export function TrainerDashboardClient({ userId, betaTesterMode }: TrainerDashbo
     // ─── Queries ──────────────────────────────────────────────────────────
     const { data: profile } = useQuery({ 
         queryKey: QUERY_KEYS.profile.detail(userId), 
-        queryFn: getTrainerProfile,
+        queryFn: () => getTrainerProfile(userId),
         staleTime: 0,
         refetchOnMount: 'always'
     })
     const { data: effectiveTier } = useQuery({ 
         queryKey: QUERY_KEYS.trainer.effectiveTier(userId), 
-        queryFn: getEffectiveTier,
+        queryFn: () => getEffectiveTier(userId),
         staleTime: 0,
         refetchOnMount: 'always'
     })
@@ -56,7 +56,7 @@ export function TrainerDashboardClient({ userId, betaTesterMode }: TrainerDashbo
     })
     const { data: activities = [] } = useQuery({ 
         queryKey: QUERY_KEYS.trainer.activity(userId), 
-        queryFn: getTrainerActivityFeed,
+        queryFn: () => getTrainerActivityFeed(userId),
         staleTime: 0,
         refetchOnMount: 'always'
     })

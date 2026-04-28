@@ -28,7 +28,7 @@ export function WorkoutsLibraryClient({
 }: WorkoutsLibraryClientProps) {
     const { data: workouts = initialWorkouts } = useQuery({
         queryKey: QUERY_KEYS.workouts.library(userId),
-        queryFn: () => getTrainerWorkouts(),
+        queryFn: () => getTrainerWorkouts(userId),
         staleTime: 0,
         refetchOnMount: 'always'
     })

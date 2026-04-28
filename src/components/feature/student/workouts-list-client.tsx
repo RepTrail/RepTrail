@@ -47,7 +47,7 @@ export function WorkoutsListClient({ userId }: WorkoutsListClientProps) {
 
     const { data: libraryWorkouts = [] } = useQuery({
         queryKey: QUERY_KEYS.workouts.library(userId),
-        queryFn: () => getTrainerWorkouts(),
+        queryFn: () => getTrainerWorkouts(userId),
         enabled: allowManualWorkouts,
         staleTime: 1000 * 60 * 5
     })
