@@ -27,7 +27,7 @@ export default async function StudentDietPage() {
         queryClient.prefetchQuery({
             queryKey: config.queryKey,
             queryFn: config.queryFn,
-            staleTime: Infinity
+            staleTime: 1000 * 30 // 30s instead of Infinity to allow auto-refetch
         })
     ))
 
