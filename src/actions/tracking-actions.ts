@@ -329,15 +329,15 @@ export async function getDetailedAdherence(date?: string) {
 }
 
 export async function getAdherenceHistory(days: number = 30) {
-    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
+    const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return []
 
     const todayStr = getTodayStr()
-    const endDate = new Date(todayStr + 'T12:00:00')
-    const startDate = new Date(todayStr + 'T12:00:00')
-    startDate.setDate(startDate.getDate() - days + 1)
-
+    const today = new Date(todayStr + 'T12:00:00')
+    const startDate = new Date(today)
+    startDate.setDate(today.getDate() - (days - 1))
+    
     const startDateStr = startDate.toISOString().split('T')[0]
     const endDateStr = todayStr
 
@@ -353,19 +353,21 @@ export async function getAdherenceHistory(days: number = 30) {
         { data: details },
         { data: wLogs },
         { data: cLogs },
-        { data: eLogs }
+        { data: eLogs },
+        { data: mLogs }
     ] = await Promise.all([
         supabase.from('profiles').select('created_at').eq('id', user.id).single(),
         supabase.from('trainer_students').select('created_at').eq('student_id', user.id).eq('active', true).maybeSingle(),
         supabase.from('daily_tracking').select('*').eq('user_id', user.id).gte('date', startDateStr).lte('date', endDateStr).order('date', { ascending: true }),
         supabase.from('assigned_workouts').select('day_of_week').eq('student_id', user.id).eq('active', true),
-        supabase.from('assigned_cardios').select('days_of_week').eq('student_id', user.id).eq('active', true),
-        supabase.from('assigned_diets').select('id').eq('student_id', user.id).eq('active', true),
+        supabase.from('assigned_cardios').select('days_of_week, day_of_week').eq('student_id', user.id).eq('active', true),
+        supabase.from('assigned_diets').select('days_of_week, diet:diets(meals(meal_items(id)))').eq('student_id', user.id).eq('active', true),
         supabase.from('ergogenics').select('application_days').eq('student_id', user.id),
         supabase.from('student_details').select('steroid_use').eq('id', user.id).single(),
         supabase.from('workout_logs').select('id, started_at, status').eq('student_id', user.id).eq('status', 'completed').gte('started_at', startDateStr + 'T00:00:00-03:00').lte('started_at', endDateStr + 'T23:59:59-03:00'),
         supabase.from('cardio_logs').select('started_at, status, elapsed_seconds, assignment:assigned_cardios(duration_minutes)').eq('student_id', user.id).in('status', ['completed', 'in_progress']).gte('started_at', startDateStr + 'T00:00:00-03:00').lte('started_at', endDateStr + 'T23:59:59-03:00'),
-        supabase.from('ergogenic_logs').select('created_at').eq('student_id', user.id).gte('created_at', startDateStr + 'T00:00:00-03:00').lte('created_at', endDateStr + 'T23:59:59-03:00')
+        supabase.from('ergogenic_logs').select('created_at').eq('student_id', user.id).gte('created_at', startDateStr + 'T00:00:00-03:00').lte('created_at', endDateStr + 'T23:59:59-03:00'),
+        supabase.from('meal_item_logs').select('date, meal_item_id').eq('user_id', user.id).gte('date', startDateStr).lte('date', endDateStr)
     ])
 
     const profileCreatedStr = profile?.created_at ? new Date(profile.created_at).toISOString().split('T')[0] : '2000-01-01'
@@ -396,7 +398,7 @@ export async function getAdherenceHistory(days: number = 30) {
     const cardioDays = new Set<number>()
     if (ac) {
         ac.forEach((a: any) => {
-            if (a.days_of_week && Array.isArray(a.days_of_week)) {
+            if (Array.isArray(a.days_of_week)) {
                 a.days_of_week.forEach((d: number) => cardioDays.add(d))
             } else if (a.day_of_week !== undefined && a.day_of_week !== null) {
                 cardioDays.add(a.day_of_week)
@@ -414,14 +416,18 @@ export async function getAdherenceHistory(days: number = 30) {
     }
 
     const historyArr: any[] = []
-    const dayListSlice: string[] = []
     for (let i = 0; i < days; i++) {
-        const d = new Date(startDate)
-        d.setDate(d.getDate() + i)
-        dayListSlice.push(d.toISOString().split('T')[0])
-    }
+        const currentDate = new Date(startDate)
+        currentDate.setDate(startDate.getDate() + i)
+        
+        const year = currentDate.getFullYear()
+        const month = String(currentDate.getMonth() + 1).padStart(2, '0')
+        const day = String(currentDate.getDate()).padStart(2, '0')
+        const dateStr = `${year}-${month}-${day}`
+        
+        const dow = currentDate.getDay()
+        const isPast = dateStr < todayStr
 
-    for (const dateStr of dayListSlice) {
         if (dateStr < effectiveStartStr) {
             historyArr.push({
                 date: dateStr,
@@ -437,9 +443,6 @@ export async function getAdherenceHistory(days: number = 30) {
         }
 
         const found = tracking?.find(t => t.date === dateStr)
-        const d = new Date(dateStr + 'T12:00:00')
-        const dow = d.getDay()
-        const isPast = dateStr < todayStr
 
         // Workout Status
         let workoutStatus = found?.workout_status || 'none'
@@ -488,9 +491,31 @@ export async function getAdherenceHistory(days: number = 30) {
             }
         }
 
+        // Diet Status
+        let dietPercentage = found?.diet_percentage || 0
+        let dietStatus = 'none'
+
+        const dowDiets = (ad as any[] || []).filter((a: any) => { let days = a.days_of_week; if (typeof days === "string") { try { days = JSON.parse(days) } catch { days = [] } } return Array.isArray(days) && days.map(Number).includes(dow) })
+        const totalItems = dowDiets.reduce((acc: number, a: any) => {
+            const meals = a.diet?.meals || []
+            return acc + meals.reduce((mAcc: number, m: any) => mAcc + (m.meal_items?.length || 0), 0)
+        }, 0)
+
+        if (dietPercentage === 0 && totalItems > 0) {
+            const dayLogsCount = (mLogs || []).filter((l: any) => l.date === dateStr).length
+            dietPercentage = Math.min(Math.round((dayLogsCount / totalItems) * 100), 100)
+        }
+
+        if (dietPercentage >= 100) dietStatus = 'completed'
+        else if (dietPercentage > 0) dietStatus = 'partial'
+        else if (totalItems > 0) {
+            dietStatus = isPast ? 'skipped' : 'assigned'
+        }
+
         historyArr.push({
             date: dateStr,
-            diet_percentage: found?.diet_percentage || 0,
+            diet_percentage: dietPercentage,
+            diet_status: dietStatus,
             workout_status: workoutStatus,
             workout_percentage: workoutPercentage,
             cardio_status: cardioStatus,
@@ -505,11 +530,12 @@ export async function getAdherenceHistory(days: number = 30) {
 
 // Trainer-side version: fetch adherence history for any student by ID
 export async function getStudentAdherenceHistory(studentId: string, days: number = 30) {
-    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
+    const supabase = await createClient()
 
     const todayStr = getTodayStr()
-    const startDate = new Date(todayStr + 'T12:00:00')
-    startDate.setDate(startDate.getDate() - days + 1)
+    const today = new Date(todayStr + 'T12:00:00')
+    const startDate = new Date(today)
+    startDate.setDate(today.getDate() - (days - 1))
     const startDateStr = startDate.toISOString().split('T')[0]
 
     // Fetch everything in parallel
@@ -523,7 +549,9 @@ export async function getStudentAdherenceHistory(studentId: string, days: number
         { data: details },
         { data: wLogs },
         { data: cLogs },
-        { data: eLogs }
+        { data: eLogs },
+        { data: ad },
+        { data: mLogs }
     ] = await Promise.all([
         supabase.from('profiles').select('created_at').eq('id', studentId).single(),
         supabase.from('trainer_students').select('created_at').eq('student_id', studentId).eq('active', true).maybeSingle(),
@@ -534,7 +562,9 @@ export async function getStudentAdherenceHistory(studentId: string, days: number
         supabase.from('student_details').select('steroid_use').eq('id', studentId).single(),
         supabase.from('workout_logs').select('started_at, status').eq('student_id', studentId).eq('status', 'completed').gte('started_at', startDateStr + 'T00:00:00-03:00').lte('started_at', todayStr + 'T23:59:59-03:00'),
         supabase.from('cardio_logs').select('started_at, status, elapsed_seconds, assignment:assigned_cardios(duration_minutes)').eq('student_id', studentId).in('status', ['completed', 'in_progress']).gte('started_at', startDateStr + 'T00:00:00-03:00').lte('started_at', todayStr + 'T23:59:59-03:00'),
-        supabase.from('ergogenic_logs').select('created_at').eq('student_id', studentId).gte('created_at', startDateStr + 'T00:00:00-03:00').lte('created_at', todayStr + 'T23:59:59-03:00')
+        supabase.from('ergogenic_logs').select('created_at').eq('student_id', studentId).gte('created_at', startDateStr + 'T00:00:00-03:00').lte('created_at', todayStr + 'T23:59:59-03:00'),
+        supabase.from('assigned_diets').select('days_of_week, diet:diets(meals(meal_items(id)))').eq('student_id', studentId).eq('active', true),
+        supabase.from('meal_item_logs').select('date, meal_item_id').eq('user_id', studentId).gte('date', startDateStr).lte('date', todayStr)
     ])
 
     const profileCreatedStr = profile?.created_at ? new Date(profile.created_at).toISOString().split('T')[0] : '2000-01-01'
@@ -563,17 +593,27 @@ export async function getStudentAdherenceHistory(studentId: string, days: number
     const cardioDays = new Set<number>()
     if (ac) {
         ac.forEach((c: any) => {
-            if (c.day_of_week !== undefined && c.day_of_week !== null) cardioDays.add(c.day_of_week)
-            if (c.days_of_week && Array.isArray(c.days_of_week)) c.days_of_week.forEach((day: number) => cardioDays.add(day))
+            if (Array.isArray(c.days_of_week)) {
+                c.days_of_week.forEach((day: number) => cardioDays.add(day))
+            } else if (c.day_of_week !== undefined && c.day_of_week !== null) {
+                cardioDays.add(c.day_of_week)
+            }
         })
     }
     const ergogenicsDays = new Set((ae || []).map((e: any) => e.application_days || []).flat())
 
     const historyArr: any[] = []
     for (let i = 0; i < days; i++) {
-        const d = new Date(startDate)
-        d.setDate(d.getDate() + i)
-        const dateStr = d.toISOString().split('T')[0]
+        const currentDate = new Date(startDate)
+        currentDate.setDate(startDate.getDate() + i)
+        
+        const year = currentDate.getFullYear()
+        const month = String(currentDate.getMonth() + 1).padStart(2, '0')
+        const day = String(currentDate.getDate()).padStart(2, '0')
+        const dateStr = `${year}-${month}-${day}`
+        
+        const dow = currentDate.getDay()
+        const isPast = dateStr < todayStr
 
         if (dateStr < effectiveStartStr) {
             historyArr.push({
@@ -590,8 +630,6 @@ export async function getStudentAdherenceHistory(studentId: string, days: number
         }
 
         const found = tracking?.find((t: any) => t.date === dateStr)
-        const dow = d.getDay()
-        const isPast = dateStr < todayStr
 
         // Workout Status
         let workoutStatus = found?.workout_status || 'none'
@@ -640,9 +678,31 @@ export async function getStudentAdherenceHistory(studentId: string, days: number
             }
         }
 
+        // Diet Status
+        let dietPercentage = found?.diet_percentage || 0
+        let dietStatus = 'none'
+
+        const dowDiets = (ad as any[] || []).filter((a: any) => { let days = a.days_of_week; if (typeof days === "string") { try { days = JSON.parse(days) } catch { days = [] } } return Array.isArray(days) && days.map(Number).includes(dow) })
+        const totalItems = dowDiets.reduce((acc: number, a: any) => {
+            const meals = a.diet?.meals || []
+            return acc + meals.reduce((mAcc: number, m: any) => mAcc + (m.meal_items?.length || 0), 0)
+        }, 0)
+
+        if (dietPercentage === 0 && totalItems > 0) {
+            const dayLogsCount = (mLogs || []).filter((l: any) => l.date === dateStr).length
+            dietPercentage = Math.min(Math.round((dayLogsCount / totalItems) * 100), 100)
+        }
+
+        if (dietPercentage >= 100) dietStatus = 'completed'
+        else if (dietPercentage > 0) dietStatus = 'partial'
+        else if (totalItems > 0) {
+            dietStatus = isPast ? 'skipped' : 'assigned'
+        }
+
         historyArr.push({
             date: dateStr,
-            diet_percentage: found?.diet_percentage || 0,
+            diet_percentage: dietPercentage,
+            diet_status: dietStatus,
             workout_status: workoutStatus,
             workout_percentage: workoutPercentage,
             cardio_status: cardioStatus,
@@ -654,3 +714,4 @@ export async function getStudentAdherenceHistory(studentId: string, days: number
 
     return historyArr
 }
+

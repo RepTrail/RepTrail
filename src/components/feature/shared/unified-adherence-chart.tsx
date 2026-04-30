@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils'
 interface AdherenceHistoryItem {
     date: string
     diet_percentage: number
+    diet_status?: 'none' | 'assigned' | 'completed' | 'skipped' | 'partial'
     workout_status: 'none' | 'assigned' | 'completed' | 'skipped' | 'partial'
     workout_percentage?: number
     cardio_status: 'none' | 'assigned' | 'completed' | 'skipped' | 'partial'
@@ -77,7 +78,11 @@ export function UnifiedAdherenceChart({ history, showErgogenics = false, noCard 
                                     percentage = day.ergogenics_percentage
                                 } else if (row.id === 'diet') {
                                     percentage = day.diet_percentage
-                                    if (percentage > 0) status = percentage >= 100 ? 'completed' : 'partial'
+                                    if (percentage > 0) {
+                                        status = percentage >= 100 ? 'completed' : 'partial'
+                                    } else {
+                                        status = day.diet_status || 'none'
+                                    }
                                 }
 
                                 const colorClass = getStatusColor(status, percentage)

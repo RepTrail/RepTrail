@@ -59,9 +59,13 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
 
         // Generate full daily range
         const data = []
-        // Back-fill: initialize with the first available value to make lines start from the beginning
-        let lastWeight: number | null = sortedW.length > 0 ? sortedW[0].weight_kg : null
-        let lastBf: number | null = sortedB.length > 0 ? sortedB[0].bf_percentage : null
+        
+        const lastWDate = sortedW.length > 0 ? sortedW[sortedW.length - 1].recorded_at.split('T')[0] : null
+        const lastBDate = sortedB.length > 0 ? sortedB[sortedB.length - 1].recorded_at.split('T')[0] : null
+        
+        // Initial values for back-filling and tracking
+        let currentWeight: number | null = sortedW.length > 0 ? sortedW[0].weight_kg : null
+        let currentBf: number | null = sortedB.length > 0 ? sortedB[0].bf_percentage : null
 
         const sortedFreq = [...frequency].sort((a, b) => a.date.localeCompare(b.date))
         let lastPerformance: number | null = sortedFreq.length > 0 ? sortedFreq[0].sessions : null
@@ -70,22 +74,26 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
             const currentDate = addDays(minDate, i)
             const dateStr = format(currentDate, 'yyyy-MM-dd')
 
-            const weightEntries = weights.filter(w => w.recorded_at.startsWith(dateStr))
-            const bfEntries = bfs.filter(b => b.recorded_at.startsWith(dateStr))
-
-            const weightEntry = weightEntries.length > 0 ? weightEntries[weightEntries.length - 1] : null
-            const bfEntry = bfEntries.length > 0 ? bfEntries[bfEntries.length - 1] : null
+            const weightEntry = weights.find(w => w.recorded_at.startsWith(dateStr))
+            const bfEntry = bfs.find(b => b.recorded_at.startsWith(dateStr))
             const freqEntry = frequency.find(f => f.date.startsWith(dateStr))
 
-            if (weightEntry) lastWeight = weightEntry.weight_kg
-            if (bfEntry) lastBf = bfEntry.bf_percentage
+            if (weightEntry) currentWeight = weightEntry.weight_kg
+            if (bfEntry) currentBf = bfEntry.bf_percentage
             if (freqEntry) lastPerformance = freqEntry.sessions
+
+            const isWeightPastLast = lastWDate && dateStr > lastWDate
+            const isWeightBeforeFirst = firstWDate && dateStr < firstWDate
+            
+            const isBfPastLast = lastBDate && dateStr > lastBDate
+            const isBfBeforeFirst = firstBDate && dateStr < firstBDate
 
             data.push({
                 date: dateStr,
                 displayDate: format(currentDate, 'dd/MM'),
-                weight: lastWeight,
-                bf: lastBf,
+                // Only use value if it's a real entry, or if we are outside the [first, last] range
+                weight: weightEntry ? weightEntry.weight_kg : ((isWeightPastLast || isWeightBeforeFirst) ? currentWeight : null),
+                bf: bfEntry ? bfEntry.bf_percentage : ((isBfPastLast || isBfBeforeFirst) ? currentBf : null),
                 performance: lastPerformance,
                 realWeight: !!weightEntry,
                 realBf: !!bfEntry,
