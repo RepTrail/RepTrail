@@ -151,6 +151,14 @@ export function StudentDetailClient({ relationshipId, userId }: StudentDetailCli
         dietsCount: 0
     })
 
+    const [isImpersonating, setIsImpersonating] = useState(false)
+
+    useEffect(() => {
+        const cookies = document.cookie.split('; ')
+        const imp = cookies.find(c => c.startsWith('rt_impersonating='))?.split('=')[1]
+        setIsImpersonating(imp === 'true')
+    }, [])
+
     if (!relationship) return null
 
     const trainerTier = trainerProfile?.plan_tier || 'start'
@@ -233,7 +241,7 @@ export function StudentDetailClient({ relationshipId, userId }: StudentDetailCli
     return (
         <div className="space-y-10 pb-10 w-full">
 
-            {(onboardingStep === 'aha_moment' || relationship.is_placeholder) && (
+            {((onboardingStep === 'aha_moment' || relationship.is_placeholder) && !isImpersonating) && (
                 <div id="tour-aha-card" className="bg-emerald-500/10 border border-emerald-500/20 rounded-[2rem] p-6 mb-10 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
                     <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
                         <Sparkles className="w-24 h-24 text-emerald-500" />

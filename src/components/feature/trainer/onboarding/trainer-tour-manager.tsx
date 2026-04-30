@@ -22,6 +22,7 @@ export function TrainerTourManager({ userId }: TrainerTourManagerProps) {
     const [showBindingModes, setShowBindingModes] = useState(false)
     const [isCreatingStudent, setIsCreatingStudent] = useState(false)
     const [isParsed, setIsParsed] = useState(false)
+    const [isImpersonating, setIsImpersonating] = useState(false)
 
     // 2. Data Hooks
     const { data: profile } = useQuery({
@@ -41,6 +42,12 @@ export function TrainerTourManager({ userId }: TrainerTourManagerProps) {
         const check = () => setIsDesktop(window.innerWidth >= 1024)
         check()
         window.addEventListener('resize', check)
+        
+        // Check impersonation status
+        const cookies = document.cookie.split('; ')
+        const imp = cookies.find(c => c.startsWith('rt_impersonating='))?.split('=')[1]
+        setIsImpersonating(imp === 'true')
+
         return () => window.removeEventListener('resize', check)
     }, [])
 
@@ -188,7 +195,7 @@ export function TrainerTourManager({ userId }: TrainerTourManagerProps) {
         }
     }
 
-    if (!isDesktop || !isTourActive || allSteps.length === 0) return null
+    if (!isDesktop || !isTourActive || allSteps.length === 0 || isImpersonating) return null
 
     return (
         <SpotlightTour 

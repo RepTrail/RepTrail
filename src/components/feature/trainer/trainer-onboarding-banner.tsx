@@ -22,6 +22,7 @@ export function TrainerOnboardingBanner({ userId, trainerCode, stats }: TrainerO
     const { step, ghostData, nextStep, complete, dismiss } = useTrainerOnboarding(userId, stats)
     const [isVisible, setIsVisible] = useState(false)
     const [copied, setCopied] = useState(false)
+    const [isImpersonating, setIsImpersonating] = useState(false)
 
     useEffect(() => {
         if (step !== 'idle' && step !== 'completed') {
@@ -29,9 +30,14 @@ export function TrainerOnboardingBanner({ userId, trainerCode, stats }: TrainerO
         } else {
             setIsVisible(false)
         }
+
+        // Check impersonation status
+        const cookies = document.cookie.split('; ')
+        const imp = cookies.find(c => c.startsWith('rt_impersonating='))?.split('=')[1]
+        setIsImpersonating(imp === 'true')
     }, [step])
 
-    if (!isVisible) return null
+    if (!isVisible || isImpersonating) return null
 
     const studentName = ghostData?.name || 'Seu aluno'
     const studentEmail = ghostData?.email || ''

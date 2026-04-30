@@ -46,7 +46,7 @@ export async function getAdminOverview() {
             supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('is_affiliate', true),
             supabase.from('profiles').select('affiliate_balance').eq('is_affiliate', true),
             supabase.from('profiles').select('id, plan_tier, created_at, elite_until').eq('role', 'trainer'),
-            supabase.from('trainer_students').select('trainer_id').eq('active', true),
+            supabase.from('trainer_students').select('student_id, trainer_id').eq('active', true),
             supabase.from('profiles').select('id, created_at').eq('role', 'student').eq('auto_training_status', 'active'),
             supabase.from('trainer_students').select('monthly_fee, active, created_at'),
             supabase.from('affiliate_commissions').select('amount, created_at, status'),
@@ -157,6 +157,8 @@ export async function getAdminOverview() {
             trialTrainers: trialCount,
             studentsInTrial,
             students: totalStudents || 0,
+            studentsWithTrainer: activeStudents?.length || 0,
+            autoTrainingCount: autoTrainingStudents?.length || 0,
             relationships: totalRelationships || 0,
             monthlyTrainerVolume,
             totalTrainerVolume,
@@ -185,7 +187,7 @@ export async function getAdminOverview() {
 
 export async function getAllUsers(role?: string) {
     const { supabase } = await checkAdmin()
-    let query = supabase.from('profiles').select('id, full_name, email, role, plan_tier, is_admin, created_at, avatar_url, trainer_code, is_billing_exempt')
+    let query = supabase.from('profiles').select('id, full_name, email, role, plan_tier, is_admin, created_at, avatar_url, trainer_code, is_billing_exempt, auto_training_status')
     if (role) query = query.eq('role', role)
     const { data } = await query.order('created_at', { ascending: false })
     return data || []
@@ -1020,4 +1022,32 @@ export async function repairBiSets() {
         console.error('[REPAIR BISETS] Failed:', e)
         return { error: e.message }
     }
+}
+
+export async function grantAutoTraining(studentId: string, status: 'active' | 'none') {
+    const { supabase } = await checkAdmin()
+    
+    const { error } = await supabase
+        .from('profiles')
+        .update({ 
+            auto_training_status: status,
+        })
+        .eq('id', studentId)
+    
+    if (error) {
+        console.error('[GRANT AUTO TRAINING] Failed:', error)
+        return { error: error.message }
+    }
+
+    const { data: { user } } = await supabase.auth.getUser()
+    if (user) {
+        await supabase.from('admin_logs').insert({
+            admin_id: user.id,
+            action: 'grant_auto_training',
+            details: { student_id: studentId, status }
+        })
+    }
+
+    revalidatePath('/admin')
+    return { success: true }
 }

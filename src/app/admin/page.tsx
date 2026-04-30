@@ -9,7 +9,7 @@ import {
     impersonateUser,
     getAllStoreProducts, toggleProductStatus, addStoreProduct, updateStoreProduct, deleteStoreProduct, fetchProductFromUrl,
     getAdminLogs, getTopProductsByClicks, getRecentStudentActivity,
-    getPlanPricing, updatePlanPricing, deleteUser,
+    getPlanPricing, updatePlanPricing, deleteUser, grantAutoTraining,
     getOperationalCosts, repairWorkoutExercisesData, repairBiSets
 } from '@/actions/admin-actions'
 import { getAdminAffiliates, getAdminPayouts } from '@/actions/admin-affiliate-actions'
@@ -80,11 +80,21 @@ export default function AdminDashboardPage() {
     const loading = loadingTrainers || loadingStudents || loadingProducts
 
     async function loadAll() {
-        queryClient.invalidateQueries({ queryKey: QUERY_KEYS.admin.overview })
-        queryClient.invalidateQueries({ queryKey: QUERY_KEYS.admin.trainers })
-        queryClient.invalidateQueries({ queryKey: QUERY_KEYS.admin.students })
-        queryClient.invalidateQueries({ queryKey: QUERY_KEYS.store.products })
-        queryClient.invalidateQueries({ queryKey: QUERY_KEYS.admin.logs })
+        startTransition(async () => {
+            await Promise.all([
+                queryClient.invalidateQueries({ queryKey: QUERY_KEYS.admin.overview }),
+                queryClient.invalidateQueries({ queryKey: QUERY_KEYS.admin.trainers }),
+                queryClient.invalidateQueries({ queryKey: QUERY_KEYS.admin.students }),
+                queryClient.invalidateQueries({ queryKey: QUERY_KEYS.admin.affiliates }),
+                queryClient.invalidateQueries({ queryKey: QUERY_KEYS.admin.payouts }),
+                queryClient.invalidateQueries({ queryKey: QUERY_KEYS.admin.costs }),
+                queryClient.invalidateQueries({ queryKey: QUERY_KEYS.admin.activity }),
+                queryClient.invalidateQueries({ queryKey: QUERY_KEYS.admin.logs }),
+                queryClient.invalidateQueries({ queryKey: QUERY_KEYS.store.products }),
+                queryClient.invalidateQueries({ queryKey: QUERY_KEYS.store.clicks })
+            ])
+            toast({ title: 'Dados atualizados!' })
+        })
     }
 
     async function handlePlanChange(userId: string, plan: string) {
@@ -211,6 +221,19 @@ export default function AdminDashboardPage() {
         })
     }
 
+    async function handleGrantAutoTraining(studentId: string, currentStatus: string) {
+        const newStatus = currentStatus === 'active' ? 'none' : 'active'
+        startTransition(async () => {
+            const res = await grantAutoTraining(studentId, newStatus)
+            if (res.error) toast({ variant: 'destructive', title: 'Erro', description: res.error })
+            else {
+                toast({ title: newStatus === 'active' ? 'Auto-Treino concedido!' : 'Auto-Treino removido' })
+                queryClient.invalidateQueries({ queryKey: QUERY_KEYS.admin.students })
+                queryClient.invalidateQueries({ queryKey: QUERY_KEYS.admin.overview })
+            }
+        })
+    }
+
     const tabs: { id: Tab; label: string; icon: any }[] = [
         { id: 'overview', label: 'Visão Geral', icon: BarChart3 },
         { id: 'trainers', label: 'Personais', icon: Users2 },
@@ -230,32 +253,30 @@ export default function AdminDashboardPage() {
     )
 
     return (
-        <div className="min-h-screen bg-zinc-950 text-white overflow-x-hidden">
-            <div className="flex min-h-screen">
-                <div className="hidden md:block w-72 shrink-0">
-                    <UnifiedSidebar
-                        brandColor="red"
-                        logoColor="red"
-                        user={{
-                            id: adminUser?.id || 'admin',
-                            name: adminUser?.full_name || "Admin RepTrail",
-                            email: adminUser?.email || "admin@reptrail.com.br",
-                            avatar_url: adminUser?.avatar_url || null
-                        }}
-                        links={tabs.map(t => ({
-                            label: t.label,
-                            icon: <t.icon className="w-4 h-4" />,
-                            onClick: () => {
-                                setTab(t.id)
-                                window.scrollTo({ top: 0, behavior: 'smooth' })
-                            },
-                            isActive: tab === t.id
-                        }))}
-                        showSettings={false}
-                    />
-                </div>
+        <div className="flex h-screen w-full bg-zinc-950 text-white overflow-hidden">
+            <UnifiedSidebar
+                brandColor="red"
+                logoColor="red"
+                user={{
+                    id: adminUser?.id || 'admin',
+                    name: adminUser?.full_name || "Admin RepTrail",
+                    email: adminUser?.email || "admin@reptrail.com.br",
+                    avatar_url: adminUser?.avatar_url || null
+                }}
+                links={tabs.map(t => ({
+                    label: t.label,
+                    icon: <t.icon className="w-4 h-4" />,
+                    onClick: () => {
+                        setTab(t.id)
+                        const main = document.getElementById('admin-main')
+                        if (main) main.scrollTo({ top: 0, behavior: 'smooth' })
+                    },
+                    isActive: tab === t.id
+                }))}
+                showSettings={false}
+            />
 
-                <div className="flex-1 flex flex-col min-w-0">
+            <div className="flex-1 flex flex-col min-w-0 overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent" id="admin-main">
                     <header className="sticky top-0 z-40 bg-zinc-950/90 backdrop-blur-md border-b border-zinc-900">
                         <div className="flex items-center justify-between px-4 sm:px-8 h-14 sm:h-16">
                             <div className="flex items-center gap-2 sm:gap-4">
@@ -266,32 +287,12 @@ export default function AdminDashboardPage() {
                             </div>
                             <div className="flex items-center gap-2">
                                 <Button
-                                    onClick={handleRepairBiSets}
-                                    variant="ghost"
-                                    className="h-9 px-3 text-zinc-500 hover:text-cyan-500 gap-2 border border-transparent hover:border-cyan-500/20 hover:bg-cyan-500/5 transition-all"
-                                    title="Reparar Bi-sets"
-                                >
-                                    <Layers className="w-4 h-4" />
-                                    <span className="text-[10px] font-black uppercase tracking-widest hidden lg:inline">Bi-sets</span>
-                                </Button>
-
-                                <Button
-                                    onClick={handleRepairData}
-                                    variant="ghost"
-                                    className="h-9 px-3 text-zinc-500 hover:text-amber-500 gap-2 border border-transparent hover:border-amber-500/20 hover:bg-amber-500/5 transition-all"
-                                    title="Reparar Dados de Treino"
-                                >
-                                    <Wrench className="w-4 h-4" />
-                                    <span className="text-[10px] font-black uppercase tracking-widest hidden lg:inline">Reparar Dados</span>
-                                </Button>
-
-                                <Button
                                     onClick={loadAll}
                                     variant="ghost"
-                                    className="h-9 px-3 text-zinc-500 hover:text-white gap-2"
+                                    className="h-9 px-3 text-zinc-500 hover:text-white gap-2 border border-transparent hover:border-zinc-800 hover:bg-white/5 transition-all"
                                 >
                                     <RefreshCw className={`w-4 h-4 ${isPending ? 'animate-spin' : ''}`} />
-                                    <span className="text-[10px] font-black uppercase tracking-widest hidden sm:inline">Atualizar</span>
+                                    <span className="text-[10px] font-black uppercase tracking-widest hidden sm:inline">Atualizar Painel</span>
                                 </Button>
                             </div>
                         </div>
@@ -356,7 +357,7 @@ export default function AdminDashboardPage() {
                                     <StatCard
                                         label="Alunos"
                                         value={stats?.students || 0}
-                                        sub={`${stats?.recentSignups || 0} novos | ${stats?.studentsInTrial || 0} em trial`}
+                                        sub={`${stats?.studentsWithTrainer || 0} com personal | ${stats?.autoTrainingCount || 0} auto-treino | ${(stats?.students || 0) - (stats?.studentsWithTrainer || 0) - (stats?.autoTrainingCount || 0)} avulsos`}
                                         icon={Users} color="text-cyan-500" bg="bg-cyan-500/10"
                                     />
                                     <StatCard
@@ -516,6 +517,7 @@ export default function AdminDashboardPage() {
                                                 student={student}
                                                 onImpersonate={() => handleImpersonate(student.id)}
                                                 onDelete={() => handleDeleteUser(student.id, student.full_name || student.email, false)}
+                                                onGrantAutoTraining={() => handleGrantAutoTraining(student.id, (student as any).auto_training_status)}
                                                 isPending={isPending}
                                             />
                                         ))}
@@ -615,9 +617,8 @@ export default function AdminDashboardPage() {
                         )}
                     </main>
                 </div>
-            </div>
 
-            {/* Mobile Bottom Tab Bar */}
+                {/* Mobile Bottom Tab Bar */}
             <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-zinc-950/95 backdrop-blur-md border-t border-zinc-900 flex">
                 {tabs.map(t => (
                     <button
@@ -691,7 +692,7 @@ function TrainerRow({ trainer, onPlanChange, onEliteToggle, onExemptToggle, onEl
 
     return (
         <div className="flex flex-col sm:flex-row sm:items-center gap-3 p-4 bg-zinc-900/40 border border-zinc-800/50 rounded-2xl hover:bg-zinc-900/60 transition-all">
-            <div className="flex items-center gap-3 pb-4 flex-1 min-w-0">
+            <div className="flex items-center gap-3 flex-1 min-w-0">
                 <Avatar className="w-10 h-10 shrink-0">
                     <AvatarImage src={trainer.avatar_url} />
                     <AvatarFallback className="bg-zinc-800 text-zinc-500 text-xs font-black">
@@ -712,6 +713,9 @@ function TrainerRow({ trainer, onPlanChange, onEliteToggle, onExemptToggle, onEl
                         <p className="text-[10px] font-bold text-zinc-600 truncate">{trainer.email}</p>
                         <span className="text-[8px] font-black text-emerald-500 uppercase tracking-widest bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">
                             Registro: {new Date(trainer.created_at).toLocaleDateString('pt-BR')}
+                        </span>
+                        <span className="text-[8px] font-black text-blue-500 uppercase tracking-widest bg-blue-500/10 px-1.5 py-0.5 rounded border border-blue-500/20">
+                            {trainer.students?.filter((s: any) => s.active).length || 0} Alunos
                         </span>
                     </div>
                 </div>
@@ -785,7 +789,9 @@ function TrainerRow({ trainer, onPlanChange, onEliteToggle, onExemptToggle, onEl
     )
 }
 
-function StudentRow({ student, onImpersonate, onDelete, isPending }: any) {
+function StudentRow({ student, onImpersonate, onDelete, onGrantAutoTraining, isPending }: any) {
+    const isAutoTraining = student.auto_training_status === 'active'
+
     return (
         <div className="flex items-center gap-4 p-4 bg-zinc-900/40 border border-zinc-800/50 rounded-2xl">
             <Avatar className="w-10 h-10 shrink-0">
@@ -799,9 +805,22 @@ function StudentRow({ student, onImpersonate, onDelete, isPending }: any) {
                 <p className="text-[10px] font-bold text-zinc-600 truncate">{student.email}</p>
             </div>
             <div className="shrink-0 flex items-center gap-2">
-                <span className="text-[9px] font-black text-zinc-600 uppercase tracking-widest">
+                <span className="text-[9px] font-black text-zinc-600 uppercase tracking-widest hidden sm:inline">
                     {new Date(student.created_at).toLocaleDateString('pt-BR')}
                 </span>
+
+                <button
+                    onClick={onGrantAutoTraining}
+                    disabled={isPending}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border transition-all text-[9px] font-black uppercase tracking-widest ${isAutoTraining
+                        ? 'bg-amber-500/20 border-amber-500/30 text-amber-500 hover:bg-amber-500/30'
+                        : 'bg-zinc-800 border-zinc-700 text-zinc-500 hover:text-white hover:border-zinc-500'
+                        }`}
+                    title={isAutoTraining ? "Remover Auto-Treino" : "Conceder Auto-Treino Grátis"}
+                >
+                    <Zap className="w-3 h-3" />
+                    {isAutoTraining ? 'Auto-Treino' : 'Conceder Auto'}
+                </button>
 
                 <button
                     onClick={onImpersonate}

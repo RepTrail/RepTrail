@@ -115,13 +115,12 @@ export function OperationalCosts({ initialCosts, totalMonthly, totalAllTime }: O
                     </p>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-4 items-end sm:items-center w-full sm:w-auto">
-                    <div className="text-right px-4 py-2 bg-zinc-900/60 rounded-xl border border-zinc-800">
-                        <p className="text-xs text-zinc-500 uppercase font-medium">Custo Mensal</p>
-                        <p className="text-lg font-bold text-red-400">R$ {totalMonthly.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
+                    <div className="flex items-center px-6 h-12 bg-zinc-900/60 rounded-full border border-zinc-800">
+                        <p className="text-base font-black text-red-400 italic tabular-nums">R$ {totalMonthly.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
                     </div>
                     <Dialog open={isOpen} onOpenChange={setIsOpen}>
                         <DialogTrigger asChild>
-                            <Button size="sm" variant="outline" className="gap-2 border-zinc-700 bg-zinc-800 hover:bg-zinc-700 text-zinc-100 min-w-[140px] rounded-full px-6">
+                             <Button variant="outline" className="h-12 gap-2 border-zinc-700 bg-zinc-800 hover:bg-zinc-700 text-zinc-100 min-w-[140px] rounded-full px-8 font-black uppercase italic tracking-wide transition-all active:scale-95">
                                 <Plus className="h-4 w-4" />
                                 Adicionar Custo
                             </Button>

@@ -14,11 +14,17 @@ interface StudentDashboardModalProps {
 
 export function StudentDashboardModals({ userId, showModal, hasTrainer }: StudentDashboardModalProps) {
     const [isModalOpen, setIsModalOpen] = useState(false)
+    const [isImpersonating, setIsImpersonating] = useState(false)
 
     useEffect(() => {
         if (showModal && !hasTrainer) {
             setIsModalOpen(true)
         }
+
+        // Check impersonation status
+        const cookies = document.cookie.split('; ')
+        const imp = cookies.find(c => c.startsWith('rt_impersonating='))?.split('=')[1]
+        setIsImpersonating(imp === 'true')
     }, [showModal, hasTrainer])
 
     useEffect(() => {
@@ -57,7 +63,7 @@ export function StudentDashboardModals({ userId, showModal, hasTrainer }: Studen
 
     return (
         <AutoTrainingOnboardingModal
-            isOpen={isModalOpen}
+            isOpen={isModalOpen && !isImpersonating}
             onAccept={handleAccept}
             onReject={handleReject}
             onClose={handleClose}

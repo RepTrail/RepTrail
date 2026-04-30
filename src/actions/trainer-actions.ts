@@ -137,15 +137,41 @@ export async function getTrainerProfile(trainerId?: string) {
         tid = user.id
     }
 
-    const { data } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', tid)
-        .single()
+    const [profileRes, studentsRes] = await Promise.all([
+        supabase.from('profiles').select('*').eq('id', tid).single(),
+        supabase.from('trainer_students').select('monthly_fee, active, created_at').eq('trainer_id', tid)
+    ])
 
-    console.log(`[GET PROFILE] ${tid} - asaas_subscription_id:`, data?.asaas_subscription_id)
+    if (profileRes.error || !profileRes.data) return null
 
-    return data
+    const students = studentsRes.data || []
+    const activeStudents = students.filter(s => s.active).length
+    
+    const monthlyRevenue = students.reduce((sum: number, s: any) => {
+        return s.active ? sum + (Number(s.monthly_fee) || 0) : sum
+    }, 0)
+
+    const now = new Date()
+    const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
+    const newStudentsThisMonth = students.filter(s => new Date(s.created_at) >= firstDayOfMonth).length
+
+    const totalRevenue = students.reduce((sum: number, s: any) => {
+        if (!s.active) return sum
+        const start = new Date(s.created_at)
+        const diffMonths = (now.getFullYear() - start.getFullYear()) * 12 + (now.getMonth() - start.getMonth())
+        const months = Math.max(1, diffMonths + 1)
+        return sum + ((Number(s.monthly_fee) || 0) * months)
+    }, 0)
+
+    return {
+        ...profileRes.data,
+        stats: {
+            active_students: activeStudents,
+            new_students_this_month: newStudentsThisMonth,
+            monthly_revenue: monthlyRevenue,
+            total_revenue: totalRevenue
+        }
+    }
 }
 
 export async function deactivateAndPurgeStudent(relationshipId: string, studentId: string) {
