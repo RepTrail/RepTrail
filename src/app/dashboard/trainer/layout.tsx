@@ -16,6 +16,7 @@ import { getEffectiveTier, getTrainerProfile, getTrainerRanking } from '@/action
 import { Suspense } from 'react'
 import { TrainerMobileNavLink } from '@/components/layout/trainer-nav'
 import { TrainerTourManager } from '@/components/feature/trainer/onboarding/trainer-tour-manager'
+import { MobileTrainerTourManager } from '@/components/feature/trainer/onboarding/mobile-trainer-tour-manager'
 
 export default async function TrainerLayout({
     children,
@@ -87,6 +88,7 @@ export default async function TrainerLayout({
         <HydrationBoundary state={dehydratedState}>
             <div className="flex h-screen w-full bg-zinc-950 text-zinc-100 font-sans">
                 <TrainerTourManager userId={userId} />
+                <MobileTrainerTourManager userId={userId} />
                 <Suspense fallback={<div className="hidden md:flex w-72 h-screen bg-zinc-900 border-r border-zinc-800 animate-pulse" />}>
                     <DashboardSidebarLoader userId={userId} />
                 </Suspense>

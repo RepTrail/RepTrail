@@ -41,6 +41,7 @@ export function MobileHeader({ role, hasTrainer, steroidUse, hideImportPdf, auto
 
     const trainerLinks = [
         { href: '/dashboard/trainer/workouts', icon: <Dumbbell className="w-5 h-5" />, label: 'Treinos' },
+        { href: '/dashboard/trainer/students', icon: <Users className="w-5 h-5" />, label: 'Alunos' },
         { href: '/dashboard/trainer/diets', icon: <Utensils className="w-5 h-5" />, label: 'Dietas' },
         { href: '/dashboard/trainer/cardio', icon: <Activity className="w-5 h-5" />, label: 'Cardio' },
         { href: '/dashboard/trainer/ergogenics', icon: <Syringe className="w-5 h-5" />, label: 'Ergogênicos' },
@@ -67,6 +68,7 @@ export function MobileHeader({ role, hasTrainer, steroidUse, hideImportPdf, auto
 
                 {links.length > 0 && (
                     <button
+                        id="tour-mobile-hamburger"
                         onClick={() => setIsOpen(true)}
                         className="relative z-10 p-3 text-zinc-500 hover:text-white hover:bg-zinc-900 rounded-xl transition-all active:scale-95 touch-manipulation"
                     >
@@ -105,6 +107,7 @@ export function MobileHeader({ role, hasTrainer, steroidUse, hideImportPdf, auto
                                     return (
                                         <Link
                                             key={link.href}
+                                            id={link.label === 'Alunos' ? 'tour-mobile-link-students' : link.label === 'Importar PDF' ? 'tour-mobile-link-import' : undefined}
                                             href={link.href}
                                             onClick={() => setIsOpen(false)}
                                             className={`

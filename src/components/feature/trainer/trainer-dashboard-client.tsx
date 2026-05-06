@@ -221,7 +221,7 @@ export function TrainerDashboardClient({ userId, betaTesterMode }: TrainerDashbo
                                     Tem uma planilha ou PDF? Nossa IA pode ler o arquivo e criar o treino ou dieta em segundos.
                                 </p>
                                 <Button asChild className="w-full bg-orange-500 border border-orange-400 text-zinc-950 hover:bg-orange-400 rounded-xl h-11 font-bold shadow-lg shadow-orange-500/10 transition-all active:scale-[0.98]">
-                                    <Link href="/dashboard/trainer/import-pdf">
+                                    <Link id="tour-import-pdf-mobile" href="/dashboard/trainer/import-pdf">
                                         Importar via PDF
                                     </Link>
                                 </Button>

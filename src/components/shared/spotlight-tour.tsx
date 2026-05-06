@@ -99,12 +99,25 @@ export function SpotlightTour({ steps, currentPhase, totalPhases, stepIndex, onS
 
     const cardPosition = () => {
         if (!currentStep) return { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }
+
+        const isMobile = windowSize.width < 768
+        if (isMobile) {
+            const isTop = currentStep.position === 'top'
+            return {
+                [isTop ? 'top' : 'bottom']: '20px',
+                left: '20px',
+                width: 'calc(100% - 40px)',
+                transform: 'none',
+                position: 'fixed'
+            }
+        }
+
         if (currentStep.position === 'top-right') return { top: 40, right: 40, transform: 'none' }
         if (!targetRect) return { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }
 
-        const padding = 24
+        const padding = 16
         const pos = currentStep.position || 'bottom'
-        const cardWidth = 380
+        const cardWidth = isMobile ? Math.min(320, windowSize.width - 32) : 380
         let style: any = {}
 
         switch (pos) {
@@ -133,10 +146,54 @@ export function SpotlightTour({ steps, currentPhase, totalPhases, stepIndex, onS
             const maxLeft = windowSize.width - cardWidth / 2 - padding
             style.left = Math.max(minLeft, Math.min(maxLeft, leftVal))
             style.transform = 'translateX(-50%)'
+            style.width = cardWidth
         }
 
         return style
     }
+
+    // ─── Click Interceptor ───────────────────────────────────────────────────
+    // We allow native scroll by using pointer-events: none on the overlay.
+    // To block clicks, we intercept them at the window level.
+    useEffect(() => {
+        if (!active || !currentStep) return
+
+        const handleInteraction = (e: MouseEvent | TouchEvent) => {
+            // Allow clicks on the tour card
+            const tourCard = (e.target as HTMLElement).closest('[data-tour-card="true"]')
+            const closeButton = (e.target as HTMLElement).closest('button[title="Fechar Tutorial"]')
+            if (tourCard || closeButton) return
+
+            // Allow clicks on the target element
+            if (targetRect) {
+                const x = (e as MouseEvent).clientX ?? (e as TouchEvent).touches[0]?.clientX
+                const y = (e as MouseEvent).clientY ?? (e as TouchEvent).touches[0]?.clientY
+
+                if (
+                    x >= targetRect.left &&
+                    x <= targetRect.right &&
+                    y >= targetRect.top &&
+                    y <= targetRect.bottom
+                ) {
+                    return
+                }
+            }
+
+            // Block everything else
+            e.preventDefault()
+            e.stopPropagation()
+        }
+
+        window.addEventListener('click', handleInteraction, true)
+        window.addEventListener('mousedown', handleInteraction, true)
+        window.addEventListener('touchstart', handleInteraction, true)
+
+        return () => {
+            window.removeEventListener('click', handleInteraction, true)
+            window.removeEventListener('mousedown', handleInteraction, true)
+            window.removeEventListener('touchstart', handleInteraction, true)
+        }
+    }, [active, currentStep, targetRect])
 
     if (!active || !mounted || !currentStep) return null
 
@@ -175,10 +232,10 @@ export function SpotlightTour({ steps, currentPhase, totalPhases, stepIndex, onS
     }
 
     return createPortal(
-        <div className="fixed inset-0 z-[9999] overflow-hidden pointer-events-none">
+        <div className="fixed inset-0 z-[9999] overflow-visible pointer-events-none" style={{ touchAction: 'pan-y' }}>
             <button
                 onClick={onDismiss}
-                className="fixed top-8 right-8 z-[100] pointer-events-auto w-12 h-12 flex items-center justify-center bg-zinc-900/50 hover:bg-zinc-800 text-zinc-500 hover:text-white border border-zinc-800 rounded-2xl transition-all active:scale-95 group"
+                className="fixed top-8 left-8 sm:left-auto sm:right-8 z-[100] pointer-events-auto w-12 h-12 flex items-center justify-center bg-zinc-900/50 hover:bg-zinc-800 text-zinc-500 hover:text-white border border-zinc-800 rounded-2xl transition-all active:scale-95 group"
                 title="Fechar Tutorial"
             >
                 <X className="w-6 h-6 transition-transform group-hover:scale-110" />
@@ -200,7 +257,6 @@ export function SpotlightTour({ steps, currentPhase, totalPhases, stepIndex, onS
                     d={getPath()}
                     fill="rgba(0, 0, 0, 0.5)"
                     fillRule="evenodd"
-                    className="pointer-events-auto"
                 />
             </svg>
 
@@ -241,7 +297,7 @@ export function SpotlightTour({ steps, currentPhase, totalPhases, stepIndex, onS
                     />
                 )}
 
-                {targetRect && currentStep.showArrow && (
+                {targetRect && currentStep.showArrow && windowSize.width >= 768 && (
                     <motion.div
                         key={`arrow-${stepIndex}`}
                         initial={{ opacity: 0, y: -20 }}
@@ -263,7 +319,7 @@ export function SpotlightTour({ steps, currentPhase, totalPhases, stepIndex, onS
                 <motion.div 
                     key={`card-${stepIndex}`}
                     data-tour-card="true"
-                    className="absolute z-[60] pointer-events-auto w-full max-w-[320px] sm:max-w-[380px] flex flex-col"
+                    className="absolute z-[60] pointer-events-auto flex flex-col"
                     style={{ ...(cardPosition() as any), maxHeight: 'calc(100vh - 80px)' }}
                     initial={{ opacity: 0, scale: 0.9, y: 20 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
