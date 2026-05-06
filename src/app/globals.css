@@ -111,6 +111,14 @@
   input[type="submit"] {
     cursor: pointer;
   }
+
+  /* Prevent auto-zoom on mobile inputs */
+  input, 
+  textarea, 
+  select {
+    font-size: 16px !important;
+  }
+
   * {
     @apply outline-ring/50;
   }
