@@ -154,7 +154,7 @@ export function AffiliatesManagement({ initialAffiliates, allUsers = [] }: Affil
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                     <h2 className="text-xl font-black text-white italic uppercase tracking-tight flex items-center gap-2">
-                        <Users className="w-5 h-5 text-emerald-500" />
+                        <Users className="w-5 h-5 text-red-500" />
                         Gestão de Afiliados
                     </h2>
                     <p className="text-[10px] font-black text-zinc-600 uppercase tracking-widest mt-1">
@@ -163,15 +163,15 @@ export function AffiliatesManagement({ initialAffiliates, allUsers = [] }: Affil
                 </div>
                 <Button
                     onClick={() => setIsAddModalOpen(true)}
-                    className="bg-emerald-500 hover:bg-emerald-600 text-black font-bold uppercase text-xs tracking-wide rounded-full h-10 px-6 gap-2"
+                    className="bg-red-600 hover:bg-red-500 text-white font-bold uppercase text-xs tracking-wide rounded-xl h-10 px-6 gap-2 shadow-lg shadow-red-900/20"
                 >
                     <UserPlus className="w-4 h-4" />
                     Novo Afiliado
                 </Button>
             </div>
 
-            <Card className="bg-zinc-900 border-zinc-800 rounded-3xl overflow-hidden">
-                <div className="overflow-x-auto">
+            <Card className="bg-zinc-900 border-zinc-800 rounded-3xl overflow-hidden max-w-[calc(100vw-2rem)] sm:max-w-none">
+                <div className="overflow-x-auto scrollbar-hide">
                     <table className="w-full text-left border-collapse">
                         <thead className="bg-zinc-950/50 border-b border-zinc-800">
                             <tr>
@@ -251,7 +251,7 @@ export function AffiliatesManagement({ initialAffiliates, allUsers = [] }: Affil
                                                     <Button
                                                         size="sm"
                                                         onClick={() => saveCommission(affiliate.id)}
-                                                        className="h-8 bg-emerald-500 hover:bg-emerald-600 text-black font-bold uppercase text-[9px] tracking-widest rounded-full px-4"
+                                                        className="h-8 bg-red-600 hover:bg-red-500 text-white font-bold uppercase text-[9px] tracking-widest rounded-full px-4"
                                                     >
                                                         <Save className="w-3 h-3 mr-1.5" />
                                                         Salvar

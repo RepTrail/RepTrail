@@ -162,8 +162,12 @@ export function AuthForm({ view }: AuthFormProps) {
                     fbqEvent("StartTrial", { predicted_ltv: 0 });
                 }
 
-                alert('Cadastro realizado! Verifique seu email ou faça login.')
-                router.push('/auth/login')
+                // Auto-login: Redirect directly to dashboard since email verification is disabled
+                if (role === 'trainer') {
+                    router.push('/dashboard/trainer')
+                } else {
+                    router.push('/dashboard/student')
+                }
                 isRedirecting = true
             } else {
                 const { error } = await supabase.auth.signInWithPassword({

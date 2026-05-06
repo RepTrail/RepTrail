@@ -17,11 +17,15 @@ import { AffiliatesManagement } from '@/components/feature/admin/affiliates-mana
 import { PayoutsManagement } from '@/components/feature/admin/payouts-management'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
-    BarChart3, Users, CreditCard, ShoppingBag, TrendingUp,
+    BarChart3, Users, CreditCard, ShoppingBag, TrendingUp, DollarSign,
     ArrowUpRight, Users2, Settings, Package, Trophy,
     Shield, Star, Eye, EyeOff, Plus, ChevronDown,
     Activity, Zap, Crown, AlertCircle, Check, X,
-    Search, Filter, RefreshCw, ExternalLink, Clock, Layers, Pencil, Save, Wrench, Key, Trash2, HeartHandshake, AlertTriangle
+    Search, Filter, RefreshCw, ExternalLink, Clock, Layers, Pencil, Save, Wrench, Key, Trash2, HeartHandshake, AlertTriangle,
+    CheckCircle2,
+    XCircle,
+    UserCheck,
+    Menu
 } from 'lucide-react'
 import {
     Dialog,
@@ -41,7 +45,7 @@ import { OperationalCosts } from '@/components/feature/admin/operational-costs'
 import { UnifiedSidebar } from '@/components/layout/sidebar-unified'
 import { createClient } from '@/lib/supabase/client'
 
-type Tab = 'overview' | 'trainers' | 'students' | 'affiliates' | 'store' | 'logs'
+type Tab = 'overview' | 'trainers' | 'students' | 'affiliates' | 'store' | 'logs' | 'more'
 
 export default function AdminDashboardPage() {
     const queryClient = useQueryClient()
@@ -235,12 +239,16 @@ export default function AdminDashboardPage() {
     }
 
     const tabs: { id: Tab; label: string; icon: any }[] = [
-        { id: 'overview', label: 'Visão Geral', icon: BarChart3 },
-        { id: 'trainers', label: 'Personais', icon: Users2 },
-        { id: 'students', label: 'Alunos', icon: Users },
+        { id: 'overview', label: 'Início', icon: BarChart3 },
+        { id: 'trainers', label: 'Personais', icon: Users },
+        { id: 'students', label: 'Alunos', icon: UserCheck },
+        { id: 'more', label: 'Mais', icon: Menu },
+    ]
+
+    const moreTabs = [
         { id: 'affiliates', label: 'Afiliados', icon: HeartHandshake },
-        { id: 'store', label: 'Loja', icon: ShoppingBag },
-        { id: 'logs', label: 'Logs', icon: Activity },
+        { id: 'store', label: 'Loja RepTrail', icon: ShoppingBag },
+        { id: 'logs', label: 'Logs do Sistema', icon: Activity },
     ]
 
     if (loading) return (
@@ -368,11 +376,24 @@ export default function AdminDashboardPage() {
                                     />
                                 </div>
 
-                                <OperationalCosts
-                                    initialCosts={operationalCosts}
-                                    totalMonthly={stats?.monthlyOperationalCosts || 0}
-                                    totalAllTime={stats?.totalOperationalCosts || 0}
-                                />
+                                <Card className="bg-zinc-900/40 border-zinc-800/50 rounded-[2rem]">
+                                    <CardHeader className="flex flex-col sm:flex-row items-center sm:items-center justify-between gap-6 border-b border-zinc-800/50 pb-8">
+                                        <div className="text-center sm:text-left">
+                                            <CardTitle className="text-xl font-black text-white italic uppercase tracking-tight flex items-center justify-center sm:justify-start gap-2">
+                                                <DollarSign className="w-5 h-5 text-red-500" />
+                                                Custos Operacionais
+                                            </CardTitle>
+                                            <p className="text-[10px] font-black text-zinc-600 uppercase tracking-widest mt-1">
+                                                Infraestrutura e operação da plataforma.
+                                            </p>
+                                        </div>
+                                    </CardHeader>
+                                    <OperationalCosts
+                                        initialCosts={operationalCosts}
+                                        totalMonthly={stats?.monthlyOperationalCosts || 0}
+                                        totalAllTime={stats?.totalOperationalCosts || 0}
+                                    />
+                                </Card>
 
                                 {/* Two columns */}
                                 <div className="grid lg:grid-cols-2 gap-8">
@@ -388,13 +409,15 @@ export default function AdminDashboardPage() {
                                             {topProducts.length === 0 ? (
                                                 <p className="text-zinc-600 text-xs font-bold uppercase text-center py-8">Nenhum clique ainda</p>
                                             ) : topProducts.map((p, i) => (
-                                                <div key={p.id} className="flex items-center gap-4 p-3 bg-zinc-950 rounded-xl">
-                                                    <span className="text-[10px] font-black text-zinc-600 w-4">{i + 1}</span>
-                                                    <div className="flex-1 min-w-0">
-                                                        <p className="text-xs font-black text-white truncate">{p.name}</p>
-                                                        <p className="text-[9px] font-bold text-zinc-600 uppercase">{p.category}</p>
+                                                <div key={p.id} className="flex items-center justify-between gap-3 p-3 bg-zinc-950/50 rounded-xl border border-zinc-900">
+                                                    <div className="flex items-center gap-3 min-w-0">
+                                                        <span className="text-[10px] font-black text-zinc-700 w-4 shrink-0">0{i + 1}</span>
+                                                        <div className="flex-1 min-w-0 max-w-[150px] xs:max-w-[200px] sm:max-w-none">
+                                                            <p className="text-xs font-black text-white truncate italic uppercase tracking-tight">{p.name}</p>
+                                                            <p className="text-[9px] font-bold text-zinc-600 uppercase tracking-widest">{p.category}</p>
+                                                        </div>
                                                     </div>
-                                                    <span className="text-xs font-black text-emerald-500">{p.clicks} cliques</span>
+                                                    <span className="text-[10px] font-black text-emerald-500 tabular-nums shrink-0 bg-emerald-500/10 px-2 py-1 rounded-lg border border-emerald-500/20">{p.clicks} <span className="text-[8px] opacity-70">CLIQUES</span></span>
                                                 </div>
                                             ))}
                                         </CardContent>
@@ -619,20 +642,35 @@ export default function AdminDashboardPage() {
                 </div>
 
                 {/* Mobile Bottom Tab Bar */}
-            <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-zinc-950/95 backdrop-blur-md border-t border-zinc-900 flex">
-                {tabs.map(t => (
-                    <button
-                        key={t.id}
-                        onClick={() => setTab(t.id)}
-                        className={`flex-1 flex flex-col items-center justify-center gap-1 py-3 transition-all ${tab === t.id
-                            ? 'text-white'
-                            : 'text-zinc-600 hover:text-zinc-400'
-                            }`}
-                    >
-                        <t.icon className="w-4 h-4" />
-                        <span className="text-[8px] font-black uppercase tracking-widest">{t.label}</span>
-                    </button>
-                ))}
+            <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-zinc-950/95 backdrop-blur-xl border-t border-zinc-900/50 flex safe-bottom pb-2">
+                {tabs.map(t => {
+                    const isMore = t.id === 'more'
+                    const isActive = isMore 
+                        ? ['affiliates', 'shop', 'logs'].includes(tab)
+                        : tab === t.id
+
+                    return (
+                        <button
+                            key={t.id}
+                            onClick={() => {
+                                if (isMore) {
+                                    setTab('affiliates')
+                                } else {
+                                    setTab(t.id as Tab)
+                                }
+                            }}
+                            className={`flex-1 flex flex-col items-center justify-center gap-1.5 py-4 transition-all relative ${isActive
+                                ? 'text-red-500'
+                                : 'text-zinc-600 hover:text-zinc-400'
+                                }`}
+                        >
+                            <div className={`p-2 rounded-2xl transition-all ${isActive ? 'bg-red-500/10' : ''}`}>
+                                <t.icon className={`w-5 h-5 transition-transform ${isActive ? 'scale-110' : ''}`} />
+                            </div>
+                            <span className="text-[8px] font-black uppercase tracking-widest leading-none">{t.label}</span>
+                        </button>
+                    )
+                })}
             </nav>
         </div>
     )
@@ -691,97 +729,66 @@ function TrainerRow({ trainer, onPlanChange, onEliteToggle, onExemptToggle, onEl
     }
 
     return (
-        <div className="flex flex-col sm:flex-row sm:items-center gap-3 p-4 bg-zinc-900/40 border border-zinc-800/50 rounded-2xl hover:bg-zinc-900/60 transition-all">
-            <div className="flex items-center gap-3 flex-1 min-w-0">
-                <Avatar className="w-10 h-10 shrink-0">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4 p-5 bg-zinc-900/40 border border-zinc-800/50 rounded-[2rem] hover:bg-zinc-900/60 transition-all overflow-hidden">
+            {/* Header: Avatar + Identity */}
+            <div className="flex items-center gap-4 flex-1 min-w-0">
+                <Avatar className="w-12 h-12 shrink-0 rounded-2xl border border-zinc-800 shadow-xl">
                     <AvatarImage src={trainer.avatar_url} />
-                    <AvatarFallback className="bg-zinc-800 text-zinc-500 text-xs font-black">
+                    <AvatarFallback className="bg-zinc-950 text-zinc-500 text-xs font-black">
                         {trainer.full_name?.substring(0, 2)?.toUpperCase()}
                     </AvatarFallback>
                 </Avatar>
                 <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                        <p className="text-sm font-black text-white truncate">{trainer.full_name || 'Sem nome'}</p>
+                    <div className="flex items-center gap-2 mb-1">
+                        <p className="text-sm font-black text-white truncate italic uppercase tracking-tight">{trainer.full_name || 'Sem nome'}</p>
                         {trainer.is_elite && <Crown className="w-3.5 h-3.5 text-amber-500 shrink-0" />}
-                        {trainer.is_billing_exempt && (
-                            <span className="px-2 py-0.5 bg-amber-500/10 border border-amber-500/20 rounded text-[8px] font-black text-amber-500 uppercase tracking-widest">
-                                Isento
-                            </span>
-                        )}
                     </div>
-                    <div className="flex items-center gap-2">
-                        <p className="text-[10px] font-bold text-zinc-600 truncate">{trainer.email}</p>
-                        <span className="text-[8px] font-black text-emerald-500 uppercase tracking-widest bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">
-                            Registro: {new Date(trainer.created_at).toLocaleDateString('pt-BR')}
-                        </span>
-                        <span className="text-[8px] font-black text-blue-500 uppercase tracking-widest bg-blue-500/10 px-1.5 py-0.5 rounded border border-blue-500/20">
-                            {trainer.students?.filter((s: any) => s.active).length || 0} Alunos
-                        </span>
-                    </div>
-                </div>
-
-                <div className="hidden xl:flex items-center gap-4  border-l border-zinc-800/50">
-                    <div className="text-right">
-                        <span className="block text-[8px] font-black uppercase text-zinc-600 tracking-wide">Mensal</span>
-                        <span className="block text-xs font-black text-emerald-500 tabular-nums">R$ {Number(trainer.monthly_revenue || 0).toFixed(2)}</span>
-                    </div>
-                    <div className="text-right">
-                        <span className="block text-[8px] font-black uppercase text-zinc-600 tracking-wide">Total Est.</span>
-                        <span className="block text-xs font-black text-zinc-400 tabular-nums">R$ {Number(trainer.total_revenue || 0).toFixed(2)}</span>
+                    <p className="text-[10px] font-bold text-zinc-600 truncate mb-2">{trainer.email}</p>
+                    
+                    {/* Badges Row */}
+                    <div className="flex flex-wrap gap-2">
+                        <div className="px-2 py-0.5 bg-emerald-500/10 border border-emerald-500/20 rounded-lg flex items-center gap-1.5">
+                            <span className="text-[9px] font-black text-emerald-500 tabular-nums">R$ {Number(trainer.monthly_revenue || 0).toFixed(2)}</span>
+                        </div>
+                        <div className="px-2 py-0.5 bg-blue-500/10 border border-blue-500/20 rounded-lg flex items-center gap-1.5">
+                            <span className="text-[9px] font-black text-blue-500 tabular-nums">{trainer.student_count || 0}</span>
+                            <span className="text-[8px] font-black text-zinc-600 uppercase tracking-widest">Alunos</span>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div className="flex items-center gap-2 shrink-0">
-                {/* Plan selector */}
-                <div className="flex bg-zinc-950 rounded-xl border border-zinc-800 overflow-hidden">
+
+            {/* Actions: Grid on mobile, Flex on desktop */}
+            <div className="grid grid-cols-2 sm:flex items-center gap-2 mt-4 sm:mt-0 w-full sm:w-auto pt-4 sm:pt-0 border-t sm:border-t-0 border-zinc-800/50">
+                {/* Plan selector (compact) */}
+                <div className="col-span-2 flex bg-zinc-950 rounded-xl border border-zinc-800 p-1">
                     {plans.map(p => (
                         <button
                             key={p}
-                            /* ❌ UI BLOCKING REMOVED */ disabled={false}
                             onClick={() => onPlanChange(p as string)}
-                            className={`px-3 py-1.5 text-[9px] font-black uppercase tracking-widest transition-all ${trainer.plan_tier === p
+                            className={`flex-1 px-2 py-1.5 text-[8px] font-black uppercase tracking-widest rounded-lg transition-all ${trainer.plan_tier === p
                                 ? `bg-zinc-800 ${planColors[p]}`
-                                : 'text-zinc-700 hover:text-zinc-400'
+                                : 'text-zinc-700 hover:text-zinc-500'
                                 }`}
                         >
                             {p === 'on_demand' ? 'O.D.' : p}
                         </button>
                     ))}
                 </div>
-                {/* Removed Elite toggle and Trial Button for On-Demand model */}
 
-                {/* Exempt toggle */}
-                <button
-                    onClick={onExemptToggle}
-                    /* ❌ UI BLOCKING REMOVED */ disabled={false}
-                    className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full border transition-all text-[9px] font-black uppercase tracking-widest ${trainer.is_billing_exempt
-                        ? 'bg-amber-500/20 border-amber-500/50 text-amber-500 hover:bg-amber-500/30'
-                        : 'bg-zinc-800 border-zinc-700 text-zinc-500 hover:text-white hover:border-zinc-500'
-                        }`}
-                    title={trainer.is_billing_exempt ? "Remover Isenção" : "Tornar Isento (VIP)"}
-                >
-                    <HeartHandshake className="w-3 h-3" />
-                    {trainer.is_billing_exempt ? 'Isento' : 'Isentar'}
-                </button>
-
-                {/* Impersonate Button */}
                 <button
                     onClick={onImpersonate}
-                    /* ❌ UI BLOCKING REMOVED */ disabled={false}
-                    className="flex items-center gap-1.5 px-4 py-1.5 rounded-full border border-blue-500/30 bg-blue-500/10 text-blue-500 hover:bg-blue-500/20 hover:border-blue-500/50 text-[9px] font-black uppercase tracking-widest transition-all"
-                    title="Inspecionar conta"
+                    className="flex items-center justify-center gap-2 h-10 px-4 rounded-xl border border-blue-500/20 bg-blue-500/10 text-blue-500 hover:bg-blue-500/20 text-[9px] font-black uppercase tracking-widest transition-all active:scale-95"
                 >
-                    <Eye className="w-3 h-3" />
+                    <Eye className="w-3.5 h-3.5" />
                     Inspecionar
                 </button>
 
-                {/* Delete Button */}
                 <button
                     onClick={onDelete}
-                    /* ❌ UI BLOCKING REMOVED */ disabled={false}
-                    className="flex items-center gap-1.5 px-4 py-1.5 rounded-full border border-red-500/30 bg-red-500/10 text-red-500 hover:bg-red-500/20 hover:border-red-500/50 text-[9px] font-black uppercase tracking-widest transition-all"
+                    className="flex items-center justify-center gap-2 h-10 px-4 rounded-xl border border-red-500/20 bg-red-500/10 text-red-500 hover:bg-red-500/20 text-[9px] font-black uppercase tracking-widest transition-all active:scale-95"
                 >
-                    <Trash2 className="w-3 h-3" />
+                    <Trash2 className="w-3.5 h-3.5" />
                     Deletar
                 </button>
             </div>
@@ -793,51 +800,51 @@ function StudentRow({ student, onImpersonate, onDelete, onGrantAutoTraining, isP
     const isAutoTraining = student.auto_training_status === 'active'
 
     return (
-        <div className="flex items-center gap-4 p-4 bg-zinc-900/40 border border-zinc-800/50 rounded-2xl">
-            <Avatar className="w-10 h-10 shrink-0">
-                <AvatarImage src={student.avatar_url} />
-                <AvatarFallback className="bg-zinc-800 text-zinc-500 text-xs font-black">
-                    {student.full_name?.substring(0, 2)?.toUpperCase()}
-                </AvatarFallback>
-            </Avatar>
-            <div className="flex-1 min-w-0">
-                <p className="text-sm font-black text-white truncate">{student.full_name || 'Sem nome'}</p>
-                <p className="text-[10px] font-bold text-zinc-600 truncate">{student.email}</p>
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4 p-5 bg-zinc-900/40 border border-zinc-800/50 rounded-[2rem] hover:bg-zinc-900/60 transition-all overflow-hidden">
+            <div className="flex items-center gap-4 flex-1 min-w-0">
+                <Avatar className="w-12 h-12 shrink-0 rounded-2xl border border-zinc-800 shadow-xl">
+                    <AvatarImage src={student.avatar_url} />
+                    <AvatarFallback className="bg-zinc-950 text-zinc-500 text-xs font-black">
+                        {student.full_name?.substring(0, 2)?.toUpperCase()}
+                    </AvatarFallback>
+                </Avatar>
+                <div className="flex-1 min-w-0">
+                    <p className="text-sm font-black text-white truncate italic uppercase tracking-tight mb-0.5">{student.full_name || 'Sem nome'}</p>
+                    <p className="text-[10px] font-bold text-zinc-600 truncate">{student.email}</p>
+                    <div className="flex items-center gap-2 mt-2">
+                        <span className="text-[8px] font-black text-zinc-500 uppercase tracking-[0.2em]">{new Date(student.created_at).toLocaleDateString('pt-BR')}</span>
+                        {isAutoTraining && (
+                            <span className="px-2 py-0.5 bg-amber-500/10 border border-amber-500/20 rounded-md text-[8px] font-black text-amber-500 uppercase">Auto-Treino</span>
+                        )}
+                    </div>
+                </div>
             </div>
-            <div className="shrink-0 flex items-center gap-2">
-                <span className="text-[9px] font-black text-zinc-600 uppercase tracking-widest hidden sm:inline">
-                    {new Date(student.created_at).toLocaleDateString('pt-BR')}
-                </span>
 
+            <div className="grid grid-cols-3 sm:flex items-center gap-2 mt-4 sm:mt-0 w-full sm:w-auto pt-4 sm:pt-0 border-t sm:border-t-0 border-zinc-800/50">
                 <button
                     onClick={onGrantAutoTraining}
                     disabled={isPending}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border transition-all text-[9px] font-black uppercase tracking-widest ${isAutoTraining
-                        ? 'bg-amber-500/20 border-amber-500/30 text-amber-500 hover:bg-amber-500/30'
-                        : 'bg-zinc-800 border-zinc-700 text-zinc-500 hover:text-white hover:border-zinc-500'
+                    className={`flex items-center justify-center h-10 rounded-xl border transition-all text-[9px] font-black uppercase tracking-widest active:scale-95 ${isAutoTraining
+                        ? 'bg-amber-500/20 border-amber-500/30 text-amber-500'
+                        : 'bg-zinc-800 border-zinc-700 text-zinc-500'
                         }`}
-                    title={isAutoTraining ? "Remover Auto-Treino" : "Conceder Auto-Treino Grátis"}
                 >
-                    <Zap className="w-3 h-3" />
-                    {isAutoTraining ? 'Auto-Treino' : 'Conceder Auto'}
+                    <Zap className="w-3.5 h-3.5" />
                 </button>
 
                 <button
                     onClick={onImpersonate}
-                    /* ❌ UI BLOCKING REMOVED */ disabled={false}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-blue-500/30 bg-blue-500/10 text-blue-500 hover:bg-blue-500/20 hover:border-blue-500/50 text-[9px] font-black uppercase tracking-widest transition-all"
-                    title="Inspecionar conta"
+                    className="flex-1 sm:flex-none flex items-center justify-center gap-2 h-10 px-4 rounded-xl border border-blue-500/20 bg-blue-500/10 text-blue-500 hover:bg-blue-500/20 text-[9px] font-black uppercase tracking-widest transition-all active:scale-95"
                 >
-                    <Eye className="w-3 h-3" />
+                    <Eye className="w-3.5 h-3.5" />
                     Inspecionar
                 </button>
 
                 <button
                     onClick={onDelete}
-                    /* ❌ UI BLOCKING REMOVED */ disabled={false}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-red-500/30 bg-red-500/10 text-red-500 hover:bg-red-500/20 hover:border-red-500/50 text-[9px] font-black uppercase tracking-widest transition-all"
+                    className="flex-1 sm:flex-none flex items-center justify-center gap-2 h-10 px-4 rounded-xl border border-red-500/20 bg-red-500/10 text-red-500 hover:bg-red-500/20 text-[9px] font-black uppercase tracking-widest transition-all active:scale-95"
                 >
-                    <Trash2 className="w-3 h-3" />
+                    <Trash2 className="w-3.5 h-3.5" />
                     Deletar
                 </button>
             </div>

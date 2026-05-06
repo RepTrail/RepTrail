@@ -114,9 +114,9 @@ export function OperationalCosts({ initialCosts, totalMonthly, totalAllTime }: O
                         Gerencie os custos de infraestrutura e operação da plataforma.
                     </p>
                 </div>
-                <div className="flex flex-col sm:flex-row gap-4 items-end sm:items-center w-full sm:w-auto">
-                    <div className="flex items-center px-6 h-12 bg-zinc-900/60 rounded-full border border-zinc-800">
-                        <p className="text-base font-black text-red-400 italic tabular-nums">R$ {totalMonthly.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
+                <div className="flex flex-col sm:flex-row gap-4 items-center w-full sm:w-auto">
+                    <div className="flex items-center justify-center px-6 h-12 bg-zinc-900/60 rounded-full border border-zinc-800 w-full sm:w-auto">
+                        <p className="text-base font-black text-red-500 italic tabular-nums">R$ {totalMonthly.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
                     </div>
                     <Dialog open={isOpen} onOpenChange={setIsOpen}>
                         <DialogTrigger asChild>
