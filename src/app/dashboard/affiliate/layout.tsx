@@ -16,15 +16,14 @@ export default async function AffiliateLayout({ children }: { children: React.Re
         .single()
 
     const links = [
-        { href: '/dashboard/affiliate',            label: 'Visão Geral',  icon: Home,       exact: true },
-        { href: '/dashboard/affiliate/referrals',   label: 'Indicados',    icon: Users },
-        { href: '/dashboard/affiliate/earnings',    label: 'Ganhos',       icon: DollarSign },
-        { href: '/dashboard/affiliate/stats',       label: 'Estatísticas', icon: BarChart2 },
-        // Link de retorno ao painel de origem
+        { href: '/dashboard/affiliate',           label: 'Visão Geral',  icon: 'Home',       exact: true },
+        { href: '/dashboard/affiliate/referrals', label: 'Indicados',    icon: 'Users' },
+        { href: '/dashboard/affiliate/earnings',  label: 'Ganhos',       icon: 'DollarSign' },
+        { href: '/dashboard/affiliate/stats',     label: 'Estatísticas', icon: 'BarChart2' },
         ...(profile?.role === 'trainer'
-            ? [{ href: '/dashboard/trainer', label: 'Meu Painel', icon: User }]
+            ? [{ href: '/dashboard/trainer', label: 'Meu Painel', icon: 'User' }]
             : profile?.role === 'student'
-                ? [{ href: '/dashboard/student', label: 'Meu Painel', icon: User }]
+                ? [{ href: '/dashboard/student', label: 'Meu Painel', icon: 'User' }]
                 : []
         ),
     ]

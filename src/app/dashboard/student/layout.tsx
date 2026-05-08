@@ -43,7 +43,7 @@ async function StudentLayoutLoader({ userId, children }: { userId: string; child
     const supabase = await createClient()
 
     const [profileRes, detailsRes, trainerRel] = await Promise.all([
-        supabase.from('profiles').select('role, full_name, avatar_url, auto_training_status, auto_training_trial_end').eq('id', userId).single(),
+        supabase.from('profiles').select('role, full_name, avatar_url, email, auto_training_status, auto_training_trial_end').eq('id', userId).single(),
         supabase.from('student_details').select('id, steroid_use').eq('id', userId).single(),
         getStudentTrainer(userId),
         queryClient.prefetchQuery({ queryKey: QUERY_KEYS.workouts.session, queryFn: () => import('@/actions/log-actions').then(m => m.getActiveWorkoutSession()) }),
@@ -70,28 +70,28 @@ async function StudentLayoutLoader({ userId, children }: { userId: string; child
     const hasPlan = hasTrainer || isAutoTrainingActive
 
     const allLinks = [
-        { href: '/dashboard/student',              label: 'Home',           icon: Home,          exact: true },
-        { href: '/dashboard/student/workouts',      label: 'Meus Treinos',   icon: Dumbbell,      hidden: !hasPlan },
-        { href: '/dashboard/student/cardio',        label: 'Cardio',         icon: Activity,      hidden: !hasPlan },
-        { href: '/dashboard/student/diet',          label: 'Minha Dieta',    icon: Utensils,      hidden: !hasPlan },
-        { href: '/dashboard/student/ergogenics',    label: 'Ergogênicos',    icon: Syringe,       hidden: !hasPlan || !steroidUse },
-        { href: '/dashboard/student/progress',      label: 'Evolução',       icon: TrendingUp,    hidden: !hasPlan },
-        { href: '/dashboard/student/import-pdf',    label: 'Importar PDF',   icon: Sparkles,      hidden: hasTrainer },
-        { href: '/dashboard/student/anamnese',      label: 'Anamnese',       icon: ClipboardList },
-        { href: '/buscar-personal',                 label: 'Buscar Personal', icon: Search,       hidden: hasTrainer || isAutoTrainingActive },
-        { href: '/dashboard/student/feed',          label: 'Feed de Alunos', icon: UserCheck },
-        { href: '/dashboard/student/ranking',       label: 'Ranking',        icon: Trophy },
-        { href: '/dashboard/student/loja',          label: 'Loja',           icon: ShoppingBag },
-        { href: '/dashboard/student/meu-personal',  label: 'Meu Personal',   icon: UserCheck,     hidden: !hasTrainer },
-        { href: '/dashboard/student/profile',       label: 'Meu Perfil',     icon: User },
+        { href: '/dashboard/student',              label: 'Home',           icon: 'Home',          exact: true },
+        { href: '/dashboard/student/workouts',     label: 'Meus Treinos',   icon: 'Dumbbell',      hidden: !hasPlan },
+        { href: '/dashboard/student/cardio',       label: 'Cardio',         icon: 'Activity',      hidden: !hasPlan },
+        { href: '/dashboard/student/diet',         label: 'Minha Dieta',    icon: 'Utensils',      hidden: !hasPlan },
+        { href: '/dashboard/student/ergogenics',   label: 'Ergogênicos',    icon: 'Syringe',       hidden: !hasPlan || !steroidUse },
+        { href: '/dashboard/student/progress',     label: 'Evolução',       icon: 'TrendingUp',    hidden: !hasPlan },
+        { href: '/dashboard/student/import-pdf',   label: 'Importar PDF',   icon: 'Sparkles',      hidden: hasTrainer },
+        { href: '/dashboard/student/anamnese',     label: 'Anamnese',       icon: 'ClipboardList' },
+        { href: '/buscar-personal',                label: 'Buscar Personal', icon: 'Search',       hidden: hasTrainer || isAutoTrainingActive },
+        { href: '/dashboard/student/feed',         label: 'Feed de Alunos', icon: 'UserCheck' },
+        { href: '/dashboard/student/ranking',      label: 'Ranking',        icon: 'Trophy' },
+        { href: '/dashboard/student/loja',         label: 'Loja',           icon: 'ShoppingBag' },
+        { href: '/dashboard/student/meu-personal', label: 'Meu Personal',   icon: 'UserCheck',     hidden: !hasTrainer },
+        { href: '/dashboard/student/profile',      label: 'Meu Perfil',     icon: 'User' },
     ]
 
     const mobileLinks = [
-        { href: '/dashboard/student',              label: 'Home',    icon: Home,       exact: true },
-        { href: '/dashboard/student/workouts',     label: 'Treinos', icon: Dumbbell,   hidden: !hasPlan },
-        { href: '/dashboard/student/cardio',       label: 'Cardio',  icon: Activity,   hidden: !hasPlan },
-        { href: '/dashboard/student/loja',         label: 'Loja',    icon: ShoppingBag },
-        { href: '/dashboard/student/profile',      label: 'Perfil',  icon: User },
+        { href: '/dashboard/student',              label: 'Home',    icon: 'Home',       exact: true },
+        { href: '/dashboard/student/workouts',     label: 'Treinos', icon: 'Dumbbell',   hidden: !hasPlan },
+        { href: '/dashboard/student/cardio',       label: 'Cardio',  icon: 'Activity',   hidden: !hasPlan },
+        { href: '/dashboard/student/loja',         label: 'Loja',    icon: 'ShoppingBag' },
+        { href: '/dashboard/student/profile',      label: 'Perfil',  icon: 'User' },
     ]
 
     return (
@@ -100,7 +100,7 @@ async function StudentLayoutLoader({ userId, children }: { userId: string; child
                 color="orange"
                 links={allLinks}
                 mobileLinks={mobileLinks}
-                user={{ id: userId, name: p?.full_name, avatar_url: p?.avatar_url }}
+                user={{ id: userId, name: p?.full_name, email: (p as any)?.email, avatar_url: p?.avatar_url }}
             >
                 {children}
             </DashboardShell>

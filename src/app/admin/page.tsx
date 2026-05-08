@@ -260,12 +260,12 @@ export default function AdminDashboardPage() {
     )
 
     const sidebarLinks = [
-        { href: '#overview',   label: 'Início',    icon: BarChart3,     onClick: () => handleTabChange('overview') },
-        { href: '#trainers',   label: 'Personais', icon: Users,         onClick: () => handleTabChange('trainers') },
-        { href: '#students',   label: 'Alunos',    icon: UserCheck,     onClick: () => handleTabChange('students') },
-        { href: '#affiliates', label: 'Afiliados', icon: HeartHandshake, onClick: () => handleTabChange('affiliates') },
-        { href: '#store',      label: 'Loja',      icon: ShoppingBag,   onClick: () => handleTabChange('store') },
-        { href: '#logs',       label: 'Logs',      icon: Activity,      onClick: () => handleTabChange('logs') },
+        { href: '#overview',   label: 'Início',    icon: 'BarChart3',      onClick: () => handleTabChange('overview') },
+        { href: '#trainers',   label: 'Personais', icon: 'Users',          onClick: () => handleTabChange('trainers') },
+        { href: '#students',   label: 'Alunos',    icon: 'UserCheck',      onClick: () => handleTabChange('students') },
+        { href: '#affiliates', label: 'Afiliados', icon: 'HeartHandshake', onClick: () => handleTabChange('affiliates') },
+        { href: '#store',      label: 'Loja',      icon: 'ShoppingBag',    onClick: () => handleTabChange('store') },
+        { href: '#logs',       label: 'Logs',      icon: 'Activity',       onClick: () => handleTabChange('logs') },
     ]
 
     const handleTabChange = (id: string) => {
@@ -278,10 +278,10 @@ export default function AdminDashboardPage() {
             color="red"
             links={sidebarLinks as any}
             mobileLinks={[
-                { href: '#overview',   label: 'Início',    icon: BarChart3,      onClick: () => handleTabChange('overview') },
-                { href: '#trainers',   label: 'Personais', icon: Users,         onClick: () => handleTabChange('trainers') },
-                { href: '#students',   label: 'Alunos',    icon: UserCheck,     onClick: () => handleTabChange('students') },
-                { href: '#store',      label: 'Loja',      icon: ShoppingBag,   onClick: () => handleTabChange('store') },
+                { href: '#overview',   label: 'Início',    icon: 'BarChart3',  onClick: () => handleTabChange('overview') },
+                { href: '#trainers',   label: 'Personais', icon: 'Users',      onClick: () => handleTabChange('trainers') },
+                { href: '#students',   label: 'Alunos',    icon: 'UserCheck',  onClick: () => handleTabChange('students') },
+                { href: '#store',      label: 'Loja',      icon: 'ShoppingBag', onClick: () => handleTabChange('store') },
             ] as any}
             user={{
                 id: adminUser?.id || 'admin',

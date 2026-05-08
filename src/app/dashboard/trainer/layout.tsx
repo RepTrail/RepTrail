@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { Button } from '@/components/ui/button'
-import { LogOut, Home, Users, Dumbbell, Utensils, Activity, FlaskConical, ShoppingBag, CreditCard, Trophy, User, FileUp } from 'lucide-react'
+import { LogOut } from 'lucide-react'
 import { signOutAction } from '@/actions/auth-actions'
 import { Logo } from '@/components/ui/logo'
 import { headers } from 'next/headers'
@@ -23,7 +23,7 @@ export default async function TrainerLayout({ children }: { children: React.Reac
     const supabase = await createClient()
     const { data: profile } = await supabase
         .from('profiles')
-        .select('role, plan_tier, full_name, avatar_url')
+        .select('role, plan_tier, full_name, avatar_url, email')
         .eq('id', userId)
         .single()
 
@@ -67,25 +67,25 @@ export default async function TrainerLayout({ children }: { children: React.Reac
 
     // ─── Full Dashboard Layout ─────────────────────────────────────────────────
     const links = [
-        { href: '/dashboard/trainer',           label: 'Visão Geral',  icon: Home,         exact: true },
-        { href: '/dashboard/trainer/students',   label: 'Alunos',       icon: Users },
-        { href: '/dashboard/trainer/workouts',   label: 'Treinos',      icon: Dumbbell },
-        { href: '/dashboard/trainer/diets',      label: 'Dietas',       icon: Utensils },
-        { href: '/dashboard/trainer/cardio',     label: 'Cardio',       icon: Activity },
-        { href: '/dashboard/trainer/ergogenics', label: 'Ergogênicos',  icon: FlaskConical },
-        { href: '/dashboard/trainer/import-pdf', label: 'Importar PDF', icon: FileUp,      hidden: betaTesterMode },
-        { href: '/dashboard/trainer/loja',       label: 'Loja',         icon: ShoppingBag },
-        { href: '/dashboard/trainer/plans',      label: 'Faturamento',  icon: CreditCard },
-        { href: '/dashboard/trainer/ranking',    label: 'Ranking',      icon: Trophy },
-        { href: '/dashboard/trainer/profile',    label: 'Meu Perfil',   icon: User },
+        { href: '/dashboard/trainer',           label: 'Visão Geral',  icon: 'Home',         exact: true },
+        { href: '/dashboard/trainer/students',   label: 'Alunos',       icon: 'Users' },
+        { href: '/dashboard/trainer/workouts',   label: 'Treinos',      icon: 'Dumbbell' },
+        { href: '/dashboard/trainer/diets',      label: 'Dietas',       icon: 'Utensils' },
+        { href: '/dashboard/trainer/cardio',     label: 'Cardio',       icon: 'Activity' },
+        { href: '/dashboard/trainer/ergogenics', label: 'Ergogênicos',  icon: 'FlaskConical' },
+        { href: '/dashboard/trainer/import-pdf', label: 'Importar PDF', icon: 'FileUp',      hidden: betaTesterMode },
+        { href: '/dashboard/trainer/loja',       label: 'Loja',         icon: 'ShoppingBag' },
+        { href: '/dashboard/trainer/plans',      label: 'Faturamento',  icon: 'CreditCard' },
+        { href: '/dashboard/trainer/ranking',    label: 'Ranking',      icon: 'Trophy' },
+        { href: '/dashboard/trainer/profile',    label: 'Meu Perfil',   icon: 'User' },
     ]
 
     const mobileLinks = [
-        { href: '/dashboard/trainer',            label: 'Início',  icon: Home,        exact: true },
-        { href: '/dashboard/trainer/students',   label: 'Alunos',  icon: Users },
-        { href: '/dashboard/trainer/loja',       label: 'Loja',    icon: ShoppingBag },
-        { href: '/dashboard/trainer/ranking',    label: 'Ranking', icon: Trophy },
-        { href: '/dashboard/trainer/profile',    label: 'Perfil',  icon: User },
+        { href: '/dashboard/trainer',            label: 'Início',  icon: 'Home',        exact: true },
+        { href: '/dashboard/trainer/students',   label: 'Alunos',  icon: 'Users' },
+        { href: '/dashboard/trainer/loja',       label: 'Loja',    icon: 'ShoppingBag' },
+        { href: '/dashboard/trainer/ranking',    label: 'Ranking', icon: 'Trophy' },
+        { href: '/dashboard/trainer/profile',    label: 'Perfil',  icon: 'User' },
     ]
 
     return (
@@ -96,7 +96,7 @@ export default async function TrainerLayout({ children }: { children: React.Reac
                 color="emerald"
                 links={links}
                 mobileLinks={mobileLinks}
-                user={{ id: userId, name: profile?.full_name, avatar_url: profile?.avatar_url }}
+                user={{ id: userId, name: profile?.full_name, email: (profile as any)?.email, avatar_url: profile?.avatar_url }}
             >
                 {children}
             </DashboardShell>
