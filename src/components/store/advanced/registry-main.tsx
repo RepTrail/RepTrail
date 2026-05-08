@@ -100,6 +100,6 @@ export function RegistryMain({
           </Inline>
         </GlassPanel>
       </Stack>
-    </Box>
+    </Box >
   )
 }
