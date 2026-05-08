@@ -51,6 +51,7 @@ export function Surface({
     base: 'bg-zinc-900 border border-white/5',
     glass: 'bg-gradient-to-br from-white/[0.05] to-white/[0.02] border border-white/[0.05] backdrop-blur-md',
     'glass-diagonal': 'bg-gradient-to-br from-white/[0.07] to-white/[0.04] border border-white/[0.05] backdrop-blur-md',
+    'glass-dark': 'bg-gradient-to-br from-black/40 to-black/20 border border-black/40 backdrop-blur-md',
     sunken: 'bg-zinc-950/40 border border-white/5',
     raised: 'bg-zinc-800 border border-white/10 shadow-lg',
     interactive: 'bg-zinc-900 border border-white/5 hover:border-emerald-500/30 hover:bg-zinc-800 transition-all cursor-pointer',

@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import { Box } from '../base/box'
 import { Stack } from '../base/stack'
 import { Font } from '../base/font'
 import { Icon } from '../base/icon'
@@ -35,59 +36,62 @@ export function SegmentedSwitch({
     <GlassPanel 
       padding={0} 
       rounded="full" 
-      noScrollbar
-      overflow="auto"
+      overflow="hidden"
       fullWidth={fullWidth}
     >
-      <Stack 
-        direction="row" 
-        gap={1} 
-        wrap={false} 
-        padding={1}
-        align="stretch"
+      <Box 
+        overflowX="auto" 
+        noScrollbar 
+        fullWidth
       >
-        {options.map((option) => {
-          const isActive = activeId === option.id
-          const variant = option.activeVariant || defaultActiveVariant
-          const colorToken = variant.split('-')[1]
+        <Stack 
+          direction="row" 
+          gap={1} 
+          wrap={false} 
+          padding={1}
+          align="stretch"
+        >
+          {options.map((option) => {
+            const isActive = activeId === option.id
+            const variant = option.activeVariant || defaultActiveVariant
+            const colorToken = variant.split('-')[1]
 
-          return (
-            <Button
-              key={option.id}
-              onClick={() => onSelect(option.id)}
-              variant={isActive ? variant : 'ghost'}
-              rounded="full"
-              size="sm"
-              // Only use flex-1 on desktop if fullWidth is enabled
-              // On mobile, we want natural width to allow overflow scroll
-              className={cn(
-                'shrink-0 min-w-fit px-5 transition-all duration-300',
-                fullWidth && 'md:flex-1'
-              )}
-            >
-              <Stack direction="row" align="center" gap={2.5} wrap={false}>
-                {option.icon && (
-                  <Icon 
-                    icon={option.icon} 
-                    size="xs" 
-                    color={(isActive ? colorToken : 'zinc-500') as any} 
-                  />
+            return (
+              <Button
+                key={option.id}
+                onClick={() => onSelect(option.id)}
+                variant={isActive ? variant : 'ghost'}
+                rounded="full"
+                size="sm"
+                className={cn(
+                  'shrink-0 min-w-fit px-5 transition-all duration-300',
+                  fullWidth && 'md:flex-1'
                 )}
-                <Font 
-                  variant="sub-tiny" 
-                  weight="black" 
-                  uppercase 
-                  italic 
-                  color={(isActive ? colorToken : 'zinc-500') as any}
-                  nowrap
-                >
-                  {option.label}
-                </Font>
-              </Stack>
-            </Button>
-          )
-        })}
-      </Stack>
+              >
+                <Stack direction="row" align="center" gap={2.5} wrap={false}>
+                  {option.icon && (
+                    <Icon 
+                      icon={option.icon} 
+                      size="xs" 
+                      color={(isActive ? colorToken : 'zinc-500') as any} 
+                    />
+                  )}
+                  <Font 
+                    variant="sub-tiny" 
+                    weight="black" 
+                    uppercase 
+                    italic 
+                    color={(isActive ? colorToken : 'zinc-500') as any}
+                    nowrap
+                  >
+                    {option.label}
+                  </Font>
+                </Stack>
+              </Button>
+            )
+          })}
+        </Stack>
+      </Box>
     </GlassPanel>
   )
 }

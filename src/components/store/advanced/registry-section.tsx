@@ -32,11 +32,9 @@ export function RegistrySection({
           <Icon icon={icon} color={primaryColor as any} size="lg" />
           <Font variant="heading">{title}</Font>
         </Inline>
-        {subtitle && (
-          <Font color="zinc-500" variant="body">
-            {subtitle}
-          </Font>
-        )}
+        <Font color="zinc-500" variant="body">
+          {subtitle}
+        </Font>
       </Stack>
 
       {/* Section Content */}

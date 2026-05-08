@@ -8,6 +8,8 @@ interface RegistryContextProps {
   setActiveTab: (tab: string) => void
   activeSection: string
   setActiveSection: (section: string) => void
+  isSidebarOpen: boolean
+  setIsSidebarOpen: (open: boolean) => void
 }
 
 export const RegistryContext = createContext<RegistryContextProps | undefined>(undefined)

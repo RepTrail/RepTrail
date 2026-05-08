@@ -73,7 +73,10 @@ export function UserListItem({
                     </Inline>
 
                     {/* Badges Block - Below on Mobile, Side on Desktop */}
-                    <div className="transition-transform duration-500 ease-out lg:group-hover:-translate-x-[160px]">
+                    <div className={cn(
+                        "transition-transform duration-500 ease-out",
+                        (onInspect || onAction || onDelete) && "lg:group-hover:-translate-x-[160px]"
+                    )}>
                         <Inline gap={2.5} align="center">
                             <Badge label={registrationDate} variant="glass" rounded="full" size="xs" />
                             <Badge 
@@ -88,29 +91,37 @@ export function UserListItem({
                 </div>
 
                 {/* Actions Sidebar: Vertical on Mobile, Absolute Overlay on Desktop */}
-                <div className={cn(
-                    "flex flex-col lg:flex-row items-center justify-center bg-zinc-950/40 lg:bg-zinc-950/90 backdrop-blur-xl border-l border-white/10 p-4 lg:px-5 lg:py-0 transition-all duration-500 ease-out",
-                    // Layout physics: Relative flow for mobile side-by-side, Absolute for desktop overlay
-                    "relative lg:absolute lg:right-0 lg:top-0 lg:h-full lg:translate-x-full lg:group-hover:translate-x-0"
-                )}>
-                    <Stack direction="row" className="lg:flex-row flex-col" gap={2.5} align="center">
-                        <ActionButton 
-                            icon={Eye} 
-                            variant="outline-blue" 
-                            onClick={onInspect} 
-                        />
-                        <ActionButton 
-                            icon={currentAction.icon} 
-                            variant={currentAction.outlineVariant} 
-                            onClick={onAction} 
-                        />
-                        <ActionButton 
-                            icon={Trash2} 
-                            variant="outline-red" 
-                            onClick={onDelete} 
-                        />
-                    </Stack>
-                </div>
+                {(onInspect || onAction || onDelete) && (
+                    <div className={cn(
+                        "flex flex-col lg:flex-row items-center justify-center bg-zinc-950/40 lg:bg-zinc-950/90 backdrop-blur-xl border-l border-white/10 p-4 lg:px-5 lg:py-0 transition-all duration-500 ease-out",
+                        // Layout physics: Relative flow for mobile side-by-side, Absolute for desktop overlay
+                        "relative lg:absolute lg:right-0 lg:top-0 lg:h-full lg:translate-x-full lg:group-hover:translate-x-0"
+                    )}>
+                        <Stack direction="row" className="lg:flex-row flex-col" gap={2.5} align="center">
+                            {onInspect && (
+                                <ActionButton 
+                                    icon={Eye} 
+                                    variant="outline-blue" 
+                                    onClick={onInspect} 
+                                />
+                            )}
+                            {onAction && (
+                                <ActionButton 
+                                    icon={currentAction.icon} 
+                                    variant={currentAction.outlineVariant} 
+                                    onClick={onAction} 
+                                />
+                            )}
+                            {onDelete && (
+                                <ActionButton 
+                                    icon={Trash2} 
+                                    variant="outline-red" 
+                                    onClick={onDelete} 
+                                />
+                            )}
+                        </Stack>
+                    </div>
+                )}
             </div>
         </GlassPanel>
     )

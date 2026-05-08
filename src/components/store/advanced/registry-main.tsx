@@ -17,6 +17,7 @@ import {
 import { useRegistry } from '@/components/store/advanced/registry-context'
 import { SegmentedSwitch } from '@/components/store/intermediary/segmented-switch'
 import { AdminSectionContent } from '../sections/admin-section-content'
+import { AffiliateSectionContent } from '../sections/affiliate-section-content'
 
 interface RegistryMainProps {
   children: React.ReactNode
@@ -48,6 +49,8 @@ export function RegistryMain({
         return children
       case 'admin':
         return <AdminSectionContent />
+      case 'afiliado':
+        return <AffiliateSectionContent />
       default:
         return (
           <EmptyState 

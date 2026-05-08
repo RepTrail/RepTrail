@@ -38,28 +38,17 @@ export function RegistryBottomNav() {
             key={item.id}
             onClick={() => setActiveTab(item.id)}
             variant={isActive ? variant : 'ghost'}
-            size="sm"
-            rounded="sm"
-            isIconOnly={false}
-            direction="col"
-            height="auto"
-            paddingY={2}
-            gap={1}
+            size="md"
+            rounded={isActive ? 'system' : 'full'}
+            isIconOnly
+            className="transition-transform active:scale-90"
           >
             <Icon 
               icon={item.icon} 
               size="sm" 
-              color={(isActive ? primaryColor : 'zinc-500') as any} 
+              color={(isActive ? primaryColor : 'white') as any} 
+              className={isActive ? 'opacity-100' : 'opacity-40'}
             />
-            <Font 
-              variant="sub-tiny" 
-              color={(isActive ? primaryColor : 'zinc-600') as any}
-              weight={isActive ? 'black' : 'medium'}
-              uppercase
-              scale={75}
-            >
-              {item.label}
-            </Font>
           </Button>
         )
       })}

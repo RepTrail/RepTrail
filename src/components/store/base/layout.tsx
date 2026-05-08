@@ -4,9 +4,11 @@ import React from 'react'
 import { cn } from '@/lib/utils'
 import { Box } from './box'
 
+type GapToken = 0 | 1 | 2.5 | 5 | 7.5 | 12.5 | 'section'
+
 interface LayoutBaseProps {
   children: React.ReactNode
-  gap?: 0 | 2.5 | 5 | 12.5 | 'section'
+  gap?: GapToken | { base: GapToken, md: GapToken }
   align?: 'start' | 'center' | 'end' | 'stretch'
   justify?: 'start' | 'center' | 'end' | 'between' | 'around'
   flex1?: boolean
@@ -39,10 +41,22 @@ export function Inline({
   
   const gapClasses = {
     0: 'gap-0',
+    1: 'gap-1',
     2.5: 'gap-2.5',
     5: 'gap-5',
+    7.5: 'gap-[30px]',
     12.5: 'gap-[50px]',
     'section': 'gap-[100px]'
+  }
+
+  const gapMdClasses = {
+    0: 'md:gap-0',
+    1: 'md:gap-1',
+    2.5: 'md:gap-2.5',
+    5: 'md:gap-5',
+    7.5: 'md:gap-[30px]',
+    12.5: 'md:gap-[50px]',
+    'section': 'md:gap-[100px]'
   }
 
   const alignClasses = {
@@ -60,6 +74,11 @@ export function Inline({
     around: 'justify-around'
   }
 
+  // Handle responsive gap
+  const isRespGap = typeof gap === 'object'
+  const gapBase = isRespGap ? (gap as any).base : gap
+  const gapMd = isRespGap ? (gap as any).md : undefined
+
   return (
     <Box 
       id={id}
@@ -69,7 +88,8 @@ export function Inline({
       paddingY={paddingY}
       className={cn(
         'flex flex-row',
-        gapClasses[gap as keyof typeof gapClasses],
+        gapClasses[gapBase as keyof typeof gapClasses],
+        gapMd && gapMdClasses[gapMd as keyof typeof gapMdClasses],
         alignClasses[align],
         justifyClasses[justify],
         flex1 && 'flex-1',
@@ -101,11 +121,28 @@ export function Cluster({
   
   const gapClasses = {
     0: 'gap-0',
+    1: 'gap-1',
     2.5: 'gap-2.5',
     5: 'gap-5',
+    7.5: 'gap-[30px]',
     12.5: 'gap-[50px]',
     'section': 'gap-[100px]'
   }
+
+  const gapMdClasses = {
+    0: 'md:gap-0',
+    1: 'md:gap-1',
+    2.5: 'md:gap-2.5',
+    5: 'md:gap-5',
+    7.5: 'md:gap-[30px]',
+    12.5: 'md:gap-[50px]',
+    'section': 'md:gap-[100px]'
+  }
+
+  // Handle responsive gap
+  const isRespGap = typeof gap === 'object'
+  const gapBase = isRespGap ? (gap as any).base : gap
+  const gapMd = isRespGap ? (gap as any).md : undefined
 
   return (
     <Box 
@@ -116,7 +153,8 @@ export function Cluster({
       paddingY={paddingY}
       className={cn(
         'flex flex-row flex-wrap',
-        gapClasses[gap as keyof typeof gapClasses],
+        gapClasses[gapBase as keyof typeof gapClasses],
+        gapMd && gapMdClasses[gapMd as keyof typeof gapMdClasses],
         align && `items-${align}`,
         justify && `justify-${justify}`,
         flex1 && 'flex-1',
@@ -163,7 +201,7 @@ export function MobileNavContainer({ children, id }: { children: React.ReactNode
   return (
     <nav
       id={id}
-      className="fixed left-0 bottom-0 h-20 w-full bg-zinc-950 border-t border-white/5 md:hidden z-40 px-5 flex items-center justify-around"
+      className="fixed left-0 bottom-0 h-20 w-full bg-gradient-to-t from-black/40 to-black/20 border-t border-black/40 backdrop-blur-md md:hidden z-40 px-5 flex items-center justify-around"
     >
       {children}
     </nav>

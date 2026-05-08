@@ -16,6 +16,7 @@ interface RegistryShellProps {
 
 export function RegistryShell({ children }: RegistryShellProps) {
   const [isSettingsOpen, setIsSettingsOpen] = React.useState(false)
+  const [isSidebarOpen, setIsSidebarOpen] = React.useState(false)
   const [activeTab, setActiveTab] = React.useState('overview')
   const [activeSection, setActiveSection] = React.useState('branding')
   const [primaryColor, setPrimaryColor] = React.useState<RegistryColor>('blue')
@@ -83,7 +84,9 @@ export function RegistryShell({ children }: RegistryShellProps) {
       activeTab,
       setActiveTab,
       activeSection,
-      setActiveSection
+      setActiveSection,
+      isSidebarOpen,
+      setIsSidebarOpen
     }}>
       <Box minHeight="screen" bg="zinc" bgOpacity={100} overflowX="hidden" display="flex" direction="col" position="relative">
         

@@ -46,7 +46,7 @@ export function AdminSectionContent({ id }: { id?: string }) {
     }
 
     return (
-        <Stack gap={10}>
+        <Stack gap={12.5}>
             {/* Dashboard Overview */}
             <RegistrySection 
                 id={id}
@@ -131,6 +131,7 @@ export function AdminSectionContent({ id }: { id?: string }) {
                         avatarVariant="orange"
                         onDelete={() => openModal('delete', 'Marcos Vinicius', 'user')}
                         onInspect={() => openModal('edit', 'Marcos Vinicius', 'user')}
+                        onAction={() => openModal('edit', 'Marcos Vinicius', 'user')}
                     />
                     <UserListItem 
                         name="Juliana Silva"
@@ -142,6 +143,7 @@ export function AdminSectionContent({ id }: { id?: string }) {
                         avatarVariant="amber"
                         onDelete={() => openModal('delete', 'Juliana Silva', 'user')}
                         onInspect={() => openModal('edit', 'Juliana Silva', 'user')}
+                        onAction={() => openModal('edit', 'Juliana Silva', 'user')}
                     />
                     
                     <Box className="pt-5">
@@ -171,6 +173,7 @@ export function AdminSectionContent({ id }: { id?: string }) {
                         avatarVariant="emerald"
                         onDelete={() => openModal('delete', 'Carlos Eduardo', 'user')}
                         onInspect={() => openModal('edit', 'Carlos Eduardo', 'user')}
+                        onAction={() => openModal('edit', 'Carlos Eduardo', 'user')}
                     />
                     <UserListItem 
                         name="Beatriz Santos"
@@ -182,6 +185,7 @@ export function AdminSectionContent({ id }: { id?: string }) {
                         avatarVariant="zinc"
                         onDelete={() => openModal('delete', 'Beatriz Santos', 'user')}
                         onInspect={() => openModal('edit', 'Beatriz Santos', 'user')}
+                        onAction={() => openModal('edit', 'Beatriz Santos', 'user')}
                     />
 
                     <Box className="pt-5">
