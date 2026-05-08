@@ -18,6 +18,7 @@ type ButtonVariant =
   | 'outline-red'
   | 'outline-blue'
   | 'outline-indigo'
+  | 'outline-zinc'
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant
@@ -73,6 +74,7 @@ export function Button({
     'outline-red': 'bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500/20',
     'outline-blue': 'bg-blue-500/10 text-blue-500 border border-blue-500/20 hover:bg-blue-500/20',
     'outline-indigo': 'bg-indigo-500/10 text-indigo-500 border border-indigo-500/20 hover:bg-indigo-500/20',
+    'outline-zinc': 'bg-white/5 text-zinc-400 border border-white/10 hover:bg-white/10',
   }
 
   const sizeClasses = {

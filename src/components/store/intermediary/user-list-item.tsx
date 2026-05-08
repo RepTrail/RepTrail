@@ -18,6 +18,7 @@ interface UserListItemProps {
     role: 'personal' | 'aluno'
     roleLabel: string
     initials: string
+    isActionActive?: boolean
     avatarVariant?: 'orange' | 'emerald' | 'red' | 'blue' | 'amber' | 'zinc'
     onInspect?: () => void
     onAction?: () => void
@@ -31,6 +32,7 @@ export function UserListItem({
     role,
     roleLabel,
     initials,
+    isActionActive = false,
     avatarVariant = 'zinc',
     onInspect,
     onAction,
@@ -75,7 +77,7 @@ export function UserListItem({
                     {/* Badges Block - Below on Mobile, Side on Desktop */}
                     <div className={cn(
                         "transition-transform duration-500 ease-out",
-                        (onInspect || onAction || onDelete) && "lg:group-hover:-translate-x-[160px]"
+                        (onInspect || onAction || onDelete) && "lg:group-hover:-translate-x-[180px]"
                     )}>
                         <Inline gap={2.5} align="center">
                             <Badge label={registrationDate} variant="glass" rounded="full" size="xs" />
@@ -97,7 +99,7 @@ export function UserListItem({
                         // Layout physics: Relative flow for mobile side-by-side, Absolute for desktop overlay
                         "relative lg:absolute lg:right-0 lg:top-0 lg:h-full lg:translate-x-full lg:group-hover:translate-x-0"
                     )}>
-                        <Stack direction="row" className="lg:flex-row flex-col" gap={2.5} align="center">
+                        <Stack direction="row" className="lg:flex-row flex-col" gap={5} align="center">
                             {onInspect && (
                                 <ActionButton 
                                     icon={Eye} 
@@ -108,7 +110,7 @@ export function UserListItem({
                             {onAction && (
                                 <ActionButton 
                                     icon={currentAction.icon} 
-                                    variant={currentAction.outlineVariant} 
+                                    variant={isActionActive ? currentAction.outlineVariant : 'outline-zinc'} 
                                     onClick={onAction} 
                                 />
                             )}

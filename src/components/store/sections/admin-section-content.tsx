@@ -32,12 +32,24 @@ import {
 
 export function AdminSectionContent({ id }: { id?: string }) {
     const [modalState, setModalState] = useState<{
-        type: 'edit' | 'delete' | null,
+        type: 'edit' | 'delete' | 'inspect' | null,
         target: string | null,
         category: 'user' | 'product' | null
     }>({ type: null, target: null, category: null })
 
-    const openModal = (type: 'edit' | 'delete', target: string, category: 'user' | 'product') => {
+    // State for local service toggles (simulating backend switches)
+    const [userServices, setUserServices] = useState<Record<string, boolean>>({
+        'Marcos Vinicius': true,
+        'Juliana Silva': false,
+        'Carlos Eduardo': true,
+        'Beatriz Santos': false
+    })
+
+    const toggleService = (name: string) => {
+        setUserServices(prev => ({ ...prev, [name]: !prev[name] }))
+    }
+
+    const openModal = (type: 'edit' | 'delete' | 'inspect', target: string, category: 'user' | 'product') => {
         setModalState({ type, target, category })
     }
 
@@ -130,8 +142,9 @@ export function AdminSectionContent({ id }: { id?: string }) {
                         initials="MV"
                         avatarVariant="orange"
                         onDelete={() => openModal('delete', 'Marcos Vinicius', 'user')}
-                        onInspect={() => openModal('edit', 'Marcos Vinicius', 'user')}
-                        onAction={() => openModal('edit', 'Marcos Vinicius', 'user')}
+                        onInspect={() => openModal('inspect', 'Marcos Vinicius', 'user')}
+                        onAction={() => toggleService('Marcos Vinicius')}
+                        isActionActive={userServices['Marcos Vinicius']}
                     />
                     <UserListItem 
                         name="Juliana Silva"
@@ -142,8 +155,9 @@ export function AdminSectionContent({ id }: { id?: string }) {
                         initials="JS"
                         avatarVariant="amber"
                         onDelete={() => openModal('delete', 'Juliana Silva', 'user')}
-                        onInspect={() => openModal('edit', 'Juliana Silva', 'user')}
-                        onAction={() => openModal('edit', 'Juliana Silva', 'user')}
+                        onInspect={() => openModal('inspect', 'Juliana Silva', 'user')}
+                        onAction={() => toggleService('Juliana Silva')}
+                        isActionActive={userServices['Juliana Silva']}
                     />
                     
                     <Box className="pt-5">
@@ -172,8 +186,9 @@ export function AdminSectionContent({ id }: { id?: string }) {
                         initials="CE"
                         avatarVariant="emerald"
                         onDelete={() => openModal('delete', 'Carlos Eduardo', 'user')}
-                        onInspect={() => openModal('edit', 'Carlos Eduardo', 'user')}
-                        onAction={() => openModal('edit', 'Carlos Eduardo', 'user')}
+                        onInspect={() => openModal('inspect', 'Carlos Eduardo', 'user')}
+                        onAction={() => toggleService('Carlos Eduardo')}
+                        isActionActive={userServices['Carlos Eduardo']}
                     />
                     <UserListItem 
                         name="Beatriz Santos"
@@ -184,8 +199,9 @@ export function AdminSectionContent({ id }: { id?: string }) {
                         initials="BS"
                         avatarVariant="zinc"
                         onDelete={() => openModal('delete', 'Beatriz Santos', 'user')}
-                        onInspect={() => openModal('edit', 'Beatriz Santos', 'user')}
-                        onAction={() => openModal('edit', 'Beatriz Santos', 'user')}
+                        onInspect={() => openModal('inspect', 'Beatriz Santos', 'user')}
+                        onAction={() => toggleService('Beatriz Santos')}
+                        isActionActive={userServices['Beatriz Santos']}
                     />
 
                     <Box className="pt-5">
@@ -305,6 +321,30 @@ export function AdminSectionContent({ id }: { id?: string }) {
                         <Font variant="sub-tiny" color="red" weight="black" uppercase italic>
                             Aviso: Os dados de auditoria (Logs) permanecerão salvos para fins legais.
                         </Font>
+                    </div>
+                </Stack>
+            </Modal>
+
+            <Modal
+                isOpen={modalState.type === 'inspect'}
+                onClose={closeModal}
+                title={`Inspecionar ${modalState.category === 'user' ? 'Painel' : 'Produto'}`}
+                subtitle={`Acessando interface do usuário: ${modalState.target}`}
+                icon={Search}
+                variant="blue"
+                confirmLabel="Acessar Painel"
+                cancelLabel="Cancelar"
+            >
+                <Stack gap={5}>
+                    <Font variant="description" color="zinc-400">
+                        A ação de inspeção permite que você acesse temporariamente o painel deste usuário. Você poderá visualizar a interface exatamente como ele a vê para fins de suporte, auditoria ou configuração.
+                    </Font>
+                    
+                    <div className="space-y-4">
+                        <div className="p-4 rounded bg-white/5 border border-white/10">
+                            <Font variant="sub-tiny" color="zinc-500" weight="black" uppercase italic>Status do Registro</Font>
+                            <Font color="emerald" weight="bold" className="block">VERIFICADO & ATIVO</Font>
+                        </div>
                     </div>
                 </Stack>
             </Modal>
