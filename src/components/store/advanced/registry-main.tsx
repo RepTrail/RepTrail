@@ -66,7 +66,7 @@ export function RegistryMain({
   return (
     <Box fullWidth className="py-20 md:py-0">
       <Stack gap={{ base: 12.5, md: 'section' }}>
-        {/* Header Section */}
+        {/* Header Section title*/}
         <Stack gap={2.5}>
           <Inline gap={2.5}>
             <Icon icon={icon} color={primaryColor as any} size="lg" />
