@@ -1,61 +1,310 @@
+'use client'
+
 import React from 'react'
-import { Box } from '../base/box'
-import { Stack } from '../base/stack'
-import { Font } from '../base/font'
-import { Icon } from '../base/icon'
-import { Button } from '../base/button'
-import { Grid } from '../base/grid'
-import { RegistrySection } from '../advanced/registry-section'
-import { Eye, Trash2, Check, X, Dumbbell } from 'lucide-react'
+import { Box } from '@/components/store/base/box'
+import { Stack } from '@/components/store/base/stack'
+import { Font } from '@/components/store/base/font'
+import { Icon } from '@/components/store/base/icon'
+import { Button } from '@/components/store/base/button'
+import { Grid } from '@/components/store/base/grid'
+import { RegistrySection } from '@/components/store/advanced/registry-section'
+import { Badge } from '@/components/store/base/badge'
+import { Inline, Cluster } from '@/components/store/base/layout'
+import { GlassPanel } from '@/components/store/base/surface'
+import { cn } from '@/lib/utils'
+import { 
+    Eye, Trash2, Check, X, Dumbbell, Tag, Shield, Zap, 
+    Activity, Info, Settings, Bell, Plus, MousePointer2, ChevronRight,
+    Search, Calendar, Phone, User, Lock, Mail, Camera
+} from 'lucide-react'
+import { Input } from '@/components/store/base/input'
+import { FileUpload } from '@/components/store/base/file-upload'
+import { FormSwitch } from '@/components/store/base/form-switch'
+import { FormSelect } from '@/components/store/base/form-select'
+import { FormCheckbox } from '@/components/store/base/form-checkbox'
 
 export function ComponentsRegistryContent() {
+    const colors = [
+        { label: 'Aluno', color: 'orange', icon: Zap },
+        { label: 'Personal', color: 'emerald', icon: Activity },
+        { label: 'Afiliado', color: 'amber', icon: Tag },
+        { label: 'Admin', color: 'red', icon: Shield },
+        { label: 'System', color: 'blue', icon: Info },
+        { label: 'Default', color: 'zinc', icon: Tag },
+    ] as const
+
+    const iconOnlyVariants = [
+        { variant: 'zinc' as const, icon: Settings, iconColor: 'zinc-400' as const },
+        { variant: 'outline-orange' as const, icon: Zap, iconColor: 'orange' as const },
+        { variant: 'outline-emerald' as const, icon: Check, iconColor: 'emerald' as const },
+        { variant: 'outline-blue' as const, icon: Info, iconColor: 'blue' as const },
+        { variant: 'outline-red' as const, icon: Trash2, iconColor: 'red' as const },
+        { variant: 'outline-amber' as const, icon: Bell, iconColor: 'amber' as const },
+        { variant: 'outline-orange' as const, icon: Plus, iconColor: 'orange' as const },
+        { variant: 'outline-blue' as const, icon: Eye, iconColor: 'blue' as const },
+    ]
+
     return (
         <Stack gap="section">
-            <RegistrySection
-                title="Grid & Row Actions"
-                icon={Dumbbell}
-                subtitle="Ações de alta densidade para tabelas e listagens administrativas."
+            {/* New Main Buttons Section */}
+            <RegistrySection 
+                title="Ações Principais (Call to Action)" 
+                icon={MousePointer2} 
+                subtitle="Botões de destaque para fluxos principais e conversão no ecossistema RepTrail."
             >
-                <Box bg="zinc-950/40" padding={5} border="white/5" rounded="system">
-                    <Grid cols={1} gap={5} align="center">
-                        <Stack align="center" gap={2.5}>
-                            <Button variant="outline-blue" rounded="full" size="sm">
-                                <Stack direction="row" align="center" gap={2.5}>
-                                    <Icon icon={Eye} size="xs" color="blue" />
-                                    <Font variant="auxiliary" weight="black" italic uppercase color="blue">Inspecionar</Font>
-                                </Stack>
-                            </Button>
-                            <Font variant="sub-tiny" color="zinc-600">ROW ACTION (BLUE)</Font>
+                <Grid cols={2} gap={5}>
+                    {/* System Radius Column - Solid Style */}
+                    <GlassPanel>
+                        <Stack gap={5}>
+                            <Font variant="sub-tiny" color="zinc-600" weight="black" uppercase>System Radius (5px) - Solid Style</Font>
+                            <Stack gap={2.5}>
+                                <Button variant="orange" size="lg" rounded="system" fullWidth>
+                                    Começar Agora <Icon icon={ChevronRight} size="xs" />
+                                </Button>
+                                <Button variant="emerald" size="lg" rounded="system" fullWidth>
+                                    Confirmar Matrícula <Icon icon={Check} size="xs" />
+                                </Button>
+                                <Button variant="white" size="lg" rounded="system" fullWidth>
+                                    Explorar Plataforma
+                                </Button>
+                            </Stack>
                         </Stack>
+                    </GlassPanel>
 
-                        <Stack align="center" gap={2.5}>
-                            <Button variant="outline-red" rounded="full" size="sm">
-                                <Stack direction="row" align="center" gap={2.5}>
-                                    <Icon icon={Trash2} size="xs" color="red" />
-                                    <Font variant="auxiliary" weight="black" italic uppercase color="red">Deletar</Font>
-                                </Stack>
-                            </Button>
-                            <Font variant="sub-tiny" color="zinc-600">ROW ACTION (RED)</Font>
+                    {/* Pill Style Column - Glass Style (Transparent + Border) */}
+                    <GlassPanel>
+                        <Stack gap={5}>
+                            <Font variant="sub-tiny" color="zinc-600" weight="black" uppercase>Pill Style (Full Radius) - Glass Style</Font>
+                            <Stack gap={2.5}>
+                                <Button variant="outline-orange" size="lg" rounded="full" fullWidth>
+                                    <Icon icon={Zap} size="xs" /> Iniciar Treino
+                                </Button>
+                                <Button variant="outline-emerald" size="lg" rounded="full" fullWidth>
+                                    <Icon icon={Check} size="xs" /> Finalizar Aula
+                                </Button>
+                                <Button variant="zinc" size="lg" rounded="full" fullWidth>
+                                    Configurações Avançadas
+                                </Button>
+                            </Stack>
                         </Stack>
+                    </GlassPanel>
+                </Grid>
+            </RegistrySection>
 
-                        <Stack align="center" gap={2.5}>
-                            <Button variant="outline-emerald" rounded="full" size="sm">
-                                <Stack direction="row" align="center" gap={2.5}>
-                                    <Icon icon={Check} size="xs" color="emerald" />
-                                    <Font variant="auxiliary" weight="black" italic uppercase color="emerald">Finalizar</Font>
-                                </Stack>
-                            </Button>
-                            <Font variant="sub-tiny" color="zinc-600">ROW ACTION (EMERALD)</Font>
-                        </Stack>
+            <RegistrySection 
+                title="Grid & Row Actions" 
+                icon={Dumbbell} 
+                subtitle="Ações de alta densidade e indicadores de estado para listagens administrativas."
+            >
+                <Grid cols={2} gap={5}>
+                    {/* Actions Column (50%) */}
+                    <GlassPanel>
+                        <Stack gap={5}>
+                            <Font variant="sub-tiny" color="zinc-600" weight="black" uppercase>Inline Row Actions</Font>
+                            <Cluster gap={2.5}>
+                                <Button variant="outline-blue" rounded="full" size="sm">
+                                    <Inline gap={2.5}>
+                                        <Icon icon={Eye} size="xs" color="blue" />
+                                        <Font variant="auxiliary" weight="black" italic uppercase color="blue">Inspecionar</Font>
+                                    </Inline>
+                                </Button>
 
-                        <Stack align="center" gap={2.5}>
-                            <Button variant="close" rounded="full" isIconOnly size="sm">
-                                <Icon icon={X} size="xs" />
-                            </Button>
-                            <Font variant="sub-tiny" color="zinc-600">CLOSE ACTION</Font>
+                                <Button variant="outline-red" rounded="full" size="sm">
+                                    <Inline gap={2.5}>
+                                        <Icon icon={Trash2} size="xs" color="red" />
+                                        <Font variant="auxiliary" weight="black" italic uppercase color="red">Deletar</Font>
+                                    </Inline>
+                                </Button>
+
+                                <Button variant="outline-emerald" rounded="full" size="sm">
+                                    <Inline gap={2.5}>
+                                        <Icon icon={Check} size="xs" color="emerald" />
+                                        <Font variant="auxiliary" weight="black" italic uppercase color="emerald">Finalizar</Font>
+                                    </Inline>
+                                </Button>
+
+                                <Button variant="zinc" rounded="full" isIconOnly size="sm">
+                                    <Icon icon={X} size="xs" />
+                                </Button>
+                            </Cluster>
+
+                            <Font variant="sub-tiny" color="zinc-600" weight="black" uppercase>Circular Icon Actions (Pill Style)</Font>
+                            <Cluster gap={2.5}>
+                                {iconOnlyVariants.map((v, i) => (
+                                    <Button 
+                                        key={i}
+                                        variant={v.variant}
+                                        rounded="full" 
+                                        isIconOnly 
+                                        size="sm"
+                                    >
+                                        <Icon icon={v.icon} size="xs" color={v.iconColor} />
+                                    </Button>
+                                ))}
+                            </Cluster>
                         </Stack>
-                    </Grid>
-                </Box>
+                    </GlassPanel>
+
+                    {/* Badge Variations Column (50%) */}
+                    <GlassPanel>
+                        <Stack gap={5}>
+                            <Font variant="sub-tiny" color="zinc-600" weight="black" uppercase>Status & Badge Variations</Font>
+                            
+                            <Cluster gap={2.5}>
+                                <Badge label="Pendente" color="amber" variant="dot" />
+                                <Badge label="Concluído" color="emerald" variant="dot" />
+                                <Badge label="Erro" color="red" variant="dot" />
+                                
+                                {colors.map((v) => (
+                                    <div 
+                                        key={v.label}
+                                        className={cn(
+                                            "flex items-center justify-center px-2.5 py-2.5 rounded-full border md:w-auto",
+                                            v.color === 'orange' && "bg-orange-500/10 border-orange-500/30",
+                                            v.color === 'emerald' && "bg-emerald-500/10 border-emerald-500/30",
+                                            v.color === 'amber' && "bg-amber-500/10 border-amber-500/30",
+                                            v.color === 'red' && "bg-red-500/10 border-red-500/30",
+                                            v.color === 'blue' && "bg-blue-500/10 border-blue-500/30",
+                                            v.color === 'zinc' && "bg-white/5 border-white/10"
+                                        )}
+                                    >
+                                        <Inline gap={2.5}>
+                                            <Icon icon={v.icon} size="xs" color={v.color as any} />
+                                            <Font variant="auxiliary" color={v.color as any} weight="black" italic uppercase nowrap>{v.label}</Font>
+                                        </Inline>
+                                    </div>
+                                ))}
+                            </Cluster>
+                        </Stack>
+                    </GlassPanel>
+                </Grid>
+            </RegistrySection>
+
+            <RegistrySection 
+                title="Inputs & Form Control" 
+                icon={Settings} 
+                subtitle="Componentes de captura de dados com máscaras inteligentes, validação visual e estados de foco emerald."
+            >
+                <Grid cols={1} mdCols={2} gap={10}>
+                    {/* Basic & Identity Column */}
+                    <GlassPanel>
+                        <Stack gap={5}>
+                            <Font variant="sub-tiny" color="zinc-600" weight="black" uppercase>Identity & Data</Font>
+                            
+                            <Grid cols={1} mdCols={2} gap={5}>
+                                <Input label="Nome Completo" placeholder="Ex: Marcos Silva" icon={<Icon icon={User} size="xs" />} />
+                                <Input label="CPF" placeholder="000.000.000-00" mask="cpf" icon={<Icon icon={Tag} size="xs" />} />
+                            </Grid>
+
+                            <Input label="Email" placeholder="contato@reptrail.com" type="email" icon={<Icon icon={Mail} size="xs" />} />
+
+                            <Grid cols={1} mdCols={2} gap={5}>
+                                <Input label="Telefone" placeholder="(00) 00000-0000" mask="phone" icon={<Icon icon={Phone} size="xs" />} />
+                                <Input label="Data de Nasc." placeholder="DD/MM/AAAA" mask="date" icon={<Icon icon={Calendar} size="xs" />} />
+                            </Grid>
+
+                            <Input label="Senha" type="password" placeholder="••••••••" icon={<Icon icon={Lock} size="xs" />} />
+                        </Stack>
+                    </GlassPanel>
+
+                    {/* Search & Media Column */}
+                    <GlassPanel>
+                        <Stack gap={5}>
+                            <Font variant="sub-tiny" color="zinc-600" weight="black" uppercase>Search & Media</Font>
+                            
+                            <Input 
+                                label="Busca Global" 
+                                placeholder="Procurar alunos, treinos ou registros..." 
+                                icon={<Icon icon={Search} size="xs" />} 
+                                rounded="full" 
+                            />
+
+                            <Grid cols={1} mdCols={2} gap={5} align="start">
+                                <FileUpload label="Foto de Perfil" variant="profile" />
+                                <FileUpload label="Documento/Logo" variant="generic" />
+                            </Grid>
+
+                            <Input label="Number Input" placeholder="0.00" type="number" mask="number" />
+                        </Stack>
+                    </GlassPanel>
+                </Grid>
+            </RegistrySection>
+
+            <RegistrySection 
+                title="Selection & Choices" 
+                icon={Check} 
+                subtitle="Controles de seleção customizados: switch segmentado, dropdown e checkbox com estados visuais premium."
+            >
+                <Grid cols={1} mdCols={3} gap={5} align="start">
+                    {/* Switch */}
+                    <GlassPanel className="self-start">
+                        <Stack gap={5}>
+                            <Font variant="sub-tiny" color="zinc-600" weight="black" uppercase>Segmented Switch</Font>
+                            <FormSwitch
+                                label="Plano de Treino"
+                                options={[
+                                    { label: 'Básico', value: 'basic' },
+                                    { label: 'Avançado', value: 'advanced' },
+                                    { label: 'Elite', value: 'elite' },
+                                ]}
+                                color="emerald"
+                            />
+                            <FormSwitch
+                                label="Período"
+                                options={[
+                                    { label: 'Semana', value: 'week' },
+                                    { label: 'Mês', value: 'month' },
+                                    { label: 'Ano', value: 'year' },
+                                ]}
+                                color="orange"
+                            />
+                        </Stack>
+                    </GlassPanel>
+
+                    {/* Select */}
+                    <GlassPanel className="self-start">
+                        <Stack gap={5}>
+                            <Font variant="sub-tiny" color="zinc-600" weight="black" uppercase>Custom Select</Font>
+                            <div className="relative">
+                                <FormSelect
+                                    label="Nível do Aluno"
+                                    placeholder="Selecionar nível..."
+                                    options={[
+                                        { label: 'Iniciante', value: 'beginner', description: 'Menos de 6 meses de treino' },
+                                        { label: 'Intermediário', value: 'intermediate', description: '6 meses a 2 anos' },
+                                        { label: 'Avançado', value: 'advanced', description: 'Mais de 2 anos' },
+                                        { label: 'Elite', value: 'elite', description: 'Atleta competitivo' },
+                                    ]}
+                                />
+                            </div>
+                        </Stack>
+                    </GlassPanel>
+
+                    {/* Checkbox */}
+                    <GlassPanel className="self-start">
+                        <Stack gap={5}>
+                            <Font variant="sub-tiny" color="zinc-600" weight="black" uppercase>Checkboxes</Font>
+                            <Stack gap={5}>
+                                <FormCheckbox
+                                    label="Receber notificações"
+                                    description="Avisos de treinos e atualizações do sistema."
+                                    color="emerald"
+                                    checked
+                                />
+                                <FormCheckbox
+                                    label="Modo competição"
+                                    description="Habilita ranking e comparativos entre alunos."
+                                    color="orange"
+                                />
+                                <FormCheckbox
+                                    label="Aceito os termos"
+                                    description="Li e concordo com os termos de uso da plataforma."
+                                    color="blue"
+                                />
+                            </Stack>
+                        </Stack>
+                    </GlassPanel>
+                </Grid>
             </RegistrySection>
         </Stack>
     )

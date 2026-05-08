@@ -26,9 +26,9 @@ export function LogItem({ action, admin, target, details, date }: LogItemProps) 
                 </Box>
                 <Stack gap={2.5} flex1>
                     <Stack direction="row" align="center" gap={2.5} wrap>
-                        <Font variant="label-caps">{action.replace(/_/g, ' ')}</Font>
-                        {target && <Font variant="sub-tiny" color="amber" weight="black" italic>• {target}</Font>}
-                        {admin && <Font variant="sub-tiny" color="zinc-600">por {admin}</Font>}
+                         <Font variant="label-caps">{action.replace(/_/g, ' ')}</Font>
+                         {target && <Font variant="sub-tiny" color="orange" weight="black" uppercase italic>{target}</Font>}
+                         {admin && <Font variant="sub-tiny" color="zinc-600">por {admin}</Font>}
                     </Stack>
                     {detailString && (
                         <Box bg="black" bgOpacity={20} padding={2.5} rounded="sm" display="flex" align="center">
@@ -36,8 +36,8 @@ export function LogItem({ action, admin, target, details, date }: LogItemProps) 
                         </Box>
                     )}
                     <Stack direction="row" align="center" gap={2.5}>
-                        <Icon icon={Clock} color="zinc-700" size="xs" />
-                        <Font variant="sub-tiny" color="zinc-600">{date}</Font>
+                         <Icon icon={Clock} color="zinc-700" size="xs" />
+                         <Font variant="sub-tiny" color="zinc-600">{date}</Font>
                     </Stack>
                 </Stack>
             </Stack>

@@ -1,7 +1,7 @@
 import React from 'react'
 import { cn } from '@/lib/utils'
 
-export interface FontProps {
+interface FontProps {
   children: React.ReactNode
   variant?: 'heading' | 'h1' | 'h2' | 'body' | 'body-sm' | 'description' | 'auxiliary' | 'label-caps' | 'sub-tiny'
   color?: 'foreground' | 'muted' | 'orange' | 'emerald' | 'amber' | 'red' | 'blue' | 'zinc-400' | 'zinc-500' | 'zinc-600' | 'zinc-700' | 'zinc-800' | 'black' | 'white' | 'inherit' | 'brand-accent' | 'zinc'
@@ -23,9 +23,9 @@ export interface FontProps {
   className?: string // Internal use only
 }
 
-export function Font({
-  children,
-  variant = 'body',
+export function Font({ 
+  children, 
+  variant = 'body', 
   color = 'inherit',
   italic = false,
   uppercase = false,
@@ -44,37 +44,58 @@ export function Font({
   paddingLeft,
   className
 }: FontProps) {
+  // Internal mappings to consolidate logic and improve atomic predictability
+  const variantMap = {
+    heading: 'text-xl md:text-3xl font-black uppercase italic tracking-tighter',
+    h1: 'text-4xl md:text-8xl font-black italic uppercase tracking-tighter leading-none',
+    h2: 'text-2xl md:text-4xl font-black italic uppercase tracking-tight',
+    body: 'text-sm md:text-lg font-medium leading-relaxed',
+    'body-sm': 'text-sm font-medium leading-normal',
+    description: 'text-xl text-zinc-400',
+    auxiliary: 'text-[10px] font-black uppercase tracking-widest',
+    'label-caps': 'text-xs font-black uppercase tracking-[0.2em]',
+    'sub-tiny': 'text-[8px] uppercase tracking-widest'
+  }
+
+  const colorMap = {
+    foreground: 'text-foreground',
+    muted: 'text-zinc-500',
+    orange: 'text-orange-500',
+    emerald: 'text-emerald-500',
+    amber: 'text-amber-500',
+    red: 'text-red-500',
+    blue: 'text-blue-500',
+    'zinc-400': 'text-zinc-400',
+    'zinc-500': 'text-zinc-500',
+    'zinc-600': 'text-zinc-600',
+    'zinc-700': 'text-zinc-700',
+    'zinc-800': 'text-zinc-800',
+    zinc: 'text-zinc-500',
+    black: 'text-black',
+    white: 'text-white',
+    'brand-accent': 'text-orange-500',
+    inherit: 'text-inherit'
+  }
+
+  const weightMap = {
+    normal: 'font-normal',
+    medium: 'font-medium',
+    bold: 'font-bold',
+    black: 'font-black'
+  }
+
+  const trackingMap = {
+    tighter: 'tracking-tighter',
+    tight: 'tracking-tight',
+    normal: 'tracking-normal',
+    wide: 'tracking-wide',
+    widest: 'tracking-widest'
+  }
+
   return (
     <span className={cn(
-      // Variants
-      variant === 'heading' && 'text-xl md:text-3xl font-black uppercase italic tracking-tighter',
-      variant === 'h1' && 'text-4xl md:text-8xl font-black italic uppercase tracking-tighter leading-none',
-      variant === 'h2' && 'text-2xl md:text-4xl font-black italic uppercase tracking-tight',
-      variant === 'body' && 'text-sm md:text-lg font-medium leading-relaxed',
-      variant === 'body-sm' && 'text-sm font-medium leading-normal',
-      variant === 'description' && 'text-zinc-400 text-xl',
-      variant === 'auxiliary' && 'text-[10px] font-black uppercase tracking-widest',
-      variant === 'label-caps' && 'text-xs font-black uppercase tracking-[0.2em]',
-      variant === 'sub-tiny' && 'text-[8px] uppercase tracking-widest',
-
-      // Colors
-      color === 'foreground' && 'text-foreground',
-      color === 'muted' && 'text-zinc-500',
-      color === 'orange' && 'text-orange-500',
-      color === 'emerald' && 'text-emerald-500',
-      color === 'amber' && 'text-amber-500',
-      color === 'red' && 'text-red-500',
-      color === 'blue' && 'text-blue-500',
-      color === 'zinc-400' && 'text-zinc-400',
-      color === 'zinc-500' && 'text-zinc-500',
-      color === 'zinc-600' && 'text-zinc-600',
-      color === 'zinc-700' && 'text-zinc-700',
-      color === 'zinc-800' && 'text-zinc-800',
-      color === 'zinc' && 'text-zinc-500',
-      color === 'black' && 'text-black',
-      color === 'white' && 'text-white',
-      color === 'brand-accent' && 'text-orange-500',
-      color === 'inherit' && 'text-inherit',
+      variantMap[variant],
+      colorMap[color],
 
       // Alignment
       align === 'left' && 'text-left',
@@ -85,21 +106,14 @@ export function Font({
       // Modifiers
       italic && 'italic',
       uppercase && 'uppercase',
-
-      // Manual Overrides (if specified)
-      weight === 'normal' && 'font-normal',
-      weight === 'medium' && 'font-medium',
-      weight === 'bold' && 'font-bold',
-      weight === 'black' && 'font-black',
-
-      tracking === 'tighter' && 'tracking-tighter',
-      tracking === 'tight' && 'tracking-tight',
-      tracking === 'wide' && 'tracking-wide',
-      tracking === 'widest' && 'tracking-widest',
+      underline && 'underline',
+      
+      weight && weightMap[weight],
+      tracking !== 'normal' && trackingMap[tracking],
 
       leading === 'none' && 'leading-none',
       leading === 'tight' && 'leading-tight',
-      leading === 'relaxed' && 'relaxed',
+      leading === 'relaxed' && 'leading-relaxed',
 
       // Transformations
       rotate === 90 && 'rotate-90',
@@ -107,9 +121,8 @@ export function Font({
       scale === 75 && 'scale-75',
       scale === 50 && 'scale-50',
       scale === 40 && 'scale-[0.4]',
-
+      
       nowrap && 'whitespace-nowrap',
-
       inlineBlock && 'inline-block',
       truncate && 'truncate',
       breakAll && 'break-all',

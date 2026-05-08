@@ -4,43 +4,51 @@ import { cn } from '@/lib/utils'
 interface GridProps {
   children: React.ReactNode
   cols?: 1 | 2 | 3 | 4 | 5 | 6 | 12
-  gap?: 0 | 2 | 2.5 | 4 | 5 | 8 | 12 | 12.5 | 'section'
+  mdCols?: 1 | 2 | 3 | 4 | 5 | 6 | 12
+  gap?: 0 | 2 | 2.5 | 4 | 5 | 8 | 10 | 12 | 12.5 | 'section'
   align?: 'start' | 'center' | 'end' | 'stretch'
-  className?: string // Internal use only
+  className?: string
 }
 
+/**
+ * Grid: A layout-only component for CSS Grid distribution.
+ */
 export function Grid({
   children,
   cols = 1,
+  mdCols,
   gap = 8,
-  align = 'stretch'
+  align = 'stretch',
+  className
 }: GridProps) {
+  
+  const gapClasses = {
+    0: 'gap-0',
+    2: 'gap-2',
+    2.5: 'gap-2.5',
+    4: 'gap-4',
+    5: 'gap-5',
+    8: 'gap-8',
+    10: 'gap-10',
+    12: 'gap-12',
+    12.5: 'gap-[50px]',
+    'section': 'gap-[50px]'
+  }
+
   return (
     <div className={cn(
       'grid',
-      // Columns
-      cols === 1 && 'grid-cols-1',
-      cols === 2 && 'grid-cols-1 md:grid-cols-2',
-      cols === 3 && 'grid-cols-1 md:grid-cols-3',
-      cols === 4 && 'grid-cols-1 md:grid-cols-4',
-      cols === 5 && 'grid-cols-1 md:grid-cols-5',
-      cols === 12 && 'grid-cols-12',
+      // Columns mapping
+      cols && `grid-cols-${cols}`,
+      mdCols && `md:grid-cols-${mdCols}`,
 
-      // Gaps
-      gap === 2 && 'gap-2',
-      gap === 2.5 && 'gap-2.5',
-      gap === 4 && 'gap-4',
-      gap === 5 && 'gap-5',
-      gap === 8 && 'gap-8',
-      gap === 12 && 'gap-12',
-      gap === 12.5 && 'gap-[50px]',
-      gap === 'section' && 'gap-[50px]',
+      // Gap mapping
+      gap !== undefined && gapClasses[gap],
 
       // Alignment
-      align === 'start' && 'items-start',
-      align === 'center' && 'items-center',
-      align === 'end' && 'items-end',
-      align === 'stretch' && 'items-stretch'
+      align && `items-${align}`,
+      
+      className
     )}>
       {children}
     </div>

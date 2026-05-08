@@ -3,6 +3,7 @@ import { Stack } from '../base/stack'
 import { Box } from '../base/box'
 import { Font } from '../base/font'
 import { Icon } from '../base/icon'
+import { Inline } from '../base/layout'
 import { LucideIcon } from 'lucide-react'
 import { useRegistry } from './registry-context'
 
@@ -27,10 +28,10 @@ export function RegistrySection({
     <Stack gap="title-content" id={id}>
       {/* Section Header */}
       <Stack gap={2.5}>
-        <Stack direction="row" align="center" gap={2.5}>
+        <Inline gap={2.5}>
           <Icon icon={icon} color={primaryColor as any} size="lg" />
           <Font variant="heading">{title}</Font>
-        </Stack>
+        </Inline>
         {subtitle && (
           <Font color="zinc-500" variant="body">
             {subtitle}
@@ -39,7 +40,7 @@ export function RegistrySection({
       </Stack>
 
       {/* Section Content */}
-      <Box width="full">
+      <Box className="w-full">
         {children}
       </Box>
     </Stack>

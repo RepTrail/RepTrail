@@ -42,6 +42,7 @@ export const viewport: Viewport = {
 import { QueryProvider } from "@/components/providers/query-provider";
 import NextTopLoader from 'nextjs-toploader';
 import FacebookPixel from "@/lib/meta-pixel";
+import { ShineManager } from "@/components/layout/shine-manager";
 import Script from 'next/script';
 
 export default function RootLayout({
@@ -72,6 +73,7 @@ export default function RootLayout({
         suppressHydrationWarning
         data-scroll-behavior="smooth"
       >
+        <ShineManager />
         <ImpersonationBar />
         <NextTopLoader color="#f97316" showSpinner={false} shadow="0 0 10px #f97316,0 0 5px #f97316" zIndex={1600} />
         <FacebookPixel />

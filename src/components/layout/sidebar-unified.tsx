@@ -188,7 +188,7 @@ export function UnifiedSidebar({
       </nav>
 
       {/* Bottom Profile Area */}
-      <div className="border-t border-zinc-800 pt-6 mt-6 flex-shrink-0 flex flex-col gap-4">
+      <div className="border-t border-zinc-700 pt-6 mt-6 flex-shrink-0 flex flex-col gap-4">
         <div className="flex items-center gap-3 px-2">
           <div className={cn(
               "relative w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center font-bold border overflow-hidden",

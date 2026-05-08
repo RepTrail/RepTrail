@@ -1,40 +1,43 @@
+'use client'
+
 import React from 'react'
-import { Card, CardContent } from '../base/card'
+import { Box, BoxProps } from '../base/box'
 import { Stack } from '../base/stack'
 import { Font } from '../base/font'
-import { Box } from '../base/box'
 import { Icon } from '../base/icon'
 import { LucideIcon } from 'lucide-react'
 
 interface MetricCardProps {
     label: string
     value: string
-    sub?: string
+    sub: string
     icon: LucideIcon
-    variant?: 'blue' | 'emerald' | 'amber' | 'red' | 'orange'
+    variant?: 'orange' | 'emerald' | 'amber' | 'red' | 'blue'
 }
 
-export function MetricCard({ label, value, sub, icon, variant = 'blue' }: MetricCardProps) {
+export function MetricCard({ label, value, sub, icon, variant = 'orange' }: MetricCardProps) {
     return (
-        <Card variant="surface" border={variant} shadow={variant}>
-            <CardContent>
-                <Stack gap={5}>
-                    <Stack direction="row" align="center" justify="between">
-                        <Stack gap={0}>
-                            <Font variant="sub-tiny" color="zinc-600" weight="black" uppercase tracking="widest">{label}</Font>
-                            <Font variant="h2" weight="black" italic uppercase tracking="tight">{value}</Font>
-                        </Stack>
-                        <Box bg={`${variant}/20` as any} padding={2.5} rounded="sm" border={variant}>
-                            <Icon icon={icon} color={variant} size="sm" />
-                        </Box>
-                    </Stack>
-                    {sub && (
-                        <Box borderTop="white/5" paddingTop={2.5}>
-                            <Font variant="sub-tiny" color="zinc-500" uppercase>{sub}</Font>
-                        </Box>
-                    )}
+        <Box 
+            padding={5} 
+            bg="zinc-950/40" 
+            border="white/5" 
+            rounded="system" 
+            hoverBg="white/5" 
+            transition="all"
+        >
+            <Stack gap={5}>
+                <Stack direction="row" align="center" justify="between">
+                    <Box bg={`${variant}/20` as BoxProps['bg']} padding={2.5} rounded="system">
+                        <Icon icon={icon} color={variant as any} size="sm" />
+                    </Box>
+                    <Font variant="sub-tiny" color="zinc-600" uppercase weight="black" tracking="widest">RepTrail Core</Font>
                 </Stack>
-            </CardContent>
-        </Card>
+                <Stack gap={2.5}>
+                    <Font variant="sub-tiny" color="zinc-500" uppercase weight="black">{label}</Font>
+                    <Font variant="h2" weight="black" italic>{value}</Font>
+                    <Font variant="sub-tiny" color="zinc-600">{sub}</Font>
+                </Stack>
+            </Stack>
+        </Box>
     )
 }

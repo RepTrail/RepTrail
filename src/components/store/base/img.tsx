@@ -1,21 +1,30 @@
+'use client'
+
 import React from 'react'
 import { cn } from '@/lib/utils'
 
-interface ImgProps extends React.ImgHTMLAttributes<HTMLImageElement> {
-    rounded?: 'none' | 'sm' | 'system' | 'full'
+interface ImgProps {
+    src: string
+    alt: string
+    width?: string | number
+    height?: string | number
+    className?: string
+    rounded?: boolean
+    id?: string
 }
 
-export function Img({ className, rounded = 'none', ...props }: ImgProps) {
+export function Img({ src, alt, width, height, className, rounded, id }: ImgProps) {
     return (
         <img 
-            {...props}
+            id={id}
+            src={src} 
+            alt={alt} 
+            width={width} 
+            height={height} 
             className={cn(
-                "w-full h-full object-cover",
-                rounded === 'sm' && 'rounded-sm',
-                rounded === 'system' && 'rounded-[5px]',
-                rounded === 'full' && 'rounded-full',
+                rounded && "rounded-[5px]",
                 className
-            )}
+            )} 
         />
     )
 }

@@ -8,33 +8,19 @@ import { Button } from '../base/button'
 import { BaseAvatar } from '../base/avatar'
 import { LogOut, Settings } from 'lucide-react'
 
-interface SidebarProfileProps {
-    name?: string
-    role?: string
-    avatar?: string
-    onOpenSettings?: () => void
-}
-
-export function SidebarProfile({ 
-    name = 'Usuário', 
-    role = 'Membro', 
-    avatar,
-    onOpenSettings 
-}: SidebarProfileProps) {
-    const initials = name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()
-
+export function SidebarProfile({ onOpenSettings }: { onOpenSettings?: () => void }) {
     return (
         <Stack gap={5}>
             {/* User Identity Area */}
             <Stack gap={5}>
                 <Stack direction="row" align="center" gap={2.5}>
-                    <BaseAvatar src={avatar} initials={initials} size="md" />
-                    <Box flex1 truncate>
+                    <BaseAvatar initials="M" size="md" />
+                    <div className="flex-1 truncate">
                         <Stack gap={0}>
-                            <Font weight="black" variant="body-sm" color="white" uppercase italic>{name}</Font>
-                            <Font variant="sub-tiny" color="zinc-600" tracking="wide">{role}</Font>
+                            <Font weight="black" variant="body-sm" color="white" uppercase italic>Marcos Vinicius</Font>
+                            <Font variant="sub-tiny" color="zinc-600" tracking="wide">contato@reptrail.com.br</Font>
                         </Stack>
-                    </Box>
+                    </div>
                 </Stack>
 
                 {/* Actions Area */}
@@ -51,7 +37,7 @@ export function SidebarProfile({
                     <Button
                         variant="outline-red"
                         rounded="full"
-                        flex1
+                        className="flex-1"
                     >
                         <Icon icon={LogOut} size="sm" />
                         <Font variant="sub-tiny" weight="black">Sair</Font>
