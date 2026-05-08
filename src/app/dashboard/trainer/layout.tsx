@@ -1,56 +1,39 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { Home, Users, Dumbbell, Utensils, FileUp, User, LogOut, Trophy, CreditCard, Activity, FlaskConical, ShoppingBag } from 'lucide-react'
+import { LogOut, Home, Users, Dumbbell, Utensils, Activity, FlaskConical, ShoppingBag, CreditCard, Trophy, User, FileUp } from 'lucide-react'
 import { signOutAction } from '@/actions/auth-actions'
 import { Logo } from '@/components/ui/logo'
-import { MobileHeader } from '@/components/layout/mobile-header'
-import { UnifiedSidebar } from '@/components/layout/sidebar-unified'
 import { headers } from 'next/headers'
 import { getBetaTesterMode } from '@/actions/app-settings-actions'
 import { getQueryClient } from '@/lib/get-query-client'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { getEffectiveTier, getTrainerProfile, getTrainerRanking } from '@/actions/trainer-actions'
-import { Suspense } from 'react'
-import { TrainerMobileNavLink } from '@/components/layout/trainer-nav'
 import { TrainerTourManager } from '@/components/feature/trainer/onboarding/trainer-tour-manager'
 import { MobileTrainerTourManager } from '@/components/feature/trainer/onboarding/mobile-trainer-tour-manager'
+import { DashboardShell } from '@/components/store/advanced/dashboard-shell'
 
-export default async function TrainerLayout({
-    children,
-}: {
-    children: React.ReactNode
-}) {
+export default async function TrainerLayout({ children }: { children: React.ReactNode }) {
     const headerList = await headers()
     const userId = headerList.get('x-user-id')
 
-    if (!userId) {
-        redirect('/auth/login')
-    }
+    if (!userId) redirect('/auth/login')
 
     const supabase = await createClient()
-
-    // 1. Fetch profile for Paywall and Role check
     const { data: profile } = await supabase
         .from('profiles')
-        .select('role, plan_tier')
+        .select('role, plan_tier, full_name, avatar_url')
         .eq('id', userId)
         .single()
 
-    if (profile?.role !== 'trainer') {
-        redirect('/dashboard/student')
-    }
+    if (profile?.role !== 'trainer') redirect('/dashboard/student')
 
     const hasPlan = !!profile?.plan_tier && profile.plan_tier !== 'none'
     const pathname = headerList.get('x-pathname') || ''
 
-    if (!hasPlan && !pathname.includes('/plans')) {
-        redirect('/dashboard/trainer/plans')
-    }
+    if (!hasPlan && !pathname.includes('/plans')) redirect('/dashboard/trainer/plans')
 
-    // 2. Global Prefetching for the entire Trainer Dashboard
     const queryClient = getQueryClient()
     await Promise.all([
         queryClient.prefetchQuery({ queryKey: QUERY_KEYS.profile.detail(userId), queryFn: () => getTrainerProfile() }),
@@ -59,8 +42,9 @@ export default async function TrainerLayout({
     ])
 
     const dehydratedState = dehydrate(queryClient)
+    const betaTesterMode = await getBetaTesterMode()
 
-    // 3. Simplified Layout for Paywall
+    // ─── Paywall layout (no sidebar) ──────────────────────────────────────────
     if (!hasPlan) {
         return (
             <HydrationBoundary state={dehydratedState}>
@@ -68,101 +52,54 @@ export default async function TrainerLayout({
                     <header className="fixed top-0 left-0 right-0 h-20 bg-zinc-950/80 backdrop-blur-xl border-b border-zinc-900 z-40 px-6 flex items-center justify-between">
                         <Logo size="md" color="emerald" />
                         <form action={signOutAction}>
-                            <Button variant="ghost" className="text-zinc-500 hover:text-white hover:bg-white/5 border border-transparent hover:border-zinc-800 gap-2 font-bold uppercase text-[10px] tracking-widest  h-10 rounded-xl transition-all active:scale-95">
+                            <Button variant="ghost" className="text-zinc-500 hover:text-white hover:bg-white/5 border border-transparent hover:border-zinc-800 gap-2 font-bold uppercase text-[10px] tracking-widest h-10 rounded-xl transition-all active:scale-95">
                                 <LogOut className="w-4 h-4" /> Sair
                             </Button>
                         </form>
                     </header>
                     <main className="flex-1 overflow-y-auto pt-24 p-6 md:p-12">
-                        <div className="max-w-5xl mx-auto md:pt-[100px]">
-                            {children}
-                        </div>
+                        <div className="max-w-5xl mx-auto md:pt-[100px]">{children}</div>
                     </main>
                 </div>
             </HydrationBoundary>
         )
     }
 
-    // 4. Full Layout with Sidebar and Navigation
+    // ─── Full Dashboard Layout ─────────────────────────────────────────────────
+    const links = [
+        { href: '/dashboard/trainer',           label: 'Visão Geral',  icon: Home,         exact: true },
+        { href: '/dashboard/trainer/students',   label: 'Alunos',       icon: Users },
+        { href: '/dashboard/trainer/workouts',   label: 'Treinos',      icon: Dumbbell },
+        { href: '/dashboard/trainer/diets',      label: 'Dietas',       icon: Utensils },
+        { href: '/dashboard/trainer/cardio',     label: 'Cardio',       icon: Activity },
+        { href: '/dashboard/trainer/ergogenics', label: 'Ergogênicos',  icon: FlaskConical },
+        { href: '/dashboard/trainer/import-pdf', label: 'Importar PDF', icon: FileUp,      hidden: betaTesterMode },
+        { href: '/dashboard/trainer/loja',       label: 'Loja',         icon: ShoppingBag },
+        { href: '/dashboard/trainer/plans',      label: 'Faturamento',  icon: CreditCard },
+        { href: '/dashboard/trainer/ranking',    label: 'Ranking',      icon: Trophy },
+        { href: '/dashboard/trainer/profile',    label: 'Meu Perfil',   icon: User },
+    ]
+
+    const mobileLinks = [
+        { href: '/dashboard/trainer',            label: 'Início',  icon: Home,        exact: true },
+        { href: '/dashboard/trainer/students',   label: 'Alunos',  icon: Users },
+        { href: '/dashboard/trainer/loja',       label: 'Loja',    icon: ShoppingBag },
+        { href: '/dashboard/trainer/ranking',    label: 'Ranking', icon: Trophy },
+        { href: '/dashboard/trainer/profile',    label: 'Perfil',  icon: User },
+    ]
+
     return (
         <HydrationBoundary state={dehydratedState}>
-            <div className="flex h-screen w-full bg-zinc-950 text-zinc-100 font-sans">
-                <TrainerTourManager userId={userId} />
-                <MobileTrainerTourManager userId={userId} />
-                <Suspense fallback={<div className="hidden md:flex w-72 h-screen bg-zinc-900 border-r border-zinc-800 animate-pulse" />}>
-                    <DashboardSidebarLoader userId={userId} />
-                </Suspense>
-
-                {/* Mobile Bottom Navigation */}
-                <nav className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[95vw] h-16 bg-zinc-900/90 backdrop-blur-xl border border-zinc-800 rounded-2xl z-40 px-2 flex items-center justify-around shadow-2xl shadow-black/50">
-                    <TrainerMobileNavLink href="/dashboard/trainer" icon={<Home className="w-5 h-5" />} exact />
-                    <TrainerMobileNavLink href="/dashboard/trainer/students" icon={<Users className="w-5 h-5" />} />
-                    <TrainerMobileNavLink href="/dashboard/trainer/loja" icon={<ShoppingBag className="w-5 h-5" />} />
-                    <TrainerMobileNavLink href="/dashboard/trainer/ranking" icon={<Trophy className="w-5 h-5" />} />
-                    <TrainerMobileNavLink href="/dashboard/trainer/profile" icon={<User className="w-5 h-5" />} />
-                </nav>
-
-                <Suspense fallback={<div className="h-16 w-full bg-zinc-950 border-b border-zinc-900 md:hidden animate-pulse" />}>
-                    <DashboardNavLoader />
-                </Suspense>
-
-                <main className="flex-1 overflow-y-auto pt-24 md:pt-[50px] p-4 pb-32 md:pb-10 md:p-10 bg-zinc-950 text-zinc-100 scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent">
-                    <div className="max-w-7xl mx-auto">
-                        {children}
-                    </div>
-                </main>
-            </div>
+            <TrainerTourManager userId={userId} />
+            <MobileTrainerTourManager userId={userId} />
+            <DashboardShell
+                color="emerald"
+                links={links}
+                mobileLinks={mobileLinks}
+                user={{ id: userId, name: profile?.full_name, avatar_url: profile?.avatar_url }}
+            >
+                {children}
+            </DashboardShell>
         </HydrationBoundary>
     )
-}
-
-async function DashboardSidebarLoader({ userId }: { userId: string }) {
-    const supabase = await createClient()
-
-    const { data: profile } = await supabase
-        .from('profiles')
-        .select('full_name, avatar_url')
-        .eq('id', userId)
-        .single()
-
-    const betaTesterMode = await getBetaTesterMode()
-
-    const sidebar = (
-        <UnifiedSidebar 
-            brandColor="emerald"
-            logoColor="emerald"
-            user={{
-                id: userId,
-                name: profile?.full_name,
-                email: '', 
-                avatar_url: profile?.avatar_url
-            }}
-            links={[
-                { href: "/dashboard/trainer", icon: <Home className="w-5 h-5" />, label: "Visão Geral", exact: true },
-                { href: "/dashboard/trainer/students", icon: <Users className="w-5 h-5" />, label: "Alunos" },
-                { href: "/dashboard/trainer/workouts", icon: <Dumbbell className="w-5 h-5" />, label: "Treinos" },
-                { href: "/dashboard/trainer/diets", icon: <Utensils className="w-5 h-5" />, label: "Dietas" },
-                { href: "/dashboard/trainer/cardio", icon: <Activity className="w-5 h-5" />, label: "Cardio" },
-                { href: "/dashboard/trainer/ergogenics", icon: <FlaskConical className="w-5 h-5" />, label: "Ergogênicos" },
-                { href: "/dashboard/trainer/import-pdf", icon: <FileUp className="w-5 h-5" />, label: "Importar PDF", hidden: betaTesterMode },
-                { href: "/dashboard/trainer/loja", icon: <ShoppingBag className="w-5 h-5" />, label: "Loja" },
-                { href: "/dashboard/trainer/plans", icon: <CreditCard className="w-5 h-5" />, label: "Faturamento" },
-                { href: "/dashboard/trainer/ranking", icon: <Trophy className="w-5 h-5" />, label: "Ranking Geral" },
-            ]}
-            extraLinks={{
-                title: "Conta",
-                links: [
-                    { href: "/dashboard/trainer/profile", icon: <User className="w-5 h-5" />, label: "Meu Perfil" }
-                ]
-            }}
-            showSettings={false}
-        />
-    )
-
-    return sidebar
-}
-
-async function DashboardNavLoader() {
-    const betaTesterMode = await getBetaTesterMode()
-    return <MobileHeader role="trainer" hideImportPdf={betaTesterMode} />
 }

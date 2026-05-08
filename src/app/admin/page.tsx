@@ -40,10 +40,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { useToast } from '@/hooks/use-toast'
-import { Logo } from '@/components/ui/logo'
 import { OperationalCosts } from '@/components/feature/admin/operational-costs'
-import { UnifiedSidebar } from '@/components/layout/sidebar-unified'
 import { createClient } from '@/lib/supabase/client'
+import { DashboardShell } from '@/components/store/advanced/dashboard-shell'
 
 type Tab = 'overview' | 'trainers' | 'students' | 'affiliates' | 'store' | 'logs' | 'more'
 
@@ -260,51 +259,52 @@ export default function AdminDashboardPage() {
         </div>
     )
 
-    return (
-        <div className="flex h-screen w-full bg-zinc-950 text-white overflow-hidden">
-            <UnifiedSidebar
-                brandColor="red"
-                logoColor="red"
-                user={{
-                    id: adminUser?.id || 'admin',
-                    name: adminUser?.full_name || "Admin RepTrail",
-                    email: adminUser?.email || "admin@reptrail.com.br",
-                    avatar_url: adminUser?.avatar_url || null
-                }}
-                links={tabs.map(t => ({
-                    label: t.label,
-                    icon: <t.icon className="w-4 h-4" />,
-                    onClick: () => {
-                        setTab(t.id)
-                        const main = document.getElementById('admin-main')
-                        if (main) main.scrollTo({ top: 0, behavior: 'smooth' })
-                    },
-                    isActive: tab === t.id
-                }))}
-                showSettings={false}
-            />
+    const sidebarLinks = [
+        { href: '#overview',   label: 'Início',    icon: BarChart3,     onClick: () => handleTabChange('overview') },
+        { href: '#trainers',   label: 'Personais', icon: Users,         onClick: () => handleTabChange('trainers') },
+        { href: '#students',   label: 'Alunos',    icon: UserCheck,     onClick: () => handleTabChange('students') },
+        { href: '#affiliates', label: 'Afiliados', icon: HeartHandshake, onClick: () => handleTabChange('affiliates') },
+        { href: '#store',      label: 'Loja',      icon: ShoppingBag,   onClick: () => handleTabChange('store') },
+        { href: '#logs',       label: 'Logs',      icon: Activity,      onClick: () => handleTabChange('logs') },
+    ]
 
-            <div className="flex-1 flex flex-col min-w-0 overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent" id="admin-main">
-                    <header className="sticky top-0 z-40 bg-zinc-950/90 backdrop-blur-md border-b border-zinc-900">
-                        <div className="flex items-center justify-between px-4 sm:px-8 h-14 sm:h-16">
-                            <div className="flex items-center gap-2 sm:gap-4">
-                                <div className="flex items-center gap-2 px-2 sm:px-3 py-1 bg-red-500/10 border border-red-500/20 rounded-full">
-                                    <Shield className="w-3 h-3 text-red-500" />
-                                    <span className="text-[10px] font-black text-red-500 uppercase tracking-widest">Super Admin</span>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <Button
-                                    onClick={loadAll}
-                                    variant="ghost"
-                                    className="h-9 px-3 text-zinc-500 hover:text-white gap-2 border border-transparent hover:border-zinc-800 hover:bg-white/5 transition-all"
-                                >
-                                    <RefreshCw className={`w-4 h-4 ${isPending ? 'animate-spin' : ''}`} />
-                                    <span className="text-[10px] font-black uppercase tracking-widest hidden sm:inline">Atualizar Painel</span>
-                                </Button>
-                            </div>
-                        </div>
-                    </header>
+    const handleTabChange = (id: string) => {
+        setTab(id as Tab)
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+
+    return (
+        <DashboardShell
+            color="red"
+            links={sidebarLinks as any}
+            mobileLinks={[
+                { href: '#overview',   label: 'Início',    icon: BarChart3,      onClick: () => handleTabChange('overview') },
+                { href: '#trainers',   label: 'Personais', icon: Users,         onClick: () => handleTabChange('trainers') },
+                { href: '#students',   label: 'Alunos',    icon: UserCheck,     onClick: () => handleTabChange('students') },
+                { href: '#store',      label: 'Loja',      icon: ShoppingBag,   onClick: () => handleTabChange('store') },
+            ] as any}
+            user={{
+                id: adminUser?.id || 'admin',
+                name: adminUser?.full_name || 'Admin RepTrail',
+                email: adminUser?.email || 'admin@reptrail.com.br',
+                avatar_url: adminUser?.avatar_url || null,
+            }}
+        >
+            {/* Admin header badge */}
+            <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center gap-2 px-3 py-1.5 bg-red-500/10 border border-red-500/20 rounded-full">
+                    <Shield className="w-3 h-3 text-red-500" />
+                    <span className="text-[10px] font-black text-red-500 uppercase tracking-widest">Super Admin</span>
+                </div>
+                <Button
+                    onClick={loadAll}
+                    variant="ghost"
+                    className="h-9 px-3 text-zinc-500 hover:text-white gap-2 border border-transparent hover:border-zinc-800 hover:bg-white/5 transition-all"
+                >
+                    <RefreshCw className={`w-4 h-4 ${isPending ? 'animate-spin' : ''}`} />
+                    <span className="text-[10px] font-black uppercase tracking-widest hidden sm:inline">Atualizar Painel</span>
+                </Button>
+            </div>
 
                     <main className="flex-1 p-4 sm:p-8 space-y-6 sm:space-y-8 pb-24 md:pb-8">
                         {/* Page Header */}
@@ -635,44 +635,10 @@ export default function AdminDashboardPage() {
                                         </div>
                                     </div>
                                 ))}
-                                {logs.length === 0 && <EmptyState label="Nenhum log registrado" />}
                             </div>
                         )}
                     </main>
-                </div>
-
-                {/* Mobile Bottom Tab Bar */}
-            <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-zinc-950/95 backdrop-blur-xl border-t border-zinc-900/50 flex safe-bottom pb-2">
-                {tabs.map(t => {
-                    const isMore = t.id === 'more'
-                    const isActive = isMore 
-                        ? ['affiliates', 'shop', 'logs'].includes(tab)
-                        : tab === t.id
-
-                    return (
-                        <button
-                            key={t.id}
-                            onClick={() => {
-                                if (isMore) {
-                                    setTab('affiliates')
-                                } else {
-                                    setTab(t.id as Tab)
-                                }
-                            }}
-                            className={`flex-1 flex flex-col items-center justify-center gap-1.5 py-4 transition-all relative ${isActive
-                                ? 'text-red-500'
-                                : 'text-zinc-600 hover:text-zinc-400'
-                                }`}
-                        >
-                            <div className={`p-2 rounded-2xl transition-all ${isActive ? 'bg-red-500/10' : ''}`}>
-                                <t.icon className={`w-5 h-5 transition-transform ${isActive ? 'scale-110' : ''}`} />
-                            </div>
-                            <span className="text-[8px] font-black uppercase tracking-widest leading-none">{t.label}</span>
-                        </button>
-                    )
-                })}
-            </nav>
-        </div>
+        </DashboardShell>
     )
 }
 
