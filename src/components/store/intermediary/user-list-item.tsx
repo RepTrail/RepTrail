@@ -37,7 +37,6 @@ export function UserListItem({
     onDelete
 }: UserListItemProps) {
     
-    // Action Config based on role
     const actionConfig = {
         aluno: {
             icon: Sparkles,
@@ -60,20 +59,20 @@ export function UserListItem({
             padding={0} 
             className="group relative overflow-hidden transition-all duration-300 hover:border-white/20"
         >
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between w-full">
+            <div className="flex flex-row w-full relative min-h-[100px]">
                 
-                {/* Identity & Badges Area */}
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 p-5 w-full">
-                    {/* Left Side: Avatar & Info - COMPLETELY STATIC */}
-                    <Inline gap={2.5} align="center">
+                {/* Main Content Area: Identity (Top) + Badges (Bottom) on Mobile */}
+                <div className="flex-1 flex flex-col justify-center lg:flex-row lg:items-center lg:justify-between p-5 gap-5">
+                    {/* Identity Block */}
+                    <Inline gap={5} align="center">
                         <BaseAvatar initials={initials} variant={avatarVariant} size="md" />
                         <Stack gap={0}>
-                            <Font weight="black" uppercase italic color="white">{name}</Font>
-                            <Font variant="sub-tiny" color="zinc-600" className="lowercase">{email}</Font>
+                            <Font weight="black" uppercase italic color="white" className="text-sm md:text-base tracking-wider">{name}</Font>
+                            <Font variant="sub-tiny" color="zinc-600" className="lowercase truncate max-w-[150px] md:max-w-none">{email}</Font>
                         </Stack>
                     </Inline>
 
-                    {/* Right Side: Badges - DYNAMIC MOVEMENT ON DESKTOP */}
+                    {/* Badges Block - Below on Mobile, Side on Desktop */}
                     <div className="transition-transform duration-500 ease-out lg:group-hover:-translate-x-[160px]">
                         <Inline gap={2.5} align="center">
                             <Badge label={registrationDate} variant="glass" rounded="full" size="xs" />
@@ -88,29 +87,27 @@ export function UserListItem({
                     </div>
                 </div>
 
-                {/* Actions Bar - Slides in on Desktop, Always Visible below on Mobile */}
+                {/* Actions Sidebar: Vertical on Mobile, Absolute Overlay on Desktop */}
                 <div className={cn(
-                    "flex items-center bg-zinc-950 lg:bg-zinc-950/80 backdrop-blur-xl border-t lg:border-t-0 lg:border-l border-white/10 px-5 py-4 lg:py-0 transition-transform duration-500 ease-out",
+                    "flex flex-col lg:flex-row items-center justify-center bg-zinc-950/40 lg:bg-zinc-950/90 backdrop-blur-xl border-l border-white/10 p-4 lg:px-5 lg:py-0 transition-all duration-500 ease-out",
+                    // Layout physics: Relative flow for mobile side-by-side, Absolute for desktop overlay
                     "relative lg:absolute lg:right-0 lg:top-0 lg:h-full lg:translate-x-full lg:group-hover:translate-x-0"
                 )}>
-                    <Stack direction="row" gap={2.5} align="center" className="w-full justify-center md:justify-end">
+                    <Stack direction="row" className="lg:flex-row flex-col" gap={2.5} align="center">
                         <ActionButton 
                             icon={Eye} 
                             variant="outline-blue" 
                             onClick={onInspect} 
-                            title="Inspecionar"
                         />
                         <ActionButton 
                             icon={currentAction.icon} 
                             variant={currentAction.outlineVariant} 
                             onClick={onAction} 
-                            title={currentAction.label}
                         />
                         <ActionButton 
                             icon={Trash2} 
                             variant="outline-red" 
                             onClick={onDelete} 
-                            title="Deletar"
                         />
                     </Stack>
                 </div>
@@ -122,26 +119,22 @@ export function UserListItem({
 function ActionButton({ 
     icon: IconComp, 
     variant, 
-    onClick, 
-    title 
+    onClick 
 }: { 
     icon: LucideIcon, 
     variant: any, 
-    onClick?: () => void,
-    title: string
+    onClick?: () => void
 }) {
     return (
-        <div className="relative group/btn h-full flex items-center">
-            <Button 
-                variant={variant} 
-                size="sm" 
-                rounded="full" 
-                isIconOnly 
-                onClick={onClick}
-                className="hover:scale-110 transition-transform active:scale-95"
-            >
-                <IconComp size={16} />
-            </Button>
-        </div>
+        <Button 
+            variant={variant} 
+            size="sm" 
+            rounded="full" 
+            isIconOnly 
+            onClick={onClick}
+            className="hover:scale-110 transition-transform active:scale-95"
+        >
+            <IconComp size={16} />
+        </Button>
     )
 }
