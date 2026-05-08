@@ -4,7 +4,7 @@ import { TrendingUp, Camera, Images, History } from 'lucide-react'
 
 export default function StudentProgressLoading() {
     return (
-        <div className="max-w-7xl mx-auto space-y-10 pb-32  sm:px-6 md:px-8 animate-pulse">
+        <div className=" mx-auto space-y-10 pb-32  sm:px-6 md:px-8 animate-pulse">
             {/* Header matches StudentProgressPage header */}
             <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div className="space-y-4">

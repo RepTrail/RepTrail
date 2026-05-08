@@ -32,7 +32,7 @@ export function AffiliateSectionContent({ id }: { id?: string }) {
     const { primaryColor } = useRegistry()
 
     return (
-        <Stack gap={12.5}>
+        <Stack gap={{ base: 12.5, md: 'section' }}>
             {/* Affiliate Link Section - Dynamic Theme */}
             <RegistrySection 
                 id={id}

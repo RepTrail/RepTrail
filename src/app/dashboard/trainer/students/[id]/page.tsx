@@ -1,6 +1,6 @@
-import { 
-    getStudentRelationship, 
-    getTrainerProfile 
+import {
+    getStudentRelationship,
+    getTrainerProfile
 } from '@/actions/trainer-actions'
 import { getStudentWorkoutHistory, getStudentRecentActivities } from '@/actions/log-actions'
 import { getStudentMetricsHistory, getStudentChartData } from '@/actions/metrics-actions'
@@ -74,7 +74,7 @@ export default async function StudentDetailPage({ params }: { params: { id: stri
     await Promise.all(prefetchPromises)
 
     return (
-        <div className="max-w-7xl mx-auto" suppressHydrationWarning>
+        <div className=" mx-auto" suppressHydrationWarning>
             <HydrationBoundary state={dehydrate(queryClient)}>
                 <StudentDetailClient relationshipId={id} userId={user.id} />
             </HydrationBoundary>

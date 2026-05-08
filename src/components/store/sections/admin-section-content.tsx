@@ -58,7 +58,7 @@ export function AdminSectionContent({ id }: { id?: string }) {
     }
 
     return (
-        <Stack gap={12.5}>
+        <Stack gap={{ base: 12.5, md: 'section' }}>
             {/* Dashboard Overview */}
             <RegistrySection 
                 id={id}

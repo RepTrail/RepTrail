@@ -7,6 +7,7 @@ interface SidebarItemProps {
   label: string
   active?: boolean
   onClick?: () => void
+  href?: string
   variant?: 'orange' | 'emerald' | 'red' | 'amber' | 'blue'
 }
 

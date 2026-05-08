@@ -118,7 +118,7 @@ export function RegistryShell({ children }: RegistryShellProps) {
 
         {/* Main Content Area */}
         <main className="flex-1 w-full lg:pl-72 transition-all duration-300 relative z-10">
-          <div className="p-5 md:p-10">
+          <div className="p-5">
             {children}
           </div>
         </main>

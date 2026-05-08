@@ -131,7 +131,7 @@ export function DashboardShell({ children, color, links, mobileLinks, user }: Da
 
             {/* Main Content */}
             <main className="flex-1 w-full lg:pl-72 transition-all duration-300 relative z-10">
-                <div className="pt-[80px] lg:pt-0 p-5 md:p-10 pb-28 lg:pb-10">
+                <div className="pt-[80px] lg:pt-0 p-5 pb-28 lg:pb-10">
                     {children}
                 </div>
             </main>
@@ -151,6 +151,7 @@ function DashboardSidebar({
     setIsSidebarOpen: (v: boolean) => void
 }) {
     const pathname = usePathname()
+    const [isSettingsOpen, setIsSettingsOpen] = React.useState(false)
 
     const isActive = (link: DashboardNavLink) =>
         link.exact ? pathname === link.href : pathname.startsWith(link.href)
@@ -170,14 +171,12 @@ function DashboardSidebar({
                 'lg:translate-x-0 lg:left-0 lg:right-auto',
                 isSidebarOpen ? 'translate-x-0' : 'translate-x-full'
             )}>
-                <Box
-                    flex1
-                    display="flex"
-                    direction="col"
-                    fullHeight
-                    className="bg-gradient-to-br from-white/[0.05] to-white/[0.02] backdrop-blur-md border-l border-white/5"
-                >
-                    <Box flex1 padding={5} display="flex" direction="col" overflow="hidden" position="relative">
+                {/* Full-height flex column */}
+                <div className="flex flex-col h-full bg-gradient-to-br from-white/[0.05] to-white/[0.02] backdrop-blur-md border-l border-white/5">
+
+                    {/* Scrollable top section */}
+                    <div className="flex flex-col flex-1 overflow-hidden p-5 relative">
+
                         {/* Mobile Close Button */}
                         <button
                             onClick={() => setIsSidebarOpen(false)}
@@ -186,52 +185,45 @@ function DashboardSidebar({
                             <X size={20} />
                         </button>
 
-                        <Stack gap={12.5} flex1 overflow="hidden">
-                            <Box>
-                                <Logo size="md" color={color as any} />
-                            </Box>
+                        {/* Logo — fixed, never shrinks */}
+                        <div className="shrink-0 pb-[50px]">
+                            <Logo size="md" color={color as any} />
+                        </div>
 
-                            <Box as="nav" flex1 overflow="auto" noScrollbar>
-                                <Stack gap={2.5}>
-                                    {links.map((link) => {
-                                        const IconComp = iconMap[link.icon]
-                                        const active = isActive(link)
+                        {/* Nav — takes remaining space, scrolls */}
+                        <nav className="flex-1 overflow-y-auto min-h-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                            <Stack gap={2.5}>
+                                {links.map((link) => {
+                                    const IconComp = iconMap[link.icon]
+                                    const active = isActive(link)
 
-                                        if (link.onClick) {
-                                            return (
-                                                <button key={link.href} onClick={link.onClick} className="w-full text-left">
-                                                    <SidebarItem
-                                                        label={link.label}
-                                                        icon={IconComp ?? Home}
-                                                        active={active}
-                                                        variant={color as any}
-                                                    />
-                                                </button>
-                                            )
-                                        }
+                                    return (
+                                        <SidebarItem
+                                            key={link.href}
+                                            label={link.label}
+                                            icon={IconComp ?? Home}
+                                            active={active}
+                                            variant={color as any}
+                                            onClick={link.onClick ? () => {
+                                                link.onClick?.()
+                                                setIsSidebarOpen(false)
+                                            } : undefined}
+                                            href={link.onClick ? undefined : link.href}
+                                        />
+                                    )
+                                })}
+                            </Stack>
+                        </nav>
+                    </div>
 
-                                        return (
-                                            <Link key={link.href} href={link.href} onClick={() => setIsSidebarOpen(false)}>
-                                                <SidebarItem
-                                                    label={link.label}
-                                                    icon={IconComp ?? Home}
-                                                    active={active}
-                                                    variant={color as any}
-                                                />
-                                            </Link>
-                                        )
-                                    })}
-                                </Stack>
-                            </Box>
-                        </Stack>
-                    </Box>
-
+                    {/* Divider */}
                     <Divider color="white/5" />
 
-                    <Box padding={5}>
-                        <SidebarProfile user={user} />
-                    </Box>
-                </Box>
+                    {/* Profile — fixed at bottom */}
+                    <div className="shrink-0 p-5">
+                        <SidebarProfile user={user} onOpenSettings={() => setIsSettingsOpen(true)} />
+                    </div>
+                </div>
             </aside>
         </>
     )
@@ -278,34 +270,48 @@ function DashboardBottomNav({ color, links }: { color: RegistryColor; links: Das
                 const active = isActive(link)
                 const variant = `outline-${color}` as any
 
-                const inner = (
-                    <Button
-                        variant={active ? variant : 'ghost'}
-                        size="md"
-                        rounded={active ? 'system' : 'full'}
-                        isIconOnly
-                        className="transition-transform active:scale-90"
-                    >
-                        <Icon
-                            icon={IconComp ?? Home}
-                            size="sm"
-                            color={(active ? color : 'white') as any}
-                            className={active ? 'opacity-100' : 'opacity-40'}
-                        />
-                    </Button>
+                const iconElement = (
+                    <Icon
+                        icon={IconComp ?? Home}
+                        size="sm"
+                        color={(active ? color : 'white') as any}
+                        className={active ? 'opacity-100' : 'opacity-40'}
+                    />
                 )
 
                 if (link.onClick) {
                     return (
-                        <button key={link.href} onClick={link.onClick}>
-                            {inner}
-                        </button>
+                        <Button
+                            key={link.href}
+                            variant={active ? variant : 'ghost'}
+                            size="md"
+                            rounded={active ? 'system' : 'full'}
+                            isIconOnly
+                            className="transition-transform active:scale-90"
+                            onClick={link.onClick}
+                        >
+                            {iconElement}
+                        </Button>
                     )
                 }
 
                 return (
-                    <Link key={link.href} href={link.href}>
-                        {inner}
+                    <Link
+                        key={link.href}
+                        href={link.href}
+                        className={cn(
+                            "inline-flex items-center justify-center transition-all active:scale-90",
+                            "w-10 h-10", // approximate md isIconOnly size
+                            active 
+                                ? (color === 'orange' ? 'bg-orange-500/10 text-orange-500 border border-orange-500/20 rounded-[5px]' :
+                                   color === 'emerald' ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 rounded-[5px]' :
+                                   color === 'red' ? 'bg-red-500/10 text-red-500 border border-red-500/20 rounded-[5px]' :
+                                   color === 'amber' ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20 rounded-[5px]' :
+                                   'bg-blue-500/10 text-blue-500 border border-blue-500/20 rounded-[5px]')
+                                : "bg-transparent text-zinc-400 hover:bg-white/5 hover:text-white rounded-full"
+                        )}
+                    >
+                        {iconElement}
                     </Link>
                 )
             })}

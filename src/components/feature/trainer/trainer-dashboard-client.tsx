@@ -28,6 +28,7 @@ import { TrainerCodeCard } from './trainer-code-card'
 import { BecomeAffiliateCard } from '@/components/feature/affiliate/become-affiliate-card'
 import { EditProfileDialog } from './edit-profile-dialog'
 import { CodeAutoGenerator } from './code-auto-generator'
+import { Stack } from '@/components/store/base/stack'
 
 interface TrainerDashboardClientProps {
     userId: string
@@ -94,7 +95,7 @@ export function TrainerDashboardClient({ userId, betaTesterMode }: TrainerDashbo
     const tierColor = tierColors[currentTier] || 'text-zinc-500'
 
     return (
-        <div className="space-y-10 pb-10">
+        <Stack gap={{ base: 12.5, md: 'section' }} className="pb-10">
             <CodeAutoGenerator hasCode={!!profile?.trainer_code} />
             
             {/* Hero Section */}
@@ -228,9 +229,7 @@ export function TrainerDashboardClient({ userId, betaTesterMode }: TrainerDashbo
                             </CardContent>
                         </Card>
                     )}
-                </div>
-            </div>
-        </div>
+        </Stack>
     )
 }
 

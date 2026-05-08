@@ -43,6 +43,9 @@ import { useToast } from '@/hooks/use-toast'
 import { OperationalCosts } from '@/components/feature/admin/operational-costs'
 import { createClient } from '@/lib/supabase/client'
 import { DashboardShell } from '@/components/store/advanced/dashboard-shell'
+import { Stack } from '@/components/store/base/stack'
+import { Box } from '@/components/store/base/box'
+import { Font } from '@/components/store/base/font'
 
 type Tab = 'overview' | 'trainers' | 'students' | 'affiliates' | 'store' | 'logs' | 'more'
 
@@ -290,32 +293,31 @@ export default function AdminDashboardPage() {
                 avatar_url: adminUser?.avatar_url || null,
             }}
         >
-            {/* Admin header badge */}
-            <div className="flex items-center justify-between mb-8">
-                <div className="flex items-center gap-2 px-3 py-1.5 bg-red-500/10 border border-red-500/20 rounded-full">
-                    <Shield className="w-3 h-3 text-red-500" />
-                    <span className="text-[10px] font-black text-red-500 uppercase tracking-widest">Super Admin</span>
+            <Stack gap={{ base: 12.5, md: 'section' }}>
+                {/* Admin header badge */}
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 px-3 py-1.5 bg-red-500/10 border border-red-500/20 rounded-full">
+                        <Shield className="w-3 h-3 text-red-500" />
+                        <span className="text-[10px] font-black text-red-500 uppercase tracking-widest">Super Admin</span>
+                    </div>
+                    <Button
+                        onClick={loadAll}
+                        variant="ghost"
+                        className="h-9 px-3 text-zinc-500 hover:text-white gap-2 border border-transparent hover:border-zinc-800 hover:bg-white/5 transition-all"
+                    >
+                        <RefreshCw className={`w-4 h-4 ${isPending ? 'animate-spin' : ''}`} />
+                        <span className="text-[10px] font-black uppercase tracking-widest hidden sm:inline">Atualizar Painel</span>
+                    </Button>
                 </div>
-                <Button
-                    onClick={loadAll}
-                    variant="ghost"
-                    className="h-9 px-3 text-zinc-500 hover:text-white gap-2 border border-transparent hover:border-zinc-800 hover:bg-white/5 transition-all"
-                >
-                    <RefreshCw className={`w-4 h-4 ${isPending ? 'animate-spin' : ''}`} />
-                    <span className="text-[10px] font-black uppercase tracking-widest hidden sm:inline">Atualizar Painel</span>
-                </Button>
-            </div>
 
-                    <main className="flex-1 p-4 sm:p-8 space-y-6 sm:space-y-8 pb-24 md:pb-8">
-                        {/* Page Header */}
-                        <div className="space-y-1">
-                            <h1 className="text-2xl sm:text-3xl font-black text-white italic uppercase tracking-tighter">
-                                {tabs.find(t => t.id === tab)?.label}
-                            </h1>
-                            <p className="text-[10px] font-black text-zinc-600 uppercase tracking-[0.3em]">
-                                Painel de Controle RepTrail
-                            </p>
-                        </div>
+                <Stack gap={1}>
+                    <Font variant="h1" italic uppercase>
+                        {tabs.find(t => t.id === tab)?.label}
+                    </Font>
+                    <Font variant="description" uppercase tracking="widest" className="text-zinc-600">
+                        Painel de Controle RepTrail
+                    </Font>
+                </Stack>
 
                         {/* OVERVIEW TAB */}
                         {tab === 'overview' && (
@@ -637,7 +639,7 @@ export default function AdminDashboardPage() {
                                 ))}
                             </div>
                         )}
-                    </main>
+                    </Stack>
         </DashboardShell>
     )
 }

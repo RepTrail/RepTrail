@@ -15,7 +15,7 @@ export default async function StudentCardioPage() {
 
     // ─── NON-BLOCKING PREFETCHING (0ms Nav) ─────────────────────────────
     const configs = PREFETCH_REGISTRY['/dashboard/student/cardio']?.(userId) || []
-    await Promise.all(configs.map(config => 
+    await Promise.all(configs.map(config =>
         queryClient.prefetchQuery({
             queryKey: config.queryKey,
             queryFn: config.queryFn,
@@ -25,7 +25,7 @@ export default async function StudentCardioPage() {
 
     return (
         <Suspense fallback={<div className="animate-pulse space-y-10"><div className="h-[400px] bg-zinc-900 rounded-[2.5rem]" /></div>}>
-            <div className="max-w-7xl mx-auto" suppressHydrationWarning>
+            <div className=" mx-auto" suppressHydrationWarning>
                 <HydrationBoundary state={dehydrate(queryClient)}>
                     <CardioPageClient userId={userId} />
                 </HydrationBoundary>

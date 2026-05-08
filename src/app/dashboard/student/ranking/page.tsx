@@ -10,7 +10,7 @@ export default async function StudentRankingPage() {
     const ranking = await getTrainerRanking()
 
     return (
-        <div className="max-w-7xl mx-auto space-y-12 animate-in fade-in duration-700 " suppressHydrationWarning>
+        <div className=" mx-auto space-y-12 animate-in fade-in duration-700 " suppressHydrationWarning>
             {/* Header Section */}
             <RankingHeader />
             {/* Top 3 Podium */}

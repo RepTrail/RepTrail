@@ -53,7 +53,7 @@ export function RegistryMain({
         return <AffiliateSectionContent />
       default:
         return (
-          <EmptyState 
+          <EmptyState
             variant={primaryColor as any}
             icon={icon}
             title="Em Breve"
@@ -65,7 +65,7 @@ export function RegistryMain({
 
   return (
     <Box fullWidth className="py-20 md:py-0">
-      <Stack gap={{ base: 5, md: 10 }}>
+      <Stack gap={{ base: 12.5, md: 'section' }}>
         {/* Header Section */}
         <Stack gap={2.5}>
           <Inline gap={2.5}>

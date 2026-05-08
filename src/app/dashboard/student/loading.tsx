@@ -6,7 +6,7 @@ import { ErgogenicsCardSkeleton } from '@/components/feature/student/dashboard/e
 
 export default function StudentDashboardLoading() {
     return (
-        <div className="max-w-7xl mx-auto flex flex-col gap-section-gap animate-in fade-in duration-500 pb-20">
+        <div className=" mx-auto flex flex-col gap-section-gap animate-in fade-in duration-500 pb-20">
             {/* Payment Warning Skeleton (Placeholder height) */}
             <div className="w-full h-12 rounded-xl bg-zinc-900/50 border border-zinc-800/50" />
 

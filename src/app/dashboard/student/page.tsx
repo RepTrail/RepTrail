@@ -34,6 +34,8 @@ import { getStudentDailyDiet, getAssignedDiets } from '@/actions/diet-actions'
 import { getStudentErgogenics, getTodayErgogenicLogs } from '@/actions/ergogenics-actions'
 import { getMetricsSummary } from '@/actions/metrics-actions'
 import { getActiveWorkoutSession } from '@/actions/log-actions'
+import { Stack } from '@/components/store/base/stack'
+import { Grid } from '@/components/store/base/grid'
 
 export default async function StudentDashboardPage() {
     // ─── OPTIMIZED IDENTITY (0ms) ──────────────────────────────────────────
@@ -83,38 +85,38 @@ async function StudentDashboardContent({ userId }: { userId: string }) {
     await Promise.all([
         // Workout Chain
         ...workoutIds.flatMap(id => [
-            queryClient.prefetchQuery({ 
-                queryKey: QUERY_KEYS.workouts.status(userId, id), 
-                queryFn: () => import('@/actions/log-actions').then(m => m.getWorkoutStatus(userId, id)) 
+            queryClient.prefetchQuery({
+                queryKey: QUERY_KEYS.workouts.status(userId, id),
+                queryFn: () => import('@/actions/log-actions').then(m => m.getWorkoutStatus(userId, id))
             }),
-            queryClient.prefetchQuery({ 
-                queryKey: QUERY_KEYS.workouts.detail(id), 
-                queryFn: () => import('@/actions/workout-actions').then(m => m.getWorkoutDetails(id)) 
+            queryClient.prefetchQuery({
+                queryKey: QUERY_KEYS.workouts.detail(id),
+                queryFn: () => import('@/actions/workout-actions').then(m => m.getWorkoutDetails(id))
             })
         ]),
         workoutIds.length === 0 ? queryClient.setQueryData(QUERY_KEYS.workouts.status(userId, 'no-workout'), { status: 'empty' }) : Promise.resolve(),
 
         // Cardio Chain
-        ...cardioIds.map(id => 
-            queryClient.prefetchQuery({ 
-                queryKey: QUERY_KEYS.cardio.detail(id), 
+        ...cardioIds.map(id =>
+            queryClient.prefetchQuery({
+                queryKey: QUERY_KEYS.cardio.detail(id),
                 queryFn: () => import('@/actions/cardio-actions').then(m => m.getAssignedCardios(userId))
             })
         ),
-        
-        queryClient.prefetchQuery({ 
-            queryKey: QUERY_KEYS.cardio.logs(userId), 
-            queryFn: () => getCardioStatus(userId) 
+
+        queryClient.prefetchQuery({
+            queryKey: QUERY_KEYS.cardio.logs(userId),
+            queryFn: () => getCardioStatus(userId)
         }),
 
         // Ergogenics Chain
-        queryClient.prefetchQuery({ 
-            queryKey: QUERY_KEYS.ergogenics.logs(userId), 
-            queryFn: () => getTodayErgogenicLogs(userId) 
+        queryClient.prefetchQuery({
+            queryKey: QUERY_KEYS.ergogenics.logs(userId),
+            queryFn: () => getTodayErgogenicLogs(userId)
         }),
-        queryClient.prefetchQuery({ 
-            queryKey: QUERY_KEYS.ergogenics.all(userId), 
-            queryFn: () => getStudentErgogenics(userId) 
+        queryClient.prefetchQuery({
+            queryKey: QUERY_KEYS.ergogenics.all(userId),
+            queryFn: () => getStudentErgogenics(userId)
         }),
 
         // Diet Chain (Fix #3: explicit Stage 2 prefetch — eliminates DietCard skeleton)
@@ -136,13 +138,13 @@ async function StudentDashboardContent({ userId }: { userId: string }) {
         }),
 
         // Metrics & Profile
-        queryClient.prefetchQuery({ 
-            queryKey: QUERY_KEYS.student.metricsSummary(userId), 
-            queryFn: () => getMetricsSummary(userId) 
+        queryClient.prefetchQuery({
+            queryKey: QUERY_KEYS.student.metricsSummary(userId),
+            queryFn: () => getMetricsSummary(userId)
         }),
-        queryClient.prefetchQuery({ 
-            queryKey: QUERY_KEYS.student.details(userId), 
-            queryFn: () => getStudentProfile(userId) 
+        queryClient.prefetchQuery({
+            queryKey: QUERY_KEYS.student.details(userId),
+            queryFn: () => getStudentProfile(userId)
         })
     ])
 
@@ -165,7 +167,7 @@ async function StudentDashboardContent({ userId }: { userId: string }) {
         return (
             <HydrationBoundary state={dehydrate(queryClient)}>
                 <StudentMetaPixel />
-                <div className="flex flex-col gap-section-gap animate-in fade-in duration-700">
+                <Stack gap={{ base: 12.5, md: 'section' }} className="animate-in fade-in duration-700">
                     <header className="space-y-8">
                         <div className="relative group overflow-hidden p-6 sm:p-12 bg-zinc-900 border border-zinc-800 rounded-3xl shadow-2xl">
                             <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 via-transparent to-transparent opacity-50" />
@@ -188,7 +190,7 @@ async function StudentDashboardContent({ userId }: { userId: string }) {
                             </div>
                         </div>
                     </header>
-                </div>
+                </Stack>
             </HydrationBoundary>
         )
     }
@@ -201,7 +203,7 @@ async function StudentDashboardContent({ userId }: { userId: string }) {
         return (
             <HydrationBoundary state={dehydrate(queryClient)}>
                 <StudentMetaPixel />
-                <div className="flex flex-col gap-20 animate-in fade-in slide-in-from-bottom-4 duration-1000 mt-6">
+                <Stack gap={{ base: 12.5, md: 'section' }} className="animate-in fade-in slide-in-from-bottom-4 duration-1000 mt-6">
                     {/* Hero Section - Premium Marketplace Entry */}
                     <header className="relative">
                         <div className="absolute -inset-20 bg-gradient-to-br from-orange-500/20 via-orange-500/5 to-transparent blur-3xl opacity-50" />
@@ -241,7 +243,7 @@ async function StudentDashboardContent({ userId }: { userId: string }) {
                     </header>
 
                     {/* Auto-Training Promotion */}
-                    <section className="space-y-10">
+                    <Stack gap={{ base: 12.5, md: 'section' }}>
                         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 px-4">
                             <div className="space-y-2">
                                 <h3 className="text-2xl font-black text-white italic uppercase tracking-tighter">
@@ -256,7 +258,7 @@ async function StudentDashboardContent({ userId }: { userId: string }) {
                                 </Button>
                             </Link>
                         </div>
-                        
+
                         <Link href="/dashboard/student/plans">
                             <div className="relative group overflow-hidden p-8 sm:p-12 bg-gradient-to-r from-orange-500/5 to-orange-500/10 border border-orange-500/20 rounded-[3rem] shadow-2xl transition-all hover:border-orange-500/40">
                                 <div className="absolute top-0 right-0 p-12 opacity-5 translate-x-10 -translate-y-10 group-hover:translate-x-0 group-hover:translate-y-0 transition-transform duration-1000">
@@ -273,10 +275,10 @@ async function StudentDashboardContent({ userId }: { userId: string }) {
                                 </div>
                             </div>
                         </Link>
-                    </section>
+                    </Stack>
 
                     {/* Top Trainers - Reusing Ranking Components */}
-                    <section className="space-y-10 pb-20">
+                    <Stack gap={{ base: 12.5, md: 'section' }} className="pb-20">
                         <div className="flex items-center gap-4 px-4 overflow-hidden">
                             <div className="h-px bg-zinc-800 flex-1" />
                             <h3 className="text-3xl font-black text-white italic uppercase tracking-tight shrink-0">
@@ -309,7 +311,7 @@ async function StudentDashboardContent({ userId }: { userId: string }) {
                                 </Card>
                             </div>
                         )}
-                        
+
                         <div className="text-center pt-8">
                             <Link href="/buscar-personal">
                                 <Button variant="outline" className="h-14 px-10 rounded-2xl border-zinc-800 bg-zinc-900/50 text-zinc-400 hover:text-white font-black uppercase italic tracking-widest text-xs">
@@ -317,8 +319,8 @@ async function StudentDashboardContent({ userId }: { userId: string }) {
                                 </Button>
                             </Link>
                         </div>
-                    </section>
-                </div>
+                    </Stack>
+                </Stack>
             </HydrationBoundary>
         )
     }
@@ -330,7 +332,7 @@ async function StudentDashboardContent({ userId }: { userId: string }) {
     return (
         <HydrationBoundary state={dehydrate(queryClient)}>
             <StudentMetaPixel />
-            <div className="max-w-7xl mx-auto flex flex-col gap-section-gap animate-in fade-in duration-500 ">
+            <Stack gap={{ base: 12.5, md: 'section' }} className="mx-auto animate-in fade-in duration-500 ">
                 <PaymentWarning relationship={trainerRel} />
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-header-gap">
                     <h1 className="text-3xl font-black text-white italic uppercase tracking-tighter">Dashboard</h1>
@@ -342,19 +344,19 @@ async function StudentDashboardContent({ userId }: { userId: string }) {
                 {showAnamnesis && <AnamnesisForm initialData={details} />}
                 {!hasProtocol && <AIProtocolEmptyState userId={userId} />}
                 {hasProtocol && (
-                    <div className="grid gap-section-gap lg:grid-cols-12">
-                        <div className="lg:col-span-8 flex flex-col gap-section-gap">
+                    <Grid gap={{ base: 12.5, md: 'section' }} lgCols={12}>
+                        <Stack gap={{ base: 12.5, md: 'section' }} className="lg:col-span-8">
                             <WorkoutCard userId={userId} />
                             <CardioCard userId={userId} />
                             <ErgogenicsCard userId={userId} />
-                        </div>
-                        <div className="lg:col-span-4 flex flex-col gap-section-gap">
+                        </Stack>
+                        <Stack gap={{ base: 12.5, md: 'section' }} className="lg:col-span-4">
                             <DietCard userId={userId} hasTrainer={!!trainerRel} />
-                        </div>
-                    </div>
+                        </Stack>
+                    </Grid>
                 )}
                 <StudentDashboardModals userId={userId} showModal={showAutoTrainingModal} hasTrainer={!!trainerRel} />
-            </div>
+            </Stack>
         </HydrationBoundary>
     )
 }
@@ -364,7 +366,7 @@ async function StudentDashboardContent({ userId }: { userId: string }) {
  */
 function StudentDashboardSkeleton() {
     return (
-        <div className="space-y-10 animate-pulse pb-20">
+        <Stack gap={{ base: 12.5, md: 'section' }} className="animate-pulse pb-20">
             <div className="h-12 w-full bg-zinc-900/50 border border-zinc-800/50 rounded-xl" />
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div className="space-y-4">
@@ -373,14 +375,14 @@ function StudentDashboardSkeleton() {
                 </div>
                 <div className="h-16 w-32 bg-zinc-900 rounded-xl" />
             </div>
-            <div className="grid gap-section-gap lg:grid-cols-12">
-                <div className="lg:col-span-8 flex flex-col gap-section-gap">
+            <Grid gap={{ base: 12.5, md: 'section' }} lgCols={12}>
+                <Stack gap={{ base: 12.5, md: 'section' }} className="lg:col-span-8">
                     <div className="h-[280px] bg-zinc-900 rounded-[2.5rem]" />
                     <div className="h-[300px] bg-zinc-900 rounded-[2.5rem]" />
                     <div className="h-[200px] bg-zinc-900 rounded-[2.5rem]" />
-                </div>
+                </Stack>
                 <div className="lg:col-span-4 h-[600px] bg-zinc-900 rounded-[2.5rem]" />
-            </div>
-        </div>
+            </Grid>
+        </Stack>
     )
 }

@@ -45,7 +45,7 @@ export default async function ErgogenicsPage() {
     ])
 
     return (
-        <div className="max-w-7xl mx-auto" suppressHydrationWarning>
+        <div className=" mx-auto" suppressHydrationWarning>
             <HydrationBoundary state={dehydrate(queryClient)}>
                 <ErgogenicsPageClient userId={user.id} />
             </HydrationBoundary>
