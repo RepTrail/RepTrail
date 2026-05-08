@@ -5,6 +5,8 @@ import { Font } from '../base/font'
 import { Icon } from '../base/icon'
 import { Button } from '../base/button'
 import { X, LucideIcon } from 'lucide-react'
+import { Surface } from '../base/surface'
+import { cn } from '@/lib/utils'
 
 interface ModalProps {
   isOpen: boolean
@@ -34,45 +36,33 @@ export function Modal({
   if (!isOpen) return null
 
   return (
-    <Box
-      position="fixed"
-      inset="0"
-      zIndex={1000}
-      display="flex"
-      align="center"
-      justify="center"
-      padding={5}
-    >
+    <div className="fixed inset-0 z-[1000] flex items-center justify-center p-5">
       {/* Backdrop */}
-      <Box
-        position="absolute"
-        inset="0"
-        bg="black"
-        bgOpacity={60}
-        blur="sm"
+      <div 
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
         onClick={onClose}
       />
 
       {/* Modal Container */}
-      <Box
-        position="relative"
-        bg="zinc-950"
-        bgOpacity={100}
-        border="white/10"
-        rounded="system"
-        width="11/12"
-        mdWidth="1/2"
-        overflow="hidden"
+      <Surface 
+        variant="base" 
+        className="relative w-11/12 md:w-[600px] max-h-[90vh] overflow-hidden flex flex-col"
       >
         <Stack gap={0}>
           {/* Header */}
-          <Box padding={5} bg="zinc-950">
+          <div className="p-5 bg-zinc-950 border-b border-white/5">
             <Stack direction="row" align="center" justify="between">
               <Stack direction="row" align="center" gap={2.5}>
                 {icon && (
-                  <Box bg={variant} bgOpacity={10} padding={5} rounded="system" display="flex" align="center" justify="center">
-                    <Icon icon={icon} color={variant} size="sm" />
-                  </Box>
+                  <div className={cn(
+                    "p-5 rounded-[5px] flex items-center justify-center border",
+                    variant === 'emerald' && "bg-emerald-500/10 border-emerald-500/20",
+                    variant === 'orange' && "bg-orange-500/10 border-orange-500/20",
+                    variant === 'red' && "bg-red-500/10 border-red-500/20",
+                    variant === 'blue' && "bg-blue-500/10 border-blue-500/20"
+                  )}>
+                    <Icon icon={icon} color={variant as any} size="sm" />
+                  </div>
                 )}
                 <Stack gap={0}>
                   <Font variant="body" weight="black" color="white" uppercase italic tracking="widest">{title}</Font>
@@ -84,37 +74,45 @@ export function Modal({
                 <Icon icon={X} size="sm" />
               </Button>
             </Stack>
-          </Box>
-
-          {/* Separator */}
-          <Box width="full" height="px" bg="white/5" />
+          </div>
 
           {/* Content */}
-          <Box padding={5} bg="zinc-950">
+          <div className="p-5 bg-zinc-950 overflow-y-auto">
             {children ? children : (
               <Font variant="description" color="zinc-400">
                 Configure as opções do seu perfil e preferências de sistema aqui.
                 Todas as alterações são aplicadas instantaneamente ao seu ambiente de trabalho.
               </Font>
             )}
-          </Box>
-
-          {/* Separator */}
-          <Box width="full" height="px" bg="white/5" />
+          </div>
 
           {/* Footer Actions */}
-          <Box padding={5} bg="zinc-900">
+          <div className="p-5 bg-zinc-900/50 border-t border-white/5">
             <Stack direction="col" mdDirection="row" gap={2.5} justify="end">
-              <Button variant="outline-red" rounded="full" fullWidth onClick={onClose}>
+              <Button 
+                variant="outline-red" 
+                rounded="full" 
+                fullWidth 
+                mdFullWidth={false}
+                className="md:px-8"
+                onClick={onClose}
+              >
                 {cancelLabel}
               </Button>
-              <Button variant="outline-emerald" rounded="full" fullWidth onClick={onConfirm || onClose}>
+              <Button 
+                variant="outline-emerald" 
+                rounded="full" 
+                fullWidth 
+                mdFullWidth={false}
+                className="md:px-8"
+                onClick={onConfirm || onClose}
+              >
                 {confirmLabel}
               </Button>
             </Stack>
-          </Box>
+          </div>
         </Stack>
-      </Box>
-    </Box>
+      </Surface>
+    </div>
   )
 }
