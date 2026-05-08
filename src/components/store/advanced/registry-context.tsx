@@ -6,6 +6,8 @@ interface RegistryContextProps {
   primaryColor: RegistryColor
   activeTab: string
   setActiveTab: (tab: string) => void
+  activeSection: string
+  setActiveSection: (section: string) => void
 }
 
 export const RegistryContext = createContext<RegistryContextProps | undefined>(undefined)

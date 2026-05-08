@@ -1,121 +1,103 @@
-import React from 'react'
-import { Stack } from '@/components/store/base/stack'
-import { Grid } from '@/components/store/base/grid'
-import { Font } from '@/components/store/base/font'
-import { GlassPanel, CardHeader, CardContent } from '@/components/store/base/surface'
-import { RegistrySection } from '@/components/store/advanced/registry-section'
-import { Palette } from 'lucide-react'
-import { cn } from '@/lib/utils'
+'use client'
 
-export function ColorsSectionContent() {
+import React from 'react'
+import { Stack } from '../base/stack'
+import { Grid } from '../base/grid'
+import { Font } from '../base/font'
+import { Swatch } from '../base/swatch'
+import { GlassPanel, CardHeader, CardContent } from '../base/surface'
+import { RegistrySection } from '../advanced/registry-section'
+import { Palette } from 'lucide-react'
+
+export function ColorsSectionContent({ id }: { id?: string }) {
     const brandColors = [
-        { name: 'Orange', color: 'orange', hex: '#F97316' },
-        { name: 'Emerald', color: 'emerald', hex: '#10B981' },
-        { name: 'Amber', color: 'amber', hex: '#F59E0B' },
-        { name: 'Red', color: 'red', hex: '#EF4444' },
-        { name: 'Blue', color: 'blue', hex: '#3B82F6' },
-    ]
+        { name: 'RepTrail Orange', color: 'orange', value: '#FF5733' },
+        { name: 'Performance Emerald', color: 'emerald', value: '#10B981' },
+        { name: 'Premium Amber', color: 'amber', value: '#F59E0B' },
+        { name: 'Danger Red', color: 'red', value: '#EF4444' },
+        { name: 'System Blue', color: 'blue', value: '#3B82F6' },
+    ] as const
+
+    const systemColors = [
+        { name: 'Zinc 950 (Black)', color: 'zinc', opacity: 100, value: '#09090b' },
+        { name: 'Zinc 900 (Surface)', color: 'zinc', opacity: 50, value: '#18181b' },
+        { name: 'Zinc 800 (Raised)', color: 'zinc', opacity: 30, value: '#27272a' },
+        { name: 'White (Glass Base)', color: 'white', opacity: 10, value: '#ffffff' },
+    ] as const
 
     return (
-        <Stack gap="section">
-            <RegistrySection 
-                title="Paleta de Cores & Transparências" 
-                icon={Palette} 
-                subtitle="O núcleo visual do RepTrail, focado em alta densidade e variações de opacidade para interface."
-            >
-                <Stack gap={5}>
-                    {/* Brand Colors with Opacity Variations */}
-                    <GlassPanel padding={0}>
-                        <Stack gap={0}>
-                            <CardHeader>
-                                <Font variant="label-caps" color="zinc-500">Brand Color Spectrum (100%, 30%, 20%)</Font>
-                            </CardHeader>
-                            <CardContent padding={5}>
-                                <Stack gap={7.5}>
-                                    {brandColors.map((c) => (
-                                        <Grid key={c.color} cols={1} mdCols={3} gap={5} align="center">
-                                            {/* 100% Solid */}
-                                            <div className="flex flex-row items-center gap-5">
-                                                <div className={cn(
-                                                    "w-24 h-12 rounded-[5px] border border-white/10",
-                                                    c.color === 'orange' && "bg-orange-500",
-                                                    c.color === 'emerald' && "bg-emerald-500",
-                                                    c.color === 'amber' && "bg-amber-500",
-                                                    c.color === 'red' && "bg-red-500",
-                                                    c.color === 'blue' && "bg-blue-500"
-                                                )} />
-                                                <Stack gap={0}>
-                                                    <Font variant="sub-tiny" weight="black" uppercase color="white">{c.name}</Font>
-                                                    <Font variant="sub-tiny" color="zinc-500">Solid (100%)</Font>
-                                                </Stack>
-                                            </div>
-
-                                            {/* 30% Opacity */}
-                                            <div className="flex flex-row items-center gap-5">
-                                                <div className={cn(
-                                                    "w-24 h-12 rounded-[5px] border",
-                                                    c.color === 'orange' && "bg-orange-500/30 border-orange-500/30",
-                                                    c.color === 'emerald' && "bg-emerald-500/30 border-emerald-500/30",
-                                                    c.color === 'amber' && "bg-amber-500/30 border-amber-500/30",
-                                                    c.color === 'red' && "bg-red-500/30 border-red-500/30",
-                                                    c.color === 'blue' && "bg-blue-500/30 border-blue-500/30"
-                                                )} />
-                                                <Stack gap={0}>
-                                                    <Font variant="sub-tiny" weight="black" uppercase color={c.color as any}>30% Opaque</Font>
-                                                    <Font variant="sub-tiny" color="zinc-600">Surface Overlay</Font>
-                                                </Stack>
-                                            </div>
-
-                                            {/* 20% Opacity */}
-                                            <div className="flex flex-row items-center gap-5">
-                                                <div className={cn(
-                                                    "w-24 h-12 rounded-[5px] border border-dashed",
-                                                    c.color === 'orange' && "bg-orange-500/20 border-orange-500/30",
-                                                    c.color === 'emerald' && "bg-emerald-500/20 border-emerald-500/30",
-                                                    c.color === 'amber' && "bg-amber-500/20 border-amber-500/30",
-                                                    c.color === 'red' && "bg-red-500/20 border-red-500/30",
-                                                    c.color === 'blue' && "bg-blue-500/20 border-blue-500/30"
-                                                )} />
-                                                <Stack gap={0}>
-                                                    <Font variant="sub-tiny" weight="black" uppercase color={c.color as any}>20% Opaque</Font>
-                                                    <Font variant="sub-tiny" color="zinc-600">Subtle Background</Font>
-                                                </Stack>
-                                            </div>
-                                        </Grid>
-                                    ))}
-                                </Stack>
-                            </CardContent>
-                        </Stack>
-                    </GlassPanel>
-
-                    {/* Neutral Colors */}
-                    <GlassPanel padding={0}>
-                        <Stack gap={0}>
-                            <CardHeader>
-                                <Font variant="label-caps" color="zinc-500">Neutral & Interface</Font>
-                            </CardHeader>
-                            <CardContent padding={5}>
-                                <Grid cols={2} mdCols={4} gap={5}>
-                                    {[
-                                        { name: 'Zinc 950', color: 'bg-zinc-950', hex: '#09090b' },
-                                        { name: 'Zinc 900', color: 'bg-zinc-900', hex: '#18181b' },
-                                        { name: 'Zinc 800', color: 'bg-zinc-800', hex: '#27272a' },
-                                        { name: 'Zinc 400', color: 'bg-zinc-400', hex: '#a1a1aa' },
-                                    ].map((c) => (
-                                        <Stack key={c.color} gap={2.5}>
-                                            <div className={cn("h-12 rounded-[5px] border border-white/10", c.color)} />
-                                            <Stack gap={0}>
+        <RegistrySection 
+            id={id}
+            title="Paleta de Cores" 
+            icon={Palette} 
+            subtitle="Cores institucionais e funcionais aplicadas no ecossistema RepTrail."
+        >
+            <Stack gap={5}>
+                {/* Brand Colors with Opacity Variations */}
+                <GlassPanel padding={0}>
+                    <Stack gap={0}>
+                        <CardHeader>
+                            <Font variant="label-caps" color="zinc-500">Brand Color Spectrum (100%, 30%, 20%)</Font>
+                        </CardHeader>
+                        <CardContent padding={5}>
+                            <Stack gap={7.5}>
+                                {brandColors.map((c) => (
+                                    <Grid key={c.color} cols={1} mdCols={3} gap={5} align="center">
+                                        {/* 100% Solid */}
+                                        <Stack direction="row" align="center" gap={5}>
+                                            <Swatch color={c.color} opacity={100} size="md" />
+                                            <Stack gap={2.5}>
                                                 <Font variant="sub-tiny" weight="black" uppercase color="white">{c.name}</Font>
-                                                <Font variant="sub-tiny" color="zinc-500">{c.hex}</Font>
+                                                <Font variant="sub-tiny" color="zinc-500">Solid (100%)</Font>
                                             </Stack>
                                         </Stack>
-                                    ))}
-                                </Grid>
-                            </CardContent>
-                        </Stack>
-                    </GlassPanel>
-                </Stack>
-            </RegistrySection>
-        </Stack>
+
+                                        {/* 30% Opacity */}
+                                        <Stack direction="row" align="center" gap={5}>
+                                            <Swatch color={c.color} opacity={30} size="md" />
+                                            <Stack gap={2.5}>
+                                                <Font variant="sub-tiny" weight="black" uppercase color="white">{c.name}</Font>
+                                                <Font variant="sub-tiny" color="zinc-500">Glass (30%)</Font>
+                                            </Stack>
+                                        </Stack>
+
+                                        {/* 20% Opacity */}
+                                        <Stack direction="row" align="center" gap={5}>
+                                            <Swatch color={c.color} opacity={20} size="md" />
+                                            <Stack gap={2.5}>
+                                                <Font variant="sub-tiny" weight="black" uppercase color="white">{c.name}</Font>
+                                                <Font variant="sub-tiny" color="zinc-500">Subtle (20%)</Font>
+                                            </Stack>
+                                        </Stack>
+                                    </Grid>
+                                ))}
+                            </Stack>
+                        </CardContent>
+                    </Stack>
+                </GlassPanel>
+
+                {/* Functional System Colors */}
+                <GlassPanel padding={0}>
+                    <Stack gap={0}>
+                        <CardHeader>
+                            <Font variant="label-caps" color="zinc-500">System & Background Tokens</Font>
+                        </CardHeader>
+                        <CardContent padding={5}>
+                            <Grid cols={1} mdCols={4} gap={5}>
+                                {systemColors.map((c) => (
+                                    <Stack key={c.name} gap={2.5}>
+                                        <Swatch color={c.color as any} opacity={c.opacity as any} size="full" />
+                                        <Stack gap={2.5}>
+                                            <Font variant="sub-tiny" weight="black" uppercase color="white">{c.name}</Font>
+                                            <Font variant="sub-tiny" color="zinc-500">{c.value}</Font>
+                                        </Stack>
+                                    </Stack>
+                                ))}
+                            </Grid>
+                        </CardContent>
+                    </Stack>
+                </GlassPanel>
+            </Stack>
+        </RegistrySection>
     )
 }

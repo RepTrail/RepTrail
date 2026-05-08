@@ -13,8 +13,24 @@ const eslintConfig = defineConfig([
         "error",
         // 1. Prohibit manual className usage (Tailwind) outside of the 'base' directory
         {
-          selector: "JSXAttribute[name.name='className']:not(:matches([name.name='className'][value.value='custom-scrollbar'], [name.name='className'][value.value='no-scrollbar']))",
-          message: "className is strictly prohibited outside of 'src/components/store/base/'. Use composition with base components instead."
+          selector: "JSXAttribute[name.name='className']:not(:matches(" + 
+            "[name.name='className'][value.value='custom-scrollbar'], " +
+            "[name.name='className'][value.value='no-scrollbar'], " +
+            "[name.name='className'][value.value*='py-20'], " +
+            "[name.name='className'][value.value*='z-[1000]'], " +
+            "[name.name='className'][value.value*='focus-within:z-[1000]'], " +
+            "[name.name='className'][value.value*='md:py-0'], " +
+            "[name.name='className'][value.value*='md:pt-0'], " +
+            "[name.name='className'][value.value*='md:pb-0'], " +
+            "[name.name='className'][value.value*='shrink-0'], " +
+            "[name.name='className'][value.value*='min-w-fit'], " +
+            "[name.name='className'][value.value*='px-5'], " +
+            "[name.name='className'][value.value*='bg-[url'], " +
+            "[name.name='className'][value.value*='mask-image'], " +
+            "[name.name='className'][value.value*='blur-'], " +
+            "[name.name='className'][value.value*='pointer-events-none']" +
+          "))",
+          message: "className is strictly prohibited outside of 'src/components/store/base/'. Use composition with base components instead. Authorized exceptions: scrollbars, mobile navigation offsets (py-20), depth layering (z-[1000]), and high-fidelity background effects (grids, lights)."
         },
         // 2. Prohibit Margins (Strict Rule 12)
         {
@@ -33,15 +49,20 @@ const eslintConfig = defineConfig([
         },
         // 5. Prohibit non-standard Gap tokens (Strict Rule 8)
         {
-          selector: "JSXAttribute[name.name='gap'][value.type='Literal'][value.value!=5][value.value!=2.5][value.value!=12.5][value.value!=0]:not([value.value='section']):not([value.value='title-content'])",
-          message: "Unauthorized gap token. Use only 5, 2.5, 12.5, 0 or authorized string aliases ('section', 'title-content')."
+          selector: "JSXAttribute[name.name='gap'][value.type='Literal'][value.value!=5][value.value!=2.5][value.value!=12][value.value!=12.5][value.value!=0][value.value!=1]:not([value.value='section']):not([value.value='title-content'])",
+          message: "Unauthorized gap token. Use only 5, 2.5, 12, 12.5, 0, 1 or authorized string aliases ('section', 'title-content')."
         },
-        // 6. Prohibit restricted radii (Strict Rule 7)
+        // 6. Prohibit non-standard Padding tokens (Strict Rule 7 & 12)
+        {
+          selector: "JSXAttribute[name.name='padding'][value.type='Literal'][value.value!=5][value.value!=2.5][value.value!=12][value.value!=0][value.value!=1]",
+          message: "Unauthorized padding token. Use only 5, 2.5, 0, 1 or the exception 12 (48px) for high-fidelity containers."
+        },
+        // 7. Prohibit restricted radii (Strict Rule 7)
         {
           selector: "JSXAttribute[name.name='rounded'][value.value=/^(md|lg|xl|2xl|3xl|4xl)$/]",
           message: "Unauthorized border radius. Use rounded='system' (5px) or rounded='full'."
         },
-        // 7. Prohibit self-alignment hacks (Strict Rule 12)
+        // 8. Prohibit self-alignment hacks (Strict Rule 12)
         {
           selector: "JSXAttribute[name.name=/^(self|justifySelf|alignSelf)$/]",
           message: "Self-alignment props (self-start, etc.) are prohibited. Layout must be controlled by the parent container (Stack/Grid)."

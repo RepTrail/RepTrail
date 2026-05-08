@@ -1,21 +1,20 @@
 'use client'
 
 import React from 'react'
-import { Box } from '@/components/store/base/box'
 import { Stack } from '@/components/store/base/stack'
 import { Font } from '@/components/store/base/font'
 import { Icon } from '@/components/store/base/icon'
 import { Button } from '@/components/store/base/button'
 import { Grid } from '@/components/store/base/grid'
+import { Box } from '@/components/store/base/box'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { Badge } from '@/components/store/base/badge'
 import { Inline, Cluster } from '@/components/store/base/layout'
 import { GlassPanel } from '@/components/store/base/surface'
-import { cn } from '@/lib/utils'
 import { 
     Eye, Trash2, Check, X, Dumbbell, Tag, Shield, Zap, 
     Activity, Info, Settings, Bell, Plus, MousePointer2, ChevronRight,
-    Search, Calendar, Phone, User, Lock, Mail, Camera
+    Search, Calendar, Phone, User, Lock, Mail
 } from 'lucide-react'
 import { Input } from '@/components/store/base/input'
 import { FileUpload } from '@/components/store/base/file-upload'
@@ -23,7 +22,7 @@ import { FormSwitch } from '@/components/store/base/form-switch'
 import { FormSelect } from '@/components/store/base/form-select'
 import { FormCheckbox } from '@/components/store/base/form-checkbox'
 
-export function ComponentsRegistryContent() {
+export function ComponentsRegistryContent({ id }: { id?: string }) {
     const colors = [
         { label: 'Aluno', color: 'orange', icon: Zap },
         { label: 'Personal', color: 'emerald', icon: Activity },
@@ -45,24 +44,29 @@ export function ComponentsRegistryContent() {
     ]
 
     return (
-        <Stack gap="section">
+        <React.Fragment>
             {/* New Main Buttons Section */}
             <RegistrySection 
+                id={id}
                 title="Ações Principais (Call to Action)" 
                 icon={MousePointer2} 
                 subtitle="Botões de destaque para fluxos principais e conversão no ecossistema RepTrail."
             >
-                <Grid cols={2} gap={5}>
+                <Grid cols={1} mdCols={2} gap={5}>
                     {/* System Radius Column - Solid Style */}
                     <GlassPanel>
                         <Stack gap={5}>
                             <Font variant="sub-tiny" color="zinc-600" weight="black" uppercase>System Radius (5px) - Solid Style</Font>
                             <Stack gap={2.5}>
-                                <Button variant="orange" size="lg" rounded="system" fullWidth>
-                                    Começar Agora <Icon icon={ChevronRight} size="xs" />
+                                <Button variant="orange" size="lg" rounded="system" fullWidth textColor="black">
+                                    <Inline gap={2.5}>
+                                        Começar Agora <Icon icon={ChevronRight} size="sm" color="black" />
+                                    </Inline>
                                 </Button>
-                                <Button variant="emerald" size="lg" rounded="system" fullWidth>
-                                    Confirmar Matrícula <Icon icon={Check} size="xs" />
+                                <Button variant="emerald" size="lg" rounded="system" fullWidth textColor="black">
+                                    <Inline gap={2.5}>
+                                        Confirmar Matrícula <Icon icon={Check} size="sm" color="black" />
+                                    </Inline>
                                 </Button>
                                 <Button variant="white" size="lg" rounded="system" fullWidth>
                                     Explorar Plataforma
@@ -77,10 +81,14 @@ export function ComponentsRegistryContent() {
                             <Font variant="sub-tiny" color="zinc-600" weight="black" uppercase>Pill Style (Full Radius) - Glass Style</Font>
                             <Stack gap={2.5}>
                                 <Button variant="outline-orange" size="lg" rounded="full" fullWidth>
-                                    <Icon icon={Zap} size="xs" /> Iniciar Treino
+                                    <Inline gap={2.5}>
+                                        <Icon icon={Zap} size="sm" /> Iniciar Treino
+                                    </Inline>
                                 </Button>
                                 <Button variant="outline-emerald" size="lg" rounded="full" fullWidth>
-                                    <Icon icon={Check} size="xs" /> Finalizar Aula
+                                    <Inline gap={2.5}>
+                                        <Icon icon={Check} size="sm" /> Finalizar Aula
+                                    </Inline>
                                 </Button>
                                 <Button variant="zinc" size="lg" rounded="full" fullWidth>
                                     Configurações Avançadas
@@ -96,85 +104,85 @@ export function ComponentsRegistryContent() {
                 icon={Dumbbell} 
                 subtitle="Ações de alta densidade e indicadores de estado para listagens administrativas."
             >
-                <Grid cols={2} gap={5}>
+                <Grid cols={1} mdCols={2} gap={5}>
                     {/* Actions Column (50%) */}
                     <GlassPanel>
                         <Stack gap={5}>
-                            <Font variant="sub-tiny" color="zinc-600" weight="black" uppercase>Inline Row Actions</Font>
-                            <Cluster gap={2.5}>
-                                <Button variant="outline-blue" rounded="full" size="sm">
-                                    <Inline gap={2.5}>
-                                        <Icon icon={Eye} size="xs" color="blue" />
-                                        <Font variant="auxiliary" weight="black" italic uppercase color="blue">Inspecionar</Font>
-                                    </Inline>
-                                </Button>
-
-                                <Button variant="outline-red" rounded="full" size="sm">
-                                    <Inline gap={2.5}>
-                                        <Icon icon={Trash2} size="xs" color="red" />
-                                        <Font variant="auxiliary" weight="black" italic uppercase color="red">Deletar</Font>
-                                    </Inline>
-                                </Button>
-
-                                <Button variant="outline-emerald" rounded="full" size="sm">
-                                    <Inline gap={2.5}>
-                                        <Icon icon={Check} size="xs" color="emerald" />
-                                        <Font variant="auxiliary" weight="black" italic uppercase color="emerald">Finalizar</Font>
-                                    </Inline>
-                                </Button>
-
-                                <Button variant="zinc" rounded="full" isIconOnly size="sm">
-                                    <Icon icon={X} size="xs" />
-                                </Button>
-                            </Cluster>
-
-                            <Font variant="sub-tiny" color="zinc-600" weight="black" uppercase>Circular Icon Actions (Pill Style)</Font>
-                            <Cluster gap={2.5}>
-                                {iconOnlyVariants.map((v, i) => (
-                                    <Button 
-                                        key={i}
-                                        variant={v.variant}
-                                        rounded="full" 
-                                        isIconOnly 
-                                        size="sm"
-                                    >
-                                        <Icon icon={v.icon} size="xs" color={v.iconColor} />
+                            <Stack gap={2.5}>
+                                <Font variant="sub-tiny" color="zinc-600" weight="black" uppercase>Inline Row Actions</Font>
+                                <Cluster gap={2.5}>
+                                    <Button variant="outline-blue" rounded="full" size="sm">
+                                        <Inline gap={2.5}>
+                                            <Icon icon={Eye} size="xs" color="blue" />
+                                            <Font variant="auxiliary" weight="black" italic uppercase color="blue">Inspecionar</Font>
+                                        </Inline>
                                     </Button>
-                                ))}
-                            </Cluster>
+
+                                    <Button variant="outline-red" rounded="full" size="sm">
+                                        <Inline gap={2.5}>
+                                            <Icon icon={Trash2} size="xs" color="red" />
+                                            <Font variant="auxiliary" weight="black" italic uppercase color="red">Deletar</Font>
+                                        </Inline>
+                                    </Button>
+
+                                    <Button variant="outline-emerald" rounded="full" size="sm">
+                                        <Inline gap={2.5}>
+                                            <Icon icon={Check} size="xs" color="emerald" />
+                                            <Font variant="auxiliary" weight="black" italic uppercase color="emerald">Finalizar</Font>
+                                        </Inline>
+                                    </Button>
+
+                                    <Button variant="zinc" rounded="full" isIconOnly size="sm">
+                                        <Icon icon={X} size="xs" />
+                                    </Button>
+                                </Cluster>
+                            </Stack>
+
+                            <Stack gap={2.5}>
+                                <Font variant="sub-tiny" color="zinc-600" weight="black" uppercase>Circular Icon Actions (Pill Style)</Font>
+                                <Cluster gap={2.5}>
+                                    {iconOnlyVariants.map((v, i) => (
+                                        <Button 
+                                            key={i}
+                                            variant={v.variant}
+                                            rounded="full" 
+                                            isIconOnly 
+                                            size="sm"
+                                        >
+                                            <Icon icon={v.icon} size="xs" color={v.iconColor} />
+                                        </Button>
+                                    ))}
+                                </Cluster>
+                            </Stack>
                         </Stack>
                     </GlassPanel>
 
                     {/* Badge Variations Column (50%) */}
                     <GlassPanel>
                         <Stack gap={5}>
-                            <Font variant="sub-tiny" color="zinc-600" weight="black" uppercase>Status & Badge Variations</Font>
+                            <Stack gap={2.5}>
+                                <Font variant="sub-tiny" color="zinc-600" weight="black" uppercase>Status Variations</Font>
+                                <Cluster gap={5}>
+                                    <Badge label="Pendente" color="amber" variant="dot" />
+                                    <Badge label="Concluído" color="emerald" variant="dot" />
+                                    <Badge label="Erro" color="red" variant="dot" />
+                                </Cluster>
+                            </Stack>
                             
-                            <Cluster gap={2.5}>
-                                <Badge label="Pendente" color="amber" variant="dot" />
-                                <Badge label="Concluído" color="emerald" variant="dot" />
-                                <Badge label="Erro" color="red" variant="dot" />
-                                
-                                {colors.map((v) => (
-                                    <div 
-                                        key={v.label}
-                                        className={cn(
-                                            "flex items-center justify-center px-2.5 py-2.5 rounded-full border md:w-auto",
-                                            v.color === 'orange' && "bg-orange-500/10 border-orange-500/30",
-                                            v.color === 'emerald' && "bg-emerald-500/10 border-emerald-500/30",
-                                            v.color === 'amber' && "bg-amber-500/10 border-amber-500/30",
-                                            v.color === 'red' && "bg-red-500/10 border-red-500/30",
-                                            v.color === 'blue' && "bg-blue-500/10 border-blue-500/30",
-                                            v.color === 'zinc' && "bg-white/5 border-white/10"
-                                        )}
-                                    >
-                                        <Inline gap={2.5}>
-                                            <Icon icon={v.icon} size="xs" color={v.color as any} />
-                                            <Font variant="auxiliary" color={v.color as any} weight="black" italic uppercase nowrap>{v.label}</Font>
-                                        </Inline>
-                                    </div>
-                                ))}
-                            </Cluster>
+                            <Stack gap={2.5}>
+                                <Font variant="sub-tiny" color="zinc-600" weight="black" uppercase>Identity Badge Variations</Font>
+                                <Cluster gap={2.5}>
+                                    {colors.map((v) => (
+                                        <Badge 
+                                            key={v.label}
+                                            label={v.label}
+                                            color={v.color as any}
+                                            icon={v.icon}
+                                            variant="solid"
+                                        />
+                                    ))}
+                                </Cluster>
+                            </Stack>
                         </Stack>
                     </GlassPanel>
                 </Grid>
@@ -237,7 +245,7 @@ export function ComponentsRegistryContent() {
             >
                 <Grid cols={1} mdCols={3} gap={5} align="start">
                     {/* Switch */}
-                    <GlassPanel className="self-start">
+                    <GlassPanel shrink={0}>
                         <Stack gap={5}>
                             <Font variant="sub-tiny" color="zinc-600" weight="black" uppercase>Segmented Switch</Font>
                             <FormSwitch
@@ -262,10 +270,10 @@ export function ComponentsRegistryContent() {
                     </GlassPanel>
 
                     {/* Select */}
-                    <GlassPanel className="self-start">
+                    <GlassPanel shrink={0} className="relative focus-within:z-[1000]">
                         <Stack gap={5}>
                             <Font variant="sub-tiny" color="zinc-600" weight="black" uppercase>Custom Select</Font>
-                            <div className="relative">
+                            <Box as="div">
                                 <FormSelect
                                     label="Nível do Aluno"
                                     placeholder="Selecionar nível..."
@@ -276,12 +284,12 @@ export function ComponentsRegistryContent() {
                                         { label: 'Elite', value: 'elite', description: 'Atleta competitivo' },
                                     ]}
                                 />
-                            </div>
+                            </Box>
                         </Stack>
                     </GlassPanel>
 
                     {/* Checkbox */}
-                    <GlassPanel className="self-start">
+                    <GlassPanel shrink={0}>
                         <Stack gap={5}>
                             <Font variant="sub-tiny" color="zinc-600" weight="black" uppercase>Checkboxes</Font>
                             <Stack gap={5}>
@@ -295,6 +303,7 @@ export function ComponentsRegistryContent() {
                                     label="Modo competição"
                                     description="Habilita ranking e comparativos entre alunos."
                                     color="orange"
+                                    checked
                                 />
                                 <FormCheckbox
                                     label="Aceito os termos"
@@ -306,6 +315,6 @@ export function ComponentsRegistryContent() {
                     </GlassPanel>
                 </Grid>
             </RegistrySection>
-        </Stack>
+        </React.Fragment>
     )
 }

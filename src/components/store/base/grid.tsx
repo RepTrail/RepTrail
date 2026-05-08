@@ -4,7 +4,9 @@ import { cn } from '@/lib/utils'
 interface GridProps {
   children: React.ReactNode
   cols?: 1 | 2 | 3 | 4 | 5 | 6 | 12
+  smCols?: 1 | 2 | 3 | 4 | 5 | 6 | 12
   mdCols?: 1 | 2 | 3 | 4 | 5 | 6 | 12
+  lgCols?: 1 | 2 | 3 | 4 | 5 | 6 | 12
   gap?: 0 | 2 | 2.5 | 4 | 5 | 8 | 10 | 12 | 12.5 | 'section'
   align?: 'start' | 'center' | 'end' | 'stretch'
   className?: string
@@ -16,7 +18,9 @@ interface GridProps {
 export function Grid({
   children,
   cols = 1,
+  smCols,
   mdCols,
+  lgCols,
   gap = 8,
   align = 'stretch',
   className
@@ -37,13 +41,15 @@ export function Grid({
 
   return (
     <div className={cn(
-      'grid',
+      'grid w-full',
       // Columns mapping
       cols && `grid-cols-${cols}`,
+      smCols && `sm:grid-cols-${smCols}`,
       mdCols && `md:grid-cols-${mdCols}`,
+      lgCols && `lg:grid-cols-${lgCols}`,
 
       // Gap mapping
-      gap !== undefined && gapClasses[gap],
+      gap !== undefined && gapClasses[gap as keyof typeof gapClasses],
 
       // Alignment
       align && `items-${align}`,

@@ -1,142 +1,167 @@
 import React from 'react'
 import { cn } from '@/lib/utils'
 
-interface FontProps {
+export type FontVariant = 
+  | 'h1' 
+  | 'h2' 
+  | 'heading' 
+  | 'description' 
+  | 'body' 
+  | 'body-sm' 
+  | 'label-caps' 
+  | 'auxiliary' 
+  | 'sub-tiny'
+
+interface FontProps extends React.HTMLAttributes<HTMLSpanElement> {
   children: React.ReactNode
-  variant?: 'heading' | 'h1' | 'h2' | 'body' | 'body-sm' | 'description' | 'auxiliary' | 'label-caps' | 'sub-tiny'
-  color?: 'foreground' | 'muted' | 'orange' | 'emerald' | 'amber' | 'red' | 'blue' | 'zinc-400' | 'zinc-500' | 'zinc-600' | 'zinc-700' | 'zinc-800' | 'black' | 'white' | 'inherit' | 'brand-accent' | 'zinc'
-  italic?: boolean
+  variant?: FontVariant
+  color?: 'white' | 'zinc' | 'zinc-400' | 'zinc-500' | 'zinc-600' | 'zinc-700' | 'orange' | 'emerald' | 'amber' | 'red' | 'blue' | 'black'
+  weight?: 'normal' | 'medium' | 'semibold' | 'bold' | 'black'
+  align?: 'left' | 'center' | 'right'
   uppercase?: boolean
-  underline?: boolean
-  weight?: 'normal' | 'medium' | 'bold' | 'black'
-  tracking?: 'tighter' | 'tight' | 'normal' | 'wide' | 'widest'
-  leading?: 'none' | 'tight' | 'relaxed'
-  align?: 'left' | 'center' | 'right' | 'justify'
-  rotate?: 90 | -90
-  scale?: 75 | 50 | 40
+  italic?: boolean
   nowrap?: boolean
-  inlineBlock?: boolean
-  truncate?: boolean
-  breakAll?: boolean
   mono?: boolean
-  paddingLeft?: 1 | 2 | 4 | 5 | 6 | 8
-  className?: string // Internal use only
+  tracking?: 'tight' | 'normal' | 'wide' | 'widest'
+  scale?: 50 | 75 | 100 | 110 | 125 | 150
+  rotate?: 90 | 180 | 270
+  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | 'none'
+  opacity?: 0 | 10 | 20 | 30 | 40 | 50 | 60 | 70 | 80 | 90 | 100
+  groupHoverOpacity?: 0 | 10 | 20 | 30 | 40 | 50 | 60 | 70 | 80 | 90 | 100
+  transition?: boolean
+  className?: string
 }
 
-export function Font({ 
-  children, 
-  variant = 'body', 
-  color = 'inherit',
-  italic = false,
-  uppercase = false,
-  underline = false,
+/**
+ * Font: Central typography primitive.
+ */
+export function Font({
+  children,
+  variant = 'body',
+  color,
   weight,
-  tracking = 'normal',
-  leading,
-  align = 'left',
-  rotate,
-  scale,
+  align,
+  uppercase,
+  italic,
   nowrap,
-  inlineBlock,
-  truncate,
-  breakAll,
   mono,
-  paddingLeft,
-  className
+  tracking,
+  scale,
+  rotate,
+  maxWidth,
+  opacity,
+  groupHoverOpacity,
+  transition,
+  className,
+  ...props
 }: FontProps) {
-  // Internal mappings to consolidate logic and improve atomic predictability
-  const variantMap = {
-    heading: 'text-xl md:text-3xl font-black uppercase italic tracking-tighter',
-    h1: 'text-4xl md:text-8xl font-black italic uppercase tracking-tighter leading-none',
-    h2: 'text-2xl md:text-4xl font-black italic uppercase tracking-tight',
-    body: 'text-sm md:text-lg font-medium leading-relaxed',
-    'body-sm': 'text-sm font-medium leading-normal',
-    description: 'text-xl text-zinc-400',
-    auxiliary: 'text-[10px] font-black uppercase tracking-widest',
-    'label-caps': 'text-xs font-black uppercase tracking-[0.2em]',
-    'sub-tiny': 'text-[8px] uppercase tracking-widest'
+  
+  const variantClasses = {
+    h1: 'text-4xl md:text-5xl font-black tracking-tighter uppercase italic',
+    h2: 'text-3xl md:text-4xl font-black tracking-tight uppercase italic',
+    heading: 'text-xl md:text-2xl font-bold tracking-tight',
+    description: 'text-base md:text-lg text-zinc-400 leading-relaxed',
+    body: 'text-sm md:text-base leading-relaxed',
+    'body-sm': 'text-xs md:text-sm leading-relaxed',
+    'label-caps': 'text-[10px] font-black uppercase tracking-[0.2em] italic',
+    auxiliary: 'text-[11px] font-bold uppercase tracking-widest',
+    'sub-tiny': 'text-[10px] font-medium leading-none'
   }
 
-  const colorMap = {
-    foreground: 'text-foreground',
-    muted: 'text-zinc-500',
+  const colorClasses = {
+    white: 'text-white',
+    zinc: 'text-zinc-500',
+    'zinc-400': 'text-zinc-400',
+    'zinc-500': 'text-zinc-500',
+    'zinc-600': 'text-zinc-600',
+    'zinc-700': 'text-zinc-700',
     orange: 'text-orange-500',
     emerald: 'text-emerald-500',
     amber: 'text-amber-500',
     red: 'text-red-500',
     blue: 'text-blue-500',
-    'zinc-400': 'text-zinc-400',
-    'zinc-500': 'text-zinc-500',
-    'zinc-600': 'text-zinc-600',
-    'zinc-700': 'text-zinc-700',
-    'zinc-800': 'text-zinc-800',
-    zinc: 'text-zinc-500',
-    black: 'text-black',
-    white: 'text-white',
-    'brand-accent': 'text-orange-500',
-    inherit: 'text-inherit'
+    black: 'text-black'
   }
 
-  const weightMap = {
+  const weightClasses = {
     normal: 'font-normal',
     medium: 'font-medium',
+    semibold: 'font-semibold',
     bold: 'font-bold',
     black: 'font-black'
   }
 
-  const trackingMap = {
-    tighter: 'tracking-tighter',
-    tight: 'tracking-tight',
-    normal: 'tracking-normal',
-    wide: 'tracking-wide',
-    widest: 'tracking-widest'
+  const rotateClasses = {
+    90: 'rotate-90',
+    180: 'rotate-180',
+    270: 'rotate-270'
+  }
+
+  const maxWidthClasses = {
+    sm: 'max-w-sm',
+    md: 'max-w-md',
+    lg: 'max-w-lg',
+    xl: 'max-w-xl',
+    none: 'max-w-none'
+  }
+
+  const opacityClasses = {
+    0: 'opacity-0',
+    10: 'opacity-10',
+    20: 'opacity-20',
+    30: 'opacity-30',
+    40: 'opacity-40',
+    50: 'opacity-50',
+    60: 'opacity-60',
+    70: 'opacity-70',
+    80: 'opacity-80',
+    90: 'opacity-90',
+    100: 'opacity-100'
+  }
+
+  const groupHoverOpacityClasses = {
+    0: 'group-hover:opacity-0',
+    10: 'group-hover:opacity-10',
+    20: 'group-hover:opacity-20',
+    30: 'group-hover:opacity-30',
+    40: 'group-hover:opacity-40',
+    50: 'group-hover:opacity-50',
+    60: 'group-hover:opacity-60',
+    70: 'group-hover:opacity-70',
+    80: 'group-hover:opacity-80',
+    90: 'group-hover:opacity-90',
+    100: 'group-hover:opacity-100'
   }
 
   return (
-    <span className={cn(
-      variantMap[variant],
-      colorMap[color],
-
-      // Alignment
-      align === 'left' && 'text-left',
-      align === 'center' && 'text-center block w-full',
-      align === 'right' && 'text-right block w-full',
-      align === 'justify' && 'text-justify block w-full',
-
-      // Modifiers
-      italic && 'italic',
-      uppercase && 'uppercase',
-      underline && 'underline',
-      
-      weight && weightMap[weight],
-      tracking !== 'normal' && trackingMap[tracking],
-
-      leading === 'none' && 'leading-none',
-      leading === 'tight' && 'leading-tight',
-      leading === 'relaxed' && 'leading-relaxed',
-
-      // Transformations
-      rotate === 90 && 'rotate-90',
-      rotate === -90 && '-rotate-90',
-      scale === 75 && 'scale-75',
-      scale === 50 && 'scale-50',
-      scale === 40 && 'scale-[0.4]',
-      
-      nowrap && 'whitespace-nowrap',
-      inlineBlock && 'inline-block',
-      truncate && 'truncate',
-      breakAll && 'break-all',
-      mono && 'font-mono',
-
-      paddingLeft === 1 && 'pl-1',
-      paddingLeft === 2 && 'pl-2',
-      paddingLeft === 4 && 'pl-4',
-      paddingLeft === 5 && 'pl-5',
-      paddingLeft === 6 && 'pl-6',
-      paddingLeft === 8 && 'pl-8',
-
-      className
-    )}>
+    <span
+      className={cn(
+        variantClasses[variant],
+        color && colorClasses[color],
+        weight && weightClasses[weight],
+        align && `text-${align}`,
+        uppercase && 'uppercase',
+        italic && 'italic',
+        nowrap && 'whitespace-nowrap',
+        mono && 'font-mono',
+        tracking && `tracking-${tracking}`,
+        scale && {
+          50: 'scale-50',
+          75: 'scale-75',
+          100: 'scale-100',
+          110: 'scale-110',
+          125: 'scale-125',
+          150: 'scale-150'
+        }[scale],
+        rotate && rotateClasses[rotate],
+        maxWidth && maxWidthClasses[maxWidth],
+        opacity !== undefined && opacityClasses[opacity],
+        groupHoverOpacity !== undefined && groupHoverOpacityClasses[groupHoverOpacity],
+        transition && 'transition-opacity duration-300',
+        className
+      )}
+      {...props}
+    >
       {children}
     </span>
   )

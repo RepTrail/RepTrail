@@ -25,7 +25,7 @@ export function RegistrySection({
   const { primaryColor } = useRegistry()
 
   return (
-    <Stack gap="title-content" id={id}>
+    <Stack gap={{ base: 7.5, md: 12.5 }} id={id}>
       {/* Section Header */}
       <Stack gap={2.5}>
         <Inline gap={2.5}>
@@ -40,7 +40,7 @@ export function RegistrySection({
       </Stack>
 
       {/* Section Content */}
-      <Box className="w-full">
+      <Box fullWidth>
         {children}
       </Box>
     </Stack>

@@ -52,7 +52,13 @@ export function FormSelect({
     }
 
     return (
-        <div className="flex flex-col gap-[10px] w-full" ref={ref}>
+        <div 
+            className={cn(
+                "flex flex-col gap-[10px] w-full transition-all duration-200",
+                open ? "relative z-[1000]" : "relative z-0"
+            )} 
+            ref={ref}
+        >
             {label && (
                 <Font variant="auxiliary" color="zinc-500" weight="black" uppercase tracking="widest">
                     {label}
@@ -89,7 +95,7 @@ export function FormSelect({
 
                 {/* Dropdown — anchored below trigger */}
                 {open && (
-                    <div className="absolute top-full left-0 right-0 mt-1 z-50 rounded-[5px] border-2 border-white/5 bg-zinc-900 shadow-2xl overflow-hidden">
+                    <div className="absolute top-full left-0 right-0 mt-1 z-[1000] rounded-[5px] border-2 border-white/5 bg-zinc-900 shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
                         {options.map((opt) => {
                             const isSelected = selected === opt.value
                             return (

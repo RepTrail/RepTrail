@@ -1,80 +1,86 @@
 import React from 'react'
 import { cn } from '@/lib/utils'
+import { Box, BoxProps } from './box'
 
-export interface StackProps {
+type GapToken = 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 'section' | 'title-content'
+
+export interface StackProps extends Omit<BoxProps, 'gap'> {
   children: React.ReactNode
-  direction?: 'row' | 'col'
-  mdDirection?: 'row' | 'col'
-  gap?: 0 | 2.5 | 5 | 7.5 | 10 | 12.5 | 'section' | 'title-content'
-  align?: 'start' | 'center' | 'end' | 'baseline' | 'stretch'
-  mdAlign?: 'start' | 'center' | 'end' | 'baseline' | 'stretch'
+  direction?: 'row' | 'col' | { base: 'row' | 'col', md: 'row' | 'col' }
+  gap?: GapToken | { base: GapToken, md: GapToken }
+  align?: 'start' | 'center' | 'end' | 'stretch'
   justify?: 'start' | 'center' | 'end' | 'between' | 'around'
-  mdJustify?: 'start' | 'center' | 'end' | 'between' | 'around'
-  wrap?: boolean
   flex1?: boolean
-  shrink0?: boolean
+  fullWidth?: boolean
+  wrap?: boolean
   className?: string
   id?: string
 }
 
 /**
- * Stack: A layout-only component for vertical or horizontal alignment.
- * Encapsulates rhythm (gaps) and distribution logic.
+ * Stack: Vertical or Horizontal layout with consistent spacing.
  */
-export function Stack({
-  children,
-  direction = 'col',
-  mdDirection,
-  gap,
-  align,
-  mdAlign,
-  justify,
-  mdJustify,
+export function Stack({ 
+  children, 
+  direction = 'col', 
+  gap = 2.5, 
+  align = 'stretch', 
+  justify = 'start',
+  flex1,
+  fullWidth,
   wrap = false,
-  flex1 = false,
-  shrink0 = false,
   className,
-  id
+  id,
+  ...props
 }: StackProps) {
   
   const gapClasses = {
     0: 'gap-0',
+    1: 'gap-1',
     2.5: 'gap-2.5',
     5: 'gap-5',
     7.5: 'gap-[30px]',
     10: 'gap-10',
     12.5: 'gap-[50px]',
-    'section': 'gap-[50px] md:gap-[100px]',
-    'title-content': 'gap-[30px] md:gap-[50px]'
+    'section': 'gap-[100px]',
+    'title-content': 'gap-10'
   }
 
+  const gapMdClasses = {
+    0: 'md:gap-0',
+    1: 'md:gap-1',
+    2.5: 'md:gap-2.5',
+    5: 'md:gap-5',
+    7.5: 'md:gap-[30px]',
+    10: 'md:gap-10',
+    12.5: 'md:gap-[50px]',
+    'section': 'md:gap-[100px]',
+    'title-content': 'md:gap-10'
+  }
+
+  // Handle responsive gap
+  const isRespGap = typeof gap === 'object'
+  const gapBase = isRespGap ? (gap as any).base : gap
+  const gapMd = isRespGap ? (gap as any).md : undefined
+
   return (
-    <div
+    <Box 
       id={id}
+      fullWidth={fullWidth}
+      flex1={flex1}
+      align={align}
+      justify={justify}
+      display="flex"
+      direction={direction}
       className={cn(
-        'flex',
-        direction === 'col' ? 'flex-col' : 'flex-row',
-        mdDirection === 'col' && 'md:flex-col',
-        mdDirection === 'row' && 'md:flex-row',
+        gapClasses[gapBase as keyof typeof gapClasses],
+        gapMd && gapMdClasses[gapMd as keyof typeof gapMdClasses],
         wrap && 'flex-wrap',
-        flex1 && 'flex-1',
-        shrink0 && 'shrink-0',
-
-        // Gap mapping
-        gap !== undefined && gapClasses[gap],
-
-        // Alignment
-        align && `items-${align}`,
-        mdAlign && `md:items-${mdAlign}`,
-
-        // Justification
-        justify && `justify-${justify === 'between' ? 'between' : justify}`,
-        mdJustify && `md:justify-${mdJustify === 'between' ? 'between' : mdJustify}`,
-
         className
       )}
+      {...props}
     >
       {children}
-    </div>
+    </Box>
   )
 }

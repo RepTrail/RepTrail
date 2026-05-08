@@ -4,12 +4,14 @@ import { cn } from '@/lib/utils'
 interface LogoProps {
     size?: 'sm' | 'md' | 'lg' | 'xl'
     color?: 'white' | 'orange' | 'emerald' | 'amber' | 'red' | 'blue' | 'brand-accent'
+    className?: string
     id?: string
 }
 
 export function Logo({
     size = 'md',
     color = 'orange',
+    className,
     id
 }: LogoProps) {
     const sizeMap = {
@@ -70,7 +72,7 @@ export function Logo({
     const currentColor = colorMap[color]
 
     return (
-        <div id={id} className="flex items-center gap-3" suppressHydrationWarning data-color={color}>
+        <div id={id} className={cn("flex items-center gap-3", className)} suppressHydrationWarning data-color={color}>
             <div className={cn(
                 "rotate-3 transition-transform group-hover:rotate-0 flex-shrink-0 aspect-square flex items-center justify-center",
                 currentColor?.bg,

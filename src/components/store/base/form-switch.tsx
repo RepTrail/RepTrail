@@ -47,7 +47,7 @@ export function FormSwitch({
                 </Font>
             )}
             
-            <GlassPanel padding={2.5} rounded="full" border="glass">
+            <GlassPanel padding={2.5} rounded="full" border="subtle">
                 <div className="flex items-center gap-2.5">
                     {options.map((opt) => {
                         const isActive = selected === opt.value

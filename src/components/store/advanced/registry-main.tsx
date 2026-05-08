@@ -4,7 +4,7 @@ import { Stack } from '../base/stack'
 import { Font } from '../base/font'
 import { Icon } from '../base/icon'
 import { Inline } from '../base/layout'
-import { Surface } from '../base/surface'
+import { Surface, GlassPanel } from '../base/surface'
 import { EmptyState } from '../intermediary/empty-state'
 import {
   BarChart3,
@@ -16,7 +16,7 @@ import {
 } from 'lucide-react'
 import { useRegistry } from '@/components/store/advanced/registry-context'
 import { SegmentedSwitch } from '@/components/store/intermediary/segmented-switch'
-import { cn } from '@/lib/utils'
+import { AdminSectionContent } from '../sections/admin-section-content'
 
 interface RegistryMainProps {
   children: React.ReactNode
@@ -42,17 +42,35 @@ export function RegistryMain({
     { id: 'aluno', label: 'Aluno', icon: Users, activeVariant: 'outline-orange' as const },
   ]
 
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'overview':
+        return children
+      case 'admin':
+        return <AdminSectionContent />
+      default:
+        return (
+          <EmptyState 
+            variant={primaryColor as any}
+            icon={icon}
+            title="Em Breve"
+            description={`A seção ${activeTab.toUpperCase()} está sendo preparada para o sistema RepTrail.`}
+          />
+        )
+    }
+  }
+
   return (
-    <Box className="bg-background">
-      <Stack gap="section">
+    <Box fullWidth className="py-20 md:py-0">
+      <Stack gap={{ base: 5, md: 10 }}>
         {/* Header Section */}
-        <Stack gap={5}>
+        <Stack gap={2.5}>
           <Inline gap={2.5}>
             <Icon icon={icon} color={primaryColor as any} size="lg" />
             <Font variant="auxiliary" color={primaryColor as any}>Brand Guidelines</Font>
           </Inline>
 
-          <Stack gap={2.5}>
+          <Stack gap={1}>
             <Font variant="h1" nowrap>
               {first} <Font variant="h1" color={primaryColor} nowrap>{rest.join(' ')}</Font>
             </Font>
@@ -68,25 +86,16 @@ export function RegistryMain({
         />
 
         {/* Content Sections */}
-        <Stack gap="section">
-          {activeTab === 'overview' ? (
-            children
-          ) : (
-            <EmptyState 
-              variant={primaryColor as any}
-              icon={icon}
-              title="Em Breve"
-              description={`A seção ${activeTab.toUpperCase()} está sendo preparada para o sistema RepTrail.`}
-            />
-          )}
+        <Stack gap={{ base: 12.5, md: 'section' }}>
+          {renderContent()}
         </Stack>
 
-        {/* Footer Area */}
-        <Surface variant="base" className="border-t border-white/5 py-5 px-5">
+        {/* Footer Area - Upgraded to Liquid Glass */}
+        <GlassPanel padding={5}>
           <Inline justify="between">
             <Font variant="sub-tiny">RepTrail Design System v2.0 - 2026</Font>
           </Inline>
-        </Surface>
+        </GlassPanel>
       </Stack>
     </Box>
   )
