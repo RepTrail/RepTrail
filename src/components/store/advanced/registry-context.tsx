@@ -2,25 +2,35 @@
 
 import React, { createContext, useContext, useState } from 'react'
 
+export type RegistryColor = 'orange' | 'emerald' | 'red' | 'blue' | 'amber'
+
 interface RegistryContextType {
   activeTab: string
   setActiveTab: (tab: string) => void
-  primaryColor: 'orange' | 'emerald' | 'red' | 'blue' | 'amber'
+  primaryColor: RegistryColor
 }
 
-const RegistryContext = createContext<RegistryContextType | undefined>(undefined)
+export const RegistryContext = createContext<RegistryContextType | undefined>(undefined)
 
 export function RegistryProvider({ children }: { children: React.ReactNode }) {
   const [activeTab, setActiveTab] = useState('overview')
 
-  const primaryColor = 
-    activeTab === 'admin' ? 'red' : 
-    activeTab === 'afiliado' ? 'amber' : 
-    activeTab === 'personal' ? 'emerald' : 
-    activeTab === 'aluno' ? 'orange' : 'blue'
+  const tabs = [
+    { id: 'overview', color: 'blue' as RegistryColor },
+    { id: 'admin', color: 'red' as RegistryColor },
+    { id: 'afiliado', color: 'amber' as RegistryColor },
+    { id: 'personal', color: 'emerald' as RegistryColor },
+    { id: 'aluno', color: 'orange' as RegistryColor },
+  ]
+
+  const currentTab = tabs.find(t => t.id === activeTab) || tabs[0]
 
   return (
-    <RegistryContext.Provider value={{ activeTab, setActiveTab, primaryColor }}>
+    <RegistryContext.Provider value={{ 
+      activeTab, 
+      setActiveTab, 
+      primaryColor: currentTab.color 
+    }}>
       {children}
     </RegistryContext.Provider>
   )

@@ -27,6 +27,7 @@ import {
 } from 'lucide-react'
 import { Badge } from '../base/badge'
 import { SegmentedSwitch } from '../intermediary/segmented-switch'
+import { AdminIdentityContent } from './admin-identity-content'
 
 export function AdminRegistryContent() {
     const [subTab, setSubTab] = useState<string>('overview')
@@ -59,6 +60,7 @@ export function AdminRegistryContent() {
 
             {subTab === 'overview' && (
                 <Stack gap="section">
+                    <AdminIdentityContent />
                     <RegistrySection title="Métricas em Tempo Real" icon={BarChart3} subtitle="Visão consolidada da saúde financeira e crescimento da plataforma.">
                         <Grid cols={4} gap={5}>
                             <MetricCard label="Lucro Líquido" value="R$ 45.230,00" sub="Bruto: R$ 125k | Custos: R$ 80k" icon={DollarSign} variant="emerald" />
@@ -416,8 +418,8 @@ export function AdminRegistryContent() {
             {/* Modals */}
             <ProductEditorModal isOpen={isProductModalOpen} onClose={() => setIsProductModalOpen(false)} product={editingProduct} />
             <CostEditorModal isOpen={isCostModalOpen} onClose={() => setIsCostModalOpen(false)} cost={selectedCost} />
-            <CostDeleteModal isOpen={isDeleteModalOpen} onClose={() => setIsDeleteModalOpen(false)} costName={selectedCost?.desc} />
-            <AffiliateDeleteModal isOpen={isAffDeleteModalOpen} onClose={() => setIsAffDeleteModalOpen(false)} affiliateName={selectedAff?.name} />
+            <CostDeleteModal isOpen={isDeleteModalOpen} onClose={() => setIsDeleteModalOpen(false)} cost={selectedCost} />
+            <AffiliateDeleteModal isOpen={isAffDeleteModalOpen} onClose={() => setIsAffDeleteModalOpen(false)} affiliate={selectedAff} />
         </Stack>
     )
 }

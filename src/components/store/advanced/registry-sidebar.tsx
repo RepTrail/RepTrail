@@ -1,74 +1,97 @@
+'use client'
+
 import React from 'react'
 import { Box } from '../base/box'
 import { Stack } from '../base/stack'
-import { Logo } from '../base/logo'
-import { SidebarItem } from '../intermediary/sidebar-item'
-import { SidebarProfile } from '../intermediary/sidebar-profile'
-import { Zap, Activity, Shield, Users, Dumbbell, Trophy } from 'lucide-react'
+import { Font } from '../base/font'
+import { Icon } from '../base/icon'
 import { useRegistry } from './registry-context'
+import { 
+    LayoutDashboard, 
+    Users2, 
+    HeartHandshake, 
+    Zap, 
+    Users,
+    Settings,
+    Trophy
+} from 'lucide-react'
+import { SidebarLink } from '../base/sidebar-link'
+import { SidebarProfile } from '../intermediary/sidebar-profile'
+import { Logo } from '../base/logo'
 
-export function RegistrySidebar({ onOpenSettings }: { onOpenSettings?: () => void }) {
-  const { primaryColor } = useRegistry()
-  const sections = [
-    { id: 'branding', label: 'Branding', icon: Zap },
-    { id: 'colors', label: 'Colors & Identity', icon: Activity },
-    { id: 'admin', label: 'Admin Identity', icon: Shield },
-    { id: 'typography', label: 'Typography', icon: Users },
-    { id: 'components', label: 'Real Components', icon: Dumbbell },
-    { id: 'layout', label: 'Layout & Spacing', icon: Trophy },
-  ]
+export function RegistrySidebar() {
+    const { activeTab, setActiveTab, primaryColor } = useRegistry()
 
-  const scrollToSection = (id: string) => {
-    const el = document.getElementById(id)
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    }
-  }
+    const menuItems = [
+        { id: 'overview', label: 'Overview', icon: LayoutDashboard, color: 'blue' },
+        { id: 'admin', label: 'Admin', icon: Users2, color: 'red' },
+        { id: 'afiliado', label: 'Afiliado', icon: HeartHandshake, color: 'amber' },
+        { id: 'personal', label: 'Personal', icon: Zap, color: 'emerald' },
+        { id: 'aluno', label: 'Aluno', icon: Users, color: 'orange' },
+    ]
 
-  return (
-    <Stack
-      direction="row"
-      gap={0}
-      position="fixed"
-      inset="left-0-top-0"
-      height="screen"
-      width="72"
-      zIndex={50}
-      display="lg-flex"
-    >
-      <Box flex1 bg="zinc-850" padding={5} display="flex" flexCol height="full">
-        {/* Brand Logo Area + Navigation Area (Gap 50px) */}
-        <Stack gap={12.5} flex1 overflow="hidden">
-          <Box padding={0} shrink0>
-            <Logo size="md" color={primaryColor as any} />
-          </Box>
+    return (
+        <Box 
+            as="aside" 
+            display="hidden" 
+            mdDisplay="block" 
+            width="72" 
+            height="screen" 
+            position="fixed" 
+            left={0} 
+            top={0} 
+            bg="background" 
+            borderRight="white/5"
+            zIndex={40}
+        >
+            <Stack height="full" gap={0}>
+                {/* Brand Header */}
+                <Box padding={5} borderBottom="white/5" height="20" display="flex" align="center">
+                    <Logo color={primaryColor} size="sm" />
+                </Box>
 
-          <Box as="nav" flex1 overflow="auto" scrollbar="custom">
-            <Stack gap={2.5}>
-              {sections.map((section, idx) => (
-                <SidebarItem
-                  key={section.id}
-                  label={section.label}
-                  icon={section.icon}
-                  active={idx === 0}
-                  variant={primaryColor as any}
-                  onClick={() => scrollToSection(section.id)}
-                />
-              ))}
+                {/* Navigation Menu */}
+                <Box flex1 padding={5} overflow="auto">
+                    <Stack gap={10}>
+                        <Stack gap={2.5}>
+                            <Font variant="sub-tiny" color="zinc-600" weight="black" uppercase tracking="widest" paddingLeft={5}>
+                                Menu Principal
+                            </Font>
+                            <Stack gap={1.5}>
+                                {menuItems.map((item) => (
+                                    <SidebarLink
+                                        key={item.id}
+                                        icon={item.icon}
+                                        label={item.label}
+                                        active={activeTab === item.id}
+                                        color={item.color as any}
+                                        onClick={() => setActiveTab(item.id)}
+                                    />
+                                ))}
+                            </Stack>
+                        </Stack>
+
+                        <Stack gap={2.5}>
+                            <Font variant="sub-tiny" color="zinc-600" weight="black" uppercase tracking="widest" paddingLeft={5}>
+                                Utilitários
+                            </Font>
+                            <Stack gap={1.5}>
+                                <SidebarLink icon={Trophy} label="Rankings" />
+                                <SidebarLink icon={Settings} label="Configurações" />
+                            </Stack>
+                        </Stack>
+                    </Stack>
+                </Box>
+
+                {/* Profile Footer */}
+                <Box borderTop="white/5" padding={5}>
+                    <SidebarProfile 
+                        name="Marcos RepTrail" 
+                        role="Developer Admin" 
+                        avatar="https://github.com/shadcn.png" 
+                    />
+                </Box>
             </Stack>
-          </Box>
-        </Stack>
-
-        {/* Bottom Profile Area (Gap 20px) */}
-        <Stack gap={5}>
-          {/* Divider */}
-          <Box bg="white" bgOpacity={10} width="full" height="px" />
-          <SidebarProfile onOpenSettings={onOpenSettings} />
-        </Stack>
-      </Box>
-
-      {/* Physical Border Right */}
-      <Box bg="zinc-800" width="px" height="full" bgOpacity={50} />
-    </Stack>
-  )
+        </Box>
+    )
 }

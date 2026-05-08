@@ -4,13 +4,16 @@ import { cn } from '@/lib/utils'
 export interface BoxProps {
   children?: React.ReactNode
   as?: 'div' | 'aside' | 'nav' | 'main' | 'section' | 'header' | 'footer' | 'button' | 'img' | 'input' | 'label'
-  padding?: 0 | 2.5 | 5
-  paddingX?: 0 | 2.5 | 5
-  paddingY?: 0 | 1.5 | 2.5 | 5
-  bg?: 'background' | 'secondary' | 'zinc-400' | 'zinc-500' | 'zinc-600' | 'zinc-700' | 'zinc-800' | 'zinc-850' | 'zinc-900' | 'zinc-950' | 'zinc-950/40' | 'zinc-900/40' | 'zinc-900/20' | 'white' | 'black' | 'orange' | 'orange/20' | 'emerald' | 'emerald/20' | 'amber' | 'amber/20' | 'red' | 'red/20' | 'blue' | 'blue/20' | 'brand-accent' | 'transparent' | 'white/5' | 'white/10'
+  padding?: 0 | 1 | 1.5 | 2 | 2.5 | 4 | 5 | 10 | 12.5 | 20 | 32
+  paddingX?: 0 | 1 | 1.5 | 2 | 2.5 | 4 | 5 | 10 | 12.5 | 20 | 32
+  paddingY?: 0 | 1 | 1.5 | 2 | 2.5 | 4 | 5 | 10 | 12.5 | 20 | 32
+  bg?: 'background' | 'secondary' | 'zinc-400' | 'zinc-500' | 'zinc-600' | 'zinc-700' | 'zinc-800' | 'zinc-850' | 'zinc-900' | 'zinc-950' | 'zinc-950/40' | 'zinc-900/40' | 'zinc-900/20' | 'white' | 'black' | 'brand-accent' | 'white/5' | 'white/10' | 'white/20' | 'orange' | 'emerald' | 'red' | 'blue' | 'amber' | 'orange/10' | 'emerald/10' | 'red/10' | 'blue/10' | 'amber/10' | 'orange/20' | 'emerald/20' | 'red/20' | 'blue/20' | 'amber/20' | 'transparent'
   bgOpacity?: 5 | 10 | 20 | 30 | 40 | 50 | 60 | 70 | 80 | 90 | 100
   group?: boolean
-  mdPaddingTop?: 0 | 5 | 12.5 | 20
+  display?: 'block' | 'flex' | 'grid' | 'none' | 'hidden'
+  mdDisplay?: 'block' | 'flex' | 'grid' | 'none' | 'hidden'
+  lgDisplay?: 'block' | 'flex' | 'grid' | 'none' | 'hidden'
+  mdPaddingTop?: 0 | 1 | 1.5 | 2 | 2.5 | 4 | 5 | 10 | 12.5 | 20 | 32
   safeBottom?: boolean
   blur?: 'sm' | 'md' | 'lg'
   transition?: 'all' | 'colors' | 'opacity' | 'transform'
@@ -34,7 +37,7 @@ export interface BoxProps {
   flexCol?: boolean
   flex1?: boolean
   truncate?: boolean
-  gap?: 0 | 2.5 | 5 | 12.5
+  gap?: 0 | 1 | 1.5 | 2 | 2.5 | 4 | 5 | 10 | 12.5 | 20 | 32 | 'section' | 'title-content'
   align?: 'start' | 'center' | 'end' | 'stretch'
   justify?: 'start' | 'center' | 'end' | 'between' | 'around'
   colSpan?: 1 | 2 | 3 | 'full'
@@ -47,8 +50,10 @@ export interface BoxProps {
   shadow?: 'sm' | 'md' | 'lg' | 'emerald' | 'orange' | 'red' | 'blue' | 'amber'
   cursor?: 'pointer' | 'default'
   hoverBg?: 'white/5' | 'zinc-800' | 'zinc-900' | 'orange/20'
-  paddingTop?: 0 | 20
-  paddingBottom?: 0 | 32
+  paddingTop?: 0 | 1 | 1.5 | 2 | 2.5 | 4 | 5 | 10 | 12.5 | 20 | 32
+  paddingBottom?: 0 | 1 | 1.5 | 2 | 2.5 | 4 | 5 | 10 | 12.5 | 20 | 32
+  paddingLeft?: 0 | 1 | 1.5 | 2 | 2.5 | 4 | 5 | 10 | 12.5 | 20 | 32
+  paddingRight?: 0 | 1 | 1.5 | 2 | 2.5 | 4 | 5 | 10 | 12.5 | 20 | 32
   lgPaddingLeft?: 0 | 72
   lgPaddingTop?: 0 | 20
   lgPaddingBottom?: 0 | 32
@@ -75,6 +80,8 @@ export function Box({
   bgOpacity,
   group,
   border,
+  borderTop,
+  borderBottom,
   borderWidth,
   borderStyle,
   rounded = 'none',
@@ -255,6 +262,7 @@ export function Box({
         bg === 'amber' && (!bgOpacity ? 'bg-amber-500' : `bg-amber-500/${bgOpacity}`),
         bg === 'white' && (!bgOpacity ? 'bg-white' : `bg-white/${bgOpacity}`),
         bg === 'black' && (!bgOpacity ? 'bg-black' : `bg-black/${bgOpacity}`),
+        bg === 'brand-accent' && 'bg-orange-600',
         bg === 'zinc-400' && 'bg-zinc-400',
         color === 'zinc-500' && 'text-zinc-500',
         color === 'zinc-400' && 'text-zinc-400',
@@ -284,22 +292,35 @@ export function Box({
         bgOpacity === 100 && 'bg-opacity-100',
 
         // Paddings
+        padding === 1 && 'p-1',
+        padding === 1.5 && 'p-1.5',
         padding === 2.5 && 'p-2.5',
         padding === 5 && 'p-5',
+        padding === 10 && 'p-10',
         padding === 0 && 'p-0',
+        paddingX === 1 && 'px-1',
+        paddingX === 1.5 && 'px-1.5',
         paddingX === 2.5 && 'px-2.5',
         paddingX === 5 && 'px-5',
+        paddingX === 10 && 'px-10',
         paddingX === 0 && 'px-0',
+        paddingY === 1 && 'py-1',
         paddingY === 1.5 && 'py-1.5',
         paddingY === 2.5 && 'py-2.5',
         paddingY === 5 && 'py-5',
+        paddingY === 10 && 'py-10',
         paddingY === 0 && 'py-0',
 
         // Gap (only for flex)
+        gap === 1 && 'gap-1',
+        gap === 1.5 && 'gap-1.5',
         gap === 2.5 && 'gap-2.5',
         gap === 5 && 'gap-5',
+        gap === 10 && 'gap-10',
         gap === 12.5 && 'gap-[50px]',
         gap === 0 && 'gap-0',
+        gap === 'section' && 'gap-[50px]',
+        gap === 'title-content' && 'gap-2.5',
 
         // Borders
         border === true && 'border border-border',
@@ -400,6 +421,11 @@ export function Box({
         mdPaddingTop === 12.5 && 'md:pt-[50px]',
         mdPaddingTop === 20 && 'md:pt-20',
 
+        paddingTop === 1.5 && 'pt-1.5',
+        paddingTop === 2.5 && 'pt-2.5',
+        paddingTop === 5 && 'pt-5',
+        paddingTop === 10 && 'pt-10',
+        paddingTop === 12.5 && 'pt-[50px]',
         paddingTop === 20 && 'pt-20',
         paddingTop === 0 && 'pt-0',
         paddingBottom === 32 && 'pb-32',

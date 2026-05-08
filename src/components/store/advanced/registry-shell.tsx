@@ -1,3 +1,5 @@
+'use client'
+
 import React from 'react'
 import { RegistrySidebar } from './registry-sidebar'
 import { RegistryMobileNavigation } from './registry-mobile-navigation'
@@ -5,7 +7,7 @@ import { RegistryBottomNav } from './registry-bottom-nav'
 import { Box } from '../base/box'
 import { Modal } from './modal'
 import { Settings } from 'lucide-react'
-import { RegistryContext, RegistryColor } from './registry-context'
+import { RegistryProvider } from './registry-context'
 
 interface RegistryShellProps {
   children: React.ReactNode
@@ -13,27 +15,12 @@ interface RegistryShellProps {
 
 export function RegistryShell({ children }: RegistryShellProps) {
   const [isSettingsOpen, setIsSettingsOpen] = React.useState(false)
-  const [activeTab, setActiveTab] = React.useState('overview')
-
-  const tabs = [
-    { id: 'overview', color: 'blue' as RegistryColor },
-    { id: 'admin', color: 'red' as RegistryColor },
-    { id: 'afiliado', color: 'amber' as RegistryColor },
-    { id: 'personal', color: 'emerald' as RegistryColor },
-    { id: 'aluno', color: 'orange' as RegistryColor },
-  ]
-
-  const currentTab = tabs.find(t => t.id === activeTab) || tabs[0]
 
   return (
-    <RegistryContext.Provider value={{
-      primaryColor: currentTab.color,
-      activeTab,
-      setActiveTab
-    }}>
+    <RegistryProvider>
       <Box height="screen" bg="background" overflow="hidden" display="flex" flexCol>
         {/* Desktop Sidebar */}
-        <RegistrySidebar onOpenSettings={() => setIsSettingsOpen(true)} />
+        <RegistrySidebar />
 
         {/* Mobile Navigation */}
         <RegistryMobileNavigation />
@@ -60,10 +47,8 @@ export function RegistryShell({ children }: RegistryShellProps) {
           subtitle="Ajustes de Perfil e Sistema"
           icon={Settings}
           variant="orange"
-          confirmLabel="Salvar"
-          cancelLabel="Cancelar"
         />
       </Box>
-    </RegistryContext.Provider>
+    </RegistryProvider>
   )
 }
