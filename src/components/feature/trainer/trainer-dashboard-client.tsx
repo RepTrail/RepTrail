@@ -229,6 +229,8 @@ export function TrainerDashboardClient({ userId, betaTesterMode }: TrainerDashbo
                             </CardContent>
                         </Card>
                     )}
+                </div>
+            </div>
         </Stack>
     )
 }

@@ -13,8 +13,8 @@ import {
     getOperationalCosts, repairWorkoutExercisesData, repairBiSets
 } from '@/actions/admin-actions'
 import { getAdminAffiliates, getAdminPayouts } from '@/actions/admin-affiliate-actions'
-import { AffiliatesManagement } from '@/components/feature/admin/affiliates-management'
-import { PayoutsManagement } from '@/components/feature/admin/payouts-management'
+// import { AffiliatesManagement } from '@/components/feature/admin/affiliates-management'
+// import { PayoutsManagement } from '@/components/feature/admin/payouts-management'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
     BarChart3, Users, CreditCard, ShoppingBag, TrendingUp, DollarSign,
@@ -40,7 +40,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { useToast } from '@/hooks/use-toast'
-import { OperationalCosts } from '@/components/feature/admin/operational-costs'
+// import { OperationalCosts } from '@/components/feature/admin/operational-costs'
 import { createClient } from '@/lib/supabase/client'
 import { DashboardShell } from '@/components/store/advanced/dashboard-shell'
 import { Stack } from '@/components/store/base/stack'
@@ -263,12 +263,12 @@ export default function AdminDashboardPage() {
     )
 
     const sidebarLinks = [
-        { href: '#overview',   label: 'Início',    icon: 'BarChart3',      onClick: () => handleTabChange('overview') },
-        { href: '#trainers',   label: 'Personais', icon: 'Users',          onClick: () => handleTabChange('trainers') },
-        { href: '#students',   label: 'Alunos',    icon: 'UserCheck',      onClick: () => handleTabChange('students') },
+        { href: '#overview', label: 'Início', icon: 'BarChart3', onClick: () => handleTabChange('overview') },
+        { href: '#trainers', label: 'Personais', icon: 'Users', onClick: () => handleTabChange('trainers') },
+        { href: '#students', label: 'Alunos', icon: 'UserCheck', onClick: () => handleTabChange('students') },
         { href: '#affiliates', label: 'Afiliados', icon: 'HeartHandshake', onClick: () => handleTabChange('affiliates') },
-        { href: '#store',      label: 'Loja',      icon: 'ShoppingBag',    onClick: () => handleTabChange('store') },
-        { href: '#logs',       label: 'Logs',      icon: 'Activity',       onClick: () => handleTabChange('logs') },
+        { href: '#store', label: 'Loja', icon: 'ShoppingBag', onClick: () => handleTabChange('store') },
+        { href: '#logs', label: 'Logs', icon: 'Activity', onClick: () => handleTabChange('logs') },
     ]
 
     const handleTabChange = (id: string) => {
@@ -281,10 +281,10 @@ export default function AdminDashboardPage() {
             color="red"
             links={sidebarLinks as any}
             mobileLinks={[
-                { href: '#overview',   label: 'Início',    icon: 'BarChart3',  onClick: () => handleTabChange('overview') },
-                { href: '#trainers',   label: 'Personais', icon: 'Users',      onClick: () => handleTabChange('trainers') },
-                { href: '#students',   label: 'Alunos',    icon: 'UserCheck',  onClick: () => handleTabChange('students') },
-                { href: '#store',      label: 'Loja',      icon: 'ShoppingBag', onClick: () => handleTabChange('store') },
+                { href: '#overview', label: 'Início', icon: 'BarChart3', onClick: () => handleTabChange('overview') },
+                { href: '#trainers', label: 'Personais', icon: 'Users', onClick: () => handleTabChange('trainers') },
+                { href: '#students', label: 'Alunos', icon: 'UserCheck', onClick: () => handleTabChange('students') },
+                { href: '#store', label: 'Loja', icon: 'ShoppingBag', onClick: () => handleTabChange('store') },
             ] as any}
             user={{
                 id: adminUser?.id || 'admin',
@@ -319,327 +319,327 @@ export default function AdminDashboardPage() {
                     </Font>
                 </Stack>
 
-                        {/* OVERVIEW TAB */}
-                        {tab === 'overview' && (
-                            <div className="space-y-8">
-                                {/* Stats Grid */}
-                                {/* Stats Grid */}
-                                <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-                                    {/* PLATFORM REVENUE */}
-                                    <StatCard
-                                        label="Lucro Líquido (Plataforma)"
-                                        value={`R$ ${Number(stats?.monthlyPlatformProfit || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
-                                        sub={`Bruto: R$ ${Number(stats?.monthlyGrossRevenue || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} | Custos: R$ ${Number(stats?.monthlyOperationalCosts || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
-                                        icon={TrendingUp} color="text-emerald-500" bg="bg-emerald-500/10"
-                                    />
-                                    <StatCard
-                                        label="Faturamento Personais"
-                                        value={`R$ ${Number(stats?.monthlyTrainerVolume || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
-                                        sub={`Médio: R$ ${Number(stats?.trainerAverageTicket || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} / personal`}
-                                        icon={CreditCard} color="text-blue-500" bg="bg-blue-500/10"
-                                    />
-                                    <StatCard
-                                        label="Ticket Médio (RepTrail)"
-                                        value={`R$ ${Number(stats?.platformTicketPerTrainer || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
-                                        sub="por personal cadastrado"
-                                        icon={Activity} color="text-amber-500" bg="bg-amber-500/10"
-                                    />
-                                    <StatCard
-                                        label="Comissões Pendentes"
-                                        value={`R$ ${Number(stats?.pendingCommissions || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
-                                        sub={`Este mês: R$ ${Number(stats?.commissionsThisMonth || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
-                                        icon={AlertCircle} color="text-red-500" bg="bg-red-500/10"
-                                    />
+                {/* OVERVIEW TAB */}
+                {tab === 'overview' && (
+                    <div className="space-y-8">
+                        {/* Stats Grid */}
+                        {/* Stats Grid */}
+                        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+                            {/* PLATFORM REVENUE */}
+                            <StatCard
+                                label="Lucro Líquido (Plataforma)"
+                                value={`R$ ${Number(stats?.monthlyPlatformProfit || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
+                                sub={`Bruto: R$ ${Number(stats?.monthlyGrossRevenue || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} | Custos: R$ ${Number(stats?.monthlyOperationalCosts || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
+                                icon={TrendingUp} color="text-emerald-500" bg="bg-emerald-500/10"
+                            />
+                            <StatCard
+                                label="Faturamento Personais"
+                                value={`R$ ${Number(stats?.monthlyTrainerVolume || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
+                                sub={`Médio: R$ ${Number(stats?.trainerAverageTicket || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} / personal`}
+                                icon={CreditCard} color="text-blue-500" bg="bg-blue-500/10"
+                            />
+                            <StatCard
+                                label="Ticket Médio (RepTrail)"
+                                value={`R$ ${Number(stats?.platformTicketPerTrainer || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
+                                sub="por personal cadastrado"
+                                icon={Activity} color="text-amber-500" bg="bg-amber-500/10"
+                            />
+                            <StatCard
+                                label="Comissões Pendentes"
+                                value={`R$ ${Number(stats?.pendingCommissions || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
+                                sub={`Este mês: R$ ${Number(stats?.commissionsThisMonth || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
+                                icon={AlertCircle} color="text-red-500" bg="bg-red-500/10"
+                            />
 
-                                    {/* COUNTS & AFFILIATES */}
-                                    <StatCard
-                                        label="Afiliados"
-                                        value={stats?.affiliatesCount || 0}
-                                        sub={`Lucro Total: R$ ${Number(stats?.affiliateTotalEarnings || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
-                                        icon={HeartHandshake} color="text-purple-500" bg="bg-purple-500/10"
-                                    />
-                                    <StatCard
-                                        label="Personais"
-                                        value={stats?.trainers || 0}
-                                        sub={`${stats?.trialTrainers || 0} em período de teste`}
-                                        icon={Users2} color="text-indigo-500" bg="bg-indigo-500/10"
-                                    />
-                                    <StatCard
-                                        label="Alunos"
-                                        value={stats?.students || 0}
-                                        sub={`${stats?.studentsWithTrainer || 0} com personal | ${stats?.autoTrainingCount || 0} auto-treino | ${(stats?.students || 0) - (stats?.studentsWithTrainer || 0) - (stats?.autoTrainingCount || 0)} avulsos`}
-                                        icon={Users} color="text-cyan-500" bg="bg-cyan-500/10"
-                                    />
-                                    <StatCard
-                                        label="Produtos Loja"
-                                        value={stats?.totalProducts || 0}
-                                        sub={`${stats?.productClicks || 0} cliques totais`}
-                                        icon={ShoppingBag} color="text-pink-500" bg="bg-pink-500/10"
-                                    />
+                            {/* COUNTS & AFFILIATES */}
+                            <StatCard
+                                label="Afiliados"
+                                value={stats?.affiliatesCount || 0}
+                                sub={`Lucro Total: R$ ${Number(stats?.affiliateTotalEarnings || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
+                                icon={HeartHandshake} color="text-purple-500" bg="bg-purple-500/10"
+                            />
+                            <StatCard
+                                label="Personais"
+                                value={stats?.trainers || 0}
+                                sub={`${stats?.trialTrainers || 0} em período de teste`}
+                                icon={Users2} color="text-indigo-500" bg="bg-indigo-500/10"
+                            />
+                            <StatCard
+                                label="Alunos"
+                                value={stats?.students || 0}
+                                sub={`${stats?.studentsWithTrainer || 0} com personal | ${stats?.autoTrainingCount || 0} auto-treino | ${(stats?.students || 0) - (stats?.studentsWithTrainer || 0) - (stats?.autoTrainingCount || 0)} avulsos`}
+                                icon={Users} color="text-cyan-500" bg="bg-cyan-500/10"
+                            />
+                            <StatCard
+                                label="Produtos Loja"
+                                value={stats?.totalProducts || 0}
+                                sub={`${stats?.productClicks || 0} cliques totais`}
+                                icon={ShoppingBag} color="text-pink-500" bg="bg-pink-500/10"
+                            />
+                        </div>
+
+                        <Card className="bg-zinc-900/40 border-zinc-800/50 rounded-[2rem]">
+                            <CardHeader className="flex flex-col sm:flex-row items-center sm:items-center justify-between gap-6 border-b border-zinc-800/50 pb-8">
+                                <div className="text-center sm:text-left">
+                                    <CardTitle className="text-xl font-black text-white italic uppercase tracking-tight flex items-center justify-center sm:justify-start gap-2">
+                                        <DollarSign className="w-5 h-5 text-red-500" />
+                                        Custos Operacionais
+                                    </CardTitle>
+                                    <p className="text-[10px] font-black text-zinc-600 uppercase tracking-widest mt-1">
+                                        Infraestrutura e operação da plataforma.
+                                    </p>
                                 </div>
+                            </CardHeader>
+                            <OperationalCosts
+                                initialCosts={operationalCosts}
+                                totalMonthly={stats?.monthlyOperationalCosts || 0}
+                                totalAllTime={stats?.totalOperationalCosts || 0}
+                            />
+                        </Card>
 
-                                <Card className="bg-zinc-900/40 border-zinc-800/50 rounded-[2rem]">
-                                    <CardHeader className="flex flex-col sm:flex-row items-center sm:items-center justify-between gap-6 border-b border-zinc-800/50 pb-8">
-                                        <div className="text-center sm:text-left">
-                                            <CardTitle className="text-xl font-black text-white italic uppercase tracking-tight flex items-center justify-center sm:justify-start gap-2">
-                                                <DollarSign className="w-5 h-5 text-red-500" />
-                                                Custos Operacionais
-                                            </CardTitle>
-                                            <p className="text-[10px] font-black text-zinc-600 uppercase tracking-widest mt-1">
-                                                Infraestrutura e operação da plataforma.
-                                            </p>
-                                        </div>
-                                    </CardHeader>
-                                    <OperationalCosts
-                                        initialCosts={operationalCosts}
-                                        totalMonthly={stats?.monthlyOperationalCosts || 0}
-                                        totalAllTime={stats?.totalOperationalCosts || 0}
-                                    />
-                                </Card>
-
-                                {/* Two columns */}
-                                <div className="grid lg:grid-cols-2 gap-8">
-                                    {/* Top Products */}
-                                    <Card className="bg-zinc-900/40 border-zinc-800/50 rounded-[2rem]">
-                                        <CardHeader className="p-6 border-b border-zinc-800/50">
-                                            <CardTitle className="text-sm font-black text-white italic uppercase tracking-tight flex items-center gap-2">
-                                                <TrendingUp className="w-4 h-4 text-emerald-500" />
-                                                Produtos Mais Clicados
-                                            </CardTitle>
-                                        </CardHeader>
-                                        <CardContent className="p-6 space-y-3">
-                                            {topProducts.length === 0 ? (
-                                                <p className="text-zinc-600 text-xs font-bold uppercase text-center py-8">Nenhum clique ainda</p>
-                                            ) : topProducts.map((p, i) => (
-                                                <div key={p.id} className="flex items-center justify-between gap-3 p-3 bg-zinc-950/50 rounded-xl border border-zinc-900">
-                                                    <div className="flex items-center gap-3 min-w-0">
-                                                        <span className="text-[10px] font-black text-zinc-700 w-4 shrink-0">0{i + 1}</span>
-                                                        <div className="flex-1 min-w-0 max-w-[150px] xs:max-w-[200px] sm:max-w-none">
-                                                            <p className="text-xs font-black text-white truncate italic uppercase tracking-tight">{p.name}</p>
-                                                            <p className="text-[9px] font-bold text-zinc-600 uppercase tracking-widest">{p.category}</p>
-                                                        </div>
-                                                    </div>
-                                                    <span className="text-[10px] font-black text-emerald-500 tabular-nums shrink-0 bg-emerald-500/10 px-2 py-1 rounded-lg border border-emerald-500/20">{p.clicks} <span className="text-[8px] opacity-70">CLIQUES</span></span>
+                        {/* Two columns */}
+                        <div className="grid lg:grid-cols-2 gap-8">
+                            {/* Top Products */}
+                            <Card className="bg-zinc-900/40 border-zinc-800/50 rounded-[2rem]">
+                                <CardHeader className="p-6 border-b border-zinc-800/50">
+                                    <CardTitle className="text-sm font-black text-white italic uppercase tracking-tight flex items-center gap-2">
+                                        <TrendingUp className="w-4 h-4 text-emerald-500" />
+                                        Produtos Mais Clicados
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent className="p-6 space-y-3">
+                                    {topProducts.length === 0 ? (
+                                        <p className="text-zinc-600 text-xs font-bold uppercase text-center py-8">Nenhum clique ainda</p>
+                                    ) : topProducts.map((p, i) => (
+                                        <div key={p.id} className="flex items-center justify-between gap-3 p-3 bg-zinc-950/50 rounded-xl border border-zinc-900">
+                                            <div className="flex items-center gap-3 min-w-0">
+                                                <span className="text-[10px] font-black text-zinc-700 w-4 shrink-0">0{i + 1}</span>
+                                                <div className="flex-1 min-w-0 max-w-[150px] xs:max-w-[200px] sm:max-w-none">
+                                                    <p className="text-xs font-black text-white truncate italic uppercase tracking-tight">{p.name}</p>
+                                                    <p className="text-[9px] font-bold text-zinc-600 uppercase tracking-widest">{p.category}</p>
                                                 </div>
-                                            ))}
-                                        </CardContent>
-                                    </Card>
-
-                                    {/* Student Activity Feed */}
-                                    <Card className="bg-zinc-900/40 border-zinc-800/50 rounded-[2rem]">
-                                        <CardHeader className="p-6 border-b border-zinc-800/50">
-                                            <CardTitle className="text-sm font-black text-white italic uppercase tracking-tight flex items-center gap-2">
-                                                <Activity className="w-4 h-4 text-blue-500" />
-                                                Atividade dos Alunos
-                                            </CardTitle>
-                                        </CardHeader>
-                                        <CardContent className="p-4 space-y-2 max-h-80 overflow-y-auto">
-                                            {activityFeed.length === 0 ? (
-                                                <p className="text-zinc-600 text-xs font-bold uppercase text-center py-8">Nenhuma atividade registrada</p>
-                                            ) : activityFeed.map((entry: any) => {
-                                                const student = entry.student as any
-                                                const workout = entry.workout as any
-                                                const statusColor = entry.status === 'completed' ? 'text-emerald-500' : entry.status === 'in_progress' ? 'text-blue-500' : 'text-zinc-500'
-                                                const statusLabel = entry.status === 'completed' ? 'Concluído' : entry.status === 'in_progress' ? 'Em progresso' : entry.status || '—'
-                                                const timeAgo = (() => {
-                                                    const diff = Date.now() - new Date(entry.created_at).getTime()
-                                                    const mins = Math.floor(diff / 60000)
-                                                    if (mins < 60) return `${mins}min atrás`
-                                                    const hrs = Math.floor(mins / 60)
-                                                    if (hrs < 24) return `${hrs}h atrás`
-                                                    return `${Math.floor(hrs / 24)}d atrás`
-                                                })()
-                                                return (
-                                                    <div key={entry.id} className="flex items-center gap-3 pb-4 p-3 bg-zinc-950 rounded-xl">
-                                                        <Avatar className="w-8 h-8 shrink-0">
-                                                            <AvatarImage src={student?.avatar_url} />
-                                                            <AvatarFallback className="bg-zinc-800 text-zinc-500 text-[10px] font-black">
-                                                                {student?.full_name?.substring(0, 2)?.toUpperCase() || '?'}
-                                                            </AvatarFallback>
-                                                        </Avatar>
-                                                        <div className="flex-1 min-w-0">
-                                                            <p className="text-[10px] font-black text-white truncate">
-                                                                {student?.full_name || 'Aluno'}
-                                                            </p>
-                                                            <p className="text-[9px] font-bold text-zinc-600 truncate">
-                                                                {workout?.name || 'Treino'}
-                                                            </p>
-                                                        </div>
-                                                        <div className="text-right shrink-0 space-y-0.5">
-                                                            <p className={`text-[9px] font-black uppercase tracking-wide ${statusColor}`}>{statusLabel}</p>
-                                                            <p className="text-[8px] font-bold text-zinc-700">{timeAgo}</p>
-                                                        </div>
-                                                    </div>
-                                                )
-                                            })}
-                                        </CardContent>
-                                    </Card>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* TRAINERS TAB */}
-                        {tab === 'trainers' && (
-                            <div className="space-y-6">
-                                <SearchBar value={search} onChange={setSearch} placeholder="Buscar personal..." />
-                                <div className="space-y-3">
-                                    {trainers
-                                        .filter(t => !search || t.full_name?.toLowerCase().includes(search.toLowerCase()) || t.email?.toLowerCase().includes(search.toLowerCase()))
-                                        .map(trainer => (
-                                            <TrainerRow
-                                                key={trainer.id}
-                                                trainer={trainer}
-                                                onPlanChange={(plan: string) => handlePlanChange(trainer.id, plan)}
-                                                onEliteToggle={() => handleEliteToggle(trainer.id, trainer.is_elite)}
-                                                onExemptToggle={() => handleExemptToggle(trainer.id, trainer.is_billing_exempt)}
-                                                onEliteTrial={() => handleEliteTrial(trainer.id)}
-                                                onImpersonate={() => handleImpersonate(trainer.id)}
-                                                onDelete={() => handleDeleteUser(trainer.id, trainer.full_name || trainer.email, true)}
-                                                isPending={isPending}
-                                            />
-                                        ))}
-                                    {trainers.length === 0 && <EmptyState label="Nenhum personal cadastrado" />}
-                                </div>
-                            </div>
-                        )}
-
-                        {/* AFFILIATES TAB */}
-                        {tab === 'affiliates' && (
-                            <Tabs defaultValue="list" className="w-full">
-                                <TabsList className="bg-zinc-900 border border-zinc-800 p-1 mb-6">
-                                    <TabsTrigger value="list" className="text-xs font-black uppercase tracking-widest px-6 data-[state=active]:bg-zinc-800 data-[state=active]:text-white data-[state=active]:shadow-xl">
-                                        Afiliados
-                                    </TabsTrigger>
-                                    <TabsTrigger value="payouts" className="text-xs font-black uppercase tracking-widest px-6 data-[state=active]:bg-emerald-500/20 data-[state=active]:text-emerald-500 data-[state=active]:shadow-xl relative overflow-visible">
-                                        Saques PIX
-                                        {payouts.filter(p => p.status === 'requested' || p.status === 'pending').length > 0 && (
-                                            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-amber-500 rounded-full animate-pulse" />
-                                        )}
-                                    </TabsTrigger>
-                                </TabsList>
-
-                                <TabsContent value="list" className="mt-0 outline-none">
-                                    <AffiliatesManagement initialAffiliates={affiliates} allUsers={students} />
-                                </TabsContent>
-
-                                <TabsContent value="payouts" className="mt-0 outline-none">
-                                    <PayoutsManagement initialPayouts={payouts} />
-                                </TabsContent>
-                            </Tabs>
-                        )}
-
-                        {/* STUDENTS TAB */}
-                        {tab === 'students' && (
-                            <div className="space-y-6">
-                                <SearchBar value={search} onChange={setSearch} placeholder="Buscar aluno..." />
-                                <div className="space-y-3">
-                                    {students
-                                        .filter(s => s.role === 'student')
-                                        .filter(s => !search || s.full_name?.toLowerCase().includes(search.toLowerCase()) || s.email?.toLowerCase().includes(search.toLowerCase()))
-                                        .map(student => (
-                                            <StudentRow
-                                                key={student.id}
-                                                student={student}
-                                                onImpersonate={() => handleImpersonate(student.id)}
-                                                onDelete={() => handleDeleteUser(student.id, student.full_name || student.email, false)}
-                                                onGrantAutoTraining={() => handleGrantAutoTraining(student.id, (student as any).auto_training_status)}
-                                                isPending={isPending}
-                                            />
-                                        ))}
-                                    {students.length === 0 && <EmptyState label="Nenhum aluno cadastrado" />}
-                                </div>
-                            </div>
-                        )}
-
-                        {/* STORE TAB */}
-                        {tab === 'store' && (
-                            <div className="space-y-6">
-                                <div className="flex items-center justify-between gap-4">
-                                    <SearchBar value={search} onChange={setSearch} placeholder="Buscar produto..." />
-                                    <Button
-                                        onClick={() => { setEditingProduct(null); setProductModalOpen(true) }}
-                                        className="h-12 px-6 rounded-2xl bg-white hover:bg-zinc-200 text-zinc-950 font-black uppercase italic tracking-wide shrink-0"
-                                    >
-                                        <Plus className="w-4 h-4 sm:mr-2" />
-                                        <span className="hidden sm:inline">Novo Produto</span>
-                                    </Button>
-                                </div>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full">
-                                    {products
-                                        .filter(p => !search || p.name?.toLowerCase().includes(search.toLowerCase()))
-                                        .map(product => (
-                                            <ProductCard
-                                                key={product.id}
-                                                product={product}
-                                                onToggle={() => handleProductToggle(product.id, product.is_active)}
-                                                onEdit={() => { setEditingProduct(product); setProductModalOpen(true) }}
-                                                onDelete={() => handleDeleteProduct(product.id)}
-                                                isPending={isPending}
-                                            />
-                                        ))}
-                                    {products.length === 0 && <div className="col-span-full"><EmptyState label="Nenhum produto na loja" /></div>}
-                                </div>
-
-                                <ProductEditorModal
-                                    isOpen={productModalOpen}
-                                    onClose={() => setProductModalOpen(false)}
-                                    product={editingProduct}
-                                    onImport={fetchProductFromUrl}
-                                    onDelete={async () => {
-                                        if (editingProduct && await handleDeleteProduct(editingProduct.id)) {
-                                            setProductModalOpen(false)
-                                        }
-                                    }}
-                                    onSave={async (data: any) => {
-                                        startTransition(async () => {
-                                            const res = editingProduct
-                                                ? /* ❌ OUTBOX VIOLATION */ await updateStoreProduct(editingProduct.id, data)
-                                                : await addStoreProduct(data)
-
-                                            if (res.error) toast({ variant: 'destructive', title: 'Erro', description: (res as any).error })
-                                            else {
-                                                toast({ title: editingProduct ? 'Produto atualizado!' : 'Produto adicionado!' })
-                                                queryClient.invalidateQueries({ queryKey: QUERY_KEYS.store.products })
-                                                setProductModalOpen(false)
-                                            }
-                                        })
-                                    }}
-                                />
-                            </div>
-                        )}
-
-
-
-                        {/* LOGS TAB */}
-                        {tab === 'logs' && (
-                            <div className="space-y-4">
-                                {logs.map(log => (
-                                    <div key={log.id} className="flex items-start gap-4 p-5 bg-zinc-900/40 border border-zinc-800/50 rounded-2xl">
-                                        <div className="w-10 h-10 bg-zinc-950 rounded-xl flex items-center justify-center shrink-0 border border-zinc-800">
-                                            <Zap className="w-4 h-4 text-amber-500" />
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                            <div className="flex items-center gap-3 pb-4 flex-wrap">
-                                                <span className="text-[11px] font-black text-white uppercase tracking-wide">{log.action.replace(/_/g, ' ')}</span>
-                                                {log.admin?.full_name && (
-                                                    <span className="text-[9px] font-bold text-zinc-600 uppercase">por {log.admin.full_name}</span>
-                                                )}
                                             </div>
-                                            {log.details && (
-                                                <p className="text-[10px] font-mono text-zinc-500 mt-1 truncate">
-                                                    {JSON.stringify(log.details)}
-                                                </p>
-                                            )}
-                                            <div className="flex items-center gap-1 mt-2">
-                                                <Clock className="w-3 h-3 text-zinc-700" />
-                                                <span className="text-[9px] font-bold text-zinc-600">{new Date(log.created_at).toLocaleString('pt-BR')}</span>
-                                            </div>
+                                            <span className="text-[10px] font-black text-emerald-500 tabular-nums shrink-0 bg-emerald-500/10 px-2 py-1 rounded-lg border border-emerald-500/20">{p.clicks} <span className="text-[8px] opacity-70">CLIQUES</span></span>
                                         </div>
-                                    </div>
+                                    ))}
+                                </CardContent>
+                            </Card>
+
+                            {/* Student Activity Feed */}
+                            <Card className="bg-zinc-900/40 border-zinc-800/50 rounded-[2rem]">
+                                <CardHeader className="p-6 border-b border-zinc-800/50">
+                                    <CardTitle className="text-sm font-black text-white italic uppercase tracking-tight flex items-center gap-2">
+                                        <Activity className="w-4 h-4 text-blue-500" />
+                                        Atividade dos Alunos
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent className="p-4 space-y-2 max-h-80 overflow-y-auto">
+                                    {activityFeed.length === 0 ? (
+                                        <p className="text-zinc-600 text-xs font-bold uppercase text-center py-8">Nenhuma atividade registrada</p>
+                                    ) : activityFeed.map((entry: any) => {
+                                        const student = entry.student as any
+                                        const workout = entry.workout as any
+                                        const statusColor = entry.status === 'completed' ? 'text-emerald-500' : entry.status === 'in_progress' ? 'text-blue-500' : 'text-zinc-500'
+                                        const statusLabel = entry.status === 'completed' ? 'Concluído' : entry.status === 'in_progress' ? 'Em progresso' : entry.status || '—'
+                                        const timeAgo = (() => {
+                                            const diff = Date.now() - new Date(entry.created_at).getTime()
+                                            const mins = Math.floor(diff / 60000)
+                                            if (mins < 60) return `${mins}min atrás`
+                                            const hrs = Math.floor(mins / 60)
+                                            if (hrs < 24) return `${hrs}h atrás`
+                                            return `${Math.floor(hrs / 24)}d atrás`
+                                        })()
+                                        return (
+                                            <div key={entry.id} className="flex items-center gap-3 pb-4 p-3 bg-zinc-950 rounded-xl">
+                                                <Avatar className="w-8 h-8 shrink-0">
+                                                    <AvatarImage src={student?.avatar_url} />
+                                                    <AvatarFallback className="bg-zinc-800 text-zinc-500 text-[10px] font-black">
+                                                        {student?.full_name?.substring(0, 2)?.toUpperCase() || '?'}
+                                                    </AvatarFallback>
+                                                </Avatar>
+                                                <div className="flex-1 min-w-0">
+                                                    <p className="text-[10px] font-black text-white truncate">
+                                                        {student?.full_name || 'Aluno'}
+                                                    </p>
+                                                    <p className="text-[9px] font-bold text-zinc-600 truncate">
+                                                        {workout?.name || 'Treino'}
+                                                    </p>
+                                                </div>
+                                                <div className="text-right shrink-0 space-y-0.5">
+                                                    <p className={`text-[9px] font-black uppercase tracking-wide ${statusColor}`}>{statusLabel}</p>
+                                                    <p className="text-[8px] font-bold text-zinc-700">{timeAgo}</p>
+                                                </div>
+                                            </div>
+                                        )
+                                    })}
+                                </CardContent>
+                            </Card>
+                        </div>
+                    </div>
+                )}
+
+                {/* TRAINERS TAB */}
+                {tab === 'trainers' && (
+                    <div className="space-y-6">
+                        <SearchBar value={search} onChange={setSearch} placeholder="Buscar personal..." />
+                        <div className="space-y-3">
+                            {trainers
+                                .filter(t => !search || t.full_name?.toLowerCase().includes(search.toLowerCase()) || t.email?.toLowerCase().includes(search.toLowerCase()))
+                                .map(trainer => (
+                                    <TrainerRow
+                                        key={trainer.id}
+                                        trainer={trainer}
+                                        onPlanChange={(plan: string) => handlePlanChange(trainer.id, plan)}
+                                        onEliteToggle={() => handleEliteToggle(trainer.id, trainer.is_elite)}
+                                        onExemptToggle={() => handleExemptToggle(trainer.id, trainer.is_billing_exempt)}
+                                        onEliteTrial={() => handleEliteTrial(trainer.id)}
+                                        onImpersonate={() => handleImpersonate(trainer.id)}
+                                        onDelete={() => handleDeleteUser(trainer.id, trainer.full_name || trainer.email, true)}
+                                        isPending={isPending}
+                                    />
                                 ))}
+                            {trainers.length === 0 && <EmptyState label="Nenhum personal cadastrado" />}
+                        </div>
+                    </div>
+                )}
+
+                {/* AFFILIATES TAB */}
+                {tab === 'affiliates' && (
+                    <Tabs defaultValue="list" className="w-full">
+                        <TabsList className="bg-zinc-900 border border-zinc-800 p-1 mb-6">
+                            <TabsTrigger value="list" className="text-xs font-black uppercase tracking-widest px-6 data-[state=active]:bg-zinc-800 data-[state=active]:text-white data-[state=active]:shadow-xl">
+                                Afiliados
+                            </TabsTrigger>
+                            <TabsTrigger value="payouts" className="text-xs font-black uppercase tracking-widest px-6 data-[state=active]:bg-emerald-500/20 data-[state=active]:text-emerald-500 data-[state=active]:shadow-xl relative overflow-visible">
+                                Saques PIX
+                                {payouts.filter(p => p.status === 'requested' || p.status === 'pending').length > 0 && (
+                                    <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-amber-500 rounded-full animate-pulse" />
+                                )}
+                            </TabsTrigger>
+                        </TabsList>
+
+                        <TabsContent value="list" className="mt-0 outline-none">
+                            <AffiliatesManagement initialAffiliates={affiliates} allUsers={students} />
+                        </TabsContent>
+
+                        <TabsContent value="payouts" className="mt-0 outline-none">
+                            <PayoutsManagement initialPayouts={payouts} />
+                        </TabsContent>
+                    </Tabs>
+                )}
+
+                {/* STUDENTS TAB */}
+                {tab === 'students' && (
+                    <div className="space-y-6">
+                        <SearchBar value={search} onChange={setSearch} placeholder="Buscar aluno..." />
+                        <div className="space-y-3">
+                            {students
+                                .filter(s => s.role === 'student')
+                                .filter(s => !search || s.full_name?.toLowerCase().includes(search.toLowerCase()) || s.email?.toLowerCase().includes(search.toLowerCase()))
+                                .map(student => (
+                                    <StudentRow
+                                        key={student.id}
+                                        student={student}
+                                        onImpersonate={() => handleImpersonate(student.id)}
+                                        onDelete={() => handleDeleteUser(student.id, student.full_name || student.email, false)}
+                                        onGrantAutoTraining={() => handleGrantAutoTraining(student.id, (student as any).auto_training_status)}
+                                        isPending={isPending}
+                                    />
+                                ))}
+                            {students.length === 0 && <EmptyState label="Nenhum aluno cadastrado" />}
+                        </div>
+                    </div>
+                )}
+
+                {/* STORE TAB */}
+                {tab === 'store' && (
+                    <div className="space-y-6">
+                        <div className="flex items-center justify-between gap-4">
+                            <SearchBar value={search} onChange={setSearch} placeholder="Buscar produto..." />
+                            <Button
+                                onClick={() => { setEditingProduct(null); setProductModalOpen(true) }}
+                                className="h-12 px-6 rounded-2xl bg-white hover:bg-zinc-200 text-zinc-950 font-black uppercase italic tracking-wide shrink-0"
+                            >
+                                <Plus className="w-4 h-4 sm:mr-2" />
+                                <span className="hidden sm:inline">Novo Produto</span>
+                            </Button>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full">
+                            {products
+                                .filter(p => !search || p.name?.toLowerCase().includes(search.toLowerCase()))
+                                .map(product => (
+                                    <ProductCard
+                                        key={product.id}
+                                        product={product}
+                                        onToggle={() => handleProductToggle(product.id, product.is_active)}
+                                        onEdit={() => { setEditingProduct(product); setProductModalOpen(true) }}
+                                        onDelete={() => handleDeleteProduct(product.id)}
+                                        isPending={isPending}
+                                    />
+                                ))}
+                            {products.length === 0 && <div className="col-span-full"><EmptyState label="Nenhum produto na loja" /></div>}
+                        </div>
+
+                        <ProductEditorModal
+                            isOpen={productModalOpen}
+                            onClose={() => setProductModalOpen(false)}
+                            product={editingProduct}
+                            onImport={fetchProductFromUrl}
+                            onDelete={async () => {
+                                if (editingProduct && await handleDeleteProduct(editingProduct.id)) {
+                                    setProductModalOpen(false)
+                                }
+                            }}
+                            onSave={async (data: any) => {
+                                startTransition(async () => {
+                                    const res = editingProduct
+                                        ? /* ❌ OUTBOX VIOLATION */ await updateStoreProduct(editingProduct.id, data)
+                                        : await addStoreProduct(data)
+
+                                    if (res.error) toast({ variant: 'destructive', title: 'Erro', description: (res as any).error })
+                                    else {
+                                        toast({ title: editingProduct ? 'Produto atualizado!' : 'Produto adicionado!' })
+                                        queryClient.invalidateQueries({ queryKey: QUERY_KEYS.store.products })
+                                        setProductModalOpen(false)
+                                    }
+                                })
+                            }}
+                        />
+                    </div>
+                )}
+
+
+
+                {/* LOGS TAB */}
+                {tab === 'logs' && (
+                    <div className="space-y-4">
+                        {logs.map(log => (
+                            <div key={log.id} className="flex items-start gap-4 p-5 bg-zinc-900/40 border border-zinc-800/50 rounded-2xl">
+                                <div className="w-10 h-10 bg-zinc-950 rounded-xl flex items-center justify-center shrink-0 border border-zinc-800">
+                                    <Zap className="w-4 h-4 text-amber-500" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-3 pb-4 flex-wrap">
+                                        <span className="text-[11px] font-black text-white uppercase tracking-wide">{log.action.replace(/_/g, ' ')}</span>
+                                        {log.admin?.full_name && (
+                                            <span className="text-[9px] font-bold text-zinc-600 uppercase">por {log.admin.full_name}</span>
+                                        )}
+                                    </div>
+                                    {log.details && (
+                                        <p className="text-[10px] font-mono text-zinc-500 mt-1 truncate">
+                                            {JSON.stringify(log.details)}
+                                        </p>
+                                    )}
+                                    <div className="flex items-center gap-1 mt-2">
+                                        <Clock className="w-3 h-3 text-zinc-700" />
+                                        <span className="text-[9px] font-bold text-zinc-600">{new Date(log.created_at).toLocaleString('pt-BR')}</span>
+                                    </div>
+                                </div>
                             </div>
-                        )}
-                    </Stack>
+                        ))}
+                    </div>
+                )}
+            </Stack>
         </DashboardShell>
     )
 }
@@ -712,7 +712,7 @@ function TrainerRow({ trainer, onPlanChange, onEliteToggle, onExemptToggle, onEl
                         {trainer.is_elite && <Crown className="w-3.5 h-3.5 text-amber-500 shrink-0" />}
                     </div>
                     <p className="text-[10px] font-bold text-zinc-600 truncate mb-2">{trainer.email}</p>
-                    
+
                     {/* Badges Row */}
                     <div className="flex flex-wrap gap-2">
                         <div className="px-2 py-0.5 bg-emerald-500/10 border border-emerald-500/20 rounded-lg flex items-center gap-1.5">

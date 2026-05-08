@@ -247,7 +247,7 @@ export function ModalContainer({ children, id }: { children: React.ReactNode, id
   return (
     <div
       id={id}
-      className="relative w-11/12 md:w-[500px] max-h-[90vh] overflow-hidden flex flex-col"
+      className="relative w-11/12 md:w-[600px] max-h-[90vh] overflow-hidden flex flex-col"
     >
       {children}
     </div>

@@ -1,5 +1,5 @@
-import { AffiliatesManagement } from '@/components/feature/admin/affiliates-management'
-import { PayoutsManagement } from '@/components/feature/admin/payouts-management'
+// import { AffiliatesManagement } from '@/components/feature/admin/affiliates-management'
+// import { PayoutsManagement } from '@/components/feature/admin/payouts-management'
 import { getAdminAffiliates, getAdminPayouts } from '@/actions/admin-affiliate-actions'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
@@ -63,11 +63,11 @@ export default async function AdminAffiliatesPage() {
                 </TabsList>
 
                 <TabsContent value="list" className="mt-0 outline-none">
-                    <AffiliatesManagement initialAffiliates={affiliates || []} />
+                    <div>Affiliates Management Disabled</div>
                 </TabsContent>
 
                 <TabsContent value="payouts" className="mt-0 outline-none">
-                    <PayoutsManagement initialPayouts={(payouts as any) || []} />
+                    <div>Payouts Management Disabled</div>
                 </TabsContent>
             </Tabs>
         </div>

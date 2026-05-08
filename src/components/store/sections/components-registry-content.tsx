@@ -17,6 +17,7 @@ import {
     Search, Calendar, Phone, User, Lock, Mail
 } from 'lucide-react'
 import { Input } from '@/components/store/base/input'
+import { Textarea } from '@/components/store/base/textarea'
 import { FileUpload } from '@/components/store/base/file-upload'
 import { FormSwitch } from '@/components/store/base/form-switch'
 import { FormSelect } from '@/components/store/base/form-select'
@@ -233,6 +234,11 @@ export function ComponentsRegistryContent({ id }: { id?: string }) {
                             </Grid>
 
                             <Input label="Number Input" placeholder="0.00" type="number" mask="number" />
+                            
+                            <Textarea 
+                                label="Comentários Adicionais" 
+                                placeholder="Descreva observações médicas ou necessidades específicas..." 
+                            />
                         </Stack>
                     </GlassPanel>
                 </Grid>

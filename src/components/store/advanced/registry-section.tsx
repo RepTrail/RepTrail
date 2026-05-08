@@ -25,14 +25,16 @@ export function RegistrySection({
   const { primaryColor } = useRegistry()
 
   return (
-    <Stack gap={{ base: 7.5, md: 12.5 }} id={id}>
+    <Stack gap={10} id={id} fullWidth>
       {/* Section Header */}
-      <Stack gap={2.5}>
-        <Inline gap={2.5}>
+      <Stack gap={1}>
+        <Inline gap={2.5} align="center">
           <Icon icon={icon} color={primaryColor as any} size="lg" />
-          <Font variant="heading">{title}</Font>
+          <Font variant="heading" weight="black" uppercase italic color="white">
+            {title}
+          </Font>
         </Inline>
-        <Font color="zinc-500" variant="body">
+        <Font variant="description" color="zinc-500">
           {subtitle}
         </Font>
       </Stack>

@@ -40,10 +40,10 @@ export function Modal({
   return (
     <ModalOverlay onClose={onClose}>
       <ModalContainer>
-        <Surface variant="base" padding={0} rounded="system" direction="col" fullHeight>
-          <Stack gap={0} flex1>
+        <Surface variant="base" padding={0} rounded="system" direction="col" flex1 className="min-h-0 overflow-hidden">
+          <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
             {/* Header */}
-            <CardHeader bg="zinc" bgOpacity={100} display="flex" direction="row" align="center" justify="between">
+            <CardHeader bg="zinc" bgOpacity={100} className="shrink-0">
               <Stack direction="row" align="center" gap={2.5}>
                 {icon && <IconBox icon={icon} variant={variant as any} />}
                 <Stack gap={0}>
@@ -52,35 +52,29 @@ export function Modal({
                 </Stack>
               </Stack>
 
-              <Button variant="close" rounded="full" isIconOnly onClick={onClose}>
-                <Icon icon={X} size="sm" />
-              </Button>
+              <div className="ml-auto">
+                <Button variant="close" rounded="full" isIconOnly onClick={onClose}>
+                  <Icon icon={X} size="sm" />
+                </Button>
+              </div>
             </CardHeader>
 
             <Divider color="white/5" />
 
-            {/* Content */}
-            <CardContent 
-              padding={5} 
-              bg="zinc" 
-              bgOpacity={100} 
-              overflow="auto" 
-              height="auto" 
-              style={{ minHeight: '100px' }} 
-              flex1
-            >
+            {/* Content Area */}
+            <div className="flex-1 overflow-y-auto bg-zinc-950 p-5 min-h-0">
               {children ? children : (
                 <Font variant="description" color="zinc-400">
                   Configure as opções do seu perfil e preferências de sistema aqui.
                   Todas as alterações são aplicadas instantaneamente ao seu ambiente de trabalho.
                 </Font>
               )}
-            </CardContent>
+            </div>
 
             <Divider color="white/5" />
 
             {/* Footer Actions */}
-            <CardContent padding={5} bg="zinc" bgOpacity={50}>
+            <div className="shrink-0 bg-zinc-900 p-5">
               <Stack direction="row" gap={2.5} flex1>
                 <Button 
                   variant="outline-red" 
@@ -101,8 +95,8 @@ export function Modal({
                   {confirmLabel}
                 </Button>
               </Stack>
-            </CardContent>
-          </Stack>
+            </div>
+          </div>
         </Surface>
       </ModalContainer>
     </ModalOverlay>

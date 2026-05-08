@@ -12,14 +12,19 @@ import { cn } from '@/lib/utils'
 
 interface RegistryShellProps {
   children: React.ReactNode
+  activeTab?: string
+  setActiveTab?: (tab: string) => void
 }
 
-export function RegistryShell({ children }: RegistryShellProps) {
+export function RegistryShell({ children, activeTab: externalActiveTab, setActiveTab: externalSetActiveTab }: RegistryShellProps) {
   const [isSettingsOpen, setIsSettingsOpen] = React.useState(false)
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false)
-  const [activeTab, setActiveTab] = React.useState('overview')
+  const [internalActiveTab, setInternalActiveTab] = React.useState('overview')
   const [activeSection, setActiveSection] = React.useState('branding')
   const [primaryColor, setPrimaryColor] = React.useState<RegistryColor>('blue')
+
+  const activeTab = externalActiveTab || internalActiveTab
+  const setActiveTab = externalSetActiveTab || setInternalActiveTab
 
   const tabs = [
     { id: 'overview', color: 'blue' as RegistryColor },

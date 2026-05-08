@@ -10,12 +10,14 @@ import { Inline } from '../base/layout'
 import { Badge } from '../base/badge'
 import { ShoppingBag, Edit3, Trash2, Power } from 'lucide-react'
 
+
 interface ProductCardProps {
     name: string
     price: string
     category: string
-    isActive?: boolean
+    description?: string
     image?: string
+    isActive?: boolean
     onToggleActive?: () => void
     onEdit?: () => void
     onDelete?: () => void
@@ -25,8 +27,9 @@ export function ProductCard({
     name, 
     price, 
     category, 
-    isActive = true,
+    description,
     image,
+    isActive = true,
     onToggleActive,
     onEdit,
     onDelete 
@@ -76,10 +79,15 @@ export function ProductCard({
             {/* Product Info - Refined Typography */}
             <Stack padding={5} gap={2.5} flex1 justify="between">
                 <Stack gap={1}>
-                    <Font weight="black" uppercase italic color="white" className="text-xs tracking-wider opacity-80">
+                    <Font weight="black" uppercase italic color="white" className="text-sm tracking-wider">
                         {name}
                     </Font>
-                    <Font weight="black" color="white" className="text-lg">
+                    {description && (
+                        <Font variant="sub-tiny" color="zinc-500" className="line-clamp-2">
+                            {description}
+                        </Font>
+                    )}
+                    <Font weight="black" color="emerald" className="text-xl mt-1">
                         {price}
                     </Font>
                 </Stack>

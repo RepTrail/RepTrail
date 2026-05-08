@@ -168,7 +168,7 @@ export async function getAffiliateData() {
 export async function enableAffiliate() {
     const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return { error: 'Unauthorized' }
+    if (!user) return { error: 'Não autorizado. Faça login novamente.' }
 
     // Check if already has a token
     const { data: profile } = await supabase
@@ -196,7 +196,7 @@ export async function enableAffiliate() {
             .update({ is_affiliate: true, affiliate_token: token })
             .eq('id', user.id)
 
-        if (error) return { error: error.message }
+        if (error) return { error: 'Erro ao ativar perfil de afiliado. Tente novamente.' }
     }
 
     revalidatePath('/dashboard/affiliate')
@@ -207,7 +207,7 @@ export async function enableAffiliate() {
 export async function requestPayout(amount: number, method: string, details: string) {
     const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return { error: 'Unauthorized' }
+    if (!user) return { error: 'Não autorizado. Faça login novamente.' }
 
     const { data: profile } = await supabase
         .from('profiles')
@@ -229,7 +229,7 @@ export async function requestPayout(amount: number, method: string, details: str
             status: 'requested',
         })
 
-    if (error) return { error: error.message }
+    if (error) return { error: 'Erro ao processar solicitação de saque. Verifique seus dados.' }
 
     // Deduct from balance
     await supabase

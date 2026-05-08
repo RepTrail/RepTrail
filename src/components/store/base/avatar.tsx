@@ -14,6 +14,7 @@ export function BaseAvatar({
     initials,
     variant = 'zinc',
     size = 'md',
+    src,
     className
 }: BaseAvatarProps) {
     const sizeClasses = {
@@ -35,12 +36,23 @@ export function BaseAvatar({
     return (
         <div
             className={cn(
-                "rounded-full border flex items-center justify-center shrink-0 overflow-hidden",
+                "rounded-full border flex items-center justify-center shrink-0 overflow-hidden relative",
                 sizeClasses[size],
                 variantClasses[variant],
                 className
             )}
         >
+            {src ? (
+                <img 
+                    src={src} 
+                    alt={initials} 
+                    className="absolute inset-0 w-full h-full object-cover"
+                    onError={(e) => {
+                        (e.target as HTMLImageElement).style.display = 'none'
+                    }}
+                />
+            ) : null}
+            
             <Font 
                 weight="black" 
                 color={variant === 'zinc' ? 'zinc-500' : variant as any} 

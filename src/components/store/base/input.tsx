@@ -3,6 +3,7 @@ import { cn } from '@/lib/utils'
 import { Box } from './box'
 import { Font } from './font'
 import { Eye, EyeOff } from 'lucide-react'
+import { useRegistry } from '../advanced/registry-context'
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string
@@ -25,9 +26,22 @@ export function Input({
   type,
   ...props
 }: InputProps) {
+  const { primaryColor } = useRegistry()
+  
   const [showPassword, setShowPassword] = useState(false)
   const isPassword = type === 'password'
   const inputType = isPassword ? (showPassword ? 'text' : 'password') : type
+
+  const colorMap = {
+    blue: 'focus:border-blue-500/50 focus:bg-blue-500/5 group-focus-within:text-blue-500',
+    red: 'focus:border-red-500/50 focus:bg-red-500/5 group-focus-within:text-red-500',
+    amber: 'focus:border-amber-500/50 focus:bg-amber-500/5 group-focus-within:text-amber-500',
+    emerald: 'focus:border-emerald-500/50 focus:bg-emerald-500/5 group-focus-within:text-emerald-500',
+    orange: 'focus:border-orange-500/50 focus:bg-orange-500/5 group-focus-within:text-orange-500',
+    zinc: 'focus:border-zinc-500/50 focus:bg-zinc-500/5 group-focus-within:text-zinc-500',
+  }
+
+  const activeClasses = colorMap[primaryColor as keyof typeof colorMap]
 
   const applyMask = (value: string) => {
     if (!mask) return value
@@ -71,7 +85,10 @@ export function Input({
       <div className="relative group">
         {/* Left icon */}
         {icon && (
-          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 transition-colors group-focus-within:text-emerald-500 flex items-center z-10">
+          <div className={cn(
+            "absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 transition-colors flex items-center z-10",
+            activeClasses.split(' ').find(c => c.startsWith('group-focus-within:'))
+          )}>
             {icon}
           </div>
         )}
@@ -83,7 +100,7 @@ export function Input({
             rounded === 'system' && 'rounded-[5px]',
             rounded === 'full' && 'rounded-full',
             rounded === 'none' && 'rounded-none',
-            'focus:border-emerald-500/50 focus:bg-emerald-500/5',
+            activeClasses.split(' ').filter(c => !c.startsWith('group-focus-within:')).join(' '),
             icon ? 'pl-12' : 'pl-4',
             isPassword ? 'pr-12' : 'pr-4',
             error && 'border-red-500/50',
@@ -98,7 +115,14 @@ export function Input({
           <button
             type="button"
             onClick={() => setShowPassword(v => !v)}
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-emerald-400 transition-colors z-10"
+            className={cn(
+                "absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 transition-colors z-10",
+                primaryColor === 'emerald' && "hover:text-emerald-400",
+                primaryColor === 'orange' && "hover:text-orange-400",
+                primaryColor === 'amber' && "hover:text-amber-400",
+                primaryColor === 'blue' && "hover:text-blue-400",
+                primaryColor === 'red' && "hover:text-red-400"
+            )}
             tabIndex={-1}
           >
             {showPassword

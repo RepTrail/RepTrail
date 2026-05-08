@@ -12,6 +12,9 @@ import { ProductCard } from '../intermediary/product-card'
 import { EmptyState } from '../intermediary/empty-state'
 import { RegistrySection } from '../advanced/registry-section'
 import { Modal } from '../advanced/modal'
+import { AffiliateListItem } from '../intermediary/affiliate-list-item'
+import { AdminPayoutsManagement } from './admin-payouts-management'
+import { AdminOperationalCosts } from './admin-operational-costs'
 import { 
     TrendingUp, 
     Users, 
@@ -27,7 +30,9 @@ import {
     History,
     Package,
     Trash2,
-    Edit3
+    Edit3,
+    DollarSign,
+    Activity
 } from 'lucide-react'
 
 export function AdminSectionContent({ id }: { id?: string }) {
@@ -168,6 +173,74 @@ export function AdminSectionContent({ id }: { id?: string }) {
                         />
                     </Box>
                 </Stack>
+            </RegistrySection>
+
+            {/* Gestão de Afiliados */}
+            <RegistrySection
+                title="Gestão de Afiliados"
+                icon={HeartHandshake}
+                subtitle="Administração de parceiros comerciais, comissões e indicações."
+            >
+                <Stack gap={2.5}>
+                    <AffiliateListItem 
+                        name="Thiago Nigro"
+                        email="thiago.nigro@primocast.com.br"
+                        affiliateId="PRIMO20"
+                        registrationDate="10/01/2024"
+                        referrals={{ total: 1500, active: 850 }}
+                        revenue="R$ 45.000,00"
+                        commission="R$ 4.500,00"
+                        rate={10}
+                        onDelete={() => openModal('delete', 'Thiago Nigro', 'user')}
+                    />
+                    <AffiliateListItem 
+                        name="Joel Jota"
+                        email="joel@jota.com.br"
+                        affiliateId="JJ2024"
+                        registrationDate="15/02/2024"
+                        referrals={{ total: 800, active: 420 }}
+                        revenue="R$ 28.000,00"
+                        commission="R$ 2.800,00"
+                        rate={10}
+                        onDelete={() => openModal('delete', 'Joel Jota', 'user')}
+                    />
+                </Stack>
+            </RegistrySection>
+
+            {/* Gerenciamento de Saques */}
+            <RegistrySection
+                title="Saques PIX"
+                icon={Activity}
+                subtitle="Fluxo de aprovação de pagamentos e histórico de transações."
+            >
+                <AdminPayoutsManagement initialPayouts={[
+                    {
+                        id: '1',
+                        amount: 450.00,
+                        status: 'requested',
+                        payout_method: 'pix',
+                        payout_details: { details: 'thiago@pix.com' },
+                        created_at: new Date().toISOString(),
+                        affiliate_id: 'aff_1',
+                        profiles: { full_name: 'Thiago Nigro', email: 'thiago@primocast.com.br' }
+                    }
+                ]} />
+            </RegistrySection>
+
+            {/* Custos Operacionais */}
+            <RegistrySection
+                title="Custos Operacionais"
+                icon={DollarSign}
+                subtitle="Gestão de gastos fixos e variáveis da plataforma."
+            >
+                <AdminOperationalCosts 
+                    initialCosts={[
+                        { id: 'c1', description: 'Servidor (AWS)', amount: 150.00, type: 'fixed', created_at: new Date().toISOString() },
+                        { id: 'c2', description: 'Marketing (Meta Ads)', amount: 500.00, type: 'variable', created_at: new Date().toISOString() }
+                    ]}
+                    totalMonthly={650.00}
+                    totalAllTime={15000.00}
+                />
             </RegistrySection>
 
             {/* Gestão de Alunos */}

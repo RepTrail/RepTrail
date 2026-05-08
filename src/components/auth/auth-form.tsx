@@ -1,29 +1,25 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { useRouter } from 'next/navigation'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { Checkbox } from '@/components/ui/checkbox'
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogDescription,
-} from '@/components/ui/dialog'
-import { Alert, AlertDescription } from '@/components/ui/alert'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { ShieldCheck, ArrowRight, User, Users, Megaphone, Eye, EyeOff } from 'lucide-react'
-import { Logo } from '@/components/ui/logo'
-import { useSearchParams } from 'next/navigation'
-import { useEffect } from 'react'
+import { ShieldCheck, FileText } from 'lucide-react'
+import { Logo } from '@/components/store/base/logo'
+import { Modal } from '@/components/store/advanced/modal'
 import { AuthLoadingScreen } from './auth-loading-screen'
 import { fbqEvent } from '@/lib/meta-pixel'
 import { TRAINER_TERMS, STUDENT_TERMS } from '@/lib/terms-content'
+import { cn } from '@/lib/utils'
+
+// New Design System V2 Components
+import { AuthLoginForm } from '@/components/store/sections/auth-login-form'
+import { AuthSignUpForm } from '@/components/store/sections/auth-signup-form'
+import { AuthAffiliateSignUpForm } from '@/components/store/sections/auth-affiliate-signup-form'
+import { Stack } from '@/components/store/base/stack'
+import { Box } from '@/components/store/base/box'
+import { Font } from '@/components/store/base/font'
+import { RegistryContext, RegistryColor } from '@/components/store/advanced/registry-context'
 
 interface AuthFormProps {
     view: 'login' | 'signup'
@@ -41,6 +37,7 @@ export function AuthForm({ view }: AuthFormProps) {
     const [acceptedTerms, setAcceptedTerms] = useState(true)
     const [showTermsDialog, setShowTermsDialog] = useState(false)
     const [error, setError] = useState<string | null>(null)
+    
     const router = useRouter()
     const searchParams = useSearchParams()
     const supabase = createClient()
@@ -79,7 +76,6 @@ export function AuthForm({ view }: AuthFormProps) {
 
         try {
             if (view === 'signup') {
-                // Read referral cookie
                 const affiliateToken = getAffiliateCookie()
                 let referredById: string | null = null
                 if (affiliateToken) {
@@ -102,10 +98,7 @@ export function AuthForm({ view }: AuthFormProps) {
                 })
                 if (error) throw error
 
-                // Guarantee the profile has the correct data — use upsert because the
-                // DB trigger may not have created the row yet when this runs (race condition).
                 if (signUpData?.user?.id) {
-                    // Check for existing placeholder profile with this email
                     const { data: placeholder } = await supabase
                         .from('profiles')
                         .select('id, is_placeholder')
@@ -131,305 +124,173 @@ export function AuthForm({ view }: AuthFormProps) {
                     }
 
                     if (placeholder) {
-                        // 🚀 NEW SECURE MERGE: Call RPC to move all data
-                        // This bypasses FK and PK update issues by moving child rows and deleting the old parent
                         const { error: mergeError } = await supabase.rpc('merge_ghost_data', {
                             new_user_id: signUpData.user.id,
                             user_email: email
                         })
-
-                        if (mergeError) {
-                            console.error('[AUTH] RPC Merge Error:', mergeError)
-                        }
-
-                        // Ensure profile data is updated/inserted for the new ID
+                        if (mergeError) console.error('[AUTH] RPC Merge Error:', mergeError)
                         await supabase.from('profiles').upsert(profileData, { onConflict: 'id' })
                     } else {
-                        await supabase
-                            .from('profiles')
-                            .upsert(profileData, { onConflict: 'id' })
+                        await supabase.from('profiles').upsert(profileData, { onConflict: 'id' })
                     }
                 }
 
-                // Clear affiliate cookie after successful registration
                 if (affiliateToken) {
                     document.cookie = 'rt_affiliate_token=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;'
                 }
 
-                // Fire Meta Pixel Events
                 fbqEvent("CompleteRegistration", { content_name: role, status: "success" });
-                if (role === 'student') {
-                    fbqEvent("StartTrial", { predicted_ltv: 0 });
-                }
+                if (role === 'student') fbqEvent("StartTrial", { predicted_ltv: 0 });
 
-                // Auto-login: Redirect directly to dashboard since email verification is disabled
-                if (role === 'trainer') {
-                    router.push('/dashboard/trainer')
-                } else {
-                    router.push('/dashboard/student')
-                }
+                router.push(role === 'trainer' ? '/dashboard/trainer' : '/dashboard/student')
                 isRedirecting = true
             } else {
-                const { error } = await supabase.auth.signInWithPassword({
-                    email,
-                    password,
-                })
+                const { error } = await supabase.auth.signInWithPassword({ email, password })
                 if (error) throw error
 
                 const { data: { user } } = await supabase.auth.getUser()
                 if (user) {
                     const { data: profile } = await supabase
                         .from('profiles')
-                        .select('role, is_affiliate')
+                        .select('role')
                         .eq('id', user.id)
                         .single()
 
-                    // Use metadata as fallback if DB role is null
                     const effectiveRole = profile?.role || user.user_metadata?.role
 
-                    // Auto-fix: if role missing from DB, write it now
                     if (!profile?.role && user.user_metadata?.role) {
-                        await supabase
-                            .from('profiles')
-                            .update({ role: user.user_metadata.role })
-                            .eq('id', user.id)
+                        await supabase.from('profiles').update({ role: user.user_metadata.role }).eq('id', user.id)
                     }
 
-                    if (effectiveRole === 'trainer') {
-                        router.push('/dashboard/trainer')
-                    } else {
-                        router.push('/dashboard/student')
-                    }
+                    router.push(effectiveRole === 'trainer' ? '/dashboard/trainer' : '/dashboard/student')
                     isRedirecting = true
                 }
             }
         } catch (err: any) {
             setError(err.message)
         } finally {
-            if (!isRedirecting) {
-                setLoading(false)
-            }
+            if (!isRedirecting) setLoading(false)
         }
     }
 
+    // Determine primary color based on context
+    const getPrimaryColor = (): RegistryColor => {
+        if (isAffiliate) return 'amber'
+        if (role === 'trainer') return 'emerald'
+        return 'orange'
+    }
+
+    const primaryColor = getPrimaryColor()
+
     return (
-        <>
-            {loading && <AuthLoadingScreen />}
-            <div className="w-full max-w-[440px] space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-1000" suppressHydrationWarning>
-                <div className="flex flex-col items-center text-center space-y-2" suppressHydrationWarning>
+        <RegistryContext.Provider value={{
+            primaryColor,
+            activeTab: view,
+            setActiveTab: () => {},
+            activeSection: 'auth',
+            setActiveSection: () => {},
+            isSidebarOpen: false,
+            setIsSidebarOpen: () => {}
+        }}>
+            <Stack gap={5} width="full" className="max-w-[440px] animate-in fade-in slide-in-from-bottom-4 duration-1000 relative z-10">
+                {/* Dynamic Background Effects */}
+                <div className="fixed inset-0 pointer-events-none z-[-1] overflow-hidden">
+                    <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(to_bottom,white_0%,transparent_90%)] opacity-[0.1]" />
+                    <div className={cn(
+                        "absolute -top-[10%] -right-[5%] w-[60%] h-[60%] rounded-full blur-[120px] transition-colors duration-1000",
+                        primaryColor === 'emerald' && "bg-emerald-500/10",
+                        primaryColor === 'orange' && "bg-orange-500/10",
+                        primaryColor === 'amber' && "bg-amber-500/10",
+                        primaryColor === 'blue' && "bg-blue-500/10",
+                        primaryColor === 'red' && "bg-red-500/10"
+                    )} />
+                    <div className={cn(
+                        "absolute bottom-[10%] left-[20%] w-[400px] h-[400px] rounded-full blur-[150px] transition-colors duration-1000",
+                        primaryColor === 'emerald' && "bg-emerald-500/5",
+                        primaryColor === 'orange' && "bg-orange-500/5",
+                        primaryColor === 'amber' && "bg-amber-500/5",
+                        primaryColor === 'blue' && "bg-blue-500/5",
+                        primaryColor === 'red' && "bg-red-500/5"
+                    )} />
+                </div>
+
+                {loading && <AuthLoadingScreen />}
+                
+                <Box display="flex" align="center" justify="center" className="mb-5">
                     <Link href="/">
-                        <Logo size="lg" className="mb-4" />
+                        <Logo size="md" color={primaryColor as any} />
                     </Link>
-                    <h1 className="text-2xl font-black text-white tracking-tight italic uppercase">
-                        {view === 'login' ? 'Bem-vindo de volta' : 'Comece sua jornada'}
-                    </h1>
-                    <h2 className="sr-only">Formulário de Autenticação</h2>
-                    <p className="text-zinc-500 text-sm font-medium uppercase tracking-widest">
-                        {view === 'login' ? 'Acesse sua conta para treinar' : 'Crie sua conta em segundos'}
-                    </p>
-                </div>
+                </Box>
 
-                <Card className="bg-zinc-900 border-zinc-800 shadow-2xl rounded-3xl overflow-hidden border-t-zinc-700/50" suppressHydrationWarning>
-                    <CardContent className="p-8" suppressHydrationWarning>
-                        <form onSubmit={handleSubmit} className="space-y-5">
-                            {error && (
-                                <Alert className="bg-red-500/10 border-red-500/20 text-red-500 rounded-2xl px-4">
-                                    <AlertDescription className="text-xs font-bold uppercase tracking-wide">{error}</AlertDescription>
-                                </Alert>
-                            )}
+                {view === 'login' ? (
+                    <AuthLoginForm 
+                        email={email}
+                        setEmail={setEmail}
+                        password={password}
+                        setPassword={setPassword}
+                        showPassword={showPassword}
+                        setShowPassword={setShowPassword}
+                        onSubmit={handleSubmit}
+                        loading={loading}
+                        error={error}
+                    />
+                ) : (
+                    isAffiliate ? (
+                        <AuthAffiliateSignUpForm 
+                            loading={loading}
+                            error={error}
+                            onSignUp={handleSubmit}
+                            email={email}
+                            setEmail={setEmail}
+                            password={password}
+                            setPassword={setPassword}
+                            fullName={fullName}
+                            setFullName={setFullName}
+                            whatsapp={whatsapp}
+                            setWhatsapp={setWhatsapp}
+                        />
+                    ) : (
+                        <AuthSignUpForm 
+                            fullName={fullName}
+                            setFullName={setFullName}
+                            email={email}
+                            setEmail={setEmail}
+                            whatsapp={whatsapp}
+                            setWhatsapp={setWhatsapp}
+                            password={password}
+                            setPassword={setPassword}
+                            role={role}
+                            setRole={setRole as any}
+                            acceptedTerms={acceptedTerms}
+                            setAcceptedTerms={setAcceptedTerms}
+                            onShowTerms={() => setShowTermsDialog(true)}
+                            onSubmit={handleSubmit}
+                            loading={loading}
+                            error={error}
+                        />
+                    )
+                )}
 
-                            <div className="space-y-2">
-                                <Label htmlFor="email" className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Email Profissional</Label>
-                                <Input
-                                    id="email"
-                                    type="email"
-                                    placeholder="exemplo@email.com"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    required
-                                    className="bg-zinc-950 border-zinc-800 text-white rounded-xl h-12 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
-                                />
-                            </div>
-
-                            <div className="space-y-2">
-                                <div className="flex items-center justify-between px-1">
-                                    <Label htmlFor="password" title="Senha" className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Senha de Acesso</Label>
-                                    {view === 'login' && (
-                                        <Link href="/auth/forgot-password" className="text-[10px] font-black text-emerald-500 uppercase tracking-widest hover:text-emerald-400">
-                                            Esqueci a senha
-                                        </Link>
-                                    )}
-                                </div>
-                                <div className="relative group">
-                                    <Input
-                                        id="password"
-                                        type={showPassword ? "text" : "password"}
-                                        placeholder="••••••••"
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
-                                        required
-                                        className="bg-zinc-950 border-zinc-800 text-white rounded-xl h-12 pr-12 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition-colors"
-                                    >
-                                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                                    </button>
-                                </div>
-                            </div>
-
-                            {view === 'signup' && (
-                                <>
-                                    <div className="space-y-2">
-                                        <Label htmlFor="fullName" className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Nome Completo</Label>
-                                        <Input
-                                            id="fullName"
-                                            placeholder="Como devemos te chamar?"
-                                            value={fullName}
-                                            onChange={(e) => setFullName(e.target.value)}
-                                            required
-                                            className="bg-zinc-950 border-zinc-800 text-white rounded-xl h-12 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
-                                        />
-                                    </div>
-
-                                    <div className="space-y-2">
-                                        <Label htmlFor="whatsapp" className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">WhatsApp</Label>
-                                        <Input
-                                            id="whatsapp"
-                                            placeholder="Ex: 11 99999-9999"
-                                            value={whatsapp}
-                                            onChange={(e) => setWhatsapp(e.target.value)}
-                                            required
-                                            className="bg-zinc-950 border-zinc-800 text-white rounded-xl h-12 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
-                                        />
-                                    </div>
-
-                                    <div className="space-y-2">
-                                        <Label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Tipo de Perfil</Label>
-                                        <div className="grid grid-cols-2 gap-3">
-                                            <button
-                                                type="button"
-                                                onClick={() => setRole('student')}
-                                                className={`flex items-center justify-center gap-2 h-12 rounded-xl border transition-all font-bold text-xs uppercase tracking-widest ${role === 'student' ? 'bg-emerald-500 border-emerald-500 text-zinc-950' : 'bg-zinc-950 border-zinc-800 text-zinc-500 hover:border-zinc-700'}`}
-                                            >
-                                                <User className="w-4 h-4" /> Aluno
-                                            </button>
-                                            <button
-                                                type="button"
-                                                onClick={() => setRole('trainer')}
-                                                className={`flex items-center justify-center gap-2 h-12 rounded-xl border transition-all font-bold text-xs uppercase tracking-widest ${role === 'trainer' ? 'bg-emerald-500 border-emerald-500 text-zinc-950' : 'bg-zinc-950 border-zinc-800 text-zinc-500 hover:border-zinc-700'}`}
-                                            >
-                                                <Users className="w-4 h-4" /> Personal
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-center gap-3 py-2">
-                                        <Checkbox 
-                                            id="terms" 
-                                            checked={acceptedTerms}
-                                            onCheckedChange={(v) => setAcceptedTerms(!!v)}
-                                            className="border-zinc-700 data-[state=checked]:bg-emerald-500 data-[state=checked]:border-emerald-500"
-                                        />
-                                        <label htmlFor="terms" className="text-[10px] font-medium text-zinc-500 leading-none uppercase tracking-widest cursor-pointer">
-                                            Ao criar sua conta você aceita nossos{' '}
-                                            <button 
-                                                type="button" 
-                                                onClick={() => setShowTermsDialog(true)}
-                                                className="text-emerald-500 hover:text-emerald-400 underline underline-offset-2"
-                                            >
-                                                termos de uso
-                                            </button>
-                                        </label>
-                                    </div>
-
-                                    {/* Affiliate option */}
-                                    <button
-                                        type="button"
-                                        onClick={() => setIsAffiliate(!isAffiliate)}
-                                        className={`w-full flex items-center justify-between h-12 px-5 rounded-xl border transition-all ${isAffiliate ? 'bg-amber-500/10 border-amber-500/50 text-amber-400' : 'bg-zinc-950 border-zinc-800 text-zinc-500 hover:border-zinc-700'}`}
-                                    >
-                                        <span className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest">
-                                            <Megaphone className="w-4 h-4" />
-                                            Quero ser afiliado
-                                        </span>
-                                        <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md ${isAffiliate ? 'bg-amber-500 text-zinc-950' : 'bg-zinc-800 text-zinc-500'}`}>
-                                            {isAffiliate ? 'Ativo' : 'Opcional'}
-                                        </span>
-                                    </button>
-                                    {isAffiliate && (
-                                        <p className="text-[10px] text-amber-500/70 text-center font-medium px-2">
-                                            Ganhe 10% de comissão por cada personal que você indicar 🚀
-                                        </p>
-                                    )}
-                                </>
-                            )}
-
-                            <Button
-                                type="submit"
-                                className="w-full h-12 bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-black uppercase tracking-[0.1em] rounded-xl shadow-lg shadow-emerald-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] mt-4"
-                                disabled={loading}
-                            >
-                                {loading ? (
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-4 h-4 border-2 border-zinc-950 border-t-transparent rounded-full animate-spin" />
-                                        Processando...
-                                    </div>
-                                ) : (
-                                    <span className="flex items-center gap-2">
-                                        {view === 'login' ? 'Entrar Agora' : 'Criar minha conta'}
-                                        <ArrowRight className="w-4 h-4" />
-                                    </span>
-                                )}
-                            </Button>
-                        </form>
-                    </CardContent>
-                    <CardFooter className="bg-zinc-950/50 border-t border-zinc-800 p-6 flex justify-center">
-                        <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
-                            {view === 'login' ? 'Ainda não é membro? ' : 'Já possui uma conta? '}
-                            <Link
-                                href={view === 'login' ? '/auth/signup' : '/auth/login'}
-                                className="text-emerald-500 hover:text-emerald-400 transition-colors underline underline-offset-4"
-                            >
-                                {view === 'login' ? 'Cadastre-se grátis' : 'Fazer login'}
-                            </Link>
-                        </p>
-                    </CardFooter>
-                </Card>
-
-                <div className="flex items-center justify-center gap-2 text-zinc-600">
+                <Box display="flex" align="center" justify="center" gap={2.5} className="text-zinc-600">
                     <ShieldCheck className="w-4 h-4" />
-                    <span className="text-[10px] font-black uppercase tracking-widest">Acesso Seguro & Criptografado</span>
-                </div>
-            </div>
+                    <Font variant="sub-tiny" weight="black" uppercase tracking="widest">Acesso Seguro & Criptografado</Font>
+                </Box>
 
-            <Dialog open={showTermsDialog} onOpenChange={setShowTermsDialog}>
-                <DialogContent className="max-w-xl">
-                    <DialogHeader>
-                        <DialogTitle className="text-xl font-black text-white uppercase tracking-tight">
-                            Termos de Uso - {role === 'trainer' ? 'Personal' : 'Aluno'}
-                        </DialogTitle>
-                        <DialogDescription className="text-zinc-400 text-left leading-relaxed">
-                            Leia atentamente os termos da plataforma RepTrail.
-                        </DialogDescription>
-                    </DialogHeader>
-
-                    <div className="max-h-[50vh] overflow-y-auto rounded-xl bg-zinc-950 border border-zinc-800 p-6 text-sm text-zinc-300 whitespace-pre-wrap leading-relaxed [&>h3]:text-white [&>h3]:mt-4 [&>h3]:mb-2 [&>strong]:text-white">
+                <Modal 
+                    isOpen={showTermsDialog} 
+                    onClose={() => setShowTermsDialog(false)}
+                    title={`Termos de Uso - ${role === 'trainer' ? 'Personal' : 'Aluno'}`}
+                    subtitle="Leia atentamente os termos da plataforma RepTrail."
+                    icon={FileText}
+                    variant={primaryColor as any}
+                    confirmLabel="Entendi"
+                    cancelLabel="Fechar"
+                >
+                    <div className="max-h-[50vh] overflow-y-auto rounded-xl bg-zinc-950 border border-zinc-900 p-6 text-[13px] text-zinc-400 whitespace-pre-wrap leading-relaxed [&>h3]:text-white [&>h3]:mt-6 [&>h3]:mb-3 [&>h3]:font-black [&>h3]:uppercase [&>h3]:tracking-widest [&>strong]:text-white">
                         {role === 'trainer' ? TRAINER_TERMS : STUDENT_TERMS}
                     </div>
-
-                    <div className="flex justify-end pt-4">
-                        <Button 
-                            onClick={() => setShowTermsDialog(false)}
-                            className="bg-zinc-800 hover:bg-zinc-700 text-white font-bold uppercase tracking-widest text-xs h-10 px-6 rounded-xl"
-                        >
-                            Fechar
-                        </Button>
-                    </div>
-                </DialogContent>
-            </Dialog>
-        </>
+                </Modal>
+            </Stack>
+        </RegistryContext.Provider>
     )
 }

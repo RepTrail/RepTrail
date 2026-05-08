@@ -42,7 +42,10 @@ export function FormCheckbox({
             <button
                 type="button"
                 onClick={handleToggle}
-                className="flex items-start gap-3 group cursor-pointer"
+                className={cn(
+                    "flex items-start group cursor-pointer",
+                    (label || description) && "gap-2.5"
+                )}
             >
                 {/* Checkbox Box */}
                 <div className={cn(
@@ -60,19 +63,21 @@ export function FormCheckbox({
                 </div>
 
                 {/* Label & Description */}
-                <div className="flex flex-col gap-0.5 text-left">
-                    <span className={cn(
-                        'text-[11px] font-black uppercase tracking-widest transition-colors',
-                        isChecked ? 'text-white' : 'text-zinc-400 group-hover:text-zinc-200'
-                    )}>
-                        {label}
-                    </span>
-                    {description && (
-                        <span className="text-[10px] text-zinc-600 normal-case font-normal tracking-normal leading-relaxed">
-                            {description}
+                {(label || description) && (
+                    <div className="flex flex-col gap-0.5 text-left">
+                        <span className={cn(
+                            'text-[11px] font-black uppercase tracking-widest transition-colors',
+                            isChecked ? 'text-white' : 'text-zinc-400 group-hover:text-zinc-200'
+                        )}>
+                            {label}
                         </span>
-                    )}
-                </div>
+                        {description && (
+                            <span className="text-[10px] text-zinc-600 normal-case font-normal tracking-normal leading-relaxed">
+                                {description}
+                            </span>
+                        )}
+                    </div>
+                )}
             </button>
 
             {error && (

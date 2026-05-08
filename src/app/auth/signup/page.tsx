@@ -23,7 +23,8 @@ export default function SignupPage() {
             <noscript>
                 <img height="1" width="1" style={{display: 'none'}} src="https://www.facebook.com/tr?id=795120573646319&ev=PageView&noscript=1" />
             </noscript>
-            <div className="flex min-h-screen w-full items-center justify-center bg-zinc-950 p-4">
+            
+            <div className="relative flex min-h-screen w-full items-center justify-center bg-zinc-950 p-4 overflow-hidden">
                 <Suspense fallback={<AuthFormSkeleton />}>
                     <AuthForm view="signup" />
                 </Suspense>

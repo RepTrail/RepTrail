@@ -20,6 +20,7 @@ interface UserListItemProps {
     initials: string
     isActionActive?: boolean
     avatarVariant?: 'orange' | 'emerald' | 'red' | 'blue' | 'amber' | 'zinc'
+    avatarUrl?: string | null
     onInspect?: () => void
     onAction?: () => void
     onDelete?: () => void
@@ -34,6 +35,7 @@ export function UserListItem({
     initials,
     isActionActive = false,
     avatarVariant = 'zinc',
+    avatarUrl,
     onInspect,
     onAction,
     onDelete
@@ -67,7 +69,7 @@ export function UserListItem({
                 <div className="flex-1 flex flex-col justify-center lg:flex-row lg:items-center lg:justify-between p-5 gap-5">
                     {/* Identity Block */}
                     <Inline gap={5} align="center">
-                        <BaseAvatar initials={initials} variant={avatarVariant} size="md" />
+                        <BaseAvatar src={avatarUrl || undefined} initials={initials} variant={avatarVariant} size="md" />
                         <Stack gap={0}>
                             <Font weight="black" uppercase italic color="white" className="text-sm md:text-base tracking-wider">{name}</Font>
                             <Font variant="sub-tiny" color="zinc-600" className="lowercase truncate max-w-[150px] md:max-w-none">{email}</Font>

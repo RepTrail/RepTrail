@@ -57,8 +57,8 @@ export function Font({
 }: FontProps) {
   
   const variantClasses = {
-    h1: 'text-4xl md:text-5xl font-black tracking-tighter uppercase italic',
-    h2: 'text-3xl md:text-4xl font-black tracking-tight uppercase italic',
+    h1: 'text-3xl md:text-5xl font-black tracking-tighter uppercase italic',
+    h2: 'text-2xl md:text-4xl font-black tracking-tight uppercase italic',
     heading: 'text-xl md:text-2xl font-bold tracking-tight',
     description: 'text-base md:text-lg text-zinc-400 leading-relaxed',
     body: 'text-sm md:text-base leading-relaxed',

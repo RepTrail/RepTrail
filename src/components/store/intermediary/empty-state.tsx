@@ -6,7 +6,6 @@ import { Font } from '../base/font'
 import { IconBox } from '../base/icon'
 import { Surface } from '../base/surface'
 import { LucideIcon } from 'lucide-react'
-import { useRegistry } from '@/components/store/advanced/registry-context'
 
 interface EmptyStateProps {
   icon: LucideIcon
@@ -19,10 +18,8 @@ export function EmptyState({
   icon, 
   title, 
   description,
-  variant: propVariant
+  variant = 'zinc'
 }: EmptyStateProps) {
-  const { primaryColor } = useRegistry()
-  const variant = propVariant || primaryColor
   
   return (
     <Surface 

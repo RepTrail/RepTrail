@@ -9,6 +9,7 @@ import { LayoutSpacingContent } from '@/components/store/sections/layout-spacing
 import { ComponentsRegistryContent } from '@/components/store/sections/components-registry-content'
 import { ColorsSectionContent } from '@/components/store/sections/colors-section-content'
 import { AdminSectionContent } from '@/components/store/sections/admin-section-content'
+import { AuthSectionsContent } from '@/components/store/sections/auth-sections-content'
 import { Zap } from 'lucide-react'
 
 export default function DesignSystemPage() {
@@ -21,6 +22,7 @@ export default function DesignSystemPage() {
             >
                 <BrandingSectionContent id="branding" />
                 <ColorsSectionContent id="colors" />
+                <AuthSectionsContent id="auth" />
                 
                 <TypographyContent id="typography" />
                 <ComponentsRegistryContent id="components" />

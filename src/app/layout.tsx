@@ -4,7 +4,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { PWAClient } from "@/components/layout/pwa-client";
 import { SplashManager } from "@/components/layout/splash-manager";
-import { ImpersonationBar } from "@/components/feature/admin/impersonation-bar";
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -74,7 +74,6 @@ export default function RootLayout({
         data-scroll-behavior="smooth"
       >
         <ShineManager />
-        <ImpersonationBar />
         <NextTopLoader color="#f97316" showSpinner={false} shadow="0 0 10px #f97316,0 0 5px #f97316" zIndex={1600} />
         <FacebookPixel />
         <QueryProvider>

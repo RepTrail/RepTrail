@@ -77,7 +77,6 @@ export default async function TrainerLayout({ children }: { children: React.Reac
         { href: '/dashboard/trainer/loja',       label: 'Loja',         icon: 'ShoppingBag' },
         { href: '/dashboard/trainer/plans',      label: 'Faturamento',  icon: 'CreditCard' },
         { href: '/dashboard/trainer/ranking',    label: 'Ranking',      icon: 'Trophy' },
-        { href: '/dashboard/trainer/profile',    label: 'Meu Perfil',   icon: 'User' },
     ]
 
     const mobileLinks = [
@@ -85,7 +84,6 @@ export default async function TrainerLayout({ children }: { children: React.Reac
         { href: '/dashboard/trainer/students',   label: 'Alunos',  icon: 'Users' },
         { href: '/dashboard/trainer/loja',       label: 'Loja',    icon: 'ShoppingBag' },
         { href: '/dashboard/trainer/ranking',    label: 'Ranking', icon: 'Trophy' },
-        { href: '/dashboard/trainer/profile',    label: 'Perfil',  icon: 'User' },
     ]
 
     return (
@@ -96,6 +94,7 @@ export default async function TrainerLayout({ children }: { children: React.Reac
                 color="emerald"
                 links={links}
                 mobileLinks={mobileLinks}
+                profileHref="/dashboard/trainer/profile"
                 user={{ id: userId, name: profile?.full_name, email: (profile as any)?.email, avatar_url: profile?.avatar_url }}
             >
                 {children}

@@ -50,6 +50,16 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL('/auth/login', request.url))
     }
 
+    // Protect /admin routes
+    if (request.nextUrl.pathname.startsWith('/admin') && !user) {
+        return NextResponse.redirect(new URL('/auth/login', request.url))
+    }
+
+    // Redirect /admin (exact) to /admin/dashboard
+    if (request.nextUrl.pathname === '/admin') {
+        return NextResponse.redirect(new URL('/admin/dashboard', request.url))
+    }
+
     // Redirect authenticated users away from /auth
     if (request.nextUrl.pathname.startsWith('/auth') && user) {
         return NextResponse.redirect(new URL('/dashboard', request.url))

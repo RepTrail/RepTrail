@@ -83,7 +83,6 @@ async function StudentLayoutLoader({ userId, children }: { userId: string; child
         { href: '/dashboard/student/ranking',      label: 'Ranking',        icon: 'Trophy' },
         { href: '/dashboard/student/loja',         label: 'Loja',           icon: 'ShoppingBag' },
         { href: '/dashboard/student/meu-personal', label: 'Meu Personal',   icon: 'UserCheck',     hidden: !hasTrainer },
-        { href: '/dashboard/student/profile',      label: 'Meu Perfil',     icon: 'User' },
     ]
 
     const mobileLinks = [
@@ -91,7 +90,6 @@ async function StudentLayoutLoader({ userId, children }: { userId: string; child
         { href: '/dashboard/student/workouts',     label: 'Treinos', icon: 'Dumbbell',   hidden: !hasPlan },
         { href: '/dashboard/student/cardio',       label: 'Cardio',  icon: 'Activity',   hidden: !hasPlan },
         { href: '/dashboard/student/loja',         label: 'Loja',    icon: 'ShoppingBag' },
-        { href: '/dashboard/student/profile',      label: 'Perfil',  icon: 'User' },
     ]
 
     return (
@@ -100,6 +98,7 @@ async function StudentLayoutLoader({ userId, children }: { userId: string; child
                 color="orange"
                 links={allLinks}
                 mobileLinks={mobileLinks}
+                profileHref="/dashboard/student/profile"
                 user={{ id: userId, name: p?.full_name, email: (p as any)?.email, avatar_url: p?.avatar_url }}
             >
                 {children}

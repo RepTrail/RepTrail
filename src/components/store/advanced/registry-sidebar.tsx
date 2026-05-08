@@ -11,15 +11,29 @@ import { useRegistry } from '@/components/store/advanced/registry-context'
 import { Sidebar, Divider } from '../base/layout'
 import { cn } from '@/lib/utils'
 
-export function RegistrySidebar({ onOpenSettings }: { onOpenSettings?: () => void }) {
+interface SidebarSection {
+  id: string
+  label: string
+  icon: any
+}
+
+export function RegistrySidebar({ 
+  onOpenSettings,
+  sections: externalSections
+}: { 
+  onOpenSettings?: () => void,
+  sections?: SidebarSection[]
+}) {
   const { primaryColor, activeSection, setActiveSection, isSidebarOpen, setIsSidebarOpen } = useRegistry()
 
-  const sections = [
+  const defaultSections = [
     { id: 'branding', label: 'Branding', icon: Zap },
     { id: 'colors', label: 'Colors & Identity', icon: Activity },
     { id: 'typography', label: 'Typography', icon: Users },
     { id: 'components', label: 'Real Components', icon: Dumbbell },
   ]
+
+  const sections = externalSections || defaultSections
 
   const scrollToSection = (id: string) => {
     setActiveSection(id)
@@ -46,11 +60,12 @@ export function RegistrySidebar({ onOpenSettings }: { onOpenSettings?: () => voi
         isSidebarOpen ? "translate-x-0" : "translate-x-full" // Drawer on mobile from right
       )}>
         <Box
+          fullWidth
           flex1
           display="flex"
           direction="col"
           fullHeight
-          className="bg-gradient-to-br from-white/[0.05] to-white/[0.02] backdrop-blur-md border-l border-white/5"
+          className="bg-zinc-950/40 backdrop-blur-md border-l lg:border-l-0 lg:border-r border-white/5"
         >
           {/* Top Content (Padded) */}
           <Box flex1 padding={5} display="flex" direction="col" overflow="hidden" position="relative">
@@ -67,8 +82,8 @@ export function RegistrySidebar({ onOpenSettings }: { onOpenSettings?: () => voi
                 <Logo size="md" color={primaryColor as any} />
               </Box>
 
-              <Box as="nav" flex1 overflow="auto" noScrollbar>
-                <Stack gap={2.5}>
+              <Box as="nav" flex1 fullWidth overflow="auto" noScrollbar>
+                <Stack gap={2.5} fullWidth>
                   {sections.map((section) => (
                     <SidebarItem
                       key={section.id}
