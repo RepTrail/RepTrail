@@ -2,7 +2,7 @@ import React from 'react'
 import { Stack } from '../base/stack'
 import { Font } from '../base/font'
 import { Icon } from '../base/icon'
-import { ActionSurface } from '../base/surface'
+import { GlassPanel } from '../base/surface'
 import { Box } from '../base/box'
 import { LucideIcon } from 'lucide-react'
 
@@ -34,12 +34,10 @@ export function StatsCard({
     }
 
     return (
-        <ActionSurface padding={5} group>
-            <Stack gap={5}>
+        <GlassPanel padding={5} group>
+            <Stack gap={5} align="start">
                 {/* Icon Header */}
                 <Box 
-                    width="auto" 
-                    height="auto" 
                     padding={2.5} 
                     rounded="system" 
                     className={colorMap[color]}
@@ -48,7 +46,7 @@ export function StatsCard({
                 </Box>
 
                 {/* Content Body */}
-                <Stack gap={1}>
+                <Stack gap={1} fullWidth align="stretch">
                     <Font 
                         variant="sub-tiny" 
                         weight="black" 
@@ -80,6 +78,6 @@ export function StatsCard({
                     )}
                 </Stack>
             </Stack>
-        </ActionSurface>
+        </GlassPanel>
     )
 }

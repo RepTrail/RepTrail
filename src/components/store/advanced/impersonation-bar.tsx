@@ -10,6 +10,7 @@ import { Inline } from '@/components/store/base/layout'
 import { Font } from '@/components/store/base/font'
 import { Icon } from '@/components/store/base/icon'
 import { Badge } from '@/components/store/base/badge'
+import { Surface } from '@/components/store/base/surface'
 import { RegistryColor } from './registry-context'
 
 export function ImpersonationBar({ color }: { color?: RegistryColor }) {
@@ -52,13 +53,15 @@ export function ImpersonationBar({ color }: { color?: RegistryColor }) {
     const safeIconColor = primaryColor === 'zinc' ? 'zinc-400' : primaryColor
 
     return (
-        <Box position="relative" fullWidth className="z-50">
-            <Box 
-                className={`bg-zinc-950/40 border border-${primaryColor}-500/30 shadow-2xl backdrop-blur-xl w-full rounded-full px-5 py-2.5`}
+        <Box position="relative" fullWidth style={{ zIndex: 50 }}>
+            <Surface 
+                variant={`tonal-${primaryColor}` as any}
+                rounded="full" 
+                padding={5}
             >
                 <Inline justify="between" align="center" gap={5}>
                     <Inline gap={5} align="center">
-                        <Badge 
+                        <Badge
                             label="Modo Inspeção Ativo"
                             icon={ShieldAlert}
                             variant="glass"
@@ -89,7 +92,7 @@ export function ImpersonationBar({ color }: { color?: RegistryColor }) {
                         </Inline>
                     </Button>
                 </Inline>
-            </Box>
+            </Surface>
         </Box>
     )
 }
