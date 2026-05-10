@@ -46,12 +46,13 @@ export default function AdminPersonaisPage() {
         }
     })
 
-    async function handleEliteToggle(userId: string, current: boolean) {
+    async function handleOnDemandToggle(userId: string, currentTier: string) {
         startTransition(async () => {
-            const res = await toggleEliteStatus(userId, !current)
+            const newTier = currentTier === 'on_demand' ? 'free' : 'on_demand'
+            const res = await updateUserPlanTier(userId, newTier)
             if (res.error) toast({ variant: 'destructive', title: 'Erro', description: res.error })
             else {
-                toast({ title: !current ? 'Elite ativado!' : 'Elite removido' })
+                toast({ title: newTier === 'on_demand' ? 'Plano On-Demand ativado!' : 'Plano removido' })
                 queryClient.invalidateQueries({ queryKey: QUERY_KEYS.admin.trainers })
             }
         })
@@ -119,13 +120,13 @@ export default function AdminPersonaisPage() {
                             email={trainer.email || ''}
                             registrationDate={new Date(trainer.created_at).toLocaleDateString('pt-BR')}
                             role="personal"
-                            roleLabel="PERSONAL TRAINER"
+                            roleLabel={trainer.students ? `${trainer.students.length} ALUNO${trainer.students.length !== 1 ? 'S' : ''}` : "0 ALUNOS"}
                             initials={(trainer.full_name || '??').substring(0, 2).toUpperCase()}
                             avatarVariant="orange"
                             avatarUrl={trainer.avatar_url}
                             onInspect={() => handleImpersonate(trainer.id)}
-                            onAction={() => handleEliteToggle(trainer.id, trainer.is_elite)}
-                            isActionActive={trainer.is_elite}
+                            onAction={() => handleOnDemandToggle(trainer.id, trainer.plan_tier || 'free')}
+                            isActionActive={trainer.plan_tier === 'on_demand'}
                             onDelete={() => handleDeleteUser(trainer.id, trainer.full_name || trainer.email)}
                         />
                     ))}

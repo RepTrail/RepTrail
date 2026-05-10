@@ -143,7 +143,7 @@ export function AdminSectionContent({ id }: { id?: string }) {
                         email="marcos@reptrail.com.br"
                         registrationDate="08/05/2024"
                         role="personal"
-                        roleLabel="PERSONAL TRAINER"
+                        roleLabel="12 ALUNOS"
                         initials="MV"
                         avatarVariant="orange"
                         onDelete={() => openModal('delete', 'Marcos Vinicius', 'user')}
@@ -156,7 +156,7 @@ export function AdminSectionContent({ id }: { id?: string }) {
                         email="juliana.silva@gmail.com"
                         registrationDate="12/11/2023"
                         role="personal"
-                        roleLabel="PERSONAL TRAINER"
+                        roleLabel="5 ALUNOS"
                         initials="JS"
                         avatarVariant="amber"
                         onDelete={() => openModal('delete', 'Juliana Silva', 'user')}
