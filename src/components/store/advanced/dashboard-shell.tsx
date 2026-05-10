@@ -100,14 +100,14 @@ export function DashboardShell({ children, color, links, mobileLinks, user, prof
             position="relative"
         >
             {/* Background Grid */}
-            <div className="fixed inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(to_bottom,white_0%,transparent_90%)] opacity-[0.22] pointer-events-none z-0" />
+            <Box className="fixed inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(to_bottom,white_0%,transparent_90%)] opacity-[0.22] pointer-events-none z-0" />
 
             {/* Background Orbs */}
-            <div className={cn(
+            <Box className={cn(
                 'fixed -top-[10%] -right-[5%] w-[60%] h-[60%] rounded-full blur-[150px] pointer-events-none transition-colors duration-1000 z-0',
                 `bg-gradient-to-br ${lightColorMap[color]} to-transparent`
             )} />
-            <div className={cn(
+            <Box className={cn(
                 'fixed bottom-[10%] left-[20%] w-[500px] h-[500px] rounded-full blur-[180px] animate-pulse pointer-events-none transition-colors duration-1000 z-0',
                 orbColorMap[color]
             )} />
@@ -133,14 +133,14 @@ export function DashboardShell({ children, color, links, mobileLinks, user, prof
             <DashboardBottomNav color={color} links={bottomLinks} />
 
             {/* Main Content */}
-            <main className="flex-1 w-full lg:pl-72 transition-all duration-300 relative z-10">
-                <div className="pt-[100px] lg:pt-5 p-5 pb-28 lg:pb-10">
-                    <div className="mb-5">
+            <Box as="main" flex1 fullWidth transition position="relative" className="lg:pl-72 z-10">
+                <Box padding={5} className="pt-[100px] lg:pt-5 pb-28 lg:pb-10">
+                    <Box className="mb-5">
                         <ImpersonationBar color={color} />
-                    </div>
+                    </Box>
                     {children}
-                </div>
-            </main>
+                </Box>
+            </Box>
         </Box>
     )
 }

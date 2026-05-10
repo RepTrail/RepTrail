@@ -12,6 +12,7 @@ import { AdminPageShell } from '@/components/store/advanced/admin-page-shell'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { Modal } from '@/components/store/advanced/modal'
 import { Stack } from '@/components/store/base/stack'
+import { Box } from '@/components/store/base/box'
 import { Font } from '@/components/store/base/font'
 import { Grid } from '@/components/store/base/grid'
 import { Button } from '@/components/store/base/button'
@@ -100,23 +101,29 @@ export default function AdminLojaPage() {
             >
                 <Stack gap={10}>
                     {/* Toolbar */}
-                    <div className="flex items-center gap-4">
-                        <Input 
-                            value={search}
-                            onChange={e => setSearch(e.target.value)}
-                            placeholder="Buscar produto..."
-                            icon={<Search size={16} />}
-                            rounded="full"
-                            flex1
-                        />
+                    <Stack direction="row" align="center" gap={5}>
+                        <Box flex1>
+                            <Input 
+                                value={search}
+                                onChange={e => setSearch(e.target.value)}
+                                placeholder="Buscar produto..."
+                                icon={<Search size={16} />}
+                                rounded="full"
+                            />
+                        </Box>
                         <Button
                             onClick={() => { setEditingProduct(null); setProductModalOpen(true) }}
-                            className="h-12 px-6 rounded-2xl bg-white hover:bg-zinc-200 text-zinc-950 font-black uppercase italic tracking-wide shrink-0"
+                            variant="white"
+                            size="lg"
+                            rounded="full"
+                            shrink={0}
                         >
-                            <Plus className="w-4 h-4 sm:mr-2" />
-                            <span className="hidden sm:inline">Novo Produto</span>
+                            <Stack direction="row" align="center" gap={2.5}>
+                                <Plus className="w-4 h-4" />
+                                <Box display={{base: 'none', md: 'block'}}>Novo Produto</Box>
+                            </Stack>
                         </Button>
-                    </div>
+                    </Stack>
 
                     {isLoading && <EmptyState icon={ShoppingBag} title="Carregando..." description="Buscando produtos da loja." />}
 

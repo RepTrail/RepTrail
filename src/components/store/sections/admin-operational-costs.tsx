@@ -8,6 +8,8 @@ import { Font } from '../base/font'
 import { Icon } from '../base/icon'
 import { Button } from '../base/button'
 import { Input } from '../base/input'
+import { Grid } from '../base/grid'
+import { Badge } from '../base/badge'
 import { FormSelect } from '../base/form-select'
 import { Modal } from '../advanced/modal'
 import { addOperationalCost, deleteOperationalCost } from '@/actions/admin-actions'
@@ -119,68 +121,59 @@ export function AdminOperationalCosts({ initialCosts, totalMonthly, totalAllTime
                 </Stack>
             </Stack>
 
-            {/* Tabela de Custos */}
+            {/* Listagem de Custos */}
             <Box rounded="system" className="bg-zinc-900/20 border border-zinc-800 overflow-hidden">
-                <div className="w-full overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
-                        <thead className="bg-zinc-950/50 border-b border-zinc-800">
-                            <tr>
-                                <th className="px-6 py-4"><Font variant="label-caps" color="zinc-500">Descrição</Font></th>
-                                <th className="px-6 py-4"><Font variant="label-caps" color="zinc-500">Tipo</Font></th>
-                                <th className="px-6 py-4"><Font variant="label-caps" color="zinc-500">Data</Font></th>
-                                <th className="px-6 py-4 text-right"><Font variant="label-caps" color="zinc-500">Valor</Font></th>
-                                <th className="px-6 py-4 text-right"><Font variant="label-caps" color="zinc-500">Ações</Font></th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-zinc-800/50">
-                            {costs.length === 0 ? (
-                                <tr>
-                                    <td colSpan={5} className="p-0">
-                                        <EmptyState 
-                                            icon={TrendingDown} 
-                                            title="Sem Custos" 
-                                            description="Nenhum custo operacional registrado este mês." 
+                {/* Header da Tabela */}
+                <Box padding={5} className="bg-zinc-950/50 border-b border-zinc-800">
+                    <Grid columns={5} gap={5}>
+                        <Box><Font variant="label-caps" color="zinc-500">Descrição</Font></Box>
+                        <Box><Font variant="label-caps" color="zinc-500">Tipo</Font></Box>
+                        <Box><Font variant="label-caps" color="zinc-500">Data</Font></Box>
+                        <Box align="end"><Font variant="label-caps" color="zinc-500">Valor</Font></Box>
+                        <Box align="end"><Font variant="label-caps" color="zinc-500">Ações</Font></Box>
+                    </Grid>
+                </Box>
+
+                {/* Corpo da Tabela */}
+                <Stack gap={0} className="divide-y divide-zinc-800/50">
+                    {costs.length === 0 ? (
+                        <Box padding={5}>
+                            <EmptyState 
+                                icon={TrendingDown} 
+                                title="Sem Custos" 
+                                description="Nenhum custo operacional registrado este mês." 
+                            />
+                        </Box>
+                    ) : (
+                        costs.map((cost) => (
+                            <Box key={cost.id} padding={5} className="hover:bg-zinc-800/20 transition-colors">
+                                <Grid columns={5} gap={5} align="center">
+                                    <Box>
+                                        <Font variant="body" weight="bold" color="white">{cost.description}</Font>
+                                    </Box>
+                                    <Box>
+                                        <Badge 
+                                            label={cost.type === 'fixed' ? 'Fixo' : 'Variável'}
+                                            variant="glass"
+                                            color={cost.type === 'fixed' ? 'blue' : 'orange'}
                                         />
-                                    </td>
-                                </tr>
-                            ) : (
-                                costs.map((cost) => (
-                                    <tr key={cost.id} className="hover:bg-zinc-800/20 transition-colors">
-                                        <td className="px-6 py-4">
-                                            <Font variant="body" weight="bold" color="white">{cost.description}</Font>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <Box 
-                                                paddingX={2.5} 
-                                                paddingY={1} 
-                                                rounded="full" 
-                                                className={cn(
-                                                    "border",
-                                                    cost.type === 'fixed' ? 'bg-blue-500/10 border-blue-500/20' : 'bg-orange-500/10 border-orange-500/20'
-                                                )}
-                                            >
-                                                <Font variant="sub-tiny" color={cost.type === 'fixed' ? 'blue' : 'orange'} weight="black" uppercase italic>
-                                                    {cost.type === 'fixed' ? 'Fixo' : 'Variável'}
-                                                </Font>
-                                            </Box>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <Font variant="auxiliary" color="zinc-400">{new Date(cost.created_at).toLocaleDateString('pt-BR')}</Font>
-                                        </td>
-                                        <td className="px-6 py-4 text-right">
-                                            <Font variant="body" weight="black" color="red">- R$ {Number(cost.amount).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</Font>
-                                        </td>
-                                        <td className="px-6 py-4 text-right">
-                                            <Button variant="close" isIconOnly onClick={() => handleDelete(cost.id)}>
-                                                <Icon icon={Trash2} size="sm" color="zinc-500" className="hover:text-red-500 transition-colors" />
-                                            </Button>
-                                        </td>
-                                    </tr>
-                                ))
-                            )}
-                        </tbody>
-                    </table>
-                </div>
+                                    </Box>
+                                    <Box>
+                                        <Font variant="auxiliary" color="zinc-400">{new Date(cost.created_at).toLocaleDateString('pt-BR')}</Font>
+                                    </Box>
+                                    <Box align="end">
+                                        <Font variant="body" weight="black" color="red">- R$ {Number(cost.amount).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</Font>
+                                    </Box>
+                                    <Box align="end">
+                                        <Button variant="close" isIconOnly onClick={() => handleDelete(cost.id)}>
+                                            <Icon icon={Trash2} size="sm" color="zinc-500" className="hover:text-red-500 transition-colors" />
+                                        </Button>
+                                    </Box>
+                                </Grid>
+                            </Box>
+                        ))
+                    )}
+                </Stack>
             </Box>
 
             {/* Modal de Adição */}

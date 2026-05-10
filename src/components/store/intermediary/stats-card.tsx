@@ -2,10 +2,9 @@ import React from 'react'
 import { Stack } from '../base/stack'
 import { Font } from '../base/font'
 import { Icon } from '../base/icon'
-import { GlassPanel } from '../base/surface'
+import { ActionSurface } from '../base/surface'
 import { Box } from '../base/box'
 import { LucideIcon } from 'lucide-react'
-import { cn } from '@/lib/utils'
 
 interface StatsCardProps {
     label: string
@@ -13,7 +12,6 @@ interface StatsCardProps {
     description?: string
     icon: LucideIcon
     color?: 'emerald' | 'orange' | 'amber' | 'red' | 'blue'
-    className?: string
 }
 
 /**
@@ -25,8 +23,7 @@ export function StatsCard({
     value,
     description,
     icon,
-    color = 'emerald',
-    className
+    color = 'emerald'
 }: StatsCardProps) {
     const colorMap = {
         emerald: 'bg-emerald-500/10 text-emerald-500',
@@ -37,13 +34,7 @@ export function StatsCard({
     }
 
     return (
-        <GlassPanel 
-            padding={5} 
-            className={cn(
-                "group hover:bg-white/[0.05] transition-all duration-500",
-                className
-            )}
-        >
+        <ActionSurface padding={5} group>
             <Stack gap={5}>
                 {/* Icon Header */}
                 <Box 
@@ -51,10 +42,7 @@ export function StatsCard({
                     height="auto" 
                     padding={2.5} 
                     rounded="system" 
-                    className={cn(
-                        "w-fit transition-transform group-hover:scale-110 duration-500",
-                        colorMap[color]
-                    )}
+                    className={colorMap[color]}
                 >
                     <Icon icon={icon} size="sm" />
                 </Box>
@@ -66,16 +54,15 @@ export function StatsCard({
                         weight="black" 
                         uppercase 
                         color="zinc-500" 
-                        className="tracking-[0.1em]"
+                        tracking="widest"
                     >
                         {label}
                     </Font>
                     
                     <Font 
-                        variant="h1" 
+                        variant="heading" 
                         weight="black" 
                         italic 
-                        className="text-2xl md:text-3xl tracking-tighter"
                     >
                         {value}
                     </Font>
@@ -86,13 +73,13 @@ export function StatsCard({
                             weight="bold" 
                             uppercase 
                             color="zinc-600" 
-                            className="tracking-wider mt-1"
+                            tracking="wide"
                         >
                             {description}
                         </Font>
                     )}
                 </Stack>
             </Stack>
-        </GlassPanel>
+        </ActionSurface>
     )
 }

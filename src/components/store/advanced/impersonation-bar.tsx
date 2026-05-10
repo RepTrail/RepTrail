@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { impersonateUser } from '@/actions/admin-actions'
 import { Button } from '@/components/store/base/button'
-import { ShieldAlert, LogOut, ArrowLeftRight, UserCheck } from 'lucide-react'
+import { ShieldAlert, LogOut, ArrowLeftRight, UserCheck, RefreshCw } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import { Box } from '@/components/store/base/box'
 import { Inline } from '@/components/store/base/layout'
@@ -52,7 +52,7 @@ export function ImpersonationBar({ color }: { color?: RegistryColor }) {
     const safeIconColor = primaryColor === 'zinc' ? 'zinc-400' : primaryColor
 
     return (
-        <div className="w-full relative z-50">
+        <Box position="relative" fullWidth className="z-50">
             <Box 
                 className={`bg-zinc-950/40 border border-${primaryColor}-500/30 shadow-2xl backdrop-blur-xl w-full rounded-full px-5 py-2.5`}
             >
@@ -81,7 +81,7 @@ export function ImpersonationBar({ color }: { color?: RegistryColor }) {
                     >
                         <Inline gap={2.5} align="center">
                             {loading ? (
-                                <div className={`w-3 h-3 border-2 border-${primaryColor}-500 border-t-transparent rounded-full animate-spin`} />
+                                <Icon icon={RefreshCw} size="xs" color={safeIconColor as any} className="animate-spin" />
                             ) : (
                                 <Icon icon={ArrowLeftRight} size="xs" color={safeIconColor as any} />
                             )}
@@ -90,6 +90,6 @@ export function ImpersonationBar({ color }: { color?: RegistryColor }) {
                     </Button>
                 </Inline>
             </Box>
-        </div>
+        </Box>
     )
 }

@@ -171,20 +171,22 @@ export function AdminPayoutsManagement({ initialPayouts }: { initialPayouts: Pay
                     icon={History}
                 >
                     <Box rounded="system" className="bg-zinc-900/20 border border-zinc-800 overflow-hidden">
-                    <div className="w-full overflow-x-auto">
-                        <table className="w-full text-left border-collapse">
-                            <thead className="bg-zinc-950/50 border-b border-zinc-800">
-                                <tr>
-                                    <th className="px-6 py-4"><Font variant="label-caps" color="zinc-500">Afiliado</Font></th>
-                                    <th className="px-6 py-4 text-center"><Font variant="label-caps" color="zinc-500">Data</Font></th>
-                                    <th className="px-6 py-4 text-center"><Font variant="label-caps" color="zinc-500">Valor</Font></th>
-                                    <th className="px-6 py-4 text-right"><Font variant="label-caps" color="zinc-500">Status</Font></th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-zinc-800/50">
-                                {completedPayouts.map(p => (
-                                    <tr key={p.id} className="hover:bg-zinc-800/20 transition-colors">
-                                        <td className="px-6 py-4">
+                        {/* Header */}
+                        <Box padding={5} className="bg-zinc-950/50 border-b border-zinc-800">
+                            <Grid columns={4} gap={5}>
+                                <Box><Font variant="label-caps" color="zinc-500">Afiliado</Font></Box>
+                                <Box align="center"><Font variant="label-caps" color="zinc-500">Data</Font></Box>
+                                <Box align="center"><Font variant="label-caps" color="zinc-500">Valor</Font></Box>
+                                <Box align="end"><Font variant="label-caps" color="zinc-500">Status</Font></Box>
+                            </Grid>
+                        </Box>
+                        
+                        {/* Body */}
+                        <Stack gap={0} className="divide-y divide-zinc-800/50">
+                            {completedPayouts.map(p => (
+                                <Box key={p.id} padding={5} className="hover:bg-zinc-800/20 transition-colors">
+                                    <Grid columns={4} gap={5} align="center">
+                                        <Box>
                                             <Stack direction="row" gap={5} align="center">
                                                 <BaseAvatar 
                                                     src={p.profiles?.avatar_url || undefined} 
@@ -197,29 +199,26 @@ export function AdminPayoutsManagement({ initialPayouts }: { initialPayouts: Pay
                                                     <Font variant="auxiliary" color="zinc-500">{p.profiles?.email}</Font>
                                                 </Stack>
                                             </Stack>
-                                        </td>
-                                        <td className="px-6 py-4 text-center">
+                                        </Box>
+                                        <Box align="center">
                                             <Font variant="auxiliary" color="zinc-400">{new Date(p.created_at).toLocaleDateString('pt-BR')}</Font>
-                                        </td>
-                                        <td className="px-6 py-4 text-center">
+                                        </Box>
+                                        <Box align="center">
                                             <Font variant="body" weight="black" color="zinc-400">R$ {Number(p.amount).toFixed(2)}</Font>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <Stack direction="row" justify="end">
-                                                <Badge 
-                                                    label={p.status === 'completed' || p.status === 'paid' ? 'PAGO' : 'REJEITADO'} 
-                                                    color={p.status === 'completed' || p.status === 'paid' ? 'emerald' : 'red'}
-                                                    variant="glass"
-                                                    size="xs"
-                                                />
-                                            </Stack>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                </Box>
+                                        </Box>
+                                        <Box align="end">
+                                            <Badge 
+                                                label={p.status === 'completed' || p.status === 'paid' ? 'PAGO' : 'REJEITADO'} 
+                                                color={p.status === 'completed' || p.status === 'paid' ? 'emerald' : 'red'}
+                                                variant="glass"
+                                                size="xs"
+                                            />
+                                        </Box>
+                                    </Grid>
+                                </Box>
+                            ))}
+                        </Stack>
+                    </Box>
                 </RegistrySection>
             )}
 
