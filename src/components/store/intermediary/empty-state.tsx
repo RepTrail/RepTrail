@@ -1,48 +1,51 @@
 'use client'
 
-import React from 'react'
+import React, { useContext } from 'react'
 import { Stack } from '../base/stack'
 import { Font } from '../base/font'
 import { IconBox } from '../base/icon'
 import { Surface } from '../base/surface'
 import { LucideIcon } from 'lucide-react'
+import { RegistryContext, RegistryColor } from '../advanced/registry-context'
 
 interface EmptyStateProps {
   icon: LucideIcon
   title: string
   description: string
-  variant?: 'blue' | 'red' | 'amber' | 'emerald' | 'orange' | 'zinc'
+  variant?: RegistryColor
 }
 
 export function EmptyState({ 
   icon, 
   title, 
   description,
-  variant = 'zinc'
+  variant
 }: EmptyStateProps) {
+  
+  const ctx = useContext(RegistryContext)
+  const activeVariant = variant || (ctx?.primaryColor ?? 'zinc')
   
   return (
     <Surface 
-        variant={`tonal-${variant}` as any} 
+        variant={`tonal-${activeVariant}` as any} 
         padding={12} 
         rounded="system" 
         border="bold"
-        className="w-full"
+        fullWidth
     >
-      <Stack gap={5} align="center" className="text-center">
+      <Stack gap={5} align="center">
         <IconBox 
             icon={icon} 
-            variant={variant as any} 
+            variant={activeVariant as any} 
             size="lg" 
             rounded="full" 
-            className="animate-pulse"
         />
         
         <Stack gap={2.5} align="center">
-            <Font variant="heading" color="white" uppercase italic weight="black" className="leading-tight">
+            <Font variant="heading" color="white" uppercase italic weight="black" align="center">
                 {title}
             </Font>
-            <Font variant="description" color="zinc-400" className="max-w-md mx-auto">
+            <Font variant="description" color="zinc-400" maxWidth="md" align="center">
                 {description}
             </Font>
         </Stack>
