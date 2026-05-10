@@ -49,14 +49,14 @@ export function ProductCard({
             style={{ border: '1px solid rgba(255,255,255,0.05)' }} // Base border, hover handled by Interactive/ActionSurface normally, but GlassPanel handles its own. We just rely on base variants.
         >
             {/* Product Image - Aspect Ratio 1:1 */}
-            <Box position="relative" fullWidth bg="zinc-950" overflow="hidden" style={{ aspectRatio: '1 / 1' }}>
+            <Box position="relative" fullWidth bg="black" overflow="hidden" style={{ aspectRatio: '1 / 1' }}>
                 {image ? (
                     <Box 
                         as="img"
                         src={image} 
                         alt={cleanedName} 
-                        width="100%"
-                        height="100%"
+                        fullWidth
+                        fullHeight
                         style={{ objectFit: 'cover' }}
                         className="group-hover:scale-110 transition-transform duration-500" 
                     />
@@ -111,7 +111,7 @@ export function ProductCard({
                             </Font>
                         </Box>
                     )}
-                    <Box paddingTop={1}>
+                    <Box paddingY={1}>
                         <Font weight="black" color="emerald" variant="heading">
                             {price}
                         </Font>
@@ -119,7 +119,7 @@ export function ProductCard({
                 </Stack>
 
                 {/* Action Button - Toggle State */}
-                <Box paddingTop={2.5}>
+                <Box paddingY={2.5}>
                     <Button 
                         variant={isActive ? 'outline-emerald' : 'outline-red'} 
                         size="sm" 

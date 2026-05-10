@@ -13,6 +13,7 @@ export interface BoxProps extends React.HTMLAttributes<HTMLElement> {
   bg?: BoxColor
   bgOpacity?: 5 | 10 | 20 | 30 | 50 | 80 | 90 | 95 | 100
   opacity?: 0 | 10 | 20 | 30 | 40 | 50 | 60 | 70 | 80 | 90 | 100
+  groupHoverOpacity?: 0 | 10 | 20 | 30 | 40 | 50 | 60 | 70 | 80 | 90 | 100
   overflow?: 'hidden' | 'auto' | 'visible' | 'scroll' | 'clip'
   overflowX?: 'hidden' | 'auto' | 'visible' | 'scroll' | 'clip'
   overflowY?: 'hidden' | 'auto' | 'visible' | 'scroll' | 'clip'
@@ -56,6 +57,7 @@ export function Box({
   bg,
   bgOpacity = 100,
   opacity,
+  groupHoverOpacity,
   overflow,
   overflowX,
   overflowY,
@@ -145,7 +147,7 @@ export function Box({
     amber: { 100: 'bg-amber-500', 95: 'bg-amber-500/95', 90: 'bg-amber-500/90', 80: 'bg-amber-500/80', 50: 'bg-amber-500/50', 30: 'bg-amber-500/30', 20: 'bg-amber-500/20', 10: 'bg-amber-500/10', 5: 'bg-amber-500/5' },
     red: { 100: 'bg-red-500', 95: 'bg-red-500/95', 90: 'bg-red-500/90', 80: 'bg-red-500/80', 50: 'bg-red-500/50', 30: 'bg-red-500/30', 20: 'bg-red-500/20', 10: 'bg-red-500/10', 5: 'bg-red-500/5' },
     blue: { 100: 'bg-blue-500', 95: 'bg-blue-500/95', 90: 'bg-blue-500/90', 80: 'bg-blue-500/80', 50: 'bg-blue-500/50', 30: 'bg-blue-500/30', 20: 'bg-blue-500/20', 10: 'bg-blue-500/10', 5: 'bg-blue-500/5' },
-    zinc: { 100: 'bg-zinc-950', 95: 'bg-zinc-900', 90: 'bg-zinc-800', 80: 'bg-zinc-700', 50: 'bg-zinc-900', 30: 'bg-zinc-500/30', 20: 'bg-zinc-500/20', 10: 'bg-zinc-500/10', 5: 'bg-zinc-500/5' },
+    zinc: { 100: 'bg-zinc-500', 95: 'bg-zinc-500/95', 90: 'bg-zinc-500/90', 80: 'bg-zinc-500/80', 50: 'bg-zinc-500/50', 30: 'bg-zinc-500/30', 20: 'bg-zinc-500/20', 10: 'bg-zinc-500/10', 5: 'bg-zinc-500/5' },
     white: { 100: 'bg-white', 95: 'bg-white/95', 90: 'bg-white/90', 80: 'bg-white/80', 50: 'bg-white/50', 30: 'bg-white/30', 20: 'bg-white/20', 10: 'bg-white/10', 5: 'bg-white/5' },
     black: { 100: 'bg-black', 95: 'bg-black/95', 90: 'bg-black/90', 80: 'bg-black/80', 50: 'bg-black/50', 30: 'bg-black/30', 20: 'bg-black/20', 10: 'bg-black/10', 5: 'bg-black/5' },
     transparent: { 100: 'bg-transparent', 95: 'bg-transparent', 90: 'bg-transparent', 80: 'bg-transparent', 50: 'bg-transparent', 30: 'bg-transparent', 20: 'bg-transparent', 10: 'bg-transparent', 5: 'bg-transparent' }
@@ -163,6 +165,20 @@ export function Box({
     80: 'opacity-80',
     90: 'opacity-90',
     100: 'opacity-100'
+  }
+
+  const groupHoverOpacityClasses = {
+    0: 'group-hover:opacity-0',
+    10: 'group-hover:opacity-10',
+    20: 'group-hover:opacity-20',
+    30: 'group-hover:opacity-30',
+    40: 'group-hover:opacity-40',
+    50: 'group-hover:opacity-50',
+    60: 'group-hover:opacity-60',
+    70: 'group-hover:opacity-70',
+    80: 'group-hover:opacity-80',
+    90: 'group-hover:opacity-90',
+    100: 'group-hover:opacity-100'
   }
 
   const displayClasses = {
@@ -226,6 +242,7 @@ export function Box({
         borderColor === 'white/10' && 'border-white/10',
         borderColor === 'white/20' && 'border-white/20',
         opacity !== undefined && opacityClasses[opacity],
+        groupHoverOpacity !== undefined && groupHoverOpacityClasses[groupHoverOpacity],
         group && 'group',
         transition && 'transition-all duration-300',
 
