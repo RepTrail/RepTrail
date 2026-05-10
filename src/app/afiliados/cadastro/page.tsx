@@ -13,7 +13,7 @@ import { Font } from '@/components/store/base/font'
 import { Logo } from '@/components/store/base/logo'
 import { Icon } from '@/components/store/base/icon'
 import { AuthAffiliateSignUpForm } from '@/components/store/sections/auth-affiliate-signup-form'
-import { AuthLoadingScreen } from '@/components/auth/auth-loading-screen'
+
 import { Megaphone, CheckCircle2, ArrowLeft, ShieldCheck } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -103,7 +103,7 @@ export default function AffiliadosCadastroPage() {
                     <div className="absolute bottom-[10%] left-[20%] w-[400px] h-[400px] rounded-full bg-amber-500/5 blur-[150px] transition-colors duration-1000" />
                 </div>
 
-                {(loading || success) && <AuthLoadingScreen />}
+
 
                 <Stack gap={5} width="full" className="max-w-[440px] animate-in fade-in slide-in-from-bottom-4 duration-1000 relative z-10">
                     {/* Back Link */}
