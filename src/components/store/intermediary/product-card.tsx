@@ -34,19 +34,31 @@ export function ProductCard({
     onEdit,
     onDelete 
 }: ProductCardProps) {
+    let cleanedName = name.replace(/&amp;/gi, '&').replace(/&amp;/gi, '&')
+    cleanedName = cleanedName.replace(/\s*-\s*R\$\s*\d+([.,]\d+)?\s*$/i, '')
+
     return (
         <GlassPanel 
             padding={0} 
             overflow="hidden"
-            className="group hover:border-white/20 transition-all duration-300 flex flex-col h-full"
+            group
+            transition
+            fullHeight
+            display="flex"
+            direction="col"
+            style={{ border: '1px solid rgba(255,255,255,0.05)' }} // Base border, hover handled by Interactive/ActionSurface normally, but GlassPanel handles its own. We just rely on base variants.
         >
             {/* Product Image - Aspect Ratio 1:1 */}
-            <div className="relative aspect-square w-full bg-zinc-900 overflow-hidden">
+            <Box position="relative" fullWidth bg="zinc-950" overflow="hidden" style={{ aspectRatio: '1 / 1' }}>
                 {image ? (
-                    <img 
+                    <Box 
+                        as="img"
                         src={image} 
-                        alt={name} 
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                        alt={cleanedName} 
+                        width="100%"
+                        height="100%"
+                        style={{ objectFit: 'cover' }}
+                        className="group-hover:scale-110 transition-transform duration-500" 
                     />
                 ) : (
                     <Stack fullHeight align="center" justify="center" opacity={10}>
@@ -55,7 +67,7 @@ export function ProductCard({
                 )}
                 
                 {/* Category Badge - Standard Component */}
-                <div className="absolute top-4 left-4 z-10">
+                <Box position="absolute" style={{ top: 16, left: 16, zIndex: 10 }}>
                     <Badge 
                         label={category} 
                         variant="glass" 
@@ -63,50 +75,65 @@ export function ProductCard({
                         size="sm" 
                         rounded="full" 
                     />
-                </div>
+                </Box>
 
                 {/* Quick Actions (Hover Overlay) */}
-                <div className="absolute inset-0 bg-zinc-950/60 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2.5">
+                <Stack 
+                    direction="row"
+                    position="absolute" 
+                    align="center" 
+                    justify="center" 
+                    gap={2.5}
+                    style={{ inset: 0, backgroundColor: 'rgba(9, 9, 11, 0.6)', backdropFilter: 'blur(4px)' }}
+                    opacity={0}
+                    groupHoverOpacity={100}
+                    transition
+                >
                     <Button variant="outline-blue" size="sm" rounded="full" isIconOnly onClick={onEdit}>
                         <Edit3 size={14} />
                     </Button>
                     <Button variant="outline-red" size="sm" rounded="full" isIconOnly onClick={onDelete}>
                         <Trash2 size={14} />
                     </Button>
-                </div>
-            </div>
+                </Stack>
+            </Box>
 
             {/* Product Info - Refined Typography */}
             <Stack padding={5} gap={2.5} flex1 justify="between">
                 <Stack gap={1}>
-                    <Font weight="black" uppercase italic color="white" className="text-sm tracking-wider">
-                        {name}
+                    <Font weight="black" uppercase italic color="white" tracking="wide" variant="body-sm">
+                        {cleanedName}
                     </Font>
                     {description && (
-                        <Font variant="sub-tiny" color="zinc-500" className="line-clamp-2">
-                            {description}
-                        </Font>
+                        <Box style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                            <Font variant="sub-tiny" color="zinc-500">
+                                {description}
+                            </Font>
+                        </Box>
                     )}
-                    <Font weight="black" color="emerald" className="text-xl mt-1">
-                        {price}
-                    </Font>
+                    <Box paddingTop={1}>
+                        <Font weight="black" color="emerald" variant="heading">
+                            {price}
+                        </Font>
+                    </Box>
                 </Stack>
 
                 {/* Action Button - Toggle State */}
-                <Button 
-                    variant={isActive ? 'outline-emerald' : 'outline-red'} 
-                    size="sm" 
-                    fullWidth 
-                    onClick={onToggleActive}
-                    className="mt-2"
-                >
-                    <Inline gap={2.5} align="center">
-                        <Power size={12} />
-                        <Font variant="label-caps">
-                            {isActive ? 'Ativado' : 'Desativado'}
-                        </Font>
-                    </Inline>
-                </Button>
+                <Box paddingTop={2.5}>
+                    <Button 
+                        variant={isActive ? 'outline-emerald' : 'outline-red'} 
+                        size="sm" 
+                        fullWidth 
+                        onClick={onToggleActive}
+                    >
+                        <Inline gap={2.5} align="center">
+                            <Power size={12} />
+                            <Font variant="label-caps">
+                                {isActive ? 'Ativado' : 'Desativado'}
+                            </Font>
+                        </Inline>
+                    </Button>
+                </Box>
             </Stack>
         </GlassPanel>
     )
