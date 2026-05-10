@@ -1,22 +1,14 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import Script from 'next/script'
 import { loginAndActivateAffiliate } from '@/actions/affiliate-actions'
 
 // Design System V2 Components
-import { RegistryContext } from '@/components/store/advanced/registry-context'
-import { Stack } from '@/components/store/base/stack'
-import { Box } from '@/components/store/base/box'
-import { Font } from '@/components/store/base/font'
-import { Logo } from '@/components/store/base/logo'
-import { Icon } from '@/components/store/base/icon'
+import { RegistryProvider } from '@/components/store/advanced/registry-context'
+import { AuthShell } from '@/components/store/advanced/auth-shell'
 import { AuthLoginForm } from '@/components/store/sections/auth-login-form'
-import { AuthLoadingScreen } from '@/components/auth/auth-loading-screen'
-import { Megaphone, CheckCircle2, ArrowLeft, ShieldCheck } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { AuthFormSkeleton } from '@/components/store/advanced/auth-form-skeleton'
 
 export default function AffiliadosLoginPage() {
     const router = useRouter()
@@ -43,68 +35,9 @@ export default function AffiliadosLoginPage() {
     }
 
     return (
-        <RegistryContext.Provider value={{
-            primaryColor: 'amber',
-            activeTab: 'login',
-            setActiveTab: () => {},
-            activeSection: 'auth',
-            setActiveSection: () => {},
-            isSidebarOpen: false,
-            setIsSidebarOpen: () => {}
-        }}>
-            <Script id="meta-pixel-affiliate-login" strategy="afterInteractive">
-                {`
-                    !function(f,b,e,v,n,t,s)
-                    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-                    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-                    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-                    n.queue=[];t=b.createElement(e);t.async=!0;
-                    t.src=v;s=b.getElementsByTagName(e)[0];
-                    s.parentNode.insertBefore(t,s)}(window, document,'script',
-                    'https://connect.facebook.net/en_US/fbevents.js');
-                    fbq('init', '795120573646319');
-                    fbq('track', 'PageView');
-                `}
-            </Script>
-
-            <div className="min-h-screen bg-zinc-950 flex flex-col items-center justify-center p-5 relative overflow-hidden">
-                {/* Dynamic Background Effects */}
-                <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-                    <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(to_bottom,white_0%,transparent_90%)] opacity-[0.1]" />
-                    <div className="absolute -top-[10%] -right-[5%] w-[60%] h-[60%] rounded-full bg-amber-500/10 blur-[120px] transition-colors duration-1000" />
-                    <div className="absolute bottom-[10%] left-[20%] w-[400px] h-[400px] rounded-full bg-amber-500/5 blur-[150px] transition-colors duration-1000" />
-                </div>
-
-                {loading && <AuthLoadingScreen />}
-
-                <Stack gap={5} width="full" className="max-w-[440px] animate-in fade-in slide-in-from-bottom-4 duration-1000 relative z-10">
-                    {/* Back Link */}
-                    <Link href="/afiliados">
-                        <Stack direction="row" gap={2} align="center" className="text-zinc-500 hover:text-zinc-300 transition-colors group">
-                            <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
-                            <Font variant="sub-tiny" weight="black" uppercase tracking="widest">Voltar para o programa</Font>
-                        </Stack>
-                    </Link>
-
-                    <Box display="flex" align="center" justify="center" className="mb-2">
-                        <Link href="/">
-                            <Logo size="md" color="amber" />
-                        </Link>
-                    </Box>
-
-                    {/* Affiliate Info Box */}
-                    <Box padding={3} rounded="system" className="bg-amber-500/5 border border-amber-500/15">
-                        <Stack direction="row" gap={2.5} align="start">
-                            <Icon icon={CheckCircle2} size="xs" color="amber" className="mt-0.5" />
-                            <Stack gap={1}>
-                                <Font variant="sub-tiny" color="amber" weight="black" uppercase tracking="widest">Já é membro?</Font>
-                                <Font variant="description" color="zinc-400">
-                                    Basta entrar com sua conta RepTrail e o programa de afiliados será ativado automaticamente.
-                                </Font>
-                            </Stack>
-                        </Stack>
-                    </Box>
-
+        <RegistryProvider defaultColor="amber">
+            <AuthShell>
+                <Suspense fallback={<AuthFormSkeleton />}>
                     <AuthLoginForm 
                         email={email}
                         setEmail={setEmail}
@@ -113,14 +46,10 @@ export default function AffiliadosLoginPage() {
                         onSubmit={handleSubmit}
                         loading={loading}
                         error={error}
+                        color="amber"
                     />
-
-                    <Box display="flex" align="center" justify="center" gap={2.5} className="text-zinc-600">
-                        <ShieldCheck className="w-4 h-4" />
-                        <Font variant="sub-tiny" weight="black" uppercase tracking="widest">Acesso Seguro & Criptografado</Font>
-                    </Box>
-                </Stack>
-            </div>
-        </RegistryContext.Provider>
+                </Suspense>
+            </AuthShell>
+        </RegistryProvider>
     )
 }

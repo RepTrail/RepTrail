@@ -17,6 +17,9 @@ interface LayoutBaseProps {
   padding?: 0 | 1 | 2.5 | 5 | 7.5 | 12.5
   paddingX?: 0 | 1 | 2.5 | 5 | 7.5 | 12.5
   paddingY?: 0 | 1 | 2.5 | 5 | 7.5 | 12.5
+  position?: 'relative' | 'absolute' | 'fixed' | 'static'
+  shrink?: 0 | 1
+  opacity?: 0 | 10 | 20 | 30 | 40 | 50 | 60 | 70 | 80 | 90 | 100
   className?: string
   id?: string
 }
@@ -35,6 +38,9 @@ export function Inline({
   padding,
   paddingX,
   paddingY,
+  position,
+  shrink,
+  opacity,
   className,
   id
 }: LayoutBaseProps) {
@@ -86,6 +92,9 @@ export function Inline({
       padding={padding}
       paddingX={paddingX}
       paddingY={paddingY}
+      position={position}
+      shrink={shrink}
+      opacity={opacity}
       className={cn(
         'flex flex-row',
         gapClasses[gapBase as keyof typeof gapClasses],
@@ -115,6 +124,9 @@ export function Cluster({
   padding,
   paddingX,
   paddingY,
+  position,
+  shrink,
+  opacity,
   className,
   id
 }: LayoutBaseProps) {
@@ -151,6 +163,9 @@ export function Cluster({
       padding={padding}
       paddingX={paddingX}
       paddingY={paddingY}
+      position={position}
+      shrink={shrink}
+      opacity={opacity}
       className={cn(
         'flex flex-row flex-wrap',
         gapClasses[gapBase as keyof typeof gapClasses],
@@ -222,11 +237,18 @@ export function MobileHeaderContainer({ children, id }: { children: React.ReactN
   )
 }
 
+import { createPortal } from 'react-dom'
+
 /**
  * ModalOverlay: The fixed backdrop and centering container for modals.
  */
 export function ModalOverlay({ children, onClose, id }: { children: React.ReactNode, onClose?: () => void, id?: string }) {
-  return (
+  const [mounted, setMounted] = React.useState(false)
+  React.useEffect(() => setMounted(true), [])
+
+  if (!mounted) return null
+
+  return createPortal(
     <div 
       id={id}
       className="fixed inset-0 z-[1000] flex items-center justify-center p-5"
@@ -236,7 +258,8 @@ export function ModalOverlay({ children, onClose, id }: { children: React.ReactN
         onClick={onClose}
       />
       {children}
-    </div>
+    </div>,
+    document.body
   )
 }
 

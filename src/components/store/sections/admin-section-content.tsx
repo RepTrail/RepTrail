@@ -15,6 +15,8 @@ import { Modal } from '../advanced/modal'
 import { AffiliateListItem } from '../intermediary/affiliate-list-item'
 import { AdminPayoutsManagement } from './admin-payouts-management'
 import { AdminOperationalCosts } from './admin-operational-costs'
+import { Callout } from '../intermediary/callout'
+import { ActionIconButton } from '../intermediary/action-icon-button'
 import { 
     TrendingUp, 
     Users, 
@@ -131,6 +133,43 @@ export function AdminSectionContent({ id }: { id?: string }) {
                 </Grid>
             </RegistrySection>
 
+            {/* Gestão Financeira: Saques e Custos */}
+            <AdminPayoutsManagement 
+                initialPayouts={[
+                    {
+                        id: '1',
+                        amount: 450,
+                        status: 'requested',
+                        payout_method: 'pix',
+                        payout_details: { details: 'thiago@pix.com' },
+                        created_at: new Date().toISOString(),
+                        affiliate_id: 'aff_1',
+                        profiles: { full_name: 'Thiago Nigro', email: 'thiago@rich.com' }
+                    }
+                ]} 
+            />
+
+            <AdminOperationalCosts 
+                initialCosts={[
+                    {
+                        id: 'c1',
+                        description: 'Servidor Vercel (Pro)',
+                        amount: 120,
+                        type: 'fixed',
+                        created_at: new Date().toISOString()
+                    },
+                    {
+                        id: 'c2',
+                        description: 'API Google Maps',
+                        amount: 45.50,
+                        type: 'variable',
+                        created_at: new Date().toISOString()
+                    }
+                ]}
+                totalMonthly={165.50}
+                totalAllTime={1240.80}
+            />
+
             {/* Gestão de Personals */}
             <RegistrySection
                 title="Gestão de Personals"
@@ -165,13 +204,11 @@ export function AdminSectionContent({ id }: { id?: string }) {
                         isActionActive={userServices['Juliana Silva']}
                     />
                     
-                    <Box className="pt-5">
-                        <EmptyState 
-                            icon={Search}
-                            title="Nenhum personal encontrado"
-                            description="Tente ajustar os filtros de busca para encontrar o profissional desejado."
-                        />
-                    </Box>
+                    <EmptyState 
+                        icon={Search}
+                        title="Nenhum personal encontrado"
+                        description="Tente ajustar os filtros de busca para encontrar o profissional desejado."
+                    />
                 </Stack>
             </RegistrySection>
 
@@ -203,6 +240,12 @@ export function AdminSectionContent({ id }: { id?: string }) {
                         commission="R$ 2.800,00"
                         rate={10}
                         onDelete={() => openModal('delete', 'Joel Jota', 'user')}
+                    />
+
+                    <EmptyState 
+                        icon={HeartHandshake}
+                        title="Nenhum afiliado encontrado"
+                        description="Não há registros de parceiros comerciais para os filtros selecionados (Demonstração)."
                     />
                 </Stack>
             </RegistrySection>
@@ -277,13 +320,11 @@ export function AdminSectionContent({ id }: { id?: string }) {
                         isActionActive={userServices['Beatriz Santos']}
                     />
 
-                    <Box className="pt-5">
-                        <EmptyState 
-                            icon={Search}
-                            title="Nenhum aluno encontrado"
-                            description="Não localizamos registros com os critérios informados. Verifique a digitação ou remova os filtros."
-                        />
-                    </Box>
+                    <EmptyState 
+                        icon={Search}
+                        title="Nenhum aluno encontrado"
+                        description="Não localizamos registros com os critérios informados. Verifique a digitação ou remova os filtros."
+                    />
                 </Stack>
             </RegistrySection>
 
@@ -365,13 +406,11 @@ export function AdminSectionContent({ id }: { id?: string }) {
                         variant="red"
                     />
 
-                    <Box className="pt-5">
-                        <EmptyState 
-                            icon={History}
-                            title="Sem mais atividades"
-                            description="Não há registros adicionais de auditoria para o período selecionado."
-                        />
-                    </Box>
+                    <EmptyState 
+                        icon={History}
+                        title="Sem mais atividades"
+                        description="Não há registros adicionais de auditoria para o período selecionado."
+                    />
                 </Stack>
             </RegistrySection>
 
@@ -387,14 +426,9 @@ export function AdminSectionContent({ id }: { id?: string }) {
                 cancelLabel="Manter Registro"
             >
                 <Stack gap={2.5}>
-                    <Font variant="description" color="zinc-400">
-                        Esta ação é irreversível e removerá todos os vínculos históricos associados a este registro no banco de dados do RepTrail.
-                    </Font>
-                    <div className="p-3 rounded bg-red-500/10 border border-red-500/20">
-                        <Font variant="sub-tiny" color="red" weight="black" uppercase italic>
-                            Aviso: Os dados de auditoria (Logs) permanecerão salvos para fins legais.
-                        </Font>
-                    </div>
+                    <Callout variant="danger" title="Aviso">
+                        Esta ação é irreversível e removerá todos os vínculos históricos associados a este registro no banco de dados do RepTrail. Os dados de auditoria (Logs) permanecerão salvos para fins legais.
+                    </Callout>
                 </Stack>
             </Modal>
 
@@ -413,12 +447,12 @@ export function AdminSectionContent({ id }: { id?: string }) {
                         A ação de inspeção permite que você acesse temporariamente o painel deste usuário. Você poderá visualizar a interface exatamente como ele a vê para fins de suporte, auditoria ou configuração.
                     </Font>
                     
-                    <div className="space-y-4">
-                        <div className="p-4 rounded bg-white/5 border border-white/10">
+                    <Stack gap={5}>
+                        <Box padding={5} rounded="system" bg="white" bgOpacity={5} border borderColor="white/10">
                             <Font variant="sub-tiny" color="zinc-500" weight="black" uppercase italic>Status do Registro</Font>
-                            <Font color="emerald" weight="bold" className="block">VERIFICADO & ATIVO</Font>
-                        </div>
-                    </div>
+                            <Font color="emerald" weight="bold" display="block">VERIFICADO & ATIVO</Font>
+                        </Box>
+                    </Stack>
                 </Stack>
             </Modal>
 
@@ -438,14 +472,14 @@ export function AdminSectionContent({ id }: { id?: string }) {
                     </Font>
                     
                     {/* Placeholder for actual form components */}
-                    <div className="space-y-4">
-                        <div className="h-10 w-full bg-white/5 border border-white/10 rounded flex items-center px-4">
+                    <Stack gap={5}>
+                        <Box fullWidth bg="white" bgOpacity={5} border borderColor="white/10" rounded="system" display="flex" align="center" padding={5}>
                             <Font variant="sub-tiny" color="zinc-500">Campo de Exemplo 01...</Font>
-                        </div>
-                        <div className="h-10 w-full bg-white/5 border border-white/10 rounded flex items-center px-4">
+                        </Box>
+                        <Box fullWidth bg="white" bgOpacity={5} border borderColor="white/10" rounded="system" display="flex" align="center" padding={5}>
                             <Font variant="sub-tiny" color="zinc-500">Campo de Exemplo 02...</Font>
-                        </div>
-                    </div>
+                        </Box>
+                    </Stack>
                 </Stack>
             </Modal>
         </Stack>

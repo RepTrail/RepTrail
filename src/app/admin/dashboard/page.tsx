@@ -7,17 +7,24 @@ import {
     BarChart3, TrendingUp, CreditCard, Activity,
     AlertCircle, HeartHandshake, Users2, Users, ShoppingBag
 } from 'lucide-react'
-import {
-    getAdminOverview, getAllStoreProducts, getTopProductsByClicks,
-    getRecentStudentActivity
+import { 
+    getAdminOverview, getAllStoreProducts, getTopProductsByClicks, 
+    getRecentStudentActivity, getOperationalCosts,
+    addOperationalCost, deleteOperationalCost
 } from '@/actions/admin-actions'
+import { getAdminPayouts, updatePayoutStatus } from '@/actions/admin-affiliate-actions'
 import { createClient } from '@/lib/supabase/client'
 import { AdminPageShell } from '@/components/store/advanced/admin-page-shell'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
+import { ActionableListCard } from '@/components/store/intermediary/actionable-list-card'
+import { EmptyState } from '@/components/store/intermediary/empty-state'
 import { Stack } from '@/components/store/base/stack'
 import { Grid } from '@/components/store/base/grid'
 import { StatsCard } from '@/components/store/intermediary/stats-card'
 import { useToast } from '@/hooks/use-toast'
+
+import { AdminPayoutsManagement } from '@/components/store/sections/admin-payouts-management'
+import { AdminOperationalCosts } from '@/components/store/sections/admin-operational-costs'
 
 export default function AdminDashboardPage() {
     const queryClient = useQueryClient()
@@ -28,6 +35,7 @@ export default function AdminDashboardPage() {
         queryKey: QUERY_KEYS.admin.overview,
         queryFn: () => getAdminOverview()
     })
+
     const { data: adminUser } = useQuery({
         queryKey: QUERY_KEYS.auth.user,
         queryFn: async () => {
@@ -39,13 +47,58 @@ export default function AdminDashboardPage() {
         }
     })
 
+    const { data: payouts } = useQuery({
+        queryKey: QUERY_KEYS.admin.payouts,
+        queryFn: () => getAdminPayouts()
+    })
+
+    const { data: costs } = useQuery({
+        queryKey: QUERY_KEYS.admin.costs,
+        queryFn: () => getOperationalCosts()
+    })
+
     const loadAll = () => {
         startTransition(async () => {
             await Promise.all([
                 queryClient.invalidateQueries({ queryKey: QUERY_KEYS.admin.overview }),
+                queryClient.invalidateQueries({ queryKey: QUERY_KEYS.admin.payouts }),
+                queryClient.invalidateQueries({ queryKey: QUERY_KEYS.admin.costs }),
             ])
             toast({ title: 'Dados atualizados!' })
         })
+    }
+
+    const handlePayoutAction = async (id: string, status: 'completed' | 'rejected') => {
+        const res = await updatePayoutStatus(id, status)
+        if (res.success) {
+            queryClient.invalidateQueries({ queryKey: QUERY_KEYS.admin.payouts })
+            queryClient.invalidateQueries({ queryKey: QUERY_KEYS.admin.overview })
+            toast({ title: status === 'completed' ? 'Saque confirmado!' : 'Saque rejeitado.' })
+        } else {
+            toast({ title: 'Erro ao processar saque', description: res.error, variant: 'destructive' })
+        }
+    }
+
+    const handleAddCost = async (data: any) => {
+        const res = await addOperationalCost(data)
+        if (res.success) {
+            queryClient.invalidateQueries({ queryKey: QUERY_KEYS.admin.costs })
+            queryClient.invalidateQueries({ queryKey: QUERY_KEYS.admin.overview })
+            toast({ title: 'Custo adicionado!' })
+        } else {
+            toast({ title: 'Erro ao adicionar custo', description: res.error, variant: 'destructive' })
+        }
+    }
+
+    const handleDeleteCost = async (id: string) => {
+        const res = await deleteOperationalCost(id)
+        if (res.success) {
+            queryClient.invalidateQueries({ queryKey: QUERY_KEYS.admin.costs })
+            queryClient.invalidateQueries({ queryKey: QUERY_KEYS.admin.overview })
+            toast({ title: 'Custo removido.' })
+        } else {
+            toast({ title: 'Erro ao remover custo', description: res.error, variant: 'destructive' })
+        }
     }
 
     return (
@@ -62,92 +115,86 @@ export default function AdminDashboardPage() {
             }
         >
             <Stack gap="section">
-                {/* Base de Usuários e Loja */}
+                {/* Indicadores de Performance */}
                 <RegistrySection
-                    title="Base de Usuários e Loja"
-                    subtitle="Monitoramento de crescimento da base e engajamento no catálogo."
-                    icon={Users}
+                    title="Indicadores de Performance"
+                    subtitle="Visão consolidada de usuários, loja, finanças e parceiros."
+                    icon={Activity}
                 >
-                    <Grid cols={1} mdCols={2} lgCols={3} gap={5}>
+                    <Grid cols={1} mdCols={2} lgCols={4} gap={5}>
                         <StatsCard
                             label="Personais"
                             value={String(stats?.trainers || 0)}
-                            description={`${stats?.trialTrainers || 0} EM PERÍODO DE TESTE`}
+                            description={`${stats?.trialTrainers || 0} EM TESTE`}
                             icon={Users2}
                             color="blue"
                         />
                         <StatsCard
                             label="Alunos"
                             value={String(stats?.students || 0)}
-                            description={`${stats?.studentsWithTrainer || 0} COM PERSONAL | ${stats?.autoTrainingCount || 0} AUTO-TREINO`}
+                            description={`${stats?.studentsWithTrainer || 0} C/ PERS. | ${stats?.autoTrainingCount || 0} AUTO`}
                             icon={Users}
                             color="emerald"
                         />
                         <StatsCard
                             label="Produtos Loja"
                             value={String(stats?.totalProducts || 0)}
-                            description={`${stats?.productClicks || 0} CLIQUES TOTAIS`}
+                            description={`${stats?.productClicks || 0} CLIQUES`}
                             icon={ShoppingBag}
                             color="orange"
                         />
-                    </Grid>
-                </RegistrySection>
-
-                {/* Indicadores Financeiros */}
-                <RegistrySection
-                    title="Indicadores Financeiros"
-                    subtitle="Desempenho monetário bruto e líquido da operação RepTrail."
-                    icon={TrendingUp}
-                >
-                    <Grid cols={1} mdCols={2} lgCols={3} gap={5}>
                         <StatsCard
-                            label="Lucro Líquido (Plataforma)"
+                            label="Lucro Líquido"
                             value={`R$ ${Number(stats?.monthlyPlatformProfit || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
-                            description={`BRUTO: R$ ${Number(stats?.monthlyGrossRevenue || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} | CUSTOS: R$ ${Number(stats?.monthlyOperationalCosts || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
+                            description={`CUSTOS: R$ ${Number(stats?.monthlyOperationalCosts || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
                             icon={TrendingUp}
                             color="emerald"
                         />
                         <StatsCard
                             label="Faturamento Personais"
                             value={`R$ ${Number(stats?.monthlyTrainerVolume || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
-                            description={`MÉDIO: R$ ${Number(stats?.trainerAverageTicket || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} / PERSONAL`}
+                            description={`MÉDIO: R$ ${Number(stats?.trainerAverageTicket || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
                             icon={CreditCard}
                             color="blue"
                         />
                         <StatsCard
-                            label="Ticket Médio (RepTrail)"
+                            label="Ticket Médio"
                             value={`R$ ${Number(stats?.platformTicketPerTrainer || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
-                            description="POR PERSONAL CADASTRADO"
+                            description="POR PERSONAL"
                             icon={Activity}
                             color="amber"
                         />
-                    </Grid>
-                </RegistrySection>
-
-                {/* Performance de Parceiros */}
-                <RegistrySection
-                    title="Performance de Parceiros"
-                    subtitle="Gestão de comissões e engajamento da rede de afiliados."
-                    icon={HeartHandshake}
-                >
-                    <Grid cols={1} mdCols={2} lgCols={2} gap={5}>
                         <StatsCard
                             label="Comissões Pendentes"
                             value={`R$ ${Number(stats?.pendingCommissions || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
-                            description={`ESTE MÊS: R$ ${Number(stats?.commissionsThisMonth || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
+                            description={`MÊS: R$ ${Number(stats?.commissionsThisMonth || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
                             icon={AlertCircle}
                             color="red"
                         />
                         <StatsCard
                             label="Afiliados"
                             value={String(stats?.affiliatesCount || 0)}
-                            description={`LUCRO TOTAL: R$ ${Number(stats?.affiliateTotalEarnings || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
+                            description={`LUCRO: R$ ${Number(stats?.affiliateTotalEarnings || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
                             icon={HeartHandshake}
                             color="orange"
                         />
                     </Grid>
                 </RegistrySection>
 
+                {/* Gestão Financeira: Saques e Custos */}
+                <AdminPayoutsManagement 
+                    initialPayouts={payouts?.data || []} 
+                    onConfirmPayout={(id) => handlePayoutAction(id, 'completed')}
+                    onRejectPayout={(id) => handlePayoutAction(id, 'rejected')}
+                />
+
+                <AdminOperationalCosts 
+                    initialCosts={costs || []}
+                    totalMonthly={stats?.monthlyOperationalCosts || 0}
+                    totalAllTime={stats?.totalOperationalCosts || 0}
+                    onAddCost={handleAddCost}
+                    onDeleteCost={handleDeleteCost}
+                />
 
             </Stack>
         </AdminPageShell >

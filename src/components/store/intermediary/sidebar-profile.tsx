@@ -49,7 +49,7 @@ export function SidebarProfile({
             {/* User Identity Area */}
             <Stack direction="row" align="center" gap={2.5}>
                 <BaseAvatar initials={initials} src={user?.avatar_url || undefined} size="md" />
-                <Stack gap={0} flex1 overflow="hidden">
+                <Stack gap={0} flex1 overflow="hidden" minWidth={0}>
                     <Font weight="black" variant="body-sm" color="white" uppercase italic nowrap truncate>
                         {user?.name || 'Usuário'}
                     </Font>

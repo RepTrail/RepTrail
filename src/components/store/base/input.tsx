@@ -1,3 +1,4 @@
+'use client'
 import React, { useState } from 'react'
 import { cn } from '@/lib/utils'
 import { Box } from './box'
@@ -12,6 +13,9 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   rounded?: 'system' | 'full' | 'none'
   flex1?: boolean
   mask?: 'date' | 'phone' | 'cpf' | 'number'
+  color?: 'emerald' | 'orange' | 'amber' | 'red' | 'blue' | 'zinc' | 'white' | 'primary'
+  weight?: 'normal' | 'bold' | 'black'
+  height?: 'full' | 'auto'
 }
 
 export function Input({
@@ -21,6 +25,9 @@ export function Input({
   rounded = 'system',
   flex1 = false,
   mask,
+  color,
+  weight,
+  height,
   className,
   onChange,
   type,
@@ -31,6 +38,24 @@ export function Input({
   const [showPassword, setShowPassword] = useState(false)
   const isPassword = type === 'password'
   const inputType = isPassword ? (showPassword ? 'text' : 'password') : type
+
+  const resolvedColor = color === 'primary' ? primaryColor : color
+
+  const textColors = {
+    emerald: 'text-emerald-500',
+    orange: 'text-orange-500',
+    amber: 'text-amber-500',
+    red: 'text-red-500',
+    blue: 'text-blue-500',
+    zinc: 'text-zinc-500',
+    white: 'text-white'
+  }
+
+  const weightClasses = {
+    normal: 'font-normal',
+    bold: 'font-bold',
+    black: 'font-black'
+  }
 
   const colorMap = {
     blue: 'focus:border-blue-500/50 focus:bg-blue-500/5 group-focus-within:text-blue-500',
@@ -76,13 +101,13 @@ export function Input({
   }
 
   return (
-    <Box className={cn('w-full flex flex-col gap-[10px]', flex1 && 'flex-1')}>
+    <Box className={cn('w-full flex flex-col gap-[10px]', flex1 && 'flex-1', height === 'full' && 'h-full')}>
       {label && (
         <Font variant="auxiliary" color="zinc-500" weight="black" uppercase tracking="widest">
           {label}
         </Font>
       )}
-      <div className="relative group">
+      <div className={cn("relative group", height === 'full' && 'h-full flex-1')}>
         {/* Left icon */}
         {icon && (
           <div className={cn(
@@ -96,7 +121,11 @@ export function Input({
         <input
           type={inputType}
           className={cn(
-            'w-full h-12 bg-zinc-950/40 border-2 border-white/5 text-white placeholder:text-zinc-600 outline-none transition-all',
+            'w-full bg-zinc-950/40 border-2 placeholder:text-zinc-600 outline-none transition-all',
+            resolvedColor ? `border-${resolvedColor}-500/40` : 'border-white/5',
+            height === 'full' ? 'h-full' : 'h-12',
+            resolvedColor ? textColors[resolvedColor as keyof typeof textColors] : 'text-white',
+            weight && weightClasses[weight],
             rounded === 'system' && 'rounded-[5px]',
             rounded === 'full' && 'rounded-full',
             rounded === 'none' && 'rounded-none',

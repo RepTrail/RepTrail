@@ -15,6 +15,8 @@ import { cn } from '@/lib/utils'
 import { Mail, Lock, User, Users, ArrowRight, Phone } from 'lucide-react'
 import { translateAuthError } from '@/lib/auth-errors'
 import Link from 'next/link'
+import { Modal } from '../advanced/modal'
+import { ShieldCheck } from 'lucide-react'
 
 interface AuthSignUpFormProps {
     fullName?: string
@@ -34,6 +36,7 @@ interface AuthSignUpFormProps {
     onSignUp?: (data: any) => void
     loading?: boolean
     error?: string | null
+    syncColor?: boolean
 }
 
 export function AuthSignUpForm({ 
@@ -45,29 +48,47 @@ export function AuthSignUpForm({
     acceptedTerms, setAcceptedTerms,
     onShowTerms,
     onSubmit, 
-    loading, error 
+    loading, error,
+    syncColor = true 
 }: AuthSignUpFormProps) {
-    const { primaryColor } = useRegistry()
+    const { primaryColor, setPrimaryColor } = useRegistry()
+    const [internalRole, setInternalRole] = React.useState<'student' | 'trainer'>('trainer')
+    const [showTermsModal, setShowTermsModal] = React.useState(false)
+
+    const activeRole = role || internalRole
+    const handleSetRole = setRole || setInternalRole
+
+    React.useEffect(() => {
+        if (!syncColor) return
+
+        if (activeRole === 'trainer') {
+            setPrimaryColor('emerald')
+        } else {
+            setPrimaryColor('orange')
+        }
+    }, [activeRole, setPrimaryColor, syncColor])
 
     return (
-        <Surface variant="glass" padding={0} rounded="system" width="full" className="max-w-[440px]">
+        <Surface variant="glass" padding={0} rounded="system" width="full" maxWidth="auth-form">
             <Stack gap={0}>
                 {/* Header */}
-                <Box padding={5} className="border-b border-white/5">
-                    <Stack gap={1} align="center">
-                        <Font variant="h2" align="center">Comece sua <Font variant="h2" color={primaryColor as any}>jornada</Font></Font>
+                <Box padding={5}>
+                    <Stack gap={2.5} align="center">
+                        <Font variant="h2" align="center">Criar sua <Font variant="h2" color="primary">Conta</Font></Font>
                         <Font variant="auxiliary" color="zinc-500" align="center" uppercase tracking="widest">
-                            Crie sua conta em segundos
+                            Preencha os dados para começar
                         </Font>
                     </Stack>
                 </Box>
+
+                <Divider color="white/5" />
 
                 {/* Form Content */}
                 <Box padding={5}>
                     <form onSubmit={onSubmit || ((e) => e.preventDefault())}>
                         <Stack gap={5}>
                             {error && (
-                                <Box padding={2.5} rounded="system" display="flex" align="center" className="bg-red-500/10 border border-red-500/20 min-h-[44px]">
+                                <Box padding={2.5} rounded="system" display="flex" align="center" bg="red" bgOpacity={10} border minHeight={44}>
                                     <Font variant="sub-tiny" color="red" weight="black" uppercase tracking="widest">
                                         {translateAuthError(error)}
                                     </Font>
@@ -119,26 +140,26 @@ export function AuthSignUpForm({
                                 <Stack direction="row" gap={2.5}>
                                     <Button 
                                         type="button"
-                                        variant={role === 'student' ? (primaryColor as any) : 'ghost'} 
+                                        variant={activeRole === 'student' ? 'primary' : 'outline-zinc'} 
                                         flex1 
-                                        onClick={() => setRole?.('student')}
-                                        className={cn("h-12", role !== 'student' && "border border-zinc-800")}
+                                        rounded="system"
+                                        onClick={() => handleSetRole('student')}
                                     >
                                         <Stack direction="row" gap={2.5} align="center" justify="center">
-                                            <Icon icon={User} size="xs" color={role === 'student' ? 'black' : 'zinc-500'} />
-                                            <Font variant="label-caps" color={role === 'student' ? 'black' : 'zinc-500'}>Aluno</Font>
+                                            <Icon icon={User} size="xs" color={activeRole === 'student' ? 'black' : 'zinc-500'} />
+                                            <Font variant="label-caps" color={activeRole === 'student' ? 'black' : 'zinc-500'}>Aluno</Font>
                                         </Stack>
                                     </Button>
                                     <Button 
                                         type="button"
-                                        variant={role === 'trainer' ? (primaryColor as any) : 'ghost'} 
+                                        variant={activeRole === 'trainer' ? 'primary' : 'outline-zinc'} 
                                         flex1 
-                                        onClick={() => setRole?.('trainer')}
-                                        className={cn("h-12", role !== 'trainer' && "border border-zinc-800")}
+                                        rounded="system"
+                                        onClick={() => handleSetRole('trainer')}
                                     >
                                         <Stack direction="row" gap={2.5} align="center" justify="center">
-                                            <Icon icon={Users} size="xs" color={role === 'trainer' ? 'black' : 'zinc-500'} />
-                                            <Font variant="label-caps" color={role === 'trainer' ? 'black' : 'zinc-500'}>Personal</Font>
+                                            <Icon icon={Users} size="xs" color={activeRole === 'trainer' ? 'black' : 'zinc-500'} />
+                                            <Font variant="label-caps" color={activeRole === 'trainer' ? 'black' : 'zinc-500'}>Personal</Font>
                                         </Stack>
                                     </Button>
                                 </Stack>
@@ -150,26 +171,65 @@ export function AuthSignUpForm({
                                     label=""
                                     checked={acceptedTerms} 
                                     onChange={setAcceptedTerms}
-                                    color={primaryColor as any}
+                                    color="primary"
                                 />
                                 <Font variant="sub-tiny" color="zinc-500" weight="bold" uppercase tracking="widest">
-                                    Eu aceito os <Font variant="sub-tiny" color={primaryColor as any} weight="black" className="cursor-pointer underline" onClick={onShowTerms}>termos de uso</Font>
+                                    Eu aceito os <Font variant="sub-tiny" color="primary" weight="black" className="cursor-pointer underline" onClick={() => setShowTermsModal(true)}>termos de uso</Font>
                                 </Font>
                             </Stack>
 
+                            <Modal 
+                                isOpen={showTermsModal} 
+                                onClose={() => setShowTermsModal(false)}
+                                title="Termos de Uso"
+                                subtitle="Leia atentamente as regras da plataforma"
+                                icon={ShieldCheck}
+                                variant={activeRole === 'trainer' ? 'emerald' : 'orange'}
+                                confirmLabel="Eu Aceito"
+                                onConfirm={() => {
+                                    setAcceptedTerms?.(true)
+                                    setShowTermsModal(false)
+                                }}
+                            >
+                                <Stack gap={5}>
+                                    <Font variant="body" color="zinc-400">
+                                        Bem-vindo ao RepTrail. Ao utilizar nossa plataforma, você concorda com as seguintes diretrizes:
+                                    </Font>
+                                    <Stack gap={2.5}>
+                                        <Font variant="label-caps" color="primary">1. Uso da Conta</Font>
+                                        <Font variant="sub-tiny" color="zinc-400">
+                                            Sua conta é pessoal e intransferível. Você é responsável por manter a segurança de suas credenciais.
+                                        </Font>
+                                    </Stack>
+                                    <Stack gap={2.5}>
+                                        <Font variant="label-caps" color="primary">2. Privacidade</Font>
+                                        <Font variant="sub-tiny" color="zinc-400">
+                                            Respeitamos sua privacidade e protegemos seus dados de acordo com a LGPD.
+                                        </Font>
+                                    </Stack>
+                                    <Stack gap={2.5}>
+                                        <Font variant="label-caps" color="primary">3. Conteúdo</Font>
+                                        <Font variant="sub-tiny" color="zinc-400">
+                                            Todo conteúdo gerado na plataforma deve respeitar as normas éticas e profissionais.
+                                        </Font>
+                                    </Stack>
+                                </Stack>
+                            </Modal>
+
                             <Button 
                                 type="submit"
-                                variant={primaryColor as any} 
+                                variant="primary" 
                                 fullWidth 
-                                rounded="full" 
-                                className="h-12"
+                                rounded="system" 
+                                height="anatomy-item"
+                                paddingY={5}
                                 disabled={loading}
                             >
                                 <Stack direction="row" gap={2.5} align="center" justify="center">
-                                    <Font variant="label-caps" color="black">
+                                    <Font variant="label-caps">
                                         {loading ? 'Processando...' : 'Criar minha conta'}
                                     </Font>
-                                    {!loading && <Icon icon={ArrowRight} size="xs" color="black" />}
+                                    {!loading && <Icon icon={ArrowRight} size="xs" />}
                                 </Stack>
                             </Button>
                         </Stack>
@@ -179,9 +239,9 @@ export function AuthSignUpForm({
                 <Divider color="white/5" />
 
                 {/* Footer */}
-                <Box padding={5} display="flex" align="center" justify="center" className="bg-zinc-950/30">
+                <Box padding={5} display="flex" align="center" justify="center" bg="black" bgOpacity={30}>
                     <Font variant="sub-tiny" color="zinc-500" align="center" weight="bold" uppercase tracking="widest">
-                        Já possui uma conta? <Link href="/auth/login" className="contents"><Font variant="sub-tiny" color={primaryColor as any} weight="black" className="cursor-pointer underline">Fazer login</Font></Link>
+                        Já possui uma conta? <Link href="/auth/login" className="contents"><Font variant="sub-tiny" color="primary" weight="black" className="cursor-pointer underline">Fazer login</Font></Link>
                     </Font>
                 </Box>
             </Stack>

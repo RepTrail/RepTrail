@@ -13,6 +13,7 @@ import { getEffectiveTier, getTrainerProfile, getTrainerRanking } from '@/action
 import { TrainerTourManager } from '@/components/feature/trainer/onboarding/trainer-tour-manager'
 import { MobileTrainerTourManager } from '@/components/feature/trainer/onboarding/mobile-trainer-tour-manager'
 import { DashboardShell } from '@/components/store/advanced/dashboard-shell'
+import { RegistryProvider } from '@/components/store/advanced/registry-context'
 
 export default async function TrainerLayout({ children }: { children: React.ReactNode }) {
     const headerList = await headers()
@@ -87,18 +88,20 @@ export default async function TrainerLayout({ children }: { children: React.Reac
     ]
 
     return (
-        <HydrationBoundary state={dehydratedState}>
-            <TrainerTourManager userId={userId} />
-            <MobileTrainerTourManager userId={userId} />
-            <DashboardShell
-                color="emerald"
-                links={links}
-                mobileLinks={mobileLinks}
-                profileHref="/dashboard/trainer/profile"
-                user={{ id: userId, name: profile?.full_name, email: (profile as any)?.email, avatar_url: profile?.avatar_url }}
-            >
-                {children}
-            </DashboardShell>
-        </HydrationBoundary>
+        <RegistryProvider defaultColor="emerald">
+            <HydrationBoundary state={dehydratedState}>
+                <TrainerTourManager userId={userId} />
+                <MobileTrainerTourManager userId={userId} />
+                <DashboardShell
+                    color="emerald"
+                    links={links}
+                    mobileLinks={mobileLinks}
+                    profileHref="/dashboard/trainer/profile"
+                    user={{ id: userId, name: profile?.full_name, email: (profile as any)?.email, avatar_url: profile?.avatar_url }}
+                >
+                    {children}
+                </DashboardShell>
+            </HydrationBoundary>
+        </RegistryProvider>
     )
 }

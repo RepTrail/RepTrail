@@ -98,7 +98,7 @@ export default function AdminPersonaisPage() {
             }}
         >
             <RegistrySection
-                title="Lista de Personais"
+                title="Diretório de Profissionais"
                 subtitle="Administre os profissionais parceiros e suas credenciais de acesso."
                 icon={UserCheck}
             >

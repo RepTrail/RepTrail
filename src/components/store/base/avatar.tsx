@@ -1,10 +1,12 @@
+'use client'
 import React from 'react'
 import { Font } from './font'
 import { cn } from '@/lib/utils'
+import { useRegistry } from '../advanced/registry-context'
 
 interface BaseAvatarProps {
     initials: string
-    variant?: 'orange' | 'emerald' | 'red' | 'blue' | 'amber' | 'zinc'
+    variant?: 'orange' | 'emerald' | 'red' | 'blue' | 'amber' | 'zinc' | 'primary'
     size?: 'sm' | 'md' | 'lg' | 'xl'
     src?: string
     className?: string
@@ -17,6 +19,9 @@ export function BaseAvatar({
     src,
     className
 }: BaseAvatarProps) {
+    const { primaryColor } = useRegistry()
+    const resolvedVariant = variant === 'primary' ? primaryColor : variant
+
     const sizeClasses = {
         sm: 'h-8 w-8 text-[8px]',
         md: 'h-12 w-12 text-[12px]',
@@ -38,7 +43,7 @@ export function BaseAvatar({
             className={cn(
                 "rounded-full border flex items-center justify-center shrink-0 overflow-hidden relative",
                 sizeClasses[size],
-                variantClasses[variant],
+                variantClasses[resolvedVariant as keyof typeof variantClasses],
                 className
             )}
         >
@@ -55,7 +60,7 @@ export function BaseAvatar({
             
             <Font 
                 weight="black" 
-                color={variant === 'zinc' ? 'zinc-500' : variant as any} 
+                color={resolvedVariant === 'zinc' ? 'zinc-500' : resolvedVariant as any} 
                 variant={size === 'sm' ? 'sub-tiny' : 'body'} 
                 align="center"
             >

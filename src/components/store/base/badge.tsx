@@ -5,12 +5,13 @@ import { cn } from '@/lib/utils'
 import { Font } from './font'
 import { Icon } from './icon'
 import { LucideIcon } from 'lucide-react'
+import { useRegistry } from '../advanced/registry-context'
 
 interface BadgeProps {
     label: string
     icon?: LucideIcon
     variant?: 'dot' | 'outline' | 'solid' | 'glass'
-    color?: 'emerald' | 'orange' | 'red' | 'blue' | 'amber' | 'zinc'
+    color?: 'emerald' | 'orange' | 'red' | 'blue' | 'amber' | 'zinc' | 'primary'
     size?: 'xs' | 'sm' | 'md'
     rounded?: 'full' | 'system'
     className?: string
@@ -25,6 +26,8 @@ export function Badge({
     rounded = 'system',
     className
 }: BadgeProps) {
+    const { primaryColor } = useRegistry()
+    const resolvedColor = color === 'primary' ? primaryColor : color
 
     const colorClasses = {
         emerald: {
@@ -70,8 +73,8 @@ export function Badge({
             glass: 'bg-white/5 border-white/10'
         },
     }
-
-    const current = colorClasses[color]
+    
+    const current = colorClasses[resolvedColor as keyof typeof colorClasses]
 
     const sizeMapping = {
         xs: {
@@ -114,10 +117,10 @@ export function Badge({
             variant === 'solid' && current.bg,
             className
         )}>
-            {icon && <Icon icon={icon} size={currentSize.icon} color={color as any} />}
+            {icon && <Icon icon={icon} size={currentSize.icon} color={resolvedColor as any} />}
             <Font 
                 variant={currentSize.font} 
-                color={color === 'zinc' ? 'zinc-400' : color as any} 
+                color={resolvedColor === 'zinc' ? 'zinc-400' : resolvedColor as any} 
                 weight="black" 
                 italic 
                 uppercase 

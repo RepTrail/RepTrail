@@ -78,16 +78,19 @@ export function ProductCard({
                 </Box>
 
                 {/* Quick Actions (Hover Overlay) */}
-                <Stack 
-                    direction="row"
+                <Box
                     position="absolute" 
+                    pin="inset"
+                    display="none"
+                    groupHoverDisplay="flex"
                     align="center" 
                     justify="center" 
                     gap={2.5}
-                    style={{ inset: 0, backgroundColor: 'rgba(9, 9, 11, 0.6)', backdropFilter: 'blur(4px)' }}
-                    opacity={0}
-                    groupHoverOpacity={100}
+                    bg="black"
+                    bgOpacity={60}
+                    backdropBlur="sm"
                     transition
+                    zIndex={20}
                 >
                     <Button variant="outline-blue" size="sm" rounded="full" isIconOnly onClick={onEdit}>
                         <Edit3 size={14} />
@@ -95,7 +98,7 @@ export function ProductCard({
                     <Button variant="outline-red" size="sm" rounded="full" isIconOnly onClick={onDelete}>
                         <Trash2 size={14} />
                     </Button>
-                </Stack>
+                </Box>
             </Box>
 
             {/* Product Info - Refined Typography */}

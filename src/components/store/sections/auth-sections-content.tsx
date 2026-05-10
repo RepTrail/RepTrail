@@ -18,18 +18,26 @@ export function AuthSectionsContent({ id }: { id?: string }) {
             subtitle="Formulários de acesso e cadastro padronizados."
             icon={ShieldCheck}
         >
-            <Stack direction="row" gap={12.5} justify="between" align="start" width="full" className="overflow-x-auto pb-10">
+            <Stack 
+                direction={{ base: 'col', md: 'row' }} 
+                gap={12.5} 
+                justify="between" 
+                align={{ base: 'stretch', md: 'start' }} 
+                width="full" 
+                overflowX={{ base: 'hidden', md: 'auto' }}
+                paddingBottom={{ base: 0, md: 10 }}
+            >
                 <Stack gap={5} align="center" width="full" className="max-w-[400px]">
-                    <AuthLoginForm />
+                    <AuthLoginForm syncColor={false} />
                 </Stack>
                 <Stack gap={5} align="center" width="full" className="max-w-[400px]">
-                    <AuthSignUpForm />
+                    <AuthSignUpForm syncColor={false} />
                 </Stack>
                 <Stack gap={5} align="center" width="full" className="max-w-[400px]">
-                    <AuthAffiliateSignUpForm />
+                    <AuthAffiliateSignUpForm syncColor={false} />
                 </Stack>
                 <Stack gap={5} align="center" width="full" className="max-w-[400px]">
-                    <AuthForgotPasswordForm />
+                    <AuthForgotPasswordForm syncColor={false} />
                 </Stack>
             </Stack>
         </RegistrySection>

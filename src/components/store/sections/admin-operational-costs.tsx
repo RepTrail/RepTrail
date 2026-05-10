@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Plus, Trash2, TrendingDown, TrendingUp } from 'lucide-react'
+import { Plus, Trash2, TrendingDown, TrendingUp, Edit3, LucideIcon } from 'lucide-react'
 import { Stack } from '../base/stack'
 import { Box } from '../base/box'
 import { Font } from '../base/font'
@@ -11,13 +11,18 @@ import { Input } from '../base/input'
 import { Grid } from '../base/grid'
 import { Badge } from '../base/badge'
 import { FormSelect } from '../base/form-select'
+import { Inline, Divider } from '../base/layout'
 import { Modal } from '../advanced/modal'
+import { RegistrySection } from '../advanced/registry-section'
 import { addOperationalCost, deleteOperationalCost } from '@/actions/admin-actions'
 import { useToast } from '@/hooks/use-toast'
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
 import { ENTITIES } from '@/lib/outbox-db'
 import { cn } from '@/lib/utils'
+import { ActionableListCard } from '../intermediary/actionable-list-card'
 import { EmptyState } from '../intermediary/empty-state'
+import { ActionIconButton } from '../intermediary/action-icon-button'
+import { CircleIcon } from '../intermediary/circle-icon'
 
 interface OperationalCost {
     id: string
@@ -36,7 +41,10 @@ interface OperationalCostsProps {
 export function AdminOperationalCosts({ initialCosts, totalMonthly, totalAllTime }: OperationalCostsProps) {
     const { toast } = useToast()
     const [costs, setCosts] = useState<OperationalCost[]>(initialCosts)
-    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+    const [selectedCost, setSelectedCost] = useState<OperationalCost | null>(null)
     const [description, setDescription] = useState('')
     const [amount, setAmount] = useState('')
     const [type, setType] = useState<'fixed' | 'variable'>('fixed')
@@ -50,7 +58,7 @@ export function AdminOperationalCosts({ initialCosts, totalMonthly, totalAllTime
             const tempId = crypto.randomUUID()
             const newCost = { ...variables.obj, id: tempId, created_at: new Date().toISOString() }
             setCosts(prev => [newCost, ...prev])
-            setIsModalOpen(false)
+            setIsAddModalOpen(false)
             setDescription('')
             setAmount('')
             setType('fixed')
@@ -73,6 +81,7 @@ export function AdminOperationalCosts({ initialCosts, totalMonthly, totalAllTime
         onMutate: (variables) => {
             const previousCosts = [...costs]
             setCosts(prev => prev.filter(c => c.id !== variables.id))
+            setIsDeleteModalOpen(false)
             return { previousCosts }
         },
         onSuccess: () => {
@@ -90,97 +99,128 @@ export function AdminOperationalCosts({ initialCosts, totalMonthly, totalAllTime
         addCostMutate({ obj: { description, amount: numericAmount, type } })
     }
 
-    function handleDelete(id: string) {
-        if (!confirm('Tem certeza que deseja apagar este custo?')) return
-        deleteCostMutate({ id })
+    function openDeleteModal(cost: OperationalCost) {
+        setSelectedCost(cost)
+        setIsDeleteModalOpen(true)
+    }
+
+    function openEditModal(cost: OperationalCost) {
+        setSelectedCost(cost)
+        setDescription(cost.description)
+        setAmount(cost.amount.toString())
+        setType(cost.type)
+        setIsEditModalOpen(true)
     }
 
     return (
-        <Stack gap={10}>
-            {/* Header com Resumo */}
-            <Stack direction="row" align="center" justify="between" className="border-b border-white/5 pb-5">
-                <Stack gap={1}>
-                    <Font variant="body" weight="black" color="white" uppercase italic>CUSTOS OPERACIONAIS</Font>
-                    <Font variant="description" color="zinc-500">Infraestrutura e operação mensal da plataforma.</Font>
-                </Stack>
-                <Stack direction="row" gap={5} align="center">
-                    <Box paddingX={5} paddingY={2.5} rounded="full" className="bg-zinc-900/60 border border-white/5">
-                         <Font variant="heading" color="red">R$ {totalMonthly.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</Font>
-                    </Box>
-                    <Button 
-                        variant="outline-red" 
-                        rounded="full" 
-                        onClick={() => setIsModalOpen(true)}
-                        className="px-8"
+        <Stack gap="section">
+            <RegistrySection 
+                title="Custos Operacionais" 
+                subtitle="Infraestrutura e operação mensal da plataforma." 
+                icon={TrendingDown}
+                rightElement={
+                    <Stack direction="row" gap={5} align="center">
+                        <Badge 
+                            label={`R$ ${totalMonthly.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} / mês`}
+                            color="emerald"
+                            variant="solid"
+                            rounded="full"
+                            size="md"
+                        />
+                        <Button 
+                            variant="outline-red" 
+                            rounded="full" 
+                            onClick={() => {
+                                setDescription('')
+                                setAmount('')
+                                setType('fixed')
+                                setIsAddModalOpen(true)
+                            }}
+                            paddingX={5}
+                            size="md"
+                        >
+                            <Stack direction="row" gap={2.5} align="center">
+                                <Icon icon={Plus} size="sm" />
+                                <Font variant="label-caps">Adicionar Custo</Font>
+                            </Stack>
+                        </Button>
+                    </Stack>
+                }
+            >
+                <Stack gap={5}>
+                    {/* Listagem de Custos */}
+                    <Stack gap={2.5}>
+                {costs.map((cost) => (
+                    <ActionableListCard 
+                        key={cost.id}
+                        badges={
+                            <Inline gap={2.5} align="center">
+                                <Badge 
+                                    label={new Date(cost.created_at).toLocaleDateString('pt-BR')}
+                                    variant="glass"
+                                    size="xs"
+                                    rounded="full"
+                                />
+                                <Badge 
+                                    label={cost.type === 'fixed' ? 'Fixo' : 'Variável'}
+                                    variant="glass"
+                                    color={cost.type === 'fixed' ? 'blue' : 'orange'}
+                                    size="xs"
+                                    rounded="full"
+                                />
+                            </Inline>
+                        }
+                        actions={
+                            <>
+                                <ActionIconButton 
+                                    icon={Edit3} 
+                                    variant="outline-blue" 
+                                    onClick={() => openEditModal(cost)} 
+                                />
+                                <ActionIconButton 
+                                    icon={Trash2} 
+                                    variant="outline-red" 
+                                    onClick={() => openDeleteModal(cost)} 
+                                />
+                            </>
+                        }
                     >
-                        <Stack direction="row" gap={2.5} align="center">
-                            <Icon icon={Plus} size="sm" />
-                            <Font variant="label-caps">Adicionar Custo</Font>
-                        </Stack>
-                    </Button>
-                </Stack>
-            </Stack>
-
-            {/* Listagem de Custos */}
-            <Box rounded="system" className="bg-zinc-900/20 border border-zinc-800 overflow-hidden">
-                {/* Header da Tabela */}
-                <Box padding={5} className="bg-zinc-950/50 border-b border-zinc-800">
-                    <Grid columns={5} gap={5}>
-                        <Box><Font variant="label-caps" color="zinc-500">Descrição</Font></Box>
-                        <Box><Font variant="label-caps" color="zinc-500">Tipo</Font></Box>
-                        <Box><Font variant="label-caps" color="zinc-500">Data</Font></Box>
-                        <Box align="end"><Font variant="label-caps" color="zinc-500">Valor</Font></Box>
-                        <Box align="end"><Font variant="label-caps" color="zinc-500">Ações</Font></Box>
-                    </Grid>
-                </Box>
-
-                {/* Corpo da Tabela */}
-                <Stack gap={0} className="divide-y divide-zinc-800/50">
-                    {costs.length === 0 ? (
-                        <Box padding={5}>
-                            <EmptyState 
+                        <Inline gap={5} align="center">
+                            <CircleIcon 
                                 icon={TrendingDown} 
-                                title="Sem Custos" 
-                                description="Nenhum custo operacional registrado este mês." 
+                                color={cost.type === 'fixed' ? 'blue' : 'orange'} 
+                                size="sm" 
                             />
-                        </Box>
-                    ) : (
-                        costs.map((cost) => (
-                            <Box key={cost.id} padding={5} className="hover:bg-zinc-800/20 transition-colors">
-                                <Grid columns={5} gap={5} align="center">
-                                    <Box>
-                                        <Font variant="body" weight="bold" color="white">{cost.description}</Font>
-                                    </Box>
-                                    <Box>
-                                        <Badge 
-                                            label={cost.type === 'fixed' ? 'Fixo' : 'Variável'}
-                                            variant="glass"
-                                            color={cost.type === 'fixed' ? 'blue' : 'orange'}
-                                        />
-                                    </Box>
-                                    <Box>
-                                        <Font variant="auxiliary" color="zinc-400">{new Date(cost.created_at).toLocaleDateString('pt-BR')}</Font>
-                                    </Box>
-                                    <Box align="end">
-                                        <Font variant="body" weight="black" color="red">- R$ {Number(cost.amount).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</Font>
-                                    </Box>
-                                    <Box align="end">
-                                        <Button variant="close" isIconOnly onClick={() => handleDelete(cost.id)}>
-                                            <Icon icon={Trash2} size="sm" color="zinc-500" className="hover:text-red-500 transition-colors" />
-                                        </Button>
-                                    </Box>
-                                </Grid>
-                            </Box>
-                        ))
-                    )}
-                </Stack>
-            </Box>
+                            <Stack gap={0} minWidth={0}>
+                                <Font weight="black" uppercase italic color="white" variant={{ base: 'body-sm', md: 'body' }} tracking="wider" truncate display="block">
+                                    {cost.description}
+                                </Font>
+                                <Box fullWidth minWidth={0} overflow="hidden">
+                                    <Font variant="sub-tiny" color="zinc-600" uppercase tracking="widest" display="block">
+                                        - R$ {Number(cost.amount).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                                    </Font>
+                                </Box>
+                            </Stack>
+                        </Inline>
+                    </ActionableListCard>
+                ))}
+
+                {costs.length === 0 && (
+                    <EmptyState 
+                        icon={TrendingDown} 
+                        title="Sem Custos" 
+                        description="Nenhum custo operacional cadastrado no momento." 
+                    />
+                )}
+            </Stack>
+            </Stack>
+            </RegistrySection>
 
             {/* Modal de Adição */}
             <Modal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                title="Adicionar Custo Operacional"
+                isOpen={isAddModalOpen}
+                onClose={() => setIsAddModalOpen(false)}
+                title="Adicionar Custo"
                 subtitle="Registre gastos de infraestrutura ou marketing."
                 icon={TrendingDown}
                 confirmLabel="Salvar Custo"
@@ -192,7 +232,7 @@ export function AdminOperationalCosts({ initialCosts, totalMonthly, totalAllTime
                         label="Descrição" 
                         placeholder="Ex: Servidor, Domínio, Marketing..." 
                         value={description}
-                        onChange={setDescription}
+                        onChange={(e) => setDescription(e.target.value)}
                     />
                     <Stack direction="row" gap={5}>
                         <Box flex1>
@@ -201,7 +241,7 @@ export function AdminOperationalCosts({ initialCosts, totalMonthly, totalAllTime
                                 type="number" 
                                 placeholder="0,00" 
                                 value={amount}
-                                onChange={setAmount}
+                                onChange={(e) => setAmount(e.target.value)}
                             />
                         </Box>
                         <Box flex1>
@@ -217,6 +257,66 @@ export function AdminOperationalCosts({ initialCosts, totalMonthly, totalAllTime
                         </Box>
                     </Stack>
                 </Stack>
+            </Modal>
+
+            {/* Modal de Edição */}
+            <Modal
+                isOpen={isEditModalOpen}
+                onClose={() => setIsEditModalOpen(false)}
+                title="Editar Custo"
+                subtitle={`Modificando: ${selectedCost?.description}`}
+                icon={Edit3}
+                confirmLabel="Salvar Alterações"
+                onConfirm={() => {
+                    toast({ title: 'Info', description: 'Funcionalidade de edição em desenvolvimento.' })
+                    setIsEditModalOpen(false)
+                }}
+                variant="blue"
+            >
+                <Stack gap={5}>
+                    <Input 
+                        label="Descrição" 
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                    />
+                    <Stack direction="row" gap={5}>
+                        <Box flex1>
+                            <Input 
+                                label="Valor (R$)" 
+                                type="number" 
+                                value={amount}
+                                onChange={(e) => setAmount(e.target.value)}
+                            />
+                        </Box>
+                        <Box flex1>
+                            <FormSelect 
+                                label="Tipo de Custo"
+                                options={[
+                                    { label: 'Fixo', value: 'fixed', description: 'Gastos recorrentes mensais' },
+                                    { label: 'Variável', value: 'variable', description: 'Gastos esporádicos' }
+                                ]}
+                                value={type}
+                                onChange={(val: any) => setType(val)}
+                            />
+                        </Box>
+                    </Stack>
+                </Stack>
+            </Modal>
+
+            {/* Modal de Exclusão */}
+            <Modal
+                isOpen={isDeleteModalOpen}
+                onClose={() => setIsDeleteModalOpen(false)}
+                title="Confirmar Exclusão"
+                subtitle={`Deseja realmente apagar o custo: ${selectedCost?.description}?`}
+                icon={Trash2}
+                variant="red"
+                confirmLabel="Sim, Excluir"
+                onConfirm={() => deleteCostMutate({ id: selectedCost?.id || '' })}
+            >
+                <Font variant="description" color="zinc-400">
+                    Esta ação não pode ser desfeita e removerá o registro permanentemente do sistema.
+                </Font>
             </Modal>
         </Stack>
     )

@@ -1,6 +1,8 @@
+'use client'
 import React from 'react'
 import { cn } from '@/lib/utils'
 import { Box, BoxProps } from './box'
+import { useRegistry } from '../advanced/registry-context'
 
 type SurfaceVariant = 
   | 'base' 
@@ -15,14 +17,17 @@ type SurfaceVariant =
   | 'tonal-amber' 
   | 'tonal-red' 
   | 'tonal-blue'
+  | 'tonal-zinc'
+  | 'tonal-primary'
 
-interface SurfaceProps extends Omit<BoxProps, 'variant' | 'padding' | 'minHeight'> {
+interface SurfaceProps extends Omit<BoxProps, 'variant' | 'padding' | 'minHeight' | 'border'> {
   children: React.ReactNode
   variant?: SurfaceVariant
-  padding?: 0 | 2.5 | 5 | 12
+  padding?: 0 | 1 | 2.5 | 5 | 7.5 | 12 | 12.5
   rounded?: 'none' | 'full' | 'system'
   minHeight?: 'sm' | 'md' | 'lg' | 'xl'
   border?: 'none' | 'subtle' | 'bold' | 'dashed'
+  hoverBorder?: string
 }
 
 /**
@@ -41,11 +46,14 @@ export function Surface({
   flex1,
   shrink,
   border,
+  hoverBorder,
   className,
   id,
   onClick,
   ...props
 }: SurfaceProps) {
+  const { primaryColor } = useRegistry()
+  const resolvedVariant = variant === 'tonal-primary' ? `tonal-${primaryColor}` as SurfaceVariant : variant
   
   const variantClasses = {
     base: 'bg-zinc-900 border border-white/5',
@@ -63,13 +71,17 @@ export function Surface({
     'tonal-amber': 'bg-amber-500/5 border-amber-500/50 hover:bg-amber-500/10 transition-all duration-500',
     'tonal-red': 'bg-red-500/5 border-red-500/50 hover:bg-red-500/10 transition-all duration-500',
     'tonal-blue': 'bg-blue-500/5 border-blue-500/50 hover:bg-blue-500/10 transition-all duration-500',
+    'tonal-zinc': 'bg-white/5 border-white/10 hover:bg-white/10 transition-all duration-500',
   }
 
   const paddingClasses = {
     0: 'p-0',
+    1: 'p-1',
     2.5: 'p-2.5',
     5: 'p-5',
-    12: 'p-5 md:p-12'
+    7.5: 'p-[30px]',
+    12: 'p-5 md:p-12',
+    12.5: 'p-[50px]'
   }
 
   const roundedClasses = {
@@ -102,8 +114,9 @@ export function Surface({
       height={height}
       align={align}
       justify={justify}
+      hoverBorder={hoverBorder}
       className={cn(
-        variantClasses[variant],
+        variantClasses[resolvedVariant as keyof typeof variantClasses],
         paddingClasses[padding as keyof typeof paddingClasses],
         roundedClasses[rounded],
         border && borderClasses[border],

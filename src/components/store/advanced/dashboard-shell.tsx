@@ -2,16 +2,16 @@
 
 import React from 'react'
 import { usePathname } from 'next/navigation'
-import Link from 'next/link'
 import { Logo } from '../base/logo'
 import { SidebarItem } from '../intermediary/sidebar-item'
+import { BottomNavItem } from '../intermediary/bottom-nav-item'
 import { SidebarProfile } from '../intermediary/sidebar-profile'
 import { Icon } from '../base/icon'
 import { Button } from '../base/button'
 import { Box } from '../base/box'
 import { Stack } from '../base/stack'
 import { Divider, MobileNavContainer, MobileHeaderContainer, Inline } from '../base/layout'
-import { GlassPanel } from '../base/surface'
+import { Surface } from '../base/surface'
 import { ImpersonationBar } from './impersonation-bar'
 import { cn } from '@/lib/utils'
 import { RegistryColor } from './registry-context'
@@ -64,21 +64,21 @@ interface DashboardShellProps {
 // ─── Color Maps ───────────────────────────────────────────────────────────────
 
 const lightColorMap: Record<RegistryColor, string> = {
-    blue:    'from-blue-500/20',
-    red:     'from-red-500/20',
-    amber:   'from-amber-500/20',
+    blue: 'from-blue-500/20',
+    red: 'from-red-500/20',
+    amber: 'from-amber-500/20',
     emerald: 'from-emerald-500/20',
-    orange:  'from-orange-500/20',
-    zinc:    'from-zinc-500/20',
+    orange: 'from-orange-500/20',
+    zinc: 'from-zinc-500/20',
 }
 
 const orbColorMap: Record<RegistryColor, string> = {
-    blue:    'bg-blue-500/10',
-    red:     'bg-red-500/10',
-    amber:   'bg-amber-500/10',
+    blue: 'bg-blue-500/10',
+    red: 'bg-red-500/10',
+    amber: 'bg-amber-500/10',
     emerald: 'bg-emerald-500/10',
-    orange:  'bg-orange-500/10',
-    zinc:    'bg-zinc-500/10',
+    orange: 'bg-orange-500/10',
+    zinc: 'bg-zinc-500/10',
 }
 
 // ─── Main Shell ───────────────────────────────────────────────────────────────
@@ -99,18 +99,36 @@ export function DashboardShell({ children, color, links, mobileLinks, user, prof
             direction="col"
             position="relative"
         >
-            {/* Background Grid */}
-            <Box className="fixed inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(to_bottom,white_0%,transparent_90%)] opacity-[0.22] pointer-events-none z-0" />
+            {/* Background Grid - Allowed exception via className for system SVGs */}
+            <Box
+                position="fixed"
+                inset={0}
+                className="bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(to_bottom,white_0%,transparent_90%)] opacity-[0.22] pointer-events-none z-0"
+            />
 
-            {/* Background Orbs */}
-            <Box className={cn(
-                'fixed -top-[10%] -right-[5%] w-[60%] h-[60%] rounded-full blur-[150px] pointer-events-none transition-colors duration-1000 z-0',
-                `bg-gradient-to-br ${lightColorMap[color]} to-transparent`
-            )} />
-            <Box className={cn(
-                'fixed bottom-[10%] left-[20%] w-[500px] h-[500px] rounded-full blur-[180px] animate-pulse pointer-events-none transition-colors duration-1000 z-0',
-                orbColorMap[color]
-            )} />
+            {/* Background Orbs - Allowed high-fidelity effects in Advanced organismos */}
+            <Box
+                position="fixed"
+                top="-10%"
+                right="-5%"
+                width="full"
+                height="full"
+                rounded="full"
+                className={cn(
+                    'blur-[150px] pointer-events-none transition-colors duration-1000 z-0',
+                    'w-[60%] h-[60%]',
+                    `bg-gradient-to-br ${lightColorMap[color]} to-transparent`
+                )}
+            />
+            <Box
+                position="fixed"
+                bottom="10%"
+                left="20%"
+                className={cn(
+                    'w-[500px] h-[500px] rounded-full blur-[180px] animate-pulse pointer-events-none transition-colors duration-1000 z-0',
+                    orbColorMap[color]
+                )}
+            />
 
             {/* Desktop Sidebar */}
             <DashboardSidebar
@@ -133,11 +151,22 @@ export function DashboardShell({ children, color, links, mobileLinks, user, prof
             <DashboardBottomNav color={color} links={bottomLinks} />
 
             {/* Main Content */}
-            <Box as="main" flex1 fullWidth transition position="relative" className="lg:pl-72 z-10">
-                <Box padding={5} className="pt-[100px] lg:pt-5 pb-28 lg:pb-10">
-                    <Box className="mb-5">
-                        <ImpersonationBar color={color} />
-                    </Box>
+            <Box
+                as="main"
+                flex1
+                fullWidth
+                transition
+                position="relative"
+                zIndex={10}
+                className="lg:pl-72" // Maintaining w-72 parity until Box supports arbitrary precise spacing
+            >
+                <Box
+                    padding={5}
+                    paddingTop={{ base: 25, lg: 5 }}
+                    paddingBottom={{ base: 25, lg: 12.5 }}
+                    gap={12.5}
+                >
+                    <ImpersonationBar color={color} />
                     {children}
                 </Box>
             </Box>
@@ -166,38 +195,62 @@ function DashboardSidebar({
         <>
             {/* Mobile Overlay */}
             {isSidebarOpen && (
-                <div
-                    className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] lg:hidden"
+                <Box
+                    position="fixed"
+                    inset={0}
+                    bg="black"
+                    bgOpacity={60}
+                    backdropBlur="sm"
+                    zIndex={100}
+                    display={{ base: 'block', lg: 'none' }}
                     onClick={() => setIsSidebarOpen(false)}
                 />
             )}
 
-            <aside className={cn(
-                'fixed right-0 top-0 h-screen w-72 z-[101] transition-transform duration-500',
-                'lg:translate-x-0 lg:left-0 lg:right-auto',
-                isSidebarOpen ? 'translate-x-0' : 'translate-x-full'
-            )}>
-                {/* Full-height flex column */}
-                <div className="flex flex-col h-full bg-zinc-950/40 backdrop-blur-md border-l lg:border-l-0 lg:border-r border-white/5">
-
-                    {/* Scrollable top section */}
-                    <div className="flex flex-col flex-1 overflow-hidden p-5 relative">
+            <Box
+                as="aside"
+                position="fixed"
+                top={0}
+                height="screen"
+                zIndex={100}
+                width="sidebar-wide"
+                translateX={{
+                    base: isSidebarOpen ? 'none' : 'full',
+                    lg: 'none'
+                }}
+                transition
+                className="right-0 lg:left-0 lg:right-auto" // Orchestration classes
+            >
+                {/* Sidebar Container */}
+                <Box
+                    fullHeight
+                    display="flex"
+                    direction="col"
+                    bg="zinc"
+                    bgOpacity={50}
+                    backdropBlur="md"
+                >
+                    <Box padding={5} position="relative" flex1 display="flex" direction="col" overflow="hidden" gap={12.5}>
 
                         {/* Mobile Close Button */}
-                        <button
-                            onClick={() => setIsSidebarOpen(false)}
-                            className="absolute left-5 top-5 lg:hidden text-white/40 hover:text-white active:scale-90 transition-all"
-                        >
-                            <X size={20} />
-                        </button>
+                        <Box display={{ base: 'block', lg: 'none' }} position="absolute" left={20} top={20}>
+                            <Button
+                                variant="zinc"
+                                size="sm"
+                                isIconOnly
+                                onClick={() => setIsSidebarOpen(false)}
+                            >
+                                <X size={20} />
+                            </Button>
+                        </Box>
 
-                        {/* Logo — fixed, never shrinks */}
-                        <div className="shrink-0 pb-[50px]">
+                        {/* Logo */}
+                        <Box shrink={0}>
                             <Logo size="md" color={color as any} />
-                        </div>
+                        </Box>
 
-                        {/* Nav — takes remaining space, scrolls */}
-                        <nav className="flex-1 w-full overflow-y-auto min-h-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                        {/* Navigation */}
+                        <Box as="nav" flex1 fullWidth overflowY="auto" noScrollbar>
                             <Stack gap={2.5} fullWidth>
                                 {links.map((link) => {
                                     const IconComp = iconMap[link.icon]
@@ -219,21 +272,19 @@ function DashboardSidebar({
                                     )
                                 })}
                             </Stack>
-                        </nav>
-                    </div>
+                        </Box>
+                    </Box>
 
-                    {/* Divider */}
                     <Divider color="white/5" />
 
-                    {/* Profile — fixed at bottom */}
-                    <div className="shrink-0 p-5">
-                        <SidebarProfile 
-                            user={user} 
-                            settingsHref={profileHref} 
+                    <Box padding={5} shrink={0}>
+                        <SidebarProfile
+                            user={user}
+                            settingsHref={profileHref}
                         />
-                    </div>
-                </div>
-            </aside>
+                    </Box>
+                </Box>
+            </Box>
         </>
     )
 }
@@ -251,14 +302,16 @@ function DashboardMobileHeader({
         <MobileHeaderContainer>
             <Inline justify="between" fullWidth align="center">
                 <Logo size="sm" color={color as any} />
-                <GlassPanel padding={0} rounded="system" className="p-1">
-                    <button
+                <Surface variant="glass" padding={1} rounded="system">
+                    <Button
+                        variant="ghost"
+                        size="md"
+                        isIconOnly
                         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                        className="flex items-center justify-center w-10 h-10 active:scale-90 transition-transform"
                     >
                         <Icon icon={Menu} color={color as any} size="sm" />
-                    </button>
-                </GlassPanel>
+                    </Button>
+                </Surface>
             </Inline>
         </MobileHeaderContainer>
     )
@@ -277,51 +330,16 @@ function DashboardBottomNav({ color, links }: { color: RegistryColor; links: Das
             {links.map((link) => {
                 const IconComp = iconMap[link.icon]
                 const active = isActive(link)
-                const variant = `outline-${color}` as any
-
-                const iconElement = (
-                    <Icon
-                        icon={IconComp ?? Home}
-                        size="sm"
-                        color={(active ? color : 'white') as any}
-                        className={active ? 'opacity-100' : 'opacity-40'}
-                    />
-                )
-
-                if (link.onClick) {
-                    return (
-                        <Button
-                            key={link.href}
-                            variant={active ? variant : 'ghost'}
-                            size="md"
-                            rounded={active ? 'system' : 'full'}
-                            isIconOnly
-                            className="transition-transform active:scale-90"
-                            onClick={link.onClick}
-                        >
-                            {iconElement}
-                        </Button>
-                    )
-                }
 
                 return (
-                    <Link
+                    <BottomNavItem
                         key={link.href}
-                        href={link.href}
-                        className={cn(
-                            "inline-flex items-center justify-center transition-all active:scale-90",
-                            "w-10 h-10", // approximate md isIconOnly size
-                            active 
-                                ? (color === 'orange' ? 'bg-orange-500/10 text-orange-500 border border-orange-500/20 rounded-[5px]' :
-                                   color === 'emerald' ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 rounded-[5px]' :
-                                   color === 'red' ? 'bg-red-500/10 text-red-500 border border-red-500/20 rounded-[5px]' :
-                                   color === 'amber' ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20 rounded-[5px]' :
-                                   'bg-blue-500/10 text-blue-500 border border-blue-500/20 rounded-[5px]')
-                                : "bg-transparent text-zinc-400 hover:bg-white/5 hover:text-white rounded-full"
-                        )}
-                    >
-                        {iconElement}
-                    </Link>
+                        href={link.onClick ? undefined : link.href}
+                        onClick={link.onClick}
+                        icon={IconComp ?? Home}
+                        active={active}
+                        variant={color}
+                    />
                 )
             })}
         </MobileNavContainer>

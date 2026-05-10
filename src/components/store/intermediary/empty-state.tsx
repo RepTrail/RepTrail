@@ -27,7 +27,7 @@ export function EmptyState({
   
   return (
     <Surface 
-        variant={`tonal-${activeVariant}` as any} 
+        variant="tonal-primary" 
         padding={12} 
         rounded="system" 
         border="bold"
@@ -36,7 +36,7 @@ export function EmptyState({
       <Stack gap={5} align="center">
         <IconBox 
             icon={icon} 
-            variant={activeVariant as any} 
+            variant="primary" 
             size="lg" 
             rounded="full" 
         />

@@ -60,7 +60,7 @@ export default function AdminLogsPage() {
             }}
         >
             <RegistrySection
-                title="Logs de Auditoria"
+                title="Registro de Eventos"
                 subtitle="Acompanhe todas as ações administrativas realizadas na plataforma."
                 icon={Activity}
             >

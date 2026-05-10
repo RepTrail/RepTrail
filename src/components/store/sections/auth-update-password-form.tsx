@@ -9,65 +9,45 @@ import { Button } from '../base/button'
 import { Icon } from '../base/icon'
 import { Box } from '../base/box'
 import { Divider } from '../base/layout'
-import Link from 'next/link'
+import { Lock, ArrowRight } from 'lucide-react'
 import { useRegistry } from '../advanced/registry-context'
-import { Mail, ArrowRight, CheckCircle2 } from 'lucide-react'
 import { translateAuthError } from '@/lib/auth-errors'
 
-interface AuthForgotPasswordFormProps {
-    email?: string
-    setEmail?: (value: string) => void
+interface AuthUpdatePasswordFormProps {
+    password?: string
+    setPassword?: (value: string) => void
     onSubmit?: (e: React.FormEvent) => void
     loading?: boolean
     error?: string | null
-    message?: string | null
     syncColor?: boolean
 }
 
-export function AuthForgotPasswordForm({ 
-    email, setEmail, 
-    onSubmit, 
-    loading, error, message,
+export function AuthUpdatePasswordForm({
+    password,
+    setPassword,
+    onSubmit,
+    loading,
+    error,
     syncColor = true
-}: AuthForgotPasswordFormProps) {
-    const { primaryColor, setPrimaryColor } = useRegistry()
-    
+}: AuthUpdatePasswordFormProps) {
+    const { setPrimaryColor } = useRegistry()
+    const [confirmPassword, setConfirmPassword] = React.useState('')
+
     React.useEffect(() => {
         if (syncColor) {
             setPrimaryColor('emerald')
         }
     }, [setPrimaryColor, syncColor])
 
-    if (message) {
-        return (
-            <Surface variant="glass" padding={7.5} rounded="system" width="full" maxWidth="auth-form" animation="in-fade-zoom">
-                <Stack gap={5} align="center" justify="center">
-                    <Icon icon={CheckCircle2} size="lg" color="emerald" animation="bounce" />
-                    <Stack gap={2.5} align="center">
-                        <Font variant="h2" align="center">Email <Font variant="h2" color="emerald">Enviado</Font></Font>
-                        <Font variant="description" align="center" color="zinc-400">
-                            {message}
-                        </Font>
-                    </Stack>
-                    <Button asChild variant="outline-zinc" fullWidth rounded="full" marginTop={5}>
-                        <Link href="/auth/login">
-                            <Font variant="label-caps">Voltar ao Login</Font>
-                        </Link>
-                    </Button>
-                </Stack>
-            </Surface>
-        )
-    }
-
     return (
         <Surface variant="glass" padding={0} rounded="system" width="full" maxWidth="auth-form">
             <Stack gap={0}>
                 {/* Header */}
                 <Box padding={5}>
-                    <Stack gap={2.5} align="center">
-                        <Font variant="h2" align="center">Recuperar <Font variant="h2" color={primaryColor as any}>Senha</Font></Font>
+                    <Stack gap={1} align="center">
+                        <Font variant="h2" align="center">Nova <Font variant="h2" color="primary">Senha</Font></Font>
                         <Font variant="auxiliary" color="zinc-500" align="center" uppercase tracking="widest">
-                            Digite seu email para receber o link
+                            Defina sua nova credencial de acesso
                         </Font>
                     </Stack>
                 </Box>
@@ -87,11 +67,21 @@ export function AuthForgotPasswordForm({
                             )}
 
                             <Input 
-                                label="Email Cadastrado" 
-                                icon={<Mail size={16} />} 
-                                placeholder="exemplo@email.com" 
-                                value={email}
-                                onChange={(e) => setEmail?.(e.target.value)}
+                                label="Nova Senha" 
+                                type="password"
+                                icon={<Lock size={16} />} 
+                                placeholder="••••••••" 
+                                value={password}
+                                onChange={(e) => setPassword?.(e.target.value)}
+                                required
+                            />
+                            <Input 
+                                label="Confirmar Senha" 
+                                type="password"
+                                icon={<Lock size={16} />} 
+                                placeholder="••••••••" 
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
                                 required
                             />
 
@@ -102,26 +92,17 @@ export function AuthForgotPasswordForm({
                                 rounded="system" 
                                 height="anatomy-item"
                                 paddingY={5}
-                                disabled={loading}
+                                disabled={loading || (password !== confirmPassword && confirmPassword !== '')}
                             >
                                 <Stack direction="row" gap={2.5} align="center" justify="center">
                                     <Font variant="label-caps">
-                                        {loading ? 'Processando...' : 'Recuperar Senha'}
+                                        {loading ? 'Processando...' : 'Atualizar Senha'}
                                     </Font>
                                     {!loading && <Icon icon={ArrowRight} size="xs" />}
                                 </Stack>
                             </Button>
                         </Stack>
                     </form>
-                </Box>
-
-                <Divider color="white/5" />
-
-                {/* Footer */}
-                <Box padding={5} display="flex" align="center" justify="center" bg="black" bgOpacity={30}>
-                    <Font variant="sub-tiny" color="zinc-500" align="center" weight="bold" uppercase tracking="widest">
-                        Lembrou a senha? <Link href="/auth/login"><Font variant="sub-tiny" color="primary" weight="black" cursor="pointer" className="underline">Fazer login</Font></Link>
-                    </Font>
                 </Box>
             </Stack>
         </Surface>

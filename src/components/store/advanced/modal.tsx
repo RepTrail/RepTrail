@@ -43,11 +43,11 @@ export function Modal({
         <Surface variant="base" padding={0} rounded="system" direction="col" flex1 className="min-h-0 overflow-hidden">
           <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
             {/* Header */}
-            <CardHeader bg="zinc" bgOpacity={100} className="shrink-0">
-              <Stack direction="row" align="center" gap={2.5}>
+            <CardHeader bg="zinc" bgOpacity={100} className="shrink-0 gap-5">
+              <Stack direction="row" align="center" gap={2.5} flex1>
                 {icon && <IconBox icon={icon} variant={variant as any} />}
                 <Stack gap={0}>
-                  <Font variant="body" weight="black" color="white" uppercase italic tracking="widest">{title}</Font>
+                  <Font variant="body" weight="black" color="white" uppercase italic tracking="normal">{title}</Font>
                   {subtitle && <Font variant="sub-tiny" color="zinc-500">{subtitle}</Font>}
                 </Stack>
               </Stack>
@@ -75,7 +75,7 @@ export function Modal({
 
             {/* Footer Actions */}
             <div className="shrink-0 bg-zinc-900 p-5">
-              <Stack direction="row" gap={2.5} flex1>
+              <Stack direction={{ base: 'col', md: 'row' }} gap={2.5} flex1>
                 <Button 
                   variant="outline-red" 
                   rounded="full" 

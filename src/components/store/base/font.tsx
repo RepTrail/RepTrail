@@ -1,9 +1,13 @@
+'use client'
 import React from 'react'
 import { cn } from '@/lib/utils'
+import { useRegistry } from '../advanced/registry-context'
 
 export type FontVariant = 
   | 'h1' 
   | 'h2' 
+  | 'h3'
+  | 'h4'
   | 'heading' 
   | 'description' 
   | 'body' 
@@ -11,25 +15,31 @@ export type FontVariant =
   | 'label-caps' 
   | 'auxiliary' 
   | 'sub-tiny'
+  | 'tiny'
 
 interface FontProps extends React.HTMLAttributes<HTMLSpanElement> {
   children: React.ReactNode
-  variant?: FontVariant
-  color?: 'white' | 'zinc' | 'zinc-400' | 'zinc-500' | 'zinc-600' | 'zinc-700' | 'orange' | 'emerald' | 'amber' | 'red' | 'blue' | 'black'
+  variant?: FontVariant | { base: FontVariant, md?: FontVariant, lg?: FontVariant }
+  color?: 'white' | 'zinc' | 'zinc-400' | 'zinc-500' | 'zinc-600' | 'zinc-700' | 'orange' | 'emerald' | 'amber' | 'red' | 'blue' | 'black' | 'primary' | 'success' | 'warning' | 'neutral'
   weight?: 'normal' | 'medium' | 'semibold' | 'bold' | 'black'
   align?: 'left' | 'center' | 'right'
   uppercase?: boolean
+  lowercase?: boolean
   italic?: boolean
   nowrap?: boolean
   mono?: boolean
-  tracking?: 'tight' | 'normal' | 'wide' | 'widest'
+  tracking?: 'tight' | 'normal' | 'wide' | 'wider' | 'widest'
   scale?: 50 | 75 | 100 | 110 | 125 | 150
   rotate?: 90 | 180 | 270
   maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | 'none'
   opacity?: 0 | 10 | 20 | 30 | 40 | 50 | 60 | 70 | 80 | 90 | 100
   groupHoverOpacity?: 0 | 10 | 20 | 30 | 40 | 50 | 60 | 70 | 80 | 90 | 100
+  flex1?: boolean
+  display?: 'block' | 'inline' | 'inline-block' | 'flex' | 'none'
+  breakAll?: boolean
   truncate?: boolean
   transition?: boolean
+  cursor?: 'pointer' | 'default' | 'not-allowed'
   className?: string
 }
 
@@ -43,6 +53,7 @@ export function Font({
   weight,
   align,
   uppercase,
+  lowercase,
   italic,
   nowrap,
   truncate,
@@ -53,22 +64,36 @@ export function Font({
   maxWidth,
   opacity,
   groupHoverOpacity,
+  flex1,
+  display,
+  breakAll,
   transition,
+  cursor,
   className,
   ...props
 }: FontProps) {
+  const { primaryColor } = useRegistry()
+  const resolvedColor = color === 'primary' ? primaryColor : color
   
   const variantClasses = {
     h1: 'text-3xl md:text-5xl font-black tracking-tighter uppercase italic',
     h2: 'text-2xl md:text-4xl font-black tracking-tight uppercase italic',
+    h3: 'text-xl md:text-3xl font-black tracking-tight uppercase italic',
+    h4: 'text-lg md:text-2xl font-black tracking-tight uppercase italic',
     heading: 'text-xl md:text-2xl font-bold tracking-tight',
     description: 'text-base md:text-lg text-zinc-400 leading-relaxed',
     body: 'text-sm md:text-base leading-relaxed',
     'body-sm': 'text-xs md:text-sm leading-relaxed',
     'label-caps': 'text-[10px] font-black uppercase tracking-[0.2em] italic',
     auxiliary: 'text-[11px] font-bold uppercase tracking-widest',
-    'sub-tiny': 'text-[10px] font-medium leading-none'
+    'sub-tiny': 'text-[10px] font-medium leading-none',
+    tiny: 'text-[9px] font-medium leading-none'
   }
+  
+  const isRespVariant = typeof variant === 'object'
+  const variantBase = isRespVariant ? (variant as any).base : variant
+  const variantMd = isRespVariant ? (variant as any).md : undefined
+  const variantLg = isRespVariant ? (variant as any).lg : undefined
 
   const colorClasses = {
     white: 'text-white',
@@ -82,7 +107,10 @@ export function Font({
     amber: 'text-amber-500',
     red: 'text-red-500',
     blue: 'text-blue-500',
-    black: 'text-black'
+    black: 'text-black',
+    success: 'text-success',
+    warning: 'text-warning',
+    neutral: 'text-neutral'
   }
 
   const weightClasses = {
@@ -138,11 +166,14 @@ export function Font({
   return (
     <span
       className={cn(
-        variantClasses[variant],
-        color && colorClasses[color],
+        variantBase && variantClasses[variantBase as keyof typeof variantClasses],
+        variantMd && `md:${variantClasses[variantMd as keyof typeof variantClasses]}`,
+        variantLg && `lg:${variantClasses[variantLg as keyof typeof variantClasses]}`,
+        resolvedColor && colorClasses[resolvedColor as keyof typeof colorClasses],
         weight && weightClasses[weight],
         align && `text-${align}`,
         uppercase && 'uppercase',
+        lowercase && 'lowercase',
         italic && 'italic',
         nowrap && 'whitespace-nowrap',
         truncate && 'truncate',
@@ -160,7 +191,17 @@ export function Font({
         maxWidth && maxWidthClasses[maxWidth],
         opacity !== undefined && opacityClasses[opacity],
         groupHoverOpacity !== undefined && groupHoverOpacityClasses[groupHoverOpacity],
+        flex1 && 'flex-1',
+        display === 'block' && 'block',
+        display === 'inline' && 'inline',
+        display === 'inline-block' && 'inline-block',
+        display === 'flex' && 'flex',
+        display === 'none' && 'hidden',
+        breakAll && 'break-all',
         transition && 'transition-opacity duration-300',
+        cursor === 'pointer' && 'cursor-pointer',
+        cursor === 'default' && 'cursor-default',
+        cursor === 'not-allowed' && 'cursor-not-allowed',
         className
       )}
       {...props}

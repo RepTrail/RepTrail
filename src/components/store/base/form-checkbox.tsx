@@ -4,13 +4,15 @@ import React, { useState } from 'react'
 import { Font } from './font'
 import { Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useRegistry } from '../advanced/registry-context'
+import { Stack } from './stack'
 
 interface FormCheckboxProps {
     label: string
     description?: string
     checked?: boolean
     onChange?: (checked: boolean) => void
-    color?: 'emerald' | 'orange' | 'amber' | 'blue'
+    color?: 'emerald' | 'orange' | 'amber' | 'blue' | 'primary'
     error?: string
 }
 
@@ -22,7 +24,9 @@ export function FormCheckbox({
     color = 'emerald',
     error
 }: FormCheckboxProps) {
+    const { primaryColor } = useRegistry()
     const [isChecked, setIsChecked] = useState(checked)
+    const resolvedColor = color === 'primary' ? primaryColor : color
 
     const colorMap = {
         emerald: { bg: 'bg-emerald-500 border-emerald-500', icon: 'text-white', shadow: 'shadow-emerald-500/30' },
@@ -30,6 +34,8 @@ export function FormCheckbox({
         amber: { bg: 'bg-amber-500 border-amber-500', icon: 'text-black', shadow: 'shadow-amber-500/30' },
         blue: { bg: 'bg-blue-500 border-blue-500', icon: 'text-white', shadow: 'shadow-blue-500/30' },
     }
+    
+    const activeColor = colorMap[resolvedColor as keyof typeof colorMap] || colorMap.emerald
 
     const handleToggle = () => {
         const next = !isChecked
@@ -51,13 +57,13 @@ export function FormCheckbox({
                 <div className={cn(
                     'w-5 h-5 rounded-[5px] border-2 flex items-center justify-center shrink-0 transition-all duration-200 mt-0.5',
                     isChecked
-                        ? `${colorMap[color].bg} shadow-lg ${colorMap[color].shadow}`
+                        ? `${activeColor.bg} shadow-lg ${activeColor.shadow}`
                         : 'border-white/5 bg-zinc-950/40 group-hover:border-white/20'
                 )}>
                     <Check className={cn(
                         'w-3 h-3 transition-all duration-200',
                         isChecked
-                            ? `${colorMap[color].icon} scale-100 opacity-100`
+                            ? `${activeColor.icon} scale-100 opacity-100`
                             : 'scale-0 opacity-0'
                     )} />
                 </div>

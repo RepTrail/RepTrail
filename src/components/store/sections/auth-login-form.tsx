@@ -22,38 +22,49 @@ interface AuthLoginFormProps {
     showPassword?: boolean
     setShowPassword?: (value: boolean) => void
     onSubmit?: (e: React.FormEvent) => void
-    onLogin?: (data: any) => void
     loading?: boolean
     error?: string | null
+    color?: 'emerald' | 'amber' | 'blue' | 'red' | 'orange'
+    syncColor?: boolean
 }
 
 export function AuthLoginForm({ 
     email, setEmail, 
     password, setPassword, 
     onSubmit, 
-    loading, error 
+    loading, error,
+    color = 'emerald',
+    syncColor = true
 }: AuthLoginFormProps) {
-    const { primaryColor } = useRegistry()
+    const { primaryColor, setPrimaryColor } = useRegistry()
+    
+    React.useEffect(() => {
+        if (syncColor) {
+            setPrimaryColor(color as any)
+        }
+    }, [setPrimaryColor, color, syncColor])
 
     return (
-        <Surface variant="glass" padding={0} rounded="system" width="full" className="max-w-[440px]">
+        <Surface variant="glass" padding={0} rounded="system" width="full" maxWidth="auth-form">
             <Stack gap={0}>
                 {/* Header */}
-                <Box padding={5} className="border-b border-white/5">
-                    <Stack gap={1} align="center">
-                        <Font variant="h2" align="center">Bem-vindo <Font variant="h2" color={primaryColor as any}>de volta</Font></Font>
+                <Box padding={5}>
+                    <Stack gap={2.5} align="center">
+                        <Font variant="h2" align="center">Entrar no <Font variant="h2" color="primary">Painel</Font></Font>
                         <Font variant="auxiliary" color="zinc-500" align="center" uppercase tracking="widest">
-                            Acesse sua conta para treinar
+                            Acesse sua conta para continuar
                         </Font>
                     </Stack>
                 </Box>
+
+                <Divider color="white/5" />
 
                 {/* Form Content */}
                 <Box padding={5}>
                     <form onSubmit={onSubmit || ((e) => e.preventDefault())}>
                         <Stack gap={5}>
                             {error && (
-                                <Box padding={2.5} rounded="system" display="flex" align="center" className="bg-red-500/10 border border-red-500/20 min-h-[44px]">
+                                <Box padding={2.5} rounded="system" display="flex" align="center" bg="red" bgOpacity={10} border borderColor="red-500/20">
                                     <Font variant="sub-tiny" color="red" weight="black" uppercase tracking="widest">
                                         {translateAuthError(error)}
                                     </Font>
@@ -75,7 +86,7 @@ export function AuthLoginForm({
                                         Senha de Acesso
                                     </Font>
                                     <Link href="/auth/forgot-password">
-                                        <Font variant="sub-tiny" color={primaryColor as any} weight="black" uppercase tracking="widest" className="cursor-pointer hover:opacity-80">
+                                        <Font variant="sub-tiny" color="primary" weight="black" uppercase tracking="widest" transition className="cursor-pointer hover:opacity-80">
                                             Esqueci a senha
                                         </Font>
                                     </Link>
@@ -92,17 +103,18 @@ export function AuthLoginForm({
 
                             <Button 
                                 type="submit"
-                                variant={primaryColor as any} 
+                                variant="primary" 
                                 fullWidth 
-                                rounded="full" 
-                                className="h-12"
+                                rounded="system" 
+                                height="anatomy-item"
+                                paddingY={5}
                                 disabled={loading}
                             >
                                 <Stack direction="row" gap={2.5} align="center" justify="center">
-                                    <Font variant="label-caps" color="black">
+                                    <Font variant="label-caps">
                                         {loading ? 'Processando...' : 'Entrar Agora'}
                                     </Font>
-                                    {!loading && <Icon icon={ArrowRight} size="xs" color="black" />}
+                                    {!loading && <Icon icon={ArrowRight} size="xs" />}
                                 </Stack>
                             </Button>
                         </Stack>
@@ -112,9 +124,9 @@ export function AuthLoginForm({
                 <Divider color="white/5" />
 
                 {/* Footer */}
-                <Box padding={5} display="flex" align="center" justify="center" className="bg-zinc-950/30">
+                <Box padding={5} display="flex" align="center" justify="center" bg="black" bgOpacity={30}>
                     <Font variant="sub-tiny" color="zinc-500" align="center" weight="bold" uppercase tracking="widest">
-                        Ainda não é membro? <Link href="/auth/signup" className="contents"><Font variant="sub-tiny" color={primaryColor as any} weight="black" className="cursor-pointer underline">Cadastre-se grátis</Font></Link>
+                        Ainda não é membro? <Link href="/auth/signup" className="contents"><Font variant="sub-tiny" color="primary" weight="black" className="cursor-pointer underline">Cadastre-se grátis</Font></Link>
                     </Font>
                 </Box>
             </Stack>

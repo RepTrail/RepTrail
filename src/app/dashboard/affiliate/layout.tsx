@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { Home, Users, DollarSign, BarChart2, User } from 'lucide-react'
 import { DashboardShell } from '@/components/store/advanced/dashboard-shell'
+import { RegistryProvider } from '@/components/store/advanced/registry-context'
 
 export default async function AffiliateLayout({ children }: { children: React.ReactNode }) {
     const supabase = await createClient()
@@ -29,12 +30,14 @@ export default async function AffiliateLayout({ children }: { children: React.Re
     ]
 
     return (
-        <DashboardShell
-            color="amber"
-            links={links}
-            user={{ id: user.id, name: profile?.full_name, email: user.email, avatar_url: profile?.avatar_url }}
-        >
-            {children}
-        </DashboardShell>
+        <RegistryProvider defaultColor="amber">
+            <DashboardShell
+                color="amber"
+                links={links}
+                user={{ id: user.id, name: profile?.full_name, email: user.email, avatar_url: profile?.avatar_url }}
+            >
+                {children}
+            </DashboardShell>
+        </RegistryProvider>
     )
 }

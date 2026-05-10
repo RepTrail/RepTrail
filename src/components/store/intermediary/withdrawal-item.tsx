@@ -6,8 +6,8 @@ import { Inline } from '../base/layout'
 import { Font } from '../base/font'
 import { Box } from '../base/box'
 import { Badge } from '../base/badge'
-import { GlassPanel } from '../base/surface'
-import { IconBox } from '../base/icon'
+import { Icon, IconBox } from '../base/icon'
+import { ActionableListCard } from './actionable-list-card'
 import { 
     CheckCircle2, 
     Clock, 
@@ -54,58 +54,73 @@ export function WithdrawalItem({
     const config = statusConfig[status]
 
     return (
-        <GlassPanel 
-            padding={0} 
-            className="group relative overflow-hidden transition-all duration-300 hover:border-white/20"
-        >
-            <Inline gap={5} align="center" className="p-5 min-h-[90px] w-full">
+        <ActionableListCard isStrictHorizontal>
+            <Inline gap={5} align="center" fullWidth>
                 {/* Transaction Icon */}
-                <IconBox 
-                    icon={config.icon} 
-                    variant={config.color} 
-                    size="md"
-                    className="shrink-0"
-                />
+                <Box shrink={0}>
+                    <IconBox 
+                        icon={config.icon} 
+                        variant={config.color} 
+                        size="md"
+                    />
+                </Box>
 
                 {/* Details Area - Strictly Horizontal even on mobile */}
-                <div className="flex-1 flex flex-row items-center justify-between gap-4 overflow-hidden">
-                    <Stack gap={0} className="flex-1 overflow-hidden">
-                        <Font weight="black" uppercase italic color="white" className="text-xs md:text-sm tracking-wider truncate">
+                <Box flex1 display="flex" direction="row" align="center" justify="between" overflow="hidden">
+                    <Stack gap={0} flex1 overflow="hidden">
+                        <Font weight="black" uppercase italic color="white" variant="body-sm" tracking="wider" truncate>
                             Saque #{id.slice(-6).toUpperCase()}
                         </Font>
-                        <Font variant="sub-tiny" color="zinc-600" className="truncate hidden sm:block">
-                            {date} • {recipient}
-                        </Font>
-                        <Font variant="sub-tiny" color="zinc-600" className="sm:hidden">
-                            {date}
-                        </Font>
+                        <Box display={{ base: 'none', sm: 'block' }}>
+                            <Font variant="sub-tiny" color="zinc-600" truncate>
+                                {date} • {recipient}
+                            </Font>
+                        </Box>
+                        <Box display={{ base: 'block', sm: 'none' }}>
+                            <Font variant="sub-tiny" color="zinc-600">
+                                {date}
+                            </Font>
+                        </Box>
                     </Stack>
 
-                    <Inline gap={{ base: 2.5, md: 5 }} align="center" className="shrink-0">
-                        <Stack gap={1} align="end">
-                            <Font weight="black" italic color="white" className="text-sm md:text-lg leading-none whitespace-nowrap">
-                                {amount}
-                            </Font>
+                    <Box shrink={0}>
+                        <Inline gap={{ base: 2.5, md: 5 }} align="center">
+                            <Stack gap={1} align="end">
+                                <Font weight="black" italic color="white" variant={{ base: 'body', md: 'h4' }} nowrap>
+                                    {amount}
+                                </Font>
                             <Inline gap={1} align="center">
-                                <QrCode size={10} className="text-zinc-600" />
+                                <Icon icon={QrCode} size="xs" color="zinc-600" />
                                 <Font variant="sub-tiny" color="zinc-600" uppercase weight="black">{method}</Font>
                             </Inline>
                         </Stack>
 
-                        <Badge 
-                            label={config.label} 
-                            color={config.color} 
-                            variant="glass" 
-                            rounded="full"
-                            size="xs"
-                            className="hidden lg:flex"
-                        />
-                    </Inline>
-                </div>
+                            <Box display={{ base: 'none', lg: 'flex' }}>
+                                <Badge 
+                                    label={config.label} 
+                                    color={config.color} 
+                                    variant="glass" 
+                                    rounded="full"
+                                    size="xs"
+                                />
+                            </Box>
+                        </Inline>
+                    </Box>
+                </Box>
 
                 {/* Hover Indicator */}
-                <Box className="absolute right-0 top-0 h-full w-1 bg-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <Box 
+                    position="absolute" 
+                    right={-5} 
+                    top={-5} 
+                    bottom={-5} 
+                    width="px" 
+                    bg="emerald" 
+                    opacity={0} 
+                    groupHoverOpacity={100} 
+                    transition 
+                />
             </Inline>
-        </GlassPanel>
+        </ActionableListCard>
     )
 }

@@ -9,6 +9,7 @@ import { getQueryClient } from '@/lib/get-query-client'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { DashboardShell } from '@/components/store/advanced/dashboard-shell'
+import { RegistryProvider } from '@/components/store/advanced/registry-context'
 
 export default async function StudentLayout({ children }: { children: React.ReactNode }) {
     const headerList = await headers()
@@ -93,18 +94,20 @@ async function StudentLayoutLoader({ userId, children }: { userId: string; child
     ]
 
     return (
-        <HydrationBoundary state={dehydrate(queryClient)}>
-            <DashboardShell
-                color="orange"
-                links={allLinks}
-                mobileLinks={mobileLinks}
-                profileHref="/dashboard/student/profile"
-                user={{ id: userId, name: p?.full_name, email: (p as any)?.email, avatar_url: p?.avatar_url }}
-            >
-                {children}
-            </DashboardShell>
-            <StudentGlobalModals hasTrainer={hasTrainer} />
-        </HydrationBoundary>
+        <RegistryProvider defaultColor="orange">
+            <HydrationBoundary state={dehydrate(queryClient)}>
+                <DashboardShell
+                    color="orange"
+                    links={allLinks}
+                    mobileLinks={mobileLinks}
+                    profileHref="/dashboard/student/profile"
+                    user={{ id: userId, name: p?.full_name, email: (p as any)?.email, avatar_url: p?.avatar_url }}
+                >
+                    {children}
+                </DashboardShell>
+                <StudentGlobalModals hasTrainer={hasTrainer} />
+            </HydrationBoundary>
+        </RegistryProvider>
     )
 }
 

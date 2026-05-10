@@ -276,7 +276,7 @@ export function ComponentsRegistryContent({ id }: { id?: string }) {
                     </GlassPanel>
 
                     {/* Select */}
-                    <GlassPanel shrink={0} className="relative focus-within:z-[1000]">
+                    <GlassPanel shrink={0} position="relative" focusWithinZIndex={1000}>
                         <Stack gap={5}>
                             <Font variant="sub-tiny" color="zinc-600" weight="black" uppercase>Custom Select</Font>
                             <Box as="div">

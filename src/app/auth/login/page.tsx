@@ -1,11 +1,16 @@
-import { AuthForm } from '@/components/auth/auth-form'
+'use client'
+
+import { AuthForm } from '@/components/store/advanced/auth-form'
 import { Suspense } from 'react'
-import { AuthFormSkeleton } from '@/components/auth/auth-form-skeleton'
+import { AuthFormSkeleton } from '@/components/store/advanced/auth-form-skeleton'
+import { RegistryProvider } from '@/components/store/advanced/registry-context'
+import { AuthShell } from '@/components/store/advanced/auth-shell'
 import Script from 'next/script'
+import { Box } from '@/components/store/base/box'
 
 export default function LoginPage() {
     return (
-        <>
+        <RegistryProvider>
             <Script id="meta-pixel-login" strategy="afterInteractive">
                 {`
                     !function(f,b,e,v,n,t,s)
@@ -20,15 +25,18 @@ export default function LoginPage() {
                     fbq('track', 'PageView');
                 `}
             </Script>
-            <noscript>
-                <img height="1" width="1" style={{display: 'none'}} src="https://www.facebook.com/tr?id=795120573646319&ev=PageView&noscript=1" />
-            </noscript>
             
-            <div className="relative flex min-h-screen w-full items-center justify-center bg-zinc-950 p-4 overflow-hidden" suppressHydrationWarning>
+            <AuthShell>
                 <Suspense fallback={<AuthFormSkeleton />}>
                     <AuthForm view="login" />
                 </Suspense>
-            </div>
-        </>
+            </AuthShell>
+
+            <noscript>
+                <Box as="span" display="none">
+                    <img height="1" width="1" src="https://www.facebook.com/tr?id=795120573646319&ev=PageView&noscript=1" />
+                </Box>
+            </noscript>
+        </RegistryProvider>
     )
 }

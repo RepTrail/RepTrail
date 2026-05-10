@@ -95,7 +95,7 @@ export default function AdminLojaPage() {
             }}
         >
             <RegistrySection
-                title="Catálogo de Produtos"
+                title="Inventário Disponível"
                 subtitle="Gerencie os itens disponíveis na loja, preços e estoque."
                 icon={ShoppingBag}
             >

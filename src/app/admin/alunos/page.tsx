@@ -105,7 +105,7 @@ export default function AdminAlunosPage() {
             }}
         >
             <RegistrySection
-                title="Gestão de Alunos"
+                title="Matrículas e Acessos"
                 subtitle="Monitore a base de alunos e gerencie privilégios de acesso."
                 icon={GraduationCap}
             >

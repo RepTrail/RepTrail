@@ -13,6 +13,7 @@ import { useRegistry } from '../advanced/registry-context'
 import { Mail, Lock, User, Megaphone, ArrowRight, Phone } from 'lucide-react'
 import { translateAuthError } from '@/lib/auth-errors'
 import Link from 'next/link'
+import { FormCheckbox } from '../base/form-checkbox'
 
 interface AuthAffiliateSignUpFormProps {
     fullName?: string
@@ -23,10 +24,12 @@ interface AuthAffiliateSignUpFormProps {
     setWhatsapp?: (value: string) => void
     password?: string
     setPassword?: (value: string) => void
+    acceptedTerms?: boolean
+    setAcceptedTerms?: (value: boolean) => void
     onSubmit?: (e: React.FormEvent) => void
-    onSignUp?: (e: React.FormEvent) => void
     loading?: boolean
     error?: string | null
+    syncColor?: boolean
 }
 
 export function AuthAffiliateSignUpForm({ 
@@ -34,30 +37,40 @@ export function AuthAffiliateSignUpForm({
     email, setEmail,
     whatsapp, setWhatsapp,
     password, setPassword,
-    onSignUp, 
-    loading, error 
+    acceptedTerms, setAcceptedTerms,
+    onSubmit, 
+    loading, error,
+    syncColor = true
 }: AuthAffiliateSignUpFormProps) {
-    const { primaryColor } = useRegistry()
+    const { primaryColor, setPrimaryColor } = useRegistry()
+
+    React.useEffect(() => {
+        if (syncColor) {
+            setPrimaryColor('amber')
+        }
+    }, [setPrimaryColor, syncColor])
 
     return (
-        <Surface variant="glass" padding={0} rounded="system" width="full" className="max-w-[440px]">
+        <Surface variant="glass" padding={0} rounded="system" width="full" maxWidth="auth-form">
             <Stack gap={0}>
                 {/* Header */}
-                <Box padding={5} className="border-b border-white/5">
-                    <Stack gap={1} align="center">
-                        <Font variant="h2" align="center">Seja um <Font variant="h2" color="amber">Afiliado</Font></Font>
+                <Box padding={5}>
+                    <Stack gap={2.5} align="center">
+                        <Font variant="h2" align="center">Seja um <Font variant="h2" color="primary">Afiliado</Font></Font>
                         <Font variant="auxiliary" color="zinc-500" align="center" uppercase tracking="widest">
                             Ganhe 10% por cada indicação
                         </Font>
                     </Stack>
                 </Box>
 
+                <Divider color="white/5" />
+
                 {/* Form Content */}
                 <Box padding={5}>
-                    <form onSubmit={onSignUp || ((e) => e.preventDefault())}>
+                    <form onSubmit={onSubmit || ((e) => e.preventDefault())}>
                         <Stack gap={5}>
                             {error && (
-                                <Box padding={2.5} rounded="system" display="flex" align="center" className="bg-red-500/10 border border-red-500/20 min-h-[44px]">
+                                <Box padding={2.5} rounded="system" display="flex" align="center" bg="red" bgOpacity={10} border minHeight={44}>
                                     <Font variant="sub-tiny" color="red" weight="black" uppercase tracking="widest">
                                         {translateAuthError(error)}
                                     </Font>
@@ -102,19 +115,33 @@ export function AuthAffiliateSignUpForm({
                                 required
                             />
 
+                            {/* Terms of Use */}
+                            <Stack direction="row" gap={2.5} align="center">
+                                <FormCheckbox 
+                                    label=""
+                                    checked={acceptedTerms} 
+                                    onChange={setAcceptedTerms}
+                                    color="primary"
+                                />
+                                <Font variant="sub-tiny" color="zinc-500" weight="bold" uppercase tracking="widest">
+                                    Eu aceito os <Font variant="sub-tiny" color="primary" weight="black" className="cursor-pointer underline">termos de uso</Font>
+                                </Font>
+                            </Stack>
+
                             <Button 
                                 type="submit"
-                                variant="amber" 
+                                variant="primary" 
                                 fullWidth 
                                 rounded="full" 
-                                className="h-12"
+                                height="anatomy-item"
+                                paddingY={5}
                                 disabled={loading}
                             >
                                 <Stack direction="row" gap={2.5} align="center" justify="center">
-                                    <Font variant="label-caps" color="black">
+                                    <Font variant="label-caps">
                                         {loading ? 'Processando...' : 'Criar minha conta'}
                                     </Font>
-                                    {!loading && <Icon icon={ArrowRight} size="xs" color="black" />}
+                                    {!loading && <Icon icon={ArrowRight} size="xs" />}
                                 </Stack>
                             </Button>
                         </Stack>
@@ -124,9 +151,9 @@ export function AuthAffiliateSignUpForm({
                 <Divider color="white/5" />
 
                 {/* Footer */}
-                <Box padding={5} display="flex" align="center" justify="center" className="bg-zinc-950/30">
+                <Box padding={5} display="flex" align="center" justify="center" bg="black" bgOpacity={30}>
                     <Font variant="sub-tiny" color="zinc-500" align="center" weight="bold" uppercase tracking="widest">
-                        Já possui uma conta? <Link href="/auth/login" className="contents"><Font variant="sub-tiny" color="amber" weight="black" className="cursor-pointer underline">Fazer login</Font></Link>
+                        Já possui uma conta? <Link href="/auth/login" className="contents"><Font variant="sub-tiny" color="primary" weight="black" className="cursor-pointer underline">Fazer login</Font></Link>
                     </Font>
                 </Box>
             </Stack>

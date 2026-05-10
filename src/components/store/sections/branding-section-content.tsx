@@ -3,6 +3,7 @@ import { Stack } from '@/components/store/base/stack'
 import { Grid } from '@/components/store/base/grid'
 import { Font } from '@/components/store/base/font'
 import { GlassPanel, CardHeader, CardContent, Surface } from '@/components/store/base/surface'
+import { Box } from '@/components/store/base/box'
 import { Logo } from '@/components/store/base/logo'
 import { Badge } from '@/components/store/base/badge'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
@@ -38,17 +39,20 @@ export function BrandingSectionContent({ id }: { id?: string }) {
                                     align="center"
                                     justify="center"
                                     padding={12}
-                                    className={cn(
-                                        "transition-all duration-300 cursor-pointer group/logo",
-                                        "hover:bg-white/[0.08] hover:border-white/10 active:scale-95"
-                                    )}
+                                    transition
+                                    cursor="pointer"
+                                    group
+                                    hoverBgOpacity={10}
+                                    hoverBorder="white/10"
+                                    activeScale={95}
                                 >
                                     <Stack align="center" gap={5}>
-                                        <Logo 
-                                            color={brand.color as any} 
-                                            size="md" 
-                                            className="group-hover/logo:scale-110 transition-transform duration-500" 
-                                        />
+                                        <Box transition groupHoverScale={110}>
+                                            <Logo 
+                                                color={brand.color as any} 
+                                                size="md" 
+                                            />
+                                        </Box>
                                         <Badge
                                             label={brand.label}
                                             color={brand.color as any}

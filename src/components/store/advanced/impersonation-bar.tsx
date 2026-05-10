@@ -53,10 +53,10 @@ export function ImpersonationBar({ color }: { color?: RegistryColor }) {
     const safeIconColor = primaryColor === 'zinc' ? 'zinc-400' : primaryColor
 
     return (
-        <Box position="relative" fullWidth style={{ zIndex: 50 }}>
-            <Surface 
+        <Box position="relative" fullWidth>
+            <Surface
                 variant={`tonal-${primaryColor}` as any}
-                rounded="full" 
+                rounded="full"
                 padding={5}
             >
                 <Inline justify="between" align="center" gap={5}>

@@ -13,6 +13,7 @@ interface RegistrySectionProps {
   subtitle: string
   icon: LucideIcon
   id?: string
+  rightElement?: React.ReactNode
 }
 
 export function RegistrySection({
@@ -20,23 +21,31 @@ export function RegistrySection({
   title,
   subtitle,
   icon,
-  id
+  id,
+  rightElement
 }: RegistrySectionProps) {
   const { primaryColor } = useRegistry()
 
   return (
     <Stack gap={10} id={id} fullWidth>
       {/* Section Header */}
-      <Stack gap={1}>
-        <Inline gap={2.5} align="center">
-          <Icon icon={icon} color={primaryColor as any} size="lg" />
-          <Font variant="heading" weight="black" uppercase italic color="white">
-            {title}
+      <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'start', lg: 'center' }} gap={5}>
+        <Stack gap={1}>
+          <Inline gap={2.5} align="center">
+            <Icon icon={icon} color={primaryColor as any} size="lg" />
+            <Font variant="heading" weight="black" uppercase italic color="white">
+              {title}
+            </Font>
+          </Inline>
+          <Font variant="description" color="zinc-500">
+            {subtitle}
           </Font>
-        </Inline>
-        <Font variant="description" color="zinc-500">
-          {subtitle}
-        </Font>
+        </Stack>
+        {rightElement && (
+          <Box>
+            {rightElement}
+          </Box>
+        )}
       </Stack>
 
       {/* Section Content */}

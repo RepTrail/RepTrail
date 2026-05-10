@@ -42,6 +42,7 @@ export function AdminPageShell({ children, user, pageTitle = '', subtitle, icon 
     return (
         <RegistryContext.Provider value={{
             primaryColor: 'red',
+            setPrimaryColor: () => {},
             activeTab: 'admin',
             setActiveTab: () => {},
             activeSection: '',

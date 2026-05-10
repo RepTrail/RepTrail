@@ -6,7 +6,7 @@ import { RegistryMobileNavigation } from '@/components/store/advanced/registry-m
 import { RegistryBottomNav } from '@/components/store/advanced/registry-bottom-nav'
 import { Modal } from './modal'
 import { Settings } from 'lucide-react'
-import { RegistryContext, RegistryColor } from '@/components/store/advanced/registry-context'
+import { RegistryContext, RegistryColor, RegistryProvider } from '@/components/store/advanced/registry-context'
 import { Box } from '../base/box'
 import { cn } from '@/lib/utils'
 
@@ -84,15 +84,12 @@ export function RegistryShell({ children, activeTab: externalActiveTab, setActiv
   }
 
   return (
-    <RegistryContext.Provider value={{
-      primaryColor,
-      activeTab,
-      setActiveTab,
-      activeSection,
-      setActiveSection,
-      isSidebarOpen,
-      setIsSidebarOpen
-    }}>
+    <RegistryProvider 
+      activeTab={activeTab} 
+      setActiveTab={setActiveTab}
+      primaryColor={primaryColor}
+      setPrimaryColor={setPrimaryColor}
+    >
       <Box minHeight="screen" bg="zinc" bgOpacity={100} overflowX="hidden" display="flex" direction="col" position="relative">
         
         {/* FIXED GLOBAL BACKGROUND EFFECTS */}
@@ -139,6 +136,6 @@ export function RegistryShell({ children, activeTab: externalActiveTab, setActiv
           cancelLabel="Cancelar"
         />
       </Box>
-    </RegistryContext.Provider>
+    </RegistryProvider>
   )
 }

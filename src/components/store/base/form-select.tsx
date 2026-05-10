@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useRef, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { Font } from './font'
 import { Icon } from './icon'
 import { ChevronDown, Check } from 'lucide-react'
@@ -31,6 +32,8 @@ export function FormSelect({
 }: FormSelectProps) {
     const [open, setOpen] = useState(false)
     const [selected, setSelected] = useState(value ?? '')
+    const [coords, setCoords] = useState({ top: 0, left: 0, width: 0 })
+    const [openUp, setOpenUp] = useState(false)
     const ref = useRef<HTMLDivElement>(null)
 
     const selectedOption = options.find(o => o.value === selected)
@@ -45,6 +48,21 @@ export function FormSelect({
         return () => document.removeEventListener('mousedown', handleClickOutside)
     }, [])
 
+    useEffect(() => {
+        if (open && ref.current) {
+            const rect = ref.current.getBoundingClientRect()
+            const spaceBelow = window.innerHeight - rect.bottom
+            const shouldOpenUp = spaceBelow < 250
+            
+            setCoords({
+                top: shouldOpenUp ? rect.top : rect.bottom,
+                left: rect.left,
+                width: rect.width
+            })
+            setOpenUp(shouldOpenUp)
+        }
+    }, [open])
+
     const handleSelect = (val: string) => {
         setSelected(val)
         setOpen(false)
@@ -53,10 +71,7 @@ export function FormSelect({
 
     return (
         <div 
-            className={cn(
-                "flex flex-col gap-[10px] w-full transition-all duration-200",
-                open ? "relative z-[1000]" : "relative z-0"
-            )} 
+            className="flex flex-col gap-[10px] w-full relative" 
             ref={ref}
         >
             {label && (
@@ -65,7 +80,6 @@ export function FormSelect({
                 </Font>
             )}
 
-            {/* Relative wrapper anchors the dropdown to the trigger */}
             <div className="relative">
                 {/* Trigger */}
                 <button
@@ -93,9 +107,20 @@ export function FormSelect({
                     )} />
                 </button>
 
-                {/* Dropdown — anchored below trigger */}
-                {open && (
-                    <div className="absolute top-full left-0 right-0 mt-1 z-[1000] rounded-[5px] border-2 border-white/5 bg-zinc-900 shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                {/* Dropdown via Portal */}
+                {open && typeof document !== 'undefined' && createPortal(
+                    <div 
+                        className={cn(
+                            "fixed z-[9999] rounded-[5px] border-2 border-white/5 bg-zinc-900 shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200",
+                            openUp ? "origin-bottom" : "origin-top"
+                        )}
+                        style={{
+                            top: openUp ? 'auto' : coords.top + 4,
+                            bottom: openUp ? (window.innerHeight - coords.top) + 4 : 'auto',
+                            left: coords.left,
+                            width: coords.width
+                        }}
+                    >
                         {options.map((opt) => {
                             const isSelected = selected === opt.value
                             return (
@@ -126,7 +151,8 @@ export function FormSelect({
                                 </button>
                             )
                         })}
-                    </div>
+                    </div>,
+                    document.body
                 )}
             </div>
 

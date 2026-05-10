@@ -6,13 +6,14 @@ type GapToken = 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 'section' | 'title-content'
 
 export interface StackProps extends Omit<BoxProps, 'gap'> {
   children: React.ReactNode
-  direction?: 'row' | 'col' | { base: 'row' | 'col', md: 'row' | 'col' }
+  direction?: 'row' | 'col' | { base: 'row' | 'col', md?: 'row' | 'col', lg?: 'row' | 'col' }
   gap?: GapToken | { base: GapToken, md: GapToken }
-  align?: 'start' | 'center' | 'end' | 'stretch'
-  justify?: 'start' | 'center' | 'end' | 'between' | 'around'
+  divide?: boolean
+  align?: 'start' | 'center' | 'end' | 'stretch' | { base: 'start' | 'center' | 'end' | 'stretch', md?: 'start' | 'center' | 'end' | 'stretch', lg?: 'start' | 'center' | 'end' | 'stretch' }
+  justify?: 'start' | 'center' | 'end' | 'between' | 'around' | { base: 'start' | 'center' | 'end' | 'between' | 'around', md?: 'start' | 'center' | 'end' | 'between' | 'around', lg?: 'start' | 'center' | 'end' | 'between' | 'around' }
   flex1?: boolean
   fullWidth?: boolean
-  wrap?: boolean
+  wrap?: 'wrap' | 'nowrap'
   className?: string
   id?: string
 }
@@ -24,11 +25,12 @@ export function Stack({
   children, 
   direction = 'col', 
   gap = 2.5, 
+  divide,
   align = 'stretch', 
   justify = 'start',
   flex1,
   fullWidth,
-  wrap = false,
+  wrap,
   className,
   id,
   ...props
@@ -42,7 +44,7 @@ export function Stack({
     7.5: 'gap-[30px]',
     10: 'gap-10',
     12.5: 'gap-[50px]',
-    'section': 'gap-[100px]',
+    'section': 'gap-[50px]',
     'title-content': 'gap-10'
   }
 
@@ -75,7 +77,9 @@ export function Stack({
       className={cn(
         gapClasses[gapBase as keyof typeof gapClasses],
         gapMd && gapMdClasses[gapMd as keyof typeof gapMdClasses],
-        wrap && 'flex-wrap',
+        wrap === 'wrap' && 'flex-wrap',
+        wrap === 'nowrap' && 'flex-nowrap',
+        divide && (direction === 'col' ? 'divide-y divide-white/10' : 'divide-x divide-white/10'),
         className
       )}
       {...props}

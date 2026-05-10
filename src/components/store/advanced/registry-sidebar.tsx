@@ -9,7 +9,7 @@ import { SidebarProfile } from '../intermediary/sidebar-profile'
 import { Zap, Activity, Shield, Users, Dumbbell, Trophy, X } from 'lucide-react'
 import { useRegistry } from '@/components/store/advanced/registry-context'
 import { Sidebar, Divider } from '../base/layout'
-import { cn } from '@/lib/utils'
+import { Button } from '../base/button'
 
 interface SidebarSection {
   id: string
@@ -48,34 +48,48 @@ export function RegistrySidebar({
     <>
       {/* Mobile Overlay */}
       {isSidebarOpen && (
-        <div 
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] lg:hidden"
+        <Box 
+            position="fixed"
+            pin="inset"
+            bg="black"
+            bgOpacity={60}
+            backdropBlur="sm"
+            zIndex={100}
+            display={{ base: 'block', lg: 'none' }}
             onClick={() => setIsSidebarOpen(false)}
         />
       )}
 
-      <aside className={cn(
-        "fixed right-0 top-0 h-screen w-72 z-[101] transition-transform duration-500",
-        "lg:translate-x-0 lg:left-0 lg:right-auto", // Static on left for desktop
-        isSidebarOpen ? "translate-x-0" : "translate-x-full" // Drawer on mobile from right
-      )}>
+      <Box
+        as="aside"
+        position="fixed"
+        pin={{ base: 'right', lg: 'left' }}
+        top={0}
+        height="screen"
+        width="sidebar-wide"
+        zIndex={100}
+        transition
+        translateX={{
+            base: isSidebarOpen ? 'none' : 'full',
+            lg: 'none'
+        }}
+      >
         <Box
           fullWidth
           flex1
           display="flex"
           direction="col"
           fullHeight
-          className="bg-zinc-950/40 backdrop-blur-md border-l lg:border-l-0 lg:border-r border-white/5"
+          bg="zinc"
+          bgOpacity={40}
+          backdropBlur="md"
         >
+          {/* Left border for mobile drawer */}
+          <Box display={{ base: 'block', lg: 'none' }} position="absolute" pin="left" top={0} fullHeight width="px" bg="white" bgOpacity={5} />
+          {/* Right border for desktop static */}
+          <Box display={{ base: 'none', lg: 'block' }} position="absolute" pin="right" top={0} fullHeight width="px" bg="white" bgOpacity={5} />
           {/* Top Content (Padded) */}
           <Box flex1 padding={5} display="flex" direction="col" overflow="hidden" position="relative">
-            {/* Mobile Close Button */}
-            <button 
-                onClick={() => setIsSidebarOpen(false)}
-                className="absolute left-5 top-5 lg:hidden text-white/40 hover:text-white active:scale-90 transition-all"
-            >
-                <X size={20} />
-            </button>
 
             <Stack gap={12.5} flex1 overflow="hidden">
               <Box>
@@ -104,10 +118,16 @@ export function RegistrySidebar({
 
           {/* Bottom Profile (Padded) */}
           <Box padding={5}>
-            <SidebarProfile onOpenSettings={onOpenSettings} />
+            <SidebarProfile 
+              onOpenSettings={onOpenSettings} 
+              user={{
+                name: 'Usuário',
+                email: 'suporte@reptrail.com'
+              }}
+            />
           </Box>
         </Box>
-      </aside>
+      </Box>
     </>
   )
 }

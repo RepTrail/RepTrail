@@ -98,36 +98,37 @@ export function AdminProductEditor({ isOpen, onClose, product, onSave, onImport 
         >
             <Stack gap={5}>
                 {/* Auto-Import */}
-                <Box padding={5} rounded="system" borderR borderColor="white/10" className="bg-emerald-500/5 border border-emerald-500/10">
+                <Box padding={5} rounded="system" border borderColor="emerald-500" bg="emerald" bgOpacity={5}>
                     <Stack gap={5}>
                         <Stack direction="row" gap={2.5} align="center">
-                            <Box padding={1} rounded="system" className="bg-emerald-500/20">
+                            <Box padding={1} rounded="system" bg="emerald" bgOpacity={20}>
                                 <Icon icon={Zap} size="xs" color="emerald" />
                             </Box>
                             <Font variant="label-caps" color="emerald">Auto-Importar Dados (IA)</Font>
                         </Stack>
-                        <Stack direction="row" gap={2.5}>
+                        <Stack direction={{ base: 'col', md: 'row' }} gap={2.5} align="stretch">
                             <Box flex1>
                                 <Input
                                     placeholder="Link do produto (Mercado Livre, etc)"
                                     value={importUrl}
                                     onChange={e => setImportUrl(e.target.value)}
+                                    color="emerald"
                                 />
                             </Box>
                             <Button 
-                                variant="emerald" 
+                                variant="primary" 
+                                fullWidth 
                                 onClick={handleImport} 
                                 disabled={importing || !importUrl}
-                                className="h-12 px-6"
                             >
-                                {importing ? <Icon icon={RefreshCw} className="animate-spin" /> : <Font variant="label-caps">Carregar</Font>}
+                                {importing ? <Icon icon={RefreshCw} spin /> : <Font variant="label-caps">Carregar</Font>}
                             </Button>
                         </Stack>
                     </Stack>
                 </Box>
 
                 {/* Form Fields */}
-                <Stack gap={5}>
+                <Stack gap={5} paddingBottom={5}>
                     <Input
                         label="Link de Afiliado"
                         icon={<ExternalLink size={16} />}
@@ -157,20 +158,22 @@ export function AdminProductEditor({ isOpen, onClose, product, onSave, onImport 
                         onChange={e => setForm(prev => ({ ...prev, image_url: e.target.value }))}
                     />
 
-                    <Grid cols={3} gap={5}>
+                    <Grid cols={1} mdCols={3} gap={5}>
                         <Input
                             label="Preço (R$)"
                             type="number"
                             value={String(form.official_price)}
                             onChange={e => setForm(prev => ({ ...prev, official_price: Number(e.target.value) }))}
-                            className="text-emerald-500 font-bold"
+                            color="emerald"
+                            weight="bold"
                         />
                         <Input
                             label="Nota (0-5)"
                             type="number"
                             value={String(form.rating)}
                             onChange={e => setForm(prev => ({ ...prev, rating: Number(e.target.value) }))}
-                            className="text-amber-500 font-bold"
+                            color="amber"
+                            weight="bold"
                         />
                         <Input
                             label="Reviews"
@@ -180,7 +183,7 @@ export function AdminProductEditor({ isOpen, onClose, product, onSave, onImport 
                         />
                     </Grid>
 
-                    <Grid cols={2} gap={5}>
+                    <Grid cols={1} mdCols={2} gap={5}>
                         <FormSelect
                             label="Categoria"
                             options={categories}

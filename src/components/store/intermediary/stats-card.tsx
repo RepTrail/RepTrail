@@ -6,12 +6,14 @@ import { GlassPanel } from '../base/surface'
 import { Box } from '../base/box'
 import { LucideIcon } from 'lucide-react'
 
+import { useRegistry } from '../advanced/registry-context'
+
 interface StatsCardProps {
     label: string
     value: string
     description?: string
     icon: LucideIcon
-    color?: 'emerald' | 'orange' | 'amber' | 'red' | 'blue'
+    color?: 'emerald' | 'orange' | 'amber' | 'red' | 'blue' | 'primary'
 }
 
 /**
@@ -25,6 +27,9 @@ export function StatsCard({
     icon,
     color = 'emerald'
 }: StatsCardProps) {
+    const { primaryColor } = useRegistry()
+    const resolvedColor = color === 'primary' ? (primaryColor as any) : color
+
     const colorMap = {
         emerald: 'bg-emerald-500/10 text-emerald-500',
         orange: 'bg-orange-500/10 text-orange-500',
@@ -40,7 +45,7 @@ export function StatsCard({
                 <Box 
                     padding={2.5} 
                     rounded="system" 
-                    className={colorMap[color]}
+                    className={colorMap[resolvedColor as keyof typeof colorMap]}
                 >
                     <Icon icon={icon} size="sm" />
                 </Box>

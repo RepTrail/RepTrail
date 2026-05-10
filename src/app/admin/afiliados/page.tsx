@@ -83,7 +83,7 @@ export default function AdminAfiliadosPage() {
         >
             <Stack gap="section">
                 <RegistrySection
-                    title="Parceiros Afiliados"
+                    title="Rede de Indicações"
                     subtitle="Gerencie os membros do seu programa de parceiros e suas comissões."
                     icon={HeartHandshake}
                 >

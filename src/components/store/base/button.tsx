@@ -1,7 +1,10 @@
+'use client'
 import React from 'react'
+import { Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useRegistry } from '../advanced/registry-context'
 
-type ButtonVariant = 
+export type ButtonVariant = 
   | 'orange' 
   | 'emerald' 
   | 'amber' 
@@ -19,8 +22,10 @@ type ButtonVariant =
   | 'outline-blue'
   | 'outline-indigo'
   | 'outline-zinc'
+  | 'primary'
+  | 'outline-primary'
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant
   size?: 'xs' | 'sm' | 'md' | 'lg'
   rounded?: 'none' | 'full' | 'system' | 'sm'
@@ -30,9 +35,23 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   shrink?: number
   direction?: 'row' | 'col'
   gap?: 0 | 1 | 2.5 | 5
-  height?: 'auto' | 'full'
-  paddingY?: number
+  height?: 'auto' | 'full' | 'anatomy-item' | 'anatomy-header' | '8' | '12' | '24'
+  paddingY?: 0 | 1 | 2.5 | 5 | 7.5 | 12.5
+  paddingX?: 0 | 1 | 2.5 | 5 | 7.5 | 12.5
+  hoverScale?: 110 | 105
+  activeScale?: 95 | 90
+  transition?: boolean
+  opacity?: 0 | 10 | 20 | 30 | 40 | 50 | 60 | 70 | 80 | 90 | 100
+  grayscale?: boolean
   textColor?: 'white' | 'black' | 'zinc'
+  bg?: 'white' | 'black' | 'zinc'
+  bgOpacity?: number
+  hoverBgOpacity?: number
+  borderColor?: string
+  cursor?: 'pointer' | 'default' | 'not-allowed'
+  asChild?: boolean
+  marginTop?: 0 | 1 | 2.5 | 5 | 7.5 | 12.5
+  loading?: boolean
 }
 
 /**
@@ -51,18 +70,38 @@ export function Button({
   gap,
   height,
   paddingY,
+  paddingX,
+  hoverScale,
+  activeScale,
+  transition,
+  opacity,
+  grayscale,
   textColor,
+  bg,
+  bgOpacity,
+  hoverBgOpacity,
+  borderColor,
+  cursor,
+  asChild,
+  marginTop,
+  loading,
   className,
   ...props
 }: ButtonProps) {
   
+  const { primaryColor } = useRegistry()
+  
+  const resolvedVariant = variant === 'primary' ? primaryColor 
+    : variant === 'outline-primary' ? `outline-${primaryColor}` as ButtonVariant
+    : variant
+  
   const variantClasses = {
-    orange: 'bg-orange-500 text-white hover:bg-orange-600 shadow-lg shadow-orange-500/20',
-    emerald: 'bg-emerald-500 text-white hover:bg-emerald-600 shadow-lg shadow-emerald-500/20',
-    amber: 'bg-amber-500 text-white hover:bg-amber-600 shadow-lg shadow-amber-500/20',
-    red: 'bg-red-500 text-white hover:bg-red-600 shadow-lg shadow-red-500/20',
-    blue: 'bg-blue-500 text-white hover:bg-blue-600 shadow-lg shadow-blue-500/20',
-    indigo: 'bg-indigo-500 text-white hover:bg-indigo-600 shadow-lg shadow-indigo-500/20',
+    orange: 'bg-orange-500 text-black hover:bg-orange-600 shadow-lg shadow-orange-500/20',
+    emerald: 'bg-emerald-500 text-black hover:bg-emerald-600 shadow-lg shadow-emerald-500/20',
+    amber: 'bg-amber-500 text-black hover:bg-amber-600 shadow-lg shadow-amber-500/20',
+    red: 'bg-red-500 text-black hover:bg-red-600 shadow-lg shadow-red-500/20',
+    blue: 'bg-blue-500 text-black hover:bg-blue-600 shadow-lg shadow-blue-500/20',
+    indigo: 'bg-indigo-500 text-black hover:bg-indigo-600 shadow-lg shadow-indigo-500/20',
     zinc: 'bg-zinc-800 text-white hover:bg-zinc-700 border border-white/5',
     white: 'bg-white text-black hover:bg-zinc-100',
     ghost: 'bg-transparent text-zinc-400 hover:bg-white/5 hover:text-white',
@@ -106,9 +145,10 @@ export function Button({
 
   return (
     <button
+      disabled={props.disabled || loading}
       className={cn(
         'inline-flex items-center justify-center font-bold transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none uppercase italic tracking-wider',
-        variantClasses[variant],
+        variantClasses[resolvedVariant as keyof typeof variantClasses],
         sizeClasses[size],
         roundedClasses[rounded],
         fullWidth ? 'w-full' : '',
@@ -117,13 +157,41 @@ export function Button({
         direction === 'col' ? 'flex-col' : 'flex-row',
         gap !== undefined && gapClasses[gap as keyof typeof gapClasses],
         height === 'auto' ? 'h-auto' : height === 'full' ? 'h-full' : '',
+        height === 'anatomy-item' && 'h-10',
+        height === 'anatomy-header' && 'h-24',
+        height === '8' && 'h-8',
+        height === '12' && 'h-12',
+        height === '24' && 'h-24',
         paddingY !== undefined && `py-${paddingY}`,
+        paddingX !== undefined && `px-${paddingX}`,
+        cursor && `cursor-${cursor}`,
+        hoverScale === 110 && 'hover:scale-110',
+        hoverScale === 105 && 'hover:scale-105',
+        activeScale === 95 && 'active:scale-95',
+        activeScale === 90 && 'active:scale-90',
+        transition && 'transition-all duration-300',
+        opacity === 0 && 'opacity-0',
+        opacity === 10 && 'opacity-10',
+        opacity === 20 && 'opacity-20',
+        opacity === 30 && 'opacity-30',
+        opacity === 40 && 'opacity-40',
+        opacity === 50 && 'opacity-50',
+        opacity === 100 && 'opacity-100',
+        grayscale && 'grayscale',
         textColor && textColorClasses[textColor],
+        bg === 'white' && 'bg-white',
+        bg === 'black' && 'bg-black',
+        bgOpacity !== undefined && `bg-opacity-[${bgOpacity}%]`,
+        hoverBgOpacity !== undefined && `hover:bg-opacity-[${hoverBgOpacity}%]`,
+        borderColor === 'transparent' && 'border-transparent',
+        marginTop !== undefined && `mt-${marginTop}`,
         className
       )}
       {...props}
     >
-      {children}
+      {loading ? (
+        <Loader2 className="animate-spin" size={16} />
+      ) : children}
     </button>
   )
 }
