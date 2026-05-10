@@ -28,6 +28,7 @@ interface FontProps extends React.HTMLAttributes<HTMLSpanElement> {
   maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | 'none'
   opacity?: 0 | 10 | 20 | 30 | 40 | 50 | 60 | 70 | 80 | 90 | 100
   groupHoverOpacity?: 0 | 10 | 20 | 30 | 40 | 50 | 60 | 70 | 80 | 90 | 100
+  truncate?: boolean
   transition?: boolean
   className?: string
 }
@@ -44,6 +45,7 @@ export function Font({
   uppercase,
   italic,
   nowrap,
+  truncate,
   mono,
   tracking,
   scale,
@@ -143,6 +145,7 @@ export function Font({
         uppercase && 'uppercase',
         italic && 'italic',
         nowrap && 'whitespace-nowrap',
+        truncate && 'truncate',
         mono && 'font-mono',
         tracking && `tracking-${tracking}`,
         scale && {
