@@ -21,13 +21,11 @@ const nextConfig: NextConfig = {
   },
   reactCompiler: true,
   serverExternalPackages: ['pdf-parse'],
-  experimental: {
-    cacheLife: {
-      page: {
-        stale: 3600,
-        revalidate: 3600,
-        expire: 3600,
-      }
+  cacheLife: {
+    page: {
+      stale: 3600,
+      revalidate: 3600,
+      expire: 3600,
     }
   },
   async headers() {
