@@ -75,9 +75,6 @@ export function FileUpload({ label, variant = 'generic', onFileSelect }: FileUpl
                             color="zinc-500"
                             className="group-hover:text-emerald-500 transition-colors"
                         />
-                        <Font variant="sub-tiny" color="zinc-600" weight="black" uppercase className="group-hover:text-emerald-400">
-                            {variant === 'profile' ? 'FOTO' : 'UPLOAD'}
-                        </Font>
                     </div>
                 )}
             </div>

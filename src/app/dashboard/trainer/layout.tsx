@@ -22,13 +22,17 @@ export default async function TrainerLayout({ children }: { children: React.Reac
     if (!userId) redirect('/auth/login')
 
     const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    
     const { data: profile } = await supabase
         .from('profiles')
-        .select('role, plan_tier, full_name, avatar_url, email')
+        .select('role, plan_tier, full_name, avatar_url, email, is_admin')
         .eq('id', userId)
         .single()
 
-    if (profile?.role !== 'trainer') redirect('/dashboard/student')
+    const effectiveRole = profile?.role || user?.user_metadata?.role
+
+    if (effectiveRole !== 'trainer') redirect('/dashboard/student')
 
     const hasPlan = !!profile?.plan_tier && profile.plan_tier !== 'none'
     const pathname = headerList.get('x-pathname') || ''
@@ -97,7 +101,7 @@ export default async function TrainerLayout({ children }: { children: React.Reac
                     links={links}
                     mobileLinks={mobileLinks}
                     profileHref="/dashboard/trainer/profile"
-                    user={{ id: userId, name: profile?.full_name, email: (profile as any)?.email, avatar_url: profile?.avatar_url }}
+                    user={{ id: userId, name: profile?.full_name, email: (profile as any)?.email, avatar_url: profile?.avatar_url, isAdmin: profile?.is_admin }}
                 >
                     {children}
                 </DashboardShell>

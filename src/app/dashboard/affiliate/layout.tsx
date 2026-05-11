@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { Home, Users, DollarSign, BarChart2, User } from 'lucide-react'
+import { Home, Users, DollarSign, BarChart2, User, ArrowRightLeft } from 'lucide-react'
 import { DashboardShell } from '@/components/store/advanced/dashboard-shell'
 import { RegistryProvider } from '@/components/store/advanced/registry-context'
 
@@ -12,7 +12,7 @@ export default async function AffiliateLayout({ children }: { children: React.Re
 
     const { data: profile } = await supabase
         .from('profiles')
-        .select('full_name, avatar_url, is_affiliate, role')
+        .select('full_name, avatar_url, is_affiliate, role, is_admin')
         .eq('id', user.id)
         .single()
 
@@ -20,13 +20,6 @@ export default async function AffiliateLayout({ children }: { children: React.Re
         { href: '/dashboard/affiliate',           label: 'Visão Geral',  icon: 'Home',       exact: true },
         { href: '/dashboard/affiliate/referrals', label: 'Indicados',    icon: 'Users' },
         { href: '/dashboard/affiliate/earnings',  label: 'Ganhos',       icon: 'DollarSign' },
-        { href: '/dashboard/affiliate/stats',     label: 'Estatísticas', icon: 'BarChart2' },
-        ...(profile?.role === 'trainer'
-            ? [{ href: '/dashboard/trainer', label: 'Meu Painel', icon: 'User' }]
-            : profile?.role === 'student'
-                ? [{ href: '/dashboard/student', label: 'Meu Painel', icon: 'User' }]
-                : []
-        ),
     ]
 
     return (
@@ -34,7 +27,9 @@ export default async function AffiliateLayout({ children }: { children: React.Re
             <DashboardShell
                 color="amber"
                 links={links}
-                user={{ id: user.id, name: profile?.full_name, email: user.email, avatar_url: profile?.avatar_url }}
+                user={{ id: user.id, name: profile?.full_name, email: user.email, avatar_url: profile?.avatar_url, isAdmin: profile?.is_admin }}
+                profileHref="/dashboard"
+                profileIcon="ArrowRightLeft"
             >
                 {children}
             </DashboardShell>

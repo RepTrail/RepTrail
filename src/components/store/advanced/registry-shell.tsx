@@ -55,7 +55,7 @@ export function RegistryShell({ children, activeTab: externalActiveTab, setActiv
     }
 
     const observer = new IntersectionObserver(handleIntersection, observerOptions)
-    
+
     const sections = ['branding', 'colors', 'admin', 'typography', 'components', 'layout']
     sections.forEach(id => {
       const el = document.getElementById(id)
@@ -84,31 +84,34 @@ export function RegistryShell({ children, activeTab: externalActiveTab, setActiv
   }
 
   return (
-    <RegistryProvider 
-      activeTab={activeTab} 
+    <RegistryProvider
+      activeTab={activeTab}
       setActiveTab={setActiveTab}
       primaryColor={primaryColor}
       setPrimaryColor={setPrimaryColor}
     >
       <Box minHeight="screen" bg="zinc" bgOpacity={100} overflowX="hidden" display="flex" direction="col" position="relative">
-        
+
         {/* FIXED GLOBAL BACKGROUND EFFECTS */}
-        <div 
-          className="fixed inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(to_bottom,white_0%,transparent_90%)] opacity-[0.22] pointer-events-none z-0" 
+        <div
+          className="fixed inset-0 bg-[url('/grid.svg')] bg-repeat bg-top [mask-image:linear-gradient(to_bottom,white_20%,transparent_95%)] opacity-[0.4] pointer-events-none z-0"
         />
 
-        <div 
+        <div
           className={cn(
             "fixed -top-[10%] -right-[5%] w-[60%] h-[60%] rounded-full blur-[150px] pointer-events-none transition-colors duration-1000 z-0",
+            // Mobile Optimization: Push orb more to the top-right to avoid center-screen cropping
+            "max-md:-top-[15%] max-md:-right-[25%] max-md:w-[90%] max-md:h-[50%] max-md:blur-[120px]",
             lightColorMap[primaryColor] ? `bg-gradient-to-br ${lightColorMap[primaryColor]} to-transparent` : ""
-          )} 
+          )}
         />
 
-        <div 
+        <div
           className={cn(
             "fixed bottom-[10%] left-[20%] w-[500px] h-[500px] rounded-full blur-[180px] animate-pulse pointer-events-none transition-colors duration-1000 z-0",
+            "max-md:w-[300px] max-md:h-[300px] max-md:blur-[100px] max-md:left-[5%] max-md:bottom-[5%]",
             orbColorMap[primaryColor]
-          )} 
+          )}
         />
 
         {/* Desktop Sidebar */}
@@ -119,11 +122,17 @@ export function RegistryShell({ children, activeTab: externalActiveTab, setActiv
         <RegistryBottomNav />
 
         {/* Main Content Area */}
-        <main className="flex-1 w-full lg:pl-72 transition-all duration-300 relative z-10">
-          <div className="p-5">
-            {children}
-          </div>
-        </main>
+        <Box
+          as="main"
+          flex1
+          fullWidth
+          paddingLeft={{ base: 0, lg: 'sidebar-wide' }}
+          transition
+          position="relative"
+          zIndex={10}
+        >
+          {children}
+        </Box>
 
         <Modal
           isOpen={isSettingsOpen}

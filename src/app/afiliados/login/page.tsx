@@ -47,6 +47,7 @@ export default function AffiliadosLoginPage() {
                         loading={loading}
                         error={error}
                         color="amber"
+                        signupHref="/afiliados/cadastro"
                     />
                 </Suspense>
             </AuthShell>

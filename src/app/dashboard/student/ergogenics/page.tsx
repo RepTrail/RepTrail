@@ -6,6 +6,7 @@ import { getStudentErgogenics, getErgogenicLogs } from '@/actions/ergogenics-act
 import { getStudentProfile, getStudentTrainer } from '@/actions/student-actions'
 import { ErgogenicsPageClient } from '@/components/feature/student/ergogenics-page-client'
 import { redirect } from 'next/navigation'
+import { RegistryMain } from '@/components/store/advanced/registry-main'
 
 export default async function ErgogenicsPage() {
     const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
@@ -45,10 +46,18 @@ export default async function ErgogenicsPage() {
     ])
 
     return (
-        <div className=" mx-auto" suppressHydrationWarning>
-            <HydrationBoundary state={dehydrate(queryClient)}>
-                <ErgogenicsPageClient userId={user.id} />
-            </HydrationBoundary>
-        </div>
+        <RegistryMain
+            title="MEUS ERGOGÊNICOS"
+            subtitle="Gerencie seu protocolo farmacológico, dosagens e agendamentos de aplicação."
+            icon="FlaskConical"
+            contextLabel="Protocolos & Performance"
+            showTabs={false}
+        >
+            <div className=" mx-auto" suppressHydrationWarning>
+                <HydrationBoundary state={dehydrate(queryClient)}>
+                    <ErgogenicsPageClient userId={user.id} />
+                </HydrationBoundary>
+            </div>
+        </RegistryMain>
     )
 }

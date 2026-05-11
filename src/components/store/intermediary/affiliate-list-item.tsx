@@ -2,7 +2,6 @@
 
 import React from 'react'
 import { Stack } from '../base/stack'
-import { Inline } from '../base/layout'
 import { Font } from '../base/font'
 import { BaseAvatar } from '../base/avatar'
 import { Badge } from '../base/badge'
@@ -42,19 +41,18 @@ export function AffiliateListItem({
     return (
         <ActionableListCard
             badges={
-                <Inline gap={2.5} align="center" wrap>
-                    <Badge label={registrationDate} variant="glass" rounded="full" size="xs" />
+                <Stack direction="row" gap={2.5} align="center" className="flex-wrap">
+                    <Badge label={registrationDate} variant="glass" size="xs" />
                     <Badge
                         label={`${referrals.total} / ${referrals.active} ATIVOS`}
                         variant="glass"
                         color="emerald"
-                        rounded="full"
                         size="xs"
                     />
-                    <Badge label={revenue} variant="glass" color="zinc" rounded="full" size="xs" />
-                    <Badge label={`${commission} ESTIMADO`} variant="glass" color="emerald" rounded="full" size="xs" />
-                    <Badge label={`${rate}%`} variant="glass" color="blue" rounded="full" size="xs" />
-                </Inline>
+                    <Badge label={revenue} variant="glass" color="zinc" size="xs" />
+                    <Badge label={`${commission} ESTIMADO`} variant="glass" color="emerald" size="xs" />
+                    <Badge label={`${rate}%`} variant="glass" color="primary" size="xs" />
+                </Stack>
             }
             actions={onDelete ? (
                 <Button
@@ -71,7 +69,7 @@ export function AffiliateListItem({
                 </Button>
             ) : undefined}
         >
-            <Inline gap={5} align="center">
+            <Stack direction="row" gap={5} align="center">
                 <BaseAvatar
                     src={avatarUrl || undefined}
                     initials={name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
@@ -84,10 +82,10 @@ export function AffiliateListItem({
                         <Font variant="sub-tiny" color="zinc-600" lowercase truncate display="block">{email}</Font>
                     </Box>
                     <Box display="flex">
-                        <Badge label={affiliateId} variant="glass" size="xs" color="zinc" rounded="system" />
+                        <Badge label={affiliateId} variant="glass" size="xs" color="primary" rounded="system" />
                     </Box>
                 </Stack>
-            </Inline>
+            </Stack>
         </ActionableListCard>
     )
 }

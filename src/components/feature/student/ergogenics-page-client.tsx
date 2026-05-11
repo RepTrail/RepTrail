@@ -13,13 +13,16 @@ import { ErgogenicForm } from '@/components/feature/shared/ergogenic-form'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useToast } from '@/hooks/use-toast'
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { cn } from "@/lib/utils"
+import { EmptyState } from '@/components/store/intermediary/empty-state'
+import { Stack } from '@/components/store/base/stack'
+import { Grid } from '@/components/store/base/grid'
 import { ENTITIES } from '@/lib/outbox-db'
+import { useRealtimeSync } from '@/hooks/use-realtime-sync'
 
 interface ErgogenicsPageClientProps {
     userId: string
 }
-
-import { useRealtimeSync } from '@/hooks/use-realtime-sync'
 
 export function ErgogenicsPageClient({ userId }: ErgogenicsPageClientProps) {
     // 1. Data Fetching via TanStack Query (Hydrated)
@@ -96,48 +99,33 @@ export function ErgogenicsPageClient({ userId }: ErgogenicsPageClientProps) {
     })
 
     return (
-        <div className="space-y-10">
-            <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 ">
-                <div className="space-y-5">
-                    <div className="flex items-center gap-3 pb-4">
-                        <h1 className="text-3xl font-black text-white italic uppercase tracking-tighter">
-                            Meus <span className="text-orange-500">Ergogênicos</span>
-                        </h1>
-                    </div>
-                    <p className="text-zinc-500 text-sm font-medium max-w-md">
-                        {viewMode === 'trainer'
-                            ? 'Gerencie seu protocolo farmacológico, dosagens e agendamentos de aplicação.'
-                            : 'Acompanhe e registre suas substâncias e dosagens prescritas pelo seu treinador.'}
-                    </p>
+        <Stack gap={10}>
+            {viewMode === 'trainer' && (
+                <div className="flex items-center justify-end w-full">
+                    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                        <DialogTrigger asChild>
+                            <Button className="h-12 px-6 bg-orange-500 hover:bg-orange-400 text-zinc-950 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2">
+                                <Plus className="w-4 h-4" />
+                                Adicionar Substância
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-2xl">
+                            <DialogHeader className="pb-6 border-b border-zinc-900/50">
+                                <DialogTitle className="text-xl font-black text-white italic uppercase tracking-tighter">
+                                    Nova <span className="text-orange-500">Substância</span>
+                                </DialogTitle>
+                            </DialogHeader>
+                            <div className="pt-8">
+                                <ErgogenicForm 
+                                    onSubmit={(data) => addMutate({ ...data, student_id: userId })}
+                                    onCancel={() => setIsDialogOpen(false)}
+                                    colorScheme="orange"
+                                />
+                            </div>
+                        </DialogContent>
+                    </Dialog>
                 </div>
-
-                {viewMode === 'trainer' && (
-                    <div className="flex-1 sm:flex-none">
-                        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                            <DialogTrigger asChild>
-                                <Button className="flex-1 sm:flex-none h-12 px-6 bg-orange-500 hover:bg-orange-400 text-zinc-950 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2">
-                                    <Plus className="w-4 h-4" />
-                                    Adicionar Substância
-                                </Button>
-                            </DialogTrigger>
-                            <DialogContent className="max-w-2xl">
-                                <DialogHeader className="pb-6 border-b border-zinc-900/50">
-                                    <DialogTitle className="text-xl font-black text-white italic uppercase tracking-tighter">
-                                        Nova <span className="text-orange-500">Substância</span>
-                                    </DialogTitle>
-                                </DialogHeader>
-                                <div className="pt-8">
-                                    <ErgogenicForm 
-                                        onSubmit={(data) => addMutate({ ...data, student_id: userId })}
-                                        onCancel={() => setIsDialogOpen(false)}
-                                        colorScheme="orange"
-                                    />
-                                </div>
-                            </DialogContent>
-                        </Dialog>
-                    </div>
-                )}
-            </header>
+            )}
 
             <UnifiedErgogenicsModule
                 studentId={userId}
@@ -147,6 +135,6 @@ export function ErgogenicsPageClient({ userId }: ErgogenicsPageClientProps) {
                 colorScheme="orange"
                 studentName={profile?.full_name}
             />
-        </div>
+        </Stack>
     )
 }

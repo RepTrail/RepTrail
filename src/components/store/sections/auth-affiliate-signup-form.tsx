@@ -12,8 +12,11 @@ import { Divider } from '../base/layout'
 import { useRegistry } from '../advanced/registry-context'
 import { Mail, Lock, User, Megaphone, ArrowRight, Phone } from 'lucide-react'
 import { translateAuthError } from '@/lib/auth-errors'
-import Link from 'next/link'
 import { FormCheckbox } from '../base/form-checkbox'
+import { Modal } from '../advanced/modal'
+import { ShieldCheck } from 'lucide-react'
+import { AFFILIATE_TERMS } from '@/lib/terms-content'
+import Link from 'next/link'
 
 interface AuthAffiliateSignUpFormProps {
     fullName?: string
@@ -37,12 +40,13 @@ export function AuthAffiliateSignUpForm({
     email, setEmail,
     whatsapp, setWhatsapp,
     password, setPassword,
-    acceptedTerms, setAcceptedTerms,
+    acceptedTerms = true, setAcceptedTerms,
     onSubmit, 
     loading, error,
     syncColor = true
 }: AuthAffiliateSignUpFormProps) {
     const { primaryColor, setPrimaryColor } = useRegistry()
+    const [showTermsModal, setShowTermsModal] = React.useState(false)
 
     React.useEffect(() => {
         if (syncColor) {
@@ -124,15 +128,35 @@ export function AuthAffiliateSignUpForm({
                                     color="primary"
                                 />
                                 <Font variant="sub-tiny" color="zinc-500" weight="bold" uppercase tracking="widest">
-                                    Eu aceito os <Font variant="sub-tiny" color="primary" weight="black" className="cursor-pointer underline">termos de uso</Font>
+                                    Eu aceito os <Font variant="sub-tiny" color="primary" weight="black" className="cursor-pointer underline" onClick={() => setShowTermsModal(true)}>termos de uso</Font>
                                 </Font>
                             </Stack>
+
+                            <Modal 
+                                isOpen={showTermsModal} 
+                                onClose={() => setShowTermsModal(false)}
+                                title="Termos de Uso"
+                                subtitle="Contrato de Prestação de Serviços - Afiliado"
+                                icon={ShieldCheck}
+                                variant="orange"
+                                confirmLabel="Entendido"
+                                onConfirm={() => {
+                                    setAcceptedTerms?.(true)
+                                    setShowTermsModal(false)
+                                }}
+                            >
+                                <Box padding={2.5} className="max-h-[60vh] overflow-y-auto pr-4 scrollbar-thin scrollbar-thumb-zinc-800">
+                                    <Font variant="body" color="zinc-400" className="whitespace-pre-wrap leading-relaxed">
+                                        {AFFILIATE_TERMS}
+                                    </Font>
+                                </Box>
+                            </Modal>
 
                             <Button 
                                 type="submit"
                                 variant="primary" 
                                 fullWidth 
-                                rounded="full" 
+                                rounded="system" 
                                 height="anatomy-item"
                                 paddingY={5}
                                 disabled={loading}
@@ -153,7 +177,7 @@ export function AuthAffiliateSignUpForm({
                 {/* Footer */}
                 <Box padding={5} display="flex" align="center" justify="center" bg="black" bgOpacity={30}>
                     <Font variant="sub-tiny" color="zinc-500" align="center" weight="bold" uppercase tracking="widest">
-                        Já possui uma conta? <Link href="/auth/login" className="contents"><Font variant="sub-tiny" color="primary" weight="black" className="cursor-pointer underline">Fazer login</Font></Link>
+                        Já possui uma conta? <Link href="/afiliados/login" className="contents"><Font variant="sub-tiny" color="primary" weight="black" className="cursor-pointer underline">Fazer login</Font></Link>
                     </Font>
                 </Box>
             </Stack>

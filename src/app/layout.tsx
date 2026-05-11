@@ -74,7 +74,7 @@ export default function RootLayout({
         data-scroll-behavior="smooth"
       >
         <ShineManager />
-        <NextTopLoader color="#f97316" showSpinner={false} shadow="0 0 10px #f97316,0 0 5px #f97316" zIndex={1600} />
+        <NextTopLoader color="var(--primary-dynamic, #f97316)" showSpinner={false} shadow="0 0 10px var(--primary-dynamic, #f97316), 0 0 5px var(--primary-dynamic, #f97316)" zIndex={1600} />
         <FacebookPixel />
         <QueryProvider>
           <SplashManager>

@@ -1,3 +1,5 @@
+'use client'
+
 import React from 'react'
 import { Box } from '../base/box'
 import { Stack } from '../base/stack'
@@ -12,28 +14,61 @@ import {
   HeartHandshake,
   Zap,
   Users,
+  ClipboardList,
+  Activity,
+  TrendingUp,
+  Sparkles,
+  Utensils,
+  Dumbbell,
+  FlaskConical,
+  FileUp,
+  Flame,
   LucideIcon
 } from 'lucide-react'
 import { useRegistry } from '@/components/store/advanced/registry-context'
 import { SegmentedSwitch } from '@/components/store/intermediary/segmented-switch'
 import { AdminSectionContent } from '../sections/admin-section-content'
 import { AffiliateSectionContent } from '../sections/affiliate-section-content'
+import { StudentRegistryContent } from '../sections/student-registry-content'
+
+const iconMap: Record<string, LucideIcon> = {
+  BarChart3,
+  Users2,
+  HeartHandshake,
+  Zap,
+  Users,
+  ClipboardList,
+  Activity,
+  TrendingUp,
+  Sparkles,
+  Utensils,
+  Dumbbell,
+  FlaskConical,
+  FileUp,
+  Flame,
+}
 
 interface RegistryMainProps {
   children: React.ReactNode
   title: string
   subtitle: string
-  icon: LucideIcon
+  icon: LucideIcon | string
+  contextLabel?: string
+  showTabs?: boolean
 }
 
 export function RegistryMain({
   children,
   title,
   subtitle,
-  icon
+  icon,
+  contextLabel,
+  showTabs = true
 }: RegistryMainProps) {
   const { activeTab, setActiveTab, primaryColor } = useRegistry()
   const [first, ...rest] = title.split(' ')
+
+  const IconComp = typeof icon === 'string' ? (iconMap[icon] || BarChart3) : icon
 
   const tabs = [
     { id: 'overview', label: 'Overview', icon: BarChart3, activeVariant: 'outline-blue' as const },
@@ -44,6 +79,8 @@ export function RegistryMain({
   ]
 
   const renderContent = () => {
+    if (!showTabs) return children
+
     switch (activeTab) {
       case 'overview':
         return children
@@ -51,11 +88,13 @@ export function RegistryMain({
         return <AdminSectionContent />
       case 'afiliado':
         return <AffiliateSectionContent />
+      case 'aluno':
+        return <StudentRegistryContent id="aluno-content" />
       default:
         return (
           <EmptyState
             variant={primaryColor as any}
-            icon={icon}
+            icon={IconComp}
             title="Em Breve"
             description={`A seção ${activeTab.toUpperCase()} está sendo preparada para o sistema RepTrail.`}
           />
@@ -64,13 +103,13 @@ export function RegistryMain({
   }
 
   return (
-    <Box fullWidth className="py-20 md:py-0">
+    <Box fullWidth paddingX={5} paddingY={{ base: 25, sm: 5, md: 20 }}>
       <Stack gap={{ base: 12.5, md: 'section' }}>
         {/* Header Section title*/}
         <Stack gap={2.5}>
           <Inline gap={2.5}>
-            <Icon icon={icon} color={primaryColor as any} size="lg" />
-            <Font variant="auxiliary" color={primaryColor as any}>Brand Guidelines</Font>
+            <Icon icon={IconComp} color={primaryColor as any} size="lg" />
+            <Font variant="auxiliary" color={primaryColor as any}>{contextLabel || 'Brand Guidelines'}</Font>
           </Inline>
 
           <Stack gap={1}>
@@ -82,11 +121,13 @@ export function RegistryMain({
         </Stack>
 
         {/* Tab Navigation System (Pill Style with Contextual Colors) */}
-        <SegmentedSwitch
-          options={tabs}
-          activeId={activeTab}
-          onSelect={setActiveTab}
-        />
+        {showTabs && (
+          <SegmentedSwitch
+            options={tabs}
+            activeId={activeTab}
+            onSelect={setActiveTab}
+          />
+        )}
 
         {/* Content Sections */}
         <Stack gap={{ base: 12.5, md: 'section' }}>

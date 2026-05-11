@@ -2,13 +2,16 @@
 
 import { useQuery } from '@tanstack/react-query'
 import { getCardioLibrary } from '@/actions/cardio-actions'
-import { getTrainerStudents } from "@/actions/trainer-actions"
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Activity, Plus } from "lucide-react"
 import { UnifiedLibraryCard } from "@/components/feature/shared/unified-library-card"
 import { UnifiedCreationDialog } from "@/components/feature/shared/unified-creation-dialog"
+import { RegistryMain } from '@/components/store/advanced/registry-main'
+import { EmptyState } from '@/components/store/intermediary/empty-state'
+import { Stack } from '@/components/store/base/stack'
+import { Grid } from '@/components/store/base/grid'
 
 interface CardioLibraryClientProps {
     initialCardios: any[]
@@ -29,18 +32,15 @@ export function CardioLibraryClient({
     })
 
     return (
-        <div className="space-y-10">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-2 border-b border-zinc-800/50">
-                <div className="space-y-2 sm:space-y-5">
-                    <h1 className="text-3xl font-black text-white italic uppercase tracking-tighter">
-                        Biblioteca de Cardio
-                    </h1>
-                    <p className="text-zinc-500 font-bold uppercase tracking-widest text-[10px] flex items-center gap-2">
-                        <Activity className="w-3.5 h-3.5 text-emerald-500" />
-                        Gerencie seus modelos de cardio e atribua aos seus alunos
-                    </p>
-                </div>
-                <div className="flex items-center gap-3 pb-4">
+        <RegistryMain
+            title="BIBLIOTECA DE CARDIO"
+            subtitle="Gerencie seus modelos de cardio e atribua aos seus alunos."
+            icon={Activity}
+            contextLabel="Área do Personal"
+            showTabs={false}
+        >
+            <Stack gap={10}>
+                <div className="flex items-center justify-end w-full">
                     <UnifiedCreationDialog
                         title="Novo Modelo de Cardio"
                         description="Crie um template (ex: Esteira 45min) para agendar para seus alunos."
@@ -60,59 +60,42 @@ export function CardioLibraryClient({
                         colorScheme="emerald"
                     />
                 </div>
-            </div>
 
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {cardios.length > 0 ? (
-                    cardios.map((cardio: any) => (
-                        <UnifiedLibraryCard
-                            key={cardio.id}
-                            id={cardio.id}
-                            name={cardio.name}
-                            description={cardio.description}
-                            studentId={userId}
-                            queryKey={QUERY_KEYS.cardio.library(userId)}
-                            icon={<Activity className="w-5 h-5" />}
-                            type="cardio"
-                            created_at={cardio.created_at}
-                            assignments={cardio.assignments}
-                            stats={{
-                                label: 'Template',
-                                value: '',
-                                icon: null
-                            }}
-                            href={`/dashboard/trainer/cardio/${cardio.id}`}
-                            colorScheme="emerald"
-                            onEditLabel="Editar Protocolo"
-                        />
-                    ))
-                ) : (
-                    <Card className="col-span-full bg-zinc-900/40 border-dashed border-zinc-800 rounded-[3rem] p-20 text-center">
-                        <div className="flex flex-col items-center gap-6">
-                            <div className="p-6 bg-zinc-900 rounded-[2rem] text-zinc-700 border border-zinc-800">
-                                <Activity className="w-12 h-12" />
-                            </div>
-                            <div className="space-y-2">
-                                <h3 className="text-2xl font-black text-white italic uppercase tracking-tight">Nenhum cardio encontrado</h3>
-                                <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest">Crie seu primeiro modelo de cardio para começar a atribuir.</p>
-                            </div>
-                            <UnifiedCreationDialog
-                                title="Novo Modelo de Cardio"
-                                description="Crie um template (ex: Esteira 45min) para agendar para seus alunos."
-                                triggerLabel="Criar Modelo"
-                                fields={[
-                                    { name: 'name', label: 'Nome do Cardio', placeholder: 'Ex: Corrida na Esteira', required: true },
-                                    { name: 'description', label: 'Descrição (Opcional)', placeholder: 'Ex: Manter batimentos entre 130-140...', type: 'textarea' }
-                                ]}
-                                actionType="create-student-cardio"
-                                successMessage="Modelo de cardio criado!"
-                                footerLabel="Salvar Modelo"
+                <Grid gap={5} mdCols={2} lgCols={3}>
+                    {cardios.length > 0 ? (
+                        cardios.map((cardio: any) => (
+                            <UnifiedLibraryCard
+                                key={cardio.id}
+                                id={cardio.id}
+                                name={cardio.name}
+                                description={cardio.description}
+                                studentId={userId}
+                                queryKey={QUERY_KEYS.cardio.library(userId)}
+                                icon={<Activity className="w-5 h-5" />}
+                                type="cardio"
+                                created_at={cardio.created_at}
+                                assignments={cardio.assignments}
+                                stats={{
+                                    label: 'Template',
+                                    value: '',
+                                    icon: null
+                                }}
+                                href={`/dashboard/trainer/cardio/${cardio.id}`}
                                 colorScheme="emerald"
+                                onEditLabel="Editar Protocolo"
+                            />
+                        ))
+                    ) : (
+                        <div className="col-span-full">
+                            <EmptyState 
+                                icon={Activity} 
+                                title="Nenhum cardio encontrado" 
+                                description="Crie seu primeiro modelo de cardio para começar a atribuir." 
                             />
                         </div>
-                    </Card>
-                )}
-            </div>
-        </div>
+                    )}
+                </Grid>
+            </Stack>
+        </RegistryMain>
     )
 }

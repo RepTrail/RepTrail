@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { SplashScreen } from '@/components/feature/shared/splash-screen'
+import { usePathname } from 'next/navigation'
 
 interface SplashManagerProps {
     children: React.ReactNode
@@ -9,6 +10,15 @@ interface SplashManagerProps {
 
 export function SplashManager({ children }: SplashManagerProps) {
     const [view, setView] = useState<'none' | 'splash' | 'ready'>('none')
+    const pathname = usePathname()
+
+    const getSplashColor = (): 'emerald' | 'amber' | 'red' | 'orange' => {
+        if (pathname.includes('/admin')) return 'red'
+        if (pathname.includes('/affiliate')) return 'amber'
+        if (pathname.includes('/personal')) return 'emerald'
+        if (pathname.includes('/student')) return 'orange'
+        return 'emerald' // Default
+    }
 
     useEffect(() => {
         // Detect environment and session status
@@ -42,7 +52,10 @@ export function SplashManager({ children }: SplashManagerProps) {
         const isStandalone = typeof window !== 'undefined' && window.matchMedia('(display-mode: standalone)').matches
         return (
             <>
-                <SplashScreen onFinish={() => setView('ready')} />
+                <SplashScreen 
+                    color={getSplashColor()} 
+                    onFinish={() => setView('ready')} 
+                />
                 {!isStandalone && children}
             </>
         )

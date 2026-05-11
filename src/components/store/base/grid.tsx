@@ -1,15 +1,15 @@
 import React from 'react'
 import { cn } from '@/lib/utils'
 
-type GapToken = 0 | 1 | 2 | 2.5 | 4 | 5 | 8 | 10 | 12 | 12.5 | 'section'
+type GapToken = 0 | 1 | 2 | 2.5 | 4 | 5 | 7.5 | 8 | 10 | 12 | 12.5 | 'section' | 'header-gap'
 
 interface GridProps {
   children: React.ReactNode
-  cols?: 1 | 2 | 3 | 4 | 5 | 6 | 12 | { base: number, md?: number, lg?: number }
+  cols?: 1 | 2 | 3 | 4 | 5 | 6 | 10 | 12 | { base: number, md?: number, lg?: number }
   columns?: number
-  smCols?: 1 | 2 | 3 | 4 | 5 | 6 | 12
-  mdCols?: 1 | 2 | 3 | 4 | 5 | 6 | 12
-  lgCols?: 1 | 2 | 3 | 4 | 5 | 6 | 12
+  smCols?: 1 | 2 | 3 | 4 | 5 | 6 | 10 | 12
+  mdCols?: 1 | 2 | 3 | 4 | 5 | 6 | 10 | 12
+  lgCols?: 1 | 2 | 3 | 4 | 5 | 6 | 10 | 12
   gap?: GapToken | { base: GapToken, md: GapToken }
   align?: 'start' | 'center' | 'end' | 'stretch'
   padding?: 0 | 1 | 2.5 | 5 | 7.5 | 12.5
@@ -51,7 +51,9 @@ export function Grid({
     10: 'gap-10',
     12: 'gap-12',
     12.5: 'gap-[50px]',
-    'section': 'gap-[50px]'
+    7.5: 'gap-[30px]',
+    'section': 'gap-[100px]',
+    'header-gap': 'gap-8'
   }
 
   const gapMdClasses = {
@@ -64,7 +66,9 @@ export function Grid({
     10: 'md:gap-10',
     12: 'md:gap-12',
     12.5: 'md:gap-[50px]',
-    'section': 'md:gap-[100px]'
+    7.5: 'md:gap-[30px]',
+    'section': 'md:gap-[100px]',
+    'header-gap': 'md:gap-8'
   }
 
   const paddingClasses = {
@@ -99,19 +103,52 @@ export function Grid({
   const gapBase = isRespGap ? (gap as any).base : gap
   const gapMd = isRespGap ? (gap as any).md : undefined
 
+  const colClasses = {
+    1: 'grid-cols-1',
+    2: 'grid-cols-2',
+    3: 'grid-cols-3',
+    4: 'grid-cols-4',
+    5: 'grid-cols-5',
+    6: 'grid-cols-6',
+    10: 'grid-cols-10',
+    12: 'grid-cols-12',
+  }
+
+  const mdColClasses = {
+    1: 'md:grid-cols-1',
+    2: 'md:grid-cols-2',
+    3: 'md:grid-cols-3',
+    4: 'md:grid-cols-4',
+    5: 'md:grid-cols-5',
+    6: 'md:grid-cols-6',
+    10: 'md:grid-cols-10',
+    12: 'md:grid-cols-12',
+  }
+
+  const lgColClasses = {
+    1: 'lg:grid-cols-1',
+    2: 'lg:grid-cols-2',
+    3: 'lg:grid-cols-3',
+    4: 'lg:grid-cols-4',
+    5: 'lg:grid-cols-5',
+    6: 'lg:grid-cols-6',
+    10: 'lg:grid-cols-10',
+    12: 'lg:grid-cols-12',
+  }
+
   return (
     <div className={cn(
       'grid w-full',
       // Columns mapping
-      typeof effectiveCols === 'number' ? `grid-cols-${effectiveCols}` : 
+      typeof effectiveCols === 'number' ? colClasses[effectiveCols as keyof typeof colClasses] : 
         cn(
-          (effectiveCols as any).base && `grid-cols-${(effectiveCols as any).base}`,
-          (effectiveCols as any).md && `md:grid-cols-${(effectiveCols as any).md}`,
-          (effectiveCols as any).lg && `lg:grid-cols-${(effectiveCols as any).lg}`
+          (effectiveCols as any).base && colClasses[(effectiveCols as any).base as keyof typeof colClasses],
+          (effectiveCols as any).md && mdColClasses[(effectiveCols as any).md as keyof typeof mdColClasses],
+          (effectiveCols as any).lg && lgColClasses[(effectiveCols as any).lg as keyof typeof lgColClasses]
         ),
-      smCols && `sm:grid-cols-${smCols}`,
-      mdCols && `md:grid-cols-${mdCols}`,
-      lgCols && `lg:grid-cols-${lgCols}`,
+      smCols && colClasses[smCols as keyof typeof colClasses], // simplified for sm
+      mdCols && mdColClasses[mdCols as keyof typeof mdColClasses],
+      lgCols && lgColClasses[lgCols as keyof typeof lgColClasses],
 
       // Gap mapping
       gapBase !== undefined && gapClasses[gapBase as keyof typeof gapClasses],

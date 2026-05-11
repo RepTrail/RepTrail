@@ -33,8 +33,12 @@ import {
     Zap,
     Eye,
     MessageSquare,
-    ArrowRight 
+    ArrowRight,
+    Users
 } from 'lucide-react'
+import { RegistryMain } from '@/components/store/advanced/registry-main'
+import { Stack } from '@/components/store/base/stack'
+import { Grid } from '@/components/store/base/grid'
 import { Badge } from "@/components/ui/badge"
 import Link from 'next/link'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -239,7 +243,14 @@ export function StudentDetailClient({ relationshipId, userId }: StudentDetailCli
     };
 
     return (
-        <div className="space-y-10 pb-10 w-full">
+        <RegistryMain
+            title={student?.full_name?.split(' ')[0] || "DETALHES DO ALUNO"}
+            subtitle="Análise de desempenho, protocolos ativos e histórico completo."
+            icon={Users}
+            contextLabel="Gestão de Aluno"
+            showTabs={false}
+        >
+            <Stack gap={10} className="pb-10">
 
             {((onboardingStep === 'aha_moment' || relationship.is_placeholder) && !isImpersonating) && (
                 <div id="tour-aha-card" className="bg-emerald-500/10 border border-emerald-500/20 rounded-[2rem] p-6 mb-10 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
@@ -279,75 +290,6 @@ export function StudentDetailClient({ relationshipId, userId }: StudentDetailCli
                 </div>
             )}
 
-            <div className="flex flex-col gap-6 pb-2 border-b border-zinc-800/50">
-                <Link href="/dashboard/trainer/students" className="flex items-center gap-2 text-zinc-500 hover:text-white transition-colors text-[10px] font-bold uppercase tracking-widest">
-                    <ChevronLeft className="w-3 h-3" /> Voltar para Lista
-                </Link>
-                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-                    <div className="flex items-center gap-4">
-                        <Avatar className="h-14 w-14 border border-zinc-800 shrink-0">
-                            <AvatarImage src={student?.avatar_url} />
-                            <AvatarFallback className="bg-zinc-900 text-zinc-400 font-black italic uppercase">
-                                {student?.full_name?.substring(0, 2) || 'AL'}
-                            </AvatarFallback>
-                        </Avatar>
-                        <div className="space-y-1 min-w-0 flex-1">
-                            <div className="flex items-center gap-3">
-                                <h1 className="text-2xl md:text-4xl font-black text-white italic uppercase truncate">{student?.full_name}</h1>
-                                {relationship.is_placeholder && (
-                                    <Badge variant="outline" className="bg-amber-500/10 text-amber-500 border-amber-500/20 text-[8px] font-black uppercase tracking-widest px-2 py-0.5">
-                                        Placeholder
-                                    </Badge>
-                                )}
-                            </div>
-                            <div className="flex items-center gap-3">
-                                <span className="text-zinc-500 text-[10px] flex items-center gap-1.5 shrink-0">
-                                    <Calendar className="w-3 h-3" /> {relationship.is_placeholder ? 'Criado em' : 'Desde'} {new Date(relationship.created_at || Date.now()).toLocaleDateString()}
-                                </span>
-                                <div className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest border ${relationship.active ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-zinc-800 text-zinc-500 border-zinc-700/50'}`}>
-                                    {relationship.is_placeholder 
-                                        ? (relationship.active ? 'Pendente' : 'Suspenso') 
-                                        : (relationship.active ? 'Ativo' : 'Inativo')}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="flex flex-wrap items-center gap-3">
-                    <Button asChild variant="outline" className="flex-1 sm:flex-none border-zinc-800 bg-zinc-900/50 text-zinc-400 rounded-xl font-bold h-10 text-xs gap-2">
-                        <a href={formatWhatsAppUrl(student?.whatsapp, `Olá, tudo bem?`)} target="_blank">
-                            <MessageSquare className="w-4 h-4" /> WhatsApp
-                        </a>
-                    </Button>
-                    {relationship.active && (
-                        <EditStudentDialog 
-                            relationshipId={relationshipId} 
-                            studentId={studentId!} 
-                            trainerId={userId} 
-                            initialData={{
-                                weight: lastWeight,
-                                body_fat: lastBF,
-                                height: details?.height,
-                                age: details?.age,
-                                sex: details?.sex,
-                                activity_level: details?.activity_level,
-                                monthly_fee: relationship.monthly_fee,
-                                payment_day: relationship.payment_day,
-                                steroid_use: details?.steroid_use,
-                                whatsapp: student?.whatsapp,
-                                email: student?.email,
-                                isPlaceholder: relationship.is_placeholder
-                            }}
-                        >
-                            <Button className="flex-1 sm:flex-none bg-white text-zinc-950 font-black uppercase italic tracking-widest h-10 px-4 text-xs rounded-xl border border-transparent">
-                                Editar
-                            </Button>
-                        </EditStudentDialog>
-                    )}
-                    <ToggleStudentStatusButton relationshipId={relationshipId} isActive={relationship.active} trainerId={userId} />
-                </div>
-            </div>
 
             <div className="grid gap-4 md:gap-6 grid-cols-1 md:grid-cols-3">
                 <StatCard label="Peso Atual" value={lastWeight || '--'} unit="kg" icon={<TrendingUp className="w-4 h-4" />} trend={weightTrend ? (parseFloat(weightTrend) > 0 ? 'up' : 'down') : 'none'} trendVal={weightTrend ? `${Math.abs(parseFloat(weightTrend))}kg` : '--'} trendLabel="nos últimos 30d" />
@@ -658,7 +600,8 @@ export function StudentDetailClient({ relationshipId, userId }: StudentDetailCli
                     </div>
                 </Card>
             )}
-        </div>
+            </Stack>
+        </RegistryMain>
     )
 }
 

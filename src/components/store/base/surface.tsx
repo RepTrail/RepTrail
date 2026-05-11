@@ -22,9 +22,9 @@ type SurfaceVariant =
 
 interface SurfaceProps extends Omit<BoxProps, 'variant' | 'padding' | 'minHeight' | 'border'> {
   children: React.ReactNode
-  variant?: SurfaceVariant
-  padding?: 0 | 1 | 2.5 | 5 | 7.5 | 12 | 12.5
-  rounded?: 'none' | 'full' | 'system'
+  variant?: SurfaceVariant | 'glass-dark'
+  padding?: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12 | 12.5
+  rounded?: 'none' | 'full' | 'system' | '3xl' | '2xl'
   minHeight?: 'sm' | 'md' | 'lg' | 'xl'
   border?: 'none' | 'subtle' | 'bold' | 'dashed'
   hoverBorder?: string
@@ -62,16 +62,16 @@ export function Surface({
     'glass-dark': 'bg-gradient-to-br from-black/40 to-black/20 border border-black/40 backdrop-blur-md',
     sunken: 'bg-zinc-950/40 border border-white/5',
     raised: 'bg-zinc-800 border border-white/10 shadow-lg',
-    interactive: 'bg-zinc-900 border border-white/5 hover:border-emerald-500/30 hover:bg-zinc-800 transition-all cursor-pointer',
+    interactive: 'bg-zinc-900 border border-white/5 transition-all cursor-pointer',
     showcase: 'bg-zinc-950/50 border border-white/5 border-dashed flex items-center justify-center',
     
     // Tonal variants (for EmptyStates, etc.)
-    'tonal-orange': 'bg-orange-500/5 border-orange-500/50 hover:bg-orange-500/10 transition-all duration-500',
-    'tonal-emerald': 'bg-emerald-500/5 border-emerald-500/50 hover:bg-emerald-500/10 transition-all duration-500',
-    'tonal-amber': 'bg-amber-500/5 border-amber-500/50 hover:bg-amber-500/10 transition-all duration-500',
-    'tonal-red': 'bg-red-500/5 border-red-500/50 hover:bg-red-500/10 transition-all duration-500',
-    'tonal-blue': 'bg-blue-500/5 border-blue-500/50 hover:bg-blue-500/10 transition-all duration-500',
-    'tonal-zinc': 'bg-white/5 border-white/10 hover:bg-white/10 transition-all duration-500',
+    'tonal-orange': 'bg-orange-500/5 border-orange-500/50 transition-all duration-500',
+    'tonal-emerald': 'bg-emerald-500/5 border-emerald-500/50 transition-all duration-500',
+    'tonal-amber': 'bg-amber-500/5 border-amber-500/50 transition-all duration-500',
+    'tonal-red': 'bg-red-500/5 border-red-500/50 transition-all duration-500',
+    'tonal-blue': 'bg-blue-500/5 border-blue-500/50 transition-all duration-500',
+    'tonal-zinc': 'bg-white/5 border-white/10 transition-all duration-500',
   }
 
   const paddingClasses = {
@@ -80,6 +80,7 @@ export function Surface({
     2.5: 'p-2.5',
     5: 'p-5',
     7.5: 'p-[30px]',
+    10: 'p-10',
     12: 'p-5 md:p-12',
     12.5: 'p-[50px]'
   }
@@ -87,7 +88,9 @@ export function Surface({
   const roundedClasses = {
     none: 'rounded-none',
     full: 'rounded-full',
-    system: 'rounded-[5px]'
+    system: 'rounded-[5px]',
+    '2xl': 'rounded-2xl',
+    '3xl': 'rounded-3xl'
   }
 
   const minHeightClasses = {

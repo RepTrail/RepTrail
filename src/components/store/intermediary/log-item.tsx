@@ -33,7 +33,7 @@ export function LogItem({
         <ActionableListCard
             isLogItem
             badges={
-                <Inline gap={2.5} align="center">
+                <Inline gap={2.5} align="center" wrap>
                     {target && (
                         <Badge 
                             label={target} 

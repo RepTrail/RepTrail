@@ -1,6 +1,7 @@
 import { ImportPdfClient } from '@/components/feature/pdf/import-pdf-client'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import { RegistryMain } from '@/components/store/advanced/registry-main'
 
 export const metadata = {
     title: 'Importar PDF | RepTrail'
@@ -12,8 +13,14 @@ export default async function StudentImportPdfPage() {
     if (!user) redirect('/login')
 
     return (
-        <div className="max-w-4xl mx-auto">
+        <RegistryMain
+            title="IMPORTAÇÃO"
+            subtitle="Transforme seus arquivos PDF em treinos e dietas interativos usando nossa tecnologia de IA."
+            icon="FileUp"
+            contextLabel="Inteligência Artificial"
+            showTabs={false}
+        >
             <ImportPdfClient role="student" userId={user.id} />
-        </div>
+        </RegistryMain>
     )
 }

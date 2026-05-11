@@ -7,7 +7,7 @@ import { Font } from '../base/font'
 import { Icon } from '../base/icon'
 import { Button } from '../base/button'
 import { BaseAvatar } from '../base/avatar'
-import { LogOut, Settings } from 'lucide-react'
+import { LogOut, Settings, ArrowRightLeft, Briefcase } from 'lucide-react'
 import { signOutAction } from '@/actions/auth-actions'
 
 import Link from 'next/link'
@@ -17,15 +17,20 @@ interface SidebarProfileUser {
     name?: string | null
     email?: string | null
     avatar_url?: string | null
+    isAdmin?: boolean
 }
 
 export function SidebarProfile({ 
     onOpenSettings,
     settingsHref,
+    settingsIcon: SettingsIcon = Settings,
+    adminHref = '/admin',
     user
 }: { 
     onOpenSettings?: () => void
     settingsHref?: string
+    settingsIcon?: any
+    adminHref?: string
     user?: SidebarProfileUser
 }) {
     const initials = user?.name
@@ -40,7 +45,7 @@ export function SidebarProfile({
             isIconOnly
             onClick={settingsHref ? undefined : onOpenSettings}
         >
-            <Icon icon={Settings} size="sm" />
+            <Icon icon={SettingsIcon} size="sm" />
         </Button>
     )
 
@@ -61,6 +66,19 @@ export function SidebarProfile({
 
             {/* Actions Area */}
             <Stack direction="row" align="center" gap={2.5} fullWidth>
+                {user?.isAdmin && (
+                    <Link href={adminHref}>
+                        <Button
+                            variant="zinc"
+                            rounded="full"
+                            size="sm"
+                            isIconOnly
+                        >
+                            <Icon icon={Briefcase} size="sm" />
+                        </Button>
+                    </Link>
+                )}
+
                 {settingsHref ? (
                     <Link href={settingsHref}>
                         {settingsTrigger}

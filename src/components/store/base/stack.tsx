@@ -2,14 +2,14 @@ import React from 'react'
 import { cn } from '@/lib/utils'
 import { Box, BoxProps } from './box'
 
-type GapToken = 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 'section' | 'title-content'
+type GapToken = 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 'section' | 'title-content' | 'header-gap'
 
 export interface StackProps extends Omit<BoxProps, 'gap'> {
   children: React.ReactNode
   direction?: 'row' | 'col' | { base: 'row' | 'col', md?: 'row' | 'col', lg?: 'row' | 'col' }
   gap?: GapToken | { base: GapToken, md: GapToken }
   divide?: boolean
-  align?: 'start' | 'center' | 'end' | 'stretch' | { base: 'start' | 'center' | 'end' | 'stretch', md?: 'start' | 'center' | 'end' | 'stretch', lg?: 'start' | 'center' | 'end' | 'stretch' }
+  align?: 'start' | 'center' | 'end' | 'stretch' | 'baseline' | { base: 'start' | 'center' | 'end' | 'stretch' | 'baseline', md?: 'start' | 'center' | 'end' | 'stretch' | 'baseline', lg?: 'start' | 'center' | 'end' | 'stretch' | 'baseline' }
   justify?: 'start' | 'center' | 'end' | 'between' | 'around' | { base: 'start' | 'center' | 'end' | 'between' | 'around', md?: 'start' | 'center' | 'end' | 'between' | 'around', lg?: 'start' | 'center' | 'end' | 'between' | 'around' }
   flex1?: boolean
   fullWidth?: boolean
@@ -44,8 +44,9 @@ export function Stack({
     7.5: 'gap-[30px]',
     10: 'gap-10',
     12.5: 'gap-[50px]',
-    'section': 'gap-[50px]',
-    'title-content': 'gap-10'
+    'section': 'gap-[100px]',
+    'title-content': 'gap-10',
+    'header-gap': 'gap-8'
   }
 
   const gapMdClasses = {
@@ -57,7 +58,8 @@ export function Stack({
     10: 'md:gap-10',
     12.5: 'md:gap-[50px]',
     'section': 'md:gap-[100px]',
-    'title-content': 'md:gap-10'
+    'title-content': 'md:gap-10',
+    'header-gap': 'md:gap-8'
   }
 
   // Handle responsive gap

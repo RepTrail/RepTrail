@@ -116,24 +116,6 @@ export function AnamnesisForm({ initialData }: { initialData?: any }) {
 
     return (
         <Card className="bg-zinc-950 border-zinc-900 shadow-2xl rounded-3xl overflow-hidden">
-            <CardHeader className="p-4 sm:p-6 md:p-12 border-b border-zinc-900 bg-zinc-900/10">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                    <div className="space-y-2">
-                        <div className="flex items-center gap-3 pb-4">
-                            <div className="p-2.5 bg-emerald-500/10 rounded-2xl border border-emerald-500/20">
-                                <Activity className="w-6 h-6 text-emerald-500" />
-                            </div>
-                            <CardTitle className="text-xl sm:text-2xl md:text-3xl font-black text-white italic uppercase tracking-tighter leading-tight">Anamnese de Performance</CardTitle>
-                        </div>
-                        <CardDescription className="text-zinc-500 font-medium text-sm">
-                            Utilizando o protocolo da Marinha Americana (Navy Seal Body Fat Formula).
-                        </CardDescription>
-                    </div>
-                    <Badge variant="outline" className="h-10 border-emerald-500/30 bg-emerald-500/5 text-emerald-500 text-[10px] font-black uppercase tracking-widest px-6 rounded-xl">
-                        Protocolo Militar Ativo
-                    </Badge>
-                </div>
-            </CardHeader>
 
             <CardContent className="p-4 sm:p-6 md:p-12">
                 <form onSubmit={handleSubmit} className="space-y-12">

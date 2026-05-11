@@ -4,12 +4,12 @@ import React from 'react'
 import { cn } from '@/lib/utils'
 import { Box } from './box'
 
-type GapToken = 0 | 1 | 2.5 | 5 | 7.5 | 12.5 | 'section'
+type GapToken = 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 'section' | 'header-gap'
 
 interface LayoutBaseProps {
   children: React.ReactNode
   gap?: GapToken | { base: GapToken, md: GapToken }
-  align?: 'start' | 'center' | 'end' | 'stretch'
+  align?: 'start' | 'center' | 'end' | 'stretch' | 'baseline'
   justify?: 'start' | 'center' | 'end' | 'between' | 'around'
   flex1?: boolean
   fullWidth?: boolean
@@ -52,7 +52,9 @@ export function Inline({
     5: 'gap-5',
     7.5: 'gap-[30px]',
     12.5: 'gap-[50px]',
-    'section': 'gap-[100px]'
+    10: 'gap-10',
+    'section': 'gap-[100px]',
+    'header-gap': 'gap-8'
   }
 
   const gapMdClasses = {
@@ -62,14 +64,17 @@ export function Inline({
     5: 'md:gap-5',
     7.5: 'md:gap-[30px]',
     12.5: 'md:gap-[50px]',
-    'section': 'md:gap-[100px]'
+    10: 'md:gap-10',
+    'section': 'md:gap-[100px]',
+    'header-gap': 'md:gap-8'
   }
 
   const alignClasses = {
     start: 'items-start',
     center: 'items-center',
     end: 'items-end',
-    stretch: 'items-stretch'
+    stretch: 'items-stretch',
+    baseline: 'items-baseline'
   }
 
   const justifyClasses = {
@@ -138,7 +143,9 @@ export function Cluster({
     5: 'gap-5',
     7.5: 'gap-[30px]',
     12.5: 'gap-[50px]',
-    'section': 'gap-[100px]'
+    10: 'gap-10',
+    'section': 'gap-[100px]',
+    'header-gap': 'gap-8'
   }
 
   const gapMdClasses = {
@@ -148,7 +155,9 @@ export function Cluster({
     5: 'md:gap-5',
     7.5: 'md:gap-[30px]',
     12.5: 'md:gap-[50px]',
-    'section': 'md:gap-[100px]'
+    10: 'md:gap-10',
+    'section': 'md:gap-[100px]',
+    'header-gap': 'md:gap-8'
   }
 
   // Handle responsive gap
@@ -188,7 +197,7 @@ export function Sidebar({ children, id }: { children: React.ReactNode, id?: stri
   return (
     <aside
       id={id}
-      className="fixed left-0 top-0 h-screen w-72 z-50 hidden lg:flex flex-row gap-0"
+      className="fixed left-0 top-0 h-screen w-80 z-50 hidden lg:flex flex-row gap-0"
     >
       {children}
     </aside>

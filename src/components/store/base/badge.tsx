@@ -13,7 +13,6 @@ interface BadgeProps {
     variant?: 'dot' | 'outline' | 'solid' | 'glass'
     color?: 'emerald' | 'orange' | 'red' | 'blue' | 'amber' | 'zinc' | 'primary'
     size?: 'xs' | 'sm' | 'md'
-    rounded?: 'full' | 'system'
     className?: string
 }
 
@@ -23,7 +22,6 @@ export function Badge({
     variant = 'outline', 
     color = 'zinc', 
     size = 'md',
-    rounded = 'system',
     className
 }: BadgeProps) {
     const { primaryColor } = useRegistry()
@@ -105,7 +103,7 @@ export function Badge({
         )
     }
 
-    const radiusClass = rounded === 'full' ? 'rounded-full' : 'rounded-[5px]'
+    const radiusClass = 'rounded-[5px]'
 
     return (
         <div className={cn(

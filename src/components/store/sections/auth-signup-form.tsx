@@ -16,7 +16,9 @@ import { Mail, Lock, User, Users, ArrowRight, Phone } from 'lucide-react'
 import { translateAuthError } from '@/lib/auth-errors'
 import Link from 'next/link'
 import { Modal } from '../advanced/modal'
-import { ShieldCheck } from 'lucide-react'
+import { SegmentedSwitch } from '../intermediary/segmented-switch'
+import { STUDENT_TERMS, TRAINER_TERMS } from '@/lib/terms-content'
+import { ShieldCheck } from 'lucide-react'      
 
 interface AuthSignUpFormProps {
     fullName?: string
@@ -39,24 +41,28 @@ interface AuthSignUpFormProps {
     syncColor?: boolean
 }
 
-export function AuthSignUpForm({ 
+export function AuthSignUpForm({
     fullName, setFullName,
     email, setEmail,
     whatsapp, setWhatsapp,
     password, setPassword,
     role, setRole,
-    acceptedTerms, setAcceptedTerms,
+    acceptedTerms = true, setAcceptedTerms,
     onShowTerms,
-    onSubmit, 
+    onSubmit,
     loading, error,
-    syncColor = true 
+    syncColor = true
 }: AuthSignUpFormProps) {
     const { primaryColor, setPrimaryColor } = useRegistry()
     const [internalRole, setInternalRole] = React.useState<'student' | 'trainer'>('trainer')
     const [showTermsModal, setShowTermsModal] = React.useState(false)
 
     const activeRole = role || internalRole
-    const handleSetRole = setRole || setInternalRole
+    const handleSetRole = (id: string) => {
+        const r = id as 'student' | 'trainer'
+        if (setRole) setRole(r)
+        else setInternalRole(r)
+    }
 
     React.useEffect(() => {
         if (!syncColor) return
@@ -95,81 +101,58 @@ export function AuthSignUpForm({
                                 </Box>
                             )}
 
-                            <Input 
-                                label="Nome Completo" 
-                                icon={<User size={16} />} 
-                                placeholder="Como devemos te chamar?" 
+                            <Input
+                                label="Nome Completo"
+                                icon={<User size={16} />}
+                                placeholder="Como devemos te chamar?"
                                 value={fullName}
                                 onChange={(e) => setFullName?.(e.target.value)}
                                 required
                             />
 
-                            <Input 
-                                label="Email Profissional" 
-                                icon={<Mail size={16} />} 
-                                placeholder="exemplo@email.com" 
+                            <Input
+                                label="Email Profissional"
+                                icon={<Mail size={16} />}
+                                placeholder="exemplo@email.com"
                                 value={email}
                                 onChange={(e) => setEmail?.(e.target.value)}
                                 required
                             />
 
-                            <Input 
-                                label="WhatsApp" 
-                                icon={<Phone size={16} />} 
-                                placeholder="Ex: 11 99999-9999" 
+                            <Input
+                                label="WhatsApp"
+                                icon={<Phone size={16} />}
+                                placeholder="Ex: 11 99999-9999"
                                 value={whatsapp}
                                 onChange={(e) => setWhatsapp?.(e.target.value)}
                                 required
                                 mask="phone"
                             />
 
-                            <Input 
-                                label="Senha de Acesso" 
+                            <Input
+                                label="Senha de Acesso"
                                 type="password"
-                                icon={<Lock size={16} />} 
-                                placeholder="••••••••" 
+                                icon={<Lock size={16} />}
+                                placeholder="••••••••"
                                 value={password}
                                 onChange={(e) => setPassword?.(e.target.value)}
                                 required
                             />
 
-                            <Stack gap={2.5}>
-                                <Font variant="auxiliary" color="zinc-500" weight="black" uppercase tracking="widest" className="ml-1">
-                                    Tipo de Perfil
-                                </Font>
-                                <Stack direction="row" gap={2.5}>
-                                    <Button 
-                                        type="button"
-                                        variant={activeRole === 'student' ? 'primary' : 'outline-zinc'} 
-                                        flex1 
-                                        rounded="system"
-                                        onClick={() => handleSetRole('student')}
-                                    >
-                                        <Stack direction="row" gap={2.5} align="center" justify="center">
-                                            <Icon icon={User} size="xs" color={activeRole === 'student' ? 'black' : 'zinc-500'} />
-                                            <Font variant="label-caps" color={activeRole === 'student' ? 'black' : 'zinc-500'}>Aluno</Font>
-                                        </Stack>
-                                    </Button>
-                                    <Button 
-                                        type="button"
-                                        variant={activeRole === 'trainer' ? 'primary' : 'outline-zinc'} 
-                                        flex1 
-                                        rounded="system"
-                                        onClick={() => handleSetRole('trainer')}
-                                    >
-                                        <Stack direction="row" gap={2.5} align="center" justify="center">
-                                            <Icon icon={Users} size="xs" color={activeRole === 'trainer' ? 'black' : 'zinc-500'} />
-                                            <Font variant="label-caps" color={activeRole === 'trainer' ? 'black' : 'zinc-500'}>Personal</Font>
-                                        </Stack>
-                                    </Button>
-                                </Stack>
-                            </Stack>
+                            <SegmentedSwitch
+                                activeId={activeRole}
+                                onSelect={handleSetRole}
+                                options={[
+                                    { id: 'trainer', label: 'Personal', icon: Users, activeVariant: 'outline-emerald' },
+                                    { id: 'student', label: 'Aluno', icon: User, activeVariant: 'outline-orange' },
+                                ]}
+                            />
 
                             {/* Terms of Use */}
                             <Stack direction="row" gap={2.5} align="center">
-                                <FormCheckbox 
+                                <FormCheckbox
                                     label=""
-                                    checked={acceptedTerms} 
+                                    checked={acceptedTerms}
                                     onChange={setAcceptedTerms}
                                     color="primary"
                                 />
@@ -178,73 +161,55 @@ export function AuthSignUpForm({
                                 </Font>
                             </Stack>
 
-                            <Modal 
-                                isOpen={showTermsModal} 
+                            <Modal
+                                isOpen={showTermsModal}
                                 onClose={() => setShowTermsModal(false)}
                                 title="Termos de Uso"
-                                subtitle="Leia atentamente as regras da plataforma"
+                                subtitle={activeRole === 'trainer' ? "Contrato de Prestação de Serviços - Trainer" : "Termos de Acompanhamento - Aluno"}
                                 icon={ShieldCheck}
                                 variant={activeRole === 'trainer' ? 'emerald' : 'orange'}
-                                confirmLabel="Eu Aceito"
+                                confirmLabel="Entendido"
                                 onConfirm={() => {
                                     setAcceptedTerms?.(true)
                                     setShowTermsModal(false)
                                 }}
                             >
-                                <Stack gap={5}>
-                                    <Font variant="body" color="zinc-400">
-                                        Bem-vindo ao RepTrail. Ao utilizar nossa plataforma, você concorda com as seguintes diretrizes:
+                                <Box padding={2.5} className="max-h-[60vh] overflow-y-auto pr-4 scrollbar-thin scrollbar-thumb-zinc-800">
+                                    <Font variant="body" color="zinc-400" className="whitespace-pre-wrap leading-relaxed">
+                                        {activeRole === 'trainer' ? TRAINER_TERMS : STUDENT_TERMS}
                                     </Font>
-                                    <Stack gap={2.5}>
-                                        <Font variant="label-caps" color="primary">1. Uso da Conta</Font>
-                                        <Font variant="sub-tiny" color="zinc-400">
-                                            Sua conta é pessoal e intransferível. Você é responsável por manter a segurança de suas credenciais.
-                                        </Font>
-                                    </Stack>
-                                    <Stack gap={2.5}>
-                                        <Font variant="label-caps" color="primary">2. Privacidade</Font>
-                                        <Font variant="sub-tiny" color="zinc-400">
-                                            Respeitamos sua privacidade e protegemos seus dados de acordo com a LGPD.
-                                        </Font>
-                                    </Stack>
-                                    <Stack gap={2.5}>
-                                        <Font variant="label-caps" color="primary">3. Conteúdo</Font>
-                                        <Font variant="sub-tiny" color="zinc-400">
-                                            Todo conteúdo gerado na plataforma deve respeitar as normas éticas e profissionais.
-                                        </Font>
-                                    </Stack>
-                                </Stack>
+                                </Box>
                             </Modal>
 
-                            <Button 
-                                type="submit"
-                                variant="primary" 
-                                fullWidth 
-                                rounded="system" 
-                                height="anatomy-item"
-                                paddingY={5}
-                                disabled={loading}
-                            >
-                                <Stack direction="row" gap={2.5} align="center" justify="center">
-                                    <Font variant="label-caps">
-                                        {loading ? 'Processando...' : 'Criar minha conta'}
-                                    </Font>
-                                    {!loading && <Icon icon={ArrowRight} size="xs" />}
-                                </Stack>
-                            </Button>
-                        </Stack>
-                    </form>
-                </Box>
+                        <Button
+                            type="submit"
+                            variant="primary"
+                            fullWidth
+                            rounded="system"
+                            height="anatomy-item"
+                            paddingY={5}
+                            disabled={loading}
+                        >
+                            <Stack direction="row" gap={2.5} align="center" justify="center">
+                                <Font variant="label-caps">
+                                    {loading ? 'Processando...' : 'Criar minha conta'}
+                                </Font>
+                                {!loading && <Icon icon={ArrowRight} size="xs" />}
+                            </Stack>
+                        </Button>
+                    </Stack>
+                </form>
+            </Box>
 
-                <Divider color="white/5" />
+            <Divider color="white/5" />
 
-                {/* Footer */}
-                <Box padding={5} display="flex" align="center" justify="center" bg="black" bgOpacity={30}>
-                    <Font variant="sub-tiny" color="zinc-500" align="center" weight="bold" uppercase tracking="widest">
-                        Já possui uma conta? <Link href="/auth/login" className="contents"><Font variant="sub-tiny" color="primary" weight="black" className="cursor-pointer underline">Fazer login</Font></Link>
-                    </Font>
-                </Box>
-            </Stack>
-        </Surface>
+            {/* Footer */}
+            <Box padding={5} display="flex" align="center" justify="center" bg="black" bgOpacity={30}>
+                <Font variant="sub-tiny" color="zinc-500" align="center" weight="bold" uppercase tracking="widest">
+                    Já possui uma conta? <Link href="/auth/login" className="contents"><Font variant="sub-tiny" color="primary" weight="black" className="cursor-pointer underline">Fazer login</Font></Link>
+                </Font>
+            </Box>
+        </Stack>
+        </Surface >
     )
 }

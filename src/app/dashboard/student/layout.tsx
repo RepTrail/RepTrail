@@ -44,7 +44,7 @@ async function StudentLayoutLoader({ userId, children }: { userId: string; child
     const supabase = await createClient()
 
     const [profileRes, detailsRes, trainerRel] = await Promise.all([
-        supabase.from('profiles').select('role, full_name, avatar_url, email, auto_training_status, auto_training_trial_end').eq('id', userId).single(),
+        supabase.from('profiles').select('role, full_name, avatar_url, email, auto_training_status, auto_training_trial_end, is_admin').eq('id', userId).single(),
         supabase.from('student_details').select('id, steroid_use').eq('id', userId).single(),
         getStudentTrainer(userId),
         queryClient.prefetchQuery({ queryKey: QUERY_KEYS.workouts.session, queryFn: () => import('@/actions/log-actions').then(m => m.getActiveWorkoutSession()) }),
@@ -101,7 +101,7 @@ async function StudentLayoutLoader({ userId, children }: { userId: string; child
                     links={allLinks}
                     mobileLinks={mobileLinks}
                     profileHref="/dashboard/student/profile"
-                    user={{ id: userId, name: p?.full_name, email: (p as any)?.email, avatar_url: p?.avatar_url }}
+                    user={{ id: userId, name: p?.full_name, email: (p as any)?.email, avatar_url: p?.avatar_url, isAdmin: p?.is_admin }}
                 >
                     {children}
                 </DashboardShell>

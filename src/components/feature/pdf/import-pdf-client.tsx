@@ -18,16 +18,6 @@ export function ImportPdfClient({ students, role = 'trainer', userId }: { studen
 
     return (
         <div className="space-y-10 pb-10" suppressHydrationWarning>
-            {/* Header Section */}
-            <div className="space-y-2 sm:space-y-5 pb-2 border-b border-zinc-800/50" suppressHydrationWarning>
-                <h1 className="text-4xl font-black tracking-tight text-white font-sans italic uppercase">
-                    Importação Inteligente
-                </h1>
-                <p className="text-zinc-500 text-sm font-medium">
-                    Transforme seus arquivos PDF em treinos e dietas interativos usando nossa tecnologia de IA.
-                </p>
-            </div>
-
             <Tabs defaultValue="workout" className="w-full">
                 <TabsList 
                     id="tour-import-type"

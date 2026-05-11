@@ -9,7 +9,7 @@ import { getGeminiApiKey } from './app-settings-actions'
 import { createOpenRouterClient, callAI } from '@/lib/ai-client'
 
 async function checkAdmin() {
-    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
+    const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) throw new Error('Unauthorized')
     const { data: profile } = await supabase.from('profiles').select('is_admin').eq('id', user.id).single()
@@ -318,8 +318,10 @@ export async function addStoreProduct(data: {
         const uploaded = await uploadImageFromUrl(data.image_url)
         if (uploaded) data.image_url = uploaded
     }
+    // Strip sync metadata before insert
+    const { clientId, clientMutationId, ...productData } = data as any
     const { error } = await supabase.from('store_products').insert({
-        ...data,
+        ...productData,
         category: finalCategory,
         is_active: true
     })
@@ -414,7 +416,7 @@ const DEFAULT_PRICES: Record<string, { monthly: number; quarterly_discount: numb
 }
 
 export async function getPlanPricing() {
-    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
+    const supabase = await createClient()
     const { data } = await supabase
         .from('plan_features')
         .select('plan_tier, feature_key, limit_value')
@@ -470,15 +472,15 @@ export async function deleteUser(userId: string) {
     const { supabase, userId: adminId } = await checkAdmin()
     const admin = createAdminClient()
     try {
+        if (!admin) throw new Error('Admin service role client unavailable')
+
         // 1. STORAGE CLEANUP
-        // Avatar
         const { data: profile } = await supabase.from('profiles').select('avatar_url').eq('id', userId).maybeSingle()
         if (profile?.avatar_url) {
             const avatarPath = profile.avatar_url.split('/').slice(-2).join('/')
-            if (avatarPath) await supabase.storage.from('avatars').remove([avatarPath])
+            if (avatarPath) await admin.storage.from('avatars').remove([avatarPath])
         }
         
-        // Progress Photos
         const { data: progressPhotos } = await supabase.from('progress_photos').select('front_url, back_url, side_left_url, side_right_url').eq('student_id', userId)
         if (progressPhotos) {
             const photoPaths: string[] = []
@@ -491,10 +493,9 @@ export async function deleteUser(userId: string) {
                     }
                 })
             })
-            if (photoPaths.length > 0) await supabase.storage.from('progress-photos').remove(photoPaths)
+            if (photoPaths.length > 0) await admin.storage.from('progress-photos').remove(photoPaths)
         }
 
-        // PDF Uploads
         const { data: pdfUploads } = await supabase.from('pdf_uploads').select('file_url').eq('uploader_id', userId)
         if (pdfUploads) {
             const pdfPaths: string[] = []
@@ -504,79 +505,60 @@ export async function deleteUser(userId: string) {
                     if (path) pdfPaths.push(path)
                 }
             })
-            if (pdfPaths.length > 0) await supabase.storage.from('pdf-uploads').remove(pdfPaths)
+            if (pdfPaths.length > 0) await admin.storage.from('pdf-uploads').remove(pdfPaths)
         }
 
-        // 2. DATABASE CLEANUP (Child tables first to satisfy constraints)
+        // 2. DATABASE CLEANUP
+        await admin.from('workout_logs').delete().eq('student_id', userId)
+        await admin.from('cardio_logs').delete().eq('student_id', userId)
+        await admin.from('cardio_sessions').delete().eq('student_id', userId)
+        await admin.from('ergogenic_logs').delete().eq('student_id', userId)
+        await admin.from('meal_item_logs').delete().eq('user_id', userId)
+        await admin.from('daily_tracking').delete().eq('user_id', userId)
+        await admin.from('weight_history').delete().eq('student_id', userId)
+        await admin.from('bf_history').delete().eq('student_id', userId)
+        await admin.from('metrics_summary').delete().eq('student_id', userId)
+        await admin.from('progress_photos').delete().eq('student_id', userId)
+        await admin.from('ai_protocol_status').delete().eq('student_id', userId)
+        await admin.from('assigned_workouts').delete().eq('student_id', userId)
+        await admin.from('assigned_diets').delete().eq('student_id', userId)
+        await admin.from('assigned_cardios').delete().eq('student_id', userId)
+        await admin.from('assigned_ergogenics').delete().eq('student_id', userId)
+        await admin.from('trainer_students').delete().or(`student_id.eq.${userId},trainer_id.eq.${userId}`)
+        await admin.from('trainer_reviews').delete().or(`student_id.eq.${userId},trainer_id.eq.${userId}`)
+        await admin.from('workouts').delete().eq('trainer_id', userId)
+        await admin.from('diets').delete().eq('trainer_id', userId)
+        await admin.from('cardios').delete().eq('trainer_id', userId)
+        await admin.from('ergogenics').delete().eq('trainer_id', userId)
+        await admin.from('exercises').delete().eq('trainer_id', userId)
+        await admin.from('notifications').delete().eq('user_id', userId)
+        await admin.from('outbox').delete().eq('user_id', userId)
+        await admin.from('pdf_uploads').delete().eq('uploader_id', userId)
+        await admin.from('student_details').delete().eq('id', userId)
+        await admin.from('product_clicks').delete().eq('user_id', userId)
         
-        // User Activity & Logs
-        await supabase.from('workout_logs').delete().eq('student_id', userId)
-        await supabase.from('cardio_logs').delete().eq('student_id', userId)
-        await supabase.from('cardio_sessions').delete().eq('student_id', userId)
-        await supabase.from('ergogenic_logs').delete().eq('student_id', userId)
-        await supabase.from('meal_item_logs').delete().eq('user_id', userId)
-        await supabase.from('daily_tracking').delete().eq('user_id', userId)
-        
-        // History & Metrics
-        await supabase.from('weight_history').delete().eq('student_id', userId)
-        await supabase.from('bf_history').delete().eq('student_id', userId)
-        await supabase.from('metrics_summary').delete().eq('student_id', userId)
-        await supabase.from('progress_photos').delete().eq('student_id', userId)
-        await supabase.from('ai_protocol_status').delete().eq('student_id', userId)
-        
-        // Assignments & Relationships
-        await supabase.from('assigned_workouts').delete().eq('student_id', userId)
-        await supabase.from('assigned_diets').delete().eq('student_id', userId)
-        await supabase.from('assigned_cardios').delete().eq('student_id', userId)
-        await supabase.from('assigned_ergogenics').delete().eq('student_id', userId)
-        await supabase.from('trainer_students').delete().or(`student_id.eq.${userId},trainer_id.eq.${userId}`)
-        await supabase.from('trainer_reviews').delete().or(`student_id.eq.${userId},trainer_id.eq.${userId}`)
-        
-        // Trainer Libraries (Workouts depend on these, so we delete them after logs)
-        await supabase.from('workouts').delete().eq('trainer_id', userId)
-        await supabase.from('diets').delete().eq('trainer_id', userId)
-        await supabase.from('cardios').delete().eq('trainer_id', userId)
-        await supabase.from('ergogenics').delete().eq('trainer_id', userId)
-        await supabase.from('exercises').delete().eq('trainer_id', userId)
-        
-        // Metadata & Misc
-        await supabase.from('notifications').delete().eq('user_id', userId)
-        await supabase.from('outbox').delete().eq('user_id', userId)
-        await supabase.from('pdf_uploads').delete().eq('uploader_id', userId)
-        await supabase.from('student_details').delete().eq('id', userId)
-        await supabase.from('product_clicks').delete().eq('user_id', userId)
-        
-        // 3. FINAL LOGGING AND DELETION
-        await supabase.from('admin_logs').insert({ 
+        await admin.from('admin_logs').insert({ 
             admin_id: adminId, 
             action: 'delete_user', 
             target_id: userId, 
             details: { deleted_at: new Date().toISOString(), type: 'hard_delete' } 
         })
         
-        // Delete from profiles (last DB step)
-        const { error: profileError } = await supabase.from('profiles').delete().eq('id', userId)
-        if (profileError) {
-            console.error('Profile deletion error:', profileError)
-            return { error: `Erro ao deletar perfil: ${profileError.message}` }
-        }
-        
-        // Delete from auth.users (requires service role)
-        if (!admin) {
-            return { success: true, warning: 'Dados removidos do banco, mas o login Auth não pôde ser excluído (Configuração de Admin ausente).' }
-        }
+        const { error: profileError } = await admin.from('profiles').delete().eq('id', userId)
+        if (profileError) throw profileError
         
         const { error: authError } = await admin.auth.admin.deleteUser(userId)
-        if (authError) {
-            console.warn('Auth deletion error:', authError)
-            return { success: true, warning: `Dados apagados do banco, mas houve erro ao remover conta de login: ${authError.message}` }
+        if (authError && !authError.message.toLowerCase().includes('not found')) {
+            throw authError
         }
         
         revalidatePath('/admin')
+        revalidatePath('/admin/personais')
+        revalidatePath('/admin/alunos')
         return { success: true }
     } catch (e: any) {
         console.error('Delete User Hard Crash:', e)
-        return { error: `Erro inesperado durante a exclusão: ${e.message}` }
+        return { error: `Erro na exclusão: ${e.message}` }
     }
 }
 
@@ -588,7 +570,9 @@ export async function updateStoreProduct(id: string, data: any) {
         const uploaded = await uploadImageFromUrl(data.image_url)
         if (uploaded) data.image_url = uploaded
     }
-    const { error } = await supabase.from('store_products').update(data).eq('id', id)
+    // Strip sync metadata before update
+    const { clientId, clientMutationId, ...updateData } = data as any
+    const { error } = await supabase.from('store_products').update(updateData).eq('id', id)
     if (error) return { error: error.message }
     await supabase.from('admin_logs').insert({ admin_id: adminId, action: 'update_product', target_id: id, details: data })
     revalidatePath('/admin')
@@ -598,7 +582,7 @@ export async function updateStoreProduct(id: string, data: any) {
 }
 
 export async function impersonateUser(targetUserId: string) {
-    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
+    const supabase = await createClient()
     const cookieStore = await cookies()
     const isCurrentlyImpersonating = cookieStore.get('rt_impersonating')?.value === 'true'
     let adminId = ''
@@ -784,10 +768,25 @@ export async function fetchProductFromUrl(url: string) {
     }
 }
 
-export async function addOperationalCost(data: { description: string; amount: number; type: 'fixed' | 'variable' }) {
+export async function addOperationalCost(data: { description: string; amount: number; type: 'fixed' | 'variable', id?: string }) {
     const { supabase, userId: adminId } = await checkAdmin()
-    const { error } = await supabase.from('operational_costs').insert(data)
+    
+    // Strip sync metadata before insert
+    const { clientId, clientMutationId, ...costData } = data as any
+    const { error, data: newRow } = await supabase.from('operational_costs').insert(costData).select().single()
     if (error) return { error: error.message }
+    revalidatePath('/admin')
+    return { success: true, data: newRow }
+}
+
+export async function updateOperationalCost(id: string, data: any) {
+    const { supabase } = await checkAdmin()
+    
+    // Strip sync metadata before update
+    const { clientId, clientMutationId, ...costData } = data as any
+    const { error } = await supabase.from('operational_costs').update(costData).eq('id', id)
+    if (error) return { error: error.message }
+    
     revalidatePath('/admin')
     return { success: true }
 }

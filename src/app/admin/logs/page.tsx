@@ -5,7 +5,9 @@ import { useQuery } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { getAdminLogs } from '@/actions/admin-actions'
 import { createClient } from '@/lib/supabase/client'
-import { AdminPageShell } from '@/components/store/advanced/admin-page-shell'
+import { RegistryProvider } from '@/components/store/advanced/registry-context'
+import { DashboardShell } from '@/components/store/advanced/dashboard-shell'
+import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { Stack } from '@/components/store/base/stack'
 import { LogItem } from '@/components/store/intermediary/log-item'
@@ -48,52 +50,70 @@ export default function AdminLogsPage() {
     )
 
     return (
-        <AdminPageShell
-            pageTitle="LOGS DE ATIVIDADE"
-            subtitle="Rastro de auditoria de todas as ações realizadas no painel administrativo."
-            icon={Activity}
-            user={{
-                id: adminUser?.id || 'admin',
-                name: adminUser?.full_name || 'Admin RepTrail',
-                email: adminUser?.email || 'admin@reptrail.com.br',
-                avatar_url: adminUser?.avatar_url || null,
-            }}
-        >
-            <RegistrySection
-                title="Registro de Eventos"
-                subtitle="Acompanhe todas as ações administrativas realizadas na plataforma."
-                icon={Activity}
+        <RegistryProvider defaultColor="red">
+            <DashboardShell
+                color="red"
+                links={[
+                    { href: '/admin/dashboard', label: 'Início', icon: 'BarChart3', exact: true },
+                    { href: '/admin/personais', label: 'Personais', icon: 'UserCheck' },
+                    { href: '/admin/alunos', label: 'Alunos', icon: 'Users' },
+                    { href: '/admin/afiliados', label: 'Afiliados', icon: 'HeartHandshake' },
+                    { href: '/admin/loja', label: 'Loja', icon: 'ShoppingBag' },
+                    { href: '/admin/logs', label: 'Logs', icon: 'Activity' },
+                ]}
+                user={{
+                    id: adminUser?.id || 'admin',
+                    name: adminUser?.full_name || 'Admin RepTrail',
+                    email: adminUser?.email || 'admin@reptrail.com.br',
+                    avatar_url: adminUser?.avatar_url || null,
+                }}
+                profileHref="/dashboard"
+                profileIcon="ArrowRightLeft"
             >
-                <Stack gap={5}>
-                    <Input 
-                        value={search}
-                        onChange={e => setSearch(e.target.value)}
-                        placeholder="Filtrar logs por ação ou administrador..."
-                        icon={<Search size={16} />}
-                        rounded="full"
-                    />
+                <RegistryMain
+                    title="LOGS DE ATIVIDADE"
+                    subtitle="Rastro de auditoria de todas as ações realizadas no painel administrativo."
+                    icon={Activity}
+                    contextLabel="Auditoria do Sistema"
+                    showTabs={false}
+                >
+                    <RegistrySection
+                        title="Registro de Eventos"
+                        subtitle="Acompanhe todas as ações administrativas realizadas na plataforma."
+                        icon={Activity}
+                    >
+                        <Stack gap={5}>
+                            <Input
+                                value={search}
+                                onChange={e => setSearch(e.target.value)}
+                                placeholder="Filtrar logs por ação ou administrador..."
+                                icon={<Search size={16} />}
+                                rounded="full"
+                            />
 
-                    {isLoading && (
-                        <EmptyState icon={Activity} title="Carregando logs..." description="Buscando registros de auditoria." />
-                    )}
+                            {isLoading && (
+                                <EmptyState icon={Activity} title="Carregando logs..." description="Buscando registros de auditoria." />
+                            )}
 
-                    {!isLoading && filtered.map(log => (
-                        <LogItem
-                            key={log.id}
-                            action={log.action}
-                            admin={log.admin?.full_name || 'Sistema'}
-                            target={log.target_id || '—'}
-                            details={log.details || undefined}
-                            date={new Date(log.created_at).toLocaleString('pt-BR')}
-                            variant={ACTION_VARIANT_MAP[log.action] ?? 'blue'}
-                        />
-                    ))}
+                            {!isLoading && filtered.map(log => (
+                                <LogItem
+                                    key={log.id}
+                                    action={log.action}
+                                    admin={log.admin?.full_name || 'Sistema'}
+                                    target={log.target_id || '—'}
+                                    details={log.details || undefined}
+                                    date={new Date(log.created_at).toLocaleString('pt-BR')}
+                                    variant={ACTION_VARIANT_MAP[log.action] ?? 'blue'}
+                                />
+                            ))}
 
-                    {!isLoading && filtered.length === 0 && (
-                        <EmptyState icon={Activity} title="Sem atividades" description="Não há registros de auditoria para o período selecionado." />
-                    )}
-                </Stack>
-            </RegistrySection>
-        </AdminPageShell>
+                            {!isLoading && filtered.length === 0 && (
+                                <EmptyState icon={Activity} title="Sem atividades" description="Não há registros de auditoria para o período selecionado." />
+                            )}
+                        </Stack>
+                    </RegistrySection>
+                </RegistryMain>
+            </DashboardShell>
+        </RegistryProvider>
     )
 }

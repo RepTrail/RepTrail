@@ -14,6 +14,10 @@ import { QUERY_KEYS } from '@/lib/query-keys'
 import { getAssignedDiets } from '@/actions/diet-actions'
 import { getStudentProfile, getStudentTrainer } from '@/actions/student-actions'
 import { cn } from "@/lib/utils"
+import { RegistryMain } from '@/components/store/advanced/registry-main'
+import { EmptyState } from '@/components/store/intermediary/empty-state'
+import { Stack } from '@/components/store/base/stack'
+import { Grid } from '@/components/store/base/grid'
 
 interface DietPageClientProps {
     userId: string
@@ -77,53 +81,36 @@ export function DietPageClient({ userId }: DietPageClientProps) {
     }, {})
 
     return (
-        <div className="flex flex-col gap-section-gap">
-            {/* Header Section */}
-            <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 px-2">
-                <div className="space-y-2 sm:space-y-5">
-                    <div className="flex items-center gap-3 pb-4">
-                        <h1 className="text-3xl font-black text-white italic uppercase tracking-tighter">
-                            Minha <span className="text-orange-500">Dieta</span>
-                        </h1>
-                    </div>
-                    <p className="text-zinc-500 text-sm font-medium max-w-md">
-                        {isAutoTrainingActive && !hasTrainer 
-                            ? "Gerencie seus modelos de dieta, organize suas refeições e agende seus planos alimentares."
-                            : (studentDailyDiet ? (studentDailyDiet as any).name : "Acompanhe seu plano alimentar oficial.")
+        <Stack gap={10}>
+            {isAutoTrainingActive && !hasTrainer && (
+                <div className="flex items-center justify-end gap-3 w-full">
+                    <Button asChild variant="outline" className="h-11 px-6 bg-zinc-900 border-zinc-800 text-zinc-100 hover:bg-zinc-800 hover:text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2 border-white/5">
+                        <Link href="/dashboard/student/import-pdf">
+                            <FileUp className="w-4 h-4" />
+                            Importar PDF
+                        </Link>
+                    </Button>
+                    <UnifiedCreationDialog
+                        title="Nova Dieta"
+                        description="Crie um plano alimentar (modelo) para agendar para seus auto-treinos."
+                        trigger={
+                            <Button className="h-11 px-6 bg-orange-500 hover:bg-orange-400 text-zinc-950 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2">
+                                <Utensils className="w-4 h-4" />
+                                Criar Modelo
+                            </Button>
                         }
-                    </p>
+                        fields={[
+                            { name: 'name', label: 'Nome da Dieta', placeholder: 'Ex: Dieta Cutting 2000kcal', required: true },
+                            { name: 'description', label: 'Descrição (Opcional)', placeholder: 'Instruções gerais sobre o plano...', type: 'textarea' }
+                        ]}
+                        actionType="create-manual-diet"
+                        successMessage="Modelo de dieta criado com sucesso!"
+                        footerLabel="Salvar Template"
+                        colorScheme="orange"
+                        queryKey={QUERY_KEYS.diets.library(userId)}
+                    />
                 </div>
-
-                {isAutoTrainingActive && !hasTrainer && (
-                    <div className="flex items-center gap-3 pb-4 w-full sm:w-auto">
-                        <Button asChild variant="outline" className="flex-1 sm:flex-none h-11 px-6 bg-zinc-900 border-zinc-800 text-zinc-100 hover:bg-zinc-800 hover:text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2 border-white/5">
-                            <Link href="/dashboard/student/import-pdf">
-                                <FileUp className="w-4 h-4" />
-                                Importar PDF
-                            </Link>
-                        </Button>
-                        <UnifiedCreationDialog
-                            title="Nova Dieta"
-                            description="Crie um plano alimentar (modelo) para agendar para seus auto-treinos."
-                            trigger={
-                                <Button className="flex-1 sm:flex-none h-11 px-6 bg-orange-500 hover:bg-orange-400 text-zinc-950 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2">
-                                    <Utensils className="w-4 h-4" />
-                                    Criar Modelo
-                                </Button>
-                            }
-                            fields={[
-                                { name: 'name', label: 'Nome da Dieta', placeholder: 'Ex: Dieta Cutting 2000kcal', required: true },
-                                { name: 'description', label: 'Descrição (Opcional)', placeholder: 'Instruções gerais sobre o plano...', type: 'textarea' }
-                            ]}
-                            actionType="create-manual-diet"
-                            successMessage="Modelo de dieta criado com sucesso!"
-                            footerLabel="Salvar Template"
-                            colorScheme="orange"
-                            queryKey={QUERY_KEYS.diets.library(userId)}
-                        />
-                    </div>
-                )}
-            </header>
+            )}
 
             {/* Daily Protocol Section */}
             {studentDailyDiet ? (
@@ -131,23 +118,17 @@ export function DietPageClient({ userId }: DietPageClientProps) {
                     <DietAdherence diet={studentDailyDiet} allowEstimation={hasTrainer} hasTrainer={hasTrainer} queryKey={QUERY_KEYS.diets.today(userId)} />
                 </div>
             ) : !isAutoTrainingActive && (
-                <div className="flex flex-col items-center justify-center py-20 text-center space-y-4 bg-zinc-900/50 rounded-3xl border border-dashed border-zinc-800">
-                    <div className="p-6 bg-zinc-950 rounded-full border border-zinc-800 mb-2">
-                        <Utensils className="h-10 w-10 text-zinc-700" />
-                    </div>
-                    <div className="space-y-1">
-                        <h3 className="text-xl font-bold text-white uppercase italic">Nenhuma dieta encontrada</h3>
-                        <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest max-w-[300px]">
-                            Seu treinador ainda não atribuiu um plano alimentar para você.
-                        </p>
-                    </div>
-                </div>
+                <EmptyState 
+                    icon={Utensils} 
+                    title="Nenhuma dieta encontrada" 
+                    description="Seu treinador ainda não atribuiu um plano alimentar para você." 
+                />
             )}
 
             {/* Library Section */}
             {isAutoTrainingActive && !hasTrainer && (
                 <div className="space-y-8">
-                    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 pt-6 border-t border-zinc-900/50">
+                    <Grid gap={5} mdCols={2} lgCols={3} className="pt-6 border-t border-zinc-900/50">
                         {diets.length > 0 ? (
                             diets.map((currentDiet: any) => {
                                 const assignedDays = dietDaysMap[currentDiet.id] || []
@@ -206,11 +187,15 @@ export function DietPageClient({ userId }: DietPageClientProps) {
                                 )
                             })
                         ) : (
-                            <div className="col-span-full py-10 text-center border-dashed border border-zinc-800 rounded-3xl w-full">
-                                <p className="text-zinc-500 text-[10px] font-bold uppercase">Sua biblioteca de dietas está vazia.</p>
+                            <div className="col-span-full">
+                                <EmptyState 
+                                    icon={Utensils} 
+                                    title="Biblioteca Vazia" 
+                                    description="Sua biblioteca de dietas está vazia." 
+                                />
                             </div>
                         )}
-                    </div>
+                    </Grid>
                 </div>
             )}
 
@@ -225,6 +210,6 @@ export function DietPageClient({ userId }: DietPageClientProps) {
                     Beba pelo menos 3L de água hoje para manter o metabolismo acelerado!
                 </p>
             </div>
-        </div>
+        </Stack>
     )
 }

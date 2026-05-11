@@ -43,26 +43,22 @@ export function AuthShell({ children }: AuthShellProps) {
             padding={5}
         >
             {/* Background Grid */}
-            <Box 
-                position="fixed" 
-                inset={0} 
-                opacity={20} 
-                zIndex={0}
-                className="bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(to_bottom,white_0%,transparent_90%)] pointer-events-none" 
+            <div
+                className="fixed inset-0 bg-[url('/grid.svg')] bg-repeat bg-top [mask-image:linear-gradient(to_bottom,white_20%,transparent_95%)] opacity-[0.4] pointer-events-none z-0" 
             />
 
             {/* Background Orbs */}
-            <Box 
-                position="fixed" 
+            <div
                 className={cn(
-                    '-top-[10%] -right-[5%] w-[60%] h-[60%] rounded-full blur-[150px] pointer-events-none transition-colors duration-1000 z-0',
+                    'fixed -top-[10%] -right-[5%] w-[60%] h-[60%] rounded-full blur-[150px] pointer-events-none transition-colors duration-1000 z-0',
+                    'max-md:-top-[15%] max-md:-right-[25%] max-md:w-[90%] max-md:h-[50%] max-md:blur-[120px]',
                     `bg-gradient-to-br ${lightColorMap[primaryColor]} to-transparent`
                 )} 
             />
-            <Box 
-                position="fixed" 
+            <div
                 className={cn(
-                    'bottom-[10%] left-[20%] w-[500px] h-[500px] rounded-full blur-[180px] animate-pulse pointer-events-none transition-colors duration-1000 z-0',
+                    'fixed bottom-[10%] left-[20%] w-[500px] h-[500px] rounded-full blur-[180px] animate-pulse pointer-events-none transition-colors duration-1000 z-0',
+                    'max-md:w-[300px] max-md:h-[300px] max-md:blur-[100px] max-md:left-[5%] max-md:bottom-[5%]',
                     orbColorMap[primaryColor]
                 )} 
             />

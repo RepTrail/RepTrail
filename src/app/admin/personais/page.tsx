@@ -8,7 +8,9 @@ import {
     toggleBillingExemption, grantEliteTrial, impersonateUser, deleteUser
 } from '@/actions/admin-actions'
 import { createClient } from '@/lib/supabase/client'
-import { AdminPageShell } from '@/components/store/advanced/admin-page-shell'
+import { RegistryProvider } from '@/components/store/advanced/registry-context'
+import { DashboardShell } from '@/components/store/advanced/dashboard-shell'
+import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { Modal } from '@/components/store/advanced/modal'
 import { Stack } from '@/components/store/base/stack'
@@ -86,71 +88,89 @@ export default function AdminPersonaisPage() {
     const filtered = trainers.filter(t => t.full_name?.toLowerCase().includes(search.toLowerCase()) || t.email?.toLowerCase().includes(search.toLowerCase()))
 
     return (
-        <AdminPageShell
-            pageTitle="GESTÃO DE PERSONAIS"
-            subtitle="Administração de profissionais parceiros e planos On-Demand."
-            icon={UserCheck}
-            user={{
-                id: adminUser?.id || 'admin',
-                name: adminUser?.full_name || 'Admin RepTrail',
-                email: adminUser?.email || 'admin@reptrail.com.br',
-                avatar_url: adminUser?.avatar_url || null,
-            }}
-        >
-            <RegistrySection
-                title="Diretório de Profissionais"
-                subtitle="Administre os profissionais parceiros e suas credenciais de acesso."
-                icon={UserCheck}
+        <RegistryProvider defaultColor="red">
+            <DashboardShell
+                color="red"
+                links={[
+                    { href: '/admin/dashboard', label: 'Início', icon: 'BarChart3', exact: true },
+                    { href: '/admin/personais', label: 'Personais', icon: 'UserCheck' },
+                    { href: '/admin/alunos', label: 'Alunos', icon: 'Users' },
+                    { href: '/admin/afiliados', label: 'Afiliados', icon: 'HeartHandshake' },
+                    { href: '/admin/loja', label: 'Loja', icon: 'ShoppingBag' },
+                    { href: '/admin/logs', label: 'Logs', icon: 'Activity' },
+                ]}
+                user={{
+                    id: adminUser?.id || 'admin',
+                    name: adminUser?.full_name || 'Admin RepTrail',
+                    email: adminUser?.email || 'admin@reptrail.com.br',
+                    avatar_url: adminUser?.avatar_url || null,
+                }}
+                profileHref="/dashboard"
+                profileIcon="ArrowRightLeft"
             >
-                <Stack gap={5}>
-                    <Input 
-                        value={search}
-                        onChange={e => setSearch(e.target.value)}
-                        placeholder="Buscar personal por nome ou email..."
-                        icon={<Search size={16} />}
-                        rounded="full"
-                    />
+                <RegistryMain
+                    title="GESTÃO DE PERSONAIS"
+                    subtitle="Administração de profissionais parceiros e planos On-Demand."
+                    icon={UserCheck}
+                    contextLabel="Painel Admin"
+                    showTabs={false}
+                >
+                    <RegistrySection
+                        title="Diretório de Profissionais"
+                        subtitle="Administre os profissionais parceiros e suas credenciais de acesso."
+                        icon={UserCheck}
+                    >
+                        <Stack gap={5}>
+                            <Input
+                                value={search}
+                                onChange={e => setSearch(e.target.value)}
+                                placeholder="Buscar personal por nome ou email..."
+                                icon={<Search size={16} />}
+                                rounded="full"
+                            />
 
-                    {isLoading && <EmptyState icon={UserCheck} title="Carregando..." description="Buscando personais cadastrados." />}
+                            {isLoading && <EmptyState icon={UserCheck} title="Carregando..." description="Buscando personais cadastrados." />}
 
-                    {!isLoading && filtered.map(trainer => (
-                        <UserListItem
-                            key={trainer.id}
-                            name={trainer.full_name || 'Sem nome'}
-                            email={trainer.email || ''}
-                            registrationDate={new Date(trainer.created_at).toLocaleDateString('pt-BR')}
-                            role="personal"
-                            roleLabel={trainer.students ? `${trainer.students.length} ALUNO${trainer.students.length !== 1 ? 'S' : ''}` : "0 ALUNOS"}
-                            initials={(trainer.full_name || '??').substring(0, 2).toUpperCase()}
-                            avatarVariant="orange"
-                            avatarUrl={trainer.avatar_url}
-                            onInspect={() => handleImpersonate(trainer.id)}
-                            onAction={() => handleOnDemandToggle(trainer.id, trainer.plan_tier || 'free')}
-                            isActionActive={trainer.plan_tier === 'on_demand'}
-                            onDelete={() => handleDeleteUser(trainer.id, trainer.full_name || trainer.email)}
-                        />
-                    ))}
+                            {!isLoading && filtered.map(trainer => (
+                                <UserListItem
+                                    key={trainer.id}
+                                    name={trainer.full_name || 'Sem nome'}
+                                    email={trainer.email || ''}
+                                    registrationDate={new Date(trainer.created_at).toLocaleDateString('pt-BR')}
+                                    role="personal"
+                                    roleLabel={trainer.students ? `${trainer.students.length} ALUNO${trainer.students.length !== 1 ? 'S' : ''}` : "0 ALUNOS"}
+                                    initials={(trainer.full_name || '??').substring(0, 2).toUpperCase()}
+                                    avatarVariant="orange"
+                                    avatarUrl={trainer.avatar_url}
+                                    onInspect={() => handleImpersonate(trainer.id)}
+                                    onAction={() => handleOnDemandToggle(trainer.id, trainer.plan_tier || 'free')}
+                                    isActionActive={trainer.plan_tier === 'on_demand'}
+                                    onDelete={() => handleDeleteUser(trainer.id, trainer.full_name || trainer.email)}
+                                />
+                            ))}
 
-                    {!isLoading && filtered.length === 0 && (
-                        <EmptyState icon={Search} title="Nenhum personal encontrado" description="Tente ajustar os filtros de busca." />
-                    )}
-                </Stack>
-            </RegistrySection>
+                            {!isLoading && filtered.length === 0 && (
+                                <EmptyState icon={Search} title="Nenhum personal encontrado" description="Tente ajustar os filtros de busca." />
+                            )}
+                        </Stack>
+                    </RegistrySection>
 
-            <Modal
-                isOpen={deleteModal.open}
-                onClose={() => setDeleteModal({ ...deleteModal, open: false })}
-                title="Deletar Personal"
-                subtitle={`Deseja deletar permanentemente ${deleteModal.name}?`}
-                icon={XCircle}
-                variant="red"
-                onConfirm={confirmDeleteUser}
-                confirmLabel="Deletar"
-            >
-                <Font variant="body" color="zinc-400">
-                    Esta ação é irreversível e removerá todos os dados do profissional, incluindo acesso à plataforma de gestão.
-                </Font>
-            </Modal>
-        </AdminPageShell>
+                    <Modal
+                        isOpen={deleteModal.open}
+                        onClose={() => setDeleteModal({ ...deleteModal, open: false })}
+                        title="Deletar Personal"
+                        subtitle={`Deseja deletar permanentemente ${deleteModal.name}?`}
+                        icon={XCircle}
+                        variant="red"
+                        onConfirm={confirmDeleteUser}
+                        confirmLabel="Deletar"
+                    >
+                        <Font variant="body" color="zinc-400">
+                            Esta ação é irreversível e removerá todos os dados do profissional, incluindo acesso à plataforma de gestão.
+                        </Font>
+                    </Modal>
+                </RegistryMain>
+            </DashboardShell>
+        </RegistryProvider>
     )
 }

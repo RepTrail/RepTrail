@@ -27,7 +27,7 @@ export function AuthForm({ view }: AuthFormProps) {
     const [fullName, setFullName] = useState('')
     const [whatsapp, setWhatsapp] = useState('')
     const [role, setRole] = useState<'student' | 'trainer'>('trainer')
-    const [acceptedTerms, setAcceptedTerms] = useState(false)
+    const [acceptedTerms, setAcceptedTerms] = useState(true)
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const [success, setSuccess] = useState<string | null>(null)

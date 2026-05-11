@@ -404,15 +404,17 @@ export async function addExerciseToWorkout(workoutId: string, exerciseId: string
         return { error: e.message }
     }
 }
-
 export async function updateWorkoutExercise(id: string, workoutId: string, data: any) {
     const { createAdminClient } = await import('@/lib/supabase/server')
     const adminSupabase = await createAdminClient()
 
+    // Strip sync metadata before update
+    const { clientId, clientMutationId, ...updateData } = data as any
+
     try {
         const { error } = await adminSupabase
             .from('workout_exercises')
-            .update(data)
+            .update(updateData)
             .eq('id', id)
 
         if (error) throw error

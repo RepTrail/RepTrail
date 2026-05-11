@@ -10,24 +10,26 @@ import { ComponentsRegistryContent } from '@/components/store/sections/component
 import { ColorsSectionContent } from '@/components/store/sections/colors-section-content'
 import { AdminSectionContent } from '@/components/store/sections/admin-section-content'
 import { AuthSectionsContent } from '@/components/store/sections/auth-sections-content'
-import { Zap } from 'lucide-react'
+import { StudentRegistryContent } from '@/components/store/sections/student-registry-content'
 
 export default function DesignSystemPage() {
     return (
         <RegistryShell>
-            <RegistryMain 
-                title="Design System" 
-                subtitle="A comprehensive guide to RepTrail's visual identity, components, and design principles."
-                icon={Zap}
-            >
-                <BrandingSectionContent id="branding" />
-                <ColorsSectionContent id="colors" />
-                <AuthSectionsContent id="auth" />
-                
-                <TypographyContent id="typography" />
-                <ComponentsRegistryContent id="components" />
-                <LayoutSpacingContent id="layout" />
-            </RegistryMain>
+                <RegistryMain
+                    title="Design System"
+                    subtitle="A comprehensive guide to RepTrail's visual identity, components, and design principles."
+                    icon="Zap"
+                    contextLabel="Brand Guidelines"
+                    showTabs={true}
+                >
+                    <BrandingSectionContent id="branding" />
+                    <ColorsSectionContent id="colors" />
+                    <AuthSectionsContent id="auth" />
+
+                    <TypographyContent id="typography" />
+                    <ComponentsRegistryContent id="components" />
+                    <LayoutSpacingContent id="layout" />
+                </RegistryMain>
         </RegistryShell>
     )
 }

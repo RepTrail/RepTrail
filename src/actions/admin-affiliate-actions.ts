@@ -204,6 +204,11 @@ export async function toggleAffiliateStatus(userId: string, isAffiliate: boolean
     return { success: true }
 }
 
+/** Remover status de afiliado */
+export async function removeAffiliate(userId: string) {
+    return toggleAffiliateStatus(userId, false)
+}
+
 function getPixType(key: string): 'CPF' | 'CNPJ' | 'EMAIL' | 'PHONE' | 'EVP' {
     const clean = key.replace(/\D/g, '')
     if (key.includes('@')) return 'EMAIL'

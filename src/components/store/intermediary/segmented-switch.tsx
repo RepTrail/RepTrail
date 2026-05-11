@@ -47,7 +47,7 @@ export function SegmentedSwitch({
         <Stack 
           direction="row" 
           gap={1} 
-          wrap={false} 
+          wrap="nowrap" 
           padding={1}
           align="stretch"
         >
@@ -64,11 +64,11 @@ export function SegmentedSwitch({
                 rounded="full"
                 size="sm"
                 className={cn(
-                  'shrink-0 min-w-fit px-5 transition-all duration-300',
-                  fullWidth && 'md:flex-1'
+                  'transition-all duration-300',
+                  fullWidth ? 'flex-1' : 'shrink-0 min-w-fit px-5'
                 )}
               >
-                <Stack direction="row" align="center" gap={2.5} wrap={false}>
+                <Stack direction="row" align="center" gap={2.5} wrap="nowrap">
                   {option.icon && (
                     <Icon 
                       icon={option.icon} 

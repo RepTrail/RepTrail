@@ -21,6 +21,8 @@ interface ModalProps {
   cancelLabel?: string
   onConfirm?: () => void
   variant?: 'emerald' | 'orange' | 'red' | 'blue'
+  isLoading?: boolean
+  disabled?: boolean
 }
 
 export function Modal({
@@ -33,7 +35,9 @@ export function Modal({
   confirmLabel = 'Confirmar',
   cancelLabel = 'Cancelar',
   onConfirm,
-  variant = 'emerald'
+  variant = 'emerald',
+  isLoading = false,
+  disabled = false
 }: ModalProps) {
   if (!isOpen) return null
 
@@ -53,7 +57,7 @@ export function Modal({
               </Stack>
 
               <div className="ml-auto">
-                <Button variant="close" rounded="full" isIconOnly onClick={onClose}>
+                <Button variant="close" rounded="full" isIconOnly onClick={onClose} disabled={isLoading}>
                   <Icon icon={X} size="sm" />
                 </Button>
               </div>
@@ -82,17 +86,19 @@ export function Modal({
                   fullWidth 
                   flex1
                   onClick={onClose}
+                  disabled={isLoading}
                 >
                   {cancelLabel}
                 </Button>
                 <Button 
-                  variant="outline-emerald" 
+                  variant={variant === 'emerald' ? 'outline-emerald' : 'outline-blue'} 
                   rounded="full" 
                   fullWidth 
                   flex1
                   onClick={onConfirm || onClose}
+                  disabled={disabled || isLoading}
                 >
-                  {confirmLabel}
+                  {isLoading ? 'Carregando...' : confirmLabel}
                 </Button>
               </Stack>
             </div>

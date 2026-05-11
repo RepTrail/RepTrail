@@ -148,81 +148,87 @@ class SyncEngine {
           }
 
           // 🚨 ADDITIONAL KEYS INVALIDATION (Precision Consistency)
-          if (userId) {
-              const rootKeys = [
-                QUERY_KEYS.workouts.all(userId),
-                QUERY_KEYS.cardio.all(userId),
-                QUERY_KEYS.ergogenics.all(userId),
-                QUERY_KEYS.student.all(userId)
-              ];
+              if (userId) {
+                  const rootKeys = [
+                    QUERY_KEYS.workouts.all(userId),
+                    QUERY_KEYS.cardio.all(userId),
+                    QUERY_KEYS.ergogenics.all(userId),
+                    QUERY_KEYS.student.all(userId)
+                  ];
 
-              await Promise.all(rootKeys.map(key => 
-                this.queryClient!.invalidateQueries({ 
-                    queryKey: key, 
-                    exact: false, 
-                    refetchType: 'active' 
-                })
-              ));
+                  await Promise.all(rootKeys.map(key => 
+                    this.queryClient!.invalidateQueries({ 
+                        queryKey: key, 
+                        exact: false, 
+                        refetchType: 'active' 
+                    })
+                  ));
 
-              // Explicit refetch for critical active sessions
-              this.queryClient.refetchQueries({ queryKey: QUERY_KEYS.workouts.session });
-              this.queryClient.refetchQueries({ queryKey: QUERY_KEYS.cardio.session });
+                  // Explicit refetch for critical active sessions
+                  this.queryClient.refetchQueries({ queryKey: QUERY_KEYS.workouts.session });
+                  this.queryClient.refetchQueries({ queryKey: QUERY_KEYS.cardio.session });
 
-              // 🚨 NEW: Invalidate trainer students if a placeholder was created
-              if ((result.results?.placeholderId || result.data?.placeholderId) && record.payload.userId) {
-                  console.log(`[SyncEngine] Placeholder detected (${result.results?.placeholderId || result.data?.placeholderId}). Invalidating trainer students cache for ${record.payload.userId}`);
-                  this.queryClient.invalidateQueries({ queryKey: QUERY_KEYS.trainer.students(record.payload.userId) });
-              }
+                  // 🚨 NEW: Invalidate trainer students if a placeholder was created
+                  if ((result.results?.placeholderId || result.data?.placeholderId) && record.payload.userId) {
+                      console.log(`[SyncEngine] Placeholder detected (${result.results?.placeholderId || result.data?.placeholderId}). Invalidating trainer students cache for ${record.payload.userId}`);
+                      this.queryClient.invalidateQueries({ queryKey: QUERY_KEYS.trainer.students(record.payload.userId) });
+                  }
 
-              // 🚨 NEW: Handle student status toggle and unassign/delete invalidation
-              const studentContentActions = [
-                  'unassign-workout',
-                  'unassign-diet',
-                  'delete-workout',
-                  'delete-student-diet',
-                  'save-workout-assignment',
-                  'save-diet-assignment',
-                  'delete-student-cardio',
-                  'delete-student-ergogenic',
-                  'delete-cardio-assignment',
-                  'mark-student-paid',
-                  'toggle-student-status'
-              ];
-              
-              if (studentContentActions.includes(record.action)) {
-                  // 🚀 LOCAL-FIRST ELITE: Only invalidate if there are no more pending mutations for this relationship/student
-                  // This prevents "flickering" when processing multiple unassignments.
-                  const relationshipId = record.payload.relationshipId || record.entityId;
-                  const studentId = record.payload.studentId || record.payload.student_id;
+                  // 🚨 NEW: Handle student status toggle and unassign/delete invalidation
+                  const studentContentActions = [
+                      'unassign-workout',
+                      'unassign-diet',
+                      'delete-workout',
+                      'delete-student-diet',
+                      'save-workout-assignment',
+                      'save-diet-assignment',
+                      'delete-student-cardio',
+                      'delete-student-ergogenic',
+                      'delete-cardio-assignment',
+                      'mark-student-paid',
+                      'toggle-student-status'
+                  ];
                   
-                  const pendingCount = await outboxDB.countPendingForStudent(relationshipId, studentId);
-                  
-                  if (pendingCount <= 1) { // 1 because we haven't marked this one as processed yet
-                      console.log(`[SyncEngine] Last mutation for student ${relationshipId}. Waiting for DB consistency...`);
+                  if (studentContentActions.includes(record.action)) {
+                      // 🚀 LOCAL-FIRST ELITE: Only invalidate if there are no more pending mutations for this relationship/student
+                      // This prevents "flickering" when processing multiple unassignments.
+                      const relationshipId = record.payload.relationshipId || record.entityId;
+                      const studentId = record.payload.studentId || record.payload.student_id;
                       
-                      // 🚀 DB CONSISTENCY DELAY: Wait 500ms to ensure Supabase triggers/commits are finished
-                      await new Promise(resolve => setTimeout(resolve, 500));
+                      const pendingCount = await outboxDB.countPendingForStudent(relationshipId, studentId);
+                      
+                      if (pendingCount <= 1) { // 1 because we haven't marked this one as processed yet
+                          console.log(`[SyncEngine] Last mutation for student ${relationshipId}. Waiting for DB consistency...`);
+                          
+                          // 🚀 DB CONSISTENCY DELAY: Wait 500ms to ensure Supabase triggers/commits are finished
+                          await new Promise(resolve => setTimeout(resolve, 500));
 
-                      if (relationshipId) {
-                          await this.queryClient.invalidateQueries({ queryKey: QUERY_KEYS.trainer.studentDetail(relationshipId) });
+                          if (relationshipId) {
+                              await this.queryClient.invalidateQueries({ queryKey: QUERY_KEYS.trainer.studentDetail(relationshipId) });
+                          }
+                          if (studentId) {
+                              await Promise.all([
+                                  this.queryClient.invalidateQueries({ queryKey: QUERY_KEYS.trainer.studentHistory(studentId) }),
+                                  this.queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workouts.assignments(studentId) }),
+                                  this.queryClient.invalidateQueries({ queryKey: QUERY_KEYS.diets.assignments(studentId) })
+                              ]);
+                          }
+                          const userId = record.payload.trainerId || record.payload.userId;
+                          if (userId) {
+                              await this.queryClient.invalidateQueries({ queryKey: QUERY_KEYS.trainer.students(userId) });
+                          }
+                      } else {
+                          console.log(`[SyncEngine] Skipping invalidation: ${pendingCount-1} more mutations pending for student.`);
                       }
-                      if (studentId) {
-                          await Promise.all([
-                              this.queryClient.invalidateQueries({ queryKey: QUERY_KEYS.trainer.studentHistory(studentId) }),
-                              this.queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workouts.assignments(studentId) }),
-                              this.queryClient.invalidateQueries({ queryKey: QUERY_KEYS.diets.assignments(studentId) })
-                          ]);
-                      }
-                      const userId = record.payload.trainerId || record.payload.userId;
-                      if (userId) {
-                          await this.queryClient.invalidateQueries({ queryKey: QUERY_KEYS.trainer.students(userId) });
-                      }
-                  } else {
-                      console.log(`[SyncEngine] Skipping invalidation: ${pendingCount-1} more mutations pending for student.`);
                   }
               }
+
+              // 🚨 NEW: Handle Admin Dashboard Invalidation
+              if (record.entity === ENTITIES.OPERATIONAL_COST || record.action.includes('cost')) {
+                  console.log('[SyncEngine] Operational Cost updated. Invalidating Admin Overview...');
+                  await this.queryClient.invalidateQueries({ queryKey: QUERY_KEYS.admin.overview });
+              }
           }
-        }
 
         // 3. mark as processed (Persistent)
         await outboxDB.markMutationAsProcessed(record.clientMutationId);

@@ -14,12 +14,14 @@ import { QUERY_KEYS } from '@/lib/query-keys'
 import { getStudentCardioAssignments, getCardioLibrary } from '@/actions/cardio-actions'
 import { getStudentProfile, getStudentTrainer } from '@/actions/student-actions'
 import { cn } from "@/lib/utils"
+import { EmptyState } from '@/components/store/intermediary/empty-state'
+import { Stack } from '@/components/store/base/stack'
+import { Grid } from '@/components/store/base/grid'
+import { useRealtimeSync } from '@/hooks/use-realtime-sync'
 
 interface CardioPageClientProps {
     userId: string
 }
-
-import { useRealtimeSync } from '@/hooks/use-realtime-sync'
 
 export function CardioPageClient({ userId }: CardioPageClientProps) {
     // 1. Data Fetching via TanStack Query (Hydrated)
@@ -71,53 +73,40 @@ export function CardioPageClient({ userId }: CardioPageClientProps) {
     }, {})
 
     return (
-        <div className="flex flex-col gap-section-gap">
-            <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 px-2">
-                <div className="space-y-5">
-                    <div className="flex items-center gap-3 pb-4">
-                        <h1 className="text-3xl font-black text-white italic uppercase tracking-tighter">
-                            Meus <span className="text-orange-500">Cardios</span>
-                        </h1>
-                    </div>
-                    <p className="text-zinc-500 text-sm font-medium max-w-md">
-                        Acompanhe e registre suas sessões de treinamento aeróbico.
-                    </p>
+        <Stack gap={10}>
+            {isAutoTrainingActive && !trainerRel && (
+                <div className="flex items-center justify-end gap-3 w-full">
+                    <UnifiedCreationDialog
+                        title="Novo Modelo de Cardio"
+                        description="Crie um template (ex: Esteira 45min) para agendar para seus auto-treinos."
+                        trigger={
+                            <Button className="h-12 px-6 bg-orange-500 hover:bg-orange-400 text-zinc-950 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2">
+                                <Activity className="w-4 h-4" />
+                                Criar Modelo
+                            </Button>
+                        }
+                        fields={[
+                            { name: 'name', label: 'Nome do Cardio', placeholder: 'Ex: Corrida na Esteira', required: true },
+                            { name: 'duration_minutes', label: 'Duração (min)', placeholder: '30', type: 'number', required: true },
+                            {
+                                name: 'suggested_intensity', label: 'Intensidade Sugerida', type: 'select', defaultValue: 'Moderada', options: [
+                                    { label: 'Leve', value: 'Leve', color: '#10b981' },
+                                    { label: 'Moderada', value: 'Moderada', color: '#f59e0b' },
+                                    { label: 'Alta', value: 'Alta', color: '#ef4444' },
+                                    { label: 'Máxima', value: 'Máxima', color: '#a855f7' }
+                                ], required: true
+                            },
+                            { name: 'description', label: 'Descrição (Opcional)', placeholder: 'Ex: 45 minutos em ritmo moderado', type: 'textarea' }
+                        ]}
+                        actionType="create-student-cardio"
+                        successMessage="Modelo de cardio criado com sucesso!"
+                        colorScheme="orange"
+                        queryKey={QUERY_KEYS.cardio.library(userId)}
+                    />
                 </div>
+            )}
 
-                {isAutoTrainingActive && !trainerRel && (
-                    <div className="flex items-center gap-3 pb-4w-full sm:w-auto">
-                        <UnifiedCreationDialog
-                            title="Novo Modelo de Cardio"
-                            description="Crie um template (ex: Esteira 45min) para agendar para seus auto-treinos."
-                            trigger={
-                                <Button className="flex-1 sm:flex-none h-12 px-6 bg-orange-500 hover:bg-orange-400 text-zinc-950 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2">
-                                    <Activity className="w-4 h-4" />
-                                    Criar Modelo
-                                </Button>
-                            }
-                            fields={[
-                                { name: 'name', label: 'Nome do Cardio', placeholder: 'Ex: Corrida na Esteira', required: true },
-                                { name: 'duration_minutes', label: 'Duração (min)', placeholder: '30', type: 'number', required: true },
-                                {
-                                    name: 'suggested_intensity', label: 'Intensidade Sugerida', type: 'select', defaultValue: 'Moderada', options: [
-                                        { label: 'Leve', value: 'Leve', color: '#10b981' },
-                                        { label: 'Moderada', value: 'Moderada', color: '#f59e0b' },
-                                        { label: 'Alta', value: 'Alta', color: '#ef4444' },
-                                        { label: 'Máxima', value: 'Máxima', color: '#a855f7' }
-                                    ], required: true
-                                },
-                                { name: 'description', label: 'Descrição (Opcional)', placeholder: 'Ex: 45 minutos em ritmo moderado', type: 'textarea' }
-                            ]}
-                            actionType="create-student-cardio"
-                            successMessage="Modelo de cardio criado com sucesso!"
-                            colorScheme="orange"
-                            queryKey={QUERY_KEYS.cardio.library(userId)}
-                        />
-                    </div>
-                )}
-            </header>
-
-            <div className="grid gap-10 lg:grid-cols-12 ">
+            <Grid gap={10} lgCols={12}>
                 <div className="lg:col-span-8 space-y-10">
                     {trainerRel ? (
                         <div className="space-y-8">
@@ -156,15 +145,16 @@ export function CardioPageClient({ userId }: CardioPageClientProps) {
                                     })()}
                                 </div>
                             ) : (
-                                <div className="py-20 text-center border-dashed border border-zinc-800 rounded-3xl">
-                                    <Activity className="w-8 h-8 text-zinc-700 mx-auto mb-3" />
-                                    <p className="text-zinc-500 text-[10px] font-bold uppercase">Nenhum cardio prescrito pelo seu personal.</p>
-                                </div>
+                                <EmptyState 
+                                    icon={Activity} 
+                                    title="Nenhum cardio prescrito" 
+                                    description="Seu personal ainda não enviou protocolos aeróbicos." 
+                                />
                             )}
                         </div>
                     ) : (
                         <div className="space-y-8">
-                            <div className="grid gap-6 md:grid-cols-2">
+                            <Grid gap={5} mdCols={2}>
                                 {isAutoTrainingActive && (
                                     <>
                                         {cardios.length > 0 ? (
@@ -237,13 +227,17 @@ export function CardioPageClient({ userId }: CardioPageClientProps) {
                                                 )
                                             })
                                         ) : (
-                                            <div className="col-span-full py-10 text-center border-dashed border border-zinc-800 rounded-3xl">
-                                                <p className="text-zinc-500 text-[10px] font-bold uppercase">Sua biblioteca está vazia.</p>
+                                            <div className="col-span-full">
+                                                <EmptyState 
+                                                    icon={Activity} 
+                                                    title="Biblioteca Vazia" 
+                                                    description="Crie modelos de cardio para agendar sua rotina." 
+                                                />
                                             </div>
                                         )}
                                     </>
                                 )}
-                            </div>
+                            </Grid>
                         </div>
                     )}
                 </div>
@@ -278,7 +272,7 @@ export function CardioPageClient({ userId }: CardioPageClientProps) {
                         </Card>
                     </div>
                 </div>
-            </div>
-        </div>
+            </Grid>
+        </Stack>
     )
 }

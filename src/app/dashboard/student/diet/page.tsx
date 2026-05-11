@@ -7,6 +7,7 @@ import { getStudentDailyDiet, getTrainerDiets, getAssignedDiets } from '@/action
 import { getStudentProfile, getStudentTrainer } from '@/actions/student-actions'
 import { ensureDailyTracking } from '@/actions/tracking-actions'
 import { DietPageClient } from '@/components/feature/student/diet-page-client'
+import { RegistryMain } from '@/components/store/advanced/registry-main'
 
 import { PREFETCH_REGISTRY } from '@/lib/prefetch-registry'
 
@@ -32,12 +33,20 @@ export default async function StudentDietPage() {
     ))
 
     return (
-        <Suspense fallback={<div className="animate-pulse space-y-10"><div className="h-[500px] bg-zinc-900 rounded-[2.5rem]" /></div>}>
-            <div className=" mx-auto" suppressHydrationWarning>
-                <HydrationBoundary state={dehydrate(queryClient)}>
-                    <DietPageClient userId={userId} />
-                </HydrationBoundary>
-            </div>
-        </Suspense>
+        <RegistryMain
+            title="MINHA DIETA"
+            subtitle="Gerencie suas refeições, macros e suplementação para maximizar seus resultados."
+            icon="Utensils"
+            contextLabel="Nutrição & Dieta"
+            showTabs={false}
+        >
+            <Suspense fallback={<div className="animate-pulse space-y-10"><div className="h-[500px] bg-zinc-900 rounded-[2.5rem]" /></div>}>
+                <div suppressHydrationWarning>
+                    <HydrationBoundary state={dehydrate(queryClient)}>
+                        <DietPageClient userId={userId} />
+                    </HydrationBoundary>
+                </div>
+            </Suspense>
+        </RegistryMain>
     )
 }

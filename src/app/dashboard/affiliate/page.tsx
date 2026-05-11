@@ -1,8 +1,12 @@
 import { getAffiliateData } from '@/actions/affiliate-actions'
 import { redirect } from 'next/navigation'
-import { AffiliateClientDashboard } from '@/components/feature/affiliate/affiliate-client-dashboard'
+import { AffiliateDashboardClient } from './affiliate-dashboard-client'
 import { AffiliateMetaPixel } from './meta-pixel'
 
+/**
+ * AffiliateDashboard Page: Standardized following the Store/Advanced/Sections architecture.
+ * Now a Server Component to support async data fetching.
+ */
 export default async function AffiliateDashboard() {
     const data = await getAffiliateData()
 
@@ -13,7 +17,7 @@ export default async function AffiliateDashboard() {
     return (
         <>
             <AffiliateMetaPixel />
-            <AffiliateClientDashboard data={data} />
+            <AffiliateDashboardClient data={data} />
         </>
     )
 }

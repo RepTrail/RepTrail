@@ -65,7 +65,7 @@ export function UserListItem({
         <ActionableListCard
             badges={
                 <Inline gap={2.5} align="center">
-                    <Badge label={registrationDate} variant="glass" rounded="full" size="xs" />
+                    <Badge label={registrationDate} variant="glass" size="xs" />
                     <Badge 
                         label={roleLabel} 
                         variant="glass" 

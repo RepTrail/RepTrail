@@ -26,18 +26,20 @@ interface AuthLoginFormProps {
     error?: string | null
     color?: 'emerald' | 'amber' | 'blue' | 'red' | 'orange'
     syncColor?: boolean
+    signupHref?: string
 }
 
-export function AuthLoginForm({ 
-    email, setEmail, 
-    password, setPassword, 
-    onSubmit, 
+export function AuthLoginForm({
+    email, setEmail,
+    password, setPassword,
+    onSubmit,
     loading, error,
     color = 'emerald',
-    syncColor = true
+    syncColor = true,
+    signupHref = '/auth/signup'
 }: AuthLoginFormProps) {
     const { primaryColor, setPrimaryColor } = useRegistry()
-    
+
     React.useEffect(() => {
         if (syncColor) {
             setPrimaryColor(color as any)
@@ -71,10 +73,10 @@ export function AuthLoginForm({
                                 </Box>
                             )}
 
-                            <Input 
-                                label="Email Profissional" 
-                                icon={<Mail size={16} />} 
-                                placeholder="exemplo@email.com" 
+                            <Input
+                                label="Email Profissional"
+                                icon={<Mail size={16} />}
+                                placeholder="exemplo@email.com"
                                 value={email}
                                 onChange={(e) => setEmail?.(e.target.value)}
                                 required
@@ -85,27 +87,22 @@ export function AuthLoginForm({
                                     <Font variant="auxiliary" color="zinc-500" weight="black" uppercase tracking="widest">
                                         Senha de Acesso
                                     </Font>
-                                    <Link href="/auth/forgot-password">
-                                        <Font variant="sub-tiny" color="primary" weight="black" uppercase tracking="widest" transition className="cursor-pointer hover:opacity-80">
-                                            Esqueci a senha
-                                        </Font>
-                                    </Link>
                                 </Stack>
-                                <Input 
+                                <Input
                                     type="password"
-                                    icon={<Lock size={16} />} 
-                                    placeholder="••••••••" 
+                                    icon={<Lock size={16} />}
+                                    placeholder="••••••••"
                                     value={password}
                                     onChange={(e) => setPassword?.(e.target.value)}
                                     required
                                 />
                             </Stack>
 
-                            <Button 
+                            <Button
                                 type="submit"
-                                variant="primary" 
-                                fullWidth 
-                                rounded="system" 
+                                variant="primary"
+                                fullWidth
+                                rounded="system"
                                 height="anatomy-item"
                                 paddingY={5}
                                 disabled={loading}
@@ -126,7 +123,7 @@ export function AuthLoginForm({
                 {/* Footer */}
                 <Box padding={5} display="flex" align="center" justify="center" bg="black" bgOpacity={30}>
                     <Font variant="sub-tiny" color="zinc-500" align="center" weight="bold" uppercase tracking="widest">
-                        Ainda não é membro? <Link href="/auth/signup" className="contents"><Font variant="sub-tiny" color="primary" weight="black" className="cursor-pointer underline">Cadastre-se grátis</Font></Link>
+                        Ainda não é membro? <Link href={signupHref} className="contents"><Font variant="sub-tiny" color="primary" weight="black" className="cursor-pointer underline">Cadastre-se grátis</Font></Link>
                     </Font>
                 </Box>
             </Stack>

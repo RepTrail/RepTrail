@@ -4,6 +4,7 @@ import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { getQueryClient } from '@/lib/get-query-client'
 import { WorkoutsListClient } from '@/components/feature/student/workouts-list-client'
 import { PREFETCH_REGISTRY } from '@/lib/prefetch-registry'
+import { RegistryMain } from '@/components/store/advanced/registry-main'
 
 export default async function StudentWorkoutsPage() {
     const headerList = await headers()
@@ -24,12 +25,20 @@ export default async function StudentWorkoutsPage() {
     ))
 
     return (
-        <Suspense fallback={<div className="animate-pulse space-y-10"><div className="h-[280px] bg-zinc-900 rounded-[2.5rem]" /></div>}>
-            <div className=" mx-auto" suppressHydrationWarning>
-                <HydrationBoundary state={dehydrate(queryClient)}>
-                    <WorkoutsListClient userId={userId} />
-                </HydrationBoundary>
-            </div>
-        </Suspense>
+        <RegistryMain
+            title="MEUS TREINOS"
+            subtitle="Acesse suas fichas de treino, acompanhe sua carga e execute com máxima intensidade."
+            icon="Dumbbell"
+            contextLabel="Treinos & Performance"
+            showTabs={false}
+        >
+            <Suspense fallback={<div className="animate-pulse space-y-10"><div className="h-[280px] bg-zinc-900 rounded-[2.5rem]" /></div>}>
+                <div suppressHydrationWarning>
+                    <HydrationBoundary state={dehydrate(queryClient)}>
+                        <WorkoutsListClient userId={userId} />
+                    </HydrationBoundary>
+                </div>
+            </Suspense>
+        </RegistryMain>
     )
 }

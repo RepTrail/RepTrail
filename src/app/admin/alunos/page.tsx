@@ -7,7 +7,9 @@ import {
     getAllUsers, deleteUser, impersonateUser, grantAutoTraining
 } from '@/actions/admin-actions'
 import { createClient } from '@/lib/supabase/client'
-import { AdminPageShell } from '@/components/store/advanced/admin-page-shell'
+import { RegistryProvider } from '@/components/store/advanced/registry-context'
+import { DashboardShell } from '@/components/store/advanced/dashboard-shell'
+import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { Modal } from '@/components/store/advanced/modal'
 import { Stack } from '@/components/store/base/stack'
@@ -93,72 +95,90 @@ export default function AdminAlunosPage() {
         )
 
     return (
-        <AdminPageShell
-            pageTitle="GESTÃO DE ALUNOS"
-            subtitle="Monitoramento da base de alunos e ativação de planos automatizados."
-            icon={GraduationCap}
-            user={{
-                id: adminUser?.id || 'admin',
-                name: adminUser?.full_name || 'Admin RepTrail',
-                email: adminUser?.email || 'admin@reptrail.com.br',
-                avatar_url: adminUser?.avatar_url || null,
-            }}
-        >
-            <RegistrySection
-                title="Matrículas e Acessos"
-                subtitle="Monitore a base de alunos e gerencie privilégios de acesso."
-                icon={GraduationCap}
+        <RegistryProvider defaultColor="red">
+            <DashboardShell
+                color="red"
+                links={[
+                    { href: '/admin/dashboard', label: 'Início', icon: 'BarChart3', exact: true },
+                    { href: '/admin/personais', label: 'Personais', icon: 'UserCheck' },
+                    { href: '/admin/alunos', label: 'Alunos', icon: 'Users' },
+                    { href: '/admin/afiliados', label: 'Afiliados', icon: 'HeartHandshake' },
+                    { href: '/admin/loja', label: 'Loja', icon: 'ShoppingBag' },
+                    { href: '/admin/logs', label: 'Logs', icon: 'Activity' },
+                ]}
+                user={{
+                    id: adminUser?.id || 'admin',
+                    name: adminUser?.full_name || 'Admin RepTrail',
+                    email: adminUser?.email || 'admin@reptrail.com.br',
+                    avatar_url: adminUser?.avatar_url || null,
+                }}
+                profileHref="/dashboard"
+                profileIcon="ArrowRightLeft"
             >
-                <Stack gap={5}>
-                    {/* Search */}
-                    <Input 
-                        value={search}
-                        onChange={e => setSearch(e.target.value)}
-                        placeholder="Buscar aluno por nome ou email..."
-                        icon={<Search size={16} />}
-                        rounded="full"
-                    />
+                <RegistryMain
+                    title="GESTÃO DE ALUNOS"
+                    subtitle="Monitoramento da base de alunos e ativação de planos automatizados."
+                    icon={GraduationCap}
+                    contextLabel="Painel Admin"
+                    showTabs={false}
+                >
+                    <RegistrySection
+                        title="Matrículas e Acessos"
+                        subtitle="Monitore a base de alunos e gerencie privilégios de acesso."
+                        icon={GraduationCap}
+                    >
+                        <Stack gap={5}>
+                            {/* Search */}
+                            <Input
+                                value={search}
+                                onChange={e => setSearch(e.target.value)}
+                                placeholder="Buscar aluno por nome ou email..."
+                                icon={<Search size={16} />}
+                                rounded="full"
+                            />
 
-                    {isLoading && <EmptyState icon={GraduationCap} title="Carregando..." description="Buscando alunos cadastrados." />}
+                            {isLoading && <EmptyState icon={GraduationCap} title="Carregando..." description="Buscando alunos cadastrados." />}
 
-                    {!isLoading && students.map(student => (
-                        <UserListItem
-                            key={student.id}
-                            name={student.full_name || 'Sem nome'}
-                            email={student.email || ''}
-                            registrationDate={new Date(student.created_at).toLocaleDateString('pt-BR')}
-                            role="aluno"
-                            roleLabel={(student as any).auto_training_status === 'active' ? 'AUTO-TREINO' : 'ALUNO'}
-                            initials={(student.full_name || '??').substring(0, 2).toUpperCase()}
-                            avatarVariant="emerald"
-                            avatarUrl={student.avatar_url}
-                            onInspect={() => handleImpersonate(student.id)}
-                            onAction={() => handleGrantAutoTraining(student.id, (student as any).auto_training_status)}
-                            isActionActive={(student as any).auto_training_status === 'active'}
-                            onDelete={() => handleDeleteUser(student.id, student.full_name || student.email)}
-                        />
-                    ))}
+                            {!isLoading && students.map(student => (
+                                <UserListItem
+                                    key={student.id}
+                                    name={student.full_name || 'Sem nome'}
+                                    email={student.email || ''}
+                                    registrationDate={new Date(student.created_at).toLocaleDateString('pt-BR')}
+                                    role="aluno"
+                                    roleLabel={(student as any).auto_training_status === 'active' ? 'AUTO-TREINO' : 'ALUNO'}
+                                    initials={(student.full_name || '??').substring(0, 2).toUpperCase()}
+                                    avatarVariant="emerald"
+                                    avatarUrl={student.avatar_url}
+                                    onInspect={() => handleImpersonate(student.id)}
+                                    onAction={() => handleGrantAutoTraining(student.id, (student as any).auto_training_status)}
+                                    isActionActive={(student as any).auto_training_status === 'active'}
+                                    onDelete={() => handleDeleteUser(student.id, student.full_name || student.email)}
+                                />
+                            ))}
 
-                    {!isLoading && students.length === 0 && (
-                        <EmptyState icon={Search} title="Nenhum aluno encontrado" description="Tente ajustar os filtros de busca." />
-                    )}
-                </Stack>
-            </RegistrySection>
+                            {!isLoading && students.length === 0 && (
+                                <EmptyState icon={Search} title="Nenhum aluno encontrado" description="Tente ajustar os filtros de busca." />
+                            )}
+                        </Stack>
+                    </RegistrySection>
 
-            <Modal
-                isOpen={deleteModal.open}
-                onClose={() => setDeleteModal({ ...deleteModal, open: false })}
-                title="Deletar Aluno"
-                subtitle={`Deseja deletar permanentemente ${deleteModal.name}?`}
-                icon={XCircle}
-                variant="red"
-                onConfirm={confirmDeleteUser}
-                confirmLabel="Deletar"
-            >
-                <Font variant="body" color="zinc-400">
-                    Esta ação é irreversível e removerá todos os dados do aluno, incluindo histórico de treinos e assinaturas vinculadas.
-                </Font>
-            </Modal>
-        </AdminPageShell>
+                    <Modal
+                        isOpen={deleteModal.open}
+                        onClose={() => setDeleteModal({ ...deleteModal, open: false })}
+                        title="Deletar Aluno"
+                        subtitle={`Deseja deletar permanentemente ${deleteModal.name}?`}
+                        icon={XCircle}
+                        variant="red"
+                        onConfirm={confirmDeleteUser}
+                        confirmLabel="Deletar"
+                    >
+                        <Font variant="body" color="zinc-400">
+                            Esta ação é irreversível e removerá todos os dados do aluno, incluindo histórico de treinos e assinaturas vinculadas.
+                        </Font>
+                    </Modal>
+                </RegistryMain>
+            </DashboardShell>
+        </RegistryProvider>
     )
 }

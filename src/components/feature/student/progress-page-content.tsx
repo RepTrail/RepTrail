@@ -11,6 +11,10 @@ import { UnifiedProgressGallery } from '@/components/feature/shared/unified-prog
 import { StatCard } from '@/components/feature/shared/stat-card'
 import { PerformanceAnalysisSection } from '@/components/feature/shared/performance-analysis-section'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Stack } from "@/components/store/base/stack"
+import { Box } from "@/components/store/base/box"
+import { Font } from "@/components/store/base/font"
+import { Inline } from "@/components/store/base/layout"
 
 export async function StudentProgressPageContent({ userId }: { userId: string }) {
     const supabase = await createClient()
@@ -67,23 +71,9 @@ export async function StudentProgressPageContent({ userId }: { userId: string })
     const progressPhotos = progressPhotosData || []
 
     return (
-        <div className=" mx-auto flex flex-col gap-section-gap">
-            {/* Header */}
-            <header className="flex flex-col md:flex-row md:items-end justify-between gap-6 px-2">
-                <div className="space-y-2 sm:space-y-5">
-                    <div className="flex items-center gap-3 pb-4">
-                        <h1 className="text-3xl font-black text-white italic uppercase tracking-tighter">
-                            Minha <span className="text-orange-500">Evolução</span>
-                        </h1>
-                    </div>
-                    <p className="text-zinc-500 text-sm font-medium max-w-md">
-                        Acompanhe seu peso, percentual de gordura e consistência nos treinos e dieta em tempo real.
-                    </p>
-                </div>
-            </header>
-
+        <Stack gap={10}>
             <Tabs defaultValue="analysis" className="space-y-8">
-                <div className="px-2">
+                <Box paddingX={1}>
                     <TabsList className="bg-zinc-900/50 p-1 border border-zinc-800/50 rounded-2xl w-full sm:w-auto h-auto flex flex-nowrap overflow-x-auto justify-start gap-1 no-scrollbar">
                         <TabsTrigger
                             value="analysis"
@@ -107,7 +97,7 @@ export async function StudentProgressPageContent({ userId }: { userId: string })
                             Histórico
                         </TabsTrigger>
                     </TabsList>
-                </div>
+                </Box>
 
                 <TabsContent value="analysis" className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                     <div className="grid gap-6 md:grid-cols-3">
@@ -157,13 +147,15 @@ export async function StudentProgressPageContent({ userId }: { userId: string })
                 <TabsContent value="photos" className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                     <Card className="bg-zinc-900/40 border-zinc-800/50 shadow-2xl rounded-3xl overflow-hidden backdrop-blur-sm">
                         <CardHeader className="p-6 sm:p-10 pb-0">
-                            <div className="space-y-1">
-                                <h2 className="text-2xl font-black text-white italic uppercase tracking-tight flex items-center gap-3 pb-4">
+                            <Stack gap={1}>
+                                <Inline gap={3} align="center">
                                     <Camera className="w-6 h-6 text-orange-500" />
-                                    Novo Registro
-                                </h2>
-                                <p className="text-zinc-500 font-bold uppercase tracking-widest text-[10px]">Envie suas fotos para avaliação.</p>
-                            </div>
+                                    <Font variant="h3" color="orange" uppercase italic tracking="tight">
+                                        Novo Registro
+                                    </Font>
+                                </Inline>
+                                <Font variant="sub-tiny" color="zinc-500" uppercase tracking="widest">Envie suas fotos para avaliação.</Font>
+                            </Stack>
                         </CardHeader>
                         <CardContent className="p-6 sm:p-10">
                             <ProgressPhotoUpload studentId={userId} />
@@ -172,13 +164,15 @@ export async function StudentProgressPageContent({ userId }: { userId: string })
 
                     <Card className="bg-zinc-900/40 border-zinc-800/50 shadow-2xl rounded-3xl overflow-hidden backdrop-blur-sm">
                         <CardHeader className="p-6 sm:p-10 pb-4">
-                            <div className="space-y-1">
-                                <h2 className="text-2xl font-black text-white italic uppercase tracking-tight flex items-center gap-3 pb-4">
+                            <Stack gap={1}>
+                                <Inline gap={3} align="center">
                                     <Images className="w-6 h-6 text-orange-500" />
-                                    Galeria de Fotos
-                                </h2>
-                                <p className="text-zinc-500 font-bold uppercase tracking-widest text-[10px]">Evolução visual cronológica.</p>
-                            </div>
+                                    <Font variant="h3" color="orange" uppercase italic tracking="tight">
+                                        Galeria de Fotos
+                                    </Font>
+                                </Inline>
+                                <Font variant="sub-tiny" color="zinc-500" uppercase tracking="widest">Evolução visual cronológica.</Font>
+                            </Stack>
                         </CardHeader>
                         <CardContent className="p-6 sm:p-10 pt-0">
                             <UnifiedProgressGallery photos={progressPhotos} mode="student" />
@@ -189,13 +183,15 @@ export async function StudentProgressPageContent({ userId }: { userId: string })
                 <TabsContent value="history" className="animate-in fade-in slide-in-from-bottom-4 duration-500">
                     <Card className="bg-zinc-900/40 border-zinc-800/50 shadow-2xl rounded-3xl overflow-hidden backdrop-blur-sm">
                         <CardHeader className="p-6 sm:p-10 pb-4">
-                            <div className="space-y-1">
-                                <CardTitle className="text-2xl font-black text-white italic uppercase tracking-tight flex items-center gap-3 pb-4">
+                            <Stack gap={1}>
+                                <Inline gap={3} align="center">
                                     <History className="w-6 h-6 text-orange-500" />
-                                    Histórico de Treinos
-                                </CardTitle>
-                                <p className="text-zinc-500 font-bold uppercase tracking-widest text-[10px]">Registros detalhados de sessões concluídas.</p>
-                            </div>
+                                    <Font variant="h3" color="orange" uppercase italic tracking="tight">
+                                        Histórico de Treinos
+                                    </Font>
+                                </Inline>
+                                <Font variant="sub-tiny" color="zinc-500" uppercase tracking="widest">Registros detalhados de sessões concluídas.</Font>
+                            </Stack>
                         </CardHeader>
                         <CardContent className="p-4 sm:p-10 pt-0">
                             <StudentWorkoutHistory
@@ -206,6 +202,6 @@ export async function StudentProgressPageContent({ userId }: { userId: string })
                     </Card>
                 </TabsContent>
             </Tabs>
-        </div>
+        </Stack>
     )
 }

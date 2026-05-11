@@ -9,9 +9,9 @@ export interface BoxProps extends React.HTMLAttributes<HTMLElement> {
   children?: React.ReactNode
   as?: 'div' | 'aside' | 'nav' | 'main' | 'section' | 'header' | 'footer' | 'button' | 'img' | 'input' | 'label' | 'span'
   variant?: 'base' | 'skeleton' | 'liquid-success' | 'liquid-zinc'
-  padding?: 0 | 1 | 2.5 | 5 | 7.5 | 12.5 | 25 | { base: 0 | 1 | 2.5 | 5 | 7.5 | 12.5 | 25, md?: 0 | 1 | 2.5 | 5 | 7.5 | 12.5 | 25, lg?: 0 | 1 | 2.5 | 5 | 7.5 | 12.5 | 25 }
-  paddingX?: 0 | 1 | 2.5 | 5 | 7.5 | 12.5 | 25 | { base: 0 | 1 | 2.5 | 5 | 7.5 | 12.5 | 25, md?: 0 | 1 | 2.5 | 5 | 7.5 | 12.5 | 25, lg?: 0 | 1 | 2.5 | 5 | 7.5 | 12.5 | 25 }
-  paddingY?: 0 | 1 | 2.5 | 5 | 7.5 | 12.5 | 25 | { base: 0 | 1 | 2.5 | 5 | 7.5 | 12.5 | 25, md?: 0 | 1 | 2.5 | 5 | 7.5 | 12.5 | 25, lg?: 0 | 1 | 2.5 | 5 | 7.5 | 12.5 | 25 }
+  padding?: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 20 | 25 | 30 | 'sidebar' | 'sidebar-wide' | { base: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 20 | 25 | 30 | 'sidebar' | 'sidebar-wide', sm?: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 20 | 25 | 30 | 'sidebar' | 'sidebar-wide', md?: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 20 | 25 | 30 | 'sidebar' | 'sidebar-wide', lg?: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 20 | 25 | 30 | 'sidebar' | 'sidebar-wide' }
+  paddingX?: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 20 | 25 | 30 | 'sidebar' | 'sidebar-wide' | { base: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 20 | 25 | 30 | 'sidebar' | 'sidebar-wide', sm?: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 20 | 25 | 30 | 'sidebar' | 'sidebar-wide', md?: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 20 | 25 | 30 | 'sidebar' | 'sidebar-wide', lg?: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 20 | 25 | 30 | 'sidebar' | 'sidebar-wide' }
+  paddingY?: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 20 | 25 | 30 | 'sidebar' | 'sidebar-wide' | { base: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 20 | 25 | 30 | 'sidebar' | 'sidebar-wide', sm?: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 20 | 25 | 30 | 'sidebar' | 'sidebar-wide', md?: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 20 | 25 | 30 | 'sidebar' | 'sidebar-wide', lg?: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 20 | 25 | 30 | 'sidebar' | 'sidebar-wide' }
   bg?: BoxColor
   bgOpacity?: 5 | 10 | 20 | 30 | 40 | 50 | 60 | 70 | 80 | 90 | 95 | 100
   border?: boolean
@@ -22,10 +22,10 @@ export interface BoxProps extends React.HTMLAttributes<HTMLElement> {
   right?: number | string
   bottom?: number | string
   left?: number | string
-  paddingTop?: 0 | 1 | 2.5 | 5 | 7.5 | 12.5 | 25 | { base: 0 | 1 | 2.5 | 5 | 7.5 | 12.5 | 25, md?: 0 | 1 | 2.5 | 5 | 7.5 | 12.5 | 25, lg?: 0 | 1 | 2.5 | 5 | 7.5 | 12.5 | 25 }
-  paddingBottom?: 0 | 1 | 2.5 | 5 | 7.5 | 12.5 | 25 | { base: 0 | 1 | 2.5 | 5 | 7.5 | 12.5 | 25, md?: 0 | 1 | 2.5 | 5 | 7.5 | 12.5 | 25, lg?: 0 | 1 | 2.5 | 5 | 7.5 | 12.5 | 25 }
-  paddingLeft?: 0 | 1 | 2.5 | 5 | 7.5 | 12.5 | 25 | { base: 0 | 1 | 2.5 | 5 | 7.5 | 12.5 | 25, md?: 0 | 1 | 2.5 | 5 | 7.5 | 12.5 | 25, lg?: 0 | 1 | 2.5 | 5 | 7.5 | 12.5 | 25 }
-  paddingRight?: 0 | 1 | 2.5 | 5 | 7.5 | 12.5 | 25 | { base: 0 | 1 | 2.5 | 5 | 7.5 | 12.5 | 25, md?: 0 | 1 | 2.5 | 5 | 7.5 | 12.5 | 25, lg?: 0 | 1 | 2.5 | 5 | 7.5 | 12.5 | 25 }
+  paddingTop?: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 20 | 25 | 30 | 'sidebar' | 'sidebar-wide' | { base: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 20 | 25 | 30 | 'sidebar' | 'sidebar-wide', sm?: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 20 | 25 | 30 | 'sidebar' | 'sidebar-wide', md?: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 20 | 25 | 30 | 'sidebar' | 'sidebar-wide', lg?: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 20 | 25 | 30 | 'sidebar' | 'sidebar-wide' }
+  paddingBottom?: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 20 | 25 | 30 | 'sidebar' | 'sidebar-wide' | { base: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 20 | 25 | 30 | 'sidebar' | 'sidebar-wide', sm?: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 20 | 25 | 30 | 'sidebar' | 'sidebar-wide', md?: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 20 | 25 | 30 | 'sidebar' | 'sidebar-wide', lg?: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 20 | 25 | 30 | 'sidebar' | 'sidebar-wide' }
+  paddingLeft?: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 20 | 25 | 30 | 'sidebar' | 'sidebar-wide' | { base: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 20 | 25 | 30 | 'sidebar' | 'sidebar-wide', sm?: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 20 | 25 | 30 | 'sidebar' | 'sidebar-wide', md?: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 20 | 25 | 30 | 'sidebar' | 'sidebar-wide', lg?: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 20 | 25 | 30 | 'sidebar' | 'sidebar-wide' }
+  paddingRight?: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 20 | 25 | 30 | 'sidebar' | 'sidebar-wide' | { base: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 20 | 25 | 30 | 'sidebar' | 'sidebar-wide', sm?: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 20 | 25 | 30 | 'sidebar' | 'sidebar-wide', md?: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 20 | 25 | 30 | 'sidebar' | 'sidebar-wide', lg?: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 20 | 25 | 30 | 'sidebar' | 'sidebar-wide' }
   rotate?: 0 | 1 | 2 | 3 | -1 | -2 | -3
   hoverBg?: BoxColor
   hoverBgOpacity?: 5 | 10 | 20 | 30 | 50 | 80 | 90 | 95 | 100
@@ -35,16 +35,16 @@ export interface BoxProps extends React.HTMLAttributes<HTMLElement> {
   overflow?: 'hidden' | 'auto' | 'visible' | 'scroll' | 'clip' | { base: 'hidden' | 'auto' | 'visible' | 'scroll' | 'clip', md?: 'hidden' | 'auto' | 'visible' | 'scroll' | 'clip', lg?: 'hidden' | 'auto' | 'visible' | 'scroll' | 'clip' }
   overflowX?: 'hidden' | 'auto' | 'visible' | 'scroll' | 'clip' | { base: 'hidden' | 'auto' | 'visible' | 'scroll' | 'clip', md?: 'hidden' | 'auto' | 'visible' | 'scroll' | 'clip', lg?: 'hidden' | 'auto' | 'visible' | 'scroll' | 'clip' }
   overflowY?: 'hidden' | 'auto' | 'visible' | 'scroll' | 'clip' | { base: 'hidden' | 'auto' | 'visible' | 'scroll' | 'clip', md?: 'hidden' | 'auto' | 'visible' | 'scroll' | 'clip', lg?: 'hidden' | 'auto' | 'visible' | 'scroll' | 'clip' }
-  rounded?: 'none' | 'full' | 'system'
-  align?: 'start' | 'center' | 'end' | 'stretch' | { base: 'start' | 'center' | 'end' | 'stretch', md?: 'start' | 'center' | 'end' | 'stretch', lg?: 'start' | 'center' | 'end' | 'stretch' }
-  justify?: 'start' | 'center' | 'end' | 'between' | 'around' | { base: 'start' | 'center' | 'end' | 'between' | 'around', md?: 'start' | 'center' | 'end' | 'between' | 'around', lg?: 'start' | 'center' | 'end' | 'between' | 'around' }
-  display?: 'flex' | 'block' | 'inline-block' | 'inline-flex' | 'none' | { base: 'flex' | 'block' | 'none', sm?: 'flex' | 'block' | 'none', md?: 'flex' | 'block' | 'none', lg?: 'flex' | 'block' | 'none' }
-  direction?: 'row' | 'col' | { base: 'row' | 'col', md?: 'row' | 'col', lg?: 'row' | 'col' }
-  position?: 'relative' | 'absolute' | 'fixed' | 'static' | { base: 'relative' | 'absolute' | 'fixed' | 'static', md?: 'relative' | 'absolute' | 'fixed' | 'static', lg?: 'relative' | 'absolute' | 'fixed' | 'static' }
+  rounded?: 'none' | 'full' | 'system' | '3xl' | '2xl'
+  align?: 'start' | 'center' | 'end' | 'stretch' | 'baseline' | { base: 'start' | 'center' | 'end' | 'stretch' | 'baseline', sm?: 'start' | 'center' | 'end' | 'stretch' | 'baseline', md?: 'start' | 'center' | 'end' | 'stretch' | 'baseline', lg?: 'start' | 'center' | 'end' | 'stretch' | 'baseline' }
+  justify?: 'start' | 'center' | 'end' | 'between' | 'around' | { base: 'start' | 'center' | 'end' | 'between' | 'around', sm?: 'start' | 'center' | 'end' | 'between' | 'around', md?: 'start' | 'center' | 'end' | 'between' | 'around', lg?: 'start' | 'center' | 'end' | 'between' | 'around' }
+  display?: 'flex' | 'grid' | 'block' | 'inline-block' | 'inline-flex' | 'none' | { base: 'flex' | 'grid' | 'block' | 'none', sm?: 'flex' | 'grid' | 'block' | 'none', md?: 'flex' | 'grid' | 'block' | 'none', lg?: 'flex' | 'grid' | 'block' | 'none' }
+  direction?: 'row' | 'col' | { base: 'row' | 'col', sm?: 'row' | 'col', md?: 'row' | 'col', lg?: 'row' | 'col' }
+  position?: 'relative' | 'absolute' | 'fixed' | 'static' | { base: 'relative' | 'absolute' | 'fixed' | 'static', sm?: 'relative' | 'absolute' | 'fixed' | 'static', md?: 'relative' | 'absolute' | 'fixed' | 'static', lg?: 'relative' | 'absolute' | 'fixed' | 'static' }
   pin?: 'left' | 'right' | 'top' | 'bottom' | 'inset' | { base: 'left' | 'right' | 'top' | 'bottom' | 'inset', md?: 'left' | 'right' | 'top' | 'bottom' | 'inset', lg?: 'left' | 'right' | 'top' | 'bottom' | 'inset' }
   maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | 'none' | 'auth-form' | { base: 'sm' | 'md' | 'lg' | 'xl' | 'none' | 'auth-form', md?: 'sm' | 'md' | 'lg' | 'xl' | 'none' | 'auth-form', lg?: 'sm' | 'md' | 'lg' | 'xl' | 'none' | 'auth-form' }
-  width?: 'full' | 'auto' | 'sidebar' | 'sidebar-wide' | 'anatomy-sidebar' | 'anatomy-title' | 'px' | 'half' | { base: 'full' | 'auto', md?: 'half' | 'sidebar' | 'sidebar-wide' | 'anatomy-sidebar' | 'auto', lg?: 'full' | 'auto' | 'half' | 'sidebar' | 'sidebar-wide' | 'anatomy-sidebar' }
-  height?: 'full' | 'auto' | 'screen' | 'px' | 'anatomy-skeleton' | 'anatomy-header' | 'anatomy-item' | 'anatomy-line' | '8' | '24'
+  width?: 'full' | 'auto' | 'sidebar' | 'sidebar-wide' | 'anatomy-sidebar' | 'anatomy-title' | 'px' | 'half' | '10' | '24' | { base: 'full' | 'auto' | '10' | '24', md?: 'half' | 'sidebar' | 'sidebar-wide' | 'anatomy-sidebar' | 'auto' | '10' | '24', lg?: 'full' | 'auto' | 'half' | 'sidebar' | 'sidebar-wide' | 'anatomy-sidebar' | '10' | '24' }
+  height?: 'full' | 'auto' | 'screen' | 'px' | 'anatomy-skeleton' | 'anatomy-header' | 'anatomy-item' | 'anatomy-line' | '8' | '24' | '10'
   minHeight?: 'screen' | number
   minWidth?: 0 | 'anatomy-sidebar'
   shrink?: 0 | 1
@@ -65,15 +65,15 @@ export interface BoxProps extends React.HTMLAttributes<HTMLElement> {
   activeScale?: 95 | 90
   zIndex?: 0 | 10 | 20 | 30 | 40 | 50 | 100 | 'auto'
   inset?: 0 | 1 | 2.5 | 5
-  colSpan?: 1 | 2 | 3 | 4
-  lgColSpan?: 1 | 2 | 3 | 4
+  colSpan?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 12
+  lgColSpan?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 12
   grayscale?: boolean
   cursor?: 'pointer' | 'default' | 'not-allowed'
   textAlign?: 'center' | 'left' | 'right'
   wrap?: 'wrap' | 'nowrap'
   focusWithinZIndex?: 10 | 50 | 100 | 1000
   animation?: 'in-fade-zoom' | 'bounce' | 'pulse'
-  gap?: 0 | 1 | 2.5 | 5 | 7.5 | 12.5 | { base: 0 | 1 | 2.5 | 5 | 7.5 | 12.5, md?: 0 | 1 | 2.5 | 5 | 7.5 | 12.5 }
+  gap?: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 20 | 25 | 30 | 'header-gap' | { base: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 20 | 25 | 30 | 'header-gap', md?: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 20 | 25 | 30 | 'header-gap' }
   className?: string
   id?: string
   onClick?: () => void
@@ -156,7 +156,6 @@ export function Box({
   gap,
   pin,
   className,
-
   id,
   onClick,
   style,
@@ -173,8 +172,13 @@ export function Box({
     2.5: 'p-2.5',
     5: 'p-5',
     7.5: 'p-[30px]',
+    10: 'p-10',
     12.5: 'p-[50px]',
-    25: 'p-[100px]'
+    20: 'p-20',
+    25: 'p-[100px]',
+    30: 'p-[120px]',
+    sidebar: 'p-56',
+    'sidebar-wide': 'p-80'
   }
 
   const paddingXMapping = {
@@ -183,8 +187,13 @@ export function Box({
     2.5: 'px-2.5',
     5: 'px-5',
     7.5: 'px-[30px]',
+    10: 'px-10',
     12.5: 'px-[50px]',
-    25: 'px-[100px]'
+    20: 'px-20',
+    25: 'px-[100px]',
+    30: 'px-[120px]',
+    sidebar: 'px-56',
+    'sidebar-wide': 'px-80'
   }
 
   const paddingYMapping = {
@@ -193,18 +202,28 @@ export function Box({
     2.5: 'py-2.5',
     5: 'py-5',
     7.5: 'py-[30px]',
+    10: 'py-10',
     12.5: 'py-[50px]',
-    25: 'py-[100px]'
+    20: 'py-20',
+    25: 'py-[100px]',
+    30: 'py-[120px]',
+    sidebar: 'py-56',
+    'sidebar-wide': 'py-80'
   }
-  
+
   const paddingTopMapping = {
     0: 'pt-0',
     1: 'pt-1',
     2.5: 'pt-2.5',
     5: 'pt-5',
     7.5: 'pt-[30px]',
+    10: 'pt-10',
     12.5: 'pt-[50px]',
-    25: 'pt-[100px]'
+    20: 'pt-20',
+    25: 'pt-[100px]',
+    30: 'pt-[120px]',
+    sidebar: 'pt-56',
+    'sidebar-wide': 'pt-80'
   }
 
   const paddingBottomMapping = {
@@ -213,8 +232,13 @@ export function Box({
     2.5: 'pb-2.5',
     5: 'pb-5',
     7.5: 'pb-[30px]',
+    10: 'pb-10',
     12.5: 'pb-[50px]',
-    25: 'pb-[100px]'
+    20: 'pb-20',
+    25: 'pb-[100px]',
+    30: 'pb-[120px]',
+    sidebar: 'pb-56',
+    'sidebar-wide': 'pb-80'
   }
 
   const paddingLeftMapping = {
@@ -223,8 +247,13 @@ export function Box({
     2.5: 'pl-2.5',
     5: 'pl-5',
     7.5: 'pl-[30px]',
+    10: 'pl-10',
     12.5: 'pl-[50px]',
-    25: 'pl-[100px]'
+    20: 'pl-20',
+    25: 'pl-[100px]',
+    30: 'pl-[120px]',
+    sidebar: 'pl-56',
+    'sidebar-wide': 'pl-80'
   }
 
   const paddingRightMapping = {
@@ -233,14 +262,46 @@ export function Box({
     2.5: 'pr-2.5',
     5: 'pr-5',
     7.5: 'pr-[30px]',
+    10: 'pr-10',
     12.5: 'pr-[50px]',
-    25: 'pr-[100px]'
+    20: 'pr-20',
+    25: 'pr-[100px]',
+    30: 'pr-[120px]',
+    sidebar: 'pr-56',
+    'sidebar-wide': 'pr-80'
+  }
+
+  const gapMapping = {
+    0: 'gap-0',
+    1: 'gap-1',
+    2.5: 'gap-2.5',
+    5: 'gap-5',
+    7.5: 'gap-[30px]',
+    12.5: 'gap-[50px]',
+    20: 'gap-20',
+    25: 'gap-[100px]',
+    30: 'gap-[120px]',
+    'header-gap': 'gap-8'
+  }
+
+  const gapMdMapping = {
+    0: 'md:gap-0',
+    1: 'md:gap-1',
+    2.5: 'md:gap-2.5',
+    5: 'md:gap-5',
+    7.5: 'md:gap-[30px]',
+    12.5: 'md:gap-[50px]',
+    20: 'md:gap-20',
+    25: 'md:gap-[100px]',
+    30: 'md:gap-[120px]'
   }
 
   const roundedClasses = {
     none: 'rounded-none',
     full: 'rounded-full',
-    system: 'rounded-[5px]'
+    system: 'rounded-[5px]',
+    '2xl': 'rounded-2xl',
+    '3xl': 'rounded-3xl'
   }
 
   const widthClasses = {
@@ -251,7 +312,9 @@ export function Box({
     'anatomy-sidebar': 'w-[240px]',
     'anatomy-title': 'w-24',
     px: 'w-px',
-    'sidebar-wide': 'w-72'
+    '10': 'w-10',
+    '24': 'w-24',
+    'sidebar-wide': 'w-80'
   }
 
   const heightClasses = {
@@ -277,16 +340,16 @@ export function Box({
     white: { 100: 'bg-white', 95: 'bg-white/95', 90: 'bg-white/90', 80: 'bg-white/80', 50: 'bg-white/50', 30: 'bg-white/30', 20: 'bg-white/20', 10: 'bg-white/10', 5: 'bg-white/5' },
     black: { 100: 'bg-black', 95: 'bg-black/95', 90: 'bg-black/90', 80: 'bg-black/80', 50: 'bg-black/50', 30: 'bg-black/30', 20: 'bg-black/20', 10: 'bg-black/10', 5: 'bg-black/5' },
     transparent: { 100: 'bg-transparent', 95: 'bg-transparent', 90: 'bg-transparent', 80: 'bg-transparent', 50: 'bg-transparent', 30: 'bg-transparent', 20: 'bg-transparent', 10: 'bg-transparent', 5: 'bg-transparent' },
-    primary: { 
-      100: `bg-${primaryColor}-500`, 
-      95: `bg-${primaryColor}-500/95`, 
-      90: `bg-${primaryColor}-500/90`, 
-      80: `bg-${primaryColor}-500/80`, 
-      50: `bg-${primaryColor}-500/50`, 
-      30: `bg-${primaryColor}-500/30`, 
-      20: `bg-${primaryColor}-500/20`, 
-      10: `bg-${primaryColor}-500/10`, 
-      5: `bg-${primaryColor}-500/5` 
+    primary: {
+      100: `bg-${primaryColor}-500`,
+      95: `bg-${primaryColor}-500/95`,
+      90: `bg-${primaryColor}-500/90`,
+      80: `bg-${primaryColor}-500/80`,
+      50: `bg-${primaryColor}-500/50`,
+      30: `bg-${primaryColor}-500/30`,
+      20: `bg-${primaryColor}-500/20`,
+      10: `bg-${primaryColor}-500/10`,
+      5: `bg-${primaryColor}-500/5`
     },
     success: { 100: 'bg-success', 95: 'bg-success/95', 90: 'bg-success/90', 80: 'bg-success/80', 50: 'bg-success/50', 30: 'bg-success/30', 20: 'bg-success/20', 10: 'bg-success/10', 5: 'bg-success/5' },
     warning: { 100: 'bg-warning', 95: 'bg-warning/95', 90: 'bg-warning/90', 80: 'bg-warning/80', 50: 'bg-warning/50', 30: 'bg-warning/30', 20: 'bg-warning/20', 10: 'bg-warning/10', 5: 'bg-warning/5' },
@@ -371,7 +434,7 @@ export function Box({
     'inline-flex': 'inline-flex',
     none: 'hidden'
   }
-  
+
   const rotateClasses = {
     0: 'rotate-0',
     1: 'rotate-1',
@@ -445,24 +508,28 @@ export function Box({
   // Handle responsive paddingTop
   const isRespPaddingTop = typeof paddingTop === 'object'
   const paddingTopBase = isRespPaddingTop ? (paddingTop as any).base : paddingTop
+  const paddingTopSm = isRespPaddingTop ? (paddingTop as any).sm : undefined
   const paddingTopMd = isRespPaddingTop ? (paddingTop as any).md : undefined
   const paddingTopLg = isRespPaddingTop ? (paddingTop as any).lg : undefined
 
   // Handle responsive paddingBottom
   const isRespPaddingBottom = typeof paddingBottom === 'object'
   const paddingBottomBase = isRespPaddingBottom ? (paddingBottom as any).base : paddingBottom
+  const paddingBottomSm = isRespPaddingBottom ? (paddingBottom as any).sm : undefined
   const paddingBottomMd = isRespPaddingBottom ? (paddingBottom as any).md : undefined
   const paddingBottomLg = isRespPaddingBottom ? (paddingBottom as any).lg : undefined
 
   // Handle responsive paddingLeft
   const isRespPaddingLeft = typeof paddingLeft === 'object'
   const paddingLeftBase = isRespPaddingLeft ? (paddingLeft as any).base : paddingLeft
+  const paddingLeftSm = isRespPaddingLeft ? (paddingLeft as any).sm : undefined
   const paddingLeftMd = isRespPaddingLeft ? (paddingLeft as any).md : undefined
   const paddingLeftLg = isRespPaddingLeft ? (paddingLeft as any).lg : undefined
 
   // Handle responsive paddingRight
   const isRespPaddingRight = typeof paddingRight === 'object'
   const paddingRightBase = isRespPaddingRight ? (paddingRight as any).base : paddingRight
+  const paddingRightSm = isRespPaddingRight ? (paddingRight as any).sm : undefined
   const paddingRightMd = isRespPaddingRight ? (paddingRight as any).md : undefined
   const paddingRightLg = isRespPaddingRight ? (paddingRight as any).lg : undefined
 
@@ -507,11 +574,11 @@ export function Box({
         displayMd && `md:${displayClasses[displayMd as keyof typeof displayClasses]}`,
         displayLg && `lg:${displayClasses[displayLg as keyof typeof displayClasses]}`,
         flexNeeded && !displayBase && !displayMd && !displayLg && 'flex',
-        
+
         directionBase === 'col' ? 'flex-col' : directionBase === 'row' ? 'flex-row' : '',
         directionMd === 'col' ? 'md:flex-col' : directionMd === 'row' ? 'md:flex-row' : '',
         directionLg === 'col' ? 'lg:flex-col' : directionLg === 'row' ? 'lg:flex-row' : '',
-        
+
         // Sizing
         fullWidth && 'w-full',
         fullHeight && 'h-full',
@@ -540,14 +607,14 @@ export function Box({
         zIndex !== undefined && zIndexClasses[zIndex as keyof typeof zIndexClasses],
 
         inset !== undefined && insetClasses[inset as keyof typeof insetClasses],
-        
+
         // Borders & Opacity
         border && (borderWidth === 2 ? 'border-2' : 'border'),
         truncate && 'truncate',
         breakAll && 'break-all',
         borderColor && (
-          borderColor.startsWith('#') || borderColor.startsWith('rgb') || borderColor.startsWith('hsl') 
-            ? `border-[${borderColor}]` 
+          borderColor.startsWith('#') || borderColor.startsWith('rgb') || borderColor.startsWith('hsl')
+            ? `border-[${borderColor}]`
             : `border-${borderColor}`
         ),
         hoverBorder && (
@@ -566,7 +633,7 @@ export function Box({
         backdropBlur && `backdrop-blur-${backdropBlur}`,
         group && 'group',
         transition && 'transition-all duration-500 ease-out',
-        
+
         // Animations/Transforms
         translateXBase === 'full' && 'translate-x-full',
         translateXBase === 'none' && 'translate-x-0',
@@ -587,10 +654,24 @@ export function Box({
         colSpan === 2 && 'col-span-2',
         colSpan === 3 && 'col-span-3',
         colSpan === 4 && 'col-span-4',
+        colSpan === 5 && 'col-span-5',
+        colSpan === 6 && 'col-span-6',
+        colSpan === 7 && 'col-span-7',
+        colSpan === 8 && 'col-span-8',
+        colSpan === 9 && 'col-span-9',
+        colSpan === 10 && 'col-span-10',
+        colSpan === 12 && 'col-span-12',
         lgColSpan === 1 && 'lg:col-span-1',
         lgColSpan === 2 && 'lg:col-span-2',
         lgColSpan === 3 && 'lg:col-span-3',
         lgColSpan === 4 && 'lg:col-span-4',
+        lgColSpan === 5 && 'lg:col-span-5',
+        lgColSpan === 6 && 'lg:col-span-6',
+        lgColSpan === 7 && 'lg:col-span-7',
+        lgColSpan === 8 && 'lg:col-span-8',
+        lgColSpan === 9 && 'lg:col-span-9',
+        lgColSpan === 10 && 'lg:col-span-10',
+        lgColSpan === 12 && 'lg:col-span-12',
         grayscale && 'grayscale',
         cursor && `cursor-${cursor}`,
         textAlign && `text-${textAlign}`,
@@ -603,20 +684,6 @@ export function Box({
         animation === 'in-fade-zoom' && 'animate-in fade-in zoom-in duration-500',
         animation === 'bounce' && 'animate-bounce',
         animation === 'pulse' && 'animate-pulse',
-        
-        // Hover
-        hoverBg === 'zinc' && {
-            5: 'hover:bg-white/5',
-            10: 'hover:bg-white/10',
-            20: 'hover:bg-white/20',
-            30: 'hover:bg-white/30',
-            50: 'hover:bg-white/50',
-            80: 'hover:bg-white/80',
-            90: 'hover:bg-white/90',
-            95: 'hover:bg-white/95',
-            100: 'hover:bg-white',
-        }[hoverBgOpacity || 10],
-        hoverBg === 'primary' && `hover:bg-${primaryColor}-500/10`,
 
         // Alignment
         alignBase && `items-${alignBase}`,
@@ -640,53 +707,40 @@ export function Box({
         paddingSm !== undefined && `sm:${paddingMapping[paddingSm as keyof typeof paddingMapping]}`,
         paddingMd !== undefined && `md:${paddingMapping[paddingMd as keyof typeof paddingMapping]}`,
         paddingLg !== undefined && `lg:${paddingMapping[paddingLg as keyof typeof paddingMapping]}`,
-        
+
         paddingXBase !== undefined && paddingXMapping[paddingXBase as keyof typeof paddingXMapping],
         paddingXSm !== undefined && `sm:${paddingXMapping[paddingXSm as keyof typeof paddingXMapping]}`,
         paddingXMd !== undefined && `md:${paddingXMapping[paddingXMd as keyof typeof paddingXMapping]}`,
         paddingXLg !== undefined && `lg:${paddingXMapping[paddingXLg as keyof typeof paddingXMapping]}`,
-        
+
         paddingYBase !== undefined && paddingYMapping[paddingYBase as keyof typeof paddingYMapping],
         paddingYSm !== undefined && `sm:${paddingYMapping[paddingYSm as keyof typeof paddingYMapping]}`,
         paddingYMd !== undefined && `md:${paddingYMapping[paddingYMd as keyof typeof paddingYMapping]}`,
         paddingYLg !== undefined && `lg:${paddingYMapping[paddingYLg as keyof typeof paddingYMapping]}`,
 
         paddingTopBase !== undefined && paddingTopMapping[paddingTopBase as keyof typeof paddingTopMapping],
+        paddingTopSm !== undefined && `sm:${paddingTopMapping[paddingTopSm as keyof typeof paddingTopMapping]}`,
         paddingTopMd !== undefined && `md:${paddingTopMapping[paddingTopMd as keyof typeof paddingTopMapping]}`,
         paddingTopLg !== undefined && `lg:${paddingTopMapping[paddingTopLg as keyof typeof paddingTopMapping]}`,
 
         paddingBottomBase !== undefined && paddingBottomMapping[paddingBottomBase as keyof typeof paddingBottomMapping],
+        paddingBottomSm !== undefined && `sm:${paddingBottomMapping[paddingBottomSm as keyof typeof paddingBottomMapping]}`,
         paddingBottomMd !== undefined && `md:${paddingBottomMapping[paddingBottomMd as keyof typeof paddingBottomMapping]}`,
         paddingBottomLg !== undefined && `lg:${paddingBottomMapping[paddingBottomLg as keyof typeof paddingBottomMapping]}`,
 
         paddingLeftBase !== undefined && paddingLeftMapping[paddingLeftBase as keyof typeof paddingLeftMapping],
+        paddingLeftSm !== undefined && `sm:${paddingLeftMapping[paddingLeftSm as keyof typeof paddingLeftMapping]}`,
         paddingLeftMd !== undefined && `md:${paddingLeftMapping[paddingLeftMd as keyof typeof paddingLeftMapping]}`,
         paddingLeftLg !== undefined && `lg:${paddingLeftMapping[paddingLeftLg as keyof typeof paddingLeftMapping]}`,
 
         paddingRightBase !== undefined && paddingRightMapping[paddingRightBase as keyof typeof paddingRightMapping],
+        paddingRightSm !== undefined && `sm:${paddingRightMapping[paddingRightSm as keyof typeof paddingRightMapping]}`,
         paddingRightMd !== undefined && `md:${paddingRightMapping[paddingRightMd as keyof typeof paddingRightMapping]}`,
         paddingRightLg !== undefined && `lg:${paddingRightMapping[paddingRightLg as keyof typeof paddingRightMapping]}`,
 
         // Gap mapping
-        gapBase !== undefined && {
-            0: 'gap-0',
-            1: 'gap-1',
-            2.5: 'gap-2.5',
-            5: 'gap-5',
-            7.5: 'gap-[30px]',
-            12.5: 'gap-[50px]',
-            25: 'gap-[100px]'
-        }[gapBase as keyof typeof paddingMapping],
-        gapMd !== undefined && {
-            0: 'md:gap-0',
-            1: 'md:gap-1',
-            2.5: 'md:gap-2.5',
-            5: 'md:gap-5',
-            7.5: 'md:gap-[30px]',
-            12.5: 'md:gap-[50px]',
-            25: 'md:gap-[100px]'
-        }[gapMd as keyof typeof paddingMapping],
-
+        gapBase !== undefined && gapMapping[gapBase as keyof typeof gapMapping],
+        gapMd !== undefined && gapMdMapping[gapMd as keyof typeof gapMdMapping],
         className
       )}
       {...props}

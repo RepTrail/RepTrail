@@ -9,26 +9,9 @@ import {
     getTrainerActivityFeed 
 } from '@/actions/trainer-actions'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { 
-    Users, 
-    DollarSign, 
-    Activity, 
-    TrendingUp, 
-    ArrowUpRight, 
-    Zap, 
-    Crown, 
-    Sparkles,
-    UserPlus,
-    FileUp
-} from "lucide-react"
-import { Button } from "@/components/ui/button"
-import Link from 'next/link'
-import { ActivityFeed } from './activity-feed'
-import { TrainerCodeCard } from './trainer-code-card'
-import { BecomeAffiliateCard } from '@/components/feature/affiliate/become-affiliate-card'
-import { EditProfileDialog } from './edit-profile-dialog'
-import { CodeAutoGenerator } from './code-auto-generator'
 import { Stack } from '@/components/store/base/stack'
+import { RegistryMain } from '@/components/store/advanced/registry-main'
+import { LayoutDashboard, UserPlus, Users, DollarSign, TrendingUp, Zap, Sparkles, Crown, FileUp, ArrowUpRight, Activity } from 'lucide-react'
 
 interface TrainerDashboardClientProps {
     userId: string
@@ -95,20 +78,18 @@ export function TrainerDashboardClient({ userId, betaTesterMode }: TrainerDashbo
     const tierColor = tierColors[currentTier] || 'text-zinc-500'
 
     return (
-        <Stack gap={{ base: 12.5, md: 'section' }} className="pb-10">
-            <CodeAutoGenerator hasCode={!!profile?.trainer_code} />
-            
-            {/* Hero Section */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-2 border-b border-zinc-800/50">
-                <div className="space-y-2 sm:space-y-5">
-                    <h1 className="text-4xl font-black text-white font-sans capitalize">
-                        Visão Geral
-                    </h1>
-                    <p className="text-zinc-500 text-sm font-medium">
-                        Bem-vindo de volta, <span className="text-zinc-200">{profile?.full_name?.split(' ')[0] || 'Treinador'}</span>. Aqui está o resumo do seu time.
-                    </p>
-                </div>
-                <div className="flex items-center gap-3 pb-4">
+        <RegistryMain
+            title="VISÃO GERAL"
+            subtitle="Bem-vindo de volta. Acompanhe o desempenho do seu time."
+            icon={LayoutDashboard}
+            contextLabel="Área do Personal"
+            showTabs={false}
+        >
+            <Stack gap={{ base: 12.5, md: 'section' }} className="pb-10">
+                <CodeAutoGenerator hasCode={!!profile?.trainer_code} />
+
+                {/* Quick Actions Header */}
+                <div className="flex flex-col md:flex-row md:items-center justify-end gap-6">
                     <Button asChild className="bg-white text-zinc-950 hover:bg-zinc-200 rounded-xl font-bold h-11 px-6 shadow-none active:scale-95 transition-all gap-2">
                         <Link href="/dashboard/trainer/students">
                             <UserPlus className="w-4 h-4" />
@@ -116,122 +97,122 @@ export function TrainerDashboardClient({ userId, betaTesterMode }: TrainerDashbo
                         </Link>
                     </Button>
                 </div>
-            </div>
 
-            {/* Stats Grid */}
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                <MetricCard
-                    title="Alunos Ativos"
-                    value={activeStudents}
-                    icon={<Users className="w-5 h-5" />}
-                    description="Total de alunos ativos"
-                    accentColor="text-blue-500"
-                    trend={`+ ${newStudentsThisMonth || 0} este mês`}
-                />
-                <MetricCard
-                    title="Receita Mensal"
-                    value={`R$ ${monthlyRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} `}
-                    icon={<DollarSign className="w-5 h-5" />}
-                    description={`Total Est.: R$ ${totalRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
-                    accentColor="text-orange-500"
-                    trend="TAXA ZERO 🔥"
-                />
-                <MetricCard
-                    title="Ranking Geral"
-                    value={`${userRank}º`}
-                    icon={<TierIcon className="w-5 h-5" />}
-                    description="Sua posição atual"
-                    accentColor={tierColor}
-                />
-                <MetricCard
-                    title="Seu Nível"
-                    value={tierName}
-                    icon={<TrendingUp className="w-5 h-5" />}
-                    description="Seu plano atual no RepTrail"
-                    accentColor="text-purple-500"
-                    trend="Ativo"
-                />
-            </div>
-
-            <div className="grid gap-6 lg:grid-cols-12">
-                <div className="lg:col-span-8 space-y-6">
-                    <ActivityFeed userId={userId} initialData={activities} />
-
-                    <div className="grid gap-6 md:grid-cols-2">
-                        <QuickActionCard
-                            title="Biblioteca de Treinos"
-                            description="Gerencie seus modelos de treino personalizados."
-                            icon={<TrendingUp className="w-6 h-6 text-blue-500" />}
-                            href="/dashboard/trainer/workouts"
-                            label="Acessar Treinos"
-                        />
-                        <QuickActionCard
-                            title="Plano Alimentar"
-                            description="Crie e ajuste dietas para seus alunos."
-                            icon={<Sparkles className="w-6 h-6 text-orange-500" />}
-                            href="/dashboard/trainer/diets"
-                            label="Acessar Dietas"
-                        />
-                    </div>
+                {/* Stats Grid */}
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                    <MetricCard
+                        title="Alunos Ativos"
+                        value={activeStudents}
+                        icon={<Users className="w-5 h-5" />}
+                        description="Total de alunos ativos"
+                        accentColor="text-blue-500"
+                        trend={`+ ${newStudentsThisMonth || 0} este mês`}
+                    />
+                    <MetricCard
+                        title="Receita Mensal"
+                        value={`R$ ${monthlyRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} `}
+                        icon={<DollarSign className="w-5 h-5" />}
+                        description={`Total Est.: R$ ${totalRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                        accentColor="text-orange-500"
+                        trend="TAXA ZERO 🔥"
+                    />
+                    <MetricCard
+                        title="Ranking Geral"
+                        value={`${userRank}º`}
+                        icon={<TierIcon className="w-5 h-5" />}
+                        description="Sua posição atual"
+                        accentColor={tierColor}
+                    />
+                    <MetricCard
+                        title="Seu Nível"
+                        value={tierName}
+                        icon={<TrendingUp className="w-5 h-5" />}
+                        description="Seu plano atual no RepTrail"
+                        accentColor="text-purple-500"
+                        trend="Ativo"
+                    />
                 </div>
 
-                <div className="lg:col-span-4 space-y-6">
-                    <div className="rounded-2xl overflow-hidden shadow-2xl space-y-4">
-                        <TrainerCodeCard initialCode={profile?.trainer_code} />
+                <div className="grid gap-6 lg:grid-cols-12">
+                    <div className="lg:col-span-8 space-y-6">
+                        <ActivityFeed userId={userId} initialData={activities} />
 
-                        {profile?.is_affiliate ? (
-                            <Button asChild variant="ghost" className="w-full text-orange-500/70 hover:text-orange-400 hover:bg-orange-500/5 text-[10px] uppercase font-bold tracking-widest h-9 transition-all duration-200 border border-orange-500/10 rounded-xl">
-                                <Link href="/dashboard/affiliate">
-                                    ⭐ Meu Painel de Afiliado
-                                </Link>
-                            </Button>
-                        ) : (
-                            <BecomeAffiliateCard />
-                        )}
-
-                        <div className="p-1">
-                            <EditProfileDialog profile={{
-                                full_name: profile?.full_name,
-                                bio: profile?.bio,
-                                specialties: profile?.specialties,
-                                whatsapp: profile?.whatsapp,
-                                trainer_code: profile?.trainer_code
-                            }} />
-
-                            {profile?.trainer_code ? (
-                                <Button asChild variant="ghost" className="w-full text-zinc-500 hover:text-zinc-300 hover:bg-zinc-900/50 text-[10px] uppercase font-bold tracking-widest mt-2 h-9 transition-all duration-200">
-                                    <Link href={`/personal/${profile.trainer_code.trim()}`} target="_blank">
-                                        Ver Meu Perfil Público
-                                        <ArrowUpRight className="w-3 h-3 ml-2" />
-                                    </Link>
-                                </Button>
-                            ) : null}
+                        <div className="grid gap-6 md:grid-cols-2">
+                            <QuickActionCard
+                                title="Biblioteca de Treinos"
+                                description="Gerencie seus modelos de treino personalizados."
+                                icon={<TrendingUp className="w-6 h-6 text-blue-500" />}
+                                href="/dashboard/trainer/workouts"
+                                label="Acessar Treinos"
+                            />
+                            <QuickActionCard
+                                title="Plano Alimentar"
+                                description="Crie e ajuste dietas para seus alunos."
+                                icon={<Sparkles className="w-6 h-6 text-orange-500" />}
+                                href="/dashboard/trainer/diets"
+                                label="Acessar Dietas"
+                            />
                         </div>
                     </div>
 
-                    {!betaTesterMode && (
-                        <Card className="bg-zinc-950 border-zinc-800 shadow-2xl rounded-2xl overflow-hidden group">
-                            <CardHeader className="bg-orange-500/5 border-b border-orange-500/10 py-4">
-                                <CardTitle className="text-sm font-bold text-orange-500 flex items-center gap-2">
-                                    <FileUp className="w-4 h-4" />
-                                    Importação Inteligente
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent className="p-6 space-y-4">
-                                <p className="text-zinc-400 text-xs leading-relaxed">
-                                    Tem uma planilha ou PDF? Nossa IA pode ler o arquivo e criar o treino ou dieta em segundos.
-                                </p>
-                                <Button asChild className="w-full bg-orange-500 border border-orange-400 text-zinc-950 hover:bg-orange-400 rounded-xl h-11 font-bold shadow-lg shadow-orange-500/10 transition-all active:scale-[0.98]">
-                                    <Link id="tour-import-pdf-mobile" href="/dashboard/trainer/import-pdf">
-                                        Importar via PDF
+                    <div className="lg:col-span-4 space-y-6">
+                        <div className="rounded-2xl overflow-hidden shadow-2xl space-y-4">
+                            <TrainerCodeCard initialCode={profile?.trainer_code} />
+
+                            {profile?.is_affiliate ? (
+                                <Button asChild variant="ghost" className="w-full text-orange-500/70 hover:text-orange-400 hover:bg-orange-500/5 text-[10px] uppercase font-bold tracking-widest h-9 transition-all duration-200 border border-orange-500/10 rounded-xl">
+                                    <Link href="/dashboard/affiliate">
+                                        ⭐ Meu Painel de Afiliado
                                     </Link>
                                 </Button>
-                            </CardContent>
-                        </Card>
-                    )}
+                            ) : (
+                                <BecomeAffiliateCard />
+                            )}
+
+                            <div className="p-1">
+                                <EditProfileDialog profile={{
+                                    full_name: profile?.full_name,
+                                    bio: profile?.bio,
+                                    specialties: profile?.specialties,
+                                    whatsapp: profile?.whatsapp,
+                                    trainer_code: profile?.trainer_code
+                                }} />
+
+                                {profile?.trainer_code ? (
+                                    <Button asChild variant="ghost" className="w-full text-zinc-500 hover:text-zinc-300 hover:bg-zinc-900/50 text-[10px] uppercase font-bold tracking-widest mt-2 h-9 transition-all duration-200">
+                                        <Link href={`/personal/${profile.trainer_code.trim()}`} target="_blank">
+                                            Ver Meu Perfil Público
+                                            <ArrowUpRight className="w-3 h-3 ml-2" />
+                                        </Link>
+                                    </Button>
+                                ) : null}
+                            </div>
+                        </div>
+
+                        {!betaTesterMode && (
+                            <Card className="bg-zinc-950 border-zinc-800 shadow-2xl rounded-2xl overflow-hidden group">
+                                <CardHeader className="bg-orange-500/5 border-b border-orange-500/10 py-4">
+                                    <CardTitle className="text-sm font-bold text-orange-500 flex items-center gap-2">
+                                        <FileUp className="w-4 h-4" />
+                                        Importação Inteligente
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent className="p-6 space-y-4">
+                                    <p className="text-zinc-400 text-xs leading-relaxed">
+                                        Tem uma planilha ou PDF? Nossa IA pode ler o arquivo e criar o treino ou dieta em segundos.
+                                    </p>
+                                    <Button asChild className="w-full bg-orange-500 border border-orange-400 text-zinc-950 hover:bg-orange-400 rounded-xl h-11 font-bold shadow-lg shadow-orange-500/10 transition-all active:scale-[0.98]">
+                                        <Link id="tour-import-pdf-mobile" href="/dashboard/trainer/import-pdf">
+                                            Importar via PDF
+                                        </Link>
+                                    </Button>
+                                </CardContent>
+                            </Card>
+                        )}
+                    </div>
                 </div>
-            </div>
-        </Stack>
+            </Stack>
+        </RegistryMain>
     )
 }
 

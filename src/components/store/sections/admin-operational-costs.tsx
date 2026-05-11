@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Plus, Trash2, TrendingDown, TrendingUp, Edit3, LucideIcon } from 'lucide-react'
 import { Stack } from '../base/stack'
 import { Box } from '../base/box'
@@ -14,7 +14,7 @@ import { FormSelect } from '../base/form-select'
 import { Inline, Divider } from '../base/layout'
 import { Modal } from '../advanced/modal'
 import { RegistrySection } from '../advanced/registry-section'
-import { addOperationalCost, deleteOperationalCost } from '@/actions/admin-actions'
+import { addOperationalCost, deleteOperationalCost, updateOperationalCost } from '@/actions/admin-actions'
 import { useToast } from '@/hooks/use-toast'
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
 import { ENTITIES } from '@/lib/outbox-db'
@@ -41,6 +41,11 @@ interface OperationalCostsProps {
 export function AdminOperationalCosts({ initialCosts, totalMonthly, totalAllTime }: OperationalCostsProps) {
     const { toast } = useToast()
     const [costs, setCosts] = useState<OperationalCost[]>(initialCosts)
+    
+    // Sync state with props to avoid stale data after refetch
+    useEffect(() => {
+        setCosts(initialCosts)
+    }, [initialCosts])
     const [isAddModalOpen, setIsAddModalOpen] = useState(false)
     const [isEditModalOpen, setIsEditModalOpen] = useState(false)
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
@@ -53,10 +58,11 @@ export function AdminOperationalCosts({ initialCosts, totalMonthly, totalAllTime
         actionName: 'add-operational-cost',
         entity: ENTITIES.OPERATIONAL_COST,
         queryKey: ['admin', 'operational-costs'],
-        mutationFn: async (variables: { obj: any }) => (await addOperationalCost(variables.obj)) as any,
+        additionalQueryKeys: [['admin', 'overview']],
+        mutationFn: async (variables: any) => (await addOperationalCost(variables)) as any,
         onMutate: (variables) => {
             const tempId = crypto.randomUUID()
-            const newCost = { ...variables.obj, id: tempId, created_at: new Date().toISOString() }
+            const newCost = { ...variables, id: tempId, created_at: new Date().toISOString() }
             setCosts(prev => [newCost, ...prev])
             setIsAddModalOpen(false)
             setDescription('')
@@ -77,6 +83,7 @@ export function AdminOperationalCosts({ initialCosts, totalMonthly, totalAllTime
         actionName: 'delete-operational-cost',
         entity: ENTITIES.OPERATIONAL_COST,
         queryKey: ['admin', 'operational-costs'],
+        additionalQueryKeys: [['admin', 'overview']],
         mutationFn: async (variables: { id: string }) => (await deleteOperationalCost(variables.id)) as any,
         onMutate: (variables) => {
             const previousCosts = [...costs]
@@ -93,10 +100,37 @@ export function AdminOperationalCosts({ initialCosts, totalMonthly, totalAllTime
         }
     })
 
+    const { mutate: updateCostMutate } = useOptimisticMutation({
+        actionName: 'update-operational-cost',
+        entity: ENTITIES.OPERATIONAL_COST,
+        queryKey: ['admin', 'operational-costs'],
+        additionalQueryKeys: [['admin', 'overview']],
+        mutationFn: async (variables: any) => (await updateOperationalCost(variables.id, variables)) as any,
+        onMutate: (variables) => {
+            const previousCosts = [...costs]
+            setCosts(prev => prev.map(c => c.id === variables.id ? { ...c, ...variables } : c))
+            setIsEditModalOpen(false)
+            return { previousCosts }
+        },
+        onSuccess: () => {
+            toast({ title: 'Sucesso', description: 'Custo atualizado localmente.' })
+        },
+        onError: (err, variables, ctx) => {
+            setCosts(ctx?.previousCosts || [])
+            toast({ title: 'Erro', description: 'Erro ao atualizar custo.', variant: 'destructive' })
+        }
+    })
+
     function handleAddCost() {
         if (!description || !amount) return toast({ title: 'Erro', description: 'Preencha todos os campos', variant: 'destructive' })
         const numericAmount = parseFloat(amount.replace(',', '.'))
-        addCostMutate({ obj: { description, amount: numericAmount, type } })
+        addCostMutate({ description, amount: numericAmount, type })
+    }
+
+    function handleEditCost() {
+        if (!selectedCost || !description || !amount) return toast({ title: 'Erro', description: 'Preencha todos os campos', variant: 'destructive' })
+        const numericAmount = parseFloat(amount.replace(',', '.'))
+        updateCostMutate({ id: selectedCost.id, description, amount: numericAmount, type })
     }
 
     function openDeleteModal(cost: OperationalCost) {
@@ -121,7 +155,7 @@ export function AdminOperationalCosts({ initialCosts, totalMonthly, totalAllTime
                 rightElement={
                     <Stack direction="row" gap={5} align="center">
                         <Badge 
-                            label={`R$ ${totalMonthly.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} / mês`}
+                            label={`R$ ${(costs.reduce((sum, c) => sum + Number(c.amount), 0)).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} / mês`}
                             color="emerald"
                             variant="solid"
                             rounded="full"
@@ -267,10 +301,7 @@ export function AdminOperationalCosts({ initialCosts, totalMonthly, totalAllTime
                 subtitle={`Modificando: ${selectedCost?.description}`}
                 icon={Edit3}
                 confirmLabel="Salvar Alterações"
-                onConfirm={() => {
-                    toast({ title: 'Info', description: 'Funcionalidade de edição em desenvolvimento.' })
-                    setIsEditModalOpen(false)
-                }}
+                onConfirm={handleEditCost}
                 variant="blue"
             >
                 <Stack gap={5}>

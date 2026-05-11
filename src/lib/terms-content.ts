@@ -32,3 +32,22 @@ Ao utilizar o RepTrail para acompanhar seu treinamento, você concorda com o seg
 
 4. **Direito de Imagem**: O uso da plataforma implica na aceitação de que seu treinador possa gerenciar seus dados de evolução para fins de acompanhamento profissional.
 `.trim()
+
+export const AFFILIATE_TERMS = `
+### Termos de Uso - Parceiro Afiliado (RepTrail)
+
+Bem-vindo ao Programa de Parceiros RepTrail. Ao se cadastrar como afiliado, você concorda com as seguintes condições:
+
+1. **Comissões Recorrentes**: Você receberá uma comissão de **10% sobre cada mensalidade paga** por usuários (Personal Trainers) que se cadastrarem através do seu link de indicação exclusivo.
+
+2. **Processamento de Pagamentos**:
+   - As comissões são contabilizadas assim que o pagamento do indicado é confirmado.
+   - O resgate dos valores acumulados segue o cronograma de liberação da plataforma (padrão de 30 dias para a primeira transação).
+   - É necessário possuir uma conta válida para recebimento via Asaas.
+
+3. **Regras de Divulgação**:
+   - É estritamente proibido o uso de SPAM, publicidade enganosa ou práticas que prejudiquem a imagem da marca RepTrail.
+   - Você é livre para criar conteúdos educativos e promocionais, desde que respeite a identidade visual e os valores da plataforma.
+
+4. **Vigência**: A parceria pode ser encerrada por qualquer uma das partes a qualquer momento. Em caso de fraude comprovada, o saldo acumulado poderá ser retido.
+`.trim()

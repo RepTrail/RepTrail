@@ -1,0 +1,44 @@
+'use client'
+
+import React, { useState } from 'react'
+import { Button } from '@/components/store/base/button'
+import { Icon } from '@/components/store/base/icon'
+import { Font } from '@/components/store/base/font'
+import { Inline } from '@/components/store/base/layout'
+import { Banknote } from 'lucide-react'
+import { RequestPayoutModal } from './request-payout-modal'
+
+/**
+ * RequestPayoutButton: Advanced component to handle payout requests.
+ * Zero-Manual-Styling compliant.
+ */
+export function RequestPayoutButton({ availableBalance }: { availableBalance: number }) {
+    const [isOpen, setIsOpen] = useState(false)
+
+    return (
+        <>
+            <Button
+                variant="primary"
+                onClick={() => setIsOpen(true)}
+                disabled={availableBalance < 50}
+                rounded="system"
+                paddingX={5}
+                height="anatomy-item"
+                fullWidth
+            >
+                <Inline gap={2.5}>
+                    <Icon icon={Banknote} size="xs" />
+                    <Font variant="label-caps">Sacar Comissões</Font>
+                </Inline>
+            </Button>
+
+            {isOpen && (
+                <RequestPayoutModal
+                    isOpen={isOpen}
+                    onClose={() => setIsOpen(false)}
+                    availableBalance={availableBalance}
+                />
+            )}
+        </>
+    )
+}

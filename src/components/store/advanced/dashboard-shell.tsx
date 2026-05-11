@@ -20,7 +20,7 @@ import {
     ShoppingBag, CreditCard, Trophy, User, FileUp, Search,
     UserCheck, Sparkles, TrendingUp, ClipboardList, Syringe,
     DollarSign, BarChart2, BarChart3, HeartHandshake, Shield,
-    Menu, X, LucideIcon
+    Menu, X, ArrowRightLeft, LucideIcon
 } from 'lucide-react'
 
 // ─── Icon Map (Server-safe string → LucideIcon) ───────────────────────────────
@@ -30,6 +30,7 @@ const iconMap: Record<string, LucideIcon> = {
     ShoppingBag, CreditCard, Trophy, User, FileUp, Search,
     UserCheck, Sparkles, TrendingUp, ClipboardList, Syringe,
     DollarSign, BarChart2, BarChart3, HeartHandshake, Shield,
+    ArrowRightLeft,
 }
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -49,6 +50,7 @@ export interface DashboardUser {
     name?: string | null
     email?: string | null
     avatar_url?: string | null
+    isAdmin?: boolean
 }
 
 interface DashboardShellProps {
@@ -59,6 +61,7 @@ interface DashboardShellProps {
     mobileLinks?: DashboardNavLink[]
     user?: DashboardUser
     profileHref?: string
+    profileIcon?: any
 }
 
 // ─── Color Maps ───────────────────────────────────────────────────────────────
@@ -83,11 +86,13 @@ const orbColorMap: Record<RegistryColor, string> = {
 
 // ─── Main Shell ───────────────────────────────────────────────────────────────
 
-export function DashboardShell({ children, color, links, mobileLinks, user, profileHref }: DashboardShellProps) {
+export function DashboardShell({ children, color, links, mobileLinks, user, profileHref, profileIcon }: DashboardShellProps) {
     const [isSidebarOpen, setIsSidebarOpen] = React.useState(false)
 
     const visibleLinks = links.filter(l => !l.hidden)
     const bottomLinks = mobileLinks?.filter(l => !l.hidden) ?? visibleLinks.slice(0, 5)
+
+    const ResolvedProfileIcon = typeof profileIcon === 'string' ? iconMap[profileIcon] : profileIcon
 
     return (
         <Box
@@ -138,6 +143,7 @@ export function DashboardShell({ children, color, links, mobileLinks, user, prof
                 isSidebarOpen={isSidebarOpen}
                 setIsSidebarOpen={setIsSidebarOpen}
                 profileHref={profileHref}
+                profileIcon={ResolvedProfileIcon}
             />
 
             {/* Mobile Top Header */}
@@ -158,17 +164,10 @@ export function DashboardShell({ children, color, links, mobileLinks, user, prof
                 transition
                 position="relative"
                 zIndex={10}
-                className="lg:pl-72" // Maintaining w-72 parity until Box supports arbitrary precise spacing
+                paddingLeft={{ base: 0, lg: 'sidebar-wide' }}
             >
-                <Box
-                    padding={5}
-                    paddingTop={{ base: 25, lg: 5 }}
-                    paddingBottom={{ base: 25, lg: 12.5 }}
-                    gap={12.5}
-                >
-                    <ImpersonationBar color={color} />
-                    {children}
-                </Box>
+                <ImpersonationBar color={color} />
+                {children}
             </Box>
         </Box>
     )
@@ -177,7 +176,7 @@ export function DashboardShell({ children, color, links, mobileLinks, user, prof
 // ─── Desktop Sidebar ──────────────────────────────────────────────────────────
 
 function DashboardSidebar({
-    color, links, user, isSidebarOpen, setIsSidebarOpen, profileHref
+    color, links, user, isSidebarOpen, setIsSidebarOpen, profileHref, profileIcon
 }: {
     color: RegistryColor
     links: DashboardNavLink[]
@@ -185,6 +184,7 @@ function DashboardSidebar({
     isSidebarOpen: boolean
     setIsSidebarOpen: (v: boolean) => void
     profileHref?: string
+    profileIcon?: any
 }) {
     const pathname = usePathname()
 
@@ -219,7 +219,7 @@ function DashboardSidebar({
                     lg: 'none'
                 }}
                 transition
-                className="right-0 lg:left-0 lg:right-auto" // Orchestration classes
+                pin={{ base: 'right', lg: 'left' }}
             >
                 {/* Sidebar Container */}
                 <Box
@@ -230,19 +230,7 @@ function DashboardSidebar({
                     bgOpacity={50}
                     backdropBlur="md"
                 >
-                    <Box padding={5} position="relative" flex1 display="flex" direction="col" overflow="hidden" gap={12.5}>
-
-                        {/* Mobile Close Button */}
-                        <Box display={{ base: 'block', lg: 'none' }} position="absolute" left={20} top={20}>
-                            <Button
-                                variant="zinc"
-                                size="sm"
-                                isIconOnly
-                                onClick={() => setIsSidebarOpen(false)}
-                            >
-                                <X size={20} />
-                            </Button>
-                        </Box>
+                    <Box fullWidth padding={5} flex1 display="flex" direction="col" overflow="hidden" gap={12.5}>
 
                         {/* Logo */}
                         <Box shrink={0}>
@@ -281,6 +269,7 @@ function DashboardSidebar({
                         <SidebarProfile
                             user={user}
                             settingsHref={profileHref}
+                            settingsIcon={profileIcon}
                         />
                     </Box>
                 </Box>

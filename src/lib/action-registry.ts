@@ -134,7 +134,7 @@ export const ACTION_REGISTRY: Record<string, ActionFn> = {
   'assign-ergogenic': async (p) => { const { assignErgogenic } = await import('@/actions/student-content-actions'); return wrap(assignErgogenic(p.ergogenic_id || p.ergogenicId, p.student_id || p.studentId, p.daysOfWeek)); },
   'mark-payment-received': async (p) => { const { markPaymentAsReceived } = await import('@/actions/student-actions'); return wrap(markPaymentAsReceived(p.studentId, p.trainerId)); },
 
-  // ─── Extras ───────────────────────────────────────────────────────────────────
+  // ─── Extras ───────────────────────────────────────────────────────────
   'accept-terms': async (p) => { const { acceptTerms } = await import('@/actions/terms-actions'); return wrap(acceptTerms(p.allowImageDisclosure)); },
   'enable-auto-training-trial': async () => { const { enableAutoTrainingTrialForCurrentUser } = await import('@/actions/auto-training-actions'); return wrap(enableAutoTrainingTrialForCurrentUser()); },
   'dismiss-auto-training': async (p) => { const { dismissAutoTrainingForSession } = await import('@/actions/auto-training-actions'); return wrap(dismissAutoTrainingForSession(p.userId)); },
@@ -146,6 +146,7 @@ export const ACTION_REGISTRY: Record<string, ActionFn> = {
   'update-payout-status': async (p) => { const { updatePayoutStatus } = await import('@/actions/admin-affiliate-actions'); return wrap(updatePayoutStatus(p.payoutId, p.status)); },
   'reassign-referral': async (p) => { const { reassignReferral } = await import('@/actions/admin-affiliate-actions'); return wrap(reassignReferral(p.studentEmail, p.newAffiliateToken)); },
   'add-operational-cost': async (p) => { const { addOperationalCost } = await import('@/actions/admin-actions'); return wrap(addOperationalCost(p)); },
+  'update-operational-cost': async (p) => { const { updateOperationalCost } = await import('@/actions/admin-actions'); return wrap(updateOperationalCost(p.id, p)); },
   'delete-operational-cost': async (p) => { const { deleteOperationalCost } = await import('@/actions/admin-actions'); return wrap(deleteOperationalCost(p.id)); },
 
   // ─── Tracking & Logs (Player) ─────────────────────────────────────────────────

@@ -1,6 +1,7 @@
 import { getTrainerStudents } from '@/actions/trainer-actions'
 import { ImportPdfClient } from '@/components/feature/pdf/import-pdf-client'
 import { createClient } from '@/lib/supabase/server'
+import { RegistryMain } from '@/components/store/advanced/registry-main'
 
 export default async function ImportPdfPage() {
     const supabase = await createClient()
@@ -9,5 +10,15 @@ export default async function ImportPdfPage() {
 
     const students = await getTrainerStudents()
 
-    return <ImportPdfClient students={students} userId={user.id} />
+    return (
+        <RegistryMain
+            title="IMPORTAÇÃO"
+            subtitle="Transforme arquivos PDF em treinos e dietas para seus alunos usando IA."
+            icon="FileUp"
+            contextLabel="Inteligência Artificial"
+            showTabs={false}
+        >
+            <ImportPdfClient students={students} userId={user.id} />
+        </RegistryMain>
+    )
 }

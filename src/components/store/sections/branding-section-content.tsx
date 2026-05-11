@@ -57,7 +57,6 @@ export function BrandingSectionContent({ id }: { id?: string }) {
                                             label={brand.label}
                                             color={brand.color as any}
                                             variant="glass"
-                                            rounded="full"
                                         />
                                     </Stack>
                                 </Surface>

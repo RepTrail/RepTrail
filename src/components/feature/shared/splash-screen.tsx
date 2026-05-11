@@ -2,22 +2,35 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Logo } from '@/components/ui/logo'
+import { Logo } from '@/components/store/base/logo'
+import { Box } from '@/components/store/base/box'
+import { Stack } from '@/components/store/base/stack'
+import { Font } from '@/components/store/base/font'
 
 interface SplashScreenProps {
     onFinish?: () => void
     redirectHref?: string
+    color?: 'emerald' | 'amber' | 'red' | 'orange' | 'blue'
 }
 
-export function SplashScreen({ onFinish, redirectHref }: SplashScreenProps) {
+export function SplashScreen({ onFinish, redirectHref, color = 'emerald' }: SplashScreenProps) {
     const [isVisible, setIsVisible] = useState(true)
     const [isFinishing, setIsFinishing] = useState(false)
     const router = useRouter()
 
+    const colorMap = {
+        emerald: '#10b981',
+        amber: '#f59e0b',
+        red: '#ef4444',
+        orange: '#f97316',
+        blue: '#3b82f6'
+    }
+
+    const strokeColor = colorMap[color] || colorMap.emerald
+
     useEffect(() => {
-        // Snappier minimalist timings
-        const drawDuration = 1500; // 1.5s to draw
-        const holdDuration = 500;   // 0.5s pause
+        const drawDuration = 1500; 
+        const holdDuration = 500;   
 
         const finishTimer = setTimeout(() => {
             setIsFinishing(true);
@@ -27,7 +40,7 @@ export function SplashScreen({ onFinish, redirectHref }: SplashScreenProps) {
                 setTimeout(() => {
                     if (onFinish) onFinish();
                     if (redirectHref) router.push(redirectHref);
-                }, 400); // Fade out duration
+                }, 400); 
             }, holdDuration);
         }, drawDuration);
 
@@ -37,8 +50,16 @@ export function SplashScreen({ onFinish, redirectHref }: SplashScreenProps) {
     if (!isVisible) return null
 
     return (
-        <div
-            className={`fixed inset-0 z-[9999] flex items-center justify-center bg-black transition-opacity duration-700 ${isVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+        <Box
+            position="fixed"
+            inset={0}
+            zIndex={100}
+            display="flex"
+            align="center"
+            justify="center"
+            bg="zinc"
+            bgOpacity={100}
+            className={`transition-opacity duration-700 ${isVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
             suppressHydrationWarning
         >
             <style>{`
@@ -74,8 +95,13 @@ export function SplashScreen({ onFinish, redirectHref }: SplashScreenProps) {
                 }
             `}</style>
 
-            <div className={`flex flex-col items-center justify-center transition-all duration-500 ${isFinishing ? 'rt-finish-fade' : ''}`}>
-                <div className="relative mb-8">
+            <Stack 
+                align="center" 
+                justify="center" 
+                gap={7.5}
+                className={`transition-all duration-500 ${isFinishing ? 'rt-finish-fade' : ''}`}
+            >
+                <Box position="relative">
                     <div className="rt-loading-container">
                         <svg
                             viewBox="0 0 24 24"
@@ -85,7 +111,7 @@ export function SplashScreen({ onFinish, redirectHref }: SplashScreenProps) {
                         >
                             <path
                                 d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"
-                                stroke="#10b981"
+                                stroke={strokeColor}
                                 strokeWidth="1"
                                 pathLength="100"
                                 className="rt-minimal-bolt"
@@ -93,21 +119,8 @@ export function SplashScreen({ onFinish, redirectHref }: SplashScreenProps) {
                             />
                         </svg>
                     </div>
-                </div>
-
-                <Logo size="md" color="emerald" className="animate-pulse" />
-
-                <div className="mt-8 flex flex-col items-center gap-2">
-                    <p className="text-zinc-500 text-[10px] font-black uppercase tracking-[0.3em] animate-pulse">
-                        Carregando RepTrail
-                    </p>
-                    <div className="flex gap-1">
-                        <div className="w-1 h-1 bg-emerald-500 rounded-full animate-bounce [animation-delay:-0.3s]" />
-                        <div className="w-1 h-1 bg-emerald-500 rounded-full animate-bounce [animation-delay:-0.15s]" />
-                        <div className="w-1 h-1 bg-emerald-500 rounded-full animate-bounce" />
-                    </div>
-                </div>
-            </div>
-        </div>
+                </Box>
+            </Stack>
+        </Box>
     )
 }

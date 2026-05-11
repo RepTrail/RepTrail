@@ -4,6 +4,7 @@ import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { getQueryClient } from '@/lib/get-query-client'
 import { CardioPageClient } from '@/components/feature/student/cardio-page-client'
 import { PREFETCH_REGISTRY } from '@/lib/prefetch-registry'
+import { RegistryMain } from '@/components/store/advanced/registry-main'
 
 export default async function StudentCardioPage() {
     const headerList = await headers()
@@ -24,12 +25,20 @@ export default async function StudentCardioPage() {
     ))
 
     return (
-        <Suspense fallback={<div className="animate-pulse space-y-10"><div className="h-[400px] bg-zinc-900 rounded-[2.5rem]" /></div>}>
-            <div className=" mx-auto" suppressHydrationWarning>
-                <HydrationBoundary state={dehydrate(queryClient)}>
-                    <CardioPageClient userId={userId} />
-                </HydrationBoundary>
-            </div>
-        </Suspense>
+        <RegistryMain
+            title="MEUS CARDIOS"
+            subtitle="Acompanhe e registre suas sessões de treinamento aeróbico."
+            icon="Flame"
+            contextLabel="Condicionamento & Saúde"
+            showTabs={false}
+        >
+            <Suspense fallback={<div className="animate-pulse space-y-10"><div className="h-[400px] bg-zinc-900 rounded-[2.5rem]" /></div>}>
+                <div suppressHydrationWarning>
+                    <HydrationBoundary state={dehydrate(queryClient)}>
+                        <CardioPageClient userId={userId} />
+                    </HydrationBoundary>
+                </div>
+            </Suspense>
+        </RegistryMain>
     )
 }

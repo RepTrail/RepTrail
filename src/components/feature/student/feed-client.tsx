@@ -3,11 +3,12 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { getPublicFeed } from '@/actions/student-actions'
-import { ShieldCheck, Lock, ChevronRight, Loader2 } from 'lucide-react'
+import { ShieldCheck, Lock, ChevronRight, Loader2, TrendingUp } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { EmptyState } from '@/components/store/intermediary/empty-state'
 
 export function FeedClient() {
     const queryClient = useQueryClient()
@@ -38,26 +39,19 @@ export function FeedClient() {
         }
     }, [queryClient, supabase])
 
-    if (isLoading) {
-        return (
-            <div className="flex flex-col items-center justify-center py-24 text-zinc-500 gap-4">
-                <Loader2 className="w-10 h-10 animate-spin text-emerald-500" />
-                <p className="text-[10px] font-black uppercase tracking-widest italic">Carregando feed...</p>
-            </div>
-        )
-    }
-
     const publicPhotos = (result?.success ? result.data : []) ?? []
+
+    if (isLoading) {
+        return <EmptyState icon={TrendingUp} title="Carregando..." description="Buscando feed de alunos." />
+    }
 
     if (publicPhotos.length === 0) {
         return (
-            <div className="flex flex-col items-center justify-center p-12 text-center bg-zinc-900/50 border border-zinc-800 rounded-3xl animate-in fade-in duration-700">
-                <Lock className="w-12 h-12 text-zinc-600 mb-4" />
-                <h3 className="text-xl font-bold text-white mb-2">Feed Vazio</h3>
-                <p className="text-zinc-500 max-w-sm">
-                    Nenhum aluno compartilhou sua evolução publicamente ainda. Que tal ser o primeiro atualizando suas configurações de privacidade?
-                </p>
-            </div>
+            <EmptyState 
+                icon={Lock} 
+                title="Feed Vazio" 
+                description="Nenhum aluno compartilhou sua evolução publicamente ainda. Que tal ser o primeiro?" 
+            />
         )
     }
 

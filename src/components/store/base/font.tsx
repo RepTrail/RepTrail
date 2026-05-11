@@ -3,19 +3,20 @@ import React from 'react'
 import { cn } from '@/lib/utils'
 import { useRegistry } from '../advanced/registry-context'
 
-export type FontVariant = 
-  | 'h1' 
-  | 'h2' 
+export type FontVariant =
+  | 'h1'
+  | 'h2'
   | 'h3'
   | 'h4'
-  | 'heading' 
-  | 'description' 
-  | 'body' 
-  | 'body-sm' 
-  | 'label-caps' 
-  | 'auxiliary' 
+  | 'heading'
+  | 'description'
+  | 'body'
+  | 'body-sm'
+  | 'label-caps'
+  | 'auxiliary'
   | 'sub-tiny'
   | 'tiny'
+  | 'bigFont'
 
 interface FontProps extends React.HTMLAttributes<HTMLSpanElement> {
   children: React.ReactNode
@@ -69,12 +70,11 @@ export function Font({
   breakAll,
   transition,
   cursor,
-  className,
   ...props
 }: FontProps) {
   const { primaryColor } = useRegistry()
   const resolvedColor = color === 'primary' ? primaryColor : color
-  
+
   const variantClasses = {
     h1: 'text-3xl md:text-5xl font-black tracking-tighter uppercase italic',
     h2: 'text-2xl md:text-4xl font-black tracking-tight uppercase italic',
@@ -87,9 +87,10 @@ export function Font({
     'label-caps': 'text-[10px] font-black uppercase tracking-[0.2em] italic',
     auxiliary: 'text-[11px] font-bold uppercase tracking-widest',
     'sub-tiny': 'text-[10px] font-medium leading-none',
-    tiny: 'text-[9px] font-medium leading-none'
+    tiny: 'text-[9px] font-medium leading-none',
+    bigFont: 'text-[400px] font-black tracking-tighter leading-none'
   }
-  
+
   const isRespVariant = typeof variant === 'object'
   const variantBase = isRespVariant ? (variant as any).base : variant
   const variantMd = isRespVariant ? (variant as any).md : undefined
@@ -202,7 +203,7 @@ export function Font({
         cursor === 'pointer' && 'cursor-pointer',
         cursor === 'default' && 'cursor-default',
         cursor === 'not-allowed' && 'cursor-not-allowed',
-        className
+        props.className
       )}
       {...props}
     >

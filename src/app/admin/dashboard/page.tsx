@@ -14,7 +14,9 @@ import {
 } from '@/actions/admin-actions'
 import { getAdminPayouts, updatePayoutStatus } from '@/actions/admin-affiliate-actions'
 import { createClient } from '@/lib/supabase/client'
-import { AdminPageShell } from '@/components/store/advanced/admin-page-shell'
+import { RegistryProvider } from '@/components/store/advanced/registry-context'
+import { DashboardShell } from '@/components/store/advanced/dashboard-shell'
+import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { ActionableListCard } from '@/components/store/intermediary/actionable-list-card'
 import { EmptyState } from '@/components/store/intermediary/empty-state'
@@ -25,6 +27,7 @@ import { useToast } from '@/hooks/use-toast'
 
 import { AdminPayoutsManagement } from '@/components/store/sections/admin-payouts-management'
 import { AdminOperationalCosts } from '@/components/store/sections/admin-operational-costs'
+import { AdminTopProducts } from '@/components/store/sections/admin-top-products'
 
 export default function AdminDashboardPage() {
     const queryClient = useQueryClient()
@@ -102,101 +105,116 @@ export default function AdminDashboardPage() {
     }
 
     return (
-        <AdminPageShell
-            pageTitle="Visão Geral"
-            subtitle="Visão geral financeira e operacional da plataforma RepTrail."
-            icon={BarChart3}
-            user={{
-                id: adminUser?.id || 'admin',
-                name: adminUser?.full_name || 'Admin RepTrail',
-                email: adminUser?.email || 'admin@reptrail.com.br',
-                avatar_url: adminUser?.avatar_url || null,
-            }
-            }
-        >
-            <Stack gap="section">
-                {/* Indicadores de Performance */}
-                <RegistrySection
-                    title="Indicadores de Performance"
-                    subtitle="Visão consolidada de usuários, loja, finanças e parceiros."
-                    icon={Activity}
+        <RegistryProvider defaultColor="red">
+            <DashboardShell
+                color="red"
+                links={[
+                    { href: '/admin/dashboard', label: 'Início', icon: 'BarChart3', exact: true },
+                    { href: '/admin/personais', label: 'Personais', icon: 'UserCheck' },
+                    { href: '/admin/alunos', label: 'Alunos', icon: 'Users' },
+                    { href: '/admin/afiliados', label: 'Afiliados', icon: 'HeartHandshake' },
+                    { href: '/admin/loja', label: 'Loja', icon: 'ShoppingBag' },
+                    { href: '/admin/logs', label: 'Logs', icon: 'Activity' },
+                ]}
+                user={{
+                    id: adminUser?.id || 'admin',
+                    name: adminUser?.full_name || 'Admin RepTrail',
+                    email: adminUser?.email || 'admin@reptrail.com.br',
+                    avatar_url: adminUser?.avatar_url || null,
+                }}
+                profileHref="/dashboard"
+                profileIcon="ArrowRightLeft"
+            >
+                <RegistryMain
+                    title="Visão Geral"
+                    subtitle="Visão geral financeira e operacional da plataforma RepTrail."
+                    icon={BarChart3}
+                    contextLabel="Painel Admin"
+                    showTabs={false}
                 >
-                    <Grid cols={1} mdCols={2} lgCols={4} gap={5}>
-                        <StatsCard
-                            label="Personais"
-                            value={String(stats?.trainers || 0)}
-                            description={`${stats?.trialTrainers || 0} EM TESTE`}
-                            icon={Users2}
-                            color="blue"
-                        />
-                        <StatsCard
-                            label="Alunos"
-                            value={String(stats?.students || 0)}
-                            description={`${stats?.studentsWithTrainer || 0} C/ PERS. | ${stats?.autoTrainingCount || 0} AUTO`}
-                            icon={Users}
-                            color="emerald"
-                        />
-                        <StatsCard
-                            label="Produtos Loja"
-                            value={String(stats?.totalProducts || 0)}
-                            description={`${stats?.productClicks || 0} CLIQUES`}
-                            icon={ShoppingBag}
-                            color="orange"
-                        />
-                        <StatsCard
-                            label="Lucro Líquido"
-                            value={`R$ ${Number(stats?.monthlyPlatformProfit || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
-                            description={`CUSTOS: R$ ${Number(stats?.monthlyOperationalCosts || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
-                            icon={TrendingUp}
-                            color="emerald"
-                        />
-                        <StatsCard
-                            label="Faturamento Personais"
-                            value={`R$ ${Number(stats?.monthlyTrainerVolume || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
-                            description={`MÉDIO: R$ ${Number(stats?.trainerAverageTicket || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
-                            icon={CreditCard}
-                            color="blue"
-                        />
-                        <StatsCard
-                            label="Ticket Médio"
-                            value={`R$ ${Number(stats?.platformTicketPerTrainer || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
-                            description="POR PERSONAL"
+                    <Stack gap="section">
+                        {/* Indicadores de Performance */}
+                        <RegistrySection
+                            title="Indicadores de Performance"
+                            subtitle="Visão consolidada de usuários, loja, finanças e parceiros."
                             icon={Activity}
-                            color="amber"
-                        />
-                        <StatsCard
-                            label="Comissões Pendentes"
-                            value={`R$ ${Number(stats?.pendingCommissions || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
-                            description={`MÊS: R$ ${Number(stats?.commissionsThisMonth || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
-                            icon={AlertCircle}
-                            color="red"
-                        />
-                        <StatsCard
-                            label="Afiliados"
-                            value={String(stats?.affiliatesCount || 0)}
-                            description={`LUCRO: R$ ${Number(stats?.affiliateTotalEarnings || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
-                            icon={HeartHandshake}
-                            color="orange"
-                        />
-                    </Grid>
-                </RegistrySection>
+                        >
+                            <Grid cols={1} mdCols={2} lgCols={4} gap={5}>
+                                <StatsCard
+                                    label="Personais"
+                                    value={String(stats?.trainers || 0)}
+                                    description={`${stats?.trialTrainers || 0} EM TESTE`}
+                                    icon={Users2}
+                                    color="blue"
+                                />
+                                <StatsCard
+                                    label="Alunos"
+                                    value={String(stats?.students || 0)}
+                                    description={`${stats?.studentsWithTrainer || 0} C/ PERS. | ${stats?.autoTrainingCount || 0} AUTO`}
+                                    icon={Users}
+                                    color="emerald"
+                                />
+                                <StatsCard
+                                    label="Produtos Loja"
+                                    value={String(stats?.totalProducts || 0)}
+                                    description={`${stats?.productClicks || 0} CLIQUES`}
+                                    icon={ShoppingBag}
+                                    color="orange"
+                                />
+                                <StatsCard
+                                    label="Lucro Líquido"
+                                    value={`R$ ${Number(stats?.monthlyPlatformProfit || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
+                                    description={`CUSTOS: R$ ${Number(stats?.monthlyOperationalCosts || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
+                                    icon={TrendingUp}
+                                    color="emerald"
+                                />
+                                <StatsCard
+                                    label="Faturamento Personais"
+                                    value={`R$ ${Number(stats?.monthlyTrainerVolume || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
+                                    description={`MÉDIO: R$ ${Number(stats?.trainerAverageTicket || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
+                                    icon={CreditCard}
+                                    color="blue"
+                                />
+                                <StatsCard
+                                    label="Ticket Médio"
+                                    value={`R$ ${Number(stats?.platformTicketPerTrainer || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
+                                    description="POR PERSONAL"
+                                    icon={Activity}
+                                    color="amber"
+                                />
+                                <StatsCard
+                                    label="Comissões Pendentes"
+                                    value={`R$ ${Number(stats?.pendingCommissions || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
+                                    description={`MÊS: R$ ${Number(stats?.commissionsThisMonth || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
+                                    icon={AlertCircle}
+                                    color="red"
+                                />
+                                <StatsCard
+                                    label="Afiliados"
+                                    value={String(stats?.affiliatesCount || 0)}
+                                    description={`LUCRO: R$ ${Number(stats?.affiliateTotalEarnings || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
+                                    icon={HeartHandshake}
+                                    color="orange"
+                                />
+                            </Grid>
+                        </RegistrySection>
 
-                {/* Gestão Financeira: Saques e Custos */}
-                <AdminPayoutsManagement 
-                    initialPayouts={payouts?.data || []} 
-                    onConfirmPayout={(id) => handlePayoutAction(id, 'completed')}
-                    onRejectPayout={(id) => handlePayoutAction(id, 'rejected')}
-                />
+                        {/* Gestão Financeira: Saques e Custos */}
+                        <AdminPayoutsManagement
+                            initialPayouts={payouts?.data || []}
+                        />
 
-                <AdminOperationalCosts 
-                    initialCosts={costs || []}
-                    totalMonthly={stats?.monthlyOperationalCosts || 0}
-                    totalAllTime={stats?.totalOperationalCosts || 0}
-                    onAddCost={handleAddCost}
-                    onDeleteCost={handleDeleteCost}
-                />
+                        <AdminOperationalCosts
+                            initialCosts={costs || []}
+                            totalMonthly={stats?.monthlyOperationalCosts || 0}
+                            totalAllTime={stats?.totalOperationalCosts || 0}
+                        />
 
-            </Stack>
-        </AdminPageShell >
+                        <AdminTopProducts />
+
+                    </Stack>
+                </RegistryMain>
+            </DashboardShell>
+        </RegistryProvider>
     )
 }
