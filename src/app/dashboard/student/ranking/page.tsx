@@ -5,7 +5,7 @@ import { QUERY_KEYS } from '@/lib/query-keys'
 import { getTrainerRanking } from '@/actions/trainer-actions'
 import { Card, CardContent } from "@/components/ui/card"
 import { TrendingUp, Trophy, Activity, Search } from "lucide-react"
-import { PodiumCard, RankingRow } from '@/components/feature/shared/ranking-cards'
+import { PodiumCard, RankingRow } from '@/components/store/features(deprecated)/ranking-cards'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { Stack } from '@/components/store/base/stack'
@@ -71,3 +71,4 @@ export default function StudentRankingPage() {
         </RegistryMain>
     )
 }
+

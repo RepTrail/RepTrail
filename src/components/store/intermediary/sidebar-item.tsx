@@ -1,5 +1,5 @@
 import React from 'react'
-import { BaseSidebarLink } from '../base/sidebar-link'
+import { BaseSidebarLink } from '@/components/store/base/sidebar-link'
 import { LucideIcon } from 'lucide-react'
 
 interface SidebarItemProps {

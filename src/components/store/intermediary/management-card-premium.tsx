@@ -8,6 +8,7 @@ import { Icon } from '@/components/store/base/icon'
 import { Button } from '@/components/store/base/button'
 import { Badge } from '@/components/store/base/badge'
 import { GlassPanel } from '@/components/store/base/surface'
+import Link from 'next/link'
 import {
     Trash2,
     Edit3,
@@ -16,6 +17,8 @@ import {
     Eye,
     LucideIcon
 } from 'lucide-react'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
+import { RegistryActionModal, RegistryActionType } from '@/components/store/advanced/registry-action-modal'
 
 interface ManagementCardPremiumProps {
     title: string
@@ -29,6 +32,7 @@ interface ManagementCardPremiumProps {
     icon: LucideIcon
     mode?: 'auto' | 'personal'
     color?: 'amber' | 'emerald' | 'orange' | 'blue' | 'primary'
+    registryType?: 'training' | 'diet'
 }
 
 /**
@@ -43,59 +47,73 @@ export function ManagementCardPremium({
     date,
     icon,
     mode = 'auto',
-    color = 'primary'
+    color = 'primary',
+    registryType = 'training'
 }: ManagementCardPremiumProps) {
     const isAuto = mode === 'auto'
+    const [modalConfig, setModalConfig] = React.useState<{ isOpen: boolean, type: RegistryActionType }>({
+        isOpen: false,
+        type: registryType === 'training' ? 'assign_training' : 'assign_diet'
+    })
+
+    const openModal = (type: RegistryActionType) => {
+        setModalConfig({ isOpen: true, type })
+    }
+
+    const closeModal = () => {
+        setModalConfig(prev => ({ ...prev, isOpen: false }))
+    }
 
     return (
         <GlassPanel
-            padding={5}
-            rounded="system"
+            padding={STORE_TOKENS.PADDING.ELEMENT}
+            rounded={STORE_TOKENS.RADIUS.SYSTEM}
             variant="glass"
             transition
             group
         >
-            <Stack gap={5}>
+            <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                 {/* Header Actions */}
                 <Stack direction="row" align="center" justify="between">
                     <Box
-                        padding={2.5}
-                        rounded="system"
-                        bg="primary"
-                        bgOpacity={10}
+                        padding={STORE_TOKENS.PADDING.ELEMENT}
+                        rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                        bg={STORE_TOKENS.COLORS.BRAND}
+                        bgOpacity={STORE_TOKENS.OPACITY.SUBTLE}
                         cursor="pointer"
                         transition
                     >
-                        <Icon icon={icon} size="md" color="primary" />
+                        <Icon icon={icon} size="md" color={STORE_TOKENS.COLORS.BRAND} />
                     </Box>
                     {isAuto && (
                         <Box
-                            padding={2.5}
-                            rounded="system"
-                            bg="red"
-                            bgOpacity={10}
+                            padding={STORE_TOKENS.PADDING.ELEMENT}
+                            rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                            bg={STORE_TOKENS.COLORS.ERROR}
+                            bgOpacity={STORE_TOKENS.OPACITY.SUBTLE}
                             cursor="pointer"
                             transition
+                            onClick={() => openModal('confirm_delete')}
                         >
-                            <Icon icon={Trash2} size="md" color="red" />
+                            <Icon icon={Trash2} size="md" color={STORE_TOKENS.COLORS.ERROR} />
                         </Box>
                     )}
                 </Stack>
 
                 {/* Body Content */}
-                <Stack gap={2.5}>
-                    <Stack gap={1}>
-                        <Font variant="h3" color="white" uppercase italic>
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                        <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} variant="h3" color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
                             {title}
                         </Font>
                         {description && (
-                            <Font variant="sub-tiny" color="zinc-600">
+                            <Font {...STORE_TOKENS.TYPOGRAPHY.DESCRIPTION} color={STORE_TOKENS.COLORS.TEXT.DIM}>
                                 {description}
                             </Font>
                         )}
                     </Stack>
 
-                    <Stack direction="row" gap={1} wrap="wrap">
+                    <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} wrap="wrap">
                         {days.map((day) => (
                             <Badge
                                 key={day}
@@ -110,44 +128,69 @@ export function ManagementCardPremium({
 
                 {/* Meta Info */}
                 <Stack direction="row" align="center" justify="between">
-                    <Font variant="sub-tiny" weight="black" color="zinc-500" uppercase tracking="widest">
+                    <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.MUTED}>
                         {mainStat.value} {mainStat.label}
                     </Font>
-                    <Font variant="sub-tiny" weight="black" color="zinc-500" uppercase tracking="widest">
+                    <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.MUTED}>
                         {date}
                     </Font>
                 </Stack>
 
                 {/* Footer Buttons & Actions */}
-                <Stack direction="row" align="center" gap={2.5}>
+                <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                     {isAuto ? (
                         <>
-                            <Button variant={color as any} flex1>
-                                <Stack direction="row" align="center" justify="center" gap={2.5}>
-                                    <Icon icon={Calendar} size="xs" color="black" />
-                                    <Font variant="sub-tiny" weight="black" color="black">AGENDAR</Font>
+                            <Button variant={`outline-${color}`} flex1 onClick={() => openModal(registryType === 'training' ? 'assign_training' : 'assign_diet')}>
+                                <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                    <Icon icon={Calendar} size="xs" />
+                                    <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL}>AGENDAR</Font>
                                 </Stack>
                             </Button>
-                            <Button variant="outline-zinc" flex1>
-                                <Stack direction="row" align="center" justify="center" gap={2.5}>
-                                    <Icon icon={Edit3} size="xs" color="white" />
-                                    <Font variant="sub-tiny" weight="black" color="white">EDITAR</Font>
+                            <Button 
+                                variant="outline-zinc" 
+                                flex1 
+                                onClick={() => {
+                                    if (registryType !== 'training' && registryType !== 'diet') {
+                                        openModal(registryType === 'training' ? 'assign_training' : 'assign_diet')
+                                    } else {
+                                        // Redirecionamento futuro para builder
+                                        console.log(`Redirecionar para builder de ${registryType}`)
+                                    }
+                                }}
+                            >
+                                <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                    <Icon icon={Edit3} size="xs" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} />
+                                    <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>EDITAR</Font>
                                 </Stack>
                             </Button>
-                            <Button variant="outline-zinc" isIconOnly size="sm">
-                                <Icon icon={Copy} size="xs" color="zinc-400" />
+                            <Button 
+                                variant="outline-zinc" 
+                                isIconOnly 
+                                size="sm" 
+                                rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                                onClick={() => openModal('confirm_duplicate')}
+                            >
+                                <Icon icon={Copy} size="xs" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} />
                             </Button>
                         </>
                     ) : (
-                        <Button variant={color as any} flex1>
-                            <Stack direction="row" align="center" justify="center" gap={2.5}>
-                                <Icon icon={Eye} size="xs" color="black" />
-                                <Font variant="sub-tiny" weight="black" color="black">VISUALIZAR</Font>
+                        <Button variant={`outline-${color}`} flex1>
+                            <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                <Icon icon={Eye} size="xs" />
+                                <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL}>VISUALIZAR</Font>
                             </Stack>
                         </Button>
                     )}
                 </Stack>
             </Stack>
+
+            <RegistryActionModal 
+                isOpen={modalConfig.isOpen}
+                onClose={closeModal}
+                type={modalConfig.type}
+                onConfirm={closeModal}
+                initialData={{ name: title, selectedDays: [1, 2, 3] }}
+            />
         </GlassPanel>
     )
 }

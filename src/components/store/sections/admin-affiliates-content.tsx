@@ -12,8 +12,9 @@ import { AffiliateListItem } from '@/components/store/intermediary/affiliate-lis
 import { EmptyState } from '@/components/store/intermediary/empty-state'
 import { HeartHandshake, Search, XCircle, Banknote } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
-import { AdminPayoutsManagement } from './admin-payouts-management'
+import { AdminPayoutsManagement } from '@/components/store/advanced/admin-payouts-management'
 import { useToast } from '@/hooks/use-toast'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 export function AdminAffiliatesContent() {
     const { toast } = useToast()
@@ -61,11 +62,11 @@ export function AdminAffiliatesContent() {
                 subtitle="Visualize e gerencie todos os afiliados ativos no sistema."
                 icon={HeartHandshake}
             >
-                <Stack gap={5}>
+                <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                     <Input
                         placeholder="Buscar por nome ou email..."
                         value={search}
-                        onChange={(e) => setSearch(e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
                         icon={<Search size={18} />}
                     />
 
@@ -77,7 +78,7 @@ export function AdminAffiliatesContent() {
                         />
                     )}
 
-                    {!loadingAffiliates && affiliates.map((affiliate: any) => (
+                    {!loadingAffiliates && affiliates.map((affiliate: any, index: number) => (
                         <AffiliateListItem
                             key={affiliate.id}
                             affiliateId={affiliate.id}
@@ -117,7 +118,7 @@ export function AdminAffiliatesContent() {
                 onConfirm={confirmRemoveAffiliate}
                 confirmLabel="Remover"
             >
-                <Font variant="body" color="zinc-400">
+                <Font variant="body" color={STORE_TOKENS.COLORS.TEXT.SECONDARY}>
                     Esta ação removerá imediatamente o acesso do usuário ao painel de afiliado e interromperá o rastreamento de novas comissões.
                 </Font>
             </Modal>

@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation'
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { getQueryClient } from '@/lib/get-query-client'
 import { QUERY_KEYS } from '@/lib/query-keys'
-import { StudentCardioDetailClient } from "@/components/feature/student/cardio-detail-client"
+import { StudentCardioDetailClient } from "@/components/store/features(deprecated)/student-cardio-detail-client"
 
 interface Props {
     params: Promise<{ id: string }>

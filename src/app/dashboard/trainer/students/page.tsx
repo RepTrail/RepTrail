@@ -2,7 +2,7 @@ import { PREFETCH_REGISTRY } from '@/lib/prefetch-registry'
 import { createClient } from '@/lib/supabase/server'
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { getQueryClient } from '@/lib/get-query-client'
-import { TrainerStudentsClient } from '@/components/feature/trainer/trainer-students-client'
+import { TrainerStudentsClient } from '@/components/store/features(deprecated)/trainer-students-client'
 
 export default async function StudentsPage() {
     const supabase = await createClient()
@@ -21,3 +21,4 @@ export default async function StudentsPage() {
         </HydrationBoundary>
     )
 }
+

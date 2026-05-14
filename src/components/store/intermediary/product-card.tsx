@@ -1,14 +1,16 @@
 'use client'
 
 import React from 'react'
-import { Stack } from '../base/stack'
-import { Font } from '../base/font'
-import { GlassPanel } from '../base/surface'
-import { Box } from '../base/box'
-import { Button } from '../base/button'
-import { Inline } from '../base/layout'
-import { Badge } from '../base/badge'
+import { Stack } from '@/components/store/base/stack'
+import { Font } from '@/components/store/base/font'
+import { GlassPanel } from '@/components/store/base/surface'
+import { Box } from '@/components/store/base/box'
+import { Button } from '@/components/store/base/button'
+import { Inline } from '@/components/store/base/layout'
+import { Badge } from '@/components/store/base/badge'
+import { Img } from '@/components/store/base/img'
 import { ShoppingBag, Edit3, Trash2, Power } from 'lucide-react'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 
 interface ProductCardProps {
@@ -23,115 +25,107 @@ interface ProductCardProps {
     onDelete?: () => void
 }
 
-export function ProductCard({ 
-    name, 
-    price, 
-    category, 
+export function ProductCard({
+    name,
+    price,
+    category,
     description,
     image,
     isActive = true,
     onToggleActive,
     onEdit,
-    onDelete 
+    onDelete
 }: ProductCardProps) {
     let cleanedName = name.replace(/&amp;/gi, '&').replace(/&amp;/gi, '&')
     cleanedName = cleanedName.replace(/\s*-\s*R\$\s*\d+([.,]\d+)?\s*$/i, '')
 
     return (
-        <GlassPanel 
-            padding={0} 
+        <GlassPanel
+            padding={0}
+            rounded={STORE_TOKENS.RADIUS.SYSTEM}
             overflow="hidden"
             group
             transition
             fullHeight
             display="flex"
             direction="col"
-            style={{ border: '1px solid rgba(255,255,255,0.05)' }} // Base border, hover handled by Interactive/ActionSurface normally, but GlassPanel handles its own. We just rely on base variants.
         >
             {/* Product Image - Aspect Ratio 1:1 */}
-            <Box position="relative" fullWidth bg="black" overflow="hidden" style={{ aspectRatio: '1 / 1' }}>
-                {image ? (
-                    <Box 
-                        as="img"
-                        src={image} 
-                        alt={cleanedName} 
-                        fullWidth
-                        fullHeight
-                        style={{ objectFit: 'cover' }}
-                        className="group-hover:scale-110 transition-transform duration-500" 
-                    />
-                ) : (
-                    <Stack fullHeight align="center" justify="center" opacity={10}>
-                        <ShoppingBag size={48} className="text-zinc-500" />
-                    </Stack>
-                )}
-                
+            <Box position="relative" fullWidth bg={STORE_TOKENS.COLORS.BLACK} overflow="hidden" aspectRatio="square">
+                <Img
+                    src={image || ''}
+                    alt={cleanedName}
+                    fallbackIcon={ShoppingBag}
+                    fullWidth
+                    fullHeight
+                    objectFit="cover"
+                    hoverScale={110}
+                    transition
+                />
+
                 {/* Category Badge - Standard Component */}
-                <Box position="absolute" style={{ top: 16, left: 16, zIndex: 10 }}>
-                    <Badge 
-                        label={category} 
-                        variant="glass" 
-                        color="orange" 
-                        size="sm" 
-                        rounded="full" 
+                <Box position="absolute">
+                    <Badge
+                        label={category}
+                        variant="outline"
+                        color="orange"
+                        size="sm"
                     />
                 </Box>
 
                 {/* Quick Actions (Hover Overlay) */}
                 <Box
-                    position="absolute" 
+                    position="absolute"
                     pin="inset"
                     display="none"
                     groupHoverDisplay="flex"
-                    align="center" 
-                    justify="center" 
-                    gap={2.5}
-                    bg="black"
-                    bgOpacity={60}
+                    align="center"
+                    justify="center"
+                    gap={STORE_TOKENS.SPACING.ELEMENT}
+                    bg={STORE_TOKENS.COLORS.BLACK}
+                    bgOpacity={STORE_TOKENS.OPACITY.MEDIUM}
                     backdropBlur="sm"
                     transition
-                    zIndex={20}
+                    zIndex={STORE_TOKENS.Z_INDEX.OVERLAY}
                 >
-                    <Button variant="outline-blue" size="sm" rounded="full" isIconOnly onClick={onEdit}>
+                    <Button variant="outline-blue" size="sm" rounded={STORE_TOKENS.RADIUS.FULL} isIconOnly onClick={onEdit}>
                         <Edit3 size={14} />
                     </Button>
-                    <Button variant="outline-red" size="sm" rounded="full" isIconOnly onClick={onDelete}>
+                    <Button variant="outline-red" size="sm" rounded={STORE_TOKENS.RADIUS.FULL} isIconOnly onClick={onDelete}>
                         <Trash2 size={14} />
                     </Button>
                 </Box>
             </Box>
 
             {/* Product Info - Refined Typography */}
-            <Stack padding={5} gap={2.5} flex1 justify="between">
-                <Stack gap={1}>
-                    <Font weight="black" uppercase italic color="white" tracking="wide" variant="body-sm">
+            <Stack padding={STORE_TOKENS.PADDING.CONTAINER} gap={STORE_TOKENS.SPACING.ELEMENT} flex1 justify="between">
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                    <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} variant="body-sm" color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
                         {cleanedName}
                     </Font>
                     {description && (
-                        <Box style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                            <Font variant="sub-tiny" color="zinc-500">
-                                {description}
-                            </Font>
-                        </Box>
+                        <Font {...STORE_TOKENS.TYPOGRAPHY.DESCRIPTION} color={STORE_TOKENS.COLORS.TEXT.MUTED} lineClamp={2}>
+                            {description}
+                        </Font>
                     )}
-                    <Box paddingY={1}>
-                        <Font weight="black" color="emerald" variant="heading">
+                    <Box padding={2.5}>
+                        <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} color={STORE_TOKENS.COLORS.SUCCESS} variant="heading">
                             {price}
                         </Font>
                     </Box>
                 </Stack>
 
                 {/* Action Button - Toggle State */}
-                <Box paddingY={2.5}>
-                    <Button 
-                        variant={isActive ? 'outline-emerald' : 'outline-red'} 
-                        size="sm" 
-                        fullWidth 
+                <Box padding={STORE_TOKENS.PADDING.ELEMENT}>
+                    <Button
+                        variant={isActive ? 'outline-emerald' : 'outline-red'}
+                        size="sm"
+                        fullWidth
                         onClick={onToggleActive}
                     >
-                        <Inline gap={2.5} align="center">
+                        <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                             <Power size={12} />
-                            <Font variant="label-caps">
+                            <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL}>
                                 {isActive ? 'Ativado' : 'Desativado'}
                             </Font>
                         </Inline>

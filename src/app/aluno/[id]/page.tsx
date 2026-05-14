@@ -7,9 +7,9 @@ import { Suspense } from 'react'
 import { Skeleton } from '@/components/ui/skeleton'
 
 // Streaming Components
-import { MetricsAndEvolution } from './_components/metrics-evolution'
-import { WorkoutHistorySection } from './_components/history-section'
-import { PhotosAndTransformation } from './_components/photos-transformation'
+import { MetricsAndEvolution } from '@/components/store/features(deprecated)/student-public-metrics'
+import { WorkoutHistorySection } from '@/components/store/features(deprecated)/student-public-history'
+import { PhotosAndTransformation } from '@/components/store/features(deprecated)/student-public-photos'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { TrendingUp, History, Image as ImageIcon } from 'lucide-react'
 

@@ -15,6 +15,8 @@ import {
     Calendar,
     Syringe
 } from 'lucide-react'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
+import { RegistryActionModal, RegistryActionType } from '@/components/store/advanced/registry-action-modal'
 
 interface ErgogenicCardPremiumProps {
     title: string
@@ -39,46 +41,60 @@ export function ErgogenicCardPremium({
     color = 'primary'
 }: ErgogenicCardPremiumProps) {
     const isAuto = mode === 'auto'
+    const [modalConfig, setModalConfig] = React.useState<{ isOpen: boolean, type: RegistryActionType }>({
+        isOpen: false,
+        type: 'assign_ergogenic'
+    })
+
+    const openModal = (type: RegistryActionType) => {
+        setModalConfig({ isOpen: true, type })
+    }
+
+    const closeModal = () => {
+        setModalConfig(prev => ({ ...prev, isOpen: false }))
+    }
 
     return (
         <GlassPanel
-            padding={5}
-            rounded="system"
+            padding={STORE_TOKENS.PADDING.ELEMENT}
+            rounded={STORE_TOKENS.RADIUS.SYSTEM}
             variant="glass"
             transition
             group
         >
-            <Stack gap={5}>
+            <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                 {/* Header Actions */}
                 <Stack direction="row" align="center" justify="between">
                     <Box
-                        padding={2.5}
-                        rounded="system"
-                        bg="primary"
-                        bgOpacity={10}
+                        padding={STORE_TOKENS.PADDING.ELEMENT}
+                        rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                        bg={STORE_TOKENS.COLORS.BRAND}
+                        bgOpacity={STORE_TOKENS.OPACITY.SUBTLE}
                         cursor="pointer"
                     >
-                        <Icon icon={Syringe} size="md" color="primary" />
+                        <Icon icon={Syringe} size="md" color={STORE_TOKENS.COLORS.BRAND} />
                     </Box>
                     {isAuto && (
-                        <Stack direction="row" gap={2.5}>
-                            <Box cursor="pointer" bg='blue' bgOpacity={10} padding={2.5} rounded='system'>
-                                <Icon icon={Copy} size="md" color="blue" />
-                            </Box>
-                            <Box cursor="pointer" bg='red' bgOpacity={10} padding={2.5} rounded='system'>
-                                <Icon icon={Trash2} size="md" color="red" />
-                            </Box>
-                        </Stack>
+                        <Box 
+                            cursor="pointer" 
+                            bg='red' 
+                            bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} 
+                            padding={STORE_TOKENS.PADDING.ELEMENT} 
+                            rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                            onClick={() => openModal('confirm_delete')}
+                        >
+                            <Icon icon={Trash2} size="md" color={STORE_TOKENS.COLORS.ERROR} />
+                        </Box>
                     )}
                 </Stack>
 
                 {/* Body Content */}
-                <Stack gap={2.5}>
-                    <Font variant="h3" color="white" uppercase italic>
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                    <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} variant="h3" color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
                         {title}
                     </Font>
 
-                    <Stack direction="row" gap={1} wrap="wrap">
+                    <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} wrap="wrap">
                         {days.map((day) => (
                             <Badge
                                 key={day}
@@ -92,20 +108,20 @@ export function ErgogenicCardPremium({
                 </Stack>
 
                 {/* Info Rows */}
-                <Stack gap={2.5}>
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                     <Stack direction="row" align="center" justify="between">
-                        <Font variant="sub-tiny" weight="black" color="zinc-600" uppercase tracking="widest">
+                        <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.DIM}>
                             DOSAGEM
                         </Font>
-                        <Font variant="sub-tiny" weight="black" color={color} uppercase tracking="widest">
+                        <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={color}>
                             {dosage}
                         </Font>
                     </Stack>
                     <Stack direction="row" align="center" justify="between">
-                        <Font variant="sub-tiny" weight="black" color="zinc-600" uppercase tracking="widest">
+                        <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.DIM}>
                             FREQUÊNCIA
                         </Font>
-                        <Font variant="sub-tiny" weight="black" color="zinc-400" uppercase tracking="widest">
+                        <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.SECONDARY}>
                             {frequency}
                         </Font>
                     </Stack>
@@ -113,22 +129,39 @@ export function ErgogenicCardPremium({
 
                 {/* Footer Buttons - Hidden in Personal Mode */}
                 {isAuto && (
-                    <Stack direction="row" align="center" gap={2.5}>
-                        <Button variant={color as any} flex1>
-                            <Stack direction="row" align="center" justify="center" gap={2.5}>
-                                <Icon icon={Calendar} size="xs" color="black" />
-                                <Font variant="sub-tiny" weight="black" color="black">AGENDAR</Font>
+                    <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                        <Button variant={color as any} flex1 onClick={() => openModal('assign_ergogenic')}>
+                            <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                <Icon icon={Calendar} size="xs" color={STORE_TOKENS.COLORS.BLACK} />
+                                <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.BLACK}>AGENDAR</Font>
                             </Stack>
                         </Button>
-                        <Button variant="outline-zinc" flex1>
-                            <Stack direction="row" align="center" justify="center" gap={2.5}>
-                                <Icon icon={Edit3} size="xs" color="white" />
-                                <Font variant="sub-tiny" weight="black" color="white">EDITAR</Font>
+                        <Button variant="outline-zinc" flex1 onClick={() => openModal('edit_ergogenic')}>
+                            <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                <Icon icon={Edit3} size="xs" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} />
+                                <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>EDITAR</Font>
                             </Stack>
+                        </Button>
+                        <Button 
+                            variant="outline-zinc" 
+                            isIconOnly 
+                            size="sm" 
+                            rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                            onClick={() => openModal('confirm_duplicate')}
+                        >
+                            <Icon icon={Copy} size="xs" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} />
                         </Button>
                     </Stack>
                 )}
             </Stack>
+
+            <RegistryActionModal 
+                isOpen={modalConfig.isOpen}
+                onClose={closeModal}
+                type={modalConfig.type}
+                onConfirm={closeModal}
+                initialData={{ item: title, dosage: dosage.split(' ')[0] }}
+            />
         </GlassPanel>
     )
 }

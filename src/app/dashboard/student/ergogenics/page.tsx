@@ -4,7 +4,7 @@ import { getQueryClient } from '@/lib/get-query-client'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { getStudentErgogenics, getErgogenicLogs } from '@/actions/ergogenics-actions'
 import { getStudentProfile, getStudentTrainer } from '@/actions/student-actions'
-import { ErgogenicsPageClient } from '@/components/feature/student/ergogenics-page-client'
+import { ErgogenicsPageClient } from '@/components/store/features(deprecated)/student-ergogenics-page-client'
 import { redirect } from 'next/navigation'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 
@@ -61,3 +61,4 @@ export default async function ErgogenicsPage() {
         </RegistryMain>
     )
 }
+

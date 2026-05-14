@@ -1,15 +1,18 @@
 'use client'
 
 import React from 'react'
-import { Box } from '../base/box'
-import { Stack } from '../base/stack'
-import { Logo } from '../base/logo'
+import { Box } from '@/components/store/base/box'
+import { Stack } from '@/components/store/base/stack'
+import { Logo } from '@/components/store/base/logo'
+import { Surface, GlassPanel } from '@/components/store/base/surface'
+import { cn } from '@/lib/utils'
 import { SidebarItem } from '../intermediary/sidebar-item'
 import { SidebarProfile } from '../intermediary/sidebar-profile'
 import { Zap, Activity, Shield, Users, Dumbbell, Trophy, X } from 'lucide-react'
 import { useRegistry } from '@/components/store/advanced/registry-context'
-import { Sidebar, Divider } from '../base/layout'
-import { Button } from '../base/button'
+import { Sidebar, Divider } from '@/components/store/base/layout'
+import { Button } from '@/components/store/base/button'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 interface SidebarSection {
   id: string
@@ -48,16 +51,18 @@ export function RegistrySidebar({
     <>
       {/* Mobile Overlay */}
       {isSidebarOpen && (
-        <Box 
+        <Surface
             position="fixed"
             pin="inset"
-            bg="black"
-            bgOpacity={60}
-            backdropBlur="sm"
+            variant="glass-dark"
+            bg={STORE_TOKENS.COLORS.BLACK}
+            bgOpacity={STORE_TOKENS.OPACITY.MODAL}
             zIndex={100}
             display={{ base: 'block', lg: 'none' }}
             onClick={() => setIsSidebarOpen(false)}
-        />
+        >
+          <></>
+        </Surface>
       )}
 
       <Box
@@ -69,35 +74,53 @@ export function RegistrySidebar({
         width="sidebar-wide"
         zIndex={100}
         transition
-        translateX={{
-            base: isSidebarOpen ? 'none' : 'full',
-            lg: 'none'
-        }}
+        translateX={{ base: isSidebarOpen ? 0 : 'full', lg: 0 }}
       >
-        <Box
+        <GlassPanel
           fullWidth
-          flex1
+          fullHeight
+          variant="glass"
+          border="none"
+          rounded="none"
           display="flex"
           direction="col"
-          fullHeight
-          bg="zinc"
-          bgOpacity={40}
-          backdropBlur="md"
         >
           {/* Left border for mobile drawer */}
-          <Box display={{ base: 'block', lg: 'none' }} position="absolute" pin="left" top={0} fullHeight width="px" bg="white" bgOpacity={5} />
+          <Surface 
+              display={{ base: 'block', lg: 'none' }} 
+              position="absolute" 
+              pin="left" 
+              top={0} 
+              fullHeight 
+              width="px" 
+              bg="white" 
+              bgOpacity={5}
+          >
+            <></>
+          </Surface>
           {/* Right border for desktop static */}
-          <Box display={{ base: 'none', lg: 'block' }} position="absolute" pin="right" top={0} fullHeight width="px" bg="white" bgOpacity={5} />
+          <Surface 
+              display={{ base: 'none', lg: 'block' }} 
+              position="absolute" 
+              pin="right" 
+              top={0} 
+              fullHeight 
+              width="px" 
+              bg="white" 
+              bgOpacity={5}
+          >
+            <></>
+          </Surface>
           {/* Top Content (Padded) */}
-          <Box flex1 padding={5} display="flex" direction="col" overflow="hidden" position="relative">
+          <Box flex1 padding={STORE_TOKENS.PADDING.CONTAINER} display="flex" direction="col" overflow="hidden" position="relative">
 
-            <Stack gap={12.5} flex1 overflow="hidden">
+            <Stack gap={STORE_TOKENS.SPACING.EMPTY_STATE} flex1 overflow="hidden">
               <Box>
                 <Logo size="md" color={primaryColor as any} />
               </Box>
 
               <Box as="nav" flex1 fullWidth overflow="auto" noScrollbar>
-                <Stack gap={2.5} fullWidth>
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
                   {sections.map((section) => (
                     <SidebarItem
                       key={section.id}
@@ -114,10 +137,10 @@ export function RegistrySidebar({
           </Box>
 
           {/* Divider (Full Width - Balanced Opacity) */}
-          <Divider color="white/5" />
+          <Divider color={STORE_TOKENS.COLORS.DIVIDER.SUBTLE} />
 
           {/* Bottom Profile (Padded) */}
-          <Box padding={5}>
+          <Box padding={STORE_TOKENS.PADDING.CONTAINER}>
             <SidebarProfile 
               onOpenSettings={onOpenSettings} 
               user={{
@@ -126,7 +149,7 @@ export function RegistrySidebar({
               }}
             />
           </Box>
-        </Box>
+        </GlassPanel>
       </Box>
     </>
   )

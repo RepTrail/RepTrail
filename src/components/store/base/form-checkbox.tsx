@@ -4,8 +4,9 @@ import React, { useState } from 'react'
 import { Font } from './font'
 import { Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { useRegistry } from '../advanced/registry-context'
+import { useRegistry } from '@/components/store/advanced/registry-context'
 import { Stack } from './stack'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 interface FormCheckboxProps {
     label: string
@@ -49,13 +50,14 @@ export function FormCheckbox({
                 type="button"
                 onClick={handleToggle}
                 className={cn(
-                    "flex items-start group cursor-pointer",
+                    "flex items-center group cursor-pointer",
                     (label || description) && "gap-2.5"
                 )}
             >
                 {/* Checkbox Box */}
                 <div className={cn(
-                    'w-5 h-5 rounded-[5px] border-2 flex items-center justify-center shrink-0 transition-all duration-200 mt-0.5',
+                    'w-5 h-5 border-2 flex items-center justify-center shrink-0 transition-all duration-200',
+                    STORE_TOKENS.RADIUS.SYSTEM === 'system' ? 'rounded-[5px]' : 'rounded-full',
                     isChecked
                         ? `${activeColor.bg} shadow-lg ${activeColor.shadow}`
                         : 'border-white/5 bg-zinc-950/40 group-hover:border-white/20'
@@ -87,7 +89,7 @@ export function FormCheckbox({
             </button>
 
             {error && (
-                <Font variant="sub-tiny" color="red" weight="black" uppercase tracking="widest" className="pl-8">
+                <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.ERROR} weight="black" uppercase tracking="widest" className="pl-8">
                     {error}
                 </Font>
             )}

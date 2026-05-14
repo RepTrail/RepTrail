@@ -12,6 +12,7 @@ import { StatsCard } from '@/components/store/intermediary/stats-card'
 import { AffiliateActivityChart } from '@/components/store/advanced/affiliate-activity-chart'
 import { BarChart, Activity, UserPlus, MousePointerClick, DollarSign, TrendingUp } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 export function AffiliateStatsContent() {
     const { data, isLoading } = useQuery({
@@ -22,8 +23,8 @@ export function AffiliateStatsContent() {
 
     if (isLoading) {
         return (
-            <Box padding={5} display="flex" justify="center">
-                <Font color="zinc-500">Carregando estatísticas...</Font>
+            <Box padding={STORE_TOKENS.PADDING.CONTAINER} display="flex" justify="center">
+                <Font color={STORE_TOKENS.COLORS.TEXT.MUTED}>Carregando estatísticas...</Font>
             </Box>
         )
     }
@@ -32,7 +33,7 @@ export function AffiliateStatsContent() {
 
     const { clicksPerDay, conversion } = data
     const clickDays = Object.entries(clicksPerDay).sort((a, b) => a[0].localeCompare(b[0]))
-    const maxClicks = Math.max(...clickDays.map(([, v]) => v), 1)
+    const maxClicks = Math.max(...clickDays.map(([, v]) => v as number), 1)
 
     return (
         <>
@@ -42,13 +43,13 @@ export function AffiliateStatsContent() {
                 icon={TrendingUp}
                 subtitle="Acompanhe o caminho do seu tráfego até a venda final."
             >
-                <Grid cols={1} mdCols={3} gap={5}>
+                <Grid cols={1} mdCols={3} gap={STORE_TOKENS.SPACING.CONTAINER}>
                     <StatsCard
                         label="PASSO 1: TRÁFEGO"
                         value={conversion.totalClicks.toLocaleString()}
                         description="CLIQUES ÚNICOS"
                         icon={MousePointerClick}
-                        color="primary"
+                        color={STORE_TOKENS.COLORS.BRAND}
                     />
 
                     <StatsCard
@@ -56,7 +57,7 @@ export function AffiliateStatsContent() {
                         value={conversion.totalReferrals.toLocaleString()}
                         description={`${conversion.clickToSignup}% CONVERSÃO`}
                         icon={UserPlus}
-                        color="amber"
+                        color={STORE_TOKENS.COLORS.WARNING}
                     />
 
                     <StatsCard
@@ -64,12 +65,11 @@ export function AffiliateStatsContent() {
                         value={conversion.payingReferrals.toLocaleString()}
                         description={`${conversion.signupToPaid}% CONVERSÃO`}
                         icon={DollarSign}
-                        color="emerald"
+                        color={STORE_TOKENS.COLORS.SUCCESS}
                     />
                 </Grid>
             </RegistrySection>
-
-            <Grid cols={1} lgCols={3} gap="section">
+            <Grid cols={1} lgCols={3} gap={STORE_TOKENS.SPACING.SECTION}>
                 {/* Main Activities Chart */}
                 <Box lgColSpan={2}>
                     <RegistrySection
@@ -88,29 +88,29 @@ export function AffiliateStatsContent() {
                         subtitle="Análise simplificada de métricas secundárias."
                         icon={Activity}
                     >
-                        <Stack gap={5}>
-                            <Surface variant="glass" padding={5} rounded="system" border="subtle">
-                                <Stack gap={5}>
-                                    <Stack gap={1}>
-                                        <Font variant="sub-tiny" color="zinc-500" weight="black" uppercase tracking="widest">Melhor dia da semana</Font>
-                                        <Font variant="body" color="white" weight="black" italic uppercase>Segunda-feira</Font>
+                        <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
+                            <Surface variant="glass" padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM} border="subtle">
+                                <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
+                                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                        <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="black" uppercase tracking="widest">Melhor dia da semana</Font>
+                                        <Font variant="body" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} weight="black" italic uppercase>Segunda-feira</Font>
                                     </Stack>
 
-                                    <Stack gap={2.5}>
-                                        <Font variant="sub-tiny" color="zinc-500" weight="black" uppercase tracking="widest">Origem do tráfego</Font>
+                                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                        <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="black" uppercase tracking="widest">Origem do tráfego</Font>
 
-                                        <Stack gap={5}>
+                                        <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                                             {[
                                                 { label: 'Instagram', value: '45%', color: 'blue', width: '45%' },
                                                 { label: 'WhatsApp', value: '30%', color: 'emerald', width: '30%' },
                                                 { label: 'Outros', value: '25%', color: 'zinc', width: '25%' }
                                             ].map((source) => (
-                                                <Stack key={source.label} gap={1}>
+                                                <Stack key={source.label} gap={STORE_TOKENS.SPACING.ELEMENT}>
                                                     <Box display="flex" justify="between">
-                                                        <Font variant="sub-tiny" color="zinc-400">{source.label}</Font>
-                                                        <Font variant="sub-tiny" color="white" weight="black">{source.value}</Font>
+                                                        <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.SECONDARY}>{source.label}</Font>
+                                                        <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} weight="black">{source.value}</Font>
                                                     </Box>
-                                                    <Box height="px" fullWidth bg="zinc" bgOpacity={90} rounded="full" overflow="hidden">
+                                                    <Box height="px" fullWidth bg={STORE_TOKENS.COLORS.SHELF} bgOpacity={STORE_TOKENS.OPACITY.SHELF} rounded={STORE_TOKENS.RADIUS.FULL} overflow="hidden">
                                                         <Box height="full" bg={source.color as any} style={{ width: source.width }} />
                                                     </Box>
                                                 </Stack>
@@ -118,8 +118,8 @@ export function AffiliateStatsContent() {
                                         </Stack>
                                     </Stack>
 
-                                    <Box paddingTop={2.5}>
-                                        <Font variant="sub-tiny" color="zinc-600" italic>* Dados estimados com base em referer_url.</Font>
+                                    <Box padding={STORE_TOKENS.PADDING.ELEMENT}>
+                                        <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.DIM} italic>* Dados estimados com base em referer_url.</Font>
                                     </Box>
                                 </Stack>
                             </Surface>
@@ -128,6 +128,6 @@ export function AffiliateStatsContent() {
                 </Box>
             </Grid>
         </>
-    )
+    );
 }
 

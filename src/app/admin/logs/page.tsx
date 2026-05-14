@@ -1,5 +1,7 @@
 'use client'
 
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
+
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/lib/query-keys'
@@ -82,7 +84,7 @@ export default function AdminLogsPage() {
                         subtitle="Acompanhe todas as ações administrativas realizadas na plataforma."
                         icon={Activity}
                     >
-                        <Stack gap={5}>
+                        <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                             <Input
                                 value={search}
                                 onChange={e => setSearch(e.target.value)}

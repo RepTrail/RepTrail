@@ -11,6 +11,7 @@ import { Input } from '@/components/store/base/input'
 import { Button } from '@/components/store/base/button'
 import { Banknote, AlertCircle, ArrowRight } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
 import { ENTITIES } from '@/lib/outbox-db'
 import { QUERY_KEYS } from '@/lib/query-keys'
@@ -42,11 +43,11 @@ export function RequestPayoutModal({ isOpen, onClose, availableBalance }: Reques
             return res
         },
         onMutate: () => {
-             toast({ title: 'Solicitação registrada!', description: 'Sua solicitação foi salva e será sincronizada.' })
-             onClose()
-             setAmount('')
-             setPixKey('')
-        },  
+            toast({ title: 'Solicitação registrada!', description: 'Sua solicitação foi salva e será sincronizada.' })
+            onClose()
+            setAmount('')
+            setPixKey('')
+        },
         onSuccess: () => {
             toast({ title: 'Saque solicitado!', description: 'Nossa equipe processará o pagamento em breve.' })
         }
@@ -90,33 +91,33 @@ export function RequestPayoutModal({ isOpen, onClose, availableBalance }: Reques
             isLoading={isPending}
             disabled={availableBalance < 50}
         >
-            <Stack gap={5}>
+            <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                 {/* Balance Summary */}
-                <Box padding={5} rounded="system" bg="zinc" bgOpacity={5} border>
+                <Box padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM} bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.LOW} border>
                     <Inline justify="between" align="center">
-                        <Font variant="description" color="zinc-400" weight="medium">Saldo Disponível:</Font>
-                        <Font variant="body" color="primary" weight="black">
+                        <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} weight="medium">Saldo Disponível:</Font>
+                        <Font variant="body" color={STORE_TOKENS.COLORS.BRAND} weight="black">
                             R$ {availableBalance.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                         </Font>
                     </Inline>
                 </Box>
 
-                <Stack gap={5}>
+                <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                     {/* Amount Input */}
-                    <Stack gap={2.5}>
+                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                         <Inline justify="between" align="center">
-                            <Font variant="sub-tiny" weight="black" uppercase tracking="widest" color="zinc-400">
+                            <Font variant="sub-tiny" weight="black" uppercase tracking="widest" color={STORE_TOKENS.COLORS.TEXT.SECONDARY}>
                                 Valor do Saque (R$)
                             </Font>
-                            <Button 
-                                variant="ghost" 
-                                padding={0} 
+                            <Button
+                                variant="ghost"
+                                padding={0}
                                 onClick={handleMaxAmount}
                             >
-                                <Font variant="sub-tiny" color="primary" weight="black">SAQUE TOTAL</Font>
+                                <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.BRAND} weight="black">SAQUE TOTAL</Font>
                             </Button>
                         </Inline>
-                        
+
                         <Input
                             type="number"
                             step="0.01"
@@ -125,16 +126,16 @@ export function RequestPayoutModal({ isOpen, onClose, availableBalance }: Reques
                             placeholder="0,00"
                             disabled={isPending}
                         />
-                        
-                        <Inline gap={1} align="center">
-                            <Icon icon={AlertCircle} size="xs" color="zinc-500" />
-                            <Font variant="sub-tiny" color="zinc-500">Mínimo de R$ 50,00</Font>
+
+                        <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                            <Icon icon={AlertCircle} size="xs" color={STORE_TOKENS.COLORS.TEXT.MUTED} />
+                            <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>Mínimo de R$ 50,00</Font>
                         </Inline>
                     </Stack>
 
                     {/* PIX Key Input */}
-                    <Stack gap={2.5}>
-                        <Font variant="sub-tiny" weight="black" uppercase tracking="widest" color="zinc-400">
+                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                        <Font variant="sub-tiny" weight="black" uppercase tracking="widest" color={STORE_TOKENS.COLORS.TEXT.SECONDARY}>
                             Chave PIX
                         </Font>
                         <Input

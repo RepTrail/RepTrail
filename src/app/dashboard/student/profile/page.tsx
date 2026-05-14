@@ -5,7 +5,7 @@ import { getQueryClient } from '@/lib/get-query-client'
 import { HydrationBoundary, dehydrate } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { getStudentProfile, getStudentTrainer } from '@/actions/student-actions'
-import { StudentProfileClient } from '@/components/feature/student/student-profile-client'
+import { StudentProfileClient } from '@/components/store/features(deprecated)/student-profile-client'
 
 export const revalidate = 0
 
@@ -40,4 +40,5 @@ export default async function StudentProfilePage() {
         </HydrationBoundary>
     )
 }
+
 

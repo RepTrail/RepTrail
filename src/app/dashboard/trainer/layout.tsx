@@ -10,8 +10,8 @@ import { getQueryClient } from '@/lib/get-query-client'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { getEffectiveTier, getTrainerProfile, getTrainerRanking } from '@/actions/trainer-actions'
-import { TrainerTourManager } from '@/components/feature/trainer/onboarding/trainer-tour-manager'
-import { MobileTrainerTourManager } from '@/components/feature/trainer/onboarding/mobile-trainer-tour-manager'
+import { TrainerTourManager } from '@/components/store/features(deprecated)/trainer-tour-manager'
+import { MobileTrainerTourManager } from '@/components/store/features(deprecated)/mobile-trainer-tour-manager'
 import { DashboardShell } from '@/components/store/advanced/dashboard-shell'
 import { RegistryProvider } from '@/components/store/advanced/registry-context'
 
@@ -109,3 +109,4 @@ export default async function TrainerLayout({ children }: { children: React.Reac
         </RegistryProvider>
     )
 }
+

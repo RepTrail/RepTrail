@@ -602,3 +602,33 @@ export async function getAssignedWorkouts(studentId: string) {
         return []
     }
 }
+
+export async function getWorkoutExercises(workoutId: string) {
+    try {
+        const supabase = await createClient()
+        const { data, error } = await supabase
+            .from('workout_exercises')
+            .select(`
+                id,
+                exercise:exercises(id, name),
+                sets,
+                reps,
+                rest_time
+            `)
+            .eq('workout_id', workoutId)
+            .order('order_index', { ascending: true })
+
+        if (error) throw error
+
+        return data.map((item: any) => ({
+            id: item.id,
+            name: item.exercise.name,
+            sets: item.sets,
+            reps: item.reps,
+            rest_time: item.rest_time
+        }))
+    } catch (error) {
+        console.error('Error fetching workout exercises:', error)
+        return []
+    }
+}

@@ -4,7 +4,7 @@ import React from 'react'
 import { cn } from '@/lib/utils'
 import { Box } from './box'
 
-type GapToken = 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 'section' | 'header-gap'
+type GapToken = 0 | 2.5 | 5 | 10 | 12.5 | 20 | 50 | 100 | 'section' | 'header-gap'
 
 interface LayoutBaseProps {
   children: React.ReactNode
@@ -14,9 +14,7 @@ interface LayoutBaseProps {
   flex1?: boolean
   fullWidth?: boolean
   wrap?: boolean
-  padding?: 0 | 1 | 2.5 | 5 | 7.5 | 12.5
-  paddingX?: 0 | 1 | 2.5 | 5 | 7.5 | 12.5
-  paddingY?: 0 | 1 | 2.5 | 5 | 7.5 | 12.5
+  padding?: 0 | 2.5 | 5 | 10 | 12.5 | 20 | 50 | 100
   position?: 'relative' | 'absolute' | 'fixed' | 'static'
   shrink?: 0 | 1
   opacity?: 0 | 10 | 20 | 30 | 40 | 50 | 60 | 70 | 80 | 90 | 100
@@ -36,8 +34,6 @@ export function Inline({
   fullWidth,
   wrap = false,
   padding,
-  paddingX,
-  paddingY,
   position,
   shrink,
   opacity,
@@ -47,24 +43,26 @@ export function Inline({
   
   const gapClasses = {
     0: 'gap-0',
-    1: 'gap-1',
     2.5: 'gap-2.5',
     5: 'gap-5',
-    7.5: 'gap-[30px]',
-    12.5: 'gap-[50px]',
     10: 'gap-10',
+    12.5: 'gap-[50px]',
+    20: 'gap-20',
+    50: 'gap-[200px]',
+    100: 'gap-[400px]',
     'section': 'gap-[100px]',
     'header-gap': 'gap-8'
   }
 
   const gapMdClasses = {
     0: 'md:gap-0',
-    1: 'md:gap-1',
     2.5: 'md:gap-2.5',
     5: 'md:gap-5',
-    7.5: 'md:gap-[30px]',
-    12.5: 'md:gap-[50px]',
     10: 'md:gap-10',
+    12.5: 'md:gap-[50px]',
+    20: 'md:gap-20',
+    50: 'md:gap-[200px]',
+    100: 'md:gap-[400px]',
     'section': 'md:gap-[100px]',
     'header-gap': 'md:gap-8'
   }
@@ -95,8 +93,6 @@ export function Inline({
       id={id}
       fullWidth={fullWidth}
       padding={padding}
-      paddingX={paddingX}
-      paddingY={paddingY}
       position={position}
       shrink={shrink}
       opacity={opacity}
@@ -127,8 +123,6 @@ export function Cluster({
   flex1,
   fullWidth,
   padding,
-  paddingX,
-  paddingY,
   position,
   shrink,
   opacity,
@@ -138,24 +132,26 @@ export function Cluster({
   
   const gapClasses = {
     0: 'gap-0',
-    1: 'gap-1',
     2.5: 'gap-2.5',
     5: 'gap-5',
-    7.5: 'gap-[30px]',
-    12.5: 'gap-[50px]',
     10: 'gap-10',
+    12.5: 'gap-[50px]',
+    20: 'gap-20',
+    50: 'gap-[200px]',
+    100: 'gap-[400px]',
     'section': 'gap-[100px]',
     'header-gap': 'gap-8'
   }
 
   const gapMdClasses = {
     0: 'md:gap-0',
-    1: 'md:gap-1',
     2.5: 'md:gap-2.5',
     5: 'md:gap-5',
-    7.5: 'md:gap-[30px]',
-    12.5: 'md:gap-[50px]',
     10: 'md:gap-10',
+    12.5: 'md:gap-[50px]',
+    20: 'md:gap-20',
+    50: 'md:gap-[200px]',
+    100: 'md:gap-[400px]',
     'section': 'md:gap-[100px]',
     'header-gap': 'md:gap-8'
   }
@@ -170,8 +166,6 @@ export function Cluster({
       id={id}
       fullWidth={fullWidth}
       padding={padding}
-      paddingX={paddingX}
-      paddingY={paddingY}
       position={position}
       shrink={shrink}
       opacity={opacity}
@@ -293,14 +287,20 @@ export function Divider({
   direction = 'horizontal', 
   color = 'white/10' 
 }: { 
-  direction?: 'horizontal' | 'vertical', 
+  direction?: 'horizontal' | 'vertical' | { base: 'horizontal' | 'vertical', md?: 'horizontal' | 'vertical' }, 
   color?: string 
 }) {
+  const isRespDirection = typeof direction === 'object'
+  const dirBase = isRespDirection ? (direction as any).base : direction
+  const dirMd = isRespDirection ? (direction as any).md : undefined
+
   return (
     <div 
       className={cn(
         'shrink-0',
-        direction === 'horizontal' ? 'w-full h-px' : 'h-full w-px',
+        dirBase === 'horizontal' ? 'w-full h-px' : 'h-full w-px',
+        dirMd === 'horizontal' && 'md:w-full md:h-px',
+        dirMd === 'vertical' && 'md:h-full md:w-px',
         color === 'white/50' && 'bg-white/50',
         color === 'white/30' && 'bg-white/30',
         color === 'white/20' && 'bg-white/20',

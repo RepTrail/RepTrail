@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import { TrainerErgogenicsHubClient } from '@/components/feature/trainer/trainer-ergogenics-hub-client'
+import { TrainerErgogenicsHubClient } from '@/components/store/features(deprecated)/trainer-ergogenics-hub-client'
 
 export default async function TrainerErgogenicsHubPage() {
     const supabase = await createClient()
@@ -59,3 +59,4 @@ export default async function TrainerErgogenicsHubPage() {
 
     return <TrainerErgogenicsHubClient ergogenicStudents={ergogenicStudents} />
 }
+

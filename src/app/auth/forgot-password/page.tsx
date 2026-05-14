@@ -1,7 +1,7 @@
 
 'use client'
 
-import { AuthForgotPasswordForm } from '@/components/store/sections/auth-forgot-password-form'
+import { AuthForgotPasswordForm } from '@/components/store/advanced/auth-forgot-password-form'
 import { Suspense } from 'react'
 import { RegistryProvider } from '@/components/store/advanced/registry-context'
 import { AuthShell } from '@/components/store/advanced/auth-shell'

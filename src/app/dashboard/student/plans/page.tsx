@@ -3,8 +3,8 @@ import { redirect } from 'next/navigation'
 import { Dumbbell, CreditCard, Sparkles, Search, Check, Zap, ArrowRight, ShieldCheck, Trophy, Target } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { CancelSubscriptionButton } from '@/components/feature/subscription/cancel-subscription-button'
-import { StudentPaymentButtons } from '@/components/feature/student/payment-buttons'
+import { CancelSubscriptionButton } from '@/components/store/features(deprecated)/cancel-subscription-button'
+import { StudentPaymentButtons } from '@/components/store/features(deprecated)/student-payment-buttons'
 
 export const dynamic = 'force-dynamic'
 
@@ -219,3 +219,4 @@ export default async function StudentPlansPage() {
         </div>
     )
 }
+

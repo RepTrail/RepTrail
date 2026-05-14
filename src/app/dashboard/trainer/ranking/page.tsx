@@ -2,7 +2,7 @@ import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { getQueryClient } from '@/lib/get-query-client'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { getTrainerRanking } from '@/actions/trainer-actions'
-import { TrainerRankingClient } from '@/components/feature/trainer/trainer-ranking-client'
+import { TrainerRankingClient } from '@/components/store/features(deprecated)/trainer-ranking-client'
 
 export const revalidate = 0
 
@@ -22,3 +22,4 @@ export default async function RankingPage() {
         </HydrationBoundary>
     )
 }
+

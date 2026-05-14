@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import { LucideIcon } from 'lucide-react'
 import { Icon } from './icon'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 interface BaseBottomNavLinkProps {
   icon: LucideIcon
@@ -29,8 +30,8 @@ export function BaseBottomNavLink({
   }
 
   const classes = cn(
-    "inline-flex items-center justify-center transition-all active:scale-90 w-11 h-11 border-2",
-    "rounded-[5px] group",
+    "inline-flex items-center justify-center transition-all active:scale-90 w-11 h-11 border-2 group",
+    STORE_TOKENS.RADIUS.SYSTEM === 'system' ? 'rounded-[5px]' : 'rounded-full',
     active 
       ? cn(activeClasses[variant], "shadow-lg shadow-black/20")
       : "bg-transparent border-white/5 text-zinc-400 hover:bg-white/5 hover:text-white"

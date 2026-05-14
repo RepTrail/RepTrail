@@ -1,6 +1,6 @@
 'use client'
 
-import { UnifiedCreationDialog } from '@/components/feature/shared/unified-creation-dialog'
+import { UnifiedCreationDialog } from '@/components/store/features(deprecated)/unified-creation-dialog'
 
 interface WorkoutActionsClientProps {
     isAutoTrainingActive: boolean
@@ -27,3 +27,4 @@ export function WorkoutActionsClient({ isAutoTrainingActive }: WorkoutActionsCli
         />
     )
 }
+

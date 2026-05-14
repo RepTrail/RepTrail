@@ -1,6 +1,6 @@
 import { getWorkoutDetails } from "@/actions/workout-actions"
 import { getTrainerStudents } from "@/actions/trainer-actions"
-import { WorkoutBuilder } from "@/components/feature/trainer/workout-builder"
+import { WorkoutBuilder } from "@/components/store/features(deprecated)/workout-builder"
 import { notFound } from "next/navigation"
 
 export default async function WorkoutEditPage({ params }: { params: { id: string } }) {

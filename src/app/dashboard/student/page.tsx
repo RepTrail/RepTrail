@@ -5,18 +5,18 @@ import { getStudentAutoTrainingStatus } from '@/actions/auto-training-actions'
 import { getTrainerRanking } from '@/actions/trainer-actions'
 import { checkStudentHasProtocol } from '@/actions/ai-protocol-actions'
 import { StudentMetaPixel } from './meta-pixel'
-import { PodiumCard, RankingRow } from '@/components/feature/shared/ranking-cards'
+import { PodiumCard, RankingRow } from '@/components/store/features(deprecated)/ranking-cards'
 import { PREFETCH_REGISTRY } from '@/lib/prefetch-registry'
 
-import { WorkoutCard } from '@/components/feature/student/dashboard/workout-card'
-import { CardioCard } from '@/components/feature/student/dashboard/cardio-card'
-import { DietCard } from '@/components/feature/student/dashboard/diet-card'
-import { ErgogenicsCard } from '@/components/feature/student/dashboard/ergogenics-card'
-import { AIProtocolEmptyState } from '@/components/feature/student/ai-protocol-empty-state'
+import { WorkoutCard } from '@/components/store/features(deprecated)/student-workout-card'
+import { CardioCard } from '@/components/store/features(deprecated)/student-cardio-card'
+import { DietCard } from '@/components/store/features(deprecated)/student-diet-card'
+import { ErgogenicsCard } from '@/components/store/features(deprecated)/student-ergogenics-card'
+import { AIProtocolEmptyState } from '@/components/store/features(deprecated)/ai-protocol-empty-state'
 
-import { PaymentWarning } from '@/components/feature/student/payment-warning'
-import { StudentDashboardModals } from '@/components/feature/student/student-dashboard-modals'
-import { AnamnesisForm } from '@/components/feature/student/anamnesis-form'
+import { PaymentWarning } from '@/components/store/features(deprecated)/student-payment-warning'
+import { StudentDashboardModals } from '@/components/store/features(deprecated)/student-dashboard-modals'
+import { AnamnesisForm } from '@/components/store/features(deprecated)/student-anamnesis-form'
 
 import { Activity, Utensils, Dumbbell, Star, Search, Trophy, ArrowRight, Sparkles, Zap, TrendingUp } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -36,9 +36,9 @@ import { getMetricsSummary } from '@/actions/metrics-actions'
 import { getActiveWorkoutSession } from '@/actions/log-actions'
 import { Stack } from '@/components/store/base/stack'
 import { Grid } from '@/components/store/base/grid'
-import { StudentDashboardClient } from '@/components/feature/student/student-dashboard-client'
-import { InactiveTrainerCard } from '@/components/feature/student/inactive-trainer-card'
-import { NoPlanHero } from '@/components/feature/student/no-plan-hero'
+import { StudentDashboardClient } from '@/components/store/features(deprecated)/student-dashboard-client'
+import { InactiveTrainerCard } from '@/components/store/features(deprecated)/inactive-trainer-card'
+import { NoPlanHero } from '@/components/store/features(deprecated)/no-plan-hero'
 
 export default async function StudentDashboardPage() {
     // ─── OPTIMIZED IDENTITY (0ms) ──────────────────────────────────────────
@@ -188,7 +188,7 @@ async function StudentDashboardContent({ userId }: { userId: string }) {
     return (
         <HydrationBoundary state={dehydrate(queryClient)}>
             <StudentMetaPixel />
-            <StudentDashboardClient 
+            <StudentDashboardClient
                 userId={userId}
                 trainerRel={trainerRel}
                 details={details}
@@ -225,3 +225,4 @@ function StudentDashboardSkeleton() {
         </Stack>
     )
 }
+

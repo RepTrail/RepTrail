@@ -1,12 +1,13 @@
 'use client'
 
 import React from 'react'
-import { Box } from '../base/box'
-import { Stack } from '../base/stack'
-import { Font } from '../base/font'
-import { Icon } from '../base/icon'
-import { Inline } from '../base/layout'
-import { Surface, GlassPanel } from '../base/surface'
+import { Box } from '@/components/store/base/box'
+import { Scaffold } from '@/components/store/base/main'
+import { Stack } from '@/components/store/base/stack'
+import { Font } from '@/components/store/base/font'
+import { Icon } from '@/components/store/base/icon'
+import { Inline } from '@/components/store/base/layout'
+import { Surface, GlassPanel } from '@/components/store/base/surface'
 import { EmptyState } from '../intermediary/empty-state'
 import {
   BarChart3,
@@ -27,6 +28,7 @@ import {
 } from 'lucide-react'
 import { useRegistry } from '@/components/store/advanced/registry-context'
 import { SegmentedSwitch } from '@/components/store/intermediary/segmented-switch'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { AdminSectionContent } from '../sections/admin-section-content'
 import { AffiliateSectionContent } from '../sections/affiliate-section-content'
 import { StudentRegistryContent } from '../sections/student-registry-content'
@@ -103,16 +105,23 @@ export function RegistryMain({
   }
 
   return (
-    <Box fullWidth paddingX={5} paddingY={{ base: 25, sm: 5, md: 20 }}>
-      <Stack gap={{ base: 12.5, md: 'section' }}>
+    <Scaffold
+      fullWidth
+      paddingX={STORE_TOKENS.PADDING.CONTAINER}
+      paddingY={{
+        base: STORE_TOKENS.PADDING.SAFE_AREA_INSET,
+        md: STORE_TOKENS.PADDING.CONTAINER,
+      }}
+    >
+      <Stack gap={{ base: STORE_TOKENS.SPACING.EMPTY_STATE, md: STORE_TOKENS.SPACING.SECTION }}>
         {/* Header Section title*/}
-        <Stack gap={2.5}>
-          <Inline gap={2.5}>
+        <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+          <Inline gap={STORE_TOKENS.SPACING.ELEMENT}>
             <Icon icon={IconComp} color={primaryColor as any} size="lg" />
             <Font variant="auxiliary" color={primaryColor as any}>{contextLabel || 'Brand Guidelines'}</Font>
           </Inline>
 
-          <Stack gap={1}>
+          <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
             <Font variant="h1" nowrap>
               {first} <Font variant="h1" color={primaryColor} nowrap>{rest.join(' ')}</Font>
             </Font>
@@ -130,17 +139,17 @@ export function RegistryMain({
         )}
 
         {/* Content Sections */}
-        <Stack gap={{ base: 12.5, md: 'section' }}>
+        <Stack gap={{ base: STORE_TOKENS.SPACING.EMPTY_STATE, md: STORE_TOKENS.SPACING.SECTION }} fullWidth>
           {renderContent()}
         </Stack>
 
         {/* Footer Area - Upgraded to Liquid Glass */}
-        <GlassPanel padding={5}>
+        <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER}>
           <Inline justify="between">
             <Font variant="sub-tiny">RepTrail Design System v2.0 - 2026</Font>
           </Inline>
         </GlassPanel>
       </Stack>
-    </Box >
-  )
+    </Scaffold>
+  );
 }

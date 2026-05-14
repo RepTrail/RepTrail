@@ -1,11 +1,12 @@
 'use client'
 
 import React from 'react'
-import { GlassPanel } from '../base/surface'
-import { Box } from '../base/box'
-import { Stack } from '../base/stack'
-import { Inline } from '../base/layout'
+import { GlassPanel } from '@/components/store/base/surface'
+import { Box } from '@/components/store/base/box'
+import { Stack } from '@/components/store/base/stack'
+import { Inline, Divider } from '@/components/store/base/layout'
 import { cn } from '@/lib/utils'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 export interface ActionableListCardProps {
     children: React.ReactNode // Main content (Identity block)
@@ -40,8 +41,8 @@ export function ActionableListCard({ children, badges, actions, isLogItem, isStr
                     direction={isStrictHorizontal ? 'row' : { base: 'col', md: 'row' }}
                     align={isStrictHorizontal ? 'center' : { base: 'stretch', md: 'center' }}
                     justify="between"
-                    padding={5}
-                    gap={5}
+                    padding={STORE_TOKENS.PADDING.CONTAINER}
+                    gap={STORE_TOKENS.SPACING.CONTAINER}
                     flex1
                     minWidth={0}
                 >
@@ -52,7 +53,7 @@ export function ActionableListCard({ children, badges, actions, isLogItem, isStr
 
                     {/* Badges Block */}
                     {badges && (
-                        <Box transition wrap="wrap" display="flex" align="center" gap={2.5} shrink={0}>
+                        <Box transition wrap="wrap" display="flex" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} shrink={0}>
                             {badges}
                         </Box>
                     )}
@@ -67,30 +68,28 @@ export function ActionableListCard({ children, badges, actions, isLogItem, isStr
                         align="stretch"
                         transition
                         shrink={0}
-                        fullWidth={isLogItem ? true : { base: true, md: false }}
                         width={isLogItem ? 'full' : { base: 'full', md: actionWidth || 'sidebar' }}
                         overflow="hidden"
                     >
                         {/* Container-based Separator (Rule 140) */}
-                        <Box 
-                            display="block"
-                            width={isLogItem ? 'full' : { base: 'full', md: 'px' }} 
-                            height={isLogItem ? 'px' : { base: 'px', md: 'full' }} 
-                            bg="white" 
-                            bgOpacity={20} 
-                            shrink={0} 
+                        <Divider 
+                            direction={{ 
+                                base: 'horizontal', 
+                                md: isLogItem ? 'horizontal' : 'vertical' 
+                            }}
+                            color={isLogItem ? 'white/5' : 'white/10'}
                         />
 
                         {/* Actions Stack (Vertical on Mobile/Log, Horizontal on PC) */}
                         <Stack
                             direction={isLogItem ? 'col' : { base: 'col', md: 'row' }}
-                            padding={5}
-                            gap={5}
+                            padding={STORE_TOKENS.PADDING.CONTAINER}
+                            gap={STORE_TOKENS.SPACING.CONTAINER}
                             align={isLogItem ? 'stretch' : 'center'}
                             justify="center"
                             bg="transparent"
                             shrink={0}
-                            flex1={isLogItem ? 0 : { base: 1, md: 0 }}
+                            flex="none"
                         >
                             {actions}
                         </Stack>

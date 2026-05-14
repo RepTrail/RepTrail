@@ -1,12 +1,15 @@
 'use client'
 
 import React from 'react'
-import { Grid } from '../base/grid'
-import { ManagementCardPremium } from '../intermediary/management-card-premium'
+import { Grid } from '@/components/store/base/grid'
+import { ManagementCardPremium } from '@/components/store/intermediary/management-card-premium'
 import { Utensils } from 'lucide-react'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
+import { EmptyState } from '@/components/store/intermediary/empty-state'
 
 interface DietManagementSectionContentProps {
     mode?: 'auto' | 'personal'
+    isEmpty?: boolean
 }
 
 /**
@@ -14,8 +17,19 @@ interface DietManagementSectionContentProps {
  * Faithful to Image 30.
  */
 export function DietManagementSectionContent({ 
-    mode = 'auto' 
+    mode = 'auto',
+    isEmpty = false
 }: DietManagementSectionContentProps) {
+    if (isEmpty) {
+        return (
+            <EmptyState 
+                icon={Utensils}
+                title="SEM DIETA"
+                description="Você ainda não possui protocolos alimentares cadastrados."
+            />
+        )
+    }
+
     const diets = [
         { 
             title: 'PROTOCOLO ALIMENTAR - SUPERÁVIT', 
@@ -26,7 +40,7 @@ export function DietManagementSectionContent({
     ]
 
     return (
-        <Grid cols={{ base: 1, md: 2, lg: 3 }} gap={5}>
+        <Grid cols={{ base: 2.5, md: 2, lg: 3 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
             {diets.map((diet, idx) => (
                 <ManagementCardPremium 
                     key={idx}
@@ -36,7 +50,8 @@ export function DietManagementSectionContent({
                     date={diet.date}
                     icon={Utensils}
                     mode={mode}
-                    color="primary"
+                    color={STORE_TOKENS.COLORS.BRAND}
+                    registryType="diet"
                 />
             ))}
         </Grid>

@@ -1,14 +1,15 @@
 'use client'
 
 import React from 'react'
-import { Stack } from '../base/stack'
-import { Font } from '../base/font'
-import { Icon, IconBox } from '../base/icon'
-import { Button } from '../base/button'
+import { Stack } from '@/components/store/base/stack'
+import { Font } from '@/components/store/base/font'
+import { Icon, IconBox } from '@/components/store/base/icon'
+import { Button, ButtonVariant } from '@/components/store/base/button'
 import { X, LucideIcon } from 'lucide-react'
-import { Surface, CardHeader, CardContent } from '../base/surface'
-import { ModalOverlay, ModalContainer, Divider } from '../base/layout'
-import { Box } from '../base/box'
+import { Surface, CardHeader } from '@/components/store/base/surface'
+import { ModalOverlay, ModalContainer, Divider } from '@/components/store/base/layout'
+import { Box } from '@/components/store/base/box'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 interface ModalProps {
   isOpen: boolean
@@ -18,11 +19,15 @@ interface ModalProps {
   icon?: LucideIcon
   children?: React.ReactNode
   confirmLabel?: string
+  confirmIcon?: LucideIcon
   cancelLabel?: string
   onConfirm?: () => void
-  variant?: 'emerald' | 'orange' | 'red' | 'blue'
+  variant?: 'emerald' | 'orange' | 'red' | 'blue' | 'primary'
+  confirmVariant?: ButtonVariant
   isLoading?: boolean
   disabled?: boolean
+  noPadding?: boolean
+  hideCancel?: boolean
 }
 
 export function Modal({
@@ -33,78 +38,108 @@ export function Modal({
   icon,
   children,
   confirmLabel = 'Confirmar',
+  confirmIcon,
   cancelLabel = 'Cancelar',
   onConfirm,
   variant = 'emerald',
+  confirmVariant,
   isLoading = false,
-  disabled = false
+  disabled = false,
+  noPadding = false,
+  hideCancel = false
 }: ModalProps) {
   if (!isOpen) return null
 
   return (
     <ModalOverlay onClose={onClose}>
       <ModalContainer>
-        <Surface variant="base" padding={0} rounded="system" direction="col" flex1 className="min-h-0 overflow-hidden">
-          <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
+        <Surface variant="base" padding={0} rounded={STORE_TOKENS.RADIUS.SYSTEM} direction="col" flex1 minHeight={0} overflow="hidden">
+          <Box flex1 direction="col" minHeight={0} overflow="hidden">
             {/* Header */}
-            <CardHeader bg="zinc" bgOpacity={100} className="shrink-0 gap-5">
-              <Stack direction="row" align="center" gap={2.5} flex1>
+            <CardHeader bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.BACKGROUND} shrink={0} gap={STORE_TOKENS.SPACING.CONTAINER} direction="col">
+              {/* Mobile: Row 1 (Icon + Close) | Desktop: Part of Row 1 */}
+              <Stack direction="row" align="center" justify="between" fullWidth>
                 {icon && <IconBox icon={icon} variant={variant as any} />}
-                <Stack gap={0}>
-                  <Font variant="body" weight="black" color="white" uppercase italic tracking="normal">{title}</Font>
-                  {subtitle && <Font variant="sub-tiny" color="zinc-500">{subtitle}</Font>}
-                </Stack>
-              </Stack>
+                
+                {/* Desktop Title (Visible only on md+) */}
+                <Box display={{ base: 'none', md: 'flex' }} flex1 padding={0}>
+                  <Stack gap={0}>
+                    <Font variant="body" weight="black" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} uppercase italic tracking="normal">{title}</Font>
+                    {subtitle && <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{subtitle}</Font>}
+                  </Stack>
+                </Box>
 
-              <div className="ml-auto">
-                <Button variant="close" rounded="full" isIconOnly onClick={onClose} disabled={isLoading}>
+                <Button variant="close" rounded={STORE_TOKENS.RADIUS.SYSTEM} isIconOnly onClick={onClose} disabled={isLoading}>
                   <Icon icon={X} size="sm" />
                 </Button>
-              </div>
+              </Stack>
+
+              {/* Mobile Title (Visible only on base, hidden on md+) */}
+              <Box display={{ base: 'flex', md: 'none' }} fullWidth>
+                <Stack gap={0}>
+                  <Font variant="body" weight="black" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} uppercase italic tracking="normal">{title}</Font>
+                  {subtitle && <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{subtitle}</Font>}
+                </Stack>
+              </Box>
             </CardHeader>
 
-            <Divider color="white/5" />
+            <Divider color={STORE_TOKENS.COLORS.DIVIDER.SUBTLE} />
 
             {/* Content Area */}
-            <div className="flex-1 overflow-y-auto bg-zinc-950 p-5 min-h-0">
+            <Box 
+              flex1 
+              overflowY="auto" 
+              bg={STORE_TOKENS.COLORS.BACKGROUND} 
+              bgOpacity={STORE_TOKENS.OPACITY.BACKGROUND} 
+              padding={noPadding ? 0 : STORE_TOKENS.PADDING.CONTAINER} 
+              minHeight={0}
+            >
               {children ? children : (
-                <Font variant="description" color="zinc-400">
+                <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.SECONDARY}>
                   Configure as opções do seu perfil e preferências de sistema aqui.
                   Todas as alterações são aplicadas instantaneamente ao seu ambiente de trabalho.
                 </Font>
               )}
-            </div>
+            </Box>
 
-            <Divider color="white/5" />
+            <Divider color={STORE_TOKENS.COLORS.DIVIDER.SUBTLE} />
 
             {/* Footer Actions */}
-            <div className="shrink-0 bg-zinc-900 p-5">
-              <Stack direction={{ base: 'col', md: 'row' }} gap={2.5} flex1>
+            <Box shrink={0} bg={STORE_TOKENS.COLORS.SURFACE} bgOpacity={STORE_TOKENS.OPACITY.SURFACE} padding={STORE_TOKENS.PADDING.CONTAINER}>
+              <Stack direction={{ base: 'col', md: 'row' }} gap={STORE_TOKENS.SPACING.ELEMENT} flex1>
+                {!hideCancel && (
+                  <Button 
+                    variant="outline-red" 
+                    rounded={STORE_TOKENS.RADIUS.SYSTEM} 
+                    fullWidth 
+                    flex1
+                    onClick={onClose}
+                    disabled={isLoading}
+                  >
+                    {cancelLabel}
+                  </Button>
+                )}
                 <Button 
-                  variant="outline-red" 
-                  rounded="full" 
-                  fullWidth 
-                  flex1
-                  onClick={onClose}
-                  disabled={isLoading}
-                >
-                  {cancelLabel}
-                </Button>
-                <Button 
-                  variant={variant === 'emerald' ? 'outline-emerald' : 'outline-blue'} 
-                  rounded="full" 
+                  variant={confirmVariant || 'outline-emerald'} 
+                  rounded={STORE_TOKENS.RADIUS.SYSTEM} 
                   fullWidth 
                   flex1
                   onClick={onConfirm || onClose}
                   disabled={disabled || isLoading}
+                  gap={STORE_TOKENS.SPACING.ELEMENT}
                 >
-                  {isLoading ? 'Carregando...' : confirmLabel}
+                  {isLoading ? 'Carregando...' : (
+                    <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                      {confirmIcon && <Icon icon={confirmIcon} size="xs" />}
+                      {confirmLabel}
+                    </Stack>
+                  )}
                 </Button>
               </Stack>
-            </div>
-          </div>
+            </Box>
+          </Box>
         </Surface>
       </ModalContainer>
     </ModalOverlay>
-  )
+  );
 }

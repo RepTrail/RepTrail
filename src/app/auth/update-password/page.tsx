@@ -1,7 +1,7 @@
 
 'use client'
 
-import { AuthUpdatePasswordForm } from '@/components/store/sections/auth-update-password-form'
+import { AuthUpdatePasswordForm } from '@/components/store/advanced/auth-update-password-form'
 import { Suspense } from 'react'
 import { RegistryProvider } from '@/components/store/advanced/registry-context'
 import { AuthShell } from '@/components/store/advanced/auth-shell'

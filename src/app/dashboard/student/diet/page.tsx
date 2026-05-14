@@ -6,7 +6,7 @@ import { QUERY_KEYS } from '@/lib/query-keys'
 import { getStudentDailyDiet, getTrainerDiets, getAssignedDiets } from '@/actions/diet-actions'
 import { getStudentProfile, getStudentTrainer } from '@/actions/student-actions'
 import { ensureDailyTracking } from '@/actions/tracking-actions'
-import { DietPageClient } from '@/components/feature/student/diet-page-client'
+import { DietPageClient } from '@/components/store/features(deprecated)/student-diet-page-client'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 
 import { PREFETCH_REGISTRY } from '@/lib/prefetch-registry'
@@ -50,3 +50,4 @@ export default async function StudentDietPage() {
         </RegistryMain>
     )
 }
+

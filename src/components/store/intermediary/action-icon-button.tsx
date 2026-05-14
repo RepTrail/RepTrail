@@ -2,8 +2,9 @@
 
 import React from 'react'
 import { LucideIcon } from 'lucide-react'
-import { Button, ButtonVariant } from '../base/button'
-import { Icon } from '../base/icon'
+import { Button, ButtonVariant } from '@/components/store/base/button'
+import { Icon } from '@/components/store/base/icon'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 interface ActionIconButtonProps {
   icon: LucideIcon
@@ -27,7 +28,7 @@ export function ActionIconButton({
     <Button 
       variant={variant} 
       size="sm" 
-      rounded="full" 
+      rounded={STORE_TOKENS.RADIUS.FULL} 
       isIconOnly 
       onClick={onClick}
       disabled={disabled}

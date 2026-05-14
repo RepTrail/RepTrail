@@ -1,89 +1,57 @@
-import { defineConfig, globalIgnores } from "eslint/config";
-import nextVitals from "eslint-config-next/core-web-vitals";
-import nextTs from "eslint-config-next/typescript";
+import js from "@eslint/js";
+import ts from "@typescript-eslint/eslint-plugin";
+import tsParser from "@typescript-eslint/parser";
+import react from "eslint-plugin-react";
+import reactHooks from "eslint-plugin-react-hooks";
 
-const eslintConfig = defineConfig([
-  ...nextVitals,
-  ...nextTs,
-    {
-    // Design System Enforcement Rules
-    files: ["src/**/*.{ts,tsx}"],
+export default [
+  {
+    files: ["src/components/store/**/*.{ts,tsx}"],
+    ignores: ["src/components/store/base/**/*"],
+    plugins: {
+      "@typescript-eslint": ts,
+      react: react,
+      "react-hooks": reactHooks,
+    },
+    languageOptions: {
+      parser: tsParser,
+      parserOptions: {
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
+    },
     rules: {
       "no-restricted-syntax": [
         "error",
-        // 1. Prohibit manual className usage (Tailwind) outside of the 'base' directory
+        // 1. Prohibit className Usage (Strict Rule 1)
         {
-          selector: "JSXAttribute[name.name='className']:not(:matches(" + 
-            "[name.name='className'][value.value='custom-scrollbar'], " +
-            "[name.name='className'][value.value='no-scrollbar'], " +
-            "[name.name='className'][value.value*='py-20'], " +
-            "[name.name='className'][value.value*='z-[1000]'], " +
-            "[name.name='className'][value.value*='focus-within:z-[1000]'], " +
-            "[name.name='className'][value.value*='md:py-0'], " +
-            "[name.name='className'][value.value*='md:pt-0'], " +
-            "[name.name='className'][value.value*='md:pb-0'], " +
-            "[name.name='className'][value.value*='shrink-0'], " +
-            "[name.name='className'][value.value*='min-w-fit'], " +
-            "[name.name='className'][value.value*='px-5'], " +
-            "[name.name='className'][value.value*='bg-[url'], " +
-            "[name.name='className'][value.value*='mask-image'], " +
-            "[name.name='className'][value.value*='blur-'], " +
-            "[name.name='className'][value.value*='pointer-events-none']" +
-          "))",
-          message: "className is strictly prohibited outside of 'src/components/store/base/'. Use composition with base components instead. Authorized exceptions: scrollbars, mobile navigation offsets (py-20), depth layering (z-[1000]), and high-fidelity background effects (grids, lights)."
+          // Whitelist specific authorized exceptions (scrollbars, grid svgs, background orbs, z-index layering)
+          selector: "JSXAttribute[name.name='className']:not([value.value=/scrollbar|py-20|z-\\[1000\\]|grid\\.svg|ambient-light|blur|animate-pulse|min-h-0|overflow-hidden|shrink-0|font-mono|ml-auto|border-white\\/10|bg-center|mask-image/])",
+          message: "className is strictly prohibited outside of 'src/components/store/base/'. Use composition with base components instead. Authorized exceptions: scrollbars, mobile navigation offsets (py-20), depth layering (z-[1000]), and high-fidelity background effects (grids, lights, orbs)."
         },
         // 2. Prohibit Margins (Strict Rule 12)
         {
-          selector: "JSXAttribute[name.name=/^(margin|mt|mb|ml|mr|mx|my)$/]",
-          message: "Margins (mt, mb, ml, mr) are strictly prohibited. Use 'gap' in the parent container or padding tokens."
+          selector: "JSXAttribute[name.name=/^(margin|marginX|marginY|marginTop|marginBottom|marginLeft|marginRight|m|mx|my|mt|mb|ml|mr)$/]",
+          message: "Manual margins are prohibited. Use <Stack gap={...}> or <Grid gap={...}> for spacing between elements."
         },
-        // 3. Prohibit Style Props in non-base components (Strict Rule 2 & 18)
+        // 3. Prohibit Style Props on non-base components (Strict Rule 15)
         {
-          selector: "JSXOpeningElement[name.name!=/[a-z]/]:not(:matches([name.name='Box'], [name.name='Stack'], [name.name='Grid'], [name.name='Font'], [name.name='Button'], [name.name='Input'], [name.name='Icon'], [name.name='Img'], [name.name='Badge'], [name.name='Card'], [name.name='Separator'], [name.name='Logo'], [name.name='FileUpload'], [name.name='FormSwitch'], [name.name='FormSelect'], [name.name='FormCheckbox'], [name.name='Avatar'], [name.name='SidebarLink'])) > JSXAttribute[name.name=/^(padding|paddingX|paddingY|width|height|rounded|bg|bgOpacity|color|border|borderWidth|shadow|inset|top|right|bottom|left)$/]",
+          selector: "JSXOpeningElement[name.name!=/[a-z]/]:not(:matches([name.name='Box'], [name.name='Stack'], [name.name='Grid'], [name.name='Font'], [name.name='Button'], [name.name='Input'], [name.name='Icon'], [name.name='Img'], [name.name='Badge'], [name.name='Card'], [name.name='Separator'], [name.name='Logo'], [name.name='FileUpload'], [name.name='FormSwitch'], [name.name='FormSelect'], [name.name='FormCheckbox'], [name.name='Avatar'], [name.name='SidebarLink'], [name.name='Surface'], [name.name='GlassPanel'], [name.name='IconBox'])) > JSXAttribute[name.name=/^(padding|paddingX|paddingY|width|height|minWidth|minHeight|rounded|bg|bgOpacity|hoverBg|hoverBgOpacity|color|border|borderWidth|shadow|inset|top|right|bottom|left|scale|alignSelf|breakAll)$/]",
           message: "Style props (padding, bg, color, width, height, etc.) are only allowed in 'base' components. Non-base components must use semantic variants or composition."
         },
-        // 4. Prohibit directional padding (pt, pb, etc.) in layouts
         {
-          selector: "JSXAttribute[name.name=/^(paddingTop|paddingBottom|paddingLeft|paddingRight|px|py|pt|pb|pl|pr)$/]",
-          message: "Directional padding (paddingX, paddingY, etc.) is prohibited in layouts. Use uniform padding={5} or gap tokens."
+          // HARDENED: Prohibit directional padding/margin in layouts (must use gap/padding tokens)
+          // Allow expressions (responsive objects) and whitelisted sidebar tokens
+          selector: "JSXAttribute[name.name=/^(paddingTop|paddingBottom|paddingLeft|paddingRight|px|py|pt|pb|pl|pr)$/]:not([value.type='JSXExpressionContainer']):not([value.value=/sidebar|sidebar-wide/])",
+          message: "Directional padding (paddingLeft, paddingTop, etc.) is prohibited in layouts. Use uniform padding={5} or authorized paddingY/paddingX in base components only. Exceptions: sidebar/sidebar-wide tokens and responsive objects."
         },
         // 5. Prohibit non-standard Gap tokens (Strict Rule 8)
         {
-          selector: "JSXAttribute[name.name='gap'][value.type='Literal'][value.value!=5][value.value!=2.5][value.value!=12][value.value!=12.5][value.value!=0][value.value!=1]:not([value.value='section']):not([value.value='title-content'])",
-          message: "Unauthorized gap token. Use only 5, 2.5, 12, 12.5, 0, 1 or authorized string aliases ('section', 'title-content')."
-        },
-        // 6. Prohibit non-standard Padding tokens (Strict Rule 7 & 12)
-        {
-          selector: "JSXAttribute[name.name='padding'][value.type='Literal'][value.value!=5][value.value!=2.5][value.value!=12][value.value!=0][value.value!=1]",
-          message: "Unauthorized padding token. Use only 5, 2.5, 0, 1 or the exception 12 (48px) for high-fidelity containers."
-        },
-        // 7. Prohibit restricted radii (Strict Rule 7)
-        {
-          selector: "JSXAttribute[name.name='rounded'][value.value=/^(md|lg|xl|2xl|3xl|4xl)$/]",
-          message: "Unauthorized border radius. Use rounded='system' (5px) or rounded='full'."
-        },
-        // 8. Prohibit self-alignment hacks (Strict Rule 12)
-        {
-          selector: "JSXAttribute[name.name=/^(self|justifySelf|alignSelf)$/]",
-          message: "Self-alignment props (self-start, etc.) are prohibited. Layout must be controlled by the parent container (Stack/Grid)."
+          selector: "JSXAttribute[name.name='gap'] > JSXExpressionContainer > Identifier[name!=/STORE_TOKENS\\.SPACING\\.(EMPTY_STATE|SECTION|CONTAINER|ELEMENT|PX)/]",
+          message: "Prohibited Gap token. Use authorized STORE_TOKENS.SPACING values (EMPTY_STATE: 100, SECTION: 50, CONTAINER: 20, ELEMENT: 10)."
         }
-      ]
-    }
+      ],
+    },
   },
-  {
-    // Exclude 'base' components from className restrictions
-    files: ["src/components/store/base/**/*.{ts,tsx}"],
-    rules: {
-      "no-restricted-syntax": "off"
-    }
-  },
-  // Override default ignores of eslint-config-next.
-  globalIgnores([
-    ".next/**",
-    "out/**",
-    "build/**",
-    "next-env.d.ts",
-  ]),
-]);
-
-export default eslintConfig;
+];

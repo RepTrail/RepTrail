@@ -2,7 +2,21 @@ import React from 'react'
 import { cn } from '@/lib/utils'
 import { Box, BoxProps } from './box'
 
-type GapToken = 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 'section' | 'title-content' | 'header-gap'
+export type GapToken = 
+  | 0 
+  | 2.5 
+  | 5 
+  | 10 
+  | 12.5 
+  | 20 
+  | 50 
+  | 100 
+  | 'section' 
+  | 'title-content' 
+  | 'header-gap'
+  | 'empty-state'
+  | 'container'
+  | 'element'
 
 export interface StackProps extends Omit<BoxProps, 'gap'> {
   children: React.ReactNode
@@ -44,8 +58,8 @@ export function Stack({
     7.5: 'gap-[30px]',
     10: 'gap-10',
     12.5: 'gap-[50px]',
-    'section': 'gap-[100px]',
-    'title-content': 'gap-10',
+    'section': 'gap-[50px]',
+    'title-content': 'gap-[30px]',
     'header-gap': 'gap-8'
   }
 
@@ -58,14 +72,20 @@ export function Stack({
     10: 'md:gap-10',
     12.5: 'md:gap-[50px]',
     'section': 'md:gap-[100px]',
-    'title-content': 'md:gap-10',
+    'title-content': 'md:gap-[50px]',
     'header-gap': 'md:gap-8'
   }
 
   // Handle responsive gap
   const isRespGap = typeof gap === 'object'
-  const gapBase = isRespGap ? (gap as any).base : gap
-  const gapMd = isRespGap ? (gap as any).md : undefined
+  let gapBase = isRespGap ? (gap as any).base : gap
+  let gapMd = isRespGap ? (gap as any).md : undefined
+
+  // Auto-responsive tokens
+  if (gap === 'section' || gap === 'title-content') {
+    gapBase = gap
+    gapMd = gap
+  }
 
   return (
     <Box 

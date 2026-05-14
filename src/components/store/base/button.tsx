@@ -1,8 +1,9 @@
 'use client'
 import React from 'react'
+import { Slot } from '@radix-ui/react-slot'
 import { Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { useRegistry } from '../advanced/registry-context'
+import { useRegistry } from '@/components/store/advanced/registry-context'
 
 export type ButtonVariant = 
   | 'orange' 
@@ -29,10 +30,10 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   variant?: ButtonVariant
   size?: 'xs' | 'sm' | 'md' | 'lg'
   rounded?: 'none' | 'full' | 'system' | 'sm'
-  fullWidth?: boolean
+  fullWidth?: boolean | { base: boolean, sm?: boolean, md?: boolean, lg?: boolean }
   isIconOnly?: boolean
-  flex1?: boolean
-  shrink?: number
+  flex1?: boolean | { base: boolean, sm?: boolean, md?: boolean, lg?: boolean }
+  shrink?: number | { base: number, sm?: number, md?: number, lg?: number }
   direction?: 'row' | 'col'
   gap?: 0 | 1 | 2.5 | 5
   height?: 'auto' | 'full' | 'anatomy-item' | 'anatomy-header' | '8' | '12' | '24'
@@ -52,6 +53,8 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   asChild?: boolean
   marginTop?: 0 | 1 | 2.5 | 5 | 7.5 | 12.5
   loading?: boolean
+  width?: number | string
+  minWidth?: number | string | { base: number | string, sm?: number | string, md?: number | string, lg?: number | string }
   padding?: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5
 }
 
@@ -86,6 +89,8 @@ export function Button({
   asChild,
   marginTop,
   loading,
+  width,
+  minWidth,
   padding,
   className,
   ...props
@@ -96,6 +101,10 @@ export function Button({
   const resolvedVariant = variant === 'primary' ? primaryColor 
     : variant === 'outline-primary' ? `outline-${primaryColor}` as ButtonVariant
     : variant
+
+  const isRespMinWidth = typeof minWidth === 'object'
+  const minWidthBase = isRespMinWidth ? (minWidth as any).base : minWidth
+  const minWidthMd = isRespMinWidth ? (minWidth as any).md : undefined
   
   const variantClasses = {
     orange: 'bg-orange-500 text-black shadow-lg shadow-orange-500/20',
@@ -145,17 +154,37 @@ export function Button({
     zinc: '!text-zinc-500'
   }
 
+  const Component = asChild ? Slot : 'button'
+
   return (
-    <button
+    <Component
       disabled={props.disabled || loading}
       className={cn(
-        'inline-flex items-center justify-center font-bold transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none uppercase italic tracking-wider',
+        'inline-flex items-center justify-center font-bold transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none uppercase italic tracking-wider [&_*]:text-current',
         variantClasses[resolvedVariant as keyof typeof variantClasses],
         sizeClasses[size],
         roundedClasses[rounded],
-        fullWidth ? 'w-full' : '',
-        flex1 ? 'flex-1' : '',
-        shrink !== undefined && `shrink-${shrink}`,
+        typeof fullWidth === 'boolean' ? (fullWidth ? 'w-full' : '') : cn(
+            fullWidth?.base && 'w-full',
+            fullWidth?.sm && 'sm:w-full',
+            fullWidth?.sm === false && 'sm:w-auto',
+            fullWidth?.md && 'md:w-full',
+            fullWidth?.md === false && 'md:w-auto',
+            fullWidth?.lg && 'lg:w-full',
+            fullWidth?.lg === false && 'lg:w-auto'
+        ),
+        flex1 && (typeof flex1 === 'boolean' ? (flex1 ? 'flex-1' : '') : cn(
+            (flex1 as any)?.base && 'flex-1',
+            (flex1 as any)?.md && 'md:flex-1',
+            (flex1 as any)?.md === false && 'md:flex-none',
+            (flex1 as any)?.lg && 'lg:flex-1',
+            (flex1 as any)?.lg === false && 'lg:flex-none'
+        )),
+        shrink !== undefined && (typeof shrink === 'number' ? `shrink-${shrink}` : cn(
+            (shrink as any)?.base !== undefined && `shrink-${(shrink as any)?.base}`,
+            (shrink as any)?.md !== undefined && `md:shrink-${(shrink as any)?.md}`,
+            (shrink as any)?.lg !== undefined && `lg:shrink-${(shrink as any)?.lg}`
+        )),
         direction === 'col' ? 'flex-col' : 'flex-row',
         gap !== undefined && gapClasses[gap as keyof typeof gapClasses],
         height === 'auto' ? 'h-auto' : height === 'full' ? 'h-full' : '',
@@ -188,13 +217,27 @@ export function Button({
         hoverBgOpacity !== undefined && `hover:bg-opacity-[${hoverBgOpacity}%]`,
         borderColor === 'transparent' && 'border-transparent',
         marginTop !== undefined && `mt-${marginTop}`,
+        minWidthBase && (
+            minWidthBase === 'auto' ? 'min-w-auto' :
+            typeof minWidthBase === 'number' ? `min-w-[${minWidthBase}px]` :
+            `min-w-[${String(minWidthBase).replace(/\s+/g, '')}]`
+        ),
+        minWidthMd && (
+            minWidthMd === 'auto' ? 'md:min-w-auto' :
+            typeof minWidthMd === 'number' ? `md:min-w-[${minWidthMd}px]` :
+            `md:min-w-[${String(minWidthMd).replace(/\s+/g, '')}]`
+        ),
         className
       )}
+      style={{
+          width: typeof width === 'number' ? `${width}px` : width,
+          ...props.style
+      }}
       {...props}
     >
       {loading ? (
         <Loader2 className="animate-spin" size={16} />
       ) : children}
-    </button>
+    </Component>
   )
 }

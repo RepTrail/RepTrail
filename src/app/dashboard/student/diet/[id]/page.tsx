@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { getQueryClient } from '@/lib/get-query-client'
 import { QUERY_KEYS } from '@/lib/query-keys'
-import { StudentDietDetailClient } from "@/components/feature/student/diet-detail-client"
+import { StudentDietDetailClient } from "@/components/store/features(deprecated)/student-diet-detail-client"
 
 export default async function StudentDietEditPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params

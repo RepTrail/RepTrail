@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { getQueryClient } from '@/lib/get-query-client'
 import { QUERY_KEYS } from '@/lib/query-keys'
-import { StudentWorkoutDetailClient } from "@/components/feature/student/workout-detail-client"
+import { StudentWorkoutDetailClient } from "@/components/store/features(deprecated)/student-workout-detail-client"
 
 export default async function StudentWorkoutPage({
     params,

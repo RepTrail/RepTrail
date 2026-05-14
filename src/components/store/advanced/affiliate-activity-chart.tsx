@@ -1,70 +1,79 @@
 'use client'
 
 import React from 'react'
-import { Stack } from '@/components/store/base/stack'
 import { Box } from '@/components/store/base/box'
+import { Stack } from '@/components/store/base/stack'
 import { Font } from '@/components/store/base/font'
-import { Surface } from '@/components/store/base/surface'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
+import { useRegistry } from '@/components/store/advanced/registry-context'
 
 interface AffiliateActivityChartProps {
-    clickDays: [string, number][]
-    maxClicks: number
+  clickDays: [string, number][]
+  maxClicks: number
 }
 
-/**
- * AffiliateActivityChart: Advanced component for rendering traffic analytics.
- * Replaces inline chart logic in stats sections.
- */
 export function AffiliateActivityChart({ clickDays, maxClicks }: AffiliateActivityChartProps) {
-    return (
-        <Surface variant="base" padding={5} rounded="system" border="subtle">
-            <Stack gap={5}>
-                <Box className="h-64" width="full" display="flex" align="end" gap={1}>
-                    {clickDays.map(([date, count], i) => (
-                        <Box 
-                            key={date} 
-                            flex1 
-                            display="flex" 
-                            direction="col" 
-                            align="center" 
-                            gap={2.5} 
-                            height="full" 
-                            justify="end" 
-                            className="group relative"
-                        >
-                            {/* Tooltip built with system props where possible, 
-                                keeping absolute div for specific hover behavior */}
-                            <div className="absolute bottom-full mb-2 bg-zinc-800 text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 pointer-events-none font-bold border border-white/5">
-                                {new Date(date).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}: {count} clicks
-                            </div>
+  const { primaryColor } = useRegistry()
 
-                            <Box
-                                fullWidth
-                                bg="primary"
-                                opacity={80}
-                                hoverBgOpacity={100}
-                                rounded="system"
-                                transition
-                                style={{
-                                    height: `${(count / maxClicks) * 100}%`,
-                                    minHeight: count > 0 ? '4px' : '1px'
-                                }}
-                            />
+  // Last 14 days for the chart
+  const recentDays = clickDays.slice(-14)
 
-                            {i % 5 === 0 && (
-                                <Box className="absolute -bottom-6">
-                                    <Font variant="sub-tiny" color="zinc-600" weight="black">
-                                        {new Date(date).getDate()}
-                                    </Font>
-                                </Box>
-                            )}
-                        </Box>
-                    ))}
+  return (
+    <Stack gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
+      <Box 
+        height={160} 
+        fullWidth 
+        display="flex" 
+        align="end" 
+        justify="between" 
+        padding={STORE_TOKENS.PADDING.ELEMENT}
+      >
+        {recentDays.map(([date, count], i) => {
+          const heightPercent = (count / maxClicks) * 100
+          const isToday = i === recentDays.length - 1
+
+          return (
+            <Stack key={date} align="center" gap={2.5} flex1>
+              <Box 
+                fullWidth 
+                bg={isToday ? primaryColor as any : 'zinc'} 
+                bgOpacity={isToday ? 100 : 20}
+                rounded="system"
+                style={{ height: `${Math.max(heightPercent, 5)}%` }}
+                transition
+                className="hover:bg-opacity-80 cursor-pointer group relative"
+              >
+                {/* Tooltip */}
+                <Box 
+                  position="absolute" 
+                  top="-30px" 
+                  left="50%" 
+                  translateX="-full"
+                  bg="black" 
+                  padding={2.5} 
+                  rounded="none" 
+                  display="none" 
+                  groupHoverDisplay="block"
+                  zIndex={50}
+                  className="whitespace-nowrap"
+                >
+                   <Font variant="sub-tiny" color="white" weight="black">{count} cliques</Font>
                 </Box>
-                <Box paddingTop={2.5} display="flex" justify="center">
-                    <Font variant="sub-tiny" color="zinc-600" italic>Eixo horizontal representa os dias do mês</Font>
-                </Box>
+              </Box>
             </Stack>
-        </Surface>
-    )
+          )
+        })}
+      </Box>
+
+      {/* X-Axis Labels */}
+      <Box display="flex" justify="between" fullWidth padding={STORE_TOKENS.PADDING.ELEMENT}>
+        <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>
+          {recentDays[0]?.[0]}
+        </Font>
+        <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>
+          Hoje
+        </Font>
+      </Box>
+    </Stack>
+  )
 }

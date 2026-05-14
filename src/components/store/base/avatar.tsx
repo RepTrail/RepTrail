@@ -2,12 +2,12 @@
 import React from 'react'
 import { Font } from './font'
 import { cn } from '@/lib/utils'
-import { useRegistry } from '../advanced/registry-context'
+import { useRegistry } from '@/components/store/advanced/registry-context'
 
 interface BaseAvatarProps {
     initials: string
     variant?: 'orange' | 'emerald' | 'red' | 'blue' | 'amber' | 'zinc' | 'primary'
-    size?: 'sm' | 'md' | 'lg' | 'xl'
+    size?: 'sm' | 'md' | 'lg' | 'xl' | 'xxl'
     src?: string
     className?: string
 }
@@ -26,7 +26,8 @@ export function BaseAvatar({
         sm: 'h-8 w-8 text-[8px]',
         md: 'h-12 w-12 text-[12px]',
         lg: 'h-16 w-16 text-[14px]',
-        xl: 'h-20 w-20 text-[16px]'
+        xl: 'h-20 w-20 text-[16px]',
+        xxl: 'h-40 w-40 text-[24px]'
     }
 
     const variantClasses = {

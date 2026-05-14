@@ -2,18 +2,21 @@
 
 import React from 'react'
 import { usePathname } from 'next/navigation'
-import { Logo } from '../base/logo'
+import { Logo } from '@/components/store/base/logo'
 import { SidebarItem } from '../intermediary/sidebar-item'
 import { BottomNavItem } from '../intermediary/bottom-nav-item'
 import { SidebarProfile } from '../intermediary/sidebar-profile'
-import { Icon } from '../base/icon'
-import { Button } from '../base/button'
-import { Box } from '../base/box'
-import { Stack } from '../base/stack'
-import { Divider, MobileNavContainer, MobileHeaderContainer, Inline } from '../base/layout'
-import { Surface } from '../base/surface'
+import { Icon } from '@/components/store/base/icon'
+import { Button } from '@/components/store/base/button'
+import { Box } from '@/components/store/base/box'
+import { Main } from '@/components/store/base/main'
+import { Stack } from '@/components/store/base/stack'
+import { Divider, MobileNavContainer, MobileHeaderContainer, Inline } from '@/components/store/base/layout'
+import { Surface, GlassPanel } from '@/components/store/base/surface'
+import { BackgroundEffects } from '@/components/store/base/background-effects'
 import { ImpersonationBar } from './impersonation-bar'
 import { cn } from '@/lib/utils'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { RegistryColor } from './registry-context'
 import {
     Home, Users, Dumbbell, Utensils, Activity, FlaskConical,
@@ -67,21 +70,21 @@ interface DashboardShellProps {
 // ─── Color Maps ───────────────────────────────────────────────────────────────
 
 const lightColorMap: Record<RegistryColor, string> = {
-    blue: 'from-blue-500/20',
-    red: 'from-red-500/20',
-    amber: 'from-amber-500/20',
-    emerald: 'from-emerald-500/20',
-    orange: 'from-orange-500/20',
-    zinc: 'from-zinc-500/20',
+    blue: '#3b82f633', // blue-500/20 approx
+    red: '#ef444433',
+    amber: '#f59e0b33',
+    emerald: '#10b98133',
+    orange: '#f9731633',
+    zinc: '#71717a33',
 }
 
 const orbColorMap: Record<RegistryColor, string> = {
-    blue: 'bg-blue-500/10',
-    red: 'bg-red-500/10',
-    amber: 'bg-amber-500/10',
-    emerald: 'bg-emerald-500/10',
-    orange: 'bg-orange-500/10',
-    zinc: 'bg-zinc-500/10',
+    blue: '#3b82f61a', // blue-500/10 approx
+    red: '#ef44441a',
+    amber: '#f59e0b1a',
+    emerald: '#10b9811a',
+    orange: '#f973161a',
+    zinc: '#71717a1a',
 }
 
 // ─── Main Shell ───────────────────────────────────────────────────────────────
@@ -95,45 +98,17 @@ export function DashboardShell({ children, color, links, mobileLinks, user, prof
     const ResolvedProfileIcon = typeof profileIcon === 'string' ? iconMap[profileIcon] : profileIcon
 
     return (
-        <Box
+        <Surface
             minHeight="screen"
             bg="zinc"
-            bgOpacity={100}
+            bgOpacity={STORE_TOKENS.OPACITY.BACKGROUND}
             overflowX="hidden"
             display="flex"
             direction="col"
             position="relative"
         >
-            {/* Background Grid - Allowed exception via className for system SVGs */}
-            <Box
-                position="fixed"
-                inset={0}
-                className="bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(to_bottom,white_0%,transparent_90%)] opacity-[0.22] pointer-events-none z-0"
-            />
-
-            {/* Background Orbs - Allowed high-fidelity effects in Advanced organismos */}
-            <Box
-                position="fixed"
-                top="-10%"
-                right="-5%"
-                width="full"
-                height="full"
-                rounded="full"
-                className={cn(
-                    'blur-[150px] pointer-events-none transition-colors duration-1000 z-0',
-                    'w-[60%] h-[60%]',
-                    `bg-gradient-to-br ${lightColorMap[color]} to-transparent`
-                )}
-            />
-            <Box
-                position="fixed"
-                bottom="10%"
-                left="20%"
-                className={cn(
-                    'w-[500px] h-[500px] rounded-full blur-[180px] animate-pulse pointer-events-none transition-colors duration-1000 z-0',
-                    orbColorMap[color]
-                )}
-            />
+            {/* Background Effects (Grid & Orbs) — Unified Base Component */}
+            <BackgroundEffects variant="all" />
 
             {/* Desktop Sidebar */}
             <DashboardSidebar
@@ -157,19 +132,18 @@ export function DashboardShell({ children, color, links, mobileLinks, user, prof
             <DashboardBottomNav color={color} links={bottomLinks} />
 
             {/* Main Content */}
-            <Box
-                as="main"
+            <Main
                 flex1
                 fullWidth
                 transition
                 position="relative"
                 zIndex={10}
                 paddingLeft={{ base: 0, lg: 'sidebar-wide' }}
-            >
+              >
                 <ImpersonationBar color={color} />
                 {children}
-            </Box>
-        </Box>
+            </Main>
+        </Surface>
     )
 }
 
@@ -195,16 +169,16 @@ function DashboardSidebar({
         <>
             {/* Mobile Overlay */}
             {isSidebarOpen && (
-                <Box
+                <Surface
                     position="fixed"
-                    inset={0}
-                    bg="black"
-                    bgOpacity={60}
-                    backdropBlur="sm"
+                    pin="inset"
+                    variant="glass-dark"
                     zIndex={100}
                     display={{ base: 'block', lg: 'none' }}
                     onClick={() => setIsSidebarOpen(false)}
-                />
+                >
+                   <></>
+                </Surface>
             )}
 
             <Box
@@ -214,65 +188,77 @@ function DashboardSidebar({
                 height="screen"
                 zIndex={100}
                 width="sidebar-wide"
-                translateX={{
-                    base: isSidebarOpen ? 'none' : 'full',
-                    lg: 'none'
-                }}
                 transition
-                pin={{ base: 'right', lg: 'left' }}
+                pin="left"
+                translateX={{ base: isSidebarOpen ? 0 : '-full', lg: 0 }}
             >
-                {/* Sidebar Container */}
-                <Box
+                <GlassPanel
+                    fullWidth
                     fullHeight
+                    variant="glass"
                     display="flex"
                     direction="col"
-                    bg="zinc"
-                    bgOpacity={50}
-                    backdropBlur="md"
+                    rounded="none"
+                    border="none"
                 >
-                    <Box fullWidth padding={5} flex1 display="flex" direction="col" overflow="hidden" gap={12.5}>
+                    {/* Right border for desktop static */}
+                    <Surface 
+                        display={{ base: 'none', lg: 'block' }} 
+                        position="absolute" 
+                        pin="right" 
+                        top={0} 
+                        fullHeight 
+                        width="px" 
+                        bg="white" 
+                        bgOpacity={5}
+                    >
+                        <></>
+                    </Surface>
 
-                        {/* Logo */}
-                        <Box shrink={0}>
-                            <Logo size="md" color={color as any} />
-                        </Box>
+                    <Box fullWidth padding={STORE_TOKENS.PADDING.CONTAINER} flex1 display="flex" direction="col" overflow="hidden">
+                        <Stack gap={STORE_TOKENS.SPACING.EMPTY_STATE} fullWidth flex1 overflow="hidden">
+                            {/* Logo */}
+                            <Box shrink={0}>
+                                <Logo size="md" color={color as any} />
+                            </Box>
 
-                        {/* Navigation */}
-                        <Box as="nav" flex1 fullWidth overflowY="auto" noScrollbar>
-                            <Stack gap={2.5} fullWidth>
-                                {links.map((link) => {
-                                    const IconComp = iconMap[link.icon]
-                                    const active = isActive(link)
+                            {/* Navigation */}
+                            <Box as="nav" flex1 fullWidth overflowY="auto" noScrollbar>
+                                <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
+                                    {links.map((link) => {
+                                        const IconComp = iconMap[link.icon]
+                                        const active = isActive(link)
 
-                                    return (
-                                        <SidebarItem
-                                            key={link.href}
-                                            label={link.label}
-                                            icon={IconComp ?? Home}
-                                            active={active}
-                                            variant={color as any}
-                                            onClick={link.onClick ? () => {
-                                                link.onClick?.()
-                                                setIsSidebarOpen(false)
-                                            } : undefined}
-                                            href={link.onClick ? undefined : link.href}
-                                        />
-                                    )
-                                })}
-                            </Stack>
-                        </Box>
+                                        return (
+                                            <SidebarItem
+                                                key={link.href}
+                                                label={link.label}
+                                                icon={IconComp ?? Home}
+                                                active={active}
+                                                variant={color as any}
+                                                onClick={link.onClick ? () => {
+                                                    link.onClick?.()
+                                                    setIsSidebarOpen(false)
+                                                } : undefined}
+                                                href={link.onClick ? undefined : link.href}
+                                            />
+                                        )
+                                    })}
+                                </Stack>
+                            </Box>
+                        </Stack>
                     </Box>
 
-                    <Divider color="white/5" />
+                    <Divider color={STORE_TOKENS.COLORS.DIVIDER.SUBTLE} />
 
-                    <Box padding={5} shrink={0}>
+                    <Box padding={STORE_TOKENS.PADDING.CONTAINER} shrink={0}>
                         <SidebarProfile
                             user={user}
                             settingsHref={profileHref}
                             settingsIcon={profileIcon}
                         />
                     </Box>
-                </Box>
+                </GlassPanel>
             </Box>
         </>
     )
@@ -291,7 +277,7 @@ function DashboardMobileHeader({
         <MobileHeaderContainer>
             <Inline justify="between" fullWidth align="center">
                 <Logo size="sm" color={color as any} />
-                <Surface variant="glass" padding={1} rounded="system">
+                <Surface variant="glass" padding={2.5} rounded={STORE_TOKENS.RADIUS.SYSTEM}>
                     <Button
                         variant="ghost"
                         size="md"

@@ -1,5 +1,5 @@
 import { getTrainerTier, getTrainerStudents, getTrainerProfile } from '@/actions/trainer-actions'
-import { PlansClient } from '@/components/feature/trainer/plans-client'
+import { PlansClient } from '@/components/store/features(deprecated)/trainer-plans-client'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { CreditCard } from 'lucide-react'
 
@@ -25,3 +25,4 @@ export default async function TrainerPlansPage() {
         </RegistryMain>
     )
 }
+

@@ -1,6 +1,6 @@
 'use client'
 
-import { UnifiedCreationDialog } from '@/components/feature/shared/unified-creation-dialog'
+import { UnifiedCreationDialog } from '@/components/store/features(deprecated)/unified-creation-dialog'
 import { Button } from '@/components/ui/button'
 import { Plus } from 'lucide-react'
 
@@ -31,3 +31,4 @@ export function WorkoutActions({ isAutoTrainingActive }: WorkoutActionsProps) {
         />
     )
 }
+

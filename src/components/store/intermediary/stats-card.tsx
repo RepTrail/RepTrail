@@ -1,12 +1,13 @@
 import React from 'react'
-import { Stack } from '../base/stack'
-import { Font } from '../base/font'
-import { Icon } from '../base/icon'
-import { GlassPanel } from '../base/surface'
-import { Box } from '../base/box'
+import { Stack } from '@/components/store/base/stack'
+import { Font } from '@/components/store/base/font'
+import { Icon } from '@/components/store/base/icon'
+import { GlassPanel } from '@/components/store/base/surface'
+import { Box } from '@/components/store/base/box'
 import { LucideIcon } from 'lucide-react'
 
-import { useRegistry } from '../advanced/registry-context'
+import { useRegistry } from '@/components/store/advanced/registry-context'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 interface StatsCardProps {
     label: string
@@ -39,44 +40,38 @@ export function StatsCard({
     }
 
     return (
-        <GlassPanel padding={5} group>
-            <Stack gap={5} align="start">
+        <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM} group>
+            <Stack gap={STORE_TOKENS.SPACING.CONTAINER} align="start">
                 {/* Icon Header */}
-                <Box 
-                    padding={2.5} 
-                    rounded="system" 
-                    className={colorMap[resolvedColor as keyof typeof colorMap]}
+                <Box
+                    padding={STORE_TOKENS.PADDING.ELEMENT}
+                    rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                    bg={resolvedColor as any}
+                    bgOpacity={STORE_TOKENS.OPACITY.SUBTLE}
                 >
-                    <Icon icon={icon} size="sm" />
+                    <Icon icon={icon} size="sm" color={resolvedColor as any} />
                 </Box>
 
                 {/* Content Body */}
-                <Stack gap={1} fullWidth align="stretch">
-                    <Font 
-                        variant="sub-tiny" 
-                        weight="black" 
-                        uppercase 
-                        color="zinc-500" 
-                        tracking="widest"
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth align="stretch">
+                    <Font
+                        {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                        color={STORE_TOKENS.COLORS.TEXT.MUTED}
                     >
                         {label}
                     </Font>
-                    
-                    <Font 
-                        variant="heading" 
-                        weight="black" 
-                        italic 
+
+                    <Font
+                        {...STORE_TOKENS.TYPOGRAPHY.HEADING}
+                        variant="heading"
                     >
                         {value}
                     </Font>
 
                     {description && (
-                        <Font 
-                            variant="sub-tiny" 
-                            weight="bold" 
-                            uppercase 
-                            color="zinc-600" 
-                            tracking="wide"
+                        <Font
+                            {...STORE_TOKENS.TYPOGRAPHY.DESCRIPTION}
+                            color={STORE_TOKENS.COLORS.TEXT.DIM}
                         >
                             {description}
                         </Font>

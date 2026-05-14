@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import { Icon } from './icon'
 import { LucideIcon } from 'lucide-react'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 interface BaseSidebarLinkProps {
   icon: LucideIcon
@@ -39,7 +40,8 @@ export function BaseSidebarLink({
   )
 
   const classes = cn(
-    "w-full flex items-center gap-4 px-5 py-3.5 rounded-full transition-all duration-300 group border-2 overflow-hidden",
+    "w-full flex items-center gap-4 px-5 py-3.5 transition-all duration-300 group border-2 overflow-hidden",
+    STORE_TOKENS.RADIUS.FULL === 'full' ? 'rounded-full' : 'rounded-[5px]',
     "text-[10px] font-black uppercase tracking-[0.2em] italic",
     active ? (
       variant === 'orange' ? 'bg-orange-500/5 border-orange-500/20 text-orange-500' :

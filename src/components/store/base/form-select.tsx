@@ -6,6 +6,8 @@ import { Font } from './font'
 import { Icon } from './icon'
 import { ChevronDown, Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useRegistry } from '@/components/store/advanced/registry-context'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 interface SelectOption {
     label: string
@@ -30,6 +32,7 @@ export function FormSelect({
     onChange,
     error
 }: FormSelectProps) {
+    const { primaryColor } = useRegistry()
     const [open, setOpen] = useState(false)
     const [selected, setSelected] = useState(value ?? '')
     const [coords, setCoords] = useState({ top: 0, left: 0, width: 0 })
@@ -37,6 +40,17 @@ export function FormSelect({
     const ref = useRef<HTMLDivElement>(null)
 
     const selectedOption = options.find(o => o.value === selected)
+
+    const activeClassesMap = {
+        emerald: 'border-emerald-500/50 bg-emerald-500/5',
+        orange: 'border-orange-500/50 bg-orange-500/5',
+        amber: 'border-amber-500/50 bg-amber-500/5',
+        blue: 'border-blue-500/50 bg-blue-500/5',
+        red: 'border-red-500/50 bg-red-500/5',
+        zinc: 'border-zinc-500/50 bg-zinc-500/5',
+    }
+    
+    const activeClasses = activeClassesMap[primaryColor as keyof typeof activeClassesMap] || activeClassesMap.emerald
 
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
@@ -71,11 +85,11 @@ export function FormSelect({
 
     return (
         <div 
-            className="flex flex-col gap-[10px] w-full relative" 
+            className="flex flex-col w-full relative gap-[10px]" 
             ref={ref}
         >
             {label && (
-                <Font variant="auxiliary" color="zinc-500" weight="black" uppercase tracking="widest">
+                <Font variant="auxiliary" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="black" uppercase tracking="widest">
                     {label}
                 </Font>
             )}
@@ -87,10 +101,11 @@ export function FormSelect({
                     onClick={() => setOpen(v => !v)}
                     className={cn(
                         'w-full h-12 px-4 flex items-center justify-between',
-                        'bg-zinc-950/40 border-2 transition-all duration-200 rounded-[5px]',
+                        'bg-zinc-950/40 border-2 transition-all duration-200',
+                        STORE_TOKENS.RADIUS.SYSTEM === 'system' ? 'rounded-[5px]' : 'rounded-full',
                         'text-left outline-none',
                         open
-                            ? 'border-emerald-500/50 bg-emerald-500/5'
+                            ? activeClasses
                             : 'border-white/5 hover:border-white/10',
                         error && 'border-red-500/50'
                     )}
@@ -103,7 +118,7 @@ export function FormSelect({
                     </span>
                     <ChevronDown className={cn(
                         'w-4 h-4 text-zinc-500 transition-transform duration-200',
-                        open && 'rotate-180 text-emerald-400'
+                        open && `rotate-180 text-${primaryColor}-400`
                     )} />
                 </button>
 
@@ -111,7 +126,8 @@ export function FormSelect({
                 {open && typeof document !== 'undefined' && createPortal(
                     <div 
                         className={cn(
-                            "fixed z-[9999] rounded-[5px] border-2 border-white/5 bg-zinc-900 shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200",
+                            "fixed z-[9999] border-2 border-white/5 bg-zinc-900 shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200",
+                            STORE_TOKENS.RADIUS.SYSTEM === 'system' ? 'rounded-[5px]' : 'rounded-full',
                             openUp ? "origin-bottom" : "origin-top"
                         )}
                         style={{
@@ -129,7 +145,7 @@ export function FormSelect({
                                     type="button"
                                     onClick={() => handleSelect(opt.value)}
                                     className={cn(
-                                        'w-full px-4 py-3 flex items-start justify-between gap-3 transition-colors text-left',
+                                        'w-full px-4 py-3 flex items-center justify-between gap-3 transition-colors text-left',
                                         isSelected
                                             ? 'bg-emerald-500/10 text-emerald-400'
                                             : 'text-zinc-400 hover:bg-white/5 hover:text-white'
@@ -146,7 +162,7 @@ export function FormSelect({
                                         )}
                                     </div>
                                     {isSelected && (
-                                        <Check className="w-3.5 h-3.5 text-emerald-400 mt-0.5 shrink-0" />
+                                        <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                                     )}
                                 </button>
                             )
@@ -157,7 +173,7 @@ export function FormSelect({
             </div>
 
             {error && (
-                <Font variant="sub-tiny" color="red" weight="black" uppercase tracking="widest" className="pl-1">
+                <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.ERROR} weight="black" uppercase tracking="widest" className="pl-1">
                     {error}
                 </Font>
             )}

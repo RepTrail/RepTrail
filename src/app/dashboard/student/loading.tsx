@@ -1,8 +1,8 @@
 import { Skeleton } from "@/components/ui/skeleton"
-import { WorkoutCardSkeleton } from '@/components/feature/student/dashboard/workout-card'
-import { CardioCardSkeleton } from '@/components/feature/student/dashboard/cardio-card'
-import { DietCardSkeleton } from '@/components/feature/student/dashboard/diet-card'
-import { ErgogenicsCardSkeleton } from '@/components/feature/student/dashboard/ergogenics-card'
+import { WorkoutCardSkeleton } from '@/components/store/features(deprecated)/student-workout-card'
+import { CardioCardSkeleton } from '@/components/store/features(deprecated)/student-cardio-card'
+import { DietCardSkeleton } from '@/components/store/features(deprecated)/student-diet-card'
+import { ErgogenicsCardSkeleton } from '@/components/store/features(deprecated)/student-ergogenics-card'
 
 export default function StudentDashboardLoading() {
     return (
@@ -37,3 +37,4 @@ export default function StudentDashboardLoading() {
         </div>
     )
 }
+

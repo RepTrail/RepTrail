@@ -1,14 +1,15 @@
 'use client'
 
 import React from 'react'
-import { Box } from '../base/box'
-import { Stack } from '../base/stack'
-import { Font } from '../base/font'
-import { Icon } from '../base/icon'
+import { Box } from '@/components/store/base/box'
+import { Stack } from '@/components/store/base/stack'
+import { Font } from '@/components/store/base/font'
+import { Icon } from '@/components/store/base/icon'
 import { LucideIcon } from 'lucide-react'
-import { GlassPanel } from '../base/surface'
-import { Button } from '../base/button'
+import { GlassPanel } from '@/components/store/base/surface'
+import { Button } from '@/components/store/base/button'
 import { cn } from '@/lib/utils'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 interface Option {
   id: string
@@ -25,31 +26,33 @@ interface SegmentedSwitchProps {
   defaultActiveVariant?: Option['activeVariant']
 }
 
-export function SegmentedSwitch({ 
-  options, 
-  activeId, 
-  onSelect, 
+export function SegmentedSwitch({
+  options,
+  activeId,
+  onSelect,
   fullWidth = true,
   defaultActiveVariant = 'outline-red'
 }: SegmentedSwitchProps) {
   return (
-    <GlassPanel 
-      padding={0} 
-      rounded="full" 
+    <GlassPanel
+      padding={0}
+      rounded={STORE_TOKENS.RADIUS.FULL}
       overflow="hidden"
       fullWidth={fullWidth}
     >
-      <Box 
-        overflowX="auto" 
-        noScrollbar 
+      <Box
+        overflowX="auto"
+        noScrollbar
         fullWidth
+        className="snap-x snap-mandatory scroll-smooth"
       >
-        <Stack 
-          direction="row" 
-          gap={1} 
-          wrap="nowrap" 
-          padding={1}
+        <Stack
+          direction="row"
+          gap={STORE_TOKENS.SPACING.ELEMENT}
+          wrap="nowrap"
+          padding={2.5}
           align="stretch"
+          fullWidth
         >
           {options.map((option) => {
             const isActive = activeId === option.id
@@ -61,28 +64,25 @@ export function SegmentedSwitch({
                 key={option.id}
                 onClick={() => onSelect(option.id)}
                 variant={isActive ? variant : 'ghost'}
-                rounded="full"
+                rounded={STORE_TOKENS.RADIUS.FULL}
                 size="sm"
-                className={cn(
-                  'transition-all duration-300',
-                  fullWidth ? 'flex-1' : 'shrink-0 min-w-fit px-5'
-                )}
+                flex1={{ base: false, md: true }}
+                shrink={{ base: 0, md: 1 }}
+                minWidth={{ base: 'calc(50% - 15px)', md: 'auto' }}
+                transition
+                className="snap-center"
               >
-                <Stack direction="row" align="center" gap={2.5} wrap="nowrap">
+                <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} wrap="nowrap">
                   {option.icon && (
-                    <Icon 
-                      icon={option.icon} 
-                      size="xs" 
-                      color={(isActive ? colorToken : 'zinc-500') as any} 
+                    <Icon
+                      icon={option.icon}
+                      size="xs"
+                      color={(isActive ? colorToken : 'zinc-500') as any}
                     />
                   )}
-                  <Font 
-                    variant="sub-tiny" 
-                    weight="black" 
-                    uppercase 
-                    italic 
+                  <Font
+                    {...STORE_TOKENS.TYPOGRAPHY.LABEL}
                     color={(isActive ? colorToken : 'zinc-500') as any}
-                    nowrap
                   >
                     {option.label}
                   </Font>
@@ -90,6 +90,8 @@ export function SegmentedSwitch({
               </Button>
             )
           })}
+          {/* Spacer to ensure right padding on horizontal scroll */}
+          <Box flex="none" width={STORE_TOKENS.SPACING.ELEMENT} height={1} />
         </Stack>
       </Box>
     </GlassPanel>

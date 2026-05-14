@@ -6,7 +6,9 @@ import { Font } from '@/components/store/base/font'
 import { Badge } from '@/components/store/base/badge'
 import { GlassPanel } from '@/components/store/base/surface'
 import { CheckIndicator } from '@/components/store/base/check-indicator'
-import { Zap } from 'lucide-react'
+import { Zap, FlaskConical } from 'lucide-react'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
+import { EmptyState } from './empty-state'
 
 interface ErgogenicItem {
     name: string
@@ -15,40 +17,50 @@ interface ErgogenicItem {
 
 interface ErgogenicsListProps {
     items: ErgogenicItem[]
+    status?: 'active' | 'empty'
 }
 
 /**
- * ErgogenicsList: Refactored to use CheckIndicator base component.
+ * ErgogenicsList: Simple list for daily management visualization.
+ * Popup actions removed as per user feedback.
  */
-export function ErgogenicsList({ items }: ErgogenicsListProps) {
+export function ErgogenicsList({ items, status = 'active' }: ErgogenicsListProps) {
+    if (status === 'empty') {
+        return (
+            <EmptyState
+                icon={FlaskConical}
+                title="SEM ERGOGÊNICOS"
+                description="NENHUM PROTOCOLO DE SUBSTÂNCIAS ATIVO."
+            />
+        )
+    }
+
     return (
-        <Stack gap={2.5}>
+        <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
             {items.map((item, idx) => (
-                <GlassPanel 
-                    key={item.name} 
-                    padding={5} 
-                    rounded="system" 
+                <GlassPanel
+                    key={item.name}
+                    padding={STORE_TOKENS.PADDING.ELEMENT}
+                    rounded={STORE_TOKENS.RADIUS.SYSTEM}
                     variant="glass"
                     transition
-                    hoverBgOpacity={10}
-                    cursor="pointer"
                 >
-                    <Stack direction="row" align="center" gap={5}>
+                    <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
                         <CheckIndicator checked={idx < 2} />
-                        <Stack gap={1} flex1>
+                        <Stack gap={STORE_TOKENS.SPACING.ELEMENT} flex1>
                             <Stack direction="row" align="center" justify="between">
-                                <Font variant="body-sm" color="white" weight="black" uppercase italic tracking="widest">
+                                <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} variant="body-sm" color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
                                     {item.name}
                                 </Font>
-                                <Badge 
-                                    label={item.dosage} 
-                                    icon={Zap} 
-                                    variant="glass" 
-                                    color="amber" 
-                                    size="xs" 
+                                <Badge
+                                    label={item.dosage}
+                                    icon={Zap}
+                                    variant="glass"
+                                    color={STORE_TOKENS.COLORS.WARNING}
+                                    size="xs"
                                 />
                             </Stack>
-                            <Font variant="sub-tiny" color="zinc-500" weight="black" uppercase>
+                            <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.MUTED}>
                                 DOSAGEM DIÁRIA RECOMENDADA
                             </Font>
                         </Stack>

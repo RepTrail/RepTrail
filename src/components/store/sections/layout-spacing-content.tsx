@@ -1,13 +1,14 @@
 'use client'
 
 import React from 'react'
-import { Stack } from '../base/stack'
-import { Font } from '../base/font'
-import { Inline } from '../base/layout'
-import { Box } from '../base/box'
-import { GlassPanel, CardHeader, CardContent } from '../base/surface'
-import { RegistrySection } from '../advanced/registry-section'
+import { Stack } from '@/components/store/base/stack'
+import { Font } from '@/components/store/base/font'
+import { Inline } from '@/components/store/base/layout'
+import { Box } from '@/components/store/base/box'
+import { GlassPanel, CardHeader, CardContent } from '@/components/store/base/surface'
+import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { Layout } from 'lucide-react'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 export function LayoutSpacingContent({ id }: { id?: string }) {
   return (
@@ -23,21 +24,21 @@ export function LayoutSpacingContent({ id }: { id?: string }) {
                 <CardHeader>
                     <Font weight="bold">Radii & Base Padding</Font>
                 </CardHeader>
-                <CardContent padding={5}>
-                    <Stack direction={{ base: 'col', md: 'row' }} gap={5} align="stretch">
+                <CardContent padding={STORE_TOKENS.PADDING.CONTAINER}>
+                    <Stack direction={{ base: 'col', md: 'row' }} gap={STORE_TOKENS.SPACING.CONTAINER} align="stretch">
                         <Box flex1 display="flex" align="center" justify="center">
-                            <Inline gap={5} justify="center" fullWidth>
-                                <RadiusItem label="Standard" value="5px" rounded="system" />
-                                <RadiusItem label="Pills" value="Full" rounded="full" />
+                            <Inline gap={STORE_TOKENS.SPACING.CONTAINER} justify="center" fullWidth>
+                                <RadiusItem label="Standard" value="5px" rounded={STORE_TOKENS.RADIUS.SYSTEM} />
+                                <RadiusItem label="Pills" value="Full" rounded={STORE_TOKENS.RADIUS.FULL} />
                             </Inline>
                         </Box>
 
-                        <GlassPanel flex1 padding={5} width={{ base: 'full', md: 'half' }}>
-                            <Stack gap={5}>
+                        <GlassPanel flex1 padding={STORE_TOKENS.PADDING.CONTAINER} width={{ base: 'full', md: 'half' }}>
+                            <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                                 <Font variant="sub-tiny" color="orange" weight="black" uppercase italic tracking="widest">Governance Rules:</Font>
-                                <Font variant="description" color="zinc-400">1. Radius must be strictly [5px] or [Full].</Font>
-                                <Font variant="description" color="zinc-400">2. Mandatory Card Padding is [20px] (Orange).</Font>
-                                <Font variant="description" color="zinc-400">3. Margins (mt/mb) are strictly prohibited.</Font>
+                                <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.SECONDARY}>1. Radius must be strictly [5px] or [Full].</Font>
+                                <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.SECONDARY}>2. Mandatory Card Padding is [20px] (Orange).</Font>
+                                <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.SECONDARY}>3. Margins (mt/mb) are strictly prohibited.</Font>
                             </Stack>
                         </GlassPanel>
                     </Stack>
@@ -56,10 +57,10 @@ interface RadiusItemProps {
 
 function RadiusItem({ label, value, rounded }: RadiusItemProps) {
   return (
-    <Box bg="orange" padding={5} flex1 rounded={rounded}>
-      <Stack align="center" justify="center" gap={2.5}>
-        <Font color="black" weight="black" variant="sub-tiny" uppercase italic>{label}</Font>
-        <Font color="black" weight="bold" variant="body">{value}</Font>
+    <Box bg="orange" padding={STORE_TOKENS.PADDING.CONTAINER} flex1 rounded={rounded}>
+      <Stack align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+        <Font color={STORE_TOKENS.COLORS.BLACK} weight="black" variant="sub-tiny" uppercase italic>{label}</Font>
+        <Font color={STORE_TOKENS.COLORS.BLACK} weight="bold" variant="body">{value}</Font>
       </Stack>
     </Box>
   )

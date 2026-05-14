@@ -1,13 +1,14 @@
-import React from 'react'
-import { Box } from '../base/box'
-import { Stack } from '../base/stack'
-import { Font } from '../base/font'
-import { Icon } from '../base/icon'
-import { Inline } from '../base/layout'
-import { GlassPanel } from '../base/surface'
+import { Box } from '@/components/store/base/box'
+import { Scaffold } from '@/components/store/base/main'
+import { Stack } from '@/components/store/base/stack'
+import { Font } from '@/components/store/base/font'
+import { Icon } from '@/components/store/base/icon'
+import { Inline } from '@/components/store/base/layout'
+import { GlassPanel } from '@/components/store/base/surface'
 import { LucideIcon } from 'lucide-react'
 import { useRegistry } from './registry-context'
 import { SegmentedSwitch } from '../intermediary/segmented-switch'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 interface DashboardMainProps {
   children: React.ReactNode
@@ -48,12 +49,16 @@ export function DashboardMain({
   const rest = words.slice(1).join(' ')
 
   return (
-    <Box fullWidth paddingX={5} paddingY={{ base: 25, sm: 5, md: 20 }}>
-      <Stack gap={{ base: 12.5, md: 'section' }}>
+    <Scaffold 
+      fullWidth 
+      paddingX={STORE_TOKENS.PADDING.CONTAINER} 
+      paddingY={{ base: 25, md: 20 }}
+    >
+      <Stack gap={{ base: STORE_TOKENS.SPACING.EMPTY_STATE, md: STORE_TOKENS.SPACING.SECTION }}>
 
         {/* Header Section */}
-        <Stack gap={2.5}>
-          <Inline gap={2.5}>
+        <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+          <Inline gap={STORE_TOKENS.SPACING.ELEMENT}>
             {icon && <Icon icon={icon} color={primaryColor as any} size="lg" />}
             {auxiliaryText && (
               <Font variant="auxiliary" color={primaryColor as any}>
@@ -62,7 +67,7 @@ export function DashboardMain({
             )}
           </Inline>
 
-          <Stack gap={1}>
+          <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
             <Font variant="h1" nowrap>
               {first} {rest && <Font variant="h1" color={primaryColor} nowrap>{rest}</Font>}
             </Font>
@@ -80,19 +85,19 @@ export function DashboardMain({
         )}
 
         {/* Content Sections */}
-        <Stack gap={{ base: 12.5, md: 'section' }}>
+        <Stack gap={{ base: STORE_TOKENS.SPACING.EMPTY_STATE, md: STORE_TOKENS.SPACING.SECTION }}>
           {children}
         </Stack>
 
         {/* Standardized Footer */}
         {showFooter && (
-          <GlassPanel padding={5}>
+          <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER}>
             <Inline justify="between">
-              <Font variant="sub-tiny" color="zinc-500">RepTrail Dashboard v2.0 - 2026</Font>
+              <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>RepTrail Dashboard v2.0 - 2026</Font>
             </Inline>
           </GlassPanel>
         )}
       </Stack>
-    </Box>
+    </Scaffold>
   )
 }

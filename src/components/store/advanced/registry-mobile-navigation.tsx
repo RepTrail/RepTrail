@@ -1,14 +1,15 @@
 'use client'
 
 import React from 'react'
-import { Logo } from '../base/logo'
-import { Font } from '../base/font'
-import { Icon } from '../base/icon'
+import { Logo } from '@/components/store/base/logo'
+import { Font } from '@/components/store/base/font'
+import { Icon } from '@/components/store/base/icon'
 import { Menu } from 'lucide-react'
 import { useRegistry } from './registry-context'
-import { MobileHeaderContainer, Inline } from '../base/layout'
-
-import { GlassPanel } from '../base/surface'
+import { MobileHeaderContainer, Inline } from '@/components/store/base/layout'
+import { Box } from '@/components/store/base/box'
+import { GlassPanel } from '@/components/store/base/surface'
+import { STORE_TOKENS } from '@/components/store/constants/tokens';
 
 export function RegistryMobileNavigation() {
   const { primaryColor, setIsSidebarOpen, isSidebarOpen } = useRegistry()
@@ -17,15 +18,24 @@ export function RegistryMobileNavigation() {
     <MobileHeaderContainer>
       <Inline justify="between" fullWidth align="center">
         <Logo size="sm" color={primaryColor as any} />
-        
-        <GlassPanel padding={0} rounded="system" className="p-1">
-            <button 
-                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                className="flex items-center justify-center w-10 h-10 active:scale-90 transition-transform"
-            >
-                <Icon icon={Menu} color={primaryColor as any} size="sm" />
-            </button>
-        </GlassPanel>
+
+        <Box 
+          as="button"
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          width="10"
+          height="10"
+          display="flex"
+          align="center"
+          justify="center"
+          bg="primary"
+          bgOpacity={20}
+          border
+          borderColor="primary"
+          borderOpacity={80}
+          rounded={STORE_TOKENS.RADIUS.SYSTEM}
+        >
+          <Icon icon={Menu} color={primaryColor as any} size="sm" />
+        </Box>
       </Inline>
     </MobileHeaderContainer>
   )

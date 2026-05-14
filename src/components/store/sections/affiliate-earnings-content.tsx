@@ -5,7 +5,7 @@ import { Stack } from '@/components/store/base/stack'
 import { Grid } from '@/components/store/base/grid'
 import { Box } from '@/components/store/base/box'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
-import { AffiliateWalletSection } from './affiliate-wallet-section'
+import { AffiliateWalletSection } from '@/components/store/advanced/affiliate-wallet-section'
 import { StatsCard } from '@/components/store/intermediary/stats-card'
 import { CommissionItem } from '@/components/store/intermediary/commission-item'
 import { WithdrawalItem } from '@/components/store/intermediary/withdrawal-item'
@@ -13,6 +13,7 @@ import { EmptyState } from '@/components/store/intermediary/empty-state'
 import { DollarSign, Clock, CheckCircle2, AlertCircle, Wallet } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { getAffiliateTransactions } from '@/actions/affiliate-actions'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 /**
  * AffiliateEarningsContent: Returns a fragment of sections for RegistryMain.
@@ -52,7 +53,7 @@ export function AffiliateEarningsContent() {
                 subtitle="Gestão de saldo e solicitações de saque de comissões."
                 icon={Wallet}
             >
-                <Grid cols={1} lgCols={3} gap={5}>
+                <Grid cols={1} lgCols={3} gap={STORE_TOKENS.SPACING.CONTAINER}>
                     <AffiliateWalletSection balance={checks.available} pendingAmount={checks.pending} />
 
                     <StatsCard
@@ -60,27 +61,27 @@ export function AffiliateEarningsContent() {
                         value={`R$ ${checks.pending.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
                         description="Aguardando confirmação (30 dias)"
                         icon={Clock}
-                        color="amber"
+                        color={STORE_TOKENS.COLORS.WARNING}
                     />
                     <StatsCard
                         label="TOTAL RECEBIDO"
                         value={`R$ ${checks.paid.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
                         description="Já transferido para sua conta"
                         icon={DollarSign}
-                        color="blue"
+                        color={STORE_TOKENS.COLORS.INFO}
                     />
                 </Grid>
             </RegistrySection>
 
             {/* Commissions and Payouts */}
-            <Grid cols={1} lgCols={12} gap="section">
+            <Grid cols={1} lgCols={12} gap={STORE_TOKENS.SPACING.SECTION}>
                 <Box lgColSpan={8}>
                     <RegistrySection
                         title="Extrato de Comissões"
                         subtitle="Relatório detalhado de todas as vendas convertidas."
                         icon={DollarSign}
                     >
-                        <Stack gap={2.5}>
+                        <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                             {commissions.length > 0 ? (
                                 commissions.map((c: any) => (
                                     <CommissionItem
@@ -95,7 +96,7 @@ export function AffiliateEarningsContent() {
                                     />
                                 ))
                             ) : (
-                                <Box paddingY={5}>
+                                <Box padding={STORE_TOKENS.PADDING.CONTAINER}>
                                     <EmptyState
                                         icon={DollarSign}
                                         title="Nenhuma comissão registrada"
@@ -113,7 +114,7 @@ export function AffiliateEarningsContent() {
                         subtitle="Gestão de transferências realizadas."
                         icon={CheckCircle2}
                     >
-                        <Stack gap={2.5}>
+                        <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                             {payouts.length > 0 ? (
                                 payouts.map((p: any) => (
                                     <WithdrawalItem
@@ -127,7 +128,7 @@ export function AffiliateEarningsContent() {
                                     />
                                 ))
                             ) : (
-                                <Box paddingY={5}>
+                                <Box padding={STORE_TOKENS.PADDING.CONTAINER}>
                                     <EmptyState
                                         icon={AlertCircle}
                                         title="Sem saques"

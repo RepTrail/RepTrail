@@ -1,12 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { Stack } from '../base/stack'
-import { Box } from '../base/box'
-import { Font } from '../base/font'
-import { Badge } from '../base/badge'
-import { BaseAvatar } from '../base/avatar'
-import { Modal } from '../advanced/modal'
+import { Stack } from '@/components/store/base/stack'
+import { Box } from '@/components/store/base/box'
+import { Font } from '@/components/store/base/font'
+import { Badge } from '@/components/store/base/badge'
+import { BaseAvatar } from '@/components/store/base/avatar'
+import { Modal } from '@/components/store/advanced/modal'
 import { EmptyState } from '../intermediary/empty-state'
 import { CheckCircle2, XCircle, Banknote, DollarSign } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
@@ -14,7 +14,8 @@ import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
 import { ENTITIES } from '@/lib/outbox-db'
 import { ActionableListCard } from '../intermediary/actionable-list-card'
 import { PayoutActionGroup } from '../intermediary/payout-action-group'
-import { RegistrySection } from '../advanced/registry-section'
+import { RegistrySection } from '@/components/store/advanced/registry-section'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 interface Payout {
     id: string
@@ -81,55 +82,55 @@ export function AdminPayoutsManagement({ initialPayouts }: { initialPayouts: Pay
             subtitle="Gestão de pagamentos e transferências para afiliados."
             icon={Banknote}
         >
-            <Stack gap={5}>
+            <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                 {pendingPayouts.length === 0 ? (
-                    <EmptyState 
-                        icon={CheckCircle2} 
-                        title="Tudo em dia!" 
+                    <EmptyState
+                        icon={CheckCircle2}
+                        title="Tudo em dia!"
                         description="Nenhuma solicitação de saque pendente no momento."
                     />
                 ) : (
-                    <Stack gap={5}>
+                    <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                         {pendingPayouts.map(payout => (
                             <ActionableListCard
                                 key={payout.id}
                                 badges={
-                                    <Stack direction="row" gap={2.5} align="center">
-                                        <Badge label="PENDENTE" color="amber" variant="glass" size="xs" />
+                                    <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                                        <Badge label="PENDENTE" color={STORE_TOKENS.COLORS.WARNING} variant="glass" size="xs" />
                                         <Badge label={new Date(payout.created_at).toLocaleDateString('pt-BR')} variant="glass" size="xs" />
                                     </Stack>
                                 }
                                 actions={
-                                    <PayoutActionGroup 
+                                    <PayoutActionGroup
                                         onReject={() => handleUpdateStatus(payout.id, 'rejected')}
                                         onApprove={() => handleUpdateStatus(payout.id, 'completed')}
                                     />
                                 }
                                 footer={
-                                    <Box padding={2.5} rounded="system" variant="liquid-success">
-                                        <Stack direction={{ base: 'col', md: 'row' }} gap={5} align={{ base: 'stretch', md: 'center' }} justify="between">
-                                            <Stack gap={2.5}>
-                                                <Font variant="sub-tiny" color="success" weight="black" uppercase tracking="widest" opacity={50}>Chave PIX</Font>
-                                                <Font variant="body-sm" color="white" weight="bold" breakAll>{formatPixKey(payout.payout_details)}</Font>
+                                    <Box padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM}>
+                                        <Stack direction={{ base: 'col', md: 'row' }} gap={STORE_TOKENS.SPACING.CONTAINER} align={{ base: 'stretch', md: 'center' }} justify="between">
+                                            <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                                <Font variant="sub-tiny" color="success" weight="black" uppercase tracking="widest" opacity={STORE_TOKENS.OPACITY.MODAL}>Chave PIX</Font>
+                                                <Font variant="body-sm" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} weight="bold" breakAll>{formatPixKey(payout.payout_details)}</Font>
                                             </Stack>
                                             <Font variant="heading" color="success" weight="black">R$ {Number(payout.amount).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</Font>
                                         </Stack>
                                     </Box>
                                 }
                             >
-                                <Stack direction="row" gap={5} align="center">
-                                    <BaseAvatar 
-                                        src={payout.profiles?.avatar_url || undefined} 
-                                        initials={(payout.profiles?.full_name || '??').substring(0, 2).toUpperCase()} 
-                                        size="md" 
+                                <Stack direction="row" gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
+                                    <BaseAvatar
+                                        src={payout.profiles?.avatar_url || undefined}
+                                        initials={(payout.profiles?.full_name || '??').substring(0, 2).toUpperCase()}
+                                        size="md"
                                         variant="zinc"
                                     />
                                     <Stack gap={0} minWidth={0}>
-                                        <Font weight="black" uppercase italic color="white" variant={{ base: 'body-sm', md: 'body' }} tracking="wider" truncate display="block">
+                                        <Font weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY} variant={{ base: 'body-sm', md: 'body' }} tracking="wider" truncate>
                                             {payout.profiles?.full_name || 'Usuário Desconhecido'}
                                         </Font>
                                         <Box fullWidth minWidth={0} overflow="hidden">
-                                            <Font variant="sub-tiny" color="zinc-600" lowercase truncate display="block">
+                                            <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.DIM} lowercase truncate>
                                                 {payout.profiles?.email}
                                             </Font>
                                         </Box>
@@ -144,8 +145,8 @@ export function AdminPayoutsManagement({ initialPayouts }: { initialPayouts: Pay
                     isOpen={modalConfig.open}
                     onClose={() => setModalConfig({ ...modalConfig, open: false })}
                     title={modalConfig.status === 'completed' ? "Confirmar Pagamento" : "Rejeitar Solicitação"}
-                    subtitle={modalConfig.status === 'completed' 
-                        ? "Confirme que a transferência via PIX foi realizada com sucesso." 
+                    subtitle={modalConfig.status === 'completed'
+                        ? "Confirme que a transferência via PIX foi realizada com sucesso."
                         : "Esta ação informará ao afiliado que a solicitação foi negada."
                     }
                     icon={modalConfig.status === 'completed' ? CheckCircle2 : XCircle}
@@ -153,9 +154,9 @@ export function AdminPayoutsManagement({ initialPayouts }: { initialPayouts: Pay
                     onConfirm={confirmUpdateStatus}
                     confirmLabel={modalConfig.status === 'completed' ? "Confirmar" : "Rejeitar"}
                 >
-                    <Stack gap={2.5}>
-                        <Font variant="body" color="zinc-400">
-                            {modalConfig.status === 'completed' 
+                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                        <Font variant="body" color={STORE_TOKENS.COLORS.TEXT.SECONDARY}>
+                            {modalConfig.status === 'completed'
                                 ? "Ao confirmar, o status do saque será atualizado para 'Pago' e o valor será deduzido permanentemente do saldo do afiliado."
                                 : "Tem certeza que deseja rejeitar esta solicitação? O saldo retornará para a conta do afiliado."
                             }
@@ -167,4 +168,3 @@ export function AdminPayoutsManagement({ initialPayouts }: { initialPayouts: Pay
     )
 }
 
-    

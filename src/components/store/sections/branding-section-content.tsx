@@ -9,6 +9,7 @@ import { Badge } from '@/components/store/base/badge'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { Zap } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 export function BrandingSectionContent({ id }: { id?: string }) {
     const brands = [
@@ -30,15 +31,15 @@ export function BrandingSectionContent({ id }: { id?: string }) {
                     <CardHeader>
                         <Font weight="bold">Logos & Identidade</Font>
                     </CardHeader>
-                    <CardContent padding={5}>
-                        <Grid cols={1} mdCols={4} gap={5}>
+                    <CardContent padding={STORE_TOKENS.PADDING.CONTAINER}>
+                        <Grid cols={1} mdCols={4} gap={STORE_TOKENS.SPACING.CONTAINER}>
                             {brands.map((brand) => (
                                 <Surface
                                     key={brand.label}
                                     variant="glass"
                                     align="center"
                                     justify="center"
-                                    padding={12}
+                                    padding={STORE_TOKENS.PADDING.CONTAINER}
                                     transition
                                     cursor="pointer"
                                     group
@@ -46,7 +47,7 @@ export function BrandingSectionContent({ id }: { id?: string }) {
                                     hoverBorder="white/10"
                                     activeScale={95}
                                 >
-                                    <Stack align="center" gap={5}>
+                                    <Stack align="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
                                         <Box transition groupHoverScale={110}>
                                             <Logo 
                                                 color={brand.color as any} 

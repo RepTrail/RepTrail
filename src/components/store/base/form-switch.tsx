@@ -4,18 +4,21 @@ import React, { useState } from 'react'
 import { Font } from './font'
 import { cn } from '@/lib/utils'
 import { GlassPanel } from './surface'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
+import { Box } from './box'
+import { useRegistry } from '@/components/store/advanced/registry-context'
 
-interface SwitchOption {
+export type SwitchOption = {
     label: string
     value: string
 }
 
-interface FormSwitchProps {
+export type FormSwitchProps = {
     label?: string
     options: SwitchOption[]
     value?: string
     onChange?: (value: string) => void
-    color?: 'emerald' | 'orange' | 'amber' | 'blue'
+    color?: 'emerald' | 'orange' | 'amber' | 'blue' | 'primary'
 }
 
 export function FormSwitch({
@@ -25,7 +28,10 @@ export function FormSwitch({
     onChange,
     color = 'emerald'
 }: FormSwitchProps) {
+    const { primaryColor } = useRegistry()
     const [selected, setSelected] = useState(value ?? options[0]?.value)
+
+    const resolvedColor = color === 'primary' ? primaryColor as 'emerald' | 'orange' | 'amber' | 'blue' : color
 
     const colorClasses = {
         emerald: 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400 shadow-emerald-500/10',
@@ -40,43 +46,61 @@ export function FormSwitch({
     }
 
     return (
-        <div className="flex flex-col gap-[10px]">
+        <div className="flex flex-col gap-[10px] w-full">
             {label && (
-                <Font variant="auxiliary" color="zinc-500" weight="black" uppercase tracking="widest">
+                <Font variant="auxiliary" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="black" uppercase tracking="widest">
                     {label}
                 </Font>
             )}
-            
-            <GlassPanel padding={2.5} rounded="full" border="subtle">
-                <div className="flex items-center gap-2.5">
+
+            <GlassPanel padding={0} rounded={STORE_TOKENS.RADIUS.FULL} border="subtle" fullWidth>
+                <Box
+                    display="flex"
+                    align="center"
+                    justify="start"
+                    gap={STORE_TOKENS.SPACING.ELEMENT}
+                    padding={STORE_TOKENS.PADDING.ELEMENT}
+                    fullWidth
+                    overflow="auto"
+                    noScrollbar
+                    className="snap-x snap-mandatory scroll-smooth"
+                >
                     {options.map((opt) => {
                         const isActive = selected === opt.value
                         return (
-                            <button
+                            <Box
                                 key={opt.value}
+                                as="button"
                                 type="button"
                                 onClick={() => handleSelect(opt.value)}
+                                flex="none"
+                                flex1={true}
+                                shrink={0}
+                                padding={STORE_TOKENS.PADDING.ELEMENT}
+                                rounded="full"
+                                transition
+                                display="flex"
+                                align="center"
+                                justify="center"
                                 className={cn(
-                                    'flex-1 px-4 py-2 rounded-full transition-all duration-300 border-2 flex items-center justify-center',
+                                    'border-2 whitespace-nowrap snap-center',
                                     isActive
-                                        ? cn("shadow-lg", colorClasses[color])
+                                        ? cn("shadow-lg", colorClasses[resolvedColor])
                                         : 'bg-transparent border-transparent text-zinc-500 hover:text-zinc-300 hover:bg-white/5'
                                 )}
                             >
-                                <Font 
-                                    variant="sub-tiny" 
-                                    weight="black" 
-                                    uppercase 
-                                    italic 
-                                    color={isActive ? color : 'zinc-500' as any}
-                                    className="tracking-[0.15em] leading-none"
+                                <Font
+                                    variant="auxiliary"
+                                    weight="black"
+                                    uppercase
+                                    color={isActive ? resolvedColor : 'zinc-500' as any}
                                 >
                                     {opt.label}
                                 </Font>
-                            </button>
+                            </Box>
                         )
                     })}
-                </div>
+                </Box>
             </GlassPanel>
         </div>
     )

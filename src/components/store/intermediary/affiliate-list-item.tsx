@@ -1,14 +1,15 @@
 'use client'
 
 import React from 'react'
-import { Stack } from '../base/stack'
-import { Font } from '../base/font'
-import { BaseAvatar } from '../base/avatar'
-import { Badge } from '../base/badge'
-import { Button } from '../base/button'
-import { Box } from '../base/box'
+import { Stack } from '@/components/store/base/stack'
+import { Font } from '@/components/store/base/font'
+import { BaseAvatar } from '@/components/store/base/avatar'
+import { Badge } from '@/components/store/base/badge'
+import { Button } from '@/components/store/base/button'
+import { Box } from '@/components/store/base/box'
 import { Trash2 } from 'lucide-react'
 import { ActionableListCard } from './actionable-list-card'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 interface AffiliateListItemProps {
     name: string
@@ -41,24 +42,24 @@ export function AffiliateListItem({
     return (
         <ActionableListCard
             badges={
-                <Stack direction="row" gap={2.5} align="center" className="flex-wrap">
+                <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} align="center" wrap="wrap">
                     <Badge label={registrationDate} variant="glass" size="xs" />
                     <Badge
                         label={`${referrals.total} / ${referrals.active} ATIVOS`}
                         variant="glass"
-                        color="emerald"
+                        color={STORE_TOKENS.COLORS.SUCCESS}
                         size="xs"
                     />
-                    <Badge label={revenue} variant="glass" color="zinc" size="xs" />
-                    <Badge label={`${commission} ESTIMADO`} variant="glass" color="emerald" size="xs" />
-                    <Badge label={`${rate}%`} variant="glass" color="primary" size="xs" />
+                    <Badge label={revenue} variant="glass" color={STORE_TOKENS.COLORS.BACKGROUND} size="xs" />
+                    <Badge label={`${commission} ESTIMADO`} variant="glass" color={STORE_TOKENS.COLORS.SUCCESS} size="xs" />
+                    <Badge label={`${rate}%`} variant="glass" color={STORE_TOKENS.COLORS.BRAND} size="xs" />
                 </Stack>
             }
             actions={onDelete ? (
                 <Button
                     variant="outline-red"
                     size="sm"
-                    rounded="full"
+                    rounded={STORE_TOKENS.RADIUS.FULL}
                     isIconOnly
                     onClick={onDelete}
                     hoverScale={110}
@@ -69,20 +70,21 @@ export function AffiliateListItem({
                 </Button>
             ) : undefined}
         >
-            <Stack direction="row" gap={5} align="center">
+            <Stack direction="row" gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
                 <BaseAvatar
                     src={avatarUrl || undefined}
                     initials={name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
                     variant="zinc"
                     size="md"
                 />
-                <Stack gap={1} minWidth={0}>
-                    <Font weight="black" uppercase italic color="white" variant={{ base: 'body-sm', md: 'body' }} tracking="wider" truncate display="block">{name}</Font>
-                    <Box fullWidth minWidth={0} overflow="hidden">
-                        <Font variant="sub-tiny" color="zinc-600" lowercase truncate display="block">{email}</Font>
-                    </Box>
-                    <Box display="flex">
-                        <Badge label={affiliateId} variant="glass" size="xs" color="primary" rounded="system" />
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT} minWidth={0}>
+                    <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} variant={{ base: 'body-sm', md: 'body' }} color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
+                        {name}
+                    </Font>
+                    <Box fullWidth minWidth={0} overflow="hidden" display="flex" align="center">
+                        <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.DIM} lowercase>
+                            {email}
+                        </Font>
                     </Box>
                 </Stack>
             </Stack>

@@ -1,5 +1,7 @@
 'use client'
 
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
+
 import { useState, useTransition } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/lib/query-keys'
@@ -21,7 +23,7 @@ import { Button } from '@/components/store/base/button'
 import { Input } from '@/components/store/base/input'
 import { EmptyState } from '@/components/store/intermediary/empty-state'
 import { ProductCard } from '@/components/store/intermediary/product-card'
-import { AdminProductEditor } from '@/components/store/sections/admin-product-editor'
+import { AdminProductEditor } from '@/components/store/advanced/admin-product-editor'
 import { useToast } from '@/hooks/use-toast'
 import { ShoppingBag, Search, Plus, Package, XCircle } from 'lucide-react'
 
@@ -119,7 +121,7 @@ export default function AdminLojaPage() {
                     >
                         <Stack gap={10}>
                             {/* Toolbar */}
-                            <Stack direction="row" align="center" gap={5}>
+                            <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
                                 <Box flex1>
                                     <Input 
                                         value={search}
@@ -136,7 +138,7 @@ export default function AdminLojaPage() {
                                     rounded="full"
                                     shrink={0}
                                 >
-                                    <Stack direction="row" align="center" gap={2.5}>
+                                    <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                         <Plus className="w-4 h-4" />
                                         <Box display={{base: 'none', md: 'block'}}>Novo Produto</Box>
                                     </Stack>
@@ -146,7 +148,7 @@ export default function AdminLojaPage() {
                             {isLoading && <EmptyState icon={ShoppingBag} title="Carregando..." description="Buscando produtos da loja." />}
 
                             {!isLoading && (
-                                <Grid cols={1} mdCols={2} lgCols={4} gap={5}>
+                                <Grid cols={1} mdCols={2} lgCols={4} gap={STORE_TOKENS.SPACING.CONTAINER}>
                                     {filtered.map(product => (
                                         <ProductCard
                                             key={product.id}

@@ -1,6 +1,6 @@
 import { getCardioDetails } from '@/actions/cardio-actions'
 import { getTrainerStudents } from '@/actions/trainer-actions'
-import { CardioBuilder } from '@/components/feature/trainer/cardio-builder'
+import { CardioBuilder } from '@/components/store/features(deprecated)/cardio-builder'
 import { notFound } from 'next/navigation'
 
 interface Props {

@@ -12,6 +12,7 @@ import { Icon } from '@/components/store/base/icon'
 import { Badge } from '@/components/store/base/badge'
 import { Surface } from '@/components/store/base/surface'
 import { RegistryColor } from './registry-context'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 export function ImpersonationBar({ color }: { color?: RegistryColor }) {
     const [mounted, setMounted] = useState(false)
@@ -56,20 +57,20 @@ export function ImpersonationBar({ color }: { color?: RegistryColor }) {
         <Box position="relative" fullWidth>
             <Surface
                 variant={`tonal-${primaryColor}` as any}
-                rounded="full"
-                padding={5}
+                rounded={STORE_TOKENS.RADIUS.FULL}
+                padding={STORE_TOKENS.PADDING.CONTAINER}
             >
-                <Inline justify="between" align="center" gap={5}>
-                    <Inline gap={5} align="center">
+                <Inline justify="between" align="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
+                    <Inline gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
                         <Badge
                             label="Modo Inspeção Ativo"
                             icon={ShieldAlert}
                             variant="glass"
                             color={primaryColor}
-                            rounded="full"
+                            rounded={STORE_TOKENS.RADIUS.FULL}
                         />
                         <Box display={{ base: 'none', md: 'block' }}>
-                            <Font variant="sub-tiny" color="zinc-400" weight="bold">
+                            <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} weight="bold">
                                 Você está visualizando a plataforma como outro usuário. Todas as ações afetarão a conta dele.
                             </Font>
                         </Box>
@@ -80,15 +81,15 @@ export function ImpersonationBar({ color }: { color?: RegistryColor }) {
                         disabled={loading}
                         variant={`outline-${primaryColor}` as any}
                         size="sm"
-                        rounded="full"
+                        rounded={STORE_TOKENS.RADIUS.FULL}
                     >
-                        <Inline gap={2.5} align="center">
+                        <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                             {loading ? (
-                                <Icon icon={RefreshCw} size="xs" color={safeIconColor as any} className="animate-spin" />
+                                <Icon icon={RefreshCw} size="xs" color={safeIconColor as any} animate="spin" />
                             ) : (
                                 <Icon icon={ArrowLeftRight} size="xs" color={safeIconColor as any} />
                             )}
-                            <Font variant="label-caps" color="white">Voltar ao Admin</Font>
+                            <Font variant="label-caps" color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>Voltar ao Admin</Font>
                         </Inline>
                     </Button>
                 </Inline>

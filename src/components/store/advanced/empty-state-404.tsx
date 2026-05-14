@@ -1,13 +1,14 @@
 'use client'
 
 import React from 'react'
-import { Box } from '../base/box'
-import { Stack } from '../base/stack'
-import { Font } from '../base/font'
-import { Button } from '../base/button'
-import { BackgroundEffects } from '../base/background-effects'
+import { Box } from '@/components/store/base/box'
+import { Stack } from '@/components/store/base/stack'
+import { Font } from '@/components/store/base/font'
+import { Button } from '@/components/store/base/button'
+import { BackgroundEffects } from '@/components/store/base/background-effects'
 import Link from 'next/link'
-import { Logo } from '../base/logo'
+import { Logo } from '@/components/store/base/logo'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 /**
  * EmptyState404: Organismo premium para a rota 404 do RepTrail.
@@ -27,12 +28,11 @@ export function EmptyState404() {
       align="center"
       justify="center"
       overflow="hidden"
-      bg="zinc"
+      bg={STORE_TOKENS.COLORS.BACKGROUND}
       zIndex={0}
     >
       {/* ─── Layer 1: Efeitos de Alta Fidelidade (Encapsulados) ───────── */}
       <BackgroundEffects variant="all" />
-
       {/* ─── Layer 2: bigFont (Identity Anchor) ─────────────────────── */}
       <Box
         position="absolute"
@@ -43,46 +43,44 @@ export function EmptyState404() {
         zIndex={0}
       >
         <Font
-          variant="bigFont"
+          variant="massive"
           weight="black"
-          uppercase
           italic
           align="center"
-          color="red"
-          opacity={10}
+          color={STORE_TOKENS.COLORS.ERROR}
+          opacity={STORE_TOKENS.OPACITY.SUBTLE}
         >
           404
         </Font>
       </Box>
-
       {/* ─── Layer 3: Conteúdo Sistêmico ────────────────────────────── */}
-      <Stack align="center" gap={10} position="relative" zIndex={10}>
-        <Logo color="red" />
-        <Stack align="center" gap={2.5}>
+      <Stack align="center" gap={STORE_TOKENS.SPACING.EMPTY_STATE} position="relative" zIndex={10}>
+        <Logo color={STORE_TOKENS.COLORS.ERROR} />
+        <Stack align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
 
-          <Stack align="center" gap={1}>
+          <Stack align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
             <Font
               variant="h1"
               weight="black"
               uppercase
               italic
               align="center"
-              color="white"
+              color={STORE_TOKENS.COLORS.TEXT.PRIMARY}
             >
               Página não encontrada
             </Font>
-            <Font variant="description" align="center" maxWidth="md">
+            <Font variant="description" align="center">
               O protocolo de navegação foi interrompido por uma rota inexistente no ecossistema RepTrail.
             </Font>
           </Stack>
         </Stack>
 
-        <Button asChild variant="outline-red" size="lg" padding={5} rounded="system">
+        <Button asChild variant="outline-red" size="lg" padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM}>
           <Link href="/dashboard">
             Voltar ao painel
           </Link>
         </Button>
       </Stack>
     </Box>
-  )
+  );
 }

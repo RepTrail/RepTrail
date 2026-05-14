@@ -5,6 +5,7 @@ import { Box, BoxProps } from './box'
 import { Icon } from './icon'
 import { Circle, Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 interface CheckIndicatorProps extends Omit<BoxProps, 'children'> {
     checked?: boolean
@@ -35,7 +36,7 @@ export function CheckIndicator({
         <Box
             width={resolvedSize}
             height={resolvedSize}
-            rounded="full"
+            rounded={STORE_TOKENS.RADIUS.FULL}
             bg={checked ? 'emerald' : 'zinc'}
             bgOpacity={checked ? 100 : 100}
             display="flex"

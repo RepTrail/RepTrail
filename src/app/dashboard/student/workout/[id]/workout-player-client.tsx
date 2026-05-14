@@ -1,25 +1,25 @@
 'use client'
 
 import { use } from 'react'
-import { WorkoutPlayer } from '@/components/feature/player/workout-player'
+import { WorkoutPlayer } from '@/components/store/features(deprecated)/workout-player'
 import { notFound } from 'next/navigation'
 import { Dumbbell, Loader2 } from 'lucide-react'
-import { MissionCompletedView } from '@/components/feature/student/mission-completed'
+import { MissionCompletedView } from '@/components/store/features(deprecated)/student-mission-completed'
 import { useQuery } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { getWorkoutDetails } from '@/actions/workout-actions'
 import { getActiveWorkoutSession, getWorkoutStatus } from '@/actions/log-actions'
 
-export default function WorkoutPlayerClient({ 
-    userId, 
-    workoutId 
-}: { 
-    userId: string, 
-    workoutId: string 
+export default function WorkoutPlayerClient({
+    userId,
+    workoutId
+}: {
+    userId: string,
+    workoutId: string
 }) {
     // ─── DATA FETCHING (LOCAL-FIRST ELITE) ───────────────────────────────────
     // These use the hydrated cache from the server (0ms execution)
-    
+
     // 1. Fetch Workout & Exercises
     const { data: workoutData, isLoading: workoutLoading } = useQuery({
         queryKey: QUERY_KEYS.workouts.detail(workoutId),

@@ -1,8 +1,7 @@
 'use client'
 
 import React from 'react'
-import { Font } from '../base/font'
-import { Icon } from '../base/icon'
+import { Icon } from '@/components/store/base/icon'
 import { 
   BarChart3, 
   Users2, 
@@ -12,8 +11,8 @@ import {
   Dumbbell
 } from 'lucide-react'
 import { useRegistry } from './registry-context'
-import { MobileNavContainer } from '../base/layout'
-import { Button } from '../base/button'
+import { MobileNavContainer } from '@/components/store/base/layout'
+import { Button } from '@/components/store/base/button'
 
 export function RegistryBottomNav() {
   const { activeTab, setActiveTab, primaryColor } = useRegistry()
@@ -41,13 +40,14 @@ export function RegistryBottomNav() {
             size="md"
             rounded={isActive ? 'system' : 'full'}
             isIconOnly
-            className="transition-transform active:scale-90"
+            activeScale={90}
+            transition
           >
             <Icon 
               icon={item.icon} 
               size="sm" 
               color={(isActive ? primaryColor : 'white') as any} 
-              className={isActive ? 'opacity-100' : 'opacity-40'}
+              opacity={isActive ? 100 : 40}
             />
           </Button>
         )

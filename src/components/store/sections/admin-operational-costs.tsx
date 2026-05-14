@@ -2,18 +2,18 @@
 
 import { useState, useEffect } from 'react'
 import { Plus, Trash2, TrendingDown, TrendingUp, Edit3, LucideIcon } from 'lucide-react'
-import { Stack } from '../base/stack'
-import { Box } from '../base/box'
-import { Font } from '../base/font'
-import { Icon } from '../base/icon'
-import { Button } from '../base/button'
-import { Input } from '../base/input'
-import { Grid } from '../base/grid'
-import { Badge } from '../base/badge'
-import { FormSelect } from '../base/form-select'
-import { Inline, Divider } from '../base/layout'
-import { Modal } from '../advanced/modal'
-import { RegistrySection } from '../advanced/registry-section'
+import { Stack } from '@/components/store/base/stack'
+import { Box } from '@/components/store/base/box'
+import { Font } from '@/components/store/base/font'
+import { Icon } from '@/components/store/base/icon'
+import { Button } from '@/components/store/base/button'
+import { Input } from '@/components/store/base/input'
+import { Grid } from '@/components/store/base/grid'
+import { Badge } from '@/components/store/base/badge'
+import { FormSelect } from '@/components/store/base/form-select'
+import { Inline, Divider } from '@/components/store/base/layout'
+import { Modal } from '@/components/store/advanced/modal'
+import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { addOperationalCost, deleteOperationalCost, updateOperationalCost } from '@/actions/admin-actions'
 import { useToast } from '@/hooks/use-toast'
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
@@ -23,6 +23,7 @@ import { ActionableListCard } from '../intermediary/actionable-list-card'
 import { EmptyState } from '../intermediary/empty-state'
 import { ActionIconButton } from '../intermediary/action-icon-button'
 import { CircleIcon } from '../intermediary/circle-icon'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 interface OperationalCost {
     id: string
@@ -41,7 +42,7 @@ interface OperationalCostsProps {
 export function AdminOperationalCosts({ initialCosts, totalMonthly, totalAllTime }: OperationalCostsProps) {
     const { toast } = useToast()
     const [costs, setCosts] = useState<OperationalCost[]>(initialCosts)
-    
+
     // Sync state with props to avoid stale data after refetch
     useEffect(() => {
         setCosts(initialCosts)
@@ -147,33 +148,33 @@ export function AdminOperationalCosts({ initialCosts, totalMonthly, totalAllTime
     }
 
     return (
-        <Stack gap="section">
-            <RegistrySection 
-                title="Custos Operacionais" 
-                subtitle="Infraestrutura e operação mensal da plataforma." 
+        <Stack gap={STORE_TOKENS.SPACING.SECTION}>
+            <RegistrySection
+                title="Custos Operacionais"
+                subtitle="Infraestrutura e operação mensal da plataforma."
                 icon={TrendingDown}
                 rightElement={
-                    <Stack direction="row" gap={5} align="center">
-                        <Badge 
+                    <Stack direction="row" gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
+                        <Badge
                             label={`R$ ${(costs.reduce((sum, c) => sum + Number(c.amount), 0)).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} / mês`}
-                            color="emerald"
+                            color={STORE_TOKENS.COLORS.SUCCESS}
                             variant="solid"
-                            rounded="full"
+                            rounded={STORE_TOKENS.RADIUS.SYSTEM}
                             size="md"
                         />
-                        <Button 
-                            variant="outline-red" 
-                            rounded="full" 
+                        <Button
+                            variant="outline-red"
+                            rounded={STORE_TOKENS.RADIUS.SYSTEM}
                             onClick={() => {
                                 setDescription('')
                                 setAmount('')
                                 setType('fixed')
                                 setIsAddModalOpen(true)
                             }}
-                            paddingX={5}
+                            paddingX={STORE_TOKENS.PADDING.CONTAINER}
                             size="md"
                         >
-                            <Stack direction="row" gap={2.5} align="center">
+                            <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                                 <Icon icon={Plus} size="sm" />
                                 <Font variant="label-caps">Adicionar Custo</Font>
                             </Stack>
@@ -181,75 +182,74 @@ export function AdminOperationalCosts({ initialCosts, totalMonthly, totalAllTime
                     </Stack>
                 }
             >
-                <Stack gap={5}>
+                <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                     {/* Listagem de Custos */}
-                    <Stack gap={2.5}>
-                {costs.map((cost) => (
-                    <ActionableListCard 
-                        key={cost.id}
-                        badges={
-                            <Inline gap={2.5} align="center">
-                                <Badge 
-                                    label={new Date(cost.created_at).toLocaleDateString('pt-BR')}
-                                    variant="glass"
-                                    size="xs"
-                                    rounded="full"
-                                />
-                                <Badge 
-                                    label={cost.type === 'fixed' ? 'Fixo' : 'Variável'}
-                                    variant="glass"
-                                    color={cost.type === 'fixed' ? 'blue' : 'orange'}
-                                    size="xs"
-                                    rounded="full"
-                                />
-                            </Inline>
-                        }
-                        actions={
-                            <>
-                                <ActionIconButton 
-                                    icon={Edit3} 
-                                    variant="outline-blue" 
-                                    onClick={() => openEditModal(cost)} 
-                                />
-                                <ActionIconButton 
-                                    icon={Trash2} 
-                                    variant="outline-red" 
-                                    onClick={() => openDeleteModal(cost)} 
-                                />
-                            </>
-                        }
-                    >
-                        <Inline gap={5} align="center">
-                            <CircleIcon 
-                                icon={TrendingDown} 
-                                color={cost.type === 'fixed' ? 'blue' : 'orange'} 
-                                size="sm" 
+                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                        {costs.map((cost) => (
+                            <ActionableListCard
+                                key={cost.id}
+                                badges={
+                                    <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                                        <Badge
+                                            label={new Date(cost.created_at).toLocaleDateString('pt-BR')}
+                                            variant="glass"
+                                            size="xs"
+                                            rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                                        />
+                                        <Badge
+                                            label={cost.type === 'fixed' ? 'Fixo' : 'Variável'}
+                                            variant="glass"
+                                            color={cost.type === 'fixed' ? 'blue' : 'orange'}
+                                            size="xs"
+                                            rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                                        />
+                                    </Inline>
+                                }
+                                actions={
+                                    <>
+                                        <ActionIconButton
+                                            icon={Edit3}
+                                            variant="outline-blue"
+                                            onClick={() => openEditModal(cost)}
+                                        />
+                                        <ActionIconButton
+                                            icon={Trash2}
+                                            variant="outline-red"
+                                            onClick={() => openDeleteModal(cost)}
+                                        />
+                                    </>
+                                }
+                            >
+                                <Inline gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
+                                    <CircleIcon
+                                        icon={TrendingDown}
+                                        color={cost.type === 'fixed' ? 'blue' : 'orange'}
+                                        size="sm"
+                                    />
+                                    <Stack gap={0} minWidth={0}>
+                                        <Font weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY} variant={{ base: 'body-sm', md: 'body' }} tracking="wider" truncate>
+                                            {cost.description}
+                                        </Font>
+                                        <Box fullWidth minWidth={0} overflow="hidden">
+                                            <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.DIM} uppercase tracking="widest">
+                                                - R$ {Number(cost.amount).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                                            </Font>
+                                        </Box>
+                                    </Stack>
+                                </Inline>
+                            </ActionableListCard>
+                        ))}
+
+                        {costs.length === 0 && (
+                            <EmptyState
+                                icon={TrendingDown}
+                                title="Sem Custos"
+                                description="Nenhum custo operacional cadastrado no momento."
                             />
-                            <Stack gap={0} minWidth={0}>
-                                <Font weight="black" uppercase italic color="white" variant={{ base: 'body-sm', md: 'body' }} tracking="wider" truncate display="block">
-                                    {cost.description}
-                                </Font>
-                                <Box fullWidth minWidth={0} overflow="hidden">
-                                    <Font variant="sub-tiny" color="zinc-600" uppercase tracking="widest" display="block">
-                                        - R$ {Number(cost.amount).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                                    </Font>
-                                </Box>
-                            </Stack>
-                        </Inline>
-                    </ActionableListCard>
-                ))}
-
-                {costs.length === 0 && (
-                    <EmptyState 
-                        icon={TrendingDown} 
-                        title="Sem Custos" 
-                        description="Nenhum custo operacional cadastrado no momento." 
-                    />
-                )}
-            </Stack>
-            </Stack>
+                        )}
+                    </Stack>
+                </Stack>
             </RegistrySection>
-
             {/* Modal de Adição */}
             <Modal
                 isOpen={isAddModalOpen}
@@ -261,25 +261,25 @@ export function AdminOperationalCosts({ initialCosts, totalMonthly, totalAllTime
                 onConfirm={handleAddCost}
                 variant="red"
             >
-                <Stack gap={5}>
-                    <Input 
-                        label="Descrição" 
-                        placeholder="Ex: Servidor, Domínio, Marketing..." 
+                <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
+                    <Input
+                        label="Descrição"
+                        placeholder="Ex: Servidor, Domínio, Marketing..."
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
                     />
-                    <Stack direction="row" gap={5}>
+                    <Stack direction="row" gap={STORE_TOKENS.SPACING.CONTAINER}>
                         <Box flex1>
-                            <Input 
-                                label="Valor (R$)" 
-                                type="number" 
-                                placeholder="0,00" 
+                            <Input
+                                label="Valor (R$)"
+                                type="number"
+                                placeholder="0,00"
                                 value={amount}
                                 onChange={(e) => setAmount(e.target.value)}
                             />
                         </Box>
                         <Box flex1>
-                            <FormSelect 
+                            <FormSelect
                                 label="Tipo de Custo"
                                 options={[
                                     { label: 'Fixo', value: 'fixed', description: 'Gastos recorrentes mensais' },
@@ -292,7 +292,6 @@ export function AdminOperationalCosts({ initialCosts, totalMonthly, totalAllTime
                     </Stack>
                 </Stack>
             </Modal>
-
             {/* Modal de Edição */}
             <Modal
                 isOpen={isEditModalOpen}
@@ -304,23 +303,23 @@ export function AdminOperationalCosts({ initialCosts, totalMonthly, totalAllTime
                 onConfirm={handleEditCost}
                 variant="blue"
             >
-                <Stack gap={5}>
-                    <Input 
-                        label="Descrição" 
+                <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
+                    <Input
+                        label="Descrição"
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
                     />
-                    <Stack direction="row" gap={5}>
+                    <Stack direction="row" gap={STORE_TOKENS.SPACING.CONTAINER}>
                         <Box flex1>
-                            <Input 
-                                label="Valor (R$)" 
-                                type="number" 
+                            <Input
+                                label="Valor (R$)"
+                                type="number"
                                 value={amount}
                                 onChange={(e) => setAmount(e.target.value)}
                             />
                         </Box>
                         <Box flex1>
-                            <FormSelect 
+                            <FormSelect
                                 label="Tipo de Custo"
                                 options={[
                                     { label: 'Fixo', value: 'fixed', description: 'Gastos recorrentes mensais' },
@@ -333,7 +332,6 @@ export function AdminOperationalCosts({ initialCosts, totalMonthly, totalAllTime
                     </Stack>
                 </Stack>
             </Modal>
-
             {/* Modal de Exclusão */}
             <Modal
                 isOpen={isDeleteModalOpen}
@@ -345,10 +343,10 @@ export function AdminOperationalCosts({ initialCosts, totalMonthly, totalAllTime
                 confirmLabel="Sim, Excluir"
                 onConfirm={() => deleteCostMutate({ id: selectedCost?.id || '' })}
             >
-                <Font variant="description" color="zinc-400">
+                <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.SECONDARY}>
                     Esta ação não pode ser desfeita e removerá o registro permanentemente do sistema.
                 </Font>
             </Modal>
         </Stack>
-    )
+    );
 }

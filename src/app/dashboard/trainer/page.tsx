@@ -3,7 +3,7 @@ import { getBetaTesterMode } from '@/actions/app-settings-actions'
 import { createClient } from '@/lib/supabase/server'
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { getQueryClient } from '@/lib/get-query-client'
-import { TrainerDashboardClient } from '@/components/feature/trainer/trainer-dashboard-client'
+import { TrainerDashboardClient } from '@/components/store/features(deprecated)/trainer-dashboard-client'
 import { TrainerMetaPixel } from './meta-pixel'
 
 export default async function TrainerDashboard() {
@@ -26,3 +26,4 @@ export default async function TrainerDashboard() {
         </HydrationBoundary>
     )
 }
+

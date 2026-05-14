@@ -1,11 +1,11 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { AuthLoginForm } from '../sections/auth-login-form'
-import { AuthSignUpForm } from '../sections/auth-signup-form'
-import { AuthAffiliateSignUpForm } from '../sections/auth-affiliate-signup-form'
-import { AuthForgotPasswordForm } from '../sections/auth-forgot-password-form'
-import { AuthUpdatePasswordForm } from '../sections/auth-update-password-form'
+import { AuthLoginForm } from './auth-login-form'
+import { AuthSignUpForm } from './auth-signup-form'
+import { AuthAffiliateSignUpForm } from './auth-affiliate-signup-form'
+import { AuthForgotPasswordForm } from './auth-forgot-password-form'
+import { AuthUpdatePasswordForm } from './auth-update-password-form'
 import { 
     signInAction, 
     signUpAction, 

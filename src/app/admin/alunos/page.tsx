@@ -1,5 +1,7 @@
 'use client'
 
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
+
 import { useState, useTransition } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/lib/query-keys'
@@ -127,7 +129,7 @@ export default function AdminAlunosPage() {
                         subtitle="Monitore a base de alunos e gerencie privilégios de acesso."
                         icon={GraduationCap}
                     >
-                        <Stack gap={5}>
+                        <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                             {/* Search */}
                             <Input
                                 value={search}

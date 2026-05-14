@@ -4,6 +4,7 @@ import React from 'react'
 import { Stack } from '@/components/store/base/stack'
 import { ActionIconButton } from '@/components/store/intermediary/action-icon-button'
 import { XCircle, CheckCircle2 } from 'lucide-react'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 interface PayoutActionGroupProps {
     onReject: () => void
@@ -15,7 +16,7 @@ interface PayoutActionGroupProps {
  */
 export function PayoutActionGroup({ onReject, onApprove }: PayoutActionGroupProps) {
     return (
-        <Stack direction="row" gap={2.5}>
+        <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT}>
             <ActionIconButton 
                 icon={XCircle} 
                 variant="outline-red" 

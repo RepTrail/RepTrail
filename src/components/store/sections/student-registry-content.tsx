@@ -4,179 +4,188 @@ import React from 'react'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { Stack } from '@/components/store/base/stack'
 import { Grid } from '@/components/store/base/grid'
-import { Box } from '@/components/store/base/box'
-import { 
-    Utensils, 
-    Dumbbell, 
-    FlaskConical, 
-    Activity
+import {
+    Utensils,
+    Dumbbell,
+    FlaskConical,
+    Activity,
+    TrendingUp,
+    Users,
+    ShoppingBag,
+    CheckCircle,
+    User,
+    Sparkles,
+    Zap
 } from 'lucide-react'
-import { ProtocolCard } from '@/components/store/intermediary/protocol-card'
-import { DietAdherenceCard } from '@/components/store/intermediary/diet-adherence-card'
-import { CardioTimerCard } from '@/components/store/intermediary/cardio-timer-card'
-import { ErgogenicsList } from '@/components/store/intermediary/ergogenics-list'
+import { CommunityFeedSectionContent } from '@/components/store/sections/community-feed-section-content'
+import { MarketplaceSectionContent } from '@/components/store/sections/marketplace-section-content'
+import { StudentTrainingProtocols } from '@/components/store/advanced/student-training-protocols'
+import { StudentCardioTracker } from '@/components/store/advanced/student-cardio-tracker'
+import { StudentNutritionAdherence } from '@/components/store/advanced/student-nutrition-adherence'
+import { StudentBioactivesManagement } from '@/components/store/advanced/student-bioactives-management'
 import { WorkoutManagementSectionContent } from '@/components/store/sections/workout-management-section-content'
 import { DietManagementSectionContent } from '@/components/store/sections/diet-management-section-content'
 import { ErgogenicManagementSectionContent } from '@/components/store/sections/ergogenic-management-section-content'
+import { RankingSectionContent } from '@/components/store/sections/ranking-section-content'
+import { StudentOnboardingSectionContent } from '@/components/store/sections/student-onboarding-section-content'
+import { StudentProfileSectionContent } from '@/components/store/sections/student-profile-section-content'
+import { AIProtocolSectionContent } from '@/components/store/sections/ai-protocol-section-content'
+import { StudentSubscriptionStatus } from '@/components/store/advanced/student-subscription-status'
+import { AIProtocolEmptyStateSectionContent } from '@/components/store/sections/ai-protocol-empty-state-section-content'
+import { Box } from '@/components/store/base/box'
+import { STORE_TOKENS } from '@/components/store/constants/tokens';
+import { Font } from '@/components/store/base/font'
 
 /**
  * StudentRegistryContent: Full Catalog of Student Dashboard Components.
- * Restored to sequential list of all 10 sections as requested.
- * - Removed internal tabs and redundant RegistryMain.
- * - Maintained 1:1 parity with design requirements.
  */
 export function StudentRegistryContent({ id }: { id: string }) {
     return (
-        <Box id={id}>
-            <Grid mdCols={12} gap="section">
+        <Stack id={id} gap="section" fullWidth>
+            <Grid mdCols={12} gap="section" fullWidth>
                 {/* Left Column: Treino & Cardio (8 cols) */}
-                <Box className="md:col-span-8">
-                    <Stack gap="section">
-                        {/* 1. Seção de Treino */}
-                        <RegistrySection
-                            title="SEÇÃO DE TREINO"
-                            subtitle="Protocolos de musculação e treinamento de força."
-                            icon={Dumbbell}
-                        >
-                            <ProtocolCard
-                                title="TREINO A"
-                                subtitle="12 EXERCÍCIOS • FOCO DO DIA"
-                                icon={Dumbbell}
-                                status="not_started"
-                                statusLabel="PRONTO PARA TREINAR"
-                                color="emerald"
-                                actionLabel="INICIAR TREINO"
-                            />
-                        </RegistrySection>
-
-                        {/* 2. Seção de Cardio */}
-                        <RegistrySection
-                            title="SEÇÃO DE CARDIO"
-                            subtitle="Monitoramento de atividades aeróbicas e cronômetros."
-                            icon={Activity}
-                        >
-                            <CardioTimerCard 
-                                title="ESTEIRA OU BIKE"
-                                duration="30 MIN"
-                                intensity="MODERADA"
-                                remainingTime="30:00"
-                                estimatedBurn="0"
-                            />
-                        </RegistrySection>
+                <Box mdColSpan={8}>
+                    <Stack gap={STORE_TOKENS.SPACING.SECTION}>
+                        <StudentTrainingProtocols />
+                        <StudentCardioTracker />
                     </Stack>
                 </Box>
 
                 {/* Right Column: Dieta & Ergogênicos (4 cols) */}
-                <Box className="md:col-span-4">
-                    <Stack gap="section">
-                        {/* 3. Seção de Dieta */}
-                        <RegistrySection
-                            title="SEÇÃO DE DIETA"
-                            subtitle="Acompanhamento nutricional."
-                            icon={Utensils}
-                        >
-                            <DietAdherenceCard
-                                completedItems={1}
-                                totalItems={12}
-                                percentage={8}
-                                macros={{
-                                    calories: 2478,
-                                    protein: 206,
-                                    carbs: 301,
-                                    fat: 50,
-                                    fiber: 0
-                                }}
-                                meals={[
-                                    { name: 'Refeição 1', itemsCount: '1/2' },
-                                    { name: 'Refeição 2', itemsCount: '0/4' }
-                                ]}
-                            />
-                        </RegistrySection>
-
-                        {/* 4. Seção de Ergogênicos */}
-                        <RegistrySection
-                            title="ERGOGÊNICOS"
-                            subtitle="Gestão diária."
-                            icon={FlaskConical}
-                        >
-                            <ErgogenicsList 
-                                items={[
-                                    { name: 'DURATESTON', dosage: 'PADRÃO' },
-                                    { name: 'IOIMBINA', dosage: 'PADRÃO' },
-                                    { name: 'NAC', dosage: 'PADRÃO' },
-                                    { name: 'CAFEINA', dosage: 'PADRÃO' }
-                                ]}
-                            />
-                        </RegistrySection>
+                <Box mdColSpan={4}>
+                    <Stack gap={STORE_TOKENS.SPACING.SECTION}>
+                        <StudentNutritionAdherence />
+                        <StudentBioactivesManagement />
                     </Stack>
                 </Box>
             </Grid>
-
             {/* 5. Seção de Gerenciamento de Treinos (Auto Treino) */}
-            <Box paddingTop={12.5}>
-                <RegistrySection
-                    title="GERENCIAMENTO DE TREINOS (AUTO TREINO)"
-                    subtitle="Versão com permissões completas de edição e organização."
-                    icon={Dumbbell}
-                >
+            <RegistrySection
+                title="GERENCIAMENTO DE TREINOS (AUTO TREINO)"
+                subtitle="Versão com permissões completas de edição e organização."
+                icon={Dumbbell}
+            >
+                <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                     <WorkoutManagementSectionContent mode="auto" />
-                </RegistrySection>
-            </Box>
-
+                    <WorkoutManagementSectionContent mode="auto" isEmpty={true} />
+                </Stack>
+            </RegistrySection>
             {/* 6. Seção de Gerenciamento de Treinos (Personal Trainer) */}
-            <Box paddingTop={12.5}>
-                <RegistrySection
-                    title="GERENCIAMENTO DE TREINOS (PERSONAL TRAINER)"
-                    subtitle="Versão para alunos com acompanhamento de personal (Apenas visualização)."
-                    icon={Dumbbell}
-                >
+            <RegistrySection
+                title="GERENCIAMENTO DE TREINOS (PERSONAL TRAINER)"
+                subtitle="Versão para alunos com acompanhamento de personal (Apenas visualização)."
+                icon={Dumbbell}
+            >
+                <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                     <WorkoutManagementSectionContent mode="personal" />
-                </RegistrySection>
-            </Box>
-
+                    <WorkoutManagementSectionContent mode="personal" isEmpty={true} />
+                </Stack>
+            </RegistrySection>
             {/* 7. Seção de Gerenciamento de Dieta (Auto Dieta) */}
-            <Box paddingTop={12.5}>
-                <RegistrySection
-                    title="GERENCIAMENTO DE DIETA (AUTO DIETA)"
-                    subtitle="Visualize e organize seus protocolos alimentares ativos."
-                    icon={Utensils}
-                >
+            <RegistrySection
+                title="GERENCIAMENTO DE DIETA (AUTO DIETA)"
+                subtitle="Visualize e organize seus protocolos alimentares ativos."
+                icon={Utensils}
+            >
+                <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                     <DietManagementSectionContent mode="auto" />
-                </RegistrySection>
-            </Box>
-
+                    <DietManagementSectionContent mode="auto" isEmpty={true} />
+                </Stack>
+            </RegistrySection>
             {/* 8. Seção de Gerenciamento de Dieta (Personal Diet) */}
-            <Box paddingTop={12.5}>
-                <RegistrySection
-                    title="GERENCIAMENTO DE DIETA (PERSONAL DIET)"
-                    subtitle="Versão para alunos com acompanhamento nutricional (Apenas visualização)."
-                    icon={Utensils}
-                >
+            <RegistrySection
+                title="GERENCIAMENTO DE DIETA (PERSONAL DIET)"
+                subtitle="Versão para alunos com acompanhamento nutricional (Apenas visualização)."
+                icon={Utensils}
+            >
+                <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                     <DietManagementSectionContent mode="personal" />
-                </RegistrySection>
-            </Box>
-
+                    <DietManagementSectionContent mode="personal" isEmpty={true} />
+                </Stack>
+            </RegistrySection>
             {/* 9. Seção de Gestão de Ergogênicos (Auto) */}
-            <Box paddingTop={12.5}>
-                <RegistrySection
-                    title="GESTÃO DE ERGOGÊNICOS (AUTO)"
-                    subtitle="Visualize e organize seus protocolos de substâncias."
-                    icon={FlaskConical}
-                >
+            <RegistrySection
+                title="GESTÃO DE ERGOGÊNICOS (AUTO)"
+                subtitle="Visualize e organize seus protocolos de substâncias."
+                icon={FlaskConical}
+            >
+                <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                     <ErgogenicManagementSectionContent mode="auto" />
-                </RegistrySection>
-            </Box>
-
+                    <ErgogenicManagementSectionContent mode="auto" isEmpty={true} />
+                </Stack>
+            </RegistrySection>
             {/* 10. Seção de Gestão de Ergogênicos (Personal) */}
-            <Box paddingTop={12.5}>
-                <RegistrySection
-                    title="GESTÃO DE ERGOGÊNICOS (PERSONAL)"
-                    subtitle="Versão para alunos com acompanhamento de coach (Apenas visualização)."
-                    icon={FlaskConical}
-                >
+            <RegistrySection
+                title="GESTÃO DE ERGOGÊNICOS (PERSONAL)"
+                subtitle="Versão para alunos com acompanhamento de coach (Apenas visualização)."
+                icon={FlaskConical}
+            >
+                <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                     <ErgogenicManagementSectionContent mode="personal" />
-                </RegistrySection>
-            </Box>
-        </Box>
-    )
+                    <ErgogenicManagementSectionContent mode="personal" isEmpty={true} />
+                </Stack>
+            </RegistrySection>
+            {/* 11. Feed da Comunidade */}
+            <RegistrySection
+                title="FEED DA COMUNIDADE"
+                subtitle="Explore os resultados, treinos e conquistas da nossa comunidade de alta performance."
+                icon={Users}
+            >
+                <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
+                    <CommunityFeedSectionContent />
+                    <CommunityFeedSectionContent isEmpty={true} />
+                </Stack>
+            </RegistrySection>
+            {/* 12. Ranking & Pódio */}
+            <Stack gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
+                <RankingSectionContent />
+                <RankingSectionContent isEmpty={true} />
+            </Stack>
+            {/* 13. Marketplace & Performance (Loja) */}
+            <RegistrySection
+                title="MARKETPLACE & PERFORMANCE"
+                subtitle="Suplementos de alta performance selecionados criteriosamente para acelerar seus resultados."
+                icon={ShoppingBag}
+            >
+                <Stack gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
+                    <MarketplaceSectionContent />
+                    <MarketplaceSectionContent isEmpty={true} />
+                </Stack>
+            </RegistrySection>
+            {/* 14. Fluxo de Onboarding (Aluno) */}
+            <RegistrySection
+                title="FLUXO DE ONBOARDING (ALUNO)"
+                icon={Activity}
+                subtitle="Visualização sequencial das etapas de cadastro inicial do ecossistema RepTrail."
+            >
+                <StudentOnboardingSectionContent />
+            </RegistrySection>
+            {/* 15. Perfil do Aluno (Reconstrução DS) */}
+            <RegistrySection
+                title="MEU PERFIL (RECONSTRUÇÃO DS)"
+                icon={User}
+                subtitle="Versão ultra-premium reconstruída 100% com componentes base do design system."
+            >
+                <StudentProfileSectionContent showVariants={true} />
+            </RegistrySection>
+
+            {/* 16. Gerador de Protocolo IA (Reconstrução DS) */}
+            <RegistrySection
+                title="GERADOR DE PROTOCOLO IA (RECONSTRUÇÃO DS)"
+                icon={Sparkles}
+                subtitle="O cérebro da plataforma. Reconstruído com a estética premium do onboarding."
+            >
+                <AIProtocolSectionContent />
+            </RegistrySection>
+
+            {/* 17. Empty State Auto Treino (Reconstrução DS) */}
+            <RegistrySection
+                title="EMPTY STATE AUTO TREINO (RECONSTRUÇÃO DS)"
+                icon={Sparkles}
+                subtitle="Banner de boas-vindas exibido quando o aluno tem auto treino mas sem protocolo."
+            >
+                <AIProtocolEmptyStateSectionContent />
+            </RegistrySection>
+        </Stack>
+    );
 }

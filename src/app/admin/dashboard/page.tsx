@@ -1,5 +1,7 @@
 'use client'
 
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
+
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useTransition } from 'react'
 import { QUERY_KEYS } from '@/lib/query-keys'
@@ -25,8 +27,8 @@ import { Grid } from '@/components/store/base/grid'
 import { StatsCard } from '@/components/store/intermediary/stats-card'
 import { useToast } from '@/hooks/use-toast'
 
-import { AdminPayoutsManagement } from '@/components/store/sections/admin-payouts-management'
-import { AdminOperationalCosts } from '@/components/store/sections/admin-operational-costs'
+import { AdminPayoutsManagement } from '@/components/store/advanced/admin-payouts-management'
+import { AdminOperationalCosts } from '@/components/store/advanced/admin-operational-costs'
 import { AdminTopProducts } from '@/components/store/sections/admin-top-products'
 
 export default function AdminDashboardPage() {
@@ -139,7 +141,7 @@ export default function AdminDashboardPage() {
                             subtitle="Visão consolidada de usuários, loja, finanças e parceiros."
                             icon={Activity}
                         >
-                            <Grid cols={1} mdCols={2} lgCols={4} gap={5}>
+                            <Grid cols={1} mdCols={2} lgCols={4} gap={STORE_TOKENS.SPACING.CONTAINER}>
                                 <StatsCard
                                     label="Personais"
                                     value={String(stats?.trainers || 0)}

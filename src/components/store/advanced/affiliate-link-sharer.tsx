@@ -8,6 +8,7 @@ import { Button } from '@/components/store/base/button'
 import { Icon } from '@/components/store/base/icon'
 import { GlassPanel } from '@/components/store/base/surface'
 import { Link as LinkIcon, Copy, Check } from 'lucide-react'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 interface AffiliateLinkSharerProps {
     token: string | null
@@ -35,17 +36,17 @@ export function AffiliateLinkSharer({ token }: AffiliateLinkSharerProps) {
     }
 
     return (
-        <GlassPanel padding={5} rounded="system">
-            <Stack gap={5}>
-                <Stack gap={2.5}>
-                    <Font variant="sub-tiny" color="zinc-500" weight="black" uppercase tracking="widest">
+        <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM}>
+            <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                    <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="black" uppercase tracking="widest">
                         Seu Link de Afiliado
                     </Font>
-                    <Stack direction="row" gap={5} align="center">
-                        <GlassPanel padding={5} flex1 rounded="system">
-                            <Stack direction="row" gap={2.5} align="center">
-                                <Icon icon={LinkIcon} color="primary" size="xs" />
-                                <Font variant="sub-tiny" color="primary" weight="bold" mono truncate>
+                    <Stack direction="row" gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
+                        <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER} flex1 rounded={STORE_TOKENS.RADIUS.SYSTEM}>
+                            <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                                <Icon icon={LinkIcon} color={STORE_TOKENS.COLORS.BRAND} size="xs" />
+                                <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.BRAND} weight="bold" mono truncate>
                                     {affiliateLink || 'Gerando link...'}
                                 </Font>
                             </Stack>
@@ -53,21 +54,21 @@ export function AffiliateLinkSharer({ token }: AffiliateLinkSharerProps) {
                         
                         <Button 
                             variant={copied ? 'primary' : 'outline-primary'} 
-                            rounded="system" 
-                            padding={5} 
+                            rounded={STORE_TOKENS.RADIUS.SYSTEM} 
+                            padding={STORE_TOKENS.PADDING.CONTAINER} 
                             onClick={handleCopy}
                         >
                             <Icon icon={copied ? Check : Copy} size="xs" />
                         </Button>
 
                         <Stack gap={0} align="center">
-                            <Font variant="heading" color="white" weight="black">10%</Font>
-                            <Font variant="sub-tiny" color="zinc-500" weight="black" uppercase italic tracking="widest">De Comissão</Font>
+                            <Font variant="heading" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} weight="black">10%</Font>
+                            <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="black" uppercase italic tracking="widest">De Comissão</Font>
                         </Stack>
                     </Stack>
                 </Stack>
 
-                <Font variant="sub-tiny" color="zinc-600" italic>
+                <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.DIM} italic>
                     Cookie persistido por 30 dias • Token oculto ao usuário • Conversões automáticas
                 </Font>
             </Stack>

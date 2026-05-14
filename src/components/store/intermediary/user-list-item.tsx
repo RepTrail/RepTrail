@@ -1,16 +1,17 @@
 'use client'
 
 import React from 'react'
-import { Stack } from '../base/stack'
-import { Inline } from '../base/layout'
-import { Font } from '../base/font'
-import { BaseAvatar } from '../base/avatar'
-import { Badge } from '../base/badge'
-import { Button } from '../base/button'
-import { Box } from '../base/box'
+import { Stack } from '@/components/store/base/stack'
+import { Inline } from '@/components/store/base/layout'
+import { Font } from '@/components/store/base/font'
+import { BaseAvatar } from '@/components/store/base/avatar'
+import { Badge } from '@/components/store/base/badge'
+import { Button } from '@/components/store/base/button'
+import { Box } from '@/components/store/base/box'
 import { ActionableListCard } from './actionable-list-card'
-import { Icon } from '../base/icon'
+import { Icon } from '@/components/store/base/icon'
 import { Eye, Sparkles, Zap, Trash2, LucideIcon } from 'lucide-react'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 interface UserListItemProps {
     name: string
@@ -64,13 +65,12 @@ export function UserListItem({
     return (
         <ActionableListCard
             badges={
-                <Inline gap={2.5} align="center">
+                <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                     <Badge label={registrationDate} variant="glass" size="xs" />
                     <Badge 
                         label={roleLabel} 
                         variant="glass" 
                         color={role === 'personal' ? 'orange' : 'emerald'} 
-                        rounded="full" 
                         size="xs"
                     />
                 </Inline>
@@ -101,12 +101,16 @@ export function UserListItem({
                 </>
             ) : undefined}
         >
-            <Inline gap={5} align="center">
+            <Inline gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
                 <BaseAvatar src={avatarUrl || undefined} initials={initials} variant={avatarVariant} size="md" />
                 <Stack gap={0} minWidth={0}>
-                    <Font weight="black" uppercase italic color="white" variant={{ base: 'body-sm', md: 'body' }} tracking="wider" truncate display="block">{name}</Font>
+                    <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} variant={{ base: 'body-sm', md: 'body' }} color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
+                        {name}
+                    </Font>
                     <Box fullWidth minWidth={0} overflow="hidden">
-                        <Font variant="sub-tiny" color="zinc-600" lowercase truncate display="block">{email}</Font>
+                        <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.DIM} lowercase>
+                            {email}
+                        </Font>
                     </Box>
                 </Stack>
             </Inline>
@@ -127,7 +131,7 @@ function ActionButton({
         <Button 
             variant={variant} 
             size="sm" 
-            rounded="full" 
+            rounded={STORE_TOKENS.RADIUS.FULL} 
             isIconOnly 
             onClick={onClick}
             hoverScale={110}

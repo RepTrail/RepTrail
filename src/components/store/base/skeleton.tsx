@@ -19,7 +19,8 @@ export function Skeleton({
 }: SkeletonProps) {
   return (
     <Box
-      variant="skeleton"
+      bg="zinc"
+      bgOpacity={20}
       className={cn("animate-pulse", className)}
       width={width as any}
       height={height as any}

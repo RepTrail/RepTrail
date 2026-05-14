@@ -4,11 +4,12 @@ import React, { useEffect } from 'react'
 import { RegistrySidebar } from './registry-sidebar'
 import { RegistryMobileNavigation } from '@/components/store/advanced/registry-mobile-navigation'
 import { RegistryBottomNav } from '@/components/store/advanced/registry-bottom-nav'
-import { Modal } from './modal'
-import { Settings } from 'lucide-react'
-import { RegistryContext, RegistryColor, RegistryProvider } from '@/components/store/advanced/registry-context'
-import { Box } from '../base/box'
-import { cn } from '@/lib/utils'
+import { SettingsModal } from '@/components/store/advanced/student-settings-modal'
+import { RegistryColor, RegistryProvider } from '@/components/store/advanced/registry-context'
+import { Surface } from '@/components/store/base/surface'
+import { Main } from '@/components/store/base/main'
+import { BackgroundEffects } from '@/components/store/base/background-effects'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 interface RegistryShellProps {
   children: React.ReactNode
@@ -18,7 +19,6 @@ interface RegistryShellProps {
 
 export function RegistryShell({ children, activeTab: externalActiveTab, setActiveTab: externalSetActiveTab }: RegistryShellProps) {
   const [isSettingsOpen, setIsSettingsOpen] = React.useState(false)
-  const [isSidebarOpen, setIsSidebarOpen] = React.useState(false)
   const [internalActiveTab, setInternalActiveTab] = React.useState('overview')
   const [activeSection, setActiveSection] = React.useState('branding')
   const [primaryColor, setPrimaryColor] = React.useState<RegistryColor>('blue')
@@ -65,24 +65,6 @@ export function RegistryShell({ children, activeTab: externalActiveTab, setActiv
     return () => observer.disconnect()
   }, [activeTab])
 
-  const lightColorMap: Record<RegistryColor, string> = {
-    blue: 'from-blue-500/20',
-    red: 'from-red-500/20',
-    amber: 'from-amber-500/20',
-    emerald: 'from-emerald-500/20',
-    orange: 'from-orange-500/20',
-    zinc: 'from-zinc-500/20'
-  }
-
-  const orbColorMap: Record<RegistryColor, string> = {
-    blue: 'bg-blue-500/10',
-    red: 'bg-red-500/10',
-    amber: 'bg-amber-500/10',
-    emerald: 'bg-emerald-500/10',
-    orange: 'bg-orange-500/10',
-    zinc: 'bg-zinc-500/10'
-  }
-
   return (
     <RegistryProvider
       activeTab={activeTab}
@@ -90,40 +72,28 @@ export function RegistryShell({ children, activeTab: externalActiveTab, setActiv
       primaryColor={primaryColor}
       setPrimaryColor={setPrimaryColor}
     >
-      <Box minHeight="screen" bg="zinc" bgOpacity={100} overflowX="hidden" display="flex" direction="col" position="relative">
+      <Surface
+        minHeight="screen"
+        bg="zinc"
+        bgOpacity={STORE_TOKENS.OPACITY.BACKGROUND}
+        overflowX="hidden"
+        display="flex"
+        direction="col"
+        position="relative"
+      >
 
-        {/* FIXED GLOBAL BACKGROUND EFFECTS */}
-        <div
-          className="fixed inset-0 bg-[url('/grid.svg')] bg-repeat bg-top [mask-image:linear-gradient(to_bottom,white_20%,transparent_95%)] opacity-[0.4] pointer-events-none z-0"
-        />
-
-        <div
-          className={cn(
-            "fixed -top-[10%] -right-[5%] w-[60%] h-[60%] rounded-full blur-[150px] pointer-events-none transition-colors duration-1000 z-0",
-            // Mobile Optimization: Push orb more to the top-right to avoid center-screen cropping
-            "max-md:-top-[15%] max-md:-right-[25%] max-md:w-[90%] max-md:h-[50%] max-md:blur-[120px]",
-            lightColorMap[primaryColor] ? `bg-gradient-to-br ${lightColorMap[primaryColor]} to-transparent` : ""
-          )}
-        />
-
-        <div
-          className={cn(
-            "fixed bottom-[10%] left-[20%] w-[500px] h-[500px] rounded-full blur-[180px] animate-pulse pointer-events-none transition-colors duration-1000 z-0",
-            "max-md:w-[300px] max-md:h-[300px] max-md:blur-[100px] max-md:left-[5%] max-md:bottom-[5%]",
-            orbColorMap[primaryColor]
-          )}
-        />
+        {/* Background Effects (Grid & Orbs) — Unified Base Component */}
+        <BackgroundEffects variant="all" />
 
         {/* Desktop Sidebar */}
-        <RegistrySidebar onOpenSettings={() => setIsSettingsOpen(true)} />
+        <RegistrySidebar onOpenSettings={() => window.dispatchEvent(new CustomEvent('open-settings'))} />
 
         {/* Mobile Navigation */}
         <RegistryMobileNavigation />
         <RegistryBottomNav />
 
         {/* Main Content Area */}
-        <Box
-          as="main"
+        <Main
           flex1
           fullWidth
           paddingLeft={{ base: 0, lg: 'sidebar-wide' }}
@@ -132,19 +102,13 @@ export function RegistryShell({ children, activeTab: externalActiveTab, setActiv
           zIndex={10}
         >
           {children}
-        </Box>
+        </Main>
 
-        <Modal
-          isOpen={isSettingsOpen}
-          onClose={() => setIsSettingsOpen(false)}
-          title="Configurações"
-          subtitle="Ajustes de Perfil e Sistema"
-          icon={Settings}
-          variant="orange"
-          confirmLabel="Salvar"
-          cancelLabel="Cancelar"
+        {/* Premium Settings Modal (Functional Version) */}
+        <SettingsModal 
+          hasTrainer={false}
         />
-      </Box>
+      </Surface>
     </RegistryProvider>
   )
 }

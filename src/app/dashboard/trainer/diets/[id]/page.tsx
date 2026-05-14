@@ -1,4 +1,4 @@
-import { DietBuilderClient } from "@/components/feature/trainer/diet-builder-client"
+import { DietBuilderClient } from "@/components/store/features(deprecated)/diet-builder-client"
 import { getDietDetails } from "@/actions/diet-actions"
 import { getTrainerStudents } from "@/actions/trainer-actions"
 import { notFound } from "next/navigation"

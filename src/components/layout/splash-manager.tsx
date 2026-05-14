@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { SplashScreen } from '@/components/feature/shared/splash-screen'
+import { SplashScreen } from '@/components/store/advanced/splash-screen'
 import { usePathname } from 'next/navigation'
 
 interface SplashManagerProps {
@@ -52,9 +52,9 @@ export function SplashManager({ children }: SplashManagerProps) {
         const isStandalone = typeof window !== 'undefined' && window.matchMedia('(display-mode: standalone)').matches
         return (
             <>
-                <SplashScreen 
-                    color={getSplashColor()} 
-                    onFinish={() => setView('ready')} 
+                <SplashScreen
+                    color={getSplashColor()}
+                    onFinish={() => setView('ready')}
                 />
                 {!isStandalone && children}
             </>

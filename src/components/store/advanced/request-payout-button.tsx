@@ -6,6 +6,7 @@ import { Icon } from '@/components/store/base/icon'
 import { Font } from '@/components/store/base/font'
 import { Inline } from '@/components/store/base/layout'
 import { Banknote } from 'lucide-react'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { RequestPayoutModal } from './request-payout-modal'
 
 /**
@@ -21,12 +22,12 @@ export function RequestPayoutButton({ availableBalance }: { availableBalance: nu
                 variant="primary"
                 onClick={() => setIsOpen(true)}
                 disabled={availableBalance < 50}
-                rounded="system"
-                paddingX={5}
+                rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                paddingX={STORE_TOKENS.PADDING.CONTAINER}
                 height="anatomy-item"
                 fullWidth
             >
-                <Inline gap={2.5}>
+                <Inline gap={STORE_TOKENS.SPACING.ELEMENT}>
                     <Icon icon={Banknote} size="xs" />
                     <Font variant="label-caps">Sacar Comissões</Font>
                 </Inline>

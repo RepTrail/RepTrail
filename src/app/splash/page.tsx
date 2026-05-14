@@ -1,6 +1,6 @@
 'use client'
 
-import { SplashScreen } from "@/components/feature/shared/splash-screen"
+import { SplashScreen } from "@/components/store/advanced/splash-screen"
 
 export default function SplashPage() {
     return (

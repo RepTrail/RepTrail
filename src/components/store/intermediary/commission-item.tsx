@@ -2,14 +2,15 @@
 'use client'
 
 import React from 'react'
-import { Stack } from '../base/stack'
-import { Inline } from '../base/layout'
-import { Font } from '../base/font'
-import { Box } from '../base/box'
-import { Badge } from '../base/badge'
-import { IconBox } from '../base/icon'
+import { Stack } from '@/components/store/base/stack'
+import { Inline } from '@/components/store/base/layout'
+import { Font } from '@/components/store/base/font'
+import { Box } from '@/components/store/base/box'
+import { Badge } from '@/components/store/base/badge'
+import { IconBox } from '@/components/store/base/icon'
 import { ActionableListCard } from './actionable-list-card'
 import { DollarSign } from 'lucide-react'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 interface CommissionItemProps {
     description: string
@@ -30,41 +31,38 @@ export function CommissionItem({
     statusColor
 }: CommissionItemProps) {
     return (
-        <ActionableListCard isStrictHorizontal>
-            <Inline gap={5} align="center" fullWidth>
+        <ActionableListCard 
+            badges={
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align={{ base: 'start', lg: 'end' }} fullWidth>
+                    <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} color={STORE_TOKENS.COLORS.SUCCESS} variant="body-sm">
+                        + {amount}
+                    </Font>
+                    <Badge
+                        label={statusLabel.toUpperCase()}
+                        color={statusColor}
+                        variant="glass"
+                        size="xs"
+                    />
+                </Stack>
+            }
+        >
+            <Inline gap={STORE_TOKENS.SPACING.CONTAINER} align="center" fullWidth>
                 <Box shrink={0}>
-                    <IconBox 
-                        icon={DollarSign} 
-                        variant="emerald" 
+                    <IconBox
+                        icon={DollarSign}
+                        variant="emerald"
                         size="md"
                     />
                 </Box>
 
-                <Box flex1 display="flex" direction="row" align="center" justify="between" overflow="hidden">
-                    <Stack gap={0} flex1 overflow="hidden">
-                        <Font weight="black" uppercase italic color="white" variant="body-sm" tracking="wider" truncate>
-                            {description}
-                        </Font>
-                        <Font variant="sub-tiny" color="zinc-600" truncate>
-                            {date} • {time}
-                        </Font>
-                    </Stack>
-
-                    <Box shrink={0}>
-                        <Stack gap={1} align="end">
-                            <Font weight="black" italic color="emerald" variant={{ base: 'body', md: 'h4' }} nowrap>
-                                + {amount}
-                            </Font>
-                            <Badge 
-                                label={statusLabel.toUpperCase()} 
-                                color={statusColor} 
-                                variant="glass" 
-                                rounded="full"
-                                size="xs"
-                            />
-                        </Stack>
-                    </Box>
-                </Box>
+                <Stack gap={0} flex1 overflow="hidden">
+                    <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} variant="body-sm" color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
+                        {description}
+                    </Font>
+                    <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.DIM}>
+                        {date} • {time}
+                    </Font>
+                </Stack>
             </Inline>
         </ActionableListCard>
     )

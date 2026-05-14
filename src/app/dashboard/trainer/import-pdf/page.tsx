@@ -1,5 +1,5 @@
 import { getTrainerStudents } from '@/actions/trainer-actions'
-import { ImportPdfClient } from '@/components/feature/pdf/import-pdf-client'
+import { ImportPdfClient } from '@/components/store/features(deprecated)/import-pdf-client'
 import { createClient } from '@/lib/supabase/server'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 
@@ -22,3 +22,4 @@ export default async function ImportPdfPage() {
         </RegistryMain>
     )
 }
+

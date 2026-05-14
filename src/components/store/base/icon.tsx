@@ -2,15 +2,17 @@
 import React from 'react'
 import { LucideIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { useRegistry } from '../advanced/registry-context'
+import { useRegistry } from '@/components/store/advanced/registry-context'
 
 interface IconProps {
   icon: LucideIcon
-  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '100'
   color?: 'foreground' | 'muted' | 'orange' | 'emerald' | 'red' | 'blue' | 'amber' | 'white' | 'black' | 'zinc-400' | 'zinc-500' | 'zinc-600' | 'zinc-700' | 'zinc-800' | 'primary'
   spin?: boolean
   animation?: 'bounce' | 'pulse'
   className?: string
+  animate?: 'spin'
+  opacity?: 0 | 10 | 20 | 30 | 40 | 50 | 60 | 70 | 80 | 90 | 100
 }
 
 export function Icon({
@@ -19,7 +21,9 @@ export function Icon({
   color,
   spin,
   animation,
-  className
+  className,
+  animate,
+  opacity
 }: IconProps) {
   const { primaryColor } = useRegistry()
   const resolvedColor = color === 'primary' ? primaryColor : color
@@ -28,15 +32,19 @@ export function Icon({
     <IconComponent
       className={cn(
         className,
-        spin && 'animate-spin',
+        (spin || animate === 'spin') && 'animate-spin',
         animation === 'bounce' && 'animate-bounce',
         animation === 'pulse' && 'animate-pulse',
+        opacity !== undefined && `opacity-${opacity}`,
         // Sizes
         size === 'xs' && 'w-3 h-3',
         size === 'sm' && 'w-4 h-4',
         size === 'md' && 'w-5 h-5',
         size === 'lg' && 'w-6 h-6',
         size === 'xl' && 'w-8 h-8',
+        size === '2xl' && 'w-10 h-10',
+        size === '3xl' && 'w-12 h-12',
+        size === '100' && 'w-[100px] h-[100px]',
 
         // Colors
         resolvedColor === 'foreground' && 'text-foreground',

@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import { AnamnesisForm } from '@/components/feature/student/anamnesis-form'
+import { AnamnesisForm } from '@/components/store/features(deprecated)/student-anamnesis-form'
 import { ClipboardList } from 'lucide-react'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 
@@ -27,3 +27,4 @@ export default async function AnamnesisPage() {
         </RegistryMain>
     )
 }
+

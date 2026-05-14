@@ -24,7 +24,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Logo } from '@/components/ui/logo'
-import { PodiumCard } from '@/components/feature/shared/ranking-cards'
+import { PodiumCard } from '@/components/store/features(deprecated)/ranking-cards'
 import Link from 'next/link'
 import { fbqEvent } from '@/lib/meta-pixel'
 
@@ -172,3 +172,4 @@ function FilterSection({ label, children }: any) {
         </div>
     )
 }
+

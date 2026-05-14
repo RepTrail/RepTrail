@@ -1,5 +1,6 @@
 import React from 'react'
 import { cn } from '@/lib/utils'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 type SwatchColor = 'orange' | 'emerald' | 'amber' | 'red' | 'blue' | 'zinc' | 'white'
 type SwatchOpacity = 10 | 20 | 30 | 50 | 100
@@ -33,8 +34,8 @@ export function Swatch({
   }
 
   const roundedClasses = {
-    system: 'rounded-[5px]',
-    full: 'rounded-full',
+    system: STORE_TOKENS.RADIUS.SYSTEM === 'system' ? 'rounded-[5px]' : 'rounded-full',
+      full: 'rounded-full',
     none: 'rounded-none'
   }
 

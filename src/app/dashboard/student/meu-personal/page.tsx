@@ -1,3 +1,4 @@
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { createClient } from '@/lib/supabase/server'
 import { getStudentTrainer } from '@/actions/student-actions'
 import { redirect } from 'next/navigation'
@@ -9,7 +10,7 @@ import {
     ShieldCheck, Star, MapPin, MessageCircle, Trophy,
     Dumbbell, Utensils, Activity, ArrowRight, UserCheck, Phone
 } from 'lucide-react'
-import { RatingModal } from '@/components/feature/student/RatingModal'
+import { RatingModal } from '@/components/store/features(deprecated)/student-rating-modal'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { Stack } from '@/components/store/base/stack'
 import { Grid } from '@/components/store/base/grid'
@@ -144,7 +145,7 @@ export default async function MeuPersonalPage() {
                 </div>
 
                 {/* Plan Info Grid */}
-                <Grid gap={5} mdCols={3}>
+                <Grid gap={STORE_TOKENS.SPACING.CONTAINER} mdCols={3}>
                     <Card className="bg-zinc-900/40 border-zinc-800/50 rounded-3xl overflow-hidden">
                         <CardContent className="p-8 space-y-3">
                             <div className="w-12 h-12 bg-zinc-950 rounded-xl flex items-center justify-center border border-zinc-800">
@@ -221,3 +222,4 @@ export default async function MeuPersonalPage() {
         </RegistryMain>
     )
 }
+

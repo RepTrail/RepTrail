@@ -8,14 +8,17 @@ import { Icon } from '@/components/store/base/icon'
 import { Button } from '@/components/store/base/button'
 import { Badge } from '@/components/store/base/badge'
 import { GlassPanel } from '@/components/store/base/surface'
+import { BackgroundIcon } from '@/components/store/base/background-icon'
 import {
     Trash2,
     Edit3,
     Copy,
     Maximize2,
     Eye,
-    Calendar
+    Calendar,
+    Dumbbell
 } from 'lucide-react'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 interface WorkoutCardPremiumProps {
     title: string
@@ -46,44 +49,54 @@ export function WorkoutCardPremium({
 
     return (
         <GlassPanel
-            padding={5}
-            rounded="system"
+            padding={STORE_TOKENS.PADDING.ELEMENT}
+            rounded={STORE_TOKENS.RADIUS.SYSTEM}
             variant="glass"
             transition
             group
+            position="relative"
+            overflow="hidden"
         >
-            <Stack gap={5}>
+            <BackgroundIcon
+                icon={Dumbbell}
+                size="100"
+                top={-10}
+                right={-10}
+                opacity={STORE_TOKENS.OPACITY.SUBTLE}
+                groupHoverOpacity={STORE_TOKENS.OPACITY.SUBTLE}
+            />
+            <Stack gap={STORE_TOKENS.SPACING.CONTAINER} position="relative" zIndex={STORE_TOKENS.Z_INDEX.CONTENT}>
                 {/* Header Actions - Hidden in Personal Mode */}
                 <Stack direction="row" align="center" justify="between">
                     <Box
-                        padding={2.5}
-                        rounded="system"
-                        bg="white"
-                        bgOpacity={5}
+                        padding={STORE_TOKENS.PADDING.ELEMENT}
+                        rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                        bg={STORE_TOKENS.COLORS.WHITE}
+                        bgOpacity={STORE_TOKENS.OPACITY.LOW}
                         cursor="pointer"
                         transition
                     >
-                        <Icon icon={Maximize2} size="xs" color="zinc-400" />
+                        <Icon icon={Maximize2} size="xs" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} />
                     </Box>
                     {isAuto && (
                         <Box
-                            padding={2.5}
-                            rounded="system"
+                            padding={STORE_TOKENS.PADDING.ELEMENT}
+                            rounded={STORE_TOKENS.RADIUS.SYSTEM}
                             cursor="pointer"
                             transition
                         >
-                            <Icon icon={Trash2} size="xs" color="zinc-600" />
+                            <Icon icon={Trash2} size="xs" color={STORE_TOKENS.COLORS.TEXT.DIM} />
                         </Box>
                     )}
                 </Stack>
 
                 {/* Body Content */}
-                <Stack gap={2.5}>
-                    <Stack gap={1}>
-                        <Font variant="h3" color="white">
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                        <Font variant="h3" color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
                             {title}
                         </Font>
-                        <Font variant="sub-tiny" color="zinc-600">
+                        <Font {...STORE_TOKENS.TYPOGRAPHY.DESCRIPTION} color={STORE_TOKENS.COLORS.TEXT.DIM}>
                             {description}
                         </Font>
                     </Stack>
@@ -100,39 +113,39 @@ export function WorkoutCardPremium({
 
                 {/* Meta Info */}
                 <Stack direction="row" align="center" justify="between">
-                    <Font variant="sub-tiny" weight="black" color="zinc-500" uppercase tracking="widest">
+                    <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.MUTED}>
                         {exercisesCount} EXERCÍCIOS
                     </Font>
-                    <Font variant="sub-tiny" weight="black" color="zinc-500" uppercase tracking="widest">
+                    <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.MUTED}>
                         {date}
                     </Font>
                 </Stack>
 
                 {/* Footer Buttons & Actions */}
-                <Stack direction="row" align="center" gap={2.5}>
+                <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                     {isAuto ? (
                         <>
                             <Button variant={color as any} flex1>
-                                <Stack direction="row" align="center" justify="center" gap={2.5}>
-                                    <Icon icon={Calendar} size="xs" color="black" />
-                                    <Font variant="sub-tiny" weight="black" color="black">AGENDAR</Font>
+                                <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                    <Icon icon={Calendar} size="xs" color={STORE_TOKENS.COLORS.BLACK} />
+                                    <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.BLACK}>AGENDAR</Font>
                                 </Stack>
                             </Button>
                             <Button variant="outline-zinc" flex1>
-                                <Stack direction="row" align="center" justify="center" gap={2.5}>
-                                    <Icon icon={Edit3} size="xs" color="white" />
-                                    <Font variant="sub-tiny" weight="black" color="white">EDITAR</Font>
+                                <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                    <Icon icon={Edit3} size="xs" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} />
+                                    <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>EDITAR</Font>
                                 </Stack>
                             </Button>
-                            <Button variant="outline-zinc" isIconOnly size="sm">
-                                <Icon icon={Copy} size="xs" color="zinc-400" />
+                            <Button variant="outline-zinc" isIconOnly size="sm" rounded={STORE_TOKENS.RADIUS.SYSTEM}>
+                                <Icon icon={Copy} size="xs" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} />
                             </Button>
                         </>
                     ) : (
                         <Button variant={color as any} flex1>
-                            <Stack direction="row" align="center" justify="center" gap={2.5}>
-                                <Icon icon={Eye} size="xs" color="black" />
-                                <Font variant="sub-tiny" weight="black" color="black">VISUALIZAR TREINO</Font>
+                            <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                <Icon icon={Eye} size="xs" color={STORE_TOKENS.COLORS.BLACK} />
+                                <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.BLACK}>VISUALIZAR TREINO</Font>
                             </Stack>
                         </Button>
                     )}

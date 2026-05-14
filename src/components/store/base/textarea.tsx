@@ -1,9 +1,10 @@
 'use client'
 import React from 'react'
 import { cn } from '@/lib/utils'
-import { Box } from './box'
+import { Stack } from './stack'
 import { Font } from './font'
-import { useRegistry } from '../advanced/registry-context'
+import { useRegistry } from '@/components/store/advanced/registry-context'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string
@@ -34,16 +35,16 @@ export function Textarea({
   const activeClasses = colorMap[primaryColor as keyof typeof colorMap]
 
   return (
-    <Box className={cn('w-full flex flex-col gap-[10px]', flex1 && 'flex-1')}>
+    <Stack gap={STORE_TOKENS.SPACING.ELEMENT} className="w-full" flex1={flex1}>
       {label && (
-        <Font variant="auxiliary" color="zinc-500" weight="black" uppercase tracking="widest">
+        <Font variant="auxiliary" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="black" uppercase tracking="widest">
           {label}
         </Font>
       )}
       <textarea
         className={cn(
           'w-full min-h-[100px] p-4 bg-zinc-950/40 border-2 border-white/5 text-white placeholder:text-zinc-600 outline-none transition-all resize-none',
-          rounded === 'system' && 'rounded-[5px]',
+          rounded === 'system' && (STORE_TOKENS.RADIUS.SYSTEM === 'system' ? 'rounded-[5px]' : 'rounded-full'),
           rounded === 'none' && 'rounded-none',
           activeClasses,
           error && 'border-red-500/50',
@@ -52,10 +53,10 @@ export function Textarea({
         {...props}
       />
       {error && (
-        <Font variant="sub-tiny" color="red" weight="black" uppercase tracking="widest" className="pl-1">
+        <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.ERROR} weight="black" uppercase tracking="widest" className="pl-1">
           {error}
         </Font>
       )}
-    </Box>
+    </Stack>
   )
 }

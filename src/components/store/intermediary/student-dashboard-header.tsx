@@ -1,9 +1,10 @@
 'use client'
 
 import React from 'react'
-import { Stack } from '../base/stack'
-import { Font } from '../base/font'
-import { Box } from '../base/box'
+import { Stack } from '@/components/store/base/stack'
+import { Font } from '@/components/store/base/font'
+import { Box } from '@/components/store/base/box'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 interface StudentDashboardHeaderProps {
     title: string
@@ -11,8 +12,8 @@ interface StudentDashboardHeaderProps {
     dateValue?: string
 }
 
-export function StudentDashboardHeader({ 
-    title = "Resumo Hoje", 
+export function StudentDashboardHeader({
+    title = "Resumo Hoje",
     dateLabel = "Hoje",
     dateValue
 }: StudentDashboardHeaderProps) {
@@ -21,24 +22,25 @@ export function StudentDashboardHeader({
 
     return (
         <Stack direction={{ base: 'col', md: 'row' }} align={{ base: 'start', md: 'end' }} justify="between" gap="header-gap">
-            <Font 
+            <Font
                 variant="h1"
-                weight="black" 
-                color="white" 
-                italic 
-                uppercase 
-                tracking="tighter"
-                className="text-3xl lg:text-4xl leading-none"
+                color={STORE_TOKENS.COLORS.TEXT.PRIMARY}
             >
                 {title}
             </Font>
-            
-            <Box padding={5} bg="zinc" bgOpacity={100} border rounded="system" className="bg-zinc-950 border-zinc-800">
-                <Stack gap={1}>
-                    <Font variant="sub-tiny" color="zinc-500" weight="black" uppercase tracking="widest" display="block">
+
+            <Box 
+                padding={STORE_TOKENS.PADDING.CONTAINER} 
+                bg={STORE_TOKENS.COLORS.BACKGROUND} 
+                bgOpacity={STORE_TOKENS.OPACITY.BACKGROUND} 
+                border 
+                rounded={STORE_TOKENS.RADIUS.SYSTEM} 
+            >
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                    <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.MUTED}>
                         {dateLabel}
                     </Font>
-                    <Font variant="description" color="white" weight="black" uppercase italic className="text-xs">
+                    <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} variant="description" color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
                         {displayDate}
                     </Font>
                 </Stack>

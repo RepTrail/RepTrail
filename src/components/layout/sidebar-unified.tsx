@@ -9,8 +9,14 @@ import { LogOut, User, Settings } from 'lucide-react'
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Logo } from "@/components/ui/logo"
+import { Box } from "@/components/store/base/box"
+import { Stack } from "@/components/store/base/stack"
+import { Font } from "@/components/store/base/font"
+import { Surface, GlassPanel } from "@/components/store/base/surface"
+import { STORE_TOKENS } from "@/components/store/constants/tokens"
 import { signOutAction } from '@/actions/auth-actions'
 import { SmartLink } from "@/components/shared/smart-link"
+import { PREFETCH_REGISTRY } from "@/lib/prefetch-registry"
 
 const sidebarLinkVariants = cva(
   "flex items-center gap-3 px-5 py-3.5 rounded-xl transition-all duration-300 group border-2 text-[10px] font-black uppercase tracking-[0.2em] italic",
@@ -76,14 +82,6 @@ export interface UnifiedSidebarProps extends VariantProps<typeof sidebarLinkVari
   showSettings?: boolean
 }
 
-import { getQueryClient } from '@/lib/get-query-client'
-import { QUERY_KEYS } from '@/lib/query-keys'
-import { getAssignedWorkouts } from '@/actions/workout-actions'
-import { getAssignedDiets } from '@/actions/diet-actions'
-import { getAssignedCardios } from '@/actions/cardio-actions'
-
-import { PREFETCH_REGISTRY } from "@/lib/prefetch-registry"
-
 export function UnifiedSidebar({
   links,
   user,
@@ -94,7 +92,6 @@ export function UnifiedSidebar({
   showSettings = true
 }: UnifiedSidebarProps) {
   const pathname = usePathname()
-  const queryClient = getQueryClient()
 
   const isLinkActive = (link: SidebarLink) => {
     if (link.isActive !== undefined) return link.isActive
@@ -104,11 +101,10 @@ export function UnifiedSidebar({
       : pathname === link.href || pathname.startsWith(link.href + '/')
   }
 
-    const renderLink = (link: SidebarLink) => {
+  const renderLink = (link: SidebarLink) => {
     const active = isLinkActive(link)
     const className = cn("w-full text-left", sidebarLinkVariants({ variant: brandColor }))
     
-    // Use registry for prefetching
     const prefetchConfigs = link.href ? (PREFETCH_REGISTRY[link.href]?.(user.id) || []) : []
 
     const content = (
@@ -154,91 +150,146 @@ export function UnifiedSidebar({
   }
 
   return (
-    <aside className="hidden md:flex w-72 h-screen bg-zinc-900 border-r border-zinc-800 p-6 flex-col shadow-2xl z-20 overflow-hidden shrink-0 sticky top-0">
-      {/* Brand Logo */}
-      <div className="flex-shrink-0 mb-10">
-        <Link href="/">
-          <Logo size="md" color={logoColor as any} />
-        </Link>
-        {tagline && (
-          <div className="mt-4 mb-3">
-            <span className={cn(
-                "text-[10px] font-black uppercase tracking-widest flex items-center gap-2 italic",
-                brandColor === 'emerald' ? 'text-emerald-500' : 
-                brandColor === 'orange' ? 'text-orange-500' : 
-                brandColor === 'amber' ? 'text-amber-500' : 
-                brandColor === 'red' ? 'text-red-500' : 'text-zinc-500'
-            )}>
-              {tagline}
-            </span>
-          </div>
-        )}
-      </div>
+    <Box
+      as="aside"
+      display={{ base: 'none', md: 'flex' }}
+      width="sidebar-wide"
+      height="screen"
+      position="sticky"
+      top={0}
+      zIndex={20}
+      shrink={0}
+      overflow="hidden"
+    >
+      <GlassPanel
+        fullWidth
+        fullHeight
+        variant="glass"
+        border="none"
+        rounded="none"
+        display="flex"
+        direction="col"
+        padding={STORE_TOKENS.PADDING.CONTAINER}
+      >
+        {/* Right border for desktop static */}
+        <Surface 
+            position="absolute" 
+            pin="right" 
+            top={0} 
+            fullHeight 
+            width="px" 
+            bg="white" 
+            bgOpacity={5}
+        >
+          <></>
+        </Surface>
 
-      {/* Main Navigation */}
-      <nav className="flex-1 space-y-1.5 overflow-y-auto pr-2 -mr-2 scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent custom-scrollbar">
-        {links.filter(l => !l.hidden).map(renderLink)}
+        {/* Brand Logo */}
+        <Stack shrink={0} gap={STORE_TOKENS.SPACING.ELEMENT}>
+          <Link href="/">
+            <Logo size="md" color={logoColor as any} />
+          </Link>
+          {tagline && (
+              <Font 
+                  variant="sub-tiny" 
+                  weight="black" 
+                  uppercase 
+                  italic 
+                  tracking="widest"
+                  color={brandColor === 'zinc' ? 'DIM' : brandColor as any}
+              >
+                {tagline}
+              </Font>
+          )}
+        </Stack>
 
-        {extraLinks && (
-          <div className="border-t border-zinc-800 my-4 pt-4">
-            <div className="text-[10px] font-black text-zinc-600 uppercase tracking-widest mb-2 ml-2">{extraLinks.title}</div>
-            {extraLinks.links.filter(l => !l.hidden).map(renderLink)}
-          </div>
-        )}
-      </nav>
+        {/* Main Navigation */}
+        <Box as="nav" flex1 fullWidth overflow="auto" noScrollbar>
+          <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
+            {links.filter(l => !l.hidden).map(renderLink)}
 
-      {/* Bottom Profile Area */}
-      <div className="border-t border-zinc-700 pt-6 mt-6 flex-shrink-0 flex flex-col gap-4">
-        <div className="flex items-center gap-3 px-2">
-          <div className={cn(
-              "relative w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center font-bold border overflow-hidden",
-              brandColor === 'emerald' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' :
-              brandColor === 'orange' ? 'bg-orange-500/10 text-orange-400 border-orange-500/30' :
-              brandColor === 'amber' ? 'bg-amber-500/10 text-amber-400 border-amber-500/30' :
-              brandColor === 'red' ? 'bg-red-500/10 text-red-500 border-red-500/30' :
-              'bg-zinc-800 text-zinc-400 border-zinc-700'
-          )}>
-            {user.avatar_url ? (
-              <Image
-                src={user.avatar_url}
-                alt={user.name || 'User'}
-                fill
-                sizes="40px"
-                className="object-cover"
-              />
-            ) : (
-              (user.name?.charAt(0) || user.email?.charAt(0) || 'U').toUpperCase()
+            {extraLinks && (
+              <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                <Box padding={STORE_TOKENS.PADDING.ELEMENT}>
+                   <Font variant="tiny" weight="black" uppercase tracking="widest" color="DIM">
+                     {extraLinks.title}
+                   </Font>
+                </Box>
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                    {extraLinks.links.filter(l => !l.hidden).map(renderLink)}
+                </Stack>
+              </Stack>
             )}
-          </div>
-          <div className="overflow-hidden">
-            <p className="text-sm font-bold text-zinc-200 truncate">{user.name || 'Usuário'}</p>
-            <p className="text-[10px] text-zinc-500 truncate font-medium">{user.email}</p>
-          </div>
-        </div>
+          </Stack>
+        </Box>
 
-        <div className="flex flex-col gap-2">
-            {showSettings && (
-                <button
-                    type="button"
-                    onClick={() => window.dispatchEvent(new CustomEvent('open-settings'))}
-                    className="flex items-center gap-3 px-5 py-3 rounded-xl transition-all duration-300 group text-zinc-500 hover:bg-zinc-800 hover:text-white border-2 border-transparent hover:border-zinc-700 w-full italic"
-                >
-                    <Settings className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                    <span className="text-[10px] font-black uppercase tracking-widest">Configurações</span>
-                </button>
-            )}
+        {/* Bottom Profile Area */}
+        <Stack gap={STORE_TOKENS.SPACING.SECTION_MOBILE} shrink={0}>
+          <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} padding={STORE_TOKENS.PADDING.ELEMENT}>
+            <Box 
+                position="relative" 
+                width="10" 
+                height="10" 
+                shrink={0}
+                display="flex" 
+                align="center" 
+                justify="center" 
+                overflow="hidden"
+            >
+               <Surface 
+                  pin="inset" 
+                  variant="glass" 
+                  bg={brandColor === 'zinc' ? STORE_TOKENS.COLORS.SURFACE : brandColor as any}
+                  bgOpacity={STORE_TOKENS.OPACITY.SUBTLE}
+                  rounded="full"
+                  border="standard"
+               >
+                  <></>
+               </Surface>
+              {user.avatar_url ? (
+                <Image
+                  src={user.avatar_url}
+                  alt={user.name || 'User'}
+                  fill
+                  sizes="40px"
+                  className="object-cover"
+                />
+              ) : (
+                <Font weight="bold" color="PRIMARY">
+                    {(user.name?.charAt(0) || user.email?.charAt(0) || 'U').toUpperCase()}
+                </Font>
+              )}
+            </Box>
+            <Box overflow="hidden">
+              <Font weight="bold" color="PRIMARY" truncate>{user.name || 'Usuário'}</Font>
+              <Font variant="tiny" color="DIM" truncate>{user.email}</Font>
+            </Box>
+          </Stack>
 
-            <form action={signOutAction} className="w-full">
-                <Button
-                    variant="outline"
-                    className="w-full bg-zinc-900 border-zinc-700 text-zinc-400 hover:text-white hover:bg-zinc-800 hover:border-zinc-600 flex items-center gap-2 transition-all font-black uppercase italic tracking-wider py-6 rounded-xl shadow-lg border-2 active:scale-95 group"
-                >
-                    <LogOut className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                    Sair
-                </Button>
-            </form>
-        </div>
-      </div>
-    </aside>
+          <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+              {showSettings && (
+                  <button
+                      type="button"
+                      onClick={() => window.dispatchEvent(new CustomEvent('open-settings'))}
+                      className="flex items-center gap-3 px-5 py-3 rounded-xl transition-all duration-300 group text-zinc-500 hover:bg-zinc-800 hover:text-white border-2 border-transparent hover:border-zinc-700 w-full italic"
+                  >
+                      <Settings className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                      <Font variant="tiny" weight="black" uppercase tracking="widest">Configurações</Font>
+                  </button>
+              )}
+
+              <form action={signOutAction} className="w-full">
+                  <Button
+                      variant="outline"
+                      className="w-full bg-zinc-900 border-zinc-700 text-zinc-400 hover:text-white hover:bg-zinc-800 hover:border-zinc-600 flex items-center gap-2 transition-all font-black uppercase italic tracking-wider py-6 rounded-xl shadow-lg border-2 active:scale-95 group"
+                  >
+                      <LogOut className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                      Sair
+                  </Button>
+              </form>
+          </Stack>
+        </Stack>
+      </GlassPanel>
+    </Box>
   )
 }

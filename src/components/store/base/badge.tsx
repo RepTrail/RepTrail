@@ -5,7 +5,8 @@ import { cn } from '@/lib/utils'
 import { Font } from './font'
 import { Icon } from './icon'
 import { LucideIcon } from 'lucide-react'
-import { useRegistry } from '../advanced/registry-context'
+import { useRegistry } from '@/components/store/advanced/registry-context'
+import { STORE_TOKENS } from '@/components/store/constants/tokens';
 
 interface BadgeProps {
     label: string
@@ -13,6 +14,7 @@ interface BadgeProps {
     variant?: 'dot' | 'outline' | 'solid' | 'glass'
     color?: 'emerald' | 'orange' | 'red' | 'blue' | 'amber' | 'zinc' | 'primary'
     size?: 'xs' | 'sm' | 'md'
+    rounded?: number | 'system' | 'full'
     className?: string
 }
 
@@ -22,10 +24,17 @@ export function Badge({
     variant = 'outline', 
     color = 'zinc', 
     size = 'md',
+    rounded = STORE_TOKENS.RADIUS.SYSTEM,
     className
 }: BadgeProps) {
     const { primaryColor } = useRegistry()
     const resolvedColor = color === 'primary' ? primaryColor : color
+
+    const roundedClasses = {
+        none: 'rounded-none',
+        full: 'rounded-full',
+        system: 'rounded-[5px]',
+    }
 
     const colorClasses = {
         emerald: {
@@ -98,23 +107,24 @@ export function Badge({
         return (
             <div className={cn('flex items-center gap-2 px-1', className)}>
                 <div className={cn('w-2 h-2 rounded-full', current.dot)} />
-                <Font variant="sub-tiny" weight="black" uppercase italic tracking="widest" color="white">{label}</Font>
+                <Font variant="sub-tiny" weight="black" uppercase italic tracking="widest" color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{label}</Font>
             </div>
         )
     }
 
-    const radiusClass = 'rounded-[5px]'
-
     return (
-        <div className={cn(
-            'flex items-center justify-center border w-fit gap-2 backdrop-blur-md transition-all',
-            currentSize.padding,
-            radiusClass,
-            variant === 'glass' ? current.glass : cn(current.bg, current.border),
-            variant === 'outline' && 'bg-transparent',
-            variant === 'solid' && current.bg,
-            className
-        )}>
+        <div 
+            style={{ borderRadius: typeof rounded === 'number' ? rounded : undefined }}
+            className={cn(
+                'flex items-center justify-center border w-fit gap-2 backdrop-blur-md transition-all',
+                currentSize.padding,
+                variant === 'glass' ? current.glass : cn(current.bg, current.border),
+                variant === 'outline' && 'bg-transparent',
+                variant === 'solid' && current.bg,
+                typeof rounded === 'string' && roundedClasses[rounded as keyof typeof roundedClasses],
+                className
+            )}
+        >
             {icon && <Icon icon={icon} size={currentSize.icon} color={resolvedColor as any} />}
             <Font 
                 variant={currentSize.font} 

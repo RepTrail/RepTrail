@@ -1,11 +1,12 @@
 'use client'
 
 import React from 'react'
-import { GlassPanel } from '../base/surface'
-import { Box } from '../base/box'
-import { Stack } from '../base/stack'
-import { Inline } from '../base/layout'
+import { GlassPanel } from '@/components/store/base/surface'
+import { Box } from '@/components/store/base/box'
+import { Stack } from '@/components/store/base/stack'
+import { Inline } from '@/components/store/base/layout'
 import { cn } from '@/lib/utils'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 export interface ActionableListCardProps {
     children: React.ReactNode // Main content (Identity block)
@@ -41,8 +42,8 @@ export function ActionableListCard({ children, badges, actions, isLogItem, isStr
                         direction={isStrictHorizontal ? 'row' : { base: 'col', lg: 'row' }}
                         align={isStrictHorizontal ? 'center' : { base: 'stretch', lg: 'center' }}
                         justify="between"
-                        padding={5}
-                        gap={5}
+                        padding={STORE_TOKENS.PADDING.CONTAINER}
+                        gap={STORE_TOKENS.SPACING.CONTAINER}
                         flex1
                         minWidth={0}
                     >
@@ -53,7 +54,7 @@ export function ActionableListCard({ children, badges, actions, isLogItem, isStr
 
                         {/* Badges Block */}
                         {badges && (
-                            <Box transition wrap="wrap" display="flex" align="center" gap={2.5} shrink={0}>
+                            <Box transition wrap="wrap" display="flex" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} shrink={0}>
                                 {badges}
                             </Box>
                         )}
@@ -62,21 +63,19 @@ export function ActionableListCard({ children, badges, actions, isLogItem, isStr
                     {/* Actions Sidebar */}
                     {hasActions && (
                         <Box
-                            display={{ base: 'flex', lg: 'none' }} // Hide on PC by default
-                            groupHoverDisplay="flex" // Show on PC hover
+                            display="flex"
                             direction="row"
                             align="stretch"
-                            transition
                             shrink={0}
                         >
                             {/* Container-based Separator (Rule 140) */}
-                            <Box width="px" bg="white" bgOpacity={10} shrink={0} />
+                            <Box width="px" bg={STORE_TOKENS.COLORS.WHITE} bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} shrink={0} />
 
                             {/* Actions Stack (Vertical on Mobile, Horizontal on PC) */}
                             <Stack
                                 direction={{ base: 'col', lg: 'row' }}
-                                padding={5}
-                                gap={2.5}
+                                padding={STORE_TOKENS.PADDING.CONTAINER}
+                                gap={STORE_TOKENS.SPACING.ELEMENT}
                                 align="center"
                                 justify="center"
                                 bg="transparent"
@@ -90,8 +89,8 @@ export function ActionableListCard({ children, badges, actions, isLogItem, isStr
 
                 {footer && (
                     <>
-                        <Box width="full" height="px" bg="white" bgOpacity={10} />
-                        <Box padding={5} fullWidth>
+                        <Box width="full" height="px" bg={STORE_TOKENS.COLORS.WHITE} bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} />
+                        <Box padding={STORE_TOKENS.PADDING.CONTAINER} fullWidth>
                             {footer}
                         </Box>
                     </>

@@ -1,13 +1,14 @@
 'use client'
 
 import React from 'react'
-import { Stack } from '../base/stack'
-import { Grid } from '../base/grid'
-import { Font } from '../base/font'
-import { Swatch } from '../base/swatch'
-import { GlassPanel, CardHeader, CardContent } from '../base/surface'
-import { RegistrySection } from '../advanced/registry-section'
+import { Stack } from '@/components/store/base/stack'
+import { Grid } from '@/components/store/base/grid'
+import { Font } from '@/components/store/base/font'
+import { Swatch } from '@/components/store/base/swatch'
+import { GlassPanel, CardHeader, CardContent } from '@/components/store/base/surface'
+import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { Palette } from 'lucide-react'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 export function ColorsSectionContent({ id }: { id?: string }) {
     const brandColors = [
@@ -32,41 +33,41 @@ export function ColorsSectionContent({ id }: { id?: string }) {
             icon={Palette} 
             subtitle="Cores institucionais e funcionais aplicadas no ecossistema RepTrail."
         >
-            <Stack gap={5}>
+            <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                 {/* Brand Colors with Opacity Variations */}
                 <GlassPanel padding={0}>
                     <Stack gap={0}>
                         <CardHeader>
-                            <Font variant="label-caps" color="zinc-500">Brand Color Spectrum (100%, 30%, 20%)</Font>
+                            <Font variant="label-caps" color={STORE_TOKENS.COLORS.TEXT.MUTED}>Brand Color Spectrum (100%, 30%, 20%)</Font>
                         </CardHeader>
-                        <CardContent padding={5}>
-                            <Stack gap={7.5}>
+                        <CardContent padding={STORE_TOKENS.PADDING.CONTAINER}>
+                            <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                                 {brandColors.map((c) => (
-                                    <Grid key={c.color} cols={1} mdCols={3} gap={5} align="center">
+                                    <Grid key={c.color} cols={1} mdCols={3} gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
                                         {/* 100% Solid */}
-                                        <Stack direction="row" align="center" gap={5}>
-                                            <Swatch color={c.color} opacity={100} size="md" />
-                                            <Stack gap={2.5}>
-                                                <Font variant="sub-tiny" weight="black" uppercase color="white">{c.name}</Font>
-                                                <Font variant="sub-tiny" color="zinc-500">Solid (100%)</Font>
+                                        <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
+                                            <Swatch color={c.color} opacity={STORE_TOKENS.OPACITY.FULL} size="md" />
+                                            <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                                <Font variant="sub-tiny" weight="black" uppercase color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{c.name}</Font>
+                                                <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>Solid (100%)</Font>
                                             </Stack>
                                         </Stack>
 
                                         {/* 30% Opacity */}
-                                        <Stack direction="row" align="center" gap={5}>
-                                            <Swatch color={c.color} opacity={30} size="md" />
-                                            <Stack gap={2.5}>
-                                                <Font variant="sub-tiny" weight="black" uppercase color="white">{c.name}</Font>
-                                                <Font variant="sub-tiny" color="zinc-500">Glass (30%)</Font>
+                                        <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
+                                            <Swatch color={c.color} opacity={STORE_TOKENS.OPACITY.INTERMEDIATE} size="md" />
+                                            <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                                <Font variant="sub-tiny" weight="black" uppercase color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{c.name}</Font>
+                                                <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>Glass (30%)</Font>
                                             </Stack>
                                         </Stack>
 
                                         {/* 20% Opacity */}
-                                        <Stack direction="row" align="center" gap={5}>
+                                        <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
                                             <Swatch color={c.color} opacity={20} size="md" />
-                                            <Stack gap={2.5}>
-                                                <Font variant="sub-tiny" weight="black" uppercase color="white">{c.name}</Font>
-                                                <Font variant="sub-tiny" color="zinc-500">Subtle (20%)</Font>
+                                            <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                                <Font variant="sub-tiny" weight="black" uppercase color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{c.name}</Font>
+                                                <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>Subtle (20%)</Font>
                                             </Stack>
                                         </Stack>
                                     </Grid>
@@ -80,16 +81,16 @@ export function ColorsSectionContent({ id }: { id?: string }) {
                 <GlassPanel padding={0}>
                     <Stack gap={0}>
                         <CardHeader>
-                            <Font variant="label-caps" color="zinc-500">System & Background Tokens</Font>
+                            <Font variant="label-caps" color={STORE_TOKENS.COLORS.TEXT.MUTED}>System & Background Tokens</Font>
                         </CardHeader>
-                        <CardContent padding={5}>
-                            <Grid cols={1} mdCols={4} gap={5}>
+                        <CardContent padding={STORE_TOKENS.PADDING.CONTAINER}>
+                            <Grid cols={1} mdCols={4} gap={STORE_TOKENS.SPACING.CONTAINER}>
                                 {systemColors.map((c) => (
-                                    <Stack key={c.name} gap={2.5}>
+                                    <Stack key={c.name} gap={STORE_TOKENS.SPACING.ELEMENT}>
                                         <Swatch color={c.color as any} opacity={c.opacity as any} size="full" />
-                                        <Stack gap={2.5}>
-                                            <Font variant="sub-tiny" weight="black" uppercase color="white">{c.name}</Font>
-                                            <Font variant="sub-tiny" color="zinc-500">{c.value}</Font>
+                                        <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                            <Font variant="sub-tiny" weight="black" uppercase color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{c.name}</Font>
+                                            <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{c.value}</Font>
                                         </Stack>
                                     </Stack>
                                 ))}
@@ -99,5 +100,5 @@ export function ColorsSectionContent({ id }: { id?: string }) {
                 </GlassPanel>
             </Stack>
         </RegistrySection>
-    )
+    );
 }

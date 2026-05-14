@@ -7,7 +7,7 @@ import { loginAndActivateAffiliate } from '@/actions/affiliate-actions'
 // Design System V2 Components
 import { RegistryProvider } from '@/components/store/advanced/registry-context'
 import { AuthShell } from '@/components/store/advanced/auth-shell'
-import { AuthLoginForm } from '@/components/store/sections/auth-login-form'
+import { AuthLoginForm } from '@/components/store/advanced/auth-login-form'
 import { AuthFormSkeleton } from '@/components/store/advanced/auth-form-skeleton'
 
 export default function AffiliadosLoginPage() {

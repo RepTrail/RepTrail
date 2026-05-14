@@ -11,6 +11,7 @@ import { EmptyState } from '@/components/store/intermediary/empty-state'
 import { UserListItem } from '@/components/store/intermediary/user-list-item'
 import { Users, TrendingUp, Search } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 export function AffiliateReferralsContent() {
     const { data: referrals = [] } = useQuery({
@@ -30,26 +31,26 @@ export function AffiliateReferralsContent() {
                 subtitle="Métricas detalhadas de conversão da sua base de indicados."
                 icon={TrendingUp}
             >
-                <Grid cols={1} mdCols={3} gap={5}>
+                <Grid cols={1} mdCols={3} gap={STORE_TOKENS.SPACING.CONTAINER}>
                     <StatsCard
                         label="TOTAL DE CADASTROS"
                         value={String(total)}
                         icon={Users}
-                        color="primary"
+                        color={STORE_TOKENS.COLORS.BRAND}
                     />
                     <StatsCard
                         label="CLIENTES ATIVOS"
                         value={String(active)}
                         description="PAGANTES CONFIRMADOS"
                         icon={TrendingUp}
-                        color="emerald"
+                        color={STORE_TOKENS.COLORS.SUCCESS}
                     />
                     <StatsCard
                         label="TAXA DE ASSINATURA"
                         value={`${conversion}%`}
                         description="DE CADASTRO PARA ATIVO"
                         icon={TrendingUp}
-                        color="amber"
+                        color={STORE_TOKENS.COLORS.WARNING}
                     />
                 </Grid>
             </RegistrySection>
@@ -59,7 +60,7 @@ export function AffiliateReferralsContent() {
                 subtitle="Histórico detalhado de todos os cadastros realizados."
                 icon={Search}
             >
-                <Stack gap={2.5}>
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                     {referrals.length > 0 ? (
                         referrals.map((r) => (
                             <UserListItem

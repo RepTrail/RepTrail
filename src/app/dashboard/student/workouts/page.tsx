@@ -2,7 +2,7 @@ import { headers } from 'next/headers'
 import { Suspense } from 'react'
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { getQueryClient } from '@/lib/get-query-client'
-import { WorkoutsListClient } from '@/components/feature/student/workouts-list-client'
+import { WorkoutsListClient } from '@/components/store/features(deprecated)/student-workouts-list-client'
 import { PREFETCH_REGISTRY } from '@/lib/prefetch-registry'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 
@@ -42,3 +42,4 @@ export default async function StudentWorkoutsPage() {
         </RegistryMain>
     )
 }
+

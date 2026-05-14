@@ -2,9 +2,10 @@
 import React from 'react'
 import { cn } from '@/lib/utils'
 import { Box, BoxProps } from './box'
-import { useRegistry } from '../advanced/registry-context'
+import { useRegistry } from '@/components/store/advanced/registry-context'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
-type SurfaceVariant = 
+export type SurfaceVariant = 
   | 'base' 
   | 'glass' 
   | 'glass-diagonal' 
@@ -20,14 +21,32 @@ type SurfaceVariant =
   | 'tonal-zinc'
   | 'tonal-primary'
 
-interface SurfaceProps extends Omit<BoxProps, 'variant' | 'padding' | 'minHeight' | 'border'> {
+type BoxColor = 'orange' | 'emerald' | 'amber' | 'red' | 'blue' | 'zinc' | 'white' | 'transparent' | 'black' | 'primary' | 'success' | 'warning' | 'neutral'
+
+interface SurfaceProps extends Omit<BoxProps, 'padding' | 'zIndex' | 'border' | 'borderWidth' | 'borderColor' | 'bgOpacity' | 'hoverBgOpacity' | 'opacity' | 'groupHoverOpacity'> {
   children: React.ReactNode
   variant?: SurfaceVariant | 'glass-dark'
-  padding?: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12 | 12.5
-  rounded?: 'none' | 'full' | 'system' | '3xl' | '2xl'
-  minHeight?: 'sm' | 'md' | 'lg' | 'xl'
-  border?: 'none' | 'subtle' | 'bold' | 'dashed'
+  padding?: 0 | 2.5 | 5 | 10 | 12.5 | 20 | 50 | 100 | 'section' | { base: 0 | 2.5 | 5 | 10 | 12.5 | 20 | 50 | 100 | 'section', md?: 0 | 2.5 | 5 | 10 | 12.5 | 20 | 50 | 100 | 'section' }
+  rounded?: 'none' | 'full' | 'system'
+  minHeight?: 'screen' | 'sm' | 'md' | 'lg' | 'xl' | number
+  border?: 'none' | 'subtle' | 'standard' | 'bold' | 'dashed'
+  borderWidth?: 1 | 2 | 4
+  borderColor?: string
   hoverBorder?: string
+  bg?: BoxColor
+  bgOpacity?: 0 | 5 | 10 | 20 | 30 | 40 | 50 | 60 | 70 | 80 | 90 | 95 | 100
+  hoverBg?: BoxColor
+  hoverBgOpacity?: 0 | 5 | 10 | 20 | 30 | 40 | 50 | 60 | 70 | 80 | 90 | 95 | 100
+  opacity?: 0 | 5 | 10 | 20 | 30 | 40 | 50 | 60 | 70 | 80 | 90 | 95 | 100
+  groupHoverOpacity?: 0 | 5 | 10 | 20 | 30 | 40 | 50 | 60 | 70 | 80 | 90 | 95 | 100
+  backdropBlur?: 'sm' | 'md' | 'lg' | 'xl' | 'none'
+  rotate?: 1 | 2 | 3 | -1 | -2 | -3
+  hoverScale?: 110 | 105
+  groupHoverScale?: 110 | 105
+  activeScale?: 95 | 90
+  animation?: 'in-fade-zoom' | 'bounce' | 'pulse'
+  group?: boolean
+  zIndex?: 10 | 20 | 30 | 40 | 50 | 100
 }
 
 /**
@@ -36,17 +55,27 @@ interface SurfaceProps extends Omit<BoxProps, 'variant' | 'padding' | 'minHeight
 export function Surface({ 
   children, 
   variant = 'base', 
-  padding = 5,
+  padding,
   rounded = 'system',
   minHeight,
-  align,
-  justify,
-  width,
-  height,
-  flex1,
-  shrink,
   border,
+  borderWidth,
+  borderColor,
   hoverBorder,
+  bg,
+  bgOpacity = 100,
+  hoverBg,
+  hoverBgOpacity,
+  opacity,
+  groupHoverOpacity,
+  backdropBlur,
+  rotate,
+  hoverScale,
+  groupHoverScale,
+  activeScale,
+  animation,
+  group,
+  zIndex,
   className,
   id,
   onClick,
@@ -55,77 +84,139 @@ export function Surface({
   const { primaryColor } = useRegistry()
   const resolvedVariant = variant === 'tonal-primary' ? `tonal-${primaryColor}` as SurfaceVariant : variant
   
-  const variantClasses = {
+  const colorMapping: Record<BoxColor, Record<number, string>> = {
+    orange: { 100: 'bg-orange-500', 95: 'bg-orange-500/95', 90: 'bg-orange-500/90', 80: 'bg-orange-500/80', 50: 'bg-orange-500/50', 30: 'bg-orange-500/30', 20: 'bg-orange-500/20', 10: 'bg-orange-500/10', 5: 'bg-orange-500/5' },
+    emerald: { 100: 'bg-emerald-500', 95: 'bg-emerald-500/95', 90: 'bg-emerald-500/90', 80: 'bg-emerald-500/80', 50: 'bg-emerald-500/50', 30: 'bg-emerald-500/30', 20: 'bg-emerald-500/20', 10: 'bg-emerald-500/10', 5: 'bg-emerald-500/5' },
+    amber: { 100: 'bg-amber-500', 95: 'bg-amber-500/95', 90: 'bg-amber-500/90', 80: 'bg-amber-500/80', 50: 'bg-amber-500/50', 30: 'bg-amber-500/30', 20: 'bg-amber-500/20', 10: 'bg-amber-500/10', 5: 'bg-amber-500/5' },
+    red: { 100: 'bg-red-500', 95: 'bg-red-500/95', 90: 'bg-red-500/90', 80: 'bg-red-500/80', 50: 'bg-red-500/50', 30: 'bg-red-500/30', 20: 'bg-red-500/20', 10: 'bg-red-500/10', 5: 'bg-red-500/5' },
+    blue: { 100: 'bg-blue-500', 95: 'bg-blue-500/95', 90: 'bg-blue-500/90', 80: 'bg-blue-500/80', 50: 'bg-blue-500/50', 30: 'bg-blue-500/30', 20: 'bg-blue-500/20', 10: 'bg-blue-500/10', 5: 'bg-blue-500/5' },
+    zinc: { 100: 'bg-zinc-950', 95: 'bg-zinc-900', 90: 'bg-zinc-800', 80: 'bg-zinc-700', 50: 'bg-zinc-950/50', 30: 'bg-zinc-500/30', 20: 'bg-zinc-500/20', 10: 'bg-zinc-500/10', 5: 'bg-zinc-500/5' },
+    white: { 100: 'bg-white', 95: 'bg-white/95', 90: 'bg-white/90', 80: 'bg-white/80', 50: 'bg-white/50', 30: 'bg-white/30', 20: 'bg-white/20', 10: 'bg-white/10', 5: 'bg-white/5' },
+    black: { 100: 'bg-black', 95: 'bg-black/95', 90: 'bg-black/90', 80: 'bg-black/80', 50: 'bg-black/50', 30: 'bg-black/30', 20: 'bg-black/20', 10: 'bg-black/10', 5: 'bg-black/5' },
+    transparent: { 100: 'bg-transparent', 95: 'bg-transparent', 90: 'bg-transparent', 80: 'bg-transparent', 50: 'bg-transparent', 30: 'bg-transparent', 20: 'bg-transparent', 10: 'bg-transparent', 5: 'bg-transparent' },
+    primary: {
+      100: `bg-${primaryColor}-500`,
+      95: `bg-${primaryColor}-500/95`,
+      90: `bg-${primaryColor}-500/90`,
+      80: `bg-${primaryColor}-500/80`,
+      50: `bg-${primaryColor}-500/50`,
+      30: `bg-${primaryColor}-500/30`,
+      20: `bg-${primaryColor}-500/20`,
+      10: `bg-${primaryColor}-500/10`,
+      5: `bg-${primaryColor}-500/5`
+    },
+    success: { 100: 'bg-success', 95: 'bg-success/95', 90: 'bg-success/90', 80: 'bg-success/80', 50: 'bg-success/50', 30: 'bg-success/30', 20: 'bg-success/20', 10: 'bg-success/10', 5: 'bg-success/5' },
+    warning: { 100: 'bg-warning', 95: 'bg-warning/95', 90: 'bg-warning/90', 80: 'bg-warning/80', 50: 'bg-warning/50', 30: 'bg-warning/30', 20: 'bg-warning/20', 10: 'bg-warning/10', 5: 'bg-warning/5' },
+    neutral: { 100: 'bg-neutral', 95: 'bg-neutral/95', 90: 'bg-neutral/90', 80: 'bg-neutral/80', 50: 'bg-neutral/50', 30: 'bg-neutral/30', 20: 'bg-neutral/20', 10: 'bg-neutral/10', 5: 'bg-neutral/5' }
+  }
+
+  const primaryTonalClasses: Record<string, string> = {
+    orange: 'bg-orange-500/5 border-orange-500/50 transition-all duration-500 backdrop-blur-xl',
+    emerald: 'bg-emerald-500/5 border-emerald-500/50 transition-all duration-500 backdrop-blur-xl',
+    blue: 'bg-blue-500/5 border-blue-500/50 transition-all duration-500 backdrop-blur-xl',
+    amber: 'bg-amber-500/5 border-amber-500/50 transition-all duration-500 backdrop-blur-xl',
+    red: 'bg-red-500/5 border-red-500/50 transition-all duration-500 backdrop-blur-xl',
+    zinc: 'bg-zinc-500/5 border-zinc-500/50 transition-all duration-500 backdrop-blur-xl',
+  }
+
+  const variantClasses: Record<string, string> = {
     base: 'bg-zinc-900 border border-white/5',
     glass: 'bg-gradient-to-br from-white/[0.05] to-white/[0.02] border border-white/[0.05] backdrop-blur-md',
     'glass-diagonal': 'bg-gradient-to-br from-white/[0.07] to-white/[0.04] border border-white/[0.05] backdrop-blur-md',
-    'glass-dark': 'bg-gradient-to-br from-black/40 to-black/20 border border-black/40 backdrop-blur-md',
+    'glass-dark': 'bg-gradient-to-br from-black/80 to-black/60 border border-white/5 backdrop-blur-xl',
     sunken: 'bg-zinc-950/40 border border-white/5',
     raised: 'bg-zinc-800 border border-white/10 shadow-lg',
     interactive: 'bg-zinc-900 border border-white/5 transition-all cursor-pointer',
     showcase: 'bg-zinc-950/50 border border-white/5 border-dashed flex items-center justify-center',
-    
-    // Tonal variants (for EmptyStates, etc.)
-    'tonal-orange': 'bg-orange-500/5 border-orange-500/50 transition-all duration-500',
-    'tonal-emerald': 'bg-emerald-500/5 border-emerald-500/50 transition-all duration-500',
-    'tonal-amber': 'bg-amber-500/5 border-amber-500/50 transition-all duration-500',
-    'tonal-red': 'bg-red-500/5 border-red-500/50 transition-all duration-500',
-    'tonal-blue': 'bg-blue-500/5 border-blue-500/50 transition-all duration-500',
-    'tonal-zinc': 'bg-white/5 border-white/10 transition-all duration-500',
-  }
-
-  const paddingClasses = {
-    0: 'p-0',
-    1: 'p-1',
-    2.5: 'p-2.5',
-    5: 'p-5',
-    7.5: 'p-[30px]',
-    10: 'p-10',
-    12: 'p-5 md:p-12',
-    12.5: 'p-[50px]'
+    'tonal-orange': 'bg-orange-500/5 border-orange-500/50 transition-all duration-500 backdrop-blur-xl',
+    'tonal-emerald': 'bg-emerald-500/5 border-emerald-500/50 transition-all duration-500 backdrop-blur-xl',
+    'tonal-amber': 'bg-amber-500/5 border-amber-500/50 transition-all duration-500 backdrop-blur-xl',
+    'tonal-red': 'bg-red-500/5 border-red-500/50 transition-all duration-500 backdrop-blur-xl',
+    'tonal-blue': 'bg-blue-500/5 border-blue-500/50 transition-all duration-500 backdrop-blur-xl',
+    'tonal-zinc': 'bg-white/5 border-white/10 transition-all duration-500 backdrop-blur-xl',
+    'tonal-primary': primaryTonalClasses[primaryColor] || primaryTonalClasses.orange
   }
 
   const roundedClasses = {
     none: 'rounded-none',
     full: 'rounded-full',
     system: 'rounded-[5px]',
-    '2xl': 'rounded-2xl',
-    '3xl': 'rounded-3xl'
-  }
-
-  const minHeightClasses = {
-    sm: 'min-h-[48px]',
-    md: 'min-h-[64px]',
-    lg: 'min-h-[128px]',
-    xl: 'min-h-[192px]'
   }
 
   const borderClasses = {
     none: 'border-none',
     subtle: 'border border-white/5',
+    standard: 'border border-white/10',
     bold: 'border-2',
     dashed: 'border border-dashed'
+  }
+
+  const opacityClasses = {
+    0: 'opacity-0',
+    5: 'opacity-5',
+    10: 'opacity-10',
+    20: 'opacity-20',
+    30: 'opacity-30',
+    40: 'opacity-40',
+    50: 'opacity-50',
+    60: 'opacity-60',
+    70: 'opacity-70',
+    80: 'opacity-80',
+    90: 'opacity-90',
+    95: 'opacity-95',
+    100: 'opacity-100'
+  }
+
+  const rotateClasses = {
+    1: 'rotate-1',
+    2: 'rotate-2',
+    3: 'rotate-3',
+    '-1': '-rotate-1',
+    '-2': '-rotate-2',
+    '-3': '-rotate-3'
+  }
+
+  const zIndexClasses = {
+    10: 'z-10',
+    20: 'z-20',
+    30: 'z-30',
+    40: 'z-40',
+    50: 'z-50',
+    100: 'z-[100]'
   }
 
   return (
     <Box
       id={id}
       onClick={onClick}
-      flex1={flex1}
-      shrink={shrink}
-      width={width}
-      height={height}
-      align={align}
-      justify={justify}
-      hoverBorder={hoverBorder}
+      padding={padding}
+      zIndex={zIndex as any}
       className={cn(
         variantClasses[resolvedVariant as keyof typeof variantClasses],
-        paddingClasses[padding as keyof typeof paddingClasses],
-        roundedClasses[rounded],
+        rounded && roundedClasses[rounded],
         border && borderClasses[border],
-        minHeight && minHeightClasses[minHeight],
-        className
+        borderWidth === 4 ? 'border-4' : borderWidth === 2 ? 'border-2' : '',
+        borderColor && `border-${borderColor}`,
+        hoverBorder && `hover:border-${hoverBorder}`,
+        bg && colorMapping[bg][bgOpacity],
+        hoverBg && `hover:${colorMapping[hoverBg][hoverBgOpacity || 100]}`,
+        opacity !== undefined && opacityClasses[opacity as keyof typeof opacityClasses],
+        groupHoverOpacity !== undefined && `group-hover:${opacityClasses[groupHoverOpacity as keyof typeof opacityClasses]}`,
+        backdropBlur && `backdrop-blur-${backdropBlur}`,
+        rotate !== undefined && rotateClasses[rotate as keyof typeof rotateClasses],
+        hoverScale && `hover:scale-${hoverScale}`,
+        groupHoverScale && `group-hover:scale-${groupHoverScale}`,
+        activeScale && `active:scale-${activeScale}`,
+        animation === 'in-fade-zoom' && 'animate-in fade-in zoom-in duration-500',
+        animation === 'bounce' && 'animate-bounce',
+        animation === 'pulse' && 'animate-pulse',
+        group && 'group',
+        typeof minHeight === 'string',
       )}
+      style={{
+        ...props.style,
+        minHeight: typeof minHeight === 'number' ? `${minHeight}px` : undefined,
+      }}
       {...props}
     >
       {children}
@@ -151,7 +242,7 @@ export function ActionSurface(props: SurfaceProps) {
 export function CardHeader({ children, className, ...props }: BoxProps) {
   return (
     <Box 
-      padding={5} 
+      padding={STORE_TOKENS.PADDING.CONTAINER} 
       display="flex" 
       align="center" 
       className={cn('border-b border-white/5', className)} 
@@ -165,7 +256,7 @@ export function CardHeader({ children, className, ...props }: BoxProps) {
 /**
  * CardContent: Sub-component for Surface/Card body content.
  */
-export function CardContent({ children, className, padding = 5, ...props }: BoxProps) {
+export function CardContent({ children, className, padding = STORE_TOKENS.PADDING.CONTAINER, ...props }: BoxProps) {
   return (
     <Box 
       padding={padding as any} 

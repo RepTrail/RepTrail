@@ -5,6 +5,7 @@ import { Font } from './font'
 import { Icon } from './icon'
 import { User, Image as ImageIcon, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { STORE_TOKENS } from '@/components/store/constants/tokens';
 
 interface FileUploadProps {
     label: string
@@ -32,7 +33,7 @@ export function FileUpload({ label, variant = 'generic', onFileSelect }: FileUpl
 
     return (
         <div className="flex flex-col gap-[10px]">
-            <Font variant="auxiliary" color="zinc-500" weight="black" uppercase tracking="widest">
+            <Font variant="auxiliary" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="black" uppercase tracking="widest">
                 {label}
             </Font>
 
@@ -64,7 +65,7 @@ export function FileUpload({ label, variant = 'generic', onFileSelect }: FileUpl
                             onClick={(e) => { e.stopPropagation(); clearFile() }}
                             className="absolute top-1 right-1 bg-black/60 rounded-full p-0.5 hover:bg-red-500 transition-colors"
                         >
-                            <Icon icon={X} size="xs" color="white" />
+                            <Icon icon={X} size="xs" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} />
                         </button>
                     </>
                 ) : (
@@ -72,7 +73,7 @@ export function FileUpload({ label, variant = 'generic', onFileSelect }: FileUpl
                         <Icon
                             icon={variant === 'profile' ? User : ImageIcon}
                             size="sm"
-                            color="zinc-500"
+                            color={STORE_TOKENS.COLORS.TEXT.MUTED}
                             className="group-hover:text-emerald-500 transition-colors"
                         />
                     </div>

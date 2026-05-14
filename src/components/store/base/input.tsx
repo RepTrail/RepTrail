@@ -4,7 +4,10 @@ import { cn } from '@/lib/utils'
 import { Box } from './box'
 import { Font } from './font'
 import { Eye, EyeOff } from 'lucide-react'
-import { useRegistry } from '../advanced/registry-context'
+import { useRegistry } from '@/components/store/advanced/registry-context'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
+import { Stack } from './stack'
+
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string
@@ -16,6 +19,8 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   color?: 'emerald' | 'orange' | 'amber' | 'red' | 'blue' | 'zinc' | 'white' | 'primary'
   weight?: 'normal' | 'bold' | 'black'
   height?: 'full' | 'auto'
+  fontMono?: boolean
+  textAlign?: 'left' | 'center' | 'right'
 }
 
 export function Input({
@@ -28,13 +33,15 @@ export function Input({
   color,
   weight,
   height,
+  fontMono,
+  textAlign,
   className,
   onChange,
   type,
   ...props
 }: InputProps) {
   const { primaryColor } = useRegistry()
-  
+
   const [showPassword, setShowPassword] = useState(false)
   const isPassword = type === 'password'
   const inputType = isPassword ? (showPassword ? 'text' : 'password') : type
@@ -76,18 +83,18 @@ export function Input({
         return clean
           .replace(/(\d{2})(\d)/, '$1/$2')
           .replace(/(\d{2})(\d)/, '$1/$2')
-          .substring(0, 10)
+          .substring(0, 10);
       case 'phone':
         return clean
           .replace(/(\d{2})(\d)/, '($1) $2')
           .replace(/(\d{5})(\d)/, '$1-$2')
-          .substring(0, 15)
+          .substring(0, 15);
       case 'cpf':
         return clean
           .replace(/(\d{3})(\d)/, '$1.$2')
           .replace(/(\d{3})(\d)/, '$1.$2')
           .replace(/(\d{3})(\d{1,2})$/, '$1-$2')
-          .substring(0, 14)
+          .substring(0, 14);
       case 'number':
         return clean
       default:
@@ -101,9 +108,9 @@ export function Input({
   }
 
   return (
-    <Box className={cn('w-full flex flex-col gap-[10px]', flex1 && 'flex-1', height === 'full' && 'h-full')}>
+    <Stack gap={STORE_TOKENS.SPACING.ELEMENT} flex1={flex1} height={height} className="w-full">
       {label && (
-        <Font variant="auxiliary" color="zinc-500" weight="black" uppercase tracking="widest">
+        <Font variant="auxiliary" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="black" uppercase tracking="widest">
           {label}
         </Font>
       )}
@@ -126,13 +133,16 @@ export function Input({
             height === 'full' ? 'h-full' : 'h-12',
             resolvedColor ? textColors[resolvedColor as keyof typeof textColors] : 'text-white',
             weight && weightClasses[weight],
-            rounded === 'system' && 'rounded-[5px]',
+            rounded === 'system' && (STORE_TOKENS.RADIUS.SYSTEM === 'system' ? 'rounded-[5px]' : 'rounded-full'),
             rounded === 'full' && 'rounded-full',
             rounded === 'none' && 'rounded-none',
             activeClasses.split(' ').filter(c => !c.startsWith('group-focus-within:')).join(' '),
             icon ? 'pl-12' : 'pl-4',
             isPassword ? 'pr-12' : 'pr-4',
             error && 'border-red-500/50',
+            fontMono && 'font-mono',
+            textAlign === 'center' && 'text-center',
+            textAlign === 'right' && 'text-right',
             className
           )}
           onChange={handleChange}
@@ -145,12 +155,12 @@ export function Input({
             type="button"
             onClick={() => setShowPassword(v => !v)}
             className={cn(
-                "absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 transition-colors z-10",
-                primaryColor === 'emerald' && "hover:text-emerald-400",
-                primaryColor === 'orange' && "hover:text-orange-400",
-                primaryColor === 'amber' && "hover:text-amber-400",
-                primaryColor === 'blue' && "hover:text-blue-400",
-                primaryColor === 'red' && "hover:text-red-400"
+              "absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 transition-colors z-10",
+              primaryColor === 'emerald' && "hover:text-emerald-400",
+              primaryColor === 'orange' && "hover:text-orange-400",
+              primaryColor === 'amber' && "hover:text-amber-400",
+              primaryColor === 'blue' && "hover:text-blue-400",
+              primaryColor === 'red' && "hover:text-red-400"
             )}
             tabIndex={-1}
           >
@@ -163,10 +173,10 @@ export function Input({
       </div>
 
       {error && (
-        <Font variant="sub-tiny" color="red" weight="black" uppercase tracking="widest" className="pl-1">
+        <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.ERROR} weight="black" uppercase tracking="widest" className="pl-1">
           {error}
         </Font>
       )}
-    </Box>
+    </Stack>
   )
 }

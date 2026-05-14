@@ -1,10 +1,11 @@
 'use client'
 
 import React from 'react'
-import { Stack } from '../base/stack'
-import { Font } from '../base/font'
-import { Box } from '../base/box'
-import { CircularProgress } from '../base/circular-progress'
+import { Stack } from '@/components/store/base/stack'
+import { Font } from '@/components/store/base/font'
+import { Box } from '@/components/store/base/box'
+import { CircularProgress } from '@/components/store/base/circular-progress'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 interface SkinfoldGaugeProps {
     label: string
@@ -24,7 +25,7 @@ export function SkinfoldGauge({
     color = 'emerald'
 }: SkinfoldGaugeProps) {
     return (
-        <Stack gap={2.5} align="center">
+        <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
             <Box position="relative" display="flex" align="center" justify="center">
                 <CircularProgress 
                     value={Math.min((value / 40) * 100, 100)} // Mocking 40mm as 100%
@@ -33,21 +34,18 @@ export function SkinfoldGauge({
                     thickness={6}
                 />
                 <Box position="absolute" display="flex" direction="col" align="center">
-                    <Font variant="heading" weight="black" italic scale={75}>
+                    <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} variant="heading" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} scale={75}>
                         {value}
                     </Font>
-                    <Font variant="tiny" weight="black" color="zinc-600" scale={75}>
+                    <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.DIM} scale={75}>
                         {unit}
                     </Font>
                 </Box>
             </Box>
             
             <Font 
-                variant="sub-tiny" 
-                weight="black" 
-                uppercase 
-                color="zinc-500" 
-                tracking="widest"
+                {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                color={STORE_TOKENS.COLORS.TEXT.MUTED} 
                 align="center"
             >
                 {label}

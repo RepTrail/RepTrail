@@ -2,13 +2,15 @@
 'use client'
 
 import React from 'react'
-import { Stack } from '../base/stack'
-import { Font } from '../base/font'
-import { Icon } from '../base/icon'
-import { Button } from '../base/button'
-import { BaseAvatar } from '../base/avatar'
+import { Stack } from '@/components/store/base/stack'
+import { Font } from '@/components/store/base/font'
+import { Icon } from '@/components/store/base/icon'
+import { Button } from '@/components/store/base/button'
+import { BaseAvatar } from '@/components/store/base/avatar'
 import { LogOut, Settings, ArrowRightLeft, Briefcase } from 'lucide-react'
 import { signOutAction } from '@/actions/auth-actions'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
+import { Box } from '@/components/store/base/box'
 
 import Link from 'next/link'
 
@@ -40,7 +42,7 @@ export function SidebarProfile({
     const settingsTrigger = (
         <Button
             variant="zinc"
-            rounded="full"
+            rounded={STORE_TOKENS.RADIUS.FULL}
             size="sm"
             isIconOnly
             onClick={settingsHref ? undefined : onOpenSettings}
@@ -50,27 +52,27 @@ export function SidebarProfile({
     )
 
     return (
-        <Stack gap={5}>
+        <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
             {/* User Identity Area */}
-            <Stack direction="row" align="center" gap={2.5}>
+            <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                 <BaseAvatar initials={initials} src={user?.avatar_url || undefined} size="md" />
                 <Stack gap={0} flex1 overflow="hidden" minWidth={0}>
-                    <Font weight="black" variant="body-sm" color="white" uppercase italic nowrap truncate>
+                    <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} variant="body-sm" color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
                         {user?.name || 'Usuário'}
                     </Font>
-                    <Font variant="sub-tiny" color="zinc-600" tracking="wide" nowrap truncate>
+                    <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.DIM}>
                         {user?.email || ''}
                     </Font>
                 </Stack>
             </Stack>
 
             {/* Actions Area */}
-            <Stack direction="row" align="center" gap={2.5} fullWidth>
+            <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
                 {user?.isAdmin && (
                     <Link href={adminHref}>
                         <Button
                             variant="zinc"
-                            rounded="full"
+                            rounded={STORE_TOKENS.RADIUS.FULL}
                             size="sm"
                             isIconOnly
                         >
@@ -87,20 +89,22 @@ export function SidebarProfile({
                     settingsTrigger
                 ) : null}
 
-                <form action={signOutAction} className="flex-1">
-                    <Button
-                        variant="outline-red"
-                        rounded="full"
-                        size="sm"
-                        fullWidth
-                        type="submit"
-                    >
-                        <Stack direction="row" align="center" gap={2.5}>
-                            <Icon icon={LogOut} size="sm" />
-                            <Font variant="sub-tiny" weight="black">Sair</Font>
-                        </Stack>
-                    </Button>
-                </form>
+                <Box flex1>
+                    <form action={signOutAction}>
+                        <Button
+                            variant="outline-red"
+                            rounded={STORE_TOKENS.RADIUS.FULL}
+                            size="sm"
+                            fullWidth
+                            type="submit"
+                        >
+                            <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                <Icon icon={LogOut} size="sm" />
+                                <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL}>Sair</Font>
+                            </Stack>
+                        </Button>
+                    </form>
+                </Box>
             </Stack>
         </Stack>
     )

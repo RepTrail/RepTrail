@@ -1,42 +1,41 @@
 'use client'
 
 import React from 'react'
-import { RegistrySection } from '../advanced/registry-section'
-import { Stack } from '../base/stack'
-import { Grid } from '../base/grid'
+import { RegistrySection } from '@/components/store/advanced/registry-section'
+import { Stack } from '@/components/store/base/stack'
 import { ShieldCheck } from 'lucide-react'
-import { AuthLoginForm } from './auth-login-form'
-import { AuthSignUpForm } from './auth-signup-form'
-import { AuthAffiliateSignUpForm } from './auth-affiliate-signup-form'
-import { AuthForgotPasswordForm } from './auth-forgot-password-form'
+import { AuthLoginForm } from '@/components/store/advanced/auth-login-form'
+import { AuthSignUpForm } from '@/components/store/advanced/auth-signup-form'
+import { AuthAffiliateSignUpForm } from '@/components/store/advanced/auth-affiliate-signup-form'
+import { AuthForgotPasswordForm } from '@/components/store/advanced/auth-forgot-password-form'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 export function AuthSectionsContent({ id }: { id?: string }) {
     return (
-        <RegistrySection 
+        <RegistrySection
             id={id}
-            title="Autenticação" 
+            title="Autenticação"
             subtitle="Formulários de acesso e cadastro padronizados."
             icon={ShieldCheck}
         >
-            <Stack 
-                direction={{ base: 'col', md: 'row' }} 
-                gap={12.5} 
-                justify="between" 
-                align={{ base: 'stretch', md: 'start' }} 
-                width="full" 
-                overflowX={{ base: 'hidden', md: 'auto' }}
-                paddingBottom={{ base: 0, md: 10 }}
+            <Stack
+                direction={{ base: 'col', md: 'row' }}
+                gap={STORE_TOKENS.SPACING.EMPTY_STATE}
+                justify="between"
+                align={{ base: 'stretch', md: 'start' }}
+                width="full"
+                overflowX='hidden'
             >
-                <Stack gap={5} align="center" width="full" className="max-w-[400px]">
+                <Stack gap={STORE_TOKENS.SPACING.CONTAINER} align="center" width="full" maxWidth="auth-form">
                     <AuthLoginForm syncColor={false} />
                 </Stack>
-                <Stack gap={5} align="center" width="full" className="max-w-[400px]">
+                <Stack gap={STORE_TOKENS.SPACING.CONTAINER} align="center" width="full" maxWidth="auth-form">
                     <AuthSignUpForm syncColor={false} />
                 </Stack>
-                <Stack gap={5} align="center" width="full" className="max-w-[400px]">
+                <Stack gap={STORE_TOKENS.SPACING.CONTAINER} align="center" width="full" maxWidth="auth-form">
                     <AuthAffiliateSignUpForm syncColor={false} />
                 </Stack>
-                <Stack gap={5} align="center" width="full" className="max-w-[400px]">
+                <Stack gap={STORE_TOKENS.SPACING.CONTAINER} align="center" width="full" maxWidth="auth-form">
                     <AuthForgotPasswordForm syncColor={false} />
                 </Stack>
             </Stack>

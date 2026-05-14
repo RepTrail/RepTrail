@@ -2,8 +2,8 @@ import { createClient } from '@/lib/supabase/server'
 import { ChevronLeft, Syringe, Plus } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { UnifiedCreationDialog } from '@/components/feature/shared/unified-creation-dialog'
-import { UnifiedErgogenicsModule } from '@/components/feature/shared/unified-ergogenics-module'
+import { UnifiedCreationDialog } from '@/components/store/features(deprecated)/unified-creation-dialog'
+import { UnifiedErgogenicsModule } from '@/components/store/features(deprecated)/unified-ergogenics-module'
 import { getStudentErgogenics } from '@/actions/ergogenics-actions'
 
 export default async function StudentErgogenicsPage({ params }: { params: { id: string } }) {
@@ -43,7 +43,7 @@ export default async function StudentErgogenicsPage({ params }: { params: { id: 
             .eq('id', id)
             .eq('trainer_id', user.id)
             .maybeSingle()
-        
+
         if (placeholder) {
             effectiveStudentId = placeholder.id
             studentName = placeholder.student_name || 'Aluno (Pendente)'

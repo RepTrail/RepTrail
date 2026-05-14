@@ -1,12 +1,13 @@
 'use client'
 
 import React, { useContext } from 'react'
-import { Stack } from '../base/stack'
-import { Font } from '../base/font'
-import { IconBox } from '../base/icon'
-import { GlassPanel, Surface } from '../base/surface'
+import { Stack } from '@/components/store/base/stack'
+import { Font } from '@/components/store/base/font'
+import { IconBox } from '@/components/store/base/icon'
+import { GlassPanel, Surface } from '@/components/store/base/surface'
 import { LucideIcon } from 'lucide-react'
-import { RegistryContext, RegistryColor } from '../advanced/registry-context'
+import { RegistryContext, RegistryColor } from '@/components/store/advanced/registry-context'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 interface EmptyStateProps {
   icon: LucideIcon
@@ -28,24 +29,24 @@ export function EmptyState({
   return (
     <GlassPanel
       variant="tonal-primary"
-      padding={12.5}
-      rounded="system"
+      padding={STORE_TOKENS.PADDING.EMPTY_STATE}
+      rounded={STORE_TOKENS.RADIUS.SYSTEM}
       border="bold"
       fullWidth
     >
-      <Stack gap={5} align="center">
+      <Stack gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
         <IconBox
           icon={icon}
           variant="primary"
           size="lg"
-          rounded="full"
+          rounded={STORE_TOKENS.RADIUS.FULL}
         />
 
-        <Stack gap={2.5} align="center">
-          <Font variant="heading" color="white" uppercase italic weight="black" align="center">
+        <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+          <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} variant="heading" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} align="center">
             {title}
           </Font>
-          <Font variant="description" color="zinc-400" maxWidth="md" align="center">
+          <Font {...STORE_TOKENS.TYPOGRAPHY.DESCRIPTION} color={STORE_TOKENS.COLORS.TEXT.SECONDARY} align="center" uppercase={false}>
             {description}
           </Font>
         </Stack>

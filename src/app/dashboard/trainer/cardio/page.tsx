@@ -1,6 +1,6 @@
 import { getCardioLibrary } from '@/actions/cardio-actions'
 import { getTrainerStudents } from "@/actions/trainer-actions"
-import { CardioLibraryClient } from "@/components/feature/trainer/cardio-library-client"
+import { CardioLibraryClient } from "@/components/store/features(deprecated)/cardio-library-client"
 import { createClient } from "@/lib/supabase/server"
 
 export default async function TrainerCardioPage() {
@@ -20,3 +20,4 @@ export default async function TrainerCardioPage() {
         />
     )
 }
+

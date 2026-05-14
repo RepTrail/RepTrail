@@ -1,6 +1,6 @@
 import { getTrainerProfile } from "@/actions/trainer-actions"
 import { createClient } from '@/lib/supabase/server'
-import { TrainerProfileClient } from "@/components/feature/trainer/trainer-profile-client"
+import { TrainerProfileClient } from "@/components/store/features(deprecated)/trainer-profile-client"
 
 export const dynamic = 'force-dynamic'
 
@@ -22,5 +22,5 @@ export default async function TrainerProfilePage() {
         />
     )
 }
-    )
-}
+
+

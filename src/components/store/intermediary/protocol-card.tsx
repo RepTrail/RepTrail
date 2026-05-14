@@ -1,15 +1,20 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import { Stack } from '@/components/store/base/stack'
 import { Font } from '@/components/store/base/font'
 import { Box } from '@/components/store/base/box'
-import { Icon } from '@/components/store/base/icon'
 import { Button } from '@/components/store/base/button'
 import { Badge } from '@/components/store/base/badge'
 import { GlassPanel } from '@/components/store/base/surface'
-import { LucideIcon, CheckCircle, Sparkles, Zap } from 'lucide-react'
+import { BackgroundIcon } from '@/components/store/base/background-icon'
+import { Icon } from '@/components/store/base/icon'
+import { LucideIcon, CheckCircle, Sparkles, Zap, Eye } from 'lucide-react'
 import { RegistryColor } from '@/components/store/advanced/registry-context'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
+import { EmptyState } from './empty-state'
+import { WorkoutReviewModal } from '@/components/store/advanced/workout-review-modal'
+import { WorkoutExercisesModal } from '@/components/store/advanced/workout-exercises-modal'
 
 interface ProtocolCardProps {
     title: string
@@ -23,12 +28,11 @@ interface ProtocolCardProps {
     footer?: string
     variant?: 'large' | 'compact'
     count?: { current: number, total: number }
+    logId?: string
+    userId?: string
+    workoutId?: string
 }
 
-/**
- * ProtocolCard: Refactored to normal GlassPanel.
- * - Fixed TS errors: rotate, badge animation, font hover.
- */
 export function ProtocolCard({
     title,
     subtitle,
@@ -38,120 +42,157 @@ export function ProtocolCard({
     actionLabel = 'Iniciar',
     onAction,
     footer,
-    count
+    logId,
+    userId,
+    workoutId
 }: ProtocolCardProps) {
+    const [isReviewOpen, setIsReviewOpen] = useState(false)
+    const [isExercisesOpen, setIsExercisesOpen] = useState(false)
+    
     const isCompleted = status === 'completed'
     const isInProgress = status === 'in_progress'
     const isEmpty = status === 'empty'
 
     if (isEmpty) {
         return (
-            <GlassPanel
-                padding={12.5}
-                rounded="system"
-                border="dashed"
-                align="center"
-                justify="center"
-                variant="glass"
-            >
-                <Stack gap={5} align="center">
-                    <Icon icon={icon} size="md" color="zinc-700" />
-                    <Font variant="sub-tiny" color="zinc-500" weight="black" uppercase italic tracking="widest">
-                        {title}
-                    </Font>
-                </Stack>
-            </GlassPanel>
+            <EmptyState
+                icon={icon}
+                title={title}
+                description={subtitle}
+            />
         )
     }
 
+    const handleButtonClick = (e: React.MouseEvent) => {
+        if (isCompleted && logId && userId) {
+            e.preventDefault()
+            e.stopPropagation()
+            setIsReviewOpen(true)
+        } else if (onAction) {
+            onAction()
+        }
+    }
+
+    const handleViewExercises = (e: React.MouseEvent) => {
+        e.preventDefault()
+        e.stopPropagation()
+        setIsExercisesOpen(true)
+    }
+
     return (
-        <GlassPanel
-            rounded="system"
-            position="relative"
-            overflow="hidden"
-            transition
-            group
-            onClick={onAction}
-            variant="glass"
-        >
-            {/* Decorative Background Icon */}
-            <Box
-                position="absolute"
-                top="1/2"
-                right={-10}
-                opacity={10}
-                groupHoverOpacity={20}
+        <>
+            <GlassPanel
+                padding={STORE_TOKENS.PADDING.ELEMENT}
+                rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                position="relative"
+                overflow="hidden"
                 transition
-                rotate={3}
-            />
+                group
+                onClick={onAction}
+                variant="glass"
+            >
+                <BackgroundIcon
+                    icon={icon}
+                    size="100"
+                    top={0}
+                    right={0}
+                    opacity={STORE_TOKENS.OPACITY.SUBTLE}
+                    groupHoverOpacity={STORE_TOKENS.OPACITY.SUBTLE}
+                />
 
-            <Box>
-                <Stack gap={5} position="relative">
-                    <Stack gap={5}>
-                        {/* Status Line */}
-                        <Box>
-                            {isCompleted ? (
-                                <Badge
-                                    variant="glass"
-                                    color="emerald"
-                                    label={statusLabel || 'MISSÃO CUMPRIDA'}
-                                    icon={CheckCircle}
-                                    size="sm"
-                                />
-                            ) : isInProgress ? (
-                                <Badge
-                                    variant="glass"
-                                    color="amber"
-                                    label={statusLabel || 'EM ANDAMENTO'}
-                                    icon={Zap}
-                                    size="sm"
-                                />
-                            ) : (
-                                <Badge
-                                    variant="glass"
-                                    color="orange"
-                                    label={statusLabel || 'PRONTO PARA TREINAR'}
-                                    icon={Sparkles}
-                                    size="sm"
-                                />
-                            )}
-                        </Box>
+                <Box position="relative" zIndex={STORE_TOKENS.Z_INDEX.CONTENT}>
+                    <Stack gap={STORE_TOKENS.SPACING.CONTAINER} position="relative">
+                        <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
+                            <Box>
+                                {isCompleted ? (
+                                    <Badge
+                                        variant="glass"
+                                        color={STORE_TOKENS.COLORS.SUCCESS}
+                                        label={statusLabel || 'MISSÃO CUMPRIDA'}
+                                        icon={CheckCircle}
+                                        size="sm"
+                                    />
+                                ) : isInProgress ? (
+                                    <Badge
+                                        variant="glass"
+                                        color={STORE_TOKENS.COLORS.WARNING}
+                                        label={statusLabel || 'EM ANDAMENTO'}
+                                        icon={Zap}
+                                        size="sm"
+                                    />
+                                ) : (
+                                    <Badge
+                                        variant="glass"
+                                        color="orange"
+                                        label={statusLabel || 'PRONTO PARA TREINAR'}
+                                        icon={Sparkles}
+                                        size="sm"
+                                    />
+                                )}
+                            </Box>
 
-                        {/* Title Block */}
-                        <Stack gap={2.5}>
-                            <Font
-                                variant="h3"
-                                color="white"
-                            >
-                                {title}
-                            </Font>
-                            <Font variant="sub-tiny" color="zinc-500">
-                                {subtitle}
-                            </Font>
+                            <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                <Font
+                                    {...STORE_TOKENS.TYPOGRAPHY.HEADING}
+                                    variant="h3"
+                                    color={STORE_TOKENS.COLORS.TEXT.PRIMARY}
+                                >
+                                    {title}
+                                </Font>
+                                <Font {...STORE_TOKENS.TYPOGRAPHY.DESCRIPTION} color={STORE_TOKENS.COLORS.TEXT.MUTED}>
+                                    {subtitle}
+                                </Font>
+                            </Stack>
                         </Stack>
+
+                        <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                            <Button
+                                variant={isCompleted ? 'outline-emerald' : isInProgress ? 'outline-amber' : 'outline-emerald'}
+                                flex1
+                                size="sm"
+                                onClick={handleButtonClick}
+                            >
+                                <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL}>
+                                    {isCompleted ? 'REVISAR ANOTAÇÕES' : isInProgress ? 'CONTINUAR TREINO' : actionLabel.toUpperCase()}
+                                </Font>
+                            </Button>
+
+                            <Button
+                                variant="outline-zinc"
+                                isIconOnly
+                                size="sm"
+                                onClick={handleViewExercises}
+                            >
+                                <Icon icon={Eye} size="xs" />
+                            </Button>
+                        </Stack>
+
+                        {footer && (
+                            <Box padding={0} border={false}>
+                                <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.MUTED}>
+                                    {footer}
+                                </Font>
+                            </Box>
+                        )}
                     </Stack>
+                </Box>
+            </GlassPanel>
 
-                    {/* Action Button */}
-                    <Box>
-                        <Button
-                            variant={isCompleted ? 'outline-emerald' : isInProgress ? 'amber' : 'emerald'}
-                            fullWidth
-                        >
-                            <Font variant="body-sm" weight="black">
-                                {isCompleted ? 'REVISAR' : isInProgress ? 'CONTINUAR' : actionLabel.toUpperCase()}
-                            </Font>
-                        </Button>
-                    </Box>
+            {isCompleted && logId && userId && (
+                <WorkoutReviewModal 
+                    isOpen={isReviewOpen}
+                    onClose={() => setIsReviewOpen(false)}
+                    logId={logId}
+                    userId={userId}
+                />
+            )}
 
-                    {footer && (
-                        <Box padding={0} border={false}>
-                            <Font variant="sub-tiny" color="zinc-500" weight="black" uppercase tracking="widest">
-                                {footer}
-                            </Font>
-                        </Box>
-                    )}
-                </Stack>
-            </Box>
-        </GlassPanel>
+            <WorkoutExercisesModal
+                isOpen={isExercisesOpen}
+                onClose={() => setIsExercisesOpen(false)}
+                workoutId={workoutId || (logId ? `mock-${logId}` : 'mock-workout')}
+                workoutName={title}
+            />
+        </>
     )
 }
