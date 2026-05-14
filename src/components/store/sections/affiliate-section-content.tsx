@@ -10,7 +10,7 @@ import { Icon } from '@/components/store/base/icon'
 import { Button } from '@/components/store/base/button'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { AffiliateLinkSharingPanel } from '@/components/store/advanced/affiliate-link-sharing-panel'
-import { AffiliateWalletPanel } from '@/components/store/advanced/affiliate-wallet-panel'
+import { AffiliateWalletSummary } from '@/components/store/intermediary/affiliate-wallet-summary'
 import { useRegistry } from '@/components/store/advanced/registry-context'
 import { cn } from '@/lib/utils'
 import { Input } from '@/components/store/base/input'
@@ -120,7 +120,13 @@ export function AffiliateSectionContent({ id }: { id?: string }) {
 
                 {/* Wallet Info */}
                 <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
-                    <AffiliateWalletPanel />
+                    <RegistrySection
+                        title="Sua Carteira"
+                        icon={Wallet}
+                        subtitle="Gestão de saldo e solicitações de saque de comissões."
+                    >
+                        <AffiliateWalletSummary />
+                    </RegistrySection>
 
                     <RegistrySection
                         title="Saques"

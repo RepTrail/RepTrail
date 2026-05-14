@@ -7,7 +7,8 @@ import {
 } from 'lucide-react'
 import { AdminUsersManagementPanel } from '@/components/store/advanced/admin-users-management-panel'
 import { AdminProductsCatalogPanel } from '@/components/store/advanced/admin-products-catalog-panel'
-import { AdminActivityLogsPanel } from '@/components/store/advanced/admin-activity-logs-panel'
+import { LogItem } from '@/components/store/intermediary/log-item'
+import { History } from 'lucide-react'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { AdminAnalyticsGrid } from '@/components/store/advanced/admin-analytics-grid'
 import { AdminPayoutsManagement } from '@/components/store/advanced/admin-payouts-management'
@@ -88,7 +89,44 @@ export function AdminSectionContent({ id }: { id?: string }) {
             <AdminProductsCatalogPanel />
 
             {/* Logs de Atividade */}
-            <AdminActivityLogsPanel />
+            <RegistrySection
+                title="Logs de Atividade"
+                icon={History}
+                subtitle="Rastro de auditoria de todas as ações realizadas no painel administrativo."
+            >
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                    <LogItem 
+                        action="UPDATE_USER_ROLE"
+                        admin="Marcos Vinicius"
+                        target="ALUNO_CARLOS"
+                        details={{ from: 'FREE', to: 'PREMIUM', method: 'MANUAL_ADMIN' }}
+                        date="há 5 minutos"
+                        variant="blue"
+                    />
+                    <LogItem 
+                        action="ACTIVATE_ONDEMAND"
+                        admin="Juliana Silva"
+                        target="PERSONAL_JULIANA"
+                        details={{ service: 'ON_DEMAND_V2', status: 'ACTIVE' }}
+                        date="há 12 minutos"
+                        variant="orange"
+                    />
+                    <LogItem 
+                        action="DELETE_PRODUCT"
+                        admin="Sistema"
+                        target="PROD_TEST_01"
+                        details="Remoção automática de produto sem estoque há 30 dias."
+                        date="há 1 hora"
+                        variant="red"
+                    />
+
+                    <EmptyState 
+                        icon={History}
+                        title="Sem mais atividades"
+                        description="Não há registros adicionais de auditoria para o período selecionado."
+                    />
+                </Stack>
+            </RegistrySection>
         </Stack>
     )
 }

@@ -12,7 +12,7 @@ import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { AffiliateWalletSection } from '@/components/store/advanced/affiliate-wallet-section'
 import { AffiliateLinkSharer } from '@/components/store/advanced/affiliate-link-sharer'
 import { AffiliatePerformanceGrid } from '@/components/store/advanced/affiliate-performance-grid'
-import { AffiliateActivityFeed } from '@/components/store/advanced/affiliate-activity-feed'
+import { AffiliateConversionTracker } from '@/components/store/advanced/affiliate-conversion-tracker'
 import {
     Link as LinkIcon,
     MousePointer2,
@@ -91,7 +91,7 @@ export function AffiliateOverviewContent({ data }: AffiliateOverviewContentProps
                             subtitle="Últimas interações na sua rede."
                             icon={History}
                         >
-                            <AffiliateActivityFeed 
+                            <AffiliateConversionTracker 
                                 recentReferrals={recentReferrals}
                                 recentCommissions={recentCommissions}
                             />
