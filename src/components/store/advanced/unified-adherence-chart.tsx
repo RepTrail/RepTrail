@@ -4,7 +4,7 @@ import * as React from 'react'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { Activity, Dumbbell, Flame, Utensils, Sparkles } from 'lucide-react'
 import { Stack } from '@/components/store/base/stack'
-import { Box } from '@/components/store/base/box'
+import { Box, BoxProps } from '@/components/store/base/box'
 import { Font } from '@/components/store/base/font'
 import { Icon } from '@/components/store/base/icon'
 import { Grid } from '@/components/store/base/grid'
@@ -36,12 +36,12 @@ export function UnifiedAdherenceChart({ history, showErgogenics = false, noCard 
 
     const rows = React.useMemo(() => [
         { id: 'workout', label: 'Treino', icon: Dumbbell, color: STORE_TOKENS.COLORS.SUCCESS },
-        { id: 'cardio', label: 'Cardio', icon: Flame, color: STORE_TOKENS.COLORS.WARNING },
-        { id: 'diet', label: 'Dieta', icon: Utensils, color: '#3b82f6' },
-        ...(showErgogenics ? [{ id: 'ergo', label: 'Ergo', icon: Sparkles, color: STORE_TOKENS.COLORS.WARNING }] : []),
+        { id: 'cardio', label: 'Cardio', icon: Flame, color: STORE_TOKENS.COLORS.INFO },
+        { id: 'diet', label: 'Dieta', icon: Utensils, color: STORE_TOKENS.COLORS.WARNING },
+        ...(showErgogenics ? [{ id: 'ergo', label: 'Ergo', icon: Sparkles, color: STORE_TOKENS.COLORS.ERROR }] : []),
     ], [showErgogenics])
 
-    const getStatusProps = (status: string, percentage?: number) => {
+    const getStatusProps = (status: string, percentage?: number): Partial<BoxProps> & { style?: React.CSSProperties } => {
         if (percentage !== undefined && percentage !== null && status !== 'none' && status !== 'assigned') {
             if (percentage >= 100) return { bg: STORE_TOKENS.COLORS.SUCCESS, style: { boxShadow: '0 0 10px rgba(16,185,129,0.3)' } }
             if (percentage > 0) return { bg: STORE_TOKENS.COLORS.WARNING }
