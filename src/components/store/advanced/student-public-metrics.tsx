@@ -67,7 +67,7 @@ export function StudentPublicMetrics({ fullMetrics, adherenceHistory, steroidUse
             : 0
 
     return (
-        <Stack gap={STORE_TOKENS.SPACING.EMPTY_STATE}>
+        <Stack gap={STORE_TOKENS.SPACING.SECTION}>
 
             {/* ── Stats Cards ─────────────────────────────────────────── */}
             <Grid cols={{ base: 1, md: 3 }} gap={STORE_TOKENS.SPACING.CONTAINER}>

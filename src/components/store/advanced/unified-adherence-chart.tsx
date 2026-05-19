@@ -10,6 +10,15 @@ import { Icon } from '@/components/store/base/icon'
 import { Grid } from '@/components/store/base/grid'
 import { GlassPanel } from '@/components/store/base/surface'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
+import { ChartTooltip } from '@/components/store/intermediary/chart-tooltip'
+
+/** Hex values for DS semantic colors used in adherence chart dots */
+const COLOR_HEX: Record<string, string> = {
+    emerald: '#10b981',
+    amber:   '#f59e0b',
+    red:     '#ef4444',
+    blue:    '#3b82f6',
+}
 
 interface AdherenceHistoryItem {
     date: string
@@ -98,17 +107,23 @@ export function UnifiedAdherenceChart({ history, showErgogenics = false, noCard 
                                     <TooltipProvider key={day.date}>
                                         <Tooltip delayDuration={0}>
                                             <TooltipTrigger asChild>
-                                                <Box style={{ flex: 1, height: '100%', cursor: 'crosshair', transition: 'all 0.2s ease', ...boxProps.style }} rounded={STORE_TOKENS.RADIUS.SYSTEM} bg={boxProps.bg} bgOpacity={boxProps.bgOpacity} border={boxProps.border} borderColor={boxProps.borderColor} borderOpacity={boxProps.borderOpacity} opacity={boxProps.opacity} />
+                                                <Box flex1={true} style={{ height: '100%', cursor: 'crosshair', transition: 'all 0.2s ease', minWidth: 0, ...boxProps.style }} rounded={STORE_TOKENS.RADIUS.SYSTEM} bg={boxProps.bg} bgOpacity={boxProps.bgOpacity ?? 100} border={boxProps.border} borderColor={boxProps.borderColor} borderOpacity={boxProps.borderOpacity} opacity={boxProps.opacity} />
                                             </TooltipTrigger>
-                                            <TooltipContent side="top" className="bg-zinc-900 border-zinc-800 text-white text-[10px] p-3 rounded-system shadow-2xl backdrop-blur-xl">
-                                                <div className="space-y-1">
-                                                    <p className="font-black text-zinc-500 uppercase tracking-widest">{dateLabel}</p>
-                                                    <p className="font-bold text-white italic uppercase">
-                                                        {row.id === 'diet'
+                                            <TooltipContent side="top" className="p-0 border-0 bg-transparent shadow-none">
+                                                <ChartTooltip
+                                                    title={dateLabel}
+                                                    rows={[{
+                                                        color: COLOR_HEX[row.color] ?? '#ffffff',
+                                                        label: row.label,
+                                                        value: row.id === 'diet'
                                                             ? `${percentage || 0}% de adesão`
-                                                            : status === 'none' ? 'Folga / Sem Meta' : status === 'assigned' ? 'Pendente' : status === 'skipped' ? 'Falhou' : status === 'partial' ? `Parcial (${percentage || 0}%)` : 'Concluído'}
-                                                    </p>
-                                                </div>
+                                                            : status === 'none' ? 'Folga / Sem Meta'
+                                                            : status === 'assigned' ? 'Pendente'
+                                                            : status === 'skipped' ? 'Falhou'
+                                                            : status === 'partial' ? `Parcial (${percentage || 0}%)`
+                                                            : 'Concluído'
+                                                    }]}
+                                                />
                                             </TooltipContent>
                                         </Tooltip>
                                     </TooltipProvider>

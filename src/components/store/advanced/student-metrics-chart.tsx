@@ -18,6 +18,7 @@ import { Box } from '@/components/store/base/box'
 import { Font } from '@/components/store/base/font'
 import { GlassPanel } from '@/components/store/base/surface'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
+import { RechartsChartTooltip } from '@/components/store/intermediary/chart-tooltip'
 
 interface StudentMetricsChartProps {
     weights: { weight_kg: number; recorded_at: string }[]
@@ -127,36 +128,7 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
         return [Math.max(0, Math.floor(min - padding)), Math.ceil(max + padding)]
     }, [bfs])
 
-    // Custom Tooltip
-    const CustomTooltip = ({ active, payload, label }: any) => {
-        if (active && payload && payload.length) {
-            return (
-                <GlassPanel variant="glass-dark" padding={STORE_TOKENS.PADDING.ELEMENT}>
-                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        <Font variant="tiny" weight="black" color="white" uppercase>{label}</Font>
-                        <Box style={{ width: '100%', height: 1, backgroundColor: 'rgba(255,255,255,0.05)', marginBottom: 4 }} />
-                        {payload.map((entry: any) => {
-                            if (entry.value === null) return null
-                            return (
-                                <Box key={entry.dataKey} display="flex" align="center" style={{ justifyContent: 'space-between', gap: 24 }}>
-                                    <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                        <Box width={8} height={8} rounded={STORE_TOKENS.RADIUS.FULL} style={{ backgroundColor: entry.color, boxShadow: `0 0 10px ${entry.color}` }} />
-                                        <Font variant="tiny" weight="bold" color="zinc-400" >
-                                            {entry.name}
-                                        </Font>
-                                    </Stack>
-                                    <Font variant="tiny" weight="black" color="white">
-                                        {entry.value}<span style={{ color: '#a1a1aa', fontWeight: 'bold', marginLeft: 2 }}>{entry.unit}</span>
-                                    </Font>
-                                </Box>
-                            )
-                        })}
-                    </Stack>
-                </GlassPanel>
-            )
-        }
-        return null
-    }
+    // Custom Tooltip handled by shared intermediary component
 
     const CustomWeightDot = (props: any) => {
         const { cx, cy, payload } = props;
@@ -240,7 +212,7 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
                                     hide={true}
                                 />
 
-                                <Tooltip content={<CustomTooltip />} wrapperStyle={{ zIndex: 50, outline: 'none' }} cursor={{ stroke: STORE_TOKENS.COLORS.DIVIDER.STANDARD, strokeWidth: 1, strokeDasharray: '4 4' }} />
+                                <Tooltip content={<RechartsChartTooltip layout="spaced" />} wrapperStyle={{ zIndex: 50, outline: 'none' }} cursor={{ stroke: STORE_TOKENS.COLORS.DIVIDER.STANDARD, strokeWidth: 1, strokeDasharray: '4 4' }} />
 
                                 {/* Performance Line - Continuous */}
                                 <Line

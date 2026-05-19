@@ -61,8 +61,12 @@ export async function ensureDailyTracking(userId: string) {
     let hasErgo = false
     if (steroids?.steroid_use && ae) {
         ae.forEach((a: any) => {
-            if (a.application_days && Array.isArray(a.application_days)) {
-                if (a.application_days.includes(dow)) hasErgo = true
+            let days = a.application_days
+            if (typeof days === 'string') {
+                try { days = JSON.parse(days) } catch { days = [] }
+            }
+            if (Array.isArray(days)) {
+                if (days.map(Number).includes(dow)) hasErgo = true
             }
         })
     }
@@ -409,8 +413,12 @@ export async function getAdherenceHistory(days: number = 30) {
     const ergoDays = new Set<number>()
     if (ae) {
         ae.forEach((a: any) => {
-            if (a.application_days && Array.isArray(a.application_days)) {
-                a.application_days.forEach((d: number) => ergoDays.add(d))
+            let days = a.application_days
+            if (typeof days === 'string') {
+                try { days = JSON.parse(days) } catch { days = [] }
+            }
+            if (Array.isArray(days)) {
+                days.forEach((d: any) => ergoDays.add(Number(d)))
             }
         })
     }
@@ -559,7 +567,18 @@ export async function getStudentAdherenceHistory(studentId: string, days: number
             }
         })
     }
-    const ergogenicsDays = new Set((ae || []).map((e: any) => e.application_days || []).flat())
+    const ergogenicsDays = new Set<number>()
+    if (ae) {
+        ae.forEach((e: any) => {
+            let days = e.application_days
+            if (typeof days === 'string') {
+                try { days = JSON.parse(days) } catch { days = [] }
+            }
+            if (Array.isArray(days)) {
+                days.forEach((d: any) => ergogenicsDays.add(Number(d)))
+            }
+        })
+    }
 
     for (let i = 0; i < days; i++) {
         const currentDate = new Date(startDate)
