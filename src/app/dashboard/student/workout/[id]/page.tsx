@@ -7,8 +7,16 @@ import { QUERY_KEYS } from '@/lib/query-keys'
 import WorkoutPlayerClient from './workout-player-client'
 import { redirect } from 'next/navigation'
 
-export default async function WorkoutPlayerPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function WorkoutPlayerPage({ 
+    params,
+    searchParams
+}: { 
+    params: Promise<{ id: string }>
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}) {
     const { id: workoutId } = await params
+    const sParams = await searchParams
+    const isForced = sParams.force === 'true'
     
     // ─── AUTH (SERVER-SIDE) ──────────────────────────────────────────────────
     // Eliminates the client-side useEffect waterfall (Bug 01)
@@ -42,7 +50,7 @@ export default async function WorkoutPlayerPage({ params }: { params: Promise<{ 
 
     return (
         <HydrationBoundary state={dehydrate(queryClient)}>
-            <WorkoutPlayerClient userId={userId} workoutId={workoutId} />
+            <WorkoutPlayerClient userId={userId} workoutId={workoutId} isForced={isForced} />
         </HydrationBoundary>
     )
 }

@@ -25,10 +25,12 @@ import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 export default function WorkoutPlayerClient({
     userId,
-    workoutId
+    workoutId,
+    isForced = false
 }: {
     userId: string,
-    workoutId: string
+    workoutId: string,
+    isForced?: boolean
 }) {
     // ─── DATA FETCHING (LOCAL-FIRST ELITE) ───────────────────────────────────
     const { data: workoutData, isLoading: workoutLoading } = useQuery({
@@ -81,7 +83,7 @@ export default function WorkoutPlayerClient({
         )
     }
 
-    if (logsStatus?.status === 'completed') {
+    if (logsStatus?.status === 'completed' && !isForced) {
         return (
             <Box display="flex" align="center" justify="center" minHeight="screen" width="full">
                 <BackgroundEffects variant="all" />

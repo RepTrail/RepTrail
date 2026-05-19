@@ -158,7 +158,7 @@ export function WorkoutManagementSectionContent({
                             onEdit={() => router.push(`/dashboard/student/workouts/${workout.id}`)}
                             onDelete={() => openAction('confirm_delete', workout)}
                             onDuplicate={() => openAction('confirm_duplicate', workout)}
-                            onPlay={() => router.push(`/dashboard/student/workout/${workout.id}`)}
+                            onPlay={() => router.push(`/dashboard/student/workout/${workout.id}?force=true`)}
                         />
                     )
                 })}
