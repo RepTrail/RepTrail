@@ -458,10 +458,10 @@ export function Box({
         flexGrow: grow,
         flexShrink: shrinkBase !== undefined ? (typeof shrinkBase === 'number' ? shrinkBase : (shrinkBase as any)) : undefined,
         aspectRatio: aspectRatio === 'square' ? '1/1' : aspectRatio === 'video' ? '16/9' : aspectRatio,
-        minHeight: typeof minHeight === 'number' ? `${minHeight}px` : undefined,
-        maxHeight: typeof maxHeight === 'number' ? `${maxHeight}px` : maxHeight,
-        width: typeof width === 'number' ? `${width}px` : undefined,
-        height: typeof height === 'number' ? `${height}px` : undefined
+        minHeight: typeof minHeight === 'number' ? `${minHeight}px` : style?.minHeight,
+        maxHeight: typeof maxHeight === 'number' ? `${maxHeight}px` : (maxHeight || style?.maxHeight),
+        width: typeof width === 'number' ? `${width}px` : (typeof width === 'string' ? width : style?.width),
+        height: typeof height === 'number' ? `${height}px` : (typeof height === 'string' ? height : style?.height)
       }}
       className={cn(
         // Display & Flex
