@@ -61,10 +61,10 @@ export function UnifiedAdherenceChart({ history, showErgogenics = false, noCard 
         <Stack fullWidth gap={STORE_TOKENS.SPACING.SECTION} style={{ paddingBottom: noCard ? 0 : 20 }}>
             <Stack fullWidth gap={STORE_TOKENS.SPACING.CONTAINER} style={{ minWidth: '450px' }}>
                 {rows.map(row => (
-                    <Box key={row.id} style={{ display: 'grid', gridTemplateColumns: '90px 1fr', gap: '20px', alignItems: 'center' }} className="group">
-                        <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                    <Box key={row.id} style={{ display: 'grid', gridTemplateColumns: '90px 1fr', gap: '20px', alignItems: 'center' }}>
+                        <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
                             <Icon icon={row.icon} size="sm" color={row.color as any} />
-                            <Font variant="tiny" weight="black" uppercase color="zinc-500" className="group-hover:text-white transition-colors">{row.label}</Font>
+                            <Font variant="tiny" weight="black" uppercase color={`${row.color}-500` as any}>{row.label}</Font>
                         </Stack>
                         
                         <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} bg="zinc" bgOpacity={30} rounded={STORE_TOKENS.RADIUS.SYSTEM} border={true} borderColor="zinc" borderOpacity={10} style={{ height: '28px', padding: 6 }}>
@@ -119,7 +119,7 @@ export function UnifiedAdherenceChart({ history, showErgogenics = false, noCard 
                 ))}
             </Stack>
 
-            <Stack direction="row" wrap="wrap" align="center" justify="center" gap={STORE_TOKENS.SPACING.SECTION} style={{ opacity: 0.6, marginTop: '2rem' }}>
+            <Stack direction="row" wrap="wrap" align="center" justify="center" gap={STORE_TOKENS.SPACING.SECTION} style={{ opacity: 0.6 }}>
                 <LegendItem color={STORE_TOKENS.COLORS.SUCCESS} label="Meta Batida" />
                 <LegendItem color={STORE_TOKENS.COLORS.WARNING} label="Parcial" />
                 <LegendItem color={STORE_TOKENS.COLORS.ERROR} label="Não Realizado" />
@@ -133,8 +133,8 @@ export function UnifiedAdherenceChart({ history, showErgogenics = false, noCard 
     return (
         <GlassPanel>
             <Stack padding={STORE_TOKENS.PADDING.SECTION} fullWidth>
-                <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.CONTAINER} style={{ paddingBottom: 20 }}>
-                    <Icon icon={Activity} size="lg" color="primary" className="animate-pulse" />
+                <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.CONTAINER} style={{ paddingBottom: STORE_TOKENS.SPACING.CONTAINER * 4 }}>
+                    <Icon icon={Activity} size="lg" color="primary" style={{ animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite' }} />
                     <Stack direction="row" align="baseline" gap={STORE_TOKENS.SPACING.ELEMENT}>
                         <Font variant="h3" weight="black" color="primary" italic uppercase>Adesão Consolidada</Font>
                         <Font variant="sub-tiny" weight="normal" color="zinc-500">(30 Dias)</Font>
@@ -149,7 +149,7 @@ export function UnifiedAdherenceChart({ history, showErgogenics = false, noCard 
 function LegendItem({ color, label }: { color: string, label: string }) {
     return (
         <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-            <Box width={8} height={8} rounded={STORE_TOKENS.RADIUS.FULL} style={{ backgroundColor: color }} />
+            <Box width={8} height={8} rounded={STORE_TOKENS.RADIUS.FULL} bg={color as any} bgOpacity={100} />
             <Font variant="tiny" weight="black" color="zinc-500" uppercase>{label}</Font>
         </Stack>
     )

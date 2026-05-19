@@ -63,10 +63,10 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
 
         // Generate full daily range
         const data = []
-        
+
         const lastWDate = sortedW.length > 0 ? sortedW[sortedW.length - 1].recorded_at.split('T')[0] : null
         const lastBDate = sortedB.length > 0 ? sortedB[sortedB.length - 1].recorded_at.split('T')[0] : null
-        
+
         // Initial values for back-filling and tracking
         let currentWeight: number | null = sortedW.length > 0 ? sortedW[0].weight_kg : null
         let currentBf: number | null = sortedB.length > 0 ? sortedB[0].bf_percentage : null
@@ -88,7 +88,7 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
 
             const isWeightPastLast = lastWDate && dateStr > lastWDate
             const isWeightBeforeFirst = firstWDate && dateStr < firstWDate
-            
+
             const isBfPastLast = lastBDate && dateStr > lastBDate
             const isBfBeforeFirst = firstBDate && dateStr < firstBDate
 
@@ -185,7 +185,7 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
             </Stack>
 
             <Box height={300} fullWidth overflow="auto" ref={scrollRef}>
-                <Box position="relative" fullHeight style={{ minWidth: mounted ? `${Math.max(100, chartData.length * 40)}px` : '100%', width: '100%' }}>
+                <Box position="relative" fullHeight>
                     {mounted ? (
                         <ResponsiveContainer width="100%" height="100%">
                             <LineChart data={chartData} margin={{ top: 10, right: 0, left: -25, bottom: 0 }}>
