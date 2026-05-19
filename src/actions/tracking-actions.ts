@@ -397,7 +397,11 @@ export async function getAdherenceHistory(days: number = 30) {
         }
     })
 
-    const ergoDates = new Set(eLogs?.map(l => formatToBrazilDate(l.created_at)))
+    const ergoLogsCount = new Map<string, number>()
+    eLogs?.forEach((l: any) => {
+        const dateKey = formatToBrazilDate(l.created_at)
+        ergoLogsCount.set(dateKey, (ergoLogsCount.get(dateKey) || 0) + 1)
+    })
     const steroidUse = !!details?.steroid_use
     const workoutDays = new Set((aw || []).map((a: any) => a.day_of_week))
     const cardioDays = new Set<number>()
@@ -465,11 +469,27 @@ export async function getAdherenceHistory(days: number = 30) {
 
         let ergoStatus = found?.ergogenics_status || 'none'
         let ergoPercentage = found?.ergogenics_percentage || 0
-        if (ergoDates.has(dateStr)) {
-            ergoStatus = 'completed'
-            ergoPercentage = 100
+        
+        let assignedErgosCount = 0
+        if (ae) {
+            ae.forEach((a: any) => {
+                let days = a.application_days
+                if (typeof days === 'string') {
+                    try { days = JSON.parse(days) } catch { days = [] }
+                }
+                if (Array.isArray(days) && days.map(Number).includes(dow)) {
+                    assignedErgosCount++
+                }
+            })
+        }
+
+        const logsCount = ergoLogsCount.get(dateStr) || 0
+
+        if (logsCount > 0) {
+            ergoPercentage = assignedErgosCount > 0 ? Math.min(Math.round((logsCount / assignedErgosCount) * 100), 100) : 100
+            ergoStatus = ergoPercentage >= 100 ? 'completed' : 'partial'
         } else {
-            if (!ergoDays.has(dow)) {
+            if (assignedErgosCount === 0) {
                 ergoStatus = 'none'
             } else {
                 if (ergoStatus === 'none') ergoStatus = 'assigned'
@@ -554,7 +574,11 @@ export async function getStudentAdherenceHistory(studentId: string, days: number
         }
     })
 
-    const ergoDates = new Set(eLogs?.map(l => formatToBrazilDate(l.created_at)))
+    const ergoLogsCount = new Map<string, number>()
+    eLogs?.forEach((l: any) => {
+        const dateKey = formatToBrazilDate(l.created_at)
+        ergoLogsCount.set(dateKey, (ergoLogsCount.get(dateKey) || 0) + 1)
+    })
     const steroidUse = !!details?.steroid_use
     const workoutDays = new Set((aw || []).map((a: any) => a.day_of_week))
     const cardioDays = new Set<number>()
@@ -622,11 +646,27 @@ export async function getStudentAdherenceHistory(studentId: string, days: number
 
         let ergoStatus = found?.ergogenics_status || 'none'
         let ergoPercentage = found?.ergogenics_percentage || 0
-        if (ergoDates.has(dateStr)) {
-            ergoStatus = 'completed'
-            ergoPercentage = 100
+        
+        let assignedErgosCount = 0
+        if (ae) {
+            ae.forEach((e: any) => {
+                let days = e.application_days
+                if (typeof days === 'string') {
+                    try { days = JSON.parse(days) } catch { days = [] }
+                }
+                if (Array.isArray(days) && days.map(Number).includes(dow)) {
+                    assignedErgosCount++
+                }
+            })
+        }
+
+        const logsCount = ergoLogsCount.get(dateStr) || 0
+
+        if (logsCount > 0) {
+            ergoPercentage = assignedErgosCount > 0 ? Math.min(Math.round((logsCount / assignedErgosCount) * 100), 100) : 100
+            ergoStatus = ergoPercentage >= 100 ? 'completed' : 'partial'
         } else {
-            if (!ergogenicsDays.has(dow)) {
+            if (assignedErgosCount === 0) {
                 ergoStatus = 'none'
             } else {
                 if (ergoStatus === 'none') ergoStatus = 'assigned'
