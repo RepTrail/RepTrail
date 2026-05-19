@@ -52,7 +52,7 @@ export function WorkoutExecutionState({
                     </Stack>
                     <Badge label={`${Math.round(progress)}%`} variant="solid" color="emerald" size="sm" />
                 </Stack>
-                <Box bg="zinc" bgOpacity={50} rounded="full" overflow="hidden" border borderColor="white/10" height={2}>
+                <Box bg="zinc" bgOpacity={50} rounded="full" overflow="hidden" height={6}>
                     <Box height="full" bg="emerald" style={{ width: `${progress}%` }} />
                 </Box>
             </Stack>
