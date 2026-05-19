@@ -131,7 +131,7 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
     const CustomTooltip = ({ active, payload, label }: any) => {
         if (active && payload && payload.length) {
             return (
-                <GlassPanel variant="glass-dark" padding={STORE_TOKENS.PADDING.ELEMENT} style={{ zIndex: 100, position: 'relative', boxShadow: '0 30px 60px -10px rgba(0,0,0,0.8)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)' }}>
+                <GlassPanel variant="glass-dark" padding={STORE_TOKENS.PADDING.ELEMENT}>
                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                         <Font variant="tiny" weight="black" color="white" uppercase>{label}</Font>
                         <Box style={{ width: '100%', height: 1, backgroundColor: 'rgba(255,255,255,0.05)', marginBottom: 4 }} />

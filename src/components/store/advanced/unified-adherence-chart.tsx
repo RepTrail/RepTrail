@@ -41,30 +41,30 @@ export function UnifiedAdherenceChart({ history, showErgogenics = false, noCard 
         ...(showErgogenics ? [{ id: 'ergo', label: 'Ergo', icon: Sparkles, color: STORE_TOKENS.COLORS.WARNING }] : []),
     ], [showErgogenics])
 
-    const getStatusStyles = (status: string, percentage?: number) => {
+    const getStatusProps = (status: string, percentage?: number) => {
         if (percentage !== undefined && percentage !== null && status !== 'none' && status !== 'assigned') {
-            if (percentage >= 100) return { bg: STORE_TOKENS.COLORS.SUCCESS, shadow: '0 0 10px rgba(16,185,129,0.3)', border: 'none' }
-            if (percentage > 0) return { bg: STORE_TOKENS.COLORS.WARNING, shadow: 'none', border: 'none' }
-            if (status === 'skipped' || status === 'fail') return { bg: STORE_TOKENS.COLORS.ERROR, shadow: 'none', border: 'none' }
-            return { bg: STORE_TOKENS.COLORS.BACKGROUND, shadow: 'none', border: 'none' }
+            if (percentage >= 100) return { bg: STORE_TOKENS.COLORS.SUCCESS, style: { boxShadow: '0 0 10px rgba(16,185,129,0.3)' } }
+            if (percentage > 0) return { bg: STORE_TOKENS.COLORS.WARNING }
+            if (status === 'skipped' || status === 'fail') return { bg: STORE_TOKENS.COLORS.ERROR }
+            return { bg: STORE_TOKENS.COLORS.BACKGROUND }
         }
         switch (status) {
-            case 'completed': return { bg: STORE_TOKENS.COLORS.SUCCESS, shadow: '0 0 10px rgba(16,185,129,0.3)', border: 'none' }
-            case 'partial': return { bg: STORE_TOKENS.COLORS.WARNING, shadow: 'none', border: 'none' }
-            case 'skipped': return { bg: STORE_TOKENS.COLORS.ERROR, shadow: 'none', border: 'none' }
-            case 'assigned': return { bg: STORE_TOKENS.COLORS.BACKGROUND, shadow: 'none', border: `1px solid ${STORE_TOKENS.COLORS.DIVIDER.STANDARD}` }
-            case 'none': default: return { bg: STORE_TOKENS.COLORS.BACKGROUND, shadow: 'none', border: `1px solid ${STORE_TOKENS.COLORS.DIVIDER.STANDARD}`, opacity: 0.4 }
+            case 'completed': return { bg: STORE_TOKENS.COLORS.SUCCESS, style: { boxShadow: '0 0 10px rgba(16,185,129,0.3)' } }
+            case 'partial': return { bg: STORE_TOKENS.COLORS.WARNING }
+            case 'skipped': return { bg: STORE_TOKENS.COLORS.ERROR }
+            case 'assigned': return { bg: STORE_TOKENS.COLORS.BACKGROUND, bgOpacity: 90, border: true, borderColor: 'zinc', borderOpacity: 50 }
+            case 'none': default: return { bg: STORE_TOKENS.COLORS.BACKGROUND, bgOpacity: 100, border: true, borderColor: 'zinc', borderOpacity: 10, opacity: 40 }
         }
     }
 
     const content = (
         <Stack fullWidth gap={STORE_TOKENS.SPACING.SECTION} style={{ paddingBottom: noCard ? 0 : 20 }}>
-            <Stack fullWidth gap={STORE_TOKENS.SPACING.ELEMENT} style={{ minWidth: '450px' }}>
+            <Stack fullWidth gap={STORE_TOKENS.SPACING.CONTAINER} style={{ minWidth: '450px' }}>
                 {rows.map(row => (
-                    <Box key={row.id} style={{ display: 'grid', gridTemplateColumns: '90px 1fr', gap: '20px', alignItems: 'center' }}>
+                    <Box key={row.id} style={{ display: 'grid', gridTemplateColumns: '90px 1fr', gap: '20px', alignItems: 'center' }} className="group">
                         <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                            <Icon icon={row.icon} size="sm" style={{ color: row.color }} />
-                            <Font variant="tiny" weight="black" uppercase color="zinc-500">{row.label}</Font>
+                            <Icon icon={row.icon} size="sm" color={row.color as any} />
+                            <Font variant="tiny" weight="black" uppercase color="zinc-500" className="group-hover:text-white transition-colors">{row.label}</Font>
                         </Stack>
                         
                         <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} bg="zinc" bgOpacity={30} rounded={STORE_TOKENS.RADIUS.SYSTEM} border={true} borderColor="zinc" borderOpacity={10} style={{ height: '28px', padding: 6 }}>
@@ -90,7 +90,7 @@ export function UnifiedAdherenceChart({ history, showErgogenics = false, noCard 
                                     }
                                 }
 
-                                const styles = getStatusStyles(status, percentage)
+                                const boxProps = getStatusProps(status, percentage)
                                 const dateObj = new Date(day.date)
                                 const dateLabel = dateObj.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })
 
@@ -98,7 +98,7 @@ export function UnifiedAdherenceChart({ history, showErgogenics = false, noCard 
                                     <TooltipProvider key={day.date}>
                                         <Tooltip delayDuration={0}>
                                             <TooltipTrigger asChild>
-                                                <Box style={{ flex: 1, height: '100%', backgroundColor: styles.bg, boxShadow: styles.shadow, border: styles.border, opacity: styles.opacity || 1, cursor: 'crosshair', transition: 'all 0.2s ease' }} rounded={STORE_TOKENS.RADIUS.SYSTEM} />
+                                                <Box style={{ flex: 1, height: '100%', cursor: 'crosshair', transition: 'all 0.2s ease', ...boxProps.style }} rounded={STORE_TOKENS.RADIUS.SYSTEM} bg={boxProps.bg} bgOpacity={boxProps.bgOpacity} border={boxProps.border} borderColor={boxProps.borderColor} borderOpacity={boxProps.borderOpacity} opacity={boxProps.opacity} />
                                             </TooltipTrigger>
                                             <TooltipContent side="top" className="bg-zinc-900 border-zinc-800 text-white text-[10px] p-3 rounded-system shadow-2xl backdrop-blur-xl">
                                                 <div className="space-y-1">
