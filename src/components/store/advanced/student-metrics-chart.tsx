@@ -140,7 +140,7 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
                                 <Box key={entry.dataKey} display="flex" align="center" style={{ justifyContent: 'space-between', gap: 24 }}>
                                     <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                         <Box width={8} height={8} rounded={STORE_TOKENS.RADIUS.FULL} style={{ backgroundColor: entry.color, boxShadow: `0 0 10px ${entry.color}` }} />
-                                        <Font variant="tiny" weight="bold" color="zinc-400" capitalize>
+                                        <Font variant="tiny" weight="bold" color="zinc-400" style={{ textTransform: 'capitalize' }}>
                                             {entry.name}
                                         </Font>
                                     </Stack>
