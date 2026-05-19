@@ -182,7 +182,7 @@ export default function WorkoutPlayerClient({
             )}
 
             {/* Main Player Content: Vertically Centered */}
-            <Box flex1 display="flex" align="center" justify="center" padding={0} position="relative" zIndex={10}>
+            <Box flex1 display="flex" align={{ base: 'start', md: 'center' }} justify="center" padding={0} position="relative" zIndex={10}>
                 <WorkoutPlayer
                     userId={userId}
                     workout={workout}

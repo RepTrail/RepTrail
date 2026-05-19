@@ -58,7 +58,7 @@ export function WorkoutExecutionState({
             </Stack>
 
             {/* Execution State */}
-            <Stack flex1 justify="center" gap={STORE_TOKENS.SPACING.CONTAINER} position="relative">
+            <Stack flex1 justify={{ base: 'start', md: 'center' }} gap={STORE_TOKENS.SPACING.CONTAINER} position="relative">
                 <BackgroundIcon icon={Play} size="100" opacity={10} top={0} right={0} />
 
                 {/* Main Exercise Card */}
