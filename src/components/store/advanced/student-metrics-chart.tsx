@@ -130,24 +130,27 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
     const CustomTooltip = ({ active, payload, label }: any) => {
         if (active && payload && payload.length) {
             return (
-                <Box bg="zinc" bgOpacity={90} border={true} borderColor="zinc" borderOpacity={80} padding={STORE_TOKENS.SPACING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM} style={{ backdropFilter: 'blur(12px)', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' }}>
-                    <Box style={{ marginBottom: 8 }}>
-                        <Font variant="sub-tiny" weight="black" color="zinc-500" uppercase>{label}</Font>
-                    </Box>
-                    {payload.map((entry: any) => {
-                        if (entry.value === null) return null
-                        return (
-                            <Box key={entry.dataKey} display="flex" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} style={{ marginBottom: 4 }}>
-                                <Box width={8} height={8} rounded={STORE_TOKENS.RADIUS.FULL} style={{ backgroundColor: entry.color }} />
-                                <Font variant="tiny" weight="bold" color="zinc-400">
-                                    {entry.name}:
-                                </Font>
-                                <Font variant="tiny" weight="black" color="white">
-                                    {entry.value}{entry.unit}
-                                </Font>
-                            </Box>
-                        )
-                    })}
+                <Box bg="zinc" bgOpacity={40} border={true} borderColor="white" borderOpacity={10} padding={STORE_TOKENS.SPACING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM} style={{ backdropFilter: 'blur(24px)', boxShadow: '0 30px 60px -10px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.1)' }}>
+                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                        <Font variant="tiny" weight="black" color="white" uppercase>{label}</Font>
+                        <Box style={{ width: '100%', height: 1, backgroundColor: 'rgba(255,255,255,0.05)', marginBottom: 4 }} />
+                        {payload.map((entry: any) => {
+                            if (entry.value === null) return null
+                            return (
+                                <Box key={entry.dataKey} display="flex" align="center" style={{ justifyContent: 'space-between', gap: 24 }}>
+                                    <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                        <Box width={8} height={8} rounded={STORE_TOKENS.RADIUS.FULL} style={{ backgroundColor: entry.color, boxShadow: `0 0 10px ${entry.color}` }} />
+                                        <Font variant="tiny" weight="bold" color="zinc-400" capitalize>
+                                            {entry.name}
+                                        </Font>
+                                    </Stack>
+                                    <Font variant="tiny" weight="black" color="white">
+                                        {entry.value}<span style={{ color: '#a1a1aa', fontWeight: 'bold', marginLeft: 2 }}>{entry.unit}</span>
+                                    </Font>
+                                </Box>
+                            )
+                        })}
+                    </Stack>
                 </Box>
             )
         }
