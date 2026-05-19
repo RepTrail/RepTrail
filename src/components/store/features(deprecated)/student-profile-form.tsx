@@ -26,7 +26,7 @@ import { toast } from '@/hooks/use-toast'
 import { Checkbox } from '@/components/ui/checkbox'
 import { AvatarUploadWithCrop } from './avatar-upload-with-crop'
 import { StudentTrialBadge } from './student-trial-badge'
-import { CancelSubscriptionButton } from './cancel-subscription-button'
+import { CancelSubscriptionButton } from '../advanced/cancel-subscription-button'
 import Link from 'next/link'
 
 interface StudentProfileFormProps {

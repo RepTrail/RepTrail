@@ -3,7 +3,7 @@ import React from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Award, User, CreditCard, Sparkles, Zap, Crown, Activity } from "lucide-react"
 import { TrainerProfileForm as ClientProfileForm } from "./trainer-profile-form"
-import { CancelSubscriptionButton } from "./cancel-subscription-button"
+import { CancelSubscriptionButton } from "../advanced/cancel-subscription-button"
 import Link from 'next/link'
 import { Button } from "@/components/ui/button"
 import { RegistryMain } from '@/components/store/advanced/registry-main'
