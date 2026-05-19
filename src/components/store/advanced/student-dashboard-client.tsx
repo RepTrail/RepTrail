@@ -20,7 +20,7 @@ import { AIProtocolEmptyStateSectionContent } from '@/components/store/sections/
 
 // Preserved Logic Components (Wrapped)
 import { AnamnesisForm } from '@/components/store/features(deprecated)/anamnesis-form'
-import { StudentDashboardModals } from '@/components/store/features(deprecated)/student-dashboard-modals'
+import { StudentDashboardModals } from '@/components/store/advanced/student-dashboard-modals'
 
 interface StudentDashboardClientProps {
     userId: string

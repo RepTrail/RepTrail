@@ -8,7 +8,7 @@ import { QUERY_KEYS } from '@/lib/query-keys'
 import { getTrainerRanking } from '@/actions/trainer-actions'
 import { Card, CardContent } from "@/components/ui/card"
 import { TrendingUp, Trophy } from "lucide-react"
-import { PodiumCard, RankingRow } from '@/components/store/features(deprecated)/ranking-cards'
+import { PodiumCard, RankingRow } from '@/components/store/advanced/ranking-cards'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { Stack } from '@/components/store/base/stack'
 import { Grid } from '@/components/store/base/grid'

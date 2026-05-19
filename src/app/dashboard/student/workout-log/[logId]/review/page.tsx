@@ -1,5 +1,5 @@
 import { getWorkoutLogForReview } from '@/actions/log-actions'
-import { WorkoutLogReview } from '@/components/store/features(deprecated)/student-workout-log-review'
+import { WorkoutLogReview } from '@/components/store/advanced/student-workout-log-review'
 import { notFound } from 'next/navigation'
 
 export default async function WorkoutLogReviewPage({ params }: { params: { logId: string } }) {

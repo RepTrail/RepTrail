@@ -6,7 +6,7 @@ import { Stack } from '@/components/store/base/stack'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import Link from 'next/link'
-import { PodiumCard, RankingRow } from '@/components/store/features(deprecated)/ranking-cards'
+import { PodiumCard, RankingRow } from '@/components/store/advanced/ranking-cards'
 
 export function NoPlanHero({ ranking }: { ranking: any[] }) {
     const topTrainers = ranking.slice(0, 3)

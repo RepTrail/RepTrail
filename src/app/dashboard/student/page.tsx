@@ -5,7 +5,7 @@ import { getStudentAutoTrainingStatus } from '@/actions/auto-training-actions'
 import { getTrainerRanking } from '@/actions/trainer-actions'
 import { checkStudentHasProtocol } from '@/actions/ai-protocol-actions'
 import { StudentMetaPixel } from './meta-pixel'
-import { PodiumCard, RankingRow } from '@/components/store/features(deprecated)/ranking-cards'
+import { PodiumCard, RankingRow } from '@/components/store/advanced/ranking-cards'
 import { PREFETCH_REGISTRY } from '@/lib/prefetch-registry'
 
 
@@ -27,8 +27,8 @@ import { getMetricsSummary } from '@/actions/metrics-actions'
 import { getActiveWorkoutSession } from '@/actions/log-actions'
 import { Stack } from '@/components/store/base/stack'
 import { Grid } from '@/components/store/base/grid'
-import { StudentDashboardClient } from '@/components/store/features(deprecated)/student-dashboard-client'
-import { InactiveTrainerCard } from '@/components/store/features(deprecated)/inactive-trainer-card'
+import { StudentDashboardClient } from '@/components/store/advanced/student-dashboard-client'
+import { InactiveTrainerCard } from '@/components/store/advanced/inactive-trainer-card'
 import { StudentNoPlanSection } from '@/components/store/sections/student-no-plan-section'
 
 export default async function StudentDashboardPage() {
