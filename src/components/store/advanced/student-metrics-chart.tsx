@@ -16,6 +16,7 @@ import {
 import { Stack } from '@/components/store/base/stack'
 import { Box } from '@/components/store/base/box'
 import { Font } from '@/components/store/base/font'
+import { GlassPanel } from '@/components/store/base/surface'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 interface StudentMetricsChartProps {
@@ -130,7 +131,7 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
     const CustomTooltip = ({ active, payload, label }: any) => {
         if (active && payload && payload.length) {
             return (
-                <Box bg="zinc" bgOpacity={40} border={true} borderColor="white" borderOpacity={10} padding={STORE_TOKENS.SPACING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM} style={{ backdropFilter: 'blur(24px)', boxShadow: '0 30px 60px -10px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.1)' }}>
+                <GlassPanel border={true} padding={STORE_TOKENS.SPACING.CONTAINER} style={{ zIndex: 50, position: 'relative', boxShadow: '0 30px 60px -10px rgba(0,0,0,0.8)' }}>
                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                         <Font variant="tiny" weight="black" color="white" uppercase>{label}</Font>
                         <Box style={{ width: '100%', height: 1, backgroundColor: 'rgba(255,255,255,0.05)', marginBottom: 4 }} />
@@ -151,7 +152,7 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
                             )
                         })}
                     </Stack>
-                </Box>
+                </GlassPanel>
             )
         }
         return null
@@ -239,7 +240,7 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
                                     hide={true}
                                 />
 
-                                <Tooltip content={<CustomTooltip />} />
+                                <Tooltip content={<CustomTooltip />} wrapperStyle={{ zIndex: 50, outline: 'none' }} cursor={{ stroke: STORE_TOKENS.COLORS.DIVIDER.STANDARD, strokeWidth: 1, strokeDasharray: '4 4' }} />
 
                                 {/* Performance Line - Continuous */}
                                 <Line
