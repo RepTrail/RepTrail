@@ -59,7 +59,7 @@ export async function ensureDailyTracking(userId: string) {
     const hasCardio = !!ac
 
     let hasErgo = false
-    if (steroids?.steroid_use && ae) {
+    if (ae) {
         ae.forEach((a: any) => {
             let days = a.application_days
             if (typeof days === 'string') {
@@ -472,7 +472,7 @@ export async function getAdherenceHistory(days: number = 30) {
             if (!ergoDays.has(dow)) {
                 ergoStatus = 'none'
             } else {
-                if (ergoStatus === 'none' && steroidUse) ergoStatus = 'assigned'
+                if (ergoStatus === 'none') ergoStatus = 'assigned'
                 if (ergoStatus === 'assigned' && isPast) ergoStatus = 'skipped'
             }
         }
@@ -629,7 +629,7 @@ export async function getStudentAdherenceHistory(studentId: string, days: number
             if (!ergogenicsDays.has(dow)) {
                 ergoStatus = 'none'
             } else {
-                if (ergoStatus === 'none' && steroidUse) ergoStatus = 'assigned'
+                if (ergoStatus === 'none') ergoStatus = 'assigned'
                 if (ergoStatus === 'assigned' && isPast) ergoStatus = 'skipped'
             }
         }
