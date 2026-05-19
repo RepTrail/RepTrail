@@ -13,6 +13,10 @@ import {
     ResponsiveContainer,
     ReferenceLine
 } from 'recharts'
+import { Stack } from '@/components/store/base/stack'
+import { Box } from '@/components/store/base/box'
+import { Font } from '@/components/store/base/font'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 interface StudentMetricsChartProps {
     weights: { weight_kg: number; recorded_at: string }[]
@@ -126,23 +130,25 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
     const CustomTooltip = ({ active, payload, label }: any) => {
         if (active && payload && payload.length) {
             return (
-                <div className="bg-zinc-900/90 border border-zinc-800 p-3 rounded-system shadow-2xl backdrop-blur-md">
-                    <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2">{label}</p>
+                <Box bg="zinc" bgOpacity={90} border={true} borderColor="zinc" borderOpacity={80} padding={3} rounded={STORE_TOKENS.RADIUS.SYSTEM} style={{ backdropFilter: 'blur(12px)', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' }}>
+                    <Box marginBottom={2}>
+                        <Font variant="sub-tiny" weight="black" color="zinc-500" uppercase>{label}</Font>
+                    </Box>
                     {payload.map((entry: any) => {
                         if (entry.value === null) return null
                         return (
-                            <div key={entry.dataKey} className="flex items-center gap-2 mb-1">
-                                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
-                                <span className="text-xs font-bold text-zinc-300 capitalize">
+                            <Box key={entry.dataKey} display="flex" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} marginBottom={1}>
+                                <Box width={8} height={8} rounded={STORE_TOKENS.RADIUS.FULL} style={{ backgroundColor: entry.color }} />
+                                <Font variant="tiny" weight="bold" color="zinc-300" capitalize>
                                     {entry.name}:
-                                </span>
-                                <span className="text-xs font-black text-white">
+                                </Font>
+                                <Font variant="tiny" weight="black" color="white">
                                     {entry.value}{entry.unit}
-                                </span>
-                            </div>
+                                </Font>
+                            </Box>
                         )
                     })}
-                </div>
+                </Box>
             )
         }
         return null
@@ -171,15 +177,15 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
     const minChartWidth = Math.max(100, chartData.length * 40)
 
     return (
-        <div className="w-full space-y-6">
-            <div className="flex flex-wrap gap-4 items-center justify-end px-2">
+        <Stack fullWidth gap={STORE_TOKENS.SPACING.SECTION}>
+            <Stack direction="row" wrap="wrap" gap={STORE_TOKENS.SPACING.CONTAINER} align="center" justify="end" paddingX={2}>
                 <LegendItem color="#10b981" label="Performance" />
                 <LegendItem color="#eab308" label="Peso" />
                 <LegendItem color="#ef4444" label="BF%" />
-            </div>
+            </Stack>
 
-            <div className="h-[300px] w-full max-w-full overflow-x-auto overflow-y-hidden scrollbar-hide" ref={scrollRef}>
-                <div style={{ minWidth: mounted ? `${Math.max(100, chartData.length * 40)}px` : '100%', width: '100%', height: '100%' }} className="relative">
+            <Box height={300} fullWidth maxWidth="100%" overflow="auto" className="scrollbar-hide" ref={scrollRef}>
+                <Box position="relative" fullHeight style={{ minWidth: mounted ? `${Math.max(100, chartData.length * 40)}px` : '100%', width: '100%' }}>
                     {mounted ? (
                         <ResponsiveContainer width="100%" height="100%">
                             <LineChart data={chartData} margin={{ top: 10, right: 0, left: -25, bottom: 0 }}>
@@ -277,20 +283,20 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
                             </LineChart>
                         </ResponsiveContainer>
                     ) : (
-                        <div className="w-full h-full bg-zinc-900/10 animate-pulse rounded-system" />
+                        <Box fullWidth fullHeight bg="zinc" bgOpacity={10} rounded={STORE_TOKENS.RADIUS.SYSTEM} className="animate-pulse" />
                     )}
                 </div>
             </div>
-        </div>
+        </Stack>
     )
 }
 
 function LegendItem({ color, label }: { color: string, label: string }) {
     return (
-        <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full ring-2 ring-offset-2 ring-offset-zinc-950/50" style={{ backgroundColor: color, '--tw-ring-color': color } as any} />
-            <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">{label}</span>
-        </div>
+        <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+            <Box width={8} height={8} rounded={STORE_TOKENS.RADIUS.FULL} style={{ backgroundColor: color, boxShadow: `0 0 0 2px rgba(9, 9, 11, 0.5), 0 0 0 4px ${color}` }} />
+            <Font variant="sub-tiny" weight="black" color="zinc-500" uppercase>{label}</Font>
+        </Stack>
     )
 }
 

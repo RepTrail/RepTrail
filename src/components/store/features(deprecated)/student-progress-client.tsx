@@ -4,10 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Activity, TrendingUp, Target, Droplet, Camera, History, Images } from "lucide-react"
 import { StudentWorkoutHistory } from './student-workout-history'
 import { ProgressPhotoUpload } from '@/components/store/advanced/student-photo-upload'
-import { UnifiedAdherenceChart } from '@/components/store/features(deprecated)/unified-adherence-chart'
+import { UnifiedAdherenceChart } from '@/components/store/advanced/unified-adherence-chart'
 import { UnifiedProgressGallery } from '@/components/store/advanced/unified-progress-gallery'
 import { StatCard } from '@/components/store/features(deprecated)/stat-card'
-import { PerformanceAnalysisSection } from '@/components/store/features(deprecated)/performance-analysis-section'
+import { PerformanceAnalysisSection } from '@/components/store/advanced/performance-analysis-section'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useQuery } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/lib/query-keys'

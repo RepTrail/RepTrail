@@ -1,7 +1,7 @@
 import { getStudentFullMetrics } from '@/actions/metrics-actions'
 import { getStudentAdherenceHistory } from '@/actions/tracking-actions'
-import { PerformanceAnalysisSection } from '@/components/store/features(deprecated)/performance-analysis-section'
-import { UnifiedAdherenceChart } from '@/components/store/features(deprecated)/unified-adherence-chart'
+import { PerformanceAnalysisSection } from '@/components/store/advanced/performance-analysis-section'
+import { UnifiedAdherenceChart } from '@/components/store/advanced/unified-adherence-chart'
 import { StatCard } from '@/components/store/features(deprecated)/stat-card'
 import { Target, TrendingUp, Droplet } from 'lucide-react'
 

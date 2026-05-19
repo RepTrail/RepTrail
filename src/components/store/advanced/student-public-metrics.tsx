@@ -1,8 +1,8 @@
 'use client'
 
 import React from 'react'
-import { PerformanceAnalysisSection } from '@/components/store/features(deprecated)/performance-analysis-section'
-import { UnifiedAdherenceChart } from '@/components/store/features(deprecated)/unified-adherence-chart'
+import { PerformanceAnalysisSection } from '@/components/store/advanced/performance-analysis-section'
+import { UnifiedAdherenceChart } from '@/components/store/advanced/unified-adherence-chart'
 import { StatsCard } from '@/components/store/intermediary/stats-card'
 import { Target, TrendingUp, Droplet } from 'lucide-react'
 import { Stack } from '@/components/store/base/stack'
