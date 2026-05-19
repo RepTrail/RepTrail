@@ -64,10 +64,10 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
 
         // Generate full daily range
         const data = []
-        
+
         const lastWDate = sortedW.length > 0 ? sortedW[sortedW.length - 1].recorded_at.split('T')[0] : null
         const lastBDate = sortedB.length > 0 ? sortedB[sortedB.length - 1].recorded_at.split('T')[0] : null
-        
+
         // Initial values for back-filling and tracking
         let currentWeight: number | null = sortedW.length > 0 ? sortedW[0].weight_kg : null
         let currentBf: number | null = sortedB.length > 0 ? sortedB[0].bf_percentage : null
@@ -89,7 +89,7 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
 
             const isWeightPastLast = lastWDate && dateStr > lastWDate
             const isWeightBeforeFirst = firstWDate && dateStr < firstWDate
-            
+
             const isBfPastLast = lastBDate && dateStr > lastBDate
             const isBfBeforeFirst = firstBDate && dateStr < firstBDate
 
@@ -131,7 +131,7 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
     const CustomTooltip = ({ active, payload, label }: any) => {
         if (active && payload && payload.length) {
             return (
-                <GlassPanel border={true} padding={STORE_TOKENS.SPACING.CONTAINER} style={{ zIndex: 50, position: 'relative', boxShadow: '0 30px 60px -10px rgba(0,0,0,0.8)' }}>
+                <GlassPanel variant="glass-dark" padding={STORE_TOKENS.PADDING.ELEMENT} style={{ zIndex: 100, position: 'relative', boxShadow: '0 30px 60px -10px rgba(0,0,0,0.8)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)' }}>
                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                         <Font variant="tiny" weight="black" color="white" uppercase>{label}</Font>
                         <Box style={{ width: '100%', height: 1, backgroundColor: 'rgba(255,255,255,0.05)', marginBottom: 4 }} />
@@ -141,7 +141,7 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
                                 <Box key={entry.dataKey} display="flex" align="center" style={{ justifyContent: 'space-between', gap: 24 }}>
                                     <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                         <Box width={8} height={8} rounded={STORE_TOKENS.RADIUS.FULL} style={{ backgroundColor: entry.color, boxShadow: `0 0 10px ${entry.color}` }} />
-                                        <Font variant="tiny" weight="bold" color="zinc-400" style={{ textTransform: 'capitalize' }}>
+                                        <Font variant="tiny" weight="bold" color="zinc-400" >
                                             {entry.name}
                                         </Font>
                                     </Stack>
