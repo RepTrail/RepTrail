@@ -745,6 +745,42 @@ export async function logMealCheck(mealId: string, status: boolean = true) {
     }
 }
 
+export async function logMealItemCheck(itemId: string, status: boolean = true) {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return { error: 'Unauthorized' }
+
+    const todayStr = getTodayStrBrazil()
+
+    try {
+        if (status) {
+            const { error } = await supabase
+                .from('meal_item_logs')
+                .insert({
+                    user_id: user.id,
+                    meal_item_id: itemId,
+                    date: todayStr,
+                    is_checked: true
+                })
+            if (error) throw error
+        } else {
+            const { error } = await supabase
+                .from('meal_item_logs')
+                .delete()
+                .eq('user_id', user.id)
+                .eq('meal_item_id', itemId)
+                .eq('date', todayStr)
+            if (error) throw error
+        }
+
+        revalidatePath('/dashboard/student')
+        revalidatePath('/dashboard/student/diet')
+        return { success: true }
+    } catch (e: any) {
+        return { error: e.message }
+    }
+}
+
 export async function getStudentDailyDiet(studentId: string) {
     const { createAdminClient } = await import('@/lib/supabase/server')
     const adminSupabase = await createAdminClient()

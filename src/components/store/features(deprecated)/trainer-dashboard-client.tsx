@@ -11,7 +11,15 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Stack } from '@/components/store/base/stack'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
-import { LayoutDashboard, UserPlus, Users, DollarSign, TrendingUp, Zap, Sparkles, Crown, FileUp, ArrowUpRight, Activity } from 'lucide-react'
+import { LayoutDashboard, UserPlus, Users, DollarSign, TrendingUp, Zap, Sparkles, Crown, FileUp, ArrowUpRight, Activity, Star } from 'lucide-react'
+import { Button } from '@/components/store/base/button'
+import Link from 'next/link'
+
+// Deprecated features
+import { ActivityFeed } from './activity-feed'
+import { CodeAutoGenerator } from './code-auto-generator'
+import { TrainerCodeCard } from './trainer-code-card'
+import { EditProfileDialog } from './edit-profile-dialog'
 
 interface TrainerDashboardClientProps {
     userId: string
@@ -252,6 +260,31 @@ function QuickActionCard({ title, description, icon, href, label }: any) {
                 <Button asChild variant="ghost" className="text-zinc-400 hover:text-white hover:bg-zinc-900/50 h-9 text-xs font-bold rounded-xl mt-2 transition-all active:scale-95">
                     <Link href={href}>
                         {label}
+                    </Link>
+                </Button>
+            </CardContent>
+        </Card>
+    )
+}
+function BecomeAffiliateCard() {
+    return (
+        <Card className="bg-orange-500/5 border-orange-500/20 shadow-xl rounded-2xl overflow-hidden border-t-orange-500/30 transition-all hover:bg-orange-500/10 group">
+            <CardContent className="p-6 space-y-4">
+                <div className="flex items-center gap-3">
+                    <div className="p-2 bg-orange-500/20 rounded-xl">
+                        <Star className="w-5 h-5 text-orange-500" />
+                    </div>
+                    <div>
+                        <h3 className="font-bold text-white text-sm">Seja um Afiliado</h3>
+                        <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest">Ganhe 50% de comissão</p>
+                    </div>
+                </div>
+                <p className="text-zinc-400 text-xs leading-relaxed">
+                    Indique o RepTrail para outros personais e ganhe comissões recorrentes.
+                </p>
+                <Button asChild variant="orange" className="w-full h-10 text-[10px] uppercase font-black tracking-widest shadow-lg shadow-orange-500/20">
+                    <Link href="/dashboard/affiliate/onboarding">
+                        Saber Mais
                     </Link>
                 </Button>
             </CardContent>

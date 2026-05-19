@@ -19,6 +19,8 @@ export type FormSwitchProps = {
     value?: string
     onChange?: (value: string) => void
     color?: 'emerald' | 'orange' | 'amber' | 'blue' | 'primary'
+    flex1?: boolean
+    width?: string | number | { base: string | number, md?: string | number, lg?: string | number }
 }
 
 export function FormSwitch({
@@ -26,7 +28,9 @@ export function FormSwitch({
     options,
     value,
     onChange,
-    color = 'emerald'
+    color = 'emerald',
+    flex1,
+    width
 }: FormSwitchProps) {
     const { primaryColor } = useRegistry()
     const [selected, setSelected] = useState(value ?? options[0]?.value)
@@ -46,7 +50,14 @@ export function FormSwitch({
     }
 
     return (
-        <div className="flex flex-col gap-[10px] w-full">
+        <Box 
+            display="flex" 
+            direction="col" 
+            gap={STORE_TOKENS.SPACING.ELEMENT} 
+            fullWidth={!width} 
+            flex1={flex1}
+            width={width as any}
+        >
             {label && (
                 <Font variant="auxiliary" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="black" uppercase tracking="widest">
                     {label}
@@ -102,6 +113,6 @@ export function FormSwitch({
                     })}
                 </Box>
             </GlassPanel>
-        </div>
+        </Box>
     )
 }

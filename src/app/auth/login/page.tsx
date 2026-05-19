@@ -2,7 +2,7 @@
 
 import { AuthForm } from '@/components/store/advanced/auth-form'
 import { Suspense } from 'react'
-import { AuthFormSkeleton } from '@/components/store/advanced/auth-form-skeleton'
+
 import { RegistryProvider } from '@/components/store/advanced/registry-context'
 import { AuthShell } from '@/components/store/advanced/auth-shell'
 import Script from 'next/script'
@@ -27,7 +27,7 @@ export default function LoginPage() {
             </Script>
             
             <AuthShell>
-                <Suspense fallback={<AuthFormSkeleton />}>
+                <Suspense fallback={null}>
                     <AuthForm view="login" />
                 </Suspense>
             </AuthShell>

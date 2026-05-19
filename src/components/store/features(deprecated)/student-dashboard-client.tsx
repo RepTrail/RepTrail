@@ -1,16 +1,25 @@
 'use client'
 
-import { Activity, Utensils, Dumbbell, Sparkles, TrendingUp } from 'lucide-react'
+import { Activity } from 'lucide-react'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { Stack } from '@/components/store/base/stack'
 import { Grid } from '@/components/store/base/grid'
-import { PaymentWarning } from '@/components/store/features(deprecated)/payment-warning'
+import { Box } from '@/components/store/base/box'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
+
+// Store Advanced Components (Smart Layer)
+import { StudentDashboardHeader } from '@/components/store/advanced/student-dashboard-header'
+import { StudentPaymentWarning } from '@/components/store/advanced/student-payment-warning'
+import { StudentTrainingProtocols } from '@/components/store/advanced/student-training-protocols'
+import { StudentCardioTracker } from '@/components/store/advanced/student-cardio-tracker'
+import { StudentBioactivesManagement } from '@/components/store/advanced/student-bioactives-management'
+import { StudentNutritionAdherence } from '@/components/store/advanced/student-nutrition-adherence'
+
+// Sections
+import { AIProtocolEmptyStateSectionContent } from '@/components/store/sections/ai-protocol-empty-state-section-content'
+
+// Preserved Logic Components (Wrapped)
 import { AnamnesisForm } from '@/components/store/features(deprecated)/anamnesis-form'
-import { AIProtocolEmptyState } from '@/components/store/features(deprecated)/ai-protocol-empty-state'
-import { WorkoutCard } from '@/components/store/features(deprecated)/workout-card'
-import { CardioCard } from '@/components/store/features(deprecated)/cardio-card'
-import { ErgogenicsCard } from '@/components/store/features(deprecated)/ergogenics-card'
-import { DietCard } from '@/components/store/features(deprecated)/diet-card'
 import { StudentDashboardModals } from '@/components/store/features(deprecated)/student-dashboard-modals'
 
 interface StudentDashboardClientProps {
@@ -25,6 +34,10 @@ interface StudentDashboardClientProps {
     showAnamnesis: boolean
 }
 
+/**
+ * StudentDashboardClient (Migrated): Orchestrates the student home experience.
+ * Now follows strict RepTrail Store architecture and governance.
+ */
 export function StudentDashboardClient({
     userId,
     trainerRel,
@@ -33,8 +46,11 @@ export function StudentDashboardClient({
     showAutoTrainingModal,
     showAnamnesis
 }: StudentDashboardClientProps) {
-    const tzNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }))
     const hasProtocol = protocolStatus.hasWorkout || protocolStatus.hasDiet
+
+    // Se não tem trainer (Auto Treino) e não tem protocolo, esconde o header.
+    // Se tiver trainer, continua igual. Se tiver protocolo, continua igual.
+    const showHeader = !!trainerRel || hasProtocol
 
     return (
         <RegistryMain
@@ -43,33 +59,51 @@ export function StudentDashboardClient({
             icon={Activity}
             contextLabel="Área do Aluno"
             showTabs={false}
+            showHeader={showHeader}
         >
-            <Stack gap={{ base: 12.5, md: 'section' }} className="animate-in fade-in duration-500">
-                <PaymentWarning relationship={trainerRel} />
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-header-gap">
-                    <h1 className="text-3xl font-black text-white italic uppercase tracking-tighter">Resumo Hoje</h1>
-                    <div className="p-4 bg-zinc-950 rounded-xl border border-zinc-800">
-                        <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest block">Hoje</span>
-                        <span className="text-xs font-black text-white italic uppercase">{tzNow.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' })}</span>
-                    </div>
-                </div>
-                {showAnamnesis && <AnamnesisForm initialData={details} />}
-                {!hasProtocol && <AIProtocolEmptyState userId={userId} />}
+            <Stack gap={STORE_TOKENS.SPACING.SECTION} className="animate-in fade-in duration-500">
+                {/* 1. Notifications (Overlay/Hidden logic preserved) */}
+                <StudentPaymentWarning relationship={trainerRel} />
+
+                {/* 3. Domain Logic Blocks (Conditional) */}
+                {showAnamnesis && (
+                    <Box fullWidth>
+                        <AnamnesisForm initialData={details} />
+                    </Box>
+                )}
+
+                {!hasProtocol && (
+                    <AIProtocolEmptyStateSectionContent userId={userId} />
+                )}
+
+                {/* 4. Main Performance Grid (8/4 Split) */}
                 {hasProtocol && (
-                    <Grid gap={{ base: 12.5, md: 'section' }} lgCols={12}>
-                        <Stack gap={{ base: 12.5, md: 'section' }} className="lg:col-span-8">
-                            <WorkoutCard userId={userId} />
-                            <CardioCard userId={userId} />
-                            <ErgogenicsCard userId={userId} />
-                        </Stack>
-                        <Stack gap={{ base: 12.5, md: 'section' }} className="lg:col-span-4">
-                            <DietCard userId={userId} hasTrainer={!!trainerRel} />
-                        </Stack>
+                    <Grid gap={STORE_TOKENS.SPACING.SECTION} lgCols={12} fullWidth>
+                        {/* Left Column: Intensity & Volume (8 cols) */}
+                        <Box lgColSpan={8} fullWidth>
+                            <Stack gap={STORE_TOKENS.SPACING.SECTION} fullWidth>
+                                <StudentTrainingProtocols userId={userId} />
+                                <StudentCardioTracker userId={userId} />
+                                <StudentBioactivesManagement userId={userId} />
+                            </Stack>
+                        </Box>
+
+                        {/* Right Column: Nutrition & Fuel (4 cols) */}
+                        <Box lgColSpan={4} fullWidth>
+                            <Stack gap={STORE_TOKENS.SPACING.SECTION} fullWidth>
+                                <StudentNutritionAdherence userId={userId} />
+                            </Stack>
+                        </Box>
                     </Grid>
                 )}
-                <StudentDashboardModals userId={userId} showModal={showAutoTrainingModal} hasTrainer={!!trainerRel} />
+
+                {/* 5. System Orchestration Modals */}
+                <StudentDashboardModals 
+                    userId={userId} 
+                    showModal={showAutoTrainingModal} 
+                    hasTrainer={!!trainerRel} 
+                />
             </Stack>
         </RegistryMain>
     )
 }
-

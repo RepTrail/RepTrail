@@ -8,7 +8,7 @@ import { loginAndActivateAffiliate } from '@/actions/affiliate-actions'
 import { RegistryProvider } from '@/components/store/advanced/registry-context'
 import { AuthShell } from '@/components/store/advanced/auth-shell'
 import { AuthLoginForm } from '@/components/store/advanced/auth-login-form'
-import { AuthFormSkeleton } from '@/components/store/advanced/auth-form-skeleton'
+
 
 export default function AffiliadosLoginPage() {
     const router = useRouter()
@@ -37,7 +37,7 @@ export default function AffiliadosLoginPage() {
     return (
         <RegistryProvider defaultColor="amber">
             <AuthShell>
-                <Suspense fallback={<AuthFormSkeleton />}>
+                <Suspense fallback={null}>
                     <AuthLoginForm 
                         email={email}
                         setEmail={setEmail}

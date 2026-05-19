@@ -8,10 +8,10 @@ import { StudentMetaPixel } from './meta-pixel'
 import { PodiumCard, RankingRow } from '@/components/store/features(deprecated)/ranking-cards'
 import { PREFETCH_REGISTRY } from '@/lib/prefetch-registry'
 
-import { WorkoutCard } from '@/components/store/features(deprecated)/student-workout-card'
-import { CardioCard } from '@/components/store/features(deprecated)/student-cardio-card'
-import { DietCard } from '@/components/store/features(deprecated)/student-diet-card'
-import { ErgogenicsCard } from '@/components/store/features(deprecated)/student-ergogenics-card'
+import { WorkoutCard } from '@/components/store/features(deprecated)/workout-card'
+import { CardioCard } from '@/components/store/features(deprecated)/cardio-card'
+import { DietCard } from '@/components/store/features(deprecated)/diet-card'
+import { ErgogenicsCard } from '@/components/store/features(deprecated)/ergogenics-card'
 import { AIProtocolEmptyState } from '@/components/store/features(deprecated)/ai-protocol-empty-state'
 
 import { PaymentWarning } from '@/components/store/features(deprecated)/student-payment-warning'
@@ -38,7 +38,7 @@ import { Stack } from '@/components/store/base/stack'
 import { Grid } from '@/components/store/base/grid'
 import { StudentDashboardClient } from '@/components/store/features(deprecated)/student-dashboard-client'
 import { InactiveTrainerCard } from '@/components/store/features(deprecated)/inactive-trainer-card'
-import { NoPlanHero } from '@/components/store/features(deprecated)/no-plan-hero'
+import { StudentNoPlanSection } from '@/components/store/sections/student-no-plan-section'
 
 export default async function StudentDashboardPage() {
     // ─── OPTIMIZED IDENTITY (0ms) ──────────────────────────────────────────
@@ -48,7 +48,7 @@ export default async function StudentDashboardPage() {
     if (!userId) return null
 
     return (
-        <Suspense fallback={<StudentDashboardSkeleton />}>
+        <Suspense fallback={null}>
             <StudentDashboardContent userId={userId} />
         </Suspense>
     )
@@ -87,7 +87,7 @@ async function StudentDashboardContent({ userId }: { userId: string }) {
 
     await Promise.all([
         // Workout Chain
-        ...workoutIds.flatMap(id => [
+        ...workoutIds.flatMap((id: string) => [
             queryClient.prefetchQuery({
                 queryKey: QUERY_KEYS.workouts.status(userId, id),
                 queryFn: () => import('@/actions/log-actions').then(m => m.getWorkoutStatus(userId, id))
@@ -100,7 +100,7 @@ async function StudentDashboardContent({ userId }: { userId: string }) {
         workoutIds.length === 0 ? queryClient.setQueryData(QUERY_KEYS.workouts.status(userId, 'no-workout'), { status: 'empty' }) : Promise.resolve(),
 
         // Cardio Chain
-        ...cardioIds.map(id =>
+        ...cardioIds.map((id: string) =>
             queryClient.prefetchQuery({
                 queryKey: QUERY_KEYS.cardio.detail(id),
                 queryFn: () => import('@/actions/cardio-actions').then(m => m.getAssignedCardios(userId))
@@ -180,7 +180,7 @@ async function StudentDashboardContent({ userId }: { userId: string }) {
         return (
             <HydrationBoundary state={dehydrate(queryClient)}>
                 <StudentMetaPixel />
-                <NoPlanHero ranking={ranking} />
+                <StudentNoPlanSection ranking={ranking} />
             </HydrationBoundary>
         )
     }
@@ -199,30 +199,3 @@ async function StudentDashboardContent({ userId }: { userId: string }) {
         </HydrationBoundary>
     )
 }
-
-/**
- * ─── SKELETON (0ms Nav Frame) ──────────────────────────────────────────
- */
-function StudentDashboardSkeleton() {
-    return (
-        <Stack gap={{ base: 12.5, md: 'section' }} className="animate-pulse pb-20">
-            <div className="h-12 w-full bg-zinc-900/50 border border-zinc-800/50 rounded-xl" />
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                <div className="space-y-4">
-                    <div className="h-10 w-48 bg-zinc-900 rounded-xl" />
-                    <div className="h-4 w-64 bg-zinc-900 rounded-md" />
-                </div>
-                <div className="h-16 w-32 bg-zinc-900 rounded-xl" />
-            </div>
-            <Grid gap={{ base: 12.5, md: 'section' }} lgCols={12}>
-                <Stack gap={{ base: 12.5, md: 'section' }} className="lg:col-span-8">
-                    <div className="h-[280px] bg-zinc-900 rounded-[2.5rem]" />
-                    <div className="h-[300px] bg-zinc-900 rounded-[2.5rem]" />
-                    <div className="h-[200px] bg-zinc-900 rounded-[2.5rem]" />
-                </Stack>
-                <div className="lg:col-span-4 h-[600px] bg-zinc-900 rounded-[2.5rem]" />
-            </Grid>
-        </Stack>
-    )
-}
-

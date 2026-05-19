@@ -82,21 +82,24 @@ export async function getCardioLibrary(userId?: string) {
     }
 }
 
-export async function createCardio(nameOrData: string | FormData, description?: string) {
+export async function createCardio(nameOrData: string | FormData, description?: string, durationMinutes?: number, suggestedIntensity?: string, daysOfWeek?: number[]) {
     const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { error: 'Unauthorized' }
 
     let name = ''
     let desc = description
-    let duration = 30
-    let intensity = 'Moderada'
+    let duration = durationMinutes ?? 30
+    let intensity = suggestedIntensity ?? 'Moderada'
+    let days = daysOfWeek
 
     if (nameOrData instanceof FormData) {
         name = nameOrData.get('name') as string
         desc = (nameOrData.get('description') as string) || undefined
         duration = parseInt(nameOrData.get('duration_minutes')?.toString() || '30')
         intensity = nameOrData.get('suggested_intensity')?.toString() || 'Moderada'
+        const dJson = nameOrData.get('daysOfWeek')?.toString()
+        if (dJson) days = JSON.parse(dJson)
     } else {
         name = nameOrData
     }
@@ -116,6 +119,24 @@ export async function createCardio(nameOrData: string | FormData, description?: 
 
         if (error) throw error
         
+        // Auto-assign if days are provided
+        if (days && days.length > 0) {
+            const assignments = days.map(day => ({
+                student_id: user.id,
+                cardio_id: data.id,
+                duration_minutes: duration,
+                suggested_intensity: intensity,
+                day_of_week: day,
+                active: true
+            }))
+
+            const { error: assignErr } = await supabase
+                .from('assigned_cardios')
+                .insert(assignments)
+
+            if (assignErr) console.error('[Cardio] Failed to auto-assign:', assignErr)
+        }
+
         revalidateTag('cardio', 'page')
         revalidateTag(`trainer-cardio-${user.id}`, 'page')
         revalidatePath('/dashboard/trainer/cardio')
@@ -648,7 +669,7 @@ export async function getCardioStatus(userId: string) {
     try {
         const { data, error } = await supabase
             .from('cardio_logs')
-            .select('assigned_cardio_id, status')
+            .select('assigned_cardio_id, status, elapsed_seconds')
             .eq('student_id', userId)
             .gte('started_at', start)
             .lte('started_at', end)

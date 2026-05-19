@@ -25,9 +25,9 @@ export function StudentNav({ hasTrainer, steroidUse, autoTrainingActive = false,
         { href: '/dashboard/student/diet', icon: <Utensils className="w-4 h-4" />, label: 'Minha Dieta', requiresTrainer: true },
         { href: '/dashboard/student/ergogenics', icon: <Syringe className="w-4 h-4" />, label: 'Ergogênicos', requiresTrainer: true, showOnlyIfSteroidUse: true },
         { href: '/dashboard/student/progress', icon: <TrendingUp className="w-4 h-4" />, label: 'Evolução', requiresTrainer: true },
-        { href: '/dashboard/student/import-pdf', icon: <Sparkles className="w-4 h-4" />, label: 'Importar PDF', requiresTrainer: true, hideIfHasTrainer: true },
-        { href: '/dashboard/student/anamnese', icon: <ClipboardList className="w-4 h-4" />, label: 'Anamnese', requiresTrainer: false },
-        { href: '/buscar-personal', icon: <Search className="w-4 h-4" />, label: 'Buscar Personal', requiresTrainer: false, hideIfHasTrainer: true },
+        { href: '/dashboard/student/import-pdf', icon: <Sparkles className="w-4 h-4" />, label: 'Importar PDF', requiresTrainer: false, hideIfHasTrainer: true },
+        { href: '/dashboard/student/anamnese', icon: <ClipboardList className="w-4 h-4" />, label: 'Anamnese', requiresTrainer: true, showOnlyIfHasTrainer: true },
+        { href: '/dashboard/student/buscar-personal', icon: <Search className="w-4 h-4" />, label: 'Buscar Personal', requiresTrainer: false, hideIfHasTrainer: true },
         { href: '/dashboard/student/feed', icon: <UserCheck className="w-4 h-4" />, label: 'Feed de Alunos', requiresTrainer: false },
         { href: '/dashboard/student/ranking', icon: <Trophy className="w-4 h-4" />, label: 'Ranking', requiresTrainer: false },
         { href: '/dashboard/student/loja', icon: <ShoppingBag className="w-4 h-4" />, label: 'Loja', requiresTrainer: false },
@@ -41,7 +41,7 @@ export function StudentNav({ hasTrainer, steroidUse, autoTrainingActive = false,
         if (item.showOnlyIfHasTrainer && !hasTrainer) return false
         if (item.showOnlyIfSteroidUse && !steroidUse) return false
         // Hide "Buscar Personal" when auto-training is active
-        if (item.href === '/buscar-personal' && autoTrainingActive) return false
+        if (item.href === '/dashboard/student/buscar-personal' && autoTrainingActive) return false
         return !item.requiresTrainer || hasTrainer || autoTrainingActive
     })
 
@@ -130,9 +130,9 @@ export function MobileStudentNav({ hasTrainer, steroidUse, autoTrainingActive = 
                 </SmartLink>
             ) : !autoTrainingActive ? (
                 <SmartLink
-                    href="/buscar-personal"
+                    href="/dashboard/student/buscar-personal"
                     prefetch={true}
-                    className={`z-10 relative p-2.5 rounded-xl transition-all ${pathname === '/buscar-personal' ? 'bg-orange-500 text-zinc-950' : 'text-zinc-500 hover:text-zinc-300'}`}
+                    className={`z-10 relative p-2.5 rounded-xl transition-all ${pathname === '/dashboard/student/buscar-personal' ? 'bg-orange-500 text-zinc-950' : 'text-zinc-500 hover:text-zinc-300'}`}
                 >
                     <Search className="w-5 h-5" />
                 </SmartLink>

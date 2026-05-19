@@ -26,12 +26,14 @@ export function SidebarProfile({
     onOpenSettings,
     settingsHref,
     settingsIcon: SettingsIcon = Settings,
+    settingsVariant = 'zinc',
     adminHref = '/admin',
     user
 }: { 
     onOpenSettings?: () => void
     settingsHref?: string
     settingsIcon?: any
+    settingsVariant?: any
     adminHref?: string
     user?: SidebarProfileUser
 }) {
@@ -41,7 +43,7 @@ export function SidebarProfile({
 
     const settingsTrigger = (
         <Button
-            variant="zinc"
+            variant={settingsVariant}
             rounded={STORE_TOKENS.RADIUS.FULL}
             size="sm"
             isIconOnly

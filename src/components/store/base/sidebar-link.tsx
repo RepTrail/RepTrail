@@ -5,6 +5,7 @@ import { LucideIcon } from 'lucide-react'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 interface BaseSidebarLinkProps {
+  id?: string
   icon: LucideIcon
   label: string
   active?: boolean
@@ -14,6 +15,7 @@ interface BaseSidebarLinkProps {
 }
 
 export function BaseSidebarLink({
+  id,
   icon,
   label,
   active,
@@ -56,7 +58,7 @@ export function BaseSidebarLink({
 
   if (href) {
     return (
-      <Link href={href} className={classes} role="button">
+      <Link id={id} href={href} className={classes} role="button">
         {content}
       </Link>
     )
@@ -64,6 +66,7 @@ export function BaseSidebarLink({
 
   return (
     <button
+      id={id}
       onClick={onClick}
       className={classes}
     >

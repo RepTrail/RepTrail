@@ -2,7 +2,6 @@
 
 import React from 'react'
 import { Box } from '@/components/store/base/box'
-import { cn } from '@/lib/utils'
 import { Stack } from '@/components/store/base/stack'
 import { Font } from '@/components/store/base/font'
 import { Icon } from '@/components/store/base/icon'
@@ -10,11 +9,9 @@ import { Grid } from '@/components/store/base/grid'
 import { Badge } from '@/components/store/base/badge'
 import { GlassPanel } from '@/components/store/base/surface'
 import { BackgroundIcon } from '@/components/store/base/background-icon'
-import { Activity, Play, Timer, Zap, CheckCircle } from 'lucide-react'
+import { Activity, Play, Timer, Zap, CheckCircle, Pause, Square } from 'lucide-react'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { EmptyState } from './empty-state'
-import { RegistryActionModal } from '@/components/store/advanced/registry-action-modal'
-import { Edit3 } from 'lucide-react'
 
 interface CardioTimerCardProps {
     title: string
@@ -23,11 +20,16 @@ interface CardioTimerCardProps {
     remainingTime: string
     estimatedBurn: string
     status?: 'not_started' | 'completed' | 'empty'
+    isRunning?: boolean
+    progress?: number
+    onAction?: () => void
+    onPlay?: () => void
+    onPause?: () => void
+    onStop?: () => void
 }
 
 /**
- * CardioTimerCard: Refactored to normal GlassPanel.
- * - All containers (main and sub-cards) now use GlassPanel variant="glass".
+ * CardioTimerCard: Premium card for cardio activities.
  */
 export function CardioTimerCard({
     title,
@@ -35,7 +37,13 @@ export function CardioTimerCard({
     intensity,
     remainingTime,
     estimatedBurn,
-    status = 'not_started'
+    status = 'not_started',
+    isRunning = false,
+    progress = 0,
+    onAction,
+    onPlay,
+    onPause,
+    onStop
 }: CardioTimerCardProps) {
 
     if (status === 'empty') {
@@ -101,7 +109,6 @@ export function CardioTimerCard({
                                 color={isCompleted ? STORE_TOKENS.COLORS.SUCCESS : STORE_TOKENS.COLORS.WARNING}
                                 size="xs"
                             />
-                            
                         </Stack>
                     </Stack>
 
@@ -114,24 +121,49 @@ export function CardioTimerCard({
                         </Font>
                     </Stack>
 
-                    <Box
-                        width={96}
-                        height={96}
-                        rounded={STORE_TOKENS.RADIUS.FULL}
-                        bg={isCompleted ? STORE_TOKENS.COLORS.SUCCESS : "primary"}
-                        bgOpacity={STORE_TOKENS.OPACITY.INTERMEDIATE}
-                        display="flex"
-                        align="center"
-                        justify="center"
-                        cursor={isCompleted ? "default" : "pointer"}
-                        shrink={0}
-                        transition
-                        hoverBgOpacity={isCompleted ? STORE_TOKENS.OPACITY.INTERMEDIATE : STORE_TOKENS.OPACITY.MEDIUM}
-                        border={true}
-                        borderColor={isCompleted ? "emerald-500/20" : STORE_TOKENS.COLORS.DIVIDER.STANDARD}
-                    >
-                        <Icon icon={isCompleted ? CheckCircle : Play} size="lg" color={isCompleted ? STORE_TOKENS.COLORS.SUCCESS : STORE_TOKENS.COLORS.BRAND} />
-                    </Box>
+                    <Stack direction="row" gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
+                        <Box
+                            width={80}
+                            height={80}
+                            rounded={STORE_TOKENS.RADIUS.FULL}
+                            bg={isCompleted ? STORE_TOKENS.COLORS.SUCCESS : isRunning ? "orange" : "primary"}
+                            bgOpacity={STORE_TOKENS.OPACITY.INTERMEDIATE}
+                            display="flex"
+                            align="center"
+                            justify="center"
+                            cursor={isCompleted ? "default" : "pointer"}
+                            shrink={0}
+                            transition
+                            hoverBgOpacity={STORE_TOKENS.OPACITY.MEDIUM}
+                            border={true}
+                            borderColor={isCompleted ? "emerald-500/20" : isRunning ? "orange-500/20" : STORE_TOKENS.COLORS.DIVIDER.STANDARD}
+                            onClick={isCompleted ? undefined : isRunning ? onPause : onPlay || onAction}
+                        >
+                            <Icon icon={isCompleted ? CheckCircle : isRunning ? (remainingTime === "00:00" ? CheckCircle : Pause) : Play} size="lg" color={isCompleted ? STORE_TOKENS.COLORS.SUCCESS : isRunning ? "orange" : STORE_TOKENS.COLORS.BRAND} />
+                        </Box>
+
+                        {isRunning && (
+                            <Box
+                                width={60}
+                                height={60}
+                                rounded={STORE_TOKENS.RADIUS.FULL}
+                                bg="red"
+                                bgOpacity={STORE_TOKENS.OPACITY.INTERMEDIATE}
+                                display="flex"
+                                align="center"
+                                justify="center"
+                                cursor="pointer"
+                                shrink={0}
+                                transition
+                                hoverBgOpacity={STORE_TOKENS.OPACITY.MEDIUM}
+                                border={true}
+                                borderColor="red-500/20"
+                                onClick={onStop}
+                            >
+                                <Icon icon={Square} size="md" color="red" />
+                            </Box>
+                        )}
+                    </Stack>
 
                     <Grid cols={{ base: 2.5, lg: 2 }} gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
                         <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM} variant="glass" display="flex" direction="col" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
@@ -149,7 +181,6 @@ export function CardioTimerCard({
                     </Grid>
                 </Stack>
             </Box>
-
         </GlassPanel>
     )
 }

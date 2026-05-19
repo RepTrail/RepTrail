@@ -1,0 +1,182 @@
+'use client'
+
+import React from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { QUERY_KEYS } from '@/lib/query-keys'
+import { getStudentErgogenics, deleteErgogenic, addErgogenic, updateErgogenic } from '@/actions/ergogenics-actions'
+import { getStudentProfile, getStudentTrainer } from '@/actions/student-actions'
+import { useRealtimeSync } from '@/hooks/use-realtime-sync'
+import { RegistrySection } from '@/components/store/advanced/registry-section'
+import { ErgogenicManagementSectionContent } from '@/components/store/sections/ergogenic-management-section-content'
+import { FlaskConical, Plus } from 'lucide-react'
+import { Stack } from '@/components/store/base/stack'
+import { Button } from '@/components/store/base/button'
+import { Icon } from '@/components/store/base/icon'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
+import { RegistryActionModal, RegistryActionType } from '@/components/store/advanced/registry-action-modal'
+import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { ENTITIES } from '@/lib/outbox-db'
+
+interface StudentErgogenicManagementSmartProps {
+    userId: string
+}
+
+export function StudentErgogenicManagementSmart({ userId }: StudentErgogenicManagementSmartProps) {
+    const [actionModal, setActionModal] = React.useState<{ isOpen: boolean, type: RegistryActionType, data?: any }>({
+        isOpen: false,
+        type: 'assign_ergogenic'
+    })
+
+    // 1. Data Fetching
+    const { data: profile } = useQuery({
+        queryKey: QUERY_KEYS.student.details(userId),
+        queryFn: () => getStudentProfile(userId),
+        staleTime: 1000 * 60 * 5
+    })
+
+    const { data: trainerLink } = useQuery({
+        queryKey: QUERY_KEYS.profile.trainer(userId),
+        queryFn: () => getStudentTrainer(userId),
+        staleTime: 1000 * 60 * 5
+    })
+
+    const { data: ergogenicsData = [], isLoading } = useQuery({
+        queryKey: QUERY_KEYS.ergogenics.all(userId),
+        queryFn: async () => {
+            const res = await getStudentErgogenics(userId)
+            if (Array.isArray(res)) return res
+            return []
+        },
+        staleTime: 1000 * 60 * 5
+    })
+
+    const ergogenics = Array.isArray(ergogenicsData) ? ergogenicsData : []
+
+    const isAutoMode = !trainerLink
+
+    // 2. Realtime Sync
+    useRealtimeSync({
+        table: 'ergogenics',
+        queryKey: QUERY_KEYS.ergogenics.all(userId),
+        filter: `student_id=eq.${userId}`
+    })
+
+    React.useEffect(() => {
+        const handler = (e: any) => {
+            if (e.detail?.type === 'create_ergogenic') {
+                openAction('create_ergogenic', {})
+            }
+        }
+        window.addEventListener('open-ergogenic-action', handler)
+        return () => window.removeEventListener('open-ergogenic-action', handler)
+    }, [])
+
+    // 3. Mutations
+    const { mutate: deleteMutation } = useOptimisticMutation({
+        queryKey: QUERY_KEYS.ergogenics.all(userId),
+        entity: ENTITIES.ERGOGENIC,
+        actionName: 'delete-ergogenic',
+        mutationFn: async ({ id }: { id: string }) => {
+            const res = await deleteErgogenic(id, userId)
+            if (res.error) throw new Error(res.error)
+            return res
+        }
+    })
+
+    const { mutate: duplicateMutation } = useOptimisticMutation({
+        queryKey: QUERY_KEYS.ergogenics.all(userId),
+        entity: ENTITIES.ERGOGENIC,
+        actionName: 'duplicate-ergogenic',
+        mutationFn: async ({ item }: { item: any }) => {
+            const { id, created_at, updated_at, ...data } = item
+            const res = await addErgogenic({ 
+                ...data, 
+                name: `${item.name} (Cópia)`,
+                student_id: userId 
+            })
+            if (res.error) throw new Error(res.error)
+            return res
+        }
+    })
+
+    const { mutate: assignMutation } = useOptimisticMutation({
+        queryKey: QUERY_KEYS.ergogenics.all(userId),
+        entity: ENTITIES.ERGOGENIC,
+        actionName: 'assign-ergogenic',
+        mutationFn: async ({ ergogenicId, days }: { ergogenicId: string, days: number[] }) => {
+            const res = await updateErgogenic(ergogenicId, userId, { application_days: days })
+            if (res.error) throw new Error(res.error)
+            return res
+        }
+    })
+
+    const { mutate: createMutation } = useOptimisticMutation({
+        queryKey: QUERY_KEYS.ergogenics.all(userId),
+        entity: ENTITIES.ERGOGENIC,
+        actionName: 'add-ergogenic',
+        mutationFn: async (data: any) => {
+            const res = await addErgogenic({ ...data, student_id: userId })
+            if (res.error) throw new Error(res.error)
+            return res
+        }
+    })
+
+    const handleConfirm = (data?: any) => {
+        if (!actionModal.data && actionModal.type !== ('create_ergogenic' as any)) return
+
+        switch (actionModal.type) {
+            case 'confirm_delete':
+                deleteMutation({ id: actionModal.data.id })
+                break
+            case 'confirm_duplicate':
+                duplicateMutation({ item: actionModal.data })
+                break
+            case 'assign_ergogenic':
+                if (Array.isArray(data)) {
+                    assignMutation({ ergogenicId: actionModal.data.id, days: data })
+                }
+                break
+            case ('create_ergogenic' as any):
+                createMutation(data)
+                break
+        }
+        closeAction()
+    }
+
+    const openAction = (type: RegistryActionType, data?: any) => {
+        setActionModal({ 
+            isOpen: true, 
+            type, 
+            data: { 
+                ...data, 
+                item: data?.name, 
+                dosage: data?.weekly_dosage,
+                selectedDays: data?.application_days || [] 
+            } 
+        })
+    }
+
+    const closeAction = () => setActionModal(prev => ({ ...prev, isOpen: false }))
+
+    return (
+        <RegistrySection>
+            <ErgogenicManagementSectionContent 
+                items={ergogenics}
+                mode={isAutoMode ? 'auto' : 'personal'}
+                onEdit={(item) => openAction('edit_ergogenic', item)}
+                onDelete={(item) => openAction('confirm_delete', item)}
+                onDuplicate={(item) => openAction('confirm_duplicate', item)}
+                onSchedule={(item) => openAction('assign_ergogenic', item)}
+            />
+
+            <RegistryActionModal 
+                isOpen={actionModal.isOpen}
+                onClose={closeAction}
+                type={actionModal.type}
+                onConfirm={handleConfirm}
+                initialData={actionModal.data}
+                isLoading={false}
+            />
+        </RegistrySection>
+    )
+}

@@ -6,10 +6,12 @@ import { QUERY_KEYS } from '@/lib/query-keys'
 import { getStudentDailyDiet, getTrainerDiets, getAssignedDiets } from '@/actions/diet-actions'
 import { getStudentProfile, getStudentTrainer } from '@/actions/student-actions'
 import { ensureDailyTracking } from '@/actions/tracking-actions'
-import { DietPageClient } from '@/components/store/features(deprecated)/student-diet-page-client'
+import { StudentDietManagementSmart } from '@/components/store/advanced/student-diet-management-smart'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 
 import { PREFETCH_REGISTRY } from '@/lib/prefetch-registry'
+
+import { StudentRegistryHeaderActions } from '@/components/store/advanced/student-registry-header-actions'
 
 export default async function StudentDietPage() {
     const headerList = await headers()
@@ -39,11 +41,12 @@ export default async function StudentDietPage() {
             icon="Utensils"
             contextLabel="Nutrição & Dieta"
             showTabs={false}
+            rightElement={<StudentRegistryHeaderActions userId={userId} type="diet" />}
         >
             <Suspense fallback={<div className="animate-pulse space-y-10"><div className="h-[500px] bg-zinc-900 rounded-[2.5rem]" /></div>}>
                 <div suppressHydrationWarning>
                     <HydrationBoundary state={dehydrate(queryClient)}>
-                        <DietPageClient userId={userId} />
+                        <StudentDietManagementSmart userId={userId} />
                     </HydrationBoundary>
                 </div>
             </Suspense>

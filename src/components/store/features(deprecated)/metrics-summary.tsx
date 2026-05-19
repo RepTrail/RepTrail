@@ -1,7 +1,6 @@
 'use client'
 
 import { getMetricsSummary } from '@/actions/metrics-actions'
-import { Skeleton } from '@/components/ui/skeleton'
 
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { useQuery } from '@tanstack/react-query'
@@ -17,10 +16,8 @@ export function MetricsSummary({ userId }: MetricsSummaryProps) {
         queryFn: () => getMetricsSummary(userId),
     })
 
-    // Skeleton Fallback: Only if loading AND no cache available
-    if (isLoading && !metrics) {
-        return <MetricsSummary.Skeleton />
-    }
+    // Loading state handled by parent
+    if (isLoading) return null
 
     return (
         <div className="grid grid-cols-2 gap-4">
@@ -42,18 +39,5 @@ export function MetricsSummary({ userId }: MetricsSummaryProps) {
     )
 }
 
-MetricsSummary.Skeleton = function MetricsSummarySkeleton() {
-    return (
-        <div className="grid grid-cols-2 gap-4 animate-pulse">
-            <div className="bg-zinc-900/30 border border-zinc-800/50 rounded-3xl p-5 space-y-1">
-                <Skeleton className="h-[14px] w-12 bg-zinc-800/50" />
-                <Skeleton className="h-8 w-16 bg-zinc-800/50" />
-            </div>
-            <div className="bg-zinc-900/30 border border-zinc-800/50 rounded-3xl p-5 space-y-1">
-                <Skeleton className="h-[14px] w-12 bg-zinc-800/50" />
-                <Skeleton className="h-8 w-16 bg-zinc-800/50" />
-            </div>
-        </div>
-    )
-}
+
 

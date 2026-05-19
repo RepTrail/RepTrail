@@ -10,6 +10,7 @@ import { SidebarItem } from '../intermediary/sidebar-item'
 import { SidebarProfile } from '../intermediary/sidebar-profile'
 import { Zap, Activity, Shield, Users, Dumbbell, Trophy, X } from 'lucide-react'
 import { useRegistry } from '@/components/store/advanced/registry-context'
+import { usePathname } from 'next/navigation'
 import { Sidebar, Divider } from '@/components/store/base/layout'
 import { Button } from '@/components/store/base/button'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
@@ -37,6 +38,11 @@ export function RegistrySidebar({
   ]
 
   const sections = externalSections || defaultSections
+  const pathname = usePathname()
+
+  React.useEffect(() => {
+    setIsSidebarOpen(false)
+  }, [pathname, setIsSidebarOpen])
 
   const scrollToSection = (id: string) => {
     setActiveSection(id)

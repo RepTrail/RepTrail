@@ -7,17 +7,17 @@ import { SidebarItem } from '../intermediary/sidebar-item'
 import { BottomNavItem } from '../intermediary/bottom-nav-item'
 import { SidebarProfile } from '../intermediary/sidebar-profile'
 import { Icon } from '@/components/store/base/icon'
-import { Button } from '@/components/store/base/button'
 import { Box } from '@/components/store/base/box'
 import { Main } from '@/components/store/base/main'
 import { Stack } from '@/components/store/base/stack'
-import { Divider, MobileNavContainer, MobileHeaderContainer, Inline } from '@/components/store/base/layout'
+import { Divider, MobileNavContainer, Inline } from '@/components/store/base/layout'
 import { Surface, GlassPanel } from '@/components/store/base/surface'
 import { BackgroundEffects } from '@/components/store/base/background-effects'
 import { ImpersonationBar } from './impersonation-bar'
+import { StoreMobileHeader } from './store-mobile-header'
 import { cn } from '@/lib/utils'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
-import { RegistryColor } from './registry-context'
+import { RegistryColor, RegistryProvider } from './registry-context'
 import {
     Home, Users, Dumbbell, Utensils, Activity, FlaskConical,
     ShoppingBag, CreditCard, Trophy, User, FileUp, Search,
@@ -26,7 +26,7 @@ import {
     Menu, X, ArrowRightLeft, LucideIcon
 } from 'lucide-react'
 
-// ─── Icon Map (Server-safe string → LucideIcon) ───────────────────────────────
+// ─── Icon Map ───────────────────────────────────────────────────────────────
 
 const iconMap: Record<string, LucideIcon> = {
     Home, Users, Dumbbell, Utensils, Activity, FlaskConical,
@@ -41,7 +41,6 @@ const iconMap: Record<string, LucideIcon> = {
 export interface DashboardNavLink {
     href: string
     label: string
-    /** Pass the icon name as a string, e.g. 'Home', 'Dumbbell', 'Trophy' */
     icon: string
     exact?: boolean
     hidden?: boolean
@@ -60,57 +59,47 @@ interface DashboardShellProps {
     children: React.ReactNode
     color: RegistryColor
     links: DashboardNavLink[]
-    /** Subset for bottom nav (defaults to first 5 visible links) */
     mobileLinks?: DashboardNavLink[]
     user?: DashboardUser
     profileHref?: string
     profileIcon?: any
-}
-
-// ─── Color Maps ───────────────────────────────────────────────────────────────
-
-const lightColorMap: Record<RegistryColor, string> = {
-    blue: '#3b82f633', // blue-500/20 approx
-    red: '#ef444433',
-    amber: '#f59e0b33',
-    emerald: '#10b98133',
-    orange: '#f9731633',
-    zinc: '#71717a33',
-}
-
-const orbColorMap: Record<RegistryColor, string> = {
-    blue: '#3b82f61a', // blue-500/10 approx
-    red: '#ef44441a',
-    amber: '#f59e0b1a',
-    emerald: '#10b9811a',
-    orange: '#f973161a',
-    zinc: '#71717a1a',
+    settingsHref?: string
+    settingsVariant?: any
 }
 
 // ─── Main Shell ───────────────────────────────────────────────────────────────
 
-export function DashboardShell({ children, color, links, mobileLinks, user, profileHref, profileIcon }: DashboardShellProps) {
+export function DashboardShell({ children, color, links, mobileLinks, user, profileHref, profileIcon, settingsHref, settingsVariant }: DashboardShellProps) {
     const [isSidebarOpen, setIsSidebarOpen] = React.useState(false)
+    const pathname = usePathname()
+    const isPlayerMode = pathname.includes('/workout/') && !pathname.endsWith('/workouts')
 
     const visibleLinks = links.filter(l => !l.hidden)
     const bottomLinks = mobileLinks?.filter(l => !l.hidden) ?? visibleLinks.slice(0, 5)
 
     const ResolvedProfileIcon = typeof profileIcon === 'string' ? iconMap[profileIcon] : profileIcon
 
+    const handleOpenSettings = () => {
+        window.dispatchEvent(new CustomEvent('open-settings'))
+    }
+
+    const resolvedSettingsHref = settingsHref || (profileIcon === 'ArrowRightLeft' ? '/dashboard' : undefined)
+    const resolvedSettingsVariant = settingsVariant || (profileIcon === 'ArrowRightLeft' ? 'outline-emerald' : undefined)
+
     return (
-        <Surface
-            minHeight="screen"
-            bg="zinc"
-            bgOpacity={STORE_TOKENS.OPACITY.BACKGROUND}
-            overflowX="hidden"
-            display="flex"
-            direction="col"
-            position="relative"
-        >
-            {/* Background Effects (Grid & Orbs) — Unified Base Component */}
+        <RegistryProvider primaryColor={color} defaultColor={color}>
+            <Surface
+                minHeight="screen"
+                bg="zinc"
+                bgOpacity={STORE_TOKENS.OPACITY.BACKGROUND}
+                overflowX="hidden"
+                display="flex"
+                direction="col"
+                position="relative"
+            >
             <BackgroundEffects variant="all" />
 
-            {/* Desktop Sidebar */}
+            {/* Sidebar (Mobile Right Drawer / Desktop Static Left) */}
             <DashboardSidebar
                 color={color}
                 links={visibleLinks}
@@ -119,38 +108,44 @@ export function DashboardShell({ children, color, links, mobileLinks, user, prof
                 setIsSidebarOpen={setIsSidebarOpen}
                 profileHref={profileHref}
                 profileIcon={ResolvedProfileIcon}
+                settingsHref={resolvedSettingsHref}
+                settingsVariant={resolvedSettingsVariant}
+                onOpenSettings={handleOpenSettings}
             />
 
-            {/* Mobile Top Header */}
-            <DashboardMobileHeader
-                color={color}
-                isSidebarOpen={isSidebarOpen}
-                setIsSidebarOpen={setIsSidebarOpen}
-            />
+            {/* Mobile Header (Canonical) */}
+            {!isPlayerMode && (
+                <StoreMobileHeader
+                    onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                />
+            )}
 
             {/* Mobile Bottom Nav */}
-            <DashboardBottomNav color={color} links={bottomLinks} />
+            {!isPlayerMode && <DashboardBottomNav color={color} links={bottomLinks} />}
 
-            {/* Main Content */}
+            {/* Main Content Area */}
             <Main
                 flex1
                 fullWidth
                 transition
                 position="relative"
                 zIndex={10}
-                paddingLeft={{ base: 0, lg: 'sidebar-wide' }}
-              >
+                paddingLeft={{ base: 0, md: 'sidebar-wide' }}
+                display="flex"
+                direction="col"
+            >
                 <ImpersonationBar color={color} />
                 {children}
             </Main>
-        </Surface>
+            </Surface>
+        </RegistryProvider>
     )
 }
 
-// ─── Desktop Sidebar ──────────────────────────────────────────────────────────
+// ─── Sidebar Sub-component ───────────────────────────────────────────────────
 
 function DashboardSidebar({
-    color, links, user, isSidebarOpen, setIsSidebarOpen, profileHref, profileIcon
+    color, links, user, isSidebarOpen, setIsSidebarOpen, profileHref, profileIcon, settingsHref, settingsVariant, onOpenSettings
 }: {
     color: RegistryColor
     links: DashboardNavLink[]
@@ -159,8 +154,15 @@ function DashboardSidebar({
     setIsSidebarOpen: (v: boolean) => void
     profileHref?: string
     profileIcon?: any
+    settingsHref?: string
+    settingsVariant?: any
+    onOpenSettings?: () => void
 }) {
     const pathname = usePathname()
+
+    React.useEffect(() => {
+        setIsSidebarOpen(false)
+    }, [pathname, setIsSidebarOpen])
 
     const isActive = (link: DashboardNavLink) =>
         link.exact ? pathname === link.href : pathname.startsWith(link.href)
@@ -177,7 +179,7 @@ function DashboardSidebar({
                     display={{ base: 'block', lg: 'none' }}
                     onClick={() => setIsSidebarOpen(false)}
                 >
-                   <></>
+                    <></>
                 </Surface>
             )}
 
@@ -189,8 +191,8 @@ function DashboardSidebar({
                 zIndex={100}
                 width="sidebar-wide"
                 transition
-                pin="left"
-                translateX={{ base: isSidebarOpen ? 0 : '-full', lg: 0 }}
+                pin={{ base: 'right', lg: 'left' }}
+                translateX={{ base: isSidebarOpen ? 0 : 'full', lg: 0 }}
             >
                 <GlassPanel
                     fullWidth
@@ -201,7 +203,19 @@ function DashboardSidebar({
                     rounded="none"
                     border="none"
                 >
-                    {/* Right border for desktop static */}
+                    {/* Drawer Border (Mobile Left / Desktop Right) */}
+                    <Surface 
+                        display={{ base: 'block', lg: 'none' }} 
+                        position="absolute" 
+                        pin="left" 
+                        top={0} 
+                        fullHeight 
+                        width="px" 
+                        bg="white" 
+                        bgOpacity={5}
+                    >
+                        <></>
+                    </Surface>
                     <Surface 
                         display={{ base: 'none', lg: 'block' }} 
                         position="absolute" 
@@ -228,10 +242,14 @@ function DashboardSidebar({
                                     {links.map((link) => {
                                         const IconComp = iconMap[link.icon]
                                         const active = isActive(link)
+                                        const tourId = link.label === "Importar PDF" ? "tour-import-pdf" : 
+                                                       link.label === "Alunos" ? "tour-sidebar-students" : 
+                                                       undefined
 
                                         return (
                                             <SidebarItem
                                                 key={link.href}
+                                                id={tourId}
                                                 label={link.label}
                                                 icon={IconComp ?? Home}
                                                 active={active}
@@ -254,8 +272,10 @@ function DashboardSidebar({
                     <Box padding={STORE_TOKENS.PADDING.CONTAINER} shrink={0}>
                         <SidebarProfile
                             user={user}
-                            settingsHref={profileHref}
                             settingsIcon={profileIcon}
+                            settingsHref={settingsHref}
+                            settingsVariant={settingsVariant}
+                            onOpenSettings={onOpenSettings}
                         />
                     </Box>
                 </GlassPanel>
@@ -264,35 +284,7 @@ function DashboardSidebar({
     )
 }
 
-// ─── Mobile Header ────────────────────────────────────────────────────────────
-
-function DashboardMobileHeader({
-    color, isSidebarOpen, setIsSidebarOpen
-}: {
-    color: RegistryColor
-    isSidebarOpen: boolean
-    setIsSidebarOpen: (v: boolean) => void
-}) {
-    return (
-        <MobileHeaderContainer>
-            <Inline justify="between" fullWidth align="center">
-                <Logo size="sm" color={color as any} />
-                <Surface variant="glass" padding={2.5} rounded={STORE_TOKENS.RADIUS.SYSTEM}>
-                    <Button
-                        variant="ghost"
-                        size="md"
-                        isIconOnly
-                        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                    >
-                        <Icon icon={Menu} color={color as any} size="sm" />
-                    </Button>
-                </Surface>
-            </Inline>
-        </MobileHeaderContainer>
-    )
-}
-
-// ─── Mobile Bottom Nav ────────────────────────────────────────────────────────
+// ─── Bottom Nav Sub-component ───────────────────────────────────────────────
 
 function DashboardBottomNav({ color, links }: { color: RegistryColor; links: DashboardNavLink[] }) {
     const pathname = usePathname()

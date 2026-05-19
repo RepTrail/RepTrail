@@ -19,6 +19,7 @@ export type FontVariant =
   | 'tiny'
   | 'massive'
   | 'display'
+  | 'hero'
 
 type FontColor = 
   | 'PRIMARY' | 'SECONDARY' | 'MUTED' | 'DIM'
@@ -96,7 +97,8 @@ export function Font({
     'sub-tiny': 'text-[10px] font-medium leading-tight',
     tiny: 'text-[9px] font-medium leading-tight',
     massive: 'text-5xl md:text-8xl font-black tracking-tighter uppercase italic leading-[0.8]',
-    display: 'text-4xl md:text-7xl font-black tracking-tighter uppercase italic leading-[0.8]'
+    display: 'text-4xl md:text-7xl font-black tracking-tighter uppercase italic leading-[0.8]',
+    hero: 'text-4xl md:text-8xl font-black tracking-tighter uppercase italic leading-[0.8]'
   }
 
   const isRespVariant = typeof variant === 'object'

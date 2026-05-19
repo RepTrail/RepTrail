@@ -13,6 +13,7 @@ interface IconProps {
   className?: string
   animate?: 'spin'
   opacity?: 0 | 10 | 20 | 30 | 40 | 50 | 60 | 70 | 80 | 90 | 100
+  style?: React.CSSProperties
 }
 
 export function Icon({
@@ -23,13 +24,15 @@ export function Icon({
   animation,
   className,
   animate,
-  opacity
+  opacity,
+  style
 }: IconProps) {
   const { primaryColor } = useRegistry()
   const resolvedColor = color === 'primary' ? primaryColor : color
 
   return (
     <IconComponent
+      style={style}
       className={cn(
         className,
         (spin || animate === 'spin') && 'animate-spin',
@@ -59,8 +62,8 @@ export function Icon({
         resolvedColor === 'zinc-600' && 'text-zinc-600',
         resolvedColor === 'zinc-700' && 'text-zinc-700',
         resolvedColor === 'zinc-800' && 'text-zinc-800',
-        resolvedColor === 'black' && 'text-black',
-        resolvedColor === 'white' && 'text-white'
+        resolvedColor === 'white' && 'text-white',
+        resolvedColor === 'black' && 'text-black'
       )}
     />
   )

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { UserCircle, Sparkles, X, Plus } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import {
@@ -33,6 +33,7 @@ interface EditProfileDialogProps {
 }
 
 export function EditProfileDialog({ profile }: EditProfileDialogProps) {
+    const [mounted, setMounted] = useState(false)
     const [open, setOpen] = useState(false)
     const [loading, setLoading] = useState(false)
     const [formData, setFormData] = useState({
@@ -46,6 +47,10 @@ export function EditProfileDialog({ profile }: EditProfileDialogProps) {
 
     const queryClient = useQueryClient()
     const { toast } = useToast()
+
+    useEffect(() => {
+        setMounted(true)
+    }, [])
 
     const handleAddSpecialty = () => {
         if (newSpecialty && !specialties.includes(newSpecialty)) {
@@ -77,6 +82,15 @@ export function EditProfileDialog({ profile }: EditProfileDialogProps) {
             ...formData,
             specialties
         })
+    }
+
+    if (!mounted) {
+        return (
+            <Button variant="outline" className="w-full bg-zinc-900 border-zinc-800 hover:bg-zinc-800 hover:border-zinc-700 hover:text-white text-zinc-100 rounded-xl h-11 transition-all duration-200 mt-4">
+                <UserCircle className="w-4 h-4 mr-2" />
+                Editar Perfil Público
+            </Button>
+        )
     }
 
     return (

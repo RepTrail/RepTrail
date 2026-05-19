@@ -1,5 +1,5 @@
 import { Box } from '@/components/store/base/box'
-import { Scaffold } from '@/components/store/base/main'
+import { Main } from '@/components/store/base/main'
 import { Stack } from '@/components/store/base/stack'
 import { Font } from '@/components/store/base/font'
 import { Icon } from '@/components/store/base/icon'
@@ -49,12 +49,15 @@ export function DashboardMain({
   const rest = words.slice(1).join(' ')
 
   return (
-    <Scaffold 
+    <Main 
       fullWidth 
       paddingX={STORE_TOKENS.PADDING.CONTAINER} 
       paddingY={{ base: 25, md: 20 }}
+      minHeight="screen"
+      display="flex"
+      direction="col"
     >
-      <Stack gap={{ base: STORE_TOKENS.SPACING.EMPTY_STATE, md: STORE_TOKENS.SPACING.SECTION }}>
+      <Stack flex1 gap={{ base: STORE_TOKENS.SPACING.EMPTY_STATE, md: STORE_TOKENS.SPACING.SECTION }}>
 
         {/* Header Section */}
         <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
@@ -85,19 +88,21 @@ export function DashboardMain({
         )}
 
         {/* Content Sections */}
-        <Stack gap={{ base: STORE_TOKENS.SPACING.EMPTY_STATE, md: STORE_TOKENS.SPACING.SECTION }}>
+        <Stack flex1 gap={{ base: STORE_TOKENS.SPACING.EMPTY_STATE, md: STORE_TOKENS.SPACING.SECTION }}>
           {children}
         </Stack>
 
         {/* Standardized Footer */}
         {showFooter && (
-          <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER}>
-            <Inline justify="between">
-              <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>RepTrail Dashboard v2.0 - 2026</Font>
-            </Inline>
-          </GlassPanel>
+          <Box shrink={0}>
+            <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER}>
+              <Inline justify="between">
+                <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>RepTrail Dashboard v2.0 - 2026</Font>
+              </Inline>
+            </GlassPanel>
+          </Box>
         )}
       </Stack>
-    </Scaffold>
+    </Main>
   )
 }

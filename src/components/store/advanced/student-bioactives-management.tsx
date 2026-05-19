@@ -2,33 +2,90 @@
 
 import React from 'react'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
-import { Stack } from '@/components/store/base/stack'
 import { ErgogenicsList } from '@/components/store/intermediary/ergogenics-list'
-import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { FlaskConical } from 'lucide-react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { QUERY_KEYS } from '@/lib/query-keys'
+import { getStudentErgogenics, getTodayErgogenicLogs, toggleErgogenicLog } from '@/actions/ergogenics-actions'
+import { Box } from '@/components/store/base/box'
 
-export function StudentBioactivesManagement() {
+interface StudentBioactivesManagementProps {
+    userId: string
+}
+
+/**
+ * StudentBioactivesManagement (Smart): Manages ergogenic data and logs.
+ * Now functional with toggle capabilities.
+ */
+export function StudentBioactivesManagement({ userId }: StudentBioactivesManagementProps) {
+    const queryClient = useQueryClient()
+
+    const { data: items, isLoading } = useQuery<any[]>({
+        queryKey: QUERY_KEYS.ergogenics.all(userId),
+        queryFn: async () => {
+            const res = await getStudentErgogenics(userId)
+            return Array.isArray(res) ? res : []
+        },
+        staleTime: 1000 * 60 * 5,
+        refetchOnMount: false,
+    })
+
+    const { data: logs } = useQuery<any[]>({
+        queryKey: QUERY_KEYS.ergogenics.logs(userId),
+        queryFn: () => getTodayErgogenicLogs(userId),
+        staleTime: 1000 * 60 * 5,
+        refetchOnMount: false,
+    })
+
+    const toggleMutation = useMutation({
+        mutationFn: ({ id, currentStatus }: { id: string, currentStatus: boolean }) => 
+            toggleErgogenicLog(userId, id, !currentStatus),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ergogenics.logs(userId) })
+        }
+    })
+
+    if (isLoading) return <RegistrySection title="BIOATIVOS DE HOJE" icon={FlaskConical}><Box className="animate-pulse h-32 bg-zinc-900/50 rounded-3xl" /></RegistrySection>
+
+    // Timezone logic for Brazil
+    const today = (() => {
+        try {
+            const brazilTime = new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' })
+            return new Date(brazilTime).getDay()
+        } catch {
+            return new Date().getDay()
+        }
+    })()
+
+    const todayItems = Array.isArray(items) ? items.filter((item: any) => {
+        const days = Array.isArray(item.application_days) ? item.application_days : []
+        return days.map((d: any) => Number(d)).includes(today)
+    }) : []
+
+    if (todayItems.length === 0) {
+        return (
+            <RegistrySection title="BIOATIVOS DE HOJE" icon={FlaskConical}>
+                <ErgogenicsList items={[]} status="empty" />
+            </RegistrySection>
+        )
+    }
+
     return (
         <RegistrySection
-            title="ERGOGÊNICOS"
-            subtitle="Gestão diária."
+            title="BIOATIVOS DE HOJE"
+            subtitle="Gestão diária de protocolos auxiliares."
             icon={FlaskConical}
         >
-            <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
-                <ErgogenicsList
-                    items={[
-                        { name: 'DURATESTON', dosage: 'PADRÃO' },
-                        { name: 'IOIMBINA', dosage: 'PADRÃO' },
-                        { name: 'NAC', dosage: 'PADRÃO' },
-                        { name: 'CAFEINA', dosage: 'PADRÃO' }
-                    ]}
-                    status="active"
-                />
-                <ErgogenicsList
-                    items={[]}
-                    status="empty"
-                />
-            </Stack>
+            <ErgogenicsList
+                items={todayItems.map((item: any) => ({
+                    id: item.id,
+                    name: item.name.toUpperCase(),
+                    dosage: `${(item.weekly_dosage / (item.application_days?.length || 1)).toFixed(2)} ${item.unit?.toUpperCase() || 'MG'}`,
+                    isCompleted: !!logs?.some((l: any) => l.ergogenic_id === item.id)
+                }))}
+                status="active"
+                onToggle={(id, currentStatus) => toggleMutation.mutate({ id, currentStatus })}
+            />
         </RegistrySection>
     )
 }

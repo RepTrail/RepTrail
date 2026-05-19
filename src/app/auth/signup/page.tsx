@@ -2,7 +2,7 @@
 
 import { AuthForm } from '@/components/store/advanced/auth-form'
 import { Suspense } from 'react'
-import { AuthFormSkeleton } from '@/components/store/advanced/auth-form-skeleton'
+
 import { RegistryProvider } from '@/components/store/advanced/registry-context'
 import { AuthShell } from '@/components/store/advanced/auth-shell'
 import { Box } from '@/components/store/base/box'
@@ -27,7 +27,7 @@ export default function SignupPage() {
             </Script>
 
             <AuthShell>
-                <Suspense fallback={<AuthFormSkeleton />}>
+                <Suspense fallback={null}>
                     <AuthForm view="signup" />
                 </Suspense>
             </AuthShell>

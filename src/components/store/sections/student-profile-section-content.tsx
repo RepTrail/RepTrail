@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { Grid } from '@/components/store/base/grid'
 import { Box } from '@/components/store/base/box'
 import { Stack } from '@/components/store/base/stack'
@@ -10,23 +11,63 @@ import { AsaasPaymentModal } from '@/components/store/advanced/asaas-payment-mod
 import { StudentProfileSummary } from '@/components/store/advanced/student-profile-summary'
 import { StudentSubscriptionStatus } from '@/components/store/advanced/student-subscription-status'
 import { StudentProfileForm } from '@/components/store/advanced/student-profile-form'
-import { 
-    Zap, 
-    AlertCircle, 
-    CheckCircle, 
+import {
+    Zap,
+    AlertCircle,
+    CheckCircle,
     XCircle
 } from 'lucide-react'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
+import { QUERY_KEYS } from '@/lib/query-keys'
+import { getStudentProfile } from '@/actions/student-actions'
 
 /**
  * StudentProfileSectionContent: A premium reconstruction of the student profile screen.
- * Refactored to orchestrate Advanced components.
- * Visual parity is 100% preserved.
+ * Fully data-driven via React Query + getStudentProfile action.
  */
-export function StudentProfileSectionContent({ showVariants = false }: { showVariants?: boolean }) {
+export function StudentProfileSectionContent({
+    userId,
+    showVariants = false
+}: {
+    userId?: string
+    showVariants?: boolean
+}) {
     const [isTrialModalOpen, setIsTrialModalOpen] = useState(false)
     const [isCancelModalOpen, setIsCancelModalOpen] = useState(false)
     const [isAsaasModalOpen, setIsAsaasModalOpen] = useState(false)
+
+    const { data: profile } = useQuery({
+        queryKey: userId ? QUERY_KEYS.student.details(userId) : ['student-profile-no-id'],
+        queryFn: () => getStudentProfile(userId!),
+        enabled: !!userId
+    })
+
+    // Derive subscription status from backend data
+    const subscriptionStatus: 'active' | 'trial_available' | 'expired' = (() => {
+        const status = profile?.auto_training_status
+        const trialEnd = profile?.auto_training_trial_end
+        const now = new Date()
+
+        if (status === 'active') return 'active'
+
+        if (status === 'trial') {
+            if (trialEnd && new Date(trialEnd) > now) {
+                return 'active'
+            }
+            return 'expired'
+        }
+
+        if (status === 'trial_available') return 'trial_available'
+        if (!profile?.auto_training_trial_used && status !== 'expired' && status !== 'disabled') {
+            return 'trial_available'
+        }
+
+        return 'expired'
+    })()
+
+    const name = profile?.full_name || profile?.name || 'Carregando...'
+    const email = profile?.email || ''
+    const avatarUrl = profile?.avatar_url
 
     return (
         <>
@@ -34,13 +75,15 @@ export function StudentProfileSectionContent({ showVariants = false }: { showVar
                 {/* Left Column: Profile Card & Statuses (4 cols) */}
                 <Box mdColSpan={4}>
                     <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
-                        <StudentProfileSummary 
-                            name="MARCOS VINICIUS" 
-                            email="marcos@reptrail.com.br" 
+                        <StudentProfileSummary
+                            name={name}
+                            email={email}
+                            avatarUrl={avatarUrl}
+                            userId={userId}
                         />
-                        
-                        <StudentSubscriptionStatus 
-                            status="active" 
+
+                        <StudentSubscriptionStatus
+                            status={subscriptionStatus}
                             onActivateTrial={() => setIsTrialModalOpen(true)}
                             onCancelSubscription={() => setIsCancelModalOpen(true)}
                             onRenewSubscription={() => setIsAsaasModalOpen(true)}
@@ -48,14 +91,14 @@ export function StudentProfileSectionContent({ showVariants = false }: { showVar
 
                         {showVariants && (
                             <>
-                                <StudentSubscriptionStatus 
-                                    status="trial_available" 
+                                <StudentSubscriptionStatus
+                                    status="trial_available"
                                     onActivateTrial={() => setIsTrialModalOpen(true)}
                                     onCancelSubscription={() => setIsCancelModalOpen(true)}
                                     onRenewSubscription={() => setIsAsaasModalOpen(true)}
                                 />
-                                <StudentSubscriptionStatus 
-                                    status="expired" 
+                                <StudentSubscriptionStatus
+                                    status="expired"
                                     onActivateTrial={() => setIsTrialModalOpen(true)}
                                     onCancelSubscription={() => setIsCancelModalOpen(true)}
                                     onRenewSubscription={() => setIsAsaasModalOpen(true)}
@@ -67,13 +110,13 @@ export function StudentProfileSectionContent({ showVariants = false }: { showVar
 
                 {/* Right Column: Edit Form (8 cols) */}
                 <Box mdColSpan={8}>
-                    <StudentProfileForm />
+                    <StudentProfileForm userId={userId} profile={profile} />
                 </Box>
             </Grid>
 
             {/* Confirmation Modals */}
-            <Modal 
-                isOpen={isTrialModalOpen} 
+            <Modal
+                isOpen={isTrialModalOpen}
                 onClose={() => setIsTrialModalOpen(false)}
                 title="ATIVAR TESTE GRÁTIS"
                 subtitle="Você terá acesso total por 7 dias."
@@ -93,8 +136,8 @@ export function StudentProfileSectionContent({ showVariants = false }: { showVar
                 </Stack>
             </Modal>
 
-            <Modal 
-                isOpen={isCancelModalOpen} 
+            <Modal
+                isOpen={isCancelModalOpen}
                 onClose={() => setIsCancelModalOpen(false)}
                 title="CANCELAR ASSINATURA"
                 subtitle="Sentiremos sua falta na plataforma!"
@@ -115,13 +158,14 @@ export function StudentProfileSectionContent({ showVariants = false }: { showVar
                 </Stack>
             </Modal>
 
-            <AsaasPaymentModal 
+            <AsaasPaymentModal
                 isOpen={isAsaasModalOpen}
                 onClose={() => setIsAsaasModalOpen(false)}
                 tier="auto_training"
                 monthlyTotal={10.90}
-                currentName="MARCOS VINICIUS"
+                currentName={name}
             />
         </>
-    );
+    )
 }
+

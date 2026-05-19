@@ -9,7 +9,7 @@ import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { Stack } from './stack'
 
 
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'width'> {
   label?: string
   error?: string
   icon?: React.ReactNode
@@ -21,6 +21,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   height?: 'full' | 'auto'
   fontMono?: boolean
   textAlign?: 'left' | 'center' | 'right'
+  width?: string | number | { base: string | number, md?: string | number, lg?: string | number }
 }
 
 export function Input({
@@ -35,6 +36,7 @@ export function Input({
   height,
   fontMono,
   textAlign,
+  width,
   className,
   onChange,
   type,
@@ -108,13 +110,13 @@ export function Input({
   }
 
   return (
-    <Stack gap={STORE_TOKENS.SPACING.ELEMENT} flex1={flex1} height={height} className="w-full">
+    <Stack gap={STORE_TOKENS.SPACING.ELEMENT} flex1={flex1} width={width as any} className={cn(!width && "w-full")}>
       {label && (
         <Font variant="auxiliary" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="black" uppercase tracking="widest">
           {label}
         </Font>
       )}
-      <div className={cn("relative group", height === 'full' && 'h-full flex-1')}>
+      <div className={cn("relative group", height === 'full' && 'flex-1 flex flex-col')}>
         {/* Left icon */}
         {icon && (
           <div className={cn(
@@ -130,7 +132,7 @@ export function Input({
           className={cn(
             'w-full bg-zinc-950/40 border-2 placeholder:text-zinc-600 outline-none transition-all',
             resolvedColor ? `border-${resolvedColor}-500/40` : 'border-white/5',
-            height === 'full' ? 'h-full' : 'h-12',
+            height === 'full' ? 'flex-1 min-h-[48px]' : 'h-12',
             resolvedColor ? textColors[resolvedColor as keyof typeof textColors] : 'text-white',
             weight && weightClasses[weight],
             rounded === 'system' && (STORE_TOKENS.RADIUS.SYSTEM === 'system' ? 'rounded-[5px]' : 'rounded-full'),

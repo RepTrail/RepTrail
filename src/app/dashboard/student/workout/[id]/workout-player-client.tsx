@@ -1,14 +1,27 @@
 'use client'
 
-import { use } from 'react'
-import { WorkoutPlayer } from '@/components/store/features(deprecated)/workout-player'
+import React, { useState, use } from 'react'
+import { WorkoutPlayer } from '@/components/store/advanced/workout-player'
 import { notFound } from 'next/navigation'
-import { Dumbbell, Loader2 } from 'lucide-react'
+import { Dumbbell, Activity, ArrowLeft } from 'lucide-react'
 import { MissionCompletedView } from '@/components/store/features(deprecated)/student-mission-completed'
 import { useQuery } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { getWorkoutDetails } from '@/actions/workout-actions'
 import { getActiveWorkoutSession, getWorkoutStatus } from '@/actions/log-actions'
+import Link from 'next/link'
+
+// Design System Primitives
+import { Surface } from '@/components/store/base/surface'
+import { Stack } from '@/components/store/base/stack'
+import { Box } from '@/components/store/base/box'
+import { Font } from '@/components/store/base/font'
+import { Badge } from '@/components/store/base/badge'
+import { Icon } from '@/components/store/base/icon'
+import { Scaffold } from '@/components/store/base/main'
+import { Button } from '@/components/store/base/button'
+import { BackgroundEffects } from '@/components/store/base/background-effects'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 export default function WorkoutPlayerClient({
     userId,
@@ -18,16 +31,12 @@ export default function WorkoutPlayerClient({
     workoutId: string
 }) {
     // ─── DATA FETCHING (LOCAL-FIRST ELITE) ───────────────────────────────────
-    // These use the hydrated cache from the server (0ms execution)
-
-    // 1. Fetch Workout & Exercises
     const { data: workoutData, isLoading: workoutLoading } = useQuery({
         queryKey: QUERY_KEYS.workouts.detail(workoutId),
         queryFn: () => getWorkoutDetails(workoutId),
         enabled: !!workoutId
     })
 
-    // 2. Check logs (Today's completion and Active session)
     const { data: logsStatus, isLoading: logsLoading } = useQuery({
         queryKey: QUERY_KEYS.workouts.status(userId, workoutId),
         queryFn: () => getWorkoutStatus(userId, workoutId),
@@ -40,10 +49,10 @@ export default function WorkoutPlayerClient({
         enabled: !!userId
     })
 
-    // 🚨 ELITE: If data is cached, this resolves in 0ms. 
-    // If not, we show a Skeleton instead of a center spinner.
+    const [isResting, setIsResting] = useState(false)
+
     if (workoutLoading || logsLoading || activeLoading) {
-        return <PlayerSkeleton />
+        return null
     }
 
     if (!workoutData) return notFound()
@@ -53,30 +62,36 @@ export default function WorkoutPlayerClient({
 
     if (exercises.length === 0) {
         return (
-            <div className="flex flex-col items-center justify-center min-h-[60vh] p-8 text-center space-y-4">
-                <div className="p-6 bg-zinc-900 rounded-full border border-zinc-800">
-                    <Dumbbell className="h-10 w-10 text-zinc-700" />
-                </div>
-                <div className="space-y-1">
-                    <h3 className="text-xl font-bold text-white uppercase italic">Sem exercícios</h3>
-                    <p className="text-zinc-500 text-xs font-bold uppercase tracking-widest max-w-[300px]">
-                        Este treino ainda não possui exercícios cadastrados.
-                    </p>
-                </div>
-            </div>
+            <Box display="flex" align="center" justify="center" minHeight="screen" width="full">
+                <BackgroundEffects variant="all" />
+                <Stack align="center" justify="center" gap={STORE_TOKENS.SPACING.CONTAINER} position="relative" zIndex={10} padding={STORE_TOKENS.PADDING.CONTAINER}>
+                    <Surface variant="glass" padding={5} rounded="full" border="standard">
+                        <Box>
+                            <Icon icon={Dumbbell} size="lg" color="zinc-700" />
+                        </Box>
+                    </Surface>
+                    <Stack gap={2.5} align="center">
+                        <Font variant="h3" weight="black" uppercase italic tracking="tight">Sem exercícios</Font>
+                        <Font variant="sub-tiny" color="zinc-500" weight="black" uppercase tracking="widest" align="center" style={{ maxWidth: '300px' }}>
+                            Este treino ainda não possui exercícios cadastrados.
+                        </Font>
+                    </Stack>
+                </Stack>
+            </Box>
         )
     }
 
-    // 3. Handle Already Completed Today
     if (logsStatus?.status === 'completed') {
         return (
-            <div className="min-h-screen bg-zinc-950 flex flex-col items-center justify-center p-4">
-                <MissionCompletedView />
-            </div>
+            <Box display="flex" align="center" justify="center" minHeight="screen" width="full">
+                <BackgroundEffects variant="all" />
+                <Box position="relative" zIndex={10} width="full" padding={STORE_TOKENS.PADDING.CONTAINER}>
+                    <MissionCompletedView />
+                </Box>
+            </Box>
         )
     }
 
-    // 4. Resume Logic (Calculated Client-side)
     let initialExerciseIndex = 0
     let initialLogId: string | undefined = undefined
     let initialSet = 1
@@ -84,7 +99,6 @@ export default function WorkoutPlayerClient({
     let initialIsResting = false
     let initialRestEndTime: number | undefined = undefined
 
-    // Resume from active session if it matches this workout
     if (activeSession && activeSession.workout_id === workoutId) {
         initialLogId = activeSession.id
         if (activeSession.current_state) {
@@ -98,52 +112,89 @@ export default function WorkoutPlayerClient({
     }
 
     return (
-        <div className="min-h-screen bg-zinc-950 flex flex-col">
-            <div className="bg-black/40 backdrop-blur-xl border-b border-zinc-800/50 p-4 sm:p-6 flex items-center justify-between sticky top-0 z-50">
-                <div className="space-y-1 sm:space-y-5">
-                    <div className="flex items-center gap-4">
-                        <div className="w-1.5 h-6 bg-emerald-500 rounded-full shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
-                        <h1 className="text-xl font-black text-white uppercase italic tracking-tight truncate max-w-[60vw]">{workout.name}</h1>
-                    </div>
-                    <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest leading-none">
-                        Player de Treino • Foco e Intensidade
-                    </p>
-                </div>
-                <div className="flex items-center gap-2 px-3 py-1.5 bg-zinc-900/50 rounded-xl border border-zinc-800/50 flex-shrink-0 ml-4">
-                    <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-                    <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest whitespace-nowrap">Em progresso</span>
-                </div>
-            </div>
+        <Scaffold 
+            position={{ base: 'fixed', md: 'relative' }} 
+            pin={{ base: 'inset', md: undefined }} 
+            style={{ zIndex: 9999 }}
+            minHeight="screen"
+            display="flex"
+            direction="col"
+            bg="zinc"
+            overflowY="auto"
+            paddingLeft={{ base: 0, md: 'sidebar-wide' }}
+        >
+            {/* Background Effects: Grid & Orbs */}
+            <BackgroundEffects variant="all" />
 
-            <div className="flex-1 p-4 md:p-8 flex flex-col">
-                <div className="max-w-xl mx-auto w-full flex-1">
-                    <WorkoutPlayer
-                        userId={userId}
-                        workout={workout}
-                        exercises={exercises}
-                        initialExerciseIndex={initialExerciseIndex}
-                        initialLogId={initialLogId}
-                        initialSet={initialSet}
-                        initialSetType={initialSetType}
-                        initialIsResting={initialIsResting}
-                        initialRestEndTime={initialRestEndTime}
-                    />
-                </div>
-            </div>
-        </div>
+            {/* Header: Full-width sticky bar */}
+            {!isResting && (
+                <Box position="sticky" top={0} zIndex={50} width="full">
+                    <Surface variant="glass" border="standard" padding={STORE_TOKENS.PADDING.CONTAINER} rounded="none">
+                        <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                            {/* Mobile Top Bar: Badge + Back Button */}
+                            <Box display={{ base: 'flex', md: 'none' }} justify="between" fullWidth direction="row" align="center">
+                                <Badge 
+                                    label="Em progresso" 
+                                    variant="glass" 
+                                    color="emerald" 
+                                    icon={Activity} 
+                                    animatePulse
+                                />
+                                <Link href="/dashboard/student" passHref>
+                                    <Button variant="outline-zinc" size="sm" rounded="full">
+                                        <ArrowLeft size={14} style={{ marginRight: '6px' }} />
+                                        Voltar
+                                    </Button>
+                                </Link>
+                            </Box>
+
+                            <Stack direction="row" align="center" justify="between">
+                                <Stack gap={2.5}>
+                                    <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                        <Box width={8} height={8} bg="emerald" rounded="full" style={{ boxShadow: '0 0 10px rgba(16,185,129,0.5)' }} />
+                                        <Font variant="h3" weight="black" color="white" uppercase italic tracking="tight" truncate style={{ maxWidth: '60vw' }}>
+                                            {workout.name}
+                                        </Font>
+                                    </Stack>
+                                    <Box>
+                                        <Font variant="tiny" color="zinc-500" weight="black" uppercase tracking="widest">
+                                            Player de Treino • Foco e Intensidade
+                                        </Font>
+                                    </Box>
+                                </Stack>
+                                
+                                {/* Desktop Badge */}
+                                <Box display={{ base: 'none', md: 'block' }}>
+                                    <Badge 
+                                        label="Em progresso" 
+                                        variant="glass" 
+                                        color="emerald" 
+                                        icon={Activity} 
+                                        animatePulse
+                                    />
+                                </Box>
+                            </Stack>
+                        </Stack>
+                    </Surface>
+                </Box>
+            )}
+
+            {/* Main Player Content: Vertically Centered */}
+            <Box flex1 display="flex" align="center" justify="center" padding={0} position="relative" zIndex={10}>
+                <WorkoutPlayer
+                    userId={userId}
+                    workout={workout}
+                    exercises={exercises}
+                    initialExerciseIndex={initialExerciseIndex}
+                    initialLogId={initialLogId}
+                    initialSet={initialSet}
+                    initialSetType={initialSetType}
+                    initialIsResting={initialIsResting}
+                    initialRestEndTime={initialRestEndTime}
+                    onRestChange={setIsResting}
+                />
+            </Box>
+        </Scaffold>
     )
 }
 
-function PlayerSkeleton() {
-    return (
-        <div className="min-h-screen bg-zinc-950 flex flex-col animate-pulse">
-            <div className="h-20 bg-zinc-900/50 border-b border-zinc-800/50 p-6 flex justify-between items-center" />
-            <div className="flex-1 p-8 space-y-8 max-w-xl mx-auto w-full">
-                <div className="h-8 bg-zinc-900/50 rounded-xl w-48" />
-                <div className="h-64 bg-zinc-900/50 rounded-[2.5rem]" />
-                <div className="h-24 bg-zinc-900/50 rounded-3xl" />
-                <div className="h-20 bg-zinc-900/50 rounded-3xl" />
-            </div>
-        </div>
-    )
-}

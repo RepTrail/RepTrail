@@ -32,11 +32,11 @@ export function MobileHeader({ role, hasTrainer, steroidUse, hideImportPdf, auto
         { href: '/dashboard/student/workouts', icon: <Dumbbell className="w-5 h-5" />, label: 'Meus Treinos', requiresTrainer: true },
         { href: '/dashboard/student/diet', icon: <Utensils className="w-5 h-5" />, label: 'Minha Dieta', requiresTrainer: true },
         { href: '/dashboard/student/cardio', icon: <Activity className="w-5 h-5" />, label: 'Cardio', requiresTrainer: true },
-        { href: '/dashboard/student/import-pdf', icon: <FileUp className="w-5 h-5" />, label: 'Importar PDF', requiresTrainer: true, hideIfHasTrainer: true },
+        { href: '/dashboard/student/import-pdf', icon: <FileUp className="w-5 h-5" />, label: 'Importar PDF', requiresTrainer: true, showOnlyIfHasTrainer: true },
         { href: '/dashboard/student/progress', icon: <TrendingUp className="w-5 h-5" />, label: 'Minha Evolução', requiresTrainer: true },
         { href: '/dashboard/student/ergogenics', icon: <Syringe className="w-5 h-5" />, label: 'Ergogênicos', requiresTrainer: true, showOnlyIfSteroidUse: true },
         { href: '/dashboard/student/feed', icon: <Users className="w-5 h-5" />, label: 'Feed de Alunos' },
-        { href: '/dashboard/student/anamnese', icon: <ClipboardList className="w-5 h-5" />, label: 'Anamnese' },
+        { href: '/dashboard/student/anamnese', icon: <ClipboardList className="w-5 h-5" />, label: 'Anamnese', requiresTrainer: true, showOnlyIfHasTrainer: true },
     ]
 
     const trainerLinks = [
@@ -52,6 +52,7 @@ export function MobileHeader({ role, hasTrainer, steroidUse, hideImportPdf, auto
     const links = role === 'student'
         ? studentLinks.filter(link => {
             const item = link as any;
+            if (item.showOnlyIfHasTrainer && !hasTrainer) return false
             if (item.requiresTrainer && !hasTrainer && !autoTrainingActive) return false
             if (item.showOnlyIfSteroidUse && !steroidUse) return false
             if (item.hideIfHasTrainer && hasTrainer) return false

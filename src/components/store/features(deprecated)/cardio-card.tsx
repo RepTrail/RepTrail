@@ -1,7 +1,7 @@
 'use client'
 
 import { getTodayCardio, getCardioStatus } from '@/actions/cardio-actions'
-import { Skeleton } from '@/components/ui/skeleton'
+
 import { Flame, Activity } from 'lucide-react'
 import { CardioPlayer } from '@/components/store/features(deprecated)/cardio-player'
 import { QUERY_KEYS } from '@/lib/query-keys'
@@ -58,11 +58,6 @@ export function CardioCard({ userId }: CardioCardProps) {
         staleTime: 1000 * 60 * 5,
         refetchOnMount: false,
     })
-
-    // Skeleton Fallback: Only if loading AND no cache available
-    if ((isLoading || isLoadingLogs) && (!cardios || !Array.isArray(cardios) || cardios.length === 0)) {
-        return <CardioCardSkeleton />
-    }
 
     if (!cardios || !Array.isArray(cardios) || cardios.length === 0) {
         return (
@@ -129,9 +124,4 @@ export function CardioCard({ userId }: CardioCardProps) {
     )
 }
 
-export function CardioCardSkeleton() {
-    return <CardioPlayer.Skeleton />
-}
-
-CardioCard.Skeleton = CardioCardSkeleton
 

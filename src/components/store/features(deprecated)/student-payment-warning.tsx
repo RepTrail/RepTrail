@@ -52,7 +52,7 @@ export function PaymentWarning({ relationship }: PaymentWarningProps) {
             }
         }}>
             <DialogContent className="sm:max-w-md border-orange-500/30 p-0 overflow-hidden bg-zinc-950 rounded-system">
-                <Box padding={{ base: 6, sm: 10 }}>
+                <Box padding={{ base: 5, md: 10 }}>
                     <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                         <Stack gap={STORE_TOKENS.SPACING.CONTAINER} align="center" textAlign="center">
                             <Box 
@@ -69,17 +69,17 @@ export function PaymentWarning({ relationship }: PaymentWarningProps) {
                             </Box>
                             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                                 <DialogTitle asChild>
-                                    <Font variant="heading" weight="black" italic uppercase tracking="tighter" className="text-3xl">
+                                    <Font variant="heading" weight="black" italic uppercase tracking="tight" className="text-3xl">
                                         Vencimento Próximo
                                     </Font>
                                 </DialogTitle>
                                 <Font variant="sub-tiny" weight="black" color="zinc-500" uppercase tracking="widest" className="leading-relaxed">
-                                    Notamos que o prazo de pagamento do seu plano com <Font as="span" color="white">{relationship.trainer?.full_name}</Font> venceu ou está próximo.
+                                    Notamos que o prazo de pagamento do seu plano com <Font color="white">{relationship.trainer?.full_name}</Font> venceu ou está próximo.
                                 </Font>
                             </Stack>
                         </Stack>
 
-                        <Box padding={{ base: 4, sm: 6 }} bg="zinc" bgOpacity={50} border borderColor="zinc" rounded="system">
+                        <Box padding={{ base: 5, md: 7.5 }} bg="zinc" bgOpacity={50} border borderColor="zinc" rounded="system">
                             <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                                 <div className="flex items-center justify-between">
                                     <Font variant="sub-tiny" weight="black" color="zinc-500" uppercase tracking="widest">

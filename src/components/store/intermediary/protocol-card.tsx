@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React from 'react'
 import { Stack } from '@/components/store/base/stack'
 import { Font } from '@/components/store/base/font'
 import { Box } from '@/components/store/base/box'
@@ -46,8 +46,8 @@ export function ProtocolCard({
     userId,
     workoutId
 }: ProtocolCardProps) {
-    const [isReviewOpen, setIsReviewOpen] = useState(false)
-    const [isExercisesOpen, setIsExercisesOpen] = useState(false)
+    const [isReviewOpen, setIsReviewOpen] = React.useState(false)
+    const [isExercisesOpen, setIsExercisesOpen] = React.useState(false)
     
     const isCompleted = status === 'completed'
     const isInProgress = status === 'in_progress'
@@ -82,7 +82,7 @@ export function ProtocolCard({
     return (
         <>
             <GlassPanel
-                padding={STORE_TOKENS.PADDING.ELEMENT}
+                padding={STORE_TOKENS.PADDING.CONTAINER}
                 rounded={STORE_TOKENS.RADIUS.SYSTEM}
                 position="relative"
                 overflow="hidden"
@@ -147,14 +147,12 @@ export function ProtocolCard({
 
                         <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT}>
                             <Button
-                                variant={isCompleted ? 'outline-emerald' : isInProgress ? 'outline-amber' : 'outline-emerald'}
+                                variant={isCompleted ? 'outline-emerald' : isInProgress ? 'outline-amber' : 'outline-primary'}
                                 flex1
                                 size="sm"
                                 onClick={handleButtonClick}
                             >
-                                <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL}>
-                                    {isCompleted ? 'REVISAR ANOTAÇÕES' : isInProgress ? 'CONTINUAR TREINO' : actionLabel.toUpperCase()}
-                                </Font>
+                                {isCompleted ? 'REVISAR ANOTAÇÕES' : isInProgress ? 'CONTINUAR TREINO' : actionLabel.toUpperCase()}
                             </Button>
 
                             <Button

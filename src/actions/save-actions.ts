@@ -107,16 +107,22 @@ export async function saveParsedData(
 
                         if (!exerciseId) continue;
 
-                        const parseSets = (s: any) => typeof s === 'number' ? s : (parseInt(String(s)) || 3);
-                        const parseReps = (r: any) => String(r || '10');
+                        const parseSets = (s: any) => typeof s === 'number' ? s : (parseInt(String(s)) || 0);
+                        const parseReps = (r: any) => String(r || '');
 
                         await supabase.from('workout_exercises').insert({
                             workout_id: workout.id,
                             exercise_id: exerciseId,
                             order_index: i,
-                            working_sets: parseSets(exData.sets),
-                            reps: parseReps(exData.reps),
-                            rest_seconds: parseInt(exData.rest) || 60,
+                            working_sets: parseSets(exData.sets || exData.working_sets || 3),
+                            reps: parseReps(exData.reps || exData.working_reps || '10'),
+                            rest_seconds: parseInt(exData.rest || exData.rest_seconds) || 60,
+                            warmup_sets: parseSets(exData.warmup_sets),
+                            warmup_reps: parseReps(exData.warmup_reps),
+                            warmup_rest_seconds: parseInt(exData.warmup_rest || exData.warmup_rest_seconds) || 45,
+                            feeder_sets: parseSets(exData.feeder_sets),
+                            feeder_reps: parseReps(exData.feeder_reps),
+                            feeder_rest_seconds: parseInt(exData.feeder_rest || exData.feeder_rest_seconds) || 45,
                             notes: exData.notes || null
                         });
                     }

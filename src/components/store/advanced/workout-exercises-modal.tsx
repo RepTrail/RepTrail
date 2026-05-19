@@ -149,7 +149,7 @@ export function WorkoutExercisesModal({
 
                                         {/* Right Container: Exercise Info + Inline Badges */}
                                         <Stack flex1 gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                            <Stack gap={2.5}>
+                                            <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                                                 <Font variant="body-sm" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
                                                     {ex.name}
                                                 </Font>
@@ -161,7 +161,7 @@ export function WorkoutExercisesModal({
                                                 </Stack>
                                             </Stack>
 
-                                            <Stack direction="row" wrap="wrap" gap={2.5}>
+                                            <Stack direction="row" wrap="wrap" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                                 {ex.warmup && (
                                                     <Badge 
                                                         label={`WARM UP: ${ex.warmup.sets}X ${ex.warmup.reps} (${ex.warmup.rest})`} 

@@ -13,7 +13,7 @@ export default async function TrainerPlansPage() {
         <RegistryMain
             title="PLANO & ASSINATURA"
             subtitle="Grátis até 5 alunos. Cresça sem limites pagando só pelo que usar."
-            icon={CreditCard}
+            icon="CreditCard"
             contextLabel="Faturamento & Expansão"
             showTabs={false}
         >

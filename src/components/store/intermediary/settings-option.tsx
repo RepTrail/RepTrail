@@ -42,7 +42,13 @@ export function SettingsOption({
             padding={STORE_TOKENS.PADDING.ELEMENT} 
             rounded={STORE_TOKENS.RADIUS.SYSTEM} 
             border={variant === 'zinc' ? 'subtle' : 'none'}
-            className={`w-full text-left transition-all group ${onClick && !disabled ? 'cursor-pointer hover:bg-opacity-80 active:scale-[0.98]' : ''} ${disabled ? 'opacity-60 cursor-not-allowed' : ''}`}
+            fullWidth
+            textAlign="left"
+            transition
+            group
+            cursor={onClick && !disabled ? 'pointer' : 'default'}
+            activeScale={onClick && !disabled ? 95 : undefined}
+            opacity={disabled ? 60 : undefined}
             onClick={disabled ? undefined : onClick}
         >
             <Stack direction="row" align="center" justify="between" gap={STORE_TOKENS.SPACING.ELEMENT}>
@@ -67,7 +73,7 @@ export function SettingsOption({
                 
                 <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                     {badge && (
-                        <Box padding={2.5} bg={variant} bgOpacity={10} border borderColor={`${variant}/20`} rounded="full" className="px-2">
+                        <Box padding={2.5} bg={variant} bgOpacity={10} border borderColor={`${variant}/20`} rounded={STORE_TOKENS.RADIUS.FULL}>
                             <Font variant="sub-tiny" weight="black" color={variant} uppercase>{badge}</Font>
                         </Box>
                     )}

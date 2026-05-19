@@ -1,9 +1,10 @@
 import React from 'react'
 import { cn } from '@/lib/utils'
+import { Box, BoxProps } from './box'
 
 type GapToken = 0 | 1 | 2 | 2.5 | 4 | 5 | 7.5 | 8 | 10 | 12 | 12.5 | 'section' | 'header-gap'
 
-interface GridProps {
+export interface GridProps extends Omit<BoxProps, 'gap' | 'align' | 'padding'> {
   children: React.ReactNode
   cols?: 1 | 2 | 3 | 4 | 5 | 6 | 10 | 12 | { base: number, md?: number, lg?: number }
   columns?: number
@@ -15,8 +16,6 @@ interface GridProps {
   padding?: 0 | 1 | 2.5 | 5 | 7.5 | 12.5
   paddingX?: 0 | 1 | 2.5 | 5 | 7.5 | 12.5
   paddingY?: 0 | 1 | 2.5 | 5 | 7.5 | 12.5
-  fullWidth?: boolean
-  className?: string
 }
 
 /**
@@ -35,7 +34,8 @@ export function Grid({
   paddingX,
   paddingY,
   fullWidth,
-  className
+  className,
+  ...props
 }: GridProps) {
   
   const effectiveCols = columns || cols
@@ -110,6 +110,9 @@ export function Grid({
     4: 'grid-cols-4',
     5: 'grid-cols-5',
     6: 'grid-cols-6',
+    7: 'grid-cols-7',
+    8: 'grid-cols-8',
+    9: 'grid-cols-9',
     10: 'grid-cols-10',
     12: 'grid-cols-12',
   }
@@ -121,6 +124,9 @@ export function Grid({
     4: 'md:grid-cols-4',
     5: 'md:grid-cols-5',
     6: 'md:grid-cols-6',
+    7: 'md:grid-cols-7',
+    8: 'md:grid-cols-8',
+    9: 'md:grid-cols-9',
     10: 'md:grid-cols-10',
     12: 'md:grid-cols-12',
   }
@@ -132,41 +138,46 @@ export function Grid({
     4: 'lg:grid-cols-4',
     5: 'lg:grid-cols-5',
     6: 'lg:grid-cols-6',
+    7: 'lg:grid-cols-7',
+    8: 'lg:grid-cols-8',
+    9: 'lg:grid-cols-9',
     10: 'lg:grid-cols-10',
     12: 'lg:grid-cols-12',
   }
 
   return (
-    <div className={cn(
-      'grid w-full',
-      // Columns mapping
-      typeof effectiveCols === 'number' ? colClasses[effectiveCols as keyof typeof colClasses] : 
-        cn(
-          (effectiveCols as any).base && colClasses[(effectiveCols as any).base as keyof typeof colClasses],
-          (effectiveCols as any).md && mdColClasses[(effectiveCols as any).md as keyof typeof mdColClasses],
-          (effectiveCols as any).lg && lgColClasses[(effectiveCols as any).lg as keyof typeof lgColClasses]
-        ),
-      smCols && colClasses[smCols as keyof typeof colClasses], // simplified for sm
-      mdCols && mdColClasses[mdCols as keyof typeof mdColClasses],
-      lgCols && lgColClasses[lgCols as keyof typeof lgColClasses],
+    <Box 
+      display="grid"
+      fullWidth={fullWidth}
+      className={cn(
+        // Columns mapping
+        typeof effectiveCols === 'number' ? colClasses[effectiveCols as keyof typeof colClasses] : 
+          cn(
+            (effectiveCols as any).base && colClasses[(effectiveCols as any).base as keyof typeof colClasses],
+            (effectiveCols as any).md && mdColClasses[(effectiveCols as any).md as keyof typeof mdColClasses],
+            (effectiveCols as any).lg && lgColClasses[(effectiveCols as any).lg as keyof typeof lgColClasses]
+          ),
+        smCols && colClasses[smCols as keyof typeof colClasses], // simplified for sm
+        mdCols && mdColClasses[mdCols as keyof typeof mdColClasses],
+        lgCols && lgColClasses[lgCols as keyof typeof lgColClasses],
 
-      // Gap mapping
-      gapBase !== undefined && gapClasses[gapBase as keyof typeof gapClasses],
-      gapMd !== undefined && gapMdClasses[gapMd as keyof typeof gapMdClasses],
+        // Gap mapping
+        gapBase !== undefined && gapClasses[gapBase as keyof typeof gapClasses],
+        gapMd !== undefined && gapMdClasses[gapMd as keyof typeof gapMdClasses],
 
-      // Alignment
-      align && `items-${align}`,
-      
-      // Padding
-      padding !== undefined && paddingClasses[padding as keyof typeof paddingClasses],
-      paddingX !== undefined && paddingXClasses[paddingX as keyof typeof paddingXClasses],
-      paddingY !== undefined && paddingYClasses[paddingY as keyof typeof paddingYClasses],
+        // Alignment
+        align && `items-${align}`,
+        
+        // Padding
+        padding !== undefined && paddingClasses[padding as keyof typeof paddingClasses],
+        paddingX !== undefined && paddingXClasses[paddingX as keyof typeof paddingXClasses],
+        paddingY !== undefined && paddingYClasses[paddingY as keyof typeof paddingYClasses],
 
-      fullWidth && 'w-full',
-      
-      className
-    )}>
+        className
+      )}
+      {...props}
+    >
       {children}
-    </div>
+    </Box>
   )
 }

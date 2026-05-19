@@ -1,6 +1,6 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { revalidatePath, revalidateTag } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { WorkoutService } from '@/services/WorkoutService'
@@ -200,19 +200,45 @@ export async function duplicateWorkout(workoutId: string) {
 }
 
 export async function assignWorkout(workoutId: string, studentId: string, dayOfWeek: number) {
-    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
+    const supabase = await createClient()
 
     try {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) return { error: 'Unauthorized' }
+
+        // Security check: Must be the student self-assigning OR the active trainer of the student
+        let isAuthorized = (user.id === studentId)
+
+        if (!isAuthorized) {
+            const { data: relationship } = await supabase
+                .from('trainer_students')
+                .select('id')
+                .eq('trainer_id', user.id)
+                .eq('student_id', studentId)
+                .eq('active', true)
+                .maybeSingle()
+            if (relationship) {
+                isAuthorized = true
+            }
+        }
+
+        if (!isAuthorized) {
+            return { error: 'Você não tem permissão para atribuir treinos a este aluno.' }
+        }
+
+        // Use Admin Client to bypass database-level RLS policies on assigned_workouts
+        const adminSupabase = await createAdminClient()
+
         // First, deactivate any existing day assignments for this workout and student
         // This ensures the workout is "moved" to the new day rather than duplicated
-        await supabase
+        await adminSupabase
             .from('assigned_workouts')
             .update({ active: false })
             .eq('workout_id', workoutId)
             .eq('student_id', studentId)
 
         // Check if already assigned (even if inactive) on the SPECIFIC new day
-        const { data: existing } = await supabase
+        const { data: existing } = await adminSupabase
             .from('assigned_workouts')
             .select('id, active')
             .eq('workout_id', workoutId)
@@ -225,7 +251,7 @@ export async function assignWorkout(workoutId: string, studentId: string, dayOfW
                 return { success: true, message: 'Este treino já está assinado para este dia.' }
             }
             // Reactivate inactive one
-            const { error } = await supabase
+            const { error } = await adminSupabase
                 .from('assigned_workouts')
                 .update({ active: true })
                 .eq('id', existing.id)
@@ -233,7 +259,7 @@ export async function assignWorkout(workoutId: string, studentId: string, dayOfW
             if (error) throw error
         } else {
             // New assignment
-            const { error } = await supabase
+            const { error } = await adminSupabase
                 .from('assigned_workouts')
                 .insert({
                     workout_id: workoutId,
@@ -245,7 +271,6 @@ export async function assignWorkout(workoutId: string, studentId: string, dayOfW
             if (error) throw error
         }
 
-        const { data: { user } } = await supabase.auth.getUser()
         if (user) {
             revalidateTag(`trainer-${user.id}`, 'page')
         }
@@ -611,9 +636,15 @@ export async function getWorkoutExercises(workoutId: string) {
             .select(`
                 id,
                 exercise:exercises(id, name),
-                sets,
+                warmup_sets,
+                warmup_reps,
+                warmup_rest_seconds,
+                feeder_sets,
+                feeder_reps,
+                feeder_rest_seconds,
+                working_sets,
                 reps,
-                rest_time
+                rest_seconds
             `)
             .eq('workout_id', workoutId)
             .order('order_index', { ascending: true })
@@ -623,9 +654,10 @@ export async function getWorkoutExercises(workoutId: string) {
         return data.map((item: any) => ({
             id: item.id,
             name: item.exercise.name,
-            sets: item.sets,
-            reps: item.reps,
-            rest_time: item.rest_time
+            warmup: item.warmup_sets > 0 ? { sets: item.warmup_sets, reps: item.warmup_reps, rest: `${item.warmup_rest_seconds}s` } : undefined,
+            feeder: item.feeder_sets > 0 ? { sets: item.feeder_sets, reps: item.feeder_reps, rest: `${item.feeder_rest_seconds}s` } : undefined,
+            working: { sets: item.working_sets, reps: item.reps, rest: `${item.rest_seconds}s` },
+            rest_time: `${item.rest_seconds}s`
         }))
     } catch (error) {
         console.error('Error fetching workout exercises:', error)

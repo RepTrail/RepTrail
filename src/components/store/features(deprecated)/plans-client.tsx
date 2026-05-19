@@ -6,7 +6,7 @@ import { Check, Users, Zap, ArrowRight, Sparkles, CreditCard, QrCode, FileText }
 import { createAsaasSubscription } from "@/actions/asaas-actions"
 import { useToast } from "@/hooks/use-toast"
 import { useQueryClient } from '@tanstack/react-query'
-import { PaymentModal } from "../asaas/payment-modal"
+import { PaymentModal } from "./payment-modal"
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { Stack } from '@/components/store/base/stack'
 

@@ -120,7 +120,7 @@ export function DietAdherence({ diet, allowEstimation = false, hasTrainer = fals
 
     return (
         <Box 
-            padding={{ base: 5, sm: 12.5 }} 
+            padding={{ base: 5, md: 12.5 }} 
             rounded="system" 
             bg="zinc" 
             bgOpacity={40} 
@@ -219,7 +219,7 @@ export function DietAdherence({ diet, allowEstimation = false, hasTrainer = fals
 function MacroBox({ label, value, unit, color, className }: any) {
     return (
         <Box 
-            padding={{ base: 2.5, sm: 5 }} 
+            padding={{ base: 2.5, md: 5 }} 
             rounded="system" 
             bg="zinc" 
             bgOpacity={50} 
@@ -303,7 +303,7 @@ const MealItem = memo(({ item, mealId, onToggle, onSwap, hasTrainer }: any) => {
             </div>
             {hasTrainer && item.has_substitute && (
                 <Button
-                    variant="ghost" size="icon"
+                    variant="ghost" size="xs" isIconOnly
                     onClick={() => onSwap({ id: item.id, itemId: item.id })}
                     className={cn("w-8 h-8 transition-colors duration-200", item.is_substituted ? "text-orange-500 bg-orange-500/10 hover:bg-orange-500/20" : "text-zinc-600 hover:text-orange-500 hover:bg-orange-500/10")}
                 >

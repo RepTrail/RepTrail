@@ -29,7 +29,7 @@ export default async function StudentLayout({ children }: { children: React.Reac
     }
 
     return (
-        <Suspense fallback={<StudentLayoutShell userId={userId} />}>
+        <Suspense fallback={null}>
             <StudentLayoutLoader userId={userId}>
                 {children}
             </StudentLayoutLoader>
@@ -78,12 +78,13 @@ async function StudentLayoutLoader({ userId, children }: { userId: string; child
         { href: '/dashboard/student/ergogenics',   label: 'Ergogênicos',    icon: 'Syringe',       hidden: !hasPlan || !steroidUse },
         { href: '/dashboard/student/progress',     label: 'Evolução',       icon: 'TrendingUp',    hidden: !hasPlan },
         { href: '/dashboard/student/import-pdf',   label: 'Importar PDF',   icon: 'Sparkles',      hidden: hasTrainer },
-        { href: '/dashboard/student/anamnese',     label: 'Anamnese',       icon: 'ClipboardList' },
-        { href: '/buscar-personal',                label: 'Buscar Personal', icon: 'Search',       hidden: hasTrainer || isAutoTrainingActive },
+        { href: '/dashboard/student/anamnese',     label: 'Anamnese',       icon: 'ClipboardList', hidden: !hasTrainer },
+        { href: '/dashboard/student/buscar-personal',                label: 'Buscar Personal', icon: 'Search',       hidden: hasTrainer || isAutoTrainingActive },
         { href: '/dashboard/student/feed',         label: 'Feed de Alunos', icon: 'UserCheck' },
         { href: '/dashboard/student/ranking',      label: 'Ranking',        icon: 'Trophy' },
         { href: '/dashboard/student/loja',         label: 'Loja',           icon: 'ShoppingBag' },
         { href: '/dashboard/student/meu-personal', label: 'Meu Personal',   icon: 'UserCheck',     hidden: !hasTrainer },
+        { href: '/dashboard/student/profile',      label: 'Meu Perfil',     icon: 'User' },
     ]
 
     const mobileLinks = [
@@ -91,6 +92,7 @@ async function StudentLayoutLoader({ userId, children }: { userId: string; child
         { href: '/dashboard/student/workouts',     label: 'Treinos', icon: 'Dumbbell',   hidden: !hasPlan },
         { href: '/dashboard/student/cardio',       label: 'Cardio',  icon: 'Activity',   hidden: !hasPlan },
         { href: '/dashboard/student/loja',         label: 'Loja',    icon: 'ShoppingBag' },
+        { href: '/dashboard/student/profile',      label: 'Meu Perfil', icon: 'User' },
     ]
 
     return (
@@ -105,19 +107,8 @@ async function StudentLayoutLoader({ userId, children }: { userId: string; child
                 >
                     {children}
                 </DashboardShell>
-                <StudentGlobalModals hasTrainer={hasTrainer} />
+                <StudentGlobalModals hasTrainer={hasTrainer} userId={userId} />
             </HydrationBoundary>
         </RegistryProvider>
-    )
-}
-
-// ─── Skeleton fallback ────────────────────────────────────────────────────────
-
-function StudentLayoutShell({ userId }: { userId: string }) {
-    return (
-        <div className="flex h-screen w-full bg-zinc-950 text-white">
-            <div className="hidden lg:flex w-72 h-screen bg-zinc-900/50 border-r border-zinc-800 animate-pulse" />
-            <main className="flex-1 p-10" />
-        </div>
     )
 }

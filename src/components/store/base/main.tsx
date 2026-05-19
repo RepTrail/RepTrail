@@ -85,16 +85,28 @@ export function Scaffold({
   const paddingLeftLg = isRespPaddingLeft ? (paddingLeft as any).lg : undefined
 
   const paddingLeftMapping = {
+    0: 'pl-0',
+    1: 'pl-1',
+    2.5: 'pl-2.5',
+    5: 'pl-5',
     'sidebar': 'pl-56',
     'sidebar-wide': 'pl-72'
   }
 
   const paddingLeftMdMapping = {
+    0: 'md:pl-0',
+    1: 'md:pl-1',
+    2.5: 'md:pl-2.5',
+    5: 'md:pl-5',
     'sidebar': 'md:pl-56',
     'sidebar-wide': 'md:pl-72'
   }
 
   const paddingLeftLgMapping = {
+    0: 'lg:pl-0',
+    1: 'lg:pl-1',
+    2.5: 'lg:pl-2.5',
+    5: 'lg:pl-5',
     'sidebar': 'lg:pl-56',
     'sidebar-wide': 'lg:pl-72'
   }

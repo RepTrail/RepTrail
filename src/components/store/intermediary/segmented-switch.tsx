@@ -58,6 +58,7 @@ export function SegmentedSwitch({
             const isActive = activeId === option.id
             const variant = option.activeVariant || defaultActiveVariant
             const colorToken = variant.split('-')[1]
+            const isFewOptions = options.length <= 2
 
             return (
               <Button
@@ -66,9 +67,9 @@ export function SegmentedSwitch({
                 variant={isActive ? variant : 'ghost'}
                 rounded={STORE_TOKENS.RADIUS.FULL}
                 size="sm"
-                flex1={{ base: false, md: true }}
-                shrink={{ base: 0, md: 1 }}
-                minWidth={{ base: 'calc(50% - 15px)', md: 'auto' }}
+                flex1={{ base: isFewOptions, md: true }}
+                shrink={{ base: isFewOptions ? 1 : 0, md: 1 }}
+                minWidth={{ base: isFewOptions ? 0 : 'calc(50% - 15px)', md: 0 }}
                 transition
                 className="snap-center"
               >

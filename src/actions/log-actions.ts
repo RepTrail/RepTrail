@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache'
 import { upsertDailyTracking } from '@/actions/tracking-actions'
 import { getTodayRangeBrazil } from '@/lib/date-utils'
 
-export async function startWorkoutLog(workoutId: string) {
+export async function startWorkoutLog(workoutId: string, id?: string) {
     const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
@@ -25,7 +25,7 @@ export async function startWorkoutLog(workoutId: string) {
             .limit(1)
             .maybeSingle()
 
-        if (existing) {
+        if (existing && !id) {
             console.log('DEBUG: Resuming existing workout log:', existing.id)
             return { success: true, logId: existing.id, resumed: true }
         }
@@ -33,6 +33,7 @@ export async function startWorkoutLog(workoutId: string) {
         const { data, error } = await supabase
             .from('workout_logs')
             .insert({
+                id: id || undefined,
                 student_id: user.id,
                 workout_id: workoutId,
                 status: 'in_progress',

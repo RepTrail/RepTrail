@@ -24,6 +24,8 @@ import {
   FlaskConical,
   FileUp,
   Flame,
+  CreditCard,
+  UserCheck,
   LucideIcon
 } from 'lucide-react'
 import { useRegistry } from '@/components/store/advanced/registry-context'
@@ -48,6 +50,8 @@ const iconMap: Record<string, LucideIcon> = {
   FlaskConical,
   FileUp,
   Flame,
+  CreditCard,
+  UserCheck,
 }
 
 interface RegistryMainProps {
@@ -57,6 +61,8 @@ interface RegistryMainProps {
   icon: LucideIcon | string
   contextLabel?: string
   showTabs?: boolean
+  showHeader?: boolean
+  rightElement?: React.ReactNode
 }
 
 export function RegistryMain({
@@ -65,7 +71,9 @@ export function RegistryMain({
   subtitle,
   icon,
   contextLabel,
-  showTabs = true
+  showTabs = true,
+  showHeader = true,
+  rightElement
 }: RegistryMainProps) {
   const { activeTab, setActiveTab, primaryColor } = useRegistry()
   const [first, ...rest] = title.split(' ')
@@ -112,22 +120,36 @@ export function RegistryMain({
         base: STORE_TOKENS.PADDING.SAFE_AREA_INSET,
         md: STORE_TOKENS.PADDING.CONTAINER,
       }}
+      minHeight="screen"
+      display="flex"
+      direction="col"
+      flex1
     >
-      <Stack gap={{ base: STORE_TOKENS.SPACING.EMPTY_STATE, md: STORE_TOKENS.SPACING.SECTION }}>
+      <Stack flex1 gap={{ base: STORE_TOKENS.SPACING.EMPTY_STATE, md: STORE_TOKENS.SPACING.SECTION }}>
         {/* Header Section title*/}
-        <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-          <Inline gap={STORE_TOKENS.SPACING.ELEMENT}>
-            <Icon icon={IconComp} color={primaryColor as any} size="lg" />
-            <Font variant="auxiliary" color={primaryColor as any}>{contextLabel || 'Brand Guidelines'}</Font>
-          </Inline>
+        {showHeader && (
+          <Stack direction={{ base: 'col', md: 'row' }} justify="between" align={{ base: 'start', md: 'center' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+            <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+              <Inline gap={STORE_TOKENS.SPACING.ELEMENT}>
+                <Icon icon={IconComp} color={primaryColor as any} size="lg" />
+                <Font variant="auxiliary" color={primaryColor as any}>{contextLabel || 'Brand Guidelines'}</Font>
+              </Inline>
 
-          <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-            <Font variant="h1" nowrap>
-              {first} <Font variant="h1" color={primaryColor} nowrap>{rest.join(' ')}</Font>
-            </Font>
-            <Font variant="description">{subtitle}</Font>
+              <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                <Font variant="h1">
+                  {first} <Font variant="h1" color={primaryColor}>{rest.join(' ')}</Font>
+                </Font>
+                <Font variant="description">{subtitle}</Font>
+              </Stack>
+            </Stack>
+            
+            {rightElement && (
+              <Box display="flex" fullWidth={{ base: true, md: false }}>
+                {rightElement}
+              </Box>
+            )}
           </Stack>
-        </Stack>
+        )}
 
         {/* Tab Navigation System (Pill Style with Contextual Colors) */}
         {showTabs && (
@@ -139,16 +161,18 @@ export function RegistryMain({
         )}
 
         {/* Content Sections */}
-        <Stack gap={{ base: STORE_TOKENS.SPACING.EMPTY_STATE, md: STORE_TOKENS.SPACING.SECTION }} fullWidth>
+        <Stack flex1 gap={{ base: STORE_TOKENS.SPACING.EMPTY_STATE, md: STORE_TOKENS.SPACING.SECTION }} fullWidth>
           {renderContent()}
         </Stack>
 
         {/* Footer Area - Upgraded to Liquid Glass */}
-        <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER}>
-          <Inline justify="between">
-            <Font variant="sub-tiny">RepTrail Design System v2.0 - 2026</Font>
-          </Inline>
-        </GlassPanel>
+        <Box shrink={0}>
+          <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER}>
+            <Inline justify="between">
+              <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>RepTrail Design System v2.0 - 2026</Font>
+            </Inline>
+          </GlassPanel>
+        </Box>
       </Stack>
     </Scaffold>
   );

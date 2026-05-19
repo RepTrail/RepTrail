@@ -41,7 +41,10 @@ export function AffiliateActivityChart({ clickDays, maxClicks }: AffiliateActivi
                 rounded="system"
                 style={{ height: `${Math.max(heightPercent, 5)}%` }}
                 transition
-                className="hover:bg-opacity-80 cursor-pointer group relative"
+                hoverBgOpacity={80}
+                cursor="pointer"
+                group
+                position="relative"
               >
                 {/* Tooltip */}
                 <Box 
@@ -55,9 +58,8 @@ export function AffiliateActivityChart({ clickDays, maxClicks }: AffiliateActivi
                   display="none" 
                   groupHoverDisplay="block"
                   zIndex={50}
-                  className="whitespace-nowrap"
                 >
-                   <Font variant="sub-tiny" color="white" weight="black">{count} cliques</Font>
+                   <Font variant="sub-tiny" color="white" weight="black" nowrap>{count} cliques</Font>
                 </Box>
               </Box>
             </Stack>

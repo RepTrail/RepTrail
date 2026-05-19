@@ -1,7 +1,7 @@
-import { ImportPdfClient } from '@/components/store/features(deprecated)/import-pdf-client'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
+import { ImportPdfSectionContent } from '@/components/store/sections/import-pdf-section-content'
 
 export const metadata = {
     title: 'Importar PDF | RepTrail'
@@ -20,8 +20,7 @@ export default async function StudentImportPdfPage() {
             contextLabel="Inteligência Artificial"
             showTabs={false}
         >
-            <ImportPdfClient role="student" userId={user.id} />
+            <ImportPdfSectionContent role="student" userId={user.id} />
         </RegistryMain>
     )
 }
-

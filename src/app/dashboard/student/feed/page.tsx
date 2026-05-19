@@ -2,7 +2,7 @@ import { getPublicFeed } from '@/actions/student-actions'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { getQueryClient } from '@/lib/get-query-client'
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
-import { FeedClient } from '@/components/store/features(deprecated)/student-feed-client'
+import { CommunityFeedSectionContent } from '@/components/store/sections/community-feed-section-content'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 
 export const metadata = {
@@ -27,7 +27,7 @@ export default async function StudentFeedPage() {
             showTabs={false}
         >
             <HydrationBoundary state={dehydrate(queryClient)}>
-                <FeedClient />
+                <CommunityFeedSectionContent />
             </HydrationBoundary>
         </RegistryMain>
     )

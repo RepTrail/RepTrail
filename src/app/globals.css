@@ -272,6 +272,9 @@
     rgba(255, 255, 255, 0.4) 50%,
     rgba(255, 255, 255, 0) 100%
   );
-  animation: shine 1.5s infinite;
-  transform: skewX(-30deg);
+  transform: translateX(-200%) skewX(-30deg);
 }
+
+*:hover > .shine-container > .shine-line {
+  animation: shine 1.5s infinite;
+}

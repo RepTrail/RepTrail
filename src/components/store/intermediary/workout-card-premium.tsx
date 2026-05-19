@@ -122,34 +122,25 @@ export function WorkoutCardPremium({
                 </Stack>
 
                 {/* Footer Buttons & Actions */}
-                <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    {isAuto ? (
-                        <>
-                            <Button variant={color as any} flex1>
-                                <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                    <Icon icon={Calendar} size="xs" color={STORE_TOKENS.COLORS.BLACK} />
-                                    <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.BLACK}>AGENDAR</Font>
-                                </Stack>
-                            </Button>
-                            <Button variant="outline-zinc" flex1>
-                                <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                    <Icon icon={Edit3} size="xs" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} />
-                                    <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>EDITAR</Font>
-                                </Stack>
-                            </Button>
-                            <Button variant="outline-zinc" isIconOnly size="sm" rounded={STORE_TOKENS.RADIUS.SYSTEM}>
-                                <Icon icon={Copy} size="xs" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} />
-                            </Button>
-                        </>
-                    ) : (
+                {isAuto && (
+                    <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                         <Button variant={color as any} flex1>
                             <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                <Icon icon={Eye} size="xs" color={STORE_TOKENS.COLORS.BLACK} />
-                                <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.BLACK}>VISUALIZAR TREINO</Font>
+                                <Icon icon={Calendar} size="xs" color={STORE_TOKENS.COLORS.BLACK} />
+                                <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.BLACK}>AGENDAR</Font>
                             </Stack>
                         </Button>
-                    )}
-                </Stack>
+                        <Button variant="outline-zinc" flex1>
+                            <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                <Icon icon={Edit3} size="xs" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} />
+                                <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>EDITAR</Font>
+                            </Stack>
+                        </Button>
+                        <Button variant="outline-zinc" isIconOnly size="sm" rounded={STORE_TOKENS.RADIUS.SYSTEM}>
+                            <Icon icon={Copy} size="xs" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} />
+                        </Button>
+                    </Stack>
+                )}
             </Stack>
         </GlassPanel>
     )

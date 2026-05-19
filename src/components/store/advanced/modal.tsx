@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Stack } from '@/components/store/base/stack'
 import { Font } from '@/components/store/base/font'
 import { Icon, IconBox } from '@/components/store/base/icon'
@@ -10,6 +10,7 @@ import { Surface, CardHeader } from '@/components/store/base/surface'
 import { ModalOverlay, ModalContainer, Divider } from '@/components/store/base/layout'
 import { Box } from '@/components/store/base/box'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
+import { cn } from '@/lib/utils'
 
 interface ModalProps {
   isOpen: boolean
@@ -48,11 +49,43 @@ export function Modal({
   noPadding = false,
   hideCancel = false
 }: ModalProps) {
-  if (!isOpen) return null
+  const [shouldRender, setShouldRender] = useState(false)
+  const [animateState, setAnimateState] = useState<'closed' | 'open'>('closed')
+
+  useEffect(() => {
+    if (isOpen) {
+      setShouldRender(true)
+      const timer = setTimeout(() => {
+        setAnimateState('open')
+      }, 10)
+      return () => clearTimeout(timer)
+    } else {
+      if (shouldRender) {
+        setAnimateState('closed')
+        const timer = setTimeout(() => {
+          setShouldRender(false)
+        }, 200)
+        return () => clearTimeout(timer)
+      }
+    }
+  }, [isOpen, shouldRender])
+
+  // Lock page scrolling when modal is active/rendered to avoid backscroll
+  useEffect(() => {
+    if (shouldRender) {
+      const originalOverflow = document.body.style.overflow
+      document.body.style.overflow = 'hidden'
+      return () => {
+        document.body.style.overflow = originalOverflow
+      }
+    }
+  }, [shouldRender])
+
+  if (!shouldRender) return null
 
   return (
-    <ModalOverlay onClose={onClose}>
-      <ModalContainer>
+    <ModalOverlay onClose={onClose} animateState={animateState}>
+      <ModalContainer animateState={animateState}>
         <Surface variant="base" padding={0} rounded={STORE_TOKENS.RADIUS.SYSTEM} direction="col" flex1 minHeight={0} overflow="hidden">
           <Box flex1 direction="col" minHeight={0} overflow="hidden">
             {/* Header */}

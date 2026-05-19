@@ -14,6 +14,7 @@ import { TrainerTourManager } from '@/components/store/features(deprecated)/trai
 import { MobileTrainerTourManager } from '@/components/store/features(deprecated)/mobile-trainer-tour-manager'
 import { DashboardShell } from '@/components/store/advanced/dashboard-shell'
 import { RegistryProvider } from '@/components/store/advanced/registry-context'
+import { SettingsModal } from '@/components/store/advanced/student-settings-modal'
 
 export default async function TrainerLayout({ children }: { children: React.ReactNode }) {
     const headerList = await headers()
@@ -82,6 +83,7 @@ export default async function TrainerLayout({ children }: { children: React.Reac
         { href: '/dashboard/trainer/loja',       label: 'Loja',         icon: 'ShoppingBag' },
         { href: '/dashboard/trainer/plans',      label: 'Faturamento',  icon: 'CreditCard' },
         { href: '/dashboard/trainer/ranking',    label: 'Ranking',      icon: 'Trophy' },
+        { href: '/dashboard/trainer/profile',    label: 'Meu Perfil',   icon: 'User' },
     ]
 
     const mobileLinks = [
@@ -105,6 +107,7 @@ export default async function TrainerLayout({ children }: { children: React.Reac
                 >
                     {children}
                 </DashboardShell>
+                <SettingsModal isTrainer={true} hasTrainer={false} />
             </HydrationBoundary>
         </RegistryProvider>
     )

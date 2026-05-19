@@ -12,6 +12,7 @@ import { Inline } from '@/components/store/base/layout'
 import { ActionableListCard } from './actionable-list-card'
 import { Star, ArrowRight, Users } from 'lucide-react'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
+import Link from 'next/link'
 
 interface RankingListItemProps {
     trainer: {
@@ -19,6 +20,7 @@ interface RankingListItemProps {
         avatar_url?: string
         rating?: number
         studentCount: number
+        trainer_code?: string | null
     }
     rank: number
 }
@@ -48,15 +50,30 @@ export function RankingListItem({ trainer, rank }: RankingListItemProps) {
                 </Inline>
             }
             actions={
-                <Button 
-                    variant="outline-zinc" 
-                    rounded="full" 
-                    isIconOnly 
-                    size="sm"
-                    transition
-                >
-                    <Icon icon={ArrowRight} size="xs" />
-                </Button>
+                trainer.trainer_code ? (
+                    <Link href={`/personal/${trainer.trainer_code}`}>
+                        <Button
+                            variant="outline-zinc"
+                            rounded="full"
+                            isIconOnly
+                            size="sm"
+                            transition
+                        >
+                            <Icon icon={ArrowRight} size="xs" />
+                        </Button>
+                    </Link>
+                ) : (
+                    <Button
+                        variant="outline-zinc"
+                        rounded="full"
+                        isIconOnly
+                        size="sm"
+                        transition
+                        disabled
+                    >
+                        <Icon icon={ArrowRight} size="xs" />
+                    </Button>
+                )
             }
         >
             <Inline gap={STORE_TOKENS.SPACING.CONTAINER} align="center">

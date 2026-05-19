@@ -14,35 +14,29 @@ export function StoreHeroCard() {
     return (
         <Banner src="/imagem-loja.png">
             <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
-                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <Box>
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align={{ base: 'center', md: 'start' }} fullWidth>
+                    <Box textAlign={{ base: 'center', md: 'left' }}>
                         <Font
-                            variant="display"
+                            variant="hero"
                             color={STORE_TOKENS.COLORS.TEXT.PRIMARY}
                         >
                             PERFORMANCE
                         </Font>
                         <br />
                         <Font
-                            variant="massive"
+                            variant="hero"
                             color="orange"
                         >
                             EXTREMA
                         </Font>
                     </Box>
-                    <Box maxWidth="md">
+                    <Box maxWidth="md" textAlign={{ base: 'center', md: 'left' }}>
                         <Font variant="body" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} weight="medium">
                             A base sólida que seu corpo precisa para bater novos recordes todos os dias.
                         </Font>
                     </Box>
                 </Stack>
 
-                <Box width="auto" alignSelf="start">
-                    <Button variant="orange" size="lg" rounded={STORE_TOKENS.RADIUS.SYSTEM} textColor="black" direction="row" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} variant="body-sm">EXPLORAR COLEÇÃO</Font>
-                        <Icon icon={ArrowRight} size="sm" color={STORE_TOKENS.COLORS.BLACK} />
-                    </Button>
-                </Box>
             </Stack>
         </Banner>
     );

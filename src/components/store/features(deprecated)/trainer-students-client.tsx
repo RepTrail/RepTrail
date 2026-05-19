@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { getTrainerStudents, getTrainerProfile, getTrainerRanking } from '@/actions/trainer-actions'

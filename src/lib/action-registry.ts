@@ -49,6 +49,7 @@ export const ACTION_REGISTRY: Record<string, ActionFn> = {
   'delete-student-diet': async (p) => { const { deleteStudentDiet } = await import('@/actions/student-content-actions'); return wrap(deleteStudentDiet(p.id)); },
   'delete-student-cardio': async (p) => { const { deleteStudentCardio } = await import('@/actions/student-content-actions'); return wrap(deleteStudentCardio(p.id, p.studentId || p.relationshipId)); },
   'delete-student-ergogenic': async (p) => { const { deleteErgogenic } = await import('@/actions/ergogenics-actions'); return wrap(deleteErgogenic(p.id, p.studentId || p.relationshipId || '')); },
+  'delete-ergogenic': async (p) => { const { deleteErgogenic } = await import('@/actions/ergogenics-actions'); return wrap(deleteErgogenic(p.id, p.studentId || p.relationshipId || '')); },
   'delete-student-workout': async (p) => { const { deleteStudentWorkout } = await import('@/actions/student-content-actions'); return wrap(deleteStudentWorkout(p.id)); },
 
   // ─── Workouts ─────────────────────────────────────────────────────────────────
@@ -57,7 +58,7 @@ export const ACTION_REGISTRY: Record<string, ActionFn> = {
   'create-manual-cardio': async (p) => { const { createManualCardio } = await import('@/actions/student-content-actions'); return executeWithFormData(createManualCardio, p); },
   'delete-workout': async (p) => { const { deleteWorkout } = await import('@/actions/workout-actions'); return wrap(deleteWorkout(p.id)); },
   'update-workout-meta': async (p) => { const { updateWorkoutMeta } = await import('@/actions/workout-actions'); return wrap(updateWorkoutMeta(p.id, p.name)); },
-  'assign-workout': async (p) => { const { assignWorkout } = await import('@/actions/workout-actions'); return wrap(assignWorkout(p.workout_id || p.workoutId, p.student_id || p.studentId, p.day_of_week ?? (Array.isArray(p.daysOfWeek) ? p.daysOfWeek[0] : p.daysOfWeek))); },
+  'assign-workout': async (p) => { const { assignWorkout } = await import('@/actions/workout-actions'); return wrap(assignWorkout(p.workout_id || p.workoutId, p.student_id || p.studentId, p.day_of_week ?? p.day ?? (Array.isArray(p.daysOfWeek) ? p.daysOfWeek[0] : p.daysOfWeek))); },
   'unassign-workout': async (p) => { const { unassignWorkout } = await import('@/actions/workout-actions'); return wrap(unassignWorkout(p.contentId || p.workout_id || p.workoutId || p.id, p.student_id || p.studentId || p.relationshipId)); },
 
   // ─── Trainer ──────────────────────────────────────────────────────────────────
@@ -121,10 +122,15 @@ export const ACTION_REGISTRY: Record<string, ActionFn> = {
   'update-meal-item': async (p) => { const { updateMealItem } = await import('@/actions/diet-actions'); return wrap(updateMealItem(p.id, p.dietId, p.data)); },
   'delete-diet': async (p) => { const { deleteDiet } = await import('@/actions/diet-actions'); return wrap(deleteDiet(p.id)); },
   'delete-cardio': async (p) => { const { deleteCardio } = await import('@/actions/cardio-actions'); return wrap(deleteCardio(p.id)); },
+  'create-cardio': async (p) => { const { createCardio } = await import('@/actions/cardio-actions'); return wrap(createCardio(p.name, p.description, p.duration, p.intensity, p.daysOfWeek || p.selectedDays)); },
+  'update-cardio': async (p) => { const { updateCardioMeta } = await import('@/actions/cardio-actions'); return wrap(updateCardioMeta(p.id, p.name, p.description, p.duration, p.intensity)); },
   'update-diet-meta': async (p) => { const { updateDietMeta } = await import('@/actions/diet-actions'); return wrap(updateDietMeta(p.id, p.data)); },
 
   // ─── Specialized Assignments ──────────────────────────────────────────────────
-  'assign-cardio': async (p) => { const { assignCardioToStudent } = await import('@/actions/student-content-actions'); return wrap(assignCardioToStudent(p.cardio_id, p.student_id, p)); },
+  'assign-cardio': async (p) => { 
+    const { assignCardioToStudent } = await import('@/actions/student-content-actions'); 
+    return wrap(assignCardioToStudent(p.cardioId || p.cardio_id, p.studentId || p.student_id, p)); 
+  },
   'assign-cardio-to-student': async (p) => { const { assignCardioToStudent } = await import('@/actions/student-content-actions'); return wrap(assignCardioToStudent(p.cardioId, p.studentId, p)); },
   'toggle-ergogenic-log': async (p) => { const { toggleErgogenicLog } = await import('@/actions/ergogenics-actions'); return wrap(toggleErgogenicLog(p.student_id || p.studentId, p.ergogenic_id || p.ergogenicId, p.status)); },
   'update-workout-day': async (p) => { const { updateStudentWorkoutDay } = await import('@/actions/student-workout-schedule-actions'); return wrap(updateStudentWorkoutDay(p.id, p.day_of_week)); },
@@ -150,13 +156,15 @@ export const ACTION_REGISTRY: Record<string, ActionFn> = {
   'delete-operational-cost': async (p) => { const { deleteOperationalCost } = await import('@/actions/admin-actions'); return wrap(deleteOperationalCost(p.id)); },
 
   // ─── Tracking & Logs (Player) ─────────────────────────────────────────────────
-  'start-workout-log': async (p) => { const { startWorkoutLog } = await import('@/actions/log-actions'); return wrap(startWorkoutLog(p.workoutId || p.id)); },
+  'start-workout-log': async (p) => { const { startWorkoutLog } = await import('@/actions/log-actions'); return wrap(startWorkoutLog(p.workoutId, p.id)); },
   'record-set-load': async (p) => { const { recordSetLoad } = await import('@/actions/log-actions'); return wrap(recordSetLoad(p)); },
   'finish-workout-log': async (p) => { const { finishWorkoutLog } = await import('@/actions/log-actions'); return wrap(finishWorkoutLog(p.id || p.logId, p.feedback, p.perceivedEffort, p.adherenceStatus)); },
+  'finish-workout': async (p) => { const { finishWorkoutLog } = await import('@/actions/log-actions'); return wrap(finishWorkoutLog(p.id || p.logId, p.feedback, p.perceivedEffort, p.adherenceStatus)); },
   'start-cardio-session': async (p) => { const { startCardioSession } = await import('@/actions/cardio-actions'); return wrap(startCardioSession(p.cardioId || p.assignmentId)); },
   'update-cardio-session': async (p) => { const { updateCardioSession } = await import('@/actions/cardio-actions'); return wrap(updateCardioSession(p.id || p.logId, p.seconds || p.elapsed_seconds || 0, p.running || p.is_running || false)); },
   'finish-cardio-session': async (p) => { const { finishCardioSession } = await import('@/actions/cardio-actions'); return wrap(finishCardioSession(p.logId, p.feedback, p.intensity, p.percentage)); },
   'update-workout-log-state': async (p) => { const { saveWorkoutLogState } = await import('@/actions/log-actions'); return wrap(saveWorkoutLogState(p.logId, p.state)); },
+  'save-workout-state': async (p) => { const { saveWorkoutLogState } = await import('@/actions/log-actions'); return wrap(saveWorkoutLogState(p.logId, p.state)); },
   'add-ergogenic': async (p) => { const { addErgogenic } = await import('@/actions/ergogenics-actions'); return wrap(addErgogenic(p)); },
   'update-ergogenic': async (p) => { const { updateErgogenic } = await import('@/actions/ergogenics-actions'); return wrap(updateErgogenic(p.id, p.studentId || p.student_id, p.data || p)); },
   'update-student-ergogenic': async (p) => { const { updateErgogenic } = await import('@/actions/ergogenics-actions'); return wrap(updateErgogenic(p.id, p.student_id || p.studentId, p.data || p)); },

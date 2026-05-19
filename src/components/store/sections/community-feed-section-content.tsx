@@ -1,48 +1,84 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Grid } from '@/components/store/base/grid'
 import { CommunityFeedCard } from '@/components/store/intermediary/community-feed-card'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
-import { Users } from 'lucide-react'
+import { Users, TrendingUp } from 'lucide-react'
 import { EmptyState } from '@/components/store/intermediary/empty-state'
+import { QUERY_KEYS } from '@/lib/query-keys'
+import { getPublicFeed } from '@/actions/student-actions'
+import { createClient } from '@/lib/supabase/client'
 
 /**
  * CommunityFeedSectionContent: The composite content for the Community Feed section.
  * Separated into the sections layer to maintain architectural purity.
  */
 export function CommunityFeedSectionContent({ isEmpty = false }: { isEmpty?: boolean }) {
-    if (isEmpty) {
+    const router = useRouter()
+    const queryClient = useQueryClient()
+    const supabase = createClient()
+
+    const { data: result, isLoading } = useQuery({
+        queryKey: QUERY_KEYS.public.feed,
+        queryFn: async () => getPublicFeed(),
+        staleTime: 1000 * 60 * 5 // 5 minutes
+    })
+
+    // Realtime invalidation for the public feed
+    useEffect(() => {
+        const channel = supabase
+            .channel('public-feed-sync')
+            .on(
+                'postgres_changes',
+                { event: '*', schema: 'public', table: 'progress_photos' },
+                () => {
+                    queryClient.invalidateQueries({ queryKey: QUERY_KEYS.public.feed })
+                }
+            )
+            .subscribe()
+
+        return () => {
+            supabase.removeChannel(channel)
+        }
+    }, [queryClient, supabase])
+
+    const publicPhotos = (result?.success ? result.data : []) ?? []
+
+    if (isLoading) {
+        return <EmptyState icon={TrendingUp} title="CARREGANDO..." description="BUSCANDO FEED DE ALUNOS." />
+    }
+
+    if (isEmpty || publicPhotos.length === 0) {
         return (
             <EmptyState 
                 icon={Users}
                 title="FEED VAZIO"
-                description="AINDA NÃO HÁ PUBLICAÇÕES NA COMUNIDADE."
+                description="NENHUM ALUNO COMPARTILHOU SUA EVOLUÇÃO PUBLICAMENTE AINDA."
             />
         )
     }
 
     return (
-        <Grid cols={{ base: 2.5, md: 2, lg: 3 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
-            <CommunityFeedCard
-                imageUrl="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?q=80&w=2070&auto=format&fit=crop"
-                userName="MARCOS VINICIUS"
-                avatarUrl="https://github.com/shadcn.png"
-                statusLabel="EVOLUÇÃO ATIVA"
-            />
-            <CommunityFeedCard
-                imageUrl="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop"
-                userName="GABRIEL ALMEIDA"
-                avatarUrl="https://github.com/shadcn.png"
-                statusLabel="NOVO RECORDE"
-            />
-            <CommunityFeedCard
-                imageUrl="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?q=80&w=1470&auto=format&fit=crop"
-                userName="LUCAS FERNANDES"
-                avatarUrl="https://github.com/shadcn.png"
-                statusLabel="TREINO CONCLUÍDO"
-            />
+        <Grid cols={{ base: 1, md: 2, lg: 3 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+            {publicPhotos.map((photo: any) => {
+                const mainUrl = photo.front_url || photo.side_right_url || photo.back_url;
+                if (!mainUrl) return null;
+
+                return (
+                    <CommunityFeedCard
+                        key={photo.id}
+                        imageUrl={mainUrl}
+                        userName={photo.student?.full_name || 'ALUNO REPTRAIL'}
+                        avatarUrl={photo.student?.avatar_url}
+                        statusLabel="EVOLUÇÃO ATIVA"
+                        onAction={() => router.push(`/aluno/${photo.student_id}`)}
+                    />
+                )
+            })}
         </Grid>
     )
 }

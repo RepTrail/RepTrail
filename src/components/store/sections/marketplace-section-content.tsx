@@ -1,25 +1,69 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { Stack } from '@/components/store/base/stack'
 import { Grid } from '@/components/store/base/grid'
+import { Input } from '@/components/store/base/input'
 import { StoreHeroCard } from '@/components/store/intermediary/store-hero-card'
 import { StoreProductCard } from '@/components/store/intermediary/store-product-card'
-import { ShoppingBag } from 'lucide-react'
+import { ShoppingBag, Search, Filter } from 'lucide-react'
 import { EmptyState } from '@/components/store/intermediary/empty-state'
+import { FormSelect } from '@/components/store/base/form-select'
+import { Box } from '@/components/store/base/box'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
+import { QUERY_KEYS } from '@/lib/query-keys'
+import { getStoreProducts, logProductClick } from '@/actions/store-actions'
 
 /**
  * MarketplaceSectionContent: The composite content for the Marketplace & Performance section.
- * Separated into the sections layer to maintain architectural purity.
+ * Fully data-driven via React Query + getStoreProducts action.
  */
-export function MarketplaceSectionContent({ isEmpty = false }: { isEmpty?: boolean }) {
-    if (isEmpty) {
+export function MarketplaceSectionContent() {
+    const [search, setSearch] = useState('')
+    const [selectedCategory, setSelectedCategory] = useState('ALL')
+
+    const { data: products = [], isLoading } = useQuery({
+        queryKey: QUERY_KEYS.store.products,
+        queryFn: getStoreProducts,
+        staleTime: 1000 * 60 * 5 // 5 minutes
+    })
+
+    const categories = React.useMemo(() => {
+        if (!products.length) return [{ label: 'TODAS AS CATEGORIAS', value: 'ALL' }]
+        const cats = Array.from(new Set(products.map((p: any) => p.category).filter(Boolean)))
+        return [
+            { label: 'TODAS AS CATEGORIAS', value: 'ALL' },
+            ...cats.map((c: any) => ({ label: String(c).toUpperCase(), value: String(c) }))
+        ]
+    }, [products])
+
+    const filtered = products.filter((p: any) => {
+        const q = search.toLowerCase()
+        const matchesSearch = p.name?.toLowerCase().includes(q) ||
+            p.description?.toLowerCase().includes(q) ||
+            p.category?.toLowerCase().includes(q)
+        
+        const matchesCategory = selectedCategory === 'ALL' || p.category === selectedCategory
+        
+        return matchesSearch && matchesCategory
+    })
+
+    function handleBuy(product: any) {
+        if (product.link_url) window.open(product.link_url, '_blank')
+        logProductClick(product.id)
+    }
+
+    if (isLoading) {
+        return <EmptyState icon={ShoppingBag} title="CARREGANDO..." description="BUSCANDO OS PRODUTOS DA LOJA." />
+    }
+
+    if (filtered.length === 0 && !isLoading) {
         return (
-            <EmptyState 
+            <EmptyState
                 icon={ShoppingBag}
                 title="LOJA INDISPONÍVEL"
-                description="Não há produtos disponíveis no momento."
+                description={search ? 'NENHUM PRODUTO ENCONTRADO PARA SUA BUSCA.' : 'NÃO HÁ PRODUTOS DISPONÍVEIS NO MOMENTO.'}
             />
         )
     }
@@ -27,48 +71,60 @@ export function MarketplaceSectionContent({ isEmpty = false }: { isEmpty?: boole
     return (
         <Stack gap={STORE_TOKENS.SPACING.EMPTY_STATE}>
             <StoreHeroCard />
-            <Grid cols={{ base: 2.5, md: 2, lg: 4 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
-                <StoreProductCard 
-                    id="1"
-                    name="HIPERCALÓRICO 1KG GROWTH SUPPLEMENTS"
-                    description="PESO DA UNIDADE: 1 KG. | VOLUME DA UNIDADE: 1 L. | UNIDADES POR EMBALAGEM: 1."
-                    category="SUPPLEMENT"
-                    price={82.90}
-                    rating={4.8}
-                    reviewsCount={1089}
-                    imageUrl="https://www.gsuplementos.com.br/upload/growth-contents/produtos/detalhes/hipercalorico-1kg-growth-supplements-sabor-chocolate-rs-growth-supplements.png"
-                />
-                <StoreProductCard 
-                    id="2"
-                    name="L-GLUTAMINA 250G GROWTH SUPPLEMENTS"
-                    description="PESO DA UNIDADE: 250 G. | VOLUME DA UNIDADE: 250 ML. | UNIDADES POR EMBALAGEM: 1."
-                    category="SUPPLEMENT"
-                    price={50.90}
-                    rating={4.9}
-                    reviewsCount={501}
-                    imageUrl="https://www.gsuplementos.com.br/upload/growth-contents/produtos/detalhes/l-glutamina-250g-growth-supplements-sem-sabor-em-p-rs-growth-supplements.png"
-                />
-                <StoreProductCard 
-                    id="3"
-                    name="BARRA DE PROTEÍNA (CX. 12 UNID.)"
-                    description="PESO DA UNIDADE: 400 G. | VOLUME DA UNIDADE: 400 ML. | UNIDADES POR EMBALAGEM: 12."
-                    category="SUPPLEMENT"
-                    price={58.90}
-                    rating={4.7}
-                    reviewsCount={369}
-                    imageUrl="https://www.gsuplementos.com.br/upload/growth-contents/produtos/detalhes/barra-de-prote-na-cx-12-unid-growth-supplements-sabor-cookies-n-cream-rs-growth-supplements.png"
-                />
-                <StoreProductCard 
-                    id="4"
-                    name="MULTIVITAMÍNICO (120 CAPS) GROWTH"
-                    description="VITAMINAS E MINERAIS DE A A Z. | 120 CÁPSULAS POR EMBALAGEM."
-                    category="HEALTH"
-                    price={36.90}
-                    rating={4.9}
-                    reviewsCount={2450}
-                    imageUrl="https://www.gsuplementos.com.br/upload/growth-contents/produtos/detalhes/multivitaminico-120-caps-growth-supplements-rs-growth-supplements.png"
-                />
-            </Grid>
+
+            {/* Search + Category Filter block */}
+            <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
+                <Box 
+                    display="flex" 
+                    direction={{ base: 'col', md: 'row' }} 
+                    gap={STORE_TOKENS.SPACING.ELEMENT}
+                    fullWidth
+                    align="center"
+                >
+                    <Box width={{ base: 'full', md: '70%' }}>
+                        <Input
+                            placeholder="Buscar por nome, descrição ou categoria..."
+                            value={search}
+                            onChange={e => setSearch(e.target.value)}
+                            icon={<Search className="w-4 h-4" />}
+                        />
+                    </Box>
+                    <Box width={{ base: 'full', md: '30%' }}>
+                        <FormSelect
+                            options={categories}
+                            value={selectedCategory}
+                            onChange={setSelectedCategory}
+                            placeholder="CATEGORIAS"
+                        />
+                    </Box>
+                </Box>
+
+                {filtered.length === 0 ? (
+                    <EmptyState
+                        icon={ShoppingBag}
+                        title="NENHUM RESULTADO"
+                        description="NENHUM PRODUTO ENCONTRADO PARA SUA BUSCA."
+                    />
+                ) : (
+                    <Grid cols={{ base: 2.5, md: 2, lg: 4 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                        {filtered.map((product: any) => (
+                            <StoreProductCard
+                                key={product.id}
+                                id={String(product.id)}
+                                name={product.name}
+                                description={product.description || ''}
+                                category={product.category || 'OFERTA'}
+                                price={product.official_price || 0}
+                                rating={product.rating || 5}
+                                reviewsCount={product.reviews_count || 0}
+                                imageUrl={product.image_url || ''}
+                                linkUrl={product.link_url}
+                                onBuy={() => handleBuy(product)}
+                            />
+                        ))}
+                    </Grid>
+                )}
+            </Stack>
         </Stack>
-    );
+    )
 }

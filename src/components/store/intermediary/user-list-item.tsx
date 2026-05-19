@@ -101,15 +101,19 @@ export function UserListItem({
                 </>
             ) : undefined}
         >
-            <Inline gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
-                <BaseAvatar src={avatarUrl || undefined} initials={initials} variant={avatarVariant} size="md" />
-                <Stack gap={0} minWidth={0}>
-                    <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} variant={{ base: 'body-sm', md: 'body' }} color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
-                        {name}
-                    </Font>
+            <Inline gap={STORE_TOKENS.SPACING.CONTAINER} align="center" minWidth={0} fullWidth>
+                <Box shrink={0}>
+                    <BaseAvatar src={avatarUrl || undefined} initials={initials} variant={avatarVariant} size="md" />
+                </Box>
+                <Stack gap={0} minWidth={0} flex1>
                     <Box fullWidth minWidth={0} overflow="hidden">
-                        <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.DIM} lowercase>
-                            {email}
+                        <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} variant={{ base: 'body-sm', md: 'body' }} color={STORE_TOKENS.COLORS.TEXT.PRIMARY} truncate display="block">
+                            {name}
+                        </Font>
+                    </Box>
+                    <Box fullWidth minWidth={0} overflow="hidden">
+                        <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.DIM} lowercase truncate display="block">
+                            {email || 'Sem email cadastrado'}
                         </Font>
                     </Box>
                 </Stack>

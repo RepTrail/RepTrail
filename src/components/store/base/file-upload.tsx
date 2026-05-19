@@ -3,19 +3,28 @@
 import React, { useRef, useState } from 'react'
 import { Font } from './font'
 import { Icon } from './icon'
-import { User, Image as ImageIcon, X } from 'lucide-react'
+import { User, Image as ImageIcon, X, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { STORE_TOKENS } from '@/components/store/constants/tokens';
 
 interface FileUploadProps {
     label: string
     variant?: 'generic' | 'profile'
+    currentImageUrl?: string
     onFileSelect?: (file: File) => void
+    isUploading?: boolean
 }
 
-export function FileUpload({ label, variant = 'generic', onFileSelect }: FileUploadProps) {
-    const [preview, setPreview] = useState<string | null>(null)
+export function FileUpload({ label, variant = 'generic', currentImageUrl, onFileSelect, isUploading }: FileUploadProps) {
+    const [preview, setPreview] = useState<string | null>(currentImageUrl || null)
     const fileInputRef = useRef<HTMLInputElement>(null)
+
+    // Sync preview with currentImageUrl changes if needed
+    React.useEffect(() => {
+        if (currentImageUrl) {
+            setPreview(currentImageUrl)
+        }
+    }, [currentImageUrl])
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
@@ -43,10 +52,11 @@ export function FileUpload({ label, variant = 'generic', onFileSelect }: FileUpl
                 className="hidden"
                 onChange={handleFileChange}
                 accept="image/*"
+                disabled={isUploading}
             />
 
             <div
-                onClick={() => fileInputRef.current?.click()}
+                onClick={() => !isUploading && fileInputRef.current?.click()}
                 className={cn(
                     "cursor-pointer group transition-all duration-300 relative",
                     "border-2 border-dashed border-white/5 bg-zinc-950/40",
@@ -59,14 +69,16 @@ export function FileUpload({ label, variant = 'generic', onFileSelect }: FileUpl
             >
                 {preview ? (
                     <>
-                        <img src={preview} alt="Preview" className="w-full h-full object-cover" />
-                        <button
-                            type="button"
-                            onClick={(e) => { e.stopPropagation(); clearFile() }}
-                            className="absolute top-1 right-1 bg-black/60 rounded-full p-0.5 hover:bg-red-500 transition-colors"
-                        >
-                            <Icon icon={X} size="xs" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} />
-                        </button>
+                        <img src={preview} alt="Preview" className={cn("w-full h-full object-cover", isUploading && "opacity-40")} />
+                        {!isUploading && (
+                            <button
+                                type="button"
+                                onClick={(e) => { e.stopPropagation(); clearFile() }}
+                                className="absolute top-1 right-1 bg-black/60 rounded-full p-0.5 hover:bg-red-500 transition-colors"
+                            >
+                                <Icon icon={X} size="xs" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} />
+                            </button>
+                        )}
                     </>
                 ) : (
                     <div className="flex flex-col items-center gap-1">
@@ -76,6 +88,12 @@ export function FileUpload({ label, variant = 'generic', onFileSelect }: FileUpl
                             color={STORE_TOKENS.COLORS.TEXT.MUTED}
                             className="group-hover:text-emerald-500 transition-colors"
                         />
+                    </div>
+                )}
+
+                {isUploading && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/60 z-10 rounded-inherit">
+                        <Loader2 className="w-5 h-5 text-orange-500 animate-spin" />
                     </div>
                 )}
             </div>

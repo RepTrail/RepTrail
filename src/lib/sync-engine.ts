@@ -263,7 +263,8 @@ class SyncEngine {
             lowerError.includes('encontrada') || 
             lowerError.includes('not found') || 
             lowerError.includes('id da substância é necessário') ||
-            lowerError.includes('substância é necessário')
+            lowerError.includes('substância é necessário') ||
+            lowerError.includes('violates foreign key constraint')
         ) {
             console.warn(`⚠️ [SyncEngine] Obsolete/Unrecoverable mutation ${record.id}: ${errorMsg}. Dequeuing.`);
             await outboxDB.markMutationAsProcessed(record.clientMutationId);
@@ -277,6 +278,15 @@ class SyncEngine {
     } catch (error: any) {
       console.error(`❌ Failed to sync mutation ${record.id} [Action: ${record.action}]:`, error.message);
       
+      const lowerError = String(error.message || '').toLowerCase();
+      if (lowerError.includes('violates foreign key constraint')) {
+          console.warn(`⚠️ [SyncEngine] Catch: Obsolete/Unrecoverable mutation caught. Dequeuing ${record.id}.`);
+          await outboxDB.markMutationAsProcessed(record.clientMutationId);
+          await outboxDB.dequeue(record.id);
+          delete this.retryCounts[record.id];
+          return;
+      }
+
       await outboxDB.updateStatus(record.id, 'pending');
       
       this.retryCounts[record.id] = (this.retryCounts[record.id] || 0) + 1;

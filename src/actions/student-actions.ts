@@ -387,8 +387,7 @@ export async function updateStudentProfile(data: {
 
         const { error: detailsError } = await supabase
             .from('student_details')
-            .update(detailsUpdate)
-            .eq('id', user.id)
+            .upsert({ id: user.id, ...detailsUpdate }, { onConflict: 'id' })
 
         if (detailsError) throw detailsError
 
@@ -720,7 +719,7 @@ export async function submitTrainerReview(data: {
         if (error) throw error
 
         revalidatePath('/dashboard/student/meu-personal')
-        revalidatePath('/buscar-personal')
+        revalidatePath('/dashboard/student/buscar-personal')
         return { success: true }
     } catch (e: any) {
         console.error('Error submitting review:', e)

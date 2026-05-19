@@ -1,7 +1,6 @@
 'use client'
 
 import { getTodayWorkout } from '@/actions/workout-actions'
-import { Skeleton } from '@/components/ui/skeleton'
 import { Dumbbell, CheckCircle, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
@@ -40,10 +39,8 @@ export function WorkoutCard({ userId }: WorkoutCardProps) {
         refetchOnWindowFocus: false,
     })
 
-    // Skeleton Fallback: Only show if truly loading AND no cache available
-    if (isLoadingWorkout && (!workouts || (workouts as any[]).length === 0)) {
-        return <WorkoutCardSkeleton />
-    }
+    // Loading handled by parent
+    if (isLoadingWorkout) return null
 
     if (!workouts || !Array.isArray(workouts) || workouts.length === 0) {
         return (
@@ -161,22 +158,5 @@ export function WorkoutCard({ userId }: WorkoutCardProps) {
     )
 }
 
-export function WorkoutCardSkeleton() {
-    return (
-        <div className="bg-zinc-900/40 border border-zinc-800/50 shadow-xl p-6 sm:p-10 rounded-3xl backdrop-blur-sm overflow-hidden relative animate-pulse">
-            <div className="absolute top-0 right-0 p-8 opacity-[0.02]">
-                <Dumbbell className="w-32 h-32" />
-            </div>
-            <div className="relative space-y-6">
-                <div className="space-y-1">
-                    <Skeleton className="h-[36px] w-3/4 rounded-xl bg-zinc-800/50" />
-                    <Skeleton className="h-[16px] w-48 rounded-md bg-zinc-800/50 mt-1" />
-                </div>
-                <Skeleton className="h-12 w-40 rounded-xl bg-zinc-800/50" />
-            </div>
-        </div>
-    )
-}
 
-WorkoutCard.Skeleton = WorkoutCardSkeleton
 

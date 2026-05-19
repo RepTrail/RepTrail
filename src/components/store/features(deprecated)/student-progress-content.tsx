@@ -75,7 +75,7 @@ export async function StudentProgressPageContent({ userId }: { userId: string })
     return (
         <Stack gap={STORE_TOKENS.SPACING.EMPTY_STATE}>
             <Tabs defaultValue="analysis" className="space-y-8">
-                <Box paddingX={1}>
+                <Box padding={1}>
                     <TabsList className="bg-zinc-900/50 p-1 border border-zinc-800/50 rounded-system w-full sm:w-auto h-auto flex flex-nowrap overflow-x-auto justify-start gap-1 no-scrollbar">
                         <TabsTrigger
                             value="analysis"

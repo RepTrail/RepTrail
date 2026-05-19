@@ -13,6 +13,7 @@ import { BackgroundIcon } from '@/components/store/base/background-icon'
 import { Trophy, Star, MapPin, ArrowRight } from 'lucide-react'
 import { Grid } from '@/components/store/base/grid'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
+import Link from 'next/link'
 
 interface RankingPodiumCardProps {
     trainer: {
@@ -22,6 +23,7 @@ interface RankingPodiumCardProps {
         rating?: number
         studentCount: number
         score: number
+        trainer_code?: string | null
     }
     rank: number
 }
@@ -116,17 +118,34 @@ export function RankingPodiumCard({ trainer, rank }: RankingPodiumCardProps) {
                     </Stack>
                 </Grid>
 
-                <Button 
-                    variant="outline-emerald" 
-                    size="md" 
-                    fullWidth 
-                    rounded={STORE_TOKENS.RADIUS.SYSTEM} 
-                    gap={STORE_TOKENS.SPACING.ELEMENT}
-                    transition
-                >
-                    <Font variant="sub-tiny" weight="black" uppercase tracking="widest">Ver Perfil</Font>
-                    <Icon icon={ArrowRight} size="xs" />
-                </Button>
+                {trainer.trainer_code ? (
+                    <Link href={`/personal/${trainer.trainer_code}`} className="w-full">
+                        <Button 
+                            variant="outline-emerald" 
+                            size="md" 
+                            fullWidth 
+                            rounded={STORE_TOKENS.RADIUS.SYSTEM} 
+                            gap={STORE_TOKENS.SPACING.ELEMENT}
+                            transition
+                        >
+                            <Font variant="sub-tiny" weight="black" uppercase tracking="widest">Ver Perfil</Font>
+                            <Icon icon={ArrowRight} size="xs" />
+                        </Button>
+                    </Link>
+                ) : (
+                    <Button 
+                        variant="outline-emerald" 
+                        size="md" 
+                        fullWidth 
+                        rounded={STORE_TOKENS.RADIUS.SYSTEM} 
+                        gap={STORE_TOKENS.SPACING.ELEMENT}
+                        transition
+                        disabled
+                    >
+                        <Font variant="sub-tiny" weight="black" uppercase tracking="widest">Ver Perfil</Font>
+                        <Icon icon={ArrowRight} size="xs" />
+                    </Button>
+                )}
             </Stack>
         </GlassPanel>
     );

@@ -14,14 +14,10 @@ function getTodayStr() {
 }
 
 export async function upsertDailyTracking(userId: string, updates: any, dateStr?: string) {
-    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
+    const supabase = await createClient()
     const targetDate = dateStr || getTodayStr()
 
     try {
-        // First check if exists to determine if we insert or update, 
-        // or just use upsert. 
-        // daily_tracking has a unique constraint on (user_id, date)
-
         const { error } = await supabase
             .from('daily_tracking')
             .upsert({
@@ -33,12 +29,6 @@ export async function upsertDailyTracking(userId: string, updates: any, dateStr?
                 onConflict: 'user_id, date'
             })
 
-        if (error) {
-            console.error('Error upserting daily tracking:', error)
-            // If error is about duplicate key but we used upsert, something confusing.
-            // But standard upsert should work.
-        }
-
         return { success: !error }
     } catch (e) {
         console.error("Exception in upsertDailyTracking", e)
@@ -47,11 +37,10 @@ export async function upsertDailyTracking(userId: string, updates: any, dateStr?
 }
 
 export async function ensureDailyTracking(userId: string) {
-    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
+    const supabase = await createClient()
     const today = getTodayStr()
     const dow = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' })).getDay()
 
-    // 1. & 2. Fetch everything in parallel
     const [
         { data: existing },
         { data: aw },
@@ -95,7 +84,7 @@ export async function ensureDailyTracking(userId: string) {
 }
 
 export async function toggleMealItem(itemId: string, status: boolean, date?: string) {
-    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
+    const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { error: 'Unauthorized' }
 
@@ -103,31 +92,45 @@ export async function toggleMealItem(itemId: string, status: boolean, date?: str
 
     try {
         if (status) {
-            // Check item
-            const { error } = await supabase
+            await supabase
                 .from('meal_item_logs')
                 .insert({
                     user_id: user.id,
                     meal_item_id: itemId,
                     date: targetDate
                 })
-                .select()
-
-            if (error && error.code !== '23505') throw error // Ignore unique constraint violation
         } else {
-            // Uncheck item
-            const { error } = await supabase
+            const { getTodayRangeBrazil } = await import('@/lib/date-utils')
+            const { start, end } = getTodayRangeBrazil()
+
+            // 1. Delete item log
+            await supabase
                 .from('meal_item_logs')
                 .delete()
                 .eq('user_id', user.id)
                 .eq('meal_item_id', itemId)
                 .eq('date', targetDate)
 
-            if (error) throw error
+            // 2. Delete meal summary log (legacy) if it exists for this meal
+            // Fetch the meal_id for this item to clean up meal_logs
+            const { data: item } = await supabase
+                .from('meal_items')
+                .select('meal_id')
+                .eq('id', itemId)
+                .single()
+
+            if (item?.meal_id) {
+                await supabase
+                    .from('meal_logs')
+                    .delete()
+                    .eq('student_id', user.id)
+                    .eq('meal_id', item.meal_id)
+                    .gte('consumed_at', start)
+                    .lt('consumed_at', end)
+            }
         }
 
         revalidatePath('/dashboard/student')
-        revalidatePath('/dashboard/student/progress')
         return { success: true }
     } catch (e: any) {
         return { error: e.message }
@@ -135,14 +138,13 @@ export async function toggleMealItem(itemId: string, status: boolean, date?: str
 }
 
 export async function toggleMealGroup(mealId: string, status: boolean, date?: string) {
-    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
+    const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { error: 'Unauthorized' }
 
     const targetDate = date || getTodayStr()
 
     try {
-        // Get all items for this meal
         const { data: items } = await supabase
             .from('meal_items')
             .select('id')
@@ -151,10 +153,10 @@ export async function toggleMealGroup(mealId: string, status: boolean, date?: st
         if (!items || items.length === 0) return { success: true }
 
         const itemIds = items.map(i => i.id)
+        const { getTodayRangeBrazil } = await import('@/lib/date-utils')
+        const { start, end } = getTodayRangeBrazil()
 
         if (status) {
-            // Insert all (skip duplicates provided by DB constraint, but batch insert is better)
-            // We'll prepare rows
             const rows = itemIds.map(id => ({
                 user_id: user.id,
                 meal_item_id: id,
@@ -163,38 +165,49 @@ export async function toggleMealGroup(mealId: string, status: boolean, date?: st
 
             const { error } = await supabase
                 .from('meal_item_logs')
-                .upsert(rows, { onConflict: 'user_id, meal_item_id, date' })
+                .insert(rows)
 
             if (error) throw error
+
+            // Also log the meal summary
+            await supabase
+                .from('meal_logs')
+                .insert({
+                    student_id: user.id,
+                    meal_id: mealId,
+                    consumed_at: new Date().toISOString()
+                })
         } else {
-            // Delete all for this meal/date
-            const { error } = await supabase
+            // 1. Delete item logs
+            const { error: itemError } = await supabase
                 .from('meal_item_logs')
                 .delete()
                 .eq('user_id', user.id)
                 .eq('date', targetDate)
                 .in('meal_item_id', itemIds)
 
-            if (error) throw error
+            if (itemError) throw itemError
+
+            // 2. Delete meal summary log
+            await supabase
+                .from('meal_logs')
+                .delete()
+                .eq('student_id', user.id)
+                .eq('meal_id', mealId)
+                .gte('consumed_at', start)
+                .lt('consumed_at', end)
         }
 
         revalidatePath('/dashboard/student')
-        revalidatePath('/dashboard/student/progress')
+        revalidatePath('/dashboard/student/diet')
         return { success: true }
     } catch (e: any) {
         return { error: e.message }
     }
 }
 
-export async function substituteMealItem(itemId: string, substituteData: {
-    food_name: string,
-    quantity: string,
-    protein?: number,
-    carbs?: number,
-    fat?: number,
-    fiber?: number
-}, date?: string) {
-    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
+export async function substituteMealItem(itemId: string, substituteData: any, date?: string) {
+    const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { error: 'Unauthorized' }
 
@@ -229,14 +242,13 @@ export async function substituteMealItem(itemId: string, substituteData: {
 }
 
 export async function toggleSubstitution(itemId: string, date?: string) {
-    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
+    const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { error: 'Unauthorized' }
 
     const targetDate = date || getTodayStr()
 
     try {
-        // 1. Get current log status
         const { data: log } = await supabase
             .from('meal_item_logs')
             .select('*')
@@ -245,7 +257,6 @@ export async function toggleSubstitution(itemId: string, date?: string) {
             .eq('date', targetDate)
             .maybeSingle()
 
-        // 2. Get predefined substitute
         const { data: item } = await supabase
             .from('meal_items')
             .select('*')
@@ -256,7 +267,7 @@ export async function toggleSubstitution(itemId: string, date?: string) {
 
         if (log) {
             const newIsSubstituted = !log.is_substituted
-            const { error } = await supabase
+            const { error: updateError } = await supabase
                 .from('meal_item_logs')
                 .update({
                     is_substituted: newIsSubstituted,
@@ -269,10 +280,9 @@ export async function toggleSubstitution(itemId: string, date?: string) {
                 })
                 .eq('id', log.id)
 
-            if (error) throw error
+            if (updateError) throw updateError
         } else {
-            // Create new log with substitution
-            const { error } = await supabase
+            const { error: insertError } = await supabase
                 .from('meal_item_logs')
                 .insert({
                     user_id: user.id,
@@ -287,7 +297,7 @@ export async function toggleSubstitution(itemId: string, date?: string) {
                     substituted_fiber: item.sub_fiber || 0,
                 })
 
-            if (error) throw error
+            if (insertError) throw insertError
         }
 
         revalidatePath('/dashboard/student')
@@ -299,13 +309,12 @@ export async function toggleSubstitution(itemId: string, date?: string) {
 }
 
 export async function getDetailedAdherence(date?: string) {
-    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
+    const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return null
 
     const targetDate = date || getTodayStr()
 
-    // Get daily tracking
     const { data: tracking } = await supabase
         .from('daily_tracking')
         .select('*')
@@ -313,7 +322,6 @@ export async function getDetailedAdherence(date?: string) {
         .eq('date', targetDate)
         .maybeSingle()
 
-    // Get item logs for frontend state
     const { data: itemLogs } = await supabase
         .from('meal_item_logs')
         .select('meal_item_id')
@@ -337,11 +345,9 @@ export async function getAdherenceHistory(days: number = 30) {
     const today = new Date(todayStr + 'T12:00:00')
     const startDate = new Date(today)
     startDate.setDate(today.getDate() - (days - 1))
-    
     const startDateStr = startDate.toISOString().split('T')[0]
     const endDateStr = todayStr
 
-    // 1. Fetch everything in parallel
     const [
         { data: profile },
         { data: trainerLink },
@@ -370,20 +376,17 @@ export async function getAdherenceHistory(days: number = 30) {
         supabase.from('meal_item_logs').select('date, meal_item_id').eq('user_id', user.id).gte('date', startDateStr).lte('date', endDateStr)
     ])
 
+    const historyArr: any[] = []
     const profileCreatedStr = profile?.created_at ? new Date(profile.created_at).toISOString().split('T')[0] : '2000-01-01'
     const linkDateStr = trainerLink?.created_at ? new Date(trainerLink.created_at).toISOString().split('T')[0] : '2000-01-01'
     const effectiveStartStr = linkDateStr > profileCreatedStr ? linkDateStr : profileCreatedStr
 
     const workoutDates = new Set(wLogs?.map(l => formatToBrazilDate(l.started_at)))
-
-    // Process Cardio Logs to support Partial/In-Progress from past days
     const cardioDataMap = new Map<string, { status: string, percentage: number }>()
     cLogs?.forEach((l: any) => {
         const dateKey = formatToBrazilDate(l.started_at)
         const targetSeconds = (l.assignment?.duration_minutes || 30) * 60
         const percentage = Math.min(Math.round((l.elapsed_seconds / targetSeconds) * 100), 100)
-
-        // If multiple logs, pick the best one
         const existing = cardioDataMap.get(dateKey)
         if (!existing || percentage > existing.percentage) {
             cardioDataMap.set(dateKey, { status: l.status, percentage })
@@ -391,10 +394,8 @@ export async function getAdherenceHistory(days: number = 30) {
     })
 
     const ergoDates = new Set(eLogs?.map(l => formatToBrazilDate(l.created_at)))
-
     const steroidUse = !!details?.steroid_use
     const workoutDays = new Set((aw || []).map((a: any) => a.day_of_week))
-
     const cardioDays = new Set<number>()
     if (ac) {
         ac.forEach((a: any) => {
@@ -405,7 +406,6 @@ export async function getAdherenceHistory(days: number = 30) {
             }
         })
     }
-
     const ergoDays = new Set<number>()
     if (ae) {
         ae.forEach((a: any) => {
@@ -415,36 +415,19 @@ export async function getAdherenceHistory(days: number = 30) {
         })
     }
 
-    const historyArr: any[] = []
     for (let i = 0; i < days; i++) {
         const currentDate = new Date(startDate)
         currentDate.setDate(startDate.getDate() + i)
-        
-        const year = currentDate.getFullYear()
-        const month = String(currentDate.getMonth() + 1).padStart(2, '0')
-        const day = String(currentDate.getDate()).padStart(2, '0')
-        const dateStr = `${year}-${month}-${day}`
-        
+        const dateStr = currentDate.toISOString().split('T')[0]
         const dow = currentDate.getDay()
         const isPast = dateStr < todayStr
 
         if (dateStr < effectiveStartStr) {
-            historyArr.push({
-                date: dateStr,
-                diet_percentage: 0,
-                workout_status: 'none',
-                workout_percentage: 0,
-                cardio_status: 'none',
-                cardio_percentage: 0,
-                ergogenics_status: 'none',
-                ergogenics_percentage: 0,
-            })
+            historyArr.push({ date: dateStr, diet_percentage: 0, workout_status: 'none', workout_percentage: 0, cardio_status: 'none', cardio_percentage: 0, ergogenics_status: 'none', ergogenics_percentage: 0 })
             continue
         }
 
         const found = tracking?.find(t => t.date === dateStr)
-
-        // Workout Status
         let workoutStatus = found?.workout_status || 'none'
         let workoutPercentage = found?.workout_percentage || 0
         if (workoutDates.has(dateStr)) {
@@ -455,14 +438,10 @@ export async function getAdherenceHistory(days: number = 30) {
             if (workoutStatus === 'assigned' && isPast) workoutStatus = 'skipped'
         }
 
-        // Cardio Status
         let cardioStatus = found?.cardio_status || 'none'
         let cardioPercentage = found?.cardio_percentage || 0
         const logData = cardioDataMap.get(dateStr)
-
         if (logData) {
-            // Priority: if daily_tracking already has a more complete status/percentage, keep it
-            // otherwise use the log data (especially for historical partials)
             if (cardioStatus === 'none' || cardioStatus === 'assigned' || cardioStatus === 'skipped') {
                 cardioStatus = logData.status === 'completed' ? (logData.percentage >= 100 ? 'completed' : 'partial') : 'partial'
                 cardioPercentage = logData.percentage
@@ -476,7 +455,6 @@ export async function getAdherenceHistory(days: number = 30) {
             if (cardioStatus === 'assigned' && isPast) cardioStatus = 'skipped'
         }
 
-        // Ergo Status
         let ergoStatus = found?.ergogenics_status || 'none'
         let ergoPercentage = found?.ergogenics_percentage || 0
         if (ergoDates.has(dateStr)) {
@@ -491,10 +469,8 @@ export async function getAdherenceHistory(days: number = 30) {
             }
         }
 
-        // Diet Status
         let dietPercentage = found?.diet_percentage || 0
         let dietStatus = 'none'
-
         const dowDiets = (ad as any[] || []).filter((a: any) => { let days = a.days_of_week; if (typeof days === "string") { try { days = JSON.parse(days) } catch { days = [] } } return Array.isArray(days) && days.map(Number).includes(dow) })
         const totalItems = dowDiets.reduce((acc: number, a: any) => {
             const meals = a.diet?.meals || []
@@ -505,40 +481,26 @@ export async function getAdherenceHistory(days: number = 30) {
             const dayLogsCount = (mLogs || []).filter((l: any) => l.date === dateStr).length
             dietPercentage = Math.min(Math.round((dayLogsCount / totalItems) * 100), 100)
         }
-
         if (dietPercentage >= 100) dietStatus = 'completed'
         else if (dietPercentage > 0) dietStatus = 'partial'
         else if (totalItems > 0) {
             dietStatus = isPast ? 'skipped' : 'assigned'
         }
 
-        historyArr.push({
-            date: dateStr,
-            diet_percentage: dietPercentage,
-            diet_status: dietStatus,
-            workout_status: workoutStatus,
-            workout_percentage: workoutPercentage,
-            cardio_status: cardioStatus,
-            cardio_percentage: cardioPercentage,
-            ergogenics_status: ergoStatus,
-            ergogenics_percentage: ergoPercentage,
-        })
+        historyArr.push({ date: dateStr, diet_percentage: dietPercentage, diet_status: dietStatus, workout_status: workoutStatus, workout_percentage: workoutPercentage, cardio_status: cardioStatus, cardio_percentage: cardioPercentage, ergogenics_status: ergoStatus, ergogenics_percentage: ergoPercentage })
     }
 
     return historyArr
 }
 
-// Trainer-side version: fetch adherence history for any student by ID
 export async function getStudentAdherenceHistory(studentId: string, days: number = 30) {
     const supabase = await createClient()
-
     const todayStr = getTodayStr()
     const today = new Date(todayStr + 'T12:00:00')
     const startDate = new Date(today)
     startDate.setDate(today.getDate() - (days - 1))
     const startDateStr = startDate.toISOString().split('T')[0]
 
-    // Fetch everything in parallel
     const [
         { data: profile },
         { data: trainerLink },
@@ -567,19 +529,17 @@ export async function getStudentAdherenceHistory(studentId: string, days: number
         supabase.from('meal_item_logs').select('date, meal_item_id').eq('user_id', studentId).gte('date', startDateStr).lte('date', todayStr)
     ])
 
+    const historyArr: any[] = []
     const profileCreatedStr = profile?.created_at ? new Date(profile.created_at).toISOString().split('T')[0] : '2000-01-01'
     const linkDateStr = trainerLink?.created_at ? new Date(trainerLink.created_at).toISOString().split('T')[0] : '2000-01-01'
     const effectiveStartStr = linkDateStr > profileCreatedStr ? linkDateStr : profileCreatedStr
 
     const workoutDates = new Set(wLogs?.map(l => formatToBrazilDate(l.started_at)))
-
-    // Process Cardio Logs to support Partial/In-Progress
     const cardioDataMap = new Map<string, { status: string, percentage: number }>()
     cLogs?.forEach((l: any) => {
         const dateKey = formatToBrazilDate(l.started_at)
         const targetSeconds = (l.assignment?.duration_minutes || 30) * 60
         const percentage = Math.min(Math.round((l.elapsed_seconds / targetSeconds) * 100), 100)
-
         const existing = cardioDataMap.get(dateKey)
         if (!existing || percentage > existing.percentage) {
             cardioDataMap.set(dateKey, { status: l.status, percentage })
@@ -588,7 +548,6 @@ export async function getStudentAdherenceHistory(studentId: string, days: number
 
     const ergoDates = new Set(eLogs?.map(l => formatToBrazilDate(l.created_at)))
     const steroidUse = !!details?.steroid_use
-
     const workoutDays = new Set((aw || []).map((a: any) => a.day_of_week))
     const cardioDays = new Set<number>()
     if (ac) {
@@ -602,36 +561,19 @@ export async function getStudentAdherenceHistory(studentId: string, days: number
     }
     const ergogenicsDays = new Set((ae || []).map((e: any) => e.application_days || []).flat())
 
-    const historyArr: any[] = []
     for (let i = 0; i < days; i++) {
         const currentDate = new Date(startDate)
         currentDate.setDate(startDate.getDate() + i)
-        
-        const year = currentDate.getFullYear()
-        const month = String(currentDate.getMonth() + 1).padStart(2, '0')
-        const day = String(currentDate.getDate()).padStart(2, '0')
-        const dateStr = `${year}-${month}-${day}`
-        
+        const dateStr = currentDate.toISOString().split('T')[0]
         const dow = currentDate.getDay()
         const isPast = dateStr < todayStr
 
         if (dateStr < effectiveStartStr) {
-            historyArr.push({
-                date: dateStr,
-                diet_percentage: 0,
-                workout_status: 'none',
-                workout_percentage: 0,
-                cardio_status: 'none',
-                cardio_percentage: 0,
-                ergogenics_status: 'none',
-                ergogenics_percentage: 0,
-            })
+            historyArr.push({ date: dateStr, diet_percentage: 0, workout_status: 'none', workout_percentage: 0, cardio_status: 'none', cardio_percentage: 0, ergogenics_status: 'none', ergogenics_percentage: 0 })
             continue
         }
 
         const found = tracking?.find((t: any) => t.date === dateStr)
-
-        // Workout Status
         let workoutStatus = found?.workout_status || 'none'
         let workoutPercentage = found?.workout_percentage || 0
         if (workoutDates.has(dateStr)) {
@@ -642,14 +584,10 @@ export async function getStudentAdherenceHistory(studentId: string, days: number
             if (workoutStatus === 'assigned' && isPast) workoutStatus = 'skipped'
         }
 
-        // Cardio Status
         let cardioStatus = found?.cardio_status || 'none'
         let cardioPercentage = found?.cardio_percentage || 0
         const logData = cardioDataMap.get(dateStr)
-
         if (logData) {
-            // Priority: if daily_tracking already has a more complete status/percentage, keep it
-            // otherwise use the log data (especially for historical partials)
             if (cardioStatus === 'none' || cardioStatus === 'assigned' || cardioStatus === 'skipped') {
                 cardioStatus = logData.status === 'completed' ? (logData.percentage >= 100 ? 'completed' : 'partial') : 'partial'
                 cardioPercentage = logData.percentage
@@ -663,7 +601,6 @@ export async function getStudentAdherenceHistory(studentId: string, days: number
             if (cardioStatus === 'assigned' && isPast) cardioStatus = 'skipped'
         }
 
-        // Ergo Status
         let ergoStatus = found?.ergogenics_status || 'none'
         let ergoPercentage = found?.ergogenics_percentage || 0
         if (ergoDates.has(dateStr)) {
@@ -678,10 +615,8 @@ export async function getStudentAdherenceHistory(studentId: string, days: number
             }
         }
 
-        // Diet Status
         let dietPercentage = found?.diet_percentage || 0
         let dietStatus = 'none'
-
         const dowDiets = (ad as any[] || []).filter((a: any) => { let days = a.days_of_week; if (typeof days === "string") { try { days = JSON.parse(days) } catch { days = [] } } return Array.isArray(days) && days.map(Number).includes(dow) })
         const totalItems = dowDiets.reduce((acc: number, a: any) => {
             const meals = a.diet?.meals || []
@@ -692,26 +627,14 @@ export async function getStudentAdherenceHistory(studentId: string, days: number
             const dayLogsCount = (mLogs || []).filter((l: any) => l.date === dateStr).length
             dietPercentage = Math.min(Math.round((dayLogsCount / totalItems) * 100), 100)
         }
-
         if (dietPercentage >= 100) dietStatus = 'completed'
         else if (dietPercentage > 0) dietStatus = 'partial'
         else if (totalItems > 0) {
             dietStatus = isPast ? 'skipped' : 'assigned'
         }
 
-        historyArr.push({
-            date: dateStr,
-            diet_percentage: dietPercentage,
-            diet_status: dietStatus,
-            workout_status: workoutStatus,
-            workout_percentage: workoutPercentage,
-            cardio_status: cardioStatus,
-            cardio_percentage: cardioPercentage,
-            ergogenics_status: ergoStatus,
-            ergogenics_percentage: ergoPercentage,
-        })
+        historyArr.push({ date: dateStr, diet_percentage: dietPercentage, diet_status: dietStatus, workout_status: workoutStatus, workout_percentage: workoutPercentage, cardio_status: cardioStatus, cardio_percentage: cardioPercentage, ergogenics_status: ergoStatus, ergogenics_percentage: ergoPercentage })
     }
 
     return historyArr
 }
-

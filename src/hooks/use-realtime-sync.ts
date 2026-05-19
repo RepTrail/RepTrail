@@ -80,17 +80,27 @@ export function useRealtimeSync({
                 }
 
                 // ─── DETERMINISTIC RECONCILIATION ────────────────────────────────────────
+                // Bypass client-side merge for complex joined tables where raw row structure doesn't match cached objects
+                const relationshipTables = ['assigned_workouts', 'assigned_diets', 'assigned_cardio']
+                if (relationshipTables.includes(table)) {
+                    console.log(`[RealtimeSync] ⚡ Invalidation: Invalidating ${table} for queryKey ${JSON.stringify(queryKey)}`)
+                    queryClient.invalidateQueries({ queryKey })
+                    return
+                }
+
                 queryClient.setQueryData(queryKey, (oldData: any) => {
                     if (!oldData) return oldData
 
                     // Handle List Views (Array)
                     if (Array.isArray(oldData)) {
+                        const cleanOldData = oldData.filter((i: any) => i && i[idField] !== undefined && i[idField] !== null)
+
                         if (payload.eventType === 'DELETE') {
-                            return oldData.filter((i: any) => i[idField] !== entityId)
+                            return cleanOldData.filter((i: any) => i[idField] !== entityId)
                         }
 
                         // Map-based Deterministic Merge (ULTRA-SAFE)
-                        const map = new Map(oldData.map((i: any) => [i[idField], i]))
+                        const map = new Map(cleanOldData.map((i: any) => [i[idField], i]))
                         const prev = map.get(entityId)
 
                         // Overlay Pattern: Local Base + Server Overlay

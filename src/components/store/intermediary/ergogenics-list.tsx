@@ -11,42 +11,47 @@ import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { EmptyState } from './empty-state'
 
 interface ErgogenicItem {
+    id: string
     name: string
     dosage: string
+    isCompleted: boolean
 }
 
 interface ErgogenicsListProps {
     items: ErgogenicItem[]
     status?: 'active' | 'empty'
+    onToggle?: (id: string, currentStatus: boolean) => void
 }
 
 /**
  * ErgogenicsList: Simple list for daily management visualization.
- * Popup actions removed as per user feedback.
+ * Now supports real toggle functionality.
  */
-export function ErgogenicsList({ items, status = 'active' }: ErgogenicsListProps) {
+export function ErgogenicsList({ items, status = 'active', onToggle }: ErgogenicsListProps) {
     if (status === 'empty') {
         return (
             <EmptyState
                 icon={FlaskConical}
                 title="SEM ERGOGÊNICOS"
-                description="NENHUM PROTOCOLO DE SUBSTÂNCIAS ATIVO."
+                description="NENHUM PROTOCOLO DE SUBSTÂNCIAS ATIVO PARA HOJE."
             />
         )
     }
 
     return (
         <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-            {items.map((item, idx) => (
+            {items.map((item) => (
                 <GlassPanel
-                    key={item.name}
+                    key={item.id}
                     padding={STORE_TOKENS.PADDING.ELEMENT}
                     rounded={STORE_TOKENS.RADIUS.SYSTEM}
                     variant="glass"
                     transition
+                    cursor="pointer"
+                    onClick={() => onToggle?.(item.id, item.isCompleted)}
                 >
                     <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
-                        <CheckIndicator checked={idx < 2} />
+                        <CheckIndicator checked={item.isCompleted} />
                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT} flex1>
                             <Stack direction="row" align="center" justify="between">
                                 <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} variant="body-sm" color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>

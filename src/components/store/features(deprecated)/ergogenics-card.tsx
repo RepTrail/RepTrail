@@ -3,7 +3,6 @@
 import { getStudentErgogenics, getTodayErgogenicLogs } from '@/actions/ergogenics-actions'
 import { getTodayRangeBrazil } from '@/lib/date-utils'
 import { getStudentProfile } from '@/actions/student-actions'
-import { Skeleton } from '@/components/ui/skeleton'
 import { Syringe } from 'lucide-react'
 import { ErgogenicCheckButton } from '@/components/store/features(deprecated)/ergogenic-check-button'
 import { QUERY_KEYS } from '@/lib/query-keys'
@@ -54,10 +53,8 @@ export function ErgogenicsCard({ userId }: ErgogenicsCardProps) {
     // ── Steroid guard (hide card if user doesn't use steroids) ────────────────
     if (profile && profile.details && !profile.details?.steroid_use) return null
 
-    // ── Skeleton while loading ────────────────────────────────────────────────
-    if ((isLoading || isLoadingLogs) && !rawErgogenics?.length) {
-        return <ErgogenicsCardSkeleton />
-    }
+    // Loading handled by parent
+    if (isLoading || isLoadingLogs) return null
 
     // ── Day/Log Calculation ───────────────────────────────────────────────────
     const today = (() => {
@@ -147,35 +144,6 @@ export function ErgogenicsCard({ userId }: ErgogenicsCardProps) {
     )
 }
 
-export function ErgogenicsCardSkeleton() {
-    return (
-        <div className="space-y-6 animate-pulse">
-            <div className="flex items-center justify-between px-2">
-                <h2 className="text-[12px] font-black text-zinc-100 flex items-center gap-2 uppercase tracking-[0.2em] opacity-50">
-                    <Syringe className="w-4 h-4 text-orange-500/50" />
-                    Ergogênicos do Dia
-                </h2>
-            </div>
-            <div className="flex flex-col gap-3">
-                {[1, 2].map((i) => (
-                    <div key={i} className="flex flex-col p-3 rounded-xl bg-zinc-900/30 border border-zinc-800/50 gap-3">
-                        <div className="flex items-center gap-3 min-w-0">
-                            <Skeleton className="w-8 h-8 rounded-xl bg-zinc-800/50 flex-shrink-0" />
-                            <div className="flex flex-col min-w-0 space-y-1 w-full">
-                                <Skeleton className="h-[14px] w-32 bg-zinc-800/50" />
-                                <Skeleton className="h-[10px] w-16 bg-zinc-800/50" />
-                            </div>
-                        </div>
-                        <div className="pl-11 pr-2 pb-1">
-                            <Skeleton className="h-[10px] w-full max-w-[200px] bg-zinc-800/50" />
-                        </div>
-                    </div>
-                ))}
-            </div>
-        </div>
-    )
-}
 
-ErgogenicsCard.Skeleton = ErgogenicsCardSkeleton
 
 

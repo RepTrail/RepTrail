@@ -4,7 +4,6 @@ import { useState, useMemo, memo } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Progress } from "@/components/ui/progress"
 import { CheckCircle2, Circle, Utensils, ChevronDown, Check, Sparkles, Loader2, Repeat2 } from 'lucide-react'
-import { Skeleton } from '@/components/ui/skeleton'
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/hooks/use-toast'
 import { cn } from '@/lib/utils'
@@ -341,54 +340,5 @@ const MealRow = memo(({ meal, isOpen, onToggleAccordion, onToggleItem, onToggleG
 })
 MealRow.displayName = 'MealRow'
 
-export function DietAdherenceSkeleton() {
-    return (
-        <Card className="bg-zinc-900 border-zinc-800 shadow-2xl rounded-3xl overflow-hidden border-t-zinc-700/10 animate-pulse">
-            <CardContent className="p-6 space-y-8">
-                <div className="space-y-6">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-                        <div className="space-y-2">
-                            <div className="flex items-center gap-2">
-                                <Utensils className="w-4 h-4 text-zinc-800" />
-                                <Skeleton className="h-5 w-32 bg-zinc-800/50" />
-                            </div>
-                            <Skeleton className="h-[15px] w-40 bg-zinc-800/50" />
-                        </div>
-                        <div className="flex items-center gap-6">
-                            <Skeleton className="h-8 w-12 rounded-lg bg-zinc-800/50" />
-                        </div>
-                    </div>
-                    <div className="space-y-2">
-                        <Skeleton className="h-3 w-full rounded-full bg-zinc-800/50" />
-                    </div>
-                </div>
 
-                <div className="grid grid-cols-6 gap-3 p-4 bg-zinc-950/30 border border-zinc-800/50 rounded-3xl">
-                    <div className="h-[74px] rounded-2xl bg-zinc-900/50 border border-zinc-800/50 col-span-3 sm:col-span-2" />
-                    <div className="h-[74px] rounded-2xl bg-zinc-900/50 border border-zinc-800/50 col-span-3 sm:col-span-2" />
-                    <div className="h-[74px] rounded-2xl bg-zinc-900/50 border border-zinc-800/50 col-span-3 sm:col-span-2" />
-                    <div className="h-[74px] rounded-2xl bg-zinc-900/50 border border-zinc-800/50 col-span-3 sm:col-span-3" />
-                    <div className="h-[74px] rounded-2xl bg-zinc-900/50 border border-zinc-800/50 col-span-6 sm:col-span-3" />
-                </div>
-
-                <div className="space-y-4">
-                    {Array.from({ length: 4 }).map((_, i) => (
-                        <div key={i} className="flex items-center justify-between p-5 rounded-3xl bg-zinc-950/20 border border-zinc-900">
-                            <div className="flex items-center gap-4">
-                                <Skeleton className="w-10 h-10 rounded-full bg-zinc-800/50" />
-                                <div className="space-y-2">
-                                    <Skeleton className="h-[20px] w-24 bg-zinc-800/50" />
-                                    <Skeleton className="h-[15px] w-16 bg-zinc-800/50" />
-                                </div>
-                            </div>
-                            <Skeleton className="w-5 h-5 rounded-full bg-zinc-800/50" />
-                        </div>
-                    ))}
-                </div>
-            </CardContent>
-        </Card>
-    )
-}
-
-DietAdherence.Skeleton = DietAdherenceSkeleton
 

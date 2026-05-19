@@ -1,41 +1,84 @@
 'use client'
 
-import { CheckCircle, Dumbbell } from 'lucide-react'
-import { Button } from "@/components/ui/button"
+import { CheckCircle } from 'lucide-react'
 import Link from 'next/link'
+
+// Design System Primitives
+import { Stack } from '@/components/store/base/stack'
+import { Box } from '@/components/store/base/box'
+import { Font } from '@/components/store/base/font'
+import { Button } from '@/components/store/base/button'
+import { Surface } from '@/components/store/base/surface'
+import { Icon } from '@/components/store/base/icon'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 export function MissionCompletedView() {
     return (
-        <div className="flex flex-col items-center justify-center min-h-[80vh] p-8 text-center space-y-8 animate-in fade-in zoom-in duration-500">
-            <div className="relative">
-                <div className="absolute inset-0 bg-emerald-500 rounded-full blur-3xl opacity-20 animate-pulse" />
-                <div className="relative p-8 bg-zinc-900 rounded-full border border-emerald-500/30 shadow-[0_0_50px_rgba(16,185,129,0.2)]">
-                    <CheckCircle className="h-16 w-16 text-emerald-500" />
-                </div>
-            </div>
+        <Stack 
+            align="center" 
+            justify="center" 
+            flex1 
+            padding={STORE_TOKENS.PADDING.CONTAINER} 
+            gap={STORE_TOKENS.SPACING.SECTION}
+            style={{ minHeight: '80vh' }}
+        >
+            <Box position="relative">
+                <Box 
+                    position="absolute" 
+                    pin="inset" 
+                    bg="emerald" 
+                    bgOpacity={20} 
+                    rounded="full" 
+                    className="blur-3xl animate-pulse" 
+                />
+                <Surface 
+                    variant="tonal-zinc" 
+                    padding={STORE_TOKENS.PADDING.CONTAINER} 
+                    rounded="full" 
+                    border="standard" 
+                    borderColor="emerald"
+                    borderOpacity={30}
+                    style={{ boxShadow: '0 0 50px rgba(16,185,129,0.2)' }}
+                >
+                    <Box>
+                        <Icon icon={CheckCircle} size="lg" color="emerald" />
+                    </Box>
+                </Surface>
+            </Box>
 
-            <div className="space-y-4">
-                <h2 className="text-4xl font-black text-white uppercase italic tracking-tighter">
-                    Missão de Hoje <span className="text-emerald-500">Concluída!</span> <span className="align-middle">✅</span>
-                </h2>
-                <p className="text-zinc-500 font-bold uppercase tracking-widest text-xs max-w-md mx-auto leading-relaxed">
+            <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                <Font variant="h2" weight="black" color="white" uppercase italic tracking="tight" align="center">
+                    Missão de Hoje <Font variant="h2" color="success">Concluída!</Font> ✅
+                </Font>
+                <Font 
+                    variant="sub-tiny" 
+                    color="zinc-500" 
+                    weight="black" 
+                    uppercase 
+                    tracking="widest" 
+                    align="center"
+                    style={{ maxWidth: '400px' }}
+                >
                     Você já finalizou este treino hoje. Aproveite o descanso e volte amanhã para mais resultados!
-                </p>
-            </div>
+                </Font>
+            </Stack>
 
-            <div className="flex flex-col gap-4 w-full max-w-xs">
-                <Button asChild className="h-14 bg-white hover:bg-zinc-200 text-zinc-950 font-black italic uppercase tracking-widest rounded-system shadow-xl active:scale-95 transition-all text-sm">
-                    <Link href="/dashboard/student/workouts">
-                        Voltar aos Treinos
-                    </Link>
-                </Button>
-                <Button asChild variant="ghost" className="h-14 text-zinc-500 hover:text-white font-bold uppercase tracking-widest text-[10px]">
-                    <Link href="/dashboard/student">
-                        Ir para Dashboard
-                    </Link>
-                </Button>
-            </div>
-        </div>
+            <Stack gap={STORE_TOKENS.SPACING.ELEMENT} width="full" style={{ maxWidth: '320px' }}>
+                <Link href="/dashboard/student/workouts" passHref style={{ width: '100%' }}>
+                    <Button variant="white" fullWidth height="12">
+                        <Font variant="sub-tiny" weight="black" italic uppercase tracking="widest" color="black">
+                            Voltar aos Treinos
+                        </Font>
+                    </Button>
+                </Link>
+                <Link href="/dashboard/student" passHref style={{ width: '100%' }}>
+                    <Button variant="ghost" fullWidth height="12">
+                        <Font variant="tiny" weight="bold" uppercase tracking="widest" color="zinc-500">
+                            Ir para Dashboard
+                        </Font>
+                    </Button>
+                </Link>
+            </Stack>
+        </Stack>
     )
 }
-

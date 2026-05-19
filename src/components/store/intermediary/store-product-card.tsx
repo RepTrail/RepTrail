@@ -22,6 +22,7 @@ export interface StoreProductCardProps {
     reviewsCount: number
     imageUrl: string
     linkUrl?: string
+    onBuy?: () => void
 }
 
 export function StoreProductCard({
@@ -33,7 +34,8 @@ export function StoreProductCard({
     rating,
     reviewsCount,
     imageUrl,
-    linkUrl
+    linkUrl,
+    onBuy
 }: StoreProductCardProps) {
     const isOriginal = true
 
@@ -134,7 +136,7 @@ export function StoreProductCard({
                         </Stack>
                     </Stack>
 
-                    <Button variant="emerald" size="lg" rounded={STORE_TOKENS.RADIUS.SYSTEM} fullWidth direction="row" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                    <Button variant="emerald" size="lg" rounded={STORE_TOKENS.RADIUS.SYSTEM} fullWidth direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} onClick={onBuy}>
                         <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} variant="label-caps" color={STORE_TOKENS.COLORS.BLACK}>COMPRAR AGORA</Font>
                         <Icon icon={ExternalLink} size="xs" color={STORE_TOKENS.COLORS.BLACK} />
                     </Button>

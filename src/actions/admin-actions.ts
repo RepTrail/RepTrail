@@ -204,7 +204,33 @@ export async function getAllTrainers() {
         .eq('role', 'trainer')
         .order('created_at', { ascending: false })
 
-    return (data || []).map((t: any) => {
+    const admin = createAdminClient()
+    
+    const processedData = await Promise.all((data || []).map(async (t: any) => {
+        // Lazy sync missing auth data
+        if ((!t.email || !t.created_at) && admin) {
+            try {
+                const { data: authUser } = await admin.auth.admin.getUserById(t.id)
+                if (authUser?.user) {
+                    const updateData: any = {}
+                    if (!t.email && authUser.user.email) {
+                        t.email = authUser.user.email
+                        updateData.email = authUser.user.email
+                    }
+                    if (!t.created_at && authUser.user.created_at) {
+                        t.created_at = authUser.user.created_at
+                        updateData.created_at = authUser.user.created_at
+                    }
+                    if (Object.keys(updateData).length > 0) {
+                        // Fire and forget update
+                        admin.from('profiles').update(updateData).eq('id', t.id).then()
+                    }
+                }
+            } catch (e) {
+                console.error('Failed to sync user data for', t.id, e)
+            }
+        }
+
         const students = t.students || []
         const monthlyRevenue = students.reduce((sum: number, s: any) => {
             return s.active ? sum + (Number(s.monthly_fee) || 0) : sum
@@ -223,7 +249,9 @@ export async function getAllTrainers() {
             monthly_revenue: monthlyRevenue,
             total_revenue: totalRevenue
         }
-    })
+    }))
+
+    return processedData
 }
 
 export async function updateUserPlanTier(userId: string, planTier: string) {

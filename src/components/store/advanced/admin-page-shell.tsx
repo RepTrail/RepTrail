@@ -2,7 +2,6 @@
 
 import React from 'react'
 import { DashboardShell, DashboardUser } from './dashboard-shell'
-import { RegistryContext } from './registry-context'
 import { Stack } from '@/components/store/base/stack'
 import { Inline } from '@/components/store/base/layout'
 import { Font } from '@/components/store/base/font'
@@ -41,40 +40,29 @@ export function AdminPageShell({ children, user, pageTitle = '', subtitle, icon 
     const rest = words.slice(1).join(' ')
 
     return (
-        <RegistryContext.Provider value={{
-            primaryColor: 'red',
-            setPrimaryColor: () => { },
-            activeTab: 'admin',
-            setActiveTab: () => { },
-            activeSection: '',
-            setActiveSection: () => { },
-            isSidebarOpen: false,
-            setIsSidebarOpen: () => { },
-        }}>
-            <DashboardShell
-                color={STORE_TOKENS.COLORS.ERROR}
-                links={ADMIN_LINKS}
-                mobileLinks={ADMIN_MOBILE_LINKS}
-                user={user}
-            >
-                <Stack gap={{ base: STORE_TOKENS.SPACING.EMPTY_STATE, md: STORE_TOKENS.SPACING.SECTION }}>
-                    {/* Page Header — RegistryMain pattern */}
+        <DashboardShell
+            color={STORE_TOKENS.COLORS.ERROR}
+            links={ADMIN_LINKS}
+            mobileLinks={ADMIN_MOBILE_LINKS}
+            user={user}
+        >
+            <Stack gap={{ base: STORE_TOKENS.SPACING.EMPTY_STATE, md: STORE_TOKENS.SPACING.SECTION }}>
+                {/* Page Header — RegistryMain pattern */}
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                    <Inline gap={STORE_TOKENS.SPACING.ELEMENT}>
+                        <Icon icon={icon} color={STORE_TOKENS.COLORS.ERROR} size="lg" />
+                        <Font variant="auxiliary" color={STORE_TOKENS.COLORS.ERROR}>Painel Admin</Font>
+                    </Inline>
                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        <Inline gap={STORE_TOKENS.SPACING.ELEMENT}>
-                            <Icon icon={icon} color={STORE_TOKENS.COLORS.ERROR} size="lg" />
-                            <Font variant="auxiliary" color={STORE_TOKENS.COLORS.ERROR}>Painel Admin</Font>
-                        </Inline>
-                        <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                            <Font variant="h1" nowrap>
-                                {first}{rest ? <> <Font variant="h1" color={STORE_TOKENS.COLORS.ERROR} nowrap>{rest}</Font></> : null}
-                            </Font>
-                            {subtitle && <Font variant="description">{subtitle}</Font>}
-                        </Stack>
+                        <Font variant="h1" nowrap>
+                            {first}{rest ? <> <Font variant="h1" color={STORE_TOKENS.COLORS.ERROR} nowrap>{rest}</Font></> : null}
+                        </Font>
+                        {subtitle && <Font variant="description">{subtitle}</Font>}
                     </Stack>
-
-                    {children}
                 </Stack>
-            </DashboardShell>
-        </RegistryContext.Provider>
+
+                {children}
+            </Stack>
+        </DashboardShell>
     )
 }

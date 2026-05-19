@@ -191,6 +191,7 @@ export function Surface({
       onClick={onClick}
       padding={padding}
       zIndex={zIndex as any}
+      minHeight={minHeight}
       className={cn(
         variantClasses[resolvedVariant as keyof typeof variantClasses],
         rounded && roundedClasses[rounded],
@@ -211,12 +212,8 @@ export function Surface({
         animation === 'bounce' && 'animate-bounce',
         animation === 'pulse' && 'animate-pulse',
         group && 'group',
-        typeof minHeight === 'string',
       )}
-      style={{
-        ...props.style,
-        minHeight: typeof minHeight === 'number' ? `${minHeight}px` : undefined,
-      }}
+      style={props.style}
       {...props}
     >
       {children}

@@ -19,40 +19,37 @@ import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { RegistryActionModal, RegistryActionType } from '@/components/store/advanced/registry-action-modal'
 
 interface ErgogenicCardPremiumProps {
+    id: string
     title: string
     days: string[]
     dosage: string
     frequency: string
     mode?: 'auto' | 'personal'
     color?: 'amber' | 'emerald' | 'orange' | 'blue' | 'primary'
+    onEdit?: () => void
+    onDelete?: () => void
+    onDuplicate?: () => void
+    onSchedule?: () => void
 }
 
 /**
  * ErgogenicCardPremium: High-fidelity card for ergogenic substance management.
  * Faithful to Image 31 (Scale 1:1).
- * - Removed 'Visualizar' for Personal mode as requested.
  */
 export function ErgogenicCardPremium({
+    id,
     title,
     days,
     dosage,
     frequency,
     mode = 'auto',
-    color = 'primary'
+    color = 'primary',
+    onEdit,
+    onDelete,
+    onDuplicate,
+    onSchedule
 }: ErgogenicCardPremiumProps) {
     const isAuto = mode === 'auto'
-    const [modalConfig, setModalConfig] = React.useState<{ isOpen: boolean, type: RegistryActionType }>({
-        isOpen: false,
-        type: 'assign_ergogenic'
-    })
-
-    const openModal = (type: RegistryActionType) => {
-        setModalConfig({ isOpen: true, type })
-    }
-
-    const closeModal = () => {
-        setModalConfig(prev => ({ ...prev, isOpen: false }))
-    }
 
     return (
         <GlassPanel
@@ -70,21 +67,19 @@ export function ErgogenicCardPremium({
                         rounded={STORE_TOKENS.RADIUS.SYSTEM}
                         bg={STORE_TOKENS.COLORS.BRAND}
                         bgOpacity={STORE_TOKENS.OPACITY.SUBTLE}
-                        cursor="pointer"
                     >
                         <Icon icon={Syringe} size="md" color={STORE_TOKENS.COLORS.BRAND} />
                     </Box>
                     {isAuto && (
-                        <Box 
-                            cursor="pointer" 
-                            bg='red' 
-                            bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} 
-                            padding={STORE_TOKENS.PADDING.ELEMENT} 
+                        <Button 
+                            variant="outline-red"
+                            isIconOnly
+                            shine
+                            onClick={onDelete}
                             rounded={STORE_TOKENS.RADIUS.SYSTEM}
-                            onClick={() => openModal('confirm_delete')}
                         >
                             <Icon icon={Trash2} size="md" color={STORE_TOKENS.COLORS.ERROR} />
-                        </Box>
+                        </Button>
                     )}
                 </Stack>
 
@@ -130,13 +125,13 @@ export function ErgogenicCardPremium({
                 {/* Footer Buttons - Hidden in Personal Mode */}
                 {isAuto && (
                     <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        <Button variant={color as any} flex1 onClick={() => openModal('assign_ergogenic')}>
+                        <Button variant={color as any} flex1 onClick={onSchedule} shine>
                             <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                 <Icon icon={Calendar} size="xs" color={STORE_TOKENS.COLORS.BLACK} />
                                 <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.BLACK}>AGENDAR</Font>
                             </Stack>
                         </Button>
-                        <Button variant="outline-zinc" flex1 onClick={() => openModal('edit_ergogenic')}>
+                        <Button variant="outline-zinc" flex1 onClick={onEdit}>
                             <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                 <Icon icon={Edit3} size="xs" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} />
                                 <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>EDITAR</Font>
@@ -147,21 +142,13 @@ export function ErgogenicCardPremium({
                             isIconOnly 
                             size="sm" 
                             rounded={STORE_TOKENS.RADIUS.SYSTEM}
-                            onClick={() => openModal('confirm_duplicate')}
+                            onClick={onDuplicate}
                         >
                             <Icon icon={Copy} size="xs" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} />
                         </Button>
                     </Stack>
                 )}
             </Stack>
-
-            <RegistryActionModal 
-                isOpen={modalConfig.isOpen}
-                onClose={closeModal}
-                type={modalConfig.type}
-                onConfirm={closeModal}
-                initialData={{ item: title, dosage: dosage.split(' ')[0] }}
-            />
         </GlassPanel>
     )
 }

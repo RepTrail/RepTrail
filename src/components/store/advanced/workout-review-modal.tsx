@@ -144,7 +144,7 @@ export function WorkoutReviewModal({
             {isLoading ? (
                 <Box padding={STORE_TOKENS.SPACING.EMPTY_STATE} display="flex" align="center" justify="center" fullWidth>
                     <Stack align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        <Loader2 className="w-8 h-8 text-emerald-500 animate-spin" />
+                        <Icon icon={Loader2} size="xl" color="emerald" spin />
                         <Font variant="sub-tiny" weight="black" uppercase color="zinc-500">Carregando dados do treino...</Font>
                     </Stack>
                 </Box>
@@ -205,11 +205,11 @@ export function WorkoutReviewModal({
 
                                         {/* Column Headers (Desktop Only) */}
                                         <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} display={{ base: 'none', md: 'flex' }}>
-                                            <Box className="w-[80px]" align="center">
+                                            <Box width={80} align="center">
                                                 <Font variant="sub-tiny" weight="black" uppercase color="zinc-500">Peso</Font>
                                             </Box>
-                                            <Box className="w-[20px]" /> {/* Spacer for the 'x' icon */}
-                                            <Box className="w-[60px]" align="center">
+                                            <Box width={20} /> {/* Spacer for the 'x' icon */}
+                                            <Box width={60} align="center">
                                                 <Font variant="sub-tiny" weight="black" uppercase color="zinc-500">Reps</Font>
                                             </Box>
                                         </Stack>
@@ -226,44 +226,46 @@ export function WorkoutReviewModal({
                                             <Box key={load.id} padding={STORE_TOKENS.PADDING.ELEMENT}>
                                                 <Stack direction={{ base: 'col', md: 'row' }} align={{ base: 'start', md: 'center' }} gap={STORE_TOKENS.SPACING.ELEMENT}>
                                                     {/* Set Type Badge */}
-                                                    <Box className="w-full md:w-[80px]">
+                                                    <Box width={{ base: 'full', md: 80 }}>
                                                         <Badge label={cfg.label} color={cfg.color} size="xs" variant="glass" />
                                                     </Box>
 
                                                     {/* Load/Reps Controls */}
-                                                    <Stack direction="row" align="center" justify="end" flex1 fullWidth gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                                    <Stack direction="row" align={{ base: 'end', md: 'center' }} justify="end" flex1 fullWidth gap={STORE_TOKENS.SPACING.ELEMENT}>
                                                         {/* Weight Column */}
-                                                        <Stack gap={2.5} className="flex-1 md:flex-none align-start md:align-stretch">
-                                                            <Box display={{ base: 'block', md: 'none' }} padding={2.5}>
+                                                        <Stack gap={STORE_TOKENS.SPACING.ELEMENT} flex1={ { base: true, md: false } }>
+                                                            <Box display={{ base: 'block', md: 'none' }} padding={0}>
                                                                 <Font variant="sub-tiny" weight="black" uppercase color="zinc-600">Peso</Font>
                                                             </Box>
-                                                            <Box className="w-full md:w-[80px]">
-                                                                <Input 
-                                                                    type="number" 
-                                                                    step="0.5" 
-                                                                    value={edit.weight}
-                                                                    onChange={(e) => setEdits(prev => ({ ...prev, [load.id]: { ...prev[load.id], weight: e.target.value } }))}
-                                                                    className="text-center font-bold"
-                                                                />
+                                                            <Box width={{ base: 'full', md: 80 }}>
+                                                                    <Input 
+                                                                        type="number" 
+                                                                        step="0.5" 
+                                                                        value={edit.weight}
+                                                                        onChange={(e) => setEdits(prev => ({ ...prev, [load.id]: { ...prev[load.id], weight: e.target.value } }))}
+                                                                        textAlign="center"
+                                                                        weight="bold"
+                                                                    />
                                                             </Box>
                                                         </Stack>
                                                         
-                                                        <Box className="w-auto md:w-[20px] pt-6 md:pt-0" align="center">
+                                                        <Box width={{ base: 'auto', md: 20 }} align="center">
                                                             <Font variant="tiny" color="zinc-600">×</Font>
                                                         </Box>
 
                                                         {/* Reps Column */}
-                                                        <Stack gap={2.5} className="flex-1 md:flex-none align-start md:align-stretch">
-                                                            <Box display={{ base: 'block', md: 'none' }} padding={2.5}>
+                                                        <Stack gap={STORE_TOKENS.SPACING.ELEMENT} flex1={ { base: true, md: false } }>
+                                                            <Box display={{ base: 'block', md: 'none' }} padding={0}>
                                                                 <Font variant="sub-tiny" weight="black" uppercase color="zinc-600">Reps</Font>
                                                             </Box>
-                                                            <Box className="w-full md:w-[60px]">
-                                                                <Input 
-                                                                    type="number" 
-                                                                    value={edit.reps}
-                                                                    onChange={(e) => setEdits(prev => ({ ...prev, [load.id]: { ...prev[load.id], reps: e.target.value } }))}
-                                                                    className="text-center font-bold"
-                                                                />
+                                                            <Box width={{ base: 'full', md: 60 }}>
+                                                                    <Input 
+                                                                        type="number" 
+                                                                        value={edit.reps}
+                                                                        onChange={(e) => setEdits(prev => ({ ...prev, [load.id]: { ...prev[load.id], reps: e.target.value } }))}
+                                                                        textAlign="center"
+                                                                        weight="bold"
+                                                                    />
                                                             </Box>
                                                         </Stack>
                                                     </Stack>

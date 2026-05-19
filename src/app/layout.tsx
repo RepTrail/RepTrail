@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "@/components/store/advanced/toaster";
 import { PWAClient } from "@/components/layout/pwa-client";
 import { SplashManager } from "@/components/layout/splash-manager";
 

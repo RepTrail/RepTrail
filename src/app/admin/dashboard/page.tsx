@@ -27,8 +27,8 @@ import { Grid } from '@/components/store/base/grid'
 import { StatsCard } from '@/components/store/intermediary/stats-card'
 import { useToast } from '@/hooks/use-toast'
 
-import { AdminPayoutsManagement } from '@/components/store/advanced/admin-payouts-management'
-import { AdminOperationalCosts } from '@/components/store/advanced/admin-operational-costs'
+import { AdminPayoutsManagement } from '@/components/store/sections/admin-payouts-management'
+import { AdminOperationalCosts } from '@/components/store/sections/admin-operational-costs'
 import { AdminTopProducts } from '@/components/store/sections/admin-top-products'
 
 export default function AdminDashboardPage() {

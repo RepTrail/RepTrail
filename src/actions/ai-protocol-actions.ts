@@ -119,7 +119,10 @@ Retorne SOMENTE um JSON válido com esta estrutura exata. Não adicione markdown
           "sets": 4,
           "reps": "10",
           "rest": 90,
-          "warmup_sets": "2x15",
+          "warmup_sets": 2,
+          "warmup_reps": "15",
+          "feeder_sets": 1,
+          "feeder_reps": "8",
           "notes": "Controle na descida, 3 segundos"
         }
       ]
@@ -131,7 +134,7 @@ Retorne SOMENTE um JSON válido com esta estrutura exata. Não adicione markdown
       "duration": "30",
       "intensity": "Moderado - 65-70% FCM",
       "frequency": "Conforme sugerido pela IA",
-      "days_of_week": [2, 4, 6] // IMPORTANTE: Array de números inteiros de 0 (Domingo) a 6 (Sábado)
+      "days_of_week": [2, 4, 6]
     }
   ],
   "diets": [
@@ -150,7 +153,10 @@ Retorne SOMENTE um JSON válido com esta estrutura exata. Não adicione markdown
 }
 
 REGRAS:
-- FREQUÊNCIA E DURAÇÃO: Decida a frequência ideal (entre 3 a 6 dias) e duração (entre 45 a 90 min) baseada no perfil e objetivo.
+- AQUECIMENTO E PREPARAÇÃO (WARMUP & FEEDERS): Para o PRIMEIRO exercício de cada grupo muscular principal no treino (ex: primeiro exercício de peito, primeiro de pernas, etc.), prescreva obrigatoriamente séries de aquecimento ("warmup_sets": 2, "warmup_reps": "15") e séries preparatórias ("feeder_sets": 1, "feeder_reps": "8") para preparar as articulações e o sistema neuromuscular. Para exercícios subsequentes do mesmo grupo muscular, defina warmup_sets e feeder_sets como 0, e warmup_reps e feeder_reps como "".
+- QUANTIDADE DE EXERCÍCIOS: É OBRIGATÓRIO incluir a lista completa de exercícios para cada treino. NUNCA retorne apenas um exercício de exemplo! Cada treino ("workout") deve ter entre 5 e 8 exercícios na array "exercises".
+- FREQUÊNCIA DE CARDIO: Se o objetivo for Cutting, prescreva cardio de 4 a 6 dias na semana (ex: [1, 2, 4, 5, 6]). Se for Bulking/Manutenção, 3 a 4 dias (ex: [1, 3, 5]). NUNCA prescreva menos de 3 dias de cardio.
+- DURAÇÃO DO CARDIO: Entre 30 e 60 minutos por sessão.
 - PRIORIZAÇÃO MUSCULAR: Se houver "Pontos Fracos", garanta que esses grupos tenham maior volume semanal ou sejam treinados no início da sessão. Para "Pontos Fortes", mantenha um volume de manutenção.
 - MACRONUTRIENTES E FIBRAS: Seja extremamente preciso nos cálculos. Grãos (como aveia), vegetais e frutas DEVEM ter valores de fibras realistas. Não deixe fibras como 0 se o alimento for integral ou vegetal.
 - Crie um treino para cada dia de treino decidido.
@@ -175,7 +181,7 @@ ${preferences.mealsPerDay === 4 ? `  • 4 refeições: Refeição 1 = leve (~15
 - Macros total das refeições devem somar aproximadamente: ${proteinG}g proteína, ${carbG}g carbs, ${fatG}g gordura
 - day_of_week (Workouts): 0=Dom, 1=Seg, 2=Ter, 3=Qua, 4=Qui, 5=Sex, 6=Sáb.
 - DISTRIBUIÇÃO DOS DIAS: Espalhe os treinos ao longo da semana. NÃO use dias consecutivos se não for necessário.
-- Cardios: Agrupe por tipo. Se um cardio deve ser feito 3x na semana, retorne UM objeto no array 'cardios' com 'days_of_week': [1, 3, 5].
+- Cardios: Agrupe por tipo. Se um cardio deve ser feito 3x na semana, retorne UM objeto no array 'cardios' com 'days_of_week' contendo os dias. Nunca use comentários dentro do array.
 `
 
   try {

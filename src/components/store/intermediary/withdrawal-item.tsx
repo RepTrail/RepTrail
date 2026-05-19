@@ -57,7 +57,7 @@ export function WithdrawalItem({
     return (
         <ActionableListCard 
             badges={
-                <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align={{ base: 'start', lg: 'center' }} fullWidth>
+                <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center" fullWidth>
                     <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} color={STORE_TOKENS.COLORS.TEXT.PRIMARY} variant="body-sm">
                         {amount}
                     </Font>

@@ -19,9 +19,9 @@ interface SettingsActionCardProps {
     subtitle: string
     actionLabel: string
     onAction: () => void
+    actionIcon?: any
     disabled?: boolean
     isLoading?: boolean
-    children?: React.ReactNode // For cases like the custom content inside Button
 }
 
 /**
@@ -37,15 +37,17 @@ export function SettingsActionCard({
     subtitle,
     actionLabel,
     onAction,
+    actionIcon,
     disabled = false,
-    isLoading = false,
-    children
+    isLoading = false
 }: SettingsActionCardProps) {
     // Determine tonal variant if not provided
     const resolvedSurfaceVariant = surfaceVariant || (`tonal-${color}` as SurfaceVariant)
     
     // Type safe colors for Font and Icon
     const safeColor = color === 'zinc' ? 'zinc-400' : (color === 'transparent' ? 'foreground' : color) as any
+
+    const ActionIcon = actionIcon
 
     return (
         <Surface variant={resolvedSurfaceVariant} padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM} border="none">
@@ -66,10 +68,12 @@ export function SettingsActionCard({
                     onClick={onAction}
                     disabled={disabled}
                     loading={isLoading}
+                    gap={2.5}
                 >
-                    {children || (
-                        <Font variant="body-sm" weight="black" uppercase italic>{actionLabel}</Font>
+                    {ActionIcon && (
+                        <ActionIcon size={16} strokeWidth={2.5} className="shrink-0" />
                     )}
+                    {actionLabel}
                 </Button>
             </Stack>
         </Surface>

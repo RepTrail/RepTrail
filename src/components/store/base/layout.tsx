@@ -18,6 +18,7 @@ interface LayoutBaseProps {
   position?: 'relative' | 'absolute' | 'fixed' | 'static'
   shrink?: 0 | 1
   opacity?: 0 | 10 | 20 | 30 | 40 | 50 | 60 | 70 | 80 | 90 | 100
+  minWidth?: number | string | { base: number | string, md?: number | string, lg?: number | string }
   className?: string
   id?: string
 }
@@ -37,6 +38,7 @@ export function Inline({
   position,
   shrink,
   opacity,
+  minWidth,
   className,
   id
 }: LayoutBaseProps) {
@@ -96,6 +98,7 @@ export function Inline({
       position={position}
       shrink={shrink}
       opacity={opacity}
+      minWidth={minWidth}
       className={cn(
         'flex flex-row',
         gapClasses[gapBase as keyof typeof gapClasses],
@@ -126,6 +129,7 @@ export function Cluster({
   position,
   shrink,
   opacity,
+  minWidth,
   className,
   id
 }: LayoutBaseProps) {
@@ -245,19 +249,40 @@ import { createPortal } from 'react-dom'
 /**
  * ModalOverlay: The fixed backdrop and centering container for modals.
  */
-export function ModalOverlay({ children, onClose, id }: { children: React.ReactNode, onClose?: () => void, id?: string }) {
+export function ModalOverlay({ 
+  children, 
+  onClose, 
+  id, 
+  className, 
+  backdropClassName,
+  animateState 
+}: { 
+  children: React.ReactNode
+  onClose?: () => void
+  id?: string
+  className?: string
+  backdropClassName?: string
+  animateState?: 'closed' | 'open'
+}) {
   const [mounted, setMounted] = React.useState(false)
   React.useEffect(() => setMounted(true), [])
 
   if (!mounted) return null
 
+  const computedBackdropClassName = cn(
+    "absolute inset-0 bg-black/60",
+    "transition-all duration-200 ease-out",
+    animateState === 'open' ? "opacity-100 backdrop-blur-sm" : "opacity-0 backdrop-blur-none",
+    backdropClassName
+  )
+
   return createPortal(
     <div 
       id={id}
-      className="fixed inset-0 z-[1000] flex items-center justify-center p-5"
+      className={cn("fixed inset-0 z-[1000] flex items-center justify-center p-5", className)}
     >
       <div 
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm" 
+        className={computedBackdropClassName} 
         onClick={onClose}
       />
       {children}
@@ -269,11 +294,28 @@ export function ModalOverlay({ children, onClose, id }: { children: React.ReactN
 /**
  * ModalContainer: The relative container for modal content.
  */
-export function ModalContainer({ children, id }: { children: React.ReactNode, id?: string }) {
+export function ModalContainer({ 
+  children, 
+  id, 
+  className,
+  animateState 
+}: { 
+  children: React.ReactNode
+  id?: string
+  className?: string
+  animateState?: 'closed' | 'open'
+}) {
+  const computedContainerClassName = cn(
+    "relative w-11/12 md:w-[600px] max-h-[90vh] overflow-hidden flex flex-col",
+    "transition-all duration-200 ease-out",
+    animateState === 'open' ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 translate-y-4",
+    className
+  )
+
   return (
     <div
       id={id}
-      className="relative w-11/12 md:w-[600px] max-h-[90vh] overflow-hidden flex flex-col"
+      className={computedContainerClassName}
     >
       {children}
     </div>

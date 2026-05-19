@@ -37,7 +37,7 @@ export function CommunityFeedCard({
             cursor="pointer"
             onClick={onAction}
             group
-            height={400}
+            className="aspect-[3/4]"
             display="flex"
             direction="col"
         >
@@ -55,15 +55,25 @@ export function CommunityFeedCard({
                 />
             </Box>
 
-            {/* Gradient Overlay (Compliant approach using opacity stack) */}
+            {/* Base Overlay (Cinematic Darkening) */}
             <Box
                 position="absolute"
                 pin="inset"
                 zIndex={STORE_TOKENS.Z_INDEX.CONTENT}
                 bg={STORE_TOKENS.COLORS.BLACK}
-                bgOpacity={40}
-                groupHoverOpacity={20}
+                bgOpacity={20}
+                groupHoverOpacity={10}
                 transition
+            />
+            
+            {/* Bottom Gradient (Ensures Footer Readability) */}
+            <Box
+                position="absolute"
+                pin="inset"
+                top="auto"
+                height="50%"
+                zIndex={STORE_TOKENS.Z_INDEX.CONTENT}
+                className="bg-gradient-to-t from-black via-black/60 to-transparent"
             />
 
             {/* Content Container */}

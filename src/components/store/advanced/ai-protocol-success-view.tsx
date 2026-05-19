@@ -47,7 +47,9 @@ export function AIProtocolSuccessView({ summary }: AIProtocolSuccessViewProps) {
                     <Icon icon={Sparkles} size="lg" color="primary" />
                 </Surface>
                 <Stack gap={2.5} align="center">
-                    <Font variant="h2" weight="black" uppercase italic color="white">Protocolo <Font color="primary">Gerado!</Font></Font>
+                    <Font variant="h2" weight="black" uppercase italic color="white">
+                        Protocolo <Font variant="h2" weight="black" uppercase italic color="primary">Gerado!</Font>
+                    </Font>
                     <Font variant="description" color="zinc-500" align="center">Seu plano personalizado está pronto.</Font>
                 </Stack>
                 <Grid cols={{ base: 2, md: 4 }} gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
@@ -56,7 +58,7 @@ export function AIProtocolSuccessView({ summary }: AIProtocolSuccessViewProps) {
                     <AIProtocolSummaryStat icon={Zap} value={`${summary.targetCalories}`} label="Calorias" />
                     <AIProtocolSummaryStat icon={Utensils} value={`${summary.proteinG}g`} label="Proteína" />
                 </Grid>
-                <Button variant="primary" size="lg" fullWidth onClick={() => router.push('/dashboard/student')}>
+                <Button variant="primary" size="lg" fullWidth onClick={() => window.location.href = '/dashboard/student'}>
                     VER NO DASHBOARD <ChevronRight size={16} />
                 </Button>
             </Stack>

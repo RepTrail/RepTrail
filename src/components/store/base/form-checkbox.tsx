@@ -10,8 +10,10 @@ import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 interface FormCheckboxProps {
     label: string
+    name?: string
     description?: string
     checked?: boolean
+    defaultChecked?: boolean
     onChange?: (checked: boolean) => void
     color?: 'emerald' | 'orange' | 'amber' | 'blue' | 'primary'
     error?: string
@@ -19,14 +21,16 @@ interface FormCheckboxProps {
 
 export function FormCheckbox({
     label,
+    name,
     description,
-    checked = false,
+    checked,
+    defaultChecked,
     onChange,
     color = 'emerald',
     error
 }: FormCheckboxProps) {
     const { primaryColor } = useRegistry()
-    const [isChecked, setIsChecked] = useState(checked)
+    const [isChecked, setIsChecked] = useState(defaultChecked ?? checked ?? false)
     const resolvedColor = color === 'primary' ? primaryColor : color
 
     const colorMap = {
@@ -46,6 +50,15 @@ export function FormCheckbox({
 
     return (
         <div className="flex flex-col gap-1.5">
+            {name && (
+                <input 
+                    type="checkbox" 
+                    name={name} 
+                    checked={isChecked} 
+                    readOnly 
+                    className="hidden" 
+                />
+            )}
             <button
                 type="button"
                 onClick={handleToggle}

@@ -1,49 +1,30 @@
-import { createClient } from '@/lib/supabase/server'
+import { headers } from 'next/headers'
+import { Suspense } from 'react'
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { getQueryClient } from '@/lib/get-query-client'
-import { QUERY_KEYS } from '@/lib/query-keys'
-import { getStudentErgogenics, getErgogenicLogs } from '@/actions/ergogenics-actions'
-import { getStudentProfile, getStudentTrainer } from '@/actions/student-actions'
-import { ErgogenicsPageClient } from '@/components/store/features(deprecated)/student-ergogenics-page-client'
-import { redirect } from 'next/navigation'
+import { StudentErgogenicManagementSmart } from '@/components/store/advanced/student-ergogenic-management-smart'
+import { PREFETCH_REGISTRY } from '@/lib/prefetch-registry'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 
+import { StudentRegistryHeaderActions } from '@/components/store/advanced/student-registry-header-actions'
+
 export default async function ErgogenicsPage() {
-    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) redirect('/login')
+    const headerList = await headers()
+    const userId = headerList.get('x-user-id')
+
+    if (!userId) return null
 
     const queryClient = getQueryClient()
 
-    // 1. Prefetch core student data
-    await Promise.all([
+    // ─── NON-BLOCKING PREFETCHING (0ms Nav) ─────────────────────────────
+    const configs = PREFETCH_REGISTRY['/dashboard/student/ergogenics']?.(userId) || []
+    await Promise.all(configs.map(config =>
         queryClient.prefetchQuery({
-            queryKey: QUERY_KEYS.student.details(user.id),
-            queryFn: () => getStudentProfile(user.id)
-        }),
-        queryClient.prefetchQuery({
-            queryKey: QUERY_KEYS.profile.trainer(user.id),
-            queryFn: () => getStudentTrainer(user.id)
+            queryKey: config.queryKey,
+            queryFn: config.queryFn,
+            staleTime: 1000 * 30
         })
-    ])
-
-    // Verify if steroid_use is enabled (Data is already prefetched above)
-    const profile = queryClient.getQueryData<any>(QUERY_KEYS.student.details(user.id))
-    if (!profile?.details?.steroid_use) {
-        redirect('/dashboard/student')
-    }
-
-    // 2. Prefetch Ergogenics specific data
-    await Promise.all([
-        queryClient.prefetchQuery({
-            queryKey: QUERY_KEYS.ergogenics.all(user.id),
-            queryFn: () => getStudentErgogenics(user.id)
-        }),
-        queryClient.prefetchQuery({
-            queryKey: QUERY_KEYS.ergogenics.logs(user.id),
-            queryFn: () => getErgogenicLogs(user.id)
-        })
-    ])
+    ))
 
     return (
         <RegistryMain
@@ -52,12 +33,15 @@ export default async function ErgogenicsPage() {
             icon="FlaskConical"
             contextLabel="Protocolos & Performance"
             showTabs={false}
+            rightElement={<StudentRegistryHeaderActions userId={userId} type="ergogenic" />}
         >
-            <div className=" mx-auto" suppressHydrationWarning>
-                <HydrationBoundary state={dehydrate(queryClient)}>
-                    <ErgogenicsPageClient userId={user.id} />
-                </HydrationBoundary>
-            </div>
+            <Suspense fallback={<div className="animate-pulse space-y-10"><div className="h-[400px] bg-zinc-900 rounded-[2.5rem]" /></div>}>
+                <div suppressHydrationWarning>
+                    <HydrationBoundary state={dehydrate(queryClient)}>
+                        <StudentErgogenicManagementSmart userId={userId} />
+                    </HydrationBoundary>
+                </div>
+            </Suspense>
         </RegistryMain>
     )
 }

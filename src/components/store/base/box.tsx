@@ -8,7 +8,7 @@ export type BoxColor = 'orange' | 'emerald' | 'amber' | 'red' | 'blue' | 'zinc' 
 export interface BoxProps extends Omit<React.HTMLAttributes<HTMLElement>, 'color'> {
   children?: React.ReactNode
   as?: 'div' | 'aside' | 'nav' | 'main' | 'section' | 'header' | 'footer' | 'button' | 'img' | 'input' | 'label' | 'span'
-  padding?: 0 | 2.5 | 5 | 10 | 12.5 | 20 | 50 | 100 | 'section' | { base: 0 | 2.5 | 5 | 10 | 12.5 | 20 | 50 | 100 | 'section', md?: 0 | 2.5 | 5 | 10 | 12.5 | 20 | 50 | 100 | 'section', lg?: 0 | 2.5 | 5 | 10 | 12.5 | 20 | 50 | 100 | 'section' }
+  padding?: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12 | 12.5 | 20 | 50 | 100 | 'section' | { base: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12 | 12.5 | 20 | 50 | 100 | 'section', md?: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12 | 12.5 | 20 | 50 | 100 | 'section', lg?: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12 | 12.5 | 20 | 50 | 100 | 'section' }
   align?: 'start' | 'center' | 'end' | 'stretch' | 'baseline' | { base: 'start' | 'center' | 'end' | 'stretch' | 'baseline', sm?: 'start' | 'center' | 'end' | 'stretch' | 'baseline', md?: 'start' | 'center' | 'end' | 'stretch' | 'baseline', lg?: 'start' | 'center' | 'end' | 'stretch' | 'baseline' }
   justify?: 'start' | 'center' | 'end' | 'between' | 'around' | { base: 'start' | 'center' | 'end' | 'between' | 'around', sm?: 'start' | 'center' | 'end' | 'between' | 'around', md?: 'start' | 'center' | 'end' | 'between' | 'around', lg?: 'start' | 'center' | 'end' | 'between' | 'around' }
   display?: 'flex' | 'grid' | 'block' | 'inline-block' | 'inline-flex' | 'none' | { base: 'flex' | 'grid' | 'block' | 'none', sm?: 'flex' | 'grid' | 'block' | 'none', md?: 'flex' | 'grid' | 'block' | 'none', lg?: 'flex' | 'grid' | 'block' | 'none' }
@@ -16,9 +16,9 @@ export interface BoxProps extends Omit<React.HTMLAttributes<HTMLElement>, 'color
   position?: 'relative' | 'absolute' | 'fixed' | 'static' | 'sticky' | { base: 'relative' | 'absolute' | 'fixed' | 'static' | 'sticky', sm?: 'relative' | 'absolute' | 'fixed' | 'static' | 'sticky', md?: 'relative' | 'absolute' | 'fixed' | 'static' | 'sticky', lg?: 'relative' | 'absolute' | 'fixed' | 'static' | 'sticky' }
   pin?: 'left' | 'right' | 'top' | 'bottom' | 'inset' | { base: 'left' | 'right' | 'top' | 'bottom' | 'inset', md?: 'left' | 'right' | 'top' | 'bottom' | 'inset', lg?: 'left' | 'right' | 'top' | 'bottom' | 'inset' }
   maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | 'none' | 'auth-form' | { base: 'sm' | 'md' | 'lg' | 'xl' | 'none' | 'auth-form', md?: 'sm' | 'md' | 'lg' | 'xl' | 'none' | 'auth-form', lg?: 'sm' | 'md' | 'lg' | 'xl' | 'none' | 'auth-form' }
-  width?: 'full' | 'auto' | 'px' | 'half' | 'sidebar' | 'sidebar-wide' | '10' | { base: 'full' | 'auto' | '10', md?: 'full' | 'half' | 'auto' | '10' | 'sidebar' | 'sidebar-wide', lg?: 'full' | 'auto' | 'half' | 'sidebar' | 'sidebar-wide' | '10' } | number
-  height?: 'full' | 'auto' | 'screen' | 'px' | '10' | number
-  minHeight?: 'screen' | 'sm' | 'md' | 'lg' | 'xl' | number
+  width?: 'full' | 'auto' | 'px' | 'half' | 'sidebar' | 'sidebar-wide' | '10' | number | string | { base?: 'full' | 'auto' | '10' | number | string, md?: 'full' | 'half' | 'auto' | '10' | 'sidebar' | 'sidebar-wide' | number | string, lg?: 'full' | 'auto' | 'half' | 'sidebar' | 'sidebar-wide' | '10' | number | string }
+  height?: 'full' | 'auto' | 'screen' | 'px' | '10' | number | string | { base?: 'full' | 'auto' | 'screen' | 'px' | '10' | number | string, md?: 'full' | 'auto' | 'screen' | 'px' | '10' | number | string }
+  minHeight?: 'screen' | 'full' | 'sm' | 'md' | 'lg' | 'xl' | number
   maxHeight?: number | string
   minWidth?: number | string | { base: number | string, sm?: number | string, md?: number | string, lg?: number | string }
   overflow?: 'hidden' | 'auto' | 'scroll' | 'visible' | { base: 'hidden' | 'auto' | 'scroll' | 'visible', md?: 'hidden' | 'auto' | 'scroll' | 'visible' }
@@ -34,7 +34,7 @@ export interface BoxProps extends Omit<React.HTMLAttributes<HTMLElement>, 'color
   alignSelf?: 'start' | 'center' | 'end' | 'stretch'
   flex?: 0 | 1 | 'none' | { base: 0 | 1 | 'none', md?: 0 | 1 | 'none', lg?: 0 | 1 | 'none' }
   flex1?: boolean | { base: boolean, md?: boolean, lg?: boolean }
-  fullWidth?: boolean
+  fullWidth?: boolean | { base: boolean, md?: boolean, lg?: boolean }
   fullHeight?: boolean
   translateX?: 0 | '-full' | 'full' | { base: 0 | '-full' | 'full', md?: 0 | '-full' | 'full', lg?: 0 | '-full' | 'full' }
   translateY?: 0 | '-full' | 'full'
@@ -48,12 +48,12 @@ export interface BoxProps extends Omit<React.HTMLAttributes<HTMLElement>, 'color
   mdColSpan?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 12
   lgColSpan?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 12
   cursor?: 'pointer' | 'default' | 'not-allowed'
-  textAlign?: 'center' | 'left' | 'right'
+  textAlign?: 'center' | 'left' | 'right' | { base: 'center' | 'left' | 'right', md?: 'center' | 'left' | 'right', lg?: 'center' | 'left' | 'right' }
   wrap?: 'wrap' | 'nowrap'
   gap?: 0 | 2.5 | 5 | 10 | 12.5 | 20 | 50 | 100 | { base: 0 | 2.5 | 5 | 10 | 12.5 | 20 | 50 | 100, sm?: 0 | 2.5 | 5 | 10 | 12.5 | 20 | 50 | 100, md?: 0 | 2.5 | 5 | 10 | 12.5 | 20 | 50 | 100, lg?: 0 | 2.5 | 5 | 10 | 12.5 | 20 | 50 | 100 }
   className?: string
   id?: string
-  onClick?: () => void
+  onClick?: (e: React.MouseEvent<HTMLElement>) => void
   style?: React.CSSProperties
   group?: boolean
   groupHoverDisplay?: 'flex' | 'grid' | 'block' | 'none'
@@ -330,6 +330,7 @@ export function Box({
 
   const minHeightMapping = {
     screen: 'min-h-screen',
+    full: 'min-h-full',
     sm: 'min-h-[200px]',
     md: 'min-h-[400px]',
     lg: 'min-h-[600px]',
@@ -487,34 +488,50 @@ export function Box({
           ),
 
         // Sizing
-        fullWidth && 'w-full',
+        typeof fullWidth === 'boolean' ? (fullWidth && 'w-full') : cn(
+            (fullWidth as any)?.base && 'w-full',
+            (fullWidth as any)?.md && 'md:w-full',
+            (fullWidth as any)?.lg && 'lg:w-full',
+            (fullWidth as any)?.md === false && 'md:w-auto',
+            (fullWidth as any)?.lg === false && 'lg:w-auto'
+        ),
         fullHeight && 'h-full',
-        widthBase && typeof widthBase === 'string' && widthClasses[widthBase as keyof typeof widthClasses],
-        widthMd && (
+        widthBase !== undefined && (
+          typeof widthBase === 'string' 
+            ? (widthClasses[widthBase as keyof typeof widthClasses] || `w-[${widthBase.replace(/\s+/g, '')}]`) 
+            : (widthBase === 0 ? 'w-0' : `w-[${widthBase}px]`)
+        ),
+        widthMd !== undefined && (
           widthMd === 'full' ? 'md:w-full' :
             widthMd === 'half' ? 'md:w-1/2' :
               widthMd === 'sidebar' ? 'md:w-56' :
                 widthMd === 'sidebar-wide' ? 'md:w-72' :
-                  widthMd === 'auto' ? 'md:w-auto' : ''
+                  widthMd === 'auto' ? 'md:w-auto' :
+                    typeof widthMd === 'number' ? (widthMd === 0 ? 'md:w-0' : `md:w-[${widthMd}px]`) : `md:w-[${String(widthMd).replace(/\s+/g, '')}]`
         ),
-        widthLg && (
+        widthLg !== undefined && (
           widthLg === 'full' ? 'lg:w-full' :
             widthLg === 'half' ? 'lg:w-1/2' :
               widthLg === 'sidebar-wide' ? 'lg:w-72' :
                 widthLg === 'sidebar' ? 'lg:w-56' :
-                  widthLg === 'auto' ? 'lg:w-auto' : ''
+                  widthLg === 'auto' ? 'lg:w-auto' :
+                    typeof widthLg === 'number' ? (widthLg === 0 ? 'lg:w-0' : `lg:w-[${widthLg}px]`) : `lg:w-[${String(widthLg).replace(/\s+/g, '')}]`
         ),
-        minWidthBase && (
+        minWidthBase !== undefined && (
           minWidthBase === 'auto' ? 'min-w-auto' :
-            typeof minWidthBase === 'number' ? `min-w-[${minWidthBase}px]` :
+            typeof minWidthBase === 'number' ? (minWidthBase === 0 ? 'min-w-0' : `min-w-[${minWidthBase}px]`) :
               `min-w-[${String(minWidthBase).replace(/\s+/g, '')}]`
         ),
-        minWidthMd && (
+        minWidthMd !== undefined && (
           minWidthMd === 'auto' ? 'md:min-w-auto' :
-            typeof minWidthMd === 'number' ? `md:min-w-[${minWidthMd}px]` :
+            typeof minWidthMd === 'number' ? (minWidthMd === 0 ? 'md:min-w-0' : `md:min-w-[${minWidthMd}px]`) :
               `md:min-w-[${String(minWidthMd).replace(/\s+/g, '')}]`
         ),
-        height && typeof height === 'string' && heightClasses[height as keyof typeof heightClasses],
+        height !== undefined && (
+          typeof height === 'string' 
+            ? (heightClasses[height as keyof typeof heightClasses] || `h-[${height.replace(/\s+/g, '')}]`) 
+            : (height === 0 ? 'h-0' : `h-[${height}px]`)
+        ),
         minHeight && typeof minHeight === 'string' && minHeightMapping[minHeight as keyof typeof minHeightMapping],
 
         flexBase !== undefined && flexClasses[flexBase as keyof typeof flexClasses],
@@ -589,7 +606,11 @@ export function Box({
         mdColSpan && mdColSpanClasses[mdColSpan as keyof typeof mdColSpanClasses],
         lgColSpan && lgColSpanClasses[lgColSpan as keyof typeof lgColSpanClasses],
         cursor && `cursor-${cursor}`,
-        textAlign && `text-${textAlign}`,
+        textAlign && (typeof textAlign === 'string' ? `text-${textAlign}` : cn(
+          textAlign.base && `text-${textAlign.base}`,
+          textAlign.md && `md:text-${textAlign.md}`,
+          textAlign.lg && `lg:text-${textAlign.lg}`
+        )),
         wrap && `flex-${wrap}`,
         maxWidth && (typeof maxWidth === 'string' ? maxWidthClasses[maxWidth as keyof typeof maxWidthClasses] : cn(
           (maxWidth as any).base && maxWidthClasses[(maxWidth as any).base as keyof typeof maxWidthClasses],
@@ -640,24 +661,30 @@ export function Box({
         border && (borderWidth === 1 ? 'border' : 'border-2'),
         border && !borderColor && 'border-white/5',
         border && borderColor && (
-          borderColor === 'primary' ? (
-            primaryColor === 'orange' ? (borderOpacity === 80 ? 'border-orange-500/80' : borderOpacity === 20 ? 'border-orange-500/20' : 'border-orange-500') :
-              primaryColor === 'emerald' ? (borderOpacity === 80 ? 'border-emerald-500/80' : borderOpacity === 20 ? 'border-emerald-500/20' : 'border-emerald-500') :
-                primaryColor === 'blue' ? (borderOpacity === 80 ? 'border-blue-500/80' : borderOpacity === 20 ? 'border-blue-500/20' : 'border-blue-500') :
-                  primaryColor === 'red' ? (borderOpacity === 80 ? 'border-red-500/80' : borderOpacity === 20 ? 'border-red-500/20' : 'border-red-500') :
-                    primaryColor === 'amber' ? (borderOpacity === 80 ? 'border-amber-500/80' : borderOpacity === 20 ? 'border-amber-500/20' : 'border-amber-500') :
-                      'border-brand-primary'
-          ) :
-            borderColor === 'success' ? 'border-emerald-500' :
-              borderColor === 'warning' ? 'border-orange-500' :
-                borderColor === 'red' ? 'border-red-500' :
-                  borderColor === 'blue' ? 'border-blue-500' :
-                    borderColor === 'zinc' ? 'border-zinc-500' :
-                      borderColor === 'white' ? 'border-white' :
-                        borderColor === 'black' ? 'border-black' :
-                          borderColor.includes('/') ? `border-${borderColor}` : `border-${borderColor}`
+          (() => {
+            const opacitySuffix = borderOpacity && borderOpacity !== 100 ? `/${borderOpacity}` : '';
+            if (borderColor === 'primary') {
+                if (primaryColor === 'orange') return `border-orange-500${opacitySuffix}`;
+                if (primaryColor === 'emerald') return `border-emerald-500${opacitySuffix}`;
+                if (primaryColor === 'blue') return `border-blue-500${opacitySuffix}`;
+                if (primaryColor === 'red') return `border-red-500${opacitySuffix}`;
+                if (primaryColor === 'amber') return `border-amber-500${opacitySuffix}`;
+                return 'border-brand-primary';
+            }
+            if (borderColor === 'success') return `border-emerald-500${opacitySuffix}`;
+            if (borderColor === 'warning') return `border-orange-500${opacitySuffix}`;
+            if (borderColor === 'red') return `border-red-500${opacitySuffix}`;
+            if (borderColor === 'blue') return `border-blue-500${opacitySuffix}`;
+            if (borderColor === 'emerald') return `border-emerald-500${opacitySuffix}`;
+            if (borderColor === 'orange') return `border-orange-500${opacitySuffix}`;
+            if (borderColor === 'amber') return `border-amber-500${opacitySuffix}`;
+            if (borderColor === 'zinc') return `border-zinc-500${opacitySuffix}`;
+            if (borderColor === 'white') return `border-white${opacitySuffix}`;
+            if (borderColor === 'black') return `border-black${opacitySuffix}`;
+            if (borderColor.includes('/')) return `border-${borderColor}`;
+            return `border-${borderColor}-500${opacitySuffix}`;
+          })()
         ),
-        border && borderColor && borderOpacity && borderColor !== 'primary' && borderOpacityClasses[borderOpacity as keyof typeof borderOpacityClasses],
 
         className
       )}

@@ -35,45 +35,51 @@ export async function signUpAction(formData: FormData) {
     const email = formData.get('email') as string
     const password = formData.get('password') as string
     const fullName = formData.get('full_name') as string
-    const role = formData.get('role') as string || 'trainer'
+    const role = (formData.get('role') as string) || 'trainer'
+    const whatsapp = formData.get('whatsapp') as string
     const referredBy = formData.get('referred_by') as string
     
     const supabase = await createClient()
 
+    // Pass ALL data into user_metadata so the handle_new_user trigger
+    // picks it up correctly and creates the profile atomically.
+    const metadata: Record<string, string> = {
+        full_name: fullName,
+        role: role,
+    }
+    if (whatsapp) metadata.whatsapp = whatsapp
+    if (referredBy) metadata.referred_by_id = referredBy
+
     const { data: { user }, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
-        options: {
-            data: {
-                full_name: fullName,
-                role: role,
-            }
-        }
+        options: { data: metadata }
     })
 
     if (signUpError || !user) {
         return { error: signUpError?.message || 'Erro ao criar conta.' }
     }
 
-    // Additional profile updates if needed
-    const updates: any = {
+    // Safety-net upsert: ensures profile row exists even if trigger was
+    // slow or the DB trigger is not yet deployed in this environment.
+    // Uses the authenticated session (established by signUp above).
+    const profilePayload: Record<string, any> = {
+        id: user.id,
+        email: email,
         full_name: fullName,
         role: role,
     }
-
-    if (referredBy) {
-        updates.referred_by_id = referredBy
-    }
+    profilePayload.plan_tier = 'on_demand'
+    if (whatsapp) profilePayload.whatsapp = whatsapp
+    if (referredBy) profilePayload.referred_by_id = referredBy
 
     const { error: profileError } = await supabase
         .from('profiles')
-        .upsert({
-            id: user.id,
-            ...updates
-        })
+        .upsert(profilePayload, { onConflict: 'id', ignoreDuplicates: false })
 
     if (profileError) {
         console.error('Profile upsert error:', profileError)
+        // Not fatal — the trigger may have already created the row
     }
 
     revalidatePath('/', 'layout')

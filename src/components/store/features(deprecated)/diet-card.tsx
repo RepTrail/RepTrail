@@ -2,7 +2,6 @@
 
 import { useQuery } from '@tanstack/react-query'
 import { getStudentDailyDiet } from '@/actions/diet-actions'
-import { Skeleton } from '@/components/ui/skeleton'
 import { Utensils } from 'lucide-react'
 import { DietAdherence } from '@/components/store/features(deprecated)/diet-adherence'
 
@@ -35,10 +34,8 @@ export function DietCard({ userId, hasTrainer }: DietCardProps) {
         enabled: !!userId,
     })
 
-    // Skeleton Fallback: Only if loading AND no cache available
-    if (isLoading && !diet) {
-        return <DietCardSkeleton />
-    }
+    // Loading state handled by parent or query
+    if (isLoading) return null
 
     if (!diet) {
         return (
@@ -54,10 +51,6 @@ export function DietCard({ userId, hasTrainer }: DietCardProps) {
     return <DietAdherence diet={diet} hasTrainer={hasTrainer} />
 }
 
-export function DietCardSkeleton() {
-    return <DietAdherence.Skeleton />
-}
 
-DietCard.Skeleton = DietCardSkeleton
 
 

@@ -12,11 +12,12 @@ import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 interface RegistrySectionProps {
   children: React.ReactNode
-  title: string
-  subtitle: string
-  icon: LucideIcon
+  title?: string
+  subtitle?: string
+  icon?: LucideIcon
   id?: string
   rightElement?: React.ReactNode
+  flex1?: boolean
 }
 
 export function RegistrySection({
@@ -25,33 +26,47 @@ export function RegistrySection({
   subtitle,
   icon,
   id,
-  rightElement
+  rightElement,
+  flex1 = false
 }: RegistrySectionProps) {
   const { primaryColor } = useRegistry()
 
   return (
-    <Stack gap="title-content" id={id} fullWidth>
+    <Stack gap="title-content" id={id} fullWidth flex1={flex1}>
       {/* Section Header */}
-      <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'start', lg: 'center' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
-        <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-          <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-            <Icon icon={icon} color={primaryColor as any} size="lg" />
-            <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
-              {title}
-            </Font>
-          </Inline>
-          <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>
-            {subtitle}
-          </Font>
+      {(title || subtitle || rightElement) && (
+        <Stack 
+          direction={{ base: 'col', lg: 'row' }} 
+          justify={(title || subtitle) ? "between" : "end"} 
+          align={{ base: 'stretch', lg: 'center' }} 
+          gap={STORE_TOKENS.SPACING.CONTAINER}
+        >
+          {(title || subtitle) && (
+            <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+              {title && (
+                <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                  {icon && <Icon icon={icon} color={primaryColor as any} size="lg" />}
+                  <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
+                    {title}
+                  </Font>
+                </Inline>
+              )}
+              {subtitle && (
+                <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>
+                  {subtitle}
+                </Font>
+              )}
+            </Stack>
+          )}
+          {rightElement && (
+            <Box display="flex">
+              {rightElement}
+            </Box>
+          )}
         </Stack>
-        {rightElement && (
-          <Box>
-            {rightElement}
-          </Box>
-        )}
-      </Stack>
+      )}
       {/* Section Content */}
-      <Box fullWidth>
+      <Box fullWidth flex1={flex1} display="flex" direction="col">
         {children}
       </Box>
     </Stack>

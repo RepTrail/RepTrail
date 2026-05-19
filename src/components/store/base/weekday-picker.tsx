@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react'
 import { Stack } from './stack'
+import { Grid } from './grid'
 import { Font } from './font'
 import { Box } from './box'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
@@ -51,36 +52,35 @@ export function WeekdayPicker({
                 bgOpacity={STORE_TOKENS.OPACITY.SUBTLE}
                 border
                 borderColor={STORE_TOKENS.COLORS.DIVIDER.SUBTLE}
-                display="flex"
-                justify="between"
-                align="center"
             >
-                {days.map((day, i) => {
-                    const isSelected = selectedDays.includes(i)
-                    return (
-                        <Box
-                            key={i}
-                            width={40}
-                            height={40}
-                            display="flex"
-                            align="center"
-                            justify="center"
-                            rounded={STORE_TOKENS.RADIUS.SYSTEM}
-                            cursor="pointer"
-                            bg={isSelected ? 'primary' : 'transparent'}
-                            transition
-                            onClick={() => toggleDay(i)}
-                        >
-                            <Font 
-                                variant="tiny" 
-                                color={isSelected ? STORE_TOKENS.COLORS.BLACK : STORE_TOKENS.COLORS.TEXT.DIM} 
-                                weight="black"
+                <Grid cols={{ base: 4, md: 7 }} gap={STORE_TOKENS.SPACING.ELEMENT}>
+                    {days.map((day, i) => {
+                        const isSelected = selectedDays.includes(i)
+                        return (
+                            <Box
+                                key={i}
+                                height={40}
+                                display="flex"
+                                align="center"
+                                justify="center"
+                                rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                                cursor="pointer"
+                                bg={isSelected ? 'primary' : 'transparent'}
+                                transition
+                                onClick={() => toggleDay(i)}
+                                fullWidth
                             >
-                                {day}
-                            </Font>
-                        </Box>
-                    )
-                })}
+                                <Font 
+                                    variant="tiny" 
+                                    color={isSelected ? STORE_TOKENS.COLORS.BLACK : STORE_TOKENS.COLORS.TEXT.DIM} 
+                                    weight="black"
+                                >
+                                    {day}
+                                </Font>
+                            </Box>
+                        )
+                    })}
+                </Grid>
             </Box>
         </Stack>
     )

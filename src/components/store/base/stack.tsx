@@ -25,7 +25,7 @@ export interface StackProps extends Omit<BoxProps, 'gap'> {
   divide?: boolean
   align?: 'start' | 'center' | 'end' | 'stretch' | 'baseline' | { base: 'start' | 'center' | 'end' | 'stretch' | 'baseline', md?: 'start' | 'center' | 'end' | 'stretch' | 'baseline', lg?: 'start' | 'center' | 'end' | 'stretch' | 'baseline' }
   justify?: 'start' | 'center' | 'end' | 'between' | 'around' | { base: 'start' | 'center' | 'end' | 'between' | 'around', md?: 'start' | 'center' | 'end' | 'between' | 'around', lg?: 'start' | 'center' | 'end' | 'between' | 'around' }
-  flex1?: boolean
+  flex1?: boolean | { base: boolean, md?: boolean, lg?: boolean }
   fullWidth?: boolean
   wrap?: 'wrap' | 'nowrap'
   className?: string

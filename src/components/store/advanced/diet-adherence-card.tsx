@@ -10,11 +10,11 @@ import { Badge } from '@/components/store/base/badge'
 import { Button } from '@/components/store/base/button'
 import { Surface, GlassPanel } from '@/components/store/base/surface'
 import { CheckIndicator } from '@/components/store/base/check-indicator'
-import { ChevronDown, ChevronUp, CheckCircle2, RefreshCcw, Check, Utensils, Zap, FlaskConical } from 'lucide-react'
+import { ChevronDown, ChevronUp, CheckCircle2, RefreshCcw, Check, Utensils } from 'lucide-react'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { EmptyState } from '../intermediary/empty-state'
+import { motion, AnimatePresence } from 'framer-motion'
 
-// High-fidelity progress bar matching Image 1
 function ProgressLocal({ value }: { value: number }) {
     return (
         <GlassPanel
@@ -26,11 +26,14 @@ function ProgressLocal({ value }: { value: number }) {
             overflow="hidden"
             border="none"
         >
-            <Box
-                height="full"
-                transition
-                bg={STORE_TOKENS.COLORS.SUCCESS}
-                style={{ width: `${value}%` }}
+            <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${value}%` }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+                className="bg-emerald-500"
+                style={{ 
+                    height: '100%'
+                }}
             />
         </GlassPanel>
     )
@@ -49,19 +52,19 @@ interface DietAdherenceCardProps {
     }
     meals: any[]
     status?: 'active' | 'empty'
+    onToggleMeal?: (mealId: string, currentStatus: boolean) => void
+    onToggleItem?: (itemId: string, currentStatus: boolean) => void
 }
 
-/**
- * DietAdherenceCard: Advanced Accordion functionality with interactive substitutions.
- * Refined typography for better legibility and system consistency.
- */
 export function DietAdherenceCard({
     completedItems,
     totalItems,
     percentage,
     macros,
     meals,
-    status = 'active'
+    status = 'active',
+    onToggleMeal,
+    onToggleItem
 }: DietAdherenceCardProps) {
     if (status === 'empty') {
         return (
@@ -79,7 +82,7 @@ export function DietAdherenceCard({
             <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                 <Stack direction="row" align="center" justify="between">
                     <Badge
-                        label={`${completedItems}/${totalItems} ITENS CONCLUÍDOS`}
+                        label={`${completedItems}/${totalItems} ALIMENTOS CONSUMIDOS`}
                         icon={CheckCircle2}
                         variant="glass"
                         color={STORE_TOKENS.COLORS.SUCCESS}
@@ -110,30 +113,21 @@ export function DietAdherenceCard({
 
             {/* Meals List with Accordion */}
             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                {meals.map((meal, idx) => (
-                    <MealAccordion key={idx} meal={meal} isChecked={idx === 0} />
+                {meals.map((meal) => (
+                    <MealAccordion 
+                        key={meal.id} 
+                        meal={meal} 
+                        onToggleMeal={() => onToggleMeal?.(meal.id, meal.is_checked)}
+                        onToggleItem={onToggleItem}
+                    />
                 ))}
             </Stack>
         </Stack>
     )
 }
 
-function MealAccordion({ meal, isChecked }: { meal: any, isChecked?: boolean }) {
+function MealAccordion({ meal, onToggleMeal, onToggleItem }: { meal: any, onToggleMeal: () => void, onToggleItem?: (id: string, s: boolean) => void }) {
     const [isOpen, setIsOpen] = useState(false)
-
-    // Initial mock data
-    const itemsData = [
-        { qty: '200g', name: 'Arroz', macros: 'P: 5 C: 55 G: 1 F: 0' },
-        { qty: '150g', name: 'Feijão', macros: 'P: 10 C: 25 G: 1 F: 0' },
-        {
-            qty: '200g',
-            name: 'Franco Grelhado',
-            macros: 'P: 60 C: 0 G: 8 F: 0',
-            hasSubstitution: true,
-            sub: { qty: '100g', name: 'Patinho Moído', macros: 'P: 25 C: 0 G: 5 F: 0' }
-        },
-        { qty: 'À vontade', name: 'Salada (Tomate, Pepino)', macros: 'P: 1 C: 5 G: 0 F: 0' }
-    ]
 
     return (
         <GlassPanel
@@ -146,107 +140,125 @@ function MealAccordion({ meal, isChecked }: { meal: any, isChecked?: boolean }) 
             {/* Header (Closed State) */}
             <Box
                 padding={STORE_TOKENS.PADDING.ELEMENT}
-                cursor="pointer"
-                onClick={() => setIsOpen(!isOpen)}
                 hoverBgOpacity={STORE_TOKENS.OPACITY.SUBTLE}
                 transition
             >
                 <Stack direction="row" align="center" justify="between">
-                    <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
-                        <CheckIndicator checked={isChecked} />
+                    <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.CONTAINER} flex1 onClick={() => setIsOpen(!isOpen)} cursor="pointer">
+                        <Box onClick={(e) => {
+                            e.stopPropagation();
+                            onToggleMeal();
+                        }}>
+                            <CheckIndicator checked={meal.is_checked} />
+                        </Box>
                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                             <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
                                 {meal.name.toLowerCase()}
                             </Font>
                             <Stack direction={{ base: 'col', md: 'row' }} align={{ base: 'start', md: 'center' }} gap={{ base: 2.5, md: STORE_TOKENS.SPACING.ELEMENT }}>
                                 <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.MUTED} tracking="wide">
-                                    {meal.itemsCount} ITENS
+                                    {meal.meal_items?.length || 0} ITENS
                                 </Font>
                                 <Box width="px" height="px" bg={STORE_TOKENS.COLORS.BACKGROUND} opacity={STORE_TOKENS.OPACITY.INTERMEDIATE} display={{ base: 'none', md: 'block' }} />
                                 <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                    <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.SUCCESS} tracking="wide">P: 45G</Font>
-                                    <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.WARNING} tracking="wide">C: 60G</Font>
-                                    <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.ERROR} tracking="wide">G: 12G</Font>
+                                    <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.SUCCESS} tracking="wide">
+                                        P: {Math.round(meal.meal_items?.reduce((acc: number, i: any) => acc + (i.protein || 0), 0) || 0)}G
+                                    </Font>
+                                    <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.WARNING} tracking="wide">
+                                        C: {Math.round(meal.meal_items?.reduce((acc: number, i: any) => acc + (i.carbs || 0), 0) || 0)}G
+                                    </Font>
+                                    <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.ERROR} tracking="wide">
+                                        G: {Math.round(meal.meal_items?.reduce((acc: number, i: any) => acc + (i.fat || 0), 0) || 0)}G
+                                    </Font>
                                 </Stack>
                             </Stack>
                         </Stack>
                     </Stack>
-                    <Icon icon={isOpen ? ChevronUp : ChevronDown} size="sm" color={STORE_TOKENS.COLORS.TEXT.DIM} />
+                    <Box onClick={() => setIsOpen(!isOpen)} cursor="pointer">
+                        <Icon icon={isOpen ? ChevronUp : ChevronDown} size="sm" color={STORE_TOKENS.COLORS.TEXT.DIM} />
+                    </Box>
                 </Stack>
             </Box>
 
             {/* Details (Open State) */}
-            {isOpen && (
-                <Box padding={STORE_TOKENS.PADDING.ELEMENT}>
-                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        {itemsData.map((item, i) => (
-                            <FoodItemRow
-                                key={i}
-                                item={item}
-                                isChecked={isChecked && i < 2}
-                            />
-                        ))}
-
+            <AnimatePresence>
+                {isOpen && (
+                    <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                    >
                         <Box padding={STORE_TOKENS.PADDING.ELEMENT}>
-                            <Button variant="emerald" fullWidth>
-                                <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                    <Icon icon={Check} size="xs" color={STORE_TOKENS.COLORS.BLACK} />
-                                    <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.BLACK}>MARCAR TODOS</Font>
-                                </Stack>
-                            </Button>
+                            <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                {(meal.meal_items || []).map((item: any) => (
+                                    <FoodItemRow
+                                        key={item.id}
+                                        item={item}
+                                        isChecked={item.is_checked}
+                                        onToggle={() => onToggleItem?.(item.id, item.is_checked)}
+                                    />
+                                ))}
+
+                                <Box padding={STORE_TOKENS.PADDING.ELEMENT}>
+                                    <Button variant="emerald" fullWidth onClick={onToggleMeal}>
+                                        <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                            <Icon icon={Check} size="xs" color={STORE_TOKENS.COLORS.BLACK} />
+                                            <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.BLACK}>
+                                                {meal.is_checked ? 'DESMARCAR REFEIÇÃO' : 'CONCLUIR REFEIÇÃO'}
+                                            </Font>
+                                        </Stack>
+                                    </Button>
+                                </Box>
+                            </Stack>
                         </Box>
-                    </Stack>
-                </Box>
-            )}
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </GlassPanel>
     )
 }
 
-function FoodItemRow({ item, isChecked }: { item: any, isChecked?: boolean }) {
-    const [isSubstituted, setIsSubstituted] = useState(false)
-
-    const displayItem = isSubstituted && item.sub ? item.sub : item
-
+function FoodItemRow({ item, isChecked, onToggle }: { item: any, isChecked?: boolean, onToggle: () => void }) {
     return (
         <Surface
             padding={STORE_TOKENS.PADDING.ELEMENT}
             rounded={STORE_TOKENS.RADIUS.SYSTEM}
-            variant={isSubstituted ? 'tonal-amber' : 'glass'}
+            variant={item.is_substituted ? 'tonal-amber' : 'glass'}
             transition
             cursor="pointer"
+            onClick={onToggle}
         >
-            <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
-                <CheckIndicator size="sm" checked={isChecked} />
+            <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                <CheckIndicator size="md" checked={isChecked} />
                 <Stack gap={0} flex1>
                     <Stack direction="row" align="baseline" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        <Font variant="body-sm" weight="black" color={isSubstituted ? 'amber' : 'white'} italic nowrap>
-                            {displayItem.qty}
+                        <Font variant="body-sm" weight="black" color={item.is_substituted ? 'amber' : 'white'} italic nowrap>
+                            {item.is_substituted ? item.substituted_quantity : item.quantity}
                         </Font>
                         <Font
                             variant="body-sm"
-                            color={isSubstituted ? 'amber' : 'zinc-400'}
+                            color={item.is_substituted ? 'amber' : 'zinc-400'}
                             weight="semibold"
                         >
-                            {displayItem.name}
+                            {item.is_substituted ? item.substituted_food_name : (item.food_name || item.name)}
                         </Font>
                     </Stack>
-                    <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={isSubstituted ? 'amber' : 'zinc-600'} opacity={80}>
-                        {displayItem.macros}
+                    <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={item.is_substituted ? 'amber' : 'zinc-600'} opacity={80}>
+                        P: {item.is_substituted ? item.substituted_protein : item.protein}G • 
+                        C: {item.is_substituted ? item.substituted_carbs : item.carbs}G • 
+                        G: {item.is_substituted ? item.substituted_fat : item.fat}G
                     </Font>
                 </Stack>
 
-                {item.hasSubstitution && (
+                {item.is_substituted && (
                     <Box
                         padding={2.5}
                         rounded={STORE_TOKENS.RADIUS.SYSTEM}
-                        bg={isSubstituted ? 'amber' : 'white'}
-                        bgOpacity={isSubstituted ? 100 : 5}
-                        transition
-                        onClick={() => {
-                            setIsSubstituted(!isSubstituted)
-                        }}
+                        bg="amber"
+                        bgOpacity={100}
                     >
-                        <Icon icon={RefreshCcw} size="xs" color={isSubstituted ? 'black' : 'amber'} />
+                        <Icon icon={RefreshCcw} size="xs" color="black" />
                     </Box>
                 )}
             </Stack>
@@ -254,7 +266,7 @@ function FoodItemRow({ item, isChecked }: { item: any, isChecked?: boolean }) {
     )
 }
 
-function MacroBox({ label, value, unit, color, className, colSpan, mdColSpan, lgColSpan }: any) {
+function MacroBox({ label, value, unit, color, colSpan, mdColSpan, lgColSpan }: any) {
     return (
         <GlassPanel
             padding={STORE_TOKENS.PADDING.CONTAINER}

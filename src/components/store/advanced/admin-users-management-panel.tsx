@@ -4,23 +4,24 @@ import React, { useState } from 'react'
 import { Stack } from '@/components/store/base/stack'
 import { Font } from '@/components/store/base/font'
 import { Box } from '@/components/store/base/box'
-import { UserListItem } from '@/components/store/intermediary/user-list-item'
-import { AffiliateListItem } from '@/components/store/intermediary/affiliate-list-item'
-import { EmptyState } from '@/components/store/intermediary/empty-state'
-import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { Modal } from '@/components/store/advanced/modal'
 import { Callout } from '@/components/store/intermediary/callout'
+import { AdminPersonalsPanel } from './admin-personals-panel'
+import { AdminAffiliatesManagementPanel } from './admin-affiliates-management-panel'
+import { AdminStudentsPanel } from './admin-students-panel'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { 
-    UserCheck, 
-    HeartHandshake, 
-    GraduationCap, 
     Search, 
     Trash2, 
-    Edit3,
-    History
+    Edit3
 } from 'lucide-react'
 
+/**
+ * AdminUsersManagementPanel: Top-level advanced orchestrator for all user management subdomains.
+ * - Orchestrates Personals, Affiliates, and Students panels.
+ * - Manages shared modal states to avoid redundant duplication across sub-panels.
+ * - Responsibility: High-level user domain coordination.
+ */
 export function AdminUsersManagementPanel() {
     const [modalState, setModalState] = useState<{
         type: 'edit' | 'delete' | 'inspect' | null,
@@ -28,18 +29,7 @@ export function AdminUsersManagementPanel() {
         category: 'user' | 'product' | null
     }>({ type: null, target: null, category: null })
 
-    const [userServices, setUserServices] = useState<Record<string, boolean>>({
-        'Marcos Vinicius': true,
-        'Juliana Silva': false,
-        'Carlos Eduardo': true,
-        'Beatriz Santos': false
-    })
-
-    const toggleService = (name: string) => {
-        setUserServices(prev => ({ ...prev, [name]: !prev[name] }))
-    }
-
-    const openModal = (type: 'edit' | 'delete' | 'inspect', target: string, category: 'user' | 'product') => {
+    const openModal = (type: 'edit' | 'delete' | 'inspect', target: string, category: 'user' | 'product' = 'user') => {
         setModalState({ type, target, category })
     }
 
@@ -49,129 +39,22 @@ export function AdminUsersManagementPanel() {
 
     return (
         <Stack gap={{ base: STORE_TOKENS.SPACING.EMPTY_STATE, md: STORE_TOKENS.SPACING.SECTION }}>
-            {/* Gestão de Personals */}
-            <RegistrySection
-                title="Gestão de Personals"
-                icon={UserCheck}
-                subtitle="Administração de profissionais parceiros e status de serviço On-Demand."
-            >
-                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <UserListItem 
-                        name="Marcos Vinicius"
-                        email="marcos@reptrail.com.br"
-                        registrationDate="08/05/2024"
-                        role="personal"
-                        roleLabel="12 ALUNOS"
-                        initials="MV"
-                        avatarVariant="orange"
-                        onDelete={() => openModal('delete', 'Marcos Vinicius', 'user')}
-                        onInspect={() => openModal('inspect', 'Marcos Vinicius', 'user')}
-                        onAction={() => toggleService('Marcos Vinicius')}
-                        isActionActive={userServices['Marcos Vinicius']}
-                    />
-                    <UserListItem 
-                        name="Juliana Silva"
-                        email="juliana.silva@gmail.com"
-                        registrationDate="12/11/2023"
-                        role="personal"
-                        roleLabel="5 ALUNOS"
-                        initials="JS"
-                        avatarVariant="amber"
-                        onDelete={() => openModal('delete', 'Juliana Silva', 'user')}
-                        onInspect={() => openModal('inspect', 'Juliana Silva', 'user')}
-                        onAction={() => toggleService('Juliana Silva')}
-                        isActionActive={userServices['Juliana Silva']}
-                    />
-                    
-                    <EmptyState 
-                        icon={Search}
-                        title="Nenhum personal encontrado"
-                        description="Tente ajustar os filtros de busca para encontrar o profissional desejado."
-                    />
-                </Stack>
-            </RegistrySection>
+            {/* Subdomain Panels */}
+            <AdminPersonalsPanel 
+                onDelete={(name) => openModal('delete', name)} 
+                onInspect={(name) => openModal('inspect', name)} 
+            />
 
-            {/* Gestão de Afiliados */}
-            <RegistrySection
-                title="Gestão de Afiliados"
-                icon={HeartHandshake}
-                subtitle="Administração de parceiros comerciais, comissões e indicações."
-            >
-                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <AffiliateListItem 
-                        name="Thiago Nigro"
-                        email="thiago.nigro@primocast.com.br"
-                        affiliateId="PRIMO20"
-                        registrationDate="10/01/2024"
-                        referrals={{ total: 1500, active: 850 }}
-                        revenue="R$ 45.000,00"
-                        commission="R$ 4.500,00"
-                        rate={10}
-                        onDelete={() => openModal('delete', 'Thiago Nigro', 'user')}
-                    />
-                    <AffiliateListItem 
-                        name="Joel Jota"
-                        email="joel@jota.com.br"
-                        affiliateId="JJ2024"
-                        registrationDate="15/02/2024"
-                        referrals={{ total: 800, active: 420 }}
-                        revenue="R$ 28.000,00"
-                        commission="R$ 2.800,00"
-                        rate={10}
-                        onDelete={() => openModal('delete', 'Joel Jota', 'user')}
-                    />
+            <AdminAffiliatesManagementPanel 
+                onDelete={(name) => openModal('delete', name)} 
+            />
 
-                    <EmptyState 
-                        icon={HeartHandshake}
-                        title="Nenhum afiliado encontrado"
-                        description="Não há registros de parceiros comerciais para os filtros selecionados (Demonstração)."
-                    />
-                </Stack>
-            </RegistrySection>
+            <AdminStudentsPanel 
+                onDelete={(name) => openModal('delete', name)} 
+                onInspect={(name) => openModal('inspect', name)} 
+            />
 
-            {/* Gestão de Alunos */}
-            <RegistrySection
-                title="Gestão de Alunos"
-                icon={GraduationCap}
-                subtitle="Monitoramento de base de alunos e ativação de planos automatizados."
-            >
-                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <UserListItem 
-                        name="Carlos Eduardo"
-                        email="cadu.fit@outlook.com"
-                        registrationDate="15/02/2024"
-                        role="aluno"
-                        roleLabel="ALUNO PREMIUM"
-                        initials="CE"
-                        avatarVariant="emerald"
-                        onDelete={() => openModal('delete', 'Carlos Eduardo', 'user')}
-                        onInspect={() => openModal('inspect', 'Carlos Eduardo', 'user')}
-                        onAction={() => toggleService('Carlos Eduardo')}
-                        isActionActive={userServices['Carlos Eduardo']}
-                    />
-                    <UserListItem 
-                        name="Beatriz Santos"
-                        email="bia.santos22@uol.com.br"
-                        registrationDate="02/05/2024"
-                        role="aluno"
-                        roleLabel="ALUNO FREE"
-                        initials="BS"
-                        avatarVariant="zinc"
-                        onDelete={() => openModal('delete', 'Beatriz Santos', 'user')}
-                        onInspect={() => openModal('inspect', 'Beatriz Santos', 'user')}
-                        onAction={() => toggleService('Beatriz Santos')}
-                        isActionActive={userServices['Beatriz Santos']}
-                    />
-
-                    <EmptyState 
-                        icon={Search}
-                        title="Nenhum aluno encontrado"
-                        description="Não localizamos registros com os critérios informados. Verifique a digitação ou remova os filtros."
-                    />
-                </Stack>
-            </RegistrySection>
-
-            {/* MODALS REUSE */}
+            {/* SHARED MODALS REUSE */}
             <Modal
                 isOpen={modalState.type === 'delete'}
                 onClose={closeModal}

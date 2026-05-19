@@ -3,6 +3,7 @@ import { BaseSidebarLink } from '@/components/store/base/sidebar-link'
 import { LucideIcon } from 'lucide-react'
 
 interface SidebarItemProps {
+  id?: string
   icon: LucideIcon
   label: string
   active?: boolean

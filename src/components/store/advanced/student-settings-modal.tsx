@@ -12,10 +12,12 @@ import {
     ShieldAlert,
     CheckCircle2,
     Smartphone,
-    Loader2
+    CreditCard,
+    Loader2,
+    Crown
 } from 'lucide-react'
 import { getTermsStatus } from '@/actions/terms-actions'
-import { getAutoTrainingTrialInfoForCurrentUser } from '@/actions/auto-training-actions'
+import { getAutoTrainingTrialInfoForCurrentUser, enableAutoTrainingTrialForCurrentUser } from '@/actions/auto-training-actions'
 import { useToast } from '@/hooks/use-toast'
 import { useQuery } from '@tanstack/react-query'
 import { getQueryClient } from '@/lib/get-query-client'
@@ -36,9 +38,10 @@ import { SettingsActionCard } from '@/components/store/intermediary/settings-act
 
 interface SettingsModalProps {
     hasTrainer?: boolean
+    isTrainer?: boolean
 }
 
-export function SettingsModal({ hasTrainer = false }: SettingsModalProps) {
+export function SettingsModal({ hasTrainer = false, isTrainer = false }: SettingsModalProps) {
     const [isOpen, setIsOpen] = useState(false)
     const [isPwaModalOpen, setIsPwaModalOpen] = useState(false)
     const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false)
@@ -71,7 +74,7 @@ export function SettingsModal({ hasTrainer = false }: SettingsModalProps) {
         actionName: 'enable-auto-training-trial',
         entity: ENTITIES.SETTINGS,
         queryKey: ['auto-training-trial'],
-        mutationFn: async () => ({}),
+        mutationFn: async () => enableAutoTrainingTrialForCurrentUser(),
         onMutate: () => {
             const previous = queryClient.getQueryData(['auto-training-trial'])
             queryClient.setQueryData(['auto-training-trial'], (old: any) => ({ 
@@ -85,6 +88,7 @@ export function SettingsModal({ hasTrainer = false }: SettingsModalProps) {
         onSuccess: () => {
             toast({ title: "Trial Ativado!", description: "Aproveite seus 7 dias de Auto-Training." })
             setIsOpen(false)
+            router.refresh()
             setTimeout(() => {
                 window.dispatchEvent(new CustomEvent('open-auto-training-onboarding'))
             }, 100)
@@ -96,8 +100,30 @@ export function SettingsModal({ hasTrainer = false }: SettingsModalProps) {
     })
 
     useEffect(() => {
-        const handleOpen = () => setIsOpen(true)
+        const handleOpen = () => {
+            setIsOpen(true)
+            // Re-check standalone mode when modal opens
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
+                               (window.navigator as any).standalone === true ||
+                               document.referrer.includes('android-app://')
+            
+            if (isStandalone) {
+                setPwaInstalled(true)
+            }
+        }
         window.addEventListener('open-settings', handleOpen)
+        
+        // Initial check
+        if (typeof window !== 'undefined') {
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
+                               (window.navigator as any).standalone === true
+            if (isStandalone) setPwaInstalled(true)
+
+            if ('Notification' in window && Notification.permission === 'granted') {
+                setNotifications('on')
+            }
+        }
+
         return () => window.removeEventListener('open-settings', handleOpen)
     }, [])
 
@@ -113,8 +139,9 @@ export function SettingsModal({ hasTrainer = false }: SettingsModalProps) {
     const daysRemaining = isTrialActive && trialEndMs ? Math.max(0, Math.ceil((trialEndMs - now) / (1000 * 60 * 60 * 24))) : 0
     const hasUsedTrial = !!trialInfo?.auto_training_trial_used
 
-    let autoTreinoStatus: 'available' | 'active' | 'used' = 'available'
-    if (isTrialActive) autoTreinoStatus = 'active'
+    let autoTreinoStatus: 'available' | 'trial_active' | 'subscription_active' | 'used' = 'available'
+    if (trialInfo?.auto_training_status === 'active') autoTreinoStatus = 'subscription_active'
+    else if (isTrialActive) autoTreinoStatus = 'trial_active'
     else if (hasUsedTrial) autoTreinoStatus = 'used'
 
     return (
@@ -148,41 +175,36 @@ export function SettingsModal({ hasTrainer = false }: SettingsModalProps) {
                     
                     <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                         
-                        <SettingsActionCard
-                            icon={Smartphone}
-                            color="blue"
-                            title="APLICATIVO REPTRAIL"
-                            subtitle="INSTALE PARA ACESSO RÁPIDO E OFFLINE"
-                            actionLabel={pwaInstalled ? 'INSTALADO' : 'INSTALAR'}
-                            buttonVariant="outline-blue"
-                            disabled={pwaInstalled}
-                            onAction={() => {
-                                setIsOpen(false)
-                                setIsPwaModalOpen(true)
-                            }}
-                        >
-                            {!pwaInstalled && (
-                                <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                    <Icon icon={Download} size="xs" />
-                                    <Font variant="body-sm" weight="black" uppercase italic>INSTALAR</Font>
-                                </Stack>
-                            )}
-                        </SettingsActionCard>
+                        {!pwaInstalled && (
+                            <SettingsActionCard
+                                icon={Smartphone}
+                                color="blue"
+                                title="APP REPTRAIL"
+                                subtitle="INSTALE PARA ACESSO RÁPIDO"
+                                actionLabel="INSTALAR"
+                                buttonVariant="outline-blue"
+                                actionIcon={Download}
+                                onAction={() => {
+                                    setIsPwaModalOpen(true)
+                                }}
+                            />
+                        )}
 
                         <SettingsActionCard
                             icon={Bell}
-                            color="amber"
+                            color="orange"
                             title="NOTIFICAÇÕES PUSH"
                             subtitle="RECEBA ALERTAS DE TREINOS E DIETAS"
                             actionLabel={notifications === 'on' ? 'CONFIGURAR' : 'ATIVAR'}
-                            buttonVariant="outline-amber"
+                            buttonVariant="outline-orange"
+                            actionIcon={Bell}
                             onAction={() => {
                                 setIsOpen(false)
                                 setIsNotificationModalOpen(true)
                             }}
                         />
 
-                        {!hasTrainer && (
+                        {!isTrainer && !hasTrainer && (
                             <>
                                 {autoTreinoStatus === 'available' && (
                                     <SettingsActionCard
@@ -193,26 +215,39 @@ export function SettingsModal({ hasTrainer = false }: SettingsModalProps) {
                                         subtitle="EXPERIMENTE POR 7 DIAS SEM CUSTOS"
                                         actionLabel="HABILITAR"
                                         buttonVariant="outline-emerald"
+                                        actionIcon={Zap}
                                         onAction={enableAutoTrainingTrial}
                                     />
                                 )}
 
-                                {autoTreinoStatus === 'active' && (
+                                {autoTreinoStatus === 'subscription_active' && (
+                                    <SettingsActionCard
+                                        icon={Crown}
+                                        color="emerald"
+                                        title="AUTO-TREINO ATIVO"
+                                        subtitle="VOCÊ POSSUI ACESSO TOTAL ÀS FUNCIONALIDADES"
+                                        actionLabel="GERENCIAR"
+                                        actionIcon={CheckCircle2}
+                                        buttonVariant="outline-emerald"
+                                        onAction={() => {
+                                            setIsOpen(false)
+                                            router.push('/dashboard/student/profile')
+                                        }}
+                                    />
+                                )}
+
+                                {autoTreinoStatus === 'trial_active' && (
                                     <SettingsActionCard
                                         icon={Clock}
                                         color="emerald"
                                         title="TESTE EM ANDAMENTO"
                                         subtitle={`VOCÊ TEM ${daysRemaining} DIAS RESTANTES`}
-                                        actionLabel="HABILITADO"
-                                        buttonVariant="emerald"
+                                        actionLabel="ATIVO"
+                                        actionIcon={CheckCircle2}
+                                        buttonVariant="outline-emerald"
                                         onAction={() => {}}
                                         disabled
-                                    >
-                                        <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                            <Icon icon={CheckCircle2} size="sm" color="black" />
-                                            <Font variant="body-sm" weight="black" uppercase italic>ATIVO</Font>
-                                        </Stack>
-                                    </SettingsActionCard>
+                                    />
                                 )}
 
                                 {autoTreinoStatus === 'used' && (
@@ -223,8 +258,12 @@ export function SettingsModal({ hasTrainer = false }: SettingsModalProps) {
                                         title="TESTE INDISPONÍVEL"
                                         subtitle="VOCÊ JÁ UTILIZOU SEU PERÍODO DE TESTE"
                                         actionLabel="ASSINAR"
-                                        buttonVariant="outline-primary"
-                                        onAction={() => router.push('/dashboard/student/plans')}
+                                        buttonVariant="outline-zinc"
+                                        actionIcon={CreditCard}
+                                        onAction={() => {
+                                            setIsOpen(false)
+                                            window.dispatchEvent(new CustomEvent('open-asaas', { detail: { tier: 'auto_training' } }))
+                                        }}
                                     />
                                 )}
                             </>
@@ -237,6 +276,7 @@ export function SettingsModal({ hasTrainer = false }: SettingsModalProps) {
                             subtitle="AÇÃO IRREVERSÍVEL E PERMANENTE"
                             actionLabel="DELETAR"
                             buttonVariant="outline-red"
+                            actionIcon={Trash2}
                             onAction={() => {
                                 setIsOpen(false)
                                 setIsDeleteModalOpen(true)
@@ -278,9 +318,22 @@ export function SettingsModal({ hasTrainer = false }: SettingsModalProps) {
                 icon={Bell}
                 variant="blue"
                 confirmLabel="PERMITIR"
-                onConfirm={() => {
-                    toast({ title: "Notificações ativadas", description: "Você receberá alertas importantes do seu treinador." })
-                    setNotifications('on')
+                onConfirm={async () => {
+                    if (!('Notification' in window)) {
+                        toast({ variant: 'destructive', title: "Não suportado", description: "Seu navegador não suporta notificações push." })
+                        setIsNotificationModalOpen(false)
+                        return
+                    }
+
+                    const permission = await Notification.requestPermission()
+                    
+                    if (permission === 'granted') {
+                        toast({ title: "Notificações ativadas", description: "Você receberá alertas importantes do seu treinador." })
+                        setNotifications('on')
+                    } else {
+                        toast({ variant: 'destructive', title: "Permissão negada", description: "Você não receberá notificações até permitir nas configurações do navegador." })
+                        setNotifications('off')
+                    }
                     setIsNotificationModalOpen(false)
                 }}
             >

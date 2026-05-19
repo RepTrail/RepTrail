@@ -13,7 +13,7 @@ import {
     CheckCircle2
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Skeleton } from '@/components/ui/skeleton'
+
 import { Card, CardContent } from '@/components/ui/card'
 import { Progress } from "@/components/ui/progress"
 import {
@@ -381,7 +381,7 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
         )
     }
 
-    if (isLoadingSession) return <CardioPlayerSkeleton />
+    if (isLoadingSession) return null
 
     return (
         <Card className="bg-zinc-900/40 border-zinc-800/50 shadow-2xl rounded-3xl overflow-hidden backdrop-blur-sm border-t-zinc-700/10">
@@ -496,50 +496,3 @@ export function CardioPlayer({ assignment, isCompleted }: CardioPlayerProps) {
         </Card>
     )
 }
-
-export function CardioPlayerSkeleton() {
-    return (
-        <Card className="bg-zinc-900/40 border-zinc-800/50 shadow-2xl rounded-3xl overflow-hidden backdrop-blur-sm animate-pulse border-t-zinc-700/10">
-            <CardContent className="p-6 space-y-8">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div className="space-y-3">
-                        <div className="flex items-center gap-3 pb-4">
-                            <div className="p-2 bg-zinc-950 rounded-xl border border-zinc-800">
-                                <Activity className="w-5 h-5 text-zinc-800" />
-                            </div>
-                            <Skeleton className="h-6 w-32 bg-zinc-800/50" />
-                        </div>
-                        <div className="flex gap-2">
-                            <Skeleton className="h-4 w-12 bg-zinc-800/50" />
-                            <Skeleton className="h-4 w-16 bg-zinc-800/50" />
-                        </div>
-                    </div>
-                </div>
-
-                <div className="flex flex-col items-center justify-center space-y-4">
-                    <Skeleton className="h-2 w-24 bg-zinc-800/50" />
-                    <Skeleton className="h-[72px] w-40 rounded-2xl bg-zinc-800/50" />
-                    <Skeleton className="h-2 w-full max-w-xs rounded-full bg-zinc-800/50" />
-                </div>
-
-                <div className="flex items-center justify-center gap-6">
-                    <Skeleton className="w-[96px] h-[96px] rounded-full bg-zinc-800/50" />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                    <div className="h-[74px] rounded-3xl bg-zinc-950/50 border border-zinc-900 flex flex-col items-center justify-center gap-1">
-                        <Skeleton className="h-2 w-8 bg-zinc-800/50" />
-                        <Skeleton className="h-4 w-12 bg-zinc-800/50" />
-                    </div>
-                    <div className="h-[74px] rounded-3xl bg-zinc-950/50 border border-zinc-900 flex flex-col items-center justify-center gap-1">
-                        <Skeleton className="h-2 w-8 bg-zinc-800/50" />
-                        <Skeleton className="h-4 w-12 bg-zinc-800/50" />
-                    </div>
-                </div>
-            </CardContent>
-        </Card>
-    )
-}
-
-CardioPlayer.Skeleton = CardioPlayerSkeleton
-

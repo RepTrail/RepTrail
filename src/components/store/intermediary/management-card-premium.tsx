@@ -15,10 +15,10 @@ import {
     Copy,
     Calendar,
     Eye,
+    Play,
     LucideIcon
 } from 'lucide-react'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
-import { RegistryActionModal, RegistryActionType } from '@/components/store/advanced/registry-action-modal'
 
 interface ManagementCardPremiumProps {
     title: string
@@ -33,6 +33,12 @@ interface ManagementCardPremiumProps {
     mode?: 'auto' | 'personal'
     color?: 'amber' | 'emerald' | 'orange' | 'blue' | 'primary'
     registryType?: 'training' | 'diet'
+    onView?: () => void
+    onEdit?: () => void
+    onDelete?: () => void
+    onDuplicate?: () => void
+    onSchedule?: () => void
+    onPlay?: () => void
 }
 
 /**
@@ -48,21 +54,15 @@ export function ManagementCardPremium({
     icon,
     mode = 'auto',
     color = 'primary',
-    registryType = 'training'
+    registryType = 'training',
+    onView,
+    onEdit,
+    onDelete,
+    onDuplicate,
+    onSchedule,
+    onPlay
 }: ManagementCardPremiumProps) {
     const isAuto = mode === 'auto'
-    const [modalConfig, setModalConfig] = React.useState<{ isOpen: boolean, type: RegistryActionType }>({
-        isOpen: false,
-        type: registryType === 'training' ? 'assign_training' : 'assign_diet'
-    })
-
-    const openModal = (type: RegistryActionType) => {
-        setModalConfig({ isOpen: true, type })
-    }
-
-    const closeModal = () => {
-        setModalConfig(prev => ({ ...prev, isOpen: false }))
-    }
 
     return (
         <GlassPanel
@@ -85,19 +85,30 @@ export function ManagementCardPremium({
                     >
                         <Icon icon={icon} size="md" color={STORE_TOKENS.COLORS.BRAND} />
                     </Box>
-                    {isAuto && (
-                        <Box
-                            padding={STORE_TOKENS.PADDING.ELEMENT}
-                            rounded={STORE_TOKENS.RADIUS.SYSTEM}
-                            bg={STORE_TOKENS.COLORS.ERROR}
-                            bgOpacity={STORE_TOKENS.OPACITY.SUBTLE}
-                            cursor="pointer"
-                            transition
-                            onClick={() => openModal('confirm_delete')}
-                        >
-                            <Icon icon={Trash2} size="md" color={STORE_TOKENS.COLORS.ERROR} />
-                        </Box>
-                    )}
+                    <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                        {isAuto && registryType === 'training' && onPlay && (
+                            <Button
+                                variant="outline-emerald"
+                                isIconOnly
+                                shine
+                                onClick={onPlay}
+                                rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                            >
+                                <Icon icon={Play} size="md" color="emerald" />
+                            </Button>
+                        )}
+                        {isAuto && (
+                            <Button 
+                                variant="outline-red"
+                                isIconOnly
+                                shine
+                                onClick={onDelete}
+                                rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                            >
+                                <Icon icon={Trash2} size="md" color={STORE_TOKENS.COLORS.ERROR} />
+                            </Button>
+                        )}
+                    </Stack>
                 </Stack>
 
                 {/* Body Content */}
@@ -137,60 +148,47 @@ export function ManagementCardPremium({
                 </Stack>
 
                 {/* Footer Buttons & Actions */}
-                <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    {isAuto ? (
-                        <>
-                            <Button variant={`outline-${color}`} flex1 onClick={() => openModal(registryType === 'training' ? 'assign_training' : 'assign_diet')}>
+                {(isAuto || onView) && (
+                    <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                        {isAuto ? (
+                            <>
+                                <Button variant={`outline-${color}`} flex1 onClick={onSchedule}>
+                                    <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                        <Icon icon={Calendar} size="xs" />
+                                        <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL}>AGENDAR</Font>
+                                    </Stack>
+                                </Button>
+                                <Button 
+                                    variant="outline-zinc" 
+                                    flex1 
+                                    onClick={onEdit}
+                                >
+                                    <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                        <Icon icon={Edit3} size="xs" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} />
+                                        <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>EDITAR</Font>
+                                    </Stack>
+                                </Button>
+                                <Button 
+                                    variant="outline-zinc" 
+                                    isIconOnly 
+                                    size="sm" 
+                                    rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                                    onClick={onDuplicate}
+                                >
+                                    <Icon icon={Copy} size="xs" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} />
+                                </Button>
+                            </>
+                        ) : (
+                            <Button variant={`outline-${color}`} flex1 onClick={onView}>
                                 <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                    <Icon icon={Calendar} size="xs" />
-                                    <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL}>AGENDAR</Font>
+                                    <Icon icon={Eye} size="xs" />
+                                    <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL}>VISUALIZAR</Font>
                                 </Stack>
                             </Button>
-                            <Button 
-                                variant="outline-zinc" 
-                                flex1 
-                                onClick={() => {
-                                    if (registryType !== 'training' && registryType !== 'diet') {
-                                        openModal(registryType === 'training' ? 'assign_training' : 'assign_diet')
-                                    } else {
-                                        // Redirecionamento futuro para builder
-                                        console.log(`Redirecionar para builder de ${registryType}`)
-                                    }
-                                }}
-                            >
-                                <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                    <Icon icon={Edit3} size="xs" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} />
-                                    <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>EDITAR</Font>
-                                </Stack>
-                            </Button>
-                            <Button 
-                                variant="outline-zinc" 
-                                isIconOnly 
-                                size="sm" 
-                                rounded={STORE_TOKENS.RADIUS.SYSTEM}
-                                onClick={() => openModal('confirm_duplicate')}
-                            >
-                                <Icon icon={Copy} size="xs" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} />
-                            </Button>
-                        </>
-                    ) : (
-                        <Button variant={`outline-${color}`} flex1>
-                            <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                <Icon icon={Eye} size="xs" />
-                                <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL}>VISUALIZAR</Font>
-                            </Stack>
-                        </Button>
-                    )}
-                </Stack>
+                        )}
+                    </Stack>
+                )}
             </Stack>
-
-            <RegistryActionModal 
-                isOpen={modalConfig.isOpen}
-                onClose={closeModal}
-                type={modalConfig.type}
-                onConfirm={closeModal}
-                initialData={{ name: title, selectedDays: [1, 2, 3] }}
-            />
         </GlassPanel>
     )
 }

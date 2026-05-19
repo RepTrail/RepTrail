@@ -34,10 +34,10 @@ export function SkinfoldGauge({
                     thickness={6}
                 />
                 <Box position="absolute" display="flex" direction="col" align="center">
-                    <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} variant="heading" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} scale={75}>
+                    <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} variant="heading" color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
                         {value}
                     </Font>
-                    <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.DIM} scale={75}>
+                    <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.DIM}>
                         {unit}
                     </Font>
                 </Box>

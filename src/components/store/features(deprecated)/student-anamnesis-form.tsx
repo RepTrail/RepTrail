@@ -1,26 +1,26 @@
 'use client';
+
 import { useState, useEffect } from 'react'
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
 import { useToast } from "@/hooks/use-toast"
-import { Ruler, Weight, User, Activity, ArrowRight, Target, Check } from "lucide-react"
-import { Badge } from '@/components/ui/badge'
+import { Ruler, Weight, User, ArrowRight, Target, Check } from "lucide-react"
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
 import { useQueryClient } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { ENTITIES } from '@/lib/outbox-db'
+
+// Design System Imports
 import { Box } from '@/components/store/base/box'
 import { Stack } from '@/components/store/base/stack'
 import { Font } from '@/components/store/base/font'
 import { Grid } from '@/components/store/base/grid'
+import { Input } from '@/components/store/base/input'
+import { FormSwitch } from '@/components/store/base/form-switch'
+import { FormSelect } from '@/components/store/base/form-select'
+import { Button } from '@/components/store/base/button'
+import { Surface } from '@/components/store/base/surface'
+import { Icon } from '@/components/store/base/icon'
+import { Badge } from '@/components/store/base/badge'
+import { STORE_TOKENS } from "@/components/store/constants/tokens"
 
 export function AnamnesisForm({ initialData }: { initialData?: any }) {
     const { toast } = useToast()
@@ -108,240 +108,197 @@ export function AnamnesisForm({ initialData }: { initialData?: any }) {
     }
 
     return (
-        <Box padding={{ base: 5, md: 12.5 }} bg="zinc" bgOpacity={95} border borderColor="zinc" rounded="system" className="shadow-2xl">
+        <Surface variant="glass" padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM} border="subtle">
             <form onSubmit={handleSubmit}>
-                <Stack gap={STORE_TOKENS.SPACING.EMPTY_STATE}>
+                <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
+                    
                     {/* Basic Info */}
-                    <Grid cols={{ base: 2.5, md: 3 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
-                        <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                            <Font variant="sub-tiny" weight="black" color="zinc-500" uppercase tracking="widest" className="flex items-center gap-2">
-                                <User className="w-3 h-3" /> Idade
-                            </Font>
-                            <Box 
-                                height={16} 
-                                bg="zinc" 
-                                bgOpacity={20} 
-                                border 
-                                borderColor="zinc" 
-                                rounded="system" 
-                                className="flex items-center px-6 opacity-70 cursor-not-allowed"
-                            >
-                                <Font variant="heading" weight="black" italic color="zinc-400" className="text-xl">
-                                    {studentAge ? `${studentAge} anos` : '--'}
-                                </Font>
-                            </Box>
-                        </Stack>
-                        <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                            <Font variant="sub-tiny" weight="black" color="zinc-500" uppercase tracking="widest" className="flex items-center gap-2">
-                                <Ruler className="w-3 h-3" /> Altura (cm)
-                            </Font>
-                            <Input
-                                type="number"
-                                step="0.1"
-                                placeholder="Ex: 175"
-                                value={formData.height}
-                                onChange={e => setFormData(prev => ({ ...prev, height: e.target.value }))}
-                                className="h-16 bg-zinc-900/20 border border-zinc-900 focus:border-zinc-700 rounded-system font-black italic text-xl px-6 text-zinc-300"
-                                required
-                            />
-                        </Stack>
-                        <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                            <Font variant="sub-tiny" weight="black" color="zinc-500" uppercase tracking="widest" className="flex items-center gap-2">
-                                <Weight className="w-3 h-3" /> Peso (kg)
-                            </Font>
-                            <Input
-                                type="number"
-                                step="0.1"
-                                placeholder="Ex: 80"
-                                value={formData.weight}
-                                onChange={e => setFormData(prev => ({ ...prev, weight: e.target.value }))}
-                                className="h-16 bg-zinc-900/20 border border-zinc-900 focus:border-zinc-700 rounded-system font-black italic text-xl px-6 text-zinc-300"
-                                required
-                            />
-                        </Stack>
+                    <Grid mdCols={3} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                        <Input 
+                            label="IDADE"
+                            icon={<Icon icon={User} size="xs" />}
+                            value={studentAge ? `${studentAge} anos` : '--'}
+                            disabled
+                            placeholder="--"
+                        />
+                        <Input
+                            label="ALTURA (CM)"
+                            icon={<Icon icon={Ruler} size="xs" />}
+                            type="number"
+                            placeholder="Ex: 180"
+                            value={formData.height}
+                            onChange={e => setFormData(prev => ({ ...prev, height: e.target.value }))}
+                        />
+                        <Input
+                            label="PESO (KG)"
+                            icon={<Icon icon={Weight} size="xs" />}
+                            type="number"
+                            placeholder="Ex: 80"
+                            value={formData.weight}
+                            onChange={e => setFormData(prev => ({ ...prev, weight: e.target.value }))}
+                        />
                     </Grid>
 
                     {/* Navy Seal Measurements */}
                     <Box 
-                        padding={{ base: 5, md: 7.5 }} 
-                        bg="emerald" 
-                        bgOpacity={5} 
+                        padding={STORE_TOKENS.PADDING.CONTAINER} 
+                        bg={STORE_TOKENS.COLORS.SUCCESS as any} 
+                        bgOpacity={STORE_TOKENS.OPACITY.LOW} 
                         border 
-                        borderColor="emerald" 
-                        rounded="system" 
+                        borderColor={STORE_TOKENS.COLORS.SUCCESS as any} 
+                        borderOpacity={STORE_TOKENS.OPACITY.MEDIUM}
+                        rounded={STORE_TOKENS.RADIUS.SYSTEM} 
                         position="relative" 
                         overflow="hidden" 
-                        group
                     >
-                        <Box position="absolute" pin="right" top={0} padding={STORE_TOKENS.PADDING.CONTAINER} opacity={10} groupHoverOpacity={10} transition>
-                            <Target className="w-32 h-32 text-emerald-500" />
+                        <Box position="absolute" pin="right" top={0} padding={STORE_TOKENS.PADDING.CONTAINER} opacity={STORE_TOKENS.OPACITY.SUBTLE}>
+                            <Icon icon={Target} size="xl" color={STORE_TOKENS.COLORS.SUCCESS} />
                         </Box>
 
                         <Stack gap={STORE_TOKENS.SPACING.CONTAINER} position="relative" zIndex={10}>
                             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                <div className="flex flex-wrap items-center gap-2">
-                                    <Font variant="tiny" weight="black" color="white" italic uppercase tracking="widest">
+                                <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} wrap="wrap">
+                                    <Font variant="tiny" weight="black" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} italic uppercase tracking="widest">
                                         Medições Antropométricas
                                     </Font>
-                                    <Badge variant="outline" className="border-none bg-emerald-500 text-zinc-950 text-[8px] font-black uppercase h-5 px-2 whitespace-nowrap">Precisão Máxima</Badge>
-                                </div>
-                                <Font variant="sub-tiny" color="zinc-500" weight="bold" italic>
+                                    <Badge label="Precisão Máxima" color="emerald" variant="glass" size="xs" />
+                                </Stack>
+                                <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="bold" italic>
                                     Insira suas medidas exatas com fita métrica para o cálculo de elite.
                                 </Font>
                             </Stack>
 
-                            <Grid cols={{ base: 2.5, md: 3 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
-                                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                    <Font variant="sub-tiny" weight="black" color="zinc-400" uppercase tracking="widest">Pescoço (cm)</Font>
-                                    <Input
-                                        type="number"
-                                        step="0.1"
-                                        placeholder="Ex: 40"
-                                        value={formData.neck_cm}
-                                        onChange={e => setFormData(prev => ({ ...prev, neck_cm: e.target.value }))}
-                                        className="h-16 bg-zinc-950 border-emerald-500/20 focus:border-emerald-500/50 rounded-system font-black italic text-xl px-6"
-                                        required
-                                    />
-                                </Stack>
-                                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                    <Font variant="sub-tiny" weight="black" color="zinc-400" uppercase tracking="widest">Cintura - Umbigo (cm)</Font>
-                                    <Input
-                                        type="number"
-                                        step="0.1"
-                                        placeholder="Ex: 82"
-                                        value={formData.waist_cm}
-                                        onChange={e => setFormData(prev => ({ ...prev, waist_cm: e.target.value }))}
-                                        className="h-16 bg-zinc-950 border-emerald-500/20 focus:border-emerald-500/50 rounded-system font-black italic text-xl px-6"
-                                        required
-                                    />
-                                </Stack>
+                            <Grid mdCols={3} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                                <Input
+                                    label="PESCOÇO (CM)"
+                                    type="number"
+                                    placeholder="Ex: 40"
+                                    value={formData.neck_cm}
+                                    onChange={e => setFormData(prev => ({ ...prev, neck_cm: e.target.value }))}
+                                />
+                                <Input
+                                    label="CINTURA - UMBIGO (CM)"
+                                    type="number"
+                                    placeholder="Ex: 82"
+                                    value={formData.waist_cm}
+                                    onChange={e => setFormData(prev => ({ ...prev, waist_cm: e.target.value }))}
+                                />
                                 {formData.sex === 'female' && (
-                                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                        <Font variant="sub-tiny" weight="black" color="zinc-400" uppercase tracking="widest">Quadril (cm)</Font>
-                                        <Input
-                                            type="number"
-                                            step="0.1"
-                                            placeholder="Ex: 95"
-                                            value={formData.hip_cm}
-                                            onChange={e => setFormData(prev => ({ ...prev, hip_cm: e.target.value }))}
-                                            className="h-16 bg-zinc-950 border-emerald-500/20 focus:border-emerald-500/50 rounded-system font-black italic text-xl px-6"
-                                            required
-                                        />
-                                    </Stack>
+                                    <Input
+                                        label="QUADRIL (CM)"
+                                        type="number"
+                                        placeholder="Ex: 95"
+                                        value={formData.hip_cm}
+                                        onChange={e => setFormData(prev => ({ ...prev, hip_cm: e.target.value }))}
+                                    />
                                 )}
                             </Grid>
                         </Stack>
                     </Box>
 
-                    <Grid cols={{ base: 2.5, md: 2 }} gap={STORE_TOKENS.SPACING.EMPTY_STATE}>
-                        {/* Sex & Activity */}
+                    {/* Sex & Activity & Status Grid */}
+                    <Grid mdCols={2} gap={STORE_TOKENS.SPACING.CONTAINER}>
                         <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
-                            <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
-                                <Font variant="sub-tiny" weight="black" color="zinc-500" uppercase tracking="widest">Gênero Biológico</Font>
-                                <RadioGroup
-                                    value={formData.sex}
-                                    onValueChange={v => setFormData(prev => ({ ...prev, sex: v }))}
-                                    className="flex gap-4"
-                                >
-                                    <div className="flex-1">
-                                        <RadioGroupItem value="male" id="male" className="peer sr-only" />
-                                        <label
-                                            htmlFor="male"
-                                            className="flex items-center justify-center w-full h-16 bg-zinc-900/30 border border-zinc-800 rounded-system cursor-pointer hover:bg-zinc-800 peer-data-[state=checked]:border-emerald-500 peer-data-[state=checked]:bg-emerald-500/5 transition-all text-[9px] sm:text-[10px] font-black uppercase italic tracking-widest text-zinc-500 peer-data-[state=checked]:text-emerald-500 px-2 text-center"
-                                        >
-                                            Masculino
-                                        </label>
-                                    </div>
-                                    <div className="flex-1">
-                                        <RadioGroupItem value="female" id="female" className="peer sr-only" />
-                                        <label
-                                            htmlFor="female"
-                                            className="flex items-center justify-center w-full h-16 bg-zinc-900/30 border border-zinc-800 rounded-system cursor-pointer hover:bg-zinc-800 peer-data-[state=checked]:border-pink-500 peer-data-[state=checked]:bg-pink-500/5 transition-all text-[9px] sm:text-[10px] font-black uppercase italic tracking-widest text-zinc-500 peer-data-[state=checked]:text-pink-500 px-2 text-center"
-                                        >
-                                            Feminino
-                                        </label>
-                                    </div>
-                                </RadioGroup>
-                            </Stack>
+                            <FormSwitch
+                                label="GÊNERO BIOLÓGICO"
+                                options={[
+                                    { label: 'MASCULINO', value: 'male' },
+                                    { label: 'FEMININO', value: 'female' }
+                                ]}
+                                value={formData.sex}
+                                onChange={(v) => setFormData(prev => ({ ...prev, sex: v }))}
+                                color="emerald"
+                            />
 
-                            <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
-                                <Font variant="sub-tiny" weight="black" color="zinc-500" uppercase tracking="widest">Nível de Atividade</Font>
-                                <Select
-                                    value={formData.activity_level}
-                                    onValueChange={v => setFormData(prev => ({ ...prev, activity_level: v }))}
-                                >
-                                    <SelectTrigger className="h-16 bg-zinc-900/30 border-zinc-800 rounded-system font-black italic uppercase text-[11px] tracking-widest px-6">
-                                        <SelectValue placeholder="Selecione..." />
-                                    </SelectTrigger>
-                                    <SelectContent className="bg-zinc-950 border-zinc-900 text-white">
-                                        <SelectItem value="sedentary" className="font-bold uppercase text-[10px] tracking-wider py-4">Sedentário (Nenhum exercício)</SelectItem>
-                                        <SelectItem value="light" className="font-bold uppercase text-[10px] tracking-wider py-4">Leve (1-3 dias/semana)</SelectItem>
-                                        <SelectItem value="moderate" className="font-bold uppercase text-[10px] tracking-wider py-4">Moderado (3-5 dias/semana)</SelectItem>
-                                        <SelectItem value="active" className="font-bold uppercase text-[10px] tracking-wider py-4">Intenso (6-7 dias/semana)</SelectItem>
-                                        <SelectItem value="athlete" className="font-bold uppercase text-[10px] tracking-wider py-4">Elite (Atleta prof.)</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </Stack>
+                            <FormSelect
+                                label="NÍVEL DE ATIVIDADE"
+                                value={formData.activity_level}
+                                onChange={(v) => setFormData(prev => ({ ...prev, activity_level: v }))}
+                                options={[
+                                    { value: 'sedentary', label: 'Sedentário (Nenhum exercício)' },
+                                    { value: 'light', label: 'Leve (1-3 dias/semana)' },
+                                    { value: 'moderate', label: 'Moderado (3-5 dias/semana)' },
+                                    { value: 'active', label: 'Intenso (6-7 dias/semana)' },
+                                    { value: 'athlete', label: 'Elite (Atleta prof.)' }
+                                ]}
+                            />
                         </Stack>
 
                         <Stack gap={STORE_TOKENS.SPACING.CONTAINER} justify="end">
+                            {/* Navy Seal Result Card */}
                             <Box 
-                                padding={{ base: 5, md: 7.5 }} 
-                                rounded="system" 
+                                padding={STORE_TOKENS.PADDING.CONTAINER} 
+                                rounded={STORE_TOKENS.RADIUS.SYSTEM} 
                                 border 
                                 transition 
-                                className={cn(
-                                    "duration-700",
-                                    calculatedBF ? 'bg-emerald-500/5 border-emerald-500/20 shadow-2xl shadow-emerald-500/5' : 'bg-zinc-900/10 border-zinc-800 opacity-50'
-                                )}
+                                bg={calculatedBF ? (STORE_TOKENS.COLORS.SUCCESS as any) : (STORE_TOKENS.COLORS.BACKGROUND as any)}
+                                bgOpacity={calculatedBF ? STORE_TOKENS.OPACITY.LOW : STORE_TOKENS.OPACITY.SUBTLE}
+                                borderColor={calculatedBF ? (STORE_TOKENS.COLORS.SUCCESS as any) : (STORE_TOKENS.COLORS.DIVIDER.STANDARD as any)}
+                                borderOpacity={calculatedBF ? STORE_TOKENS.OPACITY.MEDIUM : undefined}
+                                opacity={calculatedBF ? STORE_TOKENS.OPACITY.FULL : STORE_TOKENS.OPACITY.MODAL}
                             >
-                                <div className="flex items-center justify-between mb-4">
-                                    <Font variant="sub-tiny" weight="black" color="zinc-400" uppercase tracking="widest">Estimativa Navy Seal</Font>
-                                    {calculatedBF && <Check className="w-5 h-5 text-emerald-500" />}
-                                </div>
-
-                                <div className="flex items-center gap-4">
-                                    <Font variant="heading" weight="black" color="white" italic className="text-7xl tracking-tighter tabular-nums">
-                                        {calculatedBF || '--.-'}<Font color="emerald" className="text-3xl ml-1">%</Font>
-                                    </Font>
-                                    <div className="flex-1 border-l border-zinc-800 pl-6 hidden lg:block">
-                                        <Font variant="sub-tiny" weight="bold" color="zinc-500" uppercase tracking="widest" className="mb-1">Status Metabólico</Font>
-                                        <Font variant="tiny" weight="black" color="white" uppercase italic>
-                                            {calculatedBF ? (parseFloat(calculatedBF) < 10 ? 'Elite' : parseFloat(calculatedBF) < 15 ? 'Atleta' : parseFloat(calculatedBF) < 20 ? 'Fitness' : 'Iniciante') : 'Aguardando Medições'}
+                                <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
+                                    <Stack direction="row" align="center" justify="between">
+                                        <Font variant="sub-tiny" weight="black" color={STORE_TOKENS.COLORS.TEXT.MUTED} uppercase tracking="widest">
+                                            Estimativa Navy Seal
                                         </Font>
-                                    </div>
-                                </div>
+                                        {calculatedBF && <Icon icon={Check} color={STORE_TOKENS.COLORS.SUCCESS} size="sm" />}
+                                    </Stack>
+
+                                    <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                        <Stack direction="row" align="baseline" gap={0}>
+                                            <Font variant="h3" weight="black" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} italic>
+                                                {calculatedBF || '--.-'}
+                                            </Font>
+                                            <Font variant="body" weight="black" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} italic>
+                                                %
+                                            </Font>
+                                        </Stack>
+                                        
+                                        <Box display={{ base: 'none', lg: 'block' }} padding={0}>
+                                            <Box width="px" height="full" bg={STORE_TOKENS.COLORS.WHITE as any} bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} />
+                                        </Box>
+
+                                        <Box flex1 display={{ base: 'none', lg: 'block' }}>
+                                            <Stack gap={0}>
+                                                <Font 
+                                                    variant="h3" 
+                                                    weight="black" 
+                                                    color={
+                                                        !calculatedBF ? STORE_TOKENS.COLORS.TEXT.MUTED : 
+                                                        parseFloat(calculatedBF) < 10 ? 'emerald' : 
+                                                        parseFloat(calculatedBF) < 15 ? 'blue' : 
+                                                        parseFloat(calculatedBF) < 20 ? 'amber' : 'red'
+                                                    } 
+                                                    uppercase 
+                                                    italic
+                                                >
+                                                    {calculatedBF ? (parseFloat(calculatedBF) < 10 ? 'ELITE' : parseFloat(calculatedBF) < 15 ? 'ATLETA' : parseFloat(calculatedBF) < 20 ? 'FITNESS' : 'INICIANTE') : 'Aguardando Medições'}
+                                                </Font>
+                                            </Stack>
+                                        </Box>
+                                    </Stack>
+                                </Stack>
                             </Box>
 
-                            <Button
-                                type="submit"
-                                disabled={!calculatedBF}
-                                className="w-full relative h-auto py-4 sm:py-5 sm:px-8 rounded-system sm:rounded-system bg-white hover:bg-emerald-500 hover:text-white text-zinc-950 transition-all shadow-xl active:scale-95 group overflow-hidden"
+                            <Button 
+                                type="submit" 
+                                disabled={!calculatedBF} 
+                                variant="primary" 
+                                size="lg" 
+                                fullWidth 
+                                gap={2.5}
+                                className="whitespace-normal text-center leading-tight"
                             >
-                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent translate-x-[-100%] transition-transform duration-1000 group-hover:translate-x-[100%]" />
-
-                                <div className="flex flex-col items-center justify-center w-full relative z-10 sm:flex-row sm:justify-between gap-2 sm:gap-4">
-                                    <div className="flex flex-col items-center sm:items-start text-center sm:text-left">
-                                        <Font variant="tiny" weight="black" uppercase italic className="leading-none sm:text-base md:text-lg">
-                                            Salvar Dados
-                                        </Font>
-                                        <Font variant="sub-tiny" weight="bold" color="zinc-500" uppercase tracking="widest" className="group-hover:text-emerald-100 transition-colors mt-1">
-                                            Antropométricos
-                                        </Font>
-                                    </div>
-                                    <div className="w-10 h-10 rounded-full bg-zinc-100 group-hover:bg-white/20 flex items-center justify-center shrink-0 transition-colors">
-                                        <ArrowRight className="w-5 h-5 text-zinc-900 group-hover:text-white group-hover:translate-x-0.5 transition-transform" />
-                                    </div>
-                                </div>
+                                Salvar Dados Antropométricos
+                                <ArrowRight size={16} className="shrink-0" />
                             </Button>
                         </Stack>
                     </Grid>
+
                 </Stack>
             </form>
-        </Box>
+        </Surface>
     );
 }
-
-import { cn } from '@/lib/utils'
-import { STORE_TOKENS } from "../constants/tokens";
 

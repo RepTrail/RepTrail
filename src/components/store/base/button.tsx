@@ -1,6 +1,6 @@
 'use client'
 import React from 'react'
-import { Slot } from '@radix-ui/react-slot'
+import { Slot, Slottable } from '@radix-ui/react-slot'
 import { Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useRegistry } from '@/components/store/advanced/registry-context'
@@ -56,6 +56,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   width?: number | string
   minWidth?: number | string | { base: number | string, sm?: number | string, md?: number | string, lg?: number | string }
   padding?: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5
+  shine?: boolean
 }
 
 /**
@@ -92,6 +93,7 @@ export function Button({
   width,
   minWidth,
   padding,
+  shine,
   className,
   ...props
 }: ButtonProps) {
@@ -129,8 +131,8 @@ export function Button({
 
   const sizeClasses = {
     xs: isIconOnly ? 'p-1' : 'px-2 py-1 text-[10px]',
-    sm: isIconOnly ? 'p-2' : 'px-3 py-1.5 text-xs',
-    md: isIconOnly ? 'p-2.5' : 'px-4 py-2 text-sm',
+    sm: isIconOnly ? 'p-2' : 'px-5 py-1.5 text-xs',
+    md: isIconOnly ? 'p-2.5' : 'px-5 py-2 text-sm',
     lg: isIconOnly ? 'p-4' : 'px-6 py-3 text-base',
   }
 
@@ -160,7 +162,7 @@ export function Button({
     <Component
       disabled={props.disabled || loading}
       className={cn(
-        'inline-flex items-center justify-center font-bold transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none uppercase italic tracking-wider [&_*]:text-current',
+        'inline-flex items-center justify-center font-bold transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none uppercase italic tracking-wider leading-none whitespace-nowrap [&_svg]:text-current [&_svg]:stroke-current [&_*]:text-current',
         variantClasses[resolvedVariant as keyof typeof variantClasses],
         sizeClasses[size],
         roundedClasses[rounded],
@@ -230,14 +232,21 @@ export function Button({
         className
       )}
       style={{
+          position: 'relative',
+          overflow: 'hidden',
           width: typeof width === 'number' ? `${width}px` : width,
           ...props.style
       }}
       {...props}
     >
+      {shine && (
+        <div className="shine-container">
+          <div className="shine-line" />
+        </div>
+      )}
       {loading ? (
         <Loader2 className="animate-spin" size={16} />
-      ) : children}
+      ) : <Slottable>{children}</Slottable>}
     </Component>
   )
 }

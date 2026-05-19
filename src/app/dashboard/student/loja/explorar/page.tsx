@@ -15,7 +15,7 @@ import {
     Star,
     ShieldCheck
 } from 'lucide-react'
-import { ProductSkeleton } from '../loading'
+
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -159,11 +159,7 @@ export default function StoreExplorePage() {
 
             {/* Grid */}
             <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {loading ? (
-                    Array.from({ length: 8 }).map((_, i) => (
-                        <ProductSkeleton key={i} />
-                    ))
-                ) : filteredProducts.map(product => (
+                {loading ? null : filteredProducts.map(product => (
                     <Card key={product.id} className="group relative flex flex-col bg-zinc-950 border border-zinc-800 hover:border-orange-500/50 transition-all duration-500 rounded-3xl overflow-hidden hover:shadow-[0_0_40px_-5px_rgba(249,115,22,0.15)]">
                         {/* High Contrast Badge */}
                         <div className="absolute top-4 left-4 z-20">

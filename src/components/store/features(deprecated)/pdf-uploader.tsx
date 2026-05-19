@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax */
 'use client'
 
 import { useState } from 'react'
@@ -6,10 +7,16 @@ import { QUERY_KEYS } from '@/lib/query-keys'
 import { cn } from "@/lib/utils"
 import { ENTITIES } from '@/lib/outbox-db'
 import { createClient } from '@/lib/supabase/client'
-import { Badge } from "@/components/ui/badge"
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { Badge } from "@/components/store/base/badge"
+
 import { Upload, FileText, Check, Loader2, FileUp, X, Sparkles, User, Mail, Phone } from 'lucide-react'
+import { Icon } from '@/components/store/base/icon'
+import { Stack } from '@/components/store/base/stack'
+import { Font } from '@/components/store/base/font'
+import { Button as DSButton } from '@/components/store/base/button'
+import { Separator } from '@/components/store/base/separator'
+import { Surface } from '@/components/store/base/surface'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { useToast } from '@/hooks/use-toast'
 import { PdfDataView } from './pdf-data-view'
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
@@ -25,7 +32,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { Input } from "@/components/ui/input"
+import { Input as DSInput } from "@/components/store/base/input"
 
 export function PdfUploader({ type, students = [], role = 'trainer', userId, studentId: initialStudentId }: { type: 'workout' | 'diet', students?: any[], role?: 'trainer' | 'student', userId: string, studentId?: string }) {
     const [uploading, setUploading] = useState(false)
@@ -353,146 +360,129 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
     }
 
     return (
-        <Card id="tour-import-card" className="w-full bg-zinc-950 border-zinc-800 shadow-2xl rounded-system overflow-hidden border-t-zinc-700/50">
-            <CardHeader className="bg-zinc-900/20 border-b border-zinc-900/50 pb-6">
-                <div className="flex items-center justify-between">
-                    <div>
-                        <CardTitle className="text-xl font-black text-white italic uppercase tracking-tight flex items-center gap-2">
-                            <FileUp className="w-5 h-5 text-emerald-500" />
-                            Importar {type === 'workout' ? 'Treino' : 'Dieta'}
-                        </CardTitle>
-                        <CardDescription className="text-zinc-500 text-[10px] uppercase font-bold tracking-widest mt-1">
-                            Formatos suportados: PDF (Máx 5MB)
-                        </CardDescription>
-                    </div>
-                    {(uploading || parsing) && (
-                        <div className="flex items-center gap-2 text-[10px] font-bold text-zinc-400 bg-zinc-900 border border-zinc-800 px-3 py-1 rounded-full">
-                            <Loader2 className="w-3 h-3 animate-spin text-emerald-500" />
-                            PROCESSANDO
-                        </div>
-                    )}
-                </div>
-            </CardHeader>
-            <CardContent className="p-4">
+        <Stack id="tour-import-card" fullWidth gap={STORE_TOKENS.SPACING.CONTAINER}>
+            <div>
                 {!parsedData ? (
                     <div className="relative group">
                         <div
                             id="tour-dropzone"
-                            className={`
-                            flex flex-col items-center justify-center p-12 lg:p-20 border-2 border-dashed rounded-system transition-all
-                            ${uploading || parsing
+                            className={cn(
+                                'flex flex-col items-center justify-center border-2 border-dashed rounded-system transition-all',
+                                uploading || parsing
                                     ? 'bg-zinc-900/20 border-zinc-800 pointer-events-none'
-                                    : 'bg-transparent border-zinc-800 hover:border-emerald-500/50 hover:bg-emerald-500/[0.02] cursor-pointer group'}
-                        `}>
-                            {uploading || parsing ? (
-                                <div className="flex flex-col items-center gap-6">
-                                    <div className="relative">
-                                        <div className="absolute inset-0 bg-emerald-500/20 blur-2xl rounded-full" />
-                                        <Loader2 className="h-16 w-16 animate-spin text-emerald-500 relative" />
-                                    </div>
-                                    <div className="text-center space-y-2">
-                                        <p className="text-white font-bold text-lg">
-                                            {uploading ? 'Enviando arquivo...' : 'A IA está lendo o PDF...'}
-                                        </p>
-                                        <p className="text-zinc-500 text-sm max-w-[300px]">
-                                            Isso pode levar alguns segundos dependendo do tamanho do documento.
-                                        </p>
-                                    </div>
-                                </div>
-                            ) : (
-                                <>
-                                    <div className="p-6 bg-zinc-900 rounded-system border border-zinc-800 mb-6 transition-all group-hover:scale-110 group-hover:border-zinc-700 group-hover:text-emerald-500 shadow-xl">
-                                        <Upload className="h-8 w-8 text-zinc-500 group-hover:text-emerald-500 transition-colors" />
-                                    </div>
-                                    <div className="text-center space-y-1 mb-8">
-                                        <h3 className="text-lg font-bold text-white tracking-tight">Arraste seu arquivo aqui</h3>
-                                        <p className="text-sm text-zinc-500">Ou clique para navegar pelo computador</p>
-                                    </div>
-                                    <Button className="bg-white text-zinc-950 hover:bg-zinc-200 rounded-system font-bold h-12 px-8 shadow-none transition-all relative">
-                                        Selecionar Arquivo
-                                        <input
-                                            type="file"
-                                            accept=".pdf"
-                                            className="absolute inset-0 opacity-0 cursor-pointer"
-                                            onChange={handleFileChange}
-                                        />
-                                    </Button>
-                                </>
+                                    : 'bg-transparent border-zinc-800 hover:border-emerald-500/50 hover:bg-emerald-500/[0.02] cursor-pointer group'
                             )}
+                        >
+                            <Stack align="center" padding={STORE_TOKENS.PADDING.EMPTY_STATE}>
+                                {uploading || parsing ? (
+                                    <Stack align="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
+                                        <div className="relative">
+                                            <div className="absolute inset-0 bg-emerald-500/20 blur-2xl rounded-full" />
+                                            <Loader2 className="h-16 w-16 animate-spin text-emerald-500 relative" />
+                                        </div>
+                                        <Stack align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                            <Font variant="body" weight="bold" color="white">
+                                                {uploading ? 'Enviando arquivo...' : 'A IA está lendo o PDF...'}
+                                            </Font>
+                                            <Font variant="description" color="zinc-500">
+                                                Isso pode levar alguns segundos dependendo do tamanho do documento.
+                                            </Font>
+                                        </Stack>
+                                    </Stack>
+                                ) : (
+                                    <Stack align="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
+                                        <Surface
+                                            variant="tonal-emerald"
+                                            padding={STORE_TOKENS.PADDING.CONTAINER}
+                                            hoverScale={110}
+                                            animation="in-fade-zoom"
+                                        >
+                                            <Icon icon={Upload} size="lg" color="emerald" />
+                                        </Surface>
+                                        <Stack align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                            <Font variant="body" weight="bold" color="white">Arraste seu arquivo aqui</Font>
+                                            <Font variant="description" color="zinc-500">Ou clique para navegar pelo computador</Font>
+                                        </Stack>
+                                        <DSButton variant="outline-emerald" size="md" rounded="system" className="relative">
+                                            Selecionar Arquivo
+                                            <input
+                                                type="file"
+                                                accept=".pdf"
+                                                className="absolute inset-0 opacity-0 cursor-pointer"
+                                                onChange={handleFileChange}
+                                            />
+                                        </DSButton>
+                                    </Stack>
+                                )}
+                            </Stack>
                         </div>
                     </div>
                 ) : (
-                    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                    <Stack gap={STORE_TOKENS.SPACING.CONTAINER} className="animate-pulse">
                         {/* Status Message */}
-                        <div id="tour-parsed-status" className="flex items-center gap-3 pb-4 text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-system">
-                            <div className="p-2 bg-emerald-500/20 rounded-full">
-                                <Check className="h-4 w-4" />
-                            </div>
-                            <div className="flex-1">
-                                <p className="text-sm font-bold uppercase tracking-tight">Leitura Concluída</p>
-                                <p className="text-xs text-emerald-400/70">Revise abaixo as informações extraídas pela nossa IA.</p>
-                            </div>
-                        </div>
+                        <Surface id="tour-parsed-status" variant="tonal-emerald" padding={STORE_TOKENS.PADDING.CONTAINER}>
+                            <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
+                                <Surface variant="tonal-emerald" padding={STORE_TOKENS.PADDING.ELEMENT}>
+                                    <Icon icon={Check} size="sm" color="emerald" />
+                                </Surface>
+                                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                    <Font variant="label-caps" color="emerald">Leitura Concluída</Font>
+                                    <Font variant="description" color="emerald">Revise abaixo as informações extraídas pela nossa IA.</Font>
+                                </Stack>
+                            </Stack>
+                        </Surface>
 
                         {/* Student Link Card */}
                         {role === 'trainer' && (
-                            <div className="bg-zinc-900 border border-zinc-800 p-6 rounded-system flex flex-col gap-4 shadow-lg">
-                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                                    <div className="flex flex-wrap items-center gap-2 text-zinc-300">
-                                        <div className="flex items-center gap-2">
-                                            <User className="w-5 h-5 text-emerald-500" />
-                                            <span className="text-sm font-bold tracking-tight">Vincular Importação:</span>
-                                        </div>
-                                        {detectedStudentName && (
-                                            <span className="text-[10px] sm:text-sm font-black text-white px-2 py-1 bg-zinc-800 rounded-system border border-zinc-700/50">Detectado: {detectedStudentName}</span>
+                            <Surface variant="raised" padding={STORE_TOKENS.PADDING.CONTAINER}>
+                                <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
+                                    <Stack direction="row" align="center" justify="between" gap={STORE_TOKENS.SPACING.CONTAINER}>
+                                        <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                            <Icon icon={User} size="xs" color="emerald" />
+                                            <Font variant="body" weight="bold" color="white">Vincular Importação:</Font>
+                                            {detectedStudentName && (
+                                                <Badge label={`Detectado: ${detectedStudentName}`} variant="outline" color="zinc" />
+                                            )}
+                                        </Stack>
+                                        {(studentMatch?.exact || (selectedStudentId && bindingMode === 'matched')) && (
+                                            <Badge label="Aluno Vinculado" variant="glass" color="emerald" />
                                         )}
-                                    </div>
-                                    {(studentMatch?.exact || (selectedStudentId && bindingMode === 'matched')) && (
-                                        <div className="flex">
-                                            <Badge className="bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/20 text-[10px] sm:text-xs">Aluno Vinculado</Badge>
-                                        </div>
-                                    )}
-                                </div>
+                                    </Stack>
 
-                                {studentMatch?.exact && bindingMode === 'matched' ? (
-                                    <div className="flex flex-col gap-3">
-                                        <p className="text-xs text-zinc-500">
-                                            Identificamos o aluno <strong className="text-emerald-400">{studentMatch.exact.full_name}</strong> automaticamente.
-                                        </p>
-                                        <div className="flex gap-2">
-                                            <Button
-                                                variant="outline"
-                                                size="sm"
-                                                className="h-8 text-[10px] uppercase font-black px-4"
-                                                onClick={() => {
-                                                    setBindingMode('skip');
-                                                    setSelectedStudentId(null);
-                                                }}
-                                            >
-                                                Alterar Vínculo
-                                            </Button>
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <div className="space-y-4 pt-2 border-t border-zinc-800">
-                                        <p className="text-xs text-zinc-400 font-bold uppercase tracking-widest">
-                                            {detectedStudentName ? "Como deseja processar esta importação?" : "Quem deve receber este treino/dieta?"}
-                                        </p>
+                                    {studentMatch?.exact && bindingMode === 'matched' ? (
+                                        <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
+                                            <Font variant="description" color="zinc-400">
+                                                Identificamos o aluno <Font variant="description" color="emerald" weight="bold">{studentMatch.exact.full_name}</Font> automaticamente.
+                                            </Font>
+                                            <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                                <DSButton
+                                                    variant="outline-zinc"
+                                                    size="sm"
+                                                    onClick={() => {
+                                                        setBindingMode('skip');
+                                                        setSelectedStudentId(null);
+                                                    }}
+                                                >
+                                                    Alterar Vínculo
+                                                </DSButton>
+                                            </Stack>
+                                        </Stack>
+                                    ) : (
+                                        <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
+                                            <Separator opacity={5} />
+                                            
+                                            <Font variant="auxiliary" weight="black" uppercase color="zinc-500" tracking="widest">
+                                                {detectedStudentName ? "Como deseja processar esta importação?" : "Quem deve receber este treino/dieta?"}
+                                            </Font>
 
-                                        <div
-                                            id="tour-binding-modes"
-                                            className="flex flex-col md:flex-row items-stretch gap-4 w-full"
-                                        >
-                                            <div id="tour-binding-container" className="flex-1">
-                                                <Button
+                                            <Stack direction="row" gap={STORE_TOKENS.SPACING.CONTAINER} className="w-full flex-wrap md:flex-nowrap">
+                                                <DSButton
                                                     id="tour-btn-create-student"
                                                     type="button"
-                                                    variant={bindingMode === 'create' ? 'default' : 'outline'}
+                                                    variant={bindingMode === 'create' ? 'outline-emerald' : 'ghost'}
                                                     className={cn(
-                                                        "flex-1 rounded-system !h-[56px] w-full text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 border-2",
-                                                        bindingMode === 'create'
-                                                            ? "bg-emerald-500 text-black border-emerald-400 hover:bg-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.3)] scale-[1.02]"
-                                                            : "bg-zinc-900/50 border-zinc-800 hover:border-zinc-700 hover:bg-zinc-800 text-zinc-500"
+                                                        "flex-1 !h-[56px] transition-all duration-300",
+                                                        bindingMode === 'create' && "shadow-[0_0_20px_rgba(16,185,129,0.15)] scale-[1.02]"
                                                     )}
                                                     onClick={() => {
                                                         setBindingMode('create');
@@ -501,166 +491,141 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
                                                     }}
                                                 >
                                                     Criar Novo Aluno
-                                                </Button>
-                                            </div>
+                                                </DSButton>
 
-                                            <div className="flex-1">
-                                                <Select value={selectedStudentId || undefined} onValueChange={(val) => { setSelectedStudentId(val); setBindingMode('matched'); }}>
-                                                    <SelectTrigger
-                                                        className={cn(
-                                                            "w-full rounded-system !h-[56px] bg-zinc-900/50 text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 border-2 px-6 flex items-center justify-between",
-                                                            bindingMode === 'matched'
-                                                                ? "border-emerald-500 text-white shadow-[0_0_20px_rgba(16,185,129,0.2)] scale-[1.02]"
-                                                                : "border-zinc-800 text-zinc-500 hover:border-zinc-700"
-                                                        )}
-                                                        style={{ height: '56px' }}
-                                                    >
-                                                        <SelectValue placeholder="Escolher Existente" />
-                                                    </SelectTrigger>
-                                                    <SelectContent position="popper" side="bottom" sideOffset={12} className="bg-zinc-900 border-2 border-zinc-800 text-white w-[var(--radix-select-trigger-width)] z-[100] rounded-system shadow-2xl p-2 overflow-hidden">
-                                                        <div className="px-2 py-3 text-[8px] font-black uppercase tracking-widest text-zinc-600 border-b border-zinc-800 mb-2">Sugestões e Lista de Alunos</div>
-                                                        {studentMatch?.suggestions?.filter((s: any) => s.active !== false).map((s: any) => (
-                                                            <SelectItem key={s.student_id} value={s.student_id} className="text-xs py-4 rounded-system focus:bg-emerald-500/10 focus:text-emerald-400 cursor-pointer">
-                                                                {s.full_name} (Sugerido)
-                                                            </SelectItem>
-                                                        ))}
-                                                        {students.filter(s => s.active && !studentMatch?.suggestions?.find((ms: any) => ms.student_id === s.student_id)).map(s => (
-                                                            <SelectItem key={s.student_id} value={s.student_id} className="text-xs py-4 rounded-system focus:bg-zinc-800 cursor-pointer">
-                                                                {s.student?.[0]?.full_name || s.student?.full_name}
-                                                            </SelectItem>
-                                                        ))}
-                                                    </SelectContent>
-                                                </Select>
-                                            </div>
-
-                                            <Button
-                                                type="button"
-                                                variant={bindingMode === 'skip' ? 'default' : 'outline'}
-                                                className={cn(
-                                                    "flex-1 rounded-system !h-[56px] w-full text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 border-2",
-                                                    bindingMode === 'skip'
-                                                        ? "bg-zinc-700 text-white border-zinc-600 shadow-xl"
-                                                        : "bg-zinc-900/50 border-zinc-800 hover:border-zinc-700 hover:bg-zinc-800 text-zinc-500"
-                                                )}
-                                                onClick={() => { setBindingMode('skip'); setSelectedStudentId(''); }}
-                                            >
-                                                Não Vincular
-                                            </Button>
-                                        </div>
-
-                                        {bindingMode === 'create' && (
-                                            <div id="tour-student-fields" className="p-4 bg-zinc-950/50 border border-zinc-800 rounded-system space-y-4 animate-in slide-in-from-top-2">
-                                                <div className="space-y-2">
-                                                    <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest px-1">Nome do Novo Aluno</label>
-                                                    <Input
-                                                        placeholder="Digite o nome completo..."
-                                                        className="bg-zinc-900 border-zinc-800 text-white h-12 rounded-system"
-                                                        value={placeholderName}
-                                                        onChange={(e) => setPlaceholderName(e.target.value)}
-                                                    />
+                                                <div className="flex-1 min-w-[200px]">
+                                                    <Select value={selectedStudentId || undefined} onValueChange={(val) => { setSelectedStudentId(val); setBindingMode('matched'); }}>
+                                                        <SelectTrigger
+                                                            className={cn(
+                                                                "w-full rounded-system !h-[56px] bg-zinc-950/40 text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 border-2 px-6 flex items-center justify-between",
+                                                                bindingMode === 'matched'
+                                                                    ? "border-emerald-500 text-white shadow-[0_0_20px_rgba(16,185,129,0.15)] scale-[1.02]"
+                                                                    : "border-white/5 text-zinc-500 hover:border-white/10"
+                                                            )}
+                                                        >
+                                                            <SelectValue placeholder="Escolher Existente" />
+                                                        </SelectTrigger>
+                                                        <SelectContent position="popper" side="bottom" sideOffset={12} className="bg-zinc-900 border-2 border-white/5 text-white w-[var(--radix-select-trigger-width)] z-[100] rounded-system shadow-2xl p-2 overflow-hidden">
+                                                            <div className="px-2 py-3 text-[8px] font-black uppercase tracking-widest text-zinc-600 border-b border-white/5 mb-2">Sugestões e Lista de Alunos</div>
+                                                            {studentMatch?.suggestions?.filter((s: any) => s.active !== false).map((s: any) => (
+                                                                <SelectItem key={s.student_id} value={s.student_id} className="text-xs py-4 rounded-system focus:bg-emerald-500/10 focus:text-emerald-400 cursor-pointer">
+                                                                    {s.full_name} (Sugerido)
+                                                                </SelectItem>
+                                                            ))}
+                                                            {students.filter(s => s.active && !studentMatch?.suggestions?.find((ms: any) => ms.student_id === s.student_id)).map(s => (
+                                                                <SelectItem key={s.student_id} value={s.student_id} className="text-xs py-4 rounded-system focus:bg-white/5 cursor-pointer">
+                                                                    {s.student?.[0]?.full_name || s.student?.full_name}
+                                                                </SelectItem>
+                                                            ))}
+                                                        </SelectContent>
+                                                    </Select>
                                                 </div>
-                                                <div className="space-y-3">
-                                                    <div className="flex flex-col gap-1 px-1">
-                                                        <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Email do Aluno</label>
-                                                        <p className="text-[9px] font-bold text-zinc-600 uppercase tracking-widest leading-relaxed">
-                                                            O aluno precisa criar a conta com esse email para sincronizar o protocolo automaticamente.
-                                                        </p>
-                                                    </div>
-                                                    <div className="relative">
-                                                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-600" />
-                                                        <Input
-                                                            placeholder="email@aluno.com"
-                                                            type="email"
-                                                            required
-                                                            className="bg-zinc-900 border-zinc-800 text-white h-12 rounded-system pl-11"
-                                                            value={placeholderEmail}
-                                                            onChange={(e) => setPlaceholderEmail(e.target.value)}
+
+                                                <DSButton
+                                                    type="button"
+                                                    variant={bindingMode === 'skip' ? 'outline-zinc' : 'ghost'}
+                                                    className={cn(
+                                                        "flex-1 !h-[56px] transition-all duration-300",
+                                                        bindingMode === 'skip' && "shadow-xl"
+                                                    )}
+                                                    onClick={() => { setBindingMode('skip'); setSelectedStudentId(''); }}
+                                                >
+                                                    Não Vincular
+                                                </DSButton>
+                                            </Stack>
+
+                                            {bindingMode === 'create' && (
+                                                <Surface variant="raised" padding={STORE_TOKENS.PADDING.CONTAINER} className="animate-in slide-in-from-top-2">
+                                                    <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
+                                                        <DSInput
+                                                            label="Nome do Novo Aluno"
+                                                            placeholder="Digite o nome completo..."
+                                                            value={placeholderName}
+                                                            onChange={(e) => setPlaceholderName(e.target.value)}
                                                         />
-                                                    </div>
-
-                                                    <div className="space-y-2 pt-2">
-                                                        <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest px-1">WhatsApp do Aluno</label>
-                                                        <div className="relative">
-                                                            <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-600" />
-                                                            <Input
-                                                                placeholder="(00) 00000-0000"
-                                                                type="tel"
-                                                                className="bg-zinc-900 border-zinc-800 text-white h-12 rounded-system pl-11"
-                                                                value={placeholderWhatsapp}
-                                                                onChange={(e) => setPlaceholderWhatsapp(e.target.value)}
+                                                        <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                                            <DSInput
+                                                                label="Email do Aluno"
+                                                                placeholder="email@aluno.com"
+                                                                type="email"
+                                                                required
+                                                                icon={<Icon icon={Mail} size="xs" color="zinc-500" />}
+                                                                value={placeholderEmail}
+                                                                onChange={(e) => setPlaceholderEmail(e.target.value)}
                                                             />
-                                                        </div>
-                                                    </div>
+                                                            <Font variant="sub-tiny" color="zinc-600" weight="bold" uppercase tracking="widest" className="px-1">
+                                                                O aluno precisa criar a conta com esse email para sincronizar o protocolo automaticamente.
+                                                            </Font>
+                                                        </Stack>
 
-                                                    <div className="px-1 py-1">
-                                                        <p className="text-[8px] font-black text-emerald-500/50 uppercase tracking-widest">
+                                                        <DSInput
+                                                            label="WhatsApp do Aluno"
+                                                            placeholder="(00) 00000-0000"
+                                                            type="tel"
+                                                            icon={<Icon icon={Phone} size="xs" color="zinc-500" />}
+                                                            value={placeholderWhatsapp}
+                                                            onChange={(e) => setPlaceholderWhatsapp(e.target.value)}
+                                                        />
+
+                                                        <Font variant="sub-tiny" color="emerald" weight="black" uppercase tracking="widest" className="px-1">
                                                             * O email e WhatsApp são fundamentais para o envio automático do acesso.
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
-                            </div>
+                                                        </Font>
+                                                    </Stack>
+                                                </Surface>
+                                            )}
+                                        </Stack>
+                                    )}
+                                </Stack>
+                            </Surface>
                         )}
 
                         {/* Assignment Feedback Card */}
                         {role === 'trainer' && (
-                            <div className="bg-zinc-900 border-2 border-emerald-500/20 p-4 sm:p-6 rounded-system shadow-xl animate-in zoom-in-95 duration-300">
-                                <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
-                                    <div className="flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
-                                        <div className={cn(
-                                            "p-4 rounded-system shadow-lg transition-all",
-                                            selectedStudentId || bindingMode === 'create' ? "bg-emerald-500 text-black" : "bg-zinc-800 text-zinc-500"
-                                        )}>
-                                            <User className="w-6 h-6" />
-                                        </div>
-                                        <div className="space-y-1">
-                                            <span className="block text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">Destinatário da Importação</span>
-                                            <div className="flex flex-col sm:flex-row items-center gap-3">
-                                                <h3 className="text-lg sm:text-xl font-black text-white italic uppercase tracking-tight">
+                            <Surface variant="tonal-emerald" padding={STORE_TOKENS.PADDING.CONTAINER} animation="in-fade-zoom">
+                                <Stack direction="row" justify="between" align="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
+                                    <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
+                                        <Surface
+                                            variant={selectedStudentId || bindingMode === 'create' ? 'tonal-emerald' : 'raised'}
+                                            padding={STORE_TOKENS.PADDING.CONTAINER}
+                                        >
+                                            <Icon icon={User} size="md" color={selectedStudentId || bindingMode === 'create' ? 'emerald' : 'zinc-500'} />
+                                        </Surface>
+                                        <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                            <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color="zinc-500">Destinatário da Importação</Font>
+                                            <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                                <Font variant="heading" weight="black" uppercase italic color="white">
                                                     {selectedStudentId
-                                                        ? (students.find(s => s.student_id === selectedStudentId)?.student?.[0]?.full_name ||
-                                                            students.find(s => s.student_id === selectedStudentId)?.student?.full_name ||
-                                                            studentMatch?.exact?.full_name ||
-                                                            "Aluno Selecionado")
-                                                        : (bindingMode === 'create'
-                                                            ? (placeholderName || detectedStudentName || "Novo Aluno")
-                                                            : "Somente Biblioteca")
+                                                        ? (students.find((s: any) => s.student_id === selectedStudentId)?.student?.[0]?.full_name ||
+                                                            students.find((s: any) => s.student_id === selectedStudentId)?.student?.full_name ||
+                                                            studentMatch?.exact?.full_name || 'Aluno Selecionado')
+                                                        : (bindingMode === 'create' ? (placeholderName || detectedStudentName || 'Novo Aluno') : 'Somente Biblioteca')
                                                     }
-                                                </h3>
-                                                <Badge variant="outline" className={cn(
-                                                    "text-[9px] font-black italic uppercase border-2",
-                                                    selectedStudentId || bindingMode === 'create' ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : "bg-zinc-800 text-zinc-500 border-zinc-700"
-                                                )}>
-                                                    {selectedStudentId ? "Aluno Existente" : (bindingMode === 'create' ? "Novo Aluno" : "Biblioteca")}
-                                                </Badge>
-                                            </div>
-                                        </div>
-                                    </div>
-
+                                                </Font>
+                                            </Stack>
+                                        </Stack>
+                                    </Stack>
                                     {(selectedStudentId || bindingMode === 'create') && (
-                                        <div className="flex items-center gap-2 px-4 py-2 bg-emerald-500/5 border border-emerald-500/20 rounded-system">
-                                            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                                            <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Vinculação Ativa</span>
-                                        </div>
+                                        <Surface variant="tonal-emerald" padding={STORE_TOKENS.PADDING.ELEMENT}>
+                                            <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                                                <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color="emerald">Vinculação Ativa</Font>
+                                            </Stack>
+                                        </Surface>
                                     )}
-                                </div>
-                            </div>
+                                </Stack>
+                            </Surface>
                         )}
 
                         {/* Data Preview */}
-                        <div id="tour-parsed-data" className="space-y-4">
-                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-900 pb-4">
-                                <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-2">
-                                    <FileText className="w-3 h-3 text-emerald-500" />
-                                    Dados Extraídos
-                                </span>
-
+                        <Stack id="tour-parsed-data" gap={STORE_TOKENS.SPACING.CONTAINER}>
+                            <Stack direction="row" justify="between" align="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
+                                <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                    <Icon icon={FileText} size="xs" color="emerald" />
+                                    <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color="zinc-500">Dados Extraídos</Font>
+                                </Stack>
                                 {type === 'diet' && parsedData.parsed_data?.options?.length > 1 && (
-                                    <div className="flex items-center gap-3 pb-4">
-                                        <span className="text-[9px] font-black text-zinc-600 uppercase tracking-widest">Escolher Cardápio:</span>
+                                    <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                        <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color="zinc-600">Escolher Cardápio:</Font>
                                         <Select
                                             value={selectedOptionIndex.toString()}
                                             onValueChange={(v) => setSelectedOptionIndex(parseInt(v))}
@@ -676,9 +641,9 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
                                                 ))}
                                             </SelectContent>
                                         </Select>
-                                    </div>
+                                    </Stack>
                                 )}
-                            </div>
+                            </Stack>
 
                             <PdfDataView
                                 type={type}
@@ -720,59 +685,55 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
                                 }}
                                 onUpdateDietDays={(days: number[]) => setSelectedDietDays(days)}
                             />
-                        </div>
+                        </Stack>
 
                         {/* Actions */}
-                        <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-3 pt-6 border-t border-zinc-900/50">
-                            <Button
-                                variant="ghost"
-                                onClick={() => {
-                                    setParsedData(null)
-                                    setSelectedStudentId('')
-                                }}
-                                className="text-zinc-500 hover:text-white rounded-system h-12 px-6 font-bold uppercase tracking-widest text-[10px] w-full sm:w-auto"
-                            >
-                                <X className="w-4 h-4 mr-2" />
-                                Cancelar
-                            </Button>
-                            <Button
-                                id="tour-save-button"
-                                onClick={handleSave}
-                                disabled={isSaving || (role === 'trainer' && bindingMode === 'create' && (!placeholderName || !placeholderEmail))}
-                                className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-system h-12 px-10 font-bold shadow-lg shadow-emerald-500/10 transition-all active:scale-95 flex gap-2 disabled:opacity-50 w-full sm:w-auto items-center justify-center"
-                            >
-                                {isSaving ? (
-                                    <>
-                                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                        SALVANDO...
-                                    </>
-                                ) : (
-                                    <>
-                                        <Check className="w-4 h-4" />
-                                        {bindingMode === 'create'
-                                            ? `SALVAR E VINCULAR A ${placeholderName?.toUpperCase() || detectedStudentName?.toUpperCase() || 'NOVO ALUNO'}`
-                                            : `SALVAR ${type === 'workout' ? 'TREINO' : 'DIETA'}`
-                                        }
-                                    </>
-                                )}
-                            </Button>
-                        </div>
-                    </div>
+                        <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
+                            <Separator opacity={5} />
+                            <Stack direction="row" justify="end" gap={STORE_TOKENS.SPACING.CONTAINER}>
+                                <DSButton
+                                    variant="ghost"
+                                    onClick={() => { setParsedData(null); setSelectedStudentId('') }}
+                                    gap={STORE_TOKENS.SPACING.ELEMENT}
+                                >
+                                    <Icon icon={X} size="xs" color="zinc-500" />
+                                    Cancelar
+                                </DSButton>
+                                <DSButton
+                                    id="tour-save-button"
+                                    variant="outline-emerald"
+                                    onClick={handleSave}
+                                    disabled={isSaving || (role === 'trainer' && bindingMode === 'create' && (!placeholderName || !placeholderEmail))}
+                                    gap={STORE_TOKENS.SPACING.ELEMENT}
+                                    loading={isSaving}
+                                >
+                                    {!isSaving && <Icon icon={Check} size="xs" color="emerald" />}
+                                    {bindingMode === 'create'
+                                        ? `Salvar e Vincular a ${placeholderName || detectedStudentName || 'Novo Aluno'}`
+                                        : `Salvar ${type === 'workout' ? 'Treino' : 'Dieta'}`
+                                    }
+                                </DSButton>
+                            </Stack>
+                        </Stack>
+                    </Stack>
                 )}
-            </CardContent>
+            </div>
 
             {/* Feature Badges Footer */}
-            <div className="bg-zinc-900/30 px-8 py-4 border-t border-zinc-900/50 flex flex-wrap gap-4">
-                <div className="flex items-center gap-1.5 text-zinc-600">
-                    <Sparkles className="w-3.5 h-3.5" />
-                    <span className="text-[10px] font-bold uppercase tracking-tight">AI Powered Extraction</span>
-                </div>
-                <div className="flex items-center gap-1.5 text-zinc-600">
-                    <Check className="w-3.5 h-3.5" />
-                    <span className="text-[10px] font-bold uppercase tracking-tight">Auto Structured JSON</span>
-                </div>
-            </div>
-        </Card>
+            <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
+                <Separator opacity={5} />
+                <Stack direction="row" gap={STORE_TOKENS.SPACING.CONTAINER} wrap="wrap">
+                    <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                        <Icon icon={Sparkles} size="xs" color="zinc-600" />
+                        <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color="zinc-600">AI Powered Extraction</Font>
+                    </Stack>
+                    <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                        <Icon icon={Check} size="xs" color="zinc-600" />
+                        <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color="zinc-600">Auto Structured JSON</Font>
+                    </Stack>
+                </Stack>
+            </Stack>
+        </Stack>
     )
 }
 

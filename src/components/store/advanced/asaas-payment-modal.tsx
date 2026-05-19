@@ -182,10 +182,10 @@ export function AsaasPaymentModal({
         >
             <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                 {/* Total Summary */}
-                <Box padding={STORE_TOKENS.PADDING.CONTAINER} bg="zinc" bgOpacity={10} border borderColor={STORE_TOKENS.COLORS.DIVIDER.SUBTLE} rounded="system">
-                    <Stack align="center" gap={2.5}>
+                <Box padding={STORE_TOKENS.PADDING.CONTAINER} bg="zinc" bgOpacity={10} border borderColor={STORE_TOKENS.COLORS.DIVIDER.SUBTLE} rounded={STORE_TOKENS.RADIUS.SYSTEM}>
+                    <Stack align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                         <Font variant="sub-tiny" weight="black" uppercase color="zinc-500">Total a Investir</Font>
-                        <Font variant="heading" weight="black" italic color="white" className="text-3xl">R$ {monthlyTotal.toFixed(2).replace('.', ',')}</Font>
+                        <Font variant="h3" color="white">R$ {monthlyTotal.toFixed(2).replace('.', ',')}</Font>
                         <Font variant="tiny" color="emerald" weight="black" uppercase italic>Assinatura Mensal Recorrente</Font>
                     </Stack>
                 </Box>
@@ -202,7 +202,7 @@ export function AsaasPaymentModal({
 
                     <Input
                         label="NOME COMPLETO"
-                        icon={fetchingName ? <Loader2 size={16} className="animate-spin" /> : <User size={16} />}
+                        icon={fetchingName ? <Icon icon={Loader2} size="sm" spin /> : <User size={16} />}
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
                         placeholder="Seu nome conforme o documento"

@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { Activity, ArrowLeft, ChevronRight, Sparkles, Zap } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { Suspense } from 'react'
-import { Skeleton } from '@/components/ui/skeleton'
+
 
 // Streaming Components
 import { MetricsAndEvolution } from '@/components/store/features(deprecated)/student-public-metrics'
@@ -164,19 +164,19 @@ export default async function StudentPublicProfilePage({ params }: { params: Pro
 
                     <TabsContent value="evolution" className="animate-in fade-in slide-in-from-bottom-4 duration-500">
                         {/* Heavy Sections (Streamed) */}
-                        <Suspense fallback={<SectionSkeleton />}>
+                        <Suspense fallback={null}>
                             <MetricsAndEvolution studentId={studentId} steroidUse={!!details?.steroid_use} />
                         </Suspense>
                     </TabsContent>
 
                     <TabsContent value="history" className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                        <Suspense fallback={<SectionSkeleton />}>
+                        <Suspense fallback={null}>
                             <WorkoutHistorySection studentId={studentId} />
                         </Suspense>
                     </TabsContent>
 
                     <TabsContent value="photos" className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                        <Suspense fallback={<SectionSkeleton />}>
+                        <Suspense fallback={null}>
                             <PhotosAndTransformation studentId={studentId} isOwner={isOwner} studentName={profile.full_name} photos={photos || []} />
                         </Suspense>
                     </TabsContent>
@@ -204,11 +204,4 @@ export default async function StudentPublicProfilePage({ params }: { params: Pro
     )
 }
 
-function SectionSkeleton() {
-    return (
-        <div className="w-full space-y-6 mb-16">
-            <Skeleton className="h-8 w-48 bg-zinc-800" />
-            <Skeleton className="h-[300px] w-full bg-zinc-900/40 rounded-3xl" />
-        </div>
-    )
-}
+
