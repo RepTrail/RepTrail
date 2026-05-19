@@ -7,7 +7,7 @@ import { Stack } from '@/components/store/base/stack'
 import { Font } from '@/components/store/base/font'
 import { Icon } from '@/components/store/base/icon'
 import { Inline } from '@/components/store/base/layout'
-import { Surface, GlassPanel } from '@/components/store/base/surface'
+import { GlassPanel } from '@/components/store/base/surface'
 import { EmptyState } from '../intermediary/empty-state'
 import {
   BarChart3,

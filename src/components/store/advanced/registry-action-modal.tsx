@@ -10,11 +10,8 @@ import { FormSelect } from '@/components/store/base/form-select'
 import { FormSwitch } from '@/components/store/base/form-switch'
 import { Textarea } from '@/components/store/base/textarea'
 import { Callout } from '../intermediary/callout'
-import { Icon } from '@/components/store/base/icon'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
-import { Box } from '@/components/store/base/box'
 import {
-    Calendar,
     Clock,
     Dumbbell,
     Utensils,
@@ -24,8 +21,7 @@ import {
     Trash2,
     Edit3,
     Plus,
-    UserPlus,
-    Timer
+    UserPlus
 } from 'lucide-react'
 import { WeekdayPicker } from '@/components/store/base/weekday-picker'
 

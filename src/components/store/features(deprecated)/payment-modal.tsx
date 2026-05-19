@@ -11,11 +11,10 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { CreditCard, User, ShieldCheck } from 'lucide-react'
-import { createAsaasSubscription, searchAsaasCustomer } from '@/actions/asaas-actions'
+import { searchAsaasCustomer } from '@/actions/asaas-actions'
 import { useToast } from '@/hooks/use-toast'
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { fbqEvent } from '@/lib/meta-pixel'
 
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
 import { ENTITIES } from '@/lib/outbox-db'

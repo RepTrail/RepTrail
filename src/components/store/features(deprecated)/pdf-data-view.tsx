@@ -1,7 +1,7 @@
 'use client'
 
 import { Badge } from "@/components/ui/badge"
-import { Activity, Utensils, Timer, Repeat, Zap, Flame, Pill, Info, Clock, Check } from 'lucide-react'
+import { Activity, Utensils, Timer, Zap, Flame, Pill, Info, Clock, Check } from 'lucide-react'
 import { cn } from "@/lib/utils"
 
 function safeString(val: any, fallback: string = '--'): string {

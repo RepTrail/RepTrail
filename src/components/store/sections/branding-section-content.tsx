@@ -8,7 +8,6 @@ import { Logo } from '@/components/store/base/logo'
 import { Badge } from '@/components/store/base/badge'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { Zap } from 'lucide-react'
-import { cn } from '@/lib/utils'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 export function BrandingSectionContent({ id }: { id?: string }) {

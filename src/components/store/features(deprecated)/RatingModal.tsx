@@ -11,7 +11,6 @@ import {
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Star, Send, Loader2 } from "lucide-react"
-import { submitTrainerReview } from '@/actions/student-actions'
 import { useToast } from '@/hooks/use-toast'
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
 import { QUERY_KEYS } from '@/lib/query-keys'

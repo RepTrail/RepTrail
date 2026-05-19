@@ -11,7 +11,7 @@ import {
     SelectTrigger,
     SelectValue
 } from "@/components/ui/select"
-import { Dumbbell, Search } from 'lucide-react'
+import { Search } from 'lucide-react'
 
 interface Exercise {
     id: string

@@ -2,7 +2,6 @@
 
 import React from 'react'
 import { Stack } from '@/components/store/base/stack'
-import { Font } from '@/components/store/base/font'
 import { Icon } from '@/components/store/base/icon'
 import { Button, ButtonVariant } from '@/components/store/base/button'
 import { Box } from '@/components/store/base/box'

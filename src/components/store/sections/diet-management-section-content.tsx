@@ -12,7 +12,6 @@ import { useRouter } from 'next/navigation'
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { ENTITIES } from '@/lib/outbox-db'
-import { deleteDiet, duplicateDiet, assignDiet, createManualDiet, updateDietMeta } from '@/actions/diet-actions'
 
 interface DietManagementSectionContentProps {
     userId?: string

@@ -8,7 +8,6 @@ import { Icon } from '@/components/store/base/icon'
 import { Button } from '@/components/store/base/button'
 import { Badge } from '@/components/store/base/badge'
 import { GlassPanel } from '@/components/store/base/surface'
-import Link from 'next/link'
 import {
     Trash2,
     Edit3,

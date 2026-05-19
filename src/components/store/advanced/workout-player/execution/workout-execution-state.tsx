@@ -9,7 +9,7 @@ import { Surface } from '@/components/store/base/surface'
 import { Icon } from '@/components/store/base/icon'
 import { Button } from '@/components/store/base/button'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
-import { Play, Activity, ChevronRight, AlertCircle } from 'lucide-react'
+import { Play } from 'lucide-react'
 import { BackgroundIcon } from '@/components/store/base/background-icon'
 
 interface WorkoutExecutionStateProps {

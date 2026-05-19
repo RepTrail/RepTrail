@@ -2,7 +2,6 @@
 
 import React from 'react'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
-import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { Stack } from '@/components/store/base/stack'
 import { Box } from '@/components/store/base/box'
 import { Grid } from '@/components/store/base/grid'

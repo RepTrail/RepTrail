@@ -5,8 +5,8 @@ import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { generateAIProtocol, AIProtocolPreferences } from '@/actions/ai-protocol-actions'
 import {
-    Sparkles, Dumbbell, Clock, Activity, Utensils,
-    ChevronRight, ChevronLeft, Check, Loader2,
+    Sparkles, Dumbbell, Activity, Utensils,
+    ChevronRight, ChevronLeft, Loader2,
     RotateCcw, Zap
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'

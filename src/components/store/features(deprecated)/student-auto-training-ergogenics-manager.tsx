@@ -1,6 +1,6 @@
 'use client'
 
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { FlaskConical } from 'lucide-react'
 import { UnifiedCreationDialog } from '@/components/store/features(deprecated)/unified-creation-dialog'
 import { createClient } from '@/lib/supabase/client'

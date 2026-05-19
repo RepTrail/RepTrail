@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import { Stack } from '@/components/store/base/stack'
-import { Box } from '@/components/store/base/box'
 import { Font } from '@/components/store/base/font'
 import { Button } from '@/components/store/base/button'
 import { Icon } from '@/components/store/base/icon'

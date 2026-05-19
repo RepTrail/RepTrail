@@ -21,15 +21,11 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
-import { UserPlus, Loader2, Calendar, X, Timer, Activity } from "lucide-react"
+import { UserPlus, Calendar, Timer, Activity } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { useRouter } from 'next/navigation'
 import { useQueryClient, QueryKey } from '@tanstack/react-query'
 
-import { assignCardio, removeCardioAssignment } from '@/actions/cardio-actions'
-import { assignDiet, unassignDiet } from '@/actions/diet-actions'
-import { assignWorkout, unassignWorkout } from '@/actions/workout-actions'
-import { assignErgogenic } from '@/actions/student-content-actions'
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
 import { ENTITIES } from '@/lib/outbox-db'
 

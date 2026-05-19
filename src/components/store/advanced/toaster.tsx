@@ -10,7 +10,6 @@ import {
 } from "@/components/store/base/toast"
 import { useToast } from "@/hooks/use-toast"
 import { Stack } from "@/components/store/base/stack"
-import { STORE_TOKENS } from "@/components/store/constants/tokens"
 
 export function Toaster() {
     const { toasts } = useToast()

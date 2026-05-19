@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { Copy, CheckCheck, Loader2 } from 'lucide-react'
+import { Copy, CheckCheck } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
 import { useQueryClient } from '@tanstack/react-query'

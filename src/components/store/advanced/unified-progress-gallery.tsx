@@ -3,13 +3,11 @@
 import React, { useState, useTransition } from 'react'
 import { Camera, Calendar, X, Maximize2, Pencil, Check, ChevronLeft, ChevronRight, Filter } from 'lucide-react'
 import { Input } from '@/components/store/base/input'
-import { deleteProgressPhoto, updateProgressPhotoDate } from '@/actions/student-actions'
 import { useQueryClient } from '@tanstack/react-query'
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
 import { useToast } from '@/hooks/use-toast'
 import { ENTITIES } from '@/lib/outbox-db'
 import { QUERY_KEYS } from '@/lib/query-keys'
-import { cn } from '@/lib/utils'
 import Image from 'next/image'
 
 // Design System Imports
@@ -21,7 +19,6 @@ import { Icon } from '@/components/store/base/icon'
 import { Button } from '@/components/store/base/button'
 import { Separator } from '@/components/store/base/separator'
 import { Modal } from '@/components/store/advanced/modal'
-import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 type PhotoType = 'front_url' | 'back_url' | 'side_right_url' | 'side_left_url'
 

@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { Dumbbell, CreditCard, Sparkles, Search, Check, Zap, ArrowRight, ShieldCheck, Trophy, Target } from 'lucide-react'
+import { CreditCard, Search, Check, Zap, ArrowRight, ShieldCheck, Trophy, Target } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { CancelSubscriptionButton } from '@/components/store/advanced/cancel-subscription-button'

@@ -1,8 +1,7 @@
 "use client"
 
 import { useMemo, useRef, useEffect, useState } from 'react'
-import { format, differenceInDays, addDays, parseISO, isSameDay } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
+import { format, differenceInDays, addDays, parseISO } from 'date-fns'
 import {
     LineChart,
     Line,
@@ -10,13 +9,11 @@ import {
     YAxis,
     CartesianGrid,
     Tooltip,
-    ResponsiveContainer,
-    ReferenceLine
+    ResponsiveContainer
 } from 'recharts'
 import { Stack } from '@/components/store/base/stack'
 import { Box } from '@/components/store/base/box'
 import { Font } from '@/components/store/base/font'
-import { GlassPanel } from '@/components/store/base/surface'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { RechartsChartTooltip } from '@/components/store/intermediary/chart-tooltip'
 

@@ -7,16 +7,12 @@ import { Box } from '@/components/store/base/box'
 import { Font } from '@/components/store/base/font'
 import { Icon } from '@/components/store/base/icon'
 import { Input } from '@/components/store/base/input'
-import { Button } from '@/components/store/base/button'
 import {
     CreditCard,
     User,
     ShieldCheck,
-    ChevronRight,
-    ChevronLeft,
     CheckCircle2,
     Calendar,
-    Lock,
     MapPin,
     Hash,
     Loader2

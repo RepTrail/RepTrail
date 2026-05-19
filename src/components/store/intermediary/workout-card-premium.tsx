@@ -14,7 +14,6 @@ import {
     Edit3,
     Copy,
     Maximize2,
-    Eye,
     Calendar,
     Dumbbell
 } from 'lucide-react'

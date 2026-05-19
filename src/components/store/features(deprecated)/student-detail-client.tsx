@@ -13,8 +13,6 @@ import { getAssignedErgogenics } from '@/actions/ergogenics-actions'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
-    ChevronLeft,
-    Calendar,
     TrendingUp,
     Target,
     Droplet,
@@ -29,7 +27,6 @@ import {
     Syringe,
     Camera,
     Activity,
-    ArrowUpRight,
     Zap,
     Eye,
     MessageSquare,
@@ -38,17 +35,12 @@ import {
 } from 'lucide-react'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { Stack } from '@/components/store/base/stack'
-import { Grid } from '@/components/store/base/grid'
-import { Badge } from "@/components/ui/badge"
 import Link from 'next/link'
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { EditStudentDialog } from './edit-student-dialog'
 import { StudentGalleryDialog } from './student-gallery-dialog'
 import { MarkPaidButton } from './mark-paid-button'
 import { StudentWorkoutHistory } from './student-workout-history'
 import { UnifiedAdherenceChart } from '@/components/store/advanced/unified-adherence-chart'
 import { UnifiedDeleteButton } from '@/components/store/features(deprecated)/unified-delete-button'
-import { ToggleStudentStatusButton } from './toggle-student-status-button'
 import { StatCard } from '@/components/store/features(deprecated)/stat-card'
 import { PerformanceAnalysisSection } from '@/components/store/advanced/performance-analysis-section'
 import { StudentRecentActivities } from './student-recent-activities'

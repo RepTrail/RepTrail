@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { X, Zap, RefreshCw, Package, Pencil, Eye, ExternalLink } from 'lucide-react'
+import { Zap, RefreshCw, Package, Pencil, Eye, ExternalLink } from 'lucide-react'
 import { Stack } from '@/components/store/base/stack'
 import { Grid } from '@/components/store/base/grid'
 import { Box } from '@/components/store/base/box'

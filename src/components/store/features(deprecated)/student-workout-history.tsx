@@ -1,7 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import {
     Clock,
@@ -12,8 +11,6 @@ import {
     Timer,
     Activity,
     Lock,
-    XIcon,
-    Bell,
     Trash2
 } from 'lucide-react'
 import {
@@ -24,9 +21,7 @@ import {
     DialogTrigger,
     DialogClose,
     DialogDescription,
-    DialogFooter,
 } from "@/components/ui/dialog"
-import { deleteWorkoutLog } from '@/actions/log-actions'
 import { useQueryClient } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { useToast } from '@/hooks/use-toast'

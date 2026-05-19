@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { impersonateUser } from '@/actions/admin-actions'
 import { Button } from '@/components/store/base/button'
-import { ShieldAlert, LogOut, ArrowLeftRight, UserCheck, RefreshCw } from 'lucide-react'
+import { ShieldAlert, ArrowLeftRight, RefreshCw } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import { Box } from '@/components/store/base/box'
 import { Inline } from '@/components/store/base/layout'

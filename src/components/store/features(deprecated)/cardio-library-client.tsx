@@ -5,7 +5,6 @@ import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { useQuery } from '@tanstack/react-query'
 import { getCardioLibrary } from '@/actions/cardio-actions'
 import { QUERY_KEYS } from '@/lib/query-keys'
-import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Activity, Plus } from "lucide-react"
 import { UnifiedLibraryCard } from "@/components/store/features(deprecated)/unified-library-card"

@@ -10,7 +10,7 @@ import { ShieldCheck, Star, ExternalLink, ShoppingBag } from 'lucide-react'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { Badge } from '@/components/store/base/badge'
 import { Img } from '@/components/store/base/img'
-import { GlassPanel, Surface } from '@/components/store/base/surface'
+import { GlassPanel } from '@/components/store/base/surface'
 
 export interface StoreProductCardProps {
     id: string

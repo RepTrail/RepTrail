@@ -3,11 +3,8 @@
 import React from 'react'
 import { Stack } from '@/components/store/base/stack'
 import { Font } from '@/components/store/base/font'
-import { Button } from '@/components/store/base/button'
-import { Icon } from '@/components/store/base/icon'
 import { Box } from '@/components/store/base/box'
 import { Banner } from '@/components/store/base/banner'
-import { ArrowRight } from 'lucide-react'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 export function StoreHeroCard() {

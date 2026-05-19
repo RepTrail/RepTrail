@@ -1,10 +1,8 @@
 'use client';
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Logo } from '@/components/store/base/logo'
 import { Box } from '@/components/store/base/box'
 import { Stack } from '@/components/store/base/stack'
-import { Font } from '@/components/store/base/font'
 
 import { STORE_TOKENS } from "../constants/tokens";
 

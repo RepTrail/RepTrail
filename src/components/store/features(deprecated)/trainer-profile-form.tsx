@@ -6,8 +6,8 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { MapPin } from "lucide-react"
-import { updateTrainerProfile, uploadTrainerAvatar } from "@/actions/trainer-actions"
-import { useQueryClient, useMutation } from '@tanstack/react-query'
+import { uploadTrainerAvatar } from "@/actions/trainer-actions"
+import { useQueryClient } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { useToast } from "@/hooks/use-toast"
 import { AvatarUploadWithCrop } from "./avatar-upload-with-crop"

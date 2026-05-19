@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
-import { cancelAsaasSubscription } from "@/actions/asaas-actions"
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
 import { ENTITIES } from '@/lib/outbox-db'
 import {
@@ -11,7 +10,6 @@ import {
     DialogContent,
     DialogDescription,
     DialogFooter,
-    DialogHeader,
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"

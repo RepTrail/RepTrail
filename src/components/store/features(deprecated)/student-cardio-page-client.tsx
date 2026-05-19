@@ -12,7 +12,6 @@ import { useQuery } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { getStudentCardioAssignments, getCardioLibrary } from '@/actions/cardio-actions'
 import { getStudentProfile, getStudentTrainer } from '@/actions/student-actions'
-import { cn } from "@/lib/utils"
 import { EmptyState } from '@/components/store/intermediary/empty-state'
 import { Stack } from '@/components/store/base/stack'
 import { Grid } from '@/components/store/base/grid'

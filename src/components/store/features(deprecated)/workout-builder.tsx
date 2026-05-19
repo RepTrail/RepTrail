@@ -12,8 +12,6 @@ import {
     PlusCircle,
     Trash2,
     GripVertical,
-    Save,
-    Loader2,
     Pencil,
     Check,
     X,
@@ -23,16 +21,9 @@ import {
 import { UnifiedAssignDialog } from "@/components/store/features(deprecated)/unified-assign-dialog"
 import {
     getWorkoutDetails,
-    addExerciseToWorkout,
-    removeExerciseFromWorkout,
-    updateWorkoutExercise,
-    searchExercises,
-    createNewExercise,
-    updateWorkoutMeta,
-    updateWorkoutExercisesOrder
+    searchExercises
 } from "@/actions/workout-actions"
-import { getBetaTesterMode } from "@/actions/app-settings-actions"
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useToast } from '@/hooks/use-toast'
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
 import { QUERY_KEYS } from "@/lib/query-keys"

@@ -16,7 +16,6 @@ import {
     Syringe
 } from 'lucide-react'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
-import { RegistryActionModal, RegistryActionType } from '@/components/store/advanced/registry-action-modal'
 
 interface ErgogenicCardPremiumProps {
     id: string

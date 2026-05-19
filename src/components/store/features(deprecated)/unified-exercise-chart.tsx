@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import { useMemo, useRef, useEffect } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Dumbbell, TrendingUp, Activity } from 'lucide-react'
 import { cn } from '@/lib/utils'
 

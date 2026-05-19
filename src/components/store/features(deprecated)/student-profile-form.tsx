@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { updateStudentProfile, uploadAvatar } from '@/actions/student-actions'
+import { uploadAvatar } from '@/actions/student-actions'
 import { useQueryClient } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'

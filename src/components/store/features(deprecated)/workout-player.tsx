@@ -12,26 +12,18 @@ import { Icon } from '@/components/store/base/icon'
 import { Surface } from '@/components/store/base/surface'
 import {
     Play,
-    Pause,
     CheckCircle,
     SkipForward,
     Timer,
     Activity,
-    ChevronLeft,
-    ChevronRight,
     Trophy,
-    Target,
-    ChevronDown,
-    ChevronUp,
     XCircle,
-    Check,
-    Loader2
+    Check
 } from 'lucide-react'
 import { useToast } from "@/hooks/use-toast"
-import { cn } from "@/lib/utils"
 import { useRouter } from 'next/navigation'
 import { getWorkoutLastSession } from '@/actions/log-actions'
-import { generateExecutionSteps, ExecutionStep, WorkoutPhase } from '@/lib/workout-flow-engine'
+import { generateExecutionSteps } from '@/lib/workout-flow-engine'
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
 import { ENTITIES } from '@/lib/outbox-db'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'

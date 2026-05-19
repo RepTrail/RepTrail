@@ -8,7 +8,6 @@ import { Box } from '@/components/store/base/box'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 // Store Advanced Components (Smart Layer)
-import { StudentDashboardHeader } from '@/components/store/advanced/student-dashboard-header'
 import { StudentPaymentWarning } from '@/components/store/advanced/student-payment-warning'
 import { StudentTrainingProtocols } from '@/components/store/advanced/student-training-protocols'
 import { StudentCardioTracker } from '@/components/store/advanced/student-cardio-tracker'

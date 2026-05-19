@@ -1,6 +1,6 @@
 'use client'
 
-import { CheckCircle, Dumbbell } from 'lucide-react'
+import { CheckCircle } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import Link from 'next/link'
 

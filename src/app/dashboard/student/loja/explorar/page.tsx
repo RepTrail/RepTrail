@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { getStoreProducts, logProductClick } from '@/actions/store-actions'
 import {
     ShoppingBag,
@@ -10,8 +10,6 @@ import {
     ArrowLeft,
     Tag,
     ChevronDown,
-    Zap,
-    Flame,
     Star,
     ShieldCheck
 } from 'lucide-react'

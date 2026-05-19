@@ -3,7 +3,7 @@
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 import { Card, CardContent } from '@/components/ui/card'
-import { FlaskConical, Users, ArrowUpRight } from 'lucide-react'
+import { FlaskConical, ArrowUpRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"

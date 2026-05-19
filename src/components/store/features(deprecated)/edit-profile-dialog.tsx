@@ -16,11 +16,9 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
-import { updateTrainerProfile } from '@/actions/profile-actions'
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
 import { ENTITIES } from '@/lib/outbox-db'
 import { useQueryClient } from '@tanstack/react-query'
-import { QUERY_KEYS } from '@/lib/query-keys'
 
 interface EditProfileDialogProps {
     profile: {

@@ -8,12 +8,8 @@ import { getStudentProfile, getStudentTrainer } from '@/actions/student-actions'
 import { useRealtimeSync } from '@/hooks/use-realtime-sync'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { DietManagementSectionContent } from '@/components/store/sections/diet-management-section-content'
-import { Utensils, Plus, FileUp } from 'lucide-react'
 import { Stack } from '@/components/store/base/stack'
-import { Button } from '@/components/store/base/button'
-import { Icon } from '@/components/store/base/icon'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
-import Link from 'next/link'
 import { Grid } from '@/components/store/base/grid'
 
 interface StudentDietManagementSmartProps {

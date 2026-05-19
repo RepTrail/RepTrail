@@ -14,8 +14,7 @@ import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { 
     Package, 
     Trash2, 
-    Edit3,
-    Search
+    Edit3
 } from 'lucide-react'
 
 export function AdminProductsCatalogPanel() {

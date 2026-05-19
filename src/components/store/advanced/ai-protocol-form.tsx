@@ -15,8 +15,6 @@ import { Icon } from '@/components/store/base/icon'
 import { FormCheckbox } from '@/components/store/base/form-checkbox'
 import {
     Zap,
-    Dumbbell,
-    Activity,
     Utensils,
     Sparkles,
     Loader2,

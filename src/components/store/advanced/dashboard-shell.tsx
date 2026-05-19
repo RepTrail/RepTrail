@@ -6,24 +6,21 @@ import { Logo } from '@/components/store/base/logo'
 import { SidebarItem } from '../intermediary/sidebar-item'
 import { BottomNavItem } from '../intermediary/bottom-nav-item'
 import { SidebarProfile } from '../intermediary/sidebar-profile'
-import { Icon } from '@/components/store/base/icon'
 import { Box } from '@/components/store/base/box'
 import { Main } from '@/components/store/base/main'
 import { Stack } from '@/components/store/base/stack'
-import { Divider, MobileNavContainer, Inline } from '@/components/store/base/layout'
+import { Divider, MobileNavContainer } from '@/components/store/base/layout'
 import { Surface, GlassPanel } from '@/components/store/base/surface'
 import { BackgroundEffects } from '@/components/store/base/background-effects'
 import { ImpersonationBar } from './impersonation-bar'
 import { StoreMobileHeader } from './store-mobile-header'
-import { cn } from '@/lib/utils'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { RegistryColor, RegistryProvider } from './registry-context'
 import {
     Home, Users, Dumbbell, Utensils, Activity, FlaskConical,
     ShoppingBag, CreditCard, Trophy, User, FileUp, Search,
     UserCheck, Sparkles, TrendingUp, ClipboardList, Syringe,
-    DollarSign, BarChart2, BarChart3, HeartHandshake, Shield,
-    Menu, X, ArrowRightLeft, LucideIcon
+    DollarSign, BarChart2, BarChart3, HeartHandshake, Shield, ArrowRightLeft, LucideIcon
 } from 'lucide-react'
 
 // ─── Icon Map ───────────────────────────────────────────────────────────────

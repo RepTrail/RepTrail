@@ -10,7 +10,6 @@ import { Surface, CardHeader } from '@/components/store/base/surface'
 import { ModalOverlay, ModalContainer, Divider } from '@/components/store/base/layout'
 import { Box } from '@/components/store/base/box'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
-import { cn } from '@/lib/utils'
 
 interface ModalProps {
   isOpen: boolean

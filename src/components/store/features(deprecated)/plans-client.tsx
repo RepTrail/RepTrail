@@ -2,8 +2,7 @@
 
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { Check, Users, Zap, ArrowRight, Sparkles, CreditCard, QrCode, FileText } from 'lucide-react'
-import { createAsaasSubscription } from "@/actions/asaas-actions"
+import { Check, Users, Zap, Sparkles, CreditCard } from 'lucide-react'
 import { useToast } from "@/hooks/use-toast"
 import { useQueryClient } from '@tanstack/react-query'
 import { PaymentModal } from "./payment-modal"

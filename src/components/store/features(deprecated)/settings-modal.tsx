@@ -9,11 +9,8 @@ import {
     Zap,
     Clock,
     Download,
-    ShieldAlert,
     CheckCircle2,
     Smartphone,
-    AlertTriangle,
-    Key,
     Loader2
 } from 'lucide-react'
 import { getTermsStatus } from '@/actions/terms-actions'
@@ -33,7 +30,6 @@ import { Stack } from '@/components/store/base/stack'
 import { Font } from '@/components/store/base/font'
 import { Icon } from '@/components/store/base/icon'
 import { Button } from '@/components/store/base/button'
-import { FormSwitch } from '@/components/store/base/form-switch'
 import { Surface } from '@/components/store/base/surface'
 import { Box } from '@/components/store/base/box'
 import { Input } from '@/components/store/base/input'

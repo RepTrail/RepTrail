@@ -8,7 +8,6 @@ import { Icon } from '@/components/store/base/icon'
 import { LucideIcon } from 'lucide-react'
 import { GlassPanel } from '@/components/store/base/surface'
 import { Button } from '@/components/store/base/button'
-import { cn } from '@/lib/utils'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 interface Option {

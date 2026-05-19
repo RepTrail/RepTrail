@@ -15,7 +15,7 @@ import { BaseAvatar } from '@/components/store/base/avatar'
 import { GlassPanel } from '@/components/store/base/surface'
 import { Button } from '@/components/store/base/button'
 import {
-    ShieldCheck, Star, MapPin, MessageCircle, Trophy,
+    ShieldCheck, Star, MapPin, MessageCircle,
     Dumbbell, Utensils, Activity, ArrowRight, Phone
 } from 'lucide-react'
 

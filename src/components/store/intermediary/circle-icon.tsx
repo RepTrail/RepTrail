@@ -4,7 +4,6 @@ import React from 'react'
 import { LucideIcon } from 'lucide-react'
 import { Box } from '@/components/store/base/box'
 import { Icon } from '@/components/store/base/icon'
-import { cn } from '@/lib/utils'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 interface CircleIconProps {

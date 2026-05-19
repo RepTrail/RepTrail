@@ -4,11 +4,7 @@ import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 import { useQuery } from '@tanstack/react-query'
 import { getTrainerWorkouts } from "@/actions/workout-actions"
-import { getTrainerStudents } from "@/actions/trainer-actions"
-import { getBetaTesterMode } from "@/actions/app-settings-actions"
 import { QUERY_KEYS } from '@/lib/query-keys'
-import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { Dumbbell, FileUp, Plus } from "lucide-react"
 import Link from "next/link"
 import { PillButton } from "@/components/ui/pill-button"

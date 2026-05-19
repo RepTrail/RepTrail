@@ -9,36 +9,23 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
     Users,
     Search,
-    Mail,
     Wallet,
     Activity,
     ArrowUpRight,
-    AlertCircle,
-    CheckCircle,
     Zap,
     Sparkles,
     Crown,
-    BedDouble,
     Plus,
     UserMinus
 } from 'lucide-react'
-import { Badge } from "@/components/ui/badge"
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table"
+
+
 import { UnifiedCreationDialog } from '@/components/store/features(deprecated)/unified-creation-dialog'
 import { PillButton } from '@/components/ui/pill-button'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { StudentPrefetchLink } from './student-prefetch-link'
 import { CopyInviteButton } from './copy-invite-button'
-import Link from 'next/link'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
-import { LayoutDashboard } from 'lucide-react'
 
 interface TrainerStudentsClientProps {
     userId: string

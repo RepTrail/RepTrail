@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { AIProtocolGenerator } from './ai-protocol-generator'
-import { Sparkles, Dumbbell, Utensils, Zap, X, Store } from 'lucide-react'
+import { Sparkles, Dumbbell, Utensils, Zap, X } from 'lucide-react'
 import { Box } from '@/components/store/base/box'
 import { Stack } from '@/components/store/base/stack'
 import { Font } from '@/components/store/base/font'

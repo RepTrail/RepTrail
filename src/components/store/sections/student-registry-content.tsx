@@ -12,10 +12,8 @@ import {
     TrendingUp,
     Users,
     ShoppingBag,
-    CheckCircle,
     User,
-    Sparkles,
-    Zap
+    Sparkles
 } from 'lucide-react'
 import { CommunityFeedSectionContent } from '@/components/store/sections/community-feed-section-content'
 import { MarketplaceSectionContent } from '@/components/store/sections/marketplace-section-content'
@@ -30,11 +28,9 @@ import { RankingSectionContent } from '@/components/store/sections/ranking-secti
 import { StudentOnboardingSectionContent } from '@/components/store/sections/student-onboarding-section-content'
 import { StudentProfileSectionContent } from '@/components/store/sections/student-profile-section-content'
 import { AIProtocolSectionContent } from '@/components/store/sections/ai-protocol-section-content'
-import { StudentSubscriptionStatus } from '@/components/store/advanced/student-subscription-status'
 import { AIProtocolEmptyStateSectionContent } from '@/components/store/sections/ai-protocol-empty-state-section-content'
 import { Box } from '@/components/store/base/box'
 import { STORE_TOKENS } from '@/components/store/constants/tokens';
-import { Font } from '@/components/store/base/font'
 import { ManagementRegistrySection } from '@/components/store/advanced/management-registry-section'
 import { ShareTransformation } from '@/components/store/advanced/student-share-transformation'
 

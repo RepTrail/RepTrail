@@ -1,16 +1,11 @@
 'use client'
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import {
     Activity,
-    Clock,
     Timer,
-    ChevronRight,
 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import Link from 'next/link'
 import {
-    getCardioLibrary,
     getStudentCardioAssignments
 } from '@/actions/cardio-actions'
 import { Badge } from '@/components/ui/badge'

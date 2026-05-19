@@ -1,4 +1,4 @@
-/* eslint-disable no-restricted-syntax */
+ 
 'use client'
 
 import React from 'react'
@@ -7,7 +7,7 @@ import { Font } from '@/components/store/base/font'
 import { Icon } from '@/components/store/base/icon'
 import { Button } from '@/components/store/base/button'
 import { BaseAvatar } from '@/components/store/base/avatar'
-import { LogOut, Settings, ArrowRightLeft, Briefcase } from 'lucide-react'
+import { LogOut, Settings, Briefcase } from 'lucide-react'
 import { signOutAction } from '@/actions/auth-actions'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { Box } from '@/components/store/base/box'

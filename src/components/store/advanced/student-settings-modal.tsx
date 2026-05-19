@@ -9,7 +9,6 @@ import {
     Zap,
     Clock,
     Download,
-    ShieldAlert,
     CheckCircle2,
     Smartphone,
     CreditCard,
@@ -29,8 +28,6 @@ import { Modal } from '@/components/store/advanced/modal'
 import { Stack } from '@/components/store/base/stack'
 import { Font } from '@/components/store/base/font'
 import { Icon } from '@/components/store/base/icon'
-import { Button } from '@/components/store/base/button'
-import { Surface } from '@/components/store/base/surface'
 import { Box } from '@/components/store/base/box'
 import { Input } from '@/components/store/base/input'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'

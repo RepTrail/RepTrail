@@ -4,14 +4,13 @@ import React from 'react'
 import { Grid } from '@/components/store/base/grid'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { ManagementCardPremium } from '@/components/store/intermediary/management-card-premium'
-import { Maximize2, Activity } from 'lucide-react'
+import { Activity } from 'lucide-react'
 import { EmptyState } from '@/components/store/intermediary/empty-state'
 import { RegistryActionModal, RegistryActionType } from '@/components/store/advanced/registry-action-modal'
 import { useRouter } from 'next/navigation'
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { ENTITIES } from '@/lib/outbox-db'
-import { deleteCardio, duplicateCardio, assignCardio, updateCardioMeta, createCardio } from '@/actions/cardio-actions'
 
 interface CardioManagementSectionContentProps {
     userId?: string

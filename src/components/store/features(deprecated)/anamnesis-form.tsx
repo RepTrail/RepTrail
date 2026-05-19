@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -14,8 +14,7 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { useToast } from "@/hooks/use-toast"
-import { Ruler, Weight, User, Activity, Calculator, ArrowRight, Target, Check } from "lucide-react"
-import { updateStudentProfile } from '@/actions/student-actions'
+import { Ruler, Weight, User, ArrowRight, Target, Check } from "lucide-react"
 import { Badge } from '@/components/ui/badge'
 
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'

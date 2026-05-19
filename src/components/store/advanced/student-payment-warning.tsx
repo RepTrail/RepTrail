@@ -6,7 +6,7 @@ import { Stack } from '@/components/store/base/stack'
 import { Font } from '@/components/store/base/font'
 import { Surface } from '@/components/store/base/surface'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
-import { CreditCard, AlertTriangle, ChevronRight } from 'lucide-react'
+import { CreditCard, AlertTriangle } from 'lucide-react'
 import { Box } from '@/components/store/base/box'
 
 interface StudentPaymentWarningProps {

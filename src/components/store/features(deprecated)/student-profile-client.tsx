@@ -1,8 +1,8 @@
 'use client';
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { getStudentProfile, getStudentTrainer } from '@/actions/student-actions'
-import { ShieldCheck, User } from 'lucide-react'
+import { User } from 'lucide-react'
 import { StudentProfileForm } from './student-profile-form'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { Stack } from '@/components/store/base/stack'

@@ -5,16 +5,14 @@ import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { Stack } from '@/components/store/base/stack'
 import { CardioTimerCard } from '@/components/store/intermediary/cardio-timer-card'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
-import { Activity, ChevronLeft, ChevronRight, Pause, Square } from 'lucide-react'
+import { Activity, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { getTodayCardio, getCardioStatus } from '@/actions/cardio-actions'
-import { useRealtimeSync } from '@/hooks/use-realtime-sync'
 import { Button } from '@/components/store/base/button'
 import { Icon } from '@/components/store/base/icon'
 import { Box } from '@/components/store/base/box'
 import { Font } from '@/components/store/base/font'
-import { useRouter } from 'next/navigation'
 import { 
     startCardioSession, 
     updateCardioSession, 

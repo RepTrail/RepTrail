@@ -1,11 +1,10 @@
 'use client'
 
-import { useTrainerOnboarding, OnboardingStep } from '@/hooks/use-trainer-onboarding'
+import { useTrainerOnboarding } from '@/hooks/use-trainer-onboarding'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Sparkles, FileUp, UserPlus, CheckCircle2, ArrowRight, X, Zap } from 'lucide-react'
+import { Sparkles, FileUp, ArrowRight, X, Zap } from 'lucide-react'
 import Link from 'next/link'
-import { cn } from '@/lib/utils'
 import { useState, useEffect } from 'react'
 
 interface TrainerOnboardingBannerProps {

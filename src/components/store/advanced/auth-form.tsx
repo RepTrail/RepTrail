@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { AuthLoginForm } from './auth-login-form'
 import { AuthSignUpForm } from './auth-signup-form'
 import { AuthAffiliateSignUpForm } from './auth-affiliate-signup-form'

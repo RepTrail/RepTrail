@@ -2,11 +2,11 @@
 
 import { getTodayCardio, getCardioStatus } from '@/actions/cardio-actions'
 
-import { Flame, Activity } from 'lucide-react'
+import { Activity } from 'lucide-react'
 import { CardioPlayer } from '@/components/store/features(deprecated)/cardio-player'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { useRealtimeSync } from '@/hooks/use-realtime-sync'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { outboxDB } from '@/lib/outbox-db'
 
 interface CardioCardProps {
@@ -14,7 +14,7 @@ interface CardioCardProps {
 }
 
 import { useState } from 'react'
-import { ChevronLeft, ChevronRight, CheckCircle, Sparkles } from 'lucide-react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 export function CardioCard({ userId }: CardioCardProps) {
     const [currentIndex, setCurrentIndex] = useState(0)

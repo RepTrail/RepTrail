@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -17,9 +17,7 @@ import {
     Sparkles,
     Pencil,
     Check,
-    X,
     Repeat2,
-    ListRestart,
     Save,
     GripVertical,
     Calendar
@@ -27,19 +25,11 @@ import {
 import { cn } from '@/lib/utils'
 import {
     getDietDetails,
-    addMealToDiet,
-    addMealItem,
-    updateMealItem,
-    removeMealItem,
-    removeMeal,
     estimateMacros,
     estimateAllDietMacros,
-    updateDietMeta,
-    suggestSubstitution,
-    updateMealsOrder,
-    updateMealItemsOrder
+    suggestSubstitution
 } from "@/actions/diet-actions"
-import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query'
+import { useQueryClient, useQuery } from '@tanstack/react-query'
 import { useToast } from '@/hooks/use-toast'
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
 import { QUERY_KEYS } from "@/lib/query-keys"

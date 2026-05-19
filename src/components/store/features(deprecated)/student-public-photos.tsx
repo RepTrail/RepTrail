@@ -2,7 +2,6 @@ import { createClient } from '@/lib/supabase/server'
 import { Trophy, Activity } from 'lucide-react'
 import Image from 'next/image'
 import { ShareTransformation } from '@/components/store/advanced/student-share-transformation'
-import { PublicStudentGallery } from './student-public-gallery'
 
 import { UnifiedProgressGallery } from '@/components/store/advanced/unified-progress-gallery'
 

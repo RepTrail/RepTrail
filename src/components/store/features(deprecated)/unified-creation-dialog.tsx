@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
-import { Plus, ChevronDown, Calendar, X } from "lucide-react"
+import { Plus } from "lucide-react"
 import {
     Select,
     SelectContent,
@@ -30,7 +30,6 @@ import { cn } from '@/lib/utils'
 import { useQueryClient, QueryKey } from '@tanstack/react-query'
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
 import { ENTITIES } from '@/lib/outbox-db'
-import { nanoid } from 'nanoid'
 
 interface FieldConfig {
     name: string

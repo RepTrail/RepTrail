@@ -15,8 +15,7 @@ import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { Plus, Loader2 } from "lucide-react"
-import { createStudentErgogenic } from '@/actions/student-content-actions'
+import { Plus } from "lucide-react"
 import { useQueryClient } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { useToast } from '@/hooks/use-toast'

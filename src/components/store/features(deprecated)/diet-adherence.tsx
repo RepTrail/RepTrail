@@ -11,7 +11,6 @@ import { estimateAllDietMacros } from '@/actions/diet-actions'
 import { useQueryClient } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
-import { ENTITIES } from '@/lib/outbox-db'
 
 interface DietAdherenceProps {
     diet: any

@@ -7,7 +7,6 @@ import { CancelSubscriptionButton } from "../advanced/cancel-subscription-button
 import Link from 'next/link'
 import { Button } from "@/components/ui/button"
 import { RegistryMain } from '@/components/store/advanced/registry-main'
-import { Stack } from '@/components/store/base/stack'
 import { Grid } from '@/components/store/base/grid'
 
 import { STORE_TOKENS } from "../constants/tokens";

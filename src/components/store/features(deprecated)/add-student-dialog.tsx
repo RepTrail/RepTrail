@@ -19,7 +19,6 @@ import { useToast } from "@/hooks/use-toast"
 import { useQueryClient } from '@tanstack/react-query'
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
 import { ENTITIES } from '@/lib/outbox-db'
-import { QUERY_KEYS } from '@/lib/query-keys'
 
 export function AddStudentDialog() {
     const [open, setOpen] = useState(false)

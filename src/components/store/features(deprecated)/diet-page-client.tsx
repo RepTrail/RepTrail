@@ -2,10 +2,10 @@
 
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
-import { Utensils, Flame, ChevronRight, Edit, Dumbbell, Calendar, Clock, Plus, FileUp } from "lucide-react"
+import { Utensils, Flame, Calendar, FileUp } from "lucide-react"
 import { getStudentDailyDiet, getTrainerDiets } from '@/actions/diet-actions'
 import { DietAdherence } from '@/components/store/features(deprecated)/diet-adherence'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import Link from 'next/link'
 import { Button } from "@/components/ui/button"
 import { UnifiedCreationDialog } from '@/components/store/features(deprecated)/unified-creation-dialog'
@@ -15,8 +15,6 @@ import { useQuery } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { getAssignedDiets } from '@/actions/diet-actions'
 import { getStudentProfile, getStudentTrainer } from '@/actions/student-actions'
-import { cn } from "@/lib/utils"
-import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { EmptyState } from '@/components/store/intermediary/empty-state'
 import { Stack } from '@/components/store/base/stack'
 import { Grid } from '@/components/store/base/grid'

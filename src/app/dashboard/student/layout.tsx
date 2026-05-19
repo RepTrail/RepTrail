@@ -1,7 +1,6 @@
 import { Suspense } from 'react'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { Home, Dumbbell, Utensils, Activity, User, ShoppingBag, Trophy, Search, UserCheck, Sparkles, TrendingUp, ClipboardList, Syringe } from 'lucide-react'
 import { StudentGlobalModals } from '@/components/layout/student-global-modals'
 import { createClient } from '@/lib/supabase/server'
 import { getStudentTrainer } from '@/actions/student-actions'

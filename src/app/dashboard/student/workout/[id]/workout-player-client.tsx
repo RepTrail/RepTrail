@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, use } from 'react'
+import React, { useState } from 'react'
 import { WorkoutPlayer } from '@/components/store/advanced/workout-player'
 import { notFound } from 'next/navigation'
 import { Dumbbell, Activity, ArrowLeft } from 'lucide-react'

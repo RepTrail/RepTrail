@@ -3,7 +3,7 @@
 import React from 'react'
 import { Grid } from '@/components/store/base/grid'
 import { ManagementCardPremium } from '@/components/store/intermediary/management-card-premium'
-import { Maximize2, Dumbbell } from 'lucide-react'
+import { Dumbbell } from 'lucide-react'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { EmptyState } from '@/components/store/intermediary/empty-state'
 import { RegistryActionModal, RegistryActionType } from '@/components/store/advanced/registry-action-modal'

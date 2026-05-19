@@ -3,7 +3,7 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { getPublicFeed } from '@/actions/student-actions'
-import { ShieldCheck, Lock, ChevronRight, Loader2, TrendingUp } from 'lucide-react'
+import { Lock, ChevronRight, TrendingUp } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect } from 'react'

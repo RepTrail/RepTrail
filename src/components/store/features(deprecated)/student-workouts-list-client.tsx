@@ -2,7 +2,7 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import Link from 'next/link'
-import { Dumbbell, Calendar, PlayCircle, Clock, ChevronRight, Plus, Edit, Trash2, FileUp } from 'lucide-react'
+import { Dumbbell, Calendar, Clock, Plus, FileUp } from 'lucide-react'
 import { UnifiedCreationDialog } from '@/components/store/features(deprecated)/unified-creation-dialog'
 import { UnifiedAssignDialog } from '@/components/store/features(deprecated)/unified-assign-dialog'
 import { DuplicateButton } from '@/components/store/features(deprecated)/duplicate-button'
@@ -12,8 +12,6 @@ import { useQuery } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { getAssignedWorkouts, getTrainerWorkouts } from '@/actions/workout-actions'
 import { getStudentProfile, getStudentTrainer } from '@/actions/student-actions'
-import { cn } from "@/lib/utils"
-import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { EmptyState } from '@/components/store/intermediary/empty-state'
 import { Stack } from '@/components/store/base/stack'
 import { Grid } from '@/components/store/base/grid'

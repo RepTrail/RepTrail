@@ -8,15 +8,9 @@ import { getStudentProfile, getStudentTrainer } from '@/actions/student-actions'
 import { useRealtimeSync } from '@/hooks/use-realtime-sync'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { CardioManagementSectionContent } from '@/components/store/sections/cardio-management-section-content'
-import { Activity, Plus } from 'lucide-react'
 import { Stack } from '@/components/store/base/stack'
-import { Button } from '@/components/store/base/button'
-import { Icon } from '@/components/store/base/icon'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
-import Link from 'next/link'
-import { Font } from '@/components/store/base/font'
 import { Grid } from '@/components/store/base/grid'
-import { Box } from '@/components/store/base/box'
 
 interface StudentCardioManagementSmartProps {
     userId: string

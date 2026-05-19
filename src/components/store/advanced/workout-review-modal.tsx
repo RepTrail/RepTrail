@@ -12,7 +12,6 @@ import { Icon } from '@/components/store/base/icon'
 import { Badge } from '@/components/store/base/badge'
 import { 
     Dumbbell, 
-    Save, 
     Zap, 
     Loader2
 } from 'lucide-react'
