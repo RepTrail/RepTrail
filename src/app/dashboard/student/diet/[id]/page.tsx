@@ -5,6 +5,7 @@ import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { getQueryClient } from '@/lib/get-query-client'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { StudentDietDetailClient } from "@/components/store/features(deprecated)/student-diet-detail-client"
+import { RegistryMain } from "@/components/store/advanced/registry-main"
 
 export default async function StudentDietEditPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params
@@ -30,18 +31,25 @@ export default async function StudentDietEditPage({ params }: { params: Promise<
         queryFn: () => getDietDetails(id)
     })
 
-    const diet = queryClient.getQueryData(QUERY_KEYS.diets.detail(id))
+    const diet = queryClient.getQueryData(QUERY_KEYS.diets.detail(id)) as any
     if (!diet) return notFound()
 
     return (
         <HydrationBoundary state={dehydrate(queryClient)}>
-            <div className="max-w-5xl mx-auto sm:px-6 lg:px-8 py-8" suppressHydrationWarning>
+            <RegistryMain
+                title={`Protocolo Alimentar - ${diet.name}`}
+                subtitle={diet.description || "Criador de Dieta Automático"}
+                icon="Utensils"
+                contextLabel="Dieta & Nutrição"
+                showTabs={false}
+                showHeader={false}
+            >
                 <StudentDietDetailClient 
                     dietId={id} 
                     userId={user.id} 
                     initialData={diet} 
                 />
-            </div>
+            </RegistryMain>
         </HydrationBoundary>
     )
 }

@@ -8,15 +8,6 @@ import { StudentMetaPixel } from './meta-pixel'
 import { PodiumCard, RankingRow } from '@/components/store/features(deprecated)/ranking-cards'
 import { PREFETCH_REGISTRY } from '@/lib/prefetch-registry'
 
-import { WorkoutCard } from '@/components/store/features(deprecated)/workout-card'
-import { CardioCard } from '@/components/store/features(deprecated)/cardio-card'
-import { DietCard } from '@/components/store/features(deprecated)/diet-card'
-import { ErgogenicsCard } from '@/components/store/features(deprecated)/ergogenics-card'
-import { AIProtocolEmptyState } from '@/components/store/features(deprecated)/ai-protocol-empty-state'
-
-import { PaymentWarning } from '@/components/store/features(deprecated)/student-payment-warning'
-import { StudentDashboardModals } from '@/components/store/features(deprecated)/student-dashboard-modals'
-import { AnamnesisForm } from '@/components/store/features(deprecated)/student-anamnesis-form'
 
 import { Activity, Utensils, Dumbbell, Star, Search, Trophy, ArrowRight, Sparkles, Zap, TrendingUp } from 'lucide-react'
 import { Button } from '@/components/ui/button'
