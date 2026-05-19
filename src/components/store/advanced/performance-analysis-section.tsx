@@ -27,14 +27,14 @@ export function PerformanceAnalysisSection({
 
     if (isBlocked) {
         return (
-            <Box bg="zinc" bgOpacity={10} rounded={STORE_TOKENS.RADIUS.SYSTEM} border={true} borderColor="zinc" borderOpacity={20} borderStyle="dashed" padding={STORE_TOKENS.PADDING.SECTION}>
+            <Box bg="zinc" bgOpacity={10} rounded={STORE_TOKENS.RADIUS.SYSTEM} border={true} borderColor="zinc" borderOpacity={20} padding={STORE_TOKENS.PADDING.SECTION}>
                 <Stack align="center" justify="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
-                    <Box bg="zinc" padding={4} rounded={STORE_TOKENS.RADIUS.FULL} border={true} borderColor="zinc" borderOpacity={20} display="flex" align="center" justify="center">
+                    <Box bg="zinc" padding={STORE_TOKENS.SPACING.CONTAINER} rounded={STORE_TOKENS.RADIUS.FULL} border={true} borderColor="zinc" borderOpacity={20} display="flex" align="center" justify="center">
                         <Icon icon={TrendingUp} size="xl" color="zinc-700" />
                     </Box>
                     <Stack align="center" gap={STORE_TOKENS.SPACING.ELEMENT} textAlign="center">
                         <Font variant="h3" weight="black" italic uppercase color="primary">Gráficos de Evolução</Font>
-                        <Box maxWidth={280}>
+                        <Box style={{ maxWidth: 280 }}>
                             <Font variant="sub-tiny" weight="black" uppercase color="zinc-500">
                                 {isStudentView
                                     ? <>Esta função está disponível apenas para alunos de treinadores <span style={{ color: '#10b981' }}>PRO e ELITE</span>.</>

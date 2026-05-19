@@ -130,16 +130,16 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
     const CustomTooltip = ({ active, payload, label }: any) => {
         if (active && payload && payload.length) {
             return (
-                <Box bg="zinc" bgOpacity={90} border={true} borderColor="zinc" borderOpacity={80} padding={3} rounded={STORE_TOKENS.RADIUS.SYSTEM} style={{ backdropFilter: 'blur(12px)', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' }}>
-                    <Box marginBottom={2}>
+                <Box bg="zinc" bgOpacity={90} border={true} borderColor="zinc" borderOpacity={80} padding={STORE_TOKENS.SPACING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM} style={{ backdropFilter: 'blur(12px)', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' }}>
+                    <Box style={{ marginBottom: 8 }}>
                         <Font variant="sub-tiny" weight="black" color="zinc-500" uppercase>{label}</Font>
                     </Box>
                     {payload.map((entry: any) => {
                         if (entry.value === null) return null
                         return (
-                            <Box key={entry.dataKey} display="flex" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} marginBottom={1}>
+                            <Box key={entry.dataKey} display="flex" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} style={{ marginBottom: 4 }}>
                                 <Box width={8} height={8} rounded={STORE_TOKENS.RADIUS.FULL} style={{ backgroundColor: entry.color }} />
-                                <Font variant="tiny" weight="bold" color="zinc-300" capitalize>
+                                <Font variant="tiny" weight="bold" color="zinc-400">
                                     {entry.name}:
                                 </Font>
                                 <Font variant="tiny" weight="black" color="white">
@@ -178,13 +178,13 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
 
     return (
         <Stack fullWidth gap={STORE_TOKENS.SPACING.SECTION}>
-            <Stack direction="row" wrap="wrap" gap={STORE_TOKENS.SPACING.CONTAINER} align="center" justify="end" paddingX={2}>
+            <Stack direction="row" wrap="wrap" gap={STORE_TOKENS.SPACING.CONTAINER} align="center" justify="end" style={{ padding: '0 8px' }}>
                 <LegendItem color="#10b981" label="Performance" />
                 <LegendItem color="#eab308" label="Peso" />
                 <LegendItem color="#ef4444" label="BF%" />
             </Stack>
 
-            <Box height={300} fullWidth maxWidth="100%" overflow="auto" className="scrollbar-hide" ref={scrollRef}>
+            <div ref={scrollRef} className="scrollbar-hide" style={{ height: 300, width: '100%', overflow: 'auto' }}>
                 <Box position="relative" fullHeight style={{ minWidth: mounted ? `${Math.max(100, chartData.length * 40)}px` : '100%', width: '100%' }}>
                     {mounted ? (
                         <ResponsiveContainer width="100%" height="100%">
@@ -285,7 +285,7 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
                     ) : (
                         <Box fullWidth fullHeight bg="zinc" bgOpacity={10} rounded={STORE_TOKENS.RADIUS.SYSTEM} className="animate-pulse" />
                     )}
-                </div>
+                </Box>
             </div>
         </Stack>
     )
