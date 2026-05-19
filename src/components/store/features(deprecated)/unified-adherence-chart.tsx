@@ -94,7 +94,7 @@ export function UnifiedAdherenceChart({ history, showErgogenics = false, noCard 
                                         <Tooltip delayDuration={0}>
                                             <TooltipTrigger asChild>
                                                 <div className={cn(
-                                                    "flex-1 h-full rounded-system transition-all hover:scale-150 hover:z-50 cursor-crosshair",
+                                                    "flex-1 h-full rounded-system transition-all cursor-crosshair",
                                                     colorClass
                                                 )} />
                                             </TooltipTrigger>

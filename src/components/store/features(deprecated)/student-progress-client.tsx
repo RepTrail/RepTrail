@@ -3,9 +3,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Activity, TrendingUp, Target, Droplet, Camera, History, Images } from "lucide-react"
 import { StudentWorkoutHistory } from './student-workout-history'
-import { ProgressPhotoUpload } from './student-photo-upload'
+import { ProgressPhotoUpload } from '@/components/store/advanced/student-photo-upload'
 import { UnifiedAdherenceChart } from '@/components/store/features(deprecated)/unified-adherence-chart'
-import { UnifiedProgressGallery } from '@/components/store/features(deprecated)/unified-progress-gallery'
+import { UnifiedProgressGallery } from '@/components/store/advanced/unified-progress-gallery'
 import { StatCard } from '@/components/store/features(deprecated)/stat-card'
 import { PerformanceAnalysisSection } from '@/components/store/features(deprecated)/performance-analysis-section'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"

@@ -1,29 +1,84 @@
 import { notFound } from 'next/navigation'
-import Image from 'next/image'
-import Link from 'next/link'
-import { Activity, ArrowLeft, ChevronRight, Sparkles, Zap } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
-import { Suspense } from 'react'
-
-
-// Streaming Components
-import { MetricsAndEvolution } from '@/components/store/features(deprecated)/student-public-metrics'
-import { WorkoutHistorySection } from '@/components/store/features(deprecated)/student-public-history'
-import { PhotosAndTransformation } from '@/components/store/features(deprecated)/student-public-photos'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { TrendingUp, History, Image as ImageIcon } from 'lucide-react'
+import { StudentPublicProfileMain } from '@/components/store/advanced/student-public-profile-main'
+import { StudentPublicMetrics } from '@/components/store/advanced/student-public-metrics'
+import { StudentPublicHistory } from '@/components/store/advanced/student-public-history'
+import { StudentPublicPhotos } from '@/components/store/advanced/student-public-photos'
+import { getStudentFullMetrics } from '@/actions/metrics-actions'
+import { getStudentAdherenceHistory } from '@/actions/tracking-actions'
+import { getStudentWorkoutHistory } from '@/actions/log-actions'
+import { DashboardShell } from '@/components/store/advanced/dashboard-shell'
+import { RegistryProvider } from '@/components/store/advanced/registry-context'
+import { RegistryMain } from '@/components/store/advanced/registry-main'
+import { UserCheck } from 'lucide-react'
 
 export const metadata = {
-    title: 'Perfil do Aluno | RepTrail'
+    title: 'Perfil do Aluno | RepTrail',
 }
 
-export default async function StudentPublicProfilePage({ params }: { params: Promise<{ id: string }> }) {
+const STUDENT_LINKS = [
+    { href: '/dashboard/student',              label: 'Home',           icon: 'Home',          exact: true },
+    { href: '/dashboard/student/workouts',     label: 'Meus Treinos',   icon: 'Dumbbell' },
+    { href: '/dashboard/student/cardio',       label: 'Cardio',         icon: 'Activity' },
+    { href: '/dashboard/student/diet',         label: 'Minha Dieta',    icon: 'Utensils' },
+    { href: '/dashboard/student/ergogenics',   label: 'Ergogênicos',    icon: 'Syringe' },
+    { href: '/dashboard/student/progress',     label: 'Evolução',       icon: 'TrendingUp' },
+    { href: '/dashboard/student/feed',         label: 'Feed de Alunos', icon: 'UserCheck' },
+    { href: '/dashboard/student/ranking',      label: 'Ranking',        icon: 'Trophy' },
+    { href: '/dashboard/student/loja',         label: 'Loja',           icon: 'ShoppingBag' },
+    { href: '/dashboard/student/profile',      label: 'Meu Perfil',     icon: 'User' },
+]
+
+const STUDENT_MOBILE_LINKS = [
+    { href: '/dashboard/student',              label: 'Home',    icon: 'Home',       exact: true },
+    { href: '/dashboard/student/workouts',     label: 'Treinos', icon: 'Dumbbell' },
+    { href: '/dashboard/student/cardio',       label: 'Cardio',  icon: 'Activity' },
+    { href: '/dashboard/student/loja',         label: 'Loja',    icon: 'ShoppingBag' },
+    { href: '/dashboard/student/profile',      label: 'Meu Perfil', icon: 'User' },
+]
+
+const TRAINER_LINKS = [
+    { href: '/dashboard/trainer',           label: 'Visão Geral',  icon: 'Home',         exact: true },
+    { href: '/dashboard/trainer/students',   label: 'Alunos',       icon: 'Users' },
+    { href: '/dashboard/trainer/workouts',   label: 'Treinos',      icon: 'Dumbbell' },
+    { href: '/dashboard/trainer/diets',      label: 'Dietas',       icon: 'Utensils' },
+    { href: '/dashboard/trainer/cardio',     label: 'Cardio',       icon: 'Activity' },
+    { href: '/dashboard/trainer/ergogenics', label: 'Ergogênicos',  icon: 'FlaskConical' },
+    { href: '/dashboard/trainer/loja',       label: 'Loja',         icon: 'ShoppingBag' },
+    { href: '/dashboard/trainer/plans',      label: 'Faturamento',  icon: 'CreditCard' },
+    { href: '/dashboard/trainer/ranking',    label: 'Ranking',      icon: 'Trophy' },
+    { href: '/dashboard/trainer/profile',    label: 'Meu Perfil',   icon: 'User' },
+]
+
+const TRAINER_MOBILE_LINKS = [
+    { href: '/dashboard/trainer',            label: 'Início',  icon: 'Home',        exact: true },
+    { href: '/dashboard/trainer/students',   label: 'Alunos',  icon: 'Users' },
+    { href: '/dashboard/trainer/loja',       label: 'Loja',    icon: 'ShoppingBag' },
+    { href: '/dashboard/trainer/ranking',    label: 'Ranking', icon: 'Trophy' },
+]
+
+export default async function StudentPublicProfilePage({
+    params,
+}: {
+    params: Promise<{ id: string }>
+}) {
     const { id: studentId } = await params
-    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
+    const supabase = await createClient()
     const { data: { user: authUser } } = await supabase.auth.getUser()
     const isOwner = authUser?.id === studentId
 
-    // 1. Fetch Core Profile Data (Fast)
+    // ── Get Viewer Profile if Logged In (to determine sidebar role/color) ───────
+    let viewerProfile: any = null
+    if (authUser) {
+        const { data } = await supabase
+            .from('profiles')
+            .select('role, full_name, avatar_url, email, is_admin')
+            .eq('id', authUser.id)
+            .single()
+        viewerProfile = data
+    }
+
+    // ── Core Profile (Fast) ────────────────────────────────────────────────────
     const { data: profile } = await supabase
         .from('profiles')
         .select('id, full_name, avatar_url, created_at')
@@ -32,176 +87,119 @@ export default async function StudentPublicProfilePage({ params }: { params: Pro
 
     if (!profile) notFound()
 
-    // 2. Fetch Basic Details (Fast)
-    const { data: details } = await supabase
-        .from('student_details')
-        .select('steroid_use')
-        .eq('id', studentId)
-        .single()
+    // ── Student Details & Data Fetches in Parallel ─────────────────────────────
+    const [detailsResult, trainerLinkResult, photosResult, fullMetrics, adherenceHistory, workoutHistory] = await Promise.all([
+        supabase
+            .from('student_details')
+            .select('steroid_use')
+            .eq('id', studentId)
+            .single(),
+        supabase
+            .from('trainer_students')
+            .select(`
+                active,
+                trainer:profiles!trainer_id(
+                    id, full_name, avatar_url, trainer_code
+                )
+            `)
+            .eq('student_id', studentId)
+            .eq('active', true)
+            .maybeSingle(),
+        supabase
+            .from('progress_photos')
+            .select('*')
+            .eq('student_id', studentId)
+            .eq('is_private', false)
+            .order('created_at', { ascending: false }),
+        getStudentFullMetrics(studentId),
+        getStudentAdherenceHistory(studentId, 30),
+        getStudentWorkoutHistory(studentId),
+    ])
 
-    // 3. Fetch Trainer Info (Fast)
-    const { data: trainerLink } = await supabase
-        .from('trainer_students')
-        .select(`
-            active,
-            trainer:profiles!trainer_id(
-                id, full_name, avatar_url, trainer_code
-            )
-        `)
-        .eq('student_id', studentId)
-        .eq('active', true)
-        .maybeSingle()
+    const details = detailsResult.data
+    const trainerLink = trainerLinkResult.data
+    const photos = photosResult.data
 
-    const trainerData = trainerLink?.trainer as { id: string; full_name: string; avatar_url: string; trainer_code?: string } | undefined
+    const trainerData = trainerLink?.trainer as
+        | { id: string; full_name: string; avatar_url: string; trainer_code?: string }
+        | undefined
 
-    // 4. Fetch Public Photos (Fast)
-    const { data: photos } = await supabase
-        .from('progress_photos')
-        .select('*')
-        .eq('student_id', studentId)
-        .eq('is_private', false)
-        .order('created_at', { ascending: false })
-
-    return (
-        <div className="min-h-screen bg-black text-white pb-20 overflow-x-hidden">
-            {/* Navigation Header */}
-            <div className="sticky top-0 z-50 bg-black/60 backdrop-blur-xl border-b border-white/5 px-5 sm:px-6 md:px-8 py-4">
-                <div className="max-w-6xl mx-auto flex items-center justify-between gap-2">
-                    <Link href="/dashboard/student/feed" className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors group shrink-0">
-                        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-                        <span className="text-[10px] sm:text-xs font-black uppercase tracking-widest italic">Voltar ao Feed</span>
-                    </Link>
-                    <div className="flex items-center gap-2 bg-emerald-500/10 px-3 sm: py-1.5 rounded-full border border-emerald-500/20 shrink-0">
-                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                        <span className="text-[8px] sm:text-[10px] font-black uppercase tracking-widest text-emerald-500 whitespace-nowrap">Perfil Verificado</span>
-                    </div>
-                </div>
-            </div>
-
-            {/* Hero Section (Immediate Render) */}
-            <div className="max-w-6xl mx-auto px-5 sm:px-6 md:px-8 pt-12">
-                <div className="relative rounded-3xl overflow-hidden bg-zinc-900/40 border border-white/5 p-6 sm:p-8 md:p-12 mb-12">
-                    <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12 relative z-10">
-                        <div className="w-32 h-32 md:w-48 md:h-48 rounded-full border-4 border-emerald-500/30 overflow-hidden relative shadow-2xl">
-                            {profile.avatar_url ? (
-                                <Image src={profile.avatar_url} alt={profile.full_name} fill className="object-cover" />
-                            ) : (
-                                <div className="w-full h-full flex items-center justify-center bg-zinc-800 text-emerald-500 font-black text-4xl uppercase">
-                                    {profile.full_name?.charAt(0)}
-                                </div>
-                            )}
-                        </div>
-
-                        <div className="flex-1 text-center md:text-left space-y-6">
-                            <div className="space-y-1">
-                                <h1 className="text-4xl md:text-6xl font-black italic uppercase tracking-tighter text-white">
-                                    {profile.full_name}
-                                </h1>
-                                <div className="flex items-center justify-center md:justify-start gap-2 pt-1">
-                                    <div className="flex items-center gap-2 bg-white/5 border border-white/5 px-3 py-1.5 rounded-full backdrop-blur-md">
-                                        <Activity className="w-3.5 h-3.5 text-emerald-500 animate-pulse" />
-                                        <span className="text-zinc-500 font-black uppercase tracking-[0.2em] text-[10px] leading-none">
-                                            Membro desde <span className="text-zinc-300">{profile.created_at ? new Date(profile.created_at).getFullYear() : 2024}</span>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="flex flex-wrap items-center justify-center md:justify-start gap-4">
-                                {trainerData ? (
-                                    <Link
-                                        href={`/personal/${trainerData.trainer_code || trainerData.id}`}
-                                        className="group bg-emerald-500 text-zinc-950 px-8 py-4 rounded-2xl font-black italic uppercase text-xs tracking-widest transition-all hover:scale-105 active:scale-95 shadow-xl shadow-emerald-500/20 flex items-center gap-3 pb-4"
-                                    >
-                                        <div className="w-10 h-10 rounded-full overflow-hidden relative border-2 border-zinc-950/20">
-                                            {trainerData.avatar_url ? (
-                                                <Image src={trainerData.avatar_url} alt={trainerData.full_name} fill className="object-cover" />
-                                            ) : (
-                                                <div className="w-full h-full bg-zinc-900 text-[10px] flex items-center justify-center">?</div>
-                                            )}
-                                        </div>
-                                        <div className="text-left">
-                                            <p className="text-[8px] opacity-70 leading-none mb-1">Coach Responsável</p>
-                                            <p className="leading-tight">{trainerData.full_name}</p>
-                                        </div>
-                                        <ChevronRight className="w-4 h-4 ml-2" />
-                                    </Link>
-                                ) : (
-                                    <div className="bg-emerald-500/10 px-6 py-4 rounded-2xl border border-emerald-500/20 flex items-center gap-3 pb-4">
-                                        <Sparkles className="w-6 h-6 text-emerald-500" />
-                                        <div className="text-left">
-                                            <p className="text-[10px] font-black uppercase text-emerald-500/60 leading-none mb-1">Módulo</p>
-                                            <p className="text-sm font-black uppercase italic text-emerald-500">Auto Treino RepTrail</p>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Background Glow */}
-                    <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-radial from-emerald-500/10 to-transparent opacity-50" />
-                </div>
-
-                {/* Tabs Navigation */}
-                <Tabs defaultValue="evolution" className="w-full">
-                    <div className="flex items-center justify-start sm:justify-center mb-12 overflow-x-auto no-scrollbar pb-2 px-2">
-                        <TabsList className="bg-zinc-900/50 border border-white/5 p-1 rounded-2xl h-14 w-max sm:w-auto">
-                            <TabsTrigger value="evolution" className="px-6 sm:px-8 rounded-xl font-black uppercase italic tracking-widest text-[10px] data-[state=active]:bg-emerald-500 data-[state=active]:text-zinc-950 transition-all gap-2 whitespace-nowrap">
-                                <TrendingUp className="w-3.5 h-3.5" />
-                                Evolução
-                            </TabsTrigger>
-                            <TabsTrigger value="history" className="px-6 sm:px-8 rounded-xl font-black uppercase italic tracking-widest text-[10px] data-[state=active]:bg-emerald-500 data-[state=active]:text-zinc-950 transition-all gap-2 whitespace-nowrap">
-                                <History className="w-3.5 h-3.5" />
-                                Histórico
-                            </TabsTrigger>
-                            <TabsTrigger value="photos" className="px-6 sm:px-8 rounded-xl font-black uppercase italic tracking-widest text-[10px] data-[state=active]:bg-emerald-500 data-[state=active]:text-zinc-950 transition-all gap-2 whitespace-nowrap">
-                                <ImageIcon className="w-3.5 h-3.5" />
-                                Galeria
-                            </TabsTrigger>
-                        </TabsList>
-                    </div>
-
-                    <TabsContent value="evolution" className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                        {/* Heavy Sections (Streamed) */}
-                        <Suspense fallback={null}>
-                            <MetricsAndEvolution studentId={studentId} steroidUse={!!details?.steroid_use} />
-                        </Suspense>
-                    </TabsContent>
-
-                    <TabsContent value="history" className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                        <Suspense fallback={null}>
-                            <WorkoutHistorySection studentId={studentId} />
-                        </Suspense>
-                    </TabsContent>
-
-                    <TabsContent value="photos" className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                        <Suspense fallback={null}>
-                            <PhotosAndTransformation studentId={studentId} isOwner={isOwner} studentName={profile.full_name} photos={photos || []} />
-                        </Suspense>
-                    </TabsContent>
-                </Tabs>
-
-                {/* Footer */}
-                <footer className="mt-20 pt-8 border-t border-zinc-800/50">
-                    <div className="text-center space-y-4">
-                        <div className="flex items-center justify-center gap-2">
-                            <div className="w-8 h-8 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-full flex items-center justify-center">
-                                <Zap className="w-4 h-4 text-zinc-950" />
-                            </div>
-                            <span className="text-sm font-black text-zinc-400 uppercase tracking-widest">RepTrail</span>
-                        </div>
-                        <p className="text-[10px] text-zinc-600 font-bold uppercase tracking-widest">
-                            Plataforma de Treino Personalizado
-                        </p>
-                        <p className="text-[8px] text-zinc-700">
-                            © 2026 Todos os direitos reservados
-                        </p>
-                    </div>
-                </footer>
-            </div>
-        </div >
+    // ── Compose streamed tab content as ReactNode ──────────────────────────────
+    const evolutionContent = (
+        <StudentPublicMetrics 
+            key="student-evolution-metrics"
+            fullMetrics={fullMetrics} 
+            adherenceHistory={adherenceHistory || []} 
+            steroidUse={!!details?.steroid_use} 
+        />
     )
+
+    const historyContent = (
+        <StudentPublicHistory 
+            key="student-history-workout"
+            history={workoutHistory || []} 
+        />
+    )
+
+    const photosContent = (
+        <StudentPublicPhotos
+            key="student-photos-gallery"
+            studentId={studentId}
+            isOwner={isOwner}
+            studentName={profile.full_name}
+            photos={photos || []}
+        />
+    )
+
+    // ── Enforce default student 'orange' theme for content elements ─────────────
+    const mainContent = (
+        <RegistryProvider defaultColor="orange">
+            <RegistryMain
+                title="PERFIL DO ALUNO"
+                subtitle="Acompanhe a evolução física, métricas de consistência e o histórico de treinos."
+                icon="UserCheck"
+                contextLabel="Perfil Público"
+                showTabs={false}
+            >
+                <StudentPublicProfileMain
+                    profile={profile}
+                    trainerData={trainerData}
+                    evolutionContent={evolutionContent}
+                    historyContent={historyContent}
+                    photosContent={photosContent}
+                />
+            </RegistryMain>
+        </RegistryProvider>
+    )
+
+    // ── Render with Sidebar Shell if Logged In, otherwise render pure page ──────
+    if (viewerProfile) {
+        const isTrainer = viewerProfile.role === 'trainer'
+        const shellColor = isTrainer ? 'emerald' : 'orange'
+        const links = isTrainer ? TRAINER_LINKS : STUDENT_LINKS
+        const mobileLinks = isTrainer ? TRAINER_MOBILE_LINKS : STUDENT_MOBILE_LINKS
+        const profileHref = isTrainer ? '/dashboard/trainer/profile' : '/dashboard/student/profile'
+
+        return (
+            <RegistryProvider defaultColor={shellColor}>
+                <DashboardShell
+                    color={shellColor}
+                    links={links}
+                    mobileLinks={mobileLinks}
+                    profileHref={profileHref}
+                    user={{
+                        id: authUser!.id,
+                        name: viewerProfile.full_name,
+                        email: viewerProfile.email,
+                        avatar_url: viewerProfile.avatar_url,
+                        isAdmin: viewerProfile.is_admin,
+                    }}
+                >
+                    {mainContent}
+                </DashboardShell>
+            </RegistryProvider>
+        )
+    }
+
+    return mainContent
 }
-
-

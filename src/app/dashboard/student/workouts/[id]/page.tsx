@@ -5,6 +5,7 @@ import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { getQueryClient } from '@/lib/get-query-client'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { StudentWorkoutDetailClient } from "@/components/store/features(deprecated)/student-workout-detail-client"
+import { RegistryMain } from "@/components/store/advanced/registry-main"
 
 export default async function StudentWorkoutPage({
     params,
@@ -25,18 +26,24 @@ export default async function StudentWorkoutPage({
         queryFn: () => getWorkoutDetails(id)
     })
 
-    const workout = queryClient.getQueryData(QUERY_KEYS.workouts.detail(id))
+    const workout = queryClient.getQueryData(QUERY_KEYS.workouts.detail(id)) as any
     if (!workout) return notFound()
 
     return (
         <HydrationBoundary state={dehydrate(queryClient)}>
-            <div className="max-w-5xl mx-auto sm:px-6 lg:px-8 py-8">
+            <RegistryMain
+                title={workout.name.toUpperCase()}
+                subtitle={workout.description || "Importado via PDF"}
+                icon="Dumbbell"
+                contextLabel="Treinos & Performance"
+                showTabs={false}
+            >
                 <StudentWorkoutDetailClient 
                     workoutId={id} 
                     userId={user.id} 
                     initialData={workout} 
                 />
-            </div>
+            </RegistryMain>
         </HydrationBoundary>
     )
 }

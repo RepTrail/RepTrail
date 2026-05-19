@@ -1,9 +1,16 @@
 'use client'
 
 import { useRef, useState } from 'react'
-import { Download, Share2, Instagram, Image as ImageIcon, X } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogTrigger, DialogTitle, DialogHeader, DialogClose } from '@/components/ui/dialog'
+import { Download, Share2, Instagram, Image as ImageIcon, Loader2 } from 'lucide-react'
+import { Modal } from '@/components/store/advanced/modal'
+import { Stack } from '@/components/store/base/stack'
+import { Box } from '@/components/store/base/box'
+import { Font } from '@/components/store/base/font'
+import { Icon } from '@/components/store/base/icon'
+import { Button } from '@/components/store/base/button'
+import { Img } from '@/components/store/base/img'
+import { Grid } from '@/components/store/base/grid'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 interface ShareTransformationProps {
     studentName: string
@@ -11,13 +18,15 @@ interface ShareTransformationProps {
     afterUrl?: string
     beforeDate?: string
     afterDate?: string
+    fullWidth?: boolean
 }
 
-export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDate, afterDate }: ShareTransformationProps) {
+export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDate, afterDate, fullWidth }: ShareTransformationProps) {
     const canvasRef = useRef<HTMLCanvasElement>(null)
     const [isGenerating, setIsGenerating] = useState(false)
     const [previewUrl, setPreviewUrl] = useState<string | null>(null)
     const [currentFormat, setCurrentFormat] = useState<'story' | 'feed' | null>(null)
+    const [open, setOpen] = useState(false)
 
     const drawImageCover = (ctx: CanvasRenderingContext2D, img: HTMLImageElement, x: number, y: number, w: number, h: number) => {
         const imgRatio = img.width / img.height
@@ -61,14 +70,13 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
 
         // Tilted Emerald Box (Platform Style)
         ctx.save()
-        ctx.translate(-40, -40) // Position relative to origin
-        ctx.rotate(3 * Math.PI / 180) // 3 degrees rotation
+        ctx.translate(-40, -40)
+        ctx.rotate(3 * Math.PI / 180)
 
-        ctx.fillStyle = '#10b981' // Emerald-500
+        ctx.fillStyle = '#10b981'
         ctx.shadowBlur = 20
         ctx.shadowColor = 'rgba(16, 185, 129, 0.3)'
 
-        // Rounded Rect for Logo Box
         const boxSize = 80
         const bRadius = 15
         ctx.beginPath()
@@ -79,11 +87,11 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
         // Lightning Bolt inside box
         ctx.save()
         ctx.translate(boxSize / 2, boxSize / 2)
-        ctx.rotate(-3 * Math.PI / 180) // Counter-rotate to keep bolt straight
+        ctx.rotate(-3 * Math.PI / 180)
         ctx.scale(1.8, 1.8)
-        ctx.fillStyle = '#09090b' // Zinc-950
-        const zapPath = new Path2D("M13 2L3 14h9l-1 8 10-12h-9l1-8z") // Standard Lucide Zap
-        ctx.translate(-12, -12) // Center bolt (Zap is 24x24)
+        ctx.fillStyle = '#09090b'
+        const zapPath = new Path2D("M13 2L3 14h9l-1 8 10-12h-9l1-8z")
+        ctx.translate(-12, -12)
         ctx.fill(zapPath)
         ctx.restore()
 
@@ -119,13 +127,12 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
         canvas.height = height
 
         // 1. Background
-        ctx.fillStyle = '#09090b' // Deep Zinc
+        ctx.fillStyle = '#09090b'
         ctx.fillRect(0, 0, width, height)
 
-        // Radial depth for "infinite dark" effect
         const gradient = ctx.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, width)
-        gradient.addColorStop(0, '#09090b') // Zinc-950
-        gradient.addColorStop(1, '#000000') // True Black
+        gradient.addColorStop(0, '#09090b')
+        gradient.addColorStop(1, '#000000')
         ctx.fillStyle = gradient
         ctx.fillRect(0, 0, width, height)
 
@@ -142,16 +149,15 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
         ctx.fillStyle = zincGlow
         ctx.fillRect(0, 0, width, height)
 
-        // 2. Large Background Lightning Bolt (Brand Element)
-        // Draw centered and subtle
+        // 2. Large Background Lightning Bolt
         ctx.save()
         ctx.translate(width / 2, height / 2)
         ctx.rotate(-15 * Math.PI / 180)
-        ctx.scale(45, 45) // Massive scale
+        ctx.scale(45, 45)
         ctx.globalAlpha = 0.05
         ctx.fillStyle = '#10b981'
         const boltPath = new Path2D("M13 2L3 14h9l-1 8 10-12h-9l1-8z")
-        ctx.translate(-12, -12) // Center of 24x24
+        ctx.translate(-12, -12)
         ctx.fill(boltPath)
         ctx.restore()
         ctx.globalAlpha = 1.0
@@ -174,11 +180,8 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
             const padding = 50
             const photoWidth = (width - (padding * 3)) / 2
             const photoHeight = format === 'story' ? height * 0.65 : height * 0.62
-            const yOffset = height * 0.18 // Fixed top offset for better control
+            const yOffset = height * 0.18
 
-            // Background Bloom - REMOVED ctx.filter as it bugs on mobile
-            // Instead, use a stylized gradient overlay
-            // Background Bloom & Light leaks
             const bloomGradient = ctx.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, width)
             bloomGradient.addColorStop(0, 'rgba(16, 185, 129, 0.08)')
             bloomGradient.addColorStop(0.5, 'rgba(16, 185, 129, 0.02)')
@@ -214,7 +217,6 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
                 ctx.fillStyle = isActive ? '#10b981' : '#27272a'
                 ctx.fill()
 
-                // Slanted Border
                 ctx.strokeStyle = isActive ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.1)'
                 ctx.lineWidth = 3
                 ctx.stroke()
@@ -243,11 +245,9 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
             ctx.letterSpacing = '0px'
             ctx.shadowBlur = 0
 
-            // 5. Dates (Positioned Inside Photo Area)
+            // 5. Dates
             const dBefore = beforeDate ? new Date(beforeDate) : null
             const dAfter = afterDate ? new Date(afterDate) : null
-
-            const formatDate = (date: Date) => date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' })
 
             if (dBefore || dAfter) {
                 const formatDate = (date: Date) => date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' })
@@ -259,13 +259,11 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
                     const tagW = textWidth + 40
                     const tagH = 50
 
-                    // Semi-transparent background pill
                     ctx.fillStyle = 'rgba(0,0,0,0.7)'
                     ctx.beginPath()
                     ctx.roundRect(x - tagW / 2, y, tagW, tagH, 12)
                     ctx.fill()
 
-                    // Text
                     ctx.fillStyle = 'white'
                     ctx.textAlign = 'center'
                     ctx.textBaseline = 'middle'
@@ -303,7 +301,6 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
                     ctx.closePath()
                     ctx.fill()
 
-                    // Glowing border for interval badge
                     ctx.strokeStyle = 'rgba(255,255,255,0.3)'
                     ctx.lineWidth = 3
                     ctx.stroke()
@@ -326,15 +323,14 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
             ctx.letterSpacing = '6px'
             ctx.fillText('REP-TRAIL.VERCEL.APP', width / 2, height - (format === 'story' ? 80 : 60))
 
-            // Signature Line
             ctx.strokeStyle = 'rgba(16, 185, 129, 0.4)'
             ctx.lineWidth = 2
             ctx.setLineDash([15, 15])
             ctx.beginPath()
-            ctx.moveTo(width / 2, yOffset + 80) // Start below date tag
-            ctx.lineTo(width / 2, yOffset + photoHeight - 40) // End just before the badge area
+            ctx.moveTo(width / 2, yOffset + 80)
+            ctx.lineTo(width / 2, yOffset + photoHeight - 40)
             ctx.stroke()
-            ctx.setLineDash([]) // Reset
+            ctx.setLineDash([])
 
             const dataUrl = canvas.toDataURL('image/png')
             setPreviewUrl(dataUrl)
@@ -362,7 +358,6 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
                     text: `Confira minha evolução no RepTrail! #RepTrail #Fitness`,
                 })
             } else {
-                // Fallback to download if sharing is not supported
                 const link = document.createElement('a')
                 link.download = file.name
                 link.href = previewUrl
@@ -370,7 +365,6 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
             }
         } catch (err) {
             console.error('Share error:', err)
-            // Fallback to download
             const link = document.createElement('a')
             link.download = `reptrail-evolucao.png`
             link.href = previewUrl
@@ -378,131 +372,223 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
         }
     }
 
+    const handleClose = () => {
+        setOpen(false)
+        setPreviewUrl(null)
+    }
+
+    const handleBack = () => {
+        setPreviewUrl(null)
+    }
+
     if (!beforeUrl || !afterUrl) return null
 
     return (
-        <Dialog>
-            <DialogTrigger asChild>
-                <Button className="bg-[#f97316] text-black hover:bg-[#ea580c] rounded-system h-14 px-8 font-black uppercase italic tracking-widest text-[11px] gap-3 shadow-[0_0_30px_rgba(249,115,22,0.3)] transition-all hover:scale-105 active:scale-95 group">
-                    <Share2 className="w-5 h-5 group-hover:rotate-12 transition-transform" />
-                    Gerar Antes e Depois
-                </Button>
-            </DialogTrigger>
-            <DialogContent className="bg-zinc-950/95 border-zinc-900 text-white max-w-lg rounded-system md:rounded-system backdrop-blur-3xl p-0 overflow-y-auto max-h-[90vh] shadow-[0_0_100px_rgba(0,0,0,1)] gap-0 [&>button]:hidden">
-                <div className="p-4 md:p-8 space-y-4">
-                    {!previewUrl ? (
-                        <>
-                            <DialogHeader className="mb-4">
-                                <div className="flex justify-center mb-2">
-                                    <div className="h-1 w-12 bg-gradient-to-r from-transparent via-[#10b981] to-transparent rounded-full opacity-50" />
-                                </div>
-                                <div className="flex items-center justify-between">
-                                    <DialogTitle className="text-3xl md:text-5xl font-black italic uppercase tracking-tighter text-left leading-none">
-                                        EVOLUÇÃO <br />
-                                        <span className="text-[#10b981]">BRUTAL 🔥</span>
-                                    </DialogTitle>
-                                    <DialogClose asChild>
-                                        <Button variant="ghost" size="icon" className="h-10 w-10 rounded-system bg-zinc-900 border border-zinc-800 text-zinc-500 hover:text-white transition-all shadow-xl">
-                                            <X className="w-4 h-4" />
-                                        </Button>
-                                    </DialogClose>
-                                </div>
-                            </DialogHeader>
+        <>
+            <Button
+                variant="orange"
+                onClick={() => setOpen(true)}
+                transition
+                paddingY={2.5}
+                paddingX={5}
+                fullWidth={fullWidth}
+            >
+                <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                    <Icon icon={Share2} size="sm" />
+                    <Font variant="label-caps" color="white">
+                        Gerar Antes e Depois
+                    </Font>
+                </Stack>
+            </Button>
 
-                            <div className="grid grid-cols-2 gap-4 md:gap-8 py-2 md:py-4">
-                                <button onClick={() => generateImage('story')} disabled={isGenerating} className="group flex flex-col items-center">
-                                    <div className="aspect-[9/16] w-full bg-zinc-900 rounded-system md:rounded-system border border-white/5 flex flex-col items-center justify-center relative overflow-hidden group-hover:border-[#f97316]/30 transition-all shadow-2xl group-hover:shadow-[#f97316]/10">
-                                        <Instagram className="w-8 h-8 md:w-10 md:h-10 text-zinc-700 group-hover:text-white transition-all group-hover:scale-110" />
-                                        <span className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-zinc-600 group-hover:text-white mt-4 md:mt-6 transition-colors">Stories</span>
-                                        {isGenerating && (
-                                            <div className="absolute inset-0 bg-black/80 flex items-center justify-center">
-                                                <div className="w-10 h-10 border-3 border-[#f97316] border-t-transparent rounded-full animate-spin" />
-                                            </div>
-                                        )}
-                                    </div>
-                                </button>
+            <Modal
+                isOpen={open}
+                onClose={previewUrl ? handleBack : handleClose}
+                title={previewUrl ? "PREVIEW DA EVOLUÇÃO" : "EVOLUÇÃO BRUTAL"}
+                subtitle={previewUrl ? "SUA IMAGEM DE EVOLUÇÃO FOI GERADA" : "SELECIONE O FORMATO PARA GERAR A IMAGEM"}
+                icon={Share2}
+                variant={previewUrl ? "emerald" : "orange"}
+                confirmVariant={previewUrl ? "outline-emerald" : "outline-orange"}
+                confirmLabel="FECHAR"
+                onConfirm={handleClose}
+                hideCancel={!previewUrl}
+                cancelLabel="VOLTAR"
+            >
+                {!previewUrl ? (
+                    <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
+                        <Grid cols={2} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                            <Box
+                                as="button"
+                                onClick={isGenerating ? undefined : () => generateImage('story')}
+                                cursor={isGenerating ? "not-allowed" : "pointer"}
+                                fullWidth
+                                border
+                                borderWidth={1}
+                                borderColor="white/10"
+                                display="flex"
+                                direction="col"
+                                align="center"
+                                justify="center"
+                                position="relative"
+                                overflow="hidden"
+                                transition
+                                group
+                                style={{ aspectRatio: '9/16', borderStyle: 'solid' }}
+                                {...({ disabled: isGenerating } as any)}
+                            >
+                                <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                                    <Icon icon={Instagram} size="xl" color="zinc-600" />
+                                    <Font variant="label-caps" color="SECONDARY">
+                                        Stories
+                                    </Font>
+                                </Stack>
+                                {isGenerating && currentFormat === 'story' && (
+                                    <Box
+                                        position="absolute"
+                                        pin="inset"
+                                        bg="black"
+                                        bgOpacity={80}
+                                        display="flex"
+                                        align="center"
+                                        justify="center"
+                                    >
+                                        <Icon icon={Loader2} spin size="lg" color="primary" />
+                                    </Box>
+                                )}
+                            </Box>
 
-                                <button onClick={() => generateImage('feed')} disabled={isGenerating} className="group flex flex-col items-center">
-                                    <div className="aspect-square w-full bg-zinc-900 rounded-system border border-white/5 flex flex-col items-center justify-center relative overflow-hidden group-hover:border-[#f97316]/30 transition-all shadow-2xl group-hover:shadow-[#f97316]/10">
-                                        <ImageIcon className="w-10 h-10 text-zinc-700 group-hover:text-white transition-all group-hover:scale-110" />
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-zinc-600 group-hover:text-white mt-6 transition-colors">Feed</span>
-                                        {isGenerating && (
-                                            <div className="absolute inset-0 bg-black/90 flex items-center justify-center">
-                                                <div className="w-10 h-10 border-3 border-[#f97316] border-t-transparent rounded-full animate-spin" />
-                                            </div>
-                                        )}
-                                    </div>
-                                </button>
-                            </div>
+                            <Box
+                                as="button"
+                                onClick={isGenerating ? undefined : () => generateImage('feed')}
+                                cursor={isGenerating ? "not-allowed" : "pointer"}
+                                fullWidth
+                                aspectRatio="square"
+                                border
+                                borderWidth={1}
+                                borderColor="white/10"
+                                display="flex"
+                                direction="col"
+                                align="center"
+                                justify="center"
+                                position="relative"
+                                overflow="hidden"
+                                transition
+                                group
+                                style={{ borderStyle: 'solid' }}
+                                {...({ disabled: isGenerating } as any)}
+                            >
+                                <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                                    <Icon icon={ImageIcon} size="xl" color="zinc-600" />
+                                    <Font variant="label-caps" color="SECONDARY">
+                                        Feed
+                                    </Font>
+                                </Stack>
+                                {isGenerating && currentFormat === 'feed' && (
+                                    <Box
+                                        position="absolute"
+                                        pin="inset"
+                                        bg="black"
+                                        bgOpacity={80}
+                                        display="flex"
+                                        align="center"
+                                        justify="center"
+                                    >
+                                        <Icon icon={Loader2} spin size="lg" color="primary" />
+                                    </Box>
+                                )}
+                            </Box>
+                        </Grid>
 
-                            <div className="mt-6 bg-zinc-900/50 p-6 rounded-system border border-white/5 relative overflow-hidden group">
-                                <div className="absolute top-0 right-0 w-32 h-32 bg-[#f97316]/10 blur-[50px] rounded-full -mr-16 -mt-16 group-hover:bg-[#f97316]/20 transition-all pointer-events-none" />
-                                <p className="text-[10px] md:text-[11px] text-zinc-400 font-bold uppercase tracking-widest text-center leading-relaxed relative z-10">
-                                    PRONTO PARA <span className="text-white">IMPACTAR</span>? <br />
-                                    <span className="text-zinc-600 text-[8px] md:text-[9px] mt-2 block">Sua evolução real com a identidade RepTrail.</span>
-                                </p>
-                            </div>
-                        </>
-                    ) : (
-                        <div className="space-y-8 animate-in fade-in zoom-in duration-500">
-                            <div className="flex items-center justify-between mb-4 bg-zinc-900/40 p-2.5 rounded-system border border-zinc-800/50">
-                                <Button
-                                    variant="ghost"
-                                    onClick={() => setPreviewUrl(null)}
-                                    className="text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-white h-auto py-2  flex items-center gap-2"
-                                >
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
-                                    Voltar
-                                </Button>
+                        <Box
+                            bg="zinc"
+                            bgOpacity={50}
+                            rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                            border
+                            borderWidth={1}
+                            borderColor="white/10"
+                            padding={STORE_TOKENS.PADDING.CONTAINER}
+                            position="relative"
+                            overflow="hidden"
+                            style={{ borderStyle: 'solid' }}
+                        >
+                            <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                                <Font variant="label-caps" color="SECONDARY" align="center">
+                                    PRONTO PARA <Font color="white">IMPACTAR</Font>?
+                                </Font>
+                                <Font variant="tiny" color="DIM" align="center">
+                                    Sua evolução real com a identidade RepTrail.
+                                </Font>
+                            </Stack>
+                        </Box>
+                    </Stack>
+                ) : (
+                    <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
+                        <Box
+                            bg="black"
+                            rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                            overflow="hidden"
+                            border
+                            borderWidth={1}
+                            borderColor="white/10"
+                            display="flex"
+                            align="center"
+                            justify="center"
+                            style={{
+                                height: '400px',
+                                margin: '0 auto',
+                                borderStyle: 'solid',
+                                aspectRatio: currentFormat === 'story' ? '9/16' : '1/1'
+                            }}
+                        >
+                            <Img
+                                src={previewUrl}
+                                alt="Preview"
+                                fullHeight
+                                objectFit="contain"
+                            />
+                        </Box>
 
-                                <div className="flex items-center gap-4">
-                                    <div className="hidden sm:flex items-center gap-2">
-                                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                                        <span className="text-[9px] font-black uppercase tracking-widest text-emerald-500/80">Premium Render</span>
-                                    </div>
+                        <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
+                            <Button
+                                onClick={handleShare}
+                                variant="emerald"
+                                rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                                fullWidth
+                                paddingY={2.5}
+                            >
+                                <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                    <Icon icon={Share2} size="sm" />
+                                    <Font variant="label-caps" color="black">
+                                        Compartilhar Agora
+                                    </Font>
+                                </Stack>
+                            </Button>
 
-                                    <DialogClose asChild>
-                                        <Button variant="ghost" size="icon" className="h-10 w-10 rounded-system bg-zinc-900 border border-zinc-800 text-zinc-500 hover:text-white transition-all shadow-xl">
-                                            <X className="w-4 h-4" />
-                                        </Button>
-                                    </DialogClose>
-                                </div>
-                            </div>
+                            <Button
+                                onClick={() => {
+                                    const link = document.createElement('a')
+                                    link.download = `reptrail-evolucao.png`
+                                    link.href = previewUrl
+                                    link.click()
+                                }}
+                                variant="outline-zinc"
+                                rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                                fullWidth
+                                paddingY={2.5}
+                            >
+                                <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                    <Icon icon={Download} size="sm" />
+                                    <Font variant="label-caps" color="white">
+                                        Salvar Imagem
+                                    </Font>
+                                </Stack>
+                            </Button>
+                        </Stack>
+                    </Stack>
+                )}
+            </Modal>
 
-                            <div className={`relative mx-auto bg-black rounded-system overflow-hidden shadow-[0_15px_40px_rgba(0,0,0,0.5)] border border-zinc-800/50 mb-6 ${currentFormat === 'story' ? 'h-[420px] aspect-[9/16]' : 'h-[420px] aspect-[4/5]'}`}>
-                                <img src={previewUrl} alt="Preview" className="w-full h-full object-contain" />
-                            </div>
-
-                            <div className="flex flex-col gap-4">
-                                <Button
-                                    onClick={handleShare}
-                                    className="w-full h-14 bg-emerald-500 text-zinc-950 hover:bg-emerald-400 rounded-system font-black uppercase italic tracking-widest text-xs flex items-center justify-center gap-3 shadow-[0_10px_30px_rgba(16,185,129,0.2)] transition-all active:scale-95"
-                                >
-                                    <Share2 className="w-4 h-4" />
-                                    Compartilhar Agora
-                                </Button>
-
-                                <Button
-                                    onClick={() => {
-                                        const link = document.createElement('a')
-                                        link.download = `reptrail-evolucao.png`
-                                        link.href = previewUrl
-                                        link.click()
-                                    }}
-                                    variant="outline"
-                                    className="w-full h-14 border-zinc-800 bg-transparent text-white hover:bg-zinc-900 rounded-system font-black uppercase italic tracking-widest text-[10px]"
-                                >
-                                    <Download className="w-4 h-4 mr-2" />
-                                    Salvar Imagem
-                                </Button>
-                            </div>
-                        </div>
-                    )}
-                </div>
-
-                <canvas ref={canvasRef} style={{ display: 'none' }} />
-            </DialogContent>
-        </Dialog>
+            <canvas ref={canvasRef} style={{ display: 'none' }} />
+        </>
     )
 }
-

@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { ShareTransformation } from './student-share-transformation'
 import { PublicStudentGallery } from './student-public-gallery'
 
-import { UnifiedProgressGallery } from '@/components/store/features(deprecated)/unified-progress-gallery'
+import { UnifiedProgressGallery } from '@/components/store/advanced/unified-progress-gallery'
 
 interface Props {
     studentId: string

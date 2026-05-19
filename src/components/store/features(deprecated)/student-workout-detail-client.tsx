@@ -42,6 +42,7 @@ export function StudentWorkoutDetailClient({ workoutId, userId, initialData }: S
             backHref="/dashboard/student/workouts"
             canAssign={false}
             showAssignmentBadge={false}
+            hideHeader={true}
         />
     )
 }

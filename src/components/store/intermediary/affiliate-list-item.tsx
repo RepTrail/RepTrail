@@ -77,7 +77,7 @@ export function AffiliateListItem({
                     variant="zinc"
                     size="md"
                 />
-                <Stack gap={STORE_TOKENS.SPACING.ELEMENT} minWidth={0}>
+                <Stack gap={0} minWidth={0}>
                     <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} variant={{ base: 'body-sm', md: 'body' }} color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
                         {name}
                     </Font>

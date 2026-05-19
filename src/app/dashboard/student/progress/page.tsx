@@ -3,7 +3,7 @@ import { headers } from 'next/headers'
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { getQueryClient } from '@/lib/get-query-client'
 import { PREFETCH_REGISTRY } from '@/lib/prefetch-registry'
-import { StudentProgressPageContent } from '@/components/store/features(deprecated)/student-progress-content'
+import { StudentProgressPageContent } from '@/components/store/advanced/student-progress-content'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 
 export default async function StudentProgressPage() {

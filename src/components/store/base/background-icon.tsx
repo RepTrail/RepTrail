@@ -4,7 +4,6 @@ import React from 'react'
 import { Box } from './box'
 import { Icon } from './icon'
 import { LucideIcon } from 'lucide-react'
-import { STORE_TOKENS } from '@/components/store/constants/tokens';
 
 interface BackgroundIconProps {
     icon: LucideIcon
@@ -25,42 +24,27 @@ interface BackgroundIconProps {
 /**
  * BackgroundIcon: A semantic primitive for placing subtle, decorative icons 
  * in the background of cards, panels, or sections. 
- * Replaces inline absolute Box wrappers.
+ * Standardized to always sit at top-right, size 100, and opacity 10%.
  */
 export function BackgroundIcon({
     icon,
-    size = '3xl',
-    color = 'white',
-    opacity = 10,
-    groupHoverOpacity,
-    top,
-    right,
-    bottom,
-    left,
-    width = '24',
-    height = '24',
-    transition = true,
     zIndex = 0
 }: BackgroundIconProps) {
     return (
         <Box
             position="absolute"
-            top={top}
-            right={right}
-            bottom={bottom}
-            left={left}
-            width={width as any}
-            height={height as any}
-            opacity={opacity}
-            groupHoverOpacity={groupHoverOpacity}
-            transition={transition}
+            top={0}
+            right={0}
+            width="auto"
+            height="auto"
+            opacity={10}
             zIndex={zIndex}
             display="flex"
             align="center"
             justify="center"
             style={{ pointerEvents: 'none' }}
         >
-            <Icon icon={icon} size={size} color={STORE_TOKENS.COLORS.BRAND} />
+            <Icon icon={icon} size="100" color="primary" />
         </Box>
     )
 }

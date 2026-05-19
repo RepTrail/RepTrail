@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Image as ImageIcon } from 'lucide-react'
-import { UnifiedProgressGallery } from '@/components/store/features(deprecated)/unified-progress-gallery'
+import { UnifiedProgressGallery } from '@/components/store/advanced/unified-progress-gallery'
 
 interface PhotoSet {
     id: string

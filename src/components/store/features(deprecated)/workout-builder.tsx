@@ -74,9 +74,10 @@ interface WorkoutBuilderProps {
     backHref?: string
     canAssign?: boolean
     showAssignmentBadge?: boolean
+    hideHeader?: boolean
 }
 
-export function WorkoutBuilder({ workout: initialWorkout, students = [], backHref = '/dashboard/trainer/workouts', canAssign = true, showAssignmentBadge = true }: WorkoutBuilderProps) {
+export function WorkoutBuilder({ workout: initialWorkout, students = [], backHref = '/dashboard/trainer/workouts', canAssign = true, showAssignmentBadge = true, hideHeader = false }: WorkoutBuilderProps) {
     const { toast } = useToast()
     const queryClient = useQueryClient()
     const queryKey = QUERY_KEYS.workouts.detail(initialWorkout.id)
@@ -324,108 +325,110 @@ export function WorkoutBuilder({ workout: initialWorkout, students = [], backHre
     return (
         <div className="space-y-8">
             {/* Header / Meta */}
-            <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
-                <div className="flex flex-col flex-1 text-left">
-                    {isEditingMeta ? (
-                        <div className="animate-in fade-in slide-in-from-top-2 duration-200 bg-zinc-900/60 border border-zinc-700/60 rounded-system p-5 space-y-3 shadow-xl max-w-xl mx-auto sm:mx-0">
-                            <div className="space-y-1.5">
-                                <label className="text-[10px] font-black text-zinc-500 capitalize">Nome do Treino</label>
-                                <Input
-                                    ref={nameInputRef}
-                                    value={editName}
-                                    onChange={e => setEditName(e.target.value)}
-                                    onKeyDown={(e: React.KeyboardEvent) => { if (e.key === 'Enter') handleSaveMeta(); if (e.key === 'Escape') handleCancelMeta() }}
-                                    className="bg-zinc-950 border-zinc-700 text-white text-lg font-black h-12 rounded-system focus-visible:ring-blue-500/30 focus-visible:border-blue-500/50"
-                                    placeholder="Nome do treino..."
-                                />
+            {!hideHeader && (
+                <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
+                    <div className="flex flex-col flex-1 text-left">
+                        {isEditingMeta ? (
+                            <div className="animate-in fade-in slide-in-from-top-2 duration-200 bg-zinc-900/60 border border-zinc-700/60 rounded-system p-5 space-y-3 shadow-xl max-w-xl mx-auto sm:mx-0">
+                                <div className="space-y-1.5">
+                                    <label className="text-[10px] font-black text-zinc-500 capitalize">Nome do Treino</label>
+                                    <Input
+                                        ref={nameInputRef}
+                                        value={editName}
+                                        onChange={e => setEditName(e.target.value)}
+                                        onKeyDown={(e: React.KeyboardEvent) => { if (e.key === 'Enter') handleSaveMeta(); if (e.key === 'Escape') handleCancelMeta() }}
+                                        className="bg-zinc-950 border-zinc-700 text-white text-lg font-black h-12 rounded-system focus-visible:ring-blue-500/30 focus-visible:border-blue-500/50"
+                                        placeholder="Nome do treino..."
+                                    />
+                                </div>
+                                <div className="space-y-1.5">
+                                    <label className="text-[10px] font-black text-zinc-500 capitalize">Descrição (opcional)</label>
+                                    <Input
+                                        value={editDesc}
+                                        onChange={e => setEditDesc(e.target.value)}
+                                        onKeyDown={(e: React.KeyboardEvent) => { if (e.key === 'Escape') handleCancelMeta() }}
+                                        className="bg-zinc-950 border-zinc-700 text-zinc-300 h-10 rounded-system focus-visible:ring-blue-500/30 focus-visible:border-blue-500/50"
+                                        placeholder="Qual é o foco desse treino?"
+                                    />
+                                </div>
+                                <div className="flex items-center justify-center sm:justify-start gap-2 pt-1">
+                                    <Button
+                                        onClick={handleSaveMeta}
+                                        className="h-9  bg-blue-600 hover:bg-blue-500 text-white font-black capitalize text-[10px] rounded-system transition-all active:scale-95"
+                                    >
+                                        <Check className="w-3 h-3 mr-1.5" />Salvar
+                                    </Button>
+                                    <Button
+                                        onClick={handleCancelMeta}
+                                        variant="ghost"
+                                        className="h-9  bg-zinc-800/60 hover:bg-zinc-700/60 text-zinc-400 hover:text-white font-black capitalize text-[10px] rounded-system transition-all border border-zinc-700/50 hover:border-zinc-600"
+                                    >
+                                        <X className="w-3 h-3 mr-1.5" />Cancelar
+                                    </Button>
+                                </div>
                             </div>
-                            <div className="space-y-1.5">
-                                <label className="text-[10px] font-black text-zinc-500 capitalize">Descrição (opcional)</label>
-                                <Input
-                                    value={editDesc}
-                                    onChange={e => setEditDesc(e.target.value)}
-                                    onKeyDown={(e: React.KeyboardEvent) => { if (e.key === 'Escape') handleCancelMeta() }}
-                                    className="bg-zinc-950 border-zinc-700 text-zinc-300 h-10 rounded-system focus-visible:ring-blue-500/30 focus-visible:border-blue-500/50"
-                                    placeholder="Qual é o foco desse treino?"
-                                />
-                            </div>
-                            <div className="flex items-center justify-center sm:justify-start gap-2 pt-1">
-                                <Button
-                                    onClick={handleSaveMeta}
-                                    className="h-9  bg-blue-600 hover:bg-blue-500 text-white font-black capitalize text-[10px] rounded-system transition-all active:scale-95"
-                                >
-                                    <Check className="w-3 h-3 mr-1.5" />Salvar
-                                </Button>
-                                <Button
-                                    onClick={handleCancelMeta}
-                                    variant="ghost"
-                                    className="h-9  bg-zinc-800/60 hover:bg-zinc-700/60 text-zinc-400 hover:text-white font-black capitalize text-[10px] rounded-system transition-all border border-zinc-700/50 hover:border-zinc-600"
-                                >
-                                    <X className="w-3 h-3 mr-1.5" />Cancelar
-                                </Button>
-                            </div>
-                        </div>
-                    ) : (
-                        <div
-                            className="group flex items-start justify-start gap-4 cursor-pointer w-fit"
-                            onClick={() => setIsEditingMeta(true)}
-                        >
-                            <div className="flex flex-col">
-                                <h1 className="text-3xl font-bold text-white font-sans group-hover:text-blue-400 transition-colors duration-200 border-b border-transparent group-hover:border-blue-400/40 pb-0.5 whitespace-nowrap capitalize">
-                                    {editName.toLowerCase()}
-                                </h1>
-                                <p className="text-zinc-500 mt-1 group-hover:text-zinc-400 transition-colors">
-                                    {editDesc || 'Builder de Treino'}
-                                </p>
-
-                                {showAssignmentBadge && (
-                                    <>
-                                        {workout.assignments && workout.assignments.length > 0 ? (
-                                            <div className="flex items-center gap-2 px-3 sm:px-4 py-2 mt-4 bg-orange-500/10 border border-orange-500/20 rounded-system sm:rounded-system w-fit animate-in fade-in slide-in-from-left-4 duration-500">
-                                                <div className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse shrink-0" />
-                                                <span className="text-[9px] sm:text-[10px] font-black capitalize text-orange-500">
-                                                    Atribuído para: <span className="text-white ml-1">{workout.assignments[0]?.student?.full_name || 'Aluno'}</span>
-                                                </span>
-                                            </div>
-                                        ) : (
-                                            <div className="flex items-center gap-2 px-3 sm:px-4 py-2 mt-4 bg-zinc-900/50 border border-zinc-800 rounded-system sm:rounded-system w-fit">
-                                                <span className="text-[9px] sm:text-[10px] font-black capitalize text-zinc-500">Template de Biblioteca</span>
-                                            </div>
-                                        )}
-                                    </>
-                                )}
-                            </div>
-                            <button
-                                className="p-2 rounded-system text-zinc-600 hover:text-blue-400 hover:bg-blue-400/10 transition-all border border-blue-400/20 active:scale-90"
-                                title="Editar nome do treino"
+                        ) : (
+                            <div
+                                className="group flex items-start justify-start gap-4 cursor-pointer w-fit"
+                                onClick={() => setIsEditingMeta(true)}
                             >
-                                <Pencil className="w-4 h-4" />
-                            </button>
-                        </div>
-                    )}
-                </div>
+                                <div className="flex flex-col">
+                                    <h1 className="text-3xl font-bold text-white font-sans group-hover:text-blue-400 transition-colors duration-200 border-b border-transparent group-hover:border-blue-400/40 pb-0.5 whitespace-nowrap capitalize">
+                                        {editName.toLowerCase()}
+                                    </h1>
+                                    <p className="text-zinc-500 mt-1 group-hover:text-zinc-400 transition-colors">
+                                        {editDesc || 'Builder de Treino'}
+                                    </p>
 
-                <div className="shrink-0 flex justify-center">
-                    {canAssign && (
-                        <UnifiedAssignDialog
-                            itemId={workout.id}
-                            students={students}
-                            type="workout"
-                            title="Atribuir Treino"
-                            description="Escolha um aluno e os dias da semana para este protocolo."
-                            colorScheme="orange"
-                            initialStudentId={workout.assignments?.[0]?.student_id}
-                            initialDays={workout.assignments?.[0]?.day_of_week !== undefined ? [workout.assignments?.[0]?.day_of_week] : []}
-                            trigger={
-                                <Button className="h-[58px] px-8 bg-orange-500 hover:bg-orange-400 text-zinc-950 rounded-system font-black capitalize text-[10px] shadow-none flex flex-row items-center justify-start gap-3 group transition-all active:scale-95 w-full">
-                                    <Calendar className="w-5 h-5 text-center" />
-                                    <span className="text-center whitespace-normal leading-tight">{workout.assignments?.length ? "Gerenciar Atribuição" : "Atribuir"}</span>
-                                </Button>
-                            }
-                        />
-                    )}
+                                    {showAssignmentBadge && (
+                                        <>
+                                            {workout.assignments && workout.assignments.length > 0 ? (
+                                                <div className="flex items-center gap-2 px-3 sm:px-4 py-2 mt-4 bg-orange-500/10 border border-orange-500/20 rounded-system sm:rounded-system w-fit animate-in fade-in slide-in-from-left-4 duration-500">
+                                                    <div className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse shrink-0" />
+                                                    <span className="text-[9px] sm:text-[10px] font-black capitalize text-orange-500">
+                                                        Atribuído para: <span className="text-white ml-1">{workout.assignments[0]?.student?.full_name || 'Aluno'}</span>
+                                                    </span>
+                                                </div>
+                                            ) : (
+                                                <div className="flex items-center gap-2 px-3 sm:px-4 py-2 mt-4 bg-zinc-900/50 border border-zinc-800 rounded-system sm:rounded-system w-fit">
+                                                    <span className="text-[9px] sm:text-[10px] font-black capitalize text-zinc-500">Template de Biblioteca</span>
+                                                </div>
+                                            )}
+                                        </>
+                                    )}
+                                </div>
+                                <button
+                                    className="p-2 rounded-system text-zinc-600 hover:text-blue-400 hover:bg-blue-400/10 transition-all border border-blue-400/20 active:scale-90"
+                                    title="Editar nome do treino"
+                                >
+                                    <Pencil className="w-4 h-4" />
+                                </button>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="shrink-0 flex justify-center">
+                        {canAssign && (
+                            <UnifiedAssignDialog
+                                itemId={workout.id}
+                                students={students}
+                                type="workout"
+                                title="Atribuir Treino"
+                                description="Escolha um aluno e os dias da semana para este protocolo."
+                                colorScheme="orange"
+                                initialStudentId={workout.assignments?.[0]?.student_id}
+                                initialDays={workout.assignments?.[0]?.day_of_week !== undefined ? [workout.assignments?.[0]?.day_of_week] : []}
+                                trigger={
+                                    <Button className="h-[58px] px-8 bg-orange-500 hover:bg-orange-400 text-zinc-950 rounded-system font-black capitalize text-[10px] shadow-none flex flex-row items-center justify-start gap-3 group transition-all active:scale-95 w-full">
+                                        <Calendar className="w-5 h-5 text-center" />
+                                        <span className="text-center whitespace-normal leading-tight">{workout.assignments?.length ? "Gerenciar Atribuição" : "Atribuir"}</span>
+                                    </Button>
+                                }
+                            />
+                        )}
+                    </div>
                 </div>
-            </div>
+            )}
 
             {/* Exercise List */}
             <div className="space-y-4">

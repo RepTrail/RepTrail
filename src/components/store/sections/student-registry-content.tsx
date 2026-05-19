@@ -36,6 +36,7 @@ import { Box } from '@/components/store/base/box'
 import { STORE_TOKENS } from '@/components/store/constants/tokens';
 import { Font } from '@/components/store/base/font'
 import { ManagementRegistrySection } from '@/components/store/advanced/management-registry-section'
+import { ShareTransformation } from '@/components/store/advanced/student-share-transformation'
 
 /**
  * StudentRegistryContent: Full Catalog of Student Dashboard Components.
@@ -164,6 +165,23 @@ export function StudentRegistryContent({ id }: { id: string }) {
                 subtitle="Banner de boas-vindas exibido quando o aluno tem auto treino mas sem protocolo."
             >
                 <AIProtocolEmptyStateSectionContent />
+            </RegistrySection>
+
+            {/* 18. Compartilhamento de Evolução (Antes e Depois) */}
+            <RegistrySection
+                title="COMPARTILHAMENTO DE EVOLUÇÃO (ANTES E DEPOIS)"
+                icon={TrendingUp}
+                subtitle="Modal premium de geração de imagem de evolução."
+            >
+                <Stack align="start" padding={STORE_TOKENS.PADDING.CONTAINER}>
+                    <ShareTransformation
+                        studentName="Marcos Roberto"
+                        beforeUrl="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=400"
+                        afterUrl="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=400"
+                        beforeDate="2026-01-01"
+                        afterDate="2026-05-19"
+                    />
+                </Stack>
             </RegistrySection>
         </Stack>
     );
