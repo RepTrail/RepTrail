@@ -58,10 +58,10 @@ export function UnifiedAdherenceChart({ history, showErgogenics = false, noCard 
     }
 
     const content = (
-        <Stack fullWidth gap={STORE_TOKENS.SPACING.SECTION} paddingBottom={noCard ? undefined : STORE_TOKENS.SPACING.CONTAINER}>
+        <Stack fullWidth gap={STORE_TOKENS.SPACING.SECTION} style={{ paddingBottom: noCard ? 0 : 20 }}>
             <Stack fullWidth gap={STORE_TOKENS.SPACING.ELEMENT} style={{ minWidth: '450px' }}>
                 {rows.map(row => (
-                    <Grid key={row.id} cols={{ base: '90px 1fr' }} gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
+                    <Box key={row.id} style={{ display: 'grid', gridTemplateColumns: '90px 1fr', gap: '20px', alignItems: 'center' }}>
                         <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                             <Icon icon={row.icon} size="sm" style={{ color: row.color }} />
                             <Font variant="tiny" weight="black" uppercase color="zinc-500">{row.label}</Font>
@@ -115,7 +115,7 @@ export function UnifiedAdherenceChart({ history, showErgogenics = false, noCard 
                                 )
                             })}
                         </Stack>
-                    </Grid>
+                    </Box>
                 ))}
             </Stack>
 
@@ -133,8 +133,8 @@ export function UnifiedAdherenceChart({ history, showErgogenics = false, noCard 
     return (
         <GlassPanel>
             <Stack padding={STORE_TOKENS.PADDING.SECTION} fullWidth>
-                <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.CONTAINER} paddingBottom={STORE_TOKENS.PADDING.CONTAINER}>
-                    <Icon icon={Activity} size="lg" color="brand" className="animate-pulse" />
+                <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.CONTAINER} style={{ paddingBottom: 20 }}>
+                    <Icon icon={Activity} size="lg" color="primary" className="animate-pulse" />
                     <Stack direction="row" align="baseline" gap={STORE_TOKENS.SPACING.ELEMENT}>
                         <Font variant="h3" weight="black" color="primary" italic uppercase>Adesão Consolidada</Font>
                         <Font variant="sub-tiny" weight="normal" color="zinc-500">(30 Dias)</Font>
