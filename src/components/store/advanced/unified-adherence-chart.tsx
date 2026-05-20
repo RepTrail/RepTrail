@@ -72,13 +72,13 @@ export function UnifiedAdherenceChart({ history, showErgogenics = false, noCard 
                 <Box minWidth={750}>
                     <Stack fullWidth gap={STORE_TOKENS.SPACING.CONTAINER}>
                         {rows.map(row => (
-                            <Grid key={row.id} cols={12} gap={STORE_TOKENS.SPACING.CONTAINER} align="center" fullWidth>
-                                <Stack colSpan={2} direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                            <Box key={row.id} display="flex" direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
+                                <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} width={80} shrink={0}>
                                     <Icon icon={row.icon} size="sm" color={row.color as any} />
                                     <Font variant="tiny" weight="black" uppercase color={`${row.color}-500` as any}>{row.label}</Font>
                                 </Stack>
 
-                                <Box colSpan={10} display="flex" direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} height={48} bg={STORE_TOKENS.COLORS.SURFACE} bgOpacity={STORE_TOKENS.OPACITY.HIGH} rounded={STORE_TOKENS.RADIUS.SYSTEM} border={true} borderColor={STORE_TOKENS.COLORS.BACKGROUND} borderOpacity={STORE_TOKENS.OPACITY.SUBTLE} padding={STORE_TOKENS.PADDING.ELEMENT}>
+                                <Box flex1={true} display="flex" direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} height={48} bg={STORE_TOKENS.COLORS.SURFACE} bgOpacity={STORE_TOKENS.OPACITY.HIGH} rounded={STORE_TOKENS.RADIUS.SYSTEM} border={true} borderColor={STORE_TOKENS.COLORS.BACKGROUND} borderOpacity={STORE_TOKENS.OPACITY.SUBTLE} padding={STORE_TOKENS.PADDING.ELEMENT}>
                                     {sortedHistory.map((day) => {
                                         let status = 'none'
                                         let percentage = undefined
@@ -132,7 +132,7 @@ export function UnifiedAdherenceChart({ history, showErgogenics = false, noCard 
                                         )
                                     })}
                                 </Box>
-                            </Grid>
+                            </Box>
                         ))}
                     </Stack>
                 </Box>
