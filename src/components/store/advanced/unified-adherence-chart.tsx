@@ -15,9 +15,9 @@ import { ChartTooltip } from '@/components/store/intermediary/chart-tooltip'
 /** Hex values for DS semantic colors used in adherence chart dots */
 const COLOR_HEX: Record<string, string> = {
     emerald: '#10b981',
-    amber:   '#f59e0b',
-    red:     '#ef4444',
-    blue:    '#3b82f6',
+    amber: '#f59e0b',
+    red: '#ef4444',
+    blue: '#3b82f6',
 }
 
 interface AdherenceHistoryItem {
@@ -69,71 +69,73 @@ export function UnifiedAdherenceChart({ history, showErgogenics = false, noCard 
     const content = (
         <Stack fullWidth minWidth={0} gap={STORE_TOKENS.SPACING.CONTAINER} padding={noCard ? 0 : { base: 0, md: STORE_TOKENS.PADDING.CONTAINER }}>
             <Box overflowX="auto" width="full" minWidth={0} noScrollbar={true}>
-                <Stack fullWidth gap={STORE_TOKENS.SPACING.CONTAINER} minWidth={600}>
-                    {rows.map(row => (
-                        <Grid key={row.id} cols={12} gap={STORE_TOKENS.SPACING.CONTAINER} align="center" fullWidth>
-                            <Stack colSpan={2} direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                <Icon icon={row.icon} size="sm" color={row.color as any} />
-                                <Font variant="tiny" weight="black" uppercase color={`${row.color}-500` as any}>{row.label}</Font>
-                            </Stack>
-                            
-                            <Box colSpan={10} display="flex" direction="row" align="center" gap={1} padding={1} height={28} bg={STORE_TOKENS.COLORS.SURFACE} bgOpacity={STORE_TOKENS.OPACITY.HIGH} rounded={STORE_TOKENS.RADIUS.SYSTEM} border={true} borderColor={STORE_TOKENS.COLORS.BACKGROUND} borderOpacity={STORE_TOKENS.OPACITY.SUBTLE}>
-                                {sortedHistory.map((day) => {
-                                    let status = 'none'
-                                    let percentage = undefined
+                <Box minWidth={600}>
+                    <Stack fullWidth gap={STORE_TOKENS.SPACING.CONTAINER}>
+                        {rows.map(row => (
+                            <Grid key={row.id} cols={12} gap={STORE_TOKENS.SPACING.CONTAINER} align="center" fullWidth>
+                                <Stack colSpan={2} direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                    <Icon icon={row.icon} size="sm" color={row.color as any} />
+                                    <Font variant="tiny" weight="black" uppercase color={`${row.color}-500` as any}>{row.label}</Font>
+                                </Stack>
 
-                                    if (row.id === 'workout') {
-                                        status = day.workout_status
-                                        percentage = day.workout_percentage
-                                    } else if (row.id === 'cardio') {
-                                        status = day.cardio_status
-                                        percentage = day.cardio_percentage
-                                    } else if (row.id === 'ergo') {
-                                        status = day.ergogenics_status
-                                        percentage = day.ergogenics_percentage
-                                    } else if (row.id === 'diet') {
-                                        percentage = day.diet_percentage
-                                        if (percentage > 0) {
-                                            status = percentage >= 100 ? 'completed' : 'partial'
-                                        } else {
-                                            status = day.diet_status || 'none'
+                                <Box colSpan={10} display="flex" direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} height={48} bg={STORE_TOKENS.COLORS.SURFACE} bgOpacity={STORE_TOKENS.OPACITY.HIGH} rounded={STORE_TOKENS.RADIUS.SYSTEM} border={true} borderColor={STORE_TOKENS.COLORS.BACKGROUND} borderOpacity={STORE_TOKENS.OPACITY.SUBTLE} padding={STORE_TOKENS.PADDING.ELEMENT}>
+                                    {sortedHistory.map((day) => {
+                                        let status = 'none'
+                                        let percentage = undefined
+
+                                        if (row.id === 'workout') {
+                                            status = day.workout_status
+                                            percentage = day.workout_percentage
+                                        } else if (row.id === 'cardio') {
+                                            status = day.cardio_status
+                                            percentage = day.cardio_percentage
+                                        } else if (row.id === 'ergo') {
+                                            status = day.ergogenics_status
+                                            percentage = day.ergogenics_percentage
+                                        } else if (row.id === 'diet') {
+                                            percentage = day.diet_percentage
+                                            if (percentage > 0) {
+                                                status = percentage >= 100 ? 'completed' : 'partial'
+                                            } else {
+                                                status = day.diet_status || 'none'
+                                            }
                                         }
-                                    }
 
-                                    const boxProps = getStatusProps(status, percentage)
-                                    const dateObj = new Date(day.date)
-                                    const dateLabel = dateObj.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })
+                                        const boxProps = getStatusProps(status, percentage)
+                                        const dateObj = new Date(day.date)
+                                        const dateLabel = dateObj.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })
 
-                                    return (
-                                        <TooltipProvider key={day.date}>
-                                            <Tooltip delayDuration={0}>
-                                                <TooltipTrigger asChild>
-                                                    <Box flex1={true} shrink={0} fullHeight={true} minWidth={10} transition={true} rounded={STORE_TOKENS.RADIUS.SYSTEM} bg={boxProps.bg} bgOpacity={boxProps.bgOpacity ?? STORE_TOKENS.OPACITY.FULL} border={boxProps.border} borderColor={boxProps.borderColor} borderOpacity={boxProps.borderOpacity} opacity={boxProps.opacity} />
-                                                </TooltipTrigger>
-                                                <TooltipContent side="top" variant="transparent">
-                                                    <ChartTooltip
-                                                        title={dateLabel}
-                                                        rows={[{
-                                                            color: COLOR_HEX[row.color] ?? '#ffffff',
-                                                            label: row.label,
-                                                            value: row.id === 'diet'
-                                                                ? `${percentage || 0}% de adesão`
-                                                                : status === 'none' ? 'Folga / Sem Meta'
-                                                                : status === 'assigned' ? 'Pendente'
-                                                                : status === 'skipped' ? 'Falhou'
-                                                                : status === 'partial' ? `Parcial (${percentage || 0}%)`
-                                                                : 'Concluído'
-                                                        }]}
-                                                    />
-                                                </TooltipContent>
-                                            </Tooltip>
-                                        </TooltipProvider>
-                                    )
-                                })}
-                            </Box>
-                        </Grid>
-                    ))}
-                </Stack>
+                                        return (
+                                            <TooltipProvider key={day.date}>
+                                                <Tooltip delayDuration={0}>
+                                                    <TooltipTrigger asChild>
+                                                        <Box flex1={true} shrink={0} fullHeight={true} minWidth={10} transition={true} rounded={STORE_TOKENS.RADIUS.SYSTEM} bg={boxProps.bg} bgOpacity={boxProps.bgOpacity ?? STORE_TOKENS.OPACITY.FULL} border={boxProps.border} borderColor={boxProps.borderColor} borderOpacity={boxProps.borderOpacity} opacity={boxProps.opacity} />
+                                                    </TooltipTrigger>
+                                                    <TooltipContent side="top" variant="transparent">
+                                                        <ChartTooltip
+                                                            title={dateLabel}
+                                                            rows={[{
+                                                                color: COLOR_HEX[row.color] ?? '#ffffff',
+                                                                label: row.label,
+                                                                value: row.id === 'diet'
+                                                                    ? `${percentage || 0}% de adesão`
+                                                                    : status === 'none' ? 'Folga / Sem Meta'
+                                                                        : status === 'assigned' ? 'Pendente'
+                                                                            : status === 'skipped' ? 'Falhou'
+                                                                                : status === 'partial' ? `Parcial (${percentage || 0}%)`
+                                                                                    : 'Concluído'
+                                                            }]}
+                                                        />
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            </TooltipProvider>
+                                        )
+                                    })}
+                                </Box>
+                            </Grid>
+                        ))}
+                    </Stack>
+                </Box>
             </Box>
 
             <Stack direction="row" wrap="wrap" align="center" justify="center" gap={STORE_TOKENS.SPACING.CONTAINER} opacity={STORE_TOKENS.OPACITY.OVERLAY}>
