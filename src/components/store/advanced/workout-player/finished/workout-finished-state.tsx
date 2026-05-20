@@ -42,7 +42,7 @@ export function WorkoutFinishedState({
                 </Surface>
             </Box>
 
-            <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+            <Stack gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
                 <Font variant="h2" weight="black" italic color="white" uppercase tracking="tight">Treino Finalizado!</Font>
                 <Font variant="sub-tiny" weight="black" uppercase tracking="widest" color="zinc-500">Como foi o seu desempenho hoje?</Font>
             </Stack>

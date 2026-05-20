@@ -100,8 +100,8 @@ export function StudentPublicMetrics({ fullMetrics, adherenceHistory, steroidUse
                 subtitle="Acompanhamento diário da consistência de treinos, dieta, cardio e ergogênicos nas últimas 4 semanas."
                 icon={Target}
             >
-                <GlassPanel padding={5}>
-                    <Box fullWidth overflow="hidden">
+                <GlassPanel padding={5} minWidth={0}>
+                    <Box fullWidth minWidth={0} overflow="hidden">
                         <UnifiedAdherenceChart
                             history={adherenceHistory || []}
                             showErgogenics={steroidUse}

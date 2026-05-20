@@ -66,74 +66,76 @@ export function UnifiedAdherenceChart({ history, showErgogenics = false, noCard 
     }
 
     const content = (
-        <Stack fullWidth gap={STORE_TOKENS.SPACING.CONTAINER} style={{ paddingBottom: noCard ? 0 : 20 }}>
-            <Stack fullWidth gap={STORE_TOKENS.SPACING.CONTAINER} style={{ minWidth: '450px' }}>
-                {rows.map(row => (
-                    <Box key={row.id} style={{ display: 'grid', gridTemplateColumns: '90px 1fr', gap: '20px', alignItems: 'center' }}>
-                        <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
-                            <Icon icon={row.icon} size="sm" color={row.color as any} />
-                            <Font variant="tiny" weight="black" uppercase color={`${row.color}-500` as any}>{row.label}</Font>
-                        </Stack>
-                        
-                        <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} bg="zinc" bgOpacity={30} rounded={STORE_TOKENS.RADIUS.SYSTEM} border={true} borderColor="zinc" borderOpacity={10} style={{ height: '28px', padding: 6 }}>
-                            {sortedHistory.map((day) => {
-                                let status = 'none'
-                                let percentage = undefined
+        <Stack fullWidth minWidth={0} gap={STORE_TOKENS.SPACING.CONTAINER} style={{ paddingBottom: noCard ? 0 : 20 }}>
+            <Box overflowX="auto" width="full" minWidth={0} className="no-scrollbar" style={{ WebkitOverflowScrolling: 'touch' }}>
+                <Stack fullWidth gap={STORE_TOKENS.SPACING.CONTAINER} style={{ minWidth: '480px' }}>
+                    {rows.map(row => (
+                        <Box key={row.id} style={{ display: 'grid', gridTemplateColumns: '90px 1fr', gap: '20px', alignItems: 'center' }}>
+                            <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
+                                <Icon icon={row.icon} size="sm" color={row.color as any} />
+                                <Font variant="tiny" weight="black" uppercase color={`${row.color}-500` as any}>{row.label}</Font>
+                            </Stack>
+                            
+                            <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} bg="zinc" bgOpacity={30} rounded={STORE_TOKENS.RADIUS.SYSTEM} border={true} borderColor="zinc" borderOpacity={10} style={{ height: '28px', padding: 6 }}>
+                                {sortedHistory.map((day) => {
+                                    let status = 'none'
+                                    let percentage = undefined
 
-                                if (row.id === 'workout') {
-                                    status = day.workout_status
-                                    percentage = day.workout_percentage
-                                } else if (row.id === 'cardio') {
-                                    status = day.cardio_status
-                                    percentage = day.cardio_percentage
-                                } else if (row.id === 'ergo') {
-                                    status = day.ergogenics_status
-                                    percentage = day.ergogenics_percentage
-                                } else if (row.id === 'diet') {
-                                    percentage = day.diet_percentage
-                                    if (percentage > 0) {
-                                        status = percentage >= 100 ? 'completed' : 'partial'
-                                    } else {
-                                        status = day.diet_status || 'none'
+                                    if (row.id === 'workout') {
+                                        status = day.workout_status
+                                        percentage = day.workout_percentage
+                                    } else if (row.id === 'cardio') {
+                                        status = day.cardio_status
+                                        percentage = day.cardio_percentage
+                                    } else if (row.id === 'ergo') {
+                                        status = day.ergogenics_status
+                                        percentage = day.ergogenics_percentage
+                                    } else if (row.id === 'diet') {
+                                        percentage = day.diet_percentage
+                                        if (percentage > 0) {
+                                            status = percentage >= 100 ? 'completed' : 'partial'
+                                        } else {
+                                            status = day.diet_status || 'none'
+                                        }
                                     }
-                                }
 
-                                const boxProps = getStatusProps(status, percentage)
-                                const dateObj = new Date(day.date)
-                                const dateLabel = dateObj.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })
+                                    const boxProps = getStatusProps(status, percentage)
+                                    const dateObj = new Date(day.date)
+                                    const dateLabel = dateObj.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })
 
-                                return (
-                                    <TooltipProvider key={day.date}>
-                                        <Tooltip delayDuration={0}>
-                                            <TooltipTrigger asChild>
-                                                <Box flex1={true} style={{ height: '100%', cursor: 'crosshair', transition: 'all 0.2s ease', minWidth: 0, ...boxProps.style }} rounded={STORE_TOKENS.RADIUS.SYSTEM} bg={boxProps.bg} bgOpacity={boxProps.bgOpacity ?? 100} border={boxProps.border} borderColor={boxProps.borderColor} borderOpacity={boxProps.borderOpacity} opacity={boxProps.opacity} />
-                                            </TooltipTrigger>
-                                            <TooltipContent side="top" className="p-0 border-0 bg-transparent shadow-none">
-                                                <ChartTooltip
-                                                    title={dateLabel}
-                                                    rows={[{
-                                                        color: COLOR_HEX[row.color] ?? '#ffffff',
-                                                        label: row.label,
-                                                        value: row.id === 'diet'
-                                                            ? `${percentage || 0}% de adesão`
-                                                            : status === 'none' ? 'Folga / Sem Meta'
-                                                            : status === 'assigned' ? 'Pendente'
-                                                            : status === 'skipped' ? 'Falhou'
-                                                            : status === 'partial' ? `Parcial (${percentage || 0}%)`
-                                                            : 'Concluído'
-                                                    }]}
-                                                />
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    </TooltipProvider>
-                                )
-                            })}
-                        </Stack>
-                    </Box>
-                ))}
-            </Stack>
+                                    return (
+                                        <TooltipProvider key={day.date}>
+                                            <Tooltip delayDuration={0}>
+                                                <TooltipTrigger asChild>
+                                                    <Box flex1={true} style={{ height: '100%', cursor: 'crosshair', transition: 'all 0.2s ease', minWidth: 0, ...boxProps.style }} rounded={STORE_TOKENS.RADIUS.SYSTEM} bg={boxProps.bg} bgOpacity={boxProps.bgOpacity ?? 100} border={boxProps.border} borderColor={boxProps.borderColor} borderOpacity={boxProps.borderOpacity} opacity={boxProps.opacity} />
+                                                </TooltipTrigger>
+                                                <TooltipContent side="top" className="p-0 border-0 bg-transparent shadow-none">
+                                                    <ChartTooltip
+                                                        title={dateLabel}
+                                                        rows={[{
+                                                            color: COLOR_HEX[row.color] ?? '#ffffff',
+                                                            label: row.label,
+                                                            value: row.id === 'diet'
+                                                                ? `${percentage || 0}% de adesão`
+                                                                : status === 'none' ? 'Folga / Sem Meta'
+                                                                : status === 'assigned' ? 'Pendente'
+                                                                : status === 'skipped' ? 'Falhou'
+                                                                : status === 'partial' ? `Parcial (${percentage || 0}%)`
+                                                                : 'Concluído'
+                                                        }]}
+                                                    />
+                                                </TooltipContent>
+                                            </Tooltip>
+                                        </TooltipProvider>
+                                    )
+                                })}
+                            </Stack>
+                        </Box>
+                    ))}
+                </Stack>
+            </Box>
 
-            <Stack direction="row" wrap="wrap" align="center" justify="center" gap={STORE_TOKENS.SPACING.SECTION} style={{ opacity: 0.6 }}>
+            <Stack direction="row" wrap="wrap" align="center" justify="center" gap={STORE_TOKENS.SPACING.CONTAINER} style={{ opacity: 0.6 }}>
                 <LegendItem color={STORE_TOKENS.COLORS.SUCCESS} label="Meta Batida" />
                 <LegendItem color={STORE_TOKENS.COLORS.WARNING} label="Parcial" />
                 <LegendItem color={STORE_TOKENS.COLORS.ERROR} label="Não Realizado" />
