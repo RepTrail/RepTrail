@@ -108,7 +108,7 @@ export function UnifiedAdherenceChart({ history, showErgogenics = false, noCard 
                                         <TooltipProvider key={day.date}>
                                             <Tooltip delayDuration={0}>
                                                 <TooltipTrigger asChild>
-                                                    <Box flex1={true} fullHeight={true} minWidth={STORE_TOKENS.SPACING.ELEMENT} transition={true} rounded={STORE_TOKENS.RADIUS.SYSTEM} bg={boxProps.bg} bgOpacity={boxProps.bgOpacity ?? STORE_TOKENS.OPACITY.FULL} border={boxProps.border} borderColor={boxProps.borderColor} borderOpacity={boxProps.borderOpacity} opacity={boxProps.opacity} />
+                                                    <Box flex1={true} fullHeight={true} minWidth={10} transition={true} rounded={STORE_TOKENS.RADIUS.SYSTEM} bg={boxProps.bg} bgOpacity={boxProps.bgOpacity ?? STORE_TOKENS.OPACITY.FULL} border={boxProps.border} borderColor={boxProps.borderColor} borderOpacity={boxProps.borderOpacity} opacity={boxProps.opacity} />
                                                 </TooltipTrigger>
                                                 <TooltipContent side="top" variant="transparent">
                                                     <ChartTooltip
@@ -166,7 +166,7 @@ export function UnifiedAdherenceChart({ history, showErgogenics = false, noCard 
 function LegendItem({ color, label }: { color: string, label: string }) {
     return (
         <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-            <Box width={STORE_TOKENS.SPACING.ELEMENT} height={STORE_TOKENS.SPACING.ELEMENT} rounded={STORE_TOKENS.RADIUS.FULL} bg={color as any} bgOpacity={STORE_TOKENS.OPACITY.FULL} />
+            <Box width={8} height={8} rounded={STORE_TOKENS.RADIUS.FULL} bg={color as any} bgOpacity={STORE_TOKENS.OPACITY.FULL} />
             <Font variant="tiny" weight="black" color={STORE_TOKENS.COLORS.TEXT.MUTED} uppercase>{label}</Font>
         </Stack>
     )
