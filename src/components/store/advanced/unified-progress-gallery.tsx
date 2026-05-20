@@ -19,6 +19,8 @@ import { Icon } from '@/components/store/base/icon'
 import { Button } from '@/components/store/base/button'
 import { Separator } from '@/components/store/base/separator'
 import { Modal } from '@/components/store/advanced/modal'
+import { Badge } from '@/components/store/base/badge'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 type PhotoType = 'front_url' | 'back_url' | 'side_right_url' | 'side_left_url'
 
@@ -206,24 +208,39 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                         sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                         className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
                     />
-                    <Box
-                        position="absolute"
-                        pin="bottom"
-                        padding={2.5}
-                        bg="black"
-                        bgOpacity={90}
-                        className="translate-y-2 group-hover:translate-y-0 transition-transform"
+                    {/* Floating Badges Overlay */}
+                    <Box position="absolute" pin="top" padding={2.5} display="flex" justify="between" align="center" fullWidth className="pointer-events-none z-10">
+                        <Badge variant="glass" color="primary" label={typeLabels[item.type]} size="xs" />
+                        <Badge variant="glass" color="zinc" label={new Date(item.date).toLocaleDateString()} size="xs" />
+                    </Box>
+
+                    {/* Centered Hover Zoom Icon Overlay */}
+                    <Box 
+                        position="absolute" 
+                        pin="inset" 
+                        display="flex" 
+                        align="center" 
+                        justify="center" 
+                        bg="black" 
+                        bgOpacity={30} 
+                        opacity={0} 
+                        className="group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
                     >
-                        <Box display="flex" align="center" justify="between" gap={2.5}>
-                            <Stack gap={2.5}>
-                                <Font variant="sub-tiny" weight="black" color="primary" uppercase tracking="widest">
-                                    {typeLabels[item.type]}
-                                </Font>
-                                <Font variant="sub-tiny" weight="bold" color="white" uppercase tracking="tight">
-                                    {new Date(item.date).toLocaleDateString()}
-                                </Font>
-                            </Stack>
-                            <Icon icon={Maximize2} size="xs" color="white" opacity={0} className="group-hover:opacity-100 transition-opacity" />
+                        <Box 
+                            width={40} 
+                            height={40} 
+                            rounded={STORE_TOKENS.RADIUS.FULL} 
+                            bg="primary" 
+                            bgOpacity={20} 
+                            border={true}
+                            borderColor="primary"
+                            borderOpacity={50}
+                            display="flex" 
+                            align="center" 
+                            justify="center"
+                            className="scale-90 group-hover:scale-100 transition-transform duration-300"
+                        >
+                            <Icon icon={Maximize2} size="xs" color="primary" />
                         </Box>
                     </Box>
                 </Box>
