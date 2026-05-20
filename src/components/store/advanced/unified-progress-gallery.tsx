@@ -247,15 +247,16 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                     {filters.map((f) => {
                         const isActive = activeFilter === f.value
                         return (
-                            <Button
-                                key={f.value}
-                                variant={isActive ? 'outline-primary' : 'outline-zinc'}
-                                size="xs"
-                                flex1={true}
-                                onClick={() => setActiveFilter(f.value)}
-                            >
-                                {f.label}
-                            </Button>
+                            <Box key={f.value} grow={1} shrink={0} display="flex">
+                                <Button
+                                    variant={isActive ? 'outline-primary' : 'outline-zinc'}
+                                    size="xs"
+                                    fullWidth={true}
+                                    onClick={() => setActiveFilter(f.value)}
+                                >
+                                    {f.label}
+                                </Button>
+                            </Box>
                         )
                     })}
                 </Box>
