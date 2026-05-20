@@ -5,6 +5,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { Activity, Dumbbell, Flame, Utensils, Sparkles } from 'lucide-react'
 import { Stack } from '@/components/store/base/stack'
 import { Box, BoxProps } from '@/components/store/base/box'
+import { Grid } from '@/components/store/base/grid'
 import { Font } from '@/components/store/base/font'
 import { Icon } from '@/components/store/base/icon'
 import { GlassPanel } from '@/components/store/base/surface'
@@ -49,15 +50,15 @@ export function UnifiedAdherenceChart({ history, showErgogenics = false, noCard 
         ...(showErgogenics ? [{ id: 'ergo', label: 'Ergo', icon: Sparkles, color: STORE_TOKENS.COLORS.ERROR }] : []),
     ], [showErgogenics])
 
-    const getStatusProps = (status: string, percentage?: number): Partial<BoxProps> & { style?: React.CSSProperties } => {
+    const getStatusProps = (status: string, percentage?: number): Partial<BoxProps> => {
         if (percentage !== undefined && percentage !== null && status !== 'none' && status !== 'assigned') {
-            if (percentage >= 100) return { bg: STORE_TOKENS.COLORS.SUCCESS, style: { boxShadow: '0 0 10px rgba(16,185,129,0.3)' } }
+            if (percentage >= 100) return { bg: STORE_TOKENS.COLORS.SUCCESS }
             if (percentage > 0) return { bg: STORE_TOKENS.COLORS.WARNING }
             if (status === 'skipped' || status === 'fail') return { bg: STORE_TOKENS.COLORS.ERROR }
             return { bg: STORE_TOKENS.COLORS.BACKGROUND }
         }
         switch (status) {
-            case 'completed': return { bg: STORE_TOKENS.COLORS.SUCCESS, style: { boxShadow: '0 0 10px rgba(16,185,129,0.3)' } }
+            case 'completed': return { bg: STORE_TOKENS.COLORS.SUCCESS }
             case 'partial': return { bg: STORE_TOKENS.COLORS.WARNING }
             case 'skipped': return { bg: STORE_TOKENS.COLORS.ERROR }
             case 'assigned': return { bg: STORE_TOKENS.COLORS.BACKGROUND, bgOpacity: 90, border: true, borderColor: 'zinc', borderOpacity: 50 }
@@ -66,17 +67,17 @@ export function UnifiedAdherenceChart({ history, showErgogenics = false, noCard 
     }
 
     const content = (
-        <Stack fullWidth minWidth={0} gap={STORE_TOKENS.SPACING.CONTAINER} style={{ paddingBottom: noCard ? 0 : 20 }}>
-            <Box overflowX="auto" width="full" minWidth={0} className="no-scrollbar" style={{ WebkitOverflowScrolling: 'touch' }}>
-                <Stack fullWidth gap={STORE_TOKENS.SPACING.CONTAINER} style={{ minWidth: '550px' }}>
+        <Stack fullWidth minWidth={0} gap={STORE_TOKENS.SPACING.CONTAINER} padding={noCard ? 0 : { base: 0, md: STORE_TOKENS.PADDING.CONTAINER }}>
+            <Box overflowX="auto" width="full" minWidth={0} noScrollbar={true}>
+                <Stack fullWidth gap={STORE_TOKENS.SPACING.CONTAINER} minWidth={600}>
                     {rows.map(row => (
-                        <Box key={row.id} style={{ display: 'grid', gridTemplateColumns: '90px 1fr', gap: '20px', alignItems: 'center' }}>
-                            <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
+                        <Grid key={row.id} cols={12} gap={STORE_TOKENS.SPACING.CONTAINER} align="center" fullWidth>
+                            <Stack colSpan={2} direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                 <Icon icon={row.icon} size="sm" color={row.color as any} />
                                 <Font variant="tiny" weight="black" uppercase color={`${row.color}-500` as any}>{row.label}</Font>
                             </Stack>
                             
-                            <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} bg="zinc" bgOpacity={30} rounded={STORE_TOKENS.RADIUS.SYSTEM} border={true} borderColor="zinc" borderOpacity={10} style={{ height: '28px', padding: 6 }}>
+                            <Stack colSpan={10} direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} bg={STORE_TOKENS.COLORS.SURFACE} bgOpacity={STORE_TOKENS.OPACITY.HIGH} rounded={STORE_TOKENS.RADIUS.SYSTEM} border={true} borderColor={STORE_TOKENS.COLORS.BACKGROUND} borderOpacity={STORE_TOKENS.OPACITY.SUBTLE} padding={STORE_TOKENS.PADDING.ELEMENT}>
                                 {sortedHistory.map((day) => {
                                     let status = 'none'
                                     let percentage = undefined
@@ -107,7 +108,7 @@ export function UnifiedAdherenceChart({ history, showErgogenics = false, noCard 
                                         <TooltipProvider key={day.date}>
                                             <Tooltip delayDuration={0}>
                                                 <TooltipTrigger asChild>
-                                                    <Box flex1={true} style={{ height: '100%', cursor: 'crosshair', transition: 'all 0.2s ease', minWidth: '10px', ...boxProps.style }} rounded={STORE_TOKENS.RADIUS.SYSTEM} bg={boxProps.bg} bgOpacity={boxProps.bgOpacity ?? 100} border={boxProps.border} borderColor={boxProps.borderColor} borderOpacity={boxProps.borderOpacity} opacity={boxProps.opacity} />
+                                                    <Box flex1={true} fullHeight={true} minWidth={STORE_TOKENS.SPACING.ELEMENT} transition={true} rounded={STORE_TOKENS.RADIUS.SYSTEM} bg={boxProps.bg} bgOpacity={boxProps.bgOpacity ?? STORE_TOKENS.OPACITY.FULL} border={boxProps.border} borderColor={boxProps.borderColor} borderOpacity={boxProps.borderOpacity} opacity={boxProps.opacity} />
                                                 </TooltipTrigger>
                                                 <TooltipContent side="top" className="p-0 border-0 bg-transparent shadow-none">
                                                     <ChartTooltip
@@ -130,12 +131,12 @@ export function UnifiedAdherenceChart({ history, showErgogenics = false, noCard 
                                     )
                                 })}
                             </Stack>
-                        </Box>
+                        </Grid>
                     ))}
                 </Stack>
             </Box>
 
-            <Stack direction="row" wrap="wrap" align="center" justify="center" gap={STORE_TOKENS.SPACING.CONTAINER} style={{ opacity: 0.6 }}>
+            <Stack direction="row" wrap="wrap" align="center" justify="center" gap={STORE_TOKENS.SPACING.CONTAINER} opacity={STORE_TOKENS.OPACITY.OVERLAY}>
                 <LegendItem color={STORE_TOKENS.COLORS.SUCCESS} label="Meta Batida" />
                 <LegendItem color={STORE_TOKENS.COLORS.WARNING} label="Parcial" />
                 <LegendItem color={STORE_TOKENS.COLORS.ERROR} label="Não Realizado" />
@@ -148,12 +149,12 @@ export function UnifiedAdherenceChart({ history, showErgogenics = false, noCard 
 
     return (
         <GlassPanel>
-            <Stack padding={STORE_TOKENS.PADDING.SECTION} fullWidth>
-                <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.CONTAINER} style={{ paddingBottom: STORE_TOKENS.SPACING.CONTAINER * 4 }}>
-                    <Icon icon={Activity} size="lg" color="primary" style={{ animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite' }} />
+            <Stack padding={STORE_TOKENS.PADDING.CONTAINER} fullWidth gap={STORE_TOKENS.SPACING.CONTAINER}>
+                <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                    <Icon icon={Activity} size="lg" color="primary" className="animate-pulse" />
                     <Stack direction="row" align="baseline" gap={STORE_TOKENS.SPACING.ELEMENT}>
                         <Font variant="h3" weight="black" color="primary" italic uppercase>Adesão Consolidada</Font>
-                        <Font variant="sub-tiny" weight="normal" color="zinc-500">(30 Dias)</Font>
+                        <Font variant="sub-tiny" weight="normal" color={STORE_TOKENS.COLORS.TEXT.MUTED}>(30 Dias)</Font>
                     </Stack>
                 </Stack>
                 {content}
@@ -165,8 +166,8 @@ export function UnifiedAdherenceChart({ history, showErgogenics = false, noCard 
 function LegendItem({ color, label }: { color: string, label: string }) {
     return (
         <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-            <Box width={8} height={8} rounded={STORE_TOKENS.RADIUS.FULL} bg={color as any} bgOpacity={100} />
-            <Font variant="tiny" weight="black" color="zinc-500" uppercase>{label}</Font>
+            <Box width={STORE_TOKENS.SPACING.ELEMENT} height={STORE_TOKENS.SPACING.ELEMENT} rounded={STORE_TOKENS.RADIUS.FULL} bg={color as any} bgOpacity={STORE_TOKENS.OPACITY.FULL} />
+            <Font variant="tiny" weight="black" color={STORE_TOKENS.COLORS.TEXT.MUTED} uppercase>{label}</Font>
         </Stack>
     )
 }
