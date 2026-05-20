@@ -68,7 +68,7 @@ export function UnifiedAdherenceChart({ history, showErgogenics = false, noCard 
     const content = (
         <Stack fullWidth minWidth={0} gap={STORE_TOKENS.SPACING.CONTAINER} style={{ paddingBottom: noCard ? 0 : 20 }}>
             <Box overflowX="auto" width="full" minWidth={0} className="no-scrollbar" style={{ WebkitOverflowScrolling: 'touch' }}>
-                <Stack fullWidth gap={STORE_TOKENS.SPACING.CONTAINER} style={{ minWidth: '480px' }}>
+                <Stack fullWidth gap={STORE_TOKENS.SPACING.CONTAINER} style={{ minWidth: '550px' }}>
                     {rows.map(row => (
                         <Box key={row.id} style={{ display: 'grid', gridTemplateColumns: '90px 1fr', gap: '20px', alignItems: 'center' }}>
                             <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
@@ -107,7 +107,7 @@ export function UnifiedAdherenceChart({ history, showErgogenics = false, noCard 
                                         <TooltipProvider key={day.date}>
                                             <Tooltip delayDuration={0}>
                                                 <TooltipTrigger asChild>
-                                                    <Box flex1={true} style={{ height: '100%', cursor: 'crosshair', transition: 'all 0.2s ease', minWidth: 0, ...boxProps.style }} rounded={STORE_TOKENS.RADIUS.SYSTEM} bg={boxProps.bg} bgOpacity={boxProps.bgOpacity ?? 100} border={boxProps.border} borderColor={boxProps.borderColor} borderOpacity={boxProps.borderOpacity} opacity={boxProps.opacity} />
+                                                    <Box flex1={true} style={{ height: '100%', cursor: 'crosshair', transition: 'all 0.2s ease', minWidth: '10px', ...boxProps.style }} rounded={STORE_TOKENS.RADIUS.SYSTEM} bg={boxProps.bg} bgOpacity={boxProps.bgOpacity ?? 100} border={boxProps.border} borderColor={boxProps.borderColor} borderOpacity={boxProps.borderOpacity} opacity={boxProps.opacity} />
                                                 </TooltipTrigger>
                                                 <TooltipContent side="top" className="p-0 border-0 bg-transparent shadow-none">
                                                     <ChartTooltip
