@@ -242,7 +242,7 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                 gap={5}
                 padding={0}
             >
-                <Box display="flex" align="center" gap={2.5} wrap="wrap" fullWidth={true}>
+                <Box display="flex" align="center" gap={2.5} wrap="wrap" fullWidth>
                     <Icon icon={Filter} size="xs" color="zinc-400" className="shrink-0 mr-1" />
                     {filters.map((f) => {
                         const isActive = activeFilter === f.value
