@@ -156,7 +156,7 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
     if (photos.length === 0) {
         return (
             <Box
-                padding={10}
+                padding={12.5}
                 display="flex"
                 direction="col"
                 align="center"
@@ -209,7 +209,7 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                         className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
                     />
                     {/* Floating Badge Overlay (Top Left) */}
-                    <Box position="absolute" top={2.5} left={2.5} className="pointer-events-none z-10">
+                    <Box position="absolute" top={2.5} left={2.5} className="pointer-events-none" style={{ zIndex: STORE_TOKENS.Z_INDEX.BASE }}>
                         <Badge variant="solid" color="primary" label={typeLabels[item.type]} size="xs" />
                     </Box>
 
@@ -474,7 +474,7 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                         justify="center"
                         fullWidth
                         bg="zinc"
-                        bgOpacity={95}
+                        bgOpacity={90}
                         className="min-h-[50vh] md:min-h-[60vh] max-h-[70vh] overflow-hidden"
                     >
                         <div className="relative aspect-[3/4] w-full max-w-sm md:max-w-md overflow-hidden rounded-system my-5">
