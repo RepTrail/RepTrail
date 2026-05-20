@@ -459,6 +459,7 @@ export function Box({
         flexShrink: shrinkBase !== undefined ? (typeof shrinkBase === 'number' ? shrinkBase : (shrinkBase as any)) : undefined,
         aspectRatio: aspectRatio === 'square' ? '1/1' : aspectRatio === 'video' ? '16/9' : aspectRatio,
         ...(typeof minHeight === 'number' ? { minHeight: `${minHeight}px` } : {}),
+        ...(typeof minWidthBase === 'number' ? { minWidth: `${minWidthBase}px` } : {}),
         ...(typeof width === 'number' ? { width: `${width}px` } : {}),
         ...(typeof height === 'number' ? { height: `${height}px` } : {})
       }}
