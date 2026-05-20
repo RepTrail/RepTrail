@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/store/base/tooltip'
 import { Activity, Dumbbell, Flame, Utensils, Sparkles } from 'lucide-react'
 import { Stack } from '@/components/store/base/stack'
 import { Box, BoxProps } from '@/components/store/base/box'
@@ -110,7 +110,7 @@ export function UnifiedAdherenceChart({ history, showErgogenics = false, noCard 
                                                 <TooltipTrigger asChild>
                                                     <Box flex1={true} fullHeight={true} minWidth={STORE_TOKENS.SPACING.ELEMENT} transition={true} rounded={STORE_TOKENS.RADIUS.SYSTEM} bg={boxProps.bg} bgOpacity={boxProps.bgOpacity ?? STORE_TOKENS.OPACITY.FULL} border={boxProps.border} borderColor={boxProps.borderColor} borderOpacity={boxProps.borderOpacity} opacity={boxProps.opacity} />
                                                 </TooltipTrigger>
-                                                <TooltipContent side="top" className="p-0 border-0 bg-transparent shadow-none">
+                                                <TooltipContent side="top" variant="transparent">
                                                     <ChartTooltip
                                                         title={dateLabel}
                                                         rows={[{
