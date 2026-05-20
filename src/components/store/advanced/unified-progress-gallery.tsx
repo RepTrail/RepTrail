@@ -208,10 +208,9 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                         sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                         className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
                     />
-                    {/* Floating Badges Overlay */}
-                    <Box position="absolute" pin="top" padding={2.5} display="flex" justify="between" align="center" fullWidth className="pointer-events-none z-10">
-                        <Badge variant="glass" color="primary" label={typeLabels[item.type]} size="xs" />
-                        <Badge variant="glass" color="zinc" label={new Date(item.date).toLocaleDateString()} size="xs" />
+                    {/* Floating Badge Overlay (Top Left) */}
+                    <Box position="absolute" top={2.5} left={2.5} className="pointer-events-none z-10">
+                        <Badge variant="solid" color="primary" label={typeLabels[item.type]} size="xs" />
                     </Box>
 
                     {/* Centered Hover Zoom Icon Overlay */}
@@ -382,7 +381,7 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                                     </Box>
 
                                     {/* Photos Grid for this session (4 per row on md/lg screens) */}
-                                    <Grid cols={{ base: 2, md: 4 }} gap={5}>
+                                    <Grid cols={{ base: 1, md: 4 }} gap={5}>
                                         {sessionPhotos.map((photo, pIdx) => {
                                             const globalIdx = allItems.findIndex(ai => ai.url === photo.url)
                                             return renderPhotoCard({ ...photo, date: set.created_at, setId: set.id }, globalIdx)
@@ -395,7 +394,7 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                 </Stack>
             ) : (
                 /* Photos Grid for filtered view (4 per row on md/lg screens) */
-                <Grid cols={{ base: 2, md: 4 }} gap={5}>
+                <Grid cols={{ base: 1, md: 4 }} gap={5}>
                     {filteredItems.map((item, i) => {
                         const isEditing = editingSetId === item.setId
 

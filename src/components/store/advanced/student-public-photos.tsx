@@ -88,10 +88,10 @@ export function StudentPublicPhotos({ studentId, isOwner, studentName, photos, i
                                     {/* Positioned Overlay Badge */}
                                     <Box
                                         position="absolute"
-                                        top={16}
-                                        left={16}
+                                        top={2.5}
+                                        left={2.5}
                                     >
-                                        <Badge label="Início" color="orange" variant="solid" />
+                                        <Badge label="Início" color="orange" variant="solid" size="xs" />
                                     </Box>
                                 </Box>
 
@@ -133,10 +133,10 @@ export function StudentPublicPhotos({ studentId, isOwner, studentName, photos, i
                                     {/* Positioned Overlay Badge */}
                                     <Box
                                         position="absolute"
-                                        top={16}
-                                        left={16}
+                                        top={2.5}
+                                        left={2.5}
                                     >
-                                        <Badge label="Atual" color="emerald" variant="solid" />
+                                        <Badge label="Atual" color="emerald" variant="solid" size="xs" />
                                     </Box>
                                 </Box>
                             </Grid>
