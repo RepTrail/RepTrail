@@ -389,8 +389,8 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
                 variant="orange"
                 onClick={() => setOpen(true)}
                 transition
-                paddingY={2.5}
-                paddingX={5}
+                paddingY="element"
+                paddingX="container"
                 fullWidth={fullWidth}
             >
                 <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
@@ -554,7 +554,7 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
                                 variant="emerald"
                                 rounded={STORE_TOKENS.RADIUS.SYSTEM}
                                 fullWidth
-                                paddingY={2.5}
+                                paddingY="element"
                             >
                                 <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                     <Icon icon={Share2} size="sm" />
@@ -574,7 +574,7 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
                                 variant="outline-zinc"
                                 rounded={STORE_TOKENS.RADIUS.SYSTEM}
                                 fullWidth
-                                paddingY={2.5}
+                                paddingY="element"
                             >
                                 <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                     <Icon icon={Download} size="sm" />

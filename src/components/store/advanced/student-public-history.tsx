@@ -18,7 +18,7 @@ export function StudentPublicHistory({ history }: StudentPublicHistoryProps) {
             icon={History}
         >
             {/* History Content Card using Liquid Glass */}
-            <GlassPanel padding={5}>
+            <GlassPanel padding="container">
                 <StudentWorkoutHistory
                     history={history}
                     isBlocked={false}

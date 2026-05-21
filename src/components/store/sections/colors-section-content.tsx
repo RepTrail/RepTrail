@@ -35,8 +35,8 @@ export function ColorsSectionContent({ id }: { id?: string }) {
         >
             <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                 {/* Brand Colors with Opacity Variations */}
-                <GlassPanel padding={0}>
-                    <Stack gap={0}>
+                <GlassPanel padding="none">
+                    <Stack gap="none">
                         <CardHeader>
                             <Font variant="label-caps" color={STORE_TOKENS.COLORS.TEXT.MUTED}>Brand Color Spectrum (100%, 30%, 20%)</Font>
                         </CardHeader>
@@ -78,8 +78,8 @@ export function ColorsSectionContent({ id }: { id?: string }) {
                 </GlassPanel>
 
                 {/* Functional System Colors */}
-                <GlassPanel padding={0}>
-                    <Stack gap={0}>
+                <GlassPanel padding="none">
+                    <Stack gap="none">
                         <CardHeader>
                             <Font variant="label-caps" color={STORE_TOKENS.COLORS.TEXT.MUTED}>System & Background Tokens</Font>
                         </CardHeader>

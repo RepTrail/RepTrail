@@ -16,7 +16,8 @@ interface BadgeProps {
     size?: 'xs' | 'sm' | 'md'
     rounded?: number | 'system' | 'full'
     animatePulse?: boolean
-    className?: string
+    className?: never
+    style?: never
 }
 
 export function Badge({ 
@@ -28,7 +29,7 @@ export function Badge({
     rounded = STORE_TOKENS.RADIUS.SYSTEM,
     animatePulse,
     className
-}: BadgeProps) {
+}: Omit<BadgeProps, 'className' | 'style'> & { className?: string }) {
     const { primaryColor } = useRegistry()
     const resolvedColor = color === 'primary' ? primaryColor : color
 

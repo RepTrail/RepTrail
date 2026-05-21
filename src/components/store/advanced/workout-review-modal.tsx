@@ -216,7 +216,7 @@ export function WorkoutReviewModal({
                                 </Box>
 
                                 {/* Sets List */}
-                                <Stack divide gap={0}>
+                                <Stack divide gap="none">
                                     {exerciseLoads.map((load) => {
                                         const cfg = setTypeConfig[load.set_type] || setTypeConfig.WORKING
                                         const edit = edits[load.id] || { weight: '0', reps: '0' }
@@ -233,7 +233,7 @@ export function WorkoutReviewModal({
                                                     <Stack direction="row" align={{ base: 'end', md: 'center' }} justify="end" flex1 fullWidth gap={STORE_TOKENS.SPACING.ELEMENT}>
                                                         {/* Weight Column */}
                                                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT} flex1={ { base: true, md: false } }>
-                                                            <Box display={{ base: 'block', md: 'none' }} padding={0}>
+                                                            <Box display={{ base: 'block', md: 'none' }} padding="none">
                                                                 <Font variant="sub-tiny" weight="black" uppercase color="zinc-600">Peso</Font>
                                                             </Box>
                                                             <Box width={{ base: 'full', md: 80 }}>
@@ -254,7 +254,7 @@ export function WorkoutReviewModal({
 
                                                         {/* Reps Column */}
                                                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT} flex1={ { base: true, md: false } }>
-                                                            <Box display={{ base: 'block', md: 'none' }} padding={0}>
+                                                            <Box display={{ base: 'block', md: 'none' }} padding="none">
                                                                 <Font variant="sub-tiny" weight="black" uppercase color="zinc-600">Reps</Font>
                                                             </Box>
                                                             <Box width={{ base: 'full', md: 60 }}>

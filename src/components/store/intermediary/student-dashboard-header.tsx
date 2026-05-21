@@ -21,7 +21,7 @@ export function StudentDashboardHeader({
     const displayDate = dateValue || new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' })
 
     return (
-        <Stack direction={{ base: 'col', md: 'row' }} align={{ base: 'start', md: 'end' }} justify="between" gap="header-gap">
+        <Stack direction={{ base: 'col', md: 'row' }} align={{ base: 'start', md: 'end' }} justify="between" gap={STORE_TOKENS.SPACING.CONTAINER}>
             <Font
                 variant="h1"
                 color={STORE_TOKENS.COLORS.TEXT.PRIMARY}

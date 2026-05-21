@@ -60,7 +60,7 @@ export function CardioTimerCard({
 
     return (
         <GlassPanel
-            padding={0}
+            padding="none"
             rounded={STORE_TOKENS.RADIUS.SYSTEM}
             overflow="hidden"
             variant="glass"
@@ -165,7 +165,7 @@ export function CardioTimerCard({
                         )}
                     </Stack>
 
-                    <Grid cols={{ base: 2.5, lg: 2 }} gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
+                    <Grid cols={{ base: 2, lg: 2 }} gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
                         <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM} variant="glass" display="flex" direction="col" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                             <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={isCompleted ? STORE_TOKENS.COLORS.SUCCESS : STORE_TOKENS.COLORS.WARNING} opacity={80}>QUEIMA EST.</Font>
                             <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} variant="h4" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} align="center">

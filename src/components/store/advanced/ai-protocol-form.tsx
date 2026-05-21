@@ -136,7 +136,7 @@ export function AIProtocolForm({ userId, onSuccess }: AIProtocolFormProps) {
 
                         <Box height="px" bg="white" bgOpacity={5} fullWidth />
 
-                        <Grid cols={{ base: 2.5, md: 2 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                        <Grid cols={{ base: 2, md: 2 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
                             <FormSelect
                                 label="Divisão"
                                 placeholder="Selecione a divisão..."
@@ -168,7 +168,7 @@ export function AIProtocolForm({ userId, onSuccess }: AIProtocolFormProps) {
 
                         <Box height="px" bg="white" bgOpacity={5} fullWidth />
 
-                        <Grid cols={{ base: 2.5, md: 2 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                        <Grid cols={{ base: 2, md: 2 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
                             <Textarea label="Pontos Fortes" placeholder="Peitoral, Braços..." value={strongMuscles} onChange={(e) => setStrongMuscles(e.target.value)} />
                             <Textarea label="Pontos Fracos" placeholder="Dorsais, Quadríceps..." value={weakMuscles} onChange={(e) => setWeakMuscles(e.target.value)} />
                         </Grid>
@@ -186,7 +186,7 @@ export function AIProtocolForm({ userId, onSuccess }: AIProtocolFormProps) {
                 >
                     <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                         <Font variant="sub-tiny" color="zinc-500" weight="black" uppercase tracking="widest">Modalidades Aceitas</Font>
-                        <Grid cols={{ base: 2, md: 4 }} gap={2.5}>
+                        <Grid cols={{ base: 2, md: 4 }} gap="element">
                             {['Esteira', 'Bike', 'Escada', 'Corrida', 'HIIT', 'Natação', 'Caminhada', 'Corda'].map(c => (
                                 <FormCheckbox
                                     key={c}
@@ -215,7 +215,7 @@ export function AIProtocolForm({ userId, onSuccess }: AIProtocolFormProps) {
                             onChange={(v) => setMealsPerDay(Number(v))}
                             options={[{ value: '3', label: '3 Refeições' }, { value: '4', label: '4 Refeições' }, { value: '5', label: '5 Refeições' }, { value: '6', label: '6 Refeições' }]}
                         />
-                        <Grid cols={{ base: 2.5, md: 2 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                        <Grid cols={{ base: 2, md: 2 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
                             <Textarea label="Gosto de" placeholder="Frango, Arroz, Ovos..." value={foodLikes} onChange={(e) => setFoodLikes(e.target.value)} />
                             <Textarea label="Não Gosto / Restrições" placeholder="Lactose, Brócolis..." value={foodDislikes} onChange={(e) => setFoodDislikes(e.target.value)} />
                         </Grid>
@@ -224,10 +224,10 @@ export function AIProtocolForm({ userId, onSuccess }: AIProtocolFormProps) {
             )}
 
             {/* ACTION AREA */}
-            <Stack gap={5}>
+            <Stack gap="container">
                 {error && (
                     <Surface variant="tonal-red" padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM}>
-                        <Stack direction="row" align="center" gap={2.5}>
+                        <Stack direction="row" align="center" gap="element">
                             <Icon icon={AlertCircle} size="xs" color="red" />
                             <Font variant="auxiliary" color="red">{error}</Font>
                         </Stack>
@@ -236,7 +236,7 @@ export function AIProtocolForm({ userId, onSuccess }: AIProtocolFormProps) {
 
                 {currentStep === 1 ? (
                     <Button variant="primary" size="lg" fullWidth onClick={handleNext}>
-                        <Stack direction="row" align="center" justify="center" gap={2.5}>
+                        <Stack direction="row" align="center" justify="center" gap="element">
                             <Font variant="sub-tiny" weight="black" uppercase italic>Próxima Etapa</Font>
                             <Icon icon={ArrowRight} size="xs" />
                         </Stack>
@@ -244,7 +244,7 @@ export function AIProtocolForm({ userId, onSuccess }: AIProtocolFormProps) {
                 ) : (
                     <Grid cols={{ base: 1, md: 2 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
                         <Button variant="outline-zinc" size="lg" fullWidth onClick={handlePrev} disabled={loading}>
-                            <Stack direction="row" align="center" justify="center" gap={2.5}>
+                            <Stack direction="row" align="center" justify="center" gap="element">
                                 <Icon icon={ArrowLeft} size="xs" />
                                 <Font variant="sub-tiny" weight="black" uppercase italic>Anterior</Font>
                             </Stack>
@@ -252,7 +252,7 @@ export function AIProtocolForm({ userId, onSuccess }: AIProtocolFormProps) {
 
                         {currentStep < 3 ? (
                             <Button variant="primary" size="lg" fullWidth onClick={handleNext}>
-                                <Stack direction="row" align="center" justify="center" gap={2.5}>
+                                <Stack direction="row" align="center" justify="center" gap="element">
                                     <Font variant="sub-tiny" weight="black" uppercase italic>Próxima Etapa</Font>
                                     <Icon icon={ArrowRight} size="xs" />
                                 </Stack>
@@ -260,12 +260,12 @@ export function AIProtocolForm({ userId, onSuccess }: AIProtocolFormProps) {
                         ) : (
                             <Button variant="primary" size="lg" fullWidth onClick={handleGenerate} disabled={loading}>
                                 {loading ? (
-                                    <Stack direction="row" align="center" justify="center" gap={2.5}>
+                                    <Stack direction="row" align="center" justify="center" gap="element">
                                         <Icon icon={Loader2} size="sm" animate="spin" />
                                         <Font variant="sub-tiny" weight="black" uppercase>Processando...</Font>
                                     </Stack>
                                 ) : (
-                                    <Stack direction="row" align="center" justify="center" gap={2.5}>
+                                    <Stack direction="row" align="center" justify="center" gap="element">
                                         <Icon icon={Sparkles} size="xs" />
                                         <Font variant="sub-tiny" weight="black" uppercase italic>Gerar Protocolo</Font>
                                     </Stack>

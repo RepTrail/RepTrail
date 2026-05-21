@@ -76,7 +76,7 @@ export function AffiliateReferralsContent() {
                             />
                         ))
                     ) : (
-                        <Box padding={0}>
+                        <Box padding="none">
                             <EmptyState
                                 icon={Search}
                                 title="Nenhum indicado encontrado"

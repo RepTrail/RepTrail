@@ -26,7 +26,7 @@ export function PriceDisplay({ label, value, subtitle }: PriceDisplayProps) {
             borderColor={STORE_TOKENS.COLORS.DIVIDER.SUBTLE} 
             rounded="system"
         >
-            <Stack align="center" gap={2.5}>
+            <Stack align="center" gap="element">
                 <Font variant="sub-tiny" weight="black" uppercase color="zinc-500">
                     {label}
                 </Font>

@@ -10,10 +10,10 @@ interface IconProps {
   color?: 'foreground' | 'muted' | 'orange' | 'emerald' | 'red' | 'blue' | 'amber' | 'white' | 'black' | 'zinc-400' | 'zinc-500' | 'zinc-600' | 'zinc-700' | 'zinc-800' | 'primary'
   spin?: boolean
   animation?: 'bounce' | 'pulse'
-  className?: string
+  className?: never
   animate?: 'spin'
   opacity?: 0 | 10 | 20 | 30 | 40 | 50 | 60 | 70 | 80 | 90 | 100
-  style?: React.CSSProperties
+  style?: never
 }
 
 export function Icon({
@@ -26,7 +26,7 @@ export function Icon({
   animate,
   opacity,
   style
-}: IconProps) {
+}: Omit<IconProps, 'className' | 'style'> & { className?: string, style?: React.CSSProperties }) {
   const { primaryColor } = useRegistry()
   const resolvedColor = color === 'primary' ? primaryColor : color
 
@@ -74,10 +74,11 @@ interface IconBoxProps {
   variant?: 'orange' | 'emerald' | 'red' | 'blue' | 'amber' | 'zinc' | 'primary'
   size?: 'sm' | 'md' | 'lg'
   rounded?: 'system' | 'full'
-  className?: string
+  className?: never
+  style?: never
 }
 
-export function IconBox({ icon, variant = 'zinc', size = 'md', rounded = 'system', className }: IconBoxProps) {
+export function IconBox({ icon, variant = 'zinc', size = 'md', rounded = 'system', className, style }: Omit<IconBoxProps, 'className' | 'style'> & { className?: string, style?: React.CSSProperties }) {
   const { primaryColor } = useRegistry()
   const resolvedVariant = variant === 'primary' ? primaryColor : variant
 

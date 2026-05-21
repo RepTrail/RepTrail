@@ -9,7 +9,8 @@ interface BaseAvatarProps {
     variant?: 'orange' | 'emerald' | 'red' | 'blue' | 'amber' | 'zinc' | 'primary'
     size?: 'sm' | 'md' | 'lg' | 'xl' | 'xxl'
     src?: string
-    className?: string
+    className?: never
+    style?: never
 }
 
 export function BaseAvatar({
@@ -18,7 +19,7 @@ export function BaseAvatar({
     size = 'md',
     src,
     className
-}: BaseAvatarProps) {
+}: Omit<BaseAvatarProps, 'className' | 'style'> & { className?: string }) {
     const { primaryColor } = useRegistry()
     const resolvedVariant = variant === 'primary' ? primaryColor : variant
 

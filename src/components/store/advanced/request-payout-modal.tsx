@@ -111,7 +111,7 @@ export function RequestPayoutModal({ isOpen, onClose, availableBalance }: Reques
                             </Font>
                             <Button
                                 variant="ghost"
-                                padding={0}
+                                padding="none"
                                 onClick={handleMaxAmount}
                             >
                                 <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.BRAND} weight="black">SAQUE TOTAL</Font>

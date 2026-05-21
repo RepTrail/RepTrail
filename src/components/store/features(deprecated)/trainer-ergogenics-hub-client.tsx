@@ -32,7 +32,7 @@ export function TrainerErgogenicsHubClient({ ergogenicStudents }: TrainerErgogen
             contextLabel="Área do Personal"
             showTabs={false}
         >
-            <Stack gap={10}>
+            <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                 {ergogenicStudents.length > 0 ? (
                     <Grid gap={STORE_TOKENS.SPACING.CONTAINER} mdCols={2} lgCols={3}>
                         {ergogenicStudents.map((item) => (

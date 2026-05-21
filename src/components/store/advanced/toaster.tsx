@@ -19,7 +19,7 @@ export function Toaster() {
             {toasts.map(function ({ id, title, description, action, ...props }: any) {
                 return (
                     <Toast key={id} {...props}>
-                        <Stack gap={2.5} flex1>
+                        <Stack gap="element" flex1>
                             {title && <ToastTitle>{title}</ToastTitle>}
                             {description && (
                                 <ToastDescription>{description}</ToastDescription>

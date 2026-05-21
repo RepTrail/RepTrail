@@ -85,7 +85,7 @@ export function Modal({
   return (
     <ModalOverlay onClose={onClose} animateState={animateState}>
       <ModalContainer animateState={animateState}>
-        <Surface variant="base" padding={0} rounded={STORE_TOKENS.RADIUS.SYSTEM} direction="col" flex1 minHeight={0} overflow="hidden">
+        <Surface variant="base" padding="none" rounded={STORE_TOKENS.RADIUS.SYSTEM} direction="col" flex1 minHeight={0} overflow="hidden">
           <Box flex1 direction="col" minHeight={0} overflow="hidden">
             {/* Header */}
             <CardHeader bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.BACKGROUND} shrink={0} gap={STORE_TOKENS.SPACING.CONTAINER} direction="col">
@@ -94,8 +94,8 @@ export function Modal({
                 {icon && <IconBox icon={icon} variant={variant as any} />}
                 
                 {/* Desktop Title (Visible only on md+) */}
-                <Box display={{ base: 'none', md: 'flex' }} flex1 padding={0}>
-                  <Stack gap={0}>
+                <Box display={{ base: 'none', md: 'flex' }} flex1 padding="none">
+                  <Stack gap="none">
                     <Font variant="body" weight="black" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} uppercase italic tracking="normal">{title}</Font>
                     {subtitle && <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{subtitle}</Font>}
                   </Stack>
@@ -108,7 +108,7 @@ export function Modal({
 
               {/* Mobile Title (Visible only on base, hidden on md+) */}
               <Box display={{ base: 'flex', md: 'none' }} fullWidth>
-                <Stack gap={0}>
+                <Stack gap="none">
                   <Font variant="body" weight="black" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} uppercase italic tracking="normal">{title}</Font>
                   {subtitle && <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{subtitle}</Font>}
                 </Stack>
@@ -123,7 +123,7 @@ export function Modal({
               overflowY="auto" 
               bg={STORE_TOKENS.COLORS.BACKGROUND} 
               bgOpacity={STORE_TOKENS.OPACITY.BACKGROUND} 
-              padding={noPadding ? 0 : STORE_TOKENS.PADDING.CONTAINER} 
+              padding={noPadding ? 'none' : STORE_TOKENS.PADDING.CONTAINER} 
               minHeight={0}
             >
               {children ? children : (

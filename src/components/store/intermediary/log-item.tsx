@@ -65,7 +65,7 @@ export function LogItem({
             <Inline gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
                 <IconBox icon={Zap} variant={variant as any} size="md" rounded={STORE_TOKENS.RADIUS.FULL} />
                 
-                <Stack gap={0}>
+                <Stack gap="none">
                     <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} variant="body-sm" color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
                         {action.replace(/_/g, ' ')}
                     </Font>

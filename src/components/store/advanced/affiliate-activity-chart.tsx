@@ -33,7 +33,7 @@ export function AffiliateActivityChart({ clickDays, maxClicks }: AffiliateActivi
           const isToday = i === recentDays.length - 1
 
           return (
-            <Stack key={date} align="center" gap={2.5} flex1>
+            <Stack key={date} align="center" gap="element" flex1>
               <Box 
                 fullWidth 
                 bg={isToday ? primaryColor as any : 'zinc'} 
@@ -53,7 +53,7 @@ export function AffiliateActivityChart({ clickDays, maxClicks }: AffiliateActivi
                   left="50%" 
                   translateX="-full"
                   bg="black" 
-                  padding={2.5} 
+                  padding="element" 
                   rounded="none" 
                   display="none" 
                   groupHoverDisplay="block"

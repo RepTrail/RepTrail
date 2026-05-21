@@ -1,7 +1,7 @@
 'use client'
 import React from 'react'
 import { cn } from '@/lib/utils'
-import { Box, BoxProps } from './box'
+import { Box, BoxProps, SpacingToken } from './box'
 import { useRegistry } from '@/components/store/advanced/registry-context'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
@@ -26,7 +26,7 @@ type BoxColor = 'orange' | 'emerald' | 'amber' | 'red' | 'blue' | 'zinc' | 'whit
 interface SurfaceProps extends Omit<BoxProps, 'padding' | 'zIndex' | 'border' | 'borderWidth' | 'borderColor' | 'bgOpacity' | 'hoverBgOpacity' | 'opacity' | 'groupHoverOpacity'> {
   children: React.ReactNode
   variant?: SurfaceVariant | 'glass-dark'
-  padding?: 0 | 2.5 | 5 | 10 | 12.5 | 20 | 50 | 100 | 'section' | { base: 0 | 2.5 | 5 | 10 | 12.5 | 20 | 50 | 100 | 'section', md?: 0 | 2.5 | 5 | 10 | 12.5 | 20 | 50 | 100 | 'section' }
+  padding?: SpacingToken | { base: SpacingToken, md?: SpacingToken, lg?: SpacingToken }
   rounded?: 'none' | 'full' | 'system'
   minHeight?: 'screen' | 'sm' | 'md' | 'lg' | 'xl' | number
   border?: 'none' | 'subtle' | 'standard' | 'bold' | 'dashed'

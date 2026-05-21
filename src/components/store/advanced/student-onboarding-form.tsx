@@ -140,7 +140,7 @@ export function StudentOnboardingForm({ defaultTrainerCode = '' }: { defaultTrai
                             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                                 <Font variant="sub-tiny" weight="black" uppercase tracking="widest">{state.message}</Font>
                                 {state.errors && Object.keys(state.errors).length > 0 && (
-                                    <Stack gap={2.5} className="normal-case text-[10px]">
+                                    <Stack gap="element" className="normal-case text-[10px]">
                                         {Object.entries(state.errors).map(([field, msgs]) => (
                                             <div key={field}><strong>{field}:</strong> {msgs?.join(', ')}</div>
                                         ))}

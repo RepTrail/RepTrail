@@ -50,6 +50,8 @@ export interface DashboardUser {
     email?: string | null
     avatar_url?: string | null
     isAdmin?: boolean
+    isAffiliate?: boolean
+    role?: string
 }
 
 interface DashboardShellProps {
@@ -127,7 +129,7 @@ export function DashboardShell({ children, color, links, mobileLinks, user, prof
                 transition
                 position="relative"
                 zIndex={10}
-                paddingLeft={{ base: 0, md: 'sidebar-wide' }}
+                paddingLeft={{ base: "none", md: 'sidebar-wide' }}
                 display="flex"
                 direction="col"
             >

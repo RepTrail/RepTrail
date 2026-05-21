@@ -1,22 +1,8 @@
 import React from 'react'
 import { cn } from '@/lib/utils'
-import { Box, BoxProps } from './box'
+import { Box, BoxProps, SpacingToken } from './box'
 
-export type GapToken = 
-  | 0 
-  | 2.5 
-  | 5 
-  | 10 
-  | 12.5 
-  | 20 
-  | 50 
-  | 100 
-  | 'section' 
-  | 'title-content' 
-  | 'header-gap'
-  | 'empty-state'
-  | 'container'
-  | 'element'
+export type GapToken = SpacingToken
 
 export interface StackProps extends Omit<BoxProps, 'gap'> {
   children: React.ReactNode
@@ -28,8 +14,9 @@ export interface StackProps extends Omit<BoxProps, 'gap'> {
   flex1?: boolean | { base: boolean, md?: boolean, lg?: boolean }
   fullWidth?: boolean
   wrap?: 'wrap' | 'nowrap'
-  className?: string
+  className?: never
   id?: string
+  style?: never
 }
 
 /**
@@ -38,7 +25,7 @@ export interface StackProps extends Omit<BoxProps, 'gap'> {
 export function Stack({ 
   children, 
   direction = 'col', 
-  gap = 2.5, 
+  gap = "element", 
   divide,
   align = 'stretch', 
   justify = 'start',
@@ -48,30 +35,26 @@ export function Stack({
   className,
   id,
   ...props
-}: StackProps) {
+}: Omit<StackProps, 'className' | 'style'> & { className?: string, style?: React.CSSProperties }) {
   
   const gapClasses = {
-    0: 'gap-0',
-    1: 'gap-1',
-    2.5: 'gap-2.5',
-    5: 'gap-5',
-    7.5: 'gap-[30px]',
-    10: 'gap-10',
-    12.5: 'gap-[50px]',
-    'section': 'gap-[50px]',
+    none: 'gap-0',
+    tiny: 'gap-1',
+    element: 'gap-2.5',
+    container: 'gap-5',
+    empty_state: 'gap-[50px]',
+    section: 'gap-[50px]',
     'title-content': 'gap-[30px]',
     'header-gap': 'gap-8'
   }
 
   const gapMdClasses = {
-    0: 'md:gap-0',
-    1: 'md:gap-1',
-    2.5: 'md:gap-2.5',
-    5: 'md:gap-5',
-    7.5: 'md:gap-[30px]',
-    10: 'md:gap-10',
-    12.5: 'md:gap-[50px]',
-    'section': 'md:gap-[100px]',
+    none: 'md:gap-0',
+    tiny: 'md:gap-1',
+    element: 'md:gap-2.5',
+    container: 'md:gap-5',
+    empty_state: 'md:gap-[50px]',
+    section: 'md:gap-[100px]',
     'title-content': 'md:gap-[50px]',
     'header-gap': 'md:gap-8'
   }
@@ -82,7 +65,7 @@ export function Stack({
   let gapMd = isRespGap ? (gap as any).md : undefined
 
   // Auto-responsive tokens
-  if (gap === 'section' || gap === 'title-content') {
+  if (gap === 'section') {
     gapBase = gap
     gapMd = gap
   }

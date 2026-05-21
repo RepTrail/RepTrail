@@ -35,10 +35,10 @@ export function PdfDropzone({ uploading, parsing, onFileChange }: PdfDropzonePro
                                 <Loader2 className="h-16 w-16 animate-spin text-emerald-500 relative min-h-0" />
                             </div>
                             <Stack align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                <Font variant="body" weight="bold" color="white">
+                                <Font variant="body" weight="bold" color="white" align="center">
                                     {uploading ? 'Enviando arquivo...' : 'A IA está lendo o PDF...'}
                                 </Font>
-                                <Font variant="description" color="zinc-500">
+                                <Font variant="description" color="zinc-500" align="center">
                                     Isso pode levar alguns segundos dependendo do tamanho do documento.
                                 </Font>
                             </Stack>
@@ -49,8 +49,8 @@ export function PdfDropzone({ uploading, parsing, onFileChange }: PdfDropzonePro
                                 <Icon icon={Upload} size="lg" color="emerald" />
                             </Surface>
                             <Stack align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                <Font variant="body" weight="bold" color="white">Arraste seu arquivo aqui</Font>
-                                <Font variant="description" color="zinc-500">Ou clique para navegar pelo computador</Font>
+                                <Font variant="body" weight="bold" color="white" align="center">Arraste seu arquivo aqui</Font>
+                                <Font variant="description" color="zinc-500" align="center">Ou clique para navegar pelo computador</Font>
                             </Stack>
                             <DSButton variant="outline-emerald" size="md" rounded="system" className="relative min-h-0">
                                 Selecionar Arquivo

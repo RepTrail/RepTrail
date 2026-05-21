@@ -41,7 +41,7 @@ export function StoreProductCard({
 
     return (
         <GlassPanel
-            padding={0}
+            padding="none"
             rounded={STORE_TOKENS.RADIUS.SYSTEM}
             variant="glass-diagonal"
             transition
@@ -106,14 +106,14 @@ export function StoreProductCard({
                     <Stack direction="row" justify="between" align="end">
                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                             {isOriginal && (
-                                <Stack direction="row" align="center" gap={2.5}>
+                                <Stack direction="row" align="center" gap="element">
                                     <Icon icon={ShieldCheck} size="xs" color={STORE_TOKENS.COLORS.SUCCESS} />
                                     <Font variant="tiny" weight="black" uppercase color={STORE_TOKENS.COLORS.SUCCESS}>
                                         Original
                                     </Font>
                                 </Stack>
                             )}
-                            <Stack direction="row" align="baseline" gap={2.5}>
+                            <Stack direction="row" align="baseline" gap="element">
                                 <Font variant="sub-tiny" weight="bold" color={STORE_TOKENS.COLORS.TEXT.MUTED}>R$</Font>
                                 <Font variant="h3" weight="black" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} tracking="tight">
                                     {Math.floor(price)}
@@ -125,7 +125,7 @@ export function StoreProductCard({
                         </Stack>
 
                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="end">
-                            <Stack direction="row" gap={2.5}>
+                            <Stack direction="row" gap="element">
                                 {[1, 2, 3, 4, 5].map(i => (
                                     <Icon key={i} icon={Star} size="xs" color={i <= Math.round(rating) ? STORE_TOKENS.COLORS.BRAND : STORE_TOKENS.COLORS.TEXT.DIM} />
                                 ))}

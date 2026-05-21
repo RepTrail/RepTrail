@@ -93,7 +93,7 @@ export function TrainerDashboardClient({ userId, betaTesterMode }: TrainerDashbo
             contextLabel="Área do Personal"
             showTabs={false}
         >
-            <Stack gap={{ base: 12.5, md: 'section' }} className="pb-10">
+            <Stack gap={{ base: 'empty_state', md: 'section' }} className="pb-10">
                 <CodeAutoGenerator hasCode={!!profile?.trainer_code} />
 
                 {/* Quick Actions Header */}

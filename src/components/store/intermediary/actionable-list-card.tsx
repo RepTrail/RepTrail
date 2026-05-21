@@ -20,14 +20,14 @@ export function ActionableListCard({ children, badges, actions, isLogItem, isStr
 
     return (
         <GlassPanel
-            padding={0}
+            padding="none"
             transition
             group
             hoverBorder="white/20"
             overflow="hidden"
             fullWidth
         >
-            <Stack gap={0} fullWidth>
+            <Stack gap="none" fullWidth>
                 <Box
                     fullWidth
                     position="relative"

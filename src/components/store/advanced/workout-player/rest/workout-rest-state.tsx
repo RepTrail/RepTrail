@@ -33,7 +33,7 @@ export function WorkoutRestState({
             <BackgroundIcon icon={Play} size="100" opacity={10} top={0} right={0} />
 
             {/* Top Icon and Badge */}
-            <Stack align="center" gap={2.5}>
+            <Stack align="center" gap="element">
                 <Badge label="Descanso Ativo" variant="glass" color={colorTheme} icon={Timer} animatePulse />
             </Stack>
 
@@ -55,7 +55,7 @@ export function WorkoutRestState({
                     borderWidth: '2px'
                 }}
             >
-                <Stack align="center" gap={2.5}>
+                <Stack align="center" gap="element">
                     <Font variant="display" color={colorTheme}>
                         {minutes}:{seconds.toString().padStart(2, '0')}
                     </Font>
@@ -69,7 +69,7 @@ export function WorkoutRestState({
                 <Box width="full" maxWidth="md">
                     <Surface variant="glass" padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM} border="standard">
                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                            <Stack direction="row" align="center" gap={2.5}>
+                            <Stack direction="row" align="center" gap="element">
                                 <Font variant="sub-tiny" weight="black" color="zinc-500" uppercase tracking="widest">A Seguir</Font>
                                 <Box flex1 height="px" bg="zinc" bgOpacity={20} />
                             </Stack>
@@ -89,7 +89,7 @@ export function WorkoutRestState({
 
             <Box width="full" maxWidth="md">
                 <Button variant="outline-zinc" fullWidth onClick={onSkip}>
-                    <Stack direction="row" align="center" gap={2.5}>
+                    <Stack direction="row" align="center" gap="element">
                         <Icon icon={X} size="xs" />
                         <span>Pular Descanso</span>
                     </Stack>

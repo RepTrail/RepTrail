@@ -4,39 +4,67 @@ import React from 'react'
 import { cn } from '@/lib/utils'
 import { Box, BoxProps } from './box'
 
+import { SpacingToken } from './box'
+
 interface MainProps extends BoxProps {
-  paddingY?: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 20 | 25 | { base: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 20 | 25, md?: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 20 | 25 }
-  paddingX?: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 20 | 25 | { base: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 20 | 25, md?: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 20 | 25 }
-  paddingLeft?: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 'sidebar' | 'sidebar-wide' | { base?: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 'sidebar' | 'sidebar-wide', md?: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 'sidebar' | 'sidebar-wide', lg?: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5 | 'sidebar' | 'sidebar-wide' }
+  paddingY?: SpacingToken | { base: SpacingToken, md?: SpacingToken }
+  paddingX?: SpacingToken | { base: SpacingToken, md?: SpacingToken }
+  paddingLeft?: SpacingToken | 'sidebar' | 'sidebar-wide' | { base?: SpacingToken | 'sidebar' | 'sidebar-wide', md?: SpacingToken | 'sidebar' | 'sidebar-wide', lg?: SpacingToken | 'sidebar' | 'sidebar-wide' }
+}
+
+const sizeOrder: Record<string, number> = {
+  none: 0,
+  tiny: 1,
+  element: 2,
+  container: 3,
+  empty_state: 4,
+  section: 5,
+  safe_area: 6,
+  dashboard_pc: 7,
 }
 
 const paddingYMapping = {
-  5: 'py-5',
-  25: 'py-[100px]',
+  none: 'py-0',
+  tiny: 'py-1',
+  element: 'py-2.5',
+  container: 'py-5',
+  empty_state: 'py-[50px]',
+  section: 'py-[100px]',
+  safe_area: 'py-[100px]',
+  dashboard_pc: 'py-20',
 }
 
 const paddingYMdMapping = {
-  0: 'md:py-0',
-  1: 'md:py-1',
-  2.5: 'md:py-2.5',
-  5: 'md:py-5',
-  20: 'md:py-20',
+  none: 'md:py-0',
+  tiny: 'md:py-1',
+  element: 'md:py-2.5',
+  container: 'md:py-5',
+  empty_state: 'md:py-[50px]',
+  section: 'md:py-[100px]',
+  safe_area: 'md:py-[100px]',
+  dashboard_pc: 'md:py-20',
 }
 
 const paddingYMaxMdMapping = {
-  0: 'max-md:py-0',
-  1: 'max-md:py-1',
-  2.5: 'max-md:py-2.5',
-  5: 'max-md:py-5',
-  7.5: 'max-md:py-[30px]',
-  10: 'max-md:py-10',
-  12.5: 'max-md:py-[50px]',
-  20: 'max-md:py-20',
-  25: 'max-md:py-[100px]',
+  none: 'max-md:py-0',
+  tiny: 'max-md:py-1',
+  element: 'max-md:py-2.5',
+  container: 'max-md:py-5',
+  empty_state: 'max-md:py-[50px]',
+  section: 'max-md:py-[100px]',
+  safe_area: 'max-md:py-[100px]',
+  dashboard_pc: 'max-md:py-20',
 }
 
 const paddingXMapping = {
-  5: 'px-5',
+  none: 'px-0',
+  tiny: 'px-1',
+  element: 'px-2.5',
+  container: 'px-5',
+  empty_state: 'px-[50px]',
+  section: 'px-[100px]',
+  safe_area: 'px-[100px]',
+  dashboard_pc: 'px-20',
 }
 
 const paddingLeftMapping = {
@@ -67,11 +95,11 @@ export function Scaffold({
     if (!isRespPaddingY || paddingYMd === undefined || paddingYBase === paddingYMd) {
       paddingYClassName = paddingYMapping[paddingYBase as keyof typeof paddingYMapping]
     } else {
-      const b = paddingYBase as number
-      const m = paddingYMd as number
-      paddingYClassName = b > m
-          ? cn(paddingYMdMapping[m as keyof typeof paddingYMdMapping], paddingYMaxMdMapping[b as keyof typeof paddingYMaxMdMapping])
-          : cn(paddingYMapping[b as keyof typeof paddingYMapping], paddingYMdMapping[m as keyof typeof paddingYMdMapping])
+      const bOrder = sizeOrder[paddingYBase as string] || 0
+      const mOrder = sizeOrder[paddingYMd as string] || 0
+      paddingYClassName = bOrder > mOrder
+          ? cn(paddingYMdMapping[paddingYMd as keyof typeof paddingYMdMapping], paddingYMaxMdMapping[paddingYBase as keyof typeof paddingYMaxMdMapping])
+          : cn(paddingYMapping[paddingYBase as keyof typeof paddingYMapping], paddingYMdMapping[paddingYMd as keyof typeof paddingYMdMapping])
     }
   }
 
@@ -85,28 +113,34 @@ export function Scaffold({
   const paddingLeftLg = isRespPaddingLeft ? (paddingLeft as any).lg : undefined
 
   const paddingLeftMapping = {
-    0: 'pl-0',
-    1: 'pl-1',
-    2.5: 'pl-2.5',
-    5: 'pl-5',
+    none: 'pl-0',
+    tiny: 'pl-1',
+    element: 'pl-2.5',
+    container: 'pl-5',
+    section: 'pl-[50px]',
+    empty_state: 'pl-[50px]',
     'sidebar': 'pl-56',
     'sidebar-wide': 'pl-72'
   }
 
   const paddingLeftMdMapping = {
-    0: 'md:pl-0',
-    1: 'md:pl-1',
-    2.5: 'md:pl-2.5',
-    5: 'md:pl-5',
+    none: 'md:pl-0',
+    tiny: 'md:pl-1',
+    element: 'md:pl-2.5',
+    container: 'md:pl-5',
+    section: 'md:pl-[50px]',
+    empty_state: 'md:pl-[50px]',
     'sidebar': 'md:pl-56',
     'sidebar-wide': 'md:pl-72'
   }
 
   const paddingLeftLgMapping = {
-    0: 'lg:pl-0',
-    1: 'lg:pl-1',
-    2.5: 'lg:pl-2.5',
-    5: 'lg:pl-5',
+    none: 'lg:pl-0',
+    tiny: 'lg:pl-1',
+    element: 'lg:pl-2.5',
+    container: 'lg:pl-5',
+    section: 'lg:pl-[50px]',
+    empty_state: 'lg:pl-[50px]',
     'sidebar': 'lg:pl-56',
     'sidebar-wide': 'lg:pl-72'
   }

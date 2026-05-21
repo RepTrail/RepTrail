@@ -55,7 +55,7 @@ export function CommissionItem({
                     />
                 </Box>
 
-                <Stack gap={0} flex1 overflow="hidden">
+                <Stack gap="none" flex1 overflow="hidden">
                     <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} variant="body-sm" color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
                         {description}
                     </Font>

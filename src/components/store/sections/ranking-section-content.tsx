@@ -49,7 +49,7 @@ export function RankingSectionContent() {
                 subtitle="O top 3 do momento na nossa comunidade."
                 icon={TrendingUp}
             >
-                <Grid cols={{ base: 2.5, md: 3 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                <Grid cols={{ base: 2, md: 3 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
                     {podium.map((trainer: any, idx: number) => (
                         <RankingPodiumCard
                             key={trainer.id}

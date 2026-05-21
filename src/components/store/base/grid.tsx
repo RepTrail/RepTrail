@@ -1,8 +1,8 @@
 import React from 'react'
 import { cn } from '@/lib/utils'
-import { Box, BoxProps } from './box'
+import { Box, BoxProps, SpacingToken } from './box'
 
-type GapToken = 0 | 1 | 2 | 2.5 | 4 | 5 | 7.5 | 8 | 10 | 12 | 12.5 | 'section' | 'header-gap'
+type GapToken = SpacingToken
 
 export interface GridProps extends Omit<BoxProps, 'gap' | 'align' | 'padding'> {
   children: React.ReactNode
@@ -13,9 +13,11 @@ export interface GridProps extends Omit<BoxProps, 'gap' | 'align' | 'padding'> {
   lgCols?: 1 | 2 | 3 | 4 | 5 | 6 | 10 | 12
   gap?: GapToken | { base: GapToken, md: GapToken }
   align?: 'start' | 'center' | 'end' | 'stretch'
-  padding?: 0 | 1 | 2.5 | 5 | 7.5 | 12.5
-  paddingX?: 0 | 1 | 2.5 | 5 | 7.5 | 12.5
-  paddingY?: 0 | 1 | 2.5 | 5 | 7.5 | 12.5
+  padding?: SpacingToken
+  paddingX?: SpacingToken
+  paddingY?: SpacingToken
+  className?: never
+  style?: never
 }
 
 /**
@@ -28,7 +30,7 @@ export function Grid({
   smCols,
   mdCols,
   lgCols,
-  gap = 8,
+  gap = "element",
   align = 'stretch',
   padding,
   paddingX,
@@ -36,66 +38,57 @@ export function Grid({
   fullWidth,
   className,
   ...props
-}: GridProps) {
+}: Omit<GridProps, 'className' | 'style'> & { className?: string, style?: React.CSSProperties }) {
   
   const effectiveCols = columns || cols
   
   const gapClasses = {
-    0: 'gap-0',
-    1: 'gap-1',
-    2: 'gap-2',
-    2.5: 'gap-2.5',
-    4: 'gap-4',
-    5: 'gap-5',
-    8: 'gap-8',
-    10: 'gap-10',
-    12: 'gap-12',
-    12.5: 'gap-[50px]',
-    7.5: 'gap-[30px]',
-    'section': 'gap-[100px]',
+    none: 'gap-0',
+    tiny: 'gap-1',
+    element: 'gap-2.5',
+    container: 'gap-5',
+    empty_state: 'gap-[50px]',
+    section: 'gap-[100px]',
+    'title-content': 'gap-[30px]',
     'header-gap': 'gap-8'
   }
 
   const gapMdClasses = {
-    0: 'md:gap-0',
-    2: 'md:gap-2',
-    2.5: 'md:gap-2.5',
-    4: 'md:gap-4',
-    5: 'md:gap-5',
-    8: 'md:gap-8',
-    10: 'md:gap-10',
-    12: 'md:gap-12',
-    12.5: 'md:gap-[50px]',
-    7.5: 'md:gap-[30px]',
-    'section': 'md:gap-[100px]',
+    none: 'md:gap-0',
+    tiny: 'md:gap-1',
+    element: 'md:gap-2.5',
+    container: 'md:gap-5',
+    empty_state: 'md:gap-[50px]',
+    section: 'md:gap-[100px]',
+    'title-content': 'md:gap-[50px]',
     'header-gap': 'md:gap-8'
   }
 
   const paddingClasses = {
-    0: 'p-0',
-    1: 'p-1',
-    2.5: 'p-2.5',
-    5: 'p-5',
-    7.5: 'p-[30px]',
-    12.5: 'p-[50px]'
+    none: 'p-0',
+    tiny: 'p-1',
+    element: 'p-2.5',
+    container: 'p-5',
+    empty_state: 'p-[50px]',
+    section: 'p-[100px]'
   }
 
   const paddingXClasses = {
-    0: 'px-0',
-    1: 'px-1',
-    2.5: 'px-2.5',
-    5: 'px-5',
-    7.5: 'px-[30px]',
-    12.5: 'px-[50px]'
+    none: 'px-0',
+    tiny: 'px-1',
+    element: 'px-2.5',
+    container: 'px-5',
+    empty_state: 'px-[50px]',
+    section: 'px-[100px]'
   }
 
   const paddingYClasses = {
-    0: 'py-0',
-    1: 'py-1',
-    2.5: 'py-2.5',
-    5: 'py-5',
-    7.5: 'py-[30px]',
-    12.5: 'py-[50px]'
+    none: 'py-0',
+    tiny: 'py-1',
+    element: 'py-2.5',
+    container: 'py-5',
+    empty_state: 'py-[50px]',
+    section: 'py-[100px]'
   }
 
   // Handle responsive gap

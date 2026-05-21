@@ -34,7 +34,7 @@ export function SegmentedSwitch({
 }: SegmentedSwitchProps) {
   return (
     <GlassPanel
-      padding={0}
+      padding="none"
       rounded={STORE_TOKENS.RADIUS.FULL}
       overflow="hidden"
       fullWidth={fullWidth}
@@ -49,7 +49,7 @@ export function SegmentedSwitch({
           direction="row"
           gap={STORE_TOKENS.SPACING.ELEMENT}
           wrap="nowrap"
-          padding={2.5}
+          padding="element"
           align="stretch"
           fullWidth
         >
@@ -68,7 +68,7 @@ export function SegmentedSwitch({
                 size="sm"
                 flex1={{ base: isFewOptions, md: true }}
                 shrink={{ base: isFewOptions ? 1 : 0, md: 1 }}
-                minWidth={{ base: isFewOptions ? 0 : 'calc(50% - 15px)', md: 0 }}
+                minWidth={{ base: isFewOptions ? '0' : 'calc(50% - 15px)', md: '0' }}
                 transition
                 className="snap-center"
               >

@@ -166,7 +166,7 @@ export function ProtocolCard({
                         </Stack>
 
                         {footer && (
-                            <Box padding={0} border={false}>
+                            <Box padding="none" border={false}>
                                 <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.MUTED}>
                                     {footer}
                                 </Font>

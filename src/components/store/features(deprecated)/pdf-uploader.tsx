@@ -533,7 +533,7 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
                                             </Stack>
 
                                             {bindingMode === 'create' && (
-                                                <Surface variant="raised" padding={STORE_TOKENS.PADDING.CONTAINER} className="animate-in slide-in-from-top-2">
+                                                <Surface variant="raised" padding={STORE_TOKENS.PADDING.CONTAINER} animateIn="fade">
                                                     <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                                                         <DSInput
                                                             label="Nome do Novo Aluno"

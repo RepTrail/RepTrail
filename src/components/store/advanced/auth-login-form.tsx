@@ -48,8 +48,8 @@ export function AuthLoginForm({
     }, [setPrimaryColor, color, syncColor])
 
     return (
-        <Surface variant="glass" padding={0} rounded={STORE_TOKENS.RADIUS.SYSTEM} width="full" maxWidth="auth-form">
-            <Stack gap={0}>
+        <Surface variant="glass" padding="none" rounded={STORE_TOKENS.RADIUS.SYSTEM} width="full" maxWidth="auth-form">
+            <Stack gap="none">
                 {/* Header */}
                 <Box padding={STORE_TOKENS.PADDING.CONTAINER}>
                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center">

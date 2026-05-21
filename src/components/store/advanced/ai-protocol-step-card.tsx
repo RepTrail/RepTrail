@@ -38,7 +38,7 @@ export function AIProtocolStepCard({ index, title, description, icon, children }
                             <Surface padding={STORE_TOKENS.PADDING.ELEMENT} variant="tonal-primary" rounded={STORE_TOKENS.RADIUS.SYSTEM}>
                                 <Icon icon={icon} size="sm" color="primary" />
                             </Surface>
-                            <Stack gap={0}>
+                            <Stack gap="none">
                                 <Font variant="h4" weight="black" uppercase italic color="white">{title}</Font>
                                 <Font variant="sub-tiny" color="zinc-500" weight="bold">{description}</Font>
                             </Stack>

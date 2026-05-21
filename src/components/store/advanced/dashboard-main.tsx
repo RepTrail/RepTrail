@@ -52,7 +52,7 @@ export function DashboardMain({
     <Main 
       fullWidth 
       paddingX={STORE_TOKENS.PADDING.CONTAINER} 
-      paddingY={{ base: 25, md: 20 }}
+      paddingY={{ base: 'section', md: 'dashboard_pc' }}
       minHeight="screen"
       display="flex"
       direction="col"

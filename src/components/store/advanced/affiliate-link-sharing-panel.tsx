@@ -59,7 +59,7 @@ export function AffiliateLinkSharingPanel({ id }: { id?: string }) {
                             </Font>
                         </Stack>
 
-                        <Stack gap={0} align="end" display={{ base: 'none', md: 'flex' }} padding={STORE_TOKENS.PADDING.ELEMENT}>
+                        <Stack gap="none" align="end" display={{ base: 'none', md: 'flex' }} padding={STORE_TOKENS.PADDING.ELEMENT}>
                             <Font variant="h1" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} weight="black" italic uppercase>10%</Font>
                             <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="black" uppercase italic tracking="widest">De Comissão</Font>
                         </Stack>

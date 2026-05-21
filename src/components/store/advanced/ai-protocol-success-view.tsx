@@ -46,7 +46,7 @@ export function AIProtocolSuccessView({ summary }: AIProtocolSuccessViewProps) {
                 >
                     <Icon icon={Sparkles} size="lg" color="primary" />
                 </Surface>
-                <Stack gap={2.5} align="center">
+                <Stack gap="element" align="center">
                     <Font variant="h2" weight="black" uppercase italic color="white">
                         Protocolo <Font variant="h2" weight="black" uppercase italic color="primary">Gerado!</Font>
                     </Font>

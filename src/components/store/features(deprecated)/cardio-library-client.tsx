@@ -40,7 +40,7 @@ export function CardioLibraryClient({
             contextLabel="Área do Personal"
             showTabs={false}
         >
-            <Stack gap={10}>
+            <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                 <div className="flex items-center justify-end w-full">
                     <UnifiedCreationDialog
                         title="Novo Modelo de Cardio"

@@ -69,7 +69,7 @@ export function Banner({
             {/* Content Area */}
             <Box 
                 position="relative" 
-                padding={{ base: 5, md: 12.5 }} 
+                padding={{ base: 'container', md: 'empty_state' }} 
                 display="flex" 
                 direction="col" 
                 justify="center" 

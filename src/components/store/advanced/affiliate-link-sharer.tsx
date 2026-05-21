@@ -60,7 +60,7 @@ export function AffiliateLinkSharer({ token }: AffiliateLinkSharerProps) {
                             <Icon icon={copied ? Check : Copy} size="xs" />
                         </Button>
 
-                        <Stack gap={0} align="center">
+                        <Stack gap="none" align="center">
                             <Font variant="heading" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} weight="black">10%</Font>
                             <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="black" uppercase italic tracking="widest">De Comissão</Font>
                         </Stack>

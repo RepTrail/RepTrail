@@ -27,11 +27,10 @@ export default async function AffiliateLayout({ children }: { children: React.Re
             <DashboardShell
                 color="amber"
                 links={links}
-                user={{ id: user.id, name: profile?.full_name, email: user.email, avatar_url: profile?.avatar_url, isAdmin: profile?.is_admin }}
+                user={{ id: user.id, name: profile?.full_name, email: user.email, avatar_url: profile?.avatar_url, isAdmin: profile?.is_admin, role: profile?.role }}
                 profileHref="/dashboard/affiliate/profile"
                 settingsHref="/dashboard"
                 profileIcon="ArrowRightLeft"
-                settingsVariant="outline-emerald"
             >
                 {children}
             </DashboardShell>

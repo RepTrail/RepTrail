@@ -60,7 +60,7 @@ export function StudentNoPlanSection({ ranking }: StudentNoPlanSectionProps) {
                             <Font variant="body" color={STORE_TOKENS.COLORS.TEXT.MUTED}>
                                 Você ainda não possui um personal trainer. Conecte-se com a elite do treinamento físico e receba protocolos 100% personalizados.
                             </Font>
-                            <Box padding={0}>
+                            <Box padding="none">
                                 <Link href="/dashboard/student/buscar-personal">
                                     <Button variant="emerald" size="lg" rounded={STORE_TOKENS.RADIUS.SYSTEM} gap={STORE_TOKENS.SPACING.ELEMENT} transition>
                                         <Font variant="label-caps" weight="black" color="black">Encontrar Personal</Font>
@@ -99,7 +99,7 @@ export function StudentNoPlanSection({ ranking }: StudentNoPlanSectionProps) {
                             <Font variant="body" color={STORE_TOKENS.COLORS.TEXT.MUTED}>
                                 Protocolos gerados instantaneamente com base na sua rotina, objetivos e equipamentos disponíveis de forma inteligente.
                             </Font>
-                            <Box padding={0}>
+                            <Box padding="none">
                                 <Link href="/dashboard/student/plans">
                                     <Button variant="orange" size="lg" rounded={STORE_TOKENS.RADIUS.SYSTEM} gap={STORE_TOKENS.SPACING.ELEMENT} transition>
                                         <Font variant="label-caps" weight="black" color="black">Ativar por R$ 10,90/mês</Font>

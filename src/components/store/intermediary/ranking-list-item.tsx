@@ -96,7 +96,7 @@ export function RankingListItem({ trainer, rank }: RankingListItemProps) {
                     size="md" 
                 />
 
-                <Stack gap={0} minWidth={0}>
+                <Stack gap="none" minWidth={0}>
                     <Font 
                         {...STORE_TOKENS.TYPOGRAPHY.HEADING} 
                         variant={{ base: 'body-sm', md: 'body' }} 

@@ -88,7 +88,7 @@ export function RatingModal({
                 </Box>
             ) : (
                 <Button variant="outline-zinc" size="sm" onClick={() => setOpen(true)} fullWidth>
-                    <Stack direction="row" align="center" justify="center" gap={2.5}>
+                    <Stack direction="row" align="center" justify="center" gap="element">
                         Avaliar Treinador
                         <Icon icon={Star} size="xs" color="amber" />
                     </Stack>
@@ -110,9 +110,9 @@ export function RatingModal({
                 isLoading={isPending}
                 cancelLabel="CANCELAR"
             >
-                <Stack gap={5}>
+                <Stack gap="container">
                     {/* Stars Select */}
-                    <Box display="flex" align="center" justify="center" gap={2.5}>
+                    <Box display="flex" align="center" justify="center" gap="element">
                         {[1, 2, 3, 4, 5].map((star) => (
                             <Box
                                 as="button"

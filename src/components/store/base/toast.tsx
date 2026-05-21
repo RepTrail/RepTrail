@@ -68,7 +68,7 @@ const Toast = React.forwardRef<
         >
             <Surface 
                 variant={variant === 'destructive' ? 'tonal-red' : 'tonal-zinc'} 
-                padding={0} 
+                padding="none" 
                 rounded={STORE_TOKENS.RADIUS.SYSTEM}
             >
                 <Stack direction="row" align="center" justify="between" padding={STORE_TOKENS.PADDING.CONTAINER} flex1 position="relative">

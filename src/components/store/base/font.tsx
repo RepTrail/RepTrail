@@ -27,12 +27,12 @@ type FontColor =
   | 'primary' | 'success' | 'warning' | 'error' | 'white' | 'black' | 'inherit'
   | 'orange' | 'emerald' | 'amber' | 'red' | 'blue' | 'zinc'
 
-interface FontProps extends Omit<React.HTMLAttributes<HTMLSpanElement>, 'color'> {
+interface FontProps extends Omit<React.HTMLAttributes<HTMLSpanElement>, 'color' | 'className' | 'style'> {
   children: React.ReactNode
   variant?: FontVariant | { base: FontVariant, md?: FontVariant, lg?: FontVariant }
   color?: FontColor
   weight?: 'normal' | 'medium' | 'semibold' | 'bold' | 'black'
-  align?: 'left' | 'center' | 'right'
+  align?: 'left' | 'center' | 'right' | { base: 'left' | 'center' | 'right', sm?: 'left' | 'center' | 'right', md?: 'left' | 'center' | 'right', lg?: 'left' | 'center' | 'right' }
   uppercase?: boolean
   lowercase?: boolean
   italic?: boolean
@@ -50,7 +50,8 @@ interface FontProps extends Omit<React.HTMLAttributes<HTMLSpanElement>, 'color'>
   breakAll?: boolean
   display?: 'block' | 'inline-block' | 'inline' | 'flex' | 'grid'
   flex?: 0 | 1 | 'none'
-  className?: string
+  className?: never
+  style?: never
 }
 
 /**
@@ -80,7 +81,7 @@ export function Font({
   display,
   flex,
   ...props
-}: FontProps) {
+}: Omit<FontProps, 'className' | 'style'> & { className?: string, style?: React.CSSProperties }) {
   const { primaryColor } = useRegistry()
 
   const variantClasses = {
@@ -105,6 +106,11 @@ export function Font({
   const variantBase = isRespVariant ? (variant as any).base : variant
   const variantMd = isRespVariant ? (variant as any).md : undefined
   const variantLg = isRespVariant ? (variant as any).lg : undefined
+
+  const isRespAlign = typeof align === 'object'
+  const alignBase = isRespAlign ? (align as any).base : align
+  const alignMd = isRespAlign ? (align as any).md : undefined
+  const alignLg = isRespAlign ? (align as any).lg : undefined
 
   const colorClasses = {
     PRIMARY: 'text-white',
@@ -159,7 +165,9 @@ export function Font({
         variantLg && `lg:${variantClasses[variantLg as keyof typeof variantClasses]}`,
         color && colorClasses[color as keyof typeof colorClasses],
         weight && weightClasses[weight],
-        align && `text-${align} block w-full`,
+        alignBase && `text-${alignBase} block w-full`,
+        alignMd && `md:text-${alignMd}`,
+        alignLg && `lg:text-${alignLg}`,
         uppercase && 'uppercase',
         lowercase && 'lowercase',
         italic && 'italic',

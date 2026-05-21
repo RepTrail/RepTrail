@@ -36,7 +36,7 @@ export function StudentPublicPhotos({ studentId, isOwner, studentName, photos, i
                     subtitle="Envie suas fotos para avaliação."
                     icon={Camera}
                 >
-                    <GlassPanel padding={5}>
+                    <GlassPanel padding="container">
                         <ProgressPhotoUpload studentId={studentId} />
                     </GlassPanel>
                 </RegistrySection>
@@ -50,7 +50,7 @@ export function StudentPublicPhotos({ studentId, isOwner, studentName, photos, i
                     subtitle="Contraste visual entre o ponto de partida e a evolução mais recente."
                     icon={Trophy}
                 >
-                    <GlassPanel padding={5}>
+                    <GlassPanel padding="container">
                         <Stack gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
                             <Grid cols={2} gap={STORE_TOKENS.SPACING.CONTAINER}>
                                 {/* Before Photo */}
@@ -162,7 +162,7 @@ export function StudentPublicPhotos({ studentId, isOwner, studentName, photos, i
                     subtitle="Histórico completo de fotos de acompanhamento físico do aluno."
                     icon={Activity}
                 >
-                    <GlassPanel padding={5}>
+                    <GlassPanel padding="container">
                         <UnifiedProgressGallery
                             photos={photos || []}
                             mode={isStudentView ? 'student' : 'public'}

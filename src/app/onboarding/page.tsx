@@ -44,7 +44,7 @@ export default async function OnboardingPage() {
                 align="center"
                 justify="center"
                 position="relative"
-                padding={{ base: 5, md: 10 }}
+                padding={STORE_TOKENS.PADDING.CONTAINER}
             >
                 <BackgroundEffects variant="all" />
                 <Stack 

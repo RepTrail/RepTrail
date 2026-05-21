@@ -9,7 +9,7 @@ import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { Stack } from './stack'
 
 
-interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'width'> {
+interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'width' | 'size'> {
   label?: string
   error?: string
   icon?: React.ReactNode
@@ -22,6 +22,7 @@ interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, '
   fontMono?: boolean
   textAlign?: 'left' | 'center' | 'right'
   width?: string | number | { base: string | number, md?: string | number, lg?: string | number }
+  size?: 'sm' | 'md' | 'lg'
 }
 
 export function Input({
@@ -37,6 +38,7 @@ export function Input({
   fontMono,
   textAlign,
   width,
+  size = 'md',
   className,
   onChange,
   type,
@@ -116,11 +118,12 @@ export function Input({
           {label}
         </Font>
       )}
-      <div className={cn("relative group", height === 'full' && 'flex-1 flex flex-col')}>
+      <div className={cn("relative group", height === 'full' && 'flex-1 flex flex-col', size === 'sm' && 'h-8')}>
         {/* Left icon */}
         {icon && (
           <div className={cn(
             "absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 transition-colors flex items-center z-10",
+            size === 'sm' && "left-2 text-xs scale-90",
             activeClasses.split(' ').find(c => c.startsWith('group-focus-within:'))
           )}>
             {icon}
@@ -132,15 +135,15 @@ export function Input({
           className={cn(
             'w-full bg-zinc-950/40 border-2 placeholder:text-zinc-600 outline-none transition-all',
             resolvedColor ? `border-${resolvedColor}-500/40` : 'border-white/5',
-            height === 'full' ? 'flex-1 min-h-[48px]' : 'h-12',
+            height === 'full' ? 'flex-1 min-h-[48px]' : (size === 'sm' ? 'h-8 text-xs' : 'h-12'),
             resolvedColor ? textColors[resolvedColor as keyof typeof textColors] : 'text-white',
             weight && weightClasses[weight],
             rounded === 'system' && (STORE_TOKENS.RADIUS.SYSTEM === 'system' ? 'rounded-[5px]' : 'rounded-full'),
             rounded === 'full' && 'rounded-full',
             rounded === 'none' && 'rounded-none',
             activeClasses.split(' ').filter(c => !c.startsWith('group-focus-within:')).join(' '),
-            icon ? 'pl-12' : 'pl-4',
-            isPassword ? 'pr-12' : 'pr-4',
+            icon ? (size === 'sm' ? 'pl-8' : 'pl-12') : (size === 'sm' ? 'pl-2 px-2' : 'pl-4 pr-4'),
+            isPassword ? (size === 'sm' ? 'pr-8' : 'pr-12') : (size === 'sm' ? 'pr-2' : 'pr-4'),
             error && 'border-red-500/50',
             fontMono && 'font-mono',
             textAlign === 'center' && 'text-center',

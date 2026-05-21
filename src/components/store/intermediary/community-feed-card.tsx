@@ -106,7 +106,7 @@ export function CommunityFeedCard({
                                 initials={userName.substring(0, 2).toUpperCase()}
                                 size="sm"
                             />
-                            <Stack gap={0}>
+                            <Stack gap="none">
                                 <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} variant="body-sm" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} lineClamp={1}>
                                     {userName}
                                 </Font>

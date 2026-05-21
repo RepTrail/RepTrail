@@ -69,7 +69,7 @@ export function AIProtocolTeaserPanel({ userId = 'me' }: { userId?: string }) {
                     <FeatureBadge icon={Sparkles} label="IA" />
                 </Grid>
 
-                <Stack gap={5} fullWidth align="center">
+                <Stack gap="container" fullWidth align="center">
                     <Button 
                         variant="primary" 
                         size="lg" 

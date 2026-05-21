@@ -18,7 +18,7 @@ export function TypographyContent({ id }: { id?: string }) {
             <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                 {/* Main Typographic Scale */}
                 <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER}>
-                    <Stack gap="title-content">
+                    <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                         <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                             <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>H1 - System Hero</Font>
                             <Font variant="h1">REPTRAIL PERFORMANCE</Font>
@@ -38,7 +38,7 @@ export function TypographyContent({ id }: { id?: string }) {
 
                 {/* Content & Descriptions */}
                 <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER}>
-                    <Stack gap="title-content">
+                    <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                         <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                             <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>Description - Subtitles & Context</Font>
                             <Font variant="description">A plataforma mais completa para personal trainers e consultorias de alta performance que buscam escala.</Font>

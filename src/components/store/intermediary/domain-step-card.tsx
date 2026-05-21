@@ -57,7 +57,7 @@ export function DomainStepCard({
                             >
                                 <Icon icon={icon} size="sm" color={accentColor as any} />
                             </Surface>
-                            <Stack gap={0}>
+                            <Stack gap="none">
                                 <Font variant="h4" weight="black" uppercase italic color="white">
                                     {title}
                                 </Font>

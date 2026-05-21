@@ -25,8 +25,8 @@ export function BrandingSectionContent({ id }: { id?: string }) {
             icon={Zap}
             subtitle="Diretrizes de marca para as diferentes instâncias do ecossistema RepTrail."
         >
-            <GlassPanel padding={0}>
-                <Stack gap={0}>
+            <GlassPanel padding="none">
+                <Stack gap="none">
                     <CardHeader>
                         <Font weight="bold">Logos & Identidade</Font>
                     </CardHeader>

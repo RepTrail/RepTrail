@@ -2,22 +2,20 @@
 
 import React from 'react'
 import { cn } from '@/lib/utils'
-import { Box } from './box'
-
-type GapToken = 0 | 2.5 | 5 | 10 | 12.5 | 20 | 50 | 100 | 'section' | 'header-gap'
+import { Box, SpacingToken } from './box'
 
 interface LayoutBaseProps {
   children: React.ReactNode
-  gap?: GapToken | { base: GapToken, md: GapToken }
+  gap?: SpacingToken | { base: SpacingToken, md?: SpacingToken, lg?: SpacingToken }
   align?: 'start' | 'center' | 'end' | 'stretch' | 'baseline'
   justify?: 'start' | 'center' | 'end' | 'between' | 'around'
   flex1?: boolean
   fullWidth?: boolean
   wrap?: boolean
-  padding?: 0 | 2.5 | 5 | 10 | 12.5 | 20 | 50 | 100
+  padding?: SpacingToken | { base: SpacingToken, md?: SpacingToken, lg?: SpacingToken }
   position?: 'relative' | 'absolute' | 'fixed' | 'static'
   shrink?: 0 | 1
-  opacity?: 0 | 10 | 20 | 30 | 40 | 50 | 60 | 70 | 80 | 90 | 100
+  opacity?: 0 | 5 | 10 | 20 | 30 | 40 | 50 | 60 | 90 | 95 | 100
   minWidth?: number | string | { base: number | string, md?: number | string, lg?: number | string }
   className?: string
   id?: string
@@ -28,7 +26,7 @@ interface LayoutBaseProps {
  */
 export function Inline({ 
   children, 
-  gap = 2.5, 
+  gap = "element", 
   align = 'center', 
   justify = 'start',
   flex1,
@@ -44,28 +42,24 @@ export function Inline({
 }: LayoutBaseProps) {
   
   const gapClasses = {
-    0: 'gap-0',
-    2.5: 'gap-2.5',
-    5: 'gap-5',
-    10: 'gap-10',
-    12.5: 'gap-[50px]',
-    20: 'gap-20',
-    50: 'gap-[200px]',
-    100: 'gap-[400px]',
-    'section': 'gap-[100px]',
+    none: 'gap-0',
+    tiny: 'gap-1',
+    element: 'gap-2.5',
+    container: 'gap-5',
+    empty_state: 'gap-[50px]',
+    section: 'gap-[100px]',
+    'title-content': 'gap-[30px]',
     'header-gap': 'gap-8'
   }
 
   const gapMdClasses = {
-    0: 'md:gap-0',
-    2.5: 'md:gap-2.5',
-    5: 'md:gap-5',
-    10: 'md:gap-10',
-    12.5: 'md:gap-[50px]',
-    20: 'md:gap-20',
-    50: 'md:gap-[200px]',
-    100: 'md:gap-[400px]',
-    'section': 'md:gap-[100px]',
+    none: 'md:gap-0',
+    tiny: 'md:gap-1',
+    element: 'md:gap-2.5',
+    container: 'md:gap-5',
+    empty_state: 'md:gap-[50px]',
+    section: 'md:gap-[100px]',
+    'title-content': 'md:gap-[50px]',
     'header-gap': 'md:gap-8'
   }
 
@@ -120,7 +114,7 @@ export function Inline({
  */
 export function Cluster({ 
   children, 
-  gap = 2.5, 
+  gap = "element", 
   align = 'center', 
   justify = 'start',
   flex1,
@@ -135,28 +129,24 @@ export function Cluster({
 }: LayoutBaseProps) {
   
   const gapClasses = {
-    0: 'gap-0',
-    2.5: 'gap-2.5',
-    5: 'gap-5',
-    10: 'gap-10',
-    12.5: 'gap-[50px]',
-    20: 'gap-20',
-    50: 'gap-[200px]',
-    100: 'gap-[400px]',
-    'section': 'gap-[100px]',
+    none: 'gap-0',
+    tiny: 'gap-1',
+    element: 'gap-2.5',
+    container: 'gap-5',
+    empty_state: 'gap-[50px]',
+    section: 'gap-[100px]',
+    'title-content': 'gap-[30px]',
     'header-gap': 'gap-8'
   }
 
   const gapMdClasses = {
-    0: 'md:gap-0',
-    2.5: 'md:gap-2.5',
-    5: 'md:gap-5',
-    10: 'md:gap-10',
-    12.5: 'md:gap-[50px]',
-    20: 'md:gap-20',
-    50: 'md:gap-[200px]',
-    100: 'md:gap-[400px]',
-    'section': 'md:gap-[100px]',
+    none: 'md:gap-0',
+    tiny: 'md:gap-1',
+    element: 'md:gap-2.5',
+    container: 'md:gap-5',
+    empty_state: 'md:gap-[50px]',
+    section: 'md:gap-[100px]',
+    'title-content': 'md:gap-[50px]',
     'header-gap': 'md:gap-8'
   }
 

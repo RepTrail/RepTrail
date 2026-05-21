@@ -43,6 +43,8 @@ export default function AdminAfiliadosPage() {
                     name: adminUser?.full_name || 'Admin RepTrail',
                     email: adminUser?.email || 'admin@reptrail.com.br',
                     avatar_url: adminUser?.avatar_url || null,
+                    isAdmin: true,
+                    isAffiliate: adminUser?.is_affiliate || false,
                 }}
                 profileHref="/dashboard"
                 profileIcon="ArrowRightLeft"

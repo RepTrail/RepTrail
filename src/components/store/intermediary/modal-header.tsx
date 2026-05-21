@@ -38,7 +38,7 @@ export function ModalHeader({ title, subtitle, icon, variant, isLoading, onClose
                 
                 {/* Desktop Title */}
                 <Box display={{ base: 'none', md: 'flex' }} flex1 padding={STORE_TOKENS.SPACING.ELEMENT}>
-                    <Stack gap={0}>
+                    <Stack gap="none">
                         <Font variant="body" weight="black" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} uppercase italic tracking="normal">{title}</Font>
                         {subtitle && <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{subtitle}</Font>}
                     </Stack>
@@ -51,7 +51,7 @@ export function ModalHeader({ title, subtitle, icon, variant, isLoading, onClose
 
             {/* Mobile Title */}
             <Box display={{ base: 'flex', md: 'none' }} fullWidth>
-                <Stack gap={0}>
+                <Stack gap="none">
                     <Font variant="body" weight="black" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} uppercase italic tracking="normal">{title}</Font>
                     {subtitle && <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{subtitle}</Font>}
                 </Stack>

@@ -103,6 +103,8 @@ export default function AdminLojaPage() {
                     name: adminUser?.full_name || 'Admin RepTrail',
                     email: adminUser?.email || 'admin@reptrail.com.br',
                     avatar_url: adminUser?.avatar_url || null,
+                    isAdmin: true,
+                    isAffiliate: adminUser?.is_affiliate || false,
                 }}
                 profileHref="/dashboard"
                 profileIcon="ArrowRightLeft"
@@ -119,7 +121,7 @@ export default function AdminLojaPage() {
                         subtitle="Gerencie os itens disponíveis na loja, preços e estoque."
                         icon={ShoppingBag}
                     >
-                        <Stack gap={10}>
+                        <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                             {/* Toolbar */}
                             <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
                                 <Box flex1>

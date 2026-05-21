@@ -108,11 +108,11 @@ export function RankingPodiumCard({ trainer, rank }: RankingPodiumCardProps) {
                 <Box fullWidth height="px" bg={STORE_TOKENS.COLORS.WHITE} bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} />
 
                 <Grid cols={2} gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
-                    <Stack gap={0}>
+                    <Stack gap="none">
                         <Font variant="sub-tiny" weight="black" color={STORE_TOKENS.COLORS.TEXT.DIM} uppercase tracking="widest">Alunos</Font>
                         <Font variant="body" weight="black" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} italic>{trainer.studentCount}</Font>
                     </Stack>
-                    <Stack gap={0} align="end">
+                    <Stack gap="none" align="end">
                         <Font variant="sub-tiny" weight="black" color={STORE_TOKENS.COLORS.TEXT.DIM} uppercase tracking="widest">Impacto</Font>
                         <Font variant="body" weight="black" color="orange" italic align="right">Score {trainer.score}</Font>
                     </Stack>

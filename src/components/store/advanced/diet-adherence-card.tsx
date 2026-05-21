@@ -18,7 +18,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 function ProgressLocal({ value }: { value: number }) {
     return (
         <GlassPanel
-            padding={0}
+            padding="none"
             fullWidth
             height={8}
             variant="glass"
@@ -131,7 +131,7 @@ function MealAccordion({ meal, onToggleMeal, onToggleItem }: { meal: any, onTogg
 
     return (
         <GlassPanel
-            padding={0}
+            padding="none"
             rounded={STORE_TOKENS.RADIUS.SYSTEM}
             variant="glass"
             transition
@@ -155,7 +155,7 @@ function MealAccordion({ meal, onToggleMeal, onToggleItem }: { meal: any, onTogg
                             <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
                                 {meal.name.toLowerCase()}
                             </Font>
-                            <Stack direction={{ base: 'col', md: 'row' }} align={{ base: 'start', md: 'center' }} gap={{ base: 2.5, md: STORE_TOKENS.SPACING.ELEMENT }}>
+                            <Stack direction={{ base: 'col', md: 'row' }} align={{ base: 'start', md: 'center' }} gap={{ base: "element", md: STORE_TOKENS.SPACING.ELEMENT }}>
                                 <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.MUTED} tracking="wide">
                                     {meal.meal_items?.length || 0} ITENS
                                 </Font>
@@ -231,7 +231,7 @@ function FoodItemRow({ item, isChecked, onToggle }: { item: any, isChecked?: boo
         >
             <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                 <CheckIndicator size="md" checked={isChecked} />
-                <Stack gap={0} flex1>
+                <Stack gap="none" flex1>
                     <Stack direction="row" align="baseline" gap={STORE_TOKENS.SPACING.ELEMENT}>
                         <Font variant="body-sm" weight="black" color={item.is_substituted ? 'amber' : 'white'} italic nowrap>
                             {item.is_substituted ? item.substituted_quantity : item.quantity}
@@ -253,7 +253,7 @@ function FoodItemRow({ item, isChecked, onToggle }: { item: any, isChecked?: boo
 
                 {item.is_substituted && (
                     <Box
-                        padding={2.5}
+                        padding="element"
                         rounded={STORE_TOKENS.RADIUS.SYSTEM}
                         bg="amber"
                         bgOpacity={100}

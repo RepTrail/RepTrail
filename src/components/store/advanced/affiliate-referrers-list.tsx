@@ -38,7 +38,7 @@ export function AffiliateReferrersList() {
 
     if (referrers.length === 0) {
         return (
-            <Box padding={0}>
+            <Box padding="none">
                 <EmptyState
                     icon={Search}
                     title="Nenhum indicado ainda"

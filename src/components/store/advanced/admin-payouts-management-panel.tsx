@@ -133,7 +133,7 @@ export function AdminPayoutsManagementPanel({ initialPayouts }: { initialPayouts
                             size="md"
                             variant="zinc"
                         />
-                        <Stack gap={0} minWidth={0}>
+                        <Stack gap="none" minWidth={0}>
                             <Font weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY} variant={{ base: 'body-sm', md: 'body' }} tracking="wider" truncate>
                                 {payout.profiles?.full_name || 'Usuário Desconhecido'}
                             </Font>

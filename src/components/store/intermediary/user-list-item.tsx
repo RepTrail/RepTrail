@@ -105,7 +105,7 @@ export function UserListItem({
                 <Box shrink={0}>
                     <BaseAvatar src={avatarUrl || undefined} initials={initials} variant={avatarVariant} size="md" />
                 </Box>
-                <Stack gap={0} minWidth={0} flex1>
+                <Stack gap="none" minWidth={0} flex1>
                     <Box fullWidth minWidth={0} overflow="hidden">
                         <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} variant={{ base: 'body-sm', md: 'body' }} color={STORE_TOKENS.COLORS.TEXT.PRIMARY} truncate display="block">
                             {name}

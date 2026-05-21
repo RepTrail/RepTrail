@@ -26,7 +26,9 @@ export type ButtonVariant =
   | 'primary'
   | 'outline-primary'
 
-export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+import { SpacingToken } from './box'
+
+export interface ButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'className' | 'style' | 'width' | 'minWidth'> {
   variant?: ButtonVariant
   size?: 'xs' | 'sm' | 'md' | 'lg'
   rounded?: 'none' | 'full' | 'system' | 'sm'
@@ -35,10 +37,10 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   flex1?: boolean | { base: boolean, sm?: boolean, md?: boolean, lg?: boolean }
   shrink?: number | { base: number, sm?: number, md?: number, lg?: number }
   direction?: 'row' | 'col'
-  gap?: 0 | 1 | 2.5 | 5
+  gap?: SpacingToken
   height?: 'auto' | 'full' | 'anatomy-item' | 'anatomy-header' | '8' | '12' | '24'
-  paddingY?: 0 | 1 | 2.5 | 5 | 7.5 | 12.5
-  paddingX?: 0 | 1 | 2.5 | 5 | 7.5 | 12.5
+  paddingY?: SpacingToken
+  paddingX?: SpacingToken
   hoverScale?: 110 | 105
   activeScale?: 95 | 90
   transition?: boolean
@@ -51,12 +53,13 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   borderColor?: string
   cursor?: 'pointer' | 'default' | 'not-allowed'
   asChild?: boolean
-  marginTop?: 0 | 1 | 2.5 | 5 | 7.5 | 12.5
   loading?: boolean
-  width?: number | string
-  minWidth?: number | string | { base: number | string, sm?: number | string, md?: number | string, lg?: number | string }
-  padding?: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12.5
+  width?: string
+  minWidth?: string | { base: string, sm?: string, md?: string, lg?: string }
+  padding?: SpacingToken
   shine?: boolean
+  className?: never
+  style?: never
 }
 
 /**
@@ -88,7 +91,6 @@ export function Button({
   borderColor,
   cursor,
   asChild,
-  marginTop,
   loading,
   width,
   minWidth,
@@ -96,7 +98,7 @@ export function Button({
   shine,
   className,
   ...props
-}: ButtonProps) {
+}: Omit<ButtonProps, 'className' | 'style'> & { className?: string, style?: React.CSSProperties }) {
   
   const { primaryColor } = useRegistry()
   
@@ -144,10 +146,39 @@ export function Button({
   }
 
   const gapClasses = {
-    0: 'gap-0',
-    1: 'gap-1',
-    2.5: 'gap-2.5',
-    5: 'gap-5'
+    none: 'gap-0',
+    tiny: 'gap-1',
+    element: 'gap-2.5',
+    container: 'gap-5',
+    section: 'gap-[50px]',
+    empty_state: 'gap-[50px]',
+  }
+
+  const paddingClasses = {
+    none: 'p-0',
+    tiny: 'p-1',
+    element: 'p-2.5',
+    container: 'p-5',
+    section: 'p-[50px]',
+    empty_state: 'p-[50px]',
+  }
+
+  const paddingXClasses = {
+    none: 'px-0',
+    tiny: 'px-1',
+    element: 'px-2.5',
+    container: 'px-5',
+    section: 'px-[50px]',
+    empty_state: 'px-[50px]',
+  }
+
+  const paddingYClasses = {
+    none: 'py-0',
+    tiny: 'py-1',
+    element: 'py-2.5',
+    container: 'py-5',
+    section: 'py-[50px]',
+    empty_state: 'py-[50px]',
   }
 
   const textColorClasses = {
@@ -195,9 +226,9 @@ export function Button({
         height === '8' && 'h-8',
         height === '12' && 'h-12',
         height === '24' && 'h-24',
-        paddingY !== undefined && `py-${paddingY}`,
-        paddingX !== undefined && `px-${paddingX}`,
-        padding !== undefined && `p-${padding}`,
+        paddingY !== undefined && paddingYClasses[paddingY as keyof typeof paddingYClasses],
+        paddingX !== undefined && paddingXClasses[paddingX as keyof typeof paddingXClasses],
+        padding !== undefined && paddingClasses[padding as keyof typeof paddingClasses],
         cursor && `cursor-${cursor}`,
         hoverScale === 110 && 'hover:scale-110',
         hoverScale === 105 && 'hover:scale-105',
@@ -218,7 +249,6 @@ export function Button({
         bgOpacity !== undefined && `bg-opacity-[${bgOpacity}%]`,
         hoverBgOpacity !== undefined && `hover:bg-opacity-[${hoverBgOpacity}%]`,
         borderColor === 'transparent' && 'border-transparent',
-        marginTop !== undefined && `mt-${marginTop}`,
         minWidthBase && (
             minWidthBase === 'auto' ? 'min-w-auto' :
             typeof minWidthBase === 'number' ? `min-w-[${minWidthBase}px]` :

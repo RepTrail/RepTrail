@@ -203,7 +203,7 @@ export function RegistryActionModal({
                             defaultValue={initialData?.name}
                         />
                         {type !== 'create_diet' && (
-                            <Grid cols={{ base: 2.5, md: 2 }} gap={STORE_TOKENS.SPACING.ELEMENT}>
+                            <Grid cols={{ base: 2, md: 2 }} gap={STORE_TOKENS.SPACING.ELEMENT}>
                                     <Input 
                                         label="DURAÇÃO (MIN)" 
                                         icon={<Clock size={16} />} 

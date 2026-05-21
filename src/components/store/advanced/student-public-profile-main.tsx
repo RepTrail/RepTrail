@@ -73,7 +73,7 @@ export function StudentPublicProfileMain({
         <Stack gap="section" fullWidth>
 
             {/* ── Hero Card (Upgraded to Liquid Glass) ──────────────────── */}
-            <GlassPanel padding={5}>
+            <GlassPanel padding="container">
                 {/* Decorative background icon */}
                 <BackgroundIcon icon={Dumbbell} />
 
@@ -104,7 +104,7 @@ export function StudentPublicProfileMain({
 
                         {/* Identity Info */}
                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align={{ base: 'center', md: 'start' }}>
-                            <Font variant="h1" weight="black" italic uppercase color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
+                            <Font variant="h1" align={{ base: 'center', md: 'left' }} weight="black" italic uppercase color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
                                 {profile.full_name}
                             </Font>
 
@@ -204,7 +204,7 @@ export function StudentPublicProfileMain({
                                         variant={isActive ? 'outline-primary' : 'outline-zinc'}
                                         size="sm"
                                         onClick={() => setActiveTab(tab.id)}
-                                        gap={2.5}
+                                        gap="element"
                                         fullWidth
                                         flex1={true}
                                         height="full"

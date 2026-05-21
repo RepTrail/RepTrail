@@ -96,7 +96,7 @@ export function RegistryShell({ children, activeTab: externalActiveTab, setActiv
         <Main
           flex1
           fullWidth
-          paddingLeft={{ base: 0, lg: 'sidebar-wide' }}
+          paddingLeft={{ base: "none", lg: 'sidebar-wide' }}
           transition
           position="relative"
           zIndex={10}

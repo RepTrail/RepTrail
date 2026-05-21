@@ -1,5 +1,6 @@
 'use client'
 
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState, useEffect } from 'react'
 import { QUERY_KEYS } from '@/lib/query-keys'
@@ -242,7 +243,7 @@ export function StudentDetailClient({ relationshipId, userId }: StudentDetailCli
             contextLabel="Gestão de Aluno"
             showTabs={false}
         >
-            <Stack gap={10} className="pb-10">
+            <Stack gap={STORE_TOKENS.SPACING.CONTAINER} className="pb-10">
 
                 {((onboardingStep === 'aha_moment' || relationship.is_placeholder) && !isImpersonating) && (
                     <div id="tour-aha-card" className="bg-emerald-500/10 border border-emerald-500/20 rounded-[2rem] p-6 mb-10 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">

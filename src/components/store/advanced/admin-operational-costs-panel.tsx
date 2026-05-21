@@ -220,7 +220,7 @@ export function AdminOperationalCostsPanel({ initialCosts }: { initialCosts: Ope
                                 color={cost.type === 'fixed' ? 'blue' : 'orange'}
                                 size="sm"
                             />
-                            <Stack gap={0} minWidth={0}>
+                            <Stack gap="none" minWidth={0}>
                                 <Font weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY} variant={{ base: 'body-sm', md: 'body' }} tracking="wider" truncate>
                                     {cost.description}
                                 </Font>

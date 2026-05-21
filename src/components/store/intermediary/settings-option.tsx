@@ -61,7 +61,7 @@ export function SettingsOption({
                     >
                         <Icon icon={icon} size="sm" color={variant === 'zinc' ? 'zinc-400' : variant} />
                     </Box>
-                    <Stack gap={0} flex1>
+                    <Stack gap="none" flex1>
                         <Font variant="body-sm" weight="black" color={variant === 'zinc' ? 'white' : variant} uppercase italic tracking="tight">
                             {title}
                         </Font>
@@ -73,7 +73,7 @@ export function SettingsOption({
                 
                 <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                     {badge && (
-                        <Box padding={2.5} bg={variant} bgOpacity={10} border borderColor={`${variant}/20`} rounded={STORE_TOKENS.RADIUS.FULL}>
+                        <Box padding="element" bg={variant} bgOpacity={10} border borderColor={`${variant}/20`} rounded={STORE_TOKENS.RADIUS.FULL}>
                             <Font variant="sub-tiny" weight="black" color={variant} uppercase>{badge}</Font>
                         </Box>
                     )}

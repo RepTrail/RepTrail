@@ -41,7 +41,7 @@ export function ProductCard({
 
     return (
         <GlassPanel
-            padding={0}
+            padding="none"
             rounded={STORE_TOKENS.RADIUS.SYSTEM}
             overflow="hidden"
             group
@@ -108,7 +108,7 @@ export function ProductCard({
                             {description}
                         </Font>
                     )}
-                    <Box padding={2.5}>
+                    <Box padding="element">
                         <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} color={STORE_TOKENS.COLORS.SUCCESS} variant="heading">
                             {price}
                         </Font>

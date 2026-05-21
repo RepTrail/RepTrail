@@ -43,8 +43,8 @@ export function WorkoutExecutionState({
         <Stack gap={STORE_TOKENS.SPACING.CONTAINER} padding={STORE_TOKENS.PADDING.CONTAINER} flex1>
             {/* Progress Section */}
             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                <Stack direction="row" align="end" justify="between" padding={2.5}>
-                    <Stack gap={2.5}>
+                <Stack direction="row" align="end" justify="between" padding="element">
+                    <Stack gap="element">
                         <Font variant="label-caps" color="SECONDARY">Progresso Geral</Font>
                         <Font variant="h3" color="white" italic uppercase>
                             {totalCompletedSets} <Font color="zinc-700">/ {totalSteps}</Font>
@@ -108,7 +108,7 @@ export function WorkoutExecutionState({
             </Stack>
 
             {/* Action Area */}
-            <Box padding={0}>
+            <Box padding="none">
                 <Button 
                     variant="emerald" 
                     fullWidth 

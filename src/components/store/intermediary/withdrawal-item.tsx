@@ -61,7 +61,7 @@ export function WithdrawalItem({
                     <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} color={STORE_TOKENS.COLORS.TEXT.PRIMARY} variant="body-sm">
                         {amount}
                     </Font>
-                    <Inline gap={2.5} align="center">
+                    <Inline gap="element" align="center">
                         <Icon icon={QrCode} size="xs" color={STORE_TOKENS.COLORS.TEXT.DIM} />
                         <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.DIM}>{method}</Font>
                     </Inline>
@@ -85,7 +85,7 @@ export function WithdrawalItem({
                 </Box>
 
                 {/* Details Area */}
-                <Stack gap={0} flex1 overflow="hidden">
+                <Stack gap="none" flex1 overflow="hidden">
                     <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} variant="body-sm" color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
                         Saque #{id.slice(-6).toUpperCase()}
                     </Font>

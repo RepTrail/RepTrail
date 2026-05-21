@@ -7,29 +7,29 @@
 export const STORE_TOKENS = {
     PADDING: {
         /** 20px - Universal container padding and layout gap */
-        CONTAINER: 5,
+        CONTAINER: 'container' as const,
         /** 10px - Inner element spacing and small padding */
-        ELEMENT: 2.5,
+        ELEMENT: 'element' as const,
         /** 100px (PC) / 50px (Mobile) - Major section separation */
         SECTION: 'section' as const,
         /** 50px - Large padding for empty states or specialized sections */
-        EMPTY_STATE: 12.5,
+        EMPTY_STATE: 'empty_state' as const,
 
         /* Para ritmo vertical “hero” no `RegistryMain`, use `MAIN` no mobile — ver Design System §11–12.*/
-        SAFE_AREA_INSET: 25,
+        SAFE_AREA_INSET: 'safe_area' as const,
     },
     /** Spacing tokens for padding and gaps */
     SPACING: {
         /** 20px - Universal container padding and layout gap */
-        CONTAINER: 5,
+        CONTAINER: 'container' as const,
         /** 10px - Inner element spacing and small padding */
-        ELEMENT: 2.5,
+        ELEMENT: 'element' as const,
         /** 100px (PC) / 50px (Mobile) - Major section separation */
         SECTION: 'section' as const,
         /** 50px - Large padding for empty states or specialized sections */
-        EMPTY_STATE: 12.5,
+        EMPTY_STATE: 'empty_state' as const,
         /** 20px - Large padding for empty states or specialized sections */
-        SECTION_MOBILE: 5,
+        SECTION_MOBILE: 'container' as const,
     },
 
     /** Geometry and Border Radius tokens */

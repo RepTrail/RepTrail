@@ -156,7 +156,7 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
     if (photos.length === 0) {
         return (
             <Box
-                padding={12.5}
+                padding="empty_state"
                 display="flex"
                 direction="col"
                 align="center"
@@ -167,7 +167,7 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                 borderOpacity={10}
                 bg="zinc"
                 bgOpacity={5}
-                gap={2.5}
+                gap="element"
                 fullWidth
             >
                 <Icon icon={Camera} size="lg" color="zinc-400" opacity={20} />
@@ -184,7 +184,7 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                 key={`${item.url}-${index}`}
                 display="flex"
                 direction="col"
-                gap={2.5}
+                gap="element"
                 onMouseEnter={() => setHoveredSetId(item.setId)}
                 onMouseLeave={() => setHoveredSetId(null)}
                 group
@@ -209,7 +209,7 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                         className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
                     />
                     {/* Floating Badge Overlay (Top Left) */}
-                    <Box position="absolute" top={2.5} left={2.5} className="pointer-events-none" style={{ zIndex: STORE_TOKENS.Z_INDEX.BASE }}>
+                    <Box position="absolute" top={2.5} left={2.5} className="pointer-events-none">
                         <Badge variant="solid" color="primary" label={typeLabels[item.type]} size="xs" />
                     </Box>
 
@@ -248,17 +248,17 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
     }
 
     return (
-        <Stack gap={5} fullWidth>
+        <Stack gap="container" fullWidth>
             {/* Header / Filter Section */}
             <Box
                 display="flex"
                 direction={{ base: 'col', md: 'row' }}
                 align={{ base: 'stretch', md: 'center' }}
                 justify="between"
-                gap={5}
-                padding={0}
+                gap="container"
+                padding="none"
             >
-                <Box display="flex" align="center" gap={2.5} wrap="wrap" fullWidth>
+                <Box display="flex" align="center" gap="element" wrap="wrap" fullWidth>
                     <Icon icon={Filter} size="xs" color="zinc-400" className="shrink-0 mr-1" />
                     {filters.map((f) => {
                         const isActive = activeFilter === f.value
@@ -283,7 +283,7 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
 
             {/* Gallery Content */}
             {activeFilter === 'all' ? (
-                <Stack gap={5} fullWidth>
+                <Stack gap="container" fullWidth>
                     {sortedSets.map((set, idx) => {
                         const isEditing = editingSetId === set.id
                         const sessionPhotos = []
@@ -295,18 +295,18 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                         return (
                             <React.Fragment key={set.id}>
                                 {idx > 0 && <Separator opacity={5} />}
-                                <Stack gap={5} fullWidth>
+                                <Stack gap="container" fullWidth>
                                     {/* Session Header */}
-                                    <Box
-                                        display="flex"
-                                        align="center"
+                                    <Stack
+                                        direction={{ base: 'col', md: 'row' }}
+                                        align={{ base: 'start', md: 'center' }}
                                         justify="between"
-                                        gap={5}
+                                        gap="container"
                                         fullWidth
                                     >
-                                        <Box display="flex" align="center" gap={2.5}>
+                                        <Box display="flex" align="center" gap="element">
                                             <Box
-                                                padding={2.5}
+                                                padding="element"
                                                 rounded="system"
                                                 bg="primary"
                                                 bgOpacity={10}
@@ -322,11 +322,11 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                                             </Font>
                                         </Box>
 
-                                        <Box display="flex" align="center" gap={2.5}>
+                                        <Box display="flex" align="center" gap="element">
                                             {canEdit && (
                                                 <>
                                                     {isEditing ? (
-                                                        <Box display="flex" align="center" gap={2.5} className="animate-in fade-in slide-in-from-right-4 duration-300">
+                                                        <Box display="flex" align="center" gap="element" className="animate-in fade-in slide-in-from-right-4 duration-300">
                                                             <Input
                                                                 type="date"
                                                                 value={editDate}
@@ -334,7 +334,7 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                                                                 width="150px"
                                                                 className="!h-8 text-[11px]"
                                                             />
-                                                            <Box display="flex" gap={2.5}>
+                                                            <Box display="flex" gap="element">
                                                                 <Button
                                                                     size="sm"
                                                                     variant="primary"
@@ -354,12 +354,12 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                                                             </Box>
                                                         </Box>
                                                     ) : (
-                                                        <Box display="flex" align="center" gap={2.5}>
+                                                        <Box display="flex" align="center" gap="element">
                                                             <Button
                                                                 variant="outline-zinc"
                                                                 size="sm"
                                                                 onClick={() => startEditing(set.id, set.created_at)}
-                                                                gap={2.5}
+                                                                gap="element"
                                                             >
                                                                 <Icon icon={Pencil} size="xs" />
                                                                 Editar Data
@@ -378,10 +378,10 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                                                 </>
                                             )}
                                         </Box>
-                                    </Box>
+                                    </Stack>
 
                                     {/* Photos Grid for this session (4 per row on md/lg screens) */}
-                                    <Grid cols={{ base: 1, md: 4 }} gap={5}>
+                                    <Grid cols={{ base: 1, md: 4 }} gap="container">
                                         {sessionPhotos.map((photo, pIdx) => {
                                             const globalIdx = allItems.findIndex(ai => ai.url === photo.url)
                                             return renderPhotoCard({ ...photo, date: set.created_at, setId: set.id }, globalIdx)
@@ -394,24 +394,24 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                 </Stack>
             ) : (
                 /* Photos Grid for filtered view (4 per row on md/lg screens) */
-                <Grid cols={{ base: 1, md: 4 }} gap={5}>
+                <Grid cols={{ base: 1, md: 4 }} gap="container">
                     {filteredItems.map((item, i) => {
                         const isEditing = editingSetId === item.setId
 
                         return (
-                            <Stack key={`${item.url}-${i}`} gap={2.5}>
+                            <Stack key={`${item.url}-${i}`} gap="element">
                                 {renderPhotoCard(item, i)}
                                 {canEdit && (
-                                    <Box display="flex" align="center" justify="between" padding={1}>
+                                    <Box display="flex" align="center" justify="between" padding="tiny">
                                         {isEditing ? (
-                                            <Box display="flex" align="center" gap={2.5} fullWidth className="animate-in fade-in zoom-in duration-300">
+                                            <Box display="flex" align="center" gap="element" fullWidth className="animate-in fade-in zoom-in duration-300">
                                                 <Input
                                                     type="date"
                                                     value={editDate}
                                                     onChange={(e) => setEditDate(e.target.value)}
                                                     className="h-7 px-2 text-[10px] bg-zinc-900 border-zinc-800 text-white rounded-system"
                                                 />
-                                                <Box display="flex" gap={2.5}>
+                                                <Box display="flex" gap="element">
                                                     <Button
                                                         size="sm"
                                                         variant="outline-emerald"
@@ -538,10 +538,10 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                                 className="-translate-x-1/2"
                                 bg="black"
                                 bgOpacity={50}
-                                padding={2.5}
+                                padding="element"
                                 rounded="system"
                             >
-                                <Stack direction="row" align="center" gap={2.5}>
+                                <Stack direction="row" align="center" gap="element">
                                     <Font variant="sub-tiny" color="zinc-400" weight="bold" uppercase tracking="widest">Atleta:</Font>
                                     <Font variant="sub-tiny" weight="black" uppercase italic color="primary">
                                         {studentName}
@@ -565,7 +565,7 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                 cancelLabel="Cancelar"
                 onConfirm={confirmDelete}
             >
-                <Box padding={0}>
+                <Box padding="none">
                     <Font variant="body" color="zinc-400" align="center">
                         Tem certeza que deseja remover este registro de fotos? Essa ação não poderá ser desfeita.
                     </Font>

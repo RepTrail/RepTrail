@@ -19,8 +19,8 @@ export function LayoutSpacingContent({ id }: { id?: string }) {
         subtitle="Regras de arquitetura de layout, raios de borda e padding obrigatório."
     >
         {/* Radii & Padding Rules */}
-        <GlassPanel padding={0}>
-            <Stack gap={0}>
+        <GlassPanel padding="none">
+            <Stack gap="none">
                 <CardHeader>
                     <Font weight="bold">Radii & Base Padding</Font>
                 </CardHeader>

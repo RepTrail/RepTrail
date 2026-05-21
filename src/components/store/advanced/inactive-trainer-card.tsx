@@ -15,7 +15,7 @@ export function InactiveTrainerCard({ trainerName }: { trainerName: string | nul
             contextLabel="Área do Aluno"
             showTabs={false}
         >
-            <Stack gap={{ base: 12.5, md: 'section' }} className="animate-in fade-in duration-700">
+            <Stack gap={{ base: "empty_state", md: 'section' }} className="animate-in fade-in duration-700">
                 <header className="space-y-8">
                     <div className="relative group overflow-hidden p-6 sm:p-12 bg-zinc-900 border border-zinc-800 rounded-3xl shadow-2xl">
                         <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 via-transparent to-transparent opacity-50" />

@@ -72,7 +72,7 @@ export default async function StudentPublicProfilePage({
     if (authUser) {
         const { data } = await supabase
             .from('profiles')
-            .select('role, full_name, avatar_url, email, is_admin')
+            .select('role, full_name, avatar_url, email, is_admin, is_affiliate')
             .eq('id', authUser.id)
             .single()
         viewerProfile = data
@@ -193,6 +193,7 @@ export default async function StudentPublicProfilePage({
                         email: viewerProfile.email,
                         avatar_url: viewerProfile.avatar_url,
                         isAdmin: viewerProfile.is_admin,
+                        isAffiliate: viewerProfile.is_affiliate,
                     }}
                 >
                     {mainContent}

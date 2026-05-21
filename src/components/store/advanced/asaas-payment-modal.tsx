@@ -264,7 +264,7 @@ export function AsaasPaymentModal({
                     </Stack>
                 </Stack>
 
-                <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT} padding={2.5}>
+                <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT} padding="element">
                     <Icon icon={CheckCircle2} size="xs" color="emerald" />
                     <Font variant="sub-tiny" color="zinc-500" weight="black" uppercase tracking="widest">Ambiente 100% Seguro</Font>
                 </Stack>

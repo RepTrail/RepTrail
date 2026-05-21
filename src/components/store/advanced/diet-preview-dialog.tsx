@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { useQuery } from '@tanstack/react-query'
 import { getDietDetails } from '@/actions/diet-actions'
 import { Modal } from '@/components/store/advanced/modal'
@@ -57,8 +58,8 @@ export function DietPreviewDialog({ dietId, dietName, isOpen, onClose }: DietPre
             onConfirm={onClose}
         >
             {isLoading ? (
-                <Box padding={20}>
-                    <Stack align="center" justify="center" gap={5}>
+                <Box padding={STORE_TOKENS.SPACING.CONTAINER}>
+                    <Stack align="center" justify="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
                         <Icon icon={Loader2} size="xl" color="emerald" spin />
                         <Font variant="label-caps" color="SECONDARY" align="center">
                             CARREGANDO DETALHES DA DIETA...
@@ -66,8 +67,8 @@ export function DietPreviewDialog({ dietId, dietName, isOpen, onClose }: DietPre
                     </Stack>
                 </Box>
             ) : !diet?.meals || diet.meals.length === 0 ? (
-                <Box padding={20}>
-                    <Stack align="center" justify="center" gap={5}>
+                <Box padding={STORE_TOKENS.SPACING.CONTAINER}>
+                    <Stack align="center" justify="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
                         <Icon icon={Utensils} size="xl" color="muted" />
                         <Font variant="h3" color="PRIMARY" align="center">
                             NENHUMA REFEIÇÃO CADASTRADA
@@ -75,10 +76,10 @@ export function DietPreviewDialog({ dietId, dietName, isOpen, onClose }: DietPre
                     </Stack>
                 </Box>
             ) : (
-                <Stack gap={5}>
+                <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                     {/* Top total macros summary */}
-                    <Box padding={2.5} rounded="system" border borderColor="white/10" bg="zinc" bgOpacity={95}>
-                        <Stack direction="row" gap={2.5} wrap="wrap">
+                    <Box padding={STORE_TOKENS.SPACING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM} border borderColor="white/10" bg="zinc" bgOpacity={STORE_TOKENS.OPACITY.SURFACE}>
+                        <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} wrap="wrap">
                             <Badge 
                                 label={`${totalMacros.calories} KCAL`} 
                                 variant="glass" 
@@ -119,18 +120,18 @@ export function DietPreviewDialog({ dietId, dietName, isOpen, onClose }: DietPre
                         return (
                             <GlassPanel
                                 key={meal.id}
-                                padding={5}
-                                rounded="system"
+                                padding={STORE_TOKENS.SPACING.CONTAINER}
+                                rounded={STORE_TOKENS.RADIUS.SYSTEM}
                                 variant="glass"
                             >
-                                <Stack gap={5}>
+                                <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                                     {/* Meal Header */}
                                     <Stack direction="row" align="center" justify="between">
                                         <Font variant="label-caps" color="primary">
                                             {mIdx + 1}. {meal.name}
                                         </Font>
                                         {meal.time_of_day && (
-                                            <Stack direction="row" align="center" gap={2.5}>
+                                            <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                                 <Icon icon={Clock} size="sm" color="muted" />
                                                 <Font variant="sub-tiny" color="SECONDARY" mono>
                                                     {meal.time_of_day}
@@ -141,9 +142,9 @@ export function DietPreviewDialog({ dietId, dietName, isOpen, onClose }: DietPre
 
                                     {/* Meal Items Table */}
                                     {meal.meal_items && meal.meal_items.length > 0 ? (
-                                        <Stack gap={2.5}>
+                                        <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                                             {/* Header Row */}
-                                            <Grid cols={12} gap={2.5}>
+                                            <Grid cols={12} gap={STORE_TOKENS.SPACING.ELEMENT}>
                                                 <Box colSpan={4}>
                                                     <Font variant="sub-tiny" weight="black" uppercase italic tracking="widest" color="MUTED">
                                                         ALIMENTO
@@ -171,14 +172,14 @@ export function DietPreviewDialog({ dietId, dietName, isOpen, onClose }: DietPre
                                                 </Box>
                                             </Grid>
 
-                                            <Separator opacity={10} />
+                                            <Separator opacity={STORE_TOKENS.OPACITY.SUBTLE} />
 
                                             {/* Meal Item Rows */}
                                             {meal.meal_items.map((item: any) => (
                                                 <React.Fragment key={item.id}>
-                                                    <Grid cols={12} gap={2.5} align="center">
+                                                    <Grid cols={12} gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                                                         <Box colSpan={4}>
-                                                            <Stack gap={0}>
+                                                            <Stack gap="none">
                                                                 <Font variant="auxiliary" color="PRIMARY" truncate>
                                                                     {item.food_name || item.name}
                                                                 </Font>
@@ -208,12 +209,12 @@ export function DietPreviewDialog({ dietId, dietName, isOpen, onClose }: DietPre
                                                             </Font>
                                                         </Box>
                                                     </Grid>
-                                                    <Separator opacity={5} />
+                                                    <Separator opacity={STORE_TOKENS.OPACITY.LOW} />
                                                 </React.Fragment>
                                             ))}
 
                                             {/* Meal Subtotal Macros Row */}
-                                            <Grid cols={12} gap={2.5} align="center">
+                                            <Grid cols={12} gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                                                 <Box colSpan={4}>
                                                     <Font variant="sub-tiny" color="SECONDARY" uppercase>
                                                         TOTAL

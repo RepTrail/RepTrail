@@ -33,9 +33,9 @@ export function TrainerRankingClient({ initialRanking }: TrainerRankingClientPro
             contextLabel="Área do Personal"
             showTabs={false}
         >
-            <Stack gap={10}>
+            <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                 {/* Top 3 Podium */}
-                <Grid gap={8} lgCols={3}>
+                <Grid gap={STORE_TOKENS.SPACING.CONTAINER} lgCols={3}>
                     {ranking.slice(0, 3).map((trainer: any, index: number) => (
                         <PodiumCard
                             key={trainer.id}

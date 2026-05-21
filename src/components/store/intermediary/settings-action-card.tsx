@@ -56,7 +56,7 @@ export function SettingsActionCard({
                     <Box bg={color} bgOpacity={20} padding={STORE_TOKENS.PADDING.ELEMENT} rounded="full">
                         <Icon icon={icon} color={safeColor} size="md" />
                     </Box>
-                    <Stack flex1 gap={0}>
+                    <Stack flex1 gap="none">
                         <Font variant="body" weight="black" uppercase italic color={safeColor}>{title}</Font>
                         <Font variant="sub-tiny" weight="bold" color={safeColor} opacity={70}>{subtitle}</Font>
                     </Stack>
@@ -68,7 +68,7 @@ export function SettingsActionCard({
                     onClick={onAction}
                     disabled={disabled}
                     loading={isLoading}
-                    gap={2.5}
+                    gap="element"
                 >
                     {ActionIcon && (
                         <ActionIcon size={16} strokeWidth={2.5} className="shrink-0" />

@@ -64,7 +64,7 @@ export function FormSwitch({
                 </Font>
             )}
 
-            <GlassPanel padding={0} rounded={STORE_TOKENS.RADIUS.FULL} border="subtle" fullWidth>
+            <GlassPanel padding="none" rounded={STORE_TOKENS.RADIUS.FULL} border="subtle" fullWidth>
                 <Box
                     display="flex"
                     align="center"

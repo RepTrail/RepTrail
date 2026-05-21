@@ -32,7 +32,7 @@ export function RegistrySection({
   const { primaryColor } = useRegistry()
 
   return (
-    <Stack gap="title-content" id={id} fullWidth flex1={flex1}>
+    <Stack gap={STORE_TOKENS.SPACING.CONTAINER} id={id} fullWidth flex1={flex1}>
       {/* Section Header */}
       {(title || subtitle || rightElement) && (
         <Stack 

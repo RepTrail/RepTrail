@@ -27,7 +27,7 @@ export default async function TrainerLayout({ children }: { children: React.Reac
     
     const { data: profile } = await supabase
         .from('profiles')
-        .select('role, plan_tier, full_name, avatar_url, email, is_admin')
+        .select('role, plan_tier, full_name, avatar_url, email, is_admin, is_affiliate')
         .eq('id', userId)
         .single()
 
@@ -103,7 +103,7 @@ export default async function TrainerLayout({ children }: { children: React.Reac
                     links={links}
                     mobileLinks={mobileLinks}
                     profileHref="/dashboard/trainer/profile"
-                    user={{ id: userId, name: profile?.full_name, email: (profile as any)?.email, avatar_url: profile?.avatar_url, isAdmin: profile?.is_admin }}
+                    user={{ id: userId, name: profile?.full_name, email: (profile as any)?.email, avatar_url: profile?.avatar_url, isAdmin: profile?.is_admin, isAffiliate: profile?.is_affiliate, role: 'trainer' }}
                 >
                     {children}
                 </DashboardShell>

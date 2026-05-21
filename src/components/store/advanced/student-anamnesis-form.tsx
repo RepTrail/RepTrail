@@ -246,7 +246,7 @@ export function AnamnesisForm({ initialData }: { initialData?: any }) {
                                     </Stack>
 
                                     <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                        <Stack direction="row" align="baseline" gap={0}>
+                                        <Stack direction="row" align="baseline" gap="none">
                                             <Font variant="h3" weight="black" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} italic>
                                                 {calculatedBF || '--.-'}
                                             </Font>
@@ -255,12 +255,12 @@ export function AnamnesisForm({ initialData }: { initialData?: any }) {
                                             </Font>
                                         </Stack>
                                         
-                                        <Box display={{ base: 'none', lg: 'block' }} padding={0}>
+                                        <Box display={{ base: 'none', lg: 'block' }} padding="none">
                                             <Box width="px" height="full" bg={STORE_TOKENS.COLORS.WHITE as any} bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} />
                                         </Box>
 
                                         <Box flex1 display={{ base: 'none', lg: 'block' }}>
-                                            <Stack gap={0}>
+                                            <Stack gap="none">
                                                 <Font 
                                                     variant="h3" 
                                                     weight="black" 
@@ -287,7 +287,7 @@ export function AnamnesisForm({ initialData }: { initialData?: any }) {
                                 variant="primary" 
                                 size="lg" 
                                 fullWidth 
-                                gap={2.5}
+                                gap="element"
                                 className="whitespace-normal text-center leading-tight"
                             >
                                 Salvar Dados Antropométricos

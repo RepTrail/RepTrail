@@ -43,7 +43,7 @@ export function WorkoutsLibraryClient({
             contextLabel="Área do Personal"
             showTabs={false}
         >
-            <Stack gap={10}>
+            <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                 <div className="flex flex-col md:flex-row md:items-center justify-end gap-6">
                     <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
                         {!betaTesterMode && (

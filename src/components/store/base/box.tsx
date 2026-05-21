@@ -3,12 +3,14 @@ import React from 'react'
 import { cn } from '@/lib/utils'
 import { useRegistry } from '@/components/store/advanced/registry-context'
 
+export type SpacingToken = 'container' | 'element' | 'section' | 'empty_state' | 'tiny' | 'none' | 'dashboard_pc' | 'safe_area'
+
 export type BoxColor = 'orange' | 'emerald' | 'amber' | 'red' | 'blue' | 'zinc' | 'white' | 'transparent' | 'black' | 'primary' | 'success' | 'warning' | 'neutral'
 
-export interface BoxProps extends Omit<React.HTMLAttributes<HTMLElement>, 'color'> {
+export interface BoxProps extends Omit<React.HTMLAttributes<HTMLElement>, 'color' | 'className' | 'style'> {
   children?: React.ReactNode
   as?: 'div' | 'aside' | 'nav' | 'main' | 'section' | 'header' | 'footer' | 'button' | 'img' | 'input' | 'label' | 'span'
-  padding?: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12 | 12.5 | 20 | 50 | 100 | 'section' | { base: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12 | 12.5 | 20 | 50 | 100 | 'section', md?: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12 | 12.5 | 20 | 50 | 100 | 'section', lg?: 0 | 1 | 2.5 | 5 | 7.5 | 10 | 12 | 12.5 | 20 | 50 | 100 | 'section' }
+  padding?: SpacingToken | { base: SpacingToken, md?: SpacingToken, lg?: SpacingToken }
   align?: 'start' | 'center' | 'end' | 'stretch' | 'baseline' | { base: 'start' | 'center' | 'end' | 'stretch' | 'baseline', sm?: 'start' | 'center' | 'end' | 'stretch' | 'baseline', md?: 'start' | 'center' | 'end' | 'stretch' | 'baseline', lg?: 'start' | 'center' | 'end' | 'stretch' | 'baseline' }
   justify?: 'start' | 'center' | 'end' | 'between' | 'around' | { base: 'start' | 'center' | 'end' | 'between' | 'around', sm?: 'start' | 'center' | 'end' | 'between' | 'around', md?: 'start' | 'center' | 'end' | 'between' | 'around', lg?: 'start' | 'center' | 'end' | 'between' | 'around' }
   display?: 'flex' | 'grid' | 'block' | 'inline-block' | 'inline-flex' | 'none' | { base: 'flex' | 'grid' | 'block' | 'none', sm?: 'flex' | 'grid' | 'block' | 'none', md?: 'flex' | 'grid' | 'block' | 'none', lg?: 'flex' | 'grid' | 'block' | 'none' }
@@ -30,7 +32,7 @@ export interface BoxProps extends Omit<React.HTMLAttributes<HTMLElement>, 'color
   left?: number | string
   shrink?: number | { base: number, md?: number, lg?: number }
   grow?: number
-  aspectRatio?: 'square' | 'video' | 'auto'
+  aspectRatio?: 'square' | 'video' | 'portrait' | '3/4' | 'auto'
   alignSelf?: 'start' | 'center' | 'end' | 'stretch'
   flex?: 0 | 1 | 'none' | { base: 0 | 1 | 'none', md?: 0 | 1 | 'none', lg?: 0 | 1 | 'none' }
   flex1?: boolean | { base: boolean, md?: boolean, lg?: boolean }
@@ -43,22 +45,22 @@ export interface BoxProps extends Omit<React.HTMLAttributes<HTMLElement>, 'color
   breakAll?: boolean
   transition?: boolean
   zIndex?: 0 | 10 | 20 | 30 | 40 | 50 | 100 | 'auto'
-  inset?: 0 | 2.5 | 5 | 10 | 12.5 | 20 | 50 | 100
+  inset?: 0 | 2.5 | 5
   colSpan?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 12
   mdColSpan?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 12
   lgColSpan?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 12
   cursor?: 'pointer' | 'default' | 'not-allowed'
   textAlign?: 'center' | 'left' | 'right' | { base: 'center' | 'left' | 'right', md?: 'center' | 'left' | 'right', lg?: 'center' | 'left' | 'right' }
   wrap?: 'wrap' | 'nowrap'
-  gap?: 0 | 2.5 | 5 | 10 | 12.5 | 20 | 50 | 100 | { base: 0 | 2.5 | 5 | 10 | 12.5 | 20 | 50 | 100, sm?: 0 | 2.5 | 5 | 10 | 12.5 | 20 | 50 | 100, md?: 0 | 2.5 | 5 | 10 | 12.5 | 20 | 50 | 100, lg?: 0 | 2.5 | 5 | 10 | 12.5 | 20 | 50 | 100 }
-  className?: string
+  gap?: SpacingToken | { base: SpacingToken, sm?: SpacingToken, md?: SpacingToken, lg?: SpacingToken }
+  className?: never
   id?: string
   onClick?: (e: React.MouseEvent<HTMLElement>) => void
-  style?: React.CSSProperties
+  style?: never
   group?: boolean
   groupHoverDisplay?: 'flex' | 'grid' | 'block' | 'none'
   groupHoverOpacity?: 0 | 5 | 10 | 20 | 30 | 40 | 50 | 60 | 70 | 80 | 90 | 95 | 100
-  groupHoverScale?: 110 | 105
+  groupHoverScale?: 90 | 95 | 98 | 100 | 105 | 110
   bg?: BoxColor
   bgOpacity?: 0 | 5 | 10 | 20 | 30 | 40 | 50 | 60 | 70 | 80 | 90 | 95 | 100
   borderOpacity?: 0 | 5 | 10 | 20 | 30 | 40 | 50 | 60 | 70 | 80 | 90 | 95 | 100
@@ -71,6 +73,12 @@ export interface BoxProps extends Omit<React.HTMLAttributes<HTMLElement>, 'color
   borderWidth?: 1 | 2
   borderColor?: BoxColor | string
   type?: 'button' | 'submit' | 'reset'
+  scale?: 90 | 95 | 100 | 105 | 110
+  shadow?: 'sm' | 'md' | 'lg' | 'xl' | 'none'
+  pointerEvents?: 'none' | 'auto'
+  hoverScale?: 90 | 95 | 98 | 100 | 105 | 110
+  groupHoverBorderColor?: BoxColor | string
+  animateIn?: 'fade' | 'zoom' | 'slide-right' | 'none'
 }
 
 /**
@@ -143,8 +151,14 @@ export function Box({
   borderColor,
   borderOpacity,
   type,
+  scale,
+  shadow,
+  pointerEvents,
+  hoverScale,
+  groupHoverBorderColor,
+  animateIn,
   ...props
-}: BoxProps) {
+}: Omit<BoxProps, 'className' | 'style'> & { className?: string, style?: React.CSSProperties }) {
   const { primaryColor } = useRegistry()
 
   const opacityClasses = {
@@ -243,15 +257,14 @@ export function Box({
   }
 
   const paddingMapping = {
-    0: 'p-0',
-    1: 'p-1',
-    2.5: 'p-2.5',
-    5: 'p-5',
-    7.5: 'p-[30px]',
-    10: 'p-10',
-    12: 'p-12',
-    12.5: 'p-[50px]',
-    'section': 'p-[100px]'
+    none: 'p-0',
+    tiny: 'p-1',
+    element: 'p-2.5',
+    container: 'p-5',
+    empty_state: 'p-[50px]',
+    section: 'p-[100px]',
+    dashboard_pc: 'p-20',
+    safe_area: 'p-[100px]'
   }
 
   const colSpanClasses = {
@@ -300,14 +313,14 @@ export function Box({
   }
 
   const gapMapping = {
-    0: 'gap-0',
-    1: 'gap-1',
-    2.5: 'gap-2.5',
-    5: 'gap-5',
-    7.5: 'gap-[30px]',
-    10: 'gap-10',
-    12.5: 'gap-[50px]',
-    'section': 'gap-[100px]'
+    none: 'gap-0',
+    tiny: 'gap-1',
+    element: 'gap-2.5',
+    container: 'gap-5',
+    empty_state: 'gap-[50px]',
+    section: 'gap-[100px]',
+    dashboard_pc: 'gap-20',
+    safe_area: 'gap-[100px]'
   }
 
   const widthClasses = {
@@ -315,7 +328,6 @@ export function Box({
     auto: 'w-auto',
     half: 'w-1/2',
     px: 'w-px',
-    'sidebar': 'w-56',
     'sidebar-wide': 'w-72',
     '10': 'w-10'
   }
@@ -395,6 +407,52 @@ export function Box({
     0: 'lg:translate-x-0',
     'full': 'lg:translate-x-full',
     '-full': 'lg:-translate-x-full'
+  }
+
+  const shadowClasses = {
+    sm: 'shadow-sm',
+    md: 'shadow-md',
+    lg: 'shadow-lg',
+    xl: 'shadow-xl',
+    none: 'shadow-none'
+  }
+
+  const pointerEventsClasses = {
+    none: 'pointer-events-none',
+    auto: 'pointer-events-auto'
+  }
+
+  const hoverScaleClasses = {
+    90: 'hover:scale-90',
+    95: 'hover:scale-95',
+    98: 'hover:scale-[0.98]',
+    100: 'hover:scale-100',
+    105: 'hover:scale-105',
+    110: 'hover:scale-110'
+  }
+
+  const groupHoverScaleClasses = {
+    90: 'group-hover:scale-90',
+    95: 'group-hover:scale-95',
+    98: 'group-hover:scale-[0.98]',
+    100: 'group-hover:scale-100',
+    105: 'group-hover:scale-105',
+    110: 'group-hover:scale-110'
+  }
+
+  const animateInClasses = {
+    fade: 'animate-in fade-in duration-300',
+    zoom: 'animate-in fade-in zoom-in duration-300',
+    'slide-right': 'animate-in fade-in slide-in-from-right-4 duration-300',
+    none: ''
+  }
+
+  const scaleClasses = {
+    90: 'scale-90',
+    95: 'scale-95',
+    100: 'scale-100',
+    105: 'scale-105',
+    110: 'scale-110'
   }
 
   // Responsive logic
@@ -685,6 +743,41 @@ export function Box({
             return `border-${borderColor}-500${opacitySuffix}`;
           })()
         ),
+
+        shadow && shadowClasses[shadow],
+        pointerEvents && pointerEventsClasses[pointerEvents],
+        hoverScale && hoverScaleClasses[hoverScale],
+        groupHoverScale && groupHoverScaleClasses[groupHoverScale],
+        groupHoverBorderColor && (
+          (() => {
+            const opacitySuffix = borderOpacity && borderOpacity !== 100 ? `/${borderOpacity}` : '';
+            let borderVal = '';
+            if (groupHoverBorderColor === 'primary') {
+                if (primaryColor === 'orange') borderVal = `orange-500${opacitySuffix}`;
+                else if (primaryColor === 'emerald') borderVal = `emerald-500${opacitySuffix}`;
+                else if (primaryColor === 'blue') borderVal = `blue-500${opacitySuffix}`;
+                else if (primaryColor === 'red') borderVal = `red-500${opacitySuffix}`;
+                else if (primaryColor === 'amber') borderVal = `amber-500${opacitySuffix}`;
+                else borderVal = 'brand-primary';
+            }
+            else if (groupHoverBorderColor === 'success') borderVal = `emerald-500${opacitySuffix}`;
+            else if (groupHoverBorderColor === 'warning') borderVal = `orange-500${opacitySuffix}`;
+            else if (groupHoverBorderColor === 'red') borderVal = `red-500${opacitySuffix}`;
+            else if (groupHoverBorderColor === 'blue') borderVal = `blue-500${opacitySuffix}`;
+            else if (groupHoverBorderColor === 'emerald') borderVal = `emerald-500${opacitySuffix}`;
+            else if (groupHoverBorderColor === 'orange') borderVal = `orange-500${opacitySuffix}`;
+            else if (groupHoverBorderColor === 'amber') borderVal = `amber-500${opacitySuffix}`;
+            else if (groupHoverBorderColor === 'zinc') borderVal = `zinc-500${opacitySuffix}`;
+            else if (groupHoverBorderColor === 'white') borderVal = `white${opacitySuffix}`;
+            else if (groupHoverBorderColor === 'black') borderVal = `black${opacitySuffix}`;
+            else if (groupHoverBorderColor.includes('/')) borderVal = groupHoverBorderColor;
+            else borderVal = `${groupHoverBorderColor}-500${opacitySuffix}`;
+            
+            return `group-hover:border-${borderVal}`;
+          })()
+        ),
+        animateIn && animateInClasses[animateIn],
+        scale && scaleClasses[scale],
 
         className
       )}

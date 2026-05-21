@@ -1,4 +1,3 @@
- 
 'use client'
 
 import React from 'react'
@@ -7,10 +6,12 @@ import { Font } from '@/components/store/base/font'
 import { Icon } from '@/components/store/base/icon'
 import { Button } from '@/components/store/base/button'
 import { BaseAvatar } from '@/components/store/base/avatar'
-import { LogOut, Settings, Briefcase } from 'lucide-react'
+import { LogOut, Settings, Briefcase, ArrowRightLeft } from 'lucide-react'
 import { signOutAction } from '@/actions/auth-actions'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { Box } from '@/components/store/base/box'
+import { usePathname } from 'next/navigation'
+import { createClient } from '@/lib/supabase/client'
 
 import Link from 'next/link'
 
@@ -20,13 +21,15 @@ interface SidebarProfileUser {
     email?: string | null
     avatar_url?: string | null
     isAdmin?: boolean
+    isAffiliate?: boolean
+    role?: string
 }
 
 export function SidebarProfile({ 
     onOpenSettings,
     settingsHref,
     settingsIcon: SettingsIcon = Settings,
-    settingsVariant = 'zinc',
+    settingsVariant = 'outline-blue',
     adminHref = '/admin',
     user
 }: { 
@@ -37,13 +40,48 @@ export function SidebarProfile({
     adminHref?: string
     user?: SidebarProfileUser
 }) {
+    const pathname = usePathname()
     const initials = user?.name
         ? user.name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase()
         : 'U'
 
+    const [userRole, setUserRole] = React.useState<string | undefined>(user?.role)
+
+    React.useEffect(() => {
+        if (user?.role) {
+            setUserRole(user.role)
+            return
+        }
+        if (!user?.id) return
+
+        const supabase = createClient()
+        supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', user.id)
+            .single()
+            .then(({ data }) => {
+                if (data?.role) {
+                    setUserRole(data.role)
+                }
+            })
+    }, [user?.id, user?.role])
+
+    const isSwitchIcon = SettingsIcon === ArrowRightLeft
+    let resolvedVariant = settingsVariant
+    if (isSwitchIcon) {
+        if (userRole === 'student') {
+            resolvedVariant = 'outline-orange'
+        } else if (userRole === 'trainer') {
+            resolvedVariant = 'outline-emerald'
+        } else {
+            resolvedVariant = settingsVariant || 'outline-emerald'
+        }
+    }
+
     const settingsTrigger = (
         <Button
-            variant={settingsVariant}
+            variant={resolvedVariant}
             rounded={STORE_TOKENS.RADIUS.FULL}
             size="sm"
             isIconOnly
@@ -58,7 +96,7 @@ export function SidebarProfile({
             {/* User Identity Area */}
             <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                 <BaseAvatar initials={initials} src={user?.avatar_url || undefined} size="md" />
-                <Stack gap={0} flex1 overflow="hidden" minWidth={0}>
+                <Stack gap="none" flex1 overflow="hidden" minWidth={0}>
                     <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} variant="body-sm" color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
                         {user?.name || 'Usuário'}
                     </Font>
@@ -73,12 +111,25 @@ export function SidebarProfile({
                 {user?.isAdmin && (
                     <Link href={adminHref}>
                         <Button
-                            variant="zinc"
+                            variant="outline-red"
                             rounded={STORE_TOKENS.RADIUS.FULL}
                             size="sm"
                             isIconOnly
                         >
                             <Icon icon={Briefcase} size="sm" />
+                        </Button>
+                    </Link>
+                )}
+
+                {user?.isAffiliate && !pathname.startsWith('/dashboard/affiliate') && (
+                    <Link href="/dashboard/affiliate">
+                        <Button
+                            variant="outline-amber"
+                            rounded={STORE_TOKENS.RADIUS.FULL}
+                            size="sm"
+                            isIconOnly
+                        >
+                            <Icon icon={ArrowRightLeft} size="sm" />
                         </Button>
                     </Link>
                 )}
