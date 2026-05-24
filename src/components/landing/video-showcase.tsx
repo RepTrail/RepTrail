@@ -6,17 +6,17 @@ import { fbqEvent } from "@/lib/meta-pixel";
 
 const videos = [
     {
-        src: "/Videos/dash inicial do aluno.MP4",
+        src: "/Videos/dash-inicial-do-aluno.mp4",
         title: "Monitore o Progresso",
         desc: "Acompanhe o progresso de seu aluno em uma visão moderna e intuitiva, identificando áreas de melhoria."
     },
     {
-        src: "/Videos/tela minha evolução.MP4",
+        src: "/Videos/tela-minha-evolucao.mp4",
         title: "Veja a Evolução",
         desc: "Monitore a evolução real dos seus alunos com dados, fotos e métricas corporais precisas."
     },
     {
-        src: "/Videos/feed de alunos e perfil publico do aluno.MP4",
+        src: "/Videos/feed-de-alunos-e-perfil-publico-do-aluno.mp4",
         title: "Conecte-se com Alunos",
         desc: "Aumente a retenção através da conexão e motivação, criando uma comunidade engajada."
     }

@@ -1,26 +1,44 @@
-import { getTrainerProfile } from "@/actions/trainer-actions"
-import { createClient } from '@/lib/supabase/server'
-import { TrainerProfileClient } from "@/components/store/features(deprecated)/trainer-profile-client"
+import { headers } from 'next/headers'
+import { redirect } from 'next/navigation'
+import { getQueryClient } from '@/lib/get-query-client'
+import { QUERY_KEYS } from '@/lib/query-keys'
+import { getTrainerProfile } from '@/actions/trainer-actions'
+import { RegistryMain } from '@/components/store/advanced/registry-main'
+import { TrainerProfileSectionContent } from '@/components/store/sections/trainer-profile-section-content'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
-export default async function TrainerProfilePage() {
-    const profile = await getTrainerProfile()
-    const supabase = await createClient()
-
-    // Fetch Real Stats for Gamification
-    const { count: activeStudents } = await supabase
-        .from('trainer_students')
-        .select('*', { count: 'exact', head: true })
-        .eq('trainer_id', profile?.id)
-        .eq('active', true)
-
-    return (
-        <TrainerProfileClient 
-            profile={profile} 
-            activeStudents={activeStudents || 0} 
-        />
-    )
+export const metadata = {
+    title: 'Meu Perfil | RepTrail',
 }
 
+export default async function TrainerProfilePage() {
+    const headerList = await headers()
+    const userId = headerList.get('x-user-id')
 
+    if (!userId) redirect('/auth/login')
+
+    const profile = await getTrainerProfile(userId)
+    if (!profile) {
+        return (
+            <div className="p-10 text-center text-zinc-500 font-bold uppercase tracking-widest text-xs">
+                Perfil não encontrado.
+            </div>
+        )
+    }
+
+    const queryClient = getQueryClient()
+    queryClient.setQueryData(QUERY_KEYS.trainer.profile(userId), profile)
+
+    return (
+        <RegistryMain
+            title="MEU PERFIL"
+            subtitle="Gerencie sua identidade profissional e acompanhe seu progresso na plataforma."
+            icon="UserCheck"
+            contextLabel="Conta & Segurança"
+            showTabs={false}
+        >
+            <TrainerProfileSectionContent userId={userId} profile={profile} />
+        </RegistryMain>
+    )
+}

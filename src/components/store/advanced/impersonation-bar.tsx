@@ -57,7 +57,6 @@ export function ImpersonationBar({ color }: { color?: RegistryColor }) {
         <Box position="relative" fullWidth>
             <Surface
                 variant={`tonal-${primaryColor}` as any}
-                rounded={STORE_TOKENS.RADIUS.FULL}
                 padding={STORE_TOKENS.PADDING.CONTAINER}
             >
                 <Inline justify="between" align="center" gap={STORE_TOKENS.SPACING.CONTAINER}>

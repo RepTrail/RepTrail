@@ -411,6 +411,68 @@ export async function getAssignedErgogenics(studentId: string) {
     return []
 }
 
+export type TrainerErgogenicHubStudent = {
+    id: string
+    full_name: string
+    avatar_url: string | null
+    is_placeholder: boolean
+}
+
+export async function getTrainerErgogenicStudents(trainerId?: string): Promise<TrainerErgogenicHubStudent[]> {
+    const supabase = await createClient()
+    let tid = trainerId
+
+    if (!tid) {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) return []
+        tid = user.id
+    }
+
+    const [{ data: students }, { data: placeholders }] = await Promise.all([
+        supabase
+            .from('trainer_students')
+            .select(`
+                id,
+                student:profiles!student_id(
+                    id,
+                    full_name,
+                    avatar_url,
+                    details:student_details!id(steroid_use)
+                )
+            `)
+            .eq('trainer_id', tid)
+            .eq('active', true),
+        supabase
+            .from('pending_student_links')
+            .select('id, student_name, ergogenic_data')
+            .eq('trainer_id', tid)
+            .eq('status', 'pending'),
+    ])
+
+    const realStudents = (students || [])
+        .filter((s: any) => s.student?.details?.steroid_use)
+        .map((s: any) => ({
+            id: s.id,
+            full_name: s.student.full_name,
+            avatar_url: s.student.avatar_url,
+            is_placeholder: false,
+        }))
+
+    const placeholderStudents = (placeholders || [])
+        .filter((p: any) => {
+            const metadata = (p.ergogenic_data as any[])?.find((e: any) => e?.__metadata)
+            return metadata?.steroid_use === true
+        })
+        .map((p: any) => ({
+            id: p.id,
+            full_name: p.student_name,
+            avatar_url: null,
+            is_placeholder: true,
+        }))
+
+    return [...realStudents, ...placeholderStudents]
+}
+
 export async function getTodayErgogenicLogs(studentId: string) {
     const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { start, end } = getTodayRangeBrazil()

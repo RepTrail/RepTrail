@@ -146,7 +146,7 @@ export function AuthAffiliateSignUpForm({
                                     setShowTermsModal(false)
                                 }}
                             >
-                                <Box padding={STORE_TOKENS.PADDING.ELEMENT} maxHeight="60vh" overflowY="auto" className="scrollbar-thin scrollbar-thumb-zinc-800">
+                                <Box padding="none" maxHeight="60vh" overflowY="auto" className="scrollbar-thin scrollbar-thumb-zinc-800">
                                     <Font variant="body" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} whitespace="pre-line">
                                         {AFFILIATE_TERMS}
                                     </Font>

@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Star, Trophy, Users, ShieldCheck, ArrowRight, MessageCircle } from "lucide-react";
+import { Search, Star, Trophy, Users, ShieldCheck, MessageCircle } from "lucide-react";
 import { LeadCaptureModal } from "./lead-capture-modal";
 import { SectionHeader } from "./section-header";
 

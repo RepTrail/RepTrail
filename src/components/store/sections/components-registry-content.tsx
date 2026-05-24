@@ -23,6 +23,7 @@ import { FileUpload } from '@/components/store/base/file-upload'
 import { FormSwitch } from '@/components/store/base/form-switch'
 import { FormSelect } from '@/components/store/base/form-select'
 import { FormCheckbox } from '@/components/store/base/form-checkbox'
+import { TrainerDashboardSidebarPanel } from '@/components/store/advanced/trainer-dashboard-sidebar-panel'
 
 export function ComponentsRegistryContent({ id }: { id?: string }) {
     const colors = [
@@ -186,6 +187,27 @@ export function ComponentsRegistryContent({ id }: { id?: string }) {
                             </Stack>
                         </Stack>
                     </GlassPanel>
+                </Grid>
+            </RegistrySection>
+            <RegistrySection
+                title="Trainer Dashboard Sidebar"
+                icon={Shield}
+                subtitle="Sidebar operacional do personal com código da equipe, atalhos do perfil público e teaser de importação."
+            >
+                <Grid cols={{ base: 1, lg: 2 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                    <TrainerDashboardSidebarPanel
+                        trainerCode="2EBCED"
+                        editProfileHref="/dashboard/trainer/profile"
+                        publicProfileHref="/personal/2EBCED"
+                        showImportTeaser
+                        importHref="/dashboard/trainer/import-pdf"
+                    />
+
+                    <TrainerDashboardSidebarPanel
+                        trainerCode={null}
+                        editProfileHref="/dashboard/trainer/profile"
+                        showImportTeaser={false}
+                    />
                 </Grid>
             </RegistrySection>
             <RegistrySection

@@ -2,7 +2,6 @@
 import React from 'react'
 import { cn } from '@/lib/utils'
 import { useRegistry } from '@/components/store/advanced/registry-context'
-import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 export type FontVariant =
   | 'h1'
@@ -81,7 +80,7 @@ export function Font({
   display,
   flex,
   ...props
-}: Omit<FontProps, 'className' | 'style'> & { className?: string, style?: React.CSSProperties }) {
+}: FontProps) {
   const { primaryColor } = useRegistry()
 
   const variantClasses = {
@@ -195,7 +194,6 @@ export function Font({
         props.className
       )}
       style={{
-        ...props.style,
         ...(lineClamp ? {
           display: '-webkit-box',
           WebkitLineClamp: lineClamp,

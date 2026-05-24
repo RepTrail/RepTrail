@@ -59,6 +59,7 @@ export const QUERY_KEYS = {
     ergogenics: {
         all: (userId: string) => ['ergogenics', userId],
         logs: (userId: string) => ['ergogenics', userId, 'logs'],
+        hub: (trainerId: string) => ['ergogenics', trainerId, 'hub'],
     },
     store: {
         products: ['store', 'products'],

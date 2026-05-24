@@ -2,7 +2,6 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
 import { normalizeDays } from '@/lib/utils'
 import { createAdminClient } from '@/lib/supabase/admin'
 
@@ -581,76 +580,82 @@ export async function getTrainerRanking() {
     const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     try {
-        // 2. Fetch REAL student counts for all active trainers
-        // 3. Fetch REAL ratings and data from profiles to bypass RPC staleness
-        const [
-            { data: realCounts, error: countsError },
-            { data: realProfiles, error: profilesError }
-        ] = await Promise.all([
-            supabase.from('trainer_students').select('trainer_id').eq('active', true),
-            supabase.from('profiles').select('id, average_rating, plan_tier, full_name, avatar_url, region, trainer_code').eq('role', 'trainer')
-        ])
+        // Prefer DB-side aggregation (RPC) to avoid loading all trainer_students rows into Node memory.
+        const { data: stats, error: statsError } = await supabase.rpc('get_trainer_ranking_stats')
 
-        if (countsError) console.error('Error fetching real student counts:', countsError)
-
-        // Group counts by trainer_id
-        const countMap: Record<string, number> = {}
-        realCounts?.forEach(c => {
-            countMap[c.trainer_id] = (countMap[c.trainer_id] || 0) + 1
-        })
-
-        // Map profiles for quick access
-        const profileMap: Record<string, any> = {}
-        realProfiles?.forEach(p => {
-            profileMap[p.id] = p
-        })
-
-        // 4. Map and Calculate Scores
-        const tierPoints: Record<string, number> = {
-            'none': 0,
-            'start': 0,
-            'on_demand': 50,
-            'pro': 100,
-            'elite': 500
+        if (statsError) {
+            console.error('Error fetching trainer ranking stats (RPC):', statsError)
+            return []
         }
 
-        const ranking = (realProfiles || [])
-            .filter((p: any) => p.plan_tier && p.plan_tier !== 'none' && p.trainer_code)
-            .map((p: any) => {
-                const studentCount = countMap[p.id] || 0
-                const rating = Number(p.average_rating || 0)
-                const prestigePoints = tierPoints[p.plan_tier as string] || 0
+        const tierPoints: Record<string, number> = {
+            none: 0,
+            start: 0,
+            on_demand: 50,
+            pro: 100,
+            elite: 500,
+        }
+
+        const ranking = (stats || [])
+            .filter((row: any) => row.plan_tier && row.plan_tier !== 'none' && row.trainer_code)
+            .map((row: any) => {
+                const studentCount = Number(row.student_count || 0)
+                const rating = Number(row.rating || 0)
+                const prestigePoints = tierPoints[row.plan_tier as string] || 0
 
                 // Prestige-based Score Formula: 
                 // Base (Plan) + (Students * 20) + (Rating * 50)
                 const score = prestigePoints + (studentCount * 20) + (rating * 50)
 
                 // Fallback Rating for higher tiers to maintain "Elite" look
-                const displayRating = rating > 0 
-                    ? rating 
-                    : (p.plan_tier === 'elite' ? 5.0 : p.plan_tier === 'pro' ? 4.9 : 0)
+                const displayRating = rating > 0
+                    ? rating
+                    : (row.plan_tier === 'elite' ? 5.0 : row.plan_tier === 'pro' ? 4.9 : 0)
 
                 // Realistic Student Count Fallback (Social Proof)
-                const displayStudentCount = studentCount > 0 
-                    ? studentCount 
-                    : (p.plan_tier === 'elite' ? 10 : p.plan_tier === 'pro' ? 5 : 0)
+                const displayStudentCount = studentCount > 0
+                    ? studentCount
+                    : (row.plan_tier === 'elite' ? 10 : row.plan_tier === 'pro' ? 5 : 0)
 
                 return {
-                    id: p.id,
-                    full_name: p.full_name || 'Treinador sem nome',
-                    avatar_url: p.avatar_url,
-                    plan_tier: p.plan_tier,
-                    region: p.region || 'Brasil',
+                    id: row.trainer_id,
+                    full_name: row.full_name || 'Treinador sem nome',
+                    avatar_url: row.avatar_url,
+                    plan_tier: row.plan_tier,
+                    region: 'Brasil',
                     rating: isNaN(displayRating) ? 0 : displayRating,
                     studentCount: displayStudentCount,
                     score: isNaN(score) ? 0 : score,
-                    trainer_code: p.trainer_code ? String(p.trainer_code).trim() : null
+                    trainer_code: row.trainer_code ? String(row.trainer_code).trim() : null,
                 }
             })
 
-        return ranking
+        const sliced = ranking
             .sort((a: any, b: any) => b.score - a.score)
             .slice(0, 500)
+
+        // Enrich region for top trainers only (small, bounded query).
+        const ids = sliced.map((t: any) => t.id).filter(Boolean)
+        if (ids.length > 0) {
+            const { data: regions, error: regionError } = await supabase
+                .from('profiles')
+                .select('id, region')
+                .in('id', ids)
+
+            if (regionError) {
+                console.error('Error fetching regions for trainer ranking:', regionError)
+                return sliced
+            }
+
+            const regionMap: Record<string, string> = {}
+            regions?.forEach((r: any) => {
+                regionMap[r.id] = r.region || 'Brasil'
+            })
+
+            return sliced.map((t: any) => ({ ...t, region: regionMap[t.id] || 'Brasil' }))
+        }
+
+        return sliced
     } catch (e) {
         console.error('Unexpected error in getTrainerRanking:', e)
         return []

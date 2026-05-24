@@ -17,7 +17,7 @@ interface LayoutBaseProps {
   shrink?: 0 | 1
   opacity?: 0 | 5 | 10 | 20 | 30 | 40 | 50 | 60 | 90 | 95 | 100
   minWidth?: number | string | { base: number | string, md?: number | string, lg?: number | string }
-  className?: string
+  className?: never
   id?: string
 }
 
@@ -102,7 +102,7 @@ export function Inline({
         flex1 && 'flex-1',
         wrap && 'flex-wrap',
         className
-      )}
+      ) as any}
     >
       {children}
     </Box>
@@ -171,7 +171,7 @@ export function Cluster({
         justify && `justify-${justify}`,
         flex1 && 'flex-1',
         className
-      )}
+      ) as any}
     >
       {children}
     </Box>
@@ -250,7 +250,7 @@ export function ModalOverlay({
   children: React.ReactNode
   onClose?: () => void
   id?: string
-  className?: string
+  className?: never
   backdropClassName?: string
   animateState?: 'closed' | 'open'
 }) {
@@ -292,7 +292,7 @@ export function ModalContainer({
 }: { 
   children: React.ReactNode
   id?: string
-  className?: string
+  className?: never
   animateState?: 'closed' | 'open'
 }) {
   const computedContainerClassName = cn(

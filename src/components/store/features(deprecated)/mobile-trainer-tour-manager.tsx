@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation'
 import { useTrainerOnboarding } from '@/hooks/use-trainer-onboarding'
 import { SpotlightTour, TourStep } from '@/components/shared/spotlight-tour'
 import { useMemo, useState, useEffect } from 'react'
+import { useRegistry } from '@/components/store/advanced/registry-context'
 
 import { useQuery } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/lib/query-keys'
@@ -15,10 +16,10 @@ interface MobileTrainerTourManagerProps {
 
 export function MobileTrainerTourManager({ userId }: MobileTrainerTourManagerProps) {
     const pathname = usePathname()
+    const { isSidebarOpen } = useRegistry()
     
     const [currentStepIndex, setCurrentStepIndex] = useState(0)
     const [isMobile, setIsMobile] = useState(false)
-    const [isMenuOpen, setIsMenuOpen] = useState(false)
     const [showBindingModes, setShowBindingModes] = useState(false)
     const [isCreatingStudent, setIsCreatingStudent] = useState(false)
     const [isParsed, setIsParsed] = useState(false)
@@ -49,16 +50,11 @@ export function MobileTrainerTourManager({ userId }: MobileTrainerTourManagerPro
 
     useEffect(() => {
         if (currentStepIndex !== 0) setCurrentStepIndex(0)
-    }, [pathname, isMenuOpen, showBindingModes, isCreatingStudent, isParsed, onboardingStep])
+    }, [pathname, isSidebarOpen, showBindingModes, isCreatingStudent, isParsed, onboardingStep])
 
     // Monitoring for UI states
     useEffect(() => {
         const interval = setInterval(() => {
-            // Check if mobile menu is open (by looking for the backdrop or the panel)
-            const menuPanel = document.querySelector('div[class*="animate-in slide-in-from-right"]')
-            const hasMenu = !!menuPanel
-            if (hasMenu !== isMenuOpen) setIsMenuOpen(hasMenu)
-
             if (pathname === '/dashboard/trainer/import-pdf') {
                 const btn = document.querySelector('#tour-btn-create-student')
                 const fields = document.querySelector('#tour-student-fields')
@@ -70,7 +66,7 @@ export function MobileTrainerTourManager({ userId }: MobileTrainerTourManagerPro
             }
         }, 500)
         return () => clearInterval(interval)
-    }, [pathname, isMenuOpen, showBindingModes, isCreatingStudent, isParsed])
+    }, [pathname, showBindingModes, isCreatingStudent, isParsed])
 
     const allSteps = useMemo(() => {
         const steps: (TourStep & { path: string, condition?: boolean })[] = [
@@ -80,15 +76,15 @@ export function MobileTrainerTourManager({ userId }: MobileTrainerTourManagerPro
                 title: 'Comece agora',
                 content: 'Toque no menu para acessar as ferramentas de importação e gestão.',
                 position: 'bottom',
-                condition: onboardingStep === 'import_diet' && !isMenuOpen
+                condition: onboardingStep === 'import_diet' && !isSidebarOpen
             },
             {
                 path: '/dashboard/trainer',
-                selector: '#tour-mobile-link-import',
+                selector: '#tour-import-pdf',
                 title: 'Importar PDF',
                 content: 'Clique aqui para começar a importar seus treinos ou dietas.',
                 position: 'left',
-                condition: onboardingStep === 'import_diet' && isMenuOpen
+                condition: onboardingStep === 'import_diet' && isSidebarOpen
             },
             {
                 path: '/dashboard/trainer/import-pdf',
@@ -133,15 +129,15 @@ export function MobileTrainerTourManager({ userId }: MobileTrainerTourManagerPro
                 title: 'Abrir Menu',
                 content: 'Toque no ícone do menu para navegar até sua lista de alunos.',
                 position: 'bottom',
-                condition: onboardingStep === 'aha_moment' && !isMenuOpen
+                condition: onboardingStep === 'aha_moment' && !isSidebarOpen
             },
             {
                 path: '/dashboard/trainer/import-pdf',
-                selector: '#tour-mobile-link-students',
+                selector: '#tour-sidebar-students',
                 title: 'Ver Alunos',
                 content: 'Toque em Alunos para ver o perfil que acabamos de criar.',
                 position: 'left',
-                condition: onboardingStep === 'aha_moment' && isMenuOpen
+                condition: onboardingStep === 'aha_moment' && isSidebarOpen
             },
             {
                 path: '/dashboard/trainer/students',
@@ -166,18 +162,18 @@ export function MobileTrainerTourManager({ userId }: MobileTrainerTourManagerPro
 
         return steps.filter(s => s.path === pathname || (s.path.includes('[id]') && pathname.includes('/students/')))
             .filter(s => s.condition === undefined || s.condition)
-    }, [pathname, onboardingStep, showBindingModes, isCreatingStudent, isParsed, isMenuOpen])
+    }, [pathname, onboardingStep, showBindingModes, isCreatingStudent, isParsed, isSidebarOpen])
 
     const globalStepIndex = useMemo(() => {
         if (onboardingStep === 'aha_moment') {
             if (pathname.includes('/students/')) return 10;
             if (pathname === '/dashboard/trainer/students') return 9;
-            if (isMenuOpen) return 8;
+            if (isSidebarOpen) return 8;
             return 7;
         }
         if (onboardingStep === 'import_diet') {
             if (pathname === '/dashboard/trainer') {
-                return isMenuOpen ? 2 : 1;
+                return isSidebarOpen ? 2 : 1;
             }
             if (pathname === '/dashboard/trainer/import-pdf') {
                 if (showBindingModes && isCreatingStudent) return 5 + currentStepIndex;
@@ -186,7 +182,7 @@ export function MobileTrainerTourManager({ userId }: MobileTrainerTourManagerPro
             }
         }
         return 1;
-    }, [pathname, showBindingModes, isCreatingStudent, currentStepIndex, onboardingStep, isParsed, isMenuOpen]);
+    }, [pathname, showBindingModes, isCreatingStudent, currentStepIndex, onboardingStep, isParsed, isSidebarOpen]);
 
     const handleDismiss = () => {
         if (window.confirm('Quer sair do tutorial? É rapidinho!')) complete()

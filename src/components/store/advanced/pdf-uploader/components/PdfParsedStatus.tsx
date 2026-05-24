@@ -8,14 +8,14 @@ import { Check } from 'lucide-react';
 
 export function PdfParsedStatus() {
     return (
-        <Surface id="tour-parsed-status" variant="tonal-emerald" padding={STORE_TOKENS.PADDING.CONTAINER}>
+        <Surface id="tour-parsed-status" variant="tonal-primary" padding={STORE_TOKENS.PADDING.CONTAINER}>
             <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
-                <Surface variant="tonal-emerald" padding={STORE_TOKENS.PADDING.ELEMENT}>
-                    <Icon icon={Check} size="sm" color="emerald" />
+                <Surface variant="tonal-primary" padding={STORE_TOKENS.PADDING.ELEMENT}>
+                    <Icon icon={Check} size="sm" color="primary" />
                 </Surface>
                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <Font variant="label-caps" color="emerald">Leitura Concluída</Font>
-                    <Font variant="description" color="emerald">Revise abaixo as informações extraídas pela nossa IA.</Font>
+                    <Font variant="label-caps" color="primary">Leitura Concluída</Font>
+                    <Font variant="description" color="primary">Revise abaixo as informações extraídas pela nossa IA.</Font>
                 </Stack>
             </Stack>
         </Surface>

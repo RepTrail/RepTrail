@@ -1,4 +1,3 @@
-import { createClient } from '@/lib/supabase/server'
 import { getWorkoutDetails } from '@/actions/workout-actions'
 import { getActiveWorkoutSession, getWorkoutStatus } from '@/actions/log-actions'
 import { HydrationBoundary, dehydrate } from '@tanstack/react-query'
@@ -6,6 +5,7 @@ import { getQueryClient } from '@/lib/get-query-client'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import WorkoutPlayerClient from './workout-player-client'
 import { redirect } from 'next/navigation'
+import { headers } from 'next/headers'
 
 export default async function WorkoutPlayerPage({ 
     params,
@@ -20,14 +20,9 @@ export default async function WorkoutPlayerPage({
     
     // ─── AUTH (SERVER-SIDE) ──────────────────────────────────────────────────
     // Eliminates the client-side useEffect waterfall (Bug 01)
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-
-    if (!user) {
-        redirect('/login')
-    }
-
-    const userId = user.id
+    const headerList = await headers()
+    const userId = headerList.get('x-user-id')
+    if (!userId) redirect('/auth/login')
     const queryClient = getQueryClient()
     
     // ─── HYDRATION (SERVER-SIDE) ─────────────────────────────────────────────

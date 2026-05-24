@@ -1,15 +1,11 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { Button } from '@/components/ui/button'
-import { LogOut } from 'lucide-react'
-import { signOutAction } from '@/actions/auth-actions'
-import { Logo } from '@/components/ui/logo'
 import { headers } from 'next/headers'
 import { getBetaTesterMode } from '@/actions/app-settings-actions'
 import { getQueryClient } from '@/lib/get-query-client'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
-import { getEffectiveTier, getTrainerProfile, getTrainerRanking } from '@/actions/trainer-actions'
+import { getEffectiveTier, getTrainerProfile } from '@/actions/trainer-actions'
 import { TrainerTourManager } from '@/components/store/features(deprecated)/trainer-tour-manager'
 import { MobileTrainerTourManager } from '@/components/store/features(deprecated)/mobile-trainer-tour-manager'
 import { DashboardShell } from '@/components/store/advanced/dashboard-shell'
@@ -23,7 +19,6 @@ export default async function TrainerLayout({ children }: { children: React.Reac
     if (!userId) redirect('/auth/login')
 
     const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
     
     const { data: profile } = await supabase
         .from('profiles')
@@ -31,47 +26,19 @@ export default async function TrainerLayout({ children }: { children: React.Reac
         .eq('id', userId)
         .single()
 
-    const effectiveRole = profile?.role || user?.user_metadata?.role
-
-    if (effectiveRole !== 'trainer') redirect('/dashboard/student')
-
-    const hasPlan = !!profile?.plan_tier && profile.plan_tier !== 'none'
-    const pathname = headerList.get('x-pathname') || ''
-
-    if (!hasPlan && !pathname.includes('/plans')) redirect('/dashboard/trainer/plans')
+    if (!profile) redirect('/auth/login')
+    if (profile.role !== 'trainer') redirect('/dashboard/student')
 
     const queryClient = getQueryClient()
     await Promise.all([
-        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.profile.detail(userId), queryFn: () => getTrainerProfile() }),
-        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.trainer.effectiveTier(userId), queryFn: () => getEffectiveTier() }),
-        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.trainer.ranking(), queryFn: () => getTrainerRanking() }),
+        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.trainer.profile(userId), queryFn: () => getTrainerProfile(userId) }),
+        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.profile.detail(userId), queryFn: () => getTrainerProfile(userId) }),
+        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.trainer.effectiveTier(userId), queryFn: () => getEffectiveTier(userId) }),
     ])
 
     const dehydratedState = dehydrate(queryClient)
     const betaTesterMode = await getBetaTesterMode()
 
-    // ─── Paywall layout (no sidebar) ──────────────────────────────────────────
-    if (!hasPlan) {
-        return (
-            <HydrationBoundary state={dehydratedState}>
-                <div className="flex h-screen w-full bg-zinc-950 text-zinc-100 font-sans">
-                    <header className="fixed top-0 left-0 right-0 h-20 bg-zinc-950/80 backdrop-blur-xl border-b border-zinc-900 z-40 px-6 flex items-center justify-between">
-                        <Logo size="md" color="emerald" />
-                        <form action={signOutAction}>
-                            <Button variant="ghost" className="text-zinc-500 hover:text-white hover:bg-white/5 border border-transparent hover:border-zinc-800 gap-2 font-bold uppercase text-[10px] tracking-widest h-10 rounded-xl transition-all active:scale-95">
-                                <LogOut className="w-4 h-4" /> Sair
-                            </Button>
-                        </form>
-                    </header>
-                    <main className="flex-1 overflow-y-auto pt-24 p-6 md:p-12">
-                        <div className="max-w-5xl mx-auto md:pt-[100px]">{children}</div>
-                    </main>
-                </div>
-            </HydrationBoundary>
-        )
-    }
-
-    // ─── Full Dashboard Layout ─────────────────────────────────────────────────
     const links = [
         { href: '/dashboard/trainer',           label: 'Visão Geral',  icon: 'Home',         exact: true },
         { href: '/dashboard/trainer/students',   label: 'Alunos',       icon: 'Users' },
@@ -81,7 +48,6 @@ export default async function TrainerLayout({ children }: { children: React.Reac
         { href: '/dashboard/trainer/ergogenics', label: 'Ergogênicos',  icon: 'FlaskConical' },
         { href: '/dashboard/trainer/import-pdf', label: 'Importar PDF', icon: 'FileUp',      hidden: betaTesterMode },
         { href: '/dashboard/trainer/loja',       label: 'Loja',         icon: 'ShoppingBag' },
-        { href: '/dashboard/trainer/plans',      label: 'Faturamento',  icon: 'CreditCard' },
         { href: '/dashboard/trainer/ranking',    label: 'Ranking',      icon: 'Trophy' },
         { href: '/dashboard/trainer/profile',    label: 'Meu Perfil',   icon: 'User' },
     ]
@@ -112,4 +78,3 @@ export default async function TrainerLayout({ children }: { children: React.Reac
         </RegistryProvider>
     )
 }
-

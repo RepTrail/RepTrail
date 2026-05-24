@@ -35,6 +35,7 @@ export function StoreMobileHeader({ onMenuClick }: StoreMobileHeaderProps) {
 
                 <Box 
                     as="button"
+                    id="tour-mobile-hamburger"
                     onClick={handleToggle}
                     width="10"
                     height="10"

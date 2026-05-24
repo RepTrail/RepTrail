@@ -38,7 +38,7 @@ export function Grid({
   fullWidth,
   className,
   ...props
-}: Omit<GridProps, 'className' | 'style'> & { className?: string, style?: React.CSSProperties }) {
+}: GridProps) {
   
   const effectiveCols = columns || cols
   
@@ -167,7 +167,7 @@ export function Grid({
         paddingY !== undefined && paddingYClasses[paddingY as keyof typeof paddingYClasses],
 
         className
-      )}
+      ) as any}
       {...props}
     >
       {children}

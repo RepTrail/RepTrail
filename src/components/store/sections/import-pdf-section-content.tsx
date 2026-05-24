@@ -20,13 +20,13 @@ const TAB_OPTIONS = [
         id: 'workout',
         label: 'Treino',
         icon: Activity,
-        activeVariant: 'outline-orange' as const,
+        activeVariant: 'outline-primary' as const,
     },
     {
         id: 'diet',
         label: 'Dieta',
         icon: Utensils,
-        activeVariant: 'outline-orange' as const,
+        activeVariant: 'outline-primary' as const,
     },
 ]
 

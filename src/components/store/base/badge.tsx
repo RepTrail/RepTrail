@@ -29,7 +29,7 @@ export function Badge({
     rounded = STORE_TOKENS.RADIUS.SYSTEM,
     animatePulse,
     className
-}: Omit<BadgeProps, 'className' | 'style'> & { className?: string }) {
+}: BadgeProps) {
     const { primaryColor } = useRegistry()
     const resolvedColor = color === 'primary' ? primaryColor : color
 

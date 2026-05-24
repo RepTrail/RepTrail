@@ -1,5 +1,5 @@
 
-import { ShieldCheck, Award, Zap, CheckCircle2, HeartPulse } from "lucide-react";
+import { ShieldCheck, Award, Zap, HeartPulse } from "lucide-react";
 import { SectionHeader } from "./section-header";
 
 export function AuthoritySection() {

@@ -10,8 +10,7 @@ import {
     AlertCircle, HeartHandshake, Users2, Users, ShoppingBag
 } from 'lucide-react'
 import { 
-    getAdminOverview, getAllStoreProducts, getTopProductsByClicks, 
-    getRecentStudentActivity, getOperationalCosts,
+    getAdminOverview, getOperationalCosts,
     addOperationalCost, deleteOperationalCost
 } from '@/actions/admin-actions'
 import { getAdminPayouts, updatePayoutStatus } from '@/actions/admin-affiliate-actions'
@@ -20,8 +19,6 @@ import { RegistryProvider } from '@/components/store/advanced/registry-context'
 import { DashboardShell } from '@/components/store/advanced/dashboard-shell'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
-import { ActionableListCard } from '@/components/store/intermediary/actionable-list-card'
-import { EmptyState } from '@/components/store/intermediary/empty-state'
 import { Stack } from '@/components/store/base/stack'
 import { Grid } from '@/components/store/base/grid'
 import { StatsCard } from '@/components/store/intermediary/stats-card'

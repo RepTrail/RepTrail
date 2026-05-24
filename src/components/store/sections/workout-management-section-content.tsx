@@ -13,12 +13,14 @@ import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { ENTITIES } from '@/lib/outbox-db'
 import { deleteWorkout, duplicateWorkout, assignWorkout } from '@/actions/workout-actions'
+import { AssignedStudentInfo } from '@/components/store/intermediary/assigned-student-mini-card'
 
 interface WorkoutManagementSectionContentProps {
     userId?: string
     workouts?: any[]
-    mode?: 'auto' | 'personal'
+    mode?: 'auto' | 'personal' | 'trainer'
     isEmpty?: boolean
+    betaTesterMode?: boolean
 }
 
 /**
@@ -29,8 +31,12 @@ export function WorkoutManagementSectionContent({
     userId = 'mock-id',
     workouts,
     mode = 'auto',
-    isEmpty = false
+    isEmpty = false,
+    betaTesterMode = false
 }: WorkoutManagementSectionContentProps) {
+    const libraryQueryKey = QUERY_KEYS.workouts.library(userId)
+    const assignedQueryKey = QUERY_KEYS.workouts.all(userId)
+    const activeQueryKey = mode === 'auto' || mode === 'trainer' ? libraryQueryKey : assignedQueryKey
     const [actionModal, setActionModal] = React.useState<{ isOpen: boolean, type: RegistryActionType, data?: any }>({
         isOpen: false,
         type: 'assign_training'
@@ -43,7 +49,7 @@ export function WorkoutManagementSectionContent({
     const router = useRouter()
 
     const { mutate: deleteMutation } = useOptimisticMutation({
-        queryKey: mode === 'auto' ? QUERY_KEYS.workouts.library(userId) : QUERY_KEYS.workouts.all(userId),
+        queryKey: activeQueryKey,
         entity: ENTITIES.WORKOUT,
         actionName: 'delete-workout',
         mutationFn: async ({ id }: { id: string }) => {
@@ -54,7 +60,7 @@ export function WorkoutManagementSectionContent({
     })
 
     const { mutate: duplicateMutation } = useOptimisticMutation({
-        queryKey: mode === 'auto' ? QUERY_KEYS.workouts.library(userId) : QUERY_KEYS.workouts.all(userId),
+        queryKey: activeQueryKey,
         entity: ENTITIES.WORKOUT,
         actionName: 'duplicate-workout',
         mutationFn: async ({ id }: { id: string }) => {
@@ -117,7 +123,13 @@ export function WorkoutManagementSectionContent({
             <EmptyState 
                 icon={Dumbbell}
                 title="SEM TREINOS"
-                description={mode === 'auto' ? "Você ainda não possui protocolos de treino cadastrados." : "Seu treinador ainda não atribuiu treinos para sua conta."}
+                description={
+                    mode === 'trainer'
+                        ? (betaTesterMode ? 'Crie um novo treino para começar.' : 'Importe um PDF ou crie um novo treino para começar.')
+                        : mode === 'auto'
+                            ? "Você ainda não possui protocolos de treino cadastrados."
+                            : "Seu treinador ainda não atribuiu treinos para sua conta."
+                }
             />
         )
     }
@@ -137,28 +149,56 @@ export function WorkoutManagementSectionContent({
                         }
                     }
 
-                    const assignedDays = (workout.assigned_workouts || [])
-                        .filter((a: any) => a.day_of_week !== null && a.day_of_week !== undefined)
-                        .map((a: any) => dayNamesShort[a.day_of_week % 7])
-                    
+                    const daySet = new Set<number>()
+
+                    if (mode === 'trainer') {
+                        ;(workout.assignments || []).forEach((a: any) => {
+                            ;(a.days_of_week || []).forEach((d: number) => daySet.add(d))
+                        })
+                    } else {
+                        ;(workout.assigned_workouts || []).forEach((a: any) => {
+                            if (a.day_of_week !== null && a.day_of_week !== undefined) {
+                                daySet.add(a.day_of_week)
+                            }
+                        })
+                    }
+
+                    const assignedDays = Array.from(daySet)
+                        .sort((a, b) => a - b)
+                        .map((d) => dayNamesShort[d % 7])
+
+                    const assignedStudents: AssignedStudentInfo[] | undefined = mode === 'trainer'
+                        ? (workout.assignments || []).map((a: any) => ({
+                            id: a.student_id || `pending-${a.id}`,
+                            name: a.student?.full_name || 'Aluno',
+                            avatarUrl: a.student?.avatar_url,
+                            isPlaceholder: a.is_placeholder,
+                        }))
+                        : undefined
+
+                    const editPath = mode === 'trainer'
+                        ? `/dashboard/trainer/workouts/${workout.id}`
+                        : `/dashboard/student/workouts/${workout.id}`
+
                     return (
                         <ManagementCardPremium 
                             key={workout.id || idx}
                             title={workout.name.toUpperCase()}
-                            description={workout.description || 'Ficha oficial de treinamento.'}
+                            description={workout.description || (mode === 'trainer' ? 'Sem descrição disponível.' : 'Ficha oficial de treinamento.')}
                             days={assignedDays}
+                            assignedStudents={assignedStudents}
                             mainStat={{ label: 'EXERCÍCIOS', value: exercisesCount }}
                             date={new Date(workout.created_at).toLocaleDateString('pt-BR')}
                             icon={Dumbbell}
                             mode={mode}
                             color={STORE_TOKENS.COLORS.BRAND as any}
                             registryType="training"
-                            onView={() => openView(workout)}
-                            onSchedule={() => openAction('assign_training', workout)}
-                            onEdit={() => router.push(`/dashboard/student/workouts/${workout.id}`)}
-                            onDelete={() => openAction('confirm_delete', workout)}
-                            onDuplicate={() => openAction('confirm_duplicate', workout)}
-                            onPlay={() => router.push(`/dashboard/student/workout/${workout.id}?force=true`)}
+                            onView={mode === 'personal' ? () => openView(workout) : undefined}
+                            onSchedule={mode === 'auto' ? () => openAction('assign_training', workout) : undefined}
+                            onEdit={() => router.push(editPath)}
+                            onDelete={mode !== 'personal' ? () => openAction('confirm_delete', workout) : undefined}
+                            onDuplicate={mode !== 'personal' ? () => openAction('confirm_duplicate', workout) : undefined}
+                            onPlay={mode === 'auto' ? () => router.push(`/dashboard/student/workout/${workout.id}?force=true`) : undefined}
                         />
                     )
                 })}

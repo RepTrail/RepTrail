@@ -2,11 +2,10 @@
 
 import Link, { LinkProps } from 'next/link'
 import { ReactNode, useCallback } from 'react'
-import { useQueryClient } from '@tanstack/react-query'
-import { QUERY_KEYS } from '@/lib/query-keys'
+import { useQueryClient, type QueryKey } from '@tanstack/react-query'
 
 interface PrefetchConfig {
-    queryKey: any[]
+    queryKey: QueryKey
     queryFn: () => Promise<any>
 }
 
@@ -14,7 +13,7 @@ interface SmartLinkProps extends LinkProps {
     children: ReactNode
     id?: string
     className?: string
-    prefetchKey?: any[]
+    prefetchKey?: QueryKey
     prefetchFn?: () => Promise<any>
     prefetchConfigs?: PrefetchConfig[]
 }

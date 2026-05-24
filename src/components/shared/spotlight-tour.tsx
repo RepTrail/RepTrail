@@ -4,7 +4,6 @@ import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronDown, Sparkles, X } from 'lucide-react'
-import { cn } from '@/lib/utils'
 
 export interface TourStep {
     selector: string

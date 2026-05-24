@@ -2,7 +2,6 @@
 
 import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { revalidatePath, revalidateTag } from 'next/cache'
-import { redirect } from 'next/navigation'
 import { WorkoutService } from '@/services/WorkoutService'
 
 export async function getTrainerWorkouts(trainerId?: string) {

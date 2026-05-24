@@ -1,4 +1,4 @@
-import { outboxDB, OutboxRecord } from './outbox-db';
+import { outboxDB } from './outbox-db';
 import { conflictDetector } from './conflict-detector';
 import { conflictStore } from './conflict-store';
 import { getQueryClient } from '@/lib/get-query-client';

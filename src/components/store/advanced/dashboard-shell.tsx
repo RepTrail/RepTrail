@@ -15,7 +15,7 @@ import { BackgroundEffects } from '@/components/store/base/background-effects'
 import { ImpersonationBar } from './impersonation-bar'
 import { StoreMobileHeader } from './store-mobile-header'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
-import { RegistryColor, RegistryProvider } from './registry-context'
+import { RegistryColor, RegistryProvider, RegistryContext } from './registry-context'
 import {
     Home, Users, Dumbbell, Utensils, Activity, FlaskConical,
     ShoppingBag, CreditCard, Trophy, User, FileUp, Search,
@@ -69,7 +69,12 @@ interface DashboardShellProps {
 // ─── Main Shell ───────────────────────────────────────────────────────────────
 
 export function DashboardShell({ children, color, links, mobileLinks, user, profileHref, profileIcon, settingsHref, settingsVariant }: DashboardShellProps) {
-    const [isSidebarOpen, setIsSidebarOpen] = React.useState(false)
+    const parentRegistry = React.useContext(RegistryContext)
+    const [localIsSidebarOpen, setLocalIsSidebarOpen] = React.useState(false)
+
+    const isSidebarOpen = parentRegistry ? parentRegistry.isSidebarOpen : localIsSidebarOpen
+    const setIsSidebarOpen = parentRegistry ? parentRegistry.setIsSidebarOpen : setLocalIsSidebarOpen
+
     const pathname = usePathname()
     const isPlayerMode = pathname.includes('/workout/') && !pathname.endsWith('/workouts')
 
@@ -85,17 +90,16 @@ export function DashboardShell({ children, color, links, mobileLinks, user, prof
     const resolvedSettingsHref = settingsHref || (profileIcon === 'ArrowRightLeft' ? '/dashboard' : undefined)
     const resolvedSettingsVariant = settingsVariant || (profileIcon === 'ArrowRightLeft' ? 'outline-emerald' : undefined)
 
-    return (
-        <RegistryProvider primaryColor={color} defaultColor={color}>
-            <Surface
-                minHeight="screen"
-                bg="zinc"
-                bgOpacity={STORE_TOKENS.OPACITY.BACKGROUND}
-                overflowX="hidden"
-                display="flex"
-                direction="col"
-                position="relative"
-            >
+    const content = (
+        <Surface
+            minHeight="screen"
+            bg="zinc"
+            bgOpacity={STORE_TOKENS.OPACITY.BACKGROUND}
+            overflowX="hidden"
+            display="flex"
+            direction="col"
+            position="relative"
+        >
             <BackgroundEffects variant="all" />
 
             {/* Sidebar (Mobile Right Drawer / Desktop Static Left) */}
@@ -136,7 +140,12 @@ export function DashboardShell({ children, color, links, mobileLinks, user, prof
                 <ImpersonationBar color={color} />
                 {children}
             </Main>
-            </Surface>
+        </Surface>
+    )
+
+    return parentRegistry ? content : (
+        <RegistryProvider primaryColor={color} defaultColor={color}>
+            {content}
         </RegistryProvider>
     )
 }

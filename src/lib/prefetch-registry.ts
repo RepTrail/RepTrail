@@ -1,10 +1,11 @@
 import { QUERY_KEYS } from "./query-keys";
+import type { QueryKey } from '@tanstack/react-query'
 
 // 🧠 Dynamic imports used below in PREFETCH_REGISTRY to avoid Turbopack HMR errors
 // This prevents "Module factory not available" errors when server actions are imported statically in client contexts.
 
 export type PrefetchConfig = {
-    queryKey: any[];
+    queryKey: QueryKey;
     queryFn: () => Promise<any>;
 };
 
@@ -18,7 +19,6 @@ const getGlobalStudentConfigs = (userId: string): PrefetchConfig[] => [
 const getGlobalTrainerConfigs = (userId: string): PrefetchConfig[] => [
     { queryKey: QUERY_KEYS.trainer.profile(userId), queryFn: () => import('@/actions/trainer-actions').then(m => m.getTrainerProfile(userId)) },
     { queryKey: QUERY_KEYS.trainer.effectiveTier(userId), queryFn: () => import('@/actions/trainer-actions').then(m => m.getEffectiveTier(userId)) },
-    { queryKey: QUERY_KEYS.trainer.ranking(), queryFn: () => import('@/actions/trainer-actions').then(m => m.getTrainerRanking()) },
 ];
 
 export const PREFETCH_REGISTRY: Record<string, (userId: string) => PrefetchConfig[]> = {
@@ -88,7 +88,7 @@ export const PREFETCH_REGISTRY: Record<string, (userId: string) => PrefetchConfi
     ],
     '/dashboard/student/ranking': (userId) => [
         ...getGlobalStudentConfigs(userId),
-        { queryKey: QUERY_KEYS.trainer.ranking(), queryFn: () => import('@/actions/trainer-actions').then(m => m.getTrainerRanking()) }
+        { queryKey: QUERY_KEYS.admin.trainers, queryFn: () => import('@/actions/trainer-actions').then(m => m.getTrainerRanking()) },
     ],
     '/dashboard/student/meu-personal': (userId) => [
         ...getGlobalStudentConfigs(userId),
@@ -119,8 +119,17 @@ export const PREFETCH_REGISTRY: Record<string, (userId: string) => PrefetchConfi
         ...getGlobalTrainerConfigs(userId),
         { queryKey: QUERY_KEYS.cardio.library(userId), queryFn: () => import('@/actions/cardio-actions').then(m => m.getCardioLibrary(userId)) },
     ],
+    '/dashboard/trainer/ergogenics': (userId) => [
+        ...getGlobalTrainerConfigs(userId),
+        { queryKey: QUERY_KEYS.ergogenics.hub(userId), queryFn: () => import('@/actions/ergogenics-actions').then(m => m.getTrainerErgogenicStudents(userId)) },
+    ],
     '/dashboard/trainer/ranking': (userId) => [
         ...getGlobalTrainerConfigs(userId),
+        { queryKey: QUERY_KEYS.admin.trainers, queryFn: () => import('@/actions/trainer-actions').then(m => m.getTrainerRanking()) },
+    ],
+    '/dashboard/trainer/profile': (userId) => [
+        ...getGlobalTrainerConfigs(userId),
+        { queryKey: QUERY_KEYS.trainer.profile(userId), queryFn: () => import('@/actions/trainer-actions').then(m => m.getTrainerProfile(userId)) },
     ],
     '/dashboard/trainer/import-pdf': (userId) => [
         ...getGlobalTrainerConfigs(userId),

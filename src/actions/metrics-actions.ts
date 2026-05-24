@@ -1,7 +1,7 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
-import { startOfWeek, endOfWeek, eachDayOfInterval, format, isSameDay, subWeeks } from 'date-fns'
+import { startOfWeek, endOfWeek, eachDayOfInterval, format, subWeeks } from 'date-fns'
 
 import { formatToBrazilDate } from '@/lib/date-utils'
 

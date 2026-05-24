@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import { headers } from 'next/headers'
 import { createStudentWorkout } from '@/actions/student-content-actions'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -9,15 +10,17 @@ import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 
 export default async function CreateStudentWorkoutPage() {
+    const headerList = await headers()
+    const userId = headerList.get('x-user-id')
+    if (!userId) redirect('/auth/login')
+
     const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) redirect('/auth/login')
 
     // Verify auto-training is active
     const { data: profile } = await supabase
         .from('profiles')
         .select('auto_training_status')
-        .eq('id', user.id)
+        .eq('id', userId)
         .single()
 
     const isAutoTrainingActive = profile?.auto_training_status === 'active' || profile?.auto_training_status === 'trial'

@@ -1,7 +1,6 @@
 'use client'
 import React, { useState } from 'react'
 import { cn } from '@/lib/utils'
-import { Box } from './box'
 import { Font } from './font'
 import { Eye, EyeOff } from 'lucide-react'
 import { useRegistry } from '@/components/store/advanced/registry-context'

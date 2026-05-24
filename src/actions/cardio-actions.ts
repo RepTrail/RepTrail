@@ -36,7 +36,7 @@ export async function getCardioLibrary(userId?: string) {
                 assignments:assigned_cardios(
                     id,
                     student_id,
-                    student:profiles(full_name),
+                    student:profiles(full_name, avatar_url),
                     day_of_week,
                     days_of_week,
                     active

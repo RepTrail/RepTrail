@@ -1,9 +1,9 @@
 
 import { createClient } from '@/lib/supabase/server'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Progress } from "@/components/ui/progress"
-import { Apple, Utensils, CheckCircle } from 'lucide-react'
+import { Utensils, CheckCircle } from 'lucide-react'
 
 export default async function StudentDietPage() {
     const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()

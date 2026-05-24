@@ -11,11 +11,13 @@ import { useRouter } from 'next/navigation'
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { ENTITIES } from '@/lib/outbox-db'
+import { AssignedStudentInfo } from '@/components/store/intermediary/assigned-student-mini-card'
 
 interface CardioManagementSectionContentProps {
     userId?: string
     cardios?: any[]
-    mode?: 'auto' | 'personal'
+    students?: any[]
+    mode?: 'auto' | 'personal' | 'trainer'
     isEmpty?: boolean
 }
 
@@ -25,9 +27,14 @@ interface CardioManagementSectionContentProps {
 export function CardioManagementSectionContent({ 
     userId = 'mock-id',
     cardios,
+    students = [],
     mode = 'auto',
     isEmpty = false
 }: CardioManagementSectionContentProps) {
+    const libraryQueryKey = QUERY_KEYS.cardio.library(userId)
+    const assignedQueryKey = QUERY_KEYS.cardio.all(userId)
+    const activeQueryKey = mode === 'auto' || mode === 'trainer' ? libraryQueryKey : assignedQueryKey
+
     const [actionModal, setActionModal] = React.useState<{ isOpen: boolean, type: RegistryActionType, data?: any }>({
         isOpen: false,
         type: 'assign_cardio'
@@ -36,13 +43,13 @@ export function CardioManagementSectionContent({
     const router = useRouter()
 
     const { mutate: deleteMutation } = useOptimisticMutation({
-        queryKey: mode === 'auto' ? QUERY_KEYS.cardio.library(userId) : QUERY_KEYS.cardio.all(userId),
+        queryKey: activeQueryKey,
         entity: ENTITIES.CARDIO,
         actionName: 'delete-cardio'
     })
 
     const { mutate: duplicateMutation } = useOptimisticMutation({
-        queryKey: mode === 'auto' ? QUERY_KEYS.cardio.library(userId) : QUERY_KEYS.cardio.all(userId),
+        queryKey: activeQueryKey,
         entity: ENTITIES.CARDIO,
         actionName: 'duplicate-cardio'
     })
@@ -54,7 +61,7 @@ export function CardioManagementSectionContent({
     })
 
     const { mutate: updateMutation } = useOptimisticMutation({
-        queryKey: mode === 'auto' ? QUERY_KEYS.cardio.library(userId) : QUERY_KEYS.cardio.all(userId),
+        queryKey: activeQueryKey,
         entity: ENTITIES.CARDIO,
         actionName: 'update-cardio'
     })
@@ -79,7 +86,7 @@ export function CardioManagementSectionContent({
                 if (data?.selectedDays && Array.isArray(data.selectedDays)) {
                     assignMutation({ 
                         cardioId: actionModal.data.id, 
-                        studentId: userId, 
+                        studentId: mode === 'trainer' ? data.student_id : userId, 
                         daysOfWeek: data.selectedDays 
                     })
                 }
@@ -92,12 +99,15 @@ export function CardioManagementSectionContent({
                     duration: data?.duration || actionModal.data.duration_minutes,
                     intensity: data?.intensity || actionModal.data.suggested_intensity
                 })
-                if (data?.selectedDays) {
-                    assignMutation({ 
-                        cardioId: actionModal.data.id, 
-                        studentId: userId, 
-                        daysOfWeek: data.selectedDays 
-                    })
+                if (data?.selectedDays && data.selectedDays.length > 0) {
+                    const targetStudentId = mode === 'trainer' ? data.student_id : userId
+                    if (targetStudentId) {
+                        assignMutation({ 
+                            cardioId: actionModal.data.id, 
+                            studentId: targetStudentId, 
+                            daysOfWeek: data.selectedDays 
+                        })
+                    }
                 }
                 break
             case 'create_cardio':
@@ -116,6 +126,7 @@ export function CardioManagementSectionContent({
     }
 
     React.useEffect(() => {
+        if (mode === 'trainer') return
         const handler = (e: any) => {
             if (e.detail?.type === 'create_cardio') {
                 openAction('create_cardio', {})
@@ -123,7 +134,7 @@ export function CardioManagementSectionContent({
         }
         window.addEventListener('open-cardio-action', handler)
         return () => window.removeEventListener('open-cardio-action', handler)
-    }, [])
+    }, [mode])
 
     const openAction = (type: RegistryActionType, data?: any) => {
         const selectedDays = (data.assigned_cardios || []).map((a: any) => a.day_of_week)
@@ -141,7 +152,13 @@ export function CardioManagementSectionContent({
             <EmptyState 
                 icon={Activity}
                 title="SEM CARDIOS"
-                description={mode === 'auto' ? "Você ainda não possui protocolos de cardio cadastrados." : "Seu treinador ainda não atribuiu cardios para sua conta."}
+                description={
+                    mode === 'trainer'
+                        ? 'Crie seu primeiro modelo de cardio para começar a atribuir.'
+                        : mode === 'auto'
+                            ? "Você ainda não possui protocolos de cardio cadastrados."
+                            : "Seu treinador ainda não atribuiu cardios para sua conta."
+                }
             />
         )
     }
@@ -152,26 +169,56 @@ export function CardioManagementSectionContent({
         <>
             <Grid cols={{ base: 1, md: 2, lg: 3 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
                 {cardios.map((cardio, idx) => {
-                    const assignedDays = (cardio.assigned_cardios || [])
-                        .filter((a: any) => a.day_of_week !== null && a.day_of_week !== undefined)
-                        .map((a: any) => dayNamesShort[a.day_of_week % 7])
-                    
+                    const daySet = new Set<number>()
+
+                    if (mode === 'trainer') {
+                        ;(cardio.assignments || []).forEach((a: any) => {
+                            const days = Array.isArray(a.days_of_week)
+                                ? a.days_of_week
+                                : []
+                            days.forEach((d: number) => daySet.add(d))
+                            if (a.day_of_week !== null && a.day_of_week !== undefined) {
+                                daySet.add(a.day_of_week)
+                            }
+                        })
+                    } else {
+                        ;(cardio.assigned_cardios || []).forEach((a: any) => {
+                            if (a.day_of_week !== null && a.day_of_week !== undefined) {
+                                daySet.add(a.day_of_week)
+                            }
+                        })
+                    }
+
+                    const assignedDays = Array.from(daySet)
+                        .sort((a, b) => a - b)
+                        .map((d) => dayNamesShort[d % 7])
+
+                    const assignedStudents: AssignedStudentInfo[] | undefined = mode === 'trainer'
+                        ? (cardio.assignments || []).map((a: any) => ({
+                            id: a.student_id || `pending-${a.id}`,
+                            name: a.student?.full_name || 'Aluno',
+                            avatarUrl: a.student?.avatar_url,
+                            isPlaceholder: a.is_placeholder,
+                        }))
+                        : undefined
+
                     return (
                         <ManagementCardPremium 
                             key={cardio.id || idx}
                             title={cardio.name.toUpperCase()}
-                            description={cardio.description || 'Protocolo oficial de cardio.'}
+                            description={cardio.description || (mode === 'trainer' ? 'Sem descrição disponível.' : 'Protocolo oficial de cardio.')}
                             days={assignedDays}
+                            assignedStudents={assignedStudents}
                             mainStat={{ label: 'MINUTOS', value: cardio.duration_minutes || 0 }}
                             date={new Date(cardio.created_at).toLocaleDateString('pt-BR')}
                             icon={Activity}
                             mode={mode}
-                            color="orange"
-                            registryType="training"
-                            onSchedule={() => openAction('assign_cardio', cardio)}
+                            color={STORE_TOKENS.COLORS.BRAND as any}
+                            registryType="cardio"
+                            onSchedule={mode === 'auto' ? () => openAction('assign_cardio', cardio) : undefined}
                             onEdit={() => openAction('edit_cardio', cardio)}
-                            onDelete={() => openAction('confirm_delete', cardio)}
-                            onDuplicate={() => openAction('confirm_duplicate', cardio)}
+                            onDelete={mode !== 'personal' ? () => openAction('confirm_delete', cardio) : undefined}
+                            onDuplicate={mode !== 'personal' ? () => openAction('confirm_duplicate', cardio) : undefined}
                         />
                     )
                 })}
@@ -183,6 +230,7 @@ export function CardioManagementSectionContent({
                 type={actionModal.type}
                 onConfirm={handleConfirm}
                 initialData={actionModal.data}
+                students={students}
             />
         </>
     )

@@ -22,7 +22,7 @@ export function StoreHeroCard() {
                         <br />
                         <Font
                             variant="hero"
-                            color="orange"
+                            color="primary"
                         >
                             EXTREMA
                         </Font>

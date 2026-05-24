@@ -84,7 +84,9 @@ export function SettingsOption({
                             icon={rightIcon} 
                             size="sm" 
                             color={variant === 'zinc' ? 'zinc-600' : variant} 
-                            className={`transition-colors ${!disabled && 'group-hover:text-current group-hover:translate-x-1'}`}
+                            transition
+                            groupHoverColor={!disabled ? 'current' : undefined}
+                            groupHoverTranslateX={!disabled ? 1 : undefined}
                         />
                     ) : null}
                 </Stack>
@@ -95,9 +97,9 @@ export function SettingsOption({
     // Render as a div or button based on if it has an onClick handler and is not meant to be a wrapper for a switch
     if (onClick && !children) {
         return (
-            <button type="button" onClick={disabled ? undefined : onClick} className="w-full" disabled={disabled}>
+            <Box as="button" type="button" fullWidth onClick={disabled ? undefined : onClick} disabled={disabled}>
                 {content}
-            </button>
+            </Box>
         )
     }
 

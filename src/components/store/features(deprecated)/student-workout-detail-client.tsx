@@ -2,7 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query'
 import { getWorkoutDetails } from '@/actions/workout-actions'
-import { WorkoutBuilder } from '@/components/store/features(deprecated)/workout-builder'
+import { WorkoutBuilderSmart } from '@/components/store/advanced/workout-builder-smart'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { useRealtimeSync } from '@/hooks/use-realtime-sync'
 
@@ -37,7 +37,7 @@ export function StudentWorkoutDetailClient({ workoutId, userId, initialData }: S
     if (!workout) return null
 
     return (
-        <WorkoutBuilder
+        <WorkoutBuilderSmart
             workout={workout as any}
             backHref="/dashboard/student/workouts"
             canAssign={false}

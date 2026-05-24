@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Menu, X, LogOut, Dumbbell, Utensils, Activity, Home, Users, Trophy, CreditCard, FileUp, Sparkles, Syringe, TrendingUp, Download, Settings, ClipboardList, Timer } from 'lucide-react'
+import { Menu, X, LogOut, Dumbbell, Utensils, Activity, Users, FileUp, Syringe, TrendingUp, Download, Settings, ClipboardList } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Logo } from '@/components/ui/logo'
 import Link from 'next/link'
@@ -46,7 +46,6 @@ export function MobileHeader({ role, hasTrainer, steroidUse, hideImportPdf, auto
         { href: '/dashboard/trainer/cardio', icon: <Activity className="w-5 h-5" />, label: 'Cardio' },
         { href: '/dashboard/trainer/ergogenics', icon: <Syringe className="w-5 h-5" />, label: 'Ergogênicos' },
         ...(hideImportPdf ? [] : [{ href: '/dashboard/trainer/import-pdf', icon: <FileUp className="w-5 h-5" />, label: 'Importar PDF' }]),
-        { href: '/dashboard/trainer/plans', icon: <CreditCard className="w-5 h-5" />, label: 'Planos & Assinatura' },
     ]
 
     const links = role === 'student'

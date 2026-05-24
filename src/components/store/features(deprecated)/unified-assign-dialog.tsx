@@ -87,7 +87,7 @@ export function UnifiedAssignDialog({
     const { toast } = useToast()
 
     const initialDaysStr = JSON.stringify(initialDays || [])
-    
+
     React.useEffect(() => {
         if (open) {
             setSelectedStudent(initialStudentId || fixedStudentId || '')
@@ -243,11 +243,11 @@ export function UnifiedAssignDialog({
                 <div className="space-y-8 py-2">
                     {((items.length > 0 && !itemId) || !fixedStudentId) && (
                         <div className="space-y-4">
-                             <div className="flex items-center gap-2 px-1">
+                            <div className="flex items-center gap-2 px-1">
                                 <UserPlus className="w-3.5 h-3.5 text-zinc-500" />
                                 <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Destinatário & Protocolo</span>
                             </div>
-                            
+
                             <div className="space-y-4">
                                 {items.length > 0 && !itemId && (
                                     <div className="space-y-2">
@@ -277,11 +277,11 @@ export function UnifiedAssignDialog({
                                                 </SelectTrigger>
                                                 <SelectContent className="bg-zinc-900 border-zinc-800 rounded-system z-[100001]" position="popper" sideOffset={5}>
                                                     {initialStudentId && !students.some(s => s.student_id === initialStudentId) && (
-                                                       <SelectItem value={initialStudentId} className="focus:bg-zinc-800 focus:text-white">
-                                                           <span className="font-bold text-xs uppercase tracking-tight text-zinc-400">
-                                                               {initialStudentName || initialStudentId} (Inativo/Outro)
-                                                           </span>
-                                                       </SelectItem>
+                                                        <SelectItem value={initialStudentId} className="focus:bg-zinc-800 focus:text-white">
+                                                            <span className="font-bold text-xs uppercase tracking-tight text-zinc-400">
+                                                                {initialStudentName || initialStudentId} (Inativo/Outro)
+                                                            </span>
+                                                        </SelectItem>
                                                     )}
                                                     {(students || []).map((s) => (
                                                         <SelectItem
@@ -380,7 +380,7 @@ export function UnifiedAssignDialog({
                         >
                             <div className="flex items-center gap-2">
                                 <UserPlus className="w-4 h-4" />
-                                Confirmar Atribuição
+                                Confirmar
                             </div>
                         </Button>
                     </DialogFooter>

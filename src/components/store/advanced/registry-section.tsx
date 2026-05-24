@@ -32,13 +32,13 @@ export function RegistrySection({
   const { primaryColor } = useRegistry()
 
   return (
-    <Stack gap={STORE_TOKENS.SPACING.CONTAINER} id={id} fullWidth flex1={flex1}>
+    <Stack gap={STORE_TOKENS.SPACING.CONTAINER} id={id} fullWidth>
       {/* Section Header */}
       {(title || subtitle || rightElement) && (
-        <Stack 
-          direction={{ base: 'col', lg: 'row' }} 
-          justify={(title || subtitle) ? "between" : "end"} 
-          align={{ base: 'stretch', lg: 'center' }} 
+        <Stack
+          direction={{ base: 'col', lg: 'row' }}
+          justify={(title || subtitle) ? "between" : "end"}
+          align={{ base: 'stretch', lg: 'center' }}
           gap={STORE_TOKENS.SPACING.CONTAINER}
         >
           {(title || subtitle) && (

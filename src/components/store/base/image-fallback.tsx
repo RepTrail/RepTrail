@@ -8,7 +8,7 @@ import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 interface ImageFallbackProps {
   icon?: LucideIcon
-  className?: string
+  className?: never
 }
 
 /**

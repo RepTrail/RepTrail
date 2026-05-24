@@ -1,14 +1,20 @@
 import { getTrainerStudents } from '@/actions/trainer-actions'
-import { ImportPdfClient } from '@/components/store/features(deprecated)/import-pdf-client'
-import { createClient } from '@/lib/supabase/server'
+import { redirect } from 'next/navigation'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
+import { ImportPdfSectionContent } from '@/components/store/sections/import-pdf-section-content'
+import { headers } from 'next/headers'
 
-export default async function ImportPdfPage() {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return null
+export const metadata = {
+    title: 'Importar PDF | RepTrail'
+}
 
-    const students = await getTrainerStudents()
+export default async function TrainerImportPdfPage() {
+    const headerList = await headers()
+    const userId = headerList.get('x-user-id')
+
+    if (!userId) redirect('/auth/login')
+
+    const students = await getTrainerStudents(userId)
 
     return (
         <RegistryMain
@@ -18,8 +24,7 @@ export default async function ImportPdfPage() {
             contextLabel="Inteligência Artificial"
             showTabs={false}
         >
-            <ImportPdfClient students={students} userId={user.id} />
+            <ImportPdfSectionContent role="trainer" userId={userId} students={students} />
         </RegistryMain>
     )
 }
-

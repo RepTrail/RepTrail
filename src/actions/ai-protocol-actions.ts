@@ -1,8 +1,6 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
-import { saveParsedData } from '@/actions/save-actions'
-import { revalidatePath } from 'next/cache'
 
 export interface AIProtocolPreferences {
   // Goal

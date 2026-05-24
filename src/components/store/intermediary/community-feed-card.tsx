@@ -37,7 +37,7 @@ export function CommunityFeedCard({
             cursor="pointer"
             onClick={onAction}
             group
-            className="aspect-[3/4]"
+            aspectRatio="3/4"
             display="flex"
             direction="col"
         >
@@ -73,7 +73,7 @@ export function CommunityFeedCard({
                 top="auto"
                 height="50%"
                 zIndex={STORE_TOKENS.Z_INDEX.CONTENT}
-                className="bg-gradient-to-t from-black via-black/60 to-transparent"
+                bgGradient="bottom-dark"
             />
 
             {/* Content Container */}

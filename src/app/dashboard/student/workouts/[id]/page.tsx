@@ -1,11 +1,11 @@
 import { getWorkoutDetails } from "@/actions/workout-actions"
-import { notFound } from "next/navigation"
-import { createClient } from '@/lib/supabase/server'
+import { notFound, redirect } from "next/navigation"
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { getQueryClient } from '@/lib/get-query-client'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { StudentWorkoutDetailClient } from "@/components/store/features(deprecated)/student-workout-detail-client"
 import { RegistryMain } from "@/components/store/advanced/registry-main"
+import { headers } from "next/headers"
 
 export default async function StudentWorkoutPage({
     params,
@@ -13,10 +13,9 @@ export default async function StudentWorkoutPage({
     params: { id: string }
 }) {
     const { id } = await params
-    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-
-    if (!user) return notFound()
+    const headerList = await headers()
+    const userId = headerList.get('x-user-id')
+    if (!userId) redirect('/auth/login')
 
     const queryClient = getQueryClient()
 
@@ -40,7 +39,7 @@ export default async function StudentWorkoutPage({
             >
                 <StudentWorkoutDetailClient 
                     workoutId={id} 
-                    userId={user.id} 
+                    userId={userId} 
                     initialData={workout} 
                 />
             </RegistryMain>

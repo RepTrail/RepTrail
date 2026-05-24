@@ -1,4 +1,4 @@
-import { PlayCircle, Award, BarChart3, Search, Check, Smartphone, Camera, Beef } from "lucide-react";
+import { PlayCircle, Search, Check, Camera, Beef } from "lucide-react";
 
 const features = [
     {

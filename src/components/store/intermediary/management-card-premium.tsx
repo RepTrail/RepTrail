@@ -18,6 +18,9 @@ import {
     LucideIcon
 } from 'lucide-react'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
+import { AssignedStudentsAvatarRow, AssignedStudentInfo } from './assigned-student-mini-card'
+
+type ManagementCardMode = 'auto' | 'personal' | 'trainer'
 
 interface ManagementCardPremiumProps {
     title: string
@@ -29,15 +32,17 @@ interface ManagementCardPremiumProps {
     }
     date: string
     icon: LucideIcon
-    mode?: 'auto' | 'personal'
+    mode?: ManagementCardMode
+    assignedStudents?: AssignedStudentInfo[]
     color?: 'amber' | 'emerald' | 'orange' | 'blue' | 'primary'
-    registryType?: 'training' | 'diet'
+    registryType?: 'training' | 'diet' | 'cardio'
     onView?: () => void
     onEdit?: () => void
     onDelete?: () => void
     onDuplicate?: () => void
     onSchedule?: () => void
     onPlay?: () => void
+    editLabel?: string
 }
 
 /**
@@ -52,6 +57,7 @@ export function ManagementCardPremium({
     date,
     icon,
     mode = 'auto',
+    assignedStudents,
     color = 'primary',
     registryType = 'training',
     onView,
@@ -59,9 +65,17 @@ export function ManagementCardPremium({
     onDelete,
     onDuplicate,
     onSchedule,
-    onPlay
+    onPlay,
+    editLabel
 }: ManagementCardPremiumProps) {
     const isAuto = mode === 'auto'
+    const isTrainer = mode === 'trainer'
+    const showManagementActions = isAuto || isTrainer
+    const resolvedEditLabel = editLabel ?? (
+        registryType === 'diet' ? 'Editar Dieta'
+        : registryType === 'cardio' ? 'Editar Protocolo'
+        : 'Editar Treino'
+    )
 
     return (
         <GlassPanel
@@ -70,8 +84,11 @@ export function ManagementCardPremium({
             variant="glass"
             transition
             group
+            flex1
+            fullHeight
         >
-            <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
+            <Stack flex1 fullHeight justify="between" gap={STORE_TOKENS.SPACING.CONTAINER} minHeight={0}>
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT} flex1 minHeight={0}>
                 {/* Header Actions */}
                 <Stack direction="row" align="center" justify="between">
                     <Box
@@ -96,7 +113,7 @@ export function ManagementCardPremium({
                                 <Icon icon={Play} size="md" color="emerald" />
                             </Button>
                         )}
-                        {isAuto && (
+                        {showManagementActions && onDelete && (
                             <Button 
                                 variant="outline-red"
                                 isIconOnly
@@ -123,19 +140,35 @@ export function ManagementCardPremium({
                         )}
                     </Stack>
 
+                    {isTrainer && assignedStudents && assignedStudents.length > 0 && (
+                        <AssignedStudentsAvatarRow students={assignedStudents} />
+                    )}
+
                     <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} wrap="wrap">
-                        {days.map((day) => (
+                        {days.length > 0 ? (
+                            days.map((day) => (
+                                <Badge
+                                    key={day}
+                                    label={day}
+                                    variant="glass"
+                                    color={color}
+                                    size="xs"
+                                />
+                            ))
+                        ) : isTrainer ? (
                             <Badge
-                                key={day}
-                                label={day}
-                                variant="glass"
-                                color={color}
+                                label="Não agendado"
+                                icon={Calendar}
+                                variant="outline"
+                                color="orange"
                                 size="xs"
                             />
-                        ))}
+                        ) : null}
                     </Stack>
                 </Stack>
+                </Stack>
 
+                <Stack gap={STORE_TOKENS.SPACING.CONTAINER} shrink={0}>
                 {/* Meta Info */}
                 <Stack direction="row" align="center" justify="between">
                     <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.MUTED}>
@@ -147,9 +180,29 @@ export function ManagementCardPremium({
                 </Stack>
 
                 {/* Footer Buttons & Actions */}
-                {(isAuto || onView) && (
+                {(isAuto || isTrainer || onView) && (
                     <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        {isAuto ? (
+                        {isTrainer && onEdit ? (
+                            <>
+                                <Button variant="outline-primary" flex1 onClick={onEdit} shine>
+                                    <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                        <Icon icon={Edit3} size="xs" color="primary" />
+                                        <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color="primary">{resolvedEditLabel}</Font>
+                                    </Stack>
+                                </Button>
+                                {onDuplicate && (
+                                    <Button
+                                        variant="outline-zinc"
+                                        isIconOnly
+                                        size="sm"
+                                        rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                                        onClick={onDuplicate}
+                                    >
+                                        <Icon icon={Copy} size="xs" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} />
+                                    </Button>
+                                )}
+                            </>
+                        ) : isAuto ? (
                             <>
                                 <Button variant={`outline-${color}`} flex1 onClick={onSchedule}>
                                     <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
@@ -167,15 +220,17 @@ export function ManagementCardPremium({
                                         <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>EDITAR</Font>
                                     </Stack>
                                 </Button>
-                                <Button 
-                                    variant="outline-zinc" 
-                                    isIconOnly 
-                                    size="sm" 
-                                    rounded={STORE_TOKENS.RADIUS.SYSTEM}
-                                    onClick={onDuplicate}
-                                >
-                                    <Icon icon={Copy} size="xs" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} />
-                                </Button>
+                                {onDuplicate && (
+                                    <Button 
+                                        variant="outline-zinc" 
+                                        isIconOnly 
+                                        size="sm" 
+                                        rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                                        onClick={onDuplicate}
+                                    >
+                                        <Icon icon={Copy} size="xs" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} />
+                                    </Button>
+                                )}
                             </>
                         ) : (
                             <Button variant={`outline-${color}`} flex1 onClick={onView}>
@@ -187,6 +242,7 @@ export function ManagementCardPremium({
                         )}
                     </Stack>
                 )}
+                </Stack>
             </Stack>
         </GlassPanel>
     )

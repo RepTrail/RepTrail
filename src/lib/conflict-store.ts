@@ -1,4 +1,3 @@
-import { OutboxRecord } from './outbox-db';
 
 export interface Conflict {
   id: string; // Outbox record ID

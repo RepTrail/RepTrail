@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import { SettingsModal } from '@/components/store/advanced/student-settings-modal'
-import { NotificationRequestModal } from '@/components/store/features(deprecated)/notification-request-modal'
 import { AsaasPaymentModal } from '@/components/store/advanced/asaas-payment-modal'
 
 interface StudentGlobalModalsProps {
@@ -24,7 +23,6 @@ export function StudentGlobalModals({ hasTrainer, userId }: StudentGlobalModalsP
     return (
         <>
             <SettingsModal hasTrainer={hasTrainer} isTrainer={false} />
-            <NotificationRequestModal />
             <AsaasPaymentModal 
                 isOpen={asaasModal.isOpen}
                 onClose={() => setAsaasModal(prev => ({ ...prev, isOpen: false }))}

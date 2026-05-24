@@ -8,9 +8,7 @@ import { TypographyContent } from '@/components/store/sections/typography-conten
 import { LayoutSpacingContent } from '@/components/store/sections/layout-spacing-content'
 import { ComponentsRegistryContent } from '@/components/store/sections/components-registry-content'
 import { ColorsSectionContent } from '@/components/store/sections/colors-section-content'
-import { AdminSectionContent } from '@/components/store/sections/admin-section-content'
 import { AuthSectionsContent } from '@/components/store/sections/auth-sections-content'
-import { StudentRegistryContent } from '@/components/store/sections/student-registry-content'
 
 export default function DesignSystemPage() {
     return (

@@ -1,6 +1,8 @@
-import { DietBuilderClient } from "@/components/store/features(deprecated)/diet-builder-client"
 import { getDietDetails } from "@/actions/diet-actions"
 import { getTrainerStudents } from "@/actions/trainer-actions"
+import { DietBuilderSmart } from "@/components/store/advanced/diet-builder-smart"
+import { RegistryMain } from "@/components/store/advanced/registry-main"
+import { Box } from "@/components/store/base/box"
 import { notFound } from "next/navigation"
 
 export default async function DietEditPage({ params }: { params: { id: string } }) {
@@ -15,8 +17,23 @@ export default async function DietEditPage({ params }: { params: { id: string } 
     }
 
     return (
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8" suppressHydrationWarning>
-            <DietBuilderClient diet={diet as any} students={students} />
-        </div>
+        <RegistryMain
+            title="EDITAR DIETA"
+            subtitle="Personalize este protocolo alimentar para o seu aluno."
+            icon="Utensils"
+            contextLabel="Área do Personal"
+            showTabs={false}
+            showHeader={false}
+        >
+            <Box fullWidth>
+                <DietBuilderSmart
+                    diet={diet as any}
+                    students={students}
+                    contextLabel="ÁREA DO PERSONAL"
+                    icon="Utensils"
+                    contextColor="emerald"
+                />
+            </Box>
+        </RegistryMain>
     )
 }

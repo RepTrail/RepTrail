@@ -7,17 +7,19 @@ import { getStudentMetricsHistory, getStudentChartData } from '@/actions/metrics
 import { getStudentAdherenceHistory } from '@/actions/tracking-actions'
 import { getStudentCardioAssignments } from '@/actions/cardio-actions'
 import { getAssignedErgogenics } from '@/actions/ergogenics-actions'
-import { createClient } from '@/lib/supabase/server'
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { getQueryClient } from '@/lib/get-query-client'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { StudentDetailClient } from '@/components/store/features(deprecated)/student-detail-client'
+import { headers } from 'next/headers'
+import { redirect } from 'next/navigation'
 
 export default async function StudentDetailPage({ params }: { params: { id: string } }) {
     const { id } = await params
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return null
+
+    const headerList = await headers()
+    const userId = headerList.get('x-user-id')
+    if (!userId) redirect('/auth/login')
 
     const queryClient = getQueryClient()
 
@@ -32,8 +34,8 @@ export default async function StudentDetailPage({ params }: { params: { id: stri
             queryFn: () => relationship // Reuse the already fetched data
         }),
         queryClient.prefetchQuery({
-            queryKey: QUERY_KEYS.profile.detail(user.id),
-            queryFn: () => getTrainerProfile()
+            queryKey: QUERY_KEYS.profile.detail(userId),
+            queryFn: () => getTrainerProfile(userId)
         })
     ]
 
@@ -76,7 +78,7 @@ export default async function StudentDetailPage({ params }: { params: { id: stri
     return (
         <div className=" mx-auto" suppressHydrationWarning>
             <HydrationBoundary state={dehydrate(queryClient)}>
-                <StudentDetailClient relationshipId={id} userId={user.id} />
+                <StudentDetailClient relationshipId={id} userId={userId} />
             </HydrationBoundary>
         </div>
     )

@@ -23,7 +23,11 @@ export default async function StudentLayout({ children }: { children: React.Reac
         .eq('id', userId)
         .single()
 
-    if (profile && !profile.onboarding_completed && profile.role === 'student') {
+    if (profile?.role && profile.role !== 'student') {
+        redirect('/dashboard')
+    }
+
+    if (profile && !profile.onboarding_completed && (!profile.role || profile.role === 'student')) {
         redirect('/onboarding')
     }
 

@@ -1,4 +1,4 @@
-﻿import React from 'react'
+import React from 'react'
 import { cn } from '@/lib/utils'
 import { ImageFallback } from './image-fallback'
 import { LucideIcon } from 'lucide-react'
@@ -40,7 +40,7 @@ export function Img({
     fullWidth,
     fullHeight,
     grayscale
-}: Omit<ImgProps, 'className' | 'style'> & { className?: string, style?: React.CSSProperties }) {
+}: ImgProps) {
     const [error, setError] = React.useState(false)
 
     if (error || !src) {
@@ -55,7 +55,9 @@ export function Img({
         empty_state:  'p-[30px]',
         section:      'p-10',
         dashboard_pc: 'p-20',
-        safe_area:    'p-[100px]'
+        safe_area:    'p-[100px]',
+        'title-content': 'p-[30px]',
+        'header-gap': 'p-8',
     }
 
     const objectFitMapping = {

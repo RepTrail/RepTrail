@@ -1,9 +1,11 @@
-/* eslint-disable no-restricted-syntax */
+ 
 import React from 'react';
 import { Stack } from '@/components/store/base/stack';
 import { Font } from '@/components/store/base/font';
 import { Icon } from '@/components/store/base/icon';
 import { STORE_TOKENS } from '@/components/store/constants/tokens';
+import { useRegistry, RegistryColor } from '@/components/store/advanced/registry-context';
+import { cn } from '@/lib/utils';
 import { FileText } from 'lucide-react';
 import {
     Select,
@@ -21,7 +23,17 @@ interface PdfPreviewSectionProps {
     selectionHooks: any;
 }
 
+const SELECT_TEXT: Record<RegistryColor, string> = {
+    orange: 'text-orange-400',
+    emerald: 'text-emerald-400',
+    blue: 'text-blue-400',
+    red: 'text-red-400',
+    amber: 'text-amber-400',
+    zinc: 'text-zinc-400',
+}
+
 export function PdfPreviewSection({ type, parsedData, setParsedData, selectionHooks }: PdfPreviewSectionProps) {
+    const { primaryColor } = useRegistry()
     const {
         selectedOptionIndex, setSelectedOptionIndex,
         selectedCardioIndices, toggleCardio,
@@ -33,7 +45,7 @@ export function PdfPreviewSection({ type, parsedData, setParsedData, selectionHo
         <Stack id="tour-parsed-data" gap={STORE_TOKENS.SPACING.CONTAINER}>
             <Stack direction="row" justify="between" align="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
                 <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <Icon icon={FileText} size="xs" color="emerald" />
+                    <Icon icon={FileText} size="xs" color="primary" />
                     <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color="zinc-500">Dados Extraídos</Font>
                 </Stack>
                 {type === 'diet' && parsedData.parsed_data?.options?.length > 1 && (
@@ -43,7 +55,7 @@ export function PdfPreviewSection({ type, parsedData, setParsedData, selectionHo
                             value={selectedOptionIndex.toString()}
                             onValueChange={(v) => setSelectedOptionIndex(parseInt(v))}
                         >
-                            <SelectTrigger className="h-9 min-w-[180px] bg-zinc-900 border-zinc-800 text-xs font-bold text-emerald-400 rounded-system">
+                            <SelectTrigger className={cn('h-9 min-w-[180px] bg-zinc-900 border-zinc-800 text-xs font-bold rounded-system', SELECT_TEXT[primaryColor])}>
                                 <SelectValue />
                             </SelectTrigger>
                             <SelectContent className="bg-zinc-900 border-zinc-800 text-white">

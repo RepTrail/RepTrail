@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils'
 interface LogoProps {
     size?: 'sm' | 'md' | 'lg' | 'xl'
     color?: 'white' | 'orange' | 'emerald' | 'amber' | 'red' | 'blue' | 'brand-accent'
-    className?: string
+    className?: never
     id?: string
 }
 

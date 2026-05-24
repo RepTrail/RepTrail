@@ -5,7 +5,6 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { Activity, Dumbbell, Flame, Utensils, Sparkles } from 'lucide-react'
 import { Stack } from '@/components/store/base/stack'
 import { Box, BoxProps } from '@/components/store/base/box'
-import { Grid } from '@/components/store/base/grid'
 import { Font } from '@/components/store/base/font'
 import { Icon } from '@/components/store/base/icon'
 import { GlassPanel } from '@/components/store/base/surface'

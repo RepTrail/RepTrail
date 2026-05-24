@@ -1,4 +1,4 @@
-/* eslint-disable no-restricted-syntax */
+ 
 import React from 'react';
 import { Stack } from '@/components/store/base/stack';
 import { Surface } from '@/components/store/base/surface';
@@ -8,8 +8,36 @@ import { Button as DSButton } from '@/components/store/base/button';
 import { Separator } from '@/components/store/base/separator';
 import { Badge } from '@/components/store/base/badge';
 import { STORE_TOKENS } from '@/components/store/constants/tokens';
+import { useRegistry, RegistryColor } from '@/components/store/advanced/registry-context';
 import { User } from 'lucide-react';
 import { cn } from '@/lib/utils';
+
+const ACTIVE_GLOW: Record<RegistryColor, string> = {
+    orange: 'shadow-[0_0_20px_rgba(249,115,22,0.15)]',
+    emerald: 'shadow-[0_0_20px_rgba(16,185,129,0.15)]',
+    blue: 'shadow-[0_0_20px_rgba(59,130,246,0.15)]',
+    red: 'shadow-[0_0_20px_rgba(239,68,68,0.15)]',
+    amber: 'shadow-[0_0_20px_rgba(245,158,11,0.15)]',
+    zinc: 'shadow-[0_0_20px_rgba(113,113,122,0.15)]',
+}
+
+const ACTIVE_BORDER: Record<RegistryColor, string> = {
+    orange: 'border-orange-500',
+    emerald: 'border-emerald-500',
+    blue: 'border-blue-500',
+    red: 'border-red-500',
+    amber: 'border-amber-500',
+    zinc: 'border-zinc-500',
+}
+
+const SUGGESTION_FOCUS: Record<RegistryColor, string> = {
+    orange: 'focus:bg-orange-500/10 focus:text-orange-400',
+    emerald: 'focus:bg-emerald-500/10 focus:text-emerald-400',
+    blue: 'focus:bg-blue-500/10 focus:text-blue-400',
+    red: 'focus:bg-red-500/10 focus:text-red-400',
+    amber: 'focus:bg-amber-500/10 focus:text-amber-400',
+    zinc: 'focus:bg-zinc-500/10 focus:text-zinc-400',
+}
 import {
     Select,
     SelectContent,
@@ -25,6 +53,7 @@ interface StudentBindingCardProps {
 }
 
 export function StudentBindingCard({ bindingHooks, students }: StudentBindingCardProps) {
+    const { primaryColor } = useRegistry()
     const {
         selectedStudentId, setSelectedStudentId,
         bindingMode, setBindingMode,
@@ -39,21 +68,21 @@ export function StudentBindingCard({ bindingHooks, students }: StudentBindingCar
             <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                 <Stack direction="row" align="center" justify="between" gap={STORE_TOKENS.SPACING.CONTAINER}>
                     <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        <Icon icon={User} size="xs" color="emerald" />
+                        <Icon icon={User} size="xs" color="primary" />
                         <Font variant="body" weight="bold" color="white">Vincular Importação:</Font>
                         {detectedStudentName && (
                             <Badge label={`Detectado: ${detectedStudentName}`} variant="outline" color="zinc" />
                         )}
                     </Stack>
                     {(studentMatch?.exact || (selectedStudentId && bindingMode === 'matched')) && (
-                        <Badge label="Aluno Vinculado" variant="glass" color="emerald" />
+                        <Badge label="Aluno Vinculado" variant="glass" color="primary" />
                     )}
                 </Stack>
 
                 {studentMatch?.exact && bindingMode === 'matched' ? (
                     <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                         <Font variant="description" color="zinc-400">
-                            Identificamos o aluno <Font variant="description" color="emerald" weight="bold">{studentMatch.exact.full_name}</Font> automaticamente.
+                            Identificamos o aluno <Font variant="description" color="primary" weight="bold">{studentMatch.exact.full_name}</Font> automaticamente.
                         </Font>
                         <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT}>
                             <DSButton
@@ -80,10 +109,10 @@ export function StudentBindingCard({ bindingHooks, students }: StudentBindingCar
                             <DSButton
                                 id="tour-btn-create-student"
                                 type="button"
-                                variant={bindingMode === 'create' ? 'outline-emerald' : 'ghost'}
+                                variant={bindingMode === 'create' ? 'outline-primary' : 'ghost'}
                                 className={cn(
                                     "flex-1 !h-[56px] transition-all duration-300 min-h-0",
-                                    bindingMode === 'create' && "shadow-[0_0_20px_rgba(16,185,129,0.15)] scale-[1.02]"
+                                    bindingMode === 'create' && cn(ACTIVE_GLOW[primaryColor], 'scale-[1.02]')
                                 )}
                                 onClick={() => {
                                     setBindingMode('create');
@@ -100,7 +129,7 @@ export function StudentBindingCard({ bindingHooks, students }: StudentBindingCar
                                         className={cn(
                                             "w-full rounded-system !h-[56px] bg-zinc-950/40 text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 border-2 px-6 flex items-center justify-between min-h-0",
                                             bindingMode === 'matched'
-                                                ? "border-emerald-500 text-white shadow-[0_0_20px_rgba(16,185,129,0.15)] scale-[1.02]"
+                                                ? cn(ACTIVE_BORDER[primaryColor], 'text-white', ACTIVE_GLOW[primaryColor], 'scale-[1.02]')
                                                 : "border-white/5 text-zinc-500 hover:border-white/10"
                                         )}
                                     >
@@ -109,7 +138,7 @@ export function StudentBindingCard({ bindingHooks, students }: StudentBindingCar
                                     <SelectContent position="popper" side="bottom" sideOffset={12} className="bg-zinc-900 border-2 border-white/5 text-white w-[var(--radix-select-trigger-width)] z-[100] rounded-system shadow-2xl p-2 overflow-hidden">
                                         <div className="px-2 py-3 text-[8px] font-black uppercase tracking-widest text-zinc-600 border-b border-white/5 mb-2">Sugestões e Lista de Alunos</div>
                                         {studentMatch?.suggestions?.filter((s: any) => s.active !== false).map((s: any) => (
-                                            <SelectItem key={s.student_id} value={s.student_id} className="text-xs py-4 rounded-system focus:bg-emerald-500/10 focus:text-emerald-400 cursor-pointer">
+                                            <SelectItem key={s.student_id} value={s.student_id} className={cn('text-xs py-4 rounded-system cursor-pointer', SUGGESTION_FOCUS[primaryColor])}>
                                                 {s.full_name} (Sugerido)
                                             </SelectItem>
                                         ))}

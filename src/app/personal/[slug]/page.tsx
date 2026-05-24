@@ -1,18 +1,68 @@
-import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
-import Image from 'next/image'
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { Logo } from '@/components/ui/logo'
-import { ShieldCheck, Star, MapPin, Trophy, MessageCircle, ArrowLeft, Dumbbell, User, Instagram, Quote, Image as ImageIcon, ExternalLink } from 'lucide-react'
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Card, CardContent } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { createClient } from '@/lib/supabase/server'
+import { headers } from 'next/headers'
+import { TrainerPublicProfileMain } from '@/components/store/advanced/trainer-public-profile-main'
+import { DashboardShell } from '@/components/store/advanced/dashboard-shell'
+import { RegistryProvider } from '@/components/store/advanced/registry-context'
+import { RegistryMain } from '@/components/store/advanced/registry-main'
+import { Surface } from '@/components/store/base/surface'
+import { BackgroundEffects } from '@/components/store/base/background-effects'
+import { Box } from '@/components/store/base/box'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
-export default async function TrainerPublicProfile({ params }: { params: Promise<{ slug: string }> }) {
+export const metadata = {
+    title: 'Perfil do Treinador | RepTrail',
+}
+
+const STUDENT_LINKS = [
+    { href: '/dashboard/student',              label: 'Home',           icon: 'Home',          exact: true },
+    { href: '/dashboard/student/workouts',     label: 'Meus Treinos',   icon: 'Dumbbell' },
+    { href: '/dashboard/student/cardio',       label: 'Cardio',         icon: 'Activity' },
+    { href: '/dashboard/student/diet',         label: 'Minha Dieta',    icon: 'Utensils' },
+    { href: '/dashboard/student/ergogenics',   label: 'Ergogênicos',    icon: 'Syringe' },
+    { href: '/dashboard/student/progress',     label: 'Evolução',       icon: 'TrendingUp' },
+    { href: '/dashboard/student/feed',         label: 'Feed de Alunos', icon: 'UserCheck' },
+    { href: '/dashboard/student/ranking',      label: 'Ranking',        icon: 'Trophy' },
+    { href: '/dashboard/student/loja',         label: 'Loja',           icon: 'ShoppingBag' },
+    { href: '/dashboard/student/profile',      label: 'Meu Perfil',     icon: 'User' },
+]
+
+const STUDENT_MOBILE_LINKS = [
+    { href: '/dashboard/student',              label: 'Home',    icon: 'Home',       exact: true },
+    { href: '/dashboard/student/workouts',     label: 'Treinos', icon: 'Dumbbell' },
+    { href: '/dashboard/student/cardio',       label: 'Cardio',  icon: 'Activity' },
+    { href: '/dashboard/student/loja',         label: 'Loja',    icon: 'ShoppingBag' },
+    { href: '/dashboard/student/profile',      label: 'Meu Perfil', icon: 'User' },
+]
+
+const TRAINER_LINKS = [
+    { href: '/dashboard/trainer',           label: 'Visão Geral',  icon: 'Home',         exact: true },
+    { href: '/dashboard/trainer/students',   label: 'Alunos',       icon: 'Users' },
+    { href: '/dashboard/trainer/workouts',   label: 'Treinos',      icon: 'Dumbbell' },
+    { href: '/dashboard/trainer/diets',      label: 'Dietas',       icon: 'Utensils' },
+    { href: '/dashboard/trainer/cardio',     label: 'Cardio',       icon: 'Activity' },
+    { href: '/dashboard/trainer/ergogenics', label: 'Ergogênicos',  icon: 'FlaskConical' },
+    { href: '/dashboard/trainer/loja',       label: 'Loja',         icon: 'ShoppingBag' },
+    { href: '/dashboard/trainer/ranking',    label: 'Ranking',      icon: 'Trophy' },
+    { href: '/dashboard/trainer/profile',    label: 'Meu Perfil',   icon: 'User' },
+]
+
+const TRAINER_MOBILE_LINKS = [
+    { href: '/dashboard/trainer',            label: 'Início',  icon: 'Home',        exact: true },
+    { href: '/dashboard/trainer/students',   label: 'Alunos',  icon: 'Users' },
+    { href: '/dashboard/trainer/loja',       label: 'Loja',    icon: 'ShoppingBag' },
+    { href: '/dashboard/trainer/ranking',    label: 'Ranking', icon: 'Trophy' },
+]
+
+export default async function TrainerPublicProfilePage({
+    params,
+}: {
+    params: Promise<{ slug: string }>
+}) {
     const { slug } = await params
-    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    const supabase = await createClient()
+    const headerList = await headers()
+    const viewerId = headerList.get('x-user-id')
 
     // Normalize slug - remove null, undefined, or empty strings
     const normalizedSlug = slug?.trim().toUpperCase() || ''
@@ -36,384 +86,80 @@ export default async function TrainerPublicProfile({ params }: { params: Promise
         notFound()
     }
 
-    // Process photo pairs from the flattened list of photos
-    let photoPairs: { studentName: string; oldest: any; newest: any }[] = []
-    if (photos && photos.length > 0) {
-        const byStudent = new Map<string, any[]>()
-        for (const p of photos) {
-            const sid = p.student_id
-            if (!byStudent.has(sid)) byStudent.set(sid, [])
-            byStudent.get(sid)!.push(p)
-        }
-        photoPairs = Array.from(byStudent.entries())
-            .filter(([, arr]) => arr.length >= 2)
-            .map(([studentId, arr]) => {
-                const first = arr[0]
-                const last = arr[arr.length - 1]
-                const studentName = first.student_name || 'Aluno'
-                return {
-                    studentName,
-                    oldest: first,
-                    newest: last
-                }
-            })
+    // ── Get Viewer Profile if Logged In (to determine sidebar role/color) ───────
+    let viewerProfile: any = null
+    if (viewerId) {
+        const { data } = await supabase
+            .from('profiles')
+            .select('role, full_name, avatar_url, email, is_admin, is_affiliate')
+            .eq('id', viewerId)
+            .single()
+        viewerProfile = data
+    }
+
+    // ── Enforce default trainer 'emerald' theme for content elements ───────────
+    const mainContent = (
+        <RegistryProvider defaultColor="emerald">
+            <RegistryMain
+                title="PERFIL DO TREINADOR"
+                subtitle="Acompanhe a biografia, metodologia, depoimentos e transformações do seu coach."
+                icon="UserCheck"
+                contextLabel="Perfil Público"
+                showTabs={false}
+            >
+                <TrainerPublicProfileMain
+                    trainer={trainer}
+                    reviews={reviews || []}
+                    photos={photos || []}
+                />
+            </RegistryMain>
+        </RegistryProvider>
+    )
+
+    // ── Render with Sidebar Shell if Logged In, otherwise render pure page ──────
+    if (viewerProfile) {
+        const isTrainer = viewerProfile.role === 'trainer'
+        const shellColor = isTrainer ? 'emerald' : 'orange'
+        const links = isTrainer ? TRAINER_LINKS : STUDENT_LINKS
+        const mobileLinks = isTrainer ? TRAINER_MOBILE_LINKS : STUDENT_MOBILE_LINKS
+        const profileHref = isTrainer ? '/dashboard/trainer/profile' : '/dashboard/student/profile'
+
+        return (
+            <RegistryProvider defaultColor={shellColor}>
+                <DashboardShell
+                    color={shellColor}
+                    links={links}
+                    mobileLinks={mobileLinks}
+                    profileHref={profileHref}
+                    user={{
+                        id: viewerId!,
+                        name: viewerProfile.full_name,
+                        email: viewerProfile.email,
+                        avatar_url: viewerProfile.avatar_url,
+                        isAdmin: viewerProfile.is_admin,
+                        isAffiliate: viewerProfile.is_affiliate,
+                    }}
+                >
+                    {mainContent}
+                </DashboardShell>
+            </RegistryProvider>
+        )
     }
 
     return (
-        <div className="min-h-screen bg-zinc-950 text-white selection:bg-emerald-500/30">
-            {/* Header */}
-            <header className="fixed top-0 left-0 right-0 z-50 bg-zinc-950/80 backdrop-blur-md border-b border-zinc-900">
-                <div className="container mx-auto px-4 md:px-6 h-20 flex items-center justify-between">
-                    <Logo />
-                    <div className="flex items-center gap-6">
-                        {user && (
-                            <Link href="/dashboard/student" className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors group">
-                                <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-                                <span className="text-sm font-medium">Voltar</span>
-                            </Link>
-                        )}
-                        {!user && (
-                            <Link href="/auth/login">
-                                <Button className="bg-white hover:bg-zinc-200 text-zinc-950 font-black uppercase italic tracking-widest rounded-xl text-xs px-6 h-10 shadow-lg shadow-white/5 transition-all hover:scale-105 active:scale-95">
-                                    Entrar
-                                </Button>
-                            </Link>
-                        )}
-                    </div>
-                </div>
-            </header>
-
-            <main className="container mx-auto px-4 md:px-6 pt-32 pb-20">
-                <div className="max-w-4xl mx-auto space-y-12">
-
-                    {/* Hero Section */}
-                    <div className="relative group p-8 md:p-12 bg-zinc-900/50 border border-zinc-800 rounded-3xl overflow-hidden shadow-2xl">
-                        <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 via-transparent to-transparent opacity-50" />
-
-                        <div className="relative z-10 flex flex-col md:flex-row gap-10 items-center md:items-start text-center md:text-left">
-                            <div className="relative shrink-0">
-                                <div className="absolute inset-0 bg-emerald-500 blur-3xl opacity-20 rounded-full" />
-                                <Avatar className="w-48 h-48 border-4 border-zinc-900 shadow-xl relative z-10">
-                                    <AvatarImage src={trainer.avatar_url} className="object-cover" />
-                                    <AvatarFallback className="bg-zinc-800 text-zinc-500 text-4xl font-black uppercase">
-                                        {trainer.full_name?.substring(0, 2)}
-                                    </AvatarFallback>
-                                </Avatar>
-                                {trainer.is_elite && (
-                                    <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-zinc-950 border border-amber-500/50 px-3 py-1 rounded-full flex items-center gap-1.5 shadow-lg z-20 whitespace-nowrap">
-                                        <Trophy className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
-                                        <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest">Elite Trainer</span>
-                                    </div>
-                                )}
-                            </div>
-
-                            <div className="flex-1 space-y-6">
-                                <div className="space-y-2">
-                                    <h1 className="text-4xl md:text-5xl font-black text-white italic uppercase tracking-tighter">
-                                        {trainer.full_name}
-                                    </h1>
-                                    <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 text-sm font-medium text-zinc-400">
-                                        {trainer.location && (
-                                            <div className="flex items-center gap-1.5">
-                                                <MapPin className="w-4 h-4 text-emerald-500" />
-                                                <span>{trainer.location}</span>
-                                            </div>
-                                        )}
-                                        {trainer.cref && (
-                                            <div className="flex items-center gap-1.5">
-                                                <ShieldCheck className="w-4 h-4 text-emerald-500" />
-                                                <span>CREF: {trainer.cref}</span>
-                                            </div>
-                                        )}
-                                        <div className="flex items-center gap-1.5 text-amber-500">
-                                            <Star className="w-4 h-4 fill-amber-500" />
-                                            <span>{Number(trainer.average_rating || 0).toFixed(1)} Rating</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="flex flex-wrap gap-2 justify-center md:justify-start">
-                                    {trainer.specialty && (
-                                        <span className="px-3 py-1 bg-zinc-800 rounded-lg text-xs font-bold text-zinc-300 uppercase tracking-wide">
-                                            {trainer.specialty}
-                                        </span>
-                                    )}
-                                </div>
-
-                                <div className="pt-4 flex flex-col sm:flex-row gap-4 justify-center md:justify-start items-center">
-                                    {trainer.whatsapp ? (
-                                        <Link
-                                            href={`https://wa.me/${trainer.whatsapp?.replace(/\D/g, '')}?text=Olá ${trainer.full_name}, vi seu perfil no RepTrail e gostaria de saber mais sobre sua consultoria!`}
-                                            target="_blank"
-                                        >
-                                            <Button className="h-14 px-8 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase italic tracking-wide w-full sm:w-auto shadow-lg shadow-emerald-500/20 text-lg">
-                                                <MessageCircle className="w-5 h-5 mr-2" />
-                                                Contratar Agora
-                                            </Button>
-                                        </Link>
-                                    ) : (
-                                        <Button disabled className="h-14 px-8 rounded-2xl bg-zinc-800 text-zinc-500 font-black uppercase italic tracking-wide w-full sm:w-auto cursor-not-allowed">
-                                            Agenda Fechada
-                                        </Button>
-                                    )}
-                                    {trainer.instagram && (
-                                        <Link
-                                            href={`https://instagram.com/${trainer.instagram.replace(/^@/, '')}`}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                        >
-                                            <Button variant="outline" className="h-14 px-10 rounded-2xl border-zinc-800 bg-zinc-900/50 hover:bg-zinc-800 hover:border-zinc-700 text-zinc-300 hover:text-white font-black uppercase italic tracking-wide w-full sm:w-auto transition-all duration-300 group shadow-xl active:scale-95">
-                                                <Instagram className="w-5 h-5 mr-2 group-hover:rotate-12 transition-transform text-pink-500" />
-                                                Instagram
-                                            </Button>
-                                        </Link>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <Tabs defaultValue="about" className="space-y-8">
-                        <div className="px-2">
-                            <TabsList className="bg-zinc-900/50 p-1 border border-zinc-800/50 rounded-2xl w-full sm:w-auto h-auto flex flex-nowrap overflow-x-auto justify-start gap-1 no-scrollbar">
-                                <TabsTrigger
-                                    value="about"
-                                    className="flex-1 sm:flex-none py-3 px-8 rounded-xl font-black uppercase italic tracking-widest text-[10px] data-[state=active]:bg-emerald-500 data-[state=active]:text-zinc-950 whitespace-nowrap"
-                                >
-                                    <User className="w-3.5 h-3.5 mr-2" />
-                                    Sobre
-                                </TabsTrigger>
-                                <TabsTrigger
-                                    value="results"
-                                    className="flex-1 sm:flex-none py-3 px-8 rounded-xl font-black uppercase italic tracking-widest text-[10px] data-[state=active]:bg-emerald-500 data-[state=active]:text-zinc-950 whitespace-nowrap"
-                                >
-                                    <Trophy className="w-3.5 h-3.5 mr-2" />
-                                    Resultados
-                                </TabsTrigger>
-                                <TabsTrigger
-                                    value="reviews"
-                                    className="flex-1 sm:flex-none py-3 px-8 rounded-xl font-black uppercase italic tracking-widest text-[10px] data-[state=active]:bg-emerald-500 data-[state=active]:text-zinc-950 whitespace-nowrap"
-                                >
-                                    <Star className="w-3.5 h-3.5 mr-2" />
-                                    Avaliações
-                                </TabsTrigger>
-                            </TabsList>
-                        </div>
-
-                        <TabsContent value="about" className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                            <div className="bg-zinc-900/30 border border-zinc-800/50 p-8 md:p-10 rounded-3xl space-y-6">
-                                <h2 className="text-2xl font-black text-white italic uppercase tracking-tight flex items-center gap-3 pb-4">
-                                    <ShieldCheck className="w-6 h-6 text-emerald-500" />
-                                    Biografia & Metodologia
-                                </h2>
-                                <p className="text-zinc-300 leading-relaxed text-lg italic">
-                                    {trainer.bio || "Treinador focado em resultados e alta performance. Especialista em ajudar alunos a atingirem seu potencial máximo."}
-                                </p>
-                            </div>
-
-                            <div className="grid md:grid-cols-3 gap-6">
-                                <div className="bg-zinc-900/30 border border-zinc-800/50 p-8 rounded-3xl space-y-4">
-                                    <div className="w-12 h-12 bg-zinc-950 rounded-xl flex items-center justify-center border border-zinc-800">
-                                        <UsersIcon className="w-6 h-6 text-emerald-500" />
-                                    </div>
-                                    <div>
-                                        <h3 className="text-xl font-black text-white italic uppercase">Transformações</h3>
-                                        <p className="text-zinc-500 text-xs mt-1">Alunos que mudaram de vida.</p>
-                                    </div>
-                                </div>
-                                <div className="bg-zinc-900/30 border border-zinc-800/50 p-8 rounded-3xl space-y-4">
-                                    <div className="w-12 h-12 bg-zinc-950 rounded-xl flex items-center justify-center border border-zinc-800">
-                                        <Dumbbell className="w-6 h-6 text-orange-500" />
-                                    </div>
-                                    <div>
-                                        <h3 className="text-xl font-black text-white italic uppercase">Metodologia</h3>
-                                        <p className="text-zinc-500 text-xs mt-1">Treinos periodizados foca na evolução.</p>
-                                    </div>
-                                </div>
-                                <div className="bg-zinc-900/30 border border-zinc-800/50 p-8 rounded-3xl space-y-4">
-                                    <div className="w-12 h-12 bg-zinc-950 rounded-xl flex items-center justify-center border border-zinc-800">
-                                        <ActivityIcon className="w-6 h-6 text-emerald-500" />
-                                    </div>
-                                    <div>
-                                        <h3 className="text-xl font-black text-white italic uppercase">Suporte Total</h3>
-                                        <p className="text-zinc-500 text-xs mt-1">Acompanhamento próximo e constante.</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {trainer.instagram && (
-                                <div className="relative p-8 md:p-12 bg-gradient-to-br from-zinc-900/50 to-zinc-950 border border-zinc-800 rounded-3xl overflow-hidden">
-                                    <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 via-transparent to-transparent opacity-50" />
-                                    <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
-                                        <div className="space-y-2 text-center md:text-left">
-                                            <h3 className="text-2xl font-black text-white italic uppercase tracking-tighter">
-                                                Acompanhe no Instagram
-                                            </h3>
-                                            <p className="text-zinc-400 text-sm">
-                                                Veja mais transformações e conteúdo exclusivo
-                                            </p>
-                                        </div>
-                                        <Link
-                                            href={`https://instagram.com/${trainer.instagram.replace(/^@/, '')}`}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                        >
-                                            <Button className="h-14 px-8 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase italic tracking-wide shadow-lg group/btn">
-                                                <Instagram className="w-5 h-5 mr-2" />
-                                                Seguir
-                                                <ExternalLink className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
-                                            </Button>
-                                        </Link>
-                                    </div>
-                                </div>
-                            )}
-                        </TabsContent>
-
-                        <TabsContent value="results" className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                            {photoPairs && photoPairs.length > 0 ? (
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                    {photoPairs.map((pair) => {
-                                        const oldUrl = pair.oldest.front_url || pair.oldest.back_url || pair.oldest.side_right_url || pair.oldest.side_left_url
-                                        const newUrl = pair.newest.front_url || pair.newest.back_url || pair.newest.side_right_url || pair.newest.side_left_url
-                                        if (!oldUrl || !newUrl) return null
-                                        return (
-                                            <div key={pair.studentName + pair.oldest.id} className="space-y-4">
-                                                <h3 className="text-lg font-black text-white italic uppercase tracking-widest px-1">
-                                                    {pair.studentName}
-                                                </h3>
-                                                <div className="grid grid-cols-2 gap-4">
-                                                    <div className="group relative aspect-[3/4] rounded-2xl overflow-hidden bg-zinc-900 border border-zinc-800">
-                                                        <Image
-                                                            src={oldUrl}
-                                                            alt={`${pair.studentName} no início`}
-                                                            fill
-                                                            className="object-cover group-hover:scale-105 transition-transform duration-500"
-                                                        />
-                                                        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-zinc-950/90 p-3">
-                                                            <p className="text-[10px] font-black text-white uppercase tracking-widest">Início</p>
-                                                            <p className="text-[9px] text-zinc-500 font-bold uppercase tracking-widest">
-                                                                {new Date(pair.oldest.created_at).toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' })}
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                    <div className="group relative aspect-[3/4] rounded-2xl overflow-hidden bg-zinc-900 border border-zinc-800">
-                                                        <Image
-                                                            src={newUrl}
-                                                            alt={`${pair.studentName} hoje`}
-                                                            fill
-                                                            className="object-cover group-hover:scale-105 transition-transform duration-500"
-                                                        />
-                                                        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-zinc-950/90 p-3">
-                                                            <p className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">Hoje</p>
-                                                            <p className="text-[9px] text-zinc-500 font-bold uppercase tracking-widest">
-                                                                {new Date(pair.newest.created_at).toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' })}
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        )
-                                    })}
-                                </div>
-                            ) : (
-                                <div className="text-center py-20 bg-zinc-900/30 border border-zinc-800/50 rounded-3xl">
-                                    <ImageIcon className="w-12 h-12 text-zinc-800 mx-auto mb-4" />
-                                    <p className="text-zinc-500 font-black uppercase tracking-widest text-xs">Nenhuma transformação registrada ainda.</p>
-                                </div>
-                            )}
-                        </TabsContent>
-
-                        <TabsContent value="reviews" className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                            {reviews && reviews.length > 0 ? (
-                                <div className="grid md:grid-cols-2 gap-6">
-                                    {reviews.map((review: any) => (
-                                        <Card key={review.id} className="bg-zinc-900/30 border border-zinc-800/50 rounded-3xl overflow-hidden group hover:border-zinc-700/50 transition-all">
-                                            <CardContent className="p-8 space-y-6">
-                                                <div className="flex items-start justify-between">
-                                                    <div className="flex items-center gap-4">
-                                                        <Avatar className="h-12 w-12 border border-zinc-800">
-                                                            <AvatarImage src={review.student?.avatar_url} />
-                                                            <AvatarFallback className="bg-zinc-800 text-zinc-500 text-xs font-black uppercase">
-                                                                {review.student?.full_name?.substring(0, 2) || 'A'}
-                                                            </AvatarFallback>
-                                                        </Avatar>
-                                                        <div>
-                                                            <p className="text-base font-black text-white italic uppercase tracking-tight">{review.student?.full_name || 'Aluno'}</p>
-                                                            <div className="flex items-center gap-1 mt-0.5">
-                                                                {[1, 2, 3, 4, 5].map((star) => (
-                                                                    <Star
-                                                                        key={star}
-                                                                        className={`w-3 h-3 ${star <= review.rating ? 'text-amber-500 fill-amber-500' : 'text-zinc-800'}`}
-                                                                    />
-                                                                ))}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <Quote className="w-6 h-6 text-zinc-800 group-hover:text-emerald-500/30 transition-colors" />
-                                                </div>
-                                                {review.comment && (
-                                                    <p className="text-zinc-300 text-base leading-relaxed italic">
-                                                        "{review.comment}"
-                                                    </p>
-                                                )}
-                                                <p className="text-[10px] text-zinc-600 font-black uppercase tracking-widest">
-                                                    {new Date(review.created_at).toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' })}
-                                                </p>
-                                            </CardContent>
-                                        </Card>
-                                    ))}
-                                </div>
-                            ) : (
-                                <div className="text-center py-20 bg-zinc-900/30 border border-zinc-800/50 rounded-3xl">
-                                    <Star className="w-12 h-12 text-zinc-800 mx-auto mb-4" />
-                                    <p className="text-zinc-500 font-black uppercase tracking-widest text-xs">Acesse e seja o primeiro aluno a avaliar.</p>
-                                </div>
-                            )}
-                        </TabsContent>
-                    </Tabs>
-                </div>
-            </main>
-        </div>
-    )
-}
-
-function UsersIcon(props: any) {
-    return (
-        <svg
-            {...props}
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+        <Surface
+            minHeight="screen"
+            bg="zinc"
+            bgOpacity={STORE_TOKENS.OPACITY.BACKGROUND}
+            overflowX="hidden"
+            display="flex"
+            direction="col"
+            position="relative"
         >
-            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-            <circle cx="9" cy="7" r="4" />
-            <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-        </svg>
-    )
-}
-
-function ActivityIcon(props: any) {
-    return (
-        <svg
-            {...props}
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-        >
-            <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-        </svg>
+            <BackgroundEffects variant="all" />
+            <Box position="relative" zIndex={10} flex1>
+                {mainContent}
+            </Box>
+        </Surface>
     )
 }

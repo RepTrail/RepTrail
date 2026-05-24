@@ -55,7 +55,7 @@ export class DietService {
                                 student_id,
                                 days_of_week,
                                 active,
-                                student:profiles(full_name)
+                                student:profiles(full_name, avatar_url)
                             )
                         `)
                         .eq('trainer_id', trainerId)

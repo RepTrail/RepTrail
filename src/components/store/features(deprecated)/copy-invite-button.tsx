@@ -6,7 +6,7 @@ import { useToast } from '@/hooks/use-toast'
 
 import { cn } from '@/lib/utils'
 
-import { PillButton } from '@/components/ui/pill-button'
+import { Button } from '@/components/store/base/button'
 
 export function CopyInviteButton({ trainerCode, className }: { trainerCode: string, className?: string }) {
     const [copied, setCopied] = useState(false)
@@ -24,16 +24,16 @@ export function CopyInviteButton({ trainerCode, className }: { trainerCode: stri
     }
 
     return (
-        <PillButton
+        <Button
             onClick={copyLink}
-            variant="orange"
+            variant="outline-orange"
             className={cn("w-full sm:w-auto", className)}
         >
             {copied ? (
-                <><Check className="w-4 h-4" /> Link Copiado</>
+                <><Check className="w-4 h-4 mr-2" /> Link Copiado</>
             ) : (
-                <><Link className="w-4 h-4" /> Copiar Link de Convite</>
+                <><Link className="w-4 h-4 mr-2" /> Copiar Link de Convite</>
             )}
-        </PillButton>
+        </Button>
     )
 }

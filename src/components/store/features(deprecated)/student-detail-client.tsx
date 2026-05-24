@@ -58,8 +58,6 @@ export function StudentDetailClient({ relationshipId, userId }: StudentDetailCli
     const { data: relationship } = useQuery({
         queryKey: QUERY_KEYS.trainer.studentDetail(relationshipId),
         queryFn: () => getStudentRelationship(relationshipId),
-        staleTime: 0,
-        refetchOnMount: 'always'
     })
 
     if (relationship) {
@@ -92,29 +90,21 @@ export function StudentDetailClient({ relationshipId, userId }: StudentDetailCli
         queryKey: QUERY_KEYS.trainer.studentHistory(studentId!),
         queryFn: () => getStudentWorkoutHistory(studentId!),
         enabled: !!studentId,
-        staleTime: 0,
-        refetchOnMount: 'always'
     })
     const { data: metricsHistory = { weights: [], bfs: [] } } = useQuery({
         queryKey: QUERY_KEYS.trainer.studentMetrics(studentId!),
         queryFn: () => getStudentMetricsHistory(studentId!),
         enabled: !!studentId,
-        staleTime: 0,
-        refetchOnMount: 'always'
     })
     const { data: chartData = { weights: [], bfs: [], frequency: [] } } = useQuery({
         queryKey: QUERY_KEYS.trainer.studentChartData(studentId!),
         queryFn: () => getStudentChartData(studentId!),
         enabled: !!studentId,
-        staleTime: 0,
-        refetchOnMount: 'always'
     })
     const { data: adherenceHistory = [] } = useQuery({
         queryKey: QUERY_KEYS.trainer.studentAdherence(studentId!),
         queryFn: () => getStudentAdherenceHistory(studentId!, 30),
         enabled: !!studentId,
-        staleTime: 0,
-        refetchOnMount: 'always'
     })
     const { data: trainerProfile } = useQuery({
         queryKey: QUERY_KEYS.profile.detail(userId),
@@ -124,22 +114,16 @@ export function StudentDetailClient({ relationshipId, userId }: StudentDetailCli
         queryKey: ['student-recent-activities', studentId],
         queryFn: () => getStudentRecentActivities(studentId!, 50),
         enabled: !!studentId,
-        staleTime: 0,
-        refetchOnMount: 'always'
     })
     const { data: cardioAssignments = [] } = useQuery({
         queryKey: QUERY_KEYS.cardio.assignments(studentId!),
         queryFn: () => getStudentCardioAssignments(studentId!),
         enabled: !!studentId,
-        staleTime: 0,
-        refetchOnMount: 'always'
     })
     const { data: ergogenics = [] } = useQuery({
         queryKey: QUERY_KEYS.ergogenics.all(studentId!),
         queryFn: () => getAssignedErgogenics(studentId!),
         enabled: !!studentId,
-        staleTime: 0,
-        refetchOnMount: 'always'
     })
 
     const { step: onboardingStep, complete } = useTrainerOnboarding(userId, {

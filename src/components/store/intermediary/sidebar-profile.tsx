@@ -100,7 +100,13 @@ export function SidebarProfile({
                     <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} variant="body-sm" color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
                         {user?.name || 'Usuário'}
                     </Font>
-                    <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.DIM}>
+                    <Font
+                        variant="sub-tiny"
+                        color={STORE_TOKENS.COLORS.TEXT.DIM}
+                        truncate
+                        lowercase
+                        display="block"
+                    >
                         {user?.email || ''}
                     </Font>
                 </Stack>
@@ -108,7 +114,7 @@ export function SidebarProfile({
 
             {/* Actions Area */}
             <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
-                {user?.isAdmin && (
+                {user?.isAdmin && !pathname.startsWith('/admin') && (
                     <Link href={adminHref}>
                         <Button
                             variant="outline-red"

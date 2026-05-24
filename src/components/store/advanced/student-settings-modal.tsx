@@ -45,7 +45,7 @@ export function SettingsModal({ hasTrainer = false, isTrainer = false }: Setting
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
     const [deletePassword, setDeletePassword] = useState('')
     const [isDeleting, setIsDeleting] = useState(false)
-    
+
     // UI Local State
     const [pwaInstalled, setPwaInstalled] = useState(false)
     const [notifications, setNotifications] = useState('off')
@@ -74,8 +74,8 @@ export function SettingsModal({ hasTrainer = false, isTrainer = false }: Setting
         mutationFn: async () => enableAutoTrainingTrialForCurrentUser(),
         onMutate: () => {
             const previous = queryClient.getQueryData(['auto-training-trial'])
-            queryClient.setQueryData(['auto-training-trial'], (old: any) => ({ 
-                ...old, 
+            queryClient.setQueryData(['auto-training-trial'], (old: any) => ({
+                ...old,
                 auto_training_status: 'trial',
                 auto_training_trial_used: true,
                 auto_training_trial_end: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
@@ -100,20 +100,20 @@ export function SettingsModal({ hasTrainer = false, isTrainer = false }: Setting
         const handleOpen = () => {
             setIsOpen(true)
             // Re-check standalone mode when modal opens
-            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
-                               (window.navigator as any).standalone === true ||
-                               document.referrer.includes('android-app://')
-            
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
+                (window.navigator as any).standalone === true ||
+                document.referrer.includes('android-app://')
+
             if (isStandalone) {
                 setPwaInstalled(true)
             }
         }
         window.addEventListener('open-settings', handleOpen)
-        
+
         // Initial check
         if (typeof window !== 'undefined') {
-            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
-                               (window.navigator as any).standalone === true
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
+                (window.navigator as any).standalone === true
             if (isStandalone) setPwaInstalled(true)
 
             if ('Notification' in window && Notification.permission === 'granted') {
@@ -155,13 +155,13 @@ export function SettingsModal({ hasTrainer = false, isTrainer = false }: Setting
             >
                 <Box position="relative">
                     {(loadingTerms || loadingTrial) && (
-                        <Box 
-                            position="absolute" 
-                            pin="inset" 
-                            zIndex={50} 
-                            display="flex" 
-                            align="center" 
-                            justify="center" 
+                        <Box
+                            position="absolute"
+                            pin="inset"
+                            zIndex={50}
+                            display="flex"
+                            align="center"
+                            justify="center"
                             rounded={STORE_TOKENS.RADIUS.SYSTEM}
                             bg="black"
                             bgOpacity={20}
@@ -169,9 +169,9 @@ export function SettingsModal({ hasTrainer = false, isTrainer = false }: Setting
                             <Icon icon={Loader2} color="emerald" size="md" animate="spin" />
                         </Box>
                     )}
-                    
+
                     <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
-                        
+
                         {!pwaInstalled && (
                             <SettingsActionCard
                                 icon={Smartphone}
@@ -242,7 +242,7 @@ export function SettingsModal({ hasTrainer = false, isTrainer = false }: Setting
                                         actionLabel="ATIVO"
                                         actionIcon={CheckCircle2}
                                         buttonVariant="outline-emerald"
-                                        onAction={() => {}}
+                                        onAction={() => { }}
                                         disabled
                                     />
                                 )}
@@ -323,7 +323,7 @@ export function SettingsModal({ hasTrainer = false, isTrainer = false }: Setting
                     }
 
                     const permission = await Notification.requestPermission()
-                    
+
                     if (permission === 'granted') {
                         toast({ title: "Notificações ativadas", description: "Você receberá alertas importantes do seu treinador." })
                         setNotifications('on')
@@ -349,7 +349,7 @@ export function SettingsModal({ hasTrainer = false, isTrainer = false }: Setting
                 subtitle="Ação irreversível."
                 icon={Trash2}
                 variant="red"
-                confirmLabel="EXCLUIR PERMANENTEMENTE"
+                confirmLabel="Excluir"
                 isLoading={isDeleting}
                 onConfirm={() => {
                     if (!deletePassword) {
@@ -366,9 +366,9 @@ export function SettingsModal({ hasTrainer = false, isTrainer = false }: Setting
                 }}
             >
                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <Box 
-                        padding={STORE_TOKENS.PADDING.ELEMENT} 
-                        rounded={STORE_TOKENS.RADIUS.SYSTEM} 
+                    <Box
+                        padding={STORE_TOKENS.PADDING.ELEMENT}
+                        rounded={STORE_TOKENS.RADIUS.SYSTEM}
                         border
                         borderColor="red"
                         borderOpacity={20}

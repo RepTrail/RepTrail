@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom'
 import { Font } from './font'
 import { Icon } from './icon'
 import { ChevronDown, Check } from 'lucide-react'
+import { Input } from './input'
 import { cn } from '@/lib/utils'
 import { useRegistry } from '@/components/store/advanced/registry-context'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
@@ -24,6 +25,9 @@ interface FormSelectProps {
     placeholder?: string
     onChange?: (value: string) => void
     error?: string
+    isSearchable?: boolean
+    searchQuery?: string
+    onSearchChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 export function FormSelect({
@@ -34,10 +38,13 @@ export function FormSelect({
     defaultValue,
     placeholder = 'Selecionar...',
     onChange,
-    error
+    error,
+    isSearchable = false,
+    searchQuery = '',
+    onSearchChange
 }: FormSelectProps) {
     const { primaryColor } = useRegistry()
-        const [open, setOpen] = useState(false)
+    const [open, setOpen] = useState(false)
     const [shouldRender, setShouldRender] = useState(false)
     const [animateState, setAnimateState] = useState<'closed' | 'open'>('closed')
     const [internalSelected, setInternalSelected] = useState(defaultValue ?? value ?? '')
@@ -61,7 +68,7 @@ export function FormSelect({
         red: 'border-red-500/50 bg-red-500/5',
         zinc: 'border-zinc-500/50 bg-zinc-500/5',
     }
-    
+
     const activeClasses = activeClassesMap[primaryColor as keyof typeof activeClassesMap] || activeClassesMap.emerald
 
     const optionActiveClassesMap = {
@@ -98,11 +105,11 @@ export function FormSelect({
             const target = e.target as Node
             // Check if click is outside trigger AND outside any portal content
             const isOutsideTrigger = ref.current && !ref.current.contains(target)
-            
+
             // Portals are children of document.body, but we can check if the target
             // has our specific dropdown data-attribute or is inside a div with it.
             const isDropdownClick = (target as HTMLElement).closest('[data-select-dropdown]')
-            
+
             if (isOutsideTrigger && !isDropdownClick) {
                 setOpen(false)
             }
@@ -117,7 +124,7 @@ export function FormSelect({
             const rect = ref.current.getBoundingClientRect()
             const spaceBelow = window.innerHeight - rect.bottom
             const shouldOpenUp = spaceBelow < 250
-            
+
             setCoords({
                 top: shouldOpenUp ? rect.top : rect.bottom,
                 left: rect.left,
@@ -134,7 +141,7 @@ export function FormSelect({
             const rect = ref.current.getBoundingClientRect()
             const spaceBelow = window.innerHeight - rect.bottom
             const shouldOpenUp = spaceBelow < 250
-            
+
             setCoords({
                 top: shouldOpenUp ? rect.top : rect.bottom,
                 left: rect.left,
@@ -181,8 +188,8 @@ export function FormSelect({
     }
 
     return (
-        <div 
-            className="flex flex-col w-full relative gap-[10px]" 
+        <div
+            className="flex flex-col w-full relative gap-[10px]"
             ref={ref}
         >
             {name && (
@@ -210,29 +217,33 @@ export function FormSelect({
                         error && 'border-red-500/50'
                     )}
                 >
-                    <span className={cn(
-                        'text-sm font-medium',
-                        selectedOption ? 'text-white' : 'text-zinc-600'
-                    )}>
+                    <Font
+                        variant="body-sm"
+                        weight="medium"
+                        color={selectedOption ? STORE_TOKENS.COLORS.TEXT.PRIMARY : STORE_TOKENS.COLORS.TEXT.DIM}
+                    >
                         {selectedOption?.label ?? placeholder}
+                    </Font>
+                    <span className={cn('inline-flex transition-transform duration-200', open && 'rotate-180')}>
+                        <Icon
+                            icon={ChevronDown}
+                            size="xs"
+                            color={open ? 'primary' : 'zinc-500'}
+                        />
                     </span>
-                    <ChevronDown className={cn(
-                        'w-4 h-4 text-zinc-500 transition-transform duration-200',
-                        open && `rotate-180 text-${primaryColor}-400`
-                    )} />
                 </button>
 
                 {/* Dropdown via Portal */}
                 {shouldRender && typeof document !== 'undefined' && createPortal(
-                    <div 
+                    <div
                         data-select-dropdown
                         onMouseDown={(e) => e.stopPropagation()}
                         className={cn(
                             "fixed z-[9999] border-2 border-white/5 bg-zinc-900 shadow-2xl overflow-hidden transition-all duration-150 ease-out",
                             STORE_TOKENS.RADIUS.SYSTEM === 'system' ? 'rounded-[5px]' : 'rounded-full',
                             openUp ? "origin-bottom" : "origin-top",
-                            animateState === 'open' 
-                                ? "opacity-100 scale-100 translate-y-0" 
+                            animateState === 'open'
+                                ? "opacity-100 scale-100 translate-y-0"
                                 : "opacity-0 scale-95 translate-y-[-10px]"
                         )}
                         style={{
@@ -257,17 +268,27 @@ export function FormSelect({
                                     )}
                                 >
                                     <div className="flex flex-col gap-0.5">
-                                        <span className="text-[11px] font-black uppercase tracking-widest">
+                                        <Font
+                                            variant="label-caps"
+                                            color={isSelected ? 'primary' : STORE_TOKENS.COLORS.TEXT.PRIMARY}
+                                        >
                                             {opt.label}
-                                        </span>
+                                        </Font>
                                         {opt.description && (
-                                            <span className="text-[10px] text-zinc-600 normal-case font-normal tracking-normal">
+                                            <Font
+                                                variant="sub-tiny"
+                                                color={STORE_TOKENS.COLORS.TEXT.DIM}
+                                            >
                                                 {opt.description}
-                                            </span>
+                                            </Font>
                                         )}
                                     </div>
                                     {isSelected && (
-                                        <Check className={cn("w-3.5 h-3.5 shrink-0", currentActiveOptionStyles.icon)} />
+                                        <Icon
+                                            icon={Check}
+                                            size="xs"
+                                            color="primary"
+                                        />
                                     )}
                                 </button>
                             )
@@ -278,7 +299,7 @@ export function FormSelect({
             </div>
 
             {error && (
-                <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.ERROR} weight="black" uppercase tracking="widest" className="pl-1">
+                <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.ERROR} weight="black" uppercase tracking="widest">
                     {error}
                 </Font>
             )}

@@ -1,7 +1,11 @@
-import { WorkoutBuilder } from "@/components/store/features(deprecated)/workout-builder"
-import { notFound } from "next/navigation"
+import { WorkoutBuilderSmart } from "@/components/store/advanced/workout-builder-smart"
+import { notFound, redirect } from "next/navigation"
 import { createClient } from '@/lib/supabase/server'
 import { WorkoutDaySelector } from '@/components/store/features(deprecated)/student-workout-day-selector'
+import { RegistryMain } from "@/components/store/advanced/registry-main"
+import { Box } from "@/components/store/base/box"
+import { Stack } from "@/components/store/base/stack"
+import { headers } from "next/headers"
 
 export default async function EditStudentWorkoutPage({
     params,
@@ -9,20 +13,18 @@ export default async function EditStudentWorkoutPage({
     params: Promise<{ id: string }>
 }) {
     const { id } = await params
-    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) {
-        console.log('[EDIT] No user found')
-        return notFound()
-    }
+    const headerList = await headers()
+    const userId = headerList.get('x-user-id')
+    if (!userId) redirect('/auth/login')
 
-    console.log('[EDIT] Edit workout request:', { workoutId: id, userId: user.id })
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
+    console.log('[EDIT] Edit workout request:', { workoutId: id, userId })
 
     // Verify auto-training is active
     const { data: profile } = await supabase
         .from('profiles')
         .select('auto_training_status')
-        .eq('id', user.id)
+        .eq('id', userId)
         .single()
 
     const isAutoTrainingActive = profile?.auto_training_status === 'active' || profile?.auto_training_status === 'trial'
@@ -38,7 +40,7 @@ export default async function EditStudentWorkoutPage({
         .from('workouts')
         .select('*')
         .eq('id', id)
-        .eq('trainer_id', user.id) // Ensure user owns this workout
+        .eq('trainer_id', userId) // Ensure user owns this workout
         .single()
 
     console.log('[EDIT] Workout found:', { workout })
@@ -62,7 +64,7 @@ export default async function EditStudentWorkoutPage({
         .from('assigned_workouts')
         .select('id, day_of_week')
         .eq('workout_id', id)
-        .eq('student_id', user.id)
+        .eq('student_id', userId)
         .eq('active', true)
         .maybeSingle()
 
@@ -70,13 +72,28 @@ export default async function EditStudentWorkoutPage({
     console.log('[EDIT] Exercises found:', exercises?.length || 0)
 
     return (
-        <div className="max-w-5xl mx-auto  sm:px-6 lg:px-8 py-8">
-            {assignment?.id ? (
-                <div className="flex justify-end pb-6">
-                    <WorkoutDaySelector userId={user.id} assignmentId={assignment.id} dayOfWeek={assignment.day_of_week ?? null} />
-                </div>
-            ) : null}
-            <WorkoutBuilder workout={workoutWithExercises as any} backHref="/dashboard/student/workouts" />
-        </div>
+        <RegistryMain
+            title="DETALHES DO TREINO"
+            subtitle="Veja o planejamento enviado pelo seu treinador."
+            icon="Dumbbell"
+            contextLabel="Treinos & Performance"
+            showTabs={false}
+            showHeader={false}
+        >
+            <Stack fullWidth gap="element">
+                {assignment?.id ? (
+                    <Box display="flex" justify="end">
+                        <WorkoutDaySelector userId={userId} assignmentId={assignment.id} dayOfWeek={assignment.day_of_week ?? null} />
+                    </Box>
+                ) : null}
+                <WorkoutBuilderSmart 
+                    workout={workoutWithExercises as any} 
+                    backHref="/dashboard/student/workouts" 
+                    contextLabel="TREINOS E PERFORMANCE"
+                    icon="Dumbbell"
+                    contextColor="orange"
+                />
+            </Stack>
+        </RegistryMain>
     )
 }

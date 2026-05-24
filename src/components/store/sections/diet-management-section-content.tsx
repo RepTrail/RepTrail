@@ -12,12 +12,14 @@ import { useRouter } from 'next/navigation'
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { ENTITIES } from '@/lib/outbox-db'
+import { AssignedStudentInfo } from '@/components/store/intermediary/assigned-student-mini-card'
 
 interface DietManagementSectionContentProps {
     userId?: string
     diets?: any[]
-    mode?: 'auto' | 'personal'
+    mode?: 'auto' | 'personal' | 'trainer'
     isEmpty?: boolean
+    betaTesterMode?: boolean
 }
 
 /**
@@ -27,8 +29,12 @@ export function DietManagementSectionContent({
     userId = 'mock-id',
     diets,
     mode = 'auto',
-    isEmpty = false
+    isEmpty = false,
+    betaTesterMode = false
 }: DietManagementSectionContentProps) {
+    const libraryQueryKey = QUERY_KEYS.diets.library(userId)
+    const assignedQueryKey = QUERY_KEYS.diets.all(userId)
+    const activeQueryKey = mode === 'auto' || mode === 'trainer' ? libraryQueryKey : assignedQueryKey
     const [actionModal, setActionModal] = React.useState<{ isOpen: boolean, type: RegistryActionType, data?: any }>({
         isOpen: false,
         type: 'assign_diet'
@@ -42,13 +48,13 @@ export function DietManagementSectionContent({
     const router = useRouter()
 
     const { mutate: deleteMutation } = useOptimisticMutation({
-        queryKey: mode === 'auto' ? QUERY_KEYS.diets.library(userId) : QUERY_KEYS.diets.all(userId),
+        queryKey: activeQueryKey,
         entity: ENTITIES.DIET,
         actionName: 'delete-diet'
     })
 
     const { mutate: duplicateMutation } = useOptimisticMutation({
-        queryKey: mode === 'auto' ? QUERY_KEYS.diets.library(userId) : QUERY_KEYS.diets.all(userId),
+        queryKey: activeQueryKey,
         entity: ENTITIES.DIET,
         actionName: 'duplicate-diet'
     })
@@ -60,7 +66,7 @@ export function DietManagementSectionContent({
     })
 
     const { mutate: updateMutation } = useOptimisticMutation({
-        queryKey: mode === 'auto' ? QUERY_KEYS.diets.library(userId) : QUERY_KEYS.diets.all(userId),
+        queryKey: activeQueryKey,
         entity: ENTITIES.DIET,
         actionName: 'update-diet'
     })
@@ -104,6 +110,7 @@ export function DietManagementSectionContent({
     }
 
     React.useEffect(() => {
+        if (mode === 'trainer') return
         const handler = (e: any) => {
             if (e.detail?.type === 'create_diet') {
                 openAction('create_diet', {})
@@ -111,7 +118,7 @@ export function DietManagementSectionContent({
         }
         window.addEventListener('open-diet-action', handler)
         return () => window.removeEventListener('open-diet-action', handler)
-    }, [])
+    }, [mode])
 
     const openAction = (type: RegistryActionType, data?: any) => {
         const selectedDays = (data.assigned_diets || []).map((a: any) => a.day_of_week)
@@ -129,7 +136,13 @@ export function DietManagementSectionContent({
             <EmptyState 
                 icon={Utensils}
                 title="SEM DIETAS"
-                description={mode === 'auto' ? "Você ainda não possui protocolos alimentares cadastrados." : "Seu treinador ainda não atribuiu dietas para sua conta."}
+                description={
+                    mode === 'trainer'
+                        ? (betaTesterMode ? 'Crie uma nova dieta para começar.' : 'Importe um PDF ou crie uma nova dieta para começar.')
+                        : mode === 'auto'
+                            ? "Você ainda não possui protocolos alimentares cadastrados."
+                            : "Seu treinador ainda não atribuiu dietas para sua conta."
+                }
             />
         )
     }
@@ -140,33 +153,65 @@ export function DietManagementSectionContent({
         <>
             <Grid cols={{ base: 1, md: 2, lg: 3 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
                 {diets.map((diet, idx) => {
-                    const assignedDays = (diet.assigned_diets || [])
-                        .filter((a: any) => a.day_of_week !== null && a.day_of_week !== undefined)
-                        .map((a: any) => dayNamesShort[a.day_of_week % 7])
-                    
+                    const daySet = new Set<number>()
+
+                    if (mode === 'trainer') {
+                        ;(diet.assignments || []).forEach((a: any) => {
+                            const days = Array.isArray(a.days_of_week)
+                                ? a.days_of_week
+                                : typeof a.days_of_week === 'string'
+                                    ? JSON.parse(a.days_of_week)
+                                    : []
+                            days.forEach((d: number) => daySet.add(d))
+                        })
+                    } else {
+                        ;(diet.assigned_diets || []).forEach((a: any) => {
+                            if (a.day_of_week !== null && a.day_of_week !== undefined) {
+                                daySet.add(a.day_of_week)
+                            }
+                        })
+                    }
+
+                    const assignedDays = Array.from(daySet)
+                        .sort((a, b) => a - b)
+                        .map((d) => dayNamesShort[d % 7])
+
+                    const mealsCount = diet.meals?.[0]?.count
+                        ?? (Array.isArray(diet.meals) ? diet.meals.length : 0)
+                        ?? diet.meals_count
+                        ?? 0
+
+                    const assignedStudents: AssignedStudentInfo[] | undefined = mode === 'trainer'
+                        ? (diet.assignments || []).map((a: any) => ({
+                            id: a.student_id || `pending-${a.id}`,
+                            name: a.student?.full_name || 'Aluno',
+                            avatarUrl: a.student?.avatar_url,
+                            isPlaceholder: a.is_placeholder,
+                        }))
+                        : undefined
+
+                    const editPath = mode === 'trainer'
+                        ? `/dashboard/trainer/diets/${diet.id}`
+                        : `/dashboard/student/diet/${diet.id}`
+
                     return (
                         <ManagementCardPremium 
                             key={diet.id || idx}
                             title={diet.name.toUpperCase()}
-                            description={diet.description || 'Plano alimentar oficial.'}
+                            description={diet.description || (mode === 'trainer' ? 'Sem descrição disponível.' : 'Plano alimentar oficial.')}
                             days={assignedDays}
-                            mainStat={{ label: 'REFEIÇÕES', value: diet.meals_count || diet.meals?.length || 0 }}
+                            assignedStudents={assignedStudents}
+                            mainStat={{ label: 'REFEIÇÕES', value: mealsCount }}
                             date={new Date(diet.created_at).toLocaleDateString('pt-BR')}
                             icon={Utensils}
                             mode={mode}
-                            color="primary"
+                            color={STORE_TOKENS.COLORS.BRAND as any}
                             registryType="diet"
-                            onView={() => {
-                                if (mode === 'personal') {
-                                    setPreviewDiet({ isOpen: true, dietId: diet.id, dietName: diet.name })
-                                } else {
-                                    router.push(`/dashboard/student/diet/${diet.id}`)
-                                }
-                            }}
-                            onSchedule={() => openAction('assign_diet', diet)}
-                            onEdit={() => router.push(`/dashboard/student/diet/${diet.id}`)}
-                            onDelete={() => openAction('confirm_delete', diet)}
-                            onDuplicate={() => openAction('confirm_duplicate', diet)}
+                            onView={mode === 'personal' ? () => setPreviewDiet({ isOpen: true, dietId: diet.id, dietName: diet.name }) : undefined}
+                            onSchedule={mode === 'auto' ? () => openAction('assign_diet', diet) : undefined}
+                            onEdit={() => router.push(editPath)}
+                            onDelete={mode !== 'personal' ? () => openAction('confirm_delete', diet) : undefined}
+                            onDuplicate={mode !== 'personal' ? () => openAction('confirm_duplicate', diet) : undefined}
                         />
                     )
                 })}

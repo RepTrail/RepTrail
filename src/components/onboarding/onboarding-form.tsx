@@ -12,13 +12,11 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { useState } from 'react'
 import {
-    User,
     ChevronRight,
     ChevronLeft,
     Target,
     Activity,
     ShieldCheck,
-    Dumbbell,
     Stethoscope,
     Code
 } from 'lucide-react'

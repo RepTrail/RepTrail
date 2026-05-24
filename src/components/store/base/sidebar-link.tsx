@@ -35,7 +35,13 @@ export function BaseSidebarLink({
                   'text-blue-500'
         ) : "text-zinc-600 group-hover:text-zinc-400"
       )}>
-        <Icon icon={icon} size="sm" />
+        <Icon
+          icon={icon}
+          size="sm"
+          color={active ? variant : 'zinc-600'}
+          groupHoverColor="current"
+          transition
+        />
       </div>
       <span>{label}</span>
     </>

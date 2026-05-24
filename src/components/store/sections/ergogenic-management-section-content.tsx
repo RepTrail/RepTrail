@@ -9,7 +9,7 @@ import { EmptyState } from '@/components/store/intermediary/empty-state'
 
 interface ErgogenicManagementSectionContentProps {
     items?: any[]
-    mode?: 'auto' | 'personal'
+    mode?: 'auto' | 'personal' | 'trainer'
     isEmpty?: boolean
     onEdit?: (item: any) => void
     onDelete?: (item: any) => void
@@ -34,7 +34,13 @@ export function ErgogenicManagementSectionContent({
             <EmptyState 
                 icon={FlaskConical}
                 title="SEM ERGOGÊNICOS"
-                description={mode === 'auto' ? "Você ainda não possui protocolos de ergogênicos cadastrados." : "Seu treinador ainda não atribuiu ergogênicos para sua conta."}
+                description={
+                    mode === 'trainer'
+                        ? 'Nenhuma substância no protocolo deste aluno. Use "Adicionar Substância" para começar.'
+                        : mode === 'auto'
+                          ? 'Você ainda não possui protocolos de ergogênicos cadastrados.'
+                          : 'Seu treinador ainda não atribuiu ergogênicos para sua conta.'
+                }
             />
         )
     }
@@ -63,6 +69,7 @@ export function ErgogenicManagementSectionContent({
                         onDelete={() => onDelete?.(item)}
                         onDuplicate={() => onDuplicate?.(item)}
                         onSchedule={() => onSchedule?.(item)}
+                        notes={item.notes}
                     />
                 )
             })}

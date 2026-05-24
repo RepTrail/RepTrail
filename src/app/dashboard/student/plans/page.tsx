@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import { headers } from 'next/headers'
 import { CreditCard, Search, Check, Zap, ArrowRight, ShieldCheck, Trophy, Target } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
@@ -9,15 +10,16 @@ import { StudentPaymentButtons } from '@/components/store/advanced/student-payme
 export const dynamic = 'force-dynamic'
 
 export default async function StudentPlansPage() {
-    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    const headerList = await headers()
+    const userId = headerList.get('x-user-id')
+    if (!userId) redirect('/auth/login')
 
-    if (!user) redirect('/auth/login')
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
 
     const { data: profile } = await supabase
         .from('profiles')
         .select('auto_training_status, auto_training_trial_end, asaas_subscription_id')
-        .eq('id', user.id)
+        .eq('id', userId)
         .single()
 
     const now = new Date()
@@ -219,4 +221,3 @@ export default async function StudentPlansPage() {
         </div>
     )
 }
-

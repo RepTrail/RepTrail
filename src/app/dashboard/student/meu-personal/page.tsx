@@ -3,13 +3,16 @@ import { getStudentTrainer } from '@/actions/student-actions'
 import { redirect } from 'next/navigation'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { MeuPersonalSectionContent } from '@/components/store/sections/meu-personal-section-content'
+import { headers } from 'next/headers'
 
 export default async function MeuPersonalPage() {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) redirect('/auth/login')
+    const headerList = await headers()
+    const userId = headerList.get('x-user-id')
+    if (!userId) redirect('/auth/login')
 
-    const trainerRel = await getStudentTrainer(user.id)
+    const supabase = await createClient()
+
+    const trainerRel = await getStudentTrainer(userId)
     if (!trainerRel || !trainerRel.trainer) redirect('/dashboard/student/buscar-personal')
 
     const trainer = trainerRel.trainer
@@ -18,7 +21,7 @@ export default async function MeuPersonalPage() {
     const { data: existingReview } = await supabase
         .from('trainer_reviews')
         .select('*')
-        .eq('student_id', user.id)
+        .eq('student_id', userId)
         .eq('trainer_id', trainer.id)
         .maybeSingle()
 

@@ -1,5 +1,5 @@
 
-import { ShieldCheck, Calendar, RefreshCcw, CheckCircle2, Users } from "lucide-react";
+import { ShieldCheck, CheckCircle2, Users } from "lucide-react";
 
 export function GuaranteeSection() {
     return (

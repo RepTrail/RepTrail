@@ -6,8 +6,7 @@ import { useState, useTransition } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import {
-    getAllTrainers, updateUserPlanTier, toggleEliteStatus,
-    toggleBillingExemption, grantEliteTrial, impersonateUser, deleteUser
+    getAllTrainers, updateUserPlanTier, impersonateUser, deleteUser
 } from '@/actions/admin-actions'
 import { createClient } from '@/lib/supabase/client'
 import { RegistryProvider } from '@/components/store/advanced/registry-context'

@@ -26,6 +26,7 @@ import {
   Flame,
   CreditCard,
   UserCheck,
+  LayoutDashboard,
   LucideIcon
 } from 'lucide-react'
 import { useRegistry } from '@/components/store/advanced/registry-context'
@@ -52,6 +53,7 @@ const iconMap: Record<string, LucideIcon> = {
   Flame,
   CreditCard,
   UserCheck,
+  LayoutDashboard,
 }
 
 interface RegistryMainProps {
@@ -106,8 +108,7 @@ export function RegistryMain({
             variant={primaryColor as any}
             icon={IconComp}
             title="Em Breve"
-            description={`A seção ${activeTab.toUpperCase()} está sendo preparada para o sistema RepTrail.`}
-          />
+            description={`A seção ${activeTab.toUpperCase()} está sendo preparada para o sistema RepTrail.`}          />
         )
     }
   }

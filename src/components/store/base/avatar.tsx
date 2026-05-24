@@ -19,7 +19,7 @@ export function BaseAvatar({
     size = 'md',
     src,
     className
-}: Omit<BaseAvatarProps, 'className' | 'style'> & { className?: string }) {
+}: BaseAvatarProps) {
     const { primaryColor } = useRegistry()
     const resolvedVariant = variant === 'primary' ? primaryColor : variant
 

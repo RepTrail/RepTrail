@@ -1,5 +1,5 @@
-import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import { headers } from 'next/headers'
 import { getQueryClient } from '@/lib/get-query-client'
 import { HydrationBoundary, dehydrate } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/lib/query-keys'
@@ -14,23 +14,20 @@ export const metadata = {
 }
 
 export default async function StudentProfilePage() {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-
-    if (!user) {
-        redirect('/auth/login')
-    }
+    const headerList = await headers()
+    const userId = headerList.get('x-user-id')
+    if (!userId) redirect('/auth/login')
 
     const queryClient = getQueryClient()
 
     await Promise.all([
         queryClient.prefetchQuery({
-            queryKey: QUERY_KEYS.student.details(user.id),
-            queryFn: () => getStudentProfile(user.id)
+            queryKey: QUERY_KEYS.student.details(userId),
+            queryFn: () => getStudentProfile(userId)
         }),
         queryClient.prefetchQuery({
-            queryKey: QUERY_KEYS.profile.trainer(user.id),
-            queryFn: () => getStudentTrainer(user.id)
+            queryKey: QUERY_KEYS.profile.trainer(userId),
+            queryFn: () => getStudentTrainer(userId)
         })
     ])
 
@@ -43,7 +40,7 @@ export default async function StudentProfilePage() {
             showTabs={false}
         >
             <HydrationBoundary state={dehydrate(queryClient)}>
-                <StudentProfileSectionContent userId={user.id} />
+                <StudentProfileSectionContent userId={userId} />
             </HydrationBoundary>
         </RegistryMain>
     )

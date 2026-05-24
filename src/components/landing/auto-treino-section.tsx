@@ -1,6 +1,6 @@
 "use client";
 
-import { Zap, Play, CheckCircle2, ShieldOff, CreditCard, ArrowRight } from "lucide-react";
+import { Zap, CheckCircle2, ShieldOff, CreditCard, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { fbqEvent } from "@/lib/meta-pixel";

@@ -1,0 +1,58 @@
+'use client'
+
+import React from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { QUERY_KEYS } from '@/lib/query-keys'
+import { getTrainerProfile } from '@/actions/trainer-actions'
+import { Stack } from '@/components/store/base/stack'
+import { Box } from '@/components/store/base/box'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
+
+// Tools
+import { UnifiedCreationDialog } from '@/components/store/features(deprecated)/unified-creation-dialog'
+import { CopyInviteButton } from '@/components/store/features(deprecated)/copy-invite-button'
+import { Button } from '@/components/store/base/button'
+import { Plus } from 'lucide-react'
+
+interface TrainerStudentsActionsSectionProps {
+    userId: string
+}
+
+export function TrainerStudentsActionsSection({ userId }: TrainerStudentsActionsSectionProps) {
+    const { data: profile } = useQuery({
+        queryKey: QUERY_KEYS.trainer.profile(userId),
+        queryFn: () => getTrainerProfile(userId),
+    })
+
+    return (
+        <Stack 
+            direction={{ base: 'col', md: 'row' }} 
+            align={{ base: 'stretch', md: 'center' }} 
+            justify="end" 
+            gap={STORE_TOKENS.SPACING.ELEMENT}
+            fullWidth
+        >
+            <Box fullWidth={{ base: true, md: false }}>
+                <CopyInviteButton trainerCode={profile?.trainer_code || ''} />
+            </Box>
+            <Box fullWidth={{ base: true, md: false }}>
+                <UnifiedCreationDialog
+                    title="Vincular Novo Aluno"
+                    description="Insira o email que o aluno usará para criar a conta e sincronizar os dados. O email pode ser provisório e alterado depois."
+                    trigger={
+                        <Button variant="outline-emerald" fullWidth={{ base: true, sm: false }}>
+                            <Plus className="w-4 h-4 mr-2" /> Vincular Aluno
+                        </Button>
+                    }
+                    fields={[
+                        { name: 'email', label: 'Email da Conta', placeholder: 'ex: aluno@email.com', type: 'text', required: true },
+                        { name: 'monthlyFee', label: 'Valor da Mensalidade (R$)', placeholder: '0.00', type: 'number', required: false }
+                    ]}
+                    actionType="create-student"
+                    successMessage="Aluno vinculado com sucesso!"
+                    footerLabel="Finalizar Vínculo"
+                />
+            </Box>
+        </Stack>
+    )
+}

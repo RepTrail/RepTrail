@@ -1,16 +1,16 @@
-import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { ImportPdfSectionContent } from '@/components/store/sections/import-pdf-section-content'
+import { headers } from 'next/headers'
 
 export const metadata = {
     title: 'Importar PDF | RepTrail'
 }
 
 export default async function StudentImportPdfPage() {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) redirect('/login')
+    const headerList = await headers()
+    const userId = headerList.get('x-user-id')
+    if (!userId) redirect('/auth/login')
 
     return (
         <RegistryMain
@@ -20,7 +20,7 @@ export default async function StudentImportPdfPage() {
             contextLabel="Inteligência Artificial"
             showTabs={false}
         >
-            <ImportPdfSectionContent role="student" userId={user.id} />
+            <ImportPdfSectionContent role="student" userId={userId} />
         </RegistryMain>
     )
 }

@@ -14,19 +14,25 @@ interface IconProps {
   animate?: 'spin'
   opacity?: 0 | 10 | 20 | 30 | 40 | 50 | 60 | 70 | 80 | 90 | 100
   style?: never
+  groupHoverTranslateX?: 1 | 2 | 3 | 4 | 'full'
+  groupHoverColor?: 'current'
+  transition?: boolean
 }
 
 export function Icon({
   icon: IconComponent,
   size = 'md',
-  color,
+  color = 'zinc-400',
   spin,
   animation,
   className,
   animate,
   opacity,
-  style
-}: Omit<IconProps, 'className' | 'style'> & { className?: string, style?: React.CSSProperties }) {
+  style,
+  groupHoverTranslateX,
+  groupHoverColor,
+  transition
+}: IconProps) {
   const { primaryColor } = useRegistry()
   const resolvedColor = color === 'primary' ? primaryColor : color
 
@@ -34,11 +40,19 @@ export function Icon({
     <IconComponent
       style={style}
       className={cn(
+        'shrink-0',
         className,
+        transition && 'transition-colors transition-transform',
         (spin || animate === 'spin') && 'animate-spin',
         animation === 'bounce' && 'animate-bounce',
         animation === 'pulse' && 'animate-pulse',
         opacity !== undefined && `opacity-${opacity}`,
+        groupHoverColor === 'current' && 'group-hover:text-current',
+        groupHoverTranslateX === 1 && 'group-hover:translate-x-1',
+        groupHoverTranslateX === 2 && 'group-hover:translate-x-2',
+        groupHoverTranslateX === 3 && 'group-hover:translate-x-3',
+        groupHoverTranslateX === 4 && 'group-hover:translate-x-4',
+        groupHoverTranslateX === 'full' && 'group-hover:translate-x-full',
         // Sizes
         size === 'xs' && 'w-3 h-3',
         size === 'sm' && 'w-4 h-4',
@@ -76,9 +90,12 @@ interface IconBoxProps {
   rounded?: 'system' | 'full'
   className?: never
   style?: never
+  groupHoverTranslateX?: 1 | 2 | 3 | 4 | 'full'
+  groupHoverColor?: 'current'
+  transition?: boolean
 }
 
-export function IconBox({ icon, variant = 'zinc', size = 'md', rounded = 'system', className, style }: Omit<IconBoxProps, 'className' | 'style'> & { className?: string, style?: React.CSSProperties }) {
+export function IconBox({ icon, variant = 'zinc', size = 'md', rounded = 'system', className, style }: IconBoxProps) {
   const { primaryColor } = useRegistry()
   const resolvedVariant = variant === 'primary' ? primaryColor : variant
 

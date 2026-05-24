@@ -73,7 +73,7 @@ export function TrialWarningPopup({ eliteUntil }: TrialWarningPopupProps) {
 
                     <div className="pt-4 space-y-3">
                         <a
-                            href="/dashboard/trainer/plans"
+                            href="/dashboard/trainer/profile"
                             onClick={() => setIsOpen(false)}
                             className="w-full h-14 bg-white hover:bg-zinc-200 text-zinc-950 rounded-2xl flex items-center justify-center gap-3 font-black uppercase italic tracking-wide transition-all active:scale-95 group"
                         >

@@ -32,13 +32,13 @@ export function PdfActionsFooter({ type, role, isSaving, bindingHooks, setParsed
                 </DSButton>
                 <DSButton
                     id="tour-save-button"
-                    variant="outline-emerald"
+                    variant="outline-primary"
                     onClick={onSave}
                     disabled={isSaving || (role === 'trainer' && bindingMode === 'create' && (!placeholderName || !placeholderEmail))}
                     gap={STORE_TOKENS.SPACING.ELEMENT}
                     loading={isSaving}
                 >
-                    {!isSaving && <Icon icon={Check} size="xs" color="emerald" />}
+                    {!isSaving && <Icon icon={Check} size="xs" color="primary" />}
                     {bindingMode === 'create'
                         ? `Salvar e Vincular a ${placeholderName || detectedStudentName || 'Novo Aluno'}`
                         : `Salvar ${type === 'workout' ? 'Treino' : 'Dieta'}`

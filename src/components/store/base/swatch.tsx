@@ -11,7 +11,7 @@ interface SwatchProps {
   opacity?: SwatchOpacity
   size?: SwatchSize
   rounded?: 'system' | 'full' | 'none'
-  className?: string
+  className?: never
 }
 
 /**

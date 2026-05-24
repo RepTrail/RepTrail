@@ -33,9 +33,8 @@ export function Stack({
   fullWidth,
   wrap,
   className,
-  id,
   ...props
-}: Omit<StackProps, 'className' | 'style'> & { className?: string, style?: React.CSSProperties }) {
+}: StackProps) {
   
   const gapClasses = {
     none: 'gap-0',
@@ -72,7 +71,6 @@ export function Stack({
 
   return (
     <Box 
-      id={id}
       fullWidth={fullWidth}
       flex1={flex1}
       align={align}
@@ -86,7 +84,7 @@ export function Stack({
         wrap === 'nowrap' && 'flex-nowrap',
         divide && (direction === 'col' ? 'divide-y divide-white/10' : 'divide-x divide-white/10'),
         className
-      )}
+      ) as any}
       {...props}
     >
       {children}

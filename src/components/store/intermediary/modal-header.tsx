@@ -9,6 +9,7 @@ import { Box } from '@/components/store/base/box'
 import { CardHeader } from '@/components/store/base/surface'
 import { X, LucideIcon } from 'lucide-react'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
+import { Inline } from '@/components/store/base/layout'
 
 interface ModalHeaderProps {
     title: string
@@ -30,32 +31,22 @@ export function ModalHeader({ title, subtitle, icon, variant, isLoading, onClose
             bg={STORE_TOKENS.COLORS.BACKGROUND} 
             bgOpacity={STORE_TOKENS.OPACITY.BACKGROUND} 
             shrink={0} 
-            gap={STORE_TOKENS.SPACING.CONTAINER} 
-            direction="col"
         >
-            <Stack direction="row" align="center" justify="between" fullWidth>
-                {icon && <IconBox icon={icon} variant={variant as any} />}
-                
-                {/* Desktop Title */}
-                <Box display={{ base: 'none', md: 'flex' }} flex1 padding={STORE_TOKENS.SPACING.ELEMENT}>
-                    <Stack gap="none">
+            <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center" justify="between" fullWidth>
+                <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center" flex1>
+                    {icon && <IconBox icon={icon} variant={variant as any} />}
+                    <Stack gap="none" flex1>
                         <Font variant="body" weight="black" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} uppercase italic tracking="normal">{title}</Font>
                         {subtitle && <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{subtitle}</Font>}
                     </Stack>
+                </Inline>
+
+                <Box display={{ base: 'none', md: 'block' }}>
+                    <Button variant="close" rounded={STORE_TOKENS.RADIUS.SYSTEM} isIconOnly onClick={onClose} disabled={isLoading}>
+                        <Icon icon={X} size="sm" />
+                    </Button>
                 </Box>
-
-                <Button variant="close" rounded={STORE_TOKENS.RADIUS.SYSTEM} isIconOnly onClick={onClose} disabled={isLoading}>
-                    <Icon icon={X} size="sm" />
-                </Button>
-            </Stack>
-
-            {/* Mobile Title */}
-            <Box display={{ base: 'flex', md: 'none' }} fullWidth>
-                <Stack gap="none">
-                    <Font variant="body" weight="black" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} uppercase italic tracking="normal">{title}</Font>
-                    {subtitle && <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{subtitle}</Font>}
-                </Stack>
-            </Box>
+            </Inline>
         </CardHeader>
     )
 }

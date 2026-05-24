@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Search, Users, Trophy, Star, ShieldCheck, CheckCircle2 } from "lucide-react";
+import { ArrowRight, Users, Trophy, Star, ShieldCheck, CheckCircle2 } from "lucide-react";
 import { LandingBadge } from "./landing-badge";
 import { fbqEvent } from "@/lib/meta-pixel";
 
@@ -85,7 +85,7 @@ export function HeroSection() {
                                 <div className="absolute top-2 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-zinc-800 z-50 ring-1 ring-white/10" />
 
                                 <video
-                                    src="/Videos/desktop video.mp4"
+                                    src="/Videos/desktop-video.mp4"
                                     autoPlay
                                     loop
                                     muted

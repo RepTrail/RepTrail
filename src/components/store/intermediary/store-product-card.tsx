@@ -56,7 +56,7 @@ export function StoreProductCard({
             <Box position="absolute" top={12} left={12} zIndex={STORE_TOKENS.Z_INDEX.OVERLAY}>
                 <Badge
                     label={category || 'OFERTA'}
-                    color="orange"
+                    color="primary"
                     variant="glass"
                     size="sm"
                 />

@@ -38,20 +38,19 @@ export async function proxy(request: NextRequest) {
         }
     )
 
-    // IMPORTANT: Avoid calling getUser() if you don't need user data in middleware
-    const { data: { user } } = await supabase.auth.getUser()
+    // Avoid calling getUser() in proxy/middleware (can be slow) - use claims instead.
+    const { data: claimsData } = await supabase.auth.getClaims()
+    const userId = claimsData?.claims?.sub || null
 
-    if (user) {
-        requestHeaders.set('x-user-id', user.id)
-    }
+    if (userId) requestHeaders.set('x-user-id', userId)
 
     // Protect /dashboard routes
-    if (request.nextUrl.pathname.startsWith('/dashboard') && !user) {
+    if (request.nextUrl.pathname.startsWith('/dashboard') && !userId) {
         return NextResponse.redirect(new URL('/auth/login', request.url))
     }
 
     // Protect /admin routes
-    if (request.nextUrl.pathname.startsWith('/admin') && !user) {
+    if (request.nextUrl.pathname.startsWith('/admin') && !userId) {
         return NextResponse.redirect(new URL('/auth/login', request.url))
     }
 
@@ -61,7 +60,7 @@ export async function proxy(request: NextRequest) {
     }
 
     // Redirect authenticated users away from /auth
-    if (request.nextUrl.pathname.startsWith('/auth') && user) {
+    if (request.nextUrl.pathname.startsWith('/auth') && userId) {
         return NextResponse.redirect(new URL('/dashboard', request.url))
     }
 
@@ -82,14 +81,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-    matcher: [
-        /*
-         * Match all request paths except for the ones starting with:
-         * - _next/static (static files)
-         * - _next/image (image optimization files)
-         * - favicon.ico (favicon file)
-         * Feel free to modify this pattern to include more paths.
-         */
-        '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
-    ],
+    matcher: ['/dashboard/:path*', '/admin/:path*', '/auth/:path*', '/aluno/:path*', '/personal/:path*'],
 }

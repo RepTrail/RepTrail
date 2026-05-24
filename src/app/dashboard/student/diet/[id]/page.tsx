@@ -1,23 +1,26 @@
 import { getDietDetails } from "@/actions/diet-actions"
-import { notFound } from "next/navigation"
+import { notFound, redirect } from "next/navigation"
 import { createClient } from '@/lib/supabase/server'
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { getQueryClient } from '@/lib/get-query-client'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { StudentDietDetailClient } from "@/components/store/features(deprecated)/student-diet-detail-client"
 import { RegistryMain } from "@/components/store/advanced/registry-main"
+import { headers } from "next/headers"
 
 export default async function StudentDietEditPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params
+    const headerList = await headers()
+    const userId = headerList.get('x-user-id')
+
+    if (!userId) redirect('/auth/login')
+
     const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    
-    if (!user) return notFound()
 
     const { data: profile } = await supabase
         .from('profiles')
         .select('auto_training_status')
-        .eq('id', user.id)
+        .eq('id', userId)
         .single()
 
     const isAutoTrainingActive = profile?.auto_training_status === 'active' || profile?.auto_training_status === 'trial'
@@ -46,7 +49,7 @@ export default async function StudentDietEditPage({ params }: { params: Promise<
             >
                 <StudentDietDetailClient 
                     dietId={id} 
-                    userId={user.id} 
+                    userId={userId} 
                     initialData={diet} 
                 />
             </RegistryMain>

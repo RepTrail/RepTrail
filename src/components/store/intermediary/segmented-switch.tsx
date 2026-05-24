@@ -14,7 +14,7 @@ interface Option {
   id: string
   label: string
   icon?: LucideIcon
-  activeVariant?: 'outline-red' | 'outline-blue' | 'outline-amber' | 'outline-emerald' | 'outline-orange' | 'outline-indigo'
+  activeVariant?: 'outline-red' | 'outline-blue' | 'outline-amber' | 'outline-emerald' | 'outline-orange' | 'outline-indigo' | 'outline-primary'
 }
 
 interface SegmentedSwitchProps {

@@ -9,7 +9,7 @@ interface CircularProgressProps {
     size?: 'sm' | 'md' | 'lg'
     color?: 'emerald' | 'amber' | 'red' | 'blue' | 'primary'
     thickness?: number
-    className?: string
+    className?: never
 }
 
 /**

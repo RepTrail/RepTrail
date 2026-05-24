@@ -1,5 +1,5 @@
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Star, TrendingUp, Users, Wallet } from "lucide-react";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Star } from "lucide-react";
 import { SectionHeader } from "./section-header";
 
 export function SocialProofSection() {

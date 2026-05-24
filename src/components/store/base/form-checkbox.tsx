@@ -5,7 +5,6 @@ import { Font } from './font'
 import { Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useRegistry } from '@/components/store/advanced/registry-context'
-import { Stack } from './stack'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 interface FormCheckboxProps {

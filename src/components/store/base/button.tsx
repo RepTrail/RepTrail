@@ -57,6 +57,8 @@ export interface ButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonE
   width?: string
   minWidth?: string | { base: string, sm?: string, md?: string, lg?: string }
   padding?: SpacingToken
+  justify?: 'start' | 'center' | 'end' | 'between'
+  textAlign?: 'left' | 'center' | 'right'
   shine?: boolean
   className?: never
   style?: never
@@ -95,10 +97,12 @@ export function Button({
   width,
   minWidth,
   padding,
+  justify,
+  textAlign,
   shine,
   className,
   ...props
-}: Omit<ButtonProps, 'className' | 'style'> & { className?: string, style?: React.CSSProperties }) {
+}: ButtonProps) {
   
   const { primaryColor } = useRegistry()
   
@@ -193,7 +197,7 @@ export function Button({
     <Component
       disabled={props.disabled || loading}
       className={cn(
-        'inline-flex items-center justify-center font-bold transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none uppercase italic tracking-wider leading-none whitespace-nowrap [&_svg]:text-current [&_svg]:stroke-current [&_*]:text-current',
+        'inline-flex flex-wrap-reverse items-center justify-center text-center font-bold transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none uppercase italic tracking-wider leading-tight [&_svg]:text-current [&_svg]:stroke-current [&_*]:text-current',
         variantClasses[resolvedVariant as keyof typeof variantClasses],
         sizeClasses[size],
         roundedClasses[rounded],
@@ -259,13 +263,19 @@ export function Button({
             typeof minWidthMd === 'number' ? `md:min-w-[${minWidthMd}px]` :
             `md:min-w-[${String(minWidthMd).replace(/\s+/g, '')}]`
         ),
+        justify === 'start' && 'justify-start',
+        justify === 'center' && 'justify-center',
+        justify === 'end' && 'justify-end',
+        justify === 'between' && 'justify-between',
+        textAlign === 'left' && 'text-left',
+        textAlign === 'center' && 'text-center',
+        textAlign === 'right' && 'text-right',
         className
       )}
       style={{
           position: 'relative',
           overflow: 'hidden',
-          width: typeof width === 'number' ? `${width}px` : width,
-          ...props.style
+          width: typeof width === 'number' ? `${width}px` : width
       }}
       {...props}
     >

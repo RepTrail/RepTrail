@@ -106,7 +106,7 @@ export function MarketplaceSectionContent() {
                         description="NENHUM PRODUTO ENCONTRADO PARA SUA BUSCA."
                     />
                 ) : (
-                    <Grid cols={{ base: 2, md: 2, lg: 4 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                    <Grid cols={{ base: 1, md: 2, lg: 4 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
                         {filtered.map((product: any) => (
                             <StoreProductCard
                                 key={product.id}

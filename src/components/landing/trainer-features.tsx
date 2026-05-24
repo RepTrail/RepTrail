@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { ShieldCheck, ArrowRight, UserCheck, Trophy, Camera, Users, HeartPulse, FileText, Sparkles } from "lucide-react";
+import { ShieldCheck, ArrowRight, UserCheck, Sparkles } from "lucide-react";
 import { SectionHeader } from "./section-header";
 import { cn } from "@/lib/utils";
 
@@ -74,7 +74,7 @@ export function TrainerFeatures() {
                             </div>
 
                             <video
-                                src="/Videos/landing page do personal.MP4"
+                                src="/Videos/landing-page-do-personal.mp4"
                                 autoPlay
                                 loop
                                 muted

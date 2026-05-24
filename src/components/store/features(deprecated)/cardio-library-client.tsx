@@ -28,8 +28,6 @@ export function CardioLibraryClient({
     const { data: cardios = initialCardios } = useQuery({
         queryKey: QUERY_KEYS.cardio.library(userId),
         queryFn: () => getCardioLibrary(userId),
-        staleTime: 0,
-        refetchOnMount: 'always'
     })
 
     return (

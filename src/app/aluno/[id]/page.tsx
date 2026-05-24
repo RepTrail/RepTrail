@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { headers } from 'next/headers'
 import { StudentPublicProfileMain } from '@/components/store/advanced/student-public-profile-main'
 import { StudentPublicMetrics } from '@/components/store/advanced/student-public-metrics'
 import { StudentPublicHistory } from '@/components/store/advanced/student-public-history'
@@ -10,7 +11,6 @@ import { getStudentWorkoutHistory } from '@/actions/log-actions'
 import { DashboardShell } from '@/components/store/advanced/dashboard-shell'
 import { RegistryProvider } from '@/components/store/advanced/registry-context'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
-import { UserCheck } from 'lucide-react'
 
 export const metadata = {
     title: 'Perfil do Aluno | RepTrail',
@@ -45,7 +45,6 @@ const TRAINER_LINKS = [
     { href: '/dashboard/trainer/cardio',     label: 'Cardio',       icon: 'Activity' },
     { href: '/dashboard/trainer/ergogenics', label: 'Ergogênicos',  icon: 'FlaskConical' },
     { href: '/dashboard/trainer/loja',       label: 'Loja',         icon: 'ShoppingBag' },
-    { href: '/dashboard/trainer/plans',      label: 'Faturamento',  icon: 'CreditCard' },
     { href: '/dashboard/trainer/ranking',    label: 'Ranking',      icon: 'Trophy' },
     { href: '/dashboard/trainer/profile',    label: 'Meu Perfil',   icon: 'User' },
 ]
@@ -64,16 +63,17 @@ export default async function StudentPublicProfilePage({
 }) {
     const { id: studentId } = await params
     const supabase = await createClient()
-    const { data: { user: authUser } } = await supabase.auth.getUser()
-    const isOwner = authUser?.id === studentId
+    const headerList = await headers()
+    const viewerId = headerList.get('x-user-id')
+    const isOwner = viewerId === studentId
 
     // ── Get Viewer Profile if Logged In (to determine sidebar role/color) ───────
     let viewerProfile: any = null
-    if (authUser) {
+    if (viewerId) {
         const { data } = await supabase
             .from('profiles')
             .select('role, full_name, avatar_url, email, is_admin, is_affiliate')
-            .eq('id', authUser.id)
+            .eq('id', viewerId)
             .single()
         viewerProfile = data
     }
@@ -188,7 +188,7 @@ export default async function StudentPublicProfilePage({
                     mobileLinks={mobileLinks}
                     profileHref={profileHref}
                     user={{
-                        id: authUser!.id,
+                        id: viewerId!,
                         name: viewerProfile.full_name,
                         email: viewerProfile.email,
                         avatar_url: viewerProfile.avatar_url,

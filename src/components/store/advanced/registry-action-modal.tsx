@@ -3,8 +3,10 @@
 import React from 'react'
 import { Modal } from './modal'
 import { Stack } from '@/components/store/base/stack'
+import { Inline } from '@/components/store/base/layout'
 import { Grid } from '@/components/store/base/grid'
 import { Font } from '@/components/store/base/font'
+import { Icon } from '@/components/store/base/icon'
 import { Input } from '@/components/store/base/input'
 import { FormSelect } from '@/components/store/base/form-select'
 import { FormSwitch } from '@/components/store/base/form-switch'
@@ -13,6 +15,7 @@ import { Callout } from '../intermediary/callout'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import {
     Clock,
+    Calendar,
     Dumbbell,
     Utensils,
     Activity,
@@ -46,6 +49,7 @@ interface RegistryActionModalProps {
     onConfirm: (data?: any) => void
     initialData?: any
     isLoading?: boolean
+    students?: any[]
 }
 
 /**
@@ -58,20 +62,23 @@ export function RegistryActionModal({
     type,
     onConfirm,
     initialData,
-    isLoading = false
+    isLoading = false,
+    students
 }: RegistryActionModalProps) {
     const [selectedDays, setSelectedDays] = React.useState<number[]>(initialData?.selectedDays || [])
     const [duration, setDuration] = React.useState<number>(initialData?.duration || initialData?.duration_minutes || 30)
     const [intensity, setIntensity] = React.useState<string>(initialData?.intensity || initialData?.suggested_intensity || 'Moderada')
+    const [selectedStudentId, setSelectedStudentId] = React.useState<string>(initialData?.student_id || '')
 
-    // Update state when initialData changes or modal opens
+    // Update state when modal opens
     React.useEffect(() => {
         if (isOpen) {
             setSelectedDays(initialData?.selectedDays || [])
             setDuration(initialData?.duration || initialData?.duration_minutes || 30)
             setIntensity(initialData?.intensity || initialData?.suggested_intensity || 'Moderada')
+            setSelectedStudentId(initialData?.student_id || '')
         }
-    }, [isOpen, initialData])
+    }, [isOpen])
 
     // Configuration mapping based on type
     const config = {
@@ -80,42 +87,42 @@ export function RegistryActionModal({
             subtitle: 'Escolha os dias da semana para este treino.',
             icon: Plus,
             variant: 'primary' as const,
-            confirmLabel: 'CONFIRMAR ATRIBUIÇÃO'
+            confirmLabel: 'Confirmar'
         },
         assign_diet: {
             title: 'AGENDAR DIETA',
             subtitle: 'Escolha os dias da semana para esta dieta.',
             icon: Plus,
             variant: 'primary' as const,
-            confirmLabel: 'CONFIRMAR ATRIBUIÇÃO'
+            confirmLabel: 'Confirmar'
         },
         assign_cardio: {
             title: 'AGENDAR CARDIO',
             subtitle: 'Escolha os dias da semana para este protocolo.',
             icon: Activity,
             variant: 'primary' as const,
-            confirmLabel: 'CONFIRMAR ATRIBUIÇÃO'
+            confirmLabel: 'Confirmar'
         },
         assign_ergogenic: {
             title: 'AGENDAR APLICAÇÕES',
             subtitle: 'Escolha os dias da semana para este ergogênico.',
             icon: Plus,
             variant: 'primary' as const,
-            confirmLabel: 'CONFIRMAR ATRIBUIÇÃO'
+            confirmLabel: 'Confirmar'
         },
         edit_cardio: {
             title: 'EDITAR CARDIO',
             subtitle: 'Ajuste os parâmetros da atividade.',
             icon: Edit3,
             variant: 'primary' as const,
-            confirmLabel: 'CONFIRMAR ATRIBUIÇÃO'
+            confirmLabel: 'Confirmar'
         },
         edit_ergogenic: {
             title: 'EDITAR ERGOGÊNICO',
             subtitle: 'Ajuste a dosagem e frequência.',
             icon: Edit3,
             variant: 'primary' as const,
-            confirmLabel: 'CONFIRMAR ATRIBUIÇÃO'
+            confirmLabel: 'Confirmar'
         },
         confirm_duplicate: {
             title: 'DUPLICAR REGISTRO',
@@ -129,7 +136,7 @@ export function RegistryActionModal({
             subtitle: 'Esta ação não poderá ser desfeita.',
             icon: Trash2,
             variant: 'red' as const,
-            confirmLabel: 'EXCLUIR PERMANENTEMENTE'
+            confirmLabel: 'Excluir'
         },
         create_cardio: {
             title: 'NOVO MODELO DE CARDIO',
@@ -169,6 +176,15 @@ export function RegistryActionModal({
             case 'assign_training':
                 return (
                     <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
+                        {students && students.length > 0 && (
+                            <FormSelect
+                                label="ALUNO"
+                                options={students.map((s: any) => ({ label: s.student?.full_name || s.full_name || s.name || 'Aluno sem nome', value: s.student_id || s.id }))}
+                                value={selectedStudentId}
+                                onChange={setSelectedStudentId}
+                                placeholder="Selecione o aluno"
+                            />
+                        )}
                         <WeekdayPicker
                             label="DIA PROGRAMADO"
                             selectedDays={selectedDays}
@@ -181,6 +197,15 @@ export function RegistryActionModal({
             case 'assign_diet':
                 return (
                     <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
+                        {students && students.length > 0 && (
+                            <FormSelect
+                                label="ALUNO"
+                                options={students.map((s: any) => ({ label: s.student?.full_name || s.full_name || s.name || 'Aluno sem nome', value: s.student_id || s.id }))}
+                                value={selectedStudentId}
+                                onChange={setSelectedStudentId}
+                                placeholder="Selecione o aluno"
+                            />
+                        )}
                         <WeekdayPicker
                             label="DIAS DA SEMANA"
                             selectedDays={selectedDays.length > 0 ? selectedDays : [0, 1, 2, 3, 4, 5, 6]}
@@ -196,41 +221,50 @@ export function RegistryActionModal({
             case 'create_workout' as any:
                 return (
                     <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
-                        <Input 
-                            label={type === 'create_diet' ? "NOME DA DIETA *" : "NOME DO CARDIO *"} 
-                            placeholder={type === 'create_diet' ? "Ex: Dieta Cutting 2000kcal" : "Ex: Corrida na Esteira"} 
+                        <Input
+                            label={type === 'create_diet' ? "NOME DA DIETA *" : "NOME DO CARDIO *"}
+                            placeholder={type === 'create_diet' ? "Ex: Dieta Cutting 2000kcal" : "Ex: Corrida na Esteira"}
                             id="diet_name"
                             defaultValue={initialData?.name}
                         />
                         {type !== 'create_diet' && (
                             <Grid cols={{ base: 2, md: 2 }} gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                    <Input 
-                                        label="DURAÇÃO (MIN)" 
-                                        icon={<Clock size={16} />} 
-                                        placeholder="30" 
-                                        type="number" 
-                                        value={duration}
-                                        onChange={(e) => setDuration(parseInt((e.target as HTMLInputElement).value) || 0)}
-                                    />
-                                    <FormSelect
-                                        label="INTENSIDADE"
-                                        options={[
-                                            { label: 'Leve', value: 'Leve' },
-                                            { label: 'Moderada', value: 'Moderada' },
-                                            { label: 'Alta', value: 'Alta' },
-                                            { label: 'Máxima', value: 'Máxima' }
-                                        ]}
-                                        value={intensity}
-                                        onChange={setIntensity}
-                                    />
-                                </Grid>
+                                <Input
+                                    label="DURAÇÃO (MIN)"
+                                    icon={<Clock size={16} />}
+                                    placeholder="30"
+                                    type="number"
+                                    value={duration}
+                                    onChange={(e) => setDuration(parseInt((e.target as HTMLInputElement).value) || 0)}
+                                />
+                                <FormSelect
+                                    label="INTENSIDADE"
+                                    options={[
+                                        { label: 'Leve', value: 'Leve' },
+                                        { label: 'Moderada', value: 'Moderada' },
+                                        { label: 'Alta', value: 'Alta' },
+                                        { label: 'Máxima', value: 'Máxima' }
+                                    ]}
+                                    value={intensity}
+                                    onChange={setIntensity}
+                                />
+                            </Grid>
                         )}
-                        <Textarea 
-                            label="DESCRIÇÃO (OPCIONAL)" 
+                        <Textarea
+                            label="DESCRIÇÃO (OPCIONAL)"
                             placeholder={type === 'create_diet' ? "Instruções gerais sobre o plano..." : "Ex: 45 minutos em ritmo moderado"}
                             id="diet_description"
                             defaultValue={initialData?.description}
                         />
+                        {(type === 'assign_cardio' || type === 'edit_cardio') && students && students.length > 0 && (
+                            <FormSelect
+                                label="ALUNO"
+                                options={students.map((s: any) => ({ label: s.student?.full_name || s.full_name || s.name || 'Aluno sem nome', value: s.student_id || s.id }))}
+                                value={selectedStudentId}
+                                onChange={setSelectedStudentId}
+                                placeholder="Selecione o aluno"
+                            />
+                        )}
                         <WeekdayPicker
                             label="DIAS DA SEMANA"
                             selectedDays={selectedDays}
@@ -244,10 +278,10 @@ export function RegistryActionModal({
             case 'create_ergogenic' as any:
                 return (
                     <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
-                        
-                        <Input 
-                            label="NOME DA SUBSTÂNCIA *" 
-                            defaultValue={initialData?.item} 
+
+                        <Input
+                            label="NOME DA SUBSTÂNCIA *"
+                            defaultValue={initialData?.item}
                             placeholder="Ex: Durateston"
                         />
 
@@ -256,15 +290,15 @@ export function RegistryActionModal({
                                 DOSAGEM SEMANAL TOTAL *
                             </Font>
                             <Stack direction={{ base: 'col', md: 'row' }} gap={STORE_TOKENS.SPACING.ELEMENT} align="stretch">
-                                <Input 
-                                    type="number" 
+                                <Input
+                                    type="number"
                                     defaultValue={initialData?.dosage}
                                     weight="black"
                                     width={{ base: 'full', md: '70%' }}
                                     height="full"
                                     placeholder="0"
                                 />
-                                <FormSwitch 
+                                <FormSwitch
                                     options={[
                                         { label: 'MG', value: 'mg' },
                                         { label: 'ML', value: 'ml' },
@@ -277,13 +311,13 @@ export function RegistryActionModal({
                             </Stack>
                         </Stack>
 
-                        <WeekdayPicker 
+                        <WeekdayPicker
                             label="DIAS DE APLICAÇÃO *"
                             selectedDays={selectedDays}
                             onChange={setSelectedDays}
                         />
 
-                        <Textarea 
+                        <Textarea
                             label="INSTRUÇÕES / NOTAS (OPCIONAL)"
                             placeholder="Ex: Aplicar no glúteo..."
                             defaultValue={initialData?.notes}
@@ -291,7 +325,7 @@ export function RegistryActionModal({
                         />
                     </Stack>
                 )
-            
+
             case 'confirm_duplicate':
                 return (
                     <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
@@ -333,20 +367,21 @@ export function RegistryActionModal({
                 if (['assign_cardio', 'edit_cardio', 'create_cardio', 'create_diet', 'create_workout' as any].includes(type)) {
                     const nameInput = document.getElementById('diet_name') as HTMLInputElement
                     const descInput = document.getElementById('diet_description') as HTMLTextAreaElement
-                    
-                    onConfirm({ 
-                        duration, 
-                        intensity, 
+
+                    onConfirm({
+                        duration,
+                        intensity,
                         selectedDays,
                         name: nameInput?.value,
-                        description: descInput?.value
+                        description: descInput?.value,
+                        student_id: selectedStudentId
                     })
                 } else if (type === ('create_ergogenic' as any) || type === 'edit_ergogenic') {
                     const nameInput = document.querySelector('input[placeholder="Ex: Durateston"]') as HTMLInputElement
                     const dosageInput = document.querySelector('input[type="number"]') as HTMLInputElement
                     const unitSwitch = document.querySelector('[role="switch"][aria-checked="true"]') // This might be tricky
                     // Actually, I should use state for these in the modal if I want it robust
-                    
+
                     onConfirm({
                         name: nameInput?.value,
                         weekly_dosage: Number(dosageInput?.value),
@@ -355,7 +390,7 @@ export function RegistryActionModal({
                         notes: (document.querySelector('textarea') as HTMLTextAreaElement)?.value
                     })
                 } else if (['assign_training', 'assign_diet', 'assign_ergogenic'].includes(type)) {
-                    onConfirm(selectedDays)
+                    onConfirm({ selectedDays, student_id: selectedStudentId })
                 } else {
                     onConfirm()
                 }

@@ -7,7 +7,7 @@ import { Icon, IconBox } from '@/components/store/base/icon'
 import { Button, ButtonVariant } from '@/components/store/base/button'
 import { X, LucideIcon } from 'lucide-react'
 import { Surface, CardHeader } from '@/components/store/base/surface'
-import { ModalOverlay, ModalContainer, Divider } from '@/components/store/base/layout'
+import { ModalOverlay, ModalContainer, Divider, Inline } from '@/components/store/base/layout'
 import { Box } from '@/components/store/base/box'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
@@ -88,31 +88,26 @@ export function Modal({
         <Surface variant="base" padding="none" rounded={STORE_TOKENS.RADIUS.SYSTEM} direction="col" flex1 minHeight={0} overflow="hidden">
           <Box flex1 direction="col" minHeight={0} overflow="hidden">
             {/* Header */}
-            <CardHeader bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.BACKGROUND} shrink={0} gap={STORE_TOKENS.SPACING.CONTAINER} direction="col">
-              {/* Mobile: Row 1 (Icon + Close) | Desktop: Part of Row 1 */}
-              <Stack direction="row" align="center" justify="between" fullWidth>
-                {icon && <IconBox icon={icon} variant={variant as any} />}
-                
-                {/* Desktop Title (Visible only on md+) */}
-                <Box display={{ base: 'none', md: 'flex' }} flex1 padding="none">
-                  <Stack gap="none">
+            <CardHeader 
+              bg={STORE_TOKENS.COLORS.BACKGROUND} 
+              bgOpacity={STORE_TOKENS.OPACITY.BACKGROUND} 
+              shrink={0} 
+            >
+              <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center" justify="between" fullWidth>
+                <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center" flex1>
+                  {icon && <IconBox icon={icon} variant={variant as any} />}
+                  <Stack gap="none" flex1 justify="center">
                     <Font variant="body" weight="black" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} uppercase italic tracking="normal">{title}</Font>
                     {subtitle && <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{subtitle}</Font>}
                   </Stack>
+                </Inline>
+
+                <Box display={{ base: 'none', md: 'block' }}>
+                  <Button variant="close" rounded={STORE_TOKENS.RADIUS.SYSTEM} isIconOnly onClick={onClose} disabled={isLoading}>
+                    <Icon icon={X} size="sm" />
+                  </Button>
                 </Box>
-
-                <Button variant="close" rounded={STORE_TOKENS.RADIUS.SYSTEM} isIconOnly onClick={onClose} disabled={isLoading}>
-                  <Icon icon={X} size="sm" />
-                </Button>
-              </Stack>
-
-              {/* Mobile Title (Visible only on base, hidden on md+) */}
-              <Box display={{ base: 'flex', md: 'none' }} fullWidth>
-                <Stack gap="none">
-                  <Font variant="body" weight="black" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} uppercase italic tracking="normal">{title}</Font>
-                  {subtitle && <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{subtitle}</Font>}
-                </Stack>
-              </Box>
+              </Inline>
             </CardHeader>
 
             <Divider color={STORE_TOKENS.COLORS.DIVIDER.SUBTLE} />

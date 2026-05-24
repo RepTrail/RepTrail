@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { ArrowRight, Loader2, Link } from 'lucide-react'
+import { ArrowRight, Loader2 } from 'lucide-react'
 
 interface LeadCaptureModalProps {
     isOpen: boolean

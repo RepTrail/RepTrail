@@ -2,6 +2,7 @@
 import React from 'react'
 import { cn } from '@/lib/utils'
 import { Box, BoxProps, SpacingToken } from './box'
+import { Separator } from './separator'
 import { useRegistry } from '@/components/store/advanced/registry-context'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
@@ -192,6 +193,7 @@ export function Surface({
       padding={padding}
       zIndex={zIndex as any}
       minHeight={minHeight}
+      // @ts-expect-error - Surface is a foundational component and needs to pass className to Box
       className={cn(
         variantClasses[resolvedVariant as keyof typeof variantClasses],
         rounded && roundedClasses[rounded],
@@ -238,15 +240,18 @@ export function ActionSurface(props: SurfaceProps) {
  */
 export function CardHeader({ children, className, ...props }: BoxProps) {
   return (
-    <Box 
-      padding={STORE_TOKENS.PADDING.CONTAINER} 
-      display="flex" 
-      align="center" 
-      className={cn('border-b border-white/5', className)} 
-      {...props}
-    >
-      {children}
-    </Box>
+    <div className="w-full flex flex-col">
+      <Box 
+        padding={STORE_TOKENS.PADDING.CONTAINER} 
+        display="flex" 
+        align="center" 
+        className={className} 
+        {...props}
+      >
+        {children}
+      </Box>
+      <Separator opacity={5} />
+    </div>
   )
 }
 

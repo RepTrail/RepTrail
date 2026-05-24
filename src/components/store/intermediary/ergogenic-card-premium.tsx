@@ -23,7 +23,8 @@ interface ErgogenicCardPremiumProps {
     days: string[]
     dosage: string
     frequency: string
-    mode?: 'auto' | 'personal'
+    notes?: string
+    mode?: 'auto' | 'personal' | 'trainer'
     color?: 'amber' | 'emerald' | 'orange' | 'blue' | 'primary'
     onEdit?: () => void
     onDelete?: () => void
@@ -41,6 +42,7 @@ export function ErgogenicCardPremium({
     days,
     dosage,
     frequency,
+    notes,
     mode = 'auto',
     color = 'primary',
     onEdit,
@@ -49,6 +51,8 @@ export function ErgogenicCardPremium({
     onSchedule
 }: ErgogenicCardPremiumProps) {
     const isAuto = mode === 'auto'
+    const isTrainer = mode === 'trainer'
+    const showActions = isAuto || isTrainer
 
     return (
         <GlassPanel
@@ -57,8 +61,17 @@ export function ErgogenicCardPremium({
             variant="glass"
             transition
             group
+            flex1
+            fullHeight
         >
-            <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
+            <Stack
+                flex1
+                fullHeight
+                justify="between"
+                gap={STORE_TOKENS.SPACING.CONTAINER}
+                minHeight={0}
+            >
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT} flex1 minHeight={0}>
                 {/* Header Actions */}
                 <Stack direction="row" align="center" justify="between">
                     <Box
@@ -69,15 +82,15 @@ export function ErgogenicCardPremium({
                     >
                         <Icon icon={Syringe} size="md" color={STORE_TOKENS.COLORS.BRAND} />
                     </Box>
-                    {isAuto && (
-                        <Button 
-                            variant="outline-red"
-                            isIconOnly
-                            shine
-                            onClick={onDelete}
-                            rounded={STORE_TOKENS.RADIUS.SYSTEM}
-                        >
-                            <Icon icon={Trash2} size="md" color={STORE_TOKENS.COLORS.ERROR} />
+                    {showActions && (
+                        <Button
+                                variant="outline-red"
+                                isIconOnly
+                                shine
+                                onClick={onDelete}
+                                rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                            >
+                                <Icon icon={Trash2} size="md" color={STORE_TOKENS.COLORS.ERROR} />
                         </Button>
                     )}
                 </Stack>
@@ -100,7 +113,9 @@ export function ErgogenicCardPremium({
                         ))}
                     </Stack>
                 </Stack>
+                </Stack>
 
+                <Stack gap={STORE_TOKENS.SPACING.CONTAINER} shrink={0}>
                 {/* Info Rows */}
                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                     <Stack direction="row" align="center" justify="between">
@@ -121,25 +136,34 @@ export function ErgogenicCardPremium({
                     </Stack>
                 </Stack>
 
+                {notes && (
+                    <Box
+                        padding={STORE_TOKENS.PADDING.ELEMENT}
+                        rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                        bg={STORE_TOKENS.COLORS.SURFACE}
+                        bgOpacity={STORE_TOKENS.OPACITY.SUBTLE}
+                        border
+                        borderColor={STORE_TOKENS.COLORS.DIVIDER.STANDARD}
+                    >
+                        <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} italic lineClamp={2}>
+                            {notes}
+                        </Font>
+                    </Box>
+                )}
+
                 {/* Footer Buttons - Hidden in Personal Mode */}
-                {isAuto && (
+                {showActions && (
                     <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        <Button variant={color as any} flex1 onClick={onSchedule} shine>
+                        <Button variant={color as any} flex1 onClick={onEdit} shine>
                             <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                <Icon icon={Calendar} size="xs" color={STORE_TOKENS.COLORS.BLACK} />
-                                <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.BLACK}>AGENDAR</Font>
+                                <Icon icon={Edit3} size="xs" color={STORE_TOKENS.COLORS.BLACK} />
+                                <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.BLACK}>EDITAR</Font>
                             </Stack>
                         </Button>
-                        <Button variant="outline-zinc" flex1 onClick={onEdit}>
-                            <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                <Icon icon={Edit3} size="xs" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} />
-                                <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>EDITAR</Font>
-                            </Stack>
-                        </Button>
-                        <Button 
-                            variant="outline-zinc" 
-                            isIconOnly 
-                            size="sm" 
+                        <Button
+                            variant="outline-zinc"
+                            isIconOnly
+                            size="sm"
                             rounded={STORE_TOKENS.RADIUS.SYSTEM}
                             onClick={onDuplicate}
                         >
@@ -147,6 +171,7 @@ export function ErgogenicCardPremium({
                         </Button>
                     </Stack>
                 )}
+                </Stack>
             </Stack>
         </GlassPanel>
     )

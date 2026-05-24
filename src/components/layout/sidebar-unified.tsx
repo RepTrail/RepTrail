@@ -5,7 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { cva, type VariantProps } from "class-variance-authority"
-import { LogOut, User, Settings } from 'lucide-react'
+import { LogOut, Settings } from 'lucide-react'
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Logo } from "@/components/ui/logo"
@@ -37,15 +37,15 @@ const sidebarLinkVariants = cva(
 )
 
 const sidebarIconVariants = cva(
-  "transition-all duration-300 group-hover:scale-110",
+  "transition-all duration-300 group-hover:scale-110 group-data-[active=true]:scale-110",
   {
     variants: {
       variant: {
-        emerald: "group-data-[active=true]:text-emerald-500 group-data-[active=true]:scale-110 group-hover:text-emerald-400",
-        orange: "group-data-[active=true]:text-orange-500 group-data-[active=true]:scale-110 group-hover:text-orange-400",
-        amber: "group-data-[active=true]:text-amber-500 group-data-[active=true]:scale-110 group-hover:text-amber-400",
-        zinc: "group-data-[active=true]:text-white group-data-[active=true]:scale-110 group-hover:text-white",
-        red: "group-data-[active=true]:text-red-500 group-data-[active=true]:scale-110 group-hover:text-red-500",
+        emerald: "",
+        orange: "",
+        amber: "",
+        zinc: "",
+        red: "",
       }
     },
     defaultVariants: {

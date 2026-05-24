@@ -3,7 +3,7 @@ import React from 'react'
 import { cn } from '@/lib/utils'
 import { useRegistry } from '@/components/store/advanced/registry-context'
 
-export type SpacingToken = 'container' | 'element' | 'section' | 'empty_state' | 'tiny' | 'none' | 'dashboard_pc' | 'safe_area'
+export type SpacingToken = 'container' | 'element' | 'section' | 'empty_state' | 'tiny' | 'none' | 'dashboard_pc' | 'safe_area' | 'title-content' | 'header-gap'
 
 export type BoxColor = 'orange' | 'emerald' | 'amber' | 'red' | 'blue' | 'zinc' | 'white' | 'transparent' | 'black' | 'primary' | 'success' | 'warning' | 'neutral'
 
@@ -18,7 +18,7 @@ export interface BoxProps extends Omit<React.HTMLAttributes<HTMLElement>, 'color
   position?: 'relative' | 'absolute' | 'fixed' | 'static' | 'sticky' | { base: 'relative' | 'absolute' | 'fixed' | 'static' | 'sticky', sm?: 'relative' | 'absolute' | 'fixed' | 'static' | 'sticky', md?: 'relative' | 'absolute' | 'fixed' | 'static' | 'sticky', lg?: 'relative' | 'absolute' | 'fixed' | 'static' | 'sticky' }
   pin?: 'left' | 'right' | 'top' | 'bottom' | 'inset' | { base: 'left' | 'right' | 'top' | 'bottom' | 'inset', md?: 'left' | 'right' | 'top' | 'bottom' | 'inset', lg?: 'left' | 'right' | 'top' | 'bottom' | 'inset' }
   maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | 'none' | 'auth-form' | { base: 'sm' | 'md' | 'lg' | 'xl' | 'none' | 'auth-form', md?: 'sm' | 'md' | 'lg' | 'xl' | 'none' | 'auth-form', lg?: 'sm' | 'md' | 'lg' | 'xl' | 'none' | 'auth-form' }
-  width?: 'full' | 'auto' | 'px' | 'half' | 'sidebar' | 'sidebar-wide' | '10' | number | string | { base?: 'full' | 'auto' | '10' | number | string, md?: 'full' | 'half' | 'auto' | '10' | 'sidebar' | 'sidebar-wide' | number | string, lg?: 'full' | 'auto' | 'half' | 'sidebar' | 'sidebar-wide' | '10' | number | string }
+  width?: 'full' | 'auto' | 'px' | 'half' | 'sidebar' | 'sidebar-wide' | '10' | number | string | { base?: 'full' | 'auto' | '10' | number | string, sm?: 'full' | 'half' | 'auto' | '10' | 'sidebar' | 'sidebar-wide' | number | string, md?: 'full' | 'half' | 'auto' | '10' | 'sidebar' | 'sidebar-wide' | number | string, lg?: 'full' | 'auto' | 'half' | 'sidebar' | 'sidebar-wide' | '10' | number | string }
   height?: 'full' | 'auto' | 'screen' | 'px' | '10' | number | string | { base?: 'full' | 'auto' | 'screen' | 'px' | '10' | number | string, md?: 'full' | 'auto' | 'screen' | 'px' | '10' | number | string }
   minHeight?: 'screen' | 'full' | 'sm' | 'md' | 'lg' | 'xl' | number
   maxHeight?: number | string
@@ -36,7 +36,7 @@ export interface BoxProps extends Omit<React.HTMLAttributes<HTMLElement>, 'color
   alignSelf?: 'start' | 'center' | 'end' | 'stretch'
   flex?: 0 | 1 | 'none' | { base: 0 | 1 | 'none', md?: 0 | 1 | 'none', lg?: 0 | 1 | 'none' }
   flex1?: boolean | { base: boolean, md?: boolean, lg?: boolean }
-  fullWidth?: boolean | { base: boolean, md?: boolean, lg?: boolean }
+  fullWidth?: boolean | { base?: boolean, sm?: boolean, md?: boolean, lg?: boolean }
   fullHeight?: boolean
   translateX?: 0 | '-full' | 'full' | { base: 0 | '-full' | 'full', md?: 0 | '-full' | 'full', lg?: 0 | '-full' | 'full' }
   translateY?: 0 | '-full' | 'full'
@@ -61,6 +61,9 @@ export interface BoxProps extends Omit<React.HTMLAttributes<HTMLElement>, 'color
   groupHoverDisplay?: 'flex' | 'grid' | 'block' | 'none'
   groupHoverOpacity?: 0 | 5 | 10 | 20 | 30 | 40 | 50 | 60 | 70 | 80 | 90 | 95 | 100
   groupHoverScale?: 90 | 95 | 98 | 100 | 105 | 110
+  groupHoverTranslateX?: 1 | 2 | 3 | 4 | 'full'
+  disabled?: boolean
+  bgGradient?: 'bottom-dark' | 'top-dark'
   bg?: BoxColor
   bgOpacity?: 0 | 5 | 10 | 20 | 30 | 40 | 50 | 60 | 70 | 80 | 90 | 95 | 100
   borderOpacity?: 0 | 5 | 10 | 20 | 30 | 40 | 50 | 60 | 70 | 80 | 90 | 95 | 100
@@ -78,7 +81,7 @@ export interface BoxProps extends Omit<React.HTMLAttributes<HTMLElement>, 'color
   pointerEvents?: 'none' | 'auto'
   hoverScale?: 90 | 95 | 98 | 100 | 105 | 110
   groupHoverBorderColor?: BoxColor | string
-  animateIn?: 'fade' | 'zoom' | 'slide-right' | 'none'
+  animateIn?: 'fade' | 'zoom' | 'slide-right' | 'slide-down' | 'slide-left' | 'slide-up' | 'none'
 }
 
 /**
@@ -136,6 +139,9 @@ export function Box({
   groupHoverDisplay,
   groupHoverOpacity,
   groupHoverScale,
+  groupHoverTranslateX,
+  disabled,
+  bgGradient,
   bg,
   opacity,
   bgOpacity,
@@ -158,7 +164,7 @@ export function Box({
   groupHoverBorderColor,
   animateIn,
   ...props
-}: Omit<BoxProps, 'className' | 'style'> & { className?: string, style?: React.CSSProperties }) {
+}: BoxProps) {
   const { primaryColor } = useRegistry()
 
   const opacityClasses = {
@@ -440,10 +446,26 @@ export function Box({
     110: 'group-hover:scale-110'
   }
 
+  const groupHoverTranslateXClasses = {
+    1: 'group-hover:translate-x-1',
+    2: 'group-hover:translate-x-2',
+    3: 'group-hover:translate-x-3',
+    4: 'group-hover:translate-x-4',
+    'full': 'group-hover:translate-x-full'
+  }
+
+  const bgGradientClasses = {
+    'bottom-dark': 'bg-gradient-to-t from-black via-black/60 to-transparent',
+    'top-dark': 'bg-gradient-to-b from-black via-black/60 to-transparent'
+  }
+
   const animateInClasses = {
     fade: 'animate-in fade-in duration-300',
     zoom: 'animate-in fade-in zoom-in duration-300',
     'slide-right': 'animate-in fade-in slide-in-from-right-4 duration-300',
+    'slide-down': 'animate-in fade-in slide-in-from-top-4 duration-300',
+    'slide-left': 'animate-in fade-in slide-in-from-left-4 duration-300',
+    'slide-up': 'animate-in fade-in slide-in-from-bottom-4 duration-300',
     none: ''
   }
 
@@ -507,8 +529,8 @@ export function Box({
       id={id}
       onClick={onClick}
       type={type}
+      disabled={disabled}
       style={{
-        ...style,
         top: typeof top === 'number' ? `${top}px` : top,
         right: typeof right === 'number' ? `${right}px` : right,
         bottom: typeof bottom === 'number' ? `${bottom}px` : bottom,
@@ -547,16 +569,18 @@ export function Box({
 
         // Sizing
         typeof fullWidth === 'boolean' ? (fullWidth && 'w-full') : cn(
-            (fullWidth as any)?.base && 'w-full',
-            (fullWidth as any)?.md && 'md:w-full',
-            (fullWidth as any)?.lg && 'lg:w-full',
-            (fullWidth as any)?.md === false && 'md:w-auto',
-            (fullWidth as any)?.lg === false && 'lg:w-auto'
+          (fullWidth as any)?.base && 'w-full',
+          (fullWidth as any)?.sm && 'sm:w-full',
+          (fullWidth as any)?.md && 'md:w-full',
+          (fullWidth as any)?.lg && 'lg:w-full',
+          (fullWidth as any)?.sm === false && 'sm:w-auto',
+          (fullWidth as any)?.md === false && 'md:w-auto',
+          (fullWidth as any)?.lg === false && 'lg:w-auto'
         ),
         fullHeight && 'h-full',
         widthBase !== undefined && (
-          typeof widthBase === 'string' 
-            ? (widthClasses[widthBase as keyof typeof widthClasses] || `w-[${widthBase.replace(/\s+/g, '')}]`) 
+          typeof widthBase === 'string'
+            ? (widthClasses[widthBase as keyof typeof widthClasses] || `w-[${widthBase.replace(/\s+/g, '')}]`)
             : (widthBase === 0 ? 'w-0' : `w-[${widthBase}px]`)
         ),
         widthMd !== undefined && (
@@ -586,8 +610,8 @@ export function Box({
               `md:min-w-[${String(minWidthMd).replace(/\s+/g, '')}]`
         ),
         height !== undefined && (
-          typeof height === 'string' 
-            ? (heightClasses[height as keyof typeof heightClasses] || `h-[${height.replace(/\s+/g, '')}]`) 
+          typeof height === 'string'
+            ? (heightClasses[height as keyof typeof heightClasses] || `h-[${height.replace(/\s+/g, '')}]`)
             : (height === 0 ? 'h-0' : `h-[${height}px]`)
         ),
         minHeight && typeof minHeight === 'string' && minHeightMapping[minHeight as keyof typeof minHeightMapping],
@@ -683,8 +707,10 @@ export function Box({
                 groupHoverDisplay === 'none' ? 'group-hover:hidden' : ''
         ),
         groupHoverOpacity !== undefined && `group-hover:${opacityClasses[groupHoverOpacity as keyof typeof opacityClasses]}`,
-        groupHoverScale && `group-hover:scale-${groupHoverScale}`,
+        groupHoverScale && groupHoverScaleClasses[groupHoverScale],
+        groupHoverTranslateX && groupHoverTranslateXClasses[groupHoverTranslateX],
 
+        bgGradient && bgGradientClasses[bgGradient],
         bg && colorMapping[bg][bgOpacity || 100],
         opacity !== undefined && opacityClasses[opacity as keyof typeof opacityClasses],
         rounded && roundedClasses[rounded],
@@ -722,12 +748,12 @@ export function Box({
           (() => {
             const opacitySuffix = borderOpacity && borderOpacity !== 100 ? `/${borderOpacity}` : '';
             if (borderColor === 'primary') {
-                if (primaryColor === 'orange') return `border-orange-500${opacitySuffix}`;
-                if (primaryColor === 'emerald') return `border-emerald-500${opacitySuffix}`;
-                if (primaryColor === 'blue') return `border-blue-500${opacitySuffix}`;
-                if (primaryColor === 'red') return `border-red-500${opacitySuffix}`;
-                if (primaryColor === 'amber') return `border-amber-500${opacitySuffix}`;
-                return 'border-brand-primary';
+              if (primaryColor === 'orange') return `border-orange-500${opacitySuffix}`;
+              if (primaryColor === 'emerald') return `border-emerald-500${opacitySuffix}`;
+              if (primaryColor === 'blue') return `border-blue-500${opacitySuffix}`;
+              if (primaryColor === 'red') return `border-red-500${opacitySuffix}`;
+              if (primaryColor === 'amber') return `border-amber-500${opacitySuffix}`;
+              return 'border-brand-primary';
             }
             if (borderColor === 'success') return `border-emerald-500${opacitySuffix}`;
             if (borderColor === 'warning') return `border-orange-500${opacitySuffix}`;
@@ -753,12 +779,12 @@ export function Box({
             const opacitySuffix = borderOpacity && borderOpacity !== 100 ? `/${borderOpacity}` : '';
             let borderVal = '';
             if (groupHoverBorderColor === 'primary') {
-                if (primaryColor === 'orange') borderVal = `orange-500${opacitySuffix}`;
-                else if (primaryColor === 'emerald') borderVal = `emerald-500${opacitySuffix}`;
-                else if (primaryColor === 'blue') borderVal = `blue-500${opacitySuffix}`;
-                else if (primaryColor === 'red') borderVal = `red-500${opacitySuffix}`;
-                else if (primaryColor === 'amber') borderVal = `amber-500${opacitySuffix}`;
-                else borderVal = 'brand-primary';
+              if (primaryColor === 'orange') borderVal = `orange-500${opacitySuffix}`;
+              else if (primaryColor === 'emerald') borderVal = `emerald-500${opacitySuffix}`;
+              else if (primaryColor === 'blue') borderVal = `blue-500${opacitySuffix}`;
+              else if (primaryColor === 'red') borderVal = `red-500${opacitySuffix}`;
+              else if (primaryColor === 'amber') borderVal = `amber-500${opacitySuffix}`;
+              else borderVal = 'brand-primary';
             }
             else if (groupHoverBorderColor === 'success') borderVal = `emerald-500${opacitySuffix}`;
             else if (groupHoverBorderColor === 'warning') borderVal = `orange-500${opacitySuffix}`;
@@ -772,7 +798,7 @@ export function Box({
             else if (groupHoverBorderColor === 'black') borderVal = `black${opacitySuffix}`;
             else if (groupHoverBorderColor.includes('/')) borderVal = groupHoverBorderColor;
             else borderVal = `${groupHoverBorderColor}-500${opacitySuffix}`;
-            
+
             return `group-hover:border-${borderVal}`;
           })()
         ),

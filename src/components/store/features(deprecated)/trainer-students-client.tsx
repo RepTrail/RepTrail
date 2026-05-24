@@ -38,20 +38,14 @@ export function TrainerStudentsClient({ userId }: TrainerStudentsClientProps) {
     const { data: students = [] } = useQuery({
         queryKey: QUERY_KEYS.trainer.students(userId),
         queryFn: () => getTrainerStudents(userId),
-        staleTime: 0,
-        refetchOnMount: 'always'
     })
     const { data: profile } = useQuery({
         queryKey: QUERY_KEYS.trainer.profile(userId),
         queryFn: () => getTrainerProfile(userId),
-        staleTime: 0,
-        refetchOnMount: 'always'
     })
     const { data: fullRanking = [] } = useQuery({
         queryKey: QUERY_KEYS.trainer.ranking(),
         queryFn: getTrainerRanking,
-        staleTime: 0,
-        refetchOnMount: 'always'
     })
 
     // ─── Metrics ──────────────────────────────────────────────────────────

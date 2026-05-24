@@ -43,7 +43,7 @@ export function Textarea({
       )}
       <textarea
         className={cn(
-          'w-full min-h-[100px] p-4 bg-zinc-950/40 border-2 border-white/5 text-white placeholder:text-zinc-600 outline-none transition-all resize-none',
+          'w-full min-h-[100px] p-2.5 bg-zinc-950/40 border-2 border-white/5 text-white placeholder:text-zinc-600 outline-none transition-all resize-none',
           rounded === 'system' && (STORE_TOKENS.RADIUS.SYSTEM === 'system' ? 'rounded-[5px]' : 'rounded-full'),
           rounded === 'none' && 'rounded-none',
           activeClasses,

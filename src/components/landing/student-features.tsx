@@ -1,7 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { Check, Flame, Dumbbell, Utensils, Activity, ArrowRight, Zap, Target, Smartphone, Search, ShieldCheck } from "lucide-react";
-import Link from "next/link";
+import { Dumbbell, Zap, Target, Smartphone, Search, ShieldCheck } from "lucide-react";
 import { SectionHeader } from "./section-header";
 
 const features = [
@@ -31,7 +30,7 @@ export function StudentFeatures() {
 
                             {/* Mock Screen Content */}
                             <video
-                                src="/Videos/tela de treinos dos alunos.MP4"
+                                src="/Videos/tela-de-treinos-dos-alunos.mp4"
                                 autoPlay
                                 loop
                                 muted

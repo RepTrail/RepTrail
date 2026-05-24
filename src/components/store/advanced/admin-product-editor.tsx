@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Zap, RefreshCw, Package, Pencil, Eye, ExternalLink } from 'lucide-react'
+import { Zap, RefreshCw, Package, Pencil, Eye, ExternalLink, Search } from 'lucide-react'
 import { Stack } from '@/components/store/base/stack'
 import { Grid } from '@/components/store/base/grid'
 import { Box } from '@/components/store/base/box'
@@ -99,7 +99,7 @@ export function AdminProductEditor({ isOpen, onClose, product, onSave, onImport 
         >
             <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                 {/* Auto-Import */}
-                <Box padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM} border borderColor="emerald-500" bg={STORE_TOKENS.COLORS.SUCCESS} bgOpacity={STORE_TOKENS.OPACITY.LOW}>
+                <Box padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM} border borderColor="emerald" borderOpacity={80} bg={STORE_TOKENS.COLORS.SUCCESS} bgOpacity={STORE_TOKENS.OPACITY.LOW} style={{ borderColor: 'rgb(16 185 129 / 0.8)' }}>
                     <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                         <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                             <Box padding="element" rounded={STORE_TOKENS.RADIUS.SYSTEM} bg={STORE_TOKENS.COLORS.SUCCESS} bgOpacity={STORE_TOKENS.OPACITY.MEDIUM}>
@@ -107,29 +107,29 @@ export function AdminProductEditor({ isOpen, onClose, product, onSave, onImport 
                             </Box>
                             <Font variant="label-caps" color={STORE_TOKENS.COLORS.SUCCESS}>Auto-Importar Dados (IA)</Font>
                         </Stack>
-                        <Stack direction={{ base: 'col', md: 'row' }} gap={STORE_TOKENS.SPACING.ELEMENT} align="stretch">
-                            <Box flex1>
-                                <Input
-                                    placeholder="Link do produto (Mercado Livre, etc)"
-                                    value={importUrl}
-                                    onChange={e => setImportUrl(e.target.value)}
-                                    color={STORE_TOKENS.COLORS.SUCCESS}
-                                />
-                            </Box>
+                        <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} align="stretch">
+                            <Input
+                                placeholder="Link do produto (Mercado Livre, etc)"
+                                value={importUrl}
+                                onChange={e => setImportUrl(e.target.value)}
+                                color={STORE_TOKENS.COLORS.SUCCESS}
+                            />
                             <Button 
-                                variant="primary" 
-                                fullWidth 
+                                variant="outline-emerald" 
+                                isIconOnly
+                                height="12"
                                 onClick={handleImport} 
                                 disabled={importing || !importUrl}
+                                shrink={0}
                             >
-                                {importing ? <Icon icon={RefreshCw} spin /> : <Font variant="label-caps">Carregar</Font>}
+                                {importing ? <Icon icon={RefreshCw} spin size="sm" /> : <Icon icon={Search} size="sm" />}
                             </Button>
                         </Stack>
                     </Stack>
                 </Box>
 
                 {/* Form Fields */}
-                <Stack gap={STORE_TOKENS.SPACING.CONTAINER} padding={STORE_TOKENS.PADDING.CONTAINER}>
+                <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                     <Input
                         label="Link de Afiliado"
                         icon={<Icon icon={ExternalLink} size="xs" />}

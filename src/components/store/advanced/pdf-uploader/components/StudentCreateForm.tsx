@@ -1,4 +1,4 @@
-/* eslint-disable no-restricted-syntax */
+ 
 import React from 'react';
 import { Stack } from '@/components/store/base/stack';
 import { Surface } from '@/components/store/base/surface';
@@ -23,7 +23,7 @@ export function StudentCreateForm({
     placeholderWhatsapp, setPlaceholderWhatsapp
 }: StudentCreateFormProps) {
     return (
-        <Surface variant="raised" padding={STORE_TOKENS.PADDING.CONTAINER} animateIn="fade">
+        <Surface id="tour-student-fields" variant="raised" padding={STORE_TOKENS.PADDING.CONTAINER} animateIn="fade">
             <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                 <DSInput
                     label="Nome do Novo Aluno"
@@ -55,7 +55,7 @@ export function StudentCreateForm({
                     onChange={(e) => setPlaceholderWhatsapp(e.target.value)}
                 />
 
-                <Font variant="sub-tiny" color="emerald" weight="black" uppercase tracking="widest" className="px-1">
+                <Font variant="sub-tiny" color="primary" weight="black" uppercase tracking="widest" className="px-1">
                     * O email e WhatsApp são fundamentais para o envio automático do acesso.
                 </Font>
             </Stack>

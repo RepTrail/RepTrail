@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Search, Zap, Trophy, Star, ShieldCheck, CheckCircle2, Smartphone, Dumbbell, PlayCircle } from "lucide-react";
+import { ArrowRight, Search, Zap, Trophy, Star, CheckCircle2, Smartphone, Dumbbell, PlayCircle } from "lucide-react";
 import { LandingBadge } from "./landing-badge";
 import { fbqEvent } from "@/lib/meta-pixel";
 
@@ -95,7 +95,7 @@ export function StudentHeroSection() {
                             </div>
 
                             <video
-                                src="/Videos/dash inicial do aluno.MP4"
+                                src="/Videos/dash-inicial-do-aluno.mp4"
                                 autoPlay
                                 loop
                                 muted

@@ -20,7 +20,7 @@ export class WorkoutService {
                                 student_id,
                                 day_of_week,
                                 active,
-                                student:profiles(full_name)
+                                student:profiles(full_name, avatar_url)
                             )
                         `)
                         .eq('trainer_id', trainerId)
@@ -110,7 +110,7 @@ export class WorkoutService {
                             student_id,
                             day_of_week,
                             active,
-                            student:profiles(full_name)
+                            student:profiles(full_name, avatar_url)
                         )
 
                     `)

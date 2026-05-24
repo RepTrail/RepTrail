@@ -28,6 +28,7 @@ import {
 
 import { useQuery } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/lib/query-keys'
+import { Badge } from '@/components/store/base/badge'
 
 export default function StoreExplorePage() {
     const pathname = usePathname()
@@ -156,14 +157,17 @@ export default function StoreExplorePage() {
             </div>
 
             {/* Grid */}
-            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <div className="grid gap-8 grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 xl:grid-cols-4">
                 {loading ? null : filteredProducts.map(product => (
                     <Card key={product.id} className="group relative flex flex-col bg-zinc-950 border border-zinc-800 hover:border-orange-500/50 transition-all duration-500 rounded-3xl overflow-hidden hover:shadow-[0_0_40px_-5px_rgba(249,115,22,0.15)]">
                         {/* High Contrast Badge */}
                         <div className="absolute top-4 left-4 z-20">
-                            <div className="bg-orange-600/90 backdrop-blur-sm text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-md shadow-lg shadow-orange-900/20 transform -skew-x-12 border border-orange-500/20">
-                                <span className="block skew-x-12">{product.sub_category || product.category || 'PRODUTO'}</span>
-                            </div>
+                            <Badge
+                                label={(product.sub_category || product.category || 'PRODUTO').toUpperCase()}
+                                variant="glass"
+                                color="orange"
+                                size="sm"
+                            />
                         </div>
 
                         {/* Image Area */}

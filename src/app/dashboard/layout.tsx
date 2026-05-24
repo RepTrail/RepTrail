@@ -1,10 +1,6 @@
-import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import { headers } from 'next/headers'
 import Link from 'next/link'
-import Image from 'next/image'
-import { Button } from '@/components/ui/button'
-import { Home, Users, Dumbbell, Utensils, FileUp, User, LogOut, Trophy, CreditCard } from 'lucide-react'
-import { signOutAction } from '@/actions/auth-actions'
 import { LastSeenTracker } from '@/components/layout/last-seen-tracker'
 
 export default async function DashboardLayout({
@@ -12,15 +8,9 @@ export default async function DashboardLayout({
 }: {
     children: React.ReactNode
 }) {
-    const supabase = await createClient()
-
-    const {
-        data: { user },
-    } = await supabase.auth.getUser()
-
-    if (!user) {
-        redirect('/auth/login')
-    }
+    const headerList = await headers()
+    const userId = headerList.get('x-user-id')
+    if (!userId) redirect('/auth/login')
 
     return (
         <div className="min-h-screen w-full bg-zinc-950">

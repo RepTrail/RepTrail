@@ -1,5 +1,6 @@
 'use client'
 
+import { QueryClientProvider } from '@tanstack/react-query'
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 import { getQueryClient } from '@/lib/get-query-client'
 import { queryPersister, CACHE_BUSTER } from '@/lib/query-persister'
@@ -20,6 +21,7 @@ export function QueryProvider({ children }: { children: ReactNode }) {
     }, [queryClient])
 
     return (
+        <QueryClientProvider client={queryClient}>
         <PersistQueryClientProvider
             client={queryClient}
             persistOptions={{
@@ -59,5 +61,6 @@ export function QueryProvider({ children }: { children: ReactNode }) {
         >
             {children}
         </PersistQueryClientProvider>
+        </QueryClientProvider>
     )
 }

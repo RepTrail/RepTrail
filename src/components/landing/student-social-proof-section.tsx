@@ -1,5 +1,5 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Star, TrendingDown, Crosshair, Zap } from "lucide-react";
+import { Star } from "lucide-react";
 import { SectionHeader } from "./section-header";
 
 export function StudentSocialProofSection() {

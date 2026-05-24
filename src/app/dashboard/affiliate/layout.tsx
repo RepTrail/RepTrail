@@ -1,20 +1,25 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { Home, Users, DollarSign, BarChart2, User, ArrowRightLeft } from 'lucide-react'
 import { DashboardShell } from '@/components/store/advanced/dashboard-shell'
 import { RegistryProvider } from '@/components/store/advanced/registry-context'
+import { headers } from 'next/headers'
 
 export default async function AffiliateLayout({ children }: { children: React.ReactNode }) {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    const headerList = await headers()
+    const userId = headerList.get('x-user-id')
 
-    if (!user) redirect('/auth/login')
+    if (!userId) redirect('/auth/login')
+
+    const supabase = await createClient()
 
     const { data: profile } = await supabase
         .from('profiles')
-        .select('full_name, avatar_url, is_affiliate, role, is_admin')
-        .eq('id', user.id)
+        .select('full_name, avatar_url, email, is_affiliate, role, is_admin')
+        .eq('id', userId)
         .single()
+
+    if (!profile) redirect('/auth/login')
+    if (profile.role !== 'affiliate') redirect('/dashboard')
 
     const links = [
         { href: '/dashboard/affiliate',           label: 'Visão Geral',  icon: 'Home',       exact: true },
@@ -27,7 +32,7 @@ export default async function AffiliateLayout({ children }: { children: React.Re
             <DashboardShell
                 color="amber"
                 links={links}
-                user={{ id: user.id, name: profile?.full_name, email: user.email, avatar_url: profile?.avatar_url, isAdmin: profile?.is_admin, role: profile?.role }}
+                user={{ id: userId, name: profile.full_name, email: profile.email, avatar_url: profile.avatar_url, isAdmin: profile.is_admin, role: profile.role }}
                 profileHref="/dashboard/affiliate/profile"
                 settingsHref="/dashboard"
                 profileIcon="ArrowRightLeft"
