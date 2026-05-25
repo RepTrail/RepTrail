@@ -1,7 +1,7 @@
 "use client";
 
 import { Zap, CheckCircle2, ShieldOff, CreditCard, ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/store/base/button";
 import Link from "next/link";
 import { fbqEvent } from "@/lib/meta-pixel";
 
@@ -53,7 +53,11 @@ export function AutoTreinoSection() {
                             <Button
                                 asChild
                                 onClick={() => fbqEvent("Lead", { content_name: "Auto Train Start", content_category: "Landing Page Aluno" })}
-                                className="group h-auto py-5 px-10 bg-orange-500 hover:bg-orange-400 text-zinc-950 font-black uppercase italic tracking-wider rounded-2xl transition-all hover:-translate-y-1"
+                                variant="orange"
+                                size="lg"
+                                hoverScale={105}
+                                activeScale={95}
+                                shine
                             >
                                 <Link href="/auth/signup" className="flex items-center gap-3">
                                     <span>Começar meu período grátis</span>

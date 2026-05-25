@@ -9,9 +9,10 @@ import { Box } from '@/components/store/base/box'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 // Tools
-import { UnifiedCreationDialog } from '@/components/store/features(deprecated)/unified-creation-dialog'
-import { CopyInviteButton } from '@/components/store/features(deprecated)/copy-invite-button'
+import { UnifiedCreationDialog } from '@/components/store/advanced/unified-creation-dialog'
+import { CopyInviteButton } from '@/components/store/intermediary/copy-invite-button'
 import { Button } from '@/components/store/base/button'
+import { Icon } from '@/components/store/base/icon'
 import { Plus } from 'lucide-react'
 
 interface TrainerStudentsActionsSectionProps {
@@ -25,10 +26,10 @@ export function TrainerStudentsActionsSection({ userId }: TrainerStudentsActions
     })
 
     return (
-        <Stack 
-            direction={{ base: 'col', md: 'row' }} 
-            align={{ base: 'stretch', md: 'center' }} 
-            justify="end" 
+        <Stack
+            direction={{ base: 'col', md: 'row' }}
+            align={{ base: 'stretch', md: 'center' }}
+            justify="end"
             gap={STORE_TOKENS.SPACING.ELEMENT}
             fullWidth
         >
@@ -40,8 +41,11 @@ export function TrainerStudentsActionsSection({ userId }: TrainerStudentsActions
                     title="Vincular Novo Aluno"
                     description="Insira o email que o aluno usará para criar a conta e sincronizar os dados. O email pode ser provisório e alterado depois."
                     trigger={
-                        <Button variant="outline-emerald" fullWidth={{ base: true, sm: false }}>
-                            <Plus className="w-4 h-4 mr-2" /> Vincular Aluno
+                        <Button variant="outline-emerald" shine fullWidth={{ base: true, sm: false }}>
+                            <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                <Icon icon={Plus} size="xs" />
+                                <span>Vincular Aluno</span>
+                            </Stack>
                         </Button>
                     }
                     fields={[

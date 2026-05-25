@@ -121,9 +121,9 @@ export function Badge({
             className={cn(
                 'flex items-center justify-center border w-fit gap-2 backdrop-blur-md transition-all',
                 currentSize.padding,
-                variant === 'glass' ? current.glass : cn(current.bg, current.border),
-                variant === 'outline' && 'bg-transparent',
-                variant === 'solid' && current.bg,
+                variant === 'glass' && current.glass,
+                variant === 'outline' && cn('bg-transparent', current.border),
+                variant === 'solid' && cn(current.bg, current.border),
                 typeof rounded === 'string' && roundedClasses[rounded as keyof typeof roundedClasses],
                 animatePulse && 'animate-pulse',
                 className

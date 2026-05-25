@@ -1,7 +1,6 @@
 'use client'
 
-import { UnifiedCreationDialog } from '@/components/store/features(deprecated)/unified-creation-dialog'
-
+import { UnifiedCreationDialog } from '@/components/store/advanced/unified-creation-dialog'
 interface WorkoutActionsClientProps {
     isAutoTrainingActive: boolean
 }

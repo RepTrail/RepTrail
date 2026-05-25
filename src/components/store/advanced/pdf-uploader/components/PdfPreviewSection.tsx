@@ -1,20 +1,12 @@
- 
 import React from 'react';
 import { Stack } from '@/components/store/base/stack';
 import { Font } from '@/components/store/base/font';
-import { Icon } from '@/components/store/base/icon';
 import { STORE_TOKENS } from '@/components/store/constants/tokens';
-import { useRegistry, RegistryColor } from '@/components/store/advanced/registry-context';
-import { cn } from '@/lib/utils';
 import { FileText } from 'lucide-react';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
-import { PdfDataView } from '@/components/store/features(deprecated)/pdf-data-view';
+import { FormSelect } from '@/components/store/base/form-select';
+import { Box } from '@/components/store/base/box';
+import { PdfDataView } from '@/components/store/advanced/pdf-data-view';
+import { RegistrySection } from '@/components/store/advanced/registry-section';
 
 interface PdfPreviewSectionProps {
     type: 'workout' | 'diet';
@@ -23,17 +15,7 @@ interface PdfPreviewSectionProps {
     selectionHooks: any;
 }
 
-const SELECT_TEXT: Record<RegistryColor, string> = {
-    orange: 'text-orange-400',
-    emerald: 'text-emerald-400',
-    blue: 'text-blue-400',
-    red: 'text-red-400',
-    amber: 'text-amber-400',
-    zinc: 'text-zinc-400',
-}
-
 export function PdfPreviewSection({ type, parsedData, setParsedData, selectionHooks }: PdfPreviewSectionProps) {
-    const { primaryColor } = useRegistry()
     const {
         selectedOptionIndex, setSelectedOptionIndex,
         selectedCardioIndices, toggleCardio,
@@ -41,35 +23,33 @@ export function PdfPreviewSection({ type, parsedData, setParsedData, selectionHo
         setSelectedDietDays
     } = selectionHooks;
 
-    return (
-        <Stack id="tour-parsed-data" gap={STORE_TOKENS.SPACING.CONTAINER}>
-            <Stack direction="row" justify="between" align="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
-                <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <Icon icon={FileText} size="xs" color="primary" />
-                    <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color="zinc-500">Dados Extraídos</Font>
-                </Stack>
-                {type === 'diet' && parsedData.parsed_data?.options?.length > 1 && (
-                    <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color="zinc-600">Escolher Cardápio:</Font>
-                        <Select
-                            value={selectedOptionIndex.toString()}
-                            onValueChange={(v) => setSelectedOptionIndex(parseInt(v))}
-                        >
-                            <SelectTrigger className={cn('h-9 min-w-[180px] bg-zinc-900 border-zinc-800 text-xs font-bold rounded-system', SELECT_TEXT[primaryColor])}>
-                                <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent className="bg-zinc-900 border-zinc-800 text-white">
-                                {parsedData.parsed_data.options.map((opt: any, idx: number) => (
-                                    <SelectItem key={idx} value={idx.toString()} className="text-xs font-bold">
-                                        {opt.name}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </Stack>
-                )}
-            </Stack>
+    const selectOptions = parsedData.parsed_data?.options?.map((opt: any, idx: number) => ({
+        label: opt.name,
+        value: idx.toString()
+    })) || []
 
+    return (
+        <RegistrySection 
+            id="tour-parsed-data"
+            title="Dados Extraídos"
+            subtitle="Confira abaixo as informações interpretadas pela inteligência artificial a partir do seu arquivo."
+            icon={FileText}
+            rightElement={
+                type === 'diet' && parsedData.parsed_data?.options?.length > 1 ? (
+                    <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                        <Font variant="sub-tiny" color="SECONDARY" uppercase weight="bold">Cardápio:</Font>
+                        <Box minWidth={180}>
+                            <FormSelect
+                                options={selectOptions}
+                                value={selectedOptionIndex.toString()}
+                                onChange={(v) => setSelectedOptionIndex(parseInt(v))}
+                                placeholder="Escolher Cardápio..."
+                            />
+                        </Box>
+                    </Stack>
+                ) : null
+            }
+        >
             <PdfDataView
                 type={type}
                 data={type === 'diet' && parsedData.parsed_data?.options?.length > 0
@@ -110,6 +90,6 @@ export function PdfPreviewSection({ type, parsedData, setParsedData, selectionHo
                 }}
                 onUpdateDietDays={(days: number[]) => setSelectedDietDays(days)}
             />
-        </Stack>
+        </RegistrySection>
     );
 }

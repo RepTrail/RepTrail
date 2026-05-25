@@ -8,7 +8,8 @@ import { Button } from '@/components/store/base/button'
 import { Icon } from '@/components/store/base/icon'
 import { Stack } from '@/components/store/base/stack'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
-import { UnifiedCreationDialog } from '@/components/store/features(deprecated)/unified-creation-dialog'
+import { UnifiedCreationDialog } from '@/components/store/advanced/unified-creation-dialog'
+
 import { QUERY_KEYS } from '@/lib/query-keys'
 
 type TrainerLibraryVariant = 'workout' | 'diet' | 'cardio' | 'ergogenic'
@@ -88,14 +89,14 @@ const VARIANT_CONFIG: Record<TrainerLibraryVariant, {
     },
 }
 
-function DirectCreateButton({ 
-    variant, 
-    label, 
-    actionType 
-}: { 
-    variant: TrainerLibraryVariant, 
-    label: string, 
-    actionType: string 
+function DirectCreateButton({
+    variant,
+    label,
+    actionType
+}: {
+    variant: TrainerLibraryVariant,
+    label: string,
+    actionType: string
 }) {
     const router = useRouter()
     const [isPending, startTransition] = useTransition()
@@ -111,7 +112,7 @@ function DirectCreateButton({
                     const { createManualDiet } = await import('@/actions/diet-actions')
                     res = await createManualDiet({ name: 'Nova Dieta' })
                 }
-                
+
                 if (res?.success && res.data?.id) {
                     if (actionType === 'create-manual-workout') {
                         router.push(`/dashboard/trainer/workouts/${res.data.id}`)
@@ -168,10 +169,10 @@ export function TrainerRegistryHeaderActions({
             )}
             {config.showCreate && config.libraryKey && (
                 shouldUseDirectCreate ? (
-                    <DirectCreateButton 
-                        variant={variant} 
-                        label={config.createLabel} 
-                        actionType={config.actionType} 
+                    <DirectCreateButton
+                        variant={variant}
+                        label={config.createLabel}
+                        actionType={config.actionType}
                     />
                 ) : (
                     <UnifiedCreationDialog

@@ -7,7 +7,8 @@ import { Button } from '@/components/store/base/button'
 import { Icon } from '@/components/store/base/icon'
 import { Stack } from '@/components/store/base/stack'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
-import { UnifiedCreationDialog } from '@/components/store/features(deprecated)/unified-creation-dialog'
+import { UnifiedCreationDialog } from '@/components/store/advanced/unified-creation-dialog'
+
 import { QUERY_KEYS } from '@/lib/query-keys'
 
 const ERGOGENIC_CREATE_FIELDS = [
@@ -63,23 +64,23 @@ export function TrainerStudentErgogenicsHeaderActions({
                 </Button>
             )}
             <UnifiedCreationDialog
-            title="Nova Substância"
-            description={`Defina uma nova substância para o protocolo de ${studentName}.`}
-            trigger={
-                <Button variant="outline-emerald" shine fullWidth={{ base: true, lg: false }}>
-                    <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        <Icon icon={Plus} size="xs" color="emerald" />
-                        <span>Adicionar Substância</span>
-                    </Stack>
-                </Button>
-            }
-            fields={ERGOGENIC_CREATE_FIELDS}
-            actionType="create-student-ergogenic"
-            parentId={effectiveStudentId}
-            successMessage="Substância adicionada ao protocolo!"
-            footerLabel="Adicionar Substância"
-            colorScheme="emerald"
-            queryKey={QUERY_KEYS.ergogenics.all(effectiveStudentId)}
+                title="Nova Substância"
+                description={`Defina uma nova substância para o protocolo de ${studentName}.`}
+                trigger={
+                    <Button variant="outline-emerald" shine fullWidth={{ base: true, lg: false }}>
+                        <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                            <Icon icon={Plus} size="xs" color="emerald" />
+                            <span>Adicionar Substância</span>
+                        </Stack>
+                    </Button>
+                }
+                fields={ERGOGENIC_CREATE_FIELDS}
+                actionType="create-student-ergogenic"
+                parentId={effectiveStudentId}
+                successMessage="Substância adicionada ao protocolo!"
+                footerLabel="Adicionar Substância"
+                colorScheme="emerald"
+                queryKey={QUERY_KEYS.ergogenics.all(effectiveStudentId)}
             />
         </Stack>
     )

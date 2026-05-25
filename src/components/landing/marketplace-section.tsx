@@ -1,10 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Card } from "@/components/ui/card";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { BaseAvatar } from "@/components/store/base/avatar";
+import { Button } from "@/components/store/base/button";
+import { Stack } from "@/components/store/base/stack";
+import { Icon } from "@/components/store/base/icon";
+import { Input } from "@/components/store/base/input";
 import { Search, Star, Trophy, Users, ShieldCheck, MessageCircle } from "lucide-react";
 import { LeadCaptureModal } from "./lead-capture-modal";
 import { SectionHeader } from "./section-header";
@@ -42,8 +43,8 @@ export function MarketplaceSection({ initialTrainers }: MarketplaceSectionProps)
         setIsModalOpen(true);
     };
 
-    const displayTrainers = searchTerm.trim() === '' 
-        ? filteredTrainers.slice(0, 3) 
+    const displayTrainers = searchTerm.trim() === ''
+        ? filteredTrainers.slice(0, 3)
         : filteredTrainers;
     const isCarousel = displayTrainers.length > 3;
 
@@ -84,46 +85,43 @@ export function MarketplaceSection({ initialTrainers }: MarketplaceSectionProps)
                 />
 
                 {/* Search Bar */}
-                <div className="w-full relative group max-w-2xl mx-auto">
-                    <div className="absolute inset-0 bg-transparent" />
-                    <div className="relative flex items-center bg-zinc-900 border border-zinc-800 rounded-2xl px-4 py-2 shadow-2xl transition-all focus-within:border-orange-500/50">
-                        <Search className="w-5 h-5 text-zinc-500 mr-2" />
-                        <Input
-                            placeholder="Buscar treinador por nome ou código..."
-                            className="border-none bg-transparent h-12 text-white placeholder:text-zinc-600 focus-visible:ring-0 text-base md:text-lg font-medium"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                        />
-                    </div>
+                <div className="w-full max-w-2xl mx-auto">
+                    <Input
+                        placeholder="Buscar treinador por nome ou código..."
+                        value={searchTerm}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
+                        icon={<Search className="w-5 h-5 text-zinc-500" />}
+                        size="lg"
+                    />
                 </div>
 
                 {/* Results Grid / Carousel */}
                 <div className="w-full relative overflow-hidden flex justify-start md:justify-center">
 
                     <div className={`flex transition-transform duration-500 ease-out ${isCarousel ? 'flex-nowrap w-full gap-[20px]' : 'flex-wrap justify-center w-full gap-[20px]'}`}
-                        style={{ 
-                            transform: isCarousel 
-                                ? `translateX(calc(-${activeIndex} * (100% / ${itemsVisible}) - ${activeIndex * (20 / itemsVisible)}px))` 
-                                : 'none' 
+                        style={{
+                            transform: isCarousel
+                               ? `translateX(calc(-${activeIndex} * (100% / ${itemsVisible}) - ${activeIndex * (20 / itemsVisible)}px))`
+                                : 'none'
                         }}
                     >
                         {displayTrainers.slice(0, 12).map((trainer, index) => (
-                            <Card
+                            <div
                                 key={`${trainer.id}-${index}`}
                                 className={`
-                                    bg-zinc-900/40 border-zinc-800/50 hover:border-orange-500/40 transition-all duration-300 group flex flex-col p-6 gap-[20px] relative shrink-0
+                                    bg-zinc-900/40 border border-zinc-800/50 hover:border-orange-500/40 rounded-2xl transition-all duration-300 group flex flex-col p-6 gap-[20px] relative shrink-0
                                     w-full sm:w-[calc(50%-10px)] md:w-[calc(33.333%-13.33px)]
                                 `}
                             >
 
 
                                 <div className="flex items-start justify-between relative z-10 w-full">
-                                    <Avatar className="h-16 w-16 border-2 border-zinc-800 group-hover:border-orange-500 transition-colors shrink-0">
-                                        <AvatarImage src={trainer.avatar_url} />
-                                        <AvatarFallback className="bg-zinc-800 text-zinc-500 font-bold uppercase">
-                                            {trainer.full_name?.substring(0, 2)}
-                                        </AvatarFallback>
-                                    </Avatar>
+                                    <BaseAvatar 
+                                        src={trainer.avatar_url} 
+                                        initials={trainer.full_name?.substring(0, 2).toUpperCase() || 'TR'} 
+                                        size="lg" 
+                                        variant="zinc" 
+                                    />
 
                                     <div className="flex flex-col items-end gap-1 shrink-0">
                                         <div className="bg-orange-500/10 border border-orange-500/20 text-orange-500 px-2.5 py-1 rounded text-[10px] font-black uppercase tracking-widest flex items-center gap-1 leading-none">
@@ -159,13 +157,18 @@ export function MarketplaceSection({ initialTrainers }: MarketplaceSectionProps)
                                 </div>
 
                                 <Button
-                                    className="w-full h-auto min-h-[2.75rem] py-3 bg-orange-500 hover:bg-orange-400 text-zinc-950 font-black uppercase text-[10px] tracking-widest mt-4 transition-all hover:scale-[1.02] active:scale-[0.98] relative z-10 shrink-0"
+                                    variant="orange"
+                                    size="md"
+                                    shine
+                                    fullWidth
                                     onClick={() => handleContact(trainer)}
                                 >
-                                    <MessageCircle className="w-4 h-4 mr-2 shrink-0" />
-                                    Contratar Agora
+                                    <Stack direction="row" align="center" justify="center" gap="element">
+                                        <Icon icon={MessageCircle} size="xs" />
+                                        <span>Agora</span>
+                                    </Stack>
                                 </Button>
-                            </Card>
+                            </div>
                         ))}
                     </div>
                 </div>

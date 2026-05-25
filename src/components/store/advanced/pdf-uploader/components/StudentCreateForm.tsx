@@ -1,7 +1,7 @@
  
 import React from 'react';
 import { Stack } from '@/components/store/base/stack';
-import { Surface } from '@/components/store/base/surface';
+import { GlassPanel } from '@/components/store/base/surface';
 import { Font } from '@/components/store/base/font';
 import { Icon } from '@/components/store/base/icon';
 import { Input as DSInput } from '@/components/store/base/input';
@@ -23,7 +23,7 @@ export function StudentCreateForm({
     placeholderWhatsapp, setPlaceholderWhatsapp
 }: StudentCreateFormProps) {
     return (
-        <Surface id="tour-student-fields" variant="raised" padding={STORE_TOKENS.PADDING.CONTAINER} animateIn="fade">
+        <GlassPanel id="tour-student-fields" padding={STORE_TOKENS.PADDING.CONTAINER} animateIn="fade">
             <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                 <DSInput
                     label="Nome do Novo Aluno"
@@ -59,6 +59,6 @@ export function StudentCreateForm({
                     * O email e WhatsApp são fundamentais para o envio automático do acesso.
                 </Font>
             </Stack>
-        </Surface>
+        </GlassPanel>
     );
 }

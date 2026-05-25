@@ -1,8 +1,9 @@
 'use client'
 
-import { UnifiedCreationDialog } from '@/components/store/features(deprecated)/unified-creation-dialog'
+
 import { Button } from '@/components/ui/button'
 import { Plus } from 'lucide-react'
+import { UnifiedCreationDialog } from '@/components/store/advanced/unified-creation-dialog'
 
 interface WorkoutActionsProps {
     isAutoTrainingActive: boolean

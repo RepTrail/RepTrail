@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/store/base/button";
 import { ArrowRight, Search, Zap, CheckCircle2 } from "lucide-react";
 import { fbqEvent } from "@/lib/meta-pixel";
 
@@ -31,7 +31,12 @@ export function CTASection() {
                         <Button
                             asChild
                             onClick={() => fbqEvent("Lead", { content_name: "Footer Start Now", content_category: "Landing Page" })}
-                            className="w-full h-auto min-h-[4rem] py-4 px-10 text-sm md:text-lg bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase italic tracking-tight md:tracking-wide rounded-2xl transition-all hover:-translate-y-1 whitespace-normal"
+                            variant="emerald"
+                            size="lg"
+                            hoverScale={105}
+                            activeScale={95}
+                            fullWidth={true}
+                            shine
                         >
                             <Link href="/auth/signup" className="flex flex-col sm:flex-row items-center justify-center text-center leading-[1.1] sm:leading-tight py-1">
                                 <span>Quero transformar minha consultoria agora</span>
@@ -40,8 +45,11 @@ export function CTASection() {
                         </Button>
                         <Button
                             asChild
-                            variant="outline"
-                            className="w-full h-16 px-10 text-sm md:text-lg border-zinc-800 bg-zinc-900/50 text-zinc-400 hover:bg-zinc-800 hover:text-white hover:border-zinc-700 font-black uppercase italic tracking-widest rounded-2xl transition-all hover:-translate-y-1 backdrop-blur-sm"
+                            variant="outline-zinc"
+                            size="lg"
+                            hoverScale={105}
+                            activeScale={95}
+                            fullWidth={true}
                         >
                             <a href="#marketplace" className="flex items-center justify-center">
                                 <Search className="mr-2 h-5 w-5 shrink-0" />

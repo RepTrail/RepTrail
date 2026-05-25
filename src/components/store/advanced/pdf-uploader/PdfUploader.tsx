@@ -1,9 +1,10 @@
- 
 'use client'
 
 import React from 'react';
 import { Stack } from '@/components/store/base/stack';
 import { STORE_TOKENS } from '@/components/store/constants/tokens';
+import { User } from 'lucide-react';
+import { RegistrySection } from '@/components/store/advanced/registry-section';
 
 import { PdfUploaderProps } from './lib/types';
 import { usePdfSelectionState } from './hooks/usePdfSelectionState';
@@ -12,12 +13,9 @@ import { usePdfUpload } from './hooks/usePdfUpload';
 import { usePdfSaveFlow } from './hooks/usePdfSaveFlow';
 
 import { PdfDropzone } from './components/PdfDropzone';
-import { PdfParsedStatus } from './components/PdfParsedStatus';
 import { StudentBindingCard } from './components/StudentBindingCard';
-import { AssignmentFeedbackCard } from './components/AssignmentFeedbackCard';
 import { PdfPreviewSection } from './components/PdfPreviewSection';
 import { PdfActionsFooter } from './components/PdfActionsFooter';
-import { PdfFeatureBadges } from './components/PdfFeatureBadges';
 
 export function PdfUploader({ type, students = [], role = 'trainer', userId, studentId: initialStudentId }: PdfUploaderProps) {
     const selectionHooks = usePdfSelectionState();
@@ -27,12 +25,14 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
         type, role, bindingHooks, selectionHooks
     });
 
+    const currentType = parsedData?.type || type;
+
     const { handleSave, isSaving } = usePdfSaveFlow({
-        type, userId, role, initialStudentId, parsedData, setParsedData, selectionHooks, bindingHooks
+        type: currentType, userId, role, initialStudentId, parsedData, setParsedData, selectionHooks, bindingHooks
     });
 
     return (
-        <Stack id="tour-import-card" fullWidth gap={STORE_TOKENS.SPACING.CONTAINER}>
+        <Stack id="tour-import-card" fullWidth gap="section">
             {!parsedData ? (
                 <PdfDropzone 
                     uploading={uploading} 
@@ -40,32 +40,30 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
                     onFileChange={handleFileChange} 
                 />
             ) : (
-                <Stack gap={STORE_TOKENS.SPACING.CONTAINER} className="animate-pulse">
-                    <PdfParsedStatus />
+                <Stack gap="section" fullWidth>
                     
                     {role === 'trainer' && (
-                        <StudentBindingCard 
-                            bindingHooks={bindingHooks}
-                            students={students}
-                        />
-                    )}
-
-                    {role === 'trainer' && (
-                        <AssignmentFeedbackCard 
-                            bindingHooks={bindingHooks}
-                            students={students}
-                        />
+                        <RegistrySection 
+                            title="Destinatário da Importação" 
+                            subtitle="Vincule a importação a um aluno existente ou crie um novo perfil de aluno."
+                            icon={User}
+                        >
+                            <StudentBindingCard 
+                                bindingHooks={bindingHooks}
+                                students={students}
+                            />
+                        </RegistrySection>
                     )}
 
                     <PdfPreviewSection 
-                        type={type}
+                        type={currentType}
                         parsedData={parsedData}
                         setParsedData={setParsedData}
                         selectionHooks={selectionHooks}
                     />
 
                     <PdfActionsFooter 
-                        type={type}
+                        type={currentType}
                         role={role}
                         isSaving={isSaving}
                         bindingHooks={bindingHooks}
@@ -74,8 +72,7 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
                     />
                 </Stack>
             )}
-            
-            <PdfFeatureBadges />
+
         </Stack>
     );
 }

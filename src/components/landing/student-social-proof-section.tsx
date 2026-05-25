@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { BaseAvatar } from "@/components/store/base/avatar";
 import { Star } from "lucide-react";
 import { SectionHeader } from "./section-header";
 
@@ -30,9 +30,7 @@ export function StudentSocialProofSection() {
                         </div>
                         <div className="pt-4 border-t border-zinc-800/50 flex items-center justify-between">
                             <div className="flex items-center gap-3">
-                                <Avatar className="h-8 w-8 border border-zinc-700">
-                                    <AvatarFallback className="bg-zinc-800 text-zinc-500 font-bold uppercase text-[8px]">LC</AvatarFallback>
-                                </Avatar>
+                                <BaseAvatar initials="LC" size="sm" variant="zinc" />
                                 <div>
                                     <p className="text-white font-bold uppercase text-[9px]">Lucas C.</p>
                                     <p className="text-zinc-500 text-[7px] uppercase font-bold tracking-widest">Curitiba • PR</p>
@@ -56,9 +54,7 @@ export function StudentSocialProofSection() {
                         </div>
                         <div className="pt-4 border-t border-zinc-800/50 flex items-center justify-between">
                             <div className="flex items-center gap-3">
-                                <Avatar className="h-10 w-10 border-2 border-orange-500/30">
-                                    <AvatarFallback className="bg-zinc-800 text-zinc-500 font-bold uppercase text-[10px]">AM</AvatarFallback>
-                                </Avatar>
+                                <BaseAvatar initials="AM" size="md" variant="orange" />
                                 <div>
                                     <p className="text-white font-bold uppercase text-[10px]">Amanda M.</p>
                                     <p className="text-zinc-500 text-[8px] uppercase font-bold tracking-widest">Belo Horizonte • MG</p>
@@ -82,9 +78,7 @@ export function StudentSocialProofSection() {
                         </div>
                         <div className="pt-4 border-t border-zinc-800/50 flex items-center justify-between">
                             <div className="flex items-center gap-3">
-                                <Avatar className="h-8 w-8 border border-zinc-700">
-                                    <AvatarFallback className="bg-zinc-800 text-zinc-500 font-bold uppercase text-[8px]">GT</AvatarFallback>
-                                </Avatar>
+                                <BaseAvatar initials="GT" size="sm" variant="zinc" />
                                 <div>
                                     <p className="text-white font-bold uppercase text-[9px]">Gustavo T.</p>
                                     <p className="text-zinc-500 text-[7px] uppercase font-bold tracking-widest">Lisboa • PT</p>
@@ -108,9 +102,7 @@ export function StudentSocialProofSection() {
                         </div>
                         <div className="pt-4 border-t border-zinc-800/50 flex items-center justify-between">
                             <div className="flex items-center gap-3">
-                                <Avatar className="h-8 w-8 border border-zinc-700">
-                                    <AvatarFallback className="bg-zinc-800 text-zinc-500 font-bold uppercase text-[8px]">RV</AvatarFallback>
-                                </Avatar>
+                                <BaseAvatar initials="RV" size="sm" variant="zinc" />
                                 <div>
                                     <p className="text-white font-bold uppercase text-[9px]">Ricardo V.</p>
                                     <p className="text-zinc-500 text-[7px] uppercase font-bold tracking-widest">Florianópolis • SC</p>

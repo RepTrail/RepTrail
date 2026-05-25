@@ -6,9 +6,9 @@ import { VideoShowcase } from '@/components/landing/video-showcase'
 import { MarketplaceSection } from '@/components/landing/marketplace-section'
 import { StudentSocialProofSection } from '@/components/landing/student-social-proof-section'
 import { StudentFAQSection } from '@/components/landing/student-faq-section'
-import { Logo } from '@/components/ui/logo'
+import { Logo } from '@/components/store/base/logo'
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/store/base/button'
 import { getTrainerRanking } from '@/actions/trainer-actions'
 import { AffiliateTracker } from '@/components/landing/affiliate-tracker'
 import { createClient } from '@/lib/supabase/server'
@@ -39,7 +39,9 @@ export default async function StudentLandingPage() {
         <div className="container mx-auto flex items-center justify-between px-5 sm:px-6 md:px-8">
           <div className="flex items-center gap-8">
             <Link href="/" className="flex items-center gap-2 group">
-              <Logo size="md" className="group-hover:scale-105 transition-transform" />
+              <div className="group-hover:scale-105 transition-transform">
+                <Logo size="md" />
+              </div>
             </Link>
             
             {/* Navigation links removed to simplify header */}
@@ -52,7 +54,7 @@ export default async function StudentLandingPage() {
                   Login
                 </Link>
                 <Link href="/auth/signup">
-                  <Button className="bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase italic tracking-widest rounded-xl text-xs px-6 h-10 transition-all hover:scale-105 active:scale-95 leading-none">
+                  <Button variant="emerald" size="sm" hoverScale={105} activeScale={95}>
                     Começar Agora
                   </Button>
                 </Link>
@@ -60,7 +62,7 @@ export default async function StudentLandingPage() {
             ) : (
               <div className="flex items-center gap-4">
                 <Link href={dashboardUrl}>
-                  <Button className="bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase italic tracking-widest rounded-xl text-xs px-6 h-10 transition-all hover:scale-105 active:scale-95">
+                  <Button variant="emerald" size="sm" hoverScale={105} activeScale={95}>
                     Acessar Dashboard
                   </Button>
                 </Link>

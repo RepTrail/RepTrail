@@ -1,6 +1,6 @@
 import Link from 'next/link'
-import { Logo } from '@/components/ui/logo'
-import { Button } from '@/components/ui/button'
+import { Logo } from '@/components/store/base/logo'
+import { Button } from '@/components/store/base/button'
 import { AffiliateTracker } from '@/components/landing/affiliate-tracker'
 import {
     ArrowRight, CheckCircle2, Star, TrendingUp, Users,
@@ -19,14 +19,16 @@ export default function AffiliadosPage() {
             <header className="h-20 flex items-center border-b border-zinc-900/50 backdrop-blur-md sticky top-0 z-50 bg-zinc-950/80">
                 <div className="container mx-auto  flex items-center justify-between">
                     <Link href="/" className="flex items-center gap-2 group">
-                        <Logo size="md" className="group-hover:scale-105 transition-transform" />
+                        <div className="group-hover:scale-105 transition-transform">
+                            <Logo size="md" />
+                        </div>
                     </Link>
                     <div className="flex items-center gap-4">
                         <Link href="/afiliados/login" className="text-[10px] font-black text-zinc-400 hover:text-amber-400 uppercase tracking-[0.2em] transition-colors hidden md:block">
                             Já sou afiliado
                         </Link>
                         <Link href="/afiliados/cadastro" className="hidden md:block">
-                            <Button className="bg-amber-500 hover:bg-amber-400 text-zinc-950 font-black uppercase italic tracking-widest rounded-xl text-xs px-6 h-10 shadow-lg shadow-amber-500/20 transition-all hover:scale-105 active:scale-95">
+                            <Button variant="amber" size="sm" hoverScale={105} activeScale={95}>
                                 Começar agora
                             </Button>
                         </Link>
@@ -68,7 +70,15 @@ export default function AffiliadosPage() {
 
                         <div className="flex flex-col items-center justify-center gap-4 pt-4 w-full">
                             <Link href="/afiliados/cadastro" className="w-full sm:w-auto">
-                                <Button className="w-full sm:w-auto h-14 px-10 bg-amber-500 hover:bg-amber-400 text-zinc-950 font-black uppercase italic tracking-[0.1em] rounded-2xl shadow-2xl shadow-amber-500/30 transition-all hover:scale-105 active:scale-95 text-base gap-3">
+                                <Button
+                                    variant="amber"
+                                    size="lg"
+                                    hoverScale={105}
+                                    activeScale={95}
+                                    fullWidth={{ base: true, sm: false }}
+                                    gap="element"
+                                    shine
+                                >
                                     Quero me tornar afiliado
                                     <ArrowRight className="w-5 h-5" />
                                 </Button>
@@ -312,7 +322,15 @@ export default function AffiliadosPage() {
                             Seu networking no mundo fitness tem valor. O RepTrail só precisa de <strong className="text-zinc-200">1 minuto do seu tempo</strong> para transformar isso em renda recorrente.
                         </p>
                         <Link href="/afiliados/cadastro" className="w-full md:w-auto block">
-                            <Button className="w-full md:w-auto h-14 px-8 md:px-12 bg-amber-500 hover:bg-amber-400 text-zinc-950 font-black uppercase italic tracking-[0.1em] rounded-2xl shadow-2xl shadow-amber-500/30 transition-all hover:scale-105 active:scale-95 text-sm md:text-base gap-3">
+                            <Button
+                                variant="amber"
+                                size="lg"
+                                hoverScale={105}
+                                activeScale={95}
+                                fullWidth={{ base: true, md: false }}
+                                gap="element"
+                                shine
+                            >
                                 <span className="md:hidden">Criar Conta</span>
                                 <span className="hidden md:inline">Criar minha conta de afiliado</span>
                                 <ArrowRight className="w-5 h-5" />

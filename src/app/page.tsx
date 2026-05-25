@@ -7,9 +7,9 @@ import { SocialProofSection } from '@/components/landing/social-proof-section'
 import { GuaranteeSection } from '@/components/landing/guarantee-section'
 import { FAQSection } from '@/components/landing/faq-section'
 import { AuthoritySection } from '@/components/landing/authority-section'
-import { Logo } from '@/components/ui/logo'
+import { Logo } from '@/components/store/base/logo'
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/store/base/button'
 import { getTrainerRanking } from '@/actions/trainer-actions'
 import { AffiliateTracker } from '@/components/landing/affiliate-tracker'
 import { createClient } from '@/lib/supabase/server'
@@ -45,7 +45,9 @@ export default async function LandingPage() {
         {/* Header */}
         <div className="container mx-auto flex items-center justify-between px-5 sm:px-6 md:px-8">
           <Link href="/" className="flex items-center gap-2 group">
-            <Logo size="md" className="group-hover:scale-105 transition-transform" />
+            <div className="group-hover:scale-105 transition-transform">
+              <Logo size="md" />
+            </div>
           </Link>
 
           <nav className="hidden md:flex gap-6 items-center">
@@ -55,7 +57,7 @@ export default async function LandingPage() {
                   Login
                 </Link>
                 <Link href="/auth/signup">
-                  <Button className="bg-white hover:bg-zinc-200 text-zinc-950 font-black uppercase italic tracking-widest rounded-xl text-xs px-6 h-10 transition-all hover:scale-105 active:scale-95 leading-none">
+                  <Button variant="white" size="sm" hoverScale={105} activeScale={95}>
                     Começar Agora
                   </Button>
                 </Link>
@@ -64,7 +66,7 @@ export default async function LandingPage() {
               <div className="flex items-center gap-4">
                 {role === 'admin' && (
                   <Link href="/admin">
-                    <Button variant="ghost" className="text-xs font-black text-zinc-400 hover:text-white uppercase tracking-widest hover:bg-zinc-900">
+                    <Button variant="ghost" size="sm">
                       Admin
                     </Button>
                   </Link>
@@ -72,14 +74,14 @@ export default async function LandingPage() {
 
                 {isAffiliate && (
                   <Link href="/afiliados/login">
-                    <Button variant="ghost" className="text-xs font-black text-orange-500/80 hover:text-orange-500 uppercase tracking-widest hover:bg-orange-500/10">
+                    <Button variant="outline-orange" size="sm">
                       Painel Afiliado
                     </Button>
                   </Link>
                 )}
 
                 <Link href={dashboardUrl}>
-                  <Button className="bg-emerald-500 hover:bg-orange-400 text-zinc-950 font-black uppercase italic tracking-widest rounded-xl text-xs px-6 h-10 transition-all hover:scale-105 active:scale-95">
+                  <Button variant="emerald" size="sm" hoverScale={105} activeScale={95}>
                     Acessar Dashboard
                   </Button>
                 </Link>

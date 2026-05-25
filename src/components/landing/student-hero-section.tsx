@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/store/base/button";
 import { ArrowRight, Search, Zap, Trophy, Star, CheckCircle2, Smartphone, Dumbbell, PlayCircle } from "lucide-react";
 import { LandingBadge } from "./landing-badge";
 import { fbqEvent } from "@/lib/meta-pixel";
@@ -47,7 +47,12 @@ export function StudentHeroSection() {
                             <Button
                                 asChild
                                 onClick={() => fbqEvent("Lead", { content_name: "Student Hero Signup", content_category: "Landing Page Aluno" })}
-                                className="group relative overflow-hidden w-full sm:w-auto h-auto py-5 px-10 text-lg bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black uppercase italic tracking-wider rounded-2xl transition-all hover:-translate-y-1 active:scale-95"
+                                variant="emerald"
+                                size="lg"
+                                hoverScale={105}
+                                activeScale={95}
+                                fullWidth={{ base: true, sm: false }}
+                                shine
                             >
                                 <Link href="/auth/signup" className="flex items-center justify-center gap-3">
                                     <span>Criar Minha Conta</span>
@@ -57,8 +62,11 @@ export function StudentHeroSection() {
 
                             <Button
                                 asChild
-                                variant="outline"
-                                className="w-full sm:w-auto h-auto py-5 px-8 text-lg border-zinc-800 bg-zinc-900/50 text-zinc-300 hover:bg-zinc-800 hover:text-white hover:border-zinc-700 font-black uppercase italic tracking-wider rounded-2xl backdrop-blur-md transition-all hover:-translate-y-1"
+                                variant="outline-zinc"
+                                size="lg"
+                                hoverScale={105}
+                                activeScale={95}
+                                fullWidth={{ base: true, sm: false }}
                             >
                                 <a href="#marketplace" className="flex items-center justify-center gap-3">
                                     <Search className="h-5 w-5" />

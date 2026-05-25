@@ -17,17 +17,18 @@ interface PdfActionsFooterProps {
 
 export function PdfActionsFooter({ type, role, isSaving, bindingHooks, setParsedData, onSave }: PdfActionsFooterProps) {
     const { placeholderName, placeholderEmail, detectedStudentName, bindingMode, setSelectedStudentId } = bindingHooks;
-    
+
     return (
         <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
             <Separator opacity={5} />
-            <Stack direction="row" justify="end" gap={STORE_TOKENS.SPACING.CONTAINER}>
+            <Stack direction={{ base: 'col', md: 'row' }} justify="end" gap={{ base: 'element', md: 'container' }} fullWidth>
                 <DSButton
-                    variant="ghost"
+                    variant="outline-red"
                     onClick={() => { setParsedData(null); setSelectedStudentId(''); }}
                     gap={STORE_TOKENS.SPACING.ELEMENT}
+                    fullWidth={{ base: true, md: false }}
                 >
-                    <Icon icon={X} size="xs" color="zinc-500" />
+                    <Icon icon={X} size="xs" color="red" />
                     Cancelar
                 </DSButton>
                 <DSButton
@@ -37,10 +38,11 @@ export function PdfActionsFooter({ type, role, isSaving, bindingHooks, setParsed
                     disabled={isSaving || (role === 'trainer' && bindingMode === 'create' && (!placeholderName || !placeholderEmail))}
                     gap={STORE_TOKENS.SPACING.ELEMENT}
                     loading={isSaving}
+                    fullWidth={{ base: true, md: false }}
                 >
                     {!isSaving && <Icon icon={Check} size="xs" color="primary" />}
                     {bindingMode === 'create'
-                        ? `Salvar e Vincular a ${placeholderName || detectedStudentName || 'Novo Aluno'}`
+                        ? `Salvar e Vincular`
                         : `Salvar ${type === 'workout' ? 'Treino' : 'Dieta'}`
                     }
                 </DSButton>

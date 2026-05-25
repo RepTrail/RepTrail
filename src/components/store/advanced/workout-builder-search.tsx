@@ -83,7 +83,7 @@ export function WorkoutBuilderSearch({
                                         hoverBgOpacity={5}
                                         cursor="pointer"
                                     >
-                                        <Stack direction="col" gap="tiny" align="start">
+                                        <Stack direction="col" gap="element" align="start">
                                             <Font variant="label-caps" color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
                                                 {ex.name}
                                             </Font>

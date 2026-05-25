@@ -1,7 +1,7 @@
 import { WorkoutBuilderSmart } from "@/components/store/advanced/workout-builder-smart"
 import { notFound, redirect } from "next/navigation"
 import { createClient } from '@/lib/supabase/server'
-import { WorkoutDaySelector } from '@/components/store/features(deprecated)/student-workout-day-selector'
+import { WorkoutDaySelector } from '@/components/store/advanced/workout-day-selector'
 import { RegistryMain } from "@/components/store/advanced/registry-main"
 import { Box } from "@/components/store/base/box"
 import { Stack } from "@/components/store/base/stack"

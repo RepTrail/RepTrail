@@ -1,8 +1,4 @@
-
 import { createClient } from '@/lib/supabase/server'
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Progress } from "@/components/ui/progress"
 import { Utensils, CheckCircle } from 'lucide-react'
 
 export default async function StudentDietPage() {
@@ -75,49 +71,53 @@ export default async function StudentDietPage() {
     const progress = 33 // 1/3 meals checked
 
     return (
-        <div className="space-y-6 max-w-2xl mx-auto">
+        <div className="space-y-6 max-w-2xl mx-auto px-4 py-8 bg-zinc-950 text-white min-h-screen">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Minha Dieta</h1>
-                    <p className="text-gray-500">{diet?.name}</p>
+                    <h1 className="text-3xl font-black italic uppercase tracking-tight">Minha Dieta</h1>
+                    <p className="text-zinc-500 font-bold uppercase tracking-wider text-xs">{diet?.name}</p>
                 </div>
-                <div className="text-right">
-                    <div className="text-sm font-medium text-green-600 mb-1">{progress}% Concluído</div>
-                    <Progress value={progress} className="w-32 h-2" />
+                <div className="flex flex-col items-end gap-1.5">
+                    <div className="text-xs font-black text-emerald-400 uppercase tracking-widest">{progress}% Concluído</div>
+                    <div className="w-32 h-2 bg-zinc-800 rounded-full overflow-hidden">
+                        <div className="bg-emerald-500 h-full rounded-full" style={{ width: `${progress}%` }} />
+                    </div>
                 </div>
             </div>
 
             <div className="grid gap-6">
                 {meals.map((meal: any) => (
-                    <Card key={meal.id} className="border-l-4 border-l-blue-500 shadow-sm hover:shadow-md transition-shadow">
-                        <CardHeader className="pb-3 bg-gray-50/50">
-                            <div className="flex justify-between items-center">
-                                <div className="flex items-center gap-2">
-                                    <Utensils className="h-5 w-5 text-gray-400" />
-                                    <CardTitle className="text-lg">{meal.name}</CardTitle>
-                                </div>
-                                {meal.time_of_day && (
-                                    <span className="text-sm px-2 py-1 bg-white rounded border text-gray-500 font-mono">
-                                        {meal.time_of_day.slice(0, 5)}
-                                    </span>
-                                )}
+                    <div key={meal.id} className="bg-zinc-900/45 border border-zinc-800 border-l-4 border-l-orange-500 shadow-2xl rounded-2xl overflow-hidden flex flex-col gap-4">
+                        <div className="pb-3 pt-6 px-6 bg-zinc-950/20 flex flex-row items-center justify-between border-b border-zinc-800/40">
+                            <div className="flex items-center gap-2.5">
+                                <Utensils className="h-5 w-5 text-orange-500" />
+                                <h3 className="text-base font-black uppercase italic tracking-wider text-white">{meal.name}</h3>
                             </div>
-                        </CardHeader>
-                        <CardContent className="pt-4 space-y-4">
+                            {meal.time_of_day && (
+                                <span className="text-xs px-2.5 py-1 bg-zinc-950 rounded border border-zinc-800 text-zinc-400 font-mono font-bold">
+                                    {meal.time_of_day.slice(0, 5)}
+                                </span>
+                            )}
+                        </div>
+                        <div className="p-6 pt-0 space-y-4 flex flex-col">
                             {meal.items?.map((item: any) => (
-                                <div key={item.id} className="flex items-start space-x-3 p-2 hover:bg-gray-50 rounded-lg transition-colors">
-                                    <Checkbox id={item.id} />
+                                <div key={item.id} className="flex items-start space-x-3.5 p-3 hover:bg-zinc-900/60 rounded-xl transition-all border border-transparent hover:border-zinc-800/50">
+                                    <input 
+                                        type="checkbox" 
+                                        id={item.id} 
+                                        className="w-5 h-5 rounded border border-zinc-700 bg-zinc-950 text-emerald-500 focus:ring-emerald-500/20 shrink-0 cursor-pointer"
+                                    />
                                     <div className="grid gap-1.5 leading-none w-full">
                                         <label
                                             htmlFor={item.id}
-                                            className="text-base font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                                            className="text-sm font-black uppercase tracking-wider leading-none text-zinc-200 cursor-pointer hover:text-white transition-colors"
                                         >
                                             {item.food_name}
                                         </label>
-                                        <div className="flex justify-between text-sm text-muted-foreground">
+                                        <div className="flex justify-between text-xs font-bold text-zinc-500">
                                             <span>{item.quantity}</span>
                                             {item.approx_measure && (
-                                                <span className="italic text-blue-600 bg-blue-50 px-2 py-0.5 rounded text-xs">
+                                                <span className="italic text-orange-500 bg-orange-500/10 px-2 py-0.5 rounded border border-orange-500/10 text-[10px] uppercase tracking-wide">
                                                     Medida: {item.approx_measure}
                                                 </span>
                                             )}
@@ -126,13 +126,13 @@ export default async function StudentDietPage() {
                                 </div>
                             ))}
 
-                            <div className="pt-2 border-t flex justify-end">
-                                <button className="text-sm text-green-600 hover:text-green-700 font-medium flex items-center">
-                                    <CheckCircle className="h-4 w-4 mr-1" /> Marcar Refeição Completa
+                            <div className="pt-4 border-t border-zinc-800 flex justify-end">
+                                <button className="text-xs text-emerald-400 hover:text-emerald-300 font-black uppercase tracking-wider flex items-center gap-1.5 transition-colors">
+                                    <CheckCircle className="h-4 w-4 shrink-0 text-emerald-500" /> Marcar Refeição Completa
                                 </button>
                             </div>
-                        </CardContent>
-                    </Card>
+                        </div>
+                    </div>
                 ))}
             </div>
         </div>

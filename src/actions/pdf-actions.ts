@@ -56,18 +56,13 @@ export async function parseUploadedPdf(filePath: string, type: 'workout' | 'diet
     let parsedData: any = null
     let method = 'local-parser'
 
-    // Early validation: check if PDF content matches expected type
+    // Auto-detect PDF type by counting text matching keyword frequencies
     const textLower = text.toLowerCase()
-    const isWorkoutContent = /treino|exercício|repetição|série|aquecimento|peso|kg|carga|musculação|academia/.test(textLower)
-    const isDietContent = /dieta|refeição|café|almoço|jantar|lanche|caloria|proteína|carboidrato|gordura|grama/.test(textLower)
+    const workoutMatches = (textLower.match(/treino|exercício|repetição|série|aquecimento|peso|kg|carga|musculação|academia/g) || []).length;
+    const dietMatches = (textLower.match(/dieta|refeição|café|almoço|jantar|lanche|caloria|proteína|carboidrato|gordura|grama/g) || []).length;
+    const resolvedType = workoutMatches >= dietMatches ? 'workout' : 'diet';
 
-    // If content clearly doesn't match type, return error early
-    if (type === 'workout' && !isWorkoutContent && isDietContent) {
-        return { error: 'Este PDF parece ser uma dieta, não um treino. Use a aba "Dieta" para importar arquivos de dieta.' }
-    }
-    if (type === 'diet' && !isDietContent && isWorkoutContent) {
-        return { error: 'Este PDF parece ser um treino, não uma dieta. Use a aba "Treino" para importar arquivos de treino.' }
-    }
+    console.log(`[PDF] Auto-detected resolvedType: ${resolvedType} (workoutMatches=${workoutMatches}, dietMatches=${dietMatches})`);
 
     const openrouterKey = process.env.OPENROUTER_API_KEY
     if (openrouterKey) {
@@ -76,7 +71,7 @@ export async function parseUploadedPdf(filePath: string, type: 'workout' | 'diet
             const { createOpenRouterClient, callAI, DEFAULT_AI_MODEL } = await import('@/lib/ai-client')
             const client = createOpenRouterClient(openrouterKey)
 
-            const prompt = type === 'workout'
+            const prompt = resolvedType === 'workout'
                 ? `
 You are a surgical Fitness Data Extraction AI. You translate messy Portuguese gym PDFs into structured JSON.
 
@@ -197,8 +192,8 @@ ${text}
     // 4. Fallback: local regex parser
     if (!parsedData) {
         try {
-            console.log(`[PDF] Running local parser for type=${type}`)
-            parsedData = type === 'workout' ? parseWorkoutLocally(text) : parseDietLocally(text)
+            console.log(`[PDF] Running local parser for type=${resolvedType}`)
+            parsedData = resolvedType === 'workout' ? parseWorkoutLocally(text) : parseDietLocally(text)
             console.log(`[PDF] Local parse complete`)
         } catch (parseError: any) {
             console.error('[PDF] Local Parse Error:', parseError.message)
@@ -292,7 +287,7 @@ ${text}
             });
         }
 
-        if (type === 'diet') {
+        if (resolvedType === 'diet') {
             if (parsedData.options?.length > 0) {
                 parsedData.options = parsedData.options.map((opt: any) => ({
                     ...opt,
@@ -305,7 +300,7 @@ ${text}
     }
 
     // ─── AUTO-CALCULATE MACROS FOR PREVIEW ──────────────────────────────────
-    if (type === 'diet' && parsedData) {
+    if (resolvedType === 'diet' && parsedData) {
         console.log(`[PDF] Triggering auto-macro calculation for preview...`);
         const { estimateMacrosForFoodList } = await import('@/actions/diet-actions');
         
@@ -343,7 +338,7 @@ ${text}
     }
 
     const responseData = {
-        type,
+        type: resolvedType,
         raw_text_preview: text.substring(0, 200) + '...',
         parsed_data: parsedData,
         method,

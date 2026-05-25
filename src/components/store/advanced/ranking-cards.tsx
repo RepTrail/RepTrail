@@ -2,7 +2,7 @@
 
 import { Trophy, Star, MapPin, ArrowRight } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { BaseAvatar } from "@/components/store/base/avatar"
 import { Button } from "@/components/ui/button"
 import Link from 'next/link'
 
@@ -33,12 +33,12 @@ export function PodiumCard({ trainer, rank }: { trainer: TrainerRanking, rank: n
             <CardContent className="p-6 sm:p-10 flex flex-col items-center text-center space-y-8 relative z-10">
                 <div className="relative">
                     <div className={`absolute -inset-4 bg-gradient-to-r ${colors[rank - 1]?.split(' ').slice(0, 2).join(' ') || ''} rounded-full blur-2xl opacity-10 group-hover:opacity-30 transition duration-1000`}></div>
-                    <Avatar className="h-32 w-32 border-4 border-zinc-900 shadow-2xl relative">
-                        <AvatarImage src={trainer.avatar_url} className="object-cover" />
-                        <AvatarFallback className="bg-zinc-800 text-zinc-500 font-black text-3xl italic uppercase">
-                            {trainer.full_name?.substring(0, 2) || 'TR'}
-                        </AvatarFallback>
-                    </Avatar>
+                    <BaseAvatar 
+                        src={trainer.avatar_url} 
+                        initials={trainer.full_name?.substring(0, 2).toUpperCase() || 'TR'} 
+                        size="xxl" 
+                        variant="orange" 
+                    />
                     <div className={`absolute -bottom-2 -right-2 w-12 h-12 rounded-system shadow-2xl bg-zinc-950 border border-zinc-800 flex items-center justify-center`}>
                         <span className={`text-2xl font-black italic uppercase ${colors[rank - 1]?.split(' ')[2] || ''}`}>#{rank}</span>
                     </div>
@@ -101,12 +101,12 @@ export function RankingRow({ trainer, rank }: { trainer: TrainerRanking, rank: n
             </div>
 
             <div className="flex-1 flex items-center gap-3 pb-4 md:gap-6 min-w-0">
-                <Avatar className="h-10 w-10 md:h-16 md:w-16 border border-zinc-800 shrink-0 shadow-xl group-hover:scale-110 transition-transform">
-                    <AvatarImage src={trainer.avatar_url} className="object-cover" />
-                    <AvatarFallback className="bg-zinc-900 text-zinc-500 font-bold text-lg md:text-xl uppercase">
-                        {trainer.full_name?.substring(0, 2) || 'TR'}
-                    </AvatarFallback>
-                </Avatar>
+                <BaseAvatar 
+                    src={trainer.avatar_url} 
+                    initials={trainer.full_name?.substring(0, 2).toUpperCase() || 'TR'} 
+                    size="lg" 
+                    variant="zinc" 
+                />
                 <div className="overflow-hidden space-y-1 min-w-0 flex-1">
                     <p className="text-sm md:text-xl font-black text-white italic uppercase truncate group-hover:text-orange-500 transition-colors tracking-tight pr-2">
                         {trainer.full_name}

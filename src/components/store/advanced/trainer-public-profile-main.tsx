@@ -27,12 +27,11 @@ import { BaseAvatar } from '@/components/store/base/avatar'
 import { Button } from '@/components/store/base/button'
 import { GlassPanel } from '@/components/store/base/surface'
 import { BackgroundIcon } from '@/components/store/base/background-icon'
-import { Img } from '@/components/store/base/img'
 import { Grid } from '@/components/store/base/grid'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { EmptyState } from '@/components/store/intermediary/empty-state'
-import { ShareTransformation } from '@/components/store/advanced/student-share-transformation'
+import { StudentPublicPhotos } from '@/components/store/advanced/student-public-photos'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -123,6 +122,7 @@ export function TrainerPublicProfileMain({
                         direction={{ base: 'col', md: 'row' }}
                         align="center"
                         gap="container"
+                        fullWidth
                     >
                         {/* Avatar & Elite Badge */}
                         <Stack gap="element" align="center">
@@ -143,7 +143,7 @@ export function TrainerPublicProfileMain({
                         </Stack>
 
                         {/* Identity Info */}
-                        <Stack gap="element" align={{ base: 'center', md: 'start' }}>
+                        <Stack gap="element" align={{ base: 'center', md: 'start' }} fullWidth>
                             <Font variant="h1" align={{ base: 'center', md: 'left' }} weight="black" italic uppercase color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
                                 {trainer.full_name}
                             </Font>
@@ -182,17 +182,18 @@ export function TrainerPublicProfileMain({
                                 />
                             )}
 
-                            <Box display="flex" direction={{ base: 'col', sm: 'row' }} gap="element" fullWidth={{ base: true, sm: false }}>
-                                <Box fullWidth={{ base: true, sm: false }}>
+                            <Box display="flex" direction={{ base: 'col', md: 'row' }} gap="element" fullWidth>
+                                <Box flex1={{ base: false, md: true }} fullWidth>
                                     {trainer.whatsapp ? (
                                         <Link
                                             href={`https://wa.me/${trainer.whatsapp?.replace(/\D/g, '')}?text=Olá ${trainer.full_name}, vi seu perfil no RepTrail e gostaria de saber mais sobre sua consultoria!`}
                                             target="_blank"
+                                            style={{ width: '100%', display: 'flex' }}
                                         >
                                             <Button variant="outline-primary" size="sm" fullWidth>
                                                 <Stack direction="row" align="center" justify="center" gap="element">
                                                     <Icon icon={MessageCircle} size="sm" />
-                                                    Contratar Agora
+                                                    Contratar
                                                 </Stack>
                                             </Button>
                                         </Link>
@@ -207,11 +208,12 @@ export function TrainerPublicProfileMain({
                                 </Box>
 
                                 {trainer.instagram && (
-                                    <Box fullWidth={{ base: true, sm: false }}>
+                                    <Box flex1={{ base: false, md: true }} fullWidth>
                                         <Link
                                             href={`https://instagram.com/${trainer.instagram.replace(/^@/, '')}`}
                                             target="_blank"
                                             rel="noopener noreferrer"
+                                            style={{ width: '100%', display: 'flex' }}
                                         >
                                             <Button variant="outline-zinc" size="sm" fullWidth>
                                                 <Stack direction="row" align="center" justify="center" gap="element">
@@ -300,8 +302,8 @@ export function TrainerPublicProfileMain({
                                 {/* Card 2 */}
                                 <GlassPanel padding="container">
                                     <Stack gap="element">
-                                        <Box padding="element" rounded="system" bg="orange" bgOpacity={10} width="10" height="10" display="flex" align="center" justify="center">
-                                            <Icon icon={Dumbbell} size="md" color="orange" />
+                                        <Box padding="element" rounded="system" bg="primary" bgOpacity={10} width="10" height="10" display="flex" align="center" justify="center">
+                                            <Icon icon={Dumbbell} size="md" color="primary" />
                                         </Box>
                                         <Stack gap="none">
                                             <Font variant="h4" color="PRIMARY" weight="black" uppercase italic>Metodologia</Font>
@@ -346,18 +348,21 @@ export function TrainerPublicProfileMain({
                                             Veja mais transformações e conteúdo exclusivo
                                         </Font>
                                     </Stack>
-                                    <Link
-                                        href={`https://instagram.com/${trainer.instagram.replace(/^@/, '')}`}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
-                                        <Button variant="outline-primary" size="sm">
-                                            <Stack direction="row" align="center" gap="element">
-                                                Seguir
-                                                <Icon icon={ExternalLink} size="xs" />
-                                            </Stack>
-                                        </Button>
-                                    </Link>
+                                    <Box fullWidth={{ base: true, md: false }} display="flex">
+                                        <Link
+                                            href={`https://instagram.com/${trainer.instagram.replace(/^@/, '')}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            style={{ width: '100%', display: 'flex' }}
+                                        >
+                                            <Button variant="outline-primary" size="sm" fullWidth={{ base: true, md: false }}>
+                                                <Stack direction="row" align="center" justify="center" gap="element" fullWidth>
+                                                    Seguir
+                                                    <Icon icon={ExternalLink} size="xs" />
+                                                </Stack>
+                                            </Button>
+                                        </Link>
+                                    </Box>
                                 </Box>
                             </GlassPanel>
                         )}
@@ -365,97 +370,33 @@ export function TrainerPublicProfileMain({
                 )}
 
                 {activeTab === 'results' && (
-                    <RegistrySection
-                        title="Transformações Reais"
-                        icon={Trophy}
-                        subtitle="Galeria de evolução corporal com resultados práticos compartilhados pelos alunos."
-                    >
+                    <Stack gap="section" fullWidth>
                         {photoPairs && photoPairs.length > 0 ? (
-                            <Grid cols={{ base: 1, md: 2 }} gap="container">
-                                {photoPairs.map((pair, idx) => {
-                                    const oldUrl = pair.oldest.front_url || pair.oldest.back_url || pair.oldest.side_right_url || pair.oldest.side_left_url
-                                    const newUrl = pair.newest.front_url || pair.newest.back_url || pair.newest.side_right_url || pair.newest.side_left_url
-                                    if (!oldUrl || !newUrl) return null
-                                    return (
-                                        <GlassPanel key={`${pair.studentName}-${idx}`} padding="container">
-                                            <Stack gap="element" fullWidth>
-                                                <Font variant="h4" weight="black" uppercase italic color="PRIMARY">
-                                                    {pair.studentName}
-                                                </Font>
-                                                <Grid cols={2} gap="element">
-                                                    {/* Before Photo */}
-                                                    <Box
-                                                        position="relative"
-                                                        rounded="system"
-                                                        overflow="hidden"
-                                                        bg="zinc"
-                                                        bgOpacity={90}
-                                                        aspectRatio="3/4"
-                                                    >
-                                                        <Img
-                                                            src={oldUrl}
-                                                            alt="Início"
-                                                            fullWidth
-                                                            fullHeight
-                                                            objectFit="cover"
-                                                            rounded="system"
-                                                        />
-                                                        <Box position="absolute" top={2.5} left={2.5}>
-                                                            <Badge label="Início" color="orange" variant="solid" size="xs" />
-                                                        </Box>
-                                                    </Box>
-
-                                                    {/* Today Photo */}
-                                                    <Box
-                                                        position="relative"
-                                                        rounded="system"
-                                                        overflow="hidden"
-                                                        bg="zinc"
-                                                        bgOpacity={90}
-                                                        aspectRatio="3/4"
-                                                        border={true}
-                                                        borderColor="primary"
-                                                        borderOpacity={20}
-                                                    >
-                                                        <Img
-                                                            src={newUrl}
-                                                            alt="Hoje"
-                                                            fullWidth
-                                                            fullHeight
-                                                            objectFit="cover"
-                                                            rounded="system"
-                                                        />
-                                                        <Box position="absolute" top={2.5} left={2.5}>
-                                                            <Badge label="Hoje" color="emerald" variant="solid" size="xs" />
-                                                        </Box>
-                                                    </Box>
-                                                </Grid>
-
-                                                {/* Share transformation trigger below the photos comparison, spanning full width */}
-                                                {oldUrl && newUrl && (
-                                                    <ShareTransformation
-                                                        studentName={pair.studentName}
-                                                        beforeUrl={oldUrl}
-                                                        afterUrl={newUrl}
-                                                        beforeDate={pair.oldest.created_at}
-                                                        afterDate={pair.newest.created_at}
-                                                        fullWidth={true}
-                                                    />
-                                                )}
-                                            </Stack>
-                                        </GlassPanel>
-                                    )
-                                })}
-                            </Grid>
+                            photoPairs.map((pair) => (
+                                <StudentPublicPhotos
+                                    key={pair.oldest.student_id}
+                                    studentId={pair.oldest.student_id}
+                                    isOwner={false}
+                                    studentName={pair.studentName}
+                                    photos={photos.filter((p: any) => p.student_id === pair.oldest.student_id)}
+                                    isStudentView={false}
+                                />
+                            ))
                         ) : (
-                            <EmptyState
-                                variant="zinc"
-                                icon={ImageIcon}
-                                title="Nenhum registro"
-                                description="Nenhuma transformação de aluno registrada publicamente ainda."
-                            />
+                            <RegistrySection
+                                title="Transformações Reais"
+                                icon={Trophy}
+                                subtitle="Galeria de evolução corporal com resultados práticos compartilhados pelos alunos."
+                            >
+                                <EmptyState
+                                    variant="zinc"
+                                    icon={ImageIcon}
+                                    title="Nenhum registro"
+                                    description="Nenhuma transformação de aluno registrada publicamente ainda."
+                                />
+                            </RegistrySection>
                         )}
-                    </RegistrySection>
+                    </Stack>
                 )}
 
                 {activeTab === 'reviews' && (
@@ -467,8 +408,9 @@ export function TrainerPublicProfileMain({
                         {reviews && reviews.length > 0 ? (
                             <Grid cols={{ base: 1, md: 2 }} gap="container">
                                 {reviews.map((review) => (
-                                    <GlassPanel key={review.id} padding="container">
-                                        <Stack gap="element" fullWidth>
+                                    <GlassPanel key={review.id} padding="container" position="relative" overflow="hidden">
+                                        <BackgroundIcon icon={Quote} />
+                                        <Stack gap="element" fullWidth position="relative" zIndex={10}>
                                             <Box display="flex" align="center" justify="between" gap="element" fullWidth>
                                                 <Inline gap="element" align="center">
                                                     <BaseAvatar
@@ -486,9 +428,8 @@ export function TrainerPublicProfileMain({
                                                         </Font>
                                                     </Stack>
                                                 </Inline>
-                                                <Icon icon={Quote} size="md" color="zinc-800" />
                                             </Box>
-                                            
+
                                             <Inline gap="element">
                                                 {[1, 2, 3, 4, 5].map((star) => (
                                                     <Icon
