@@ -32,18 +32,26 @@ export function SegmentedSwitch({
   fullWidth = true,
   defaultActiveVariant = 'outline-red'
 }: SegmentedSwitchProps) {
+  const isFewOptions = options.length <= 2
+
   return (
     <GlassPanel
       padding="none"
       rounded={STORE_TOKENS.RADIUS.FULL}
       overflow="hidden"
       fullWidth={fullWidth}
+      minWidth={0}
     >
       <Box
         overflowX="auto"
         noScrollbar
         fullWidth
-        className="snap-x snap-mandatory scroll-smooth"
+        snap="x"
+        snapMandatory
+        scrollSmooth
+        minWidth={0}
+        position="relative"
+        zIndex={10}
       >
         <Stack
           direction="row"
@@ -51,13 +59,12 @@ export function SegmentedSwitch({
           wrap="nowrap"
           padding="element"
           align="stretch"
-          fullWidth
+          width={{ base: isFewOptions ? 'full' : 'max-content', md: 'full' }}
         >
           {options.map((option) => {
             const isActive = activeId === option.id
             const variant = option.activeVariant || defaultActiveVariant
             const colorToken = variant.split('-')[1]
-            const isFewOptions = options.length <= 2
 
             return (
               <Button
@@ -68,9 +75,8 @@ export function SegmentedSwitch({
                 size="sm"
                 flex1={{ base: isFewOptions, md: true }}
                 shrink={{ base: isFewOptions ? 1 : 0, md: 1 }}
-                minWidth={{ base: isFewOptions ? '0' : 'calc(50% - 15px)', md: '0' }}
                 transition
-                className="snap-center"
+                snapCenter
               >
                 <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} wrap="nowrap">
                   {option.icon && (

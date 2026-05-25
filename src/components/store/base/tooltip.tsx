@@ -1,30 +1,34 @@
 'use client'
 
 import * as React from 'react'
-import * as TooltipPrimitive from '@/components/ui/tooltip'
+import * as TooltipPrimitive from '@radix-ui/react-tooltip'
 import { cn } from '@/lib/utils'
 
-export const TooltipProvider = TooltipPrimitive.TooltipProvider
-export const Tooltip = TooltipPrimitive.Tooltip
-export const TooltipTrigger = TooltipPrimitive.TooltipTrigger
+export const TooltipProvider = TooltipPrimitive.Provider
+export const Tooltip = TooltipPrimitive.Root
+export const TooltipTrigger = TooltipPrimitive.Trigger
 
-interface TooltipContentProps extends React.ComponentPropsWithoutRef<typeof TooltipPrimitive.TooltipContent> {
+interface TooltipContentProps extends React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Content> {
   variant?: 'default' | 'transparent'
 }
 
 export const TooltipContent = React.forwardRef<
-  React.ElementRef<typeof TooltipPrimitive.TooltipContent>,
+  React.ElementRef<typeof TooltipPrimitive.Content>,
   TooltipContentProps
->(({ className, variant = 'default', ...props }, ref) => {
+>(({ className, variant = 'default', sideOffset = 4, ...props }, ref) => {
   return (
-    <TooltipPrimitive.TooltipContent
-      ref={ref}
-      className={cn(
-        variant === 'transparent' && 'p-0 border-0 bg-transparent shadow-none',
-        className
-      )}
-      {...props}
-    />
+    <TooltipPrimitive.Portal>
+      <TooltipPrimitive.Content
+        ref={ref}
+        sideOffset={sideOffset}
+        className={cn(
+          'z-50 overflow-hidden rounded-[5px] border border-zinc-800 bg-zinc-950 px-3 py-1.5 text-xs text-zinc-50 shadow-md animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
+          variant === 'transparent' && 'p-0 border-0 bg-transparent shadow-none',
+          className
+        )}
+        {...props}
+      />
+    </TooltipPrimitive.Portal>
   )
 })
 

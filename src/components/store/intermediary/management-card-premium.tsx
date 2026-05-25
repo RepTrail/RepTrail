@@ -184,10 +184,10 @@ export function ManagementCardPremium({
                     <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                         {isTrainer && onEdit ? (
                             <>
-                                <Button variant="outline-primary" flex1 onClick={onEdit} shine>
+                                <Button variant="primary" flex1 onClick={onEdit} shine>
                                     <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                        <Icon icon={Edit3} size="xs" color="primary" />
-                                        <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color="primary">{resolvedEditLabel}</Font>
+                                        <Icon icon={Edit3} size="xs" color={STORE_TOKENS.COLORS.BLACK} />
+                                        <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.BLACK}>{resolvedEditLabel}</Font>
                                     </Stack>
                                 </Button>
                                 {onDuplicate && (
@@ -211,13 +211,14 @@ export function ManagementCardPremium({
                                     </Stack>
                                 </Button>
                                 <Button 
-                                    variant="outline-zinc" 
+                                    variant="primary" 
                                     flex1 
                                     onClick={onEdit}
+                                    shine
                                 >
                                     <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                        <Icon icon={Edit3} size="xs" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} />
-                                        <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>EDITAR</Font>
+                                        <Icon icon={Edit3} size="xs" color={STORE_TOKENS.COLORS.BLACK} />
+                                        <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.BLACK}>EDITAR</Font>
                                     </Stack>
                                 </Button>
                                 {onDuplicate && (

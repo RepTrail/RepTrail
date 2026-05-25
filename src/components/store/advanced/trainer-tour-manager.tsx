@@ -189,7 +189,7 @@ export function TrainerTourManager({ userId }: TrainerTourManagerProps) {
     }, [pathname, showBindingModes, isCreatingStudent, currentStepIndex, onboardingStep, isParsed]);
 
     const handleDismiss = () => {
-        const confirmed = window.confirm('Isso leva menos de 1 minuto e já deixa seu primeiro aluno pronto. Quer sair agora?')
+        const confirmed = window.confirm('Isso leva menos de 1 minuto e já deja seu primeiro aluno pronto. Quer sair agora?')
         if (confirmed) {
             complete()
         }
@@ -215,5 +215,4 @@ export function TrainerTourManager({ userId }: TrainerTourManagerProps) {
             onDismiss={handleDismiss}
         />
     )
-
 }

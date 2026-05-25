@@ -10,12 +10,29 @@ import { getAssignedErgogenics } from '@/actions/ergogenics-actions'
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { getQueryClient } from '@/lib/get-query-client'
 import { QUERY_KEYS } from '@/lib/query-keys'
-import { StudentDetailClient } from '@/components/store/features(deprecated)/student-detail-client'
+import { RegistryMain } from '@/components/store/advanced/registry-main'
+import { RegistrySection } from '@/components/store/advanced/registry-section'
+import { TrainerStudentProfileSection } from '@/components/store/sections/trainer-student-profile-section'
+import { TrainerStudentEvolutionSection } from '@/components/store/sections/trainer-student-evolution-section'
+import { TrainerStudentProtocolsSection } from '@/components/store/sections/trainer-student-protocols-section'
+import { TrainerStudentPhotosActivitiesSection } from '@/components/store/sections/trainer-student-photos-activities-section'
+import { TrainerStudentDetailTabSwitcher } from '@/components/store/sections/trainer-student-detail-tab-switcher'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
+import { Compass } from 'lucide-react'
 
-export default async function StudentDetailPage({ params }: { params: { id: string } }) {
+export const revalidate = 0
+
+export default async function StudentDetailPage({
+    params,
+    searchParams,
+}: {
+    params: { id: string }
+    searchParams: { tab?: string }
+}) {
     const { id } = await params
+    const { tab } = await searchParams
+    const activeTab = tab || 'protocols'
 
     const headerList = await headers()
     const userId = headerList.get('x-user-id')
@@ -24,9 +41,14 @@ export default async function StudentDetailPage({ params }: { params: { id: stri
     const queryClient = getQueryClient()
 
     // ─── PARALLEL PREFETCHING (0ms Nav) ─────────────────────────────
-    // Start with basic relationship to get studentId
     const relationship = await getStudentRelationship(id)
-    const studentId = relationship?.student_id
+    if (!relationship || !relationship.student) {
+        redirect('/dashboard/trainer/students')
+    }
+
+    const studentId = relationship.student_id
+    const student = relationship.student
+    const studentName = student.full_name.toUpperCase()
 
     const prefetchPromises = [
         queryClient.prefetchQuery({
@@ -72,14 +94,36 @@ export default async function StudentDetailPage({ params }: { params: { id: stri
         )
     }
 
-    // Await everything before dehydration to ensure the client has the data
-    await Promise.all(prefetchPromises)
+    // Await all prefetches to ensure dehydration is complete
+    await Promise.all(prefetchPromises.filter(Boolean))
 
     return (
-        <div className=" mx-auto" suppressHydrationWarning>
-            <HydrationBoundary state={dehydrate(queryClient)}>
-                <StudentDetailClient relationshipId={id} userId={userId} />
-            </HydrationBoundary>
-        </div>
+        <HydrationBoundary state={dehydrate(queryClient)}>
+            <RegistryMain
+                title={studentName}
+                subtitle="Gestão completa e acompanhamento do aluno."
+                icon="User"
+                contextLabel="Gestão de Alunos"
+                showTabs={false}
+            >
+                <TrainerStudentDetailTabSwitcher activeTab={activeTab} />
+
+                {activeTab === 'protocols' && (
+                    <TrainerStudentProtocolsSection relationshipId={id} studentId={studentId} trainerId={userId} />
+                )}
+
+                {activeTab === 'evolution' && (
+                    <TrainerStudentEvolutionSection studentId={studentId} studentDetails={student.details} />
+                )}
+
+                {activeTab === 'photos_activities' && (
+                    <TrainerStudentPhotosActivitiesSection relationshipId={id} studentId={studentId} />
+                )}
+
+                {activeTab === 'profile' && (
+                    <TrainerStudentProfileSection studentId={studentId} student={student} />
+                )}
+            </RegistryMain>
+        </HydrationBoundary>
     )
 }

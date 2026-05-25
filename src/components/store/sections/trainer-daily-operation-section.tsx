@@ -11,7 +11,7 @@ import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { Activity } from 'lucide-react'
 import { ActivityFeed } from '@/components/store/advanced/activity-feed'
 import { TrainerDashboardSidebarPanel } from '@/components/store/advanced/trainer-dashboard-sidebar-panel'
-import { CodeAutoGenerator } from '@/components/store/features(deprecated)/code-auto-generator'
+import { CodeAutoGenerator } from '@/components/store/advanced/code-auto-generator'
 
 interface TrainerDailyOperationSectionProps {
     userId: string

@@ -60,6 +60,7 @@ export interface ButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonE
   justify?: 'start' | 'center' | 'end' | 'between'
   textAlign?: 'left' | 'center' | 'right'
   shine?: boolean
+  snapCenter?: boolean
   className?: never
   style?: never
 }
@@ -101,6 +102,7 @@ export function Button({
   textAlign,
   shine,
   className,
+  snapCenter,
   ...props
 }: ButtonProps) {
   
@@ -270,6 +272,7 @@ export function Button({
         textAlign === 'left' && 'text-left',
         textAlign === 'center' && 'text-center',
         textAlign === 'right' && 'text-right',
+        snapCenter && 'snap-center',
         className
       )}
       style={{

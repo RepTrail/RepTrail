@@ -14,6 +14,7 @@ import { Img } from '@/components/store/base/img'
 import { GlassPanel } from '@/components/store/base/surface'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
+import { EmptyState } from '@/components/store/intermediary/empty-state'
 
 interface Props {
     studentId: string
@@ -50,110 +51,118 @@ export function StudentPublicPhotos({ studentId, isOwner, studentName, photos, i
                     subtitle="Contraste visual entre o ponto de partida e a evolução mais recente."
                     icon={Trophy}
                 >
-                    <GlassPanel padding="container">
-                        <Stack gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
-                            <Grid cols={2} gap={STORE_TOKENS.SPACING.CONTAINER}>
-                                {/* Before Photo */}
-                                <Box
-                                    position="relative"
-                                    rounded={STORE_TOKENS.RADIUS.SYSTEM}
-                                    overflow="hidden"
-                                    bg="zinc"
-                                    bgOpacity={90}
-                                    className="aspect-[3/4]"
-                                >
-                                    {oldestPhoto ? (
-                                        <Img
-                                            src={oldestPhoto.front_url}
-                                            alt="Ponto de Partida"
-                                            fullWidth
-                                            fullHeight
-                                            objectFit="cover"
-                                            rounded="system"
-                                            transition
-                                        />
-                                    ) : (
-                                        <Box
-                                            fullWidth
-                                            height="full"
-                                            display="flex"
-                                            align="center"
-                                            justify="center"
-                                        >
-                                            <Font variant="sub-tiny" weight="black" italic uppercase color={STORE_TOKENS.COLORS.TEXT.DIM}>
-                                                Sem foto
-                                            </Font>
-                                        </Box>
-                                    )}
-                                    {/* Positioned Overlay Badge */}
+                    {photos.length > 0 ? (
+                        <GlassPanel padding="container">
+                            <Stack gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
+                                <Grid cols={2} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                                    {/* Before Photo */}
                                     <Box
-                                        position="absolute"
-                                        top={2.5}
-                                        left={2.5}
+                                        position="relative"
+                                        rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                                        overflow="hidden"
+                                        bg="zinc"
+                                        bgOpacity={90}
+                                        aspectRatio="3/4"
                                     >
-                                        <Badge label="Início" color="orange" variant="solid" size="xs" />
-                                    </Box>
-                                </Box>
-
-                                {/* After Photo */}
-                                <Box
-                                    position="relative"
-                                    rounded={STORE_TOKENS.RADIUS.SYSTEM}
-                                    overflow="hidden"
-                                    bg="zinc"
-                                    bgOpacity={90}
-                                    className="aspect-[3/4]"
-                                    border={true}
-                                    borderColor="primary"
-                                    borderOpacity={20}
-                                >
-                                    {newestPhoto ? (
-                                        <Img
-                                            src={newestPhoto.front_url}
-                                            alt="Status Atual"
-                                            fullWidth
-                                            fullHeight
-                                            objectFit="cover"
-                                            rounded="system"
-                                            transition
-                                        />
-                                    ) : (
+                                        {oldestPhoto ? (
+                                            <Img
+                                                src={oldestPhoto.front_url}
+                                                alt="Ponto de Partida"
+                                                fullWidth
+                                                fullHeight
+                                                objectFit="cover"
+                                                rounded="system"
+                                                transition
+                                            />
+                                        ) : (
+                                            <Box
+                                                fullWidth
+                                                height="full"
+                                                display="flex"
+                                                align="center"
+                                                justify="center"
+                                            >
+                                                <Font variant="sub-tiny" weight="black" italic uppercase color={STORE_TOKENS.COLORS.TEXT.DIM}>
+                                                    Sem foto
+                                                </Font>
+                                            </Box>
+                                        )}
+                                        {/* Positioned Overlay Badge */}
                                         <Box
-                                            fullWidth
-                                            height="full"
-                                            display="flex"
-                                            align="center"
-                                            justify="center"
+                                            position="absolute"
+                                            top={2.5}
+                                            left={2.5}
                                         >
-                                            <Font variant="sub-tiny" weight="black" italic uppercase color={STORE_TOKENS.COLORS.TEXT.DIM}>
-                                                Sem foto
-                                            </Font>
+                                            <Badge label="Início" color="orange" variant="solid" size="xs" />
                                         </Box>
-                                    )}
-                                    {/* Positioned Overlay Badge */}
-                                    <Box
-                                        position="absolute"
-                                        top={2.5}
-                                        left={2.5}
-                                    >
-                                        <Badge label="Atual" color="emerald" variant="solid" size="xs" />
                                     </Box>
-                                </Box>
-                            </Grid>
 
-                            {/* Share transformation trigger below the photos comparison, spanning full width */}
-                            {oldestPhoto && newestPhoto && (
-                                <ShareTransformation
-                                    studentName={studentName}
-                                    beforeUrl={oldestPhoto.front_url}
-                                    afterUrl={newestPhoto.front_url}
-                                    beforeDate={oldestPhoto.created_at}
-                                    afterDate={newestPhoto.created_at}
-                                    fullWidth={true}
-                                />
-                            )}
-                        </Stack>
-                    </GlassPanel>
+                                    {/* After Photo */}
+                                    <Box
+                                        position="relative"
+                                        rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                                        overflow="hidden"
+                                        bg="zinc"
+                                        bgOpacity={90}
+                                        aspectRatio="3/4"
+                                        border={true}
+                                        borderColor="primary"
+                                        borderOpacity={20}
+                                    >
+                                        {newestPhoto ? (
+                                            <Img
+                                                src={newestPhoto.front_url}
+                                                alt="Status Atual"
+                                                fullWidth
+                                                fullHeight
+                                                objectFit="cover"
+                                                rounded="system"
+                                                transition
+                                            />
+                                        ) : (
+                                            <Box
+                                                fullWidth
+                                                height="full"
+                                                display="flex"
+                                                align="center"
+                                                justify="center"
+                                            >
+                                                <Font variant="sub-tiny" weight="black" italic uppercase color={STORE_TOKENS.COLORS.TEXT.DIM}>
+                                                    Sem foto
+                                                </Font>
+                                            </Box>
+                                        )}
+                                        {/* Positioned Overlay Badge */}
+                                        <Box
+                                            position="absolute"
+                                            top={2.5}
+                                            left={2.5}
+                                        >
+                                            <Badge label="Atual" color="emerald" variant="solid" size="xs" />
+                                        </Box>
+                                    </Box>
+                                </Grid>
+
+                                {/* Share transformation trigger below the photos comparison, spanning full width */}
+                                {oldestPhoto && newestPhoto && (
+                                    <ShareTransformation
+                                        studentName={studentName}
+                                        beforeUrl={oldestPhoto.front_url}
+                                        afterUrl={newestPhoto.front_url}
+                                        beforeDate={oldestPhoto.created_at}
+                                        afterDate={newestPhoto.created_at}
+                                        fullWidth={true}
+                                    />
+                                )}
+                            </Stack>
+                        </GlassPanel>
+                    ) : (
+                        <EmptyState
+                            icon={Trophy}
+                            title="SEM FOTOS DE EVOLUÇÃO"
+                            description="Envie fotos de progresso para acompanhar a sua evolução visual de antes e depois."
+                        />
+                    )}
                 </RegistrySection>
 
                 {/* ── Gallery Section ──────────────────────────────────────── */}
@@ -162,14 +171,22 @@ export function StudentPublicPhotos({ studentId, isOwner, studentName, photos, i
                     subtitle="Histórico completo de fotos de acompanhamento físico do aluno."
                     icon={Activity}
                 >
-                    <GlassPanel padding="container">
-                        <UnifiedProgressGallery
-                            photos={photos || []}
-                            mode={isStudentView ? 'student' : 'public'}
-                            studentName={studentName}
-                            studentId={studentId}
+                    {photos.length > 0 ? (
+                        <GlassPanel padding="container">
+                            <UnifiedProgressGallery
+                                photos={photos || []}
+                                mode={isStudentView ? 'student' : 'public'}
+                                studentName={studentName}
+                                studentId={studentId}
+                            />
+                        </GlassPanel>
+                    ) : (
+                        <EmptyState
+                            icon={Camera}
+                            title="NENHUMA FOTO ENCONTRADA"
+                            description="Nenhum registro de progresso físico foi anexado a este perfil."
                         />
-                    </GlassPanel>
+                    )}
                 </RegistrySection>
             </Grid>
         </Stack>

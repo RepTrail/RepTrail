@@ -15,7 +15,11 @@ import { ErgogenicManagementSectionContent } from '@/components/store/sections/e
 import { RegistryActionModal, RegistryActionType } from '@/components/store/advanced/registry-action-modal'
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
 import { ENTITIES } from '@/lib/outbox-db'
-import { Syringe } from 'lucide-react'
+import { Syringe, Plus, Loader2 } from 'lucide-react'
+import { Button } from '@/components/store/base/button'
+import { Icon } from '@/components/store/base/icon'
+import { Stack } from '@/components/store/base/stack'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 interface TrainerStudentErgogenicsSmartProps {
     effectiveStudentId: string
@@ -87,6 +91,20 @@ export function TrainerStudentErgogenicsSmart({ effectiveStudentId }: TrainerStu
         },
     })
 
+    const { mutate: createMutation } = useOptimisticMutation({
+        queryKey: QUERY_KEYS.ergogenics.all(effectiveStudentId),
+        entity: ENTITIES.ERGOGENIC,
+        actionName: 'add-ergogenic',
+        mutationFn: async ({ data }: { data: any }) => {
+            const res = await addErgogenic({
+                ...data,
+                student_id: effectiveStudentId,
+            })
+            if (res.error) throw new Error(res.error)
+            return res
+        },
+    })
+
     const { mutate: updateMutation } = useOptimisticMutation({
         queryKey: QUERY_KEYS.ergogenics.all(effectiveStudentId),
         entity: ENTITIES.ERGOGENIC,
@@ -127,6 +145,9 @@ export function TrainerStudentErgogenicsSmart({ effectiveStudentId }: TrainerStu
                     assignMutation({ ergogenicId: actionModal.data.id, days: data })
                 }
                 break
+            case 'create_ergogenic':
+                createMutation({ data })
+                break
             case 'edit_ergogenic':
                 updateMutation({ id: actionModal.data.id, data: { ...data, student_id: effectiveStudentId } })
                 break
@@ -149,7 +170,24 @@ export function TrainerStudentErgogenicsSmart({ effectiveStudentId }: TrainerStu
 
     return (
         <>
-            <RegistrySection title="PROTOCOLO ATIVO" icon={Syringe}>
+            <RegistrySection
+                title="PROTOCOLO ATIVO"
+                subtitle="Gerencie e acompanhe a dosagem e cronograma de ergogênicos e suplementação avançada."
+                icon={Syringe}
+                rightElement={
+                    <Button
+                        variant="outline-emerald"
+                        shine
+                        onClick={() => openAction('create_ergogenic')}
+                        fullWidth={{ base: true, lg: false }}
+                    >
+                        <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                            <Icon icon={Plus} size="xs" color="emerald" />
+                            <span>Adicionar Substância</span>
+                        </Stack>
+                    </Button>
+                }
+            >
                 <ErgogenicManagementSectionContent
                     items={ergogenics}
                     mode="trainer"

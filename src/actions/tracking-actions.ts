@@ -1,6 +1,6 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { formatToBrazilDate } from '@/lib/date-utils'
 
@@ -522,7 +522,7 @@ export async function getAdherenceHistory(days: number = 30) {
 }
 
 export async function getStudentAdherenceHistory(studentId: string, days: number = 30) {
-    const supabase = await createClient()
+    const supabase = await createAdminClient()
     const todayStr = getTodayStr()
     const today = new Date(todayStr + 'T12:00:00')
     const startDate = new Date(today)

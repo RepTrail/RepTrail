@@ -53,10 +53,13 @@ export interface BoxProps extends Omit<React.HTMLAttributes<HTMLElement>, 'color
   textAlign?: 'center' | 'left' | 'right' | { base: 'center' | 'left' | 'right', md?: 'center' | 'left' | 'right', lg?: 'center' | 'left' | 'right' }
   wrap?: 'wrap' | 'nowrap'
   gap?: SpacingToken | { base: SpacingToken, sm?: SpacingToken, md?: SpacingToken, lg?: SpacingToken }
+  snap?: 'x' | 'y' | 'none'
+  snapMandatory?: boolean
+  scrollSmooth?: boolean
   className?: never
   id?: string
   onClick?: (e: React.MouseEvent<HTMLElement>) => void
-  style?: never
+  style?: React.CSSProperties
   group?: boolean
   groupHoverDisplay?: 'flex' | 'grid' | 'block' | 'none'
   groupHoverOpacity?: 0 | 5 | 10 | 20 | 30 | 40 | 50 | 60 | 70 | 80 | 90 | 95 | 100
@@ -163,6 +166,9 @@ export function Box({
   hoverScale,
   groupHoverBorderColor,
   animateIn,
+  snap,
+  snapMandatory,
+  scrollSmooth,
   ...props
 }: BoxProps) {
   const { primaryColor } = useRegistry()
@@ -335,7 +341,13 @@ export function Box({
     half: 'w-1/2',
     px: 'w-px',
     'sidebar-wide': 'w-72',
-    '10': 'w-10'
+    '10': 'w-10',
+    'max-content': 'w-max',
+    'min-content': 'w-min',
+    'fit-content': 'w-fit',
+    max: 'w-max',
+    min: 'w-min',
+    fit: 'w-fit'
   }
 
   const heightClasses = {
@@ -541,7 +553,8 @@ export function Box({
         ...(typeof minHeight === 'number' ? { minHeight: `${minHeight}px` } : {}),
         ...(typeof minWidthBase === 'number' ? { minWidth: `${minWidthBase}px` } : {}),
         ...(typeof width === 'number' ? { width: `${width}px` } : {}),
-        ...(typeof height === 'number' ? { height: `${height}px` } : {})
+        ...(typeof height === 'number' ? { height: `${height}px` } : {}),
+        ...style
       }}
       className={cn(
         // Display & Flex
@@ -644,6 +657,10 @@ export function Box({
         overflowX && `overflow-x-${overflowX}`,
         overflowY && `overflow-y-${overflowY}`,
         noScrollbar && 'no-scrollbar',
+        snap === 'x' && 'snap-x',
+        snap === 'y' && 'snap-y',
+        snapMandatory && 'snap-mandatory',
+        scrollSmooth && 'scroll-smooth',
 
         // Spacing (Responsive Support)
         paddingBase !== undefined && paddingMapping[paddingBase as keyof typeof paddingMapping],

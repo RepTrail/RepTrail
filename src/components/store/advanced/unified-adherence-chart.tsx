@@ -77,7 +77,7 @@ export function UnifiedAdherenceChart({ history, showErgogenics = false, noCard 
                                     <Font variant="tiny" weight="black" uppercase color={`${row.color}-500` as any}>{row.label}</Font>
                                 </Stack>
 
-                                <Box flex1={true} display="flex" direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} height={48} bg={STORE_TOKENS.COLORS.SURFACE} bgOpacity={STORE_TOKENS.OPACITY.HIGH} rounded={STORE_TOKENS.RADIUS.SYSTEM} border={true} borderColor={STORE_TOKENS.COLORS.BACKGROUND} borderOpacity={STORE_TOKENS.OPACITY.SUBTLE} padding={STORE_TOKENS.PADDING.ELEMENT}>
+                                <Box flex1={true} display="flex" direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} bg={STORE_TOKENS.COLORS.SURFACE} bgOpacity={STORE_TOKENS.OPACITY.HIGH} rounded={STORE_TOKENS.RADIUS.SYSTEM} padding={STORE_TOKENS.PADDING.ELEMENT}>
                                     {sortedHistory.map((day) => {
                                         let status = 'none'
                                         let percentage = undefined
@@ -108,7 +108,7 @@ export function UnifiedAdherenceChart({ history, showErgogenics = false, noCard 
                                             <TooltipProvider key={day.date}>
                                                 <Tooltip delayDuration={0}>
                                                     <TooltipTrigger asChild>
-                                                        <Box flex1={true} shrink={0} fullHeight={true} minWidth={10} transition={true} rounded={STORE_TOKENS.RADIUS.SYSTEM} bg={boxProps.bg} bgOpacity={boxProps.bgOpacity ?? STORE_TOKENS.OPACITY.FULL} border={boxProps.border} borderColor={boxProps.borderColor} borderOpacity={boxProps.borderOpacity} opacity={boxProps.opacity} />
+                                                        <Box flex1={true} shrink={0} aspectRatio="square" minWidth={10} transition={true} rounded={STORE_TOKENS.RADIUS.SYSTEM} bg={boxProps.bg} bgOpacity={boxProps.bgOpacity ?? STORE_TOKENS.OPACITY.FULL} border={boxProps.border} borderColor={boxProps.borderColor} borderOpacity={boxProps.borderOpacity} opacity={boxProps.opacity} />
                                                     </TooltipTrigger>
                                                     <TooltipContent side="top" variant="transparent">
                                                         <ChartTooltip
@@ -152,7 +152,7 @@ export function UnifiedAdherenceChart({ history, showErgogenics = false, noCard 
         <GlassPanel>
             <Stack padding={STORE_TOKENS.PADDING.CONTAINER} fullWidth gap={STORE_TOKENS.SPACING.CONTAINER}>
                 <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <Icon icon={Activity} size="lg" color="primary" className="animate-pulse" />
+                    <Icon icon={Activity} size="lg" color="primary" />
                     <Stack direction="row" align="baseline" gap={STORE_TOKENS.SPACING.ELEMENT}>
                         <Font variant="h3" weight="black" color="primary" italic uppercase>Adesão Consolidada</Font>
                         <Font variant="sub-tiny" weight="normal" color={STORE_TOKENS.COLORS.TEXT.MUTED}>(30 Dias)</Font>

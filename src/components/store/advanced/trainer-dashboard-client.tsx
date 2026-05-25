@@ -18,7 +18,7 @@ import { TrainerDashboardSidebarSectionContent } from '@/components/store/sectio
 
 // Deprecated features
 import { ActivityFeed } from '@/components/store/advanced/activity-feed'
-import { CodeAutoGenerator } from '@/components/store/features(deprecated)/code-auto-generator'
+import { CodeAutoGenerator } from '@/components/store/advanced/code-auto-generator'
 
 interface TrainerDashboardClientProps {
     userId: string

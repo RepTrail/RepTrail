@@ -68,12 +68,12 @@ export function PdfDropzone({ uploading, parsing, onFileChange }: PdfDropzonePro
                                 <Box
                                     as="input"
                                     type={"file" as any}
-                                    accept=".pdf"
                                     position="absolute"
                                     pin="inset"
                                     opacity={0}
                                     cursor="pointer"
                                     onChange={onFileChange}
+                                    {...({ accept: ".pdf" } as any)}
                                 />
                             </Box>
                         </Stack>

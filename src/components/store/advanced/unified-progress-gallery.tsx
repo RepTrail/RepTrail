@@ -21,6 +21,7 @@ import { Separator } from '@/components/store/base/separator'
 import { Modal } from '@/components/store/advanced/modal'
 import { Badge } from '@/components/store/base/badge'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
+import { EmptyState } from '@/components/store/intermediary/empty-state'
 
 type PhotoType = 'front_url' | 'back_url' | 'side_right_url' | 'side_left_url'
 
@@ -155,26 +156,11 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
 
     if (photos.length === 0) {
         return (
-            <Box
-                padding="empty_state"
-                display="flex"
-                direction="col"
-                align="center"
-                justify="center"
-                rounded="system"
-                border
-                borderColor="zinc"
-                borderOpacity={10}
-                bg="zinc"
-                bgOpacity={5}
-                gap="element"
-                fullWidth
-            >
-                <Icon icon={Camera} size="lg" color="zinc-400" opacity={20} />
-                <Font variant="sub-tiny" weight="black" uppercase italic tracking="widest" color="zinc-400">
-                    Nenhuma foto encontrada
-                </Font>
-            </Box>
+            <EmptyState 
+                icon={Camera}
+                title="NENHUMA FOTO ENCONTRADA"
+                description="Nenhum registro de progresso físico foi anexado a este perfil."
+            />
         )
     }
 
@@ -199,7 +185,11 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                     borderOpacity={5}
                     bg="zinc"
                     cursor="pointer"
-                    className="aspect-[3/4] transition-all hover:scale-[0.98] shadow-xl group-hover:border-primary/30"
+                    aspectRatio="3/4"
+                    transition
+                    hoverScale={98}
+                    shadow="xl"
+                    groupHoverBorderColor="primary"
                 >
                     <Image
                         src={item.url}
@@ -209,10 +199,10 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                         className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
                     />
                     {/* Floating Badge Overlay (Top Left) */}
-                    <Box position="absolute" top={2.5} left={2.5} className="pointer-events-none">
+                    <Box position="absolute" top={2.5} left={2.5} pointerEvents="none">
                         <Badge variant="solid" color="primary" label={typeLabels[item.type]} size="xs" />
                     </Box>
-
+ 
                     {/* Centered Hover Zoom Icon Overlay */}
                     <Box 
                         position="absolute" 
@@ -223,12 +213,14 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                         bg="black" 
                         bgOpacity={30} 
                         opacity={0} 
-                        className="group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                        groupHoverOpacity={100}
+                        transition
+                        pointerEvents="none"
                     >
                         <Box 
                             width={40} 
                             height={40} 
-                            rounded={STORE_TOKENS.RADIUS.FULL} 
+                            rounded="full" 
                             bg="primary" 
                             bgOpacity={20} 
                             border={true}
@@ -237,7 +229,9 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                             display="flex" 
                             align="center" 
                             justify="center"
-                            className="scale-90 group-hover:scale-100 transition-transform duration-300"
+                            scale={90}
+                            groupHoverScale={100}
+                            transition
                         >
                             <Icon icon={Maximize2} size="xs" color="primary" />
                         </Box>

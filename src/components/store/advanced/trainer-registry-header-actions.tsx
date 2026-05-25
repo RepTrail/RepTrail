@@ -18,6 +18,7 @@ interface TrainerRegistryHeaderActionsProps {
     userId: string
     betaTesterMode?: boolean
     variant?: TrainerLibraryVariant
+    hideImportPdf?: boolean
 }
 
 const VARIANT_CONFIG: Record<TrainerLibraryVariant, {
@@ -145,6 +146,7 @@ export function TrainerRegistryHeaderActions({
     userId,
     betaTesterMode = false,
     variant = 'workout',
+    hideImportPdf = false,
 }: TrainerRegistryHeaderActionsProps) {
     const config = VARIANT_CONFIG[variant]
 
@@ -157,7 +159,7 @@ export function TrainerRegistryHeaderActions({
             gap={STORE_TOKENS.SPACING.ELEMENT}
             fullWidth
         >
-            {config.showImportPdf && !betaTesterMode && (
+            {config.showImportPdf && !betaTesterMode && !hideImportPdf && (
                 <Button variant="outline-orange" asChild shine fullWidth={{ base: true, lg: false }}>
                     <Link href="/dashboard/trainer/import-pdf">
                         <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>

@@ -38,7 +38,7 @@ export function RegistrySection({
         <Stack
           direction={{ base: 'col', lg: 'row' }}
           justify={(title || subtitle) ? "between" : "end"}
-          align={{ base: 'stretch', lg: 'center' }}
+          align={{ base: 'stretch', lg: 'end' }}
           gap={STORE_TOKENS.SPACING.CONTAINER}
         >
           {(title || subtitle) && (
@@ -59,7 +59,7 @@ export function RegistrySection({
             </Stack>
           )}
           {rightElement && (
-            <Box display="flex">
+            <Box display="flex" align="end" fullWidth={{ base: true, lg: false }}>
               {rightElement}
             </Box>
           )}
