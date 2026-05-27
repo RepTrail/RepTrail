@@ -423,7 +423,7 @@ export function DietBuilderMealItemRow({
                     <Surface
                         variant="tonal-primary"
                         padding={STORE_TOKENS.SPACING.ELEMENT}
-                        rounded="none"
+                        rounded={STORE_TOKENS.RADIUS.NONE}
                         border="none"
                     >
                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>

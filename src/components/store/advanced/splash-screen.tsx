@@ -1,10 +1,10 @@
-'use client';
+'use client';;
+import { STORE_TOKENS } from '@/components/store/constants/tokens';
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Box } from '@/components/store/base/box'
 import { Stack } from '@/components/store/base/stack'
 
-import { STORE_TOKENS } from "../constants/tokens";
 
 interface SplashScreenProps {
     onFinish?: () => void
@@ -52,12 +52,12 @@ export function SplashScreen({ onFinish, redirectHref, color = 'emerald' }: Spla
         <Box
             position="fixed"
             inset={0}
-            zIndex={100}
+            zIndex={STORE_TOKENS.Z_INDEX.OVERLAY}
             display="flex"
             align="center"
             justify="center"
-            bg="zinc"
-            bgOpacity={100}
+            bg={STORE_TOKENS.COLORS.BACKGROUND}
+            bgOpacity={STORE_TOKENS.OPACITY.FULL}
             suppressHydrationWarning
         >
             <style>{`

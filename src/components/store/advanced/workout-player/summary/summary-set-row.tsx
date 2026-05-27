@@ -74,10 +74,10 @@ export function SummarySetRow({
                         height={6} 
                         rounded={STORE_TOKENS.RADIUS.FULL} 
                         bg={badgeColor}
-                        bgOpacity={20}
+                        bgOpacity={STORE_TOKENS.OPACITY.MEDIUM}
                         border
                         borderColor={badgeColor}
-                        borderOpacity={30}
+                        borderOpacity={STORE_TOKENS.OPACITY.HIGH}
                         shrink={0}
                         style={{ borderWidth: '2px', flexShrink: 0, width: '6px', height: '6px' }}
                     />

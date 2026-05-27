@@ -54,7 +54,7 @@ export default function AdminLogsPage() {
     return (
         <RegistryProvider defaultColor="red">
             <DashboardShell
-                color="red"
+                color={STORE_TOKENS.COLORS.ERROR}
                 links={[
                     { href: '/admin/dashboard', label: 'Início', icon: 'BarChart3', exact: true },
                     { href: '/admin/personais', label: 'Personais', icon: 'UserCheck' },
@@ -92,7 +92,7 @@ export default function AdminLogsPage() {
                                 onChange={e => setSearch(e.target.value)}
                                 placeholder="Filtrar logs por ação ou administrador..."
                                 icon={<Search size={16} />}
-                                rounded="full"
+                                rounded={STORE_TOKENS.RADIUS.FULL}
                             />
 
                             {isLoading && (
@@ -119,5 +119,5 @@ export default function AdminLogsPage() {
                 </RegistryMain>
             </DashboardShell>
         </RegistryProvider>
-    )
+    );
 }

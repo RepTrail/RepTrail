@@ -1,4 +1,5 @@
-'use client'
+'use client';
+import { STORE_TOKENS } from '@/components/store/constants/tokens';
 
 import React from 'react'
 import { Icon } from '@/components/store/base/icon'
@@ -38,7 +39,7 @@ export function RegistryBottomNav() {
             onClick={() => setActiveTab(item.id)}
             variant={isActive ? variant : 'ghost'}
             size="md"
-            rounded={isActive ? 'system' : 'full'}
+            rounded={isActive ? STORE_TOKENS.RADIUS.SYSTEM : STORE_TOKENS.RADIUS.FULL}
             isIconOnly
             activeScale={90}
             transition
@@ -46,12 +47,12 @@ export function RegistryBottomNav() {
             <Icon 
               icon={item.icon} 
               size="sm" 
-              color={(isActive ? primaryColor : 'white') as any} 
-              opacity={isActive ? 100 : 40}
+              color={(isActive ? primaryColor : STORE_TOKENS.COLORS.WHITE) as any} 
+              opacity={isActive ? STORE_TOKENS.OPACITY.FULL : STORE_TOKENS.OPACITY.SIDEBAR}
             />
           </Button>
-        )
+        );
       })}
     </MobileNavContainer>
-  )
+  );
 }

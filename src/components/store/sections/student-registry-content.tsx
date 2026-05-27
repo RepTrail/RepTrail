@@ -39,8 +39,8 @@ import { ShareTransformation } from '@/components/store/advanced/student-share-t
  */
 export function StudentRegistryContent({ id }: { id: string }) {
     return (
-        <Stack id={id} gap="section" fullWidth>
-            <Grid mdCols={12} gap="section" fullWidth>
+        <Stack id={id} gap={STORE_TOKENS.SPACING.SECTION} fullWidth>
+            <Grid mdCols={12} gap={STORE_TOKENS.SPACING.SECTION} fullWidth>
                 {/* Left Column: Treino & Cardio (8 cols) */}
                 <Box mdColSpan={8}>
                     <Stack gap={STORE_TOKENS.SPACING.SECTION}>
@@ -65,7 +65,6 @@ export function StudentRegistryContent({ id }: { id: string }) {
                 ContentComponent={WorkoutManagementSectionContent}
                 mode="auto"
             />
-
             {/* 6. Seção de Gerenciamento de Treinos (Personal Trainer) */}
             <ManagementRegistrySection
                 title="GERENCIAMENTO DE TREINOS (PERSONAL TRAINER)"
@@ -74,7 +73,6 @@ export function StudentRegistryContent({ id }: { id: string }) {
                 ContentComponent={WorkoutManagementSectionContent}
                 mode="personal"
             />
-
             {/* 7. Seção de Gerenciamento de Dieta (Auto Dieta) */}
             <ManagementRegistrySection
                 title="GERENCIAMENTO DE DIETA (AUTO DIETA)"
@@ -83,7 +81,6 @@ export function StudentRegistryContent({ id }: { id: string }) {
                 ContentComponent={DietManagementSectionContent}
                 mode="auto"
             />
-
             {/* 8. Seção de Gerenciamento de Dieta (Personal Diet) */}
             <ManagementRegistrySection
                 title="GERENCIAMENTO DE DIETA (PERSONAL DIET)"
@@ -92,7 +89,6 @@ export function StudentRegistryContent({ id }: { id: string }) {
                 ContentComponent={DietManagementSectionContent}
                 mode="personal"
             />
-
             {/* 9. Seção de Gestão de Ergogênicos (Auto) */}
             <ManagementRegistrySection
                 title="GESTÃO DE ERGOGÊNICOS (AUTO)"
@@ -101,7 +97,6 @@ export function StudentRegistryContent({ id }: { id: string }) {
                 ContentComponent={ErgogenicManagementSectionContent}
                 mode="auto"
             />
-
             {/* 10. Seção de Gestão de Ergogênicos (Personal) */}
             <ManagementRegistrySection
                 title="GESTÃO DE ERGOGÊNICOS (PERSONAL)"
@@ -110,7 +105,6 @@ export function StudentRegistryContent({ id }: { id: string }) {
                 ContentComponent={ErgogenicManagementSectionContent}
                 mode="personal"
             />
-
             {/* 11. Feed da Comunidade */}
             <ManagementRegistrySection
                 title="FEED DA COMUNIDADE"
@@ -144,7 +138,6 @@ export function StudentRegistryContent({ id }: { id: string }) {
             >
                 <StudentProfileSectionContent showVariants={true} />
             </RegistrySection>
-
             {/* 16. Gerador de Protocolo IA (Reconstrução DS) */}
             <RegistrySection
                 title="GERADOR DE PROTOCOLO IA (RECONSTRUÇÃO DS)"
@@ -153,7 +146,6 @@ export function StudentRegistryContent({ id }: { id: string }) {
             >
                 <AIProtocolSectionContent />
             </RegistrySection>
-
             {/* 17. Empty State Auto Treino (Reconstrução DS) */}
             <RegistrySection
                 title="EMPTY STATE AUTO TREINO (RECONSTRUÇÃO DS)"
@@ -162,7 +154,6 @@ export function StudentRegistryContent({ id }: { id: string }) {
             >
                 <AIProtocolEmptyStateSectionContent />
             </RegistrySection>
-
             {/* 18. Compartilhamento de Evolução (Antes e Depois) */}
             <RegistrySection
                 title="COMPARTILHAMENTO DE EVOLUÇÃO (ANTES E DEPOIS)"

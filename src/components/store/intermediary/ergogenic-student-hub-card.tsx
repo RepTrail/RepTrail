@@ -60,7 +60,7 @@ export function ErgogenicStudentHubCard({ student }: ErgogenicStudentHubCardProp
                         <Badge
                             label={student.is_placeholder ? 'Convite pendente' : 'Protocolo ativo'}
                             variant="outline"
-                            color={student.is_placeholder ? 'orange' : 'primary'}
+                            color={student.is_placeholder ? STORE_TOKENS.COLORS.BRAND : STORE_TOKENS.COLORS.BRAND}
                             size="xs"
                         />
                     </Stack>
@@ -83,7 +83,7 @@ export function ErgogenicStudentHubCard({ student }: ErgogenicStudentHubCardProp
                                 {...{
                                     color: "primary",
                                 }}>Abrir protocolo</Font>
-                            <Icon icon={ArrowUpRight} size="xs" color="primary" />
+                            <Icon icon={ArrowUpRight} size="xs" color={STORE_TOKENS.COLORS.BRAND} />
                         </Stack>
                     </Link>
                 </Button>

@@ -34,11 +34,13 @@ export function WorkoutBuilderSearch({
             padding={STORE_TOKENS.SPACING.CONTAINER} 
             border="subtle"
             position="relative"
-            zIndex={searchResults.length > 0 ? 50 : undefined}
+            // eslint-disable-next-line no-restricted-syntax
+            zIndex={searchResults.length > 0 ? STORE_TOKENS.Z_INDEX.OVERLAY : undefined}
         >
             <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                 {/* Relative container around input to position the dropdown overlay */}
-                <Box position="relative" width="full" zIndex={searchResults.length > 0 ? 50 : 'auto'}>
+                {/* eslint-disable-next-line no-restricted-syntax */}
+                <Box position="relative" width="full" zIndex={searchResults.length > 0 ? STORE_TOKENS.Z_INDEX.OVERLAY : 'auto'}>
                     <Input
                         icon={<Icon icon={Search} size="sm" />}
                         placeholder="Busque por exercícios (ex: Supino, Agachamento...)"
@@ -54,7 +56,7 @@ export function WorkoutBuilderSearch({
                             top="calc(100% + 4px)" 
                             left={0} 
                             right={0} 
-                            zIndex={50} 
+                            zIndex={STORE_TOKENS.Z_INDEX.OVERLAY} 
                             border="subtle"
                             padding={STORE_TOKENS.PADDING.NONE}
                             overflow="auto"
@@ -72,11 +74,11 @@ export function WorkoutBuilderSearch({
                                         fullWidth
                                         padding={STORE_TOKENS.PADDING.ELEMENT}
                                         transition
-                                        hoverBg="white"
-                                        hoverBgOpacity={5}
+                                        hoverBg={STORE_TOKENS.COLORS.WHITE}
+                                        hoverBgOpacity={STORE_TOKENS.OPACITY.LOW}
                                         cursor="pointer"
                                     >
-                                        <Stack direction="col" gap="element" align="start">
+                                        <Stack direction="col" gap={STORE_TOKENS.SPACING.ELEMENT} align="start">
                                             <Font
                                                 variant="label-caps"
                                                 {...{
@@ -92,7 +94,7 @@ export function WorkoutBuilderSearch({
                                                 {ex.is_system_default ? 'BIBLIOTECA' : 'PERSONALIZADO'}
                                             </Font>
                                         </Stack>
-                                        <Icon icon={Plus} size="xs" color="zinc-500" />
+                                        <Icon icon={Plus} size="xs" color={STORE_TOKENS.COLORS.TEXT.MUTED} />
                                     </Box>
                                 ))}
                             </Stack>
@@ -104,7 +106,7 @@ export function WorkoutBuilderSearch({
                     <Surface 
                         variant="sunken" 
                         padding={STORE_TOKENS.PADDING.CONTAINER} 
-                        rounded="system" 
+                        rounded={STORE_TOKENS.RADIUS.SYSTEM} 
                         border="subtle"
                     >
                         <Stack direction={{ base: 'col', md: 'row' }} align={{ base: 'stretch', md: 'center' }} justify="between" gap={STORE_TOKENS.SPACING.ELEMENT}>
@@ -126,7 +128,7 @@ export function WorkoutBuilderSearch({
                                 shrink={0}
                                 size="sm"
                             >
-                                <Icon icon={Plus} size="xs" color="blue" />
+                                <Icon icon={Plus} size="xs" color={STORE_TOKENS.COLORS.INFO} />
                                 Criar Novo Exercício
                             </Button>
                         </Stack>

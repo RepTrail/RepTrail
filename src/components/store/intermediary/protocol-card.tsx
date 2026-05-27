@@ -124,7 +124,7 @@ export function ProtocolCard({
                                 ) : (
                                     <Badge
                                         variant="glass"
-                                        color="orange"
+                                        color={STORE_TOKENS.COLORS.BRAND}
                                         label={statusLabel || 'PRONTO PARA TREINAR'}
                                         icon={Sparkles}
                                         size="sm"
@@ -172,7 +172,7 @@ export function ProtocolCard({
                         </Stack>
 
                         {footer && (
-                            <Box padding="none" border={false}>
+                            <Box padding={STORE_TOKENS.PADDING.NONE} border={false}>
                                 <Font
                                     {...STORE_TOKENS.TYPOGRAPHY.LABEL}
                                     {...{

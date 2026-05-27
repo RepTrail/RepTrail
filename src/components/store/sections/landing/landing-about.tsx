@@ -206,7 +206,7 @@ export function LandingAbout({ role = 'trainer' }: LandingAboutProps) {
               <Badge label={activeConfig.badgeText} icon={activeConfig.badgeIcon} color={STORE_TOKENS.COLORS.BRAND} variant="solid" />
             )}
             <Font variant="h2" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} uppercase italic align={{ base: 'left', md: 'center' }}>
-              <span>{activeConfig.title1} </span>
+              <Font variant="h2" display="inline">{activeConfig.title1} </Font>
               <Font variant="h2" color={STORE_TOKENS.COLORS.BRAND} uppercase italic display="inline">
                 {activeConfig.titleHighlight}
               </Font>
@@ -237,14 +237,14 @@ export function LandingAbout({ role = 'trainer' }: LandingAboutProps) {
                   <Box 
                     padding={STORE_TOKENS.PADDING.ELEMENT} 
                     rounded={STORE_TOKENS.RADIUS.SYSTEM} 
-                    bg="primary" 
-                    bgOpacity={10}
+                    bg={STORE_TOKENS.COLORS.BRAND} 
+                    bgOpacity={STORE_TOKENS.OPACITY.SUBTLE}
                     align="center" 
                     justify="center"
                     alignSelf="start"
                     zIndex={STORE_TOKENS.Z_INDEX.CONTENT}
                   >
-                    <Icon icon={feature.icon} size="sm" color="primary" />
+                    <Icon icon={feature.icon} size="sm" color={STORE_TOKENS.COLORS.BRAND} />
                   </Box>
 
                   <Stack gap={STORE_TOKENS.SPACING.ELEMENT} zIndex={STORE_TOKENS.Z_INDEX.CONTENT}>
@@ -281,5 +281,5 @@ export function LandingAbout({ role = 'trainer' }: LandingAboutProps) {
           </Grid>
         </Stack>
     </LandingSection>
-  )
+  );
 }

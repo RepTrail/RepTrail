@@ -389,8 +389,8 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
                 variant="orange"
                 onClick={() => setOpen(true)}
                 transition
-                paddingY="element"
-                paddingX="container"
+                paddingY={STORE_TOKENS.PADDING.ELEMENT}
+                paddingX={STORE_TOKENS.PADDING.CONTAINER}
                 fullWidth={fullWidth}
             >
                 <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
@@ -427,7 +427,7 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
                                 fullWidth
                                 border
                                 borderWidth={1}
-                                borderColor="white/10"
+                                borderColor={STORE_TOKENS.COLORS.DIVIDER.STANDARD}
                                 display="flex"
                                 direction="col"
                                 align="center"
@@ -440,7 +440,7 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
                                 {...({ disabled: isGenerating } as any)}
                             >
                                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                                    <Icon icon={Instagram} size="xl" color="zinc-600" />
+                                    <Icon icon={Instagram} size="xl" color={STORE_TOKENS.COLORS.TEXT.DIM} />
                                     <Font
                                         variant="label-caps"
                                         {...{
@@ -453,13 +453,13 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
                                     <Box
                                         position="absolute"
                                         pin="inset"
-                                        bg="black"
-                                        bgOpacity={80}
+                                        bg={STORE_TOKENS.COLORS.BLACK}
+                                        bgOpacity={STORE_TOKENS.OPACITY.SHELF}
                                         display="flex"
                                         align="center"
                                         justify="center"
                                     >
-                                        <Icon icon={Loader2} spin size="lg" color="primary" />
+                                        <Icon icon={Loader2} spin size="lg" color={STORE_TOKENS.COLORS.BRAND} />
                                     </Box>
                                 )}
                             </Box>
@@ -472,7 +472,7 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
                                 aspectRatio="square"
                                 border
                                 borderWidth={1}
-                                borderColor="white/10"
+                                borderColor={STORE_TOKENS.COLORS.DIVIDER.STANDARD}
                                 display="flex"
                                 direction="col"
                                 align="center"
@@ -485,7 +485,7 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
                                 {...({ disabled: isGenerating } as any)}
                             >
                                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                                    <Icon icon={ImageIcon} size="xl" color="zinc-600" />
+                                    <Icon icon={ImageIcon} size="xl" color={STORE_TOKENS.COLORS.TEXT.DIM} />
                                     <Font
                                         variant="label-caps"
                                         {...{
@@ -498,25 +498,25 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
                                     <Box
                                         position="absolute"
                                         pin="inset"
-                                        bg="black"
-                                        bgOpacity={80}
+                                        bg={STORE_TOKENS.COLORS.BLACK}
+                                        bgOpacity={STORE_TOKENS.OPACITY.SHELF}
                                         display="flex"
                                         align="center"
                                         justify="center"
                                     >
-                                        <Icon icon={Loader2} spin size="lg" color="primary" />
+                                        <Icon icon={Loader2} spin size="lg" color={STORE_TOKENS.COLORS.BRAND} />
                                     </Box>
                                 )}
                             </Box>
                         </Grid>
 
                         <Box
-                            bg="zinc"
-                            bgOpacity={50}
+                            bg={STORE_TOKENS.COLORS.BACKGROUND}
+                            bgOpacity={STORE_TOKENS.OPACITY.MODAL}
                             rounded={STORE_TOKENS.RADIUS.SYSTEM}
                             border
                             borderWidth={1}
-                            borderColor="white/10"
+                            borderColor={STORE_TOKENS.COLORS.DIVIDER.STANDARD}
                             padding={STORE_TOKENS.PADDING.CONTAINER}
                             position="relative"
                             overflow="hidden"
@@ -548,12 +548,12 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
                 ) : (
                     <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                         <Box
-                            bg="black"
+                            bg={STORE_TOKENS.COLORS.BLACK}
                             rounded={STORE_TOKENS.RADIUS.SYSTEM}
                             overflow="hidden"
                             border
                             borderWidth={1}
-                            borderColor="white/10"
+                            borderColor={STORE_TOKENS.COLORS.DIVIDER.STANDARD}
                             display="flex"
                             align="center"
                             justify="center"
@@ -578,7 +578,7 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
                                 variant="emerald"
                                 rounded={STORE_TOKENS.RADIUS.SYSTEM}
                                 fullWidth
-                                paddingY="element"
+                                paddingY={STORE_TOKENS.PADDING.ELEMENT}
                             >
                                 <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                     <Icon icon={Share2} size="sm" />
@@ -602,7 +602,7 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
                                 variant="outline-zinc"
                                 rounded={STORE_TOKENS.RADIUS.SYSTEM}
                                 fullWidth
-                                paddingY="element"
+                                paddingY={STORE_TOKENS.PADDING.ELEMENT}
                             >
                                 <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                     <Icon icon={Download} size="sm" />

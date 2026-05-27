@@ -44,7 +44,7 @@ export function StudentNoPlanSection({ ranking }: StudentNoPlanSectionProps) {
                         <BackgroundIcon
                             icon={Zap}
                             size="100"
-                            opacity={10}
+                            opacity={STORE_TOKENS.OPACITY.SUBTLE}
                             {...{
                                 width: "auto",
                                 height: "auto",
@@ -62,7 +62,7 @@ export function StudentNoPlanSection({ ranking }: StudentNoPlanSectionProps) {
                                         color: "emerald",
                                     }}>
                                     <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                                        <Icon icon={Sparkles} size="xs" color="emerald" />
+                                        <Icon icon={Sparkles} size="xs" color={STORE_TOKENS.COLORS.SUCCESS} />
                                         Plataforma Elite
                                     </Inline>
                                 </Font>
@@ -85,7 +85,7 @@ export function StudentNoPlanSection({ ranking }: StudentNoPlanSectionProps) {
                                 }}>
                                 Você ainda não possui um personal trainer. Conecte-se com a elite do treinamento físico e receba protocolos 100% personalizados.
                             </Font>
-                            <Box padding="none">
+                            <Box padding={STORE_TOKENS.PADDING.NONE}>
                                 <Link href="/dashboard/student/buscar-personal">
                                     <Button variant="emerald" size="lg" rounded={STORE_TOKENS.RADIUS.SYSTEM} gap={STORE_TOKENS.SPACING.ELEMENT} transition>
                                         <Font
@@ -94,7 +94,7 @@ export function StudentNoPlanSection({ ranking }: StudentNoPlanSectionProps) {
                                             {...{
                                                 color: "black",
                                             }}>Encontrar Personal</Font>
-                                        <Icon icon={ArrowRight} size="sm" color="black" />
+                                        <Icon icon={ArrowRight} size="sm" color={STORE_TOKENS.COLORS.BLACK} />
                                     </Button>
                                 </Link>
                             </Box>
@@ -113,7 +113,7 @@ export function StudentNoPlanSection({ ranking }: StudentNoPlanSectionProps) {
                         <BackgroundIcon
                             icon={Sparkles}
                             size="100"
-                            opacity={10}
+                            opacity={STORE_TOKENS.OPACITY.SUBTLE}
                             {...{
                                 width: "auto",
                                 height: "auto",
@@ -131,7 +131,7 @@ export function StudentNoPlanSection({ ranking }: StudentNoPlanSectionProps) {
                                         color: "orange",
                                     }}>
                                     <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                                        <Icon icon={Sparkles} size="xs" color="orange" />
+                                        <Icon icon={Sparkles} size="xs" color={STORE_TOKENS.COLORS.BRAND} />
                                         Inteligência Artificial
                                     </Inline>
                                 </Font>
@@ -154,7 +154,7 @@ export function StudentNoPlanSection({ ranking }: StudentNoPlanSectionProps) {
                                 }}>
                                 Protocolos gerados instantaneamente com base na sua rotina, objetivos e equipamentos disponíveis de forma inteligente.
                             </Font>
-                            <Box padding="none">
+                            <Box padding={STORE_TOKENS.PADDING.NONE}>
                                 <Link href="/dashboard/student/plans">
                                     <Button variant="orange" size="lg" rounded={STORE_TOKENS.RADIUS.SYSTEM} gap={STORE_TOKENS.SPACING.ELEMENT} transition>
                                         <Font
@@ -163,7 +163,7 @@ export function StudentNoPlanSection({ ranking }: StudentNoPlanSectionProps) {
                                             {...{
                                                 color: "black",
                                             }}>Ativar por R$ 10,90/mês</Font>
-                                        <Icon icon={ArrowRight} size="sm" color="black" />
+                                        <Icon icon={ArrowRight} size="sm" color={STORE_TOKENS.COLORS.BLACK} />
                                     </Button>
                                 </Link>
                             </Box>

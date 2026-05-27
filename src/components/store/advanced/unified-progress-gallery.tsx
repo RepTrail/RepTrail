@@ -170,7 +170,7 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                 key={`${item.url}-${index}`}
                 display="flex"
                 direction="col"
-                gap="element"
+                gap={STORE_TOKENS.SPACING.ELEMENT}
                 onMouseEnter={() => setHoveredSetId(item.setId)}
                 onMouseLeave={() => setHoveredSetId(null)}
                 group
@@ -178,18 +178,18 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                 <Box
                     onClick={() => setSelectedPhotoIndex(index)}
                     position="relative"
-                    rounded="system"
+                    rounded={STORE_TOKENS.RADIUS.SYSTEM}
                     overflow="hidden"
                     border
-                    borderColor="white"
-                    borderOpacity={5}
-                    bg="zinc"
+                    borderColor={STORE_TOKENS.COLORS.WHITE}
+                    borderOpacity={STORE_TOKENS.OPACITY.LOW}
+                    bg={STORE_TOKENS.COLORS.BACKGROUND}
                     cursor="pointer"
                     aspectRatio="3/4"
                     transition
                     hoverScale={98}
                     shadow="xl"
-                    groupHoverBorderColor="primary"
+                    groupHoverBorderColor={STORE_TOKENS.COLORS.BRAND}
                 >
                     <Image
                         src={item.url}
@@ -201,7 +201,7 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                         }} />
                     {/* Floating Badge Overlay (Top Left) */}
                     <Box position="absolute" top={2.5} left={2.5} pointerEvents="none">
-                        <Badge variant="solid" color="primary" label={typeLabels[item.type]} size="xs" />
+                        <Badge variant="solid" color={STORE_TOKENS.COLORS.BRAND} label={typeLabels[item.type]} size="xs" />
                     </Box>
 
                     {/* Centered Hover Zoom Icon Overlay */}
@@ -211,22 +211,22 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                         display="flex"
                         align="center"
                         justify="center"
-                        bg="black"
-                        bgOpacity={30}
-                        opacity={0}
-                        groupHoverOpacity={100}
+                        bg={STORE_TOKENS.COLORS.BLACK}
+                        bgOpacity={STORE_TOKENS.OPACITY.HIGH}
+                        opacity={STORE_TOKENS.OPACITY.NONE}
+                        groupHoverOpacity={STORE_TOKENS.OPACITY.FULL}
                         transition
                         pointerEvents="none"
                     >
                         <Box
                             width={40}
                             height={40}
-                            rounded="full"
-                            bg="primary"
-                            bgOpacity={20}
+                            rounded={STORE_TOKENS.RADIUS.FULL}
+                            bg={STORE_TOKENS.COLORS.BRAND}
+                            bgOpacity={STORE_TOKENS.OPACITY.MEDIUM}
                             border={true}
-                            borderColor="primary"
-                            borderOpacity={50}
+                            borderColor={STORE_TOKENS.COLORS.BRAND}
+                            borderOpacity={STORE_TOKENS.OPACITY.MODAL}
                             display="flex"
                             align="center"
                             justify="center"
@@ -234,7 +234,7 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                             groupHoverScale={100}
                             transition
                         >
-                            <Icon icon={Maximize2} size="xs" color="primary" />
+                            <Icon icon={Maximize2} size="xs" color={STORE_TOKENS.COLORS.BRAND} />
                         </Box>
                     </Box>
                 </Box>
@@ -243,18 +243,18 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
     }
 
     return (
-        <Stack gap="container" fullWidth>
+        <Stack gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
             {/* Header / Filter Section */}
             <Box
                 display="flex"
                 direction={{ base: 'col', md: 'row' }}
                 align={{ base: 'stretch', md: 'center' }}
                 justify="between"
-                gap="container"
-                padding="none"
+                gap={STORE_TOKENS.SPACING.CONTAINER}
+                padding={STORE_TOKENS.PADDING.NONE}
             >
-                <Box display="flex" align="center" gap="element" wrap="wrap" fullWidth>
-                    <Icon icon={Filter} size="xs" color="zinc-400" />
+                <Box display="flex" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} wrap="wrap" fullWidth>
+                    <Icon icon={Filter} size="xs" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} />
                     {filters.map((f) => {
                         const isActive = activeFilter === f.value
                         return (
@@ -273,10 +273,10 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                 </Box>
 
             </Box>
-            <Separator opacity={10} />
+            <Separator opacity={STORE_TOKENS.OPACITY.SUBTLE} />
             {/* Gallery Content */}
             {activeFilter === 'all' ? (
-                <Stack gap="container" fullWidth>
+                <Stack gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
                     {sortedSets.map((set, idx) => {
                         const isEditing = editingSetId === set.id
                         const sessionPhotos = []
@@ -287,27 +287,27 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
 
                         return (
                             <React.Fragment key={set.id}>
-                                {idx > 0 && <Separator opacity={5} />}
-                                <Stack gap="container" fullWidth>
+                                {idx > 0 && <Separator opacity={STORE_TOKENS.OPACITY.LOW} />}
+                                <Stack gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
                                     {/* Session Header */}
                                     <Stack
                                         direction={{ base: 'col', md: 'row' }}
                                         align={{ base: 'start', md: 'center' }}
                                         justify="between"
-                                        gap="container"
+                                        gap={STORE_TOKENS.SPACING.CONTAINER}
                                         fullWidth
                                     >
-                                        <Box display="flex" align="center" gap="element">
+                                        <Box display="flex" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                             <Box
-                                                padding="element"
-                                                rounded="system"
-                                                bg="primary"
-                                                bgOpacity={10}
+                                                padding={STORE_TOKENS.PADDING.ELEMENT}
+                                                rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                                                bg={STORE_TOKENS.COLORS.BRAND}
+                                                bgOpacity={STORE_TOKENS.OPACITY.SUBTLE}
                                                 display="flex"
                                                 align="center"
                                                 justify="center"
                                             >
-                                                <Icon icon={Calendar} size="md" color="primary" />
+                                                <Icon icon={Calendar} size="md" color={STORE_TOKENS.COLORS.BRAND} />
                                             </Box>
                                             <Font
                                                 variant="body"
@@ -321,11 +321,11 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                                             </Font>
                                         </Box>
 
-                                        <Box display="flex" align="center" gap="element">
+                                        <Box display="flex" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                             {canEdit && (
                                                 <>
                                                     {isEditing ? (
-                                                        <Box display="flex" align="center" gap="element" animateIn="slide-right">
+                                                        <Box display="flex" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} animateIn="slide-right">
                                                             <Input
                                                                 type="date"
                                                                 value={editDate}
@@ -333,7 +333,7 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                                                                 width={150}
                                                                 size="sm"
                                                             />
-                                                            <Box display="flex" gap="element">
+                                                            <Box display="flex" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                                                 <Button
                                                                     size="sm"
                                                                     variant="primary"
@@ -345,7 +345,7 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                                                                     size="sm"
                                                                     variant="close"
                                                                     isIconOnly
-                                                                    rounded="full"
+                                                                    rounded={STORE_TOKENS.RADIUS.FULL}
                                                                     onClick={() => setEditingSetId(null)}
                                                                 >
                                                                     <Icon icon={X} size="xs" />
@@ -353,12 +353,12 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                                                             </Box>
                                                         </Box>
                                                     ) : (
-                                                        <Box display="flex" align="center" gap="element">
+                                                        <Box display="flex" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                                             <Button
                                                                 variant="outline-zinc"
                                                                 size="sm"
                                                                 onClick={() => startEditing(set.id, set.created_at)}
-                                                                gap="element"
+                                                                gap={STORE_TOKENS.SPACING.ELEMENT}
                                                             >
                                                                 <Icon icon={Pencil} size="xs" />
                                                                 Editar Data
@@ -367,7 +367,7 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                                                                 variant="outline-zinc"
                                                                 size="sm"
                                                                 isIconOnly
-                                                                rounded="full"
+                                                                rounded={STORE_TOKENS.RADIUS.FULL}
                                                                 onClick={() => handleDelete(set.id)}
                                                             >
                                                                 <Icon icon={X} size="xs" />
@@ -380,7 +380,7 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                                     </Stack>
 
                                     {/* Photos Grid for this session (4 per row on md/lg screens) */}
-                                    <Grid cols={{ base: 1, md: 4 }} gap="container">
+                                    <Grid cols={{ base: 1, md: 4 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
                                         {sessionPhotos.map((photo, pIdx) => {
                                             const globalIdx = allItems.findIndex(ai => ai.url === photo.url)
                                             return renderPhotoCard({ ...photo, date: set.created_at, setId: set.id }, globalIdx)
@@ -393,25 +393,25 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                 </Stack>
             ) : (
                 /* Photos Grid for filtered view (4 per row on md/lg screens) */
-                (<Grid cols={{ base: 1, md: 4 }} gap="container">
+                (<Grid cols={{ base: 1, md: 4 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
                     {filteredItems.map((item, i) => {
                         const isEditing = editingSetId === item.setId
 
                         return (
-                            <Stack key={`${item.url}-${i}`} gap="element">
+                            <Stack key={`${item.url}-${i}`} gap={STORE_TOKENS.SPACING.ELEMENT}>
                                 {renderPhotoCard(item, i)}
                                 {canEdit && (
-                                    <Box display="flex" align="center" justify="between" padding="tiny">
+                                    <Box display="flex" align="center" justify="between" padding={STORE_TOKENS.PADDING.NONE}>
                                         {isEditing ? (
-                                            <Box display="flex" align="center" gap="element" fullWidth animateIn="zoom">
+                                            <Box display="flex" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth animateIn="zoom">
                                                 <Input
                                                     type="date"
                                                     value={editDate}
                                                     onChange={(e) => setEditDate(e.target.value)}
                                                     size="sm"
-                                                    color="zinc"
+                                                    color={STORE_TOKENS.COLORS.BACKGROUND}
                                                 />
-                                                <Box display="flex" gap="element">
+                                                <Box display="flex" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                                     <Button
                                                         size="xs"
                                                         isIconOnly
@@ -432,8 +432,8 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                                             </Box>
                                         ) : (
                                             <Box display="flex" align="center" justify="between" fullWidth group>
-                                                <Box display="flex" align="center" gap="tiny">
-                                                    <Icon icon={Calendar} size="xs" color="zinc-400" />
+                                                <Box display="flex" align="center" gap={STORE_TOKENS.SPACING.NONE}>
+                                                    <Icon icon={Calendar} size="xs" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} />
                                                     <Font
                                                         variant="sub-tiny"
                                                         weight="black"
@@ -445,7 +445,7 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                                                         {new Date(item.date).toLocaleDateString()}
                                                     </Font>
                                                 </Box>
-                                                <Box opacity={0} groupHoverOpacity={100} transition>
+                                                <Box opacity={STORE_TOKENS.OPACITY.NONE} groupHoverOpacity={STORE_TOKENS.OPACITY.FULL} transition>
                                                     <Button
                                                         variant="ghost"
                                                         size="xs"
@@ -483,9 +483,9 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                         align="center"
                         justify="center"
                         fullWidth
-                        bg="zinc"
-                        bgOpacity={90}
-                        padding="container"
+                        bg={STORE_TOKENS.COLORS.BACKGROUND}
+                        bgOpacity={STORE_TOKENS.OPACITY.SHELF}
+                        padding={STORE_TOKENS.PADDING.CONTAINER}
                     >
                         <Box
                             position="relative"
@@ -493,7 +493,7 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                             fullWidth
                             maxWidth={{ base: 'sm', md: 'md' }}
                             overflow="hidden"
-                            rounded="system"
+                            rounded={STORE_TOKENS.RADIUS.SYSTEM}
                         >
                             <Image
                                 src={filteredItems[selectedPhotoIndex].url}
@@ -563,13 +563,13 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                                 pointerEvents="none"
                             >
                                 <Box
-                                    bg="black"
-                                    bgOpacity={50}
-                                    padding="element"
-                                    rounded="system"
+                                    bg={STORE_TOKENS.COLORS.BLACK}
+                                    bgOpacity={STORE_TOKENS.OPACITY.MODAL}
+                                    padding={STORE_TOKENS.PADDING.ELEMENT}
+                                    rounded={STORE_TOKENS.RADIUS.SYSTEM}
                                     pointerEvents="auto"
                                 >
-                                    <Stack direction="row" align="center" gap="element">
+                                    <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                         <Font
                                             variant="sub-tiny"
                                             weight="bold"
@@ -607,7 +607,7 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                 cancelLabel="Cancelar"
                 onConfirm={confirmDelete}
             >
-                <Box padding="none">
+                <Box padding={STORE_TOKENS.PADDING.NONE}>
                     <Font
                         variant="body"
                         align="center"

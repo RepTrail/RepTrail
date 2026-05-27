@@ -102,27 +102,27 @@ export function TrainerStudentsListSection({ userId }: TrainerStudentsListSectio
                                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="end">
                                             <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                                                 {item.is_new && (
-                                                    <Badge label="Pendente" variant="glass" color="blue" size="xs" />
+                                                    <Badge label="Pendente" variant="glass" color={STORE_TOKENS.COLORS.INFO} size="xs" />
                                                 )}
                                                 {item.is_placeholder ? (
-                                                    <Badge label="Aguardando Cadastro" variant="glass" color="amber" size="xs" />
+                                                    <Badge label="Aguardando Cadastro" variant="glass" color={STORE_TOKENS.COLORS.WARNING} size="xs" />
                                                 ) : (
                                                     <Badge 
                                                         label={item.active ? 'Ativo' : 'Inativo'} 
                                                         variant={item.active ? 'glass' : 'outline'} 
-                                                        color={item.active ? 'emerald' : 'zinc'} 
+                                                        color={item.active ? STORE_TOKENS.COLORS.SUCCESS : STORE_TOKENS.COLORS.BACKGROUND} 
                                                         size="xs" 
                                                     />
                                                 )}
                                                 {paymentStatus === 'overdue' && !item.is_placeholder && (
-                                                    <Badge label="Atrasado" variant="glass" color="red" size="xs" />
+                                                    <Badge label="Atrasado" variant="glass" color={STORE_TOKENS.COLORS.ERROR} size="xs" />
                                                 )}
                                                 {paymentStatus === 'due_today' && !item.is_placeholder && (
-                                                    <Badge label="Vence Hoje" variant="glass" color="amber" size="xs" />
+                                                    <Badge label="Vence Hoje" variant="glass" color={STORE_TOKENS.COLORS.WARNING} size="xs" />
                                                 )}
-                                                <Badge label={formattedValue} variant="glass" color="amber" size="xs" />
+                                                <Badge label={formattedValue} variant="glass" color={STORE_TOKENS.COLORS.WARNING} size="xs" />
                                                 {formattedDay && (
-                                                    <Badge label={formattedDay} variant="glass" color="red" size="xs" />
+                                                    <Badge label={formattedDay} variant="glass" color={STORE_TOKENS.COLORS.ERROR} size="xs" />
                                                 )}
                                             </Inline>
                                         </Stack>
@@ -173,7 +173,7 @@ export function TrainerStudentsListSection({ userId }: TrainerStudentsListSectio
                                         <Box shrink={0}>
                                             <BaseAvatar src={item.student?.avatar_url || undefined} initials={avatarInitials} variant="zinc" size="md" />
                                         </Box>
-                                        <Stack gap="none" minWidth={0} flex1>
+                                        <Stack gap={STORE_TOKENS.SPACING.NONE} minWidth={0} flex1>
                                             <Box fullWidth minWidth={0} overflow="hidden">
                                                 <Font
                                                     {...STORE_TOKENS.TYPOGRAPHY.HEADING}

@@ -19,8 +19,8 @@ export function LayoutSpacingContent({ id }: { id?: string }) {
           subtitle="Regras de arquitetura de layout, raios de borda e padding obrigatório."
       >
           {/* Radii & Padding Rules */}
-          <GlassPanel padding="none">
-              <Stack gap="none">
+          <GlassPanel padding={STORE_TOKENS.PADDING.NONE}>
+              <Stack gap={STORE_TOKENS.SPACING.NONE}>
                   <CardHeader>
                       <Font weight="bold">Radii & Base Padding</Font>
                   </CardHeader>
@@ -90,7 +90,7 @@ interface RadiusItemProps {
 
 function RadiusItem({ label, value, rounded }: RadiusItemProps) {
   return (
-      <Box bg="orange" padding={STORE_TOKENS.PADDING.CONTAINER} flex1 rounded={rounded}>
+      <Box bg={STORE_TOKENS.COLORS.BRAND} padding={STORE_TOKENS.PADDING.CONTAINER} flex1 rounded={rounded}>
           <Stack align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
             <Font
                 weight="black"

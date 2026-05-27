@@ -48,8 +48,8 @@ export function AuthLoginForm({
     }, [setPrimaryColor, color, syncColor])
 
     return (
-        <Surface variant="glass" padding="none" rounded={STORE_TOKENS.RADIUS.SYSTEM} width="full" maxWidth="auth-form">
-            <Stack gap="none">
+        <Surface variant="glass" padding={STORE_TOKENS.PADDING.NONE} rounded={STORE_TOKENS.RADIUS.SYSTEM} width="full" maxWidth="auth-form">
+            <Stack gap={STORE_TOKENS.SPACING.NONE}>
                 {/* Header */}
                 <Box padding={STORE_TOKENS.PADDING.CONTAINER}>
                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
@@ -89,7 +89,7 @@ export function AuthLoginForm({
                                     bg={STORE_TOKENS.COLORS.ERROR} 
                                     bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} 
                                     border="subtle" 
-                                    borderColor="red-500/20"
+                                    borderColor={STORE_TOKENS.COLORS.ERROR}
                                     minHeight={44}
                                 >
                                     <Font
@@ -143,7 +143,7 @@ export function AuthLoginForm({
                                 fullWidth
                                 rounded={STORE_TOKENS.RADIUS.SYSTEM}
                                 height="anatomy-item"
-                                gap="element"
+                                gap={STORE_TOKENS.SPACING.ELEMENT}
                                 disabled={loading}
                             >
                                 <Font variant="label-caps">

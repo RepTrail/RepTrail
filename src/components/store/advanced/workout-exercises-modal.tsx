@@ -121,7 +121,7 @@ export function WorkoutExercisesModal({
             {isLoading ? (
                 <Box padding={STORE_TOKENS.PADDING.CONTAINER} display="flex" align="center" justify="center" fullWidth>
                     <Stack align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        <Icon icon={Loader2} size="md" color="emerald" spin />
+                        <Icon icon={Loader2} size="md" color={STORE_TOKENS.COLORS.SUCCESS} spin />
                         <Font
                             variant="sub-tiny"
                             weight="black"
@@ -133,7 +133,7 @@ export function WorkoutExercisesModal({
                 </Box>
             ) : (
                 <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
-                    <Box bg="zinc" bgOpacity={5} rounded="system">
+                    <Box bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.LOW} rounded={STORE_TOKENS.RADIUS.SYSTEM}>
                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT} divide>
                             {exercises.map((ex, index) => (
                                 <Box key={ex.id} padding={STORE_TOKENS.PADDING.ELEMENT}>
@@ -142,9 +142,9 @@ export function WorkoutExercisesModal({
                                         <Box 
                                             width="10" 
                                             height="10" 
-                                            rounded="full" 
-                                            bg="emerald" 
-                                            bgOpacity={10} 
+                                            rounded={STORE_TOKENS.RADIUS.FULL} 
+                                            bg={STORE_TOKENS.COLORS.SUCCESS} 
+                                            bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} 
                                             display="flex" 
                                             align="center" 
                                             justify="center"
@@ -172,7 +172,7 @@ export function WorkoutExercisesModal({
                                                     {ex.name}
                                                 </Font>
                                                 <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                                    <Icon icon={Clock} size="xs" color="zinc-500" />
+                                                    <Icon icon={Clock} size="xs" color={STORE_TOKENS.COLORS.TEXT.MUTED} />
                                                     <Font
                                                         variant="sub-tiny"
                                                         weight="bold"
@@ -189,7 +189,7 @@ export function WorkoutExercisesModal({
                                                 {ex.warmup && (
                                                     <Badge 
                                                         label={`WARM UP: ${ex.warmup.sets}X ${ex.warmup.reps} (${ex.warmup.rest})`} 
-                                                        color="blue" 
+                                                        color={STORE_TOKENS.COLORS.INFO} 
                                                         variant="glass" 
                                                         size="xs" 
                                                     />
@@ -197,7 +197,7 @@ export function WorkoutExercisesModal({
                                                 {ex.feeder && (
                                                     <Badge 
                                                         label={`FEEDER: ${ex.feeder.sets}X ${ex.feeder.reps} (${ex.feeder.rest})`} 
-                                                        color="orange" 
+                                                        color={STORE_TOKENS.COLORS.BRAND} 
                                                         variant="glass" 
                                                         size="xs" 
                                                     />
@@ -205,7 +205,7 @@ export function WorkoutExercisesModal({
                                                 {ex.working && (
                                                     <Badge 
                                                         label={`WORKING: ${ex.working.sets}X ${ex.working.reps} (${ex.working.rest})`} 
-                                                        color="emerald" 
+                                                        color={STORE_TOKENS.COLORS.SUCCESS} 
                                                         variant="glass" 
                                                         size="xs" 
                                                     />

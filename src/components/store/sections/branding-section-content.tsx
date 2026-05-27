@@ -25,8 +25,8 @@ export function BrandingSectionContent({ id }: { id?: string }) {
             icon={Zap}
             subtitle="Diretrizes de marca para as diferentes instâncias do ecossistema RepTrail."
         >
-            <GlassPanel padding="none">
-                <Stack gap="none">
+            <GlassPanel padding={STORE_TOKENS.PADDING.NONE}>
+                <Stack gap={STORE_TOKENS.SPACING.NONE}>
                     <CardHeader>
                         <Font weight="bold">Logos & Identidade</Font>
                     </CardHeader>
@@ -45,7 +45,7 @@ export function BrandingSectionContent({ id }: { id?: string }) {
                                     transition
                                     cursor="pointer"
                                     group
-                                    hoverBgOpacity={10}
+                                    hoverBgOpacity={STORE_TOKENS.OPACITY.SUBTLE}
                                     hoverBorder="white/10"
                                     activeScale={95}
                                 >

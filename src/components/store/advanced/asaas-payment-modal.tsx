@@ -178,7 +178,7 @@ export function AsaasPaymentModal({
         >
             <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                 {/* Total Summary */}
-                <Box padding={STORE_TOKENS.PADDING.CONTAINER} bg="zinc" bgOpacity={10} border borderColor={STORE_TOKENS.COLORS.DIVIDER.SUBTLE} rounded={STORE_TOKENS.RADIUS.SYSTEM}>
+                <Box padding={STORE_TOKENS.PADDING.CONTAINER} bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} border borderColor={STORE_TOKENS.COLORS.DIVIDER.SUBTLE} rounded={STORE_TOKENS.RADIUS.SYSTEM}>
                     <Stack align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                         <Font
                             variant="sub-tiny"
@@ -281,8 +281,8 @@ export function AsaasPaymentModal({
                     </Stack>
                 </Stack>
 
-                <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT} padding="element">
-                    <Icon icon={CheckCircle2} size="xs" color="emerald" />
+                <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT} padding={STORE_TOKENS.PADDING.ELEMENT}>
+                    <Icon icon={CheckCircle2} size="xs" color={STORE_TOKENS.COLORS.SUCCESS} />
                     <Font
                         variant="sub-tiny"
                         weight="black"

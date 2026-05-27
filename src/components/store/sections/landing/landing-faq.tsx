@@ -1,4 +1,5 @@
-'use client'
+'use client';
+import { STORE_TOKENS } from '@/components/store/constants/tokens';
 
 import React, { useState } from 'react'
 import { Box } from '@/components/store/base/box'
@@ -8,7 +9,6 @@ import { Icon } from '@/components/store/base/icon'
 import { Badge } from '@/components/store/base/badge'
 import { useRegistry } from '@/components/store/advanced/registry-context'
 import { ChevronDown, HelpCircle } from 'lucide-react'
-import { STORE_TOKENS } from '../../constants/tokens'
 import { LandingSection } from '@/components/store/advanced/landing-section'
 import { Surface } from '@/components/store/base/surface'
 
@@ -115,12 +115,12 @@ export function LandingFAQ({ role = 'trainer' }: LandingFAQProps) {
 
         {/* Header Stack */}
         <Stack align={{ base: 'start', md: 'center' }} gap={STORE_TOKENS.SPACING.CONTAINER} textAlign={{ base: 'left', md: 'center' }} width={{ base: 'full', md: 'half' }} alignSelf="center">
-          <Badge label={activeConfig.badgeText} icon={HelpCircle} color="primary" variant="solid" />
-          <Font variant="h2" color="PRIMARY" uppercase italic align={{ base: 'left', md: 'center' }}>
-            <span>{activeConfig.title1} </span>
-            <span color="primary">{activeConfig.titleHighlight}</span>
+          <Badge label={activeConfig.badgeText} icon={HelpCircle} color={STORE_TOKENS.COLORS.BRAND} variant="solid" />
+          <Font variant="h2" color={STORE_TOKENS.COLORS.BRAND} uppercase italic align={{ base: 'left', md: 'center' }}>
+            <Font variant="h2" display="inline">{activeConfig.title1} </Font>
+            <Font variant="h2" color={STORE_TOKENS.COLORS.BRAND} display="inline">{activeConfig.titleHighlight}</Font>
           </Font>
-          <Font variant="description" color="SECONDARY" align={{ base: 'left', md: 'center' }}>
+          <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} align={{ base: 'left', md: 'center' }}>
             {activeConfig.subtitle}
           </Font>
         </Stack>
@@ -133,8 +133,8 @@ export function LandingFAQ({ role = 'trainer' }: LandingFAQProps) {
             return (
               <Surface
                 key={index}
-                variant="tonal-emerald"
-                rounded="system"
+                variant="tonal-primary"
+                rounded={STORE_TOKENS.RADIUS.SYSTEM}
                 width="full"
                 overflow="hidden"
                 display="flex"
@@ -148,12 +148,12 @@ export function LandingFAQ({ role = 'trainer' }: LandingFAQProps) {
                   direction={{ base: 'col', md: 'row' }}
                   align="center"
                   justify="between"
-                  padding="container"
+                  padding={STORE_TOKENS.PADDING.CONTAINER}
                   width="full"
                   gap={STORE_TOKENS.SPACING.ELEMENT}
                   style={{ cursor: 'pointer', background: 'transparent' }}
                 >
-                  <Font variant="body" color="emerald" weight="black" uppercase italic>
+                  <Font variant="body" color={STORE_TOKENS.COLORS.BRAND} weight="black" uppercase italic>
                     {faq.question}
                   </Font>
                   <Box
@@ -162,23 +162,22 @@ export function LandingFAQ({ role = 'trainer' }: LandingFAQProps) {
                       transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)'
                     }}
                   >
-                    <Icon icon={ChevronDown} size="sm" color="primary" />
+                    <Icon icon={ChevronDown} size="sm" color={STORE_TOKENS.COLORS.BRAND} />
                   </Box>
                 </Box>
-
                 {/* Content area */}
                 {isOpen && (
-                  <Box padding="container" border="subtle">
-                    <Font variant="body-sm" color="SECONDARY" weight="medium">
+                  <Box padding={STORE_TOKENS.PADDING.CONTAINER} border>
+                    <Font variant="body-sm" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} weight="medium">
                       {faq.answer}
                     </Font>
                   </Box>
                 )}
               </Surface>
-            )
+            );
           })}
         </Stack>
       </Stack>
     </LandingSection>
-  )
+  );
 }

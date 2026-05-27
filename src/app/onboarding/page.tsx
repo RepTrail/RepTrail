@@ -22,7 +22,7 @@ export default async function OnboardingPage() {
         .single()
 
     const role = profile?.role || user.user_metadata?.role
-    
+
     if (role === 'trainer') {
         redirect('/dashboard/trainer')
     }
@@ -38,7 +38,7 @@ export default async function OnboardingPage() {
             <Surface
                 as="main"
                 minHeight="screen"
-                bg="zinc"
+                bg={STORE_TOKENS.COLORS.BACKGROUND}
                 overflowX="hidden"
                 display="flex"
                 align="center"
@@ -47,15 +47,14 @@ export default async function OnboardingPage() {
                 padding={STORE_TOKENS.PADDING.CONTAINER}
             >
                 <BackgroundEffects variant="all" />
-                <Stack 
-                    gap={STORE_TOKENS.SPACING.CONTAINER} 
-                    align="center" 
-                    justify="center" 
-                    className="w-full max-w-[600px] z-10 py-12"
+                <Stack
+                    gap={STORE_TOKENS.SPACING.CONTAINER}
+                    align="center"
+                    justify="center"
                 >
                     <StudentOnboardingForm defaultTrainerCode={trainerCode} />
                 </Stack>
             </Surface>
         </RegistryProvider>
-    )
+    );
 }

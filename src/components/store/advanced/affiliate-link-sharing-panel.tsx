@@ -64,7 +64,7 @@ export function AffiliateLinkSharingPanel({ id }: { id?: string }) {
                             </Font>
                         </Stack>
 
-                        <Stack gap="none" align="end" display={{ base: 'none', md: 'flex' }} padding={STORE_TOKENS.PADDING.ELEMENT}>
+                        <Stack gap={STORE_TOKENS.SPACING.NONE} align="end" display={{ base: 'none', md: 'flex' }} padding={STORE_TOKENS.PADDING.ELEMENT}>
                             <Font
                                 variant="h1"
                                 weight="black"

@@ -200,7 +200,7 @@ export function CardioBuilderSmart({
                             gap={STORE_TOKENS.SPACING.ELEMENT}
                             shine
                         >
-                            <Icon icon={Sparkles} size="xs" color="black" />
+                            <Icon icon={Sparkles} size="xs" color={STORE_TOKENS.COLORS.BLACK} />
                             <Font
                                 weight="bold"
                                 {...{

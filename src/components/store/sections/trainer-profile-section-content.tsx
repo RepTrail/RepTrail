@@ -17,10 +17,10 @@ export function TrainerProfileSectionContent({ userId, profile }: TrainerProfile
     if (!profile) {
         return (
             <Stack gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
-                <Box height={280} rounded={STORE_TOKENS.RADIUS.SYSTEM} bg="zinc" bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} />
-                <Box height={400} rounded={STORE_TOKENS.RADIUS.SYSTEM} bg="zinc" bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} />
+                <Box height={280} rounded={STORE_TOKENS.RADIUS.SYSTEM} bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} />
+                <Box height={400} rounded={STORE_TOKENS.RADIUS.SYSTEM} bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} />
             </Stack>
-        )
+        );
     }
 
     return (

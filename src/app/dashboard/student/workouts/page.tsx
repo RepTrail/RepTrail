@@ -40,7 +40,7 @@ export default async function StudentWorkoutsPage() {
             <Suspense fallback={
                 <Box fullWidth>
                     <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
-                        <Box height={280} bg="zinc" bgOpacity={5} rounded="system" />
+                        <Box height={280} bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.LOW} rounded={STORE_TOKENS.RADIUS.SYSTEM} />
                     </Stack>
                 </Box>
             }>
@@ -51,6 +51,6 @@ export default async function StudentWorkoutsPage() {
                 </Box>
             </Suspense>
         </RegistryMain>
-    )
+    );
 }
 

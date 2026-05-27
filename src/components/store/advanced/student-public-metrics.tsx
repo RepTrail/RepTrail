@@ -101,7 +101,7 @@ export function StudentPublicMetrics({ fullMetrics, adherenceHistory, steroidUse
                 subtitle="Acompanhamento diário da consistência de treinos, dieta, cardio e ergogênicos nas últimas 4 semanas."
                 icon={Target}
             >
-                <GlassPanel padding="container" minWidth={0}>
+                <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER} minWidth={0}>
                     <Box fullWidth minWidth={0} overflow="hidden">
                         <UnifiedAdherenceChart
                             history={adherenceHistory || []}
@@ -117,7 +117,7 @@ export function StudentPublicMetrics({ fullMetrics, adherenceHistory, steroidUse
                 subtitle="Histórico estatístico do percentual de gordura corporal, peso e frequência de treinos semanais."
                 icon={TrendingUp}
             >
-                <GlassPanel padding="container">
+                <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER}>
                     <PerformanceAnalysisSection
                         weights={fullMetrics.weights}
                         bfs={fullMetrics.bfs}

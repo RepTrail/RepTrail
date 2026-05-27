@@ -158,15 +158,15 @@ export function SettingsModal({ hasTrainer = false, isTrainer = false }: Setting
                         <Box
                             position="absolute"
                             pin="inset"
-                            zIndex={50}
+                            zIndex={STORE_TOKENS.Z_INDEX.OVERLAY}
                             display="flex"
                             align="center"
                             justify="center"
                             rounded={STORE_TOKENS.RADIUS.SYSTEM}
-                            bg="black"
-                            bgOpacity={20}
+                            bg={STORE_TOKENS.COLORS.BLACK}
+                            bgOpacity={STORE_TOKENS.OPACITY.MEDIUM}
                         >
-                            <Icon icon={Loader2} color="emerald" size="md" animate="spin" />
+                            <Icon icon={Loader2} color={STORE_TOKENS.COLORS.SUCCESS} size="md" animate="spin" />
                         </Box>
                     )}
 
@@ -382,10 +382,10 @@ export function SettingsModal({ hasTrainer = false, isTrainer = false }: Setting
                         padding={STORE_TOKENS.PADDING.ELEMENT}
                         rounded={STORE_TOKENS.RADIUS.SYSTEM}
                         border
-                        borderColor="red"
-                        borderOpacity={20}
-                        bg="red"
-                        bgOpacity={10}
+                        borderColor={STORE_TOKENS.COLORS.ERROR}
+                        borderOpacity={STORE_TOKENS.OPACITY.MEDIUM}
+                        bg={STORE_TOKENS.COLORS.ERROR}
+                        bgOpacity={STORE_TOKENS.OPACITY.SUBTLE}
                     >
                         <Font
                             variant="body-sm"

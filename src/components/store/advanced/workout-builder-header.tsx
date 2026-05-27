@@ -182,8 +182,8 @@ export function WorkoutBuilderHeader({
                                     }}>{name}</Font>
                                 <Box
                                     padding={STORE_TOKENS.SPACING.TINY}
-                                    rounded="system"
-                                    hoverBg="zinc"
+                                    rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                                    hoverBg={STORE_TOKENS.COLORS.BACKGROUND}
                                     display="flex"
                                     align="center"
                                     justify="center"

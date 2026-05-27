@@ -89,7 +89,7 @@ export default function AdminLojaPage() {
     return (
         <RegistryProvider defaultColor="red">
             <DashboardShell
-                color="red"
+                color={STORE_TOKENS.COLORS.ERROR}
                 links={[
                     { href: '/admin/dashboard', label: 'Início', icon: 'BarChart3', exact: true },
                     { href: '/admin/personais', label: 'Personais', icon: 'UserCheck' },
@@ -130,14 +130,14 @@ export default function AdminLojaPage() {
                                         onChange={e => setSearch(e.target.value)}
                                         placeholder="Buscar produto..."
                                         icon={<Search size={16} />}
-                                        rounded="full"
+                                        rounded={STORE_TOKENS.RADIUS.FULL}
                                     />
                                 </Box>
                                 <Button
                                     onClick={() => { setEditingProduct(null); setProductModalOpen(true) }}
                                     variant="white"
                                     size="lg"
-                                    rounded="full"
+                                    rounded={STORE_TOKENS.RADIUS.FULL}
                                     shrink={0}
                                 >
                                     <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
@@ -184,7 +184,7 @@ export default function AdminLojaPage() {
                         onConfirm={confirmDeleteProduct}
                         confirmLabel="Remover"
                     >
-                        <Font variant="body" color="zinc-400">
+                        <Font variant="body" color={STORE_TOKENS.COLORS.TEXT.SECONDARY}>
                             Esta ação removerá o produto do catálogo e não poderá ser desfeita. Vendas anteriores permanecerão no histórico.
                         </Font>
                     </Modal>
@@ -211,5 +211,5 @@ export default function AdminLojaPage() {
                 </RegistryMain>
             </DashboardShell>
         </RegistryProvider>
-    )
+    );
 }

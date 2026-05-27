@@ -33,25 +33,25 @@ export function WorkoutRestState({
             <BackgroundIcon
                 icon={Play}
                 size="100"
-                opacity={10}
+                opacity={STORE_TOKENS.OPACITY.SUBTLE}
                 {...{
                     top: 0,
                     right: 0,
                 }} />
             {/* Top Icon and Badge */}
-            <Stack align="center" gap="element">
+            <Stack align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                 <Badge label="Descanso Ativo" variant="glass" color={colorTheme} icon={Timer} animatePulse />
             </Stack>
             {/* Circle Timer */}
             <Box 
                 width={220} 
                 height={220} 
-                rounded="full" 
+                rounded={STORE_TOKENS.RADIUS.FULL} 
                 bg={colorTheme} 
-                bgOpacity={10} 
+                bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} 
                 border 
                 borderColor={colorTheme}
-                borderOpacity={20}
+                borderOpacity={STORE_TOKENS.OPACITY.MEDIUM}
                 display="flex" 
                 align="center" 
                 justify="center"
@@ -60,7 +60,7 @@ export function WorkoutRestState({
                     borderWidth: '2px'
                 }}
             >
-                <Stack align="center" gap="element">
+                <Stack align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                     <Font
                         variant="display"
                         {...{
@@ -81,7 +81,7 @@ export function WorkoutRestState({
                 <Box width="full" maxWidth="md">
                     <Surface variant="glass" padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM} border="standard">
                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                            <Stack direction="row" align="center" gap="element">
+                            <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                 <Font
                                     variant="sub-tiny"
                                     weight="black"
@@ -90,7 +90,7 @@ export function WorkoutRestState({
                                     {...{
                                         color: "zinc-500",
                                     }}>A Seguir</Font>
-                                <Box flex1 height="px" bg="zinc" bgOpacity={20} />
+                                <Box flex1 height="px" bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.MEDIUM} />
                             </Stack>
                             <Stack direction="row" align="center" justify="between" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
@@ -113,7 +113,7 @@ export function WorkoutRestState({
                                             color: "zinc-500",
                                         }}>{nextSet.isNewExercise ? "Novo Exercício" : "Próxima Série do Bloco"}</Font>
                                 </Stack>
-                                <Icon icon={ChevronRight} size="sm" color="zinc-700" />
+                                <Icon icon={ChevronRight} size="sm" color={STORE_TOKENS.COLORS.TEXT.MUTED} />
                             </Stack>
                         </Stack>
                     </Surface>
@@ -121,7 +121,7 @@ export function WorkoutRestState({
             )}
             <Box width="full" maxWidth="md">
                 <Button variant="outline-zinc" fullWidth onClick={onSkip}>
-                    <Stack direction="row" align="center" gap="element">
+                    <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                         <Icon icon={X} size="xs" />
                         Pular Descanso
                     </Stack>

@@ -91,7 +91,7 @@ export default function AdminPersonaisPage() {
     return (
         <RegistryProvider defaultColor="red">
             <DashboardShell
-                color="red"
+                color={STORE_TOKENS.COLORS.ERROR}
                 links={[
                     { href: '/admin/dashboard', label: 'Início', icon: 'BarChart3', exact: true },
                     { href: '/admin/personais', label: 'Personais', icon: 'UserCheck' },
@@ -129,7 +129,7 @@ export default function AdminPersonaisPage() {
                                 onChange={e => setSearch(e.target.value)}
                                 placeholder="Buscar personal por nome ou email..."
                                 icon={<Search size={16} />}
-                                rounded="full"
+                                rounded={STORE_TOKENS.RADIUS.FULL}
                             />
 
                             {isLoading && <EmptyState icon={UserCheck} title="Carregando..." description="Buscando personais cadastrados." />}
@@ -168,12 +168,12 @@ export default function AdminPersonaisPage() {
                         onConfirm={confirmDeleteUser}
                         confirmLabel="Deletar"
                     >
-                        <Font variant="body" color="zinc-400">
+                        <Font variant="body" color={STORE_TOKENS.COLORS.TEXT.SECONDARY}>
                             Esta ação é irreversível e removerá todos os dados do profissional, incluindo acesso à plataforma de gestão.
                         </Font>
                     </Modal>
                 </RegistryMain>
             </DashboardShell>
         </RegistryProvider>
-    )
+    );
 }

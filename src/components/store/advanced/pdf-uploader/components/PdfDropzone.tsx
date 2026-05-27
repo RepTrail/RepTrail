@@ -22,7 +22,7 @@ export function PdfDropzone({ uploading, parsing, onFileChange }: PdfDropzonePro
                 variant="tonal-emerald"
                 border="dashed"
                 borderWidth={2}
-                rounded="system"
+                rounded={STORE_TOKENS.RADIUS.SYSTEM}
                 padding={STORE_TOKENS.PADDING.EMPTY_STATE}
                 display="flex"
                 direction="col"
@@ -32,16 +32,16 @@ export function PdfDropzone({ uploading, parsing, onFileChange }: PdfDropzonePro
                 fullWidth
                 pointerEvents={uploading || parsing ? 'none' : 'auto'}
                 cursor={uploading || parsing ? 'default' : 'pointer'}
-                opacity={uploading || parsing ? 80 : 100}
+                opacity={uploading || parsing ? STORE_TOKENS.OPACITY.SHELF : STORE_TOKENS.OPACITY.FULL}
                 hoverBorder="emerald-400"
-                hoverBg="emerald"
-                hoverBgOpacity={5}
+                hoverBg={STORE_TOKENS.COLORS.SUCCESS}
+                hoverBgOpacity={STORE_TOKENS.OPACITY.LOW}
             >
                 <Stack align="center" fullWidth>
                     {uploading || parsing ? (
                         <Stack align="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
                             <Box position="relative">
-                                <Icon icon={Loader2} size="xl" color="emerald" animate="spin" />
+                                <Icon icon={Loader2} size="xl" color={STORE_TOKENS.COLORS.SUCCESS} animate="spin" />
                             </Box>
                             <Stack align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                 <Font
@@ -66,7 +66,7 @@ export function PdfDropzone({ uploading, parsing, onFileChange }: PdfDropzonePro
                     ) : (
                         <Stack align="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
                             <Surface variant="tonal-emerald" padding={STORE_TOKENS.PADDING.CONTAINER} hoverScale={110} animation="in-fade-zoom">
-                                <Icon icon={Upload} size="lg" color="emerald" />
+                                <Icon icon={Upload} size="lg" color={STORE_TOKENS.COLORS.SUCCESS} />
                             </Surface>
                             <Stack align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                 <Font
@@ -99,7 +99,7 @@ export function PdfDropzone({ uploading, parsing, onFileChange }: PdfDropzonePro
                                     type={"file" as any}
                                     position="absolute"
                                     pin="inset"
-                                    opacity={0}
+                                    opacity={STORE_TOKENS.OPACITY.NONE}
                                     cursor="pointer"
                                     onChange={onFileChange}
                                     {...({ accept: ".pdf" } as any)}

@@ -26,19 +26,19 @@ export function MissionCompletedView() {
                 <Box
                     position="absolute"
                     pin="inset"
-                    rounded="full"
+                    rounded={STORE_TOKENS.RADIUS.FULL}
                 />
                 <Surface
                     variant="tonal-zinc"
                     padding={STORE_TOKENS.PADDING.CONTAINER}
-                    rounded="full"
+                    rounded={STORE_TOKENS.RADIUS.FULL}
                     border="standard"
-                    borderColor="emerald"
-                    borderOpacity={30}
+                    borderColor={STORE_TOKENS.COLORS.SUCCESS}
+                    borderOpacity={STORE_TOKENS.OPACITY.HIGH}
                     shadow="xl"
                 >
                     <Box>
-                        <Icon icon={CheckCircle} size="lg" color="emerald" />
+                        <Icon icon={CheckCircle} size="lg" color={STORE_TOKENS.COLORS.SUCCESS} />
                     </Box>
                 </Surface>
             </Box>

@@ -112,7 +112,7 @@ export default function StoreExplorePage() {
 
                     {/* Results Count Header */}
                     <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        <Icon icon={Tag} color="orange" />
+                        <Icon icon={Tag} color={STORE_TOKENS.COLORS.BRAND} />
                         <Font variant="auxiliary" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="black" uppercase tracking="widest">
                             {filteredProducts.length} itens encontrados
                         </Font>
@@ -132,11 +132,11 @@ export default function StoreExplorePage() {
                                 overflow="hidden"
                             >
                                 {/* High Contrast Badge */}
-                                <Box position="absolute" top={STORE_TOKENS.SPACING.ELEMENT} left={STORE_TOKENS.SPACING.ELEMENT} zIndex={20}>
+                                <Box position="absolute" top={STORE_TOKENS.SPACING.ELEMENT} left={STORE_TOKENS.SPACING.ELEMENT} zIndex={STORE_TOKENS.Z_INDEX.OVERLAY}>
                                     <Badge
                                         label={(product.sub_category || product.category || 'PRODUTO').toUpperCase()}
                                         variant="glass"
-                                        color="orange"
+                                        color={STORE_TOKENS.COLORS.BRAND}
                                         size="sm"
                                     />
                                 </Box>
@@ -145,8 +145,8 @@ export default function StoreExplorePage() {
                                 <Box
                                     height={280}
                                     width="full"
-                                    bg="zinc"
-                                    bgOpacity={5}
+                                    bg={STORE_TOKENS.COLORS.BACKGROUND}
+                                    bgOpacity={STORE_TOKENS.OPACITY.LOW}
                                     align="center"
                                     justify="center"
                                     overflow="hidden"
@@ -183,8 +183,8 @@ export default function StoreExplorePage() {
                                         <Stack direction="row" align="center" justify="between" fullWidth>
                                             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                                                 <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                                    <Icon icon={ShieldCheck} color="emerald" size="xs" />
-                                                    <Font variant="sub-tiny" color="emerald" weight="black" uppercase tracking="widest">
+                                                    <Icon icon={ShieldCheck} color={STORE_TOKENS.COLORS.SUCCESS} size="xs" />
+                                                    <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.SUCCESS} weight="black" uppercase tracking="widest">
                                                         Original & Lacrado
                                                     </Font>
                                                 </Stack>
@@ -204,7 +204,7 @@ export default function StoreExplorePage() {
                                             <Stack align="end" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                                 <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                                     {[1, 2, 3, 4, 5].map(i => (
-                                                        <Icon key={i} icon={Star} color="orange" size="xs" />
+                                                        <Icon key={i} icon={Star} color={STORE_TOKENS.COLORS.BRAND} size="xs" />
                                                     ))}
                                                 </Stack>
                                                 <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="black" uppercase tracking="widest">
@@ -231,8 +231,8 @@ export default function StoreExplorePage() {
                     {!loading && filteredProducts.length === 0 && (
                         <Surface variant="glass" border="standard" padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM} textAlign="center" fullWidth>
                             <Stack gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
-                                <Surface variant="tonal-zinc" padding={STORE_TOKENS.PADDING.CONTAINER} rounded="full" border="standard">
-                                    <Icon icon={ShoppingBag} color="zinc-600" size="xl" />
+                                <Surface variant="tonal-zinc" padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.FULL} border="standard">
+                                    <Icon icon={ShoppingBag} color={STORE_TOKENS.COLORS.TEXT.DIM} size="xl" />
                                 </Surface>
                                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                                     <Font variant="heading" weight="black" uppercase italic>
@@ -248,5 +248,5 @@ export default function StoreExplorePage() {
                 </Stack>
             </Box>
         </RegistryMain>
-    )
+    );
 }

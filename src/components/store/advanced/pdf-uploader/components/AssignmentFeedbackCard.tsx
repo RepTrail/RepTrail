@@ -43,7 +43,7 @@ export function AssignmentFeedbackCard({ bindingHooks, students }: AssignmentFee
             rightElement={isActive ? (
                 <GlassPanel padding={STORE_TOKENS.PADDING.ELEMENT}>
                     <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        <Box className={cn('w-2 h-2 rounded-full animate-pulse', PULSE_DOT[primaryColor])} />
+                        <Box />
                         <Font
                             {...STORE_TOKENS.TYPOGRAPHY.LABEL}
                             {...{

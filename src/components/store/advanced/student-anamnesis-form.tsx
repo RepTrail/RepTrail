@@ -155,7 +155,7 @@ export function AnamnesisForm({ initialData }: { initialData?: any }) {
                             <Icon icon={Target} size="xl" color={STORE_TOKENS.COLORS.SUCCESS} />
                         </Box>
 
-                        <Stack gap={STORE_TOKENS.SPACING.CONTAINER} position="relative" zIndex={10}>
+                        <Stack gap={STORE_TOKENS.SPACING.CONTAINER} position="relative" zIndex={STORE_TOKENS.Z_INDEX.CONTENT}>
                             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                                 <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} wrap="wrap">
                                     <Font
@@ -169,7 +169,7 @@ export function AnamnesisForm({ initialData }: { initialData?: any }) {
                                         }}>
                                         Medições Antropométricas
                                     </Font>
-                                    <Badge label="Precisão Máxima" color="emerald" variant="glass" size="xs" />
+                                    <Badge label="Precisão Máxima" color={STORE_TOKENS.COLORS.SUCCESS} variant="glass" size="xs" />
                                 </Stack>
                                 <Font
                                     variant="sub-tiny"
@@ -221,7 +221,7 @@ export function AnamnesisForm({ initialData }: { initialData?: any }) {
                                 ]}
                                 value={formData.sex}
                                 onChange={(v) => setFormData(prev => ({ ...prev, sex: v }))}
-                                color="emerald"
+                                color={STORE_TOKENS.COLORS.SUCCESS}
                             />
 
                             <FormSelect
@@ -267,7 +267,7 @@ export function AnamnesisForm({ initialData }: { initialData?: any }) {
                                     </Stack>
 
                                     <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                        <Stack direction="row" align="baseline" gap="none">
+                                        <Stack direction="row" align="baseline" gap={STORE_TOKENS.SPACING.NONE}>
                                             <Font
                                                 variant="h3"
                                                 weight="black"
@@ -288,12 +288,12 @@ export function AnamnesisForm({ initialData }: { initialData?: any }) {
                                             </Font>
                                         </Stack>
                                         
-                                        <Box display={{ base: 'none', lg: 'block' }} padding="none">
+                                        <Box display={{ base: 'none', lg: 'block' }} padding={STORE_TOKENS.PADDING.NONE}>
                                             <Box width="px" height="full" bg={STORE_TOKENS.COLORS.WHITE as any} bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} />
                                         </Box>
 
                                         <Box flex1 display={{ base: 'none', lg: 'block' }}>
-                                            <Stack gap="none">
+                                            <Stack gap={STORE_TOKENS.SPACING.NONE}>
                                                 <Font
                                                     variant="h3"
                                                     weight="black"
@@ -319,7 +319,7 @@ export function AnamnesisForm({ initialData }: { initialData?: any }) {
                                 variant="primary" 
                                 size="lg" 
                                 fullWidth 
-                                gap="element"
+                                gap={STORE_TOKENS.SPACING.ELEMENT}
                             >
                                 Salvar Dados Antropométricos
                                 <Icon icon={ArrowRight} size="sm" />

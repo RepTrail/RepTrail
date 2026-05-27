@@ -1,4 +1,5 @@
-'use client'
+'use client';
+import { STORE_TOKENS } from '@/components/store/constants/tokens';
 
 import React from 'react'
 import { StudentWorkoutHistory } from '@/components/store/features(deprecated)/student-workout-history'
@@ -18,7 +19,7 @@ export function StudentPublicHistory({ history }: StudentPublicHistoryProps) {
             icon={History}
         >
             {/* History Content Card using Liquid Glass */}
-            <GlassPanel padding="container">
+            <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER}>
                 <StudentWorkoutHistory
                     history={history}
                     isBlocked={false}
@@ -26,5 +27,5 @@ export function StudentPublicHistory({ history }: StudentPublicHistoryProps) {
                 />
             </GlassPanel>
         </RegistrySection>
-    )
+    );
 }

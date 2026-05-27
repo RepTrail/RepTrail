@@ -66,7 +66,6 @@ export default async function StudentLandingPage() {
         <LandingAbout role="student" />
         <LandingMarketplace initialTrainers={trainers} />
         <LandingFAQ role="student" />
-        <LandingCTA role="student" />
       </LandingShell>
     </RegistryProvider>
   )

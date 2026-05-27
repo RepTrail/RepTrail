@@ -40,9 +40,8 @@ export function TrainerDailyOperationSection({ userId, betaTesterMode }: Trainer
             icon={Activity}
         >
             <CodeAutoGenerator hasCode={hasCode} />
-
             <Grid cols={{ base: 1, lg: 12 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
-                <Box lgColSpan={8} display="flex" direction="col" gap="container" overflow="hidden" fullWidth minHeight={0}>
+                <Box lgColSpan={8} display="flex" direction="col" gap={STORE_TOKENS.SPACING.CONTAINER} overflow="hidden" fullWidth minHeight={0}>
                     <ActivityFeed userId={userId} initialData={activities} />
                 </Box>
 
@@ -57,5 +56,5 @@ export function TrainerDailyOperationSection({ userId, betaTesterMode }: Trainer
                 </Box>
             </Grid>
         </RegistrySection>
-    )
+    );
 }

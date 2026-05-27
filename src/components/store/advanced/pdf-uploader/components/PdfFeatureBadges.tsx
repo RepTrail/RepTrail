@@ -9,10 +9,10 @@ import { Check, Sparkles } from 'lucide-react';
 export function PdfFeatureBadges() {
     return (
         <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
-            <Separator opacity={5} />
+            <Separator opacity={STORE_TOKENS.OPACITY.LOW} />
             <Stack direction="row" gap={STORE_TOKENS.SPACING.CONTAINER} wrap="wrap">
                 <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <Icon icon={Sparkles} size="xs" color="zinc-600" />
+                    <Icon icon={Sparkles} size="xs" color={STORE_TOKENS.COLORS.TEXT.DIM} />
                     <Font
                         {...STORE_TOKENS.TYPOGRAPHY.LABEL}
                         {...{
@@ -20,7 +20,7 @@ export function PdfFeatureBadges() {
                         }}>AI Powered Extraction</Font>
                 </Stack>
                 <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <Icon icon={Check} size="xs" color="zinc-600" />
+                    <Icon icon={Check} size="xs" color={STORE_TOKENS.COLORS.TEXT.DIM} />
                     <Font
                         {...STORE_TOKENS.TYPOGRAPHY.LABEL}
                         {...{

@@ -66,7 +66,7 @@ export function UnifiedAdherenceChart({ history, showErgogenics = false, noCard 
     }
 
     const content = (
-        <Stack fullWidth minWidth={0} gap={STORE_TOKENS.SPACING.CONTAINER} padding={noCard ? 'none' : { base: "none", md: STORE_TOKENS.PADDING.CONTAINER }}>
+        <Stack fullWidth minWidth={0} gap={STORE_TOKENS.SPACING.CONTAINER} padding={noCard ? STORE_TOKENS.PADDING.NONE : { base: STORE_TOKENS.PADDING.NONE, md: STORE_TOKENS.PADDING.CONTAINER }}>
             <Box overflowX="auto" width="full" minWidth={0} noScrollbar={true}>
                 <Box minWidth={750}>
                     <Stack fullWidth gap={STORE_TOKENS.SPACING.CONTAINER}>
@@ -174,7 +174,7 @@ export function UnifiedAdherenceChart({ history, showErgogenics = false, noCard 
         <GlassPanel>
             <Stack padding={STORE_TOKENS.PADDING.CONTAINER} fullWidth gap={STORE_TOKENS.SPACING.CONTAINER}>
                 <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <Icon icon={Activity} size="lg" color="primary" />
+                    <Icon icon={Activity} size="lg" color={STORE_TOKENS.COLORS.BRAND} />
                     <Stack direction="row" align="baseline" gap={STORE_TOKENS.SPACING.ELEMENT}>
                         <Font
                             variant="h3"

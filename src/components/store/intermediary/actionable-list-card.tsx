@@ -20,14 +20,14 @@ export function ActionableListCard({ children, badges, actions, isLogItem, isStr
 
     return (
         <GlassPanel
-            padding="none"
+            padding={STORE_TOKENS.PADDING.NONE}
             transition
             group
             hoverBorder="white/20"
             overflow="hidden"
             fullWidth
         >
-            <Stack gap="none" fullWidth>
+            <Stack gap={STORE_TOKENS.SPACING.NONE} fullWidth>
                 <Box
                     fullWidth
                     position="relative"
@@ -76,7 +76,7 @@ export function ActionableListCard({ children, badges, actions, isLogItem, isStr
                                 gap={STORE_TOKENS.SPACING.ELEMENT}
                                 align="center"
                                 justify="center"
-                                bg="transparent"
+                                bg={STORE_TOKENS.COLORS.TRANSPARENT}
                                 shrink={0}
                             >
                                 {actions}
@@ -95,5 +95,5 @@ export function ActionableListCard({ children, badges, actions, isLogItem, isStr
                 )}
             </Stack>
         </GlassPanel>
-    )
+    );
 }

@@ -43,8 +43,8 @@ export function WorkoutExecutionState({
         <Stack gap={STORE_TOKENS.SPACING.CONTAINER} padding={STORE_TOKENS.PADDING.CONTAINER} flex1>
             {/* Progress Section */}
             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                <Stack direction="row" align="end" justify="between" padding="element">
-                    <Stack gap="element">
+                <Stack direction="row" align="end" justify="between" padding={STORE_TOKENS.PADDING.ELEMENT}>
+                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                         <Font
                             variant="label-caps"
                             {...{
@@ -63,10 +63,10 @@ export function WorkoutExecutionState({
                             }}>/ {totalSteps}</Font>
                         </Font>
                     </Stack>
-                    <Badge label={`${Math.round(progress)}%`} variant="solid" color="emerald" size="sm" />
+                    <Badge label={`${Math.round(progress)}%`} variant="solid" color={STORE_TOKENS.COLORS.SUCCESS} size="sm" />
                 </Stack>
-                <Box bg="zinc" bgOpacity={50} rounded="full" overflow="hidden" height={6}>
-                    <Box height="full" bg="emerald" transition style={{ width: `${progress}%` }} />
+                <Box bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.MODAL} rounded={STORE_TOKENS.RADIUS.FULL} overflow="hidden" height={6}>
+                    <Box height="full" bg={STORE_TOKENS.COLORS.SUCCESS} transition style={{ width: `${progress}%` }} />
                 </Box>
             </Stack>
             {/* Execution State */}
@@ -74,7 +74,7 @@ export function WorkoutExecutionState({
                 <BackgroundIcon
                     icon={Play}
                     size="100"
-                    opacity={10}
+                    opacity={STORE_TOKENS.OPACITY.SUBTLE}
                     {...{
                         top: 0,
                         right: 0,
@@ -85,7 +85,7 @@ export function WorkoutExecutionState({
                     <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                             <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                <Box width={6} height={6} bg="emerald" rounded="full" shrink={0} />
+                                <Box width={6} height={6} bg={STORE_TOKENS.COLORS.SUCCESS} rounded={STORE_TOKENS.RADIUS.FULL} shrink={0} />
                                 <Font
                                     variant="label-caps"
                                     {...{
@@ -106,18 +106,18 @@ export function WorkoutExecutionState({
                         <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT}>
                             <Badge 
                                 label={({ WARMUP: 'Aquecimento', FEEDER: 'Feeder Set', WORKING: 'Série de Trabalho' } as any)[currentStep.phase]} 
-                                color={({ WARMUP: 'orange', FEEDER: 'blue', WORKING: 'emerald' } as any)[currentStep.phase]}
+                                color={({ WARMUP: STORE_TOKENS.COLORS.BRAND, FEEDER: STORE_TOKENS.COLORS.INFO, WORKING: STORE_TOKENS.COLORS.SUCCESS } as any)[currentStep.phase]}
                                 variant="solid"
                                 size="sm"
                             />
-                            <Badge label={`Série ${currentStep.setNumber}`} variant="solid" color="zinc" size="sm" />
+                            <Badge label={`Série ${currentStep.setNumber}`} variant="solid" color={STORE_TOKENS.COLORS.BACKGROUND} size="sm" />
                         </Stack>
                     </Stack>
                 </Surface>
 
                 {/* Targets & Stats */}
                 <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} width="full">
-                    <Surface variant="tonal-zinc" flex1 padding={STORE_TOKENS.PADDING.ELEMENT} rounded="system" border="standard">
+                    <Surface variant="tonal-zinc" flex1 padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM} border="standard">
                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                             <Font
                                 variant="label-caps"
@@ -139,7 +139,7 @@ export function WorkoutExecutionState({
                                 }}>Reps</Font>
                         </Stack>
                     </Surface>
-                    <Surface variant="tonal-zinc" flex1 padding={STORE_TOKENS.PADDING.ELEMENT} rounded="system" border="standard">
+                    <Surface variant="tonal-zinc" flex1 padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM} border="standard">
                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                             <Font
                                 variant="label-caps"
@@ -164,7 +164,7 @@ export function WorkoutExecutionState({
                 </Stack>
             </Stack>
             {/* Action Area */}
-            <Box padding="none">
+            <Box padding={STORE_TOKENS.PADDING.NONE}>
                 <Button 
                     variant="emerald" 
                     fullWidth 

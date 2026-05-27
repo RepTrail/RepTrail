@@ -75,7 +75,6 @@ export function LandingShell({
     >
       {/* Background visual effects — same as dashboard main */}
       <BackgroundEffects variant="all" />
-
       {/* Optional urgency banner */}
       {urgencyBanner && (
         <Box
@@ -84,15 +83,14 @@ export function LandingShell({
           justify="center"
           width="full"
           position="relative"
-          zIndex={20}
+          zIndex={STORE_TOKENS.Z_INDEX.OVERLAY}
           padding={STORE_TOKENS.PADDING.ELEMENT}
         >
-          <Font variant="label-caps" color="black" align="center" tracking="widest">
+          <Font variant="label-caps" color={STORE_TOKENS.COLORS.BLACK} align="center" tracking="widest">
             {urgencyBanner}
           </Font>
         </Box>
       )}
-
       {/* Sticky glassmorphism header */}
       <Box
         as="header"
@@ -103,7 +101,7 @@ export function LandingShell({
       >
         <GlassPanel
           fullWidth
-          rounded="none"
+          rounded={STORE_TOKENS.RADIUS.NONE}
           border="subtle"
           backdropBlur="md"
           padding={STORE_TOKENS.PADDING.CONTAINER}
@@ -159,13 +157,12 @@ export function LandingShell({
           </Box>
         </GlassPanel>
       </Box>
-
       {/* Main content area */}
       <Main
         flex1
         width="full"
         position="relative"
-        zIndex={10}
+        zIndex={STORE_TOKENS.Z_INDEX.CONTENT}
         display="flex"
         direction="col"
         gap={STORE_TOKENS.SPACING.SECTION}
@@ -174,12 +171,11 @@ export function LandingShell({
       >
         {children}
       </Main>
-
       {/* Standardized GlassPanel footer */}
-      <Box as="footer" width="full" position="relative" zIndex={10}>
+      <Box as="footer" width="full" position="relative" zIndex={STORE_TOKENS.Z_INDEX.CONTENT}>
         <GlassPanel
           fullWidth
-          rounded="none"
+          rounded={STORE_TOKENS.RADIUS.NONE}
           border="subtle"
           backdropBlur="md"
           padding={STORE_TOKENS.PADDING.CONTAINER}
@@ -236,5 +232,5 @@ export function LandingShell({
         </GlassPanel>
       </Box>
     </Box>
-  )
+  );
 }

@@ -167,7 +167,7 @@ export function TrainerProfileForm({ profile, userId }: TrainerProfileFormProps)
                         </Box>
                     </Grid>
 
-                    <Box height="px" bg="white" bgOpacity={5} fullWidth />
+                    <Box height="px" bg={STORE_TOKENS.COLORS.WHITE} bgOpacity={STORE_TOKENS.OPACITY.LOW} fullWidth />
 
                     <Stack
                         direction={{ base: 'col', md: 'row' }}

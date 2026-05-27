@@ -86,8 +86,7 @@ export function LandingCTA({ role = 'trainer' }: LandingCTAProps) {
           <Badge label={activeConfig.badgeText} icon={Zap} color={STORE_TOKENS.COLORS.BRAND} variant="solid" animatePulse />
 
           <Font variant="h1" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} uppercase italic align="center">
-            <span>{activeConfig.title1} </span>
-            <br className="hidden md:block" />
+            {activeConfig.title1}{' '}
             <Font variant="h1" color={STORE_TOKENS.COLORS.BRAND} uppercase italic display="inline">
               {activeConfig.titleHighlight}
             </Font>
@@ -112,7 +111,7 @@ export function LandingCTA({ role = 'trainer' }: LandingCTAProps) {
             >
               <Link href={activeConfig.ctaLink}>
                 <Box as="span" display="flex" direction={{ base: 'col', md: 'row' }} align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT} cursor="pointer">
-                  <span>{activeConfig.ctaText}</span>
+                  <Font variant="body" weight="medium">{activeConfig.ctaText}</Font>
                   <Icon icon={ArrowRight} size="md" />
                 </Box>
               </Link>
@@ -126,12 +125,12 @@ export function LandingCTA({ role = 'trainer' }: LandingCTAProps) {
                 activeScale={95}
                 fullWidth
               >
-                <a href={activeConfig.searchLink}>
+                <Link href={activeConfig.searchLink}>
                   <Box as="span" display="flex" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT} cursor="pointer">
                     <Icon icon={Search} size="md" />
-                    <span>{activeConfig.searchText}</span>
+                    <Font variant="body" weight="medium">{activeConfig.searchText}</Font>
                   </Box>
-                </a>
+                </Link>
               </Button>
             )}
           </Stack>

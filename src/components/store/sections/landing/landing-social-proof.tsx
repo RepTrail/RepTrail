@@ -124,6 +124,51 @@ export function LandingSocialProof({ role = 'trainer' }: LandingSocialProofProps
           location: 'São Paulo • SP',
           metric: 'R$ 1.8k /mês',
           featured: true
+        },
+        {
+          rating: 5,
+          quote: 'Divulguei no meu grupo de corrida e em duas semanas consegui 15 assinaturas. A taxa de conversão é incrível e o pagamento cai certinho.',
+          initials: 'AP',
+          author: 'Ana P.',
+          location: 'Rio de Janeiro • RJ',
+          metric: 'R$ 2.4k /mês',
+          featured: false
+        },
+        {
+          rating: 5,
+          quote: 'Coloquei o link na bio do meu Instagram focado em vida saudável. Nem preciso vender, o próprio aplicativo se vende. A renda recorrente salva meu fim de mês.',
+          initials: 'CG',
+          author: 'Carlos G.',
+          location: 'Belo Horizonte • MG',
+          metric: 'R$ 3.1k /mês',
+          featured: false
+        },
+        {
+          rating: 5,
+          quote: 'Como dono de academia, indiquei para todos os meus personais. Agora ganho uma porcentagem em cima de tudo que eles movimentam. Sensacional.',
+          initials: 'FB',
+          author: 'Fernando B.',
+          location: 'Curitiba • PR',
+          metric: 'R$ 5.2k /mês',
+          featured: true
+        },
+        {
+          rating: 5,
+          quote: 'Sempre testei outros programas de afiliados, mas nenhum pagava recorrente. Aqui o aluno fica meses na plataforma e eu continuo recebendo. Vale muito a pena!',
+          initials: 'LM',
+          author: 'Letícia M.',
+          location: 'Florianópolis • SC',
+          metric: 'R$ 4.5k /mês',
+          featured: false
+        },
+        {
+          rating: 5,
+          quote: 'Criei um vídeo rápido pro TikTok mostrando o app e coloquei meu link. Viralizou e as comissões não param de chegar no dashboard.',
+          initials: 'JL',
+          author: 'João L.',
+          location: 'Salvador • BA',
+          metric: 'R$ 6.8k /mês',
+          featured: false
         }
       ]
     }
@@ -139,7 +184,7 @@ export function LandingSocialProof({ role = 'trainer' }: LandingSocialProofProps
           <Stack align="center" gap={STORE_TOKENS.SPACING.CONTAINER} textAlign="center" width={{ base: 'full', md: 'half' }} alignSelf="center">
             <Badge label={activeConfig.badgeText} icon={Star} color={STORE_TOKENS.COLORS.BRAND} variant="solid" />
             <Font variant="h2" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} uppercase italic align="center">
-              <span>{activeConfig.title1} </span>
+              {activeConfig.title1}{' '}
               <Font variant="h2" color={STORE_TOKENS.COLORS.BRAND} uppercase italic display="inline">
                 {activeConfig.titleHighlight}
               </Font>
@@ -150,10 +195,10 @@ export function LandingSocialProof({ role = 'trainer' }: LandingSocialProofProps
           </Stack>
 
           {/* Testimonials Grid */}
-          <Grid cols={1} mdCols={role === 'affiliate' ? 1 : 2} gap={STORE_TOKENS.SPACING.CONTAINER} width="full">
+          <Grid cols={1} mdCols={2} gap={STORE_TOKENS.SPACING.CONTAINER} width="full">
             {activeConfig.testimonials.map((test, idx) => {
               const CardComponent = test.featured ? Surface : GlassPanel
-              const cardProps = test.featured ? { variant: "tonal-orange" as const } : {}
+              const cardProps = test.featured ? { variant: "tonal-primary" as const } : {}
 
               return (
                 <CardComponent
@@ -161,7 +206,6 @@ export function LandingSocialProof({ role = 'trainer' }: LandingSocialProofProps
                   position="relative"
                   padding={STORE_TOKENS.PADDING.CONTAINER}
                   rounded={STORE_TOKENS.RADIUS.SYSTEM}
-                  maxWidth={role === 'affiliate' ? 'sm' : 'none'}
                   display="flex"
                   direction="col"
                   justify="between"
@@ -173,7 +217,7 @@ export function LandingSocialProof({ role = 'trainer' }: LandingSocialProofProps
                     {/* Rating Stars */}
                     <Stack direction="row" gap={STORE_TOKENS.SPACING.NONE} align="center">
                       {Array.from({ length: test.rating }).map((_, i) => (
-                        <Icon key={i} icon={Star} size="xs" color={test.featured ? "orange" : STORE_TOKENS.COLORS.BRAND} />
+                        <Icon key={i} icon={Star} size="xs" color={STORE_TOKENS.COLORS.BRAND} />
                       ))}
                     </Stack>
 
@@ -182,7 +226,6 @@ export function LandingSocialProof({ role = 'trainer' }: LandingSocialProofProps
                       "{test.quote}"
                     </Font>
                   </Stack>
-
                   {/* Footer Meta */}
                   <Box 
                     display="flex" 
@@ -206,15 +249,15 @@ export function LandingSocialProof({ role = 'trainer' }: LandingSocialProofProps
                     {/* Highlight Metric Badge */}
                     <Badge 
                       label={test.metric} 
-                      color={test.featured ? "orange" : "primary"} 
+                      color={STORE_TOKENS.COLORS.BRAND} 
                       variant={test.featured ? "solid" : "glass"} 
                     />
                   </Box>
                 </CardComponent>
-              )
+              );
             })}
           </Grid>
         </Stack>
     </LandingSection>
-  )
+  );
 }

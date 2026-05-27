@@ -1,4 +1,5 @@
-'use client'
+'use client';
+import { STORE_TOKENS } from '@/components/store/constants/tokens';
 
 import { useState, useEffect } from 'react'
 import { Modal } from '@/components/store/advanced/modal'
@@ -77,8 +78,8 @@ export function StudentDashboardModals({ userId, showModal, hasTrainer }: Studen
             variant="orange"
             confirmVariant="primary"
         >
-            <Stack gap="container">
-                <Stack gap="element">
+            <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                     <Font
                         variant="body"
                         weight="bold"
@@ -95,7 +96,7 @@ export function StudentDashboardModals({ userId, showModal, hasTrainer }: Studen
                         O Auto Treino utiliza nossa IA avançada para construir protocolos personalizados sob medida para o seu corpo e rotina.
                     </Font>
                 </Stack>
-                <Stack gap="tiny">
+                <Stack gap={STORE_TOKENS.SPACING.NONE}>
                     <Font
                         variant="sub-tiny"
                         weight="black"

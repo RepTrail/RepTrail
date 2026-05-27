@@ -156,9 +156,9 @@ export function ProgressPhotoUpload({ studentId }: ProgressPhotoUploadProps) {
                 fullWidth
                 loading={uploading}
                 size="lg"
-                gap="element"
+                gap={STORE_TOKENS.SPACING.ELEMENT}
                 height="auto"
-                paddingY="element"
+                paddingY={STORE_TOKENS.PADDING.ELEMENT}
             >
                 <Font
                     variant="sub-tiny"

@@ -219,7 +219,7 @@ export function StudentProfileForm({
                         </Box>
                     </Grid>
 
-                    <Box height="px" bg="white" bgOpacity={5} fullWidth />
+                    <Box height="px" bg={STORE_TOKENS.COLORS.WHITE} bgOpacity={STORE_TOKENS.OPACITY.LOW} fullWidth />
 
                     {/* Footer */}
                     <Stack direction={{ base: 'col', md: 'row' }} align="center" justify="between" gap={STORE_TOKENS.SPACING.CONTAINER}>

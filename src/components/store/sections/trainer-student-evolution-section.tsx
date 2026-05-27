@@ -35,9 +35,9 @@ export function TrainerStudentEvolutionSection({
     if (isChartLoading || isAdherenceLoading) {
         return (
             <Stack align="center" justify="center" padding={STORE_TOKENS.PADDING.SECTION} fullWidth>
-                <Icon icon={Loader2} color="primary" size="xl" spin />
+                <Icon icon={Loader2} color={STORE_TOKENS.COLORS.BRAND} size="xl" spin />
             </Stack>
-        )
+        );
     }
 
     return (

@@ -17,13 +17,13 @@ interface UploaderStatusCardProps {
 
 export function UploaderStatusCard({ id, icon, label, value, isActive = true, rightElement }: UploaderStatusCardProps) {
     return (
-        <GlassPanel id={id} padding={{ base: 'element', md: 'container' }} animation="in-fade-zoom">
-            <Stack direction="row" justify="between" align="center" gap={{ base: 'element', md: 'container' }}>
-                <Stack direction="row" align="center" gap={{ base: 'element', md: 'container' }}>
+        <GlassPanel id={id} padding={{ base: STORE_TOKENS.PADDING.ELEMENT, md: STORE_TOKENS.PADDING.CONTAINER }} animation="in-fade-zoom">
+            <Stack direction="row" justify="between" align="center" gap={{ base: STORE_TOKENS.SPACING.ELEMENT, md: STORE_TOKENS.SPACING.CONTAINER }}>
+                <Stack direction="row" align="center" gap={{ base: STORE_TOKENS.SPACING.ELEMENT, md: STORE_TOKENS.SPACING.CONTAINER }}>
                     <GlassPanel padding={STORE_TOKENS.PADDING.ELEMENT}>
-                        <Icon icon={icon} size="md" color={isActive ? 'primary' : 'zinc-500'} />
+                        <Icon icon={icon} size="md" color={isActive ? STORE_TOKENS.COLORS.BRAND : STORE_TOKENS.COLORS.TEXT.MUTED} />
                     </GlassPanel>
-                    <Stack gap="element">
+                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                         <Font
                             {...STORE_TOKENS.TYPOGRAPHY.LABEL}
                             {...{

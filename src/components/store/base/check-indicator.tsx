@@ -37,8 +37,8 @@ export function CheckIndicator({
             width={resolvedSize}
             height={resolvedSize}
             rounded={STORE_TOKENS.RADIUS.FULL}
-            bg={checked ? 'emerald' : 'zinc'}
-            bgOpacity={checked ? 100 : 100}
+            bg={checked ? STORE_TOKENS.COLORS.SUCCESS : STORE_TOKENS.COLORS.BACKGROUND}
+            bgOpacity={checked ? STORE_TOKENS.OPACITY.FULL : STORE_TOKENS.OPACITY.FULL}
             display="flex"
             align="center"
             justify="center"
@@ -54,9 +54,9 @@ export function CheckIndicator({
             <Icon 
                 icon={checked ? Check : Circle} 
                 size={size === 'lg' ? 'md' : 'sm'} 
-                color={checked ? 'black' : 'zinc-600'} 
+                color={checked ? STORE_TOKENS.COLORS.BLACK : STORE_TOKENS.COLORS.TEXT.DIM} 
                 className={cn("transition-all", checked ? "scale-110" : "opacity-40")}
             />
         </Box>
-    )
+    );
 }

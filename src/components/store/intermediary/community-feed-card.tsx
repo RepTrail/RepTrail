@@ -42,6 +42,7 @@ export function CommunityFeedCard({
             direction="col"
         >
             {/* Background Image */}
+            {/* eslint-disable-next-line no-restricted-syntax */}
             <Box position="absolute" pin="inset" zIndex={0}>
                 <Img
                     src={imageUrl}
@@ -60,8 +61,8 @@ export function CommunityFeedCard({
                 pin="inset"
                 zIndex={STORE_TOKENS.Z_INDEX.CONTENT}
                 bg={STORE_TOKENS.COLORS.BLACK}
-                bgOpacity={20}
-                groupHoverOpacity={10}
+                bgOpacity={STORE_TOKENS.OPACITY.MEDIUM}
+                groupHoverOpacity={STORE_TOKENS.OPACITY.SUBTLE}
                 transition
             />
             {/* Bottom Gradient (Ensures Footer Readability) */}
@@ -103,7 +104,7 @@ export function CommunityFeedCard({
                                 initials={userName.substring(0, 2).toUpperCase()}
                                 size="sm"
                             />
-                            <Stack gap="none">
+                            <Stack gap={STORE_TOKENS.SPACING.NONE}>
                                 <Font
                                     {...STORE_TOKENS.TYPOGRAPHY.HEADING}
                                     variant="body-sm"

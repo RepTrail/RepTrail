@@ -43,11 +43,10 @@ export function WeekdayPicker({
                     </Font>
                 </Stack>
             )}
-            
             <Box 
                 padding={STORE_TOKENS.PADDING.ELEMENT} 
                 rounded={STORE_TOKENS.RADIUS.SYSTEM} 
-                bg="black" 
+                bg={STORE_TOKENS.COLORS.BLACK} 
                 bgOpacity={STORE_TOKENS.OPACITY.SUBTLE}
                 border
                 borderColor={STORE_TOKENS.COLORS.DIVIDER.SUBTLE}
@@ -64,7 +63,7 @@ export function WeekdayPicker({
                                 justify="center"
                                 rounded={STORE_TOKENS.RADIUS.SYSTEM}
                                 cursor="pointer"
-                                bg={isSelected ? 'primary' : 'transparent'}
+                                bg={isSelected ? STORE_TOKENS.COLORS.BRAND : STORE_TOKENS.COLORS.TRANSPARENT}
                                 transition
                                 onClick={() => toggleDay(i)}
                                 fullWidth
@@ -77,10 +76,10 @@ export function WeekdayPicker({
                                     {day}
                                 </Font>
                             </Box>
-                        )
+                        );
                     })}
                 </Grid>
             </Box>
         </Stack>
-    )
+    );
 }

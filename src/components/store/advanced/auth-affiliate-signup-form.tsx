@@ -56,8 +56,8 @@ export function AuthAffiliateSignUpForm({
     }, [setPrimaryColor, syncColor])
 
     return (
-        <Surface variant="glass" padding="none" rounded={STORE_TOKENS.RADIUS.SYSTEM} width="full" maxWidth="auth-form">
-            <Stack gap="none">
+        <Surface variant="glass" padding={STORE_TOKENS.PADDING.NONE} rounded={STORE_TOKENS.RADIUS.SYSTEM} width="full" maxWidth="auth-form">
+            <Stack gap={STORE_TOKENS.SPACING.NONE}>
                 {/* Header */}
                 <Box padding={STORE_TOKENS.PADDING.CONTAINER}>
                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
@@ -89,7 +89,7 @@ export function AuthAffiliateSignUpForm({
                     <form onSubmit={onSubmit || ((e) => e.preventDefault())}>
                         <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                             {error && (
-                                <Surface padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM} display="flex" align="center" bg={STORE_TOKENS.COLORS.ERROR} bgOpacity={10} border="subtle" minHeight={44}>
+                                <Surface padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM} display="flex" align="center" bg={STORE_TOKENS.COLORS.ERROR} bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} border="subtle" minHeight={44}>
                                     <Font
                                         variant="sub-tiny"
                                         weight="black"
@@ -182,7 +182,7 @@ export function AuthAffiliateSignUpForm({
                                     setShowTermsModal(false)
                                 }}
                             >
-                                <Box padding="none" maxHeight="60vh" overflowY="auto">
+                                <Box padding={STORE_TOKENS.PADDING.NONE} maxHeight="60vh" overflowY="auto">
                                     <Font
                                         variant="body"
                                         whitespace="pre-line"
@@ -200,7 +200,7 @@ export function AuthAffiliateSignUpForm({
                                 fullWidth
                                 rounded={STORE_TOKENS.RADIUS.SYSTEM}
                                 height="anatomy-item"
-                                gap="element"
+                                gap={STORE_TOKENS.SPACING.ELEMENT}
                                 disabled={loading}
                             >
                                 <Font variant="label-caps">

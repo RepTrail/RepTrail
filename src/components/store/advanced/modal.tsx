@@ -85,7 +85,7 @@ export function Modal({
   return (
     <ModalOverlay onClose={onClose} animateState={animateState}>
       <ModalContainer animateState={animateState}>
-        <Surface variant="base" padding="none" rounded={STORE_TOKENS.RADIUS.SYSTEM} direction="col" flex1 minHeight={0} overflow="hidden">
+        <Surface variant="base" padding={STORE_TOKENS.PADDING.NONE} rounded={STORE_TOKENS.RADIUS.SYSTEM} direction="col" flex1 minHeight={0} overflow="hidden">
           <Box flex1 direction="col" minHeight={0} overflow="hidden">
             {/* Header */}
             <CardHeader
@@ -97,7 +97,7 @@ export function Modal({
               <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center" justify="between" fullWidth>
                 <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center" flex1>
                   {icon && <IconBox icon={icon} variant={variant as any} />}
-                  <Stack gap="none" flex1 justify="center">
+                  <Stack gap={STORE_TOKENS.SPACING.NONE} flex1 justify="center">
                     <Font
                       variant="body"
                       weight="black"
@@ -134,7 +134,7 @@ export function Modal({
               overflowY="auto" 
               bg={STORE_TOKENS.COLORS.BACKGROUND} 
               bgOpacity={STORE_TOKENS.OPACITY.BACKGROUND} 
-              padding={noPadding ? 'none' : STORE_TOKENS.PADDING.CONTAINER} 
+              padding={noPadding ? STORE_TOKENS.PADDING.NONE : STORE_TOKENS.PADDING.CONTAINER} 
               minHeight={0}
             >
               {children ? children : (

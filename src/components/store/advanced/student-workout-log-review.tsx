@@ -96,21 +96,21 @@ export function WorkoutLogReview({ logId, userId, workoutName, completedAt, load
 
     return (
         <Box display="flex" justify="center" fullWidth>
-            <Box maxWidth="lg" display="flex" direction="col" gap="container" fullWidth>
+            <Box maxWidth="lg" display="flex" direction="col" gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
                 {/* Header */}
-                <Stack gap="element">
-                    <Button variant="ghost" size="xs" gap="tiny" asChild justify="start">
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                    <Button variant="ghost" size="xs" gap={STORE_TOKENS.SPACING.NONE} asChild justify="start">
                         <Link href="/dashboard/student">
                             <Icon icon={ChevronLeft} size="xs" />
                             Voltar
                         </Link>
                     </Button>
 
-                    <Box display="flex" align="start" gap="container">
-                        <Box padding="element" bg="emerald" bgOpacity={10} rounded="system" border borderColor="emerald" borderOpacity={20}>
-                            <Icon icon={CheckCircle} size="md" color="emerald" />
+                    <Box display="flex" align="start" gap={STORE_TOKENS.SPACING.CONTAINER}>
+                        <Box padding={STORE_TOKENS.PADDING.ELEMENT} bg={STORE_TOKENS.COLORS.SUCCESS} bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} rounded={STORE_TOKENS.RADIUS.SYSTEM} border borderColor={STORE_TOKENS.COLORS.SUCCESS} borderOpacity={STORE_TOKENS.OPACITY.MEDIUM}>
+                            <Icon icon={CheckCircle} size="md" color={STORE_TOKENS.COLORS.SUCCESS} />
                         </Box>
-                        <Stack gap="tiny">
+                        <Stack gap={STORE_TOKENS.SPACING.NONE}>
                             <Font
                                 variant="h3"
                                 weight="black"
@@ -121,8 +121,8 @@ export function WorkoutLogReview({ logId, userId, workoutName, completedAt, load
                                 }}>
                                 {workoutName}
                             </Font>
-                            <Box display="flex" align="center" gap="tiny">
-                                <Icon icon={CheckCircle} size="xs" color="emerald" />
+                            <Box display="flex" align="center" gap={STORE_TOKENS.SPACING.NONE}>
+                                <Icon icon={CheckCircle} size="xs" color={STORE_TOKENS.COLORS.SUCCESS} />
                                 <Font
                                     variant="sub-tiny"
                                     weight="bold"
@@ -139,12 +139,12 @@ export function WorkoutLogReview({ logId, userId, workoutName, completedAt, load
                 </Stack>
 
                 {/* Exercises */}
-                <Stack gap="element">
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                     {Object.entries(grouped).map(([exerciseName, exerciseLoads]) => (
-                        <Box key={exerciseName} bg="zinc" bgOpacity={5} border borderColor="zinc" borderOpacity={10} rounded="system" overflow="hidden" display="flex" direction="col">
+                        <Box key={exerciseName} bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.LOW} border borderColor={STORE_TOKENS.COLORS.BACKGROUND} borderOpacity={STORE_TOKENS.OPACITY.SUBTLE} rounded={STORE_TOKENS.RADIUS.SYSTEM} overflow="hidden" display="flex" direction="col">
                             {/* Exercise title */}
-                            <Box display="flex" align="center" gap="tiny" padding="element" bg="zinc" bgOpacity={10}>
-                                <Icon icon={Dumbbell} size="sm" color="orange" opacity={70} />
+                            <Box display="flex" align="center" gap={STORE_TOKENS.SPACING.NONE} padding={STORE_TOKENS.PADDING.ELEMENT} bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.SUBTLE}>
+                                <Icon icon={Dumbbell} size="sm" color={STORE_TOKENS.COLORS.BRAND} opacity={STORE_TOKENS.OPACITY.OVERLAY} />
                                 <Font
                                     variant="body-sm"
                                     weight="black"
@@ -156,7 +156,7 @@ export function WorkoutLogReview({ logId, userId, workoutName, completedAt, load
                                     {exerciseName}
                                 </Font>
                             </Box>
-                            <Separator opacity={5} />
+                            <Separator opacity={STORE_TOKENS.OPACITY.LOW} />
 
                             {/* Sets */}
                             <Box display="flex" direction="col">
@@ -170,17 +170,17 @@ export function WorkoutLogReview({ logId, userId, workoutName, completedAt, load
                                             <Box
                                                 display="flex"
                                                 align="center"
-                                                gap="container"
-                                                padding="element"
+                                                gap={STORE_TOKENS.SPACING.CONTAINER}
+                                                padding={STORE_TOKENS.PADDING.ELEMENT}
                                             >
                                                 {/* Set type badge */}
                                                 <Box
                                                     bg={cfg.bg}
-                                                    bgOpacity={10}
+                                                    bgOpacity={STORE_TOKENS.OPACITY.SUBTLE}
                                                     border
                                                     borderColor={cfg.bg}
-                                                    borderOpacity={80}
-                                                    rounded="system"
+                                                    borderOpacity={STORE_TOKENS.OPACITY.SHELF}
+                                                    rounded={STORE_TOKENS.RADIUS.SYSTEM}
                                                     padding={STORE_TOKENS.PADDING.ELEMENT}
                                                     shrink={0}
                                                 >
@@ -196,7 +196,7 @@ export function WorkoutLogReview({ logId, userId, workoutName, completedAt, load
                                                 </Box>
 
                                                 {/* Weight input */}
-                                                <Box flex={1} display="flex" align="center" gap="tiny">
+                                                <Box flex={1} display="flex" align="center" gap={STORE_TOKENS.SPACING.NONE}>
                                                     <Input
                                                         type="number"
                                                         step="0.5"
@@ -224,7 +224,7 @@ export function WorkoutLogReview({ logId, userId, workoutName, completedAt, load
                                                     }}>×</Font>
 
                                                 {/* Reps input */}
-                                                <Box display="flex" align="center" gap="tiny">
+                                                <Box display="flex" align="center" gap={STORE_TOKENS.SPACING.NONE}>
                                                     <Input
                                                         type="number"
                                                         min="0"
@@ -243,7 +243,7 @@ export function WorkoutLogReview({ logId, userId, workoutName, completedAt, load
                                                         }}>reps</Font>
                                                 </Box>
                                             </Box>
-                                            {!isLast && <Separator opacity={3} />}
+                                            {!isLast && <Separator opacity={STORE_TOKENS.OPACITY.LOW} />}
                                         </Stack>
                                     );
                                 })}
@@ -258,7 +258,7 @@ export function WorkoutLogReview({ logId, userId, workoutName, completedAt, load
                     bottom={24}
                     left={0}
                     right={0}
-                    zIndex={50}
+                    zIndex={STORE_TOKENS.Z_INDEX.OVERLAY}
                     display="flex"
                     justify="center"
                     pointerEvents="none"
@@ -269,7 +269,7 @@ export function WorkoutLogReview({ logId, userId, workoutName, completedAt, load
                             variant="emerald"
                             size="lg"
                             fullWidth
-                            gap="element"
+                            gap={STORE_TOKENS.SPACING.ELEMENT}
                         >
                             <Icon icon={Save} size="sm" />
                             Salvar Alterações

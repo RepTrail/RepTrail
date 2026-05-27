@@ -74,7 +74,7 @@ function ActivityRow({ item }: { item: ActivityItem }) {
                     />
                     <Badge
                         label={item.relativeTime}
-                        color="zinc"
+                        color={STORE_TOKENS.COLORS.BACKGROUND}
                         variant="glass"
                         size="xs"
                         icon={Clock}
@@ -87,9 +87,9 @@ function ActivityRow({ item }: { item: ActivityItem }) {
                     icon={icon}
                     variant={color as any}
                     size="md"
-                    rounded="system"
+                    rounded={STORE_TOKENS.RADIUS.SYSTEM}
                 />
-                <Stack gap="none">
+                <Stack gap={STORE_TOKENS.SPACING.NONE}>
                     <Font
                         variant="body-sm"
                         weight="black"
@@ -124,7 +124,7 @@ export function StudentRecentActivities({ activities }: StudentRecentActivitiesP
     const hasMore = extra.length > 0
 
     return (
-        <GlassPanel fullWidth padding="none" display="flex" direction="col">
+        <GlassPanel fullWidth padding={STORE_TOKENS.PADDING.NONE} display="flex" direction="col">
             <CardHeader>
                 <Inline justify="between" fullWidth>
                     <Inline gap={STORE_TOKENS.SPACING.ELEMENT}>
@@ -132,7 +132,7 @@ export function StudentRecentActivities({ activities }: StudentRecentActivitiesP
                             icon={Clock}
                             variant="primary"
                             size="md"
-                            rounded="system"
+                            rounded={STORE_TOKENS.RADIUS.SYSTEM}
                         />
                         <Font variant="heading" weight="black" uppercase italic>
                             Atividades Recentes
@@ -167,7 +167,7 @@ export function StudentRecentActivities({ activities }: StudentRecentActivitiesP
                             />
                         </Box>
                     ) : (
-                        <Stack gap="element" padding={STORE_TOKENS.PADDING.CONTAINER} fullWidth>
+                        <Stack gap={STORE_TOKENS.SPACING.ELEMENT} padding={STORE_TOKENS.PADDING.CONTAINER} fullWidth>
                             {preview.map((item, i) => (
                                 <ActivityRow
                                     key={`${item.type}-${item.timestamp}-${i}`}

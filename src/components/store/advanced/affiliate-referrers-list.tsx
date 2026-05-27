@@ -38,14 +38,14 @@ export function AffiliateReferrersList() {
 
     if (referrers.length === 0) {
         return (
-            <Box padding="none">
+            <Box padding={STORE_TOKENS.PADDING.NONE}>
                 <EmptyState
                     icon={Search}
                     title="Nenhum indicado ainda"
                     description="Compartilhe seu link nas redes sociais para começar a construir sua rede."
                 />
             </Box>
-        )
+        );
     }
 
     return (

@@ -74,6 +74,9 @@ export function DashboardShell({ children, color, links, mobileLinks, user, prof
 
     const isSidebarOpen = parentRegistry ? parentRegistry.isSidebarOpen : localIsSidebarOpen
     const setIsSidebarOpen = parentRegistry ? parentRegistry.setIsSidebarOpen : setLocalIsSidebarOpen
+    
+    // Resolve the active color from the parent registry if it exists, otherwise fallback to the prop
+    const activeColor = parentRegistry ? parentRegistry.primaryColor : color
 
     const pathname = usePathname()
     const isPlayerMode = pathname.includes('/workout/') && !pathname.includes('/workouts/') && !pathname.endsWith('/workouts')
@@ -93,7 +96,7 @@ export function DashboardShell({ children, color, links, mobileLinks, user, prof
     const content = (
         <Surface
             minHeight="screen"
-            bg="zinc"
+            bg={STORE_TOKENS.COLORS.BACKGROUND}
             bgOpacity={STORE_TOKENS.OPACITY.BACKGROUND}
             overflowX="hidden"
             display="flex"
@@ -114,7 +117,7 @@ export function DashboardShell({ children, color, links, mobileLinks, user, prof
                 settingsVariant={resolvedSettingsVariant}
                 onOpenSettings={handleOpenSettings}
                 {...{
-                    color: color,
+                    color: activeColor,
                 }} />
 
             {/* Mobile Header (Canonical) */}
@@ -128,7 +131,7 @@ export function DashboardShell({ children, color, links, mobileLinks, user, prof
             {!isPlayerMode && <DashboardBottomNav
                 links={bottomLinks}
                 {...{
-                    color: color,
+                    color: activeColor,
                 }} />}
 
             {/* Main Content Area */}
@@ -137,14 +140,14 @@ export function DashboardShell({ children, color, links, mobileLinks, user, prof
                 fullWidth
                 transition
                 position="relative"
-                zIndex={10}
+                zIndex={STORE_TOKENS.Z_INDEX.CONTENT}
                 paddingLeft={{ base: "none", md: 'sidebar-wide' }}
                 display="flex"
                 direction="col"
             >
                 <ImpersonationBar
                     {...{
-                        color: color,
+                        color: activeColor,
                     }} />
                 {children}
             </Main>
@@ -191,7 +194,7 @@ function DashboardSidebar({
                     position="fixed"
                     pin="inset"
                     variant="glass-dark"
-                    zIndex={100}
+                    zIndex={STORE_TOKENS.Z_INDEX.OVERLAY}
                     display={{ base: 'block', lg: 'none' }}
                     onClick={() => setIsSidebarOpen(false)}
                 >
@@ -203,7 +206,7 @@ function DashboardSidebar({
                 position="fixed"
                 top={0}
                 height="screen"
-                zIndex={100}
+                zIndex={STORE_TOKENS.Z_INDEX.OVERLAY}
                 width="sidebar-wide"
                 transition
                 pin={{ base: 'right', lg: 'left' }}
@@ -215,7 +218,7 @@ function DashboardSidebar({
                     variant="glass"
                     display="flex"
                     direction="col"
-                    rounded="none"
+                    rounded={STORE_TOKENS.RADIUS.NONE}
                     border="none"
                 >
                     {/* Drawer Border (Mobile Left / Desktop Right) */}
@@ -226,8 +229,8 @@ function DashboardSidebar({
                         top={0} 
                         fullHeight 
                         width="px" 
-                        bg="white" 
-                        bgOpacity={5}
+                        bg={STORE_TOKENS.COLORS.WHITE} 
+                        bgOpacity={STORE_TOKENS.OPACITY.LOW}
                     >
                         <></>
                     </Surface>
@@ -238,8 +241,8 @@ function DashboardSidebar({
                         top={0} 
                         fullHeight 
                         width="px" 
-                        bg="white" 
-                        bgOpacity={5}
+                        bg={STORE_TOKENS.COLORS.WHITE} 
+                        bgOpacity={STORE_TOKENS.OPACITY.LOW}
                     >
                         <></>
                     </Surface>

@@ -49,8 +49,8 @@ export function RankingPodiumCard({ trainer, rank }: RankingPodiumCardProps) {
             <BackgroundIcon
                 icon={Trophy}
                 size="100"
-                opacity={10}
-                groupHoverOpacity={10}
+                opacity={STORE_TOKENS.OPACITY.SUBTLE}
+                groupHoverOpacity={STORE_TOKENS.OPACITY.SUBTLE}
                 {...{
                     top: 5,
                     right: 5,
@@ -72,7 +72,8 @@ export function RankingPodiumCard({ trainer, rank }: RankingPodiumCardProps) {
                         <Badge 
                             label={`#${rank}`} 
                             variant="solid" 
-                            color={rank === 1 ? 'orange' : 'zinc'} 
+                            // eslint-disable-next-line no-restricted-syntax
+                            color={rank === 1 ? STORE_TOKENS.COLORS.BRAND : STORE_TOKENS.COLORS.BACKGROUND} 
                             size="xs" 
                         />
                     </Box>
@@ -105,7 +106,7 @@ export function RankingPodiumCard({ trainer, rank }: RankingPodiumCardProps) {
                     <Badge
                         label={`${Number(trainer.rating || 0).toFixed(1)} Rating`}
                         icon={Star}
-                        color="orange"
+                        color={STORE_TOKENS.COLORS.BRAND}
                         size="xs"
                         variant="glass"
                     />
@@ -115,7 +116,7 @@ export function RankingPodiumCard({ trainer, rank }: RankingPodiumCardProps) {
                 <Box fullWidth height="px" bg={STORE_TOKENS.COLORS.WHITE} bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} />
 
                 <Grid cols={2} gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
-                    <Stack gap="none">
+                    <Stack gap={STORE_TOKENS.SPACING.NONE}>
                         <Font
                             variant="sub-tiny"
                             weight="black"
@@ -132,7 +133,7 @@ export function RankingPodiumCard({ trainer, rank }: RankingPodiumCardProps) {
                                 color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
                             }}>{trainer.studentCount}</Font>
                     </Stack>
-                    <Stack gap="none" align="end">
+                    <Stack gap={STORE_TOKENS.SPACING.NONE} align="end">
                         <Font
                             variant="sub-tiny"
                             weight="black"

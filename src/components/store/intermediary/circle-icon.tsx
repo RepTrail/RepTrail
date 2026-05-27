@@ -41,7 +41,7 @@ export function CircleIcon({
       borderColor={color}
       transition
     >
-      <Icon icon={IconComp} size="xs" color={color === 'zinc' ? 'zinc-400' : color} />
+      <Icon icon={IconComp} size="xs" color={color === STORE_TOKENS.COLORS.BACKGROUND ? STORE_TOKENS.COLORS.TEXT.SECONDARY : color} />
     </Box>
-  )
+  );
 }

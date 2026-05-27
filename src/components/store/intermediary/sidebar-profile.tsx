@@ -96,7 +96,7 @@ export function SidebarProfile({
             {/* User Identity Area */}
             <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                 <BaseAvatar initials={initials} src={user?.avatar_url || undefined} size="md" />
-                <Stack gap="none" flex1 overflow="hidden" minWidth={0}>
+                <Stack gap={STORE_TOKENS.SPACING.NONE} flex1 overflow="hidden" minWidth={0}>
                     <Font
                         {...STORE_TOKENS.TYPOGRAPHY.HEADING}
                         variant="body-sm"
@@ -127,7 +127,7 @@ export function SidebarProfile({
                             size="sm"
                             isIconOnly
                         >
-                            <Icon icon={Briefcase} size="sm" />
+                            <Icon icon={ArrowRightLeft} size="sm" />
                         </Button>
                     </Link>
                 )}

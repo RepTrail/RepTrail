@@ -30,15 +30,15 @@ export function AIProtocolStepCard({ index, title, description, icon, children }
                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                     {/* Mobile Only Badge */}
                     <Box display={{ base: 'block', md: 'none' }}>
-                        <Badge label={`ETAPA 0${index}`} variant="glass" color="zinc" size="xs" />
+                        <Badge label={`ETAPA 0${index}`} variant="glass" color={STORE_TOKENS.COLORS.BACKGROUND} size="xs" />
                     </Box>
 
                     <Stack direction="row" align="center" justify="between">
                         <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                             <Surface padding={STORE_TOKENS.PADDING.ELEMENT} variant="tonal-primary" rounded={STORE_TOKENS.RADIUS.SYSTEM}>
-                                <Icon icon={icon} size="sm" color="primary" />
+                                <Icon icon={icon} size="sm" color={STORE_TOKENS.COLORS.BRAND} />
                             </Surface>
-                            <Stack gap="none">
+                            <Stack gap={STORE_TOKENS.SPACING.NONE}>
                                 <Font
                                     variant="h4"
                                     weight="black"
@@ -58,7 +58,7 @@ export function AIProtocolStepCard({ index, title, description, icon, children }
                         
                         {/* Desktop Only Badge */}
                         <Box display={{ base: 'none', md: 'block' }}>
-                            <Badge label={`ETAPA 0${index}`} variant="glass" color="zinc" size="xs" />
+                            <Badge label={`ETAPA 0${index}`} variant="glass" color={STORE_TOKENS.COLORS.BACKGROUND} size="xs" />
                         </Box>
                     </Stack>
                 </Stack>

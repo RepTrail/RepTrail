@@ -1,3 +1,4 @@
+import { STORE_TOKENS } from '@/components/store/constants/tokens';
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { headers } from 'next/headers'
@@ -65,7 +66,7 @@ export default async function TrainerLayout({ children }: { children: React.Reac
                 <TrainerTourManager userId={userId} />
                 <MobileTrainerTourManager userId={userId} />
                 <DashboardShell
-                    color="emerald"
+                    color={STORE_TOKENS.COLORS.SUCCESS}
                     links={links}
                     mobileLinks={mobileLinks}
                     profileHref="/dashboard/trainer/profile"
@@ -76,5 +77,5 @@ export default async function TrainerLayout({ children }: { children: React.Reac
                 <SettingsModal isTrainer={true} hasTrainer={false} />
             </HydrationBoundary>
         </RegistryProvider>
-    )
+    );
 }

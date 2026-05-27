@@ -33,7 +33,7 @@ export function AssignmentBadge({
             borderColor={colorToken}
             borderOpacity={STORE_TOKENS.OPACITY.INTERMEDIATE}
             padding={STORE_TOKENS.SPACING.ELEMENT}
-            rounded="system"
+            rounded={STORE_TOKENS.RADIUS.SYSTEM}
             bg={colorToken}
             bgOpacity={STORE_TOKENS.OPACITY.SUBTLE}
             backdropBlur="md"

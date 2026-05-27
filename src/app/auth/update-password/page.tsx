@@ -1,5 +1,6 @@
 
-'use client'
+'use client';
+import { STORE_TOKENS } from '@/components/store/constants/tokens';
 
 import { AuthUpdatePasswordForm } from '@/components/store/advanced/auth-update-password-form'
 import { Suspense } from 'react'
@@ -11,10 +12,10 @@ export default function UpdatePasswordPage() {
     return (
         <RegistryProvider>
             <AuthShell>
-                <Suspense fallback={<Box opacity={50}>Carregando...</Box>}>
+                <Suspense fallback={<Box opacity={STORE_TOKENS.OPACITY.MODAL}>Carregando...</Box>}>
                     <AuthUpdatePasswordForm />
                 </Suspense>
             </AuthShell>
         </RegistryProvider>
-    )
+    );
 }

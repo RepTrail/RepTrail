@@ -524,7 +524,7 @@ export function DietBuilderSmart({
                         variant="glass"
                         color={(contextColor as any) || STORE_TOKENS.COLORS.BRAND}
                         size="sm"
-                        rounded="system"
+                        rounded={STORE_TOKENS.RADIUS.SYSTEM}
                     />
                 </Stack>
 

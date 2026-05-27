@@ -37,7 +37,7 @@ export function StudentPublicPhotos({ studentId, isOwner, studentName, photos, i
                     subtitle="Envie suas fotos para avaliação."
                     icon={Camera}
                 >
-                    <GlassPanel padding="container">
+                    <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER}>
                         <ProgressPhotoUpload studentId={studentId} />
                     </GlassPanel>
                 </RegistrySection>
@@ -51,7 +51,7 @@ export function StudentPublicPhotos({ studentId, isOwner, studentName, photos, i
                     icon={Trophy}
                 >
                     {photos.length > 0 ? (
-                        <GlassPanel padding="container">
+                        <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER}>
                             <Stack gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
                                 <Grid cols={2} gap={STORE_TOKENS.SPACING.CONTAINER}>
                                     {/* Before Photo */}
@@ -59,8 +59,8 @@ export function StudentPublicPhotos({ studentId, isOwner, studentName, photos, i
                                         position="relative"
                                         rounded={STORE_TOKENS.RADIUS.SYSTEM}
                                         overflow="hidden"
-                                        bg="zinc"
-                                        bgOpacity={90}
+                                        bg={STORE_TOKENS.COLORS.BACKGROUND}
+                                        bgOpacity={STORE_TOKENS.OPACITY.SHELF}
                                         aspectRatio="3/4"
                                     >
                                         {oldestPhoto ? (
@@ -70,7 +70,7 @@ export function StudentPublicPhotos({ studentId, isOwner, studentName, photos, i
                                                 fullWidth
                                                 fullHeight
                                                 objectFit="cover"
-                                                rounded="system"
+                                                rounded={STORE_TOKENS.RADIUS.SYSTEM}
                                                 transition
                                             />
                                         ) : (
@@ -99,7 +99,7 @@ export function StudentPublicPhotos({ studentId, isOwner, studentName, photos, i
                                             top={2.5}
                                             left={2.5}
                                         >
-                                            <Badge label="Início" color="orange" variant="solid" size="xs" />
+                                            <Badge label="Início" color={STORE_TOKENS.COLORS.BRAND} variant="solid" size="xs" />
                                         </Box>
                                     </Box>
 
@@ -108,12 +108,12 @@ export function StudentPublicPhotos({ studentId, isOwner, studentName, photos, i
                                         position="relative"
                                         rounded={STORE_TOKENS.RADIUS.SYSTEM}
                                         overflow="hidden"
-                                        bg="zinc"
-                                        bgOpacity={90}
+                                        bg={STORE_TOKENS.COLORS.BACKGROUND}
+                                        bgOpacity={STORE_TOKENS.OPACITY.SHELF}
                                         aspectRatio="3/4"
                                         border={true}
-                                        borderColor="primary"
-                                        borderOpacity={20}
+                                        borderColor={STORE_TOKENS.COLORS.BRAND}
+                                        borderOpacity={STORE_TOKENS.OPACITY.MEDIUM}
                                     >
                                         {newestPhoto ? (
                                             <Img
@@ -122,7 +122,7 @@ export function StudentPublicPhotos({ studentId, isOwner, studentName, photos, i
                                                 fullWidth
                                                 fullHeight
                                                 objectFit="cover"
-                                                rounded="system"
+                                                rounded={STORE_TOKENS.RADIUS.SYSTEM}
                                                 transition
                                             />
                                         ) : (
@@ -151,7 +151,7 @@ export function StudentPublicPhotos({ studentId, isOwner, studentName, photos, i
                                             top={2.5}
                                             left={2.5}
                                         >
-                                            <Badge label="Atual" color="emerald" variant="solid" size="xs" />
+                                            <Badge label="Atual" color={STORE_TOKENS.COLORS.SUCCESS} variant="solid" size="xs" />
                                         </Box>
                                     </Box>
                                 </Grid>
@@ -185,7 +185,7 @@ export function StudentPublicPhotos({ studentId, isOwner, studentName, photos, i
                     icon={Activity}
                 >
                     {photos.length > 0 ? (
-                        <GlassPanel padding="container">
+                        <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER}>
                             <UnifiedProgressGallery
                                 photos={photos || []}
                                 mode={isStudentView ? 'student' : 'public'}

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { Box } from '@/components/store/base/box'
 import { Stack } from '@/components/store/base/stack'
 import { Font } from '@/components/store/base/font'
@@ -126,7 +127,7 @@ export function LandingLeadModal({ isOpen, onOpenChange, trainerName, trainerCod
                 </Stack>
 
                 {/* Form fields */}
-                <form onSubmit={handleSubmit} style={{ width: '100%' }}>
+                <Box as="form" onSubmit={handleSubmit} width="full">
                   <Stack gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
                     {error && (
                       <Box 
@@ -138,7 +139,7 @@ export function LandingLeadModal({ isOpen, onOpenChange, trainerName, trainerCod
                         borderOpacity={STORE_TOKENS.OPACITY.MEDIUM} 
                         rounded={STORE_TOKENS.RADIUS.SYSTEM}
                       >
-                        <Font variant="auxiliary" color="red" weight="black" uppercase tracking="wider">
+                        <Font variant="auxiliary" color={STORE_TOKENS.COLORS.ERROR} weight="black" uppercase tracking="wider">
                           {error}
                         </Font>
                       </Box>
@@ -189,21 +190,21 @@ export function LandingLeadModal({ isOpen, onOpenChange, trainerName, trainerCod
                         loading={loading}
                       >
                         <Box as="span" display="flex" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT} cursor="pointer">
-                          <span>Criar Conta & Contatar</span>
+                          <Font variant="body" weight="medium">Criar Conta & Contatar</Font>
                           <Icon icon={ArrowRight} size="sm" />
                         </Box>
                       </Button>
                     </Box>
                   </Stack>
-                </form>
+                </Box>
 
                 {/* Bottom link */}
                 <Box align="center" justify="center">
                   <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} align="center" weight="medium">
                     Já tem uma conta?{' '}
-                    <Font color={STORE_TOKENS.COLORS.BRAND} cursor="pointer" underline>
-                      <a href="/auth/login">Fazer Login</a>
-                    </Font>
+                    <Link href="/auth/login">
+                      <Box as="span">Fazer Login</Box>
+                    </Link>
                   </Font>
                 </Box>
               </Stack>
@@ -217,7 +218,7 @@ export function LandingLeadModal({ isOpen, onOpenChange, trainerName, trainerCod
                   align="center" 
                   justify="center" 
                 >
-                  <Icon icon={ArrowRight} size="lg" color={STORE_TOKENS.COLORS.BACKGROUND} />
+                  <Icon icon={ArrowRight} size="lg" color={STORE_TOKENS.COLORS.WHITE} />
                 </Box>
                 
                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center" textAlign="center">
@@ -229,12 +230,12 @@ export function LandingLeadModal({ isOpen, onOpenChange, trainerName, trainerCod
                   </Font>
                 </Stack>
 
-                <Icon icon={Loader2} size="md" color={STORE_TOKENS.COLORS.BRAND} animate="spin" opacity={50} />
+                <Icon icon={Loader2} size="md" color={STORE_TOKENS.COLORS.BRAND} animate="spin" opacity={STORE_TOKENS.OPACITY.MODAL} />
               </Stack>
             )}
           </Box>
         </Box>
       </ModalContainer>
     </ModalOverlay>
-  )
+  );
 }

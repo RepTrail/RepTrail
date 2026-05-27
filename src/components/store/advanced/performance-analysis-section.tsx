@@ -27,10 +27,10 @@ export function PerformanceAnalysisSection({
 
     if (isBlocked) {
         return (
-            <Box bg="zinc" bgOpacity={10} rounded={STORE_TOKENS.RADIUS.SYSTEM} border={true} borderColor="zinc" borderOpacity={20} padding={STORE_TOKENS.PADDING.SECTION}>
+            <Box bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} rounded={STORE_TOKENS.RADIUS.SYSTEM} border={true} borderColor={STORE_TOKENS.COLORS.BACKGROUND} borderOpacity={STORE_TOKENS.OPACITY.MEDIUM} padding={STORE_TOKENS.PADDING.SECTION}>
                 <Stack align="center" justify="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
-                    <Box bg="zinc" padding={STORE_TOKENS.SPACING.CONTAINER} rounded={STORE_TOKENS.RADIUS.FULL} border={true} borderColor="zinc" borderOpacity={20} display="flex" align="center" justify="center">
-                        <Icon icon={TrendingUp} size="xl" color="zinc-700" />
+                    <Box bg={STORE_TOKENS.COLORS.BACKGROUND} padding={STORE_TOKENS.SPACING.CONTAINER} rounded={STORE_TOKENS.RADIUS.FULL} border={true} borderColor={STORE_TOKENS.COLORS.BACKGROUND} borderOpacity={STORE_TOKENS.OPACITY.MEDIUM} display="flex" align="center" justify="center">
+                        <Icon icon={TrendingUp} size="xl" color={STORE_TOKENS.COLORS.TEXT.MUTED} />
                     </Box>
                     <Stack align="center" gap={STORE_TOKENS.SPACING.ELEMENT} textAlign="center">
                         <Font

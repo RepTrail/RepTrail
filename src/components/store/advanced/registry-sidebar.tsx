@@ -61,7 +61,7 @@ export function RegistrySidebar({
             variant="glass-dark"
             bg={STORE_TOKENS.COLORS.BLACK}
             bgOpacity={STORE_TOKENS.OPACITY.MODAL}
-            zIndex={100}
+            zIndex={STORE_TOKENS.Z_INDEX.OVERLAY}
             display={{ base: 'block', lg: 'none' }}
             onClick={() => setIsSidebarOpen(false)}
         >
@@ -75,7 +75,7 @@ export function RegistrySidebar({
         top={0}
         height="screen"
         width="sidebar-wide"
-        zIndex={100}
+        zIndex={STORE_TOKENS.Z_INDEX.OVERLAY}
         transition
         translateX={{ base: isSidebarOpen ? 0 : 'full', lg: 0 }}
       >
@@ -84,7 +84,7 @@ export function RegistrySidebar({
           fullHeight
           variant="glass"
           border="none"
-          rounded="none"
+          rounded={STORE_TOKENS.RADIUS.NONE}
           display="flex"
           direction="col"
         >
@@ -96,8 +96,8 @@ export function RegistrySidebar({
               top={0} 
               fullHeight 
               width="px" 
-              bg="white" 
-              bgOpacity={5}
+              bg={STORE_TOKENS.COLORS.WHITE} 
+              bgOpacity={STORE_TOKENS.OPACITY.LOW}
           >
             <></>
           </Surface>
@@ -109,8 +109,8 @@ export function RegistrySidebar({
               top={0} 
               fullHeight 
               width="px" 
-              bg="white" 
-              bgOpacity={5}
+              bg={STORE_TOKENS.COLORS.WHITE} 
+              bgOpacity={STORE_TOKENS.OPACITY.LOW}
           >
             <></>
           </Surface>

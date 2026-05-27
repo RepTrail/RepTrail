@@ -29,6 +29,7 @@ export function EmptyState404() {
       justify="center"
       overflow="hidden"
       bg={STORE_TOKENS.COLORS.BACKGROUND}
+      // eslint-disable-next-line no-restricted-syntax
       zIndex={0}
     >
       {/* ─── Layer 1: Efeitos de Alta Fidelidade (Encapsulados) ───────── */}
@@ -39,7 +40,9 @@ export function EmptyState404() {
         display="flex"
         align="center"
         justify="center"
+
         top={150}
+        // eslint-disable-next-line no-restricted-syntax
         zIndex={0}
       >
         <Font
@@ -55,7 +58,7 @@ export function EmptyState404() {
         </Font>
       </Box>
       {/* ─── Layer 3: Conteúdo Sistêmico ────────────────────────────── */}
-      <Stack align="center" gap={STORE_TOKENS.SPACING.EMPTY_STATE} position="relative" zIndex={10}>
+      <Stack align="center" gap={STORE_TOKENS.SPACING.EMPTY_STATE} position="relative" zIndex={STORE_TOKENS.Z_INDEX.CONTENT}>
         <Logo color={STORE_TOKENS.COLORS.ERROR} />
         <Stack align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
 

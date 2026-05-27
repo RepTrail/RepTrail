@@ -18,7 +18,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 function ProgressLocal({ value }: { value: number }) {
     return (
         <GlassPanel
-            padding="none"
+            padding={STORE_TOKENS.PADDING.NONE}
             fullWidth
             height={8}
             variant="glass"
@@ -33,7 +33,7 @@ function ProgressLocal({ value }: { value: number }) {
                 {...{ className: "bg-emerald-500", style: { height: '100%' } }}
             />
         </GlassPanel>
-    )
+    );
 }
 
 interface DietAdherenceCardProps {
@@ -175,7 +175,7 @@ function MealAccordion({ meal, onToggleMeal, onToggleItem }: { meal: any, onTogg
 
     return (
         <GlassPanel
-            padding="none"
+            padding={STORE_TOKENS.PADDING.NONE}
             rounded={STORE_TOKENS.RADIUS.SYSTEM}
             variant="glass"
             transition
@@ -204,7 +204,7 @@ function MealAccordion({ meal, onToggleMeal, onToggleItem }: { meal: any, onTogg
                                 }}>
                                 {meal.name.toLowerCase()}
                             </Font>
-                            <Stack direction={{ base: 'col', md: 'row' }} align={{ base: 'start', md: 'center' }} gap={{ base: "element", md: STORE_TOKENS.SPACING.ELEMENT }}>
+                            <Stack direction={{ base: 'col', md: 'row' }} align={{ base: 'start', md: 'center' }} gap={{ base: STORE_TOKENS.SPACING.ELEMENT, md: STORE_TOKENS.SPACING.ELEMENT }}>
                                 <Font
                                     {...STORE_TOKENS.TYPOGRAPHY.LABEL}
                                     tracking="wide"
@@ -303,7 +303,7 @@ function FoodItemRow({ item, isChecked, onToggle }: { item: any, isChecked?: boo
         >
             <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                 <CheckIndicator size="md" checked={isChecked} />
-                <Stack gap="none" flex1>
+                <Stack gap={STORE_TOKENS.SPACING.NONE} flex1>
                     <Stack direction="row" align="baseline" gap={STORE_TOKENS.SPACING.ELEMENT}>
                         <Font
                             variant="body-sm"
@@ -326,7 +326,7 @@ function FoodItemRow({ item, isChecked, onToggle }: { item: any, isChecked?: boo
                     </Stack>
                     <Font
                         {...STORE_TOKENS.TYPOGRAPHY.LABEL}
-                        opacity={80}
+                        opacity={STORE_TOKENS.OPACITY.SHELF}
                         {...{
                             color: item.is_substituted ? 'amber' : 'zinc-600',
                         }}>
@@ -338,12 +338,12 @@ function FoodItemRow({ item, isChecked, onToggle }: { item: any, isChecked?: boo
 
                 {item.is_substituted && (
                     <Box
-                        padding="element"
+                        padding={STORE_TOKENS.PADDING.ELEMENT}
                         rounded={STORE_TOKENS.RADIUS.SYSTEM}
-                        bg="amber"
-                        bgOpacity={100}
+                        bg={STORE_TOKENS.COLORS.WARNING}
+                        bgOpacity={STORE_TOKENS.OPACITY.FULL}
                     >
-                        <Icon icon={RefreshCcw} size="xs" color="black" />
+                        <Icon icon={RefreshCcw} size="xs" color={STORE_TOKENS.COLORS.BLACK} />
                     </Box>
                 )}
             </Stack>

@@ -128,7 +128,7 @@ export function RequestPayoutModal({ isOpen, onClose, availableBalance }: Reques
                             </Font>
                             <Button
                                 variant="ghost"
-                                padding="none"
+                                padding={STORE_TOKENS.PADDING.NONE}
                                 onClick={handleMaxAmount}
                             >
                                 <Font

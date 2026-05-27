@@ -11,20 +11,21 @@ import { PlayCircle } from 'lucide-react'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { LandingSection } from '@/components/store/advanced/landing-section'
 import { IphoneMockup } from '@/components/store/base/iphone-mockup'
+import { YouTubePlayer } from '@/components/store/base/youtube-player'
 
 const videos = [
   {
-    src: '/Videos/dash-inicial-do-aluno.mp4',
+    videoId: 'B_4iuITMREk',
     title: 'Monitore o Progresso',
     desc: 'Acompanhe o progresso de seu aluno em uma visão moderna e intuitiva, identificando áreas de melhoria.'
   },
   {
-    src: '/Videos/tela-minha-evolucao.mp4',
+    videoId: '91KoFgJICUc',
     title: 'Veja a Evolução',
     desc: 'Monitore a evolução real dos seus alunos com dados, fotos e métricas corporais precisas.'
   },
   {
-    src: '/Videos/feed-de-alunos-e-perfil-publico-do-aluno.mp4',
+    videoId: 'pSXoWjCMxv4',
     title: 'Conecte-se com Alunos',
     desc: 'Aumente a retenção através da conexão e motivação, criando uma comunidade engajada.'
   }
@@ -43,15 +44,15 @@ export function LandingVideoShowcase() {
       <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth align="center">
           
           {/* Header Stack */}
-          <Stack align={{ base: 'start', md: 'center' }} gap={STORE_TOKENS.SPACING.CONTAINER} textAlign={{ base: 'left', md: 'center' }} width={{ base: 'full', md: 'half' }} alignSelf="center">
+          <Stack align="center" gap={STORE_TOKENS.SPACING.CONTAINER} textAlign="center" width={{ base: 'full', md: 'half' }} alignSelf="center">
             <Badge label="RepTrail em Ação" icon={PlayCircle} color={STORE_TOKENS.COLORS.BRAND} variant="solid" />
-            <Font variant="h2" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} uppercase italic align={{ base: 'left', md: 'center' }}>
-              <span>Tecnologia </span>
+            <Font variant="h2" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} uppercase italic align="center">
+              <Font variant="h2" display="inline">Tecnologia </Font>
               <Font variant="h2" color={STORE_TOKENS.COLORS.BRAND} uppercase italic display="inline">
                 Imersiva.
               </Font>
             </Font>
-            <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} align={{ base: 'left', md: 'center' }}>
+            <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} align="center">
               Veja na prática como a plataforma revoluciona a experiência de treino, engajamento e acompanhamento dos seus alunos.
             </Font>
           </Stack>
@@ -83,28 +84,11 @@ export function LandingVideoShowcase() {
                   transition
                 >
                   <Box position="relative" display="flex" direction="col" align="center" gap={STORE_TOKENS.SPACING.CONTAINER} width="full">
-                    {/* Phone frame */}
-                    <IphoneMockup className="w-full">
-                      <video
-                        src={vid.src}
-                        autoPlay
-                        loop
-                        muted
-                        playsInline
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                        ref={(el) => {
-                          if (!el) return
-                          if (typeof window !== 'undefined' && window.innerWidth < 768) {
-                            if (idx === activeIndex) el.play().catch(() => {})
-                            else el.pause()
-                          } else {
-                            el.play().catch(() => {})
-                          }
-                        }}
-                      />
-                    </IphoneMockup>
-
-                    {/* Captions */}
+                    <Box position="relative" width="full" maxWidth="sm" transition>
+                      <IphoneMockup className="w-full">
+                        <YouTubePlayer videoId={vid.videoId} iframeClassName="w-[135%] h-[105%] max-w-none" />
+                      </IphoneMockup>
+                    </Box>   {/* Captions */}
                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center" textAlign="center" zIndex={STORE_TOKENS.Z_INDEX.CONTENT}>
                       <Font variant="h4" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} uppercase italic>
                         {vid.title}

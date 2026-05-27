@@ -33,15 +33,15 @@ export function AffiliateActivityChart({ clickDays, maxClicks }: AffiliateActivi
           const isToday = i === recentDays.length - 1
 
           return (
-            <Stack key={date} align="center" gap="element" flex1>
+            <Stack key={date} align="center" gap={STORE_TOKENS.SPACING.ELEMENT} flex1>
               <Box 
                 fullWidth 
-                bg={isToday ? primaryColor as any : 'zinc'} 
-                bgOpacity={isToday ? 100 : 20}
-                rounded="system"
+                bg={isToday ? primaryColor as any : STORE_TOKENS.COLORS.BACKGROUND} 
+                bgOpacity={isToday ? STORE_TOKENS.OPACITY.FULL : STORE_TOKENS.OPACITY.MEDIUM}
+                rounded={STORE_TOKENS.RADIUS.SYSTEM}
                 style={{ height: `${Math.max(heightPercent, 5)}%` }}
                 transition
-                hoverBgOpacity={80}
+                hoverBgOpacity={STORE_TOKENS.OPACITY.SHELF}
                 cursor="pointer"
                 group
                 position="relative"
@@ -52,12 +52,12 @@ export function AffiliateActivityChart({ clickDays, maxClicks }: AffiliateActivi
                   top="-30px" 
                   left="50%" 
                   translateX="-full"
-                  bg="black" 
-                  padding="element" 
-                  rounded="none" 
+                  bg={STORE_TOKENS.COLORS.BLACK} 
+                  padding={STORE_TOKENS.PADDING.ELEMENT} 
+                  rounded={STORE_TOKENS.RADIUS.NONE} 
                   display="none" 
                   groupHoverDisplay="block"
-                  zIndex={50}
+                  zIndex={STORE_TOKENS.Z_INDEX.OVERLAY}
                 >
                    <Font
                      variant="sub-tiny"

@@ -250,9 +250,9 @@ export function CardHeader({ children, className, ...props }: BoxProps) {
       >
         {children}
       </Box>
-      <Separator opacity={5} />
+      <Separator opacity={STORE_TOKENS.OPACITY.LOW} />
     </div>
-  )
+  );
 }
 
 /**

@@ -37,8 +37,8 @@ export interface ChartTooltipProps {
 export function ChartTooltip({ title, rows, layout = 'inline' }: ChartTooltipProps) {
     return (
         <Box
-            bg="zinc"
-            bgOpacity={90}
+            bg={STORE_TOKENS.COLORS.BACKGROUND}
+            bgOpacity={STORE_TOKENS.OPACITY.SHELF}
             padding={STORE_TOKENS.SPACING.ELEMENT}
             rounded={STORE_TOKENS.RADIUS.SYSTEM}
             style={{ backdropFilter: 'blur(12px)', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)' }}

@@ -109,7 +109,7 @@ export function ActivityFeed({ userId, initialData }: ActivityFeedProps) {
     }
 
     return (
-        <GlassPanel fullWidth padding="none" display="flex" direction="col" flex1>
+        <GlassPanel fullWidth padding={STORE_TOKENS.PADDING.NONE} display="flex" direction="col" flex1>
             <CardHeader>
                 <Inline justify="between" fullWidth>
                     <Inline gap={STORE_TOKENS.SPACING.ELEMENT}>
@@ -117,7 +117,7 @@ export function ActivityFeed({ userId, initialData }: ActivityFeedProps) {
                             icon={ActivityIcon}
                             variant="primary"
                             size="md"
-                            rounded="system"
+                            rounded={STORE_TOKENS.RADIUS.SYSTEM}
                         />
                         <Font variant="heading" weight="black" uppercase italic>
                             Atividade Recente
@@ -139,7 +139,7 @@ export function ActivityFeed({ userId, initialData }: ActivityFeedProps) {
                     direction="col"
                 >
                     {activities.length > 0 ? (
-                        <Stack gap="element" padding={STORE_TOKENS.PADDING.CONTAINER} fullWidth>
+                        <Stack gap={STORE_TOKENS.SPACING.ELEMENT} padding={STORE_TOKENS.PADDING.CONTAINER} fullWidth>
                             {activities.map((activity) => {
                                 const { color, label } = getTypeStyles(activity.type, activity.subType)
                                 const initials = activity.studentName ? activity.studentName.substring(0, 2).toUpperCase() : 'AL'
@@ -156,7 +156,7 @@ export function ActivityFeed({ userId, initialData }: ActivityFeedProps) {
                                                 />
                                                 <Badge
                                                     label={formatRelativeTime(activity.timestamp)}
-                                                    color="zinc"
+                                                    color={STORE_TOKENS.COLORS.BACKGROUND}
                                                     variant="glass"
                                                     size="xs"
                                                     icon={Clock}
@@ -203,7 +203,7 @@ export function ActivityFeed({ userId, initialData }: ActivityFeedProps) {
                                                 size="sm"
                                                 variant="zinc"
                                             />
-                                            <Stack gap="none">
+                                            <Stack gap={STORE_TOKENS.SPACING.NONE}>
                                                 <Font
                                                     variant="body-sm"
                                                     weight="black"

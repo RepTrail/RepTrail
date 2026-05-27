@@ -29,7 +29,7 @@ export function StudentSubscriptionStatus({ status, onActivateTrial, onCancelSub
                     <Stack align="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
                         <Stack align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                             <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                <Icon icon={Crown} size="xs" color="emerald" />
+                                <Icon icon={Crown} size="xs" color={STORE_TOKENS.COLORS.SUCCESS} />
                                 <Font
                                     variant="sub-tiny"
                                     weight="black"
@@ -53,7 +53,7 @@ export function StudentSubscriptionStatus({ status, onActivateTrial, onCancelSub
                             </Font>
                             <Font
                                 variant="sub-tiny"
-                                opacity={60}
+                                opacity={STORE_TOKENS.OPACITY.OVERLAY}
                                 weight="bold"
                                 uppercase
                                 tracking="tight"
@@ -78,7 +78,7 @@ export function StudentSubscriptionStatus({ status, onActivateTrial, onCancelSub
                     <Stack align="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
                         <Stack align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                             <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                <Icon icon={Zap} size="xs" color="amber" />
+                                <Icon icon={Zap} size="xs" color={STORE_TOKENS.COLORS.WARNING} />
                                 <Font
                                     variant="sub-tiny"
                                     weight="black"
@@ -102,7 +102,7 @@ export function StudentSubscriptionStatus({ status, onActivateTrial, onCancelSub
                             </Font>
                             <Font
                                 variant="sub-tiny"
-                                opacity={60}
+                                opacity={STORE_TOKENS.OPACITY.OVERLAY}
                                 weight="bold"
                                 uppercase
                                 tracking="tight"
@@ -127,7 +127,7 @@ export function StudentSubscriptionStatus({ status, onActivateTrial, onCancelSub
                     <Stack align="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
                         <Stack align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                             <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                <Icon icon={AlertCircle} size="xs" color="red" />
+                                <Icon icon={AlertCircle} size="xs" color={STORE_TOKENS.COLORS.ERROR} />
                                 <Font
                                     variant="sub-tiny"
                                     weight="black"
@@ -151,7 +151,7 @@ export function StudentSubscriptionStatus({ status, onActivateTrial, onCancelSub
                             </Font>
                             <Font
                                 variant="sub-tiny"
-                                opacity={60}
+                                opacity={STORE_TOKENS.OPACITY.OVERLAY}
                                 weight="bold"
                                 uppercase
                                 tracking="tight"

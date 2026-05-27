@@ -20,14 +20,14 @@ export function PdfActionsFooter({ type, role, isSaving, bindingHooks, setParsed
 
     return (
         <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
-            <Stack direction={{ base: 'col', md: 'row' }} justify="end" gap={{ base: 'element', md: 'container' }} fullWidth>
+            <Stack direction={{ base: 'col', md: 'row' }} justify="end" gap={{ base: STORE_TOKENS.SPACING.ELEMENT, md: STORE_TOKENS.SPACING.CONTAINER }} fullWidth>
                 <DSButton
                     variant="outline-red"
                     onClick={() => { setParsedData(null); setSelectedStudentId(''); }}
                     gap={STORE_TOKENS.SPACING.ELEMENT}
                     fullWidth={{ base: true, md: false }}
                 >
-                    <Icon icon={X} size="xs" color="red" />
+                    <Icon icon={X} size="xs" color={STORE_TOKENS.COLORS.ERROR} />
                     Cancelar
                 </DSButton>
                 <DSButton
@@ -39,7 +39,7 @@ export function PdfActionsFooter({ type, role, isSaving, bindingHooks, setParsed
                     loading={isSaving}
                     fullWidth={{ base: true, md: false }}
                 >
-                    {!isSaving && <Icon icon={Check} size="xs" color="emerald" />}
+                    {!isSaving && <Icon icon={Check} size="xs" color={STORE_TOKENS.COLORS.SUCCESS} />}
                     {bindingMode === 'create'
                         ? `Salvar e Vincular`
                         : `Salvar ${type === 'workout' ? 'Treino' : 'Dieta'}`

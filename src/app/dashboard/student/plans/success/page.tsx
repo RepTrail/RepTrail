@@ -20,12 +20,12 @@ export default async function StudentAutoTrainingSuccessPage() {
             <Box alignSelf="center" maxWidth="md" width="full" padding={STORE_TOKENS.PADDING.CONTAINER}>
                 <Stack gap={STORE_TOKENS.SPACING.CONTAINER} align="center" textAlign="center">
                     <Box position="relative">
-                        <Surface variant="glass" border="standard" padding={STORE_TOKENS.PADDING.CONTAINER} rounded="full">
-                            <Icon icon={CheckCircle} size="3xl" color="emerald" />
+                        <Surface variant="glass" border="standard" padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.FULL}>
+                            <Icon icon={CheckCircle} size="3xl" color={STORE_TOKENS.COLORS.SUCCESS} />
                         </Surface>
-                        <Box position="absolute" top={0} right={0} zIndex={10}>
-                            <Surface variant="tonal-zinc" border="standard" padding={STORE_TOKENS.PADDING.ELEMENT} rounded="full">
-                                <Icon icon={Dumbbell} size="sm" color="emerald" />
+                        <Box position="absolute" top={0} right={0} zIndex={STORE_TOKENS.Z_INDEX.CONTENT}>
+                            <Surface variant="tonal-zinc" border="standard" padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.FULL}>
+                                <Icon icon={Dumbbell} size="sm" color={STORE_TOKENS.COLORS.SUCCESS} />
                             </Surface>
                         </Box>
                     </Box>
@@ -35,7 +35,7 @@ export default async function StudentAutoTrainingSuccessPage() {
                             Pagamento Confirmado!
                         </Font>
                         <Font variant="body" color={STORE_TOKENS.COLORS.TEXT.MUTED}>
-                            Seu plano <Font color="emerald" weight="black" as="span">Auto-Training</Font> foi ativado.
+                            Seu plano <Font color={STORE_TOKENS.COLORS.SUCCESS} weight="black" as="span">Auto-Training</Font> foi ativado.
                         </Font>
                     </Stack>
 
@@ -51,5 +51,5 @@ export default async function StudentAutoTrainingSuccessPage() {
                 </Stack>
             </Box>
         </RegistryMain>
-    )
+    );
 }

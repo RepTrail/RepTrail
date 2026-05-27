@@ -1,4 +1,5 @@
-'use client'
+'use client';
+import { STORE_TOKENS } from '@/components/store/constants/tokens';
 import React from 'react'
 import { Font } from './font'
 import { cn } from '@/lib/utils'
@@ -59,15 +60,14 @@ export function BaseAvatar({
                     }}
                 />
             ) : null}
-            
             <Font 
                 weight="black" 
-                color={resolvedVariant === 'zinc' ? 'zinc-500' : resolvedVariant as any} 
+                color={resolvedVariant === STORE_TOKENS.COLORS.BACKGROUND ? STORE_TOKENS.COLORS.TEXT.MUTED : resolvedVariant as any} 
                 variant={size === 'sm' ? 'sub-tiny' : 'body'} 
                 align="center"
             >
                 {initials}
             </Font>
         </div>
-    )
+    );
 }

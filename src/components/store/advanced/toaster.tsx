@@ -1,4 +1,5 @@
-"use client"
+"use client";
+import { STORE_TOKENS } from '@/components/store/constants/tokens';
 
 import {
     Toast,
@@ -19,7 +20,7 @@ export function Toaster() {
             {toasts.map(function ({ id, title, description, action, ...props }: any) {
                 return (
                     <Toast key={id} {...props}>
-                        <Stack gap="element" flex1>
+                        <Stack gap={STORE_TOKENS.SPACING.ELEMENT} flex1>
                             {title && <ToastTitle>{title}</ToastTitle>}
                             {description && (
                                 <ToastDescription>{description}</ToastDescription>
@@ -28,9 +29,9 @@ export function Toaster() {
                         {action}
                         <ToastClose />
                     </Toast>
-                )
+                );
             })}
             <ToastViewport />
         </ToastProvider>
-    )
+    );
 }

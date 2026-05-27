@@ -49,7 +49,7 @@ export function TrainerDashboardSidebarPanel({
                 <Surface variant="tonal-primary" padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM}>
                     <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                         <Box display="flex" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                            <Icon icon={FileUp} color="primary" size="sm" />
+                            <Icon icon={FileUp} color={STORE_TOKENS.COLORS.BRAND} size="sm" />
                             <Font
                                 {...STORE_TOKENS.TYPOGRAPHY.LABEL}
                                 {...{

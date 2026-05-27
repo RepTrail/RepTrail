@@ -42,18 +42,18 @@ export function StoreMobileHeader({ onMenuClick }: StoreMobileHeaderProps) {
                     display="flex"
                     align="center"
                     justify="center"
-                    bg="primary"
-                    bgOpacity={20}
+                    bg={STORE_TOKENS.COLORS.BRAND}
+                    bgOpacity={STORE_TOKENS.OPACITY.MEDIUM}
                     border
-                    borderColor="primary"
+                    borderColor={STORE_TOKENS.COLORS.BRAND}
                     rounded={STORE_TOKENS.RADIUS.SYSTEM}
                     transition
-                    hoverBgOpacity={30}
+                    hoverBgOpacity={STORE_TOKENS.OPACITY.HIGH}
                     cursor="pointer"
                 >
                     <Icon icon={Menu} color={primaryColor as any} size="sm" />
                 </Box>
             </Inline>
         </MobileHeaderContainer>
-    )
+    );
 }

@@ -310,7 +310,7 @@ export function RegistryActionModal({
                                         { label: 'UN', value: 'un' }
                                     ]}
                                     value="mg"
-                                    color="primary"
+                                    color={STORE_TOKENS.COLORS.BRAND}
                                     width={{ base: 'full', md: '30%' }}
                                 />
                             </Stack>

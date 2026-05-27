@@ -122,7 +122,7 @@ export function TrainerDashboardClient({ userId, betaTesterMode }: TrainerDashbo
                 icon={Activity}
             >
                 <Grid cols={{ base: 1, lg: 12 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
-                    <Box lgColSpan={8} display="flex" direction="col" gap="container" overflow="hidden" fullWidth>
+                    <Box lgColSpan={8} display="flex" direction="col" gap={STORE_TOKENS.SPACING.CONTAINER} overflow="hidden" fullWidth>
                         <ActivityFeed userId={userId} initialData={activities} />
                     </Box>
 

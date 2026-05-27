@@ -178,7 +178,9 @@ export function AdminOperationalCostsPanel({ initialCosts }: { initialCosts: Ope
                 </Button>
             </Stack>
             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                {costs.map((cost) => (
+                {costs.map((cost) => {
+                    const badgeColor = cost.type === 'fixed' ? STORE_TOKENS.COLORS.INFO : STORE_TOKENS.COLORS.BRAND;
+                    return (
                     <ActionableListCard
                         key={cost.id}
                         badges={
@@ -192,7 +194,7 @@ export function AdminOperationalCostsPanel({ initialCosts }: { initialCosts: Ope
                                 <Badge
                                     label={cost.type === 'fixed' ? 'Fixo' : 'Variável'}
                                     variant="glass"
-                                    color={cost.type === 'fixed' ? 'blue' : 'orange'}
+                                    color={badgeColor}
                                     size="xs"
                                     rounded={STORE_TOKENS.RADIUS.SYSTEM}
                                 />
@@ -217,10 +219,10 @@ export function AdminOperationalCostsPanel({ initialCosts }: { initialCosts: Ope
                             <CircleIcon
                                 icon={TrendingDown}
                                 size="sm"
-                                {...{
-                                    color: cost.type === 'fixed' ? 'blue' : 'orange',
-                                }} />
-                            <Stack gap="none" minWidth={0}>
+                                // eslint-disable-next-line no-restricted-syntax
+                                color={cost.type === 'fixed' ? 'blue' : 'orange'}
+                            />
+                            <Stack gap={STORE_TOKENS.SPACING.NONE} minWidth={0}>
                                 <Font
                                     weight="black"
                                     uppercase
@@ -247,7 +249,8 @@ export function AdminOperationalCostsPanel({ initialCosts }: { initialCosts: Ope
                             </Stack>
                         </Inline>
                     </ActionableListCard>
-                ))}
+                    );
+                })}
 
                 {costs.length === 0 && (
                     <EmptyState

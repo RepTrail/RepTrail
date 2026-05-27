@@ -269,7 +269,7 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
                             </LineChart>
                         </ResponsiveContainer>
                     ) : (
-                        <Box fullWidth fullHeight bg="zinc" bgOpacity={10} rounded={STORE_TOKENS.RADIUS.SYSTEM} />
+                        <Box fullWidth fullHeight bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} rounded={STORE_TOKENS.RADIUS.SYSTEM} />
                     )}
                 </Box>
             </Box>

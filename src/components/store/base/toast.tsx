@@ -68,7 +68,7 @@ const Toast = React.forwardRef<
         >
             <Surface 
                 variant={variant === 'destructive' ? 'tonal-red' : 'tonal-zinc'} 
-                padding="none" 
+                padding={STORE_TOKENS.PADDING.NONE} 
                 rounded={STORE_TOKENS.RADIUS.SYSTEM}
             >
                 <Stack direction="row" align="center" justify="between" padding={STORE_TOKENS.PADDING.CONTAINER} flex1 position="relative">
@@ -78,7 +78,7 @@ const Toast = React.forwardRef<
                 </Stack>
             </Surface>
         </ToastPrimitives.Root>
-    )
+    );
 })
 Toast.displayName = ToastPrimitives.Root.displayName
 
@@ -93,11 +93,11 @@ const ToastAction = React.forwardRef<
     >
         <Box 
             as="button"
-            bg="white" 
-            bgOpacity={5} 
+            bg={STORE_TOKENS.COLORS.WHITE} 
+            bgOpacity={STORE_TOKENS.OPACITY.LOW} 
             border 
-            borderColor="white/10" 
-            rounded="system" 
+            borderColor={STORE_TOKENS.COLORS.DIVIDER.STANDARD} 
+            rounded={STORE_TOKENS.RADIUS.SYSTEM} 
             height="8" 
             display="flex" 
             align="center" 
@@ -105,7 +105,7 @@ const ToastAction = React.forwardRef<
             className="px-3"
             style={{ flexShrink: 0 }}
         >
-            <Font variant="auxiliary" weight="bold" color="white" uppercase italic tracking="widest">
+            <Font variant="auxiliary" weight="bold" color={STORE_TOKENS.COLORS.WHITE} uppercase italic tracking="widest">
                 {props.children}
             </Font>
         </Box>
@@ -157,7 +157,7 @@ const ToastDescription = React.forwardRef<
         asChild
         {...props}
     >
-        <Font variant="tiny" opacity={70} weight="bold" display="block">
+        <Font variant="tiny" opacity={STORE_TOKENS.OPACITY.OVERLAY} weight="bold" display="block">
             {props.children}
         </Font>
     </ToastPrimitives.Description>

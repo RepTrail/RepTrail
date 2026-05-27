@@ -130,11 +130,11 @@ function DirectCreateButton({
     return (
         <Button variant="outline-emerald" shine fullWidth={{ base: true, lg: false }} onClick={handleCreate} disabled={isPending}>
             <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                {isPending ? <Icon icon={Loader2} size="xs" color="emerald" spin /> : <Icon icon={Plus} size="xs" color="emerald" />}
+                {isPending ? <Icon icon={Loader2} size="xs" color={STORE_TOKENS.COLORS.SUCCESS} spin /> : <Icon icon={Plus} size="xs" color={STORE_TOKENS.COLORS.SUCCESS} />}
                 {isPending ? 'Criando...' : label}
             </Stack>
         </Button>
-    )
+    );
 }
 
 /**
@@ -163,7 +163,7 @@ export function TrainerRegistryHeaderActions({
                 <Button variant="outline-orange" asChild shine fullWidth={{ base: true, lg: false }}>
                     <Link href="/dashboard/trainer/import-pdf">
                         <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                            <Icon icon={FileUp} size="xs" color="orange" />
+                            <Icon icon={FileUp} size="xs" color={STORE_TOKENS.COLORS.BRAND} />
                             Importar PDF
                         </Stack>
                     </Link>
@@ -183,7 +183,7 @@ export function TrainerRegistryHeaderActions({
                         trigger={
                             <Button variant="outline-emerald" shine fullWidth={{ base: true, lg: false }}>
                                 <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                    <Icon icon={Plus} size="xs" color="emerald" />
+                                    <Icon icon={Plus} size="xs" color={STORE_TOKENS.COLORS.SUCCESS} />
                                     {config.createLabel}
                                 </Stack>
                             </Button>
@@ -198,5 +198,5 @@ export function TrainerRegistryHeaderActions({
                 )
             )}
         </Stack>
-    )
+    );
 }

@@ -23,8 +23,8 @@ export function AIProtocolSummaryStat({ icon, value, label }: AIProtocolSummaryS
     return (
         <Surface padding={STORE_TOKENS.PADDING.CONTAINER} variant="tonal-zinc" rounded={STORE_TOKENS.RADIUS.SYSTEM}>
             <Stack align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                <Icon icon={icon} size="sm" color="primary" />
-                <Stack gap="none" align="center">
+                <Icon icon={icon} size="sm" color={STORE_TOKENS.COLORS.BRAND} />
+                <Stack gap={STORE_TOKENS.SPACING.NONE} align="center">
                     <Font
                         variant="h3"
                         weight="black"

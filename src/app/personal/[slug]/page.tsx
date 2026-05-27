@@ -149,7 +149,7 @@ export default async function TrainerPublicProfilePage({
     return (
         <Surface
             minHeight="screen"
-            bg="zinc"
+            bg={STORE_TOKENS.COLORS.BACKGROUND}
             bgOpacity={STORE_TOKENS.OPACITY.BACKGROUND}
             overflowX="hidden"
             display="flex"
@@ -157,9 +157,9 @@ export default async function TrainerPublicProfilePage({
             position="relative"
         >
             <BackgroundEffects variant="all" />
-            <Box position="relative" zIndex={10} flex1>
+            <Box position="relative" zIndex={STORE_TOKENS.Z_INDEX.CONTENT} flex1>
                 {mainContent}
             </Box>
         </Surface>
-    )
+    );
 }

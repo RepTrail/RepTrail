@@ -1,4 +1,5 @@
-'use client'
+'use client';
+import { STORE_TOKENS } from '@/components/store/constants/tokens';
 
 import { useState, useEffect } from 'react'
 import { SplashScreen } from '@/components/store/advanced/splash-screen'
@@ -40,10 +41,10 @@ export function SplashManager({ children }: SplashManagerProps) {
     if (view === 'none') {
         return (
             <>
-                <Box position="fixed" inset={0} bg="black" pointerEvents="none" style={{ zIndex: 9999 }} />
-                <Box opacity={0}>{children}</Box>
+                <Box position="fixed" inset={0} bg={STORE_TOKENS.COLORS.BLACK} pointerEvents="none" style={{ zIndex: 9999 }} />
+                <Box opacity={STORE_TOKENS.OPACITY.NONE}>{children}</Box>
             </>
-        )
+        );
     }
 
     // 2. Splash state: Show animation.

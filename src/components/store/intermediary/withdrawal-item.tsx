@@ -66,7 +66,7 @@ export function WithdrawalItem({
                         }}>
                         {amount}
                     </Font>
-                    <Inline gap="element" align="center">
+                    <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                         <Icon icon={QrCode} size="xs" color={STORE_TOKENS.COLORS.TEXT.DIM} />
                         <Font
                             {...STORE_TOKENS.TYPOGRAPHY.LABEL}
@@ -94,7 +94,7 @@ export function WithdrawalItem({
                 </Box>
 
                 {/* Details Area */}
-                <Stack gap="none" flex1 overflow="hidden">
+                <Stack gap={STORE_TOKENS.SPACING.NONE} flex1 overflow="hidden">
                     <Font
                         {...STORE_TOKENS.TYPOGRAPHY.HEADING}
                         variant="body-sm"

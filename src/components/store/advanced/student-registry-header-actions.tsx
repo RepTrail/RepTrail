@@ -79,7 +79,7 @@ export function StudentRegistryHeaderActions({ userId, type }: StudentRegistryHe
                     </Button>
                     <Button variant="outline-orange" shine fullWidth={{ base: true, lg: false }} onClick={handleCreateWorkout} disabled={isPending}>
                         <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                            {isPending ? <Icon icon={Loader2} size="xs" color="orange" spin /> : <Icon icon={Plus} size="xs" color="orange" />}
+                            {isPending ? <Icon icon={Loader2} size="xs" color={STORE_TOKENS.COLORS.BRAND} spin /> : <Icon icon={Plus} size="xs" color={STORE_TOKENS.COLORS.BRAND} />}
                             {isPending ? 'Criando...' : 'Criar Modelo'}
                         </Stack>
                     </Button>
@@ -98,7 +98,7 @@ export function StudentRegistryHeaderActions({ userId, type }: StudentRegistryHe
                     </Button>
                     <Button variant="outline-primary" shine fullWidth={{ base: true, lg: false }} onClick={handleCreateDiet} disabled={isPending}>
                         <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                            {isPending ? <Icon icon={Loader2} size="xs" color="primary" spin /> : <Icon icon={Plus} size="xs" color="primary" />}
+                            {isPending ? <Icon icon={Loader2} size="xs" color={STORE_TOKENS.COLORS.BRAND} spin /> : <Icon icon={Plus} size="xs" color={STORE_TOKENS.COLORS.BRAND} />}
                             {isPending ? 'Criando...' : 'Criar Modelo'}
                         </Stack>
                     </Button>

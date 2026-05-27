@@ -1,4 +1,5 @@
-'use client'
+'use client';
+import { STORE_TOKENS } from '@/components/store/constants/tokens';
 
 import { useState, Suspense } from 'react'
 import { useRouter } from 'next/navigation'
@@ -46,11 +47,11 @@ export default function AffiliadosLoginPage() {
                         onSubmit={handleSubmit}
                         loading={loading}
                         error={error}
-                        color="amber"
+                        color={STORE_TOKENS.COLORS.WARNING}
                         signupHref="/afiliados/cadastro"
                     />
                 </Suspense>
             </AuthShell>
         </RegistryProvider>
-    )
+    );
 }

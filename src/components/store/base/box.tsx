@@ -7,9 +7,9 @@ export type SpacingToken = 'container' | 'element' | 'section' | 'empty_state' |
 
 export type BoxColor = 'orange' | 'emerald' | 'amber' | 'red' | 'blue' | 'zinc' | 'white' | 'transparent' | 'black' | 'primary' | 'success' | 'warning' | 'neutral'
 
-export interface BoxProps extends Omit<React.HTMLAttributes<HTMLElement>, 'color' | 'className' | 'style'> {
+export interface BoxProps extends Omit<React.AllHTMLAttributes<HTMLElement>, 'color' | 'className' | 'style' | 'as' | 'width' | 'height' | 'type' | 'span' | 'wrap' | 'size' | 'translate'> {
   children?: React.ReactNode
-  as?: 'div' | 'aside' | 'nav' | 'main' | 'section' | 'header' | 'footer' | 'button' | 'img' | 'input' | 'label' | 'span'
+  as?: 'div' | 'aside' | 'nav' | 'main' | 'section' | 'header' | 'footer' | 'button' | 'img' | 'input' | 'label' | 'span' | 'video' | 'form' | 'a'
   padding?: SpacingToken | { base: SpacingToken, md?: SpacingToken, lg?: SpacingToken }
   align?: 'start' | 'center' | 'end' | 'stretch' | 'baseline' | { base: 'start' | 'center' | 'end' | 'stretch' | 'baseline', sm?: 'start' | 'center' | 'end' | 'stretch' | 'baseline', md?: 'start' | 'center' | 'end' | 'stretch' | 'baseline', lg?: 'start' | 'center' | 'end' | 'stretch' | 'baseline' }
   justify?: 'start' | 'center' | 'end' | 'between' | 'around' | { base: 'start' | 'center' | 'end' | 'between' | 'around', sm?: 'start' | 'center' | 'end' | 'between' | 'around', md?: 'start' | 'center' | 'end' | 'between' | 'around', lg?: 'start' | 'center' | 'end' | 'between' | 'around' }
@@ -87,6 +87,7 @@ export interface BoxProps extends Omit<React.HTMLAttributes<HTMLElement>, 'color
   hoverScale?: 90 | 95 | 98 | 100 | 105 | 110
   groupHoverBorderColor?: BoxColor | string
   animateIn?: 'fade' | 'zoom' | 'slide-right' | 'slide-down' | 'slide-left' | 'slide-up' | 'none'
+  objectFit?: 'cover' | 'contain' | 'fill' | 'none' | 'scale-down'
 }
 
 /**
@@ -172,6 +173,7 @@ export const Box = React.forwardRef<HTMLElement, BoxProps>(function Box({
   snapMandatory,
   scrollSmooth,
   order,
+  objectFit,
   ...props
 }: BoxProps, ref) {
   const { primaryColor } = useRegistry()
@@ -1005,6 +1007,7 @@ export const Box = React.forwardRef<HTMLElement, BoxProps>(function Box({
         ),
         animateIn && animateInClasses[animateIn],
         scale && scaleClasses[scale],
+        objectFit && `object-${objectFit}`,
 
         className
       )}

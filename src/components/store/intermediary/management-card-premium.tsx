@@ -110,7 +110,7 @@ export function ManagementCardPremium({
                                 onClick={onPlay}
                                 rounded={STORE_TOKENS.RADIUS.SYSTEM}
                             >
-                                <Icon icon={Play} size="md" color="emerald" />
+                                <Icon icon={Play} size="md" color={STORE_TOKENS.COLORS.SUCCESS} />
                             </Button>
                         )}
                         {showManagementActions && onDelete && (
@@ -169,7 +169,7 @@ export function ManagementCardPremium({
                                 label="Não agendado"
                                 icon={Calendar}
                                 variant="outline"
-                                color="orange"
+                                color={STORE_TOKENS.COLORS.BRAND}
                                 size="xs"
                             />
                         ) : null}

@@ -74,7 +74,7 @@ export function AffiliateLinkSharer({ token }: AffiliateLinkSharerProps) {
                             <Icon icon={copied ? Check : Copy} size="xs" />
                         </Button>
 
-                        <Stack gap="none" align="center">
+                        <Stack gap={STORE_TOKENS.SPACING.NONE} align="center">
                             <Font
                                 variant="heading"
                                 weight="black"

@@ -365,7 +365,7 @@ export function ComponentsRegistryContent({ id }: { id?: string }) {
                                     { label: 'Mês', value: 'month' },
                                     { label: 'Ano', value: 'year' },
                                 ]}
-                                color="orange"
+                                color={STORE_TOKENS.COLORS.BRAND}
                             />
                         </Stack>
                     </GlassPanel>
@@ -415,7 +415,7 @@ export function ComponentsRegistryContent({ id }: { id?: string }) {
                                 <FormCheckbox
                                     label="Modo competição"
                                     description="Habilita ranking e comparativos entre alunos."
-                                    color="orange"
+                                    color={STORE_TOKENS.COLORS.BRAND}
                                     checked
                                 />
                                 <FormCheckbox

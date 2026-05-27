@@ -44,9 +44,9 @@ export function AIProtocolSuccessView({ summary }: AIProtocolSuccessViewProps) {
                     variant="tonal-primary" 
                     rounded={STORE_TOKENS.RADIUS.FULL}
                 >
-                    <Icon icon={Sparkles} size="lg" color="primary" />
+                    <Icon icon={Sparkles} size="lg" color={STORE_TOKENS.COLORS.BRAND} />
                 </Surface>
-                <Stack gap="element" align="center">
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                     <Font
                         variant="h2"
                         weight="black"

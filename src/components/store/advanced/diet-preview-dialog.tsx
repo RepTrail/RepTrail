@@ -60,7 +60,7 @@ export function DietPreviewDialog({ dietId, dietName, isOpen, onClose }: DietPre
             {isLoading ? (
                 <Box padding={STORE_TOKENS.SPACING.CONTAINER}>
                     <Stack align="center" justify="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
-                        <Icon icon={Loader2} size="xl" color="emerald" spin />
+                        <Icon icon={Loader2} size="xl" color={STORE_TOKENS.COLORS.SUCCESS} spin />
                         <Font
                             variant="label-caps"
                             align="center"
@@ -74,7 +74,7 @@ export function DietPreviewDialog({ dietId, dietName, isOpen, onClose }: DietPre
             ) : !diet?.meals || diet.meals.length === 0 ? (
                 <Box padding={STORE_TOKENS.SPACING.CONTAINER}>
                     <Stack align="center" justify="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
-                        <Icon icon={Utensils} size="xl" color="muted" />
+                        <Icon icon={Utensils} size="xl" color={STORE_TOKENS.COLORS.TEXT.MUTED} />
                         <Font
                             variant="h3"
                             align="center"
@@ -88,30 +88,30 @@ export function DietPreviewDialog({ dietId, dietName, isOpen, onClose }: DietPre
             ) : (
                 <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                     {/* Top total macros summary */}
-                    <Box padding={STORE_TOKENS.SPACING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM} border borderColor="white/10" bg="zinc" bgOpacity={STORE_TOKENS.OPACITY.SURFACE}>
+                    <Box padding={STORE_TOKENS.SPACING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM} border borderColor={STORE_TOKENS.COLORS.DIVIDER.STANDARD} bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.SURFACE}>
                         <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} wrap="wrap">
                             <Badge 
                                 label={`${totalMacros.calories} KCAL`} 
                                 variant="glass" 
-                                color="primary" 
+                                color={STORE_TOKENS.COLORS.BRAND} 
                                 size="xs" 
                             />
                             <Badge 
                                 label={`${totalMacros.protein}G PROT`} 
                                 variant="glass" 
-                                color="blue" 
+                                color={STORE_TOKENS.COLORS.INFO} 
                                 size="xs" 
                             />
                             <Badge 
                                 label={`${totalMacros.carbs}G CARB`} 
                                 variant="glass" 
-                                color="amber" 
+                                color={STORE_TOKENS.COLORS.WARNING} 
                                 size="xs" 
                             />
                             <Badge 
                                 label={`${totalMacros.fat}G GORD`} 
                                 variant="glass" 
-                                color="orange" 
+                                color={STORE_TOKENS.COLORS.BRAND} 
                                 size="xs" 
                             />
                         </Stack>
@@ -146,7 +146,7 @@ export function DietPreviewDialog({ dietId, dietName, isOpen, onClose }: DietPre
                                         </Font>
                                         {meal.time_of_day && (
                                             <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                                <Icon icon={Clock} size="sm" color="muted" />
+                                                <Icon icon={Clock} size="sm" color={STORE_TOKENS.COLORS.TEXT.MUTED} />
                                                 <Font
                                                     variant="sub-tiny"
                                                     mono
@@ -238,7 +238,7 @@ export function DietPreviewDialog({ dietId, dietName, isOpen, onClose }: DietPre
                                                 <React.Fragment key={item.id}>
                                                     <Grid cols={12} gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                                                         <Box colSpan={4}>
-                                                            <Stack gap="none">
+                                                            <Stack gap={STORE_TOKENS.SPACING.NONE}>
                                                                 <Font
                                                                     variant="auxiliary"
                                                                     truncate

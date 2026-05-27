@@ -200,7 +200,6 @@ export function FormSelect({
                     {label}
                 </Font>
             )}
-
             <div className="relative">
                 {/* Trigger */}
                 <button
@@ -228,7 +227,7 @@ export function FormSelect({
                         <Icon
                             icon={ChevronDown}
                             size="xs"
-                            color={open ? 'primary' : 'zinc-500'}
+                            color={open ? STORE_TOKENS.COLORS.BRAND : STORE_TOKENS.COLORS.TEXT.MUTED}
                         />
                     </span>
                 </button>
@@ -270,7 +269,7 @@ export function FormSelect({
                                     <div className="flex flex-col gap-0.5">
                                         <Font
                                             variant="label-caps"
-                                            color={isSelected ? 'primary' : STORE_TOKENS.COLORS.TEXT.PRIMARY}
+                                            color={isSelected ? STORE_TOKENS.COLORS.BRAND : STORE_TOKENS.COLORS.TEXT.PRIMARY}
                                         >
                                             {opt.label}
                                         </Font>
@@ -287,22 +286,21 @@ export function FormSelect({
                                         <Icon
                                             icon={Check}
                                             size="xs"
-                                            color="primary"
+                                            color={STORE_TOKENS.COLORS.BRAND}
                                         />
                                     )}
                                 </button>
-                            )
+                            );
                         })}
                     </div>,
                     document.body
                 )}
             </div>
-
             {error && (
                 <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.ERROR} weight="black" uppercase tracking="widest">
                     {error}
                 </Font>
             )}
         </div>
-    )
+    );
 }

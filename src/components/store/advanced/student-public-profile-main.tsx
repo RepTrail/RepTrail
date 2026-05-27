@@ -69,9 +69,9 @@ export function StudentPublicProfileMain({
         : 2024
 
     return (
-        <Stack gap="section" fullWidth>
+        <Stack gap={STORE_TOKENS.SPACING.SECTION} fullWidth>
             {/* ── Hero Card (Upgraded to Liquid Glass) ──────────────────── */}
-            <GlassPanel padding="container">
+            <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER}>
                 {/* Decorative background icon */}
                 <BackgroundIcon icon={Dumbbell} />
 
@@ -83,7 +83,7 @@ export function StudentPublicProfileMain({
                     gap={STORE_TOKENS.SPACING.CONTAINER}
                     fullWidth
                     position="relative"
-                    zIndex={10}
+                    zIndex={STORE_TOKENS.Z_INDEX.CONTENT}
                 >
                     {/* Left: Avatar + Identity Stack */}
                     <Box
@@ -119,8 +119,8 @@ export function StudentPublicProfileMain({
                                     label={`Membro desde ${memberYear}`}
                                     icon={Activity}
                                     variant="glass"
-                                    color="zinc"
-                                    rounded="system"
+                                    color={STORE_TOKENS.COLORS.BACKGROUND}
+                                    rounded={STORE_TOKENS.RADIUS.SYSTEM}
                                 />
                             </Inline>
                         </Stack>
@@ -140,7 +140,7 @@ export function StudentPublicProfileMain({
                                 <Box width="full" display="flex">
                                     <Link href={`/personal/${trainerData.trainer_code || trainerData.id}`}>
                                         <Box
-                                            bg="primary"
+                                            bg={STORE_TOKENS.COLORS.BRAND}
                                             bgOpacity={STORE_TOKENS.OPACITY.SUBTLE}
                                             rounded={STORE_TOKENS.RADIUS.SYSTEM}
                                             padding={STORE_TOKENS.PADDING.CONTAINER}
@@ -150,8 +150,8 @@ export function StudentPublicProfileMain({
                                             align="center"
                                             fullWidth
                                             border={true}
-                                            borderColor="primary"
-                                            borderOpacity={20}
+                                            borderColor={STORE_TOKENS.COLORS.BRAND}
+                                            borderOpacity={STORE_TOKENS.OPACITY.MEDIUM}
                                         >
                                             <Inline gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
                                                 <BaseAvatar
@@ -165,7 +165,7 @@ export function StudentPublicProfileMain({
                                                         variant="sub-tiny"
                                                         weight="black"
                                                         uppercase
-                                                        opacity={60}
+                                                        opacity={STORE_TOKENS.OPACITY.OVERLAY}
                                                         {...{
                                                             color: "primary",
                                                         }}>
@@ -182,14 +182,14 @@ export function StudentPublicProfileMain({
                                                         {trainerData.full_name}
                                                     </Font>
                                                 </Stack>
-                                                <Icon icon={ChevronRight} size="md" color="primary" />
+                                                <Icon icon={ChevronRight} size="md" color={STORE_TOKENS.COLORS.BRAND} />
                                             </Inline>
                                         </Box>
                                     </Link>
                                 </Box>
                             ) : (
                                 <Box
-                                    bg="primary"
+                                    bg={STORE_TOKENS.COLORS.BRAND}
                                     bgOpacity={STORE_TOKENS.OPACITY.SUBTLE}
                                     rounded={STORE_TOKENS.RADIUS.SYSTEM}
                                     padding={STORE_TOKENS.PADDING.CONTAINER}
@@ -197,18 +197,18 @@ export function StudentPublicProfileMain({
                                     align="center"
                                     fullWidth
                                     border={true}
-                                    borderColor="primary"
-                                    borderOpacity={20}
+                                    borderColor={STORE_TOKENS.COLORS.BRAND}
+                                    borderOpacity={STORE_TOKENS.OPACITY.MEDIUM}
                                     height="full"
                                 >
                                     <Inline gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
-                                        <Icon icon={Sparkles} size="lg" color="primary" />
+                                        <Icon icon={Sparkles} size="lg" color={STORE_TOKENS.COLORS.BRAND} />
                                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                                             <Font
                                                 variant="sub-tiny"
                                                 weight="black"
                                                 uppercase
-                                                opacity={60}
+                                                opacity={STORE_TOKENS.OPACITY.OVERLAY}
                                                 {...{
                                                     color: "primary",
                                                 }}>
@@ -240,15 +240,15 @@ export function StudentPublicProfileMain({
                                         variant={isActive ? 'outline-primary' : 'outline-zinc'}
                                         size="sm"
                                         onClick={() => setActiveTab(tab.id)}
-                                        gap="element"
+                                        gap={STORE_TOKENS.SPACING.ELEMENT}
                                         fullWidth
                                         flex1={true}
                                         height="full"
                                     >
-                                        <Icon icon={tab.icon} size="sm" color={isActive ? 'primary' : 'zinc-400'} />
+                                        <Icon icon={tab.icon} size="sm" color={isActive ? STORE_TOKENS.COLORS.BRAND : STORE_TOKENS.COLORS.TEXT.SECONDARY} />
                                         {tab.label}
                                     </Button>
-                                )
+                                );
                             })}
                         </Stack>
                     </Box>

@@ -70,14 +70,14 @@ export function WorkoutSummaryState({
                     <Box 
                         width={10} 
                         height={10} 
-                        bg="emerald" 
+                        bg={STORE_TOKENS.COLORS.SUCCESS} 
                         rounded={STORE_TOKENS.RADIUS.FULL} 
                         display="flex" 
                         align="center" 
                         justify="center"
                         style={{ width: '10px', height: '10px' }}
                     >
-                        <Icon icon={CheckCircle} size="xs" color="white" />
+                        <Icon icon={CheckCircle} size="xs" color={STORE_TOKENS.COLORS.WHITE} />
                     </Box>
                     <Font
                         variant="body"
@@ -131,7 +131,7 @@ export function WorkoutSummaryState({
                     placeholder="Ex: Senti um pouco o ombro, reduzir carga na próxima..."
                     value={exerciseNote}
                     onChange={e => onUpdateNote((e.target as HTMLInputElement).value)}
-                    color="zinc"
+                    color={STORE_TOKENS.COLORS.BACKGROUND}
                 />
             </Stack>
             {/* Save Button */}

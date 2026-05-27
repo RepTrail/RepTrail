@@ -1,4 +1,5 @@
-'use client'
+'use client';
+import { STORE_TOKENS } from '@/components/store/constants/tokens';
 
 import { Button } from '@/components/store/base/button'
 import { Stack } from '@/components/store/base/stack'
@@ -42,17 +43,17 @@ export function StudentPaymentButtons() {
     }
 
     return (
-        <Stack gap="element">
+        <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
             <Button
                 onClick={() => handleAsaas('CREDIT_CARD')}
                 disabled={isPending}
                 loading={isPending}
                 variant="emerald"
                 fullWidth
-                paddingY="container"
-                gap="element"
+                paddingY={STORE_TOKENS.PADDING.CONTAINER}
+                gap={STORE_TOKENS.SPACING.ELEMENT}
             >
-                <Icon icon={CreditCard} size="md" color="black" />
+                <Icon icon={CreditCard} size="md" color={STORE_TOKENS.COLORS.BLACK} />
                 Assinar com Cartão
             </Button>
             <Font

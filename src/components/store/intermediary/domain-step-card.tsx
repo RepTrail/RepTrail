@@ -41,7 +41,7 @@ export function DomainStepCard({
                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                     {/* Mobile Only Badge */}
                     <Box display={{ base: 'block', md: 'none' }}>
-                        <Badge label={`ETAPA ${formattedIndex}`} variant="glass" color="zinc" size="xs" />
+                        <Badge label={`ETAPA ${formattedIndex}`} variant="glass" color={STORE_TOKENS.COLORS.BACKGROUND} size="xs" />
                     </Box>
 
                     <Stack 
@@ -57,7 +57,7 @@ export function DomainStepCard({
                             >
                                 <Icon icon={icon} size="sm" color={accentColor as any} />
                             </Surface>
-                            <Stack gap="none">
+                            <Stack gap={STORE_TOKENS.SPACING.NONE}>
                                 <Font
                                     variant="h4"
                                     weight="black"
@@ -81,7 +81,7 @@ export function DomainStepCard({
 
                         {/* Desktop Only Badge */}
                         <Box display={{ base: 'none', md: 'block' }}>
-                            <Badge label={`ETAPA ${formattedIndex}`} variant="glass" color="zinc" size="xs" />
+                            <Badge label={`ETAPA ${formattedIndex}`} variant="glass" color={STORE_TOKENS.COLORS.BACKGROUND} size="xs" />
                         </Box>
                     </Stack>
                 </Stack>

@@ -35,8 +35,8 @@ export function ColorsSectionContent({ id }: { id?: string }) {
         >
             <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                 {/* Brand Colors with Opacity Variations */}
-                <GlassPanel padding="none">
-                    <Stack gap="none">
+                <GlassPanel padding={STORE_TOKENS.PADDING.NONE}>
+                    <Stack gap={STORE_TOKENS.SPACING.NONE}>
                         <CardHeader>
                             <Font
                                 variant="label-caps"
@@ -102,7 +102,7 @@ export function ColorsSectionContent({ id }: { id?: string }) {
                                         {/* 20% Opacity */}
                                         <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
                                             <Swatch
-                                                opacity={20}
+                                                opacity={STORE_TOKENS.OPACITY.MEDIUM}
                                                 size="md"
                                                 {...{
                                                     color: c.color,
@@ -130,8 +130,8 @@ export function ColorsSectionContent({ id }: { id?: string }) {
                 </GlassPanel>
 
                 {/* Functional System Colors */}
-                <GlassPanel padding="none">
-                    <Stack gap="none">
+                <GlassPanel padding={STORE_TOKENS.PADDING.NONE}>
+                    <Stack gap={STORE_TOKENS.SPACING.NONE}>
                         <CardHeader>
                             <Font
                                 variant="label-caps"

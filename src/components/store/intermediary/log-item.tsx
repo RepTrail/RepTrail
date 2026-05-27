@@ -39,7 +39,7 @@ export function LogItem({
                         <Badge 
                             label={target} 
                             variant="glass" 
-                            color="orange" 
+                            color={STORE_TOKENS.COLORS.BRAND} 
                             size="xs"
                         />
                     )}
@@ -71,7 +71,7 @@ export function LogItem({
             <Inline gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
                 <IconBox icon={Zap} variant={variant as any} size="md" rounded={STORE_TOKENS.RADIUS.FULL} />
                 
-                <Stack gap="none">
+                <Stack gap={STORE_TOKENS.SPACING.NONE}>
                     <Font
                         {...STORE_TOKENS.TYPOGRAPHY.HEADING}
                         variant="body-sm"

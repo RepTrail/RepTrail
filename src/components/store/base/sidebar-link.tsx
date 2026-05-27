@@ -38,7 +38,7 @@ export function BaseSidebarLink({
         <Icon
           icon={icon}
           size="sm"
-          color={active ? variant : 'zinc-600'}
+          color={active ? variant : STORE_TOKENS.COLORS.TEXT.DIM}
           groupHoverColor="current"
           transition
         />

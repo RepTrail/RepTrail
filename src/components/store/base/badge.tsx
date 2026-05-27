@@ -132,7 +132,7 @@ export function Badge({
             {icon && <Icon icon={icon} size={currentSize.icon} color={resolvedColor as any} />}
             <Font 
                 variant={currentSize.font} 
-                color={resolvedColor === 'zinc' ? 'zinc-400' : resolvedColor as any} 
+                color={resolvedColor === STORE_TOKENS.COLORS.BACKGROUND ? STORE_TOKENS.COLORS.TEXT.SECONDARY : resolvedColor as any} 
                 weight="black" 
                 italic 
                 uppercase 
@@ -141,5 +141,5 @@ export function Badge({
                 {label}
             </Font>
         </div>
-    )
+    );
 }

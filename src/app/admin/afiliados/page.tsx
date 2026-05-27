@@ -1,4 +1,5 @@
-'use client'
+'use client';
+import { STORE_TOKENS } from '@/components/store/constants/tokens';
 
 import { useQuery } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/lib/query-keys'
@@ -29,7 +30,7 @@ export default function AdminAfiliadosPage() {
     return (
         <RegistryProvider defaultColor="red">
             <DashboardShell
-                color="red"
+                color={STORE_TOKENS.COLORS.ERROR}
                 links={[
                     { href: '/admin/dashboard', label: 'Início', icon: 'BarChart3', exact: true },
                     { href: '/admin/personais', label: 'Personais', icon: 'UserCheck' },
@@ -60,6 +61,6 @@ export default function AdminAfiliadosPage() {
                 </RegistryMain>
             </DashboardShell>
         </RegistryProvider>
-    )
+    );
 }
 

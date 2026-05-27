@@ -1,3 +1,4 @@
+import { STORE_TOKENS } from '@/components/store/constants/tokens';
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { DashboardShell } from '@/components/store/advanced/dashboard-shell'
@@ -30,7 +31,7 @@ export default async function AffiliateLayout({ children }: { children: React.Re
     return (
         <RegistryProvider defaultColor="amber">
             <DashboardShell
-                color="amber"
+                color={STORE_TOKENS.COLORS.WARNING}
                 links={links}
                 user={{ id: userId, name: profile.full_name, email: profile.email, avatar_url: profile.avatar_url, isAdmin: profile.is_admin, isAffiliate: profile.is_affiliate, role: profile.role }}
                 profileHref="/dashboard/affiliate/profile"
@@ -40,5 +41,5 @@ export default async function AffiliateLayout({ children }: { children: React.Re
                 {children}
             </DashboardShell>
         </RegistryProvider>
-    )
+    );
 }

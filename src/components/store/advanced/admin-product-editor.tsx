@@ -99,10 +99,10 @@ export function AdminProductEditor({ isOpen, onClose, product, onSave, onImport 
         >
             <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                 {/* Auto-Import */}
-                <Box padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM} border borderColor="emerald" borderOpacity={80} bg={STORE_TOKENS.COLORS.SUCCESS} bgOpacity={STORE_TOKENS.OPACITY.LOW} style={{ borderColor: 'rgb(16 185 129 / 0.8)' }}>
+                <Box padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM} border borderColor={STORE_TOKENS.COLORS.SUCCESS} borderOpacity={STORE_TOKENS.OPACITY.SHELF} bg={STORE_TOKENS.COLORS.SUCCESS} bgOpacity={STORE_TOKENS.OPACITY.LOW} style={{ borderColor: 'rgb(16 185 129 / 0.8)' }}>
                     <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                         <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                            <Box padding="element" rounded={STORE_TOKENS.RADIUS.SYSTEM} bg={STORE_TOKENS.COLORS.SUCCESS} bgOpacity={STORE_TOKENS.OPACITY.MEDIUM}>
+                            <Box padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM} bg={STORE_TOKENS.COLORS.SUCCESS} bgOpacity={STORE_TOKENS.OPACITY.MEDIUM}>
                                 <Icon icon={Zap} size="xs" color={STORE_TOKENS.COLORS.SUCCESS} />
                             </Box>
                             <Font

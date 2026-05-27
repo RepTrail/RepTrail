@@ -157,10 +157,10 @@ export function DietBuilderMealCard({
 
                         <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                             <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                                <Badge label={`P: ${Math.round(mealP)}g`} variant="glass" color={STORE_TOKENS.COLORS.INFO} size="sm" rounded="system" />
-                                <Badge label={`C: ${Math.round(mealC)}g`} variant="glass" color={STORE_TOKENS.COLORS.BRAND} size="sm" rounded="system" />
-                                <Badge label={`G: ${Math.round(mealF)}g`} variant="glass" color={STORE_TOKENS.COLORS.WARNING} size="sm" rounded="system" />
-                                <Badge label={`${mealKcal} kcal`} variant="glass" color="zinc" size="sm" rounded="system" />
+                                <Badge label={`P: ${Math.round(mealP)}g`} variant="glass" color={STORE_TOKENS.COLORS.INFO} size="sm" rounded={STORE_TOKENS.RADIUS.SYSTEM} />
+                                <Badge label={`C: ${Math.round(mealC)}g`} variant="glass" color={STORE_TOKENS.COLORS.BRAND} size="sm" rounded={STORE_TOKENS.RADIUS.SYSTEM} />
+                                <Badge label={`G: ${Math.round(mealF)}g`} variant="glass" color={STORE_TOKENS.COLORS.WARNING} size="sm" rounded={STORE_TOKENS.RADIUS.SYSTEM} />
+                                <Badge label={`${mealKcal} kcal`} variant="glass" color={STORE_TOKENS.COLORS.BACKGROUND} size="sm" rounded={STORE_TOKENS.RADIUS.SYSTEM} />
                             </Inline>
                             <Button
                                 variant="outline-red"

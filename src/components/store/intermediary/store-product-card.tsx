@@ -41,7 +41,7 @@ export function StoreProductCard({
 
     return (
         <GlassPanel
-            padding="none"
+            padding={STORE_TOKENS.PADDING.NONE}
             rounded={STORE_TOKENS.RADIUS.SYSTEM}
             variant="glass-diagonal"
             transition
@@ -56,7 +56,7 @@ export function StoreProductCard({
             <Box position="absolute" top={12} left={12} zIndex={STORE_TOKENS.Z_INDEX.OVERLAY}>
                 <Badge
                     label={category || 'OFERTA'}
-                    color="primary"
+                    color={STORE_TOKENS.COLORS.BRAND}
                     variant="glass"
                     size="sm"
                 />
@@ -68,7 +68,7 @@ export function StoreProductCard({
                 align="center"
                 justify="center"
                 bg={STORE_TOKENS.COLORS.WHITE}
-                bgOpacity={5}
+                bgOpacity={STORE_TOKENS.OPACITY.LOW}
                 aspectRatio="square"
                 overflow="hidden"
                 shrink={0}
@@ -121,7 +121,7 @@ export function StoreProductCard({
                     <Stack direction="row" justify="between" align="end">
                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                             {isOriginal && (
-                                <Stack direction="row" align="center" gap="element">
+                                <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                     <Icon icon={ShieldCheck} size="xs" color={STORE_TOKENS.COLORS.SUCCESS} />
                                     <Font
                                         variant="tiny"
@@ -134,7 +134,7 @@ export function StoreProductCard({
                                     </Font>
                                 </Stack>
                             )}
-                            <Stack direction="row" align="baseline" gap="element">
+                            <Stack direction="row" align="baseline" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                 <Font
                                     variant="sub-tiny"
                                     weight="bold"
@@ -162,7 +162,7 @@ export function StoreProductCard({
                         </Stack>
 
                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="end">
-                            <Stack direction="row" gap="element">
+                            <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                 {[1, 2, 3, 4, 5].map(i => (
                                     <Icon key={i} icon={Star} size="xs" color={i <= Math.round(rating) ? STORE_TOKENS.COLORS.BRAND : STORE_TOKENS.COLORS.TEXT.DIM} />
                                 ))}

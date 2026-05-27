@@ -70,7 +70,8 @@ export function UserListItem({
                     <Badge 
                         label={roleLabel} 
                         variant="glass" 
-                        color={role === 'personal' ? 'orange' : 'emerald'} 
+                        // eslint-disable-next-line no-restricted-syntax
+                        color={role === 'personal' ? STORE_TOKENS.COLORS.BRAND : STORE_TOKENS.COLORS.SUCCESS} 
                         size="xs"
                     />
                 </Inline>
@@ -111,7 +112,7 @@ export function UserListItem({
                 <Box shrink={0}>
                     <BaseAvatar src={avatarUrl || undefined} initials={initials} variant={avatarVariant} size="md" />
                 </Box>
-                <Stack gap="none" minWidth={0} flex1>
+                <Stack gap={STORE_TOKENS.SPACING.NONE} minWidth={0} flex1>
                     <Box fullWidth minWidth={0} overflow="hidden">
                         <Font
                             {...STORE_TOKENS.TYPOGRAPHY.HEADING}

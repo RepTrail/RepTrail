@@ -48,7 +48,7 @@ export function SettingsOption({
             group
             cursor={onClick && !disabled ? 'pointer' : 'default'}
             activeScale={onClick && !disabled ? 95 : undefined}
-            opacity={disabled ? 60 : undefined}
+            opacity={disabled ? STORE_TOKENS.OPACITY.OVERLAY : undefined}
             onClick={disabled ? undefined : onClick}
         >
             <Stack direction="row" align="center" justify="between" gap={STORE_TOKENS.SPACING.ELEMENT}>
@@ -56,12 +56,12 @@ export function SettingsOption({
                     <Box 
                         padding={STORE_TOKENS.PADDING.ELEMENT} 
                         bg={variant} 
-                        bgOpacity={10} 
+                        bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} 
                         rounded={STORE_TOKENS.RADIUS.SYSTEM}
                     >
-                        <Icon icon={icon} size="sm" color={variant === 'zinc' ? 'zinc-400' : variant} />
+                        <Icon icon={icon} size="sm" color={variant === STORE_TOKENS.COLORS.BACKGROUND ? STORE_TOKENS.COLORS.TEXT.SECONDARY : variant} />
                     </Box>
-                    <Stack gap="none" flex1>
+                    <Stack gap={STORE_TOKENS.SPACING.NONE} flex1>
                         <Font
                             variant="body-sm"
                             weight="black"
@@ -75,7 +75,8 @@ export function SettingsOption({
                         </Font>
                         <Font
                             variant="sub-tiny"
-                            opacity={variant === 'zinc' ? 100 : 70}
+                            // eslint-disable-next-line no-restricted-syntax
+                            opacity={variant === 'zinc' ? STORE_TOKENS.OPACITY.FULL : STORE_TOKENS.OPACITY.OVERLAY}
                             weight="bold"
                             uppercase
                             tracking="widest"
@@ -89,7 +90,7 @@ export function SettingsOption({
                 
                 <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                     {badge && (
-                        <Box padding="element" bg={variant} bgOpacity={10} border borderColor={`${variant}/20`} rounded={STORE_TOKENS.RADIUS.FULL}>
+                        <Box padding={STORE_TOKENS.PADDING.ELEMENT} bg={variant} bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} border borderColor={`${variant}/20`} rounded={STORE_TOKENS.RADIUS.FULL}>
                             <Font
                                 variant="sub-tiny"
                                 weight="black"
@@ -105,7 +106,7 @@ export function SettingsOption({
                         <Icon 
                             icon={rightIcon} 
                             size="sm" 
-                            color={variant === 'zinc' ? 'zinc-600' : variant} 
+                            color={variant === STORE_TOKENS.COLORS.BACKGROUND ? STORE_TOKENS.COLORS.TEXT.DIM : variant} 
                             transition
                             groupHoverColor={!disabled ? 'current' : undefined}
                             groupHoverTranslateX={!disabled ? 1 : undefined}

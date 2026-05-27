@@ -28,12 +28,12 @@ interface MeuPersonalSectionContentProps {
 export function MeuPersonalSectionContent({ trainer, trainerRel, existingReview }: MeuPersonalSectionContentProps) {
     return (
         <RegistrySection>
-            <Stack gap="container">
+            <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                 {/* Perfil do Personal */}
-                <GlassPanel padding="container" rounded="system">
-                    <Stack direction={{ base: 'col', md: 'row' }} gap="container" align="center">
+                <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM}>
+                    <Stack direction={{ base: 'col', md: 'row' }} gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
                         {/* Left: Avatar & Badge */}
-                        <Stack gap="element" align="center">
+                        <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                             <BaseAvatar
                                 initials={trainer.full_name?.substring(0, 2).toUpperCase() || 'TR'}
                                 src={trainer.avatar_url}
@@ -44,15 +44,15 @@ export function MeuPersonalSectionContent({ trainer, trainerRel, existingReview 
                                 <Badge
                                     label="Elite Trainer"
                                     variant="solid"
-                                    color="amber"
+                                    color={STORE_TOKENS.COLORS.WARNING}
                                     size="xs"
                                 />
                             )}
                         </Stack>
 
                         {/* Right: Info details */}
-                        <Stack gap="container" flex1 align={{ base: 'center', md: 'start' }} fullWidth>
-                            <Stack gap="element" align={{ base: 'center', md: 'start' }}>
+                        <Stack gap={STORE_TOKENS.SPACING.CONTAINER} flex1 align={{ base: 'center', md: 'start' }} fullWidth>
+                            <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align={{ base: 'center', md: 'start' }}>
                                 <Font
                                     variant="h2"
                                     {...{
@@ -60,10 +60,10 @@ export function MeuPersonalSectionContent({ trainer, trainerRel, existingReview 
                                     }}>
                                     {trainer.full_name}
                                 </Font>
-                                <Stack direction="row" gap="element" wrap="wrap" justify={{ base: 'center', md: 'start' }}>
+                                <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} wrap="wrap" justify={{ base: 'center', md: 'start' }}>
                                     {trainer.location && (
-                                        <Stack direction="row" gap="element" align="center">
-                                            <Icon icon={MapPin} size="sm" color="emerald" />
+                                        <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                                            <Icon icon={MapPin} size="sm" color={STORE_TOKENS.COLORS.SUCCESS} />
                                             <Font
                                                 variant="sub-tiny"
                                                 {...{
@@ -74,8 +74,8 @@ export function MeuPersonalSectionContent({ trainer, trainerRel, existingReview 
                                         </Stack>
                                     )}
                                     {trainer.cref && (
-                                        <Stack direction="row" gap="element" align="center">
-                                            <Icon icon={ShieldCheck} size="sm" color="emerald" />
+                                        <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                                            <Icon icon={ShieldCheck} size="sm" color={STORE_TOKENS.COLORS.SUCCESS} />
                                             <Font
                                                 variant="sub-tiny"
                                                 {...{
@@ -85,8 +85,8 @@ export function MeuPersonalSectionContent({ trainer, trainerRel, existingReview 
                                             </Font>
                                         </Stack>
                                     )}
-                                    <Stack direction="row" gap="element" align="center">
-                                        <Icon icon={Star} size="sm" color="amber" />
+                                    <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                                        <Icon icon={Star} size="sm" color={STORE_TOKENS.COLORS.WARNING} />
                                         <Font
                                             variant="sub-tiny"
                                             weight="black"
@@ -122,13 +122,13 @@ export function MeuPersonalSectionContent({ trainer, trainerRel, existingReview 
                                 <Badge
                                     label={trainer.specialty.toUpperCase()}
                                     variant="glass"
-                                    color="primary"
+                                    color={STORE_TOKENS.COLORS.BRAND}
                                     size="xs"
                                 />
                             )}
 
                             {/* CTAs */}
-                            <Stack direction={{ base: 'col', md: 'row' }} gap="element" fullWidth>
+                            <Stack direction={{ base: 'col', md: 'row' }} gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
                                 {trainer.whatsapp ? (
                                     <Box fullWidth={{ base: true, md: false }} display="block">
                                         <Box width="full" display="block">
@@ -137,7 +137,7 @@ export function MeuPersonalSectionContent({ trainer, trainerRel, existingReview 
                                                 target="_blank"
                                             >
                                                 <Button variant="outline-primary" size="sm" fullWidth>
-                                                    <Stack direction="row" align="center" justify="center" gap="element">
+                                                    <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                                         <Icon icon={MessageCircle} size="sm" />
                                                         Falar no WhatsApp
                                                     </Stack>
@@ -147,7 +147,7 @@ export function MeuPersonalSectionContent({ trainer, trainerRel, existingReview 
                                     </Box>
                                 ) : (
                                     <Button disabled variant="outline-zinc" size="sm" fullWidth={{ base: true, md: false }}>
-                                        <Stack direction="row" align="center" justify="center" gap="element">
+                                        <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                             <Icon icon={Phone} size="sm" />
                                             Contato Indisponível
                                         </Stack>
@@ -159,7 +159,7 @@ export function MeuPersonalSectionContent({ trainer, trainerRel, existingReview 
                                         <Box width="full" display="block">
                                             <Link href={`/personal/${trainer.trainer_code.toUpperCase().trim()}`}>
                                                 <Button variant="outline-zinc" size="sm" fullWidth>
-                                                    <Stack direction="row" align="center" justify="center" gap="element">
+                                                    <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                                         Ver Perfil Completo
                                                         <Icon icon={ArrowRight} size="xs" />
                                                     </Stack>
@@ -181,9 +181,9 @@ export function MeuPersonalSectionContent({ trainer, trainerRel, existingReview 
                                         initialComment={existingReview?.comment}
                                         trigger={
                                             <Button variant="outline-zinc" size="sm" fullWidth>
-                                                <Stack direction="row" align="center" justify="center" gap="element">
+                                                <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                                     {existingReview ? 'Editar Avaliação' : 'Avaliar Treinador'}
-                                                    <Icon icon={Star} size="xs" color="amber" />
+                                                    <Icon icon={Star} size="xs" color={STORE_TOKENS.COLORS.WARNING} />
                                                 </Stack>
                                             </Button>
                                         }
@@ -198,13 +198,13 @@ export function MeuPersonalSectionContent({ trainer, trainerRel, existingReview 
                 <Grid gap={STORE_TOKENS.SPACING.CONTAINER} cols={{ base: 1, md: 3 }}>
                     <Box width="full" display="block">
                         <Link href="/dashboard/student/workouts">
-                            <GlassPanel padding="container" rounded="system" cursor="pointer" transition>
-                                <Stack gap="container">
-                                    <Stack direction="row" align="center" gap="element">
-                                        <Box padding="element" rounded="system" bg="primary" bgOpacity={10} width="10" height="10" display="flex" align="center" justify="center">
-                                            <Icon icon={Dumbbell} size="md" color="primary" />
+                            <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM} cursor="pointer" transition>
+                                <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
+                                    <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                        <Box padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM} bg={STORE_TOKENS.COLORS.BRAND} bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} width="10" height="10" display="flex" align="center" justify="center">
+                                            <Icon icon={Dumbbell} size="md" color={STORE_TOKENS.COLORS.BRAND} />
                                         </Box>
-                                        <Stack gap="none">
+                                        <Stack gap={STORE_TOKENS.SPACING.NONE}>
                                             <Font
                                                 variant="label-caps"
                                                 {...{
@@ -228,13 +228,13 @@ export function MeuPersonalSectionContent({ trainer, trainerRel, existingReview 
 
                     <Box width="full" display="block">
                         <Link href="/dashboard/student/diet">
-                            <GlassPanel padding="container" rounded="system" cursor="pointer" transition>
-                                <Stack gap="container">
-                                    <Stack direction="row" align="center" gap="element">
-                                        <Box padding="element" rounded="system" bg="amber" bgOpacity={10} width="10" height="10" display="flex" align="center" justify="center">
-                                            <Icon icon={Utensils} size="md" color="amber" />
+                            <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM} cursor="pointer" transition>
+                                <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
+                                    <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                        <Box padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM} bg={STORE_TOKENS.COLORS.WARNING} bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} width="10" height="10" display="flex" align="center" justify="center">
+                                            <Icon icon={Utensils} size="md" color={STORE_TOKENS.COLORS.WARNING} />
                                         </Box>
-                                        <Stack gap="none">
+                                        <Stack gap={STORE_TOKENS.SPACING.NONE}>
                                             <Font
                                                 variant="label-caps"
                                                 {...{
@@ -258,13 +258,13 @@ export function MeuPersonalSectionContent({ trainer, trainerRel, existingReview 
 
                     <Box width="full" display="block">
                         <Link href="/dashboard/student/cardio">
-                            <GlassPanel padding="container" rounded="system" cursor="pointer" transition>
-                                <Stack gap="container">
-                                    <Stack direction="row" align="center" gap="element">
-                                        <Box padding="element" rounded="system" bg="blue" bgOpacity={10} width="10" height="10" display="flex" align="center" justify="center">
-                                            <Icon icon={Activity} size="md" color="blue" />
+                            <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM} cursor="pointer" transition>
+                                <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
+                                    <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                        <Box padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM} bg={STORE_TOKENS.COLORS.INFO} bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} width="10" height="10" display="flex" align="center" justify="center">
+                                            <Icon icon={Activity} size="md" color={STORE_TOKENS.COLORS.INFO} />
                                         </Box>
-                                        <Stack gap="none">
+                                        <Stack gap={STORE_TOKENS.SPACING.NONE}>
                                             <Font
                                                 variant="label-caps"
                                                 {...{
@@ -289,10 +289,10 @@ export function MeuPersonalSectionContent({ trainer, trainerRel, existingReview 
 
                 {/* Contract Info */}
                 {(trainerRel.monthly_fee || trainerRel.payment_day) && (
-                    <Grid gap="container" cols={{ base: 1, md: 2 }}>
+                    <Grid gap={STORE_TOKENS.SPACING.CONTAINER} cols={{ base: 1, md: 2 }}>
                         {trainerRel.monthly_fee && (
-                            <GlassPanel padding="container" rounded="system">
-                                <Stack gap="none">
+                            <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM}>
+                                <Stack gap={STORE_TOKENS.SPACING.NONE}>
                                     <Font
                                         variant="label-caps"
                                         {...{
@@ -307,8 +307,8 @@ export function MeuPersonalSectionContent({ trainer, trainerRel, existingReview 
                             </GlassPanel>
                         )}
                         {trainerRel.payment_day && (
-                            <GlassPanel padding="container" rounded="system">
-                                <Stack gap="none">
+                            <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM}>
+                                <Stack gap={STORE_TOKENS.SPACING.NONE}>
                                     <Font
                                         variant="label-caps"
                                         {...{

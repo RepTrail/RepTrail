@@ -99,21 +99,21 @@ export function StudentOnboardingForm({ defaultTrainerCode = '' }: { defaultTrai
                 flex1
                 disabled={pending}
             >
-                <Stack direction="row" align="center" justify="center" gap="element">
+                <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                     {pending ? (
                         <>
-                            <Icon icon={Loader2} animate="spin" size="sm" color="black" />
+                            <Icon icon={Loader2} animate="spin" size="sm" color={STORE_TOKENS.COLORS.BLACK} />
                             <Font variant="sub-tiny" weight="black" uppercase tracking="widest">Finalizando...</Font>
                         </>
                     ) : (
                         <>
                             <Font variant="sub-tiny" weight="black" uppercase tracking="widest">Finalizar Cadastro</Font>
-                            <Icon icon={ShieldCheck} size="sm" color="black" />
+                            <Icon icon={ShieldCheck} size="sm" color={STORE_TOKENS.COLORS.BLACK} />
                         </>
                     )}
                 </Stack>
             </Button>
-        )
+        );
     }
 
     return (
@@ -140,16 +140,16 @@ export function StudentOnboardingForm({ defaultTrainerCode = '' }: { defaultTrai
                     {/* Error Messages */}
                     {state?.message && (
                         <Box 
-                            padding="container" 
-                            rounded="system" 
-                            bg="red"
-                            bgOpacity={10}
+                            padding={STORE_TOKENS.PADDING.CONTAINER} 
+                            rounded={STORE_TOKENS.RADIUS.SYSTEM} 
+                            bg={STORE_TOKENS.COLORS.ERROR}
+                            bgOpacity={STORE_TOKENS.OPACITY.SUBTLE}
                             border
-                            borderColor="red"
-                            borderOpacity={20}
+                            borderColor={STORE_TOKENS.COLORS.ERROR}
+                            borderOpacity={STORE_TOKENS.OPACITY.MEDIUM}
                             textAlign="center"
                         >
-                            <Stack gap="element">
+                            <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                                 <Font
                                     variant="sub-tiny"
                                     weight="black"
@@ -159,7 +159,7 @@ export function StudentOnboardingForm({ defaultTrainerCode = '' }: { defaultTrai
                                         color: "error",
                                     }}>{state.message}</Font>
                                 {state.errors && Object.keys(state.errors).length > 0 && (
-                                    <Stack gap="element">
+                                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                                         {Object.entries(state.errors).map(([field, msgs]) => (
                                             <Font
                                                 key={field}
@@ -291,7 +291,7 @@ export function StudentOnboardingForm({ defaultTrainerCode = '' }: { defaultTrai
                                     name="steroidUse"
                                     label="FAÇO USO DE RECURSOS ERGOGÊNICOS" 
                                     description="Informação confidencial para ajuste fino de volume e intensidade pelo seu treinador."
-                                    color="orange"
+                                    color={STORE_TOKENS.COLORS.BRAND}
                                     checked={steroidUse}
                                     onChange={setSteroidUse}
                                 />
@@ -309,7 +309,7 @@ export function StudentOnboardingForm({ defaultTrainerCode = '' }: { defaultTrai
                     )}
 
                     {/* Actions Navigation Bar */}
-                    <Stack direction={{ base: 'col', md: 'row' }} gap="element" fullWidth>
+                    <Stack direction={{ base: 'col', md: 'row' }} gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
                         {step > 1 && (
                             <Button 
                                 type="button" 
@@ -317,7 +317,7 @@ export function StudentOnboardingForm({ defaultTrainerCode = '' }: { defaultTrai
                                 size="lg" 
                                 onClick={prevStep}
                             >
-                                <Stack direction="row" align="center" justify="center" gap="element">
+                                <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                     <Icon icon={ChevronLeft} size="sm" />
                                     <Font variant="sub-tiny" weight="black" uppercase tracking="widest">Voltar</Font>
                                 </Stack>
@@ -333,7 +333,7 @@ export function StudentOnboardingForm({ defaultTrainerCode = '' }: { defaultTrai
                                 disabled={step === 1 ? !isStep1Valid : !isStep2Valid}
                                 onClick={nextStep}
                             >
-                                <Stack direction="row" align="center" justify="center" gap="element">
+                                <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                     <Font variant="sub-tiny" weight="black" uppercase tracking="widest">Próximo</Font>
                                     <Icon icon={ChevronRight} size="sm" />
                                 </Stack>

@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/store/advanced/toaster";
-import { SplashManager } from "@/components/layout/splash-manager";
+import { SplashManager } from "@/components/store/providers/splash-manager";
 
 
 const geistSans = Geist({
@@ -38,10 +38,10 @@ export const viewport: Viewport = {
   userScalable: false,
 };
 
-import { QueryProvider } from "@/components/providers/query-provider";
+import { QueryProvider } from "@/components/store/providers/query-provider";
 import NextTopLoader from 'nextjs-toploader';
 import FacebookPixel from "@/lib/meta-pixel";
-import { ShineManager } from "@/components/layout/shine-manager";
+import { ShineManager } from "@/components/store/providers/shine-manager";
 import Script from 'next/script';
 
 export default function RootLayout({
@@ -73,6 +73,7 @@ export default function RootLayout({
         data-scroll-behavior="smooth"
       >
         <ShineManager />
+        {/* eslint-disable-next-line no-restricted-syntax */}
         <NextTopLoader color="var(--primary-dynamic, #f97316)" showSpinner={false} shadow="0 0 10px var(--primary-dynamic, #f97316), 0 0 5px var(--primary-dynamic, #f97316)" zIndex={1600} />
         <FacebookPixel />
         <QueryProvider>

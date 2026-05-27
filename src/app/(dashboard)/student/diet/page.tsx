@@ -85,15 +85,14 @@ export default async function StudentDietPage() {
         >
             <Box fullWidth padding={STORE_TOKENS.PADDING.CONTAINER}>
                 <Stack gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
-                    
+
                     {/* Daily Progress Tracker Section */}
                     <Surface
                         variant="glass"
                         padding={STORE_TOKENS.PADDING.CONTAINER}
                         rounded={STORE_TOKENS.RADIUS.SYSTEM}
-                        border
                     >
-                        <Stack direction={{ base: 'col', sm: 'row' }} align="center" justify="between" gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
+                        <Stack direction={{ base: 'row', md: 'col' }} align="center" justify="between" gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
                             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                                 <Font variant="heading" weight="black" uppercase italic>
                                     Progresso Diário
@@ -119,12 +118,11 @@ export default async function StudentDietPage() {
                             <Surface
                                 key={meal.id}
                                 variant="tonal-zinc"
-                                border
                                 padding={STORE_TOKENS.PADDING.CONTAINER}
                                 rounded={STORE_TOKENS.RADIUS.SYSTEM}
                             >
                                 <Stack gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
-                                    
+
                                     {/* Meal Header */}
                                     <Stack direction="row" align="center" justify="between" fullWidth>
                                         <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
@@ -134,7 +132,7 @@ export default async function StudentDietPage() {
                                             </Font>
                                         </Stack>
                                         {meal.time_of_day && (
-                                            <Surface variant="glass" padding={STORE_TOKENS.PADDING.ELEMENT} rounded="system" border>
+                                            <Surface variant="glass" padding={STORE_TOKENS.PADDING.ELEMENT} rounded="system">
                                                 <Font variant="auxiliary" color="orange" weight="black" tracking="widest">
                                                     {meal.time_of_day.slice(0, 5)}
                                                 </Font>
@@ -152,9 +150,8 @@ export default async function StudentDietPage() {
                                                 variant="glass"
                                                 padding={STORE_TOKENS.PADDING.ELEMENT}
                                                 rounded="system"
-                                                border
                                             >
-                                                <Stack direction={{ base: 'col', sm: 'row' }} align={{ base: 'start', sm: 'center' }} justify="between" gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
+                                                <Stack direction={{ base: 'row', md: 'col' }} align={{ base: 'center', md: 'start' }} justify="between" gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
                                                     <FormCheckbox
                                                         label={item.food_name}
                                                         color="emerald"
@@ -164,7 +161,7 @@ export default async function StudentDietPage() {
                                                             {item.quantity}
                                                         </Font>
                                                         {item.approx_measure && (
-                                                            <Surface variant="glass" padding="tiny" rounded="system" border>
+                                                            <Surface variant="glass" padding="tiny" rounded="system">
                                                                 <Font variant="sub-tiny" color="orange" weight="black" uppercase tracking="wider">
                                                                     Medida: {item.approx_measure}
                                                                 </Font>

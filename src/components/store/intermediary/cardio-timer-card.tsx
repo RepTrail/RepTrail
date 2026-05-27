@@ -60,7 +60,7 @@ export function CardioTimerCard({
 
     return (
         <GlassPanel
-            padding="none"
+            padding={STORE_TOKENS.PADDING.NONE}
             rounded={STORE_TOKENS.RADIUS.SYSTEM}
             overflow="hidden"
             variant="glass"
@@ -79,7 +79,7 @@ export function CardioTimerCard({
                 <Stack gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
                     <Stack direction={{ base: 'col', lg: 'row' }} align={{ base: 'start', lg: 'center' }} justify="between" fullWidth gap={STORE_TOKENS.SPACING.CONTAINER}>
                         <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                            <Icon icon={Activity} color={isCompleted ? STORE_TOKENS.COLORS.SUCCESS : "orange"} size="sm" />
+                            <Icon icon={Activity} color={isCompleted ? STORE_TOKENS.COLORS.SUCCESS : STORE_TOKENS.COLORS.BRAND} size="sm" />
                             <Font
                                 variant="h4"
                                 {...{
@@ -141,7 +141,7 @@ export function CardioTimerCard({
                             width={80}
                             height={80}
                             rounded={STORE_TOKENS.RADIUS.FULL}
-                            bg={isCompleted ? STORE_TOKENS.COLORS.SUCCESS : isRunning ? "orange" : "primary"}
+                            bg={isCompleted ? STORE_TOKENS.COLORS.SUCCESS : isRunning ? STORE_TOKENS.COLORS.BRAND : STORE_TOKENS.COLORS.BRAND}
                             bgOpacity={STORE_TOKENS.OPACITY.INTERMEDIATE}
                             display="flex"
                             align="center"
@@ -151,10 +151,10 @@ export function CardioTimerCard({
                             transition
                             hoverBgOpacity={STORE_TOKENS.OPACITY.MEDIUM}
                             border={true}
-                            borderColor={isCompleted ? "emerald-500/20" : isRunning ? "orange-500/20" : STORE_TOKENS.COLORS.DIVIDER.STANDARD}
+                            borderColor={isCompleted ? STORE_TOKENS.COLORS.SUCCESS : isRunning ? STORE_TOKENS.COLORS.WARNING : STORE_TOKENS.COLORS.DIVIDER.STANDARD}
                             onClick={isCompleted ? undefined : isRunning ? onPause : onPlay || onAction}
                         >
-                            <Icon icon={isCompleted ? CheckCircle : isRunning ? (remainingTime === "00:00" ? CheckCircle : Pause) : Play} size="lg" color={isCompleted ? STORE_TOKENS.COLORS.SUCCESS : isRunning ? "orange" : STORE_TOKENS.COLORS.BRAND} />
+                            <Icon icon={isCompleted ? CheckCircle : isRunning ? (remainingTime === "00:00" ? CheckCircle : Pause) : Play} size="lg" color={isCompleted ? STORE_TOKENS.COLORS.SUCCESS : isRunning ? STORE_TOKENS.COLORS.BRAND : STORE_TOKENS.COLORS.BRAND} />
                         </Box>
 
                         {isRunning && (
@@ -162,7 +162,7 @@ export function CardioTimerCard({
                                 width={60}
                                 height={60}
                                 rounded={STORE_TOKENS.RADIUS.FULL}
-                                bg="red"
+                                bg={STORE_TOKENS.COLORS.ERROR}
                                 bgOpacity={STORE_TOKENS.OPACITY.INTERMEDIATE}
                                 display="flex"
                                 align="center"
@@ -172,10 +172,10 @@ export function CardioTimerCard({
                                 transition
                                 hoverBgOpacity={STORE_TOKENS.OPACITY.MEDIUM}
                                 border={true}
-                                borderColor="red-500/20"
+                                borderColor={STORE_TOKENS.COLORS.ERROR}
                                 onClick={onStop}
                             >
-                                <Icon icon={Square} size="md" color="red" />
+                                <Icon icon={Square} size="md" color={STORE_TOKENS.COLORS.ERROR} />
                             </Box>
                         )}
                     </Stack>
@@ -184,7 +184,7 @@ export function CardioTimerCard({
                         <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM} variant="glass" display="flex" direction="col" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                             <Font
                                 {...STORE_TOKENS.TYPOGRAPHY.LABEL}
-                                opacity={80}
+                                opacity={STORE_TOKENS.OPACITY.SHELF}
                                 {...{
                                     color: isCompleted ? STORE_TOKENS.COLORS.SUCCESS : STORE_TOKENS.COLORS.WARNING,
                                 }}>CALORIAS</Font>
@@ -201,7 +201,7 @@ export function CardioTimerCard({
                         <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM} variant="glass" display="flex" direction="col" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                             <Font
                                 {...STORE_TOKENS.TYPOGRAPHY.LABEL}
-                                opacity={80}
+                                opacity={STORE_TOKENS.OPACITY.SHELF}
                                 {...{
                                     color: isCompleted ? STORE_TOKENS.COLORS.SUCCESS : STORE_TOKENS.COLORS.WARNING,
                                 }}>INTENSIDADE</Font>

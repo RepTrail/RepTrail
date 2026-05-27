@@ -63,7 +63,7 @@ export function SearchPersonalSection() {
                     {loading ? (
                         <Grid cols={{ base: 1, md: 2, lg: 4 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
                             {[1, 2, 4, 6].map(i => (
-                                <Box key={i} bg="zinc" bgOpacity={50} height={300} fullWidth rounded={STORE_TOKENS.RADIUS.SYSTEM} />
+                                <Box key={i} bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.MODAL} height={300} fullWidth rounded={STORE_TOKENS.RADIUS.SYSTEM} />
                             ))}
                         </Grid>
                     ) : (
@@ -86,8 +86,8 @@ export function SearchPersonalSection() {
                     {!loading && trainers.length === 0 && (
                         <Surface variant="glass" padding={STORE_TOKENS.PADDING.EMPTY_STATE as any} rounded={STORE_TOKENS.RADIUS.SYSTEM} border="dashed">
                             <Stack gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
-                                <Surface padding={STORE_TOKENS.PADDING.CONTAINER} bg="zinc" rounded="full" border="subtle">
-                                    <Icon icon={Search} size="lg" color="zinc-600" />
+                                <Surface padding={STORE_TOKENS.PADDING.CONTAINER} bg={STORE_TOKENS.COLORS.BACKGROUND} rounded={STORE_TOKENS.RADIUS.FULL} border="subtle">
+                                    <Icon icon={Search} size="lg" color={STORE_TOKENS.COLORS.TEXT.DIM} />
                                 </Surface>
                                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                                     <Font

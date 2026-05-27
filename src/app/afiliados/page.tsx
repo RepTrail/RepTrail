@@ -18,11 +18,15 @@ export default function AfiliadosPage() {
     <RegistryProvider defaultColor="amber">
       <LandingShell
         navActions={[
-          { label: 'Já sou afiliado', href: '/afiliados/login', variant: 'outline-zinc' as const },
-          { label: 'Começar agora', href: '/afiliados/cadastro', variant: 'outline-primary' as const },
+          { label: 'Sou aluno', href: '/aluno', variant: 'ghost' as const, desktopOnly: true },
+          { label: 'Sou personal', href: '/', variant: 'ghost' as const, desktopOnly: true },
+          { label: 'Login', href: '/afiliados/login', variant: 'outline-zinc' as const },
+          { label: 'Começar agora', href: '/afiliados/cadastro', variant: 'outline-primary' as const, desktopOnly: true },
         ]}
         footerTagline="Comissão válida em todos os planos · Sem limite · Registrada automaticamente"
         footerLinks={[
+          { label: 'Sou aluno', href: '/aluno' },
+          { label: 'Sou personal', href: '/' },
           { label: 'Sou afiliado', href: '/afiliados/login' },
         ]}
       >
@@ -32,7 +36,6 @@ export default function AfiliadosPage() {
         <LandingSocialProof role="affiliate" />
         <LandingAbout role="affiliate" />
         <LandingFAQ role="affiliate" />
-        <LandingCTA role="affiliate" />
       </LandingShell>
     </RegistryProvider>
   )

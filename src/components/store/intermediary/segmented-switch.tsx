@@ -36,7 +36,7 @@ export function SegmentedSwitch({
 
   return (
     <GlassPanel
-      padding="none"
+      padding={STORE_TOKENS.PADDING.NONE}
       rounded={STORE_TOKENS.RADIUS.FULL}
       overflow="hidden"
       fullWidth={fullWidth}
@@ -51,13 +51,13 @@ export function SegmentedSwitch({
         scrollSmooth
         minWidth={0}
         position="relative"
-        zIndex={10}
+        zIndex={STORE_TOKENS.Z_INDEX.CONTENT}
       >
         <Stack
           direction="row"
           gap={STORE_TOKENS.SPACING.ELEMENT}
           wrap="nowrap"
-          padding="element"
+          padding={STORE_TOKENS.PADDING.ELEMENT}
           align="stretch"
           width={{ base: isFewOptions ? 'full' : 'max-content', md: 'full' }}
         >
@@ -83,7 +83,7 @@ export function SegmentedSwitch({
                     <Icon
                       icon={option.icon}
                       size="xs"
-                      color={(isActive ? colorToken : 'zinc-500') as any}
+                      color={(isActive ? colorToken : STORE_TOKENS.COLORS.TEXT.MUTED) as any}
                     />
                   )}
                   <Font

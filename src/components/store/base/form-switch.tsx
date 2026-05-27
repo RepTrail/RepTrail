@@ -63,8 +63,7 @@ export function FormSwitch({
                     {label}
                 </Font>
             )}
-
-            <GlassPanel padding="none" rounded={STORE_TOKENS.RADIUS.FULL} border="subtle" fullWidth>
+            <GlassPanel padding={STORE_TOKENS.PADDING.NONE} rounded={STORE_TOKENS.RADIUS.FULL} border="subtle" fullWidth>
                 <Box
                     display="flex"
                     align="center"
@@ -88,7 +87,7 @@ export function FormSwitch({
                                 flex1={true}
                                 shrink={0}
                                 padding={STORE_TOKENS.PADDING.ELEMENT}
-                                rounded="full"
+                                rounded={STORE_TOKENS.RADIUS.FULL}
                                 transition
                                 display="flex"
                                 align="center"
@@ -104,15 +103,15 @@ export function FormSwitch({
                                     variant="auxiliary"
                                     weight="black"
                                     uppercase
-                                    color={isActive ? resolvedColor : 'zinc-500' as any}
+                                    color={isActive ? resolvedColor : STORE_TOKENS.COLORS.TEXT.MUTED as any}
                                 >
                                     {opt.label}
                                 </Font>
                             </Box>
-                        )
+                        );
                     })}
                 </Box>
             </GlassPanel>
         </Box>
-    )
+    );
 }

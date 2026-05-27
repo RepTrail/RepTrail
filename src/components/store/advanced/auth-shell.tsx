@@ -45,10 +45,9 @@ export function AuthShell({ children }: AuthShellProps) {
         >
             {/* Background Effects (Grid & Orbs) — Unified Base Component */}
             <BackgroundEffects variant="all" />
-
-            <Box position="relative" zIndex={10} fullWidth display="flex" align="center" justify="center">
+            <Box position="relative" zIndex={STORE_TOKENS.Z_INDEX.CONTENT} fullWidth display="flex" align="center" justify="center">
                 {children}
             </Box>
         </Box>
-    )
+    );
 }

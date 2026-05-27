@@ -53,10 +53,10 @@ export function SettingsActionCard({
         <Surface variant={resolvedSurfaceVariant} padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM} border="none">
             <Stack direction={{ base: 'col', lg: 'row' }} align={{ base: 'start', lg: 'center' }} gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
                 <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.CONTAINER} flex1>
-                    <Box bg={color} bgOpacity={20} padding={STORE_TOKENS.PADDING.ELEMENT} rounded="full">
+                    <Box bg={color} bgOpacity={STORE_TOKENS.OPACITY.MEDIUM} padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.FULL}>
                         <Icon icon={icon} color={safeColor} size="md" />
                     </Box>
-                    <Stack flex1 gap="none">
+                    <Stack flex1 gap={STORE_TOKENS.SPACING.NONE}>
                         <Font
                             variant="body"
                             weight="black"
@@ -68,7 +68,7 @@ export function SettingsActionCard({
                         <Font
                             variant="sub-tiny"
                             weight="bold"
-                            opacity={70}
+                            opacity={STORE_TOKENS.OPACITY.OVERLAY}
                             {...{
                                 color: safeColor,
                             }}>{subtitle}</Font>
@@ -82,7 +82,7 @@ export function SettingsActionCard({
                     onClick={onAction}
                     disabled={disabled}
                     loading={isLoading}
-                    gap="element"
+                    gap={STORE_TOKENS.SPACING.ELEMENT}
                 >
                     {ActionIcon && (
                         <ActionIcon

@@ -57,7 +57,7 @@ export default async function StudentPlansPage() {
             showTabs={false}
         >
             <Box fullWidth padding={STORE_TOKENS.PADDING.CONTAINER}>
-                <Stack gap="section" fullWidth>
+                <Stack gap={STORE_TOKENS.SPACING.SECTION} fullWidth>
                     {/* Grid containing the two main options */}
                     <Grid cols={1} mdCols={2} gap={STORE_TOKENS.SPACING.CONTAINER}>
 
@@ -70,12 +70,12 @@ export default async function StudentPlansPage() {
                         >
                             <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                                 <Stack direction="row" align="center" justify="between">
-                                    <Surface variant="glass" padding={STORE_TOKENS.PADDING.ELEMENT} rounded="system" border="standard">
-                                        <Icon icon={Zap} color={isActive ? "emerald" : "zinc-400"} size="lg" />
+                                    <Surface variant="glass" padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM} border="standard">
+                                        <Icon icon={Zap} color={isActive ? STORE_TOKENS.COLORS.SUCCESS : STORE_TOKENS.COLORS.TEXT.SECONDARY} size="lg" />
                                     </Surface>
                                     <Box>
                                         {isActive ? (
-                                            <Font variant="sub-tiny" color="emerald" weight="black" uppercase tracking="widest">
+                                            <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.SUCCESS} weight="black" uppercase tracking="widest">
                                                 Plano Ativo
                                             </Font>
                                         ) : (
@@ -91,7 +91,7 @@ export default async function StudentPlansPage() {
                                         Auto Treino
                                     </Font>
                                     <Stack direction="row" align="baseline" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                        <Font variant="heading" weight="black" color="white">
+                                        <Font variant="heading" weight="black" color={STORE_TOKENS.COLORS.WHITE}>
                                             R$ 10,90
                                         </Font>
                                         <Font variant="auxiliary" color={STORE_TOKENS.COLORS.TEXT.MUTED} uppercase tracking="widest">
@@ -115,8 +115,8 @@ export default async function StudentPlansPage() {
                                             'Personalização de Rotinas Solitárias'
                                         ].map((item, i) => (
                                             <Stack key={i} direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                                <Surface variant="tonal-zinc" padding="tiny" rounded="full">
-                                                    <Icon icon={Check} color="emerald" size="xs" />
+                                                <Surface variant="tonal-zinc" padding={STORE_TOKENS.PADDING.NONE} rounded={STORE_TOKENS.RADIUS.FULL}>
+                                                    <Icon icon={Check} color={STORE_TOKENS.COLORS.SUCCESS} size="xs" />
                                                 </Surface>
                                                 <Font variant="body" color={STORE_TOKENS.COLORS.TEXT.MUTED}>
                                                     {item}
@@ -129,8 +129,8 @@ export default async function StudentPlansPage() {
                                 <Box>
                                     {isActive ? (
                                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                                            <Surface variant="glass" padding={STORE_TOKENS.PADDING.ELEMENT} rounded="system" fullWidth textAlign="center">
-                                                <Font variant="sub-tiny" color="emerald" weight="black" uppercase tracking="widest">
+                                            <Surface variant="glass" padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM} fullWidth textAlign="center">
+                                                <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.SUCCESS} weight="black" uppercase tracking="widest">
                                                     Gestão de Cobrança
                                                 </Font>
                                                 <Font variant="auxiliary" color={STORE_TOKENS.COLORS.TEXT.MUTED} uppercase tracking="widest">
@@ -155,10 +155,10 @@ export default async function StudentPlansPage() {
                         >
                             <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                                 <Stack direction="row" align="center" justify="between">
-                                    <Surface variant="glass" padding={STORE_TOKENS.PADDING.ELEMENT} rounded="system" border="standard">
-                                        <Icon icon={Search} color="orange" size="lg" />
+                                    <Surface variant="glass" padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM} border="standard">
+                                        <Icon icon={Search} color={STORE_TOKENS.COLORS.BRAND} size="lg" />
                                     </Surface>
-                                    <Font variant="sub-tiny" color="orange" weight="black" uppercase tracking="widest">
+                                    <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.BRAND} weight="black" uppercase tracking="widest">
                                         Consultoria Especializada
                                     </Font>
                                 </Stack>
@@ -168,7 +168,7 @@ export default async function StudentPlansPage() {
                                         Com Personal
                                     </Font>
                                     <Stack direction="row" align="baseline" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                        <Font variant="heading" weight="black" color="white">
+                                        <Font variant="heading" weight="black" color={STORE_TOKENS.COLORS.WHITE}>
                                             Gratuito
                                         </Font>
                                         <Font variant="auxiliary" color={STORE_TOKENS.COLORS.TEXT.MUTED} uppercase tracking="widest">
@@ -192,8 +192,8 @@ export default async function StudentPlansPage() {
                                             'Gestão Profissional do seu Personal'
                                         ].map((item, i) => (
                                             <Stack key={i} direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                                <Surface variant="tonal-zinc" padding="tiny" rounded="full">
-                                                    <Icon icon={Trophy} color="orange" size="xs" />
+                                                <Surface variant="tonal-zinc" padding={STORE_TOKENS.PADDING.NONE} rounded={STORE_TOKENS.RADIUS.FULL}>
+                                                    <Icon icon={Trophy} color={STORE_TOKENS.COLORS.BRAND} size="xs" />
                                                 </Surface>
                                                 <Font variant="body" color={STORE_TOKENS.COLORS.TEXT.MUTED}>
                                                     {item}
@@ -217,13 +217,13 @@ export default async function StudentPlansPage() {
                     <Grid cols={1} mdCols={3} gap={STORE_TOKENS.SPACING.CONTAINER}>
 
                         {/* Trust Item 1 */}
-                        <Surface variant="glass" padding={STORE_TOKENS.PADDING.ELEMENT} rounded="system" border="standard">
+                        <Surface variant="glass" padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM} border="standard">
                             <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                <Surface variant="tonal-zinc" padding={STORE_TOKENS.PADDING.ELEMENT} rounded="system">
-                                    <Icon icon={ShieldCheck} color="emerald" />
+                                <Surface variant="tonal-zinc" padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM}>
+                                    <Icon icon={ShieldCheck} color={STORE_TOKENS.COLORS.SUCCESS} />
                                 </Surface>
-                                <Stack gap={0}>
-                                    <Font variant="sub-tiny" weight="black" color="white" uppercase tracking="widest">
+                                <Stack gap={STORE_TOKENS.SPACING.NONE}>
+                                    <Font variant="sub-tiny" weight="black" color={STORE_TOKENS.COLORS.WHITE} uppercase tracking="widest">
                                         Pagamento Seguro
                                     </Font>
                                     <Font variant="auxiliary" color={STORE_TOKENS.COLORS.TEXT.MUTED} uppercase tracking="widest">
@@ -234,13 +234,13 @@ export default async function StudentPlansPage() {
                         </Surface>
 
                         {/* Trust Item 2 */}
-                        <Surface variant="glass" padding={STORE_TOKENS.PADDING.ELEMENT} rounded="system" border="standard">
+                        <Surface variant="glass" padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM} border="standard">
                             <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                <Surface variant="tonal-zinc" padding={STORE_TOKENS.PADDING.ELEMENT} rounded="system">
-                                    <Icon icon={CreditCard} color="orange" />
+                                <Surface variant="tonal-zinc" padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM}>
+                                    <Icon icon={CreditCard} color={STORE_TOKENS.COLORS.BRAND} />
                                 </Surface>
-                                <Stack gap={0}>
-                                    <Font variant="sub-tiny" weight="black" color="white" uppercase tracking="widest">
+                                <Stack gap={STORE_TOKENS.SPACING.NONE}>
+                                    <Font variant="sub-tiny" weight="black" color={STORE_TOKENS.COLORS.WHITE} uppercase tracking="widest">
                                         Sem Fidelidade
                                     </Font>
                                     <Font variant="auxiliary" color={STORE_TOKENS.COLORS.TEXT.MUTED} uppercase tracking="widest">
@@ -251,13 +251,13 @@ export default async function StudentPlansPage() {
                         </Surface>
 
                         {/* Trust Item 3 */}
-                        <Surface variant="glass" padding={STORE_TOKENS.PADDING.ELEMENT} rounded="system" border="standard">
+                        <Surface variant="glass" padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM} border="standard">
                             <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                <Surface variant="tonal-zinc" padding={STORE_TOKENS.PADDING.ELEMENT} rounded="system">
-                                    <Icon icon={Target} color="amber" />
+                                <Surface variant="tonal-zinc" padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM}>
+                                    <Icon icon={Target} color={STORE_TOKENS.COLORS.WARNING} />
                                 </Surface>
-                                <Stack gap={0}>
-                                    <Font variant="sub-tiny" weight="black" color="white" uppercase tracking="widest">
+                                <Stack gap={STORE_TOKENS.SPACING.NONE}>
+                                    <Font variant="sub-tiny" weight="black" color={STORE_TOKENS.COLORS.WHITE} uppercase tracking="widest">
                                         Zero Taxas extras
                                     </Font>
                                     <Font variant="auxiliary" color={STORE_TOKENS.COLORS.TEXT.MUTED} uppercase tracking="widest">
@@ -271,5 +271,5 @@ export default async function StudentPlansPage() {
                 </Stack>
             </Box>
         </RegistryMain>
-    )
+    );
 }

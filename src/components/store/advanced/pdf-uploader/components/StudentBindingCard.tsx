@@ -107,13 +107,13 @@ export function StudentBindingCard({ bindingHooks, students }: StudentBindingCar
         <Stack gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
             {detectedStudentName && (
                 <Box 
-                    padding="tiny" 
-                    bg="zinc" 
-                    bgOpacity={5} 
+                    padding={STORE_TOKENS.PADDING.NONE} 
+                    bg={STORE_TOKENS.COLORS.BACKGROUND} 
+                    bgOpacity={STORE_TOKENS.OPACITY.LOW} 
                     border 
-                    borderColor="zinc" 
-                    borderOpacity={10} 
-                    rounded="system"
+                    borderColor={STORE_TOKENS.COLORS.BACKGROUND} 
+                    borderOpacity={STORE_TOKENS.OPACITY.SUBTLE} 
+                    rounded={STORE_TOKENS.RADIUS.SYSTEM}
                     width="fit-content"
                 >
                     <Font

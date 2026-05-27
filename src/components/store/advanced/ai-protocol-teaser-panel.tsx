@@ -43,12 +43,12 @@ export function AIProtocolTeaserPanel({ userId = 'me' }: { userId?: string }) {
                         rounded={STORE_TOKENS.RADIUS.FULL}
                         animation="pulse"
                     >
-                        <Icon icon={Sparkles} size="3xl" color="orange" />
+                        <Icon icon={Sparkles} size="3xl" color={STORE_TOKENS.COLORS.BRAND} />
                     </Surface>
                 </Box>
 
                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                    <Badge label="RECURSO ATIVO" color="primary" variant="glass" size="xs" />
+                    <Badge label="RECURSO ATIVO" color={STORE_TOKENS.COLORS.BRAND} variant="glass" size="xs" />
                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                         <Font
                             variant="h2"
@@ -88,7 +88,7 @@ export function AIProtocolTeaserPanel({ userId = 'me' }: { userId?: string }) {
                     <FeatureBadge icon={Sparkles} label="IA" />
                 </Grid>
 
-                <Stack gap="container" fullWidth align="center">
+                <Stack gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth align="center">
                     <Button 
                         variant="primary" 
                         size="lg" 
@@ -122,7 +122,7 @@ function FeatureBadge({ icon, label }: { icon: any, label: string }) {
     return (
         <Surface padding={STORE_TOKENS.PADDING.ELEMENT} variant="tonal-zinc" rounded={STORE_TOKENS.RADIUS.SYSTEM}>
             <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                <Icon icon={icon} size="xs" color="zinc-500" />
+                <Icon icon={icon} size="xs" color={STORE_TOKENS.COLORS.TEXT.MUTED} />
                 <Font
                     variant="sub-tiny"
                     weight="black"

@@ -60,7 +60,7 @@ export function CommissionItem({
                     />
                 </Box>
 
-                <Stack gap="none" flex1 overflow="hidden">
+                <Stack gap={STORE_TOKENS.SPACING.NONE} flex1 overflow="hidden">
                     <Font
                         {...STORE_TOKENS.TYPOGRAPHY.HEADING}
                         variant="body-sm"

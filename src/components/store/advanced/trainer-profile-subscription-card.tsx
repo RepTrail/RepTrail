@@ -23,7 +23,7 @@ export function TrainerProfileSubscriptionCard({ hasActiveSubscription = false }
         <Surface variant="glass" padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM} border="none">
             <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                 <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <Icon icon={CreditCard} size="sm" color="primary" />
+                    <Icon icon={CreditCard} size="sm" color={STORE_TOKENS.COLORS.BRAND} />
                     <Font
                         variant="auxiliary"
                         weight="black"
@@ -61,7 +61,7 @@ export function TrainerProfileSubscriptionCard({ hasActiveSubscription = false }
                             </Font>
                         </Stack>
                         {hasActiveSubscription && (
-                            <Badge label="Válido" variant="outline" color="emerald" size="xs" />
+                            <Badge label="Válido" variant="outline" color={STORE_TOKENS.COLORS.SUCCESS} size="xs" />
                         )}
                     </Stack>
 
@@ -70,9 +70,9 @@ export function TrainerProfileSubscriptionCard({ hasActiveSubscription = false }
                             <Box
                                 width={6}
                                 height={6}
-                                rounded="full"
-                                bg={hasActiveSubscription ? 'primary' : 'zinc'}
-                                bgOpacity={hasActiveSubscription ? 100 : 40}
+                                rounded={STORE_TOKENS.RADIUS.FULL}
+                                bg={hasActiveSubscription ? STORE_TOKENS.COLORS.BRAND : STORE_TOKENS.COLORS.BACKGROUND}
+                                bgOpacity={hasActiveSubscription ? STORE_TOKENS.OPACITY.FULL : STORE_TOKENS.OPACITY.SIDEBAR}
                             />
                             <Font
                                 variant="auxiliary"
@@ -85,7 +85,7 @@ export function TrainerProfileSubscriptionCard({ hasActiveSubscription = false }
                             </Font>
                         </Inline>
                         <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                            <Box width={6} height={6} rounded="full" bg="zinc" bgOpacity={40} />
+                            <Box width={6} height={6} rounded={STORE_TOKENS.RADIUS.FULL} bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.SIDEBAR} />
                             <Font
                                 variant="auxiliary"
                                 weight="bold"

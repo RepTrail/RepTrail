@@ -32,7 +32,7 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
     });
 
     return (
-        <Stack id="tour-import-card" fullWidth gap="section">
+        <Stack id="tour-import-card" fullWidth gap={STORE_TOKENS.SPACING.SECTION}>
             {!parsedData ? (
                 <PdfDropzone 
                     uploading={uploading} 
@@ -40,7 +40,7 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
                     onFileChange={handleFileChange} 
                 />
             ) : (
-                <Stack gap="section" fullWidth>
+                <Stack gap={STORE_TOKENS.SPACING.SECTION} fullWidth>
                     
                     {role === 'trainer' && (
                         <RegistrySection 
@@ -72,7 +72,6 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
                     />
                 </Stack>
             )}
-
         </Stack>
     );
 }

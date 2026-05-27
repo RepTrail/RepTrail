@@ -43,7 +43,6 @@ export function Banner({
                     style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.6 }} 
                 />
             </Box>
-            
             {/* Standard Liquid Glass Gradients */}
             {overlay === 'gradient' && (
                 <>
@@ -65,11 +64,10 @@ export function Banner({
                     />
                 </>
             )}
-
             {/* Content Area */}
             <Box 
                 position="relative" 
-                padding={{ base: 'container', md: 'empty_state' }} 
+                padding={{ base: STORE_TOKENS.PADDING.CONTAINER, md: STORE_TOKENS.PADDING.EMPTY_STATE }} 
                 display="flex" 
                 direction="col" 
                 justify="center" 
@@ -82,5 +80,5 @@ export function Banner({
                 {children}
             </Box>
         </Box>
-    )
+    );
 }

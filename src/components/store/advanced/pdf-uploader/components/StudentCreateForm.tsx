@@ -38,11 +38,11 @@ export function StudentCreateForm({
                         placeholder="email@aluno.com"
                         type="email"
                         required
-                        icon={<Icon icon={Mail} size="xs" color="zinc-500" />}
+                        icon={<Icon icon={Mail} size="xs" color={STORE_TOKENS.COLORS.TEXT.MUTED} />}
                         value={placeholderEmail}
                         onChange={(e) => setPlaceholderEmail(e.target.value)}
                     />
-                    <Box paddingX={2.5}>
+                    <Box paddingX={STORE_TOKENS.PADDING.ELEMENT}>
                         <Font
                             variant="sub-tiny"
                             weight="bold"
@@ -60,12 +60,12 @@ export function StudentCreateForm({
                     label="WhatsApp do Aluno"
                     placeholder="(00) 00000-0000"
                     type="tel"
-                    icon={<Icon icon={Phone} size="xs" color="zinc-500" />}
+                    icon={<Icon icon={Phone} size="xs" color={STORE_TOKENS.COLORS.TEXT.MUTED} />}
                     value={placeholderWhatsapp}
                     onChange={(e) => setPlaceholderWhatsapp(e.target.value)}
                 />
 
-                <Box paddingX={2.5}>
+                <Box paddingX={STORE_TOKENS.PADDING.ELEMENT}>
                     <Font
                         variant="sub-tiny"
                         weight="black"

@@ -134,7 +134,7 @@ export function AIProtocolForm({ userId, onSuccess }: AIProtocolFormProps) {
                             ]}
                         />
 
-                        <Box height="px" bg="white" bgOpacity={5} fullWidth />
+                        <Box height="px" bg={STORE_TOKENS.COLORS.WHITE} bgOpacity={STORE_TOKENS.OPACITY.LOW} fullWidth />
 
                         <Grid cols={{ base: 2, md: 2 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
                             <FormSelect
@@ -166,7 +166,7 @@ export function AIProtocolForm({ userId, onSuccess }: AIProtocolFormProps) {
                             )}
                         </Grid>
 
-                        <Box height="px" bg="white" bgOpacity={5} fullWidth />
+                        <Box height="px" bg={STORE_TOKENS.COLORS.WHITE} bgOpacity={STORE_TOKENS.OPACITY.LOW} fullWidth />
 
                         <Grid cols={{ base: 2, md: 2 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
                             <Textarea label="Pontos Fortes" placeholder="Peitoral, Braços..." value={strongMuscles} onChange={(e) => setStrongMuscles(e.target.value)} />
@@ -192,7 +192,7 @@ export function AIProtocolForm({ userId, onSuccess }: AIProtocolFormProps) {
                             {...{
                                 color: "zinc-500",
                             }}>Modalidades Aceitas</Font>
-                        <Grid cols={{ base: 2, md: 4 }} gap="element">
+                        <Grid cols={{ base: 2, md: 4 }} gap={STORE_TOKENS.SPACING.ELEMENT}>
                             {['Esteira', 'Bike', 'Escada', 'Corrida', 'HIIT', 'Natação', 'Caminhada', 'Corda'].map(c => (
                                 <FormCheckbox
                                     key={c}
@@ -228,11 +228,11 @@ export function AIProtocolForm({ userId, onSuccess }: AIProtocolFormProps) {
                 </DomainStepCard>
             )}
             {/* ACTION AREA */}
-            <Stack gap="container">
+            <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                 {error && (
                     <Surface variant="tonal-red" padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM}>
-                        <Stack direction="row" align="center" gap="element">
-                            <Icon icon={AlertCircle} size="xs" color="red" />
+                        <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                            <Icon icon={AlertCircle} size="xs" color={STORE_TOKENS.COLORS.ERROR} />
                             <Font
                                 variant="auxiliary"
                                 {...{
@@ -244,7 +244,7 @@ export function AIProtocolForm({ userId, onSuccess }: AIProtocolFormProps) {
 
                 {currentStep === 1 ? (
                     <Button variant="primary" size="lg" fullWidth onClick={handleNext}>
-                        <Stack direction="row" align="center" justify="center" gap="element">
+                        <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                             <Font variant="sub-tiny" weight="black" uppercase italic>Próxima Etapa</Font>
                             <Icon icon={ArrowRight} size="xs" />
                         </Stack>
@@ -252,7 +252,7 @@ export function AIProtocolForm({ userId, onSuccess }: AIProtocolFormProps) {
                 ) : (
                     <Grid cols={{ base: 1, md: 2 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
                         <Button variant="outline-zinc" size="lg" fullWidth onClick={handlePrev} disabled={loading}>
-                            <Stack direction="row" align="center" justify="center" gap="element">
+                            <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                 <Icon icon={ArrowLeft} size="xs" />
                                 <Font variant="sub-tiny" weight="black" uppercase italic>Anterior</Font>
                             </Stack>
@@ -260,7 +260,7 @@ export function AIProtocolForm({ userId, onSuccess }: AIProtocolFormProps) {
 
                         {currentStep < 3 ? (
                             <Button variant="primary" size="lg" fullWidth onClick={handleNext}>
-                                <Stack direction="row" align="center" justify="center" gap="element">
+                                <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                     <Font variant="sub-tiny" weight="black" uppercase italic>Próxima Etapa</Font>
                                     <Icon icon={ArrowRight} size="xs" />
                                 </Stack>
@@ -268,12 +268,12 @@ export function AIProtocolForm({ userId, onSuccess }: AIProtocolFormProps) {
                         ) : (
                             <Button variant="primary" size="lg" fullWidth onClick={handleGenerate} disabled={loading}>
                                 {loading ? (
-                                    <Stack direction="row" align="center" justify="center" gap="element">
+                                    <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                         <Icon icon={Loader2} size="sm" animate="spin" />
                                         <Font variant="sub-tiny" weight="black" uppercase>Processando...</Font>
                                     </Stack>
                                 ) : (
-                                    <Stack direction="row" align="center" justify="center" gap="element">
+                                    <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                         <Icon icon={Sparkles} size="xs" />
                                         <Font variant="sub-tiny" weight="black" uppercase italic>Gerar Protocolo</Font>
                                     </Stack>

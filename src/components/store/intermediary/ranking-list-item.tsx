@@ -44,7 +44,7 @@ export function RankingListItem({ trainer, rank }: RankingListItemProps) {
                         label={`${trainer.studentCount} Alunos`}
                         icon={Users}
                         variant="glass"
-                        color="orange"
+                        color={STORE_TOKENS.COLORS.BRAND}
                         size="xs"
                     />
                 </Inline>
@@ -54,7 +54,7 @@ export function RankingListItem({ trainer, rank }: RankingListItemProps) {
                     <Link href={`/personal/${trainer.trainer_code}`}>
                         <Button
                             variant="outline-zinc"
-                            rounded="full"
+                            rounded={STORE_TOKENS.RADIUS.FULL}
                             isIconOnly
                             size="sm"
                             transition
@@ -65,7 +65,7 @@ export function RankingListItem({ trainer, rank }: RankingListItemProps) {
                 ) : (
                     <Button
                         variant="outline-zinc"
-                        rounded="full"
+                        rounded={STORE_TOKENS.RADIUS.FULL}
                         isIconOnly
                         size="sm"
                         transition
@@ -97,7 +97,7 @@ export function RankingListItem({ trainer, rank }: RankingListItemProps) {
                     size="md" 
                 />
 
-                <Stack gap="none" minWidth={0}>
+                <Stack gap={STORE_TOKENS.SPACING.NONE} minWidth={0}>
                     <Font
                         {...STORE_TOKENS.TYPOGRAPHY.HEADING}
                         variant={{ base: 'body-sm', md: 'body' }}

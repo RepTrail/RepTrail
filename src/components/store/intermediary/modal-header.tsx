@@ -36,7 +36,7 @@ export function ModalHeader({ title, subtitle, icon, variant, isLoading, onClose
             <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center" justify="between" fullWidth>
                 <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center" flex1>
                     {icon && <IconBox icon={icon} variant={variant as any} />}
-                    <Stack gap="none" flex1>
+                    <Stack gap={STORE_TOKENS.SPACING.NONE} flex1>
                         <Font
                             variant="body"
                             weight="black"

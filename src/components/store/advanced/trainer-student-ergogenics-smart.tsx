@@ -160,14 +160,14 @@ export function TrainerStudentErgogenicsSmart({ effectiveStudentId }: TrainerStu
     if (isLoading) {
         return (
             <Stack gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
-                <Box height={8} width={48} bg="zinc" bgOpacity={10} rounded={STORE_TOKENS.RADIUS.SYSTEM} />
+                <Box height={8} width={48} bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} rounded={STORE_TOKENS.RADIUS.SYSTEM} />
                 <Grid cols={{ base: 1, md: 2, lg: 3 }} gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
                     {[1, 2, 3].map((i) => (
-                        <Box key={i} height={280} bg="zinc" bgOpacity={10} rounded={STORE_TOKENS.RADIUS.SYSTEM} fullWidth />
+                        <Box key={i} height={280} bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} rounded={STORE_TOKENS.RADIUS.SYSTEM} fullWidth />
                     ))}
                 </Grid>
             </Stack>
-        )
+        );
     }
 
     return (
@@ -184,7 +184,7 @@ export function TrainerStudentErgogenicsSmart({ effectiveStudentId }: TrainerStu
                         fullWidth={{ base: true, lg: false }}
                     >
                         <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                            <Icon icon={Plus} size="xs" color="emerald" />
+                            <Icon icon={Plus} size="xs" color={STORE_TOKENS.COLORS.SUCCESS} />
                             Adicionar Substância
                         </Stack>
                     </Button>
@@ -200,7 +200,6 @@ export function TrainerStudentErgogenicsSmart({ effectiveStudentId }: TrainerStu
                     onSchedule={(item) => openAction('assign_ergogenic', item)}
                 />
             </RegistrySection>
-
             <RegistryActionModal
                 isOpen={actionModal.isOpen}
                 onClose={closeAction}
@@ -210,5 +209,5 @@ export function TrainerStudentErgogenicsSmart({ effectiveStudentId }: TrainerStu
                 isLoading={false}
             />
         </>
-    )
+    );
 }

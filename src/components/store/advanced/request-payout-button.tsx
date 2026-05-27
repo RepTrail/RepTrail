@@ -24,13 +24,12 @@ export function RequestPayoutButton({ availableBalance }: { availableBalance: nu
                 disabled={availableBalance < 50}
                 rounded={STORE_TOKENS.RADIUS.SYSTEM}
                 height="anatomy-item"
-                gap="element"
+                gap={STORE_TOKENS.SPACING.ELEMENT}
                 fullWidth
             >
                 <Icon icon={Banknote} size="xs" />
                 <Font variant="label-caps">Sacar Comissões</Font>
             </Button>
-
             {isOpen && (
                 <RequestPayoutModal
                     isOpen={isOpen}
@@ -39,5 +38,5 @@ export function RequestPayoutButton({ availableBalance }: { availableBalance: nu
                 />
             )}
         </>
-    )
+    );
 }

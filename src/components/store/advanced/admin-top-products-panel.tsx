@@ -53,8 +53,8 @@ export function AdminTopProductsPanel() {
                     gap={STORE_TOKENS.SPACING.CONTAINER}
                     transition
                     group
-                    hoverBg="white"
-                    hoverBgOpacity={5}
+                    hoverBg={STORE_TOKENS.COLORS.WHITE}
+                    hoverBgOpacity={STORE_TOKENS.OPACITY.LOW}
                 >
                     <Stack direction="row" align="center" justify="between" fullWidth>
                         <Stack direction="row" gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
@@ -62,8 +62,8 @@ export function AdminTopProductsPanel() {
                             <Box
                                 width="auto"
                                 padding={STORE_TOKENS.PADDING.ELEMENT}
-                                bg={index === 0 ? 'amber' : 'white'}
-                                bgOpacity={index === 0 ? 20 : 5}
+                                bg={!index ? STORE_TOKENS.COLORS.WARNING : STORE_TOKENS.COLORS.WHITE}
+                                bgOpacity={!index ? STORE_TOKENS.OPACITY.MEDIUM : STORE_TOKENS.OPACITY.LOW}
                                 rounded={STORE_TOKENS.RADIUS.FULL}
                                 display="flex"
                                 align="center"
@@ -73,9 +73,8 @@ export function AdminTopProductsPanel() {
                             >
                                 <Font
                                     variant="label-caps"
-                                    {...{
-                                        color: index === 0 ? STORE_TOKENS.COLORS.WARNING : STORE_TOKENS.COLORS.TEXT.SECONDARY,
-                                    }}>
+                                    color={!index ? STORE_TOKENS.COLORS.WARNING : STORE_TOKENS.COLORS.TEXT.SECONDARY}
+                                >
                                     #{index + 1}
                                 </Font>
                             </Box>
@@ -112,7 +111,7 @@ export function AdminTopProductsPanel() {
                                     <Badge
                                         label={product.category}
                                         variant="glass"
-                                        color="orange"
+                                        color={STORE_TOKENS.COLORS.BRAND}
                                         size="sm"
                                     />
                                 </Box>
@@ -151,7 +150,7 @@ export function AdminTopProductsPanel() {
                             <Badge
                                 label={product.category}
                                 variant="glass"
-                                color="orange"
+                                color={STORE_TOKENS.COLORS.BRAND}
                                 size="sm"
                             />
                         </Box>

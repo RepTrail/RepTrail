@@ -1,4 +1,5 @@
-'use client'
+'use client';
+import { STORE_TOKENS } from '@/components/store/constants/tokens';
 
 import { useState } from 'react'
 import { Button } from "@/components/store/base/button"
@@ -56,9 +57,9 @@ export function CancelSubscriptionButton() {
             <Button
                 variant="outline-zinc"
                 size="xs"
-                rounded="full"
+                rounded={STORE_TOKENS.RADIUS.FULL}
                 onClick={() => setOpen(true)}
-                gap="tiny"
+                gap={STORE_TOKENS.SPACING.NONE}
             >
                 <Icon icon={XCircle} size="xs" />
                 Encerrar Assinatura
@@ -76,10 +77,10 @@ export function CancelSubscriptionButton() {
                 onConfirm={handleAction}
                 isLoading={isPending}
             >
-                <Box padding="container" bg="zinc" bgOpacity={50} border borderColor="zinc" borderOpacity={10} rounded="system">
-                    <Stack gap="element">
-                        <Box display="flex" align="center" gap="tiny" style={{ paddingBottom: '10px' }}>
-                            <Icon icon={AlertTriangle} size="xs" color="orange" />
+                <Box padding={STORE_TOKENS.PADDING.CONTAINER} bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.MODAL} border borderColor={STORE_TOKENS.COLORS.BACKGROUND} borderOpacity={STORE_TOKENS.OPACITY.SUBTLE} rounded={STORE_TOKENS.RADIUS.SYSTEM}>
+                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                        <Box display="flex" align="center" gap={STORE_TOKENS.SPACING.NONE} style={{ paddingBottom: '10px' }}>
+                            <Icon icon={AlertTriangle} size="xs" color={STORE_TOKENS.COLORS.BRAND} />
                             <Font
                                 variant="label-caps"
                                 weight="bold"
@@ -89,9 +90,9 @@ export function CancelSubscriptionButton() {
                                 O que acontece agora?
                             </Font>
                         </Box>
-                        <Stack gap="tiny">
-                            <Box display="flex" align="start" gap="tiny">
-                                <Icon icon={ArrowRight} size="xs" color="zinc-400" opacity={50} />
+                        <Stack gap={STORE_TOKENS.SPACING.NONE}>
+                            <Box display="flex" align="start" gap={STORE_TOKENS.SPACING.NONE}>
+                                <Icon icon={ArrowRight} size="xs" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} opacity={STORE_TOKENS.OPACITY.MODAL} />
                                 <Font
                                     variant="sub-tiny"
                                     weight="bold"
@@ -101,8 +102,8 @@ export function CancelSubscriptionButton() {
                                     Nenhuma nova cobrança será realizada.
                                 </Font>
                             </Box>
-                            <Box display="flex" align="start" gap="tiny">
-                                <Icon icon={ArrowRight} size="xs" color="zinc-400" opacity={50} />
+                            <Box display="flex" align="start" gap={STORE_TOKENS.SPACING.NONE}>
+                                <Icon icon={ArrowRight} size="xs" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} opacity={STORE_TOKENS.OPACITY.MODAL} />
                                 <Font
                                     variant="sub-tiny"
                                     weight="bold"

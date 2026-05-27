@@ -143,7 +143,7 @@ export function WorkoutReviewModal({
             {isLoading ? (
                 <Box padding={STORE_TOKENS.SPACING.EMPTY_STATE} display="flex" align="center" justify="center" fullWidth>
                     <Stack align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        <Icon icon={Loader2} size="xl" color="emerald" spin />
+                        <Icon icon={Loader2} size="xl" color={STORE_TOKENS.COLORS.SUCCESS} spin />
                         <Font
                             variant="sub-tiny"
                             weight="black"
@@ -156,7 +156,7 @@ export function WorkoutReviewModal({
             ) : (
                 <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                     {/* 1. Subjective metrics */}
-                    <Box border borderColor={STORE_TOKENS.COLORS.DIVIDER.SUBTLE} padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM} bg="zinc" bgOpacity={5}>
+                    <Box border borderColor={STORE_TOKENS.COLORS.DIVIDER.SUBTLE} padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM} bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.LOW}>
                         <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                             <FormSelect 
                                 label="Percepção de Esforço (PSE)"
@@ -201,15 +201,15 @@ export function WorkoutReviewModal({
                                 border 
                                 borderColor={STORE_TOKENS.COLORS.DIVIDER.STANDARD} 
                                 rounded={STORE_TOKENS.RADIUS.SYSTEM} 
-                                bg="zinc" 
-                                bgOpacity={10}
+                                bg={STORE_TOKENS.COLORS.BACKGROUND} 
+                                bgOpacity={STORE_TOKENS.OPACITY.SUBTLE}
                                 overflow="hidden"
                             >
                                 {/* Exercise Header */}
-                                <Box bg="white" bgOpacity={5} padding={STORE_TOKENS.PADDING.ELEMENT}>
+                                <Box bg={STORE_TOKENS.COLORS.WHITE} bgOpacity={STORE_TOKENS.OPACITY.LOW} padding={STORE_TOKENS.PADDING.ELEMENT}>
                                     <Stack direction="row" align="center" justify="between" fullWidth gap={STORE_TOKENS.SPACING.ELEMENT}>
                                         <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                            <Icon icon={Zap} size="xs" color="emerald" />
+                                            <Icon icon={Zap} size="xs" color={STORE_TOKENS.COLORS.SUCCESS} />
                                             <Font
                                                 variant="tiny"
                                                 weight="black"
@@ -248,7 +248,7 @@ export function WorkoutReviewModal({
                                 </Box>
 
                                 {/* Sets List */}
-                                <Stack divide gap="none">
+                                <Stack divide gap={STORE_TOKENS.SPACING.NONE}>
                                     {exerciseLoads.map((load) => {
                                         const cfg = setTypeConfig[load.set_type] || setTypeConfig.WORKING
                                         const edit = edits[load.id] || { weight: '0', reps: '0' }
@@ -265,7 +265,7 @@ export function WorkoutReviewModal({
                                                     <Stack direction="row" align={{ base: 'end', md: 'center' }} justify="end" flex1 fullWidth gap={STORE_TOKENS.SPACING.ELEMENT}>
                                                         {/* Weight Column */}
                                                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT} flex1={ { base: true, md: false } }>
-                                                            <Box display={{ base: 'block', md: 'none' }} padding="none">
+                                                            <Box display={{ base: 'block', md: 'none' }} padding={STORE_TOKENS.PADDING.NONE}>
                                                                 <Font
                                                                     variant="sub-tiny"
                                                                     weight="black"
@@ -296,7 +296,7 @@ export function WorkoutReviewModal({
 
                                                         {/* Reps Column */}
                                                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT} flex1={ { base: true, md: false } }>
-                                                            <Box display={{ base: 'block', md: 'none' }} padding="none">
+                                                            <Box display={{ base: 'block', md: 'none' }} padding={STORE_TOKENS.PADDING.NONE}>
                                                                 <Font
                                                                     variant="sub-tiny"
                                                                     weight="black"

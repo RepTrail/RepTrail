@@ -41,8 +41,8 @@ export function AuthUpdatePasswordForm({
     }, [setPrimaryColor, syncColor])
 
     return (
-        <Surface variant="glass" padding="none" rounded={STORE_TOKENS.RADIUS.SYSTEM} width="full" maxWidth="auth-form">
-            <Stack gap="none">
+        <Surface variant="glass" padding={STORE_TOKENS.PADDING.NONE} rounded={STORE_TOKENS.RADIUS.SYSTEM} width="full" maxWidth="auth-form">
+            <Stack gap={STORE_TOKENS.SPACING.NONE}>
                 {/* Header */}
                 <Box padding={STORE_TOKENS.PADDING.CONTAINER}>
                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
@@ -113,7 +113,7 @@ export function AuthUpdatePasswordForm({
                                 fullWidth
                                 rounded={STORE_TOKENS.RADIUS.SYSTEM}
                                 height="anatomy-item"
-                                gap="element"
+                                gap={STORE_TOKENS.SPACING.ELEMENT}
                                 disabled={loading || (password !== confirmPassword && confirmPassword !== '')}
                             >
                                 <Font variant="label-caps">

@@ -99,9 +99,9 @@ export function TrainerPublicProfileMain({
     }
 
     return (
-        <Stack gap="section" fullWidth>
+        <Stack gap={STORE_TOKENS.SPACING.SECTION} fullWidth>
             {/* ── Hero Card (Upgraded to Liquid Glass) ──────────────────── */}
-            <GlassPanel padding="container">
+            <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER}>
                 {/* Decorative background icon */}
                 <BackgroundIcon icon={Dumbbell} />
 
@@ -110,21 +110,21 @@ export function TrainerPublicProfileMain({
                     direction={{ base: 'col', lg: 'row' }}
                     align={{ base: 'center', lg: 'center' }}
                     justify="between"
-                    gap="container"
+                    gap={STORE_TOKENS.SPACING.CONTAINER}
                     fullWidth
                     position="relative"
-                    zIndex={10}
+                    zIndex={STORE_TOKENS.Z_INDEX.CONTENT}
                 >
                     {/* Left: Avatar + Identity Stack */}
                     <Box
                         display="flex"
                         direction={{ base: 'col', md: 'row' }}
                         align="center"
-                        gap="container"
+                        gap={STORE_TOKENS.SPACING.CONTAINER}
                         fullWidth
                     >
                         {/* Avatar & Elite Badge */}
-                        <Stack gap="element" align="center">
+                        <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                             <BaseAvatar
                                 initials={trainer.full_name?.substring(0, 2).toUpperCase() || 'TR'}
                                 src={trainer.avatar_url || undefined}
@@ -135,14 +135,14 @@ export function TrainerPublicProfileMain({
                                 <Badge
                                     label="Elite Trainer"
                                     variant="solid"
-                                    color="amber"
+                                    color={STORE_TOKENS.COLORS.WARNING}
                                     size="xs"
                                 />
                             )}
                         </Stack>
 
                         {/* Identity Info */}
-                        <Stack gap="element" align={{ base: 'center', md: 'start' }} fullWidth>
+                        <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align={{ base: 'center', md: 'start' }} fullWidth>
                             <Font
                                 variant="h1"
                                 align={{ base: 'center', md: 'left' }}
@@ -155,10 +155,10 @@ export function TrainerPublicProfileMain({
                                 {trainer.full_name}
                             </Font>
 
-                            <Stack direction="row" gap="element" wrap="wrap" justify={{ base: 'center', md: 'start' }}>
+                            <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} wrap="wrap" justify={{ base: 'center', md: 'start' }}>
                                 {trainer.location && (
-                                    <Stack direction="row" gap="element" align="center">
-                                        <Icon icon={MapPin} size="sm" color="emerald" />
+                                    <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                                        <Icon icon={MapPin} size="sm" color={STORE_TOKENS.COLORS.SUCCESS} />
                                         <Font
                                             variant="sub-tiny"
                                             {...{
@@ -169,8 +169,8 @@ export function TrainerPublicProfileMain({
                                     </Stack>
                                 )}
                                 {trainer.cref && (
-                                    <Stack direction="row" gap="element" align="center">
-                                        <Icon icon={ShieldCheck} size="sm" color="emerald" />
+                                    <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                                        <Icon icon={ShieldCheck} size="sm" color={STORE_TOKENS.COLORS.SUCCESS} />
                                         <Font
                                             variant="sub-tiny"
                                             {...{
@@ -180,8 +180,8 @@ export function TrainerPublicProfileMain({
                                         </Font>
                                     </Stack>
                                 )}
-                                <Stack direction="row" gap="element" align="center">
-                                    <Icon icon={Star} size="sm" color="amber" />
+                                <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                                    <Icon icon={Star} size="sm" color={STORE_TOKENS.COLORS.WARNING} />
                                     <Font
                                         variant="sub-tiny"
                                         weight="black"
@@ -197,12 +197,12 @@ export function TrainerPublicProfileMain({
                                 <Badge
                                     label={trainer.specialty.toUpperCase()}
                                     variant="glass"
-                                    color="primary"
+                                    color={STORE_TOKENS.COLORS.BRAND}
                                     size="xs"
                                 />
                             )}
 
-                            <Box display="flex" direction={{ base: 'col', md: 'row' }} gap="element" fullWidth>
+                            <Box display="flex" direction={{ base: 'col', md: 'row' }} gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
                                 <Box flex1={{ base: false, md: true }} fullWidth display="flex">
                                     {trainer.whatsapp ? (
                                         <Link
@@ -210,7 +210,7 @@ export function TrainerPublicProfileMain({
                                             target="_blank"
                                         >
                                             <Button variant="outline-primary" size="sm" fullWidth>
-                                                <Stack direction="row" align="center" justify="center" gap="element">
+                                                <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                                     <Icon icon={MessageCircle} size="sm" />
                                                     Contratar
                                                 </Stack>
@@ -218,7 +218,7 @@ export function TrainerPublicProfileMain({
                                         </Link>
                                     ) : (
                                         <Button disabled variant="outline-zinc" size="sm" fullWidth>
-                                            <Stack direction="row" align="center" justify="center" gap="element">
+                                            <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                                 <Icon icon={Phone} size="sm" />
                                                 Agenda Fechada
                                             </Stack>
@@ -234,7 +234,7 @@ export function TrainerPublicProfileMain({
                                             rel="noopener noreferrer"
                                         >
                                             <Button variant="outline-zinc" size="sm" fullWidth>
-                                                <Stack direction="row" align="center" justify="center" gap="element">
+                                                <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                                     <Icon icon={Instagram} size="sm" />
                                                     Instagram
                                                 </Stack>
@@ -251,12 +251,12 @@ export function TrainerPublicProfileMain({
                         display="flex"
                         direction={{ base: 'col', md: 'row' }}
                         align="stretch"
-                        gap="container"
+                        gap={STORE_TOKENS.SPACING.CONTAINER}
                         justify={{ base: 'center', md: 'end' }}
                         width={{ base: 'full', lg: 'auto' }}
                     >
                         {/* Tab Switcher Stack */}
-                        <Stack gap="element" width={{ base: 'full', md: 'auto' }} flex1>
+                        <Stack gap={STORE_TOKENS.SPACING.ELEMENT} width={{ base: 'full', md: 'auto' }} flex1>
                             {TABS.map((tab) => {
                                 const isActive = activeTab === tab.id
                                 return (
@@ -265,15 +265,15 @@ export function TrainerPublicProfileMain({
                                         variant={isActive ? 'outline-primary' : 'outline-zinc'}
                                         size="sm"
                                         onClick={() => setActiveTab(tab.id)}
-                                        gap="element"
+                                        gap={STORE_TOKENS.SPACING.ELEMENT}
                                         fullWidth
                                         flex1={true}
                                         height="full"
                                     >
-                                        <Icon icon={tab.icon} size="sm" color={isActive ? 'primary' : 'zinc-400'} />
+                                        <Icon icon={tab.icon} size="sm" color={isActive ? STORE_TOKENS.COLORS.BRAND : STORE_TOKENS.COLORS.TEXT.SECONDARY} />
                                         {tab.label}
                                     </Button>
-                                )
+                                );
                             })}
                         </Stack>
                     </Box>
@@ -282,14 +282,14 @@ export function TrainerPublicProfileMain({
             {/* ── Tab Content ───────────────────────────────── */}
             <Box fullWidth>
                 {activeTab === 'about' && (
-                    <Stack gap="section" fullWidth>
+                    <Stack gap={STORE_TOKENS.SPACING.SECTION} fullWidth>
                         {/* Biography Section */}
                         <RegistrySection
                             title="Biografia & Metodologia"
                             icon={ShieldCheck}
                             subtitle="Conheça a trajetória profissional e a abordagem metodológica do seu coach."
                         >
-                            <GlassPanel padding="container">
+                            <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER}>
                                 <Font
                                     variant="body-sm"
                                     {...{
@@ -306,14 +306,14 @@ export function TrainerPublicProfileMain({
                             icon={Trophy}
                             subtitle="Os pilares fundamentais que estruturam o programa de acompanhamento físico."
                         >
-                            <Grid cols={{ base: 1, md: 3 }} gap="container">
+                            <Grid cols={{ base: 1, md: 3 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
                                 {/* Card 1 */}
-                                <GlassPanel padding="container">
-                                    <Stack gap="element">
-                                        <Box padding="element" rounded="system" bg="primary" bgOpacity={10} width="10" height="10" display="flex" align="center" justify="center">
-                                            <Icon icon={Users} size="md" color="primary" />
+                                <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER}>
+                                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                        <Box padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM} bg={STORE_TOKENS.COLORS.BRAND} bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} width="10" height="10" display="flex" align="center" justify="center">
+                                            <Icon icon={Users} size="md" color={STORE_TOKENS.COLORS.BRAND} />
                                         </Box>
-                                        <Stack gap="none">
+                                        <Stack gap={STORE_TOKENS.SPACING.NONE}>
                                             <Font
                                                 variant="h4"
                                                 weight="black"
@@ -332,12 +332,12 @@ export function TrainerPublicProfileMain({
                                 </GlassPanel>
 
                                 {/* Card 2 */}
-                                <GlassPanel padding="container">
-                                    <Stack gap="element">
-                                        <Box padding="element" rounded="system" bg="primary" bgOpacity={10} width="10" height="10" display="flex" align="center" justify="center">
-                                            <Icon icon={Dumbbell} size="md" color="primary" />
+                                <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER}>
+                                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                        <Box padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM} bg={STORE_TOKENS.COLORS.BRAND} bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} width="10" height="10" display="flex" align="center" justify="center">
+                                            <Icon icon={Dumbbell} size="md" color={STORE_TOKENS.COLORS.BRAND} />
                                         </Box>
-                                        <Stack gap="none">
+                                        <Stack gap={STORE_TOKENS.SPACING.NONE}>
                                             <Font
                                                 variant="h4"
                                                 weight="black"
@@ -356,12 +356,12 @@ export function TrainerPublicProfileMain({
                                 </GlassPanel>
 
                                 {/* Card 3 */}
-                                <GlassPanel padding="container">
-                                    <Stack gap="element">
-                                        <Box padding="element" rounded="system" bg="primary" bgOpacity={10} width="10" height="10" display="flex" align="center" justify="center">
-                                            <Icon icon={Activity} size="md" color="primary" />
+                                <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER}>
+                                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                        <Box padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM} bg={STORE_TOKENS.COLORS.BRAND} bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} width="10" height="10" display="flex" align="center" justify="center">
+                                            <Icon icon={Activity} size="md" color={STORE_TOKENS.COLORS.BRAND} />
                                         </Box>
-                                        <Stack gap="none">
+                                        <Stack gap={STORE_TOKENS.SPACING.NONE}>
                                             <Font
                                                 variant="h4"
                                                 weight="black"
@@ -383,18 +383,18 @@ export function TrainerPublicProfileMain({
 
                         {/* Instagram Promotion Card */}
                         {trainer.instagram && (
-                            <GlassPanel padding="container" position="relative" overflow="hidden">
+                            <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER} position="relative" overflow="hidden">
                                 <BackgroundIcon icon={Instagram} />
                                 <Box
                                     display="flex"
                                     direction={{ base: 'col', md: 'row' }}
                                     align="center"
                                     justify="between"
-                                    gap="container"
+                                    gap={STORE_TOKENS.SPACING.CONTAINER}
                                     position="relative"
-                                    zIndex={10}
+                                    zIndex={STORE_TOKENS.Z_INDEX.CONTENT}
                                 >
-                                    <Stack gap="element">
+                                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                                         <Font
                                             variant="h3"
                                             weight="black"
@@ -420,7 +420,7 @@ export function TrainerPublicProfileMain({
                                             rel="noopener noreferrer"
                                         >
                                             <Button variant="outline-primary" size="sm" fullWidth={{ base: true, md: false }}>
-                                                <Stack direction="row" align="center" justify="center" gap="element" fullWidth>
+                                                <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
                                                     Seguir
                                                     <Icon icon={ExternalLink} size="xs" />
                                                 </Stack>
@@ -434,7 +434,7 @@ export function TrainerPublicProfileMain({
                 )}
 
                 {activeTab === 'results' && (
-                    <Stack gap="section" fullWidth>
+                    <Stack gap={STORE_TOKENS.SPACING.SECTION} fullWidth>
                         {photoPairs && photoPairs.length > 0 ? (
                             photoPairs.map((pair) => (
                                 <StudentPublicPhotos
@@ -470,20 +470,20 @@ export function TrainerPublicProfileMain({
                         subtitle="Avaliações, feedback e experiências de quem treina e evolui diariamente."
                     >
                         {reviews && reviews.length > 0 ? (
-                            <Grid cols={{ base: 1, md: 2 }} gap="container">
+                            <Grid cols={{ base: 1, md: 2 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
                                 {reviews.map((review) => (
-                                    <GlassPanel key={review.id} padding="container" position="relative" overflow="hidden">
+                                    <GlassPanel key={review.id} padding={STORE_TOKENS.PADDING.CONTAINER} position="relative" overflow="hidden">
                                         <BackgroundIcon icon={Quote} />
-                                        <Stack gap="element" fullWidth position="relative" zIndex={10}>
-                                            <Box display="flex" align="center" justify="between" gap="element" fullWidth>
-                                                <Inline gap="element" align="center">
+                                        <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth position="relative" zIndex={STORE_TOKENS.Z_INDEX.CONTENT}>
+                                            <Box display="flex" align="center" justify="between" gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
+                                                <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                                                     <BaseAvatar
                                                         initials={review.student?.full_name?.substring(0, 2).toUpperCase() || 'A'}
                                                         src={review.student?.avatar_url || undefined}
                                                         size="md"
                                                         variant="zinc"
                                                     />
-                                                    <Stack gap="none">
+                                                    <Stack gap={STORE_TOKENS.SPACING.NONE}>
                                                         <Font
                                                             variant="body"
                                                             weight="black"
@@ -505,13 +505,13 @@ export function TrainerPublicProfileMain({
                                                 </Inline>
                                             </Box>
 
-                                            <Inline gap="element">
+                                            <Inline gap={STORE_TOKENS.SPACING.ELEMENT}>
                                                 {[1, 2, 3, 4, 5].map((star) => (
                                                     <Icon
                                                         key={star}
                                                         icon={Star}
                                                         size="xs"
-                                                        color={star <= review.rating ? 'amber' : 'zinc-800'}
+                                                        color={star <= review.rating ? STORE_TOKENS.COLORS.WARNING : STORE_TOKENS.COLORS.TEXT.MUTED}
                                                     />
                                                 ))}
                                             </Inline>

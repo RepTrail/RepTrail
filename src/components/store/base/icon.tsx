@@ -1,4 +1,5 @@
-'use client'
+'use client';
+import { STORE_TOKENS } from '@/components/store/constants/tokens';
 import React from 'react'
 import { LucideIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -122,7 +123,7 @@ export function IconBox({ icon, variant = 'zinc', size = 'md', rounded = 'system
       sizeClasses[size],
       className
     )}>
-      <Icon icon={icon} color={resolvedVariant === 'zinc' ? 'white' : resolvedVariant as any} size={size === 'sm' ? 'xs' : 'sm'} />
+      <Icon icon={icon} color={resolvedVariant === STORE_TOKENS.COLORS.BACKGROUND ? STORE_TOKENS.COLORS.WHITE : resolvedVariant as any} size={size === 'sm' ? 'xs' : 'sm'} />
     </div>
-  )
+  );
 }

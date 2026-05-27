@@ -37,12 +37,12 @@ export function TrainerTeamCodeCard({ trainerCode }: TrainerTeamCodeCardProps) {
     }
 
     return (
-        <GlassPanel padding="none" rounded={STORE_TOKENS.RADIUS.SYSTEM} overflow="hidden" fullWidth>
-            <Stack gap="none" fullWidth>
+        <GlassPanel padding={STORE_TOKENS.PADDING.NONE} rounded={STORE_TOKENS.RADIUS.SYSTEM} overflow="hidden" fullWidth>
+            <Stack gap={STORE_TOKENS.SPACING.NONE} fullWidth>
                 <Box padding={STORE_TOKENS.PADDING.CONTAINER} fullWidth>
                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                         <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                            <Icon icon={ShieldCheck} color="primary" size="sm" />
+                            <Icon icon={ShieldCheck} color={STORE_TOKENS.COLORS.BRAND} size="sm" />
                             <Font
                                 variant="body"
                                 weight="black"

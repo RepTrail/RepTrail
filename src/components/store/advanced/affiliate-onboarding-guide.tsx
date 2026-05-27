@@ -21,7 +21,7 @@ export function AffiliateOnboardingGuide() {
                     <GlassPanel padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM}>
                         <Icon icon={LinkIcon} color={STORE_TOKENS.COLORS.BRAND} size="sm" />
                     </GlassPanel>
-                    <Stack gap="none">
+                    <Stack gap={STORE_TOKENS.SPACING.NONE}>
                         <Font
                             variant="auxiliary"
                             {...{
@@ -38,7 +38,7 @@ export function AffiliateOnboardingGuide() {
                     <GlassPanel padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM}>
                         <Icon icon={Users} color={STORE_TOKENS.COLORS.INFO} size="sm" />
                     </GlassPanel>
-                    <Stack gap="none">
+                    <Stack gap={STORE_TOKENS.SPACING.NONE}>
                         <Font
                             variant="auxiliary"
                             {...{
@@ -55,7 +55,7 @@ export function AffiliateOnboardingGuide() {
                     <GlassPanel padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM}>
                         <Icon icon={Award} color={STORE_TOKENS.COLORS.SUCCESS} size="sm" />
                     </GlassPanel>
-                    <Stack gap="none">
+                    <Stack gap={STORE_TOKENS.SPACING.NONE}>
                         <Font
                             variant="auxiliary"
                             {...{

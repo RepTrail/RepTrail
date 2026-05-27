@@ -1,3 +1,4 @@
+import { STORE_TOKENS } from '@/components/store/constants/tokens';
 import { Suspense } from 'react'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
@@ -102,7 +103,7 @@ async function StudentLayoutLoader({ userId, children }: { userId: string; child
         <RegistryProvider defaultColor="orange">
             <HydrationBoundary state={dehydrate(queryClient)}>
                 <DashboardShell
-                    color="orange"
+                    color={STORE_TOKENS.COLORS.BRAND}
                     links={allLinks}
                     mobileLinks={mobileLinks}
                     profileHref="/dashboard/student/profile"
@@ -113,5 +114,5 @@ async function StudentLayoutLoader({ userId, children }: { userId: string; child
                 <SettingsModal isTrainer={false} hasTrainer={hasTrainer} />
             </HydrationBoundary>
         </RegistryProvider>
-    )
+    );
 }

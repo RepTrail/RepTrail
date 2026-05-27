@@ -307,7 +307,7 @@ export function UnifiedCreationDialog({
                         {error && (
                             <Box
                                 padding={STORE_TOKENS.PADDING.ELEMENT}
-                                bg="red"
+                                bg={STORE_TOKENS.COLORS.ERROR}
                                 bgOpacity={STORE_TOKENS.OPACITY.SUBTLE}
                                 border
                                 rounded={STORE_TOKENS.RADIUS.SYSTEM}

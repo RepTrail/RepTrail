@@ -1,4 +1,5 @@
-'use client'
+'use client';
+import { STORE_TOKENS } from '@/components/store/constants/tokens';
 
 import React, { useState, useTransition } from 'react'
 import { FormSelect } from '@/components/store/base/form-select'
@@ -57,8 +58,8 @@ export function WorkoutDaySelector({ assignmentId, dayOfWeek }: WorkoutDaySelect
 
     return (
         <Box width={240}>
-            <Stack direction="row" align="center" gap="element" fullWidth>
-                {isPending && <Icon icon={Loader2} size="xs" color="primary" spin />}
+            <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
+                {isPending && <Icon icon={Loader2} size="xs" color={STORE_TOKENS.COLORS.BRAND} spin />}
                 <FormSelect
                     options={options}
                     value={currentDay}
@@ -67,5 +68,5 @@ export function WorkoutDaySelector({ assignmentId, dayOfWeek }: WorkoutDaySelect
                 />
             </Stack>
         </Box>
-    )
+    );
 }

@@ -70,7 +70,7 @@ export function LandingBannerPromo({ role = 'trainer' }: LandingBannerPromoProps
     <LandingSection>
       <Box width="full" position="relative" zIndex={STORE_TOKENS.Z_INDEX.CONTENT}>
         <Surface
-          variant="tonal-emerald"
+          variant="tonal-primary"
           rounded={STORE_TOKENS.RADIUS.SYSTEM}
           padding={{ base: STORE_TOKENS.PADDING.CONTAINER as any, md: STORE_TOKENS.PADDING.EMPTY_STATE as any }}
           width="full"
@@ -90,7 +90,7 @@ export function LandingBannerPromo({ role = 'trainer' }: LandingBannerPromoProps
                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                   <Badge label={activeConfig.badgeText} icon={activeConfig.badgeIcon} color={STORE_TOKENS.COLORS.BRAND} variant="solid" />
                   <Font variant="h2" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} uppercase italic>
-                    <span>{activeConfig.title1} </span>
+                    <Font variant="h2" display="inline">{activeConfig.title1} </Font>
                     <Font variant="h2" color={STORE_TOKENS.COLORS.BRAND} uppercase italic display="inline">
                       {activeConfig.titleHighlight}
                     </Font>
@@ -119,14 +119,14 @@ export function LandingBannerPromo({ role = 'trainer' }: LandingBannerPromoProps
                     onClick={() => fbqEvent('Lead', { content_name: activeConfig.ctaEvent, content_category: 'Landing Page' })}
                     variant="primary"
                     size="lg"
-                    padding="container"
+                    padding={STORE_TOKENS.PADDING.CONTAINER}
                     activeScale={95}
                     fullWidth
                     shine
                   >
                     <Link href={activeConfig.ctaLink}>
                       <Box as="span" display="flex" direction={{ base: 'col', md: 'row' }} align="center" gap={STORE_TOKENS.SPACING.ELEMENT} cursor="pointer">
-                        <span>{activeConfig.ctaText}</span>
+                        <Font variant="body" weight="black" uppercase tracking="wider">{activeConfig.ctaText}</Font>
                         <Icon icon={ArrowRight} size="md" />
                       </Box>
                     </Link>
@@ -140,7 +140,7 @@ export function LandingBannerPromo({ role = 'trainer' }: LandingBannerPromoProps
             <Box lgColSpan={4} width="full" align="center" justify="center" zIndex={STORE_TOKENS.Z_INDEX.CONTENT} display={{ base: 'none', lg: 'flex' }}>
               <Surface
                 variant="tonal-orange"
-                rounded="full"
+                rounded={STORE_TOKENS.RADIUS.FULL}
                 padding={STORE_TOKENS.PADDING.CONTAINER}
                 width="full"
                 aspectRatio="square"
@@ -151,7 +151,7 @@ export function LandingBannerPromo({ role = 'trainer' }: LandingBannerPromoProps
                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center" justify="center" fullWidth>
                   <Font
                     variant="hero"
-                    color="orange"
+                    color={STORE_TOKENS.COLORS.BRAND}
                     weight="black"
                     align="center"
                     italic
@@ -160,7 +160,7 @@ export function LandingBannerPromo({ role = 'trainer' }: LandingBannerPromoProps
                   </Font>
                   <Font
                     variant="label-caps"
-                    color="orange"
+                    color={STORE_TOKENS.COLORS.BRAND}
                     align="center"
                     weight="black"
                     tracking="widest"
@@ -175,5 +175,5 @@ export function LandingBannerPromo({ role = 'trainer' }: LandingBannerPromoProps
         </Surface>
       </Box>
     </LandingSection>
-  )
+  );
 }

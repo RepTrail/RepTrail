@@ -78,7 +78,7 @@ export function AffiliateReferralsContent() {
                             />
                         ))
                     ) : (
-                        <Box padding="none">
+                        <Box padding={STORE_TOKENS.PADDING.NONE}>
                             <EmptyState
                                 icon={Search}
                                 title="Nenhum indicado encontrado"

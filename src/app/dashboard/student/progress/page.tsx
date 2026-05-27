@@ -39,11 +39,11 @@ export default async function StudentProgressPage() {
             <Suspense fallback={
                 <Box fullWidth>
                     <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
-                        <Box height={10} width={48} bg="zinc" bgOpacity={5} rounded="system" />
+                        <Box height={10} width={48} bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.LOW} rounded={STORE_TOKENS.RADIUS.SYSTEM} />
                         <Grid cols={1} mdCols={3} gap={STORE_TOKENS.SPACING.CONTAINER}>
-                            <Box height={32} bg="zinc" bgOpacity={5} rounded="system" />
-                            <Box height={32} bg="zinc" bgOpacity={5} rounded="system" />
-                            <Box height={32} bg="zinc" bgOpacity={5} rounded="system" />
+                            <Box height={32} bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.LOW} rounded={STORE_TOKENS.RADIUS.SYSTEM} />
+                            <Box height={32} bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.LOW} rounded={STORE_TOKENS.RADIUS.SYSTEM} />
+                            <Box height={32} bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.LOW} rounded={STORE_TOKENS.RADIUS.SYSTEM} />
                         </Grid>
                     </Stack>
                 </Box>
@@ -53,6 +53,6 @@ export default async function StudentProgressPage() {
                 </HydrationBoundary>
             </Suspense>
         </RegistryMain>
-    )
+    );
 }
 

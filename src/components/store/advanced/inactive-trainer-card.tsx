@@ -1,4 +1,5 @@
-'use client'
+'use client';
+import { STORE_TOKENS } from '@/components/store/constants/tokens';
 
 import { Activity } from 'lucide-react'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
@@ -22,13 +23,13 @@ export function InactiveTrainerCard({ trainerName }: { trainerName: string | nul
                 <Box
                     position="relative"
                     overflow="hidden"
-                    padding={{ base: 'container', md: 'empty_state' }}
-                    bg="zinc"
-                    bgOpacity={95}
+                    padding={{ base: STORE_TOKENS.PADDING.CONTAINER, md: STORE_TOKENS.PADDING.EMPTY_STATE }}
+                    bg={STORE_TOKENS.COLORS.BACKGROUND}
+                    bgOpacity={STORE_TOKENS.OPACITY.SURFACE}
                     border
-                    borderColor="zinc"
-                    borderOpacity={10}
-                    rounded="system"
+                    borderColor={STORE_TOKENS.COLORS.BACKGROUND}
+                    borderOpacity={STORE_TOKENS.OPACITY.SUBTLE}
+                    rounded={STORE_TOKENS.RADIUS.SYSTEM}
                     shadow="xl"
                     fullWidth
                 >
@@ -41,20 +42,20 @@ export function InactiveTrainerCard({ trainerName }: { trainerName: string | nul
 
                     <Stack
                         position="relative"
-                        zIndex={10}
+                        zIndex={STORE_TOKENS.Z_INDEX.CONTENT}
                         direction={{ base: 'col', md: 'row' }}
-                        gap="section"
+                        gap={STORE_TOKENS.SPACING.SECTION}
                         align="center"
                         fullWidth
                     >
                         <Stack
                             flex1
-                            gap="container"
+                            gap={STORE_TOKENS.SPACING.CONTAINER}
                             align={{ base: 'center', md: 'start' }}
                             textAlign={{ base: 'center', md: 'left' }}
                             fullWidth
                         >
-                            <Stack gap="element" fullWidth>
+                            <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
                                 <Font
                                     variant="h1"
                                     weight="black"
@@ -85,7 +86,7 @@ export function InactiveTrainerCard({ trainerName }: { trainerName: string | nul
                             </Stack>
                             <Stack
                                 direction={{ base: 'row', md: 'col' }}
-                                gap="element"
+                                gap={STORE_TOKENS.SPACING.ELEMENT}
                                 justify={{ base: 'center', md: 'start' }}
                                 fullWidth
                             >
@@ -94,7 +95,7 @@ export function InactiveTrainerCard({ trainerName }: { trainerName: string | nul
                                         variant="white"
                                         size="lg"
                                         fullWidth={{ base: true, sm: false }}
-                                        paddingY="container"
+                                        paddingY={STORE_TOKENS.PADDING.CONTAINER}
                                     >
                                         Procurar Novo Personal
                                     </Button>
@@ -104,7 +105,7 @@ export function InactiveTrainerCard({ trainerName }: { trainerName: string | nul
                                         variant="outline-primary"
                                         size="lg"
                                         fullWidth={{ base: true, sm: false }}
-                                        paddingY="container"
+                                        paddingY={STORE_TOKENS.PADDING.CONTAINER}
                                     >
                                         Ativar Auto-Training
                                     </Button>

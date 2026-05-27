@@ -26,7 +26,7 @@ export function StudentBodyCompositionPanel() {
                 <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                     <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                         <Icon icon={TrendingUp} size="sm" color={STORE_TOKENS.COLORS.WARNING} />
-                        <Stack gap="none">
+                        <Stack gap={STORE_TOKENS.SPACING.NONE}>
                             <Font variant="body" weight="black" uppercase italic tracking="widest">
                                 ESTADO ATUAL
                             </Font>
@@ -70,7 +70,7 @@ export function StudentBodyCompositionPanel() {
                 <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                     <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                         <Icon icon={Activity} size="sm" color={STORE_TOKENS.COLORS.SUCCESS} />
-                        <Stack gap="none">
+                        <Stack gap={STORE_TOKENS.SPACING.NONE}>
                             <Font variant="body" weight="black" uppercase italic tracking="widest">
                                 ÚLTIMA AVALIAÇÃO
                             </Font>

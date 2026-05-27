@@ -74,7 +74,7 @@ export function RegistryShell({ children, activeTab: externalActiveTab, setActiv
     >
       <Surface
         minHeight="screen"
-        bg="zinc"
+        bg={STORE_TOKENS.COLORS.BACKGROUND}
         bgOpacity={STORE_TOKENS.OPACITY.BACKGROUND}
         overflowX="hidden"
         display="flex"
@@ -99,7 +99,7 @@ export function RegistryShell({ children, activeTab: externalActiveTab, setActiv
           paddingLeft={{ base: "none", lg: 'sidebar-wide' }}
           transition
           position="relative"
-          zIndex={10}
+          zIndex={STORE_TOKENS.Z_INDEX.CONTENT}
         >
           {children}
         </Main>
@@ -110,5 +110,5 @@ export function RegistryShell({ children, activeTab: externalActiveTab, setActiv
         />
       </Surface>
     </RegistryProvider>
-  )
+  );
 }

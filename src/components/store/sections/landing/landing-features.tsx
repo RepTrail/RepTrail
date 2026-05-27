@@ -19,6 +19,7 @@ import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { LandingSection } from '@/components/store/advanced/landing-section'
 import { IphoneMockup } from '@/components/store/base/iphone-mockup'
 import { GlassPanel } from '@/components/store/base/surface'
+import { YouTubePlayer } from '@/components/store/base/youtube-player'
 
 interface LandingFeaturesProps {
   role?: 'trainer' | 'student' | 'affiliate'
@@ -41,7 +42,7 @@ export function LandingFeatures({ role = 'trainer' }: LandingFeaturesProps) {
       ],
       ctaText: 'Quero simplificar minha gestão agora',
       ctaLink: '/auth/signup',
-      videoSrc: '/Videos/landing-page-do-personal.mp4',
+      videoId: 'CPVt1ZB0hrM',
       mockupSide: 'right' as const,
       mockupRotation: 2
     },
@@ -58,7 +59,7 @@ export function LandingFeatures({ role = 'trainer' }: LandingFeaturesProps) {
       ],
       ctaText: 'Encontrar meu Treinador',
       ctaLink: '#marketplace',
-      videoSrc: '/Videos/tela-de-treinos-dos-alunos.mp4',
+      videoId: 'DioBAZS_2Iw',
       mockupSide: 'left' as const,
       mockupRotation: -2
     },
@@ -75,7 +76,7 @@ export function LandingFeatures({ role = 'trainer' }: LandingFeaturesProps) {
       ],
       ctaText: 'Quero me tornar afiliado agora',
       ctaLink: '/afiliados/cadastro',
-      videoSrc: '',
+      videoId: '',
       mockupSide: 'none' as const,
       mockupRotation: 0
     }
@@ -91,7 +92,7 @@ export function LandingFeatures({ role = 'trainer' }: LandingFeaturesProps) {
             <Stack align={{ base: 'start', md: 'center' }} gap={STORE_TOKENS.SPACING.CONTAINER} textAlign={{ base: 'left', md: 'center' }} width={{ base: 'full', md: 'half' }} alignSelf="center">
               <Badge label={activeConfig.badgeText} icon={ShieldCheck} color={STORE_TOKENS.COLORS.BRAND} variant="solid" />
               <Font variant="h2" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} uppercase italic align={{ base: 'left', md: 'center' }}>
-                <span>{activeConfig.title1} </span>
+                {activeConfig.title1}{' '}
                 <Font variant="h2" color={STORE_TOKENS.COLORS.BRAND} uppercase italic display="inline">
                   {activeConfig.titleHighlight}
                 </Font>
@@ -104,29 +105,24 @@ export function LandingFeatures({ role = 'trainer' }: LandingFeaturesProps) {
             {/* Grid of Steps */}
             <Grid cols={1} mdCols={4} gap={STORE_TOKENS.SPACING.CONTAINER} width="full">
               {activeConfig.features.map((item: any, idx) => (
-                <Box
+                <GlassPanel
                   key={idx}
                   position="relative"
                   padding={STORE_TOKENS.PADDING.CONTAINER}
-                  bg={STORE_TOKENS.COLORS.BACKGROUND}
-                  bgOpacity={STORE_TOKENS.OPACITY.HIGH}
-                  border
-                  borderColor={STORE_TOKENS.COLORS.BACKGROUND}
-                  borderWidth={1}
                   rounded={STORE_TOKENS.RADIUS.SYSTEM}
                   group
                   transition
                 >
                   <Stack gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
                     <Box display="flex" align="start" justify="between" width="full">
-                      <IconBox icon={item.icon} variant="zinc" size="sm" />
-                      <Font variant="label-caps" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} opacity={40}>
+                      <IconBox icon={item.icon} variant="primary" size="sm" />
+                      <Font variant="label-caps" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} opacity={STORE_TOKENS.OPACITY.SIDEBAR}>
                         {item.step}
                       </Font>
                     </Box>
 
                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                      <Font variant="h4" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} uppercase italic>
+                      <Font variant="body" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} uppercase italic weight="black">
                         {item.label}
                       </Font>
                       <Font variant="body-sm" color={STORE_TOKENS.COLORS.TEXT.MUTED}>
@@ -134,12 +130,12 @@ export function LandingFeatures({ role = 'trainer' }: LandingFeaturesProps) {
                       </Font>
                     </Stack>
                   </Stack>
-                </Box>
+                </GlassPanel>
               ))}
             </Grid>
 
             {/* Final CTA Button */}
-            <Box align="center" width="full">
+            <Box display="flex" justify="center" width="full">
               <Button
                 asChild
                 variant="primary"
@@ -149,7 +145,7 @@ export function LandingFeatures({ role = 'trainer' }: LandingFeaturesProps) {
               >
                 <Link href={activeConfig.ctaLink}>
                   <Box as="span" display="flex" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} cursor="pointer">
-                    <span>{activeConfig.ctaText}</span>
+                    <Font variant="body" weight="medium">{activeConfig.ctaText}</Font>
                     <Icon icon={ArrowRight} size="md" />
                   </Box>
                 </Link>
@@ -157,7 +153,7 @@ export function LandingFeatures({ role = 'trainer' }: LandingFeaturesProps) {
             </Box>
         </Stack>
       </LandingSection>
-    )
+    );
   }
 
   return (
@@ -168,14 +164,7 @@ export function LandingFeatures({ role = 'trainer' }: LandingFeaturesProps) {
           {activeConfig.mockupSide === 'left' && (
             <Box position="relative" group fullWidth align="center" justify="start" order={{ base: 'first', md: 'none' }}>
               <IphoneMockup className="w-full md:ml-0 md:mr-auto max-w-[300px]">
-                <video
-                  src={activeConfig.videoSrc}
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                />
+                <YouTubePlayer videoId={activeConfig.videoId} iframeClassName="w-[135%] h-[105%] max-w-none" />
               </IphoneMockup>
             </Box>
           )}
@@ -186,7 +175,7 @@ export function LandingFeatures({ role = 'trainer' }: LandingFeaturesProps) {
             <Stack align="start" gap={STORE_TOKENS.SPACING.CONTAINER}>
               <Badge label={activeConfig.badgeText} icon={ShieldCheck} color={STORE_TOKENS.COLORS.BRAND} variant="solid" />
               <Font variant="h2" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} uppercase italic>
-                <span>{activeConfig.title1} </span>
+                {activeConfig.title1}{' '}
                 <Font variant="h2" color={STORE_TOKENS.COLORS.BRAND} uppercase italic display="inline">
                   {activeConfig.titleHighlight}
                 </Font>
@@ -233,16 +222,16 @@ export function LandingFeatures({ role = 'trainer' }: LandingFeaturesProps) {
                 shine
               >
                 {activeConfig.ctaLink.startsWith('#') ? (
-                  <a href={activeConfig.ctaLink}>
+                  <Link href={activeConfig.ctaLink}>
                     <Box as="span" display="flex" direction={{ base: 'col', md: 'row' }} align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT} cursor="pointer">
-                      <span>{activeConfig.ctaText}</span>
+                      <Font variant="body" weight="medium">{activeConfig.ctaText}</Font>
                       <Icon icon={ArrowRight} size="md" />
                     </Box>
-                  </a>
+                  </Link>
                 ) : (
                   <Link href={activeConfig.ctaLink}>
                     <Box as="span" display="flex" direction={{ base: 'col', md: 'row' }} align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT} cursor="pointer">
-                      <span>{activeConfig.ctaText}</span>
+                      <Font variant="body" weight="medium">{activeConfig.ctaText}</Font>
                       <Icon icon={ArrowRight} size="md" />
                     </Box>
                   </Link>
@@ -255,14 +244,7 @@ export function LandingFeatures({ role = 'trainer' }: LandingFeaturesProps) {
           {activeConfig.mockupSide === 'right' && (
             <Box position="relative" group fullWidth align="center" justify="end" order={{ base: 'first', md: 'none' }}>
               <IphoneMockup className="w-full md:mr-0 md:ml-auto max-w-[300px]">
-                <video
-                  src={activeConfig.videoSrc}
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                />
+                <YouTubePlayer videoId={activeConfig.videoId} iframeClassName="w-[135%] h-[105%] max-w-none" />
               </IphoneMockup>
             </Box>
           )}

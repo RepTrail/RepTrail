@@ -121,7 +121,7 @@ export function WorkoutBuilderExerciseCard({
                                 padding={STORE_TOKENS.SPACING.ELEMENT} 
                                 bg={STORE_TOKENS.COLORS.SURFACE} 
                                 bgOpacity={STORE_TOKENS.OPACITY.MEDIUM} 
-                                rounded="system" 
+                                rounded={STORE_TOKENS.RADIUS.SYSTEM} 
                                 border
                             >
                                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
@@ -183,7 +183,7 @@ export function WorkoutBuilderExerciseCard({
                                 padding={STORE_TOKENS.SPACING.ELEMENT} 
                                 bg={STORE_TOKENS.COLORS.SURFACE} 
                                 bgOpacity={STORE_TOKENS.OPACITY.MEDIUM} 
-                                rounded="system" 
+                                rounded={STORE_TOKENS.RADIUS.SYSTEM} 
                                 border
                             >
                                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
@@ -245,7 +245,7 @@ export function WorkoutBuilderExerciseCard({
                                 padding={STORE_TOKENS.SPACING.ELEMENT} 
                                 bg={STORE_TOKENS.COLORS.INFO} 
                                 bgOpacity={STORE_TOKENS.OPACITY.LOW} 
-                                rounded="system" 
+                                rounded={STORE_TOKENS.RADIUS.SYSTEM} 
                                 border 
                                 borderColor={STORE_TOKENS.COLORS.INFO} 
                                 borderOpacity={STORE_TOKENS.OPACITY.MEDIUM}

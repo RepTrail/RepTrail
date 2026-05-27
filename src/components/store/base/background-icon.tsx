@@ -1,4 +1,5 @@
-'use client'
+'use client';
+import { STORE_TOKENS } from '@/components/store/constants/tokens';
 
 import React from 'react'
 import { Box } from './box'
@@ -37,14 +38,14 @@ export function BackgroundIcon({
             right={0}
             width="auto"
             height="auto"
-            opacity={10}
+            opacity={STORE_TOKENS.OPACITY.SUBTLE}
             zIndex={zIndex}
             display="flex"
             align="center"
             justify="center"
             style={{ pointerEvents: 'none' }}
         >
-            <Icon icon={icon} size="100" color="primary" />
+            <Icon icon={icon} size="100" color={STORE_TOKENS.COLORS.BRAND} />
         </Box>
-    )
+    );
 }

@@ -41,7 +41,7 @@ export function ProductCard({
 
     return (
         <GlassPanel
-            padding="none"
+            padding={STORE_TOKENS.PADDING.NONE}
             rounded={STORE_TOKENS.RADIUS.SYSTEM}
             overflow="hidden"
             group
@@ -68,7 +68,7 @@ export function ProductCard({
                     <Badge
                         label={category}
                         variant="outline"
-                        color="orange"
+                        color={STORE_TOKENS.COLORS.BRAND}
                         size="sm"
                     />
                 </Box>
@@ -117,7 +117,7 @@ export function ProductCard({
                             {description}
                         </Font>
                     )}
-                    <Box padding="element">
+                    <Box padding={STORE_TOKENS.PADDING.ELEMENT}>
                         <Font
                             {...STORE_TOKENS.TYPOGRAPHY.HEADING}
                             variant="heading"

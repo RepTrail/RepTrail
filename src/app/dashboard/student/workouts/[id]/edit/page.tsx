@@ -1,3 +1,4 @@
+import { STORE_TOKENS } from '@/components/store/constants/tokens';
 import { WorkoutBuilderSmart } from "@/components/store/advanced/workout-builder-smart"
 import { notFound, redirect } from "next/navigation"
 import { createClient } from '@/lib/supabase/server'
@@ -80,7 +81,7 @@ export default async function EditStudentWorkoutPage({
             showTabs={false}
             showHeader={false}
         >
-            <Stack fullWidth gap="element">
+            <Stack fullWidth gap={STORE_TOKENS.SPACING.ELEMENT}>
                 {assignment?.id ? (
                     <Box display="flex" justify="end">
                         <WorkoutDaySelector userId={userId} assignmentId={assignment.id} dayOfWeek={assignment.day_of_week ?? null} />
@@ -95,5 +96,5 @@ export default async function EditStudentWorkoutPage({
                 />
             </Stack>
         </RegistryMain>
-    )
+    );
 }

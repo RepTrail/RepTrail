@@ -134,9 +134,9 @@ function ExtraCardios({
                             <Surface 
                                 key={i} 
                                 variant={isSelected ? 'tonal-emerald' : 'glass'}
-                                padding="element"
+                                padding={STORE_TOKENS.PADDING.ELEMENT}
                                 onClick={() => onToggleCardio?.(i)}
-                                opacity={isSelected ? 100 : 40}
+                                opacity={isSelected ? STORE_TOKENS.OPACITY.FULL : STORE_TOKENS.OPACITY.SIDEBAR}
                                 group
                                 transition
                             >
@@ -147,19 +147,19 @@ function ExtraCardios({
                                             <Box
                                                 width={16}
                                                 height={16}
-                                                rounded="system"
+                                                rounded={STORE_TOKENS.RADIUS.SYSTEM}
                                                 border
                                                 borderWidth={1}
-                                                borderColor={isSelected ? 'emerald' : 'zinc'}
-                                                borderOpacity={isSelected ? 100 : 30}
-                                                bg={isSelected ? 'emerald' : 'transparent'}
+                                                borderColor={isSelected ? STORE_TOKENS.COLORS.SUCCESS : STORE_TOKENS.COLORS.BACKGROUND}
+                                                borderOpacity={isSelected ? STORE_TOKENS.OPACITY.FULL : STORE_TOKENS.OPACITY.HIGH}
+                                                bg={isSelected ? STORE_TOKENS.COLORS.SUCCESS : STORE_TOKENS.COLORS.TRANSPARENT}
                                                 display="flex"
                                                 align="center"
                                                 justify="center"
                                                 transition
                                                 shrink={0}
                                             >
-                                                {isSelected && <Icon icon={Check} size="xs" color="black" />}
+                                                {isSelected && <Icon icon={Check} size="xs" color={STORE_TOKENS.COLORS.BLACK} />}
                                             </Box>
                                             <Font
                                                 variant="body-sm"
@@ -172,7 +172,7 @@ function ExtraCardios({
                                             </Font>
                                         </Stack>
                                         {!isSelected && (
-                                            <Badge label="Ignorado" variant="outline" color="zinc" size="xs" />
+                                            <Badge label="Ignorado" variant="outline" color={STORE_TOKENS.COLORS.BACKGROUND} size="xs" />
                                         )}
                                     </Stack>
                                     <Stack direction="row" gap={STORE_TOKENS.SPACING.NONE}>
@@ -247,8 +247,8 @@ function ExtraErgogenics({
             subtitle="Revise e selecione as substâncias extraídas do PDF."
             icon={Pill}
         >
-            <GlassPanel padding={{ base: 'element', md: 'container' }}>
-                <Stack gap="element">
+            <GlassPanel padding={{ base: STORE_TOKENS.PADDING.ELEMENT, md: STORE_TOKENS.PADDING.CONTAINER }}>
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                     {ergogenics.map((ergo: any, i: number) => {
                         const isSelected = selectedErgoIndices.has(i)
                         const unit = ergo.unit || 'mg'
@@ -256,34 +256,34 @@ function ExtraErgogenics({
                             <Surface 
                                 key={i} 
                                 variant={isSelected ? 'tonal-amber' : 'glass'}
-                                padding="element"
+                                padding={STORE_TOKENS.PADDING.ELEMENT}
                                 onClick={() => onToggleErgo?.(i)}
-                                opacity={isSelected ? 100 : 40}
+                                opacity={isSelected ? STORE_TOKENS.OPACITY.FULL : STORE_TOKENS.OPACITY.SIDEBAR}
                                 group
                                 transition
                             >
-                                <Stack gap="element">
+                                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                                     <Stack direction="row" align="center" justify="between">
-                                        <Stack direction="row" align="center" gap="element">
+                                        <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                             {/* Custom checkbox */}
                                             <Box
                                                 width={16}
                                                 height={16}
-                                                rounded="system"
+                                                rounded={STORE_TOKENS.RADIUS.SYSTEM}
                                                 border
                                                 borderWidth={1}
-                                                borderColor={isSelected ? 'amber' : 'zinc'}
-                                                borderOpacity={isSelected ? 100 : 30}
-                                                bg={isSelected ? 'amber' : 'transparent'}
+                                                borderColor={isSelected ? STORE_TOKENS.COLORS.WARNING : STORE_TOKENS.COLORS.BACKGROUND}
+                                                borderOpacity={isSelected ? STORE_TOKENS.OPACITY.FULL : STORE_TOKENS.OPACITY.HIGH}
+                                                bg={isSelected ? STORE_TOKENS.COLORS.WARNING : STORE_TOKENS.COLORS.TRANSPARENT}
                                                 display="flex"
                                                 align="center"
                                                 justify="center"
                                                 transition
                                                 shrink={0}
                                             >
-                                                {isSelected && <Icon icon={Check} size="xs" color="black" />}
+                                                {isSelected && <Icon icon={Check} size="xs" color={STORE_TOKENS.COLORS.BLACK} />}
                                             </Box>
-                                            <Stack gap="element">
+                                            <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                                                 <Font
                                                     variant="body-sm"
                                                     weight="bold"
@@ -296,7 +296,7 @@ function ExtraErgogenics({
                                             </Stack>
                                         </Stack>
                                         {!isSelected && (
-                                            <Badge label="Ignorado" variant="outline" color="zinc" size="xs" />
+                                            <Badge label="Ignorado" variant="outline" color={STORE_TOKENS.COLORS.BACKGROUND} size="xs" />
                                         )}
                                     </Stack>
                                     {isSelected && (
@@ -369,19 +369,19 @@ export function PdfDataView({
                 {workouts.length > 0 && (
                     <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                         {workouts.map((workout: Workout, idx: number) => (
-                            <Surface key={idx} variant="glass" padding="none" zIndex={20} position="relative">
+                            <Surface key={idx} variant="glass" padding={STORE_TOKENS.PADDING.NONE} zIndex={STORE_TOKENS.Z_INDEX.OVERLAY} position="relative">
                         <Box 
-                            padding="element" 
-                            bg="white" 
-                            bgOpacity={5} 
+                            padding={STORE_TOKENS.PADDING.ELEMENT} 
+                            bg={STORE_TOKENS.COLORS.WHITE} 
+                            bgOpacity={STORE_TOKENS.OPACITY.LOW} 
                             display="flex" 
                             direction={{ base: 'col', md: 'row' }} 
                             align={{ base: 'start', md: 'center' }} 
                             justify="between" 
-                            gap="element"
+                            gap={STORE_TOKENS.SPACING.ELEMENT}
                         >
-                            <Stack direction="row" gap="element" align="center">
-                                <Icon icon={Activity} color="emerald" size="sm" />
+                            <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                                <Icon icon={Activity} color={STORE_TOKENS.COLORS.SUCCESS} size="sm" />
                                 <Font
                                     variant="body"
                                     weight="black"
@@ -392,11 +392,11 @@ export function PdfDataView({
                                     {safeString(workout.name) || `TREINO ${idx + 1}`}
                                 </Font>
                             </Stack>
-                            <Stack direction="row" gap="tiny" wrap="wrap">
+                            <Stack direction="row" gap={STORE_TOKENS.SPACING.NONE} wrap="wrap">
                                 <Badge 
                                     label={`${workout.exercises?.length || 0} EXERCÍCIOS`} 
                                     variant="glass" 
-                                    color="blue" 
+                                    color={STORE_TOKENS.COLORS.INFO} 
                                     size="xs" 
                                 />
                                 {(() => {
@@ -410,15 +410,15 @@ export function PdfDataView({
                                                 totalFeeder > 0 && `${totalFeeder} FEEDER`
                                             ].filter(Boolean).join(" • ")} 
                                             variant="glass" 
-                                            color="amber" 
+                                            color={STORE_TOKENS.COLORS.WARNING} 
                                             size="xs" 
                                         />
-                                    )
+                                    );
                                 })()}
                             </Stack>
                         </Box>
-                        <Separator opacity={5} />
-                        <Stack gap="none" divide>
+                        <Separator opacity={STORE_TOKENS.OPACITY.LOW} />
+                        <Stack gap={STORE_TOKENS.SPACING.NONE} divide>
                             {workout.exercises?.map((ex: Exercise, exIdx: number) => {
                                 const isConjugado = safeString(ex.name).toLowerCase().includes('+') ||
                                     safeString(ex.name).toLowerCase().includes('conjugado') ||
@@ -429,17 +429,17 @@ export function PdfDataView({
                                 return (
                                     <Box 
                                         key={exIdx} 
-                                        padding={{ base: 'element' }} 
-                                        hoverBg="zinc" 
-                                        hoverBgOpacity={5} 
+                                        padding={{ base: STORE_TOKENS.PADDING.ELEMENT }} 
+                                        hoverBg={STORE_TOKENS.COLORS.BACKGROUND} 
+                                        hoverBgOpacity={STORE_TOKENS.OPACITY.LOW} 
                                         transition
                                         group
                                     >
-                                        <Stack gap="container">
-                                            <Stack direction={{ base: 'col', lg: 'row' }} justify="between" gap="element">
-                                                <Stack gap="element" flex1>
-                                                    <Stack direction={{ base: 'col', md: 'row' }} justify="between" align={{ base: 'start', md: 'center' }} gap="element">
-                                                        <Stack direction="row" align="center" gap="element" wrap="wrap">
+                                        <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
+                                            <Stack direction={{ base: 'col', lg: 'row' }} justify="between" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                                <Stack gap={STORE_TOKENS.SPACING.ELEMENT} flex1>
+                                                    <Stack direction={{ base: 'col', md: 'row' }} justify="between" align={{ base: 'start', md: 'center' }} gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                                        <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} wrap="wrap">
                                                             <Font
                                                                 variant="body"
                                                                 weight="bold"
@@ -454,7 +454,7 @@ export function PdfDataView({
                                                                     label="CONJUGADO" 
                                                                     icon={Zap} 
                                                                     variant="glass" 
-                                                                    color="blue" 
+                                                                    color={STORE_TOKENS.COLORS.INFO} 
                                                                     size="xs" 
                                                                 />
                                                             )}
@@ -464,18 +464,18 @@ export function PdfDataView({
                                                          safeString(ex.notes).toLowerCase().trim() !== 'bi-set' && 
                                                          safeString(ex.notes).toLowerCase().trim() !== 'biset' && (
                                                             <Box 
-                                                                padding="tiny" 
-                                                                bg="zinc" 
-                                                                bgOpacity={5} 
+                                                                padding={STORE_TOKENS.PADDING.NONE} 
+                                                                bg={STORE_TOKENS.COLORS.BACKGROUND} 
+                                                                bgOpacity={STORE_TOKENS.OPACITY.LOW} 
                                                                 border 
-                                                                borderColor="zinc" 
-                                                                borderOpacity={10} 
-                                                                rounded="system"
+                                                                borderColor={STORE_TOKENS.COLORS.BACKGROUND} 
+                                                                borderOpacity={STORE_TOKENS.OPACITY.SUBTLE} 
+                                                                rounded={STORE_TOKENS.RADIUS.SYSTEM}
                                                                 display="flex"
                                                                 align="center"
-                                                                gap="element"
+                                                                gap={STORE_TOKENS.SPACING.ELEMENT}
                                                             >
-                                                                <Icon icon={Info} size="xs" color="zinc-500" />
+                                                                <Icon icon={Info} size="xs" color={STORE_TOKENS.COLORS.TEXT.MUTED} />
                                                                 <Font
                                                                     variant="tiny"
                                                                     italic
@@ -489,23 +489,23 @@ export function PdfDataView({
                                                     </Stack>
 
                                                     {/* Detailed Sets Breakdown */}
-                                                    <Grid cols={{ base: 1, md: 3 }} gap="element">
+                                                    <Grid cols={{ base: 1, md: 3 }} gap={STORE_TOKENS.SPACING.ELEMENT}>
                                                         {/* Warmup Sets */}
                                                         {ex.warmup_sets && (
                                                             <Box 
-                                                                bg="orange" 
-                                                                bgOpacity={5} 
+                                                                bg={STORE_TOKENS.COLORS.BRAND} 
+                                                                bgOpacity={STORE_TOKENS.OPACITY.LOW} 
                                                                 border 
-                                                                borderColor="orange" 
-                                                                borderOpacity={10} 
-                                                                padding="element" 
-                                                                rounded="system"
+                                                                borderColor={STORE_TOKENS.COLORS.BRAND} 
+                                                                borderOpacity={STORE_TOKENS.OPACITY.SUBTLE} 
+                                                                padding={STORE_TOKENS.PADDING.ELEMENT} 
+                                                                rounded={STORE_TOKENS.RADIUS.SYSTEM}
                                                                 display="flex"
                                                                 direction="col"
-                                                                gap="element"
+                                                                gap={STORE_TOKENS.SPACING.ELEMENT}
                                                             >
-                                                                <Stack direction="row" align="center" gap="element">
-                                                                    <Icon icon={Flame} size="xs" color="orange" />
+                                                                <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                                                    <Icon icon={Flame} size="xs" color={STORE_TOKENS.COLORS.BRAND} />
                                                                     <Font
                                                                         variant="tiny"
                                                                         weight="black"
@@ -517,7 +517,7 @@ export function PdfDataView({
                                                                         AQUECIMENTO
                                                                     </Font>
                                                                 </Stack>
-                                                                <Stack gap="element">
+                                                                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                                                                     <Font
                                                                         variant="body-sm"
                                                                         weight="bold"
@@ -529,20 +529,20 @@ export function PdfDataView({
                                                                             ? `${safeString(ex.warmup_sets).split('x')[0]} SÉRIES`
                                                                             : 'SÉRIES PROG.'}
                                                                     </Font>
-                                                                    <Stack direction="row" gap="element" wrap="wrap">
+                                                                    <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} wrap="wrap">
                                                                         <Badge 
                                                                             label={safeString(ex.warmup_sets).includes('x')
                                                                                 ? `${safeString(ex.warmup_sets).split('x')[1]} REPS`
                                                                                 : safeString(ex.warmup_sets)} 
                                                                             variant="glass" 
-                                                                            color="orange" 
+                                                                            color={STORE_TOKENS.COLORS.BRAND} 
                                                                             size="xs" 
                                                                         />
                                                                         {ex.rest ? (
                                                                             <Badge 
                                                                                 label={`DESCANSO: ${safeString(ex.rest)}S`} 
                                                                                 variant="glass" 
-                                                                                color="orange" 
+                                                                                color={STORE_TOKENS.COLORS.BRAND} 
                                                                                 size="xs" 
                                                                             />
                                                                         ) : null}
@@ -554,19 +554,19 @@ export function PdfDataView({
                                                         {/* Feeder Sets */}
                                                         {ex.feeder_sets && (
                                                             <Box 
-                                                                bg="blue" 
-                                                                bgOpacity={5} 
+                                                                bg={STORE_TOKENS.COLORS.INFO} 
+                                                                bgOpacity={STORE_TOKENS.OPACITY.LOW} 
                                                                 border 
-                                                                borderColor="blue" 
-                                                                borderOpacity={10} 
-                                                                padding="element" 
-                                                                rounded="system"
+                                                                borderColor={STORE_TOKENS.COLORS.INFO} 
+                                                                borderOpacity={STORE_TOKENS.OPACITY.SUBTLE} 
+                                                                padding={STORE_TOKENS.PADDING.ELEMENT} 
+                                                                rounded={STORE_TOKENS.RADIUS.SYSTEM}
                                                                 display="flex"
                                                                 direction="col"
-                                                                gap="element"
+                                                                gap={STORE_TOKENS.SPACING.ELEMENT}
                                                             >
-                                                                <Stack direction="row" align="center" gap="element">
-                                                                    <Icon icon={Timer} size="xs" color="blue" />
+                                                                <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                                                    <Icon icon={Timer} size="xs" color={STORE_TOKENS.COLORS.INFO} />
                                                                     <Font
                                                                         variant="tiny"
                                                                         weight="black"
@@ -578,7 +578,7 @@ export function PdfDataView({
                                                                         FEEDER
                                                                     </Font>
                                                                 </Stack>
-                                                                <Stack gap="element">
+                                                                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                                                                     <Font
                                                                         variant="body-sm"
                                                                         weight="bold"
@@ -590,20 +590,20 @@ export function PdfDataView({
                                                                             ? `${safeString(ex.feeder_sets).split('x')[0]} SÉRIES`
                                                                             : 'SÉRIE ÚNICA'}
                                                                     </Font>
-                                                                    <Stack direction="row" gap="element" wrap="wrap">
+                                                                    <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} wrap="wrap">
                                                                         <Badge 
                                                                             label={safeString(ex.feeder_sets).includes('x')
                                                                                 ? `${safeString(ex.feeder_sets).split('x')[1]} REPS`
                                                                                 : safeString(ex.feeder_sets)} 
                                                                             variant="glass" 
-                                                                            color="blue" 
+                                                                            color={STORE_TOKENS.COLORS.INFO} 
                                                                             size="xs" 
                                                                         />
                                                                         {ex.rest ? (
                                                                             <Badge 
                                                                                 label={`DESCANSO: ${safeString(ex.rest)}S`} 
                                                                                 variant="glass" 
-                                                                                color="blue" 
+                                                                                color={STORE_TOKENS.COLORS.INFO} 
                                                                                 size="xs" 
                                                                             />
                                                                         ) : null}
@@ -614,19 +614,19 @@ export function PdfDataView({
 
                                                         {/* Working Sets */}
                                                         <Box 
-                                                            bg="emerald" 
-                                                            bgOpacity={5} 
+                                                            bg={STORE_TOKENS.COLORS.SUCCESS} 
+                                                            bgOpacity={STORE_TOKENS.OPACITY.LOW} 
                                                             border 
-                                                            borderColor="emerald" 
-                                                            borderOpacity={20} 
-                                                            padding="element" 
-                                                            rounded="system"
+                                                            borderColor={STORE_TOKENS.COLORS.SUCCESS} 
+                                                            borderOpacity={STORE_TOKENS.OPACITY.MEDIUM} 
+                                                            padding={STORE_TOKENS.PADDING.ELEMENT} 
+                                                            rounded={STORE_TOKENS.RADIUS.SYSTEM}
                                                             display="flex"
                                                             direction="col"
-                                                            gap="element"
+                                                            gap={STORE_TOKENS.SPACING.ELEMENT}
                                                         >
-                                                            <Stack direction="row" align="center" gap="element">
-                                                                <Icon icon={Activity} size="xs" color="emerald" />
+                                                            <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                                                <Icon icon={Activity} size="xs" color={STORE_TOKENS.COLORS.SUCCESS} />
                                                                 <Font
                                                                     variant="tiny"
                                                                     weight="black"
@@ -638,7 +638,7 @@ export function PdfDataView({
                                                                     TRABALHO
                                                                 </Font>
                                                             </Stack>
-                                                            <Stack gap="element">
+                                                            <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                                                                 <Font
                                                                     variant="body-sm"
                                                                     weight="bold"
@@ -648,18 +648,18 @@ export function PdfDataView({
                                                                     }}>
                                                                     {safeString(ex.sets, 'sets')} SÉRIES
                                                                 </Font>
-                                                                <Stack direction="row" gap="element" wrap="wrap">
+                                                                <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} wrap="wrap">
                                                                     <Badge 
                                                                         label={`${safeString(ex.reps, 'reps')} REPS`} 
                                                                         variant="glass" 
-                                                                        color="emerald" 
+                                                                        color={STORE_TOKENS.COLORS.SUCCESS} 
                                                                         size="xs" 
                                                                     />
                                                                     {ex.rest ? (
                                                                         <Badge 
                                                                             label={`DESCANSO: ${safeString(ex.rest)}S`} 
                                                                             variant="glass" 
-                                                                            color="emerald" 
+                                                                            color={STORE_TOKENS.COLORS.SUCCESS} 
                                                                             size="xs" 
                                                                         />
                                                                     ) : null}
@@ -680,7 +680,7 @@ export function PdfDataView({
                 )}
                 {/* Cardios & Ergogenics */}
                 {(cardios.length > 0 || ergogenics.length > 0) && (
-                    <Grid cols={{ base: 1, lg: (cardios.length > 0 && ergogenics.length > 0) ? 2 : 1 }} gap="section">
+                    <Grid cols={{ base: 1, lg: (cardios.length > 0 && ergogenics.length > 0) ? 2 : 1 }} gap={STORE_TOKENS.SPACING.SECTION}>
                         {cardios.length > 0 && (
                             <ExtraCardios 
                                 cardios={cardios}
@@ -715,24 +715,24 @@ export function PdfDataView({
             <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                 {/* Diet Day Selection */}
                 <Box 
-                    bg="emerald" 
-                    bgOpacity={5} 
+                    bg={STORE_TOKENS.COLORS.SUCCESS} 
+                    bgOpacity={STORE_TOKENS.OPACITY.LOW} 
                     border 
-                    borderColor="emerald" 
-                    borderOpacity={10} 
-                    padding={{ base: 'element', md: 'container' }} 
-                    rounded="system" 
+                    borderColor={STORE_TOKENS.COLORS.SUCCESS} 
+                    borderOpacity={STORE_TOKENS.OPACITY.SUBTLE} 
+                    padding={{ base: STORE_TOKENS.PADDING.ELEMENT, md: STORE_TOKENS.PADDING.CONTAINER }} 
+                    rounded={STORE_TOKENS.RADIUS.SYSTEM} 
                     display="flex" 
                     direction={{ base: 'col', md: 'row' }} 
                     align={{ base: 'start', md: 'center' }} 
                     justify="between" 
-                    gap={{ base: 'element', md: 'container' }}
-                    zIndex={20}
+                    gap={{ base: STORE_TOKENS.SPACING.ELEMENT, md: STORE_TOKENS.SPACING.CONTAINER }}
+                    zIndex={STORE_TOKENS.Z_INDEX.OVERLAY}
                     position="relative"
                 >
-                    <Stack gap="element">
-                        <Stack direction="row" align="center" gap="element">
-                            <Icon icon={Utensils} color="emerald" size="xs" />
+                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                        <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                            <Icon icon={Utensils} color={STORE_TOKENS.COLORS.SUCCESS} size="xs" />
                             <Font
                                 variant="body-sm"
                                 weight="black"
@@ -773,19 +773,19 @@ export function PdfDataView({
                     const totalFat = m.foods?.reduce((acc, f) => acc + (f.fat || 0), 0) || 0
 
                     return (
-                        <Surface key={`${idx}-${mIdx}`} variant="glass" padding="none" zIndex={20} position="relative">
+                        <Surface key={`${idx}-${mIdx}`} variant="glass" padding={STORE_TOKENS.PADDING.NONE} zIndex={STORE_TOKENS.Z_INDEX.OVERLAY} position="relative">
                             <Box 
-                                padding="element" 
-                                bg="white" 
-                                bgOpacity={5} 
+                                padding={STORE_TOKENS.PADDING.ELEMENT} 
+                                bg={STORE_TOKENS.COLORS.WHITE} 
+                                bgOpacity={STORE_TOKENS.OPACITY.LOW} 
                                 display="flex" 
                                 direction={{ base: 'col', md: 'row' }} 
                                 align={{ base: 'start', md: 'center' }} 
                                 justify="between" 
-                                gap="element"
+                                gap={STORE_TOKENS.SPACING.ELEMENT}
                             >
-                                <Stack direction="row" gap="element" align="center">
-                                    <Icon icon={Utensils} color="emerald" size="sm" />
+                                <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                                    <Icon icon={Utensils} color={STORE_TOKENS.COLORS.SUCCESS} size="sm" />
                                     <Font
                                         variant="body"
                                         weight="black"
@@ -797,16 +797,16 @@ export function PdfDataView({
                                     </Font>
                                 </Stack>
                                 <Box 
-                                    bg="emerald" 
-                                    bgOpacity={5} 
+                                    bg={STORE_TOKENS.COLORS.SUCCESS} 
+                                    bgOpacity={STORE_TOKENS.OPACITY.LOW} 
                                     border 
-                                    borderColor="emerald" 
-                                    borderOpacity={10} 
-                                    padding="element" 
-                                    rounded="system"
+                                    borderColor={STORE_TOKENS.COLORS.SUCCESS} 
+                                    borderOpacity={STORE_TOKENS.OPACITY.SUBTLE} 
+                                    padding={STORE_TOKENS.PADDING.ELEMENT} 
+                                    rounded={STORE_TOKENS.RADIUS.SYSTEM}
                                     display="flex"
                                     align="center"
-                                    gap="element"
+                                    gap={STORE_TOKENS.SPACING.ELEMENT}
                                     wrap="wrap"
                                     width="auto"
                                 >
@@ -867,20 +867,20 @@ export function PdfDataView({
                                     </Font>
                                 </Box>
                             </Box>
-                            <Separator opacity={5} />
-                            <Box padding="element">
-                                <Stack gap="element">
+                            <Separator opacity={STORE_TOKENS.OPACITY.LOW} />
+                            <Box padding={STORE_TOKENS.PADDING.ELEMENT}>
+                                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                                     {m.foods?.length > 0 ? (
                                         m.foods.map((food, fIdx) => (
                                             <GlassPanel 
                                                 key={fIdx} 
-                                                padding="element"
+                                                padding={STORE_TOKENS.PADDING.ELEMENT}
                                                 hoverBorder="emerald"
                                                 group
                                                 transition
                                             >
-                                                <Box display="flex" direction={{ base: 'col', md: 'row' }} align={{ base: 'stretch', md: 'center' }} justify="between" gap="element">
-                                                    <Stack gap="element" flex1>
+                                                <Box display="flex" direction={{ base: 'col', md: 'row' }} align={{ base: 'stretch', md: 'center' }} justify="between" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT} flex1>
                                                         <Font
                                                             variant="body-sm"
                                                             weight="bold"
@@ -903,8 +903,8 @@ export function PdfDataView({
                                                             {safeString(food.quantity)}
                                                         </Font>
                                                     </Stack>
-                                                    <Stack direction="row" gap={{ base: 'element', md: 'container' }} align="center" justify="between">
-                                                        <Stack gap="element" align="center" justify="center" minWidth={35}>
+                                                    <Stack direction="row" gap={{ base: STORE_TOKENS.SPACING.ELEMENT, md: STORE_TOKENS.SPACING.CONTAINER }} align="center" justify="between">
+                                                        <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center" justify="center" minWidth={35}>
                                                             <Font
                                                                 variant="tiny"
                                                                 weight="black"
@@ -924,7 +924,7 @@ export function PdfDataView({
                                                                 PROT
                                                             </Font>
                                                         </Stack>
-                                                        <Stack gap="element" align="center" justify="center" minWidth={35}>
+                                                        <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center" justify="center" minWidth={35}>
                                                             <Font
                                                                 variant="tiny"
                                                                 weight="black"
@@ -944,7 +944,7 @@ export function PdfDataView({
                                                                 CARB
                                                             </Font>
                                                         </Stack>
-                                                        <Stack gap="element" align="center" justify="center" minWidth={35}>
+                                                        <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center" justify="center" minWidth={35}>
                                                             <Font
                                                                 variant="tiny"
                                                                 weight="black"
@@ -970,15 +970,15 @@ export function PdfDataView({
                                         ))
                                     ) : (
                                         <Box 
-                                            padding={{ base: 'element', md: 'container' }} 
+                                            padding={{ base: STORE_TOKENS.PADDING.ELEMENT, md: STORE_TOKENS.PADDING.CONTAINER }} 
                                             display="flex" 
                                             align="center" 
                                             justify="center" 
                                             border 
                                             borderWidth={1} 
-                                            borderColor="zinc" 
-                                            borderOpacity={10} 
-                                            rounded="system"
+                                            borderColor={STORE_TOKENS.COLORS.BACKGROUND} 
+                                            borderOpacity={STORE_TOKENS.OPACITY.SUBTLE} 
+                                            rounded={STORE_TOKENS.RADIUS.SYSTEM}
                                         >
                                             <Font
                                                 variant="tiny"
@@ -1001,7 +1001,7 @@ export function PdfDataView({
             </Stack>
             {/* Extras Section for Diets */}
             {(cardios.length > 0 || ergogenics.length > 0) && (
-                <Grid cols={{ base: 1, lg: (cardios.length > 0 && ergogenics.length > 0) ? 2 : 1 }} gap="section">
+                <Grid cols={{ base: 1, lg: (cardios.length > 0 && ergogenics.length > 0) ? 2 : 1 }} gap={STORE_TOKENS.SPACING.SECTION}>
                     {cardios.length > 0 && (
                         <ExtraCardios 
                             cardios={cardios}
