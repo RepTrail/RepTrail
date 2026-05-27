@@ -181,7 +181,7 @@ export function WorkoutManagementSectionContent({
                         : `/dashboard/student/workouts/${workout.id}`
 
                     return (
-                        <ManagementCardPremium 
+                        <ManagementCardPremium
                             key={workout.id || idx}
                             title={workout.name.toUpperCase()}
                             description={workout.description || (mode === 'trainer' ? 'Sem descrição disponível.' : 'Ficha oficial de treinamento.')}
@@ -191,7 +191,6 @@ export function WorkoutManagementSectionContent({
                             date={new Date(workout.created_at).toLocaleDateString('pt-BR')}
                             icon={Dumbbell}
                             mode={mode}
-                            color={STORE_TOKENS.COLORS.BRAND as any}
                             registryType="training"
                             onView={mode === 'personal' ? () => openView(workout) : undefined}
                             onSchedule={mode === 'auto' ? () => openAction('assign_training', workout) : undefined}
@@ -199,11 +198,12 @@ export function WorkoutManagementSectionContent({
                             onDelete={mode !== 'personal' ? () => openAction('confirm_delete', workout) : undefined}
                             onDuplicate={mode !== 'personal' ? () => openAction('confirm_duplicate', workout) : undefined}
                             onPlay={mode === 'auto' ? () => router.push(`/dashboard/student/workout/${workout.id}?force=true`) : undefined}
-                        />
-                    )
+                            {...{
+                                color: STORE_TOKENS.COLORS.BRAND as any,
+                            }} />
+                    );
                 })}
             </Grid>
-
             <RegistryActionModal 
                 isOpen={actionModal.isOpen}
                 onClose={closeAction}
@@ -211,7 +211,6 @@ export function WorkoutManagementSectionContent({
                 onConfirm={handleConfirm}
                 initialData={actionModal.data}
             />
-
             <WorkoutExercisesModal 
                 isOpen={viewModal.isOpen}
                 onClose={closeView}
@@ -219,5 +218,5 @@ export function WorkoutManagementSectionContent({
                 workoutName={viewModal.workoutName}
             />
         </>
-    )
+    );
 }

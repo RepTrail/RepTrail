@@ -122,7 +122,13 @@ export function WorkoutExercisesModal({
                 <Box padding={STORE_TOKENS.PADDING.CONTAINER} display="flex" align="center" justify="center" fullWidth>
                     <Stack align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                         <Icon icon={Loader2} size="md" color="emerald" spin />
-                        <Font variant="sub-tiny" weight="black" uppercase color="zinc-500">Buscando detalhes técnicos...</Font>
+                        <Font
+                            variant="sub-tiny"
+                            weight="black"
+                            uppercase
+                            {...{
+                                color: "zinc-500",
+                            }}>Buscando detalhes técnicos...</Font>
                     </Stack>
                 </Box>
             ) : (
@@ -144,18 +150,36 @@ export function WorkoutExercisesModal({
                                             justify="center"
                                             shrink={0}
                                         >
-                                            <Font variant="sub-tiny" weight="black" color="emerald">{index + 1}</Font>
+                                            <Font
+                                                variant="sub-tiny"
+                                                weight="black"
+                                                {...{
+                                                    color: "emerald",
+                                                }}>{index + 1}</Font>
                                         </Box>
 
                                         {/* Right Container: Exercise Info + Inline Badges */}
                                         <Stack flex1 gap={STORE_TOKENS.SPACING.ELEMENT}>
                                             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                                <Font variant="body-sm" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
+                                                <Font
+                                                    variant="body-sm"
+                                                    weight="black"
+                                                    uppercase
+                                                    italic
+                                                    {...{
+                                                        color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                                                    }}>
                                                     {ex.name}
                                                 </Font>
                                                 <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                                     <Icon icon={Clock} size="xs" color="zinc-500" />
-                                                    <Font variant="sub-tiny" color="zinc-500" weight="bold" uppercase>
+                                                    <Font
+                                                        variant="sub-tiny"
+                                                        weight="bold"
+                                                        uppercase
+                                                        {...{
+                                                            color: "zinc-500",
+                                                        }}>
                                                         DESCANSO: {ex.rest_time || '60S'}
                                                     </Font>
                                                 </Stack>

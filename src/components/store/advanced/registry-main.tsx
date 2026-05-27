@@ -116,16 +116,19 @@ export function RegistryMain({
   return (
     <Scaffold
       fullWidth
-      paddingX={STORE_TOKENS.PADDING.CONTAINER}
-      paddingY={{
-        base: STORE_TOKENS.PADDING.SAFE_AREA_INSET,
-        md: STORE_TOKENS.PADDING.CONTAINER,
-      }}
-      minHeight="screen"
       display="flex"
       direction="col"
       flex1
-    >
+      {...{
+        paddingX: STORE_TOKENS.PADDING.CONTAINER,
+
+        paddingY: {
+          base: STORE_TOKENS.PADDING.SAFE_AREA_INSET,
+          md: STORE_TOKENS.PADDING.CONTAINER,
+        },
+
+        minHeight: "screen",
+      }}>
       <Stack flex1 gap={{ base: STORE_TOKENS.SPACING.EMPTY_STATE, md: STORE_TOKENS.SPACING.SECTION }}>
         {/* Header Section title*/}
         {showHeader && (
@@ -133,12 +136,20 @@ export function RegistryMain({
             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
               <Inline gap={STORE_TOKENS.SPACING.ELEMENT}>
                 <Icon icon={IconComp} color={primaryColor as any} size="lg" />
-                <Font variant="auxiliary" color={primaryColor as any}>{contextLabel || 'Brand Guidelines'}</Font>
+                <Font
+                  variant="auxiliary"
+                  {...{
+                    color: primaryColor as any,
+                  }}>{contextLabel || 'Brand Guidelines'}</Font>
               </Inline>
 
               <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                 <Font variant="h1">
-                  {first} <Font variant="h1" color={primaryColor}>{rest.join(' ')}</Font>
+                  {first} <Font
+                  variant="h1"
+                  {...{
+                    color: primaryColor,
+                  }}>{rest.join(' ')}</Font>
                 </Font>
                 <Font variant="description">{subtitle}</Font>
               </Stack>
@@ -170,7 +181,11 @@ export function RegistryMain({
         <Box shrink={0}>
           <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER}>
             <Inline justify="between">
-              <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>RepTrail Design System v2.0 - 2026</Font>
+              <Font
+                variant="sub-tiny"
+                {...{
+                  color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                }}>RepTrail Design System v2.0 - 2026</Font>
             </Inline>
           </GlassPanel>
         </Box>

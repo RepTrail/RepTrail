@@ -41,11 +41,11 @@ export function StudentTrainingProtocols({ userId }: StudentTrainingProtocolsPro
         refetchOnMount: false,
     })
 
-    if (isLoading) return <RegistrySection title="TREINO DE HOJE" icon={Dumbbell}><Box className="animate-pulse h-48 bg-zinc-900/50 rounded-3xl" /></RegistrySection>
+    if (isLoading) return <RegistrySection title="TREINO DE HOJE" subtitle="Protocolos de musculação e treinamento de força." icon={Dumbbell}><Box /></RegistrySection>
 
     if (!workouts || workouts.length === 0) {
         return (
-            <RegistrySection title="TREINO DE HOJE" icon={Dumbbell}>
+            <RegistrySection title="TREINO DE HOJE" subtitle="Protocolos de musculação e treinamento de força." icon={Dumbbell}>
                 <ProtocolCard
                     title="DIA DE DESCANSO"
                     subtitle="Nenhum protocolo de treino para hoje."
@@ -60,7 +60,7 @@ export function StudentTrainingProtocols({ userId }: StudentTrainingProtocolsPro
 
     if (!currentWorkout || !currentWorkout.id || !currentWorkout.name) {
         return (
-            <RegistrySection title="TREINO DE HOJE" icon={Dumbbell}>
+            <RegistrySection title="TREINO DE HOJE" subtitle="Protocolos de musculação e treinamento de força." icon={Dumbbell}>
                 <ProtocolCard
                     title="DIA DE DESCANSO"
                     subtitle="Nenhum protocolo de treino para hoje."

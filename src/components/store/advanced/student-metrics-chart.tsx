@@ -151,17 +151,28 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
 
     return (
         <Stack fullWidth gap={STORE_TOKENS.SPACING.SECTION}>
-            <Stack direction="row" wrap="wrap" gap={STORE_TOKENS.SPACING.CONTAINER} align="center" justify="end" style={{ padding: '0 8px' }}>
-                <LegendItem color="#10b981" label="Performance" />
-                <LegendItem color="#eab308" label="Peso" />
-                <LegendItem color="#ef4444" label="BF%" />
+            <Stack direction="row" wrap="wrap" gap={STORE_TOKENS.SPACING.CONTAINER} align="center" justify="end">
+                <LegendItem
+                    label="Performance"
+                    {...{
+                        color: "#10b981",
+                    }} />
+                <LegendItem
+                    label="Peso"
+                    {...{
+                        color: "#eab308",
+                    }} />
+                <LegendItem
+                    label="BF%"
+                    {...{
+                        color: "#ef4444",
+                    }} />
             </Stack>
-
-            <div ref={scrollRef} className="scrollbar-hide" style={{ height: 300, width: '100%', overflow: 'auto' }}>
+            <Box ref={scrollRef} height={300} width="full" overflow="auto" noScrollbar>
                 <Box position="relative" fullHeight style={{ minWidth: mounted ? `${Math.max(100, chartData.length * 40)}px` : '100%', width: '100%' }}>
                     {mounted ? (
-                        <ResponsiveContainer width="100%" height="100%">
-                            <LineChart data={chartData} margin={{ top: 10, right: 0, left: -25, bottom: 0 }}>
+                        <ResponsiveContainer {...{ width: '100%', height: '100%' }}>
+                            <LineChart data={chartData} {...{ margin: { top: 10, right: 0, left: -25, bottom: 0 } }}>
                                 <CartesianGrid strokeDasharray="3 3" stroke="#27272a" vertical={false} />
                                 <XAxis
                                     dataKey="displayDate"
@@ -183,8 +194,9 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
                                     axisLine={false}
                                     domain={[0, 100]}
                                     unit="%"
-                                    width={35}
-                                />
+                                    {...{
+                                        width: 35,
+                                    }} />
 
                                 {/* Right Y Axis - Weight */}
                                 <YAxis
@@ -196,8 +208,9 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
                                     axisLine={false}
                                     domain={weightDomain}
                                     unit="kg"
-                                    width={35}
-                                />
+                                    {...{
+                                        width: 35,
+                                    }} />
 
                                 {/* Hidden Y Axis - BF (Keep it hidden but ensure it exists) */}
                                 <YAxis
@@ -256,20 +269,26 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
                             </LineChart>
                         </ResponsiveContainer>
                     ) : (
-                        <Box fullWidth fullHeight bg="zinc" bgOpacity={10} rounded={STORE_TOKENS.RADIUS.SYSTEM} className="animate-pulse" />
+                        <Box fullWidth fullHeight bg="zinc" bgOpacity={10} rounded={STORE_TOKENS.RADIUS.SYSTEM} />
                     )}
                 </Box>
-            </div>
+            </Box>
         </Stack>
-    )
+    );
 }
 
 function LegendItem({ color, label }: { color: string, label: string }) {
     return (
         <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
             <Box width={8} height={8} rounded={STORE_TOKENS.RADIUS.FULL} style={{ backgroundColor: color, boxShadow: `0 0 0 2px rgba(9, 9, 11, 0.5), 0 0 0 4px ${color}` }} />
-            <Font variant="sub-tiny" weight="black" color="zinc-500" uppercase>{label}</Font>
+            <Font
+                variant="sub-tiny"
+                weight="black"
+                uppercase
+                {...{
+                    color: "zinc-500",
+                }}>{label}</Font>
         </Stack>
-    )
+    );
 }
 

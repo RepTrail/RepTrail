@@ -55,30 +55,34 @@ export function TrainerMetricsSection({ userId }: { userId: string }) {
                     value={String(activeStudents)}
                     icon={Users}
                     description={`Total de alunos ativos ${newStudentsThisMonth ? `(+ ${newStudentsThisMonth} este mês)` : ''}`}
-                    color="primary"
-                />
+                    {...{
+                        color: "primary",
+                    }} />
                 <StatsCard
                     label="Receita Mensal"
                     value={`R$ ${monthlyRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
                     icon={DollarSign}
                     description={`Total Est.: R$ ${totalRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
-                    color="primary"
-                />
+                    {...{
+                        color: "primary",
+                    }} />
                 <StatsCard
                     label="Ranking Geral"
                     value={`${userRank}º`}
                     icon={TierIcon}
                     description="Sua posição atual"
-                    color="primary"
-                />
+                    {...{
+                        color: "primary",
+                    }} />
                 <StatsCard
                     label="Seu Nível"
                     value={tierName}
                     icon={TrendingUp}
                     description="Seu plano atual no RepTrail (Ativo)"
-                    color="primary"
-                />
+                    {...{
+                        color: "primary",
+                    }} />
             </Grid>
         </RegistrySection>
-    )
+    );
 }

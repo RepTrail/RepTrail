@@ -43,12 +43,21 @@ export function TrainerTeamCodeCard({ trainerCode }: TrainerTeamCodeCardProps) {
                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                         <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                             <Icon icon={ShieldCheck} color="primary" size="sm" />
-                            <Font variant="body" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} weight="black">
+                            <Font
+                                variant="body"
+                                weight="black"
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                                }}>
                                 Código da Equipe
                             </Font>
                         </Inline>
 
-                        <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>
+                        <Font
+                            variant="description"
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                            }}>
                             Seus alunos usarão este código no cadastro para se vincularem a você.
                         </Font>
                     </Stack>
@@ -79,5 +88,5 @@ export function TrainerTeamCodeCard({ trainerCode }: TrainerTeamCodeCardProps) {
                 </Box>
             </Stack>
         </GlassPanel>
-    )
+    );
 }

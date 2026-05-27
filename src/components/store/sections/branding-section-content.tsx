@@ -30,7 +30,10 @@ export function BrandingSectionContent({ id }: { id?: string }) {
                     <CardHeader>
                         <Font weight="bold">Logos & Identidade</Font>
                     </CardHeader>
-                    <CardContent padding={STORE_TOKENS.PADDING.CONTAINER}>
+                    <CardContent
+                        {...{
+                            padding: STORE_TOKENS.PADDING.CONTAINER,
+                        }}>
                         <Grid cols={1} mdCols={4} gap={STORE_TOKENS.SPACING.CONTAINER}>
                             {brands.map((brand) => (
                                 <Surface
@@ -66,5 +69,5 @@ export function BrandingSectionContent({ id }: { id?: string }) {
                 </Stack>
             </GlassPanel>
         </RegistrySection>
-    )
+    );
 }

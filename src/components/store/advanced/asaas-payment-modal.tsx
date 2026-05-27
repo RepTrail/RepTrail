@@ -180,9 +180,26 @@ export function AsaasPaymentModal({
                 {/* Total Summary */}
                 <Box padding={STORE_TOKENS.PADDING.CONTAINER} bg="zinc" bgOpacity={10} border borderColor={STORE_TOKENS.COLORS.DIVIDER.SUBTLE} rounded={STORE_TOKENS.RADIUS.SYSTEM}>
                     <Stack align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        <Font variant="sub-tiny" weight="black" uppercase color="zinc-500">Total a Investir</Font>
-                        <Font variant="h3" color="white">R$ {monthlyTotal.toFixed(2).replace('.', ',')}</Font>
-                        <Font variant="tiny" color="emerald" weight="black" uppercase italic>Assinatura Mensal Recorrente</Font>
+                        <Font
+                            variant="sub-tiny"
+                            weight="black"
+                            uppercase
+                            {...{
+                                color: "zinc-500",
+                            }}>Total a Investir</Font>
+                        <Font
+                            variant="h3"
+                            {...{
+                                color: "white",
+                            }}>R$ {monthlyTotal.toFixed(2).replace('.', ',')}</Font>
+                        <Font
+                            variant="tiny"
+                            weight="black"
+                            uppercase
+                            italic
+                            {...{
+                                color: "emerald",
+                            }}>Assinatura Mensal Recorrente</Font>
                     </Stack>
                 </Box>
 
@@ -266,7 +283,14 @@ export function AsaasPaymentModal({
 
                 <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT} padding="element">
                     <Icon icon={CheckCircle2} size="xs" color="emerald" />
-                    <Font variant="sub-tiny" color="zinc-500" weight="black" uppercase tracking="widest">Ambiente 100% Seguro</Font>
+                    <Font
+                        variant="sub-tiny"
+                        weight="black"
+                        uppercase
+                        tracking="widest"
+                        {...{
+                            color: "zinc-500",
+                        }}>Ambiente 100% Seguro</Font>
                 </Stack>
             </Stack>
         </Modal>

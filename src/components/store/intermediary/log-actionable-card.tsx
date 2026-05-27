@@ -71,13 +71,14 @@ export function ActionableListCard({ children, badges, actions, isLogItem, isStr
                         overflow="hidden"
                     >
                         {/* Container-based Separator (Rule 140) */}
-                        <Divider 
+                        <Divider
                             direction={{ 
                                 base: 'horizontal', 
                                 md: isLogItem ? 'horizontal' : 'vertical' 
                             }}
-                            color={isLogItem ? 'white/5' : 'white/10'}
-                        />
+                            {...{
+                                color: isLogItem ? 'white/5' : 'white/10',
+                            }} />
 
                         {/* Actions Stack (Vertical on Mobile/Log, Horizontal on PC) */}
                         <Stack
@@ -96,5 +97,5 @@ export function ActionableListCard({ children, badges, actions, isLogItem, isStr
                 )}
             </Box>
         </GlassPanel>
-    )
+    );
 }

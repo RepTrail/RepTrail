@@ -50,12 +50,31 @@ export function AIProtocolTeaserPanel({ userId = 'me' }: { userId?: string }) {
                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                     <Badge label="RECURSO ATIVO" color="primary" variant="glass" size="xs" />
                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                        <Font variant="h2" weight="black" uppercase italic color="white" align="center">
-                            Você ainda não tem <br />
-                            <Font variant="h2" weight="black" uppercase italic color="primary">um protocolo ativo</Font>
+                        <Font
+                            variant="h2"
+                            weight="black"
+                            uppercase
+                            italic
+                            align="center"
+                            {...{
+                                color: "white",
+                            }}>Você ainda não tem 
+                            <Font
+                                variant="h2"
+                                weight="black"
+                                uppercase
+                                italic
+                                {...{
+                                    color: "primary",
+                                }}>um protocolo ativo</Font>
                         </Font>
                         <Box>
-                            <Font variant="description" color="zinc-500" align="center">
+                            <Font
+                                variant="description"
+                                align="center"
+                                {...{
+                                    color: "zinc-500",
+                                }}>
                                 Deixe nossa inteligência montar seu treino, cardio e dieta do zero — 100% personalizado com base no seu perfil e preferências.
                             </Font>
                         </Box>
@@ -83,13 +102,20 @@ export function AIProtocolTeaserPanel({ userId = 'me' }: { userId?: string }) {
                         </Stack>
                     </Button>
                     
-                    <Font variant="sub-tiny" color="zinc-600" weight="black" uppercase tracking="widest">
+                    <Font
+                        variant="sub-tiny"
+                        weight="black"
+                        uppercase
+                        tracking="widest"
+                        {...{
+                            color: "zinc-600",
+                        }}>
                         Gratuito • Leva menos de 2 minutos
                     </Font>
                 </Stack>
             </Stack>
         </GlassPanel>
-    )
+    );
 }
 
 function FeatureBadge({ icon, label }: { icon: any, label: string }) {
@@ -97,8 +123,15 @@ function FeatureBadge({ icon, label }: { icon: any, label: string }) {
         <Surface padding={STORE_TOKENS.PADDING.ELEMENT} variant="tonal-zinc" rounded={STORE_TOKENS.RADIUS.SYSTEM}>
             <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                 <Icon icon={icon} size="xs" color="zinc-500" />
-                <Font variant="sub-tiny" weight="black" color="zinc-400" uppercase tracking="widest">{label}</Font>
+                <Font
+                    variant="sub-tiny"
+                    weight="black"
+                    uppercase
+                    tracking="widest"
+                    {...{
+                        color: "zinc-400",
+                    }}>{label}</Font>
             </Stack>
         </Surface>
-    )
+    );
 }

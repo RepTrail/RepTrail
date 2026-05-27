@@ -60,7 +60,6 @@ export function AdminAffiliatesList() {
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
                 icon={<Search size={18} />}
             />
-
             {isLoading ? (
                 <EmptyState
                     icon={HeartHandshake}
@@ -92,7 +91,6 @@ export function AdminAffiliatesList() {
                     />
                 ))
             )}
-
             <Modal
                 isOpen={deleteModal.open}
                 onClose={() => setDeleteModal({ ...deleteModal, open: false })}
@@ -103,10 +101,14 @@ export function AdminAffiliatesList() {
                 onConfirm={confirmRemoveAffiliate}
                 confirmLabel="Remover"
             >
-                <Font variant="body" color={STORE_TOKENS.COLORS.TEXT.SECONDARY}>
+                <Font
+                    variant="body"
+                    {...{
+                        color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
+                    }}>
                     Esta ação removerá imediatamente o acesso do usuário ao painel de afiliado e interromperá o rastreamento de novas comissões.
                 </Font>
             </Modal>
         </Stack>
-    )
+    );
 }

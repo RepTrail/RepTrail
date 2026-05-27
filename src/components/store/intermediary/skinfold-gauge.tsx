@@ -27,29 +27,40 @@ export function SkinfoldGauge({
     return (
         <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
             <Box position="relative" display="flex" align="center" justify="center">
-                <CircularProgress 
-                    value={Math.min((value / 40) * 100, 100)} // Mocking 40mm as 100%
-                    size="md" 
-                    color={color} 
+                <CircularProgress
+                    // Mocking 40mm as 100%
+                    value={Math.min((value / 40) * 100, 100)}
+                    size="md"
                     thickness={6}
-                />
+                    {...{
+                        color: color,
+                    }} />
                 <Box position="absolute" display="flex" direction="col" align="center">
-                    <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} variant="heading" color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
+                    <Font
+                        {...STORE_TOKENS.TYPOGRAPHY.HEADING}
+                        variant="heading"
+                        {...{
+                            color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                        }}>
                         {value}
                     </Font>
-                    <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.DIM}>
+                    <Font
+                        {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                        {...{
+                            color: STORE_TOKENS.COLORS.TEXT.DIM,
+                        }}>
                         {unit}
                     </Font>
                 </Box>
             </Box>
-            
-            <Font 
+            <Font
                 {...STORE_TOKENS.TYPOGRAPHY.LABEL}
-                color={STORE_TOKENS.COLORS.TEXT.MUTED} 
                 align="center"
-            >
+                {...{
+                    color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                }}>
                 {label}
             </Font>
         </Stack>
-    )
+    );
 }

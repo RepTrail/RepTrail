@@ -47,9 +47,10 @@ export function EmptyState404() {
           weight="black"
           italic
           align="center"
-          color={STORE_TOKENS.COLORS.ERROR}
           opacity={STORE_TOKENS.OPACITY.SUBTLE}
-        >
+          {...{
+            color: STORE_TOKENS.COLORS.ERROR,
+          }}>
           404
         </Font>
       </Box>
@@ -65,8 +66,9 @@ export function EmptyState404() {
               uppercase
               italic
               align="center"
-              color={STORE_TOKENS.COLORS.TEXT.PRIMARY}
-            >
+              {...{
+                color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+              }}>
               Página não encontrada
             </Font>
             <Font variant="description" align="center">

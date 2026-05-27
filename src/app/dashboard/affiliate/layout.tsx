@@ -19,7 +19,7 @@ export default async function AffiliateLayout({ children }: { children: React.Re
         .single()
 
     if (!profile) redirect('/auth/login')
-    if (profile.role !== 'affiliate') redirect('/dashboard')
+    if (profile.role !== 'affiliate' && !profile.is_affiliate) redirect('/dashboard')
 
     const links = [
         { href: '/dashboard/affiliate',           label: 'Visão Geral',  icon: 'Home',       exact: true },
@@ -32,7 +32,7 @@ export default async function AffiliateLayout({ children }: { children: React.Re
             <DashboardShell
                 color="amber"
                 links={links}
-                user={{ id: userId, name: profile.full_name, email: profile.email, avatar_url: profile.avatar_url, isAdmin: profile.is_admin, role: profile.role }}
+                user={{ id: userId, name: profile.full_name, email: profile.email, avatar_url: profile.avatar_url, isAdmin: profile.is_admin, isAffiliate: profile.is_affiliate, role: profile.role }}
                 profileHref="/dashboard/affiliate/profile"
                 settingsHref="/dashboard"
                 profileIcon="ArrowRightLeft"

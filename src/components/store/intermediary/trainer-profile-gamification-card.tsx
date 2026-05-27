@@ -43,18 +43,39 @@ export function TrainerProfileGamificationCard({
             <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                 <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                     <Icon icon={Award} size="sm" color={config.color} />
-                    <Font variant="auxiliary" color={config.color} weight="black" uppercase tracking="widest">
+                    <Font
+                        variant="auxiliary"
+                        weight="black"
+                        uppercase
+                        tracking="widest"
+                        {...{
+                            color: config.color,
+                        }}>
                         Gamificação
                     </Font>
                 </Stack>
 
                 <Surface variant={config.surface} padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM} border="none">
                     <Stack align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        <Font variant="auxiliary" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="black" uppercase tracking="widest">
+                        <Font
+                            variant="auxiliary"
+                            weight="black"
+                            uppercase
+                            tracking="widest"
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                            }}>
                             Nível
                         </Font>
                         <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                            <Font variant="h3" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} weight="black" uppercase italic>
+                            <Font
+                                variant="h3"
+                                weight="black"
+                                uppercase
+                                italic
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                                }}>
                                 {tier.replace('_', ' ')}
                             </Font>
                             <Icon icon={TierIcon} size="md" color={config.color} />
@@ -72,14 +93,33 @@ export function TrainerProfileGamificationCard({
                         borderColor={STORE_TOKENS.COLORS.DIVIDER.STANDARD}
                     >
                         <Stack align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                            <Font variant="tiny" color={STORE_TOKENS.COLORS.TEXT.DIM} weight="black" uppercase tracking="widest">
+                            <Font
+                                variant="tiny"
+                                weight="black"
+                                uppercase
+                                tracking="widest"
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.DIM,
+                                }}>
                                 Avaliação
                             </Font>
-                            <Font variant="heading" color={config.color} weight="bold">
+                            <Font
+                                variant="heading"
+                                weight="bold"
+                                {...{
+                                    color: config.color,
+                                }}>
                                 {displayRating}
                             </Font>
                             {rating <= 0 && (
-                                <Font variant="tiny" color={STORE_TOKENS.COLORS.TEXT.DIM} weight="bold" uppercase align="center">
+                                <Font
+                                    variant="tiny"
+                                    weight="bold"
+                                    uppercase
+                                    align="center"
+                                    {...{
+                                        color: STORE_TOKENS.COLORS.TEXT.DIM,
+                                    }}>
                                     Sem avaliações ainda
                                 </Font>
                             )}
@@ -94,10 +134,22 @@ export function TrainerProfileGamificationCard({
                         borderColor={STORE_TOKENS.COLORS.DIVIDER.STANDARD}
                     >
                         <Stack align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                            <Font variant="tiny" color={STORE_TOKENS.COLORS.TEXT.DIM} weight="black" uppercase tracking="widest">
+                            <Font
+                                variant="tiny"
+                                weight="black"
+                                uppercase
+                                tracking="widest"
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.DIM,
+                                }}>
                                 Alunos
                             </Font>
-                            <Font variant="heading" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} weight="bold">
+                            <Font
+                                variant="heading"
+                                weight="bold"
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                                }}>
                                 {activeStudents}
                             </Font>
                         </Stack>
@@ -105,5 +157,5 @@ export function TrainerProfileGamificationCard({
                 </Grid>
             </Stack>
         </Surface>
-    )
+    );
 }

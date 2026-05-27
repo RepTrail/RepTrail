@@ -100,7 +100,6 @@ export function TrainerPublicProfileMain({
 
     return (
         <Stack gap="section" fullWidth>
-
             {/* ── Hero Card (Upgraded to Liquid Glass) ──────────────────── */}
             <GlassPanel padding="container">
                 {/* Decorative background icon */}
@@ -144,7 +143,15 @@ export function TrainerPublicProfileMain({
 
                         {/* Identity Info */}
                         <Stack gap="element" align={{ base: 'center', md: 'start' }} fullWidth>
-                            <Font variant="h1" align={{ base: 'center', md: 'left' }} weight="black" italic uppercase color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
+                            <Font
+                                variant="h1"
+                                align={{ base: 'center', md: 'left' }}
+                                weight="black"
+                                italic
+                                uppercase
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                                }}>
                                 {trainer.full_name}
                             </Font>
 
@@ -152,7 +159,11 @@ export function TrainerPublicProfileMain({
                                 {trainer.location && (
                                     <Stack direction="row" gap="element" align="center">
                                         <Icon icon={MapPin} size="sm" color="emerald" />
-                                        <Font variant="sub-tiny" color="SECONDARY">
+                                        <Font
+                                            variant="sub-tiny"
+                                            {...{
+                                                color: "SECONDARY",
+                                            }}>
                                             {trainer.location}
                                         </Font>
                                     </Stack>
@@ -160,14 +171,23 @@ export function TrainerPublicProfileMain({
                                 {trainer.cref && (
                                     <Stack direction="row" gap="element" align="center">
                                         <Icon icon={ShieldCheck} size="sm" color="emerald" />
-                                        <Font variant="sub-tiny" color="SECONDARY">
+                                        <Font
+                                            variant="sub-tiny"
+                                            {...{
+                                                color: "SECONDARY",
+                                            }}>
                                             CREF: {trainer.cref}
                                         </Font>
                                     </Stack>
                                 )}
                                 <Stack direction="row" gap="element" align="center">
                                     <Icon icon={Star} size="sm" color="amber" />
-                                    <Font variant="sub-tiny" color="amber" weight="black">
+                                    <Font
+                                        variant="sub-tiny"
+                                        weight="black"
+                                        {...{
+                                            color: "amber",
+                                        }}>
                                         {Number(trainer.average_rating || 0).toFixed(1)} Rating
                                     </Font>
                                 </Stack>
@@ -183,12 +203,11 @@ export function TrainerPublicProfileMain({
                             )}
 
                             <Box display="flex" direction={{ base: 'col', md: 'row' }} gap="element" fullWidth>
-                                <Box flex1={{ base: false, md: true }} fullWidth>
+                                <Box flex1={{ base: false, md: true }} fullWidth display="flex">
                                     {trainer.whatsapp ? (
                                         <Link
                                             href={`https://wa.me/${trainer.whatsapp?.replace(/\D/g, '')}?text=Olá ${trainer.full_name}, vi seu perfil no RepTrail e gostaria de saber mais sobre sua consultoria!`}
                                             target="_blank"
-                                            style={{ width: '100%', display: 'flex' }}
                                         >
                                             <Button variant="outline-primary" size="sm" fullWidth>
                                                 <Stack direction="row" align="center" justify="center" gap="element">
@@ -208,12 +227,11 @@ export function TrainerPublicProfileMain({
                                 </Box>
 
                                 {trainer.instagram && (
-                                    <Box flex1={{ base: false, md: true }} fullWidth>
+                                    <Box flex1={{ base: false, md: true }} fullWidth display="flex">
                                         <Link
                                             href={`https://instagram.com/${trainer.instagram.replace(/^@/, '')}`}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            style={{ width: '100%', display: 'flex' }}
                                         >
                                             <Button variant="outline-zinc" size="sm" fullWidth>
                                                 <Stack direction="row" align="center" justify="center" gap="element">
@@ -261,7 +279,6 @@ export function TrainerPublicProfileMain({
                     </Box>
                 </Box>
             </GlassPanel>
-
             {/* ── Tab Content ───────────────────────────────── */}
             <Box fullWidth>
                 {activeTab === 'about' && (
@@ -273,7 +290,11 @@ export function TrainerPublicProfileMain({
                             subtitle="Conheça a trajetória profissional e a abordagem metodológica do seu coach."
                         >
                             <GlassPanel padding="container">
-                                <Font variant="body-sm" color="SECONDARY">
+                                <Font
+                                    variant="body-sm"
+                                    {...{
+                                        color: "SECONDARY",
+                                    }}>
                                     {trainer.bio || "Treinador focado em resultados e alta performance. Especialista em ajudar alunos a atingirem seu potencial máximo."}
                                 </Font>
                             </GlassPanel>
@@ -293,8 +314,19 @@ export function TrainerPublicProfileMain({
                                             <Icon icon={Users} size="md" color="primary" />
                                         </Box>
                                         <Stack gap="none">
-                                            <Font variant="h4" color="PRIMARY" weight="black" uppercase italic>Transformações</Font>
-                                            <Font variant="description" color="SECONDARY">Alunos que mudaram de vida.</Font>
+                                            <Font
+                                                variant="h4"
+                                                weight="black"
+                                                uppercase
+                                                italic
+                                                {...{
+                                                    color: "PRIMARY",
+                                                }}>Transformações</Font>
+                                            <Font
+                                                variant="description"
+                                                {...{
+                                                    color: "SECONDARY",
+                                                }}>Alunos que mudaram de vida.</Font>
                                         </Stack>
                                     </Stack>
                                 </GlassPanel>
@@ -306,8 +338,19 @@ export function TrainerPublicProfileMain({
                                             <Icon icon={Dumbbell} size="md" color="primary" />
                                         </Box>
                                         <Stack gap="none">
-                                            <Font variant="h4" color="PRIMARY" weight="black" uppercase italic>Metodologia</Font>
-                                            <Font variant="description" color="SECONDARY">Treinos periodizados com foco na evolução.</Font>
+                                            <Font
+                                                variant="h4"
+                                                weight="black"
+                                                uppercase
+                                                italic
+                                                {...{
+                                                    color: "PRIMARY",
+                                                }}>Metodologia</Font>
+                                            <Font
+                                                variant="description"
+                                                {...{
+                                                    color: "SECONDARY",
+                                                }}>Treinos periodizados com foco na evolução.</Font>
                                         </Stack>
                                     </Stack>
                                 </GlassPanel>
@@ -319,8 +362,19 @@ export function TrainerPublicProfileMain({
                                             <Icon icon={Activity} size="md" color="primary" />
                                         </Box>
                                         <Stack gap="none">
-                                            <Font variant="h4" color="PRIMARY" weight="black" uppercase italic>Suporte Total</Font>
-                                            <Font variant="description" color="SECONDARY">Acompanhamento próximo e constante.</Font>
+                                            <Font
+                                                variant="h4"
+                                                weight="black"
+                                                uppercase
+                                                italic
+                                                {...{
+                                                    color: "PRIMARY",
+                                                }}>Suporte Total</Font>
+                                            <Font
+                                                variant="description"
+                                                {...{
+                                                    color: "SECONDARY",
+                                                }}>Acompanhamento próximo e constante.</Font>
                                         </Stack>
                                     </Stack>
                                 </GlassPanel>
@@ -341,10 +395,21 @@ export function TrainerPublicProfileMain({
                                     zIndex={10}
                                 >
                                     <Stack gap="element">
-                                        <Font variant="h3" weight="black" uppercase italic color="PRIMARY">
+                                        <Font
+                                            variant="h3"
+                                            weight="black"
+                                            uppercase
+                                            italic
+                                            {...{
+                                                color: "PRIMARY",
+                                            }}>
                                             Acompanhe no Instagram
                                         </Font>
-                                        <Font variant="description" color="SECONDARY">
+                                        <Font
+                                            variant="description"
+                                            {...{
+                                                color: "SECONDARY",
+                                            }}>
                                             Veja mais transformações e conteúdo exclusivo
                                         </Font>
                                     </Stack>
@@ -353,7 +418,6 @@ export function TrainerPublicProfileMain({
                                             href={`https://instagram.com/${trainer.instagram.replace(/^@/, '')}`}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            style={{ width: '100%', display: 'flex' }}
                                         >
                                             <Button variant="outline-primary" size="sm" fullWidth={{ base: true, md: false }}>
                                                 <Stack direction="row" align="center" justify="center" gap="element" fullWidth>
@@ -420,10 +484,21 @@ export function TrainerPublicProfileMain({
                                                         variant="zinc"
                                                     />
                                                     <Stack gap="none">
-                                                        <Font variant="body" weight="black" uppercase italic color="PRIMARY">
+                                                        <Font
+                                                            variant="body"
+                                                            weight="black"
+                                                            uppercase
+                                                            italic
+                                                            {...{
+                                                                color: "PRIMARY",
+                                                            }}>
                                                             {review.student?.full_name || 'Aluno'}
                                                         </Font>
-                                                        <Font variant="sub-tiny" color="MUTED">
+                                                        <Font
+                                                            variant="sub-tiny"
+                                                            {...{
+                                                                color: "MUTED",
+                                                            }}>
                                                             {new Date(review.created_at).toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' })}
                                                         </Font>
                                                     </Stack>
@@ -442,7 +517,12 @@ export function TrainerPublicProfileMain({
                                             </Inline>
 
                                             {review.comment && (
-                                                <Font variant="body-sm" color="SECONDARY" italic>
+                                                <Font
+                                                    variant="body-sm"
+                                                    italic
+                                                    {...{
+                                                        color: "SECONDARY",
+                                                    }}>
                                                     "{review.comment}"
                                                 </Font>
                                             )}
@@ -461,7 +541,6 @@ export function TrainerPublicProfileMain({
                     </RegistrySection>
                 )}
             </Box>
-
         </Stack>
-    )
+    );
 }

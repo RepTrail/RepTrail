@@ -101,25 +101,45 @@ export function UserListItem({
                 </>
             ) : undefined}
         >
-            <Inline gap={STORE_TOKENS.SPACING.CONTAINER} align="center" minWidth={0} fullWidth>
+            <Inline
+                gap={STORE_TOKENS.SPACING.CONTAINER}
+                align="center"
+                fullWidth
+                {...{
+                    minWidth: 0,
+                }}>
                 <Box shrink={0}>
                     <BaseAvatar src={avatarUrl || undefined} initials={initials} variant={avatarVariant} size="md" />
                 </Box>
                 <Stack gap="none" minWidth={0} flex1>
                     <Box fullWidth minWidth={0} overflow="hidden">
-                        <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} variant={{ base: 'body-sm', md: 'body' }} color={STORE_TOKENS.COLORS.TEXT.PRIMARY} truncate display="block">
+                        <Font
+                            {...STORE_TOKENS.TYPOGRAPHY.HEADING}
+                            variant={{ base: 'body-sm', md: 'body' }}
+                            truncate
+                            display="block"
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                            }}>
                             {name}
                         </Font>
                     </Box>
                     <Box fullWidth minWidth={0} overflow="hidden">
-                        <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.DIM} lowercase truncate display="block">
+                        <Font
+                            {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                            lowercase
+                            truncate
+                            display="block"
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.DIM,
+                            }}>
                             {email || 'Sem email cadastrado'}
                         </Font>
                     </Box>
                 </Stack>
             </Inline>
         </ActionableListCard>
-    )
+    );
 }
 
 function ActionButton({ 

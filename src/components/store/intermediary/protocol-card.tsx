@@ -94,11 +94,12 @@ export function ProtocolCard({
                 <BackgroundIcon
                     icon={icon}
                     size="100"
-                    top={0}
-                    right={0}
                     opacity={STORE_TOKENS.OPACITY.SUBTLE}
                     groupHoverOpacity={STORE_TOKENS.OPACITY.SUBTLE}
-                />
+                    {...{
+                        top: 0,
+                        right: 0,
+                    }} />
 
                 <Box position="relative" zIndex={STORE_TOKENS.Z_INDEX.CONTENT}>
                     <Stack gap={STORE_TOKENS.SPACING.CONTAINER} position="relative">
@@ -135,11 +136,16 @@ export function ProtocolCard({
                                 <Font
                                     {...STORE_TOKENS.TYPOGRAPHY.HEADING}
                                     variant="h3"
-                                    color={STORE_TOKENS.COLORS.TEXT.PRIMARY}
-                                >
+                                    {...{
+                                        color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                                    }}>
                                     {title}
                                 </Font>
-                                <Font {...STORE_TOKENS.TYPOGRAPHY.DESCRIPTION} color={STORE_TOKENS.COLORS.TEXT.MUTED}>
+                                <Font
+                                    {...STORE_TOKENS.TYPOGRAPHY.DESCRIPTION}
+                                    {...{
+                                        color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                    }}>
                                     {subtitle}
                                 </Font>
                             </Stack>
@@ -167,7 +173,11 @@ export function ProtocolCard({
 
                         {footer && (
                             <Box padding="none" border={false}>
-                                <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.MUTED}>
+                                <Font
+                                    {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                                    {...{
+                                        color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                    }}>
                                     {footer}
                                 </Font>
                             </Box>
@@ -175,7 +185,6 @@ export function ProtocolCard({
                     </Stack>
                 </Box>
             </GlassPanel>
-
             {isCompleted && logId && userId && (
                 <WorkoutReviewModal 
                     isOpen={isReviewOpen}
@@ -184,7 +193,6 @@ export function ProtocolCard({
                     userId={userId}
                 />
             )}
-
             <WorkoutExercisesModal
                 isOpen={isExercisesOpen}
                 onClose={() => setIsExercisesOpen(false)}
@@ -192,5 +200,5 @@ export function ProtocolCard({
                 workoutName={title}
             />
         </>
-    )
+    );
 }

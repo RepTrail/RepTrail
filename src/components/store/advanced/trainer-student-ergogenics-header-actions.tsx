@@ -58,7 +58,7 @@ export function TrainerStudentErgogenicsHeaderActions({
                     <Link href="/dashboard/trainer/import-pdf">
                         <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                             <Icon icon={FileUp} size="xs" color="orange" />
-                            <span>Importar PDF</span>
+                            Importar PDF
                         </Stack>
                     </Link>
                 </Button>
@@ -70,7 +70,7 @@ export function TrainerStudentErgogenicsHeaderActions({
                     <Button variant="outline-emerald" shine fullWidth={{ base: true, lg: false }}>
                         <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                             <Icon icon={Plus} size="xs" color="emerald" />
-                            <span>Adicionar Substância</span>
+                            Adicionar Substância
                         </Stack>
                     </Button>
                 }

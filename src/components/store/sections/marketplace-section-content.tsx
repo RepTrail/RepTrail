@@ -71,7 +71,6 @@ export function MarketplaceSectionContent() {
     return (
         <Stack gap={STORE_TOKENS.SPACING.EMPTY_STATE}>
             <StoreHeroCard />
-
             {/* Search + Category Filter block */}
             <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                 <Box 
@@ -86,7 +85,10 @@ export function MarketplaceSectionContent() {
                             placeholder="Buscar por nome, descrição ou categoria..."
                             value={search}
                             onChange={e => setSearch(e.target.value)}
-                            icon={<Search className="w-4 h-4" />}
+                            icon={<Search
+                                {...{
+                                    className: "w-4 h-4",
+                                }} />}
                         />
                     </Box>
                     <Box width={{ base: 'full', md: '30%' }}>
@@ -126,5 +128,5 @@ export function MarketplaceSectionContent() {
                 )}
             </Stack>
         </Stack>
-    )
+    );
 }

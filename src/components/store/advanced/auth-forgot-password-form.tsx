@@ -45,8 +45,17 @@ export function AuthForgotPasswordForm({
                 <Stack gap={STORE_TOKENS.SPACING.CONTAINER} align="center" justify="center">
                     <Icon icon={CheckCircle2} size="lg" color={STORE_TOKENS.COLORS.SUCCESS} animation="bounce" />
                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                        <Font variant="h2" align="center">Email <Font variant="h2" color={STORE_TOKENS.COLORS.SUCCESS}>Enviado</Font></Font>
-                        <Font variant="description" align="center" color={STORE_TOKENS.COLORS.TEXT.SECONDARY}>
+                        <Font variant="h2" align="center">Email <Font
+                            variant="h2"
+                            {...{
+                                color: STORE_TOKENS.COLORS.SUCCESS,
+                            }}>Enviado</Font></Font>
+                        <Font
+                            variant="description"
+                            align="center"
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
+                            }}>
                             {message}
                         </Font>
                     </Stack>
@@ -57,7 +66,7 @@ export function AuthForgotPasswordForm({
                     </Button>
                 </Stack>
             </Surface>
-        )
+        );
     }
 
     return (
@@ -66,14 +75,28 @@ export function AuthForgotPasswordForm({
                 {/* Header */}
                 <Box padding={STORE_TOKENS.PADDING.CONTAINER}>
                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                        <Font variant="h2" align="center">Recuperar <Font variant="h2" color={primaryColor as any}>Senha</Font></Font>
-                        <Font variant="auxiliary" color={STORE_TOKENS.COLORS.TEXT.MUTED} align="center" uppercase tracking="widest">
+                        <Font variant="h2" align="center">Recuperar <Font
+                            variant="h2"
+                            {...{
+                                color: primaryColor as any,
+                            }}>Senha</Font></Font>
+                        <Font
+                            variant="auxiliary"
+                            align="center"
+                            uppercase
+                            tracking="widest"
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                            }}>
                             Digite seu email para receber o link
                         </Font>
                     </Stack>
                 </Box>
 
-                <Divider color={STORE_TOKENS.COLORS.DIVIDER.SUBTLE} />
+                <Divider
+                    {...{
+                        color: STORE_TOKENS.COLORS.DIVIDER.SUBTLE,
+                    }} />
 
                 {/* Form Content */}
                 <Box padding={STORE_TOKENS.PADDING.CONTAINER}>
@@ -81,7 +104,14 @@ export function AuthForgotPasswordForm({
                         <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                             {error && (
                                 <Surface padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM} display="flex" align="center" bg={STORE_TOKENS.COLORS.ERROR} bgOpacity={10} border="subtle" minHeight={44}>
-                                    <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.ERROR} weight="black" uppercase tracking="widest">
+                                    <Font
+                                        variant="sub-tiny"
+                                        weight="black"
+                                        uppercase
+                                        tracking="widest"
+                                        {...{
+                                            color: STORE_TOKENS.COLORS.ERROR,
+                                        }}>
                                         {translateAuthError(error)}
                                     </Font>
                                 </Surface>
@@ -102,29 +132,45 @@ export function AuthForgotPasswordForm({
                                 fullWidth
                                 rounded={STORE_TOKENS.RADIUS.SYSTEM}
                                 height="anatomy-item"
-                                padding={STORE_TOKENS.PADDING.CONTAINER}
+                                gap="element"
                                 disabled={loading}
                             >
-                                <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} align="center" justify="center">
-                                    <Font variant="label-caps">
-                                        {loading ? 'Processando...' : 'Recuperar Senha'}
-                                    </Font>
-                                    {!loading && <Icon icon={ArrowRight} size="xs" />}
-                                </Stack>
+                                <Font variant="label-caps">
+                                    {loading ? 'Processando...' : 'Recuperar Senha'}
+                                </Font>
+                                {!loading && <Icon icon={ArrowRight} size="xs" />}
                             </Button>
                         </Stack>
                     </form>
                 </Box>
 
-                <Divider color={STORE_TOKENS.COLORS.DIVIDER.SUBTLE} />
+                <Divider
+                    {...{
+                        color: STORE_TOKENS.COLORS.DIVIDER.SUBTLE,
+                    }} />
 
                 {/* Footer */}
                 <Box padding={STORE_TOKENS.PADDING.CONTAINER} display="flex" align="center" justify="center" bg={STORE_TOKENS.COLORS.BLACK} bgOpacity={STORE_TOKENS.OPACITY.INTERMEDIATE}>
-                    <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED} align="center" weight="bold" uppercase tracking="widest">
-                        Lembrou a senha? <Link href="/auth/login"><Font variant="sub-tiny" color={STORE_TOKENS.COLORS.BRAND} weight="black" cursor="pointer" underline>Fazer login</Font></Link>
+                    <Font
+                        variant="sub-tiny"
+                        align="center"
+                        weight="bold"
+                        uppercase
+                        tracking="widest"
+                        {...{
+                            color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                        }}>
+                        Lembrou a senha? <Link href="/auth/login"><Font
+                        variant="sub-tiny"
+                        weight="black"
+                        cursor="pointer"
+                        underline
+                        {...{
+                            color: STORE_TOKENS.COLORS.BRAND,
+                        }}>Fazer login</Font></Link>
                     </Font>
                 </Box>
             </Stack>
         </Surface>
-    )
+    );
 }

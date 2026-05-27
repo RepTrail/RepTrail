@@ -240,11 +240,23 @@ export function DietBuilderMealItemRow({
                     {/* Food name */}
                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT} flex1>
                         <Inline justify="between" align="center">
-                            <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.DIM} uppercase weight="bold">
+                            <Font
+                                variant="sub-tiny"
+                                uppercase
+                                weight="bold"
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.DIM,
+                                }}>
                                 Alimento
                             </Font>
                             {!isSaved && (
-                                <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.BRAND} weight="black" uppercase>
+                                <Font
+                                    variant="sub-tiny"
+                                    weight="black"
+                                    uppercase
+                                    {...{
+                                        color: STORE_TOKENS.COLORS.BRAND,
+                                    }}>
                                     Pendente
                                 </Font>
                             )}
@@ -258,7 +270,13 @@ export function DietBuilderMealItemRow({
 
                     {/* Quantity */}
                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT} shrink={0}>
-                        <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.DIM} uppercase weight="bold">
+                        <Font
+                            variant="sub-tiny"
+                            uppercase
+                            weight="bold"
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.DIM,
+                            }}>
                             Qtd
                         </Font>
                         <Input
@@ -274,7 +292,13 @@ export function DietBuilderMealItemRow({
                 {/* Macros */}
                 <Grid cols={{ base: 2, lg: 4 }} gap={STORE_TOKENS.SPACING.ELEMENT} shrink={0}>
                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.INFO} uppercase weight="bold">
+                        <Font
+                            variant="sub-tiny"
+                            uppercase
+                            weight="bold"
+                            {...{
+                                color: STORE_TOKENS.COLORS.INFO,
+                            }}>
                             Prot
                         </Font>
                         <Input
@@ -286,7 +310,13 @@ export function DietBuilderMealItemRow({
                         />
                     </Stack>
                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.BRAND} uppercase weight="bold">
+                        <Font
+                            variant="sub-tiny"
+                            uppercase
+                            weight="bold"
+                            {...{
+                                color: STORE_TOKENS.COLORS.BRAND,
+                            }}>
                             Carb
                         </Font>
                         <Input
@@ -298,7 +328,13 @@ export function DietBuilderMealItemRow({
                         />
                     </Stack>
                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.WARNING} uppercase weight="bold">
+                        <Font
+                            variant="sub-tiny"
+                            uppercase
+                            weight="bold"
+                            {...{
+                                color: STORE_TOKENS.COLORS.WARNING,
+                            }}>
                             Gord
                         </Font>
                         <Input
@@ -310,7 +346,13 @@ export function DietBuilderMealItemRow({
                         />
                     </Stack>
                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} uppercase weight="bold">
+                        <Font
+                            variant="sub-tiny"
+                            uppercase
+                            weight="bold"
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
+                            }}>
                             Fib
                         </Font>
                         <Input
@@ -374,7 +416,6 @@ export function DietBuilderMealItemRow({
                     </Box>
                 </Inline>
             </Stack>
-
             {/* Substitution row */}
             {hasSubstitute && (
                 <Box>
@@ -388,7 +429,14 @@ export function DietBuilderMealItemRow({
                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                             {/* Substitution header */}
                             <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                                <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.BRAND} uppercase weight="black" tracking="widest">
+                                <Font
+                                    variant="sub-tiny"
+                                    uppercase
+                                    weight="black"
+                                    tracking="widest"
+                                    {...{
+                                        color: STORE_TOKENS.COLORS.BRAND,
+                                    }}>
                                     ↳ Substituição
                                 </Font>
                             </Inline>
@@ -407,7 +455,13 @@ export function DietBuilderMealItemRow({
                                     flex1
                                 >
                                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT} flex1>
-                                        <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.DIM} uppercase weight="bold">
+                                        <Font
+                                            variant="sub-tiny"
+                                            uppercase
+                                            weight="bold"
+                                            {...{
+                                                color: STORE_TOKENS.COLORS.TEXT.DIM,
+                                            }}>
                                             Alimento
                                         </Font>
                                         <Input
@@ -418,7 +472,13 @@ export function DietBuilderMealItemRow({
                                         />
                                     </Stack>
                                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT} shrink={0}>
-                                        <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.DIM} uppercase weight="bold">
+                                        <Font
+                                            variant="sub-tiny"
+                                            uppercase
+                                            weight="bold"
+                                            {...{
+                                                color: STORE_TOKENS.COLORS.TEXT.DIM,
+                                            }}>
                                             Qtd
                                         </Font>
                                         <Input
@@ -434,19 +494,43 @@ export function DietBuilderMealItemRow({
                                 {/* Sub macros */}
                                 <Grid cols={4} gap={STORE_TOKENS.SPACING.ELEMENT} shrink={0}>
                                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                        <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.INFO} uppercase weight="bold">Prot</Font>
+                                        <Font
+                                            variant="sub-tiny"
+                                            uppercase
+                                            weight="bold"
+                                            {...{
+                                                color: STORE_TOKENS.COLORS.INFO,
+                                            }}>Prot</Font>
                                         <Input size="sm" type="number" value={subProtein} onChange={(e) => { setSubProtein(parseFloat(e.target.value) || 0); markUnsaved() }} textAlign="center" />
                                     </Stack>
                                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                        <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.BRAND} uppercase weight="bold">Carb</Font>
+                                        <Font
+                                            variant="sub-tiny"
+                                            uppercase
+                                            weight="bold"
+                                            {...{
+                                                color: STORE_TOKENS.COLORS.BRAND,
+                                            }}>Carb</Font>
                                         <Input size="sm" type="number" value={subCarbs} onChange={(e) => { setSubCarbs(parseFloat(e.target.value) || 0); markUnsaved() }} textAlign="center" />
                                     </Stack>
                                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                        <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.WARNING} uppercase weight="bold">Gord</Font>
+                                        <Font
+                                            variant="sub-tiny"
+                                            uppercase
+                                            weight="bold"
+                                            {...{
+                                                color: STORE_TOKENS.COLORS.WARNING,
+                                            }}>Gord</Font>
                                         <Input size="sm" type="number" value={subFat} onChange={(e) => { setSubFat(parseFloat(e.target.value) || 0); markUnsaved() }} textAlign="center" />
                                     </Stack>
                                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                        <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} uppercase weight="bold">Fib</Font>
+                                        <Font
+                                            variant="sub-tiny"
+                                            uppercase
+                                            weight="bold"
+                                            {...{
+                                                color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
+                                            }}>Fib</Font>
                                         <Input size="sm" type="number" value={subFiber} onChange={(e) => { setSubFiber(parseFloat(e.target.value) || 0); markUnsaved() }} textAlign="center" />
                                     </Stack>
                                 </Grid>
@@ -499,5 +583,5 @@ export function DietBuilderMealItemRow({
                 </Box>
             )}
         </Box>
-    )
+    );
 }

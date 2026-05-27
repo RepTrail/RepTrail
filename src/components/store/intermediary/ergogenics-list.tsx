@@ -54,7 +54,12 @@ export function ErgogenicsList({ items, status = 'active', onToggle }: Ergogenic
                         <CheckIndicator checked={item.isCompleted} />
                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT} flex1>
                             <Stack direction="row" align="center" justify="between">
-                                <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} variant="body-sm" color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
+                                <Font
+                                    {...STORE_TOKENS.TYPOGRAPHY.HEADING}
+                                    variant="body-sm"
+                                    {...{
+                                        color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                                    }}>
                                     {item.name}
                                 </Font>
                                 <Badge
@@ -65,7 +70,11 @@ export function ErgogenicsList({ items, status = 'active', onToggle }: Ergogenic
                                     size="xs"
                                 />
                             </Stack>
-                            <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.MUTED}>
+                            <Font
+                                {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                }}>
                                 DOSAGEM DIÁRIA RECOMENDADA
                             </Font>
                         </Stack>
@@ -73,5 +82,5 @@ export function ErgogenicsList({ items, status = 'active', onToggle }: Ergogenic
                 </GlassPanel>
             ))}
         </Stack>
-    )
+    );
 }

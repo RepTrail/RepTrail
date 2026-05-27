@@ -44,16 +44,13 @@ export function AdminUsersManagementPanel() {
                 onDelete={(name) => openModal('delete', name)} 
                 onInspect={(name) => openModal('inspect', name)} 
             />
-
             <AdminAffiliatesManagementPanel 
                 onDelete={(name) => openModal('delete', name)} 
             />
-
             <AdminStudentsPanel 
                 onDelete={(name) => openModal('delete', name)} 
                 onInspect={(name) => openModal('inspect', name)} 
             />
-
             {/* SHARED MODALS REUSE */}
             <Modal
                 isOpen={modalState.type === 'delete'}
@@ -71,7 +68,6 @@ export function AdminUsersManagementPanel() {
                     </Callout>
                 </Stack>
             </Modal>
-
             <Modal
                 isOpen={modalState.type === 'inspect'}
                 onClose={closeModal}
@@ -83,19 +79,33 @@ export function AdminUsersManagementPanel() {
                 cancelLabel="Cancelar"
             >
                 <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
-                    <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.SECONDARY}>
+                    <Font
+                        variant="description"
+                        {...{
+                            color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
+                        }}>
                         A ação de inspeção permite que você acesse temporariamente o painel deste usuário. Você poderá visualizar a interface exatamente como ele a vê para fins de suporte, auditoria ou configuração.
                     </Font>
                     
                     <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                         <Box padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM} bg={STORE_TOKENS.COLORS.WHITE} bgOpacity={STORE_TOKENS.OPACITY.LOW} border borderColor={STORE_TOKENS.COLORS.DIVIDER.STANDARD}>
-                            <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="black" uppercase italic>Status do Registro</Font>
-                            <Font color={STORE_TOKENS.COLORS.SUCCESS} weight="bold">VERIFICADO & ATIVO</Font>
+                            <Font
+                                variant="sub-tiny"
+                                weight="black"
+                                uppercase
+                                italic
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                }}>Status do Registro</Font>
+                            <Font
+                                weight="bold"
+                                {...{
+                                    color: STORE_TOKENS.COLORS.SUCCESS,
+                                }}>VERIFICADO & ATIVO</Font>
                         </Box>
                     </Stack>
                 </Stack>
             </Modal>
-
             <Modal
                 isOpen={modalState.type === 'edit'}
                 onClose={closeModal}
@@ -107,20 +117,32 @@ export function AdminUsersManagementPanel() {
                 cancelLabel="Descartar"
             >
                 <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
-                    <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.SECONDARY}>
+                    <Font
+                        variant="description"
+                        {...{
+                            color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
+                        }}>
                         Interface de edição rápida. Os campos abaixo permitem atualizar as propriedades fundamentais do registro sem sair do dashboard.
                     </Font>
                     
                     <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                         <Box fullWidth bg={STORE_TOKENS.COLORS.WHITE} bgOpacity={STORE_TOKENS.OPACITY.LOW} border borderColor={STORE_TOKENS.COLORS.DIVIDER.STANDARD} rounded={STORE_TOKENS.RADIUS.SYSTEM} display="flex" align="center" padding={STORE_TOKENS.PADDING.CONTAINER}>
-                            <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>Campo de Exemplo 01...</Font>
+                            <Font
+                                variant="sub-tiny"
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                }}>Campo de Exemplo 01...</Font>
                         </Box>
                         <Box fullWidth bg={STORE_TOKENS.COLORS.WHITE} bgOpacity={STORE_TOKENS.OPACITY.LOW} border borderColor={STORE_TOKENS.COLORS.DIVIDER.STANDARD} rounded={STORE_TOKENS.RADIUS.SYSTEM} display="flex" align="center" padding={STORE_TOKENS.PADDING.CONTAINER}>
-                            <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>Campo de Exemplo 02...</Font>
+                            <Font
+                                variant="sub-tiny"
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                }}>Campo de Exemplo 02...</Font>
                         </Box>
                     </Stack>
                 </Stack>
             </Modal>
         </Stack>
-    )
+    );
 }

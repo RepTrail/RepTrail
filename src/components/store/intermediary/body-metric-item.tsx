@@ -24,20 +24,32 @@ export function BodyMetricItem({
 }: BodyMetricItemProps) {
     return (
         <Stack direction="row" align="baseline" justify="between" fullWidth>
-            <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.MUTED}>
+            <Font
+                {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                {...{
+                    color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                }}>
                 {label}
             </Font>
-
             <Stack direction="row" align="baseline" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} color={color} variant="heading">
+                <Font
+                    {...STORE_TOKENS.TYPOGRAPHY.HEADING}
+                    variant="heading"
+                    {...{
+                        color: color,
+                    }}>
                     {value}
                 </Font>
                 {unit && (
-                    <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.DIM}>
+                    <Font
+                        {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                        {...{
+                            color: STORE_TOKENS.COLORS.TEXT.DIM,
+                        }}>
                         {unit}
                     </Font>
                 )}
             </Stack>
         </Stack>
-    )
+    );
 }

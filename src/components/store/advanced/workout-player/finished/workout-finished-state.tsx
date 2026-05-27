@@ -41,17 +41,37 @@ export function WorkoutFinishedState({
                     </Box>
                 </Surface>
             </Box>
-
             <Stack gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
-                <Font variant="h2" weight="black" italic color="white" uppercase tracking="tight">Treino Finalizado!</Font>
-                <Font variant="sub-tiny" weight="black" uppercase tracking="widest" color="zinc-500">Como foi o seu desempenho hoje?</Font>
+                <Font
+                    variant="h2"
+                    weight="black"
+                    italic
+                    uppercase
+                    tracking="tight"
+                    {...{
+                        color: "white",
+                    }}>Treino Finalizado!</Font>
+                <Font
+                    variant="sub-tiny"
+                    weight="black"
+                    uppercase
+                    tracking="widest"
+                    {...{
+                        color: "zinc-500",
+                    }}>Como foi o seu desempenho hoje?</Font>
             </Stack>
-
             <Box width="full" maxWidth="md">
                 <Surface variant="glass" border="standard" padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM}>
                     <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                            <Font variant="sub-tiny" weight="black" color="zinc-500" uppercase tracking="widest">Execução</Font>
+                            <Font
+                                variant="sub-tiny"
+                                weight="black"
+                                uppercase
+                                tracking="widest"
+                                {...{
+                                    color: "zinc-500",
+                                }}>Execução</Font>
                             <Grid columns={3} gap={STORE_TOKENS.SPACING.ELEMENT}>
                                 {(['success', 'partial', 'fail'] as const).map((status) => (
                                     <Button
@@ -95,5 +115,5 @@ export function WorkoutFinishedState({
                 </Surface>
             </Box>
         </Stack>
-    )
+    );
 }

@@ -30,14 +30,37 @@ export function StudentSubscriptionStatus({ status, onActivateTrial, onCancelSub
                         <Stack align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                             <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                 <Icon icon={Crown} size="xs" color="emerald" />
-                                <Font variant="sub-tiny" color="emerald" weight="black" uppercase tracking="widest">
+                                <Font
+                                    variant="sub-tiny"
+                                    weight="black"
+                                    uppercase
+                                    tracking="widest"
+                                    {...{
+                                        color: "emerald",
+                                    }}>
                                     STATUS AUTO-TREINO
                                 </Font>
                             </Stack>
-                            <Font variant="h4" color="emerald" weight="black" uppercase italic>
+                            <Font
+                                variant="h4"
+                                weight="black"
+                                uppercase
+                                italic
+                                {...{
+                                    color: "emerald",
+                                }}>
                                 ASSINANTE ATIVO
                             </Font>
-                            <Font variant="sub-tiny" color="emerald" opacity={60} weight="bold" uppercase tracking="tight" align="center">
+                            <Font
+                                variant="sub-tiny"
+                                opacity={60}
+                                weight="bold"
+                                uppercase
+                                tracking="tight"
+                                align="center"
+                                {...{
+                                    color: "emerald",
+                                }}>
                                 Você tem acesso total a todas as ferramentas de performance.
                             </Font>
                         </Stack>
@@ -50,21 +73,43 @@ export function StudentSubscriptionStatus({ status, onActivateTrial, onCancelSub
                     </Stack>
                 </Surface>
             )}
-
             {status === 'trial_available' && (
                 <Surface variant="tonal-amber" padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM} border="none">
                     <Stack align="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
                         <Stack align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                             <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                 <Icon icon={Zap} size="xs" color="amber" />
-                                <Font variant="sub-tiny" color="amber" weight="black" uppercase tracking="widest">
+                                <Font
+                                    variant="sub-tiny"
+                                    weight="black"
+                                    uppercase
+                                    tracking="widest"
+                                    {...{
+                                        color: "amber",
+                                    }}>
                                     STATUS AUTO-TREINO
                                 </Font>
                             </Stack>
-                            <Font variant="h4" color="amber" weight="black" uppercase italic>
+                            <Font
+                                variant="h4"
+                                weight="black"
+                                uppercase
+                                italic
+                                {...{
+                                    color: "amber",
+                                }}>
                                 TESTE GRÁTIS DISPONÍVEL
                             </Font>
-                            <Font variant="sub-tiny" color="amber" opacity={60} weight="bold" uppercase tracking="tight" align="center">
+                            <Font
+                                variant="sub-tiny"
+                                opacity={60}
+                                weight="bold"
+                                uppercase
+                                tracking="tight"
+                                align="center"
+                                {...{
+                                    color: "amber",
+                                }}>
                                 Comece hoje mesmo sua jornada de alta performance sem custos.
                             </Font>
                         </Stack>
@@ -77,21 +122,43 @@ export function StudentSubscriptionStatus({ status, onActivateTrial, onCancelSub
                     </Stack>
                 </Surface>
             )}
-
             {status === 'expired' && (
                 <Surface variant="tonal-red" padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM} border="none">
                     <Stack align="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
                         <Stack align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                             <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                 <Icon icon={AlertCircle} size="xs" color="red" />
-                                <Font variant="sub-tiny" color="red" weight="black" uppercase tracking="widest">
+                                <Font
+                                    variant="sub-tiny"
+                                    weight="black"
+                                    uppercase
+                                    tracking="widest"
+                                    {...{
+                                        color: "red",
+                                    }}>
                                     STATUS AUTO-TREINO
                                 </Font>
                             </Stack>
-                            <Font variant="h4" color="red" weight="black" uppercase italic>
+                            <Font
+                                variant="h4"
+                                weight="black"
+                                uppercase
+                                italic
+                                {...{
+                                    color: "red",
+                                }}>
                                 TESTE GRÁTIS EXPIRADO
                             </Font>
-                            <Font variant="sub-tiny" color="red" opacity={60} weight="bold" uppercase tracking="tight" align="center">
+                            <Font
+                                variant="sub-tiny"
+                                opacity={60}
+                                weight="bold"
+                                uppercase
+                                tracking="tight"
+                                align="center"
+                                {...{
+                                    color: "red",
+                                }}>
                                 Seu período de teste acabou. Assine agora para não perder sua evolução.
                             </Font>
                         </Stack>
@@ -105,5 +172,5 @@ export function StudentSubscriptionStatus({ status, onActivateTrial, onCancelSub
                 </Surface>
             )}
         </Stack>
-    )
+    );
 }

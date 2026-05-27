@@ -35,7 +35,12 @@ export const IconLabelButton = ({
     <Link href={href} target={target}>
       <Box display="flex" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
         {icon}
-        <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.PRIMARY} weight="black">
+        <Font
+          {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+          weight="black"
+          {...{
+            color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+          }}>
           {label}
         </Font>
       </Box>

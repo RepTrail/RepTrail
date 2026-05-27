@@ -177,7 +177,6 @@ export function AdminOperationalCostsPanel({ initialCosts }: { initialCosts: Ope
                     </Stack>
                 </Button>
             </Stack>
-
             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                 {costs.map((cost) => (
                     <ActionableListCard
@@ -217,15 +216,31 @@ export function AdminOperationalCostsPanel({ initialCosts }: { initialCosts: Ope
                         <Inline gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
                             <CircleIcon
                                 icon={TrendingDown}
-                                color={cost.type === 'fixed' ? 'blue' : 'orange'}
                                 size="sm"
-                            />
+                                {...{
+                                    color: cost.type === 'fixed' ? 'blue' : 'orange',
+                                }} />
                             <Stack gap="none" minWidth={0}>
-                                <Font weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY} variant={{ base: 'body-sm', md: 'body' }} tracking="wider" truncate>
+                                <Font
+                                    weight="black"
+                                    uppercase
+                                    italic
+                                    variant={{ base: 'body-sm', md: 'body' }}
+                                    tracking="wider"
+                                    truncate
+                                    {...{
+                                        color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                                    }}>
                                     {cost.description}
                                 </Font>
                                 <Box fullWidth minWidth={0} overflow="hidden">
-                                    <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.DIM} uppercase tracking="widest">
+                                    <Font
+                                        variant="sub-tiny"
+                                        uppercase
+                                        tracking="widest"
+                                        {...{
+                                            color: STORE_TOKENS.COLORS.TEXT.DIM,
+                                        }}>
                                         - R$ {Number(cost.amount).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                                     </Font>
                                 </Box>
@@ -242,7 +257,6 @@ export function AdminOperationalCostsPanel({ initialCosts }: { initialCosts: Ope
                     />
                 )}
             </Stack>
-
             <Modal
                 isOpen={isAddModalOpen}
                 onClose={() => setIsAddModalOpen(false)}
@@ -259,7 +273,6 @@ export function AdminOperationalCostsPanel({ initialCosts }: { initialCosts: Ope
                     type={type} setType={setType}
                 />
             </Modal>
-
             <Modal
                 isOpen={isEditModalOpen}
                 onClose={() => setIsEditModalOpen(false)}
@@ -276,7 +289,6 @@ export function AdminOperationalCostsPanel({ initialCosts }: { initialCosts: Ope
                     type={type} setType={setType}
                 />
             </Modal>
-
             <Modal
                 isOpen={isDeleteModalOpen}
                 onClose={() => setIsDeleteModalOpen(false)}
@@ -287,10 +299,14 @@ export function AdminOperationalCostsPanel({ initialCosts }: { initialCosts: Ope
                 confirmLabel="Sim, Excluir"
                 onConfirm={() => deleteCostMutate({ id: selectedCost?.id || '' })}
             >
-                <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.SECONDARY}>
+                <Font
+                    variant="description"
+                    {...{
+                        color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
+                    }}>
                     Esta ação não pode ser desfeita e removerá o registro permanentemente do sistema.
                 </Font>
             </Modal>
         </Stack>
-    )
+    );
 }

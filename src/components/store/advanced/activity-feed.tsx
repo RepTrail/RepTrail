@@ -125,12 +125,18 @@ export function ActivityFeed({ userId, initialData }: ActivityFeedProps) {
                     </Inline>
                 </Inline>
             </CardHeader>
-            <CardContent padding="none" flex1 display="flex" direction="col" minHeight={0}>
+            <CardContent
+                flex1
+                display="flex"
+                direction="col"
+                {...{
+                    padding: "none",
+                    minHeight: 0,
+                }}>
                 <Box
                     fullWidth
                     display="flex"
                     direction="col"
-                    className="transition-all duration-500 ease-in-out overflow-y-auto custom-scrollbar flex-1 min-h-0"
                 >
                     {activities.length > 0 ? (
                         <Stack gap="element" padding={STORE_TOKENS.PADDING.CONTAINER} fullWidth>
@@ -167,15 +173,28 @@ export function ActivityFeed({ userId, initialData }: ActivityFeedProps) {
                                                     size="sm"
                                                     variant="zinc"
                                                 />
-                                                <Font variant="body-sm" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
+                                                <Font
+                                                    variant="body-sm"
+                                                    weight="black"
+                                                    uppercase
+                                                    italic
+                                                    {...{
+                                                        color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                                                    }}>
                                                     {activity.studentName}
                                                 </Font>
                                             </Inline>
-                                            <Font variant="sub-tiny" weight="bold" color={STORE_TOKENS.COLORS.TEXT.MUTED} uppercase tracking="wide">
+                                            <Font
+                                                variant="sub-tiny"
+                                                weight="bold"
+                                                uppercase
+                                                tracking="wide"
+                                                {...{
+                                                    color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                                }}>
                                                 {activity.contentName}
                                             </Font>
                                         </Box>
-
                                         {/* Desktop Layout */}
                                         <Box display={{ base: 'none', lg: 'flex' }} align="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
                                             <BaseAvatar
@@ -185,16 +204,30 @@ export function ActivityFeed({ userId, initialData }: ActivityFeedProps) {
                                                 variant="zinc"
                                             />
                                             <Stack gap="none">
-                                                <Font variant="body-sm" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
+                                                <Font
+                                                    variant="body-sm"
+                                                    weight="black"
+                                                    uppercase
+                                                    italic
+                                                    {...{
+                                                        color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                                                    }}>
                                                     {activity.studentName}
                                                 </Font>
-                                                <Font variant="sub-tiny" weight="bold" color={STORE_TOKENS.COLORS.TEXT.MUTED} uppercase tracking="wide">
+                                                <Font
+                                                    variant="sub-tiny"
+                                                    weight="bold"
+                                                    uppercase
+                                                    tracking="wide"
+                                                    {...{
+                                                        color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                                    }}>
                                                     {activity.contentName}
                                                 </Font>
                                             </Stack>
                                         </Box>
                                     </ActionableListCard>
-                                )
+                                );
                             })}
                         </Stack>
                     ) : (
@@ -209,5 +242,5 @@ export function ActivityFeed({ userId, initialData }: ActivityFeedProps) {
                 </Box>
             </CardContent>
         </GlassPanel>
-    )
+    );
 }

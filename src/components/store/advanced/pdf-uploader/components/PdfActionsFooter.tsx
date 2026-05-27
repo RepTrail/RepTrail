@@ -20,7 +20,6 @@ export function PdfActionsFooter({ type, role, isSaving, bindingHooks, setParsed
 
     return (
         <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
-            <Separator opacity={5} />
             <Stack direction={{ base: 'col', md: 'row' }} justify="end" gap={{ base: 'element', md: 'container' }} fullWidth>
                 <DSButton
                     variant="outline-red"
@@ -33,14 +32,14 @@ export function PdfActionsFooter({ type, role, isSaving, bindingHooks, setParsed
                 </DSButton>
                 <DSButton
                     id="tour-save-button"
-                    variant="outline-primary"
+                    variant="outline-emerald"
                     onClick={onSave}
                     disabled={isSaving || (role === 'trainer' && bindingMode === 'create' && (!placeholderName || !placeholderEmail))}
                     gap={STORE_TOKENS.SPACING.ELEMENT}
                     loading={isSaving}
                     fullWidth={{ base: true, md: false }}
                 >
-                    {!isSaving && <Icon icon={Check} size="xs" color="primary" />}
+                    {!isSaving && <Icon icon={Check} size="xs" color="emerald" />}
                     {bindingMode === 'create'
                         ? `Salvar e Vincular`
                         : `Salvar ${type === 'workout' ? 'Treino' : 'Dieta'}`

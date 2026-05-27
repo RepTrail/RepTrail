@@ -53,14 +53,22 @@ export function MeuPersonalSectionContent({ trainer, trainerRel, existingReview 
                         {/* Right: Info details */}
                         <Stack gap="container" flex1 align={{ base: 'center', md: 'start' }} fullWidth>
                             <Stack gap="element" align={{ base: 'center', md: 'start' }}>
-                                <Font variant="h2" color="PRIMARY">
+                                <Font
+                                    variant="h2"
+                                    {...{
+                                        color: "PRIMARY",
+                                    }}>
                                     {trainer.full_name}
                                 </Font>
                                 <Stack direction="row" gap="element" wrap="wrap" justify={{ base: 'center', md: 'start' }}>
                                     {trainer.location && (
                                         <Stack direction="row" gap="element" align="center">
                                             <Icon icon={MapPin} size="sm" color="emerald" />
-                                            <Font variant="sub-tiny" color="SECONDARY">
+                                            <Font
+                                                variant="sub-tiny"
+                                                {...{
+                                                    color: "SECONDARY",
+                                                }}>
                                                 {trainer.location}
                                             </Font>
                                         </Stack>
@@ -68,18 +76,31 @@ export function MeuPersonalSectionContent({ trainer, trainerRel, existingReview 
                                     {trainer.cref && (
                                         <Stack direction="row" gap="element" align="center">
                                             <Icon icon={ShieldCheck} size="sm" color="emerald" />
-                                            <Font variant="sub-tiny" color="SECONDARY">
+                                            <Font
+                                                variant="sub-tiny"
+                                                {...{
+                                                    color: "SECONDARY",
+                                                }}>
                                                 CREF: {trainer.cref}
                                             </Font>
                                         </Stack>
                                     )}
                                     <Stack direction="row" gap="element" align="center">
                                         <Icon icon={Star} size="sm" color="amber" />
-                                        <Font variant="sub-tiny" color="amber" weight="black">
+                                        <Font
+                                            variant="sub-tiny"
+                                            weight="black"
+                                            {...{
+                                                color: "amber",
+                                            }}>
                                             {Number(trainer.average_rating || 0).toFixed(1)}
                                         </Font>
                                         {trainer.total_reviews > 0 && (
-                                            <Font variant="sub-tiny" color="MUTED">
+                                            <Font
+                                                variant="sub-tiny"
+                                                {...{
+                                                    color: "MUTED",
+                                                }}>
                                                 ({trainer.total_reviews} avaliações)
                                             </Font>
                                         )}
@@ -88,7 +109,11 @@ export function MeuPersonalSectionContent({ trainer, trainerRel, existingReview 
                             </Stack>
 
                             {trainer.bio && (
-                                <Font variant="body-sm" color="SECONDARY">
+                                <Font
+                                    variant="body-sm"
+                                    {...{
+                                        color: "SECONDARY",
+                                    }}>
                                     {trainer.bio}
                                 </Font>
                             )}
@@ -106,18 +131,19 @@ export function MeuPersonalSectionContent({ trainer, trainerRel, existingReview 
                             <Stack direction={{ base: 'col', md: 'row' }} gap="element" fullWidth>
                                 {trainer.whatsapp ? (
                                     <Box fullWidth={{ base: true, md: false }} display="block">
-                                        <Link
-                                            href={`https://wa.me/${trainer.whatsapp?.replace(/\D/g, '')}?text=Olá ${trainer.full_name}, tenho uma dúvida sobre meu treino!`}
-                                            target="_blank"
-                                            style={{ display: 'block', width: '100%' }}
-                                        >
-                                            <Button variant="outline-primary" size="sm" fullWidth>
-                                                <Stack direction="row" align="center" justify="center" gap="element">
-                                                    <Icon icon={MessageCircle} size="sm" />
-                                                    Falar no WhatsApp
-                                                </Stack>
-                                            </Button>
-                                        </Link>
+                                        <Box width="full" display="block">
+                                            <Link
+                                                href={`https://wa.me/${trainer.whatsapp?.replace(/\D/g, '')}?text=Olá ${trainer.full_name}, tenho uma dúvida sobre meu treino!`}
+                                                target="_blank"
+                                            >
+                                                <Button variant="outline-primary" size="sm" fullWidth>
+                                                    <Stack direction="row" align="center" justify="center" gap="element">
+                                                        <Icon icon={MessageCircle} size="sm" />
+                                                        Falar no WhatsApp
+                                                    </Stack>
+                                                </Button>
+                                            </Link>
+                                        </Box>
                                     </Box>
                                 ) : (
                                     <Button disabled variant="outline-zinc" size="sm" fullWidth={{ base: true, md: false }}>
@@ -130,14 +156,16 @@ export function MeuPersonalSectionContent({ trainer, trainerRel, existingReview 
 
                                 {trainer.trainer_code ? (
                                     <Box fullWidth={{ base: true, md: false }} display="block">
-                                        <Link href={`/personal/${trainer.trainer_code.toUpperCase().trim()}`} style={{ display: 'block', width: '100%' }}>
-                                            <Button variant="outline-zinc" size="sm" fullWidth>
-                                                <Stack direction="row" align="center" justify="center" gap="element">
-                                                    Ver Perfil Completo
-                                                    <Icon icon={ArrowRight} size="xs" />
-                                                </Stack>
-                                            </Button>
-                                        </Link>
+                                        <Box width="full" display="block">
+                                            <Link href={`/personal/${trainer.trainer_code.toUpperCase().trim()}`}>
+                                                <Button variant="outline-zinc" size="sm" fullWidth>
+                                                    <Stack direction="row" align="center" justify="center" gap="element">
+                                                        Ver Perfil Completo
+                                                        <Icon icon={ArrowRight} size="xs" />
+                                                    </Stack>
+                                                </Button>
+                                            </Link>
+                                        </Box>
                                     </Box>
                                 ) : (
                                     <Button disabled variant="outline-zinc" size="sm" fullWidth={{ base: true, md: false }}>
@@ -168,8 +196,8 @@ export function MeuPersonalSectionContent({ trainer, trainerRel, existingReview 
 
                 {/* Quick Links Grid */}
                 <Grid gap={STORE_TOKENS.SPACING.CONTAINER} cols={{ base: 1, md: 3 }}>
-                    <Box width="full">
-                        <Link href="/dashboard/student/workouts" style={{ display: 'block', width: '100%' }}>
+                    <Box width="full" display="block">
+                        <Link href="/dashboard/student/workouts">
                             <GlassPanel padding="container" rounded="system" cursor="pointer" transition>
                                 <Stack gap="container">
                                     <Stack direction="row" align="center" gap="element">
@@ -177,8 +205,16 @@ export function MeuPersonalSectionContent({ trainer, trainerRel, existingReview 
                                             <Icon icon={Dumbbell} size="md" color="primary" />
                                         </Box>
                                         <Stack gap="none">
-                                            <Font variant="label-caps" color="SECONDARY">Treinos</Font>
-                                            <Font variant="h4" color="PRIMARY">Meus Treinos</Font>
+                                            <Font
+                                                variant="label-caps"
+                                                {...{
+                                                    color: "SECONDARY",
+                                                }}>Treinos</Font>
+                                            <Font
+                                                variant="h4"
+                                                {...{
+                                                    color: "PRIMARY",
+                                                }}>Meus Treinos</Font>
                                         </Stack>
                                     </Stack>
                                     
@@ -190,8 +226,8 @@ export function MeuPersonalSectionContent({ trainer, trainerRel, existingReview 
                         </Link>
                     </Box>
 
-                    <Box width="full">
-                        <Link href="/dashboard/student/diet" style={{ display: 'block', width: '100%' }}>
+                    <Box width="full" display="block">
+                        <Link href="/dashboard/student/diet">
                             <GlassPanel padding="container" rounded="system" cursor="pointer" transition>
                                 <Stack gap="container">
                                     <Stack direction="row" align="center" gap="element">
@@ -199,8 +235,16 @@ export function MeuPersonalSectionContent({ trainer, trainerRel, existingReview 
                                             <Icon icon={Utensils} size="md" color="amber" />
                                         </Box>
                                         <Stack gap="none">
-                                            <Font variant="label-caps" color="SECONDARY">Dieta</Font>
-                                            <Font variant="h4" color="PRIMARY">Minha Dieta</Font>
+                                            <Font
+                                                variant="label-caps"
+                                                {...{
+                                                    color: "SECONDARY",
+                                                }}>Dieta</Font>
+                                            <Font
+                                                variant="h4"
+                                                {...{
+                                                    color: "PRIMARY",
+                                                }}>Minha Dieta</Font>
                                         </Stack>
                                     </Stack>
                                     
@@ -212,8 +256,8 @@ export function MeuPersonalSectionContent({ trainer, trainerRel, existingReview 
                         </Link>
                     </Box>
 
-                    <Box width="full">
-                        <Link href="/dashboard/student/cardio" style={{ display: 'block', width: '100%' }}>
+                    <Box width="full" display="block">
+                        <Link href="/dashboard/student/cardio">
                             <GlassPanel padding="container" rounded="system" cursor="pointer" transition>
                                 <Stack gap="container">
                                     <Stack direction="row" align="center" gap="element">
@@ -221,8 +265,16 @@ export function MeuPersonalSectionContent({ trainer, trainerRel, existingReview 
                                             <Icon icon={Activity} size="md" color="blue" />
                                         </Box>
                                         <Stack gap="none">
-                                            <Font variant="label-caps" color="SECONDARY">Cardio</Font>
-                                            <Font variant="h4" color="PRIMARY">Meus Cardios</Font>
+                                            <Font
+                                                variant="label-caps"
+                                                {...{
+                                                    color: "SECONDARY",
+                                                }}>Cardio</Font>
+                                            <Font
+                                                variant="h4"
+                                                {...{
+                                                    color: "PRIMARY",
+                                                }}>Meus Cardios</Font>
                                         </Stack>
                                     </Stack>
                                     
@@ -241,16 +293,32 @@ export function MeuPersonalSectionContent({ trainer, trainerRel, existingReview 
                         {trainerRel.monthly_fee && (
                             <GlassPanel padding="container" rounded="system">
                                 <Stack gap="none">
-                                    <Font variant="label-caps" color="SECONDARY">MENSALIDADE</Font>
-                                    <Font variant="h2" color="PRIMARY">R$ {Number(trainerRel.monthly_fee).toFixed(2)}</Font>
+                                    <Font
+                                        variant="label-caps"
+                                        {...{
+                                            color: "SECONDARY",
+                                        }}>MENSALIDADE</Font>
+                                    <Font
+                                        variant="h2"
+                                        {...{
+                                            color: "PRIMARY",
+                                        }}>R$ {Number(trainerRel.monthly_fee).toFixed(2)}</Font>
                                 </Stack>
                             </GlassPanel>
                         )}
                         {trainerRel.payment_day && (
                             <GlassPanel padding="container" rounded="system">
                                 <Stack gap="none">
-                                    <Font variant="label-caps" color="SECONDARY">VENCIMENTO</Font>
-                                    <Font variant="h2" color="PRIMARY">Dia {trainerRel.payment_day}</Font>
+                                    <Font
+                                        variant="label-caps"
+                                        {...{
+                                            color: "SECONDARY",
+                                        }}>VENCIMENTO</Font>
+                                    <Font
+                                        variant="h2"
+                                        {...{
+                                            color: "PRIMARY",
+                                        }}>Dia {trainerRel.payment_day}</Font>
                                 </Stack>
                             </GlassPanel>
                         )}
@@ -258,5 +326,5 @@ export function MeuPersonalSectionContent({ trainer, trainerRel, existingReview 
                 )}
             </Stack>
         </RegistrySection>
-    )
+    );
 }

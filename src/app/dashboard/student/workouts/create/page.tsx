@@ -2,19 +2,22 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { headers } from 'next/headers'
 import { createStudentWorkout } from '@/actions/student-content-actions'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { ArrowLeft } from 'lucide-react'
-import Link from 'next/link'
+import { Button } from '@/components/store/base/button'
+import { Input } from '@/components/store/base/input'
+import { Textarea } from '@/components/store/base/textarea'
+import { Card, CardContent, CardHeader } from '@/components/store/base/surface'
+import { RegistryMain } from '@/components/store/advanced/registry-main'
+import { Box } from '@/components/store/base/box'
+import { Stack } from '@/components/store/base/stack'
+import { Font } from '@/components/store/base/font'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 export default async function CreateStudentWorkoutPage() {
     const headerList = await headers()
     const userId = headerList.get('x-user-id')
     if (!userId) redirect('/auth/login')
 
-    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
+    const supabase = await createClient()
 
     // Verify auto-training is active
     const { data: profile } = await supabase
@@ -27,51 +30,43 @@ export default async function CreateStudentWorkoutPage() {
     if (!isAutoTrainingActive) redirect('/dashboard/student/workouts')
 
     return (
-        <div className="max-w-2xl mx-auto p-6 space-y-8">
-            <div className="flex items-center gap-4">
-                <Link href="/dashboard/student/workouts">
-                    <Button variant="ghost" size="sm">
-                        <ArrowLeft className="w-4 h-4 mr-2" />
-                        Voltar
-                    </Button>
-                </Link>
-                <h1 className="text-3xl font-black text-white italic uppercase tracking-tighter">
-                    Criar <span className="text-orange-500">Treino</span>
-                </h1>
-            </div>
+        <RegistryMain
+            title="Criar Treino"
+            subtitle="Crie um novo treino personalizado para o seu plano Auto-Training."
+            icon="Dumbbell"
+            showTabs={false}
+            backPath="/dashboard/student/workouts"
+        >
+            <Box maxWidth="lg" alignSelf="center" width="full">
+                <Card variant="base">
+                    <CardHeader>
+                        <Font variant="heading" weight="bold">Novo Treino</Font>
+                    </CardHeader>
+                    <CardContent>
+                        <form action={createStudentWorkout}>
+                            <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
+                                <Input
+                                    label="Nome do Treino"
+                                    name="name"
+                                    placeholder="Ex: Treino A - Peito e Tríceps"
+                                    required
+                                />
 
-            <Card className="bg-zinc-900 border-zinc-800">
-                <CardHeader>
-                    <CardTitle className="text-white">Novo Treino</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <form action={createStudentWorkout} className="space-y-6">
-                        <div>
-                            <label className="block text-sm font-medium text-zinc-400 mb-2">Nome do Treino</label>
-                            <Input
-                                name="name"
-                                placeholder="Ex: Treino A - Peito e Tríceps"
-                                className="bg-zinc-800 border-zinc-700 text-white"
-                                required
-                            />
-                        </div>
+                                <Textarea
+                                    label="Descrição (opcional)"
+                                    name="description"
+                                    placeholder="Breve descrição do treino..."
+                                    rows={3}
+                                />
 
-                        <div>
-                            <label className="block text-sm font-medium text-zinc-400 mb-2">Descrição (opcional)</label>
-                            <Textarea
-                                name="description"
-                                placeholder="Breve descrição do treino..."
-                                className="bg-zinc-800 border-zinc-700 text-white resize-none"
-                                rows={3}
-                            />
-                        </div>
-
-                        <Button type="submit" className="w-full bg-orange-500 hover:bg-orange-600 text-white">
-                            Criar Treino
-                        </Button>
-                    </form>
-                </CardContent>
-            </Card>
-        </div>
+                                <Button type="submit" variant="primary" fullWidth>
+                                    Criar Treino
+                                </Button>
+                            </Stack>
+                        </form>
+                    </CardContent>
+                </Card>
+            </Box>
+        </RegistryMain>
     )
 }

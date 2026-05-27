@@ -1,15 +1,21 @@
 import { createClient } from '@/lib/supabase/server'
 import { Utensils, CheckCircle } from 'lucide-react'
+import { RegistryMain } from '@/components/store/advanced/registry-main'
+import { Box } from '@/components/store/base/box'
+import { Stack } from '@/components/store/base/stack'
+import { Font } from '@/components/store/base/font'
+import { Surface } from '@/components/store/base/surface'
+import { Icon } from '@/components/store/base/icon'
+import { Button } from '@/components/store/base/button'
+import { Separator } from '@/components/store/base/separator'
+import { FormCheckbox } from '@/components/store/base/form-checkbox'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 export default async function StudentDietPage() {
-    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
+    const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     // 1. Get Assigned Diet
-    // For MVP/Demo, we fetch the first diet associated with the student (via assign table or direct link)
-    // Let's assume there's a diet or use a placeholder if none.
-
-    // Checking assigned_diets
     const { data: assignment } = await supabase
         .from('assigned_diets')
         .select('diet_id')
@@ -32,16 +38,16 @@ export default async function StudentDietPage() {
             const { data: m } = await supabase
                 .from('meals')
                 .select(`
-                *,
-                items:meal_items(*)
-            `)
+                    *,
+                    items:meal_items(*)
+                `)
                 .eq('diet_id', diet.id)
                 .order('order_index', { ascending: true })
             meals = m || []
         }
     }
 
-    // Mock data if no diet found for demo purposes (so the user sees something)
+    // Mock data if no diet found for demo purposes
     if (!diet) {
         diet = { name: "Dieta Exemplo (Demo)" }
         meals = [
@@ -71,70 +77,126 @@ export default async function StudentDietPage() {
     const progress = 33 // 1/3 meals checked
 
     return (
-        <div className="space-y-6 max-w-2xl mx-auto px-4 py-8 bg-zinc-950 text-white min-h-screen">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-3xl font-black italic uppercase tracking-tight">Minha Dieta</h1>
-                    <p className="text-zinc-500 font-bold uppercase tracking-wider text-xs">{diet?.name}</p>
-                </div>
-                <div className="flex flex-col items-end gap-1.5">
-                    <div className="text-xs font-black text-emerald-400 uppercase tracking-widest">{progress}% Concluído</div>
-                    <div className="w-32 h-2 bg-zinc-800 rounded-full overflow-hidden">
-                        <div className="bg-emerald-500 h-full rounded-full" style={{ width: `${progress}%` }} />
-                    </div>
-                </div>
-            </div>
+        <RegistryMain
+            title="MINHA DIETA"
+            subtitle={diet?.name || 'Dieta do Aluno'}
+            icon="Utensils"
+            showTabs={false}
+        >
+            <Box fullWidth padding={STORE_TOKENS.PADDING.CONTAINER}>
+                <Stack gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
+                    
+                    {/* Daily Progress Tracker Section */}
+                    <Surface
+                        variant="glass"
+                        padding={STORE_TOKENS.PADDING.CONTAINER}
+                        rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                        border
+                    >
+                        <Stack direction={{ base: 'col', sm: 'row' }} align="center" justify="between" gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
+                            <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                <Font variant="heading" weight="black" uppercase italic>
+                                    Progresso Diário
+                                </Font>
+                                <Font variant="description">
+                                    Acompanhe a ingestão das refeições prescritas pelo seu treinador.
+                                </Font>
+                            </Stack>
+                            <Stack align="end" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                <Font variant="sub-tiny" color="emerald" weight="black" uppercase tracking="widest">
+                                    {progress}% Concluído
+                                </Font>
+                                <Box {...{ width: 128, height: 8 }} bg="zinc" bgOpacity={90} rounded="full" overflow="hidden">
+                                    <Box bg="emerald" fullHeight rounded="full" style={{ width: `${progress}%` }} />
+                                </Box>
+                            </Stack>
+                        </Stack>
+                    </Surface>
 
-            <div className="grid gap-6">
-                {meals.map((meal: any) => (
-                    <div key={meal.id} className="bg-zinc-900/45 border border-zinc-800 border-l-4 border-l-orange-500 shadow-2xl rounded-2xl overflow-hidden flex flex-col gap-4">
-                        <div className="pb-3 pt-6 px-6 bg-zinc-950/20 flex flex-row items-center justify-between border-b border-zinc-800/40">
-                            <div className="flex items-center gap-2.5">
-                                <Utensils className="h-5 w-5 text-orange-500" />
-                                <h3 className="text-base font-black uppercase italic tracking-wider text-white">{meal.name}</h3>
-                            </div>
-                            {meal.time_of_day && (
-                                <span className="text-xs px-2.5 py-1 bg-zinc-950 rounded border border-zinc-800 text-zinc-400 font-mono font-bold">
-                                    {meal.time_of_day.slice(0, 5)}
-                                </span>
-                            )}
-                        </div>
-                        <div className="p-6 pt-0 space-y-4 flex flex-col">
-                            {meal.items?.map((item: any) => (
-                                <div key={item.id} className="flex items-start space-x-3.5 p-3 hover:bg-zinc-900/60 rounded-xl transition-all border border-transparent hover:border-zinc-800/50">
-                                    <input 
-                                        type="checkbox" 
-                                        id={item.id} 
-                                        className="w-5 h-5 rounded border border-zinc-700 bg-zinc-950 text-emerald-500 focus:ring-emerald-500/20 shrink-0 cursor-pointer"
-                                    />
-                                    <div className="grid gap-1.5 leading-none w-full">
-                                        <label
-                                            htmlFor={item.id}
-                                            className="text-sm font-black uppercase tracking-wider leading-none text-zinc-200 cursor-pointer hover:text-white transition-colors"
-                                        >
-                                            {item.food_name}
-                                        </label>
-                                        <div className="flex justify-between text-xs font-bold text-zinc-500">
-                                            <span>{item.quantity}</span>
-                                            {item.approx_measure && (
-                                                <span className="italic text-orange-500 bg-orange-500/10 px-2 py-0.5 rounded border border-orange-500/10 text-[10px] uppercase tracking-wide">
-                                                    Medida: {item.approx_measure}
-                                                </span>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
+                    {/* Meals List */}
+                    <Stack gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
+                        {meals.map((meal: any) => (
+                            <Surface
+                                key={meal.id}
+                                variant="tonal-zinc"
+                                border
+                                padding={STORE_TOKENS.PADDING.CONTAINER}
+                                rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                            >
+                                <Stack gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
+                                    
+                                    {/* Meal Header */}
+                                    <Stack direction="row" align="center" justify="between" fullWidth>
+                                        <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                            <Icon icon={Utensils} color="orange" size="md" />
+                                            <Font variant="heading" weight="black" uppercase italic>
+                                                {meal.name}
+                                            </Font>
+                                        </Stack>
+                                        {meal.time_of_day && (
+                                            <Surface variant="glass" padding={STORE_TOKENS.PADDING.ELEMENT} rounded="system" border>
+                                                <Font variant="auxiliary" color="orange" weight="black" tracking="widest">
+                                                    {meal.time_of_day.slice(0, 5)}
+                                                </Font>
+                                            </Surface>
+                                        )}
+                                    </Stack>
 
-                            <div className="pt-4 border-t border-zinc-800 flex justify-end">
-                                <button className="text-xs text-emerald-400 hover:text-emerald-300 font-black uppercase tracking-wider flex items-center gap-1.5 transition-colors">
-                                    <CheckCircle className="h-4 w-4 shrink-0 text-emerald-500" /> Marcar Refeição Completa
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                ))}
-            </div>
-        </div>
+                                    <Separator />
+
+                                    {/* Meal Items */}
+                                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
+                                        {meal.items?.map((item: any) => (
+                                            <Surface
+                                                key={item.id}
+                                                variant="glass"
+                                                padding={STORE_TOKENS.PADDING.ELEMENT}
+                                                rounded="system"
+                                                border
+                                            >
+                                                <Stack direction={{ base: 'col', sm: 'row' }} align={{ base: 'start', sm: 'center' }} justify="between" gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
+                                                    <FormCheckbox
+                                                        label={item.food_name}
+                                                        color="emerald"
+                                                    />
+                                                    <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                                        <Font variant="body" color="zinc-400">
+                                                            {item.quantity}
+                                                        </Font>
+                                                        {item.approx_measure && (
+                                                            <Surface variant="glass" padding="tiny" rounded="system" border>
+                                                                <Font variant="sub-tiny" color="orange" weight="black" uppercase tracking="wider">
+                                                                    Medida: {item.approx_measure}
+                                                                </Font>
+                                                            </Surface>
+                                                        )}
+                                                    </Stack>
+                                                </Stack>
+                                            </Surface>
+                                        ))}
+                                    </Stack>
+
+                                    <Separator />
+
+                                    {/* Action Trigger */}
+                                    <Stack justify="end" direction="row" fullWidth>
+                                        <Button variant="outline-emerald" size="sm" shine>
+                                            <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                                <Icon icon={CheckCircle} size="xs" />
+                                                <Font variant="sub-tiny" weight="black" uppercase tracking="wider">
+                                                    Marcar Refeição Completa
+                                                </Font>
+                                            </Stack>
+                                        </Button>
+                                    </Stack>
+
+                                </Stack>
+                            </Surface>
+                        ))}
+                    </Stack>
+
+                </Stack>
+            </Box>
+        </RegistryMain>
     )
 }

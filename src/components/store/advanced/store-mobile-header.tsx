@@ -19,7 +19,7 @@ interface StoreMobileHeaderProps {
  */
 export function StoreMobileHeader({ onMenuClick }: StoreMobileHeaderProps) {
     const { primaryColor, setIsSidebarOpen, isSidebarOpen } = useRegistry()
-    
+
     const handleToggle = () => {
         if (onMenuClick) {
             onMenuClick()
@@ -33,7 +33,7 @@ export function StoreMobileHeader({ onMenuClick }: StoreMobileHeaderProps) {
             <Inline justify="between" fullWidth align="center">
                 <Logo size="sm" color={primaryColor as any} />
 
-                <Box 
+                <Box
                     as="button"
                     id="tour-mobile-hamburger"
                     onClick={handleToggle}
@@ -50,7 +50,6 @@ export function StoreMobileHeader({ onMenuClick }: StoreMobileHeaderProps) {
                     transition
                     hoverBgOpacity={30}
                     cursor="pointer"
-                    className="active:scale-95 outline-none ring-0"
                 >
                     <Icon icon={Menu} color={primaryColor as any} size="sm" />
                 </Box>

@@ -59,11 +59,12 @@ export function WorkoutCardPremium({
             <BackgroundIcon
                 icon={Dumbbell}
                 size="100"
-                top={-10}
-                right={-10}
                 opacity={STORE_TOKENS.OPACITY.SUBTLE}
                 groupHoverOpacity={STORE_TOKENS.OPACITY.SUBTLE}
-            />
+                {...{
+                    top: -10,
+                    right: -10,
+                }} />
             <Stack gap={STORE_TOKENS.SPACING.CONTAINER} position="relative" zIndex={STORE_TOKENS.Z_INDEX.CONTENT}>
                 {/* Header Actions - Hidden in Personal Mode */}
                 <Stack direction="row" align="center" justify="between">
@@ -92,10 +93,18 @@ export function WorkoutCardPremium({
                 {/* Body Content */}
                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        <Font variant="h3" color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
+                        <Font
+                            variant="h3"
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                            }}>
                             {title}
                         </Font>
-                        <Font {...STORE_TOKENS.TYPOGRAPHY.DESCRIPTION} color={STORE_TOKENS.COLORS.TEXT.DIM}>
+                        <Font
+                            {...STORE_TOKENS.TYPOGRAPHY.DESCRIPTION}
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.DIM,
+                            }}>
                             {description}
                         </Font>
                     </Stack>
@@ -112,10 +121,18 @@ export function WorkoutCardPremium({
 
                 {/* Meta Info */}
                 <Stack direction="row" align="center" justify="between">
-                    <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.MUTED}>
+                    <Font
+                        {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                        {...{
+                            color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                        }}>
                         {exercisesCount} EXERCÍCIOS
                     </Font>
-                    <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.MUTED}>
+                    <Font
+                        {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                        {...{
+                            color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                        }}>
                         {date}
                     </Font>
                 </Stack>
@@ -126,13 +143,21 @@ export function WorkoutCardPremium({
                         <Button variant={color as any} flex1>
                             <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                 <Icon icon={Calendar} size="xs" color={STORE_TOKENS.COLORS.BLACK} />
-                                <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.BLACK}>AGENDAR</Font>
+                                <Font
+                                    {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                                    {...{
+                                        color: STORE_TOKENS.COLORS.BLACK,
+                                    }}>AGENDAR</Font>
                             </Stack>
                         </Button>
                         <Button variant="outline-zinc" flex1>
                             <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                 <Icon icon={Edit3} size="xs" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} />
-                                <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>EDITAR</Font>
+                                <Font
+                                    {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                                    {...{
+                                        color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                                    }}>EDITAR</Font>
                             </Stack>
                         </Button>
                         <Button variant="outline-zinc" isIconOnly size="sm" rounded={STORE_TOKENS.RADIUS.SYSTEM}>
@@ -142,5 +167,5 @@ export function WorkoutCardPremium({
                 )}
             </Stack>
         </GlassPanel>
-    )
+    );
 }

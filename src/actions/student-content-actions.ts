@@ -56,9 +56,10 @@ export async function createStudentWorkout(formData: FormData) {
 
         revalidateTag('workouts', 'page')
         revalidatePath('/dashboard/student/workouts')
-        redirect('/dashboard/student/workouts')
+        return { success: true, workoutId, redirectUrl: `/dashboard/student/workouts/${workoutId}` }
     } catch (e: any) {
         console.error('[STUDENT] Error creating workout:', e.message)
+        return { success: false, error: e.message }
     }
 }
 

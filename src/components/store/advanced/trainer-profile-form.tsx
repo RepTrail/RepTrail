@@ -99,7 +99,13 @@ export function TrainerProfileForm({ profile, userId }: TrainerProfileFormProps)
                                 readOnly
                                 fontMono
                             />
-                            <Font variant="tiny" color={STORE_TOKENS.COLORS.TEXT.DIM} weight="bold" uppercase>
+                            <Font
+                                variant="tiny"
+                                weight="bold"
+                                uppercase
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.DIM,
+                                }}>
                                 O código é único e permanente.
                             </Font>
                         </Stack>
@@ -118,7 +124,13 @@ export function TrainerProfileForm({ profile, userId }: TrainerProfileFormProps)
                                 defaultValue={profile?.instagram || ''}
                                 placeholder="@seuinstagram"
                             />
-                            <Font variant="tiny" color={STORE_TOKENS.COLORS.TEXT.DIM} weight="bold" uppercase>
+                            <Font
+                                variant="tiny"
+                                weight="bold"
+                                uppercase
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.DIM,
+                                }}>
                                 Seu perfil será exibido na sua landing page.
                             </Font>
                         </Stack>
@@ -164,7 +176,14 @@ export function TrainerProfileForm({ profile, userId }: TrainerProfileFormProps)
                         gap={STORE_TOKENS.SPACING.CONTAINER}
                     >
                         <Box flex1>
-                            <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="bold" uppercase tracking="tight">
+                            <Font
+                                variant="sub-tiny"
+                                weight="bold"
+                                uppercase
+                                tracking="tight"
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                }}>
                                 Após salvar, suas informações ficam visíveis para alunos e no convite.
                             </Font>
                         </Box>
@@ -186,5 +205,5 @@ export function TrainerProfileForm({ profile, userId }: TrainerProfileFormProps)
                 </Stack>
             </form>
         </Surface>
-    )
+    );
 }

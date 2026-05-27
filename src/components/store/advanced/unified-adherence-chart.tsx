@@ -74,7 +74,13 @@ export function UnifiedAdherenceChart({ history, showErgogenics = false, noCard 
                             <Box key={row.id} display="flex" direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
                                 <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} width={80} shrink={0}>
                                     <Icon icon={row.icon} size="sm" color={row.color as any} />
-                                    <Font variant="tiny" weight="black" uppercase color={`${row.color}-500` as any}>{row.label}</Font>
+                                    <Font
+                                        variant="tiny"
+                                        weight="black"
+                                        uppercase
+                                        {...{
+                                            color: `${row.color}-500` as any,
+                                        }}>{row.label}</Font>
                                 </Stack>
 
                                 <Box flex1={true} display="flex" direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} bg={STORE_TOKENS.COLORS.SURFACE} bgOpacity={STORE_TOKENS.OPACITY.HIGH} rounded={STORE_TOKENS.RADIUS.SYSTEM} padding={STORE_TOKENS.PADDING.ELEMENT}>
@@ -138,10 +144,26 @@ export function UnifiedAdherenceChart({ history, showErgogenics = false, noCard 
             </Box>
 
             <Stack direction="row" wrap="wrap" align="center" justify="center" gap={STORE_TOKENS.SPACING.CONTAINER} opacity={STORE_TOKENS.OPACITY.OVERLAY}>
-                <LegendItem color={STORE_TOKENS.COLORS.SUCCESS} label="Meta Batida" />
-                <LegendItem color={STORE_TOKENS.COLORS.WARNING} label="Parcial" />
-                <LegendItem color={STORE_TOKENS.COLORS.ERROR} label="Não Realizado" />
-                <LegendItem color={STORE_TOKENS.COLORS.BACKGROUND} label="Programado" />
+                <LegendItem
+                    label="Meta Batida"
+                    {...{
+                        color: STORE_TOKENS.COLORS.SUCCESS,
+                    }} />
+                <LegendItem
+                    label="Parcial"
+                    {...{
+                        color: STORE_TOKENS.COLORS.WARNING,
+                    }} />
+                <LegendItem
+                    label="Não Realizado"
+                    {...{
+                        color: STORE_TOKENS.COLORS.ERROR,
+                    }} />
+                <LegendItem
+                    label="Programado"
+                    {...{
+                        color: STORE_TOKENS.COLORS.BACKGROUND,
+                    }} />
             </Stack>
         </Stack>
     )
@@ -154,21 +176,39 @@ export function UnifiedAdherenceChart({ history, showErgogenics = false, noCard 
                 <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                     <Icon icon={Activity} size="lg" color="primary" />
                     <Stack direction="row" align="baseline" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        <Font variant="h3" weight="black" color="primary" italic uppercase>Adesão Consolidada</Font>
-                        <Font variant="sub-tiny" weight="normal" color={STORE_TOKENS.COLORS.TEXT.MUTED}>(30 Dias)</Font>
+                        <Font
+                            variant="h3"
+                            weight="black"
+                            italic
+                            uppercase
+                            {...{
+                                color: "primary",
+                            }}>Adesão Consolidada</Font>
+                        <Font
+                            variant="sub-tiny"
+                            weight="normal"
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                            }}>(30 Dias)</Font>
                     </Stack>
                 </Stack>
                 {content}
             </Stack>
         </GlassPanel>
-    )
+    );
 }
 
 function LegendItem({ color, label }: { color: string, label: string }) {
     return (
         <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
             <Box width={8} height={8} rounded={STORE_TOKENS.RADIUS.FULL} bg={color as any} bgOpacity={STORE_TOKENS.OPACITY.FULL} />
-            <Font variant="tiny" weight="black" color={STORE_TOKENS.COLORS.TEXT.MUTED} uppercase>{label}</Font>
+            <Font
+                variant="tiny"
+                weight="black"
+                uppercase
+                {...{
+                    color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                }}>{label}</Font>
         </Stack>
-    )
+    );
 }

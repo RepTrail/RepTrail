@@ -78,7 +78,6 @@ export function AdminProductsCatalogPanel() {
                     />
                 </Stack>
             </RegistrySection>
-
             {/* MODALS REUSE */}
             <Modal
                 isOpen={modalState.type === 'delete'}
@@ -96,7 +95,6 @@ export function AdminProductsCatalogPanel() {
                     </Callout>
                 </Stack>
             </Modal>
-
             <Modal
                 isOpen={modalState.type === 'edit'}
                 onClose={closeModal}
@@ -108,20 +106,32 @@ export function AdminProductsCatalogPanel() {
                 cancelLabel="Descartar"
             >
                 <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
-                    <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.SECONDARY}>
+                    <Font
+                        variant="description"
+                        {...{
+                            color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
+                        }}>
                         Interface de edição rápida. Os campos abaixo permitem atualizar as propriedades fundamentais do registro sem sair do dashboard.
                     </Font>
                     
                     <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                         <Box fullWidth bg={STORE_TOKENS.COLORS.WHITE} bgOpacity={STORE_TOKENS.OPACITY.LOW} border borderColor={STORE_TOKENS.COLORS.DIVIDER.STANDARD} rounded={STORE_TOKENS.RADIUS.SYSTEM} display="flex" align="center" padding={STORE_TOKENS.PADDING.CONTAINER}>
-                            <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>Campo de Exemplo 01...</Font>
+                            <Font
+                                variant="sub-tiny"
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                }}>Campo de Exemplo 01...</Font>
                         </Box>
                         <Box fullWidth bg={STORE_TOKENS.COLORS.WHITE} bgOpacity={STORE_TOKENS.OPACITY.LOW} border borderColor={STORE_TOKENS.COLORS.DIVIDER.STANDARD} rounded={STORE_TOKENS.RADIUS.SYSTEM} display="flex" align="center" padding={STORE_TOKENS.PADDING.CONTAINER}>
-                            <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>Campo de Exemplo 02...</Font>
+                            <Font
+                                variant="sub-tiny"
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                }}>Campo de Exemplo 02...</Font>
                         </Box>
                     </Stack>
                 </Stack>
             </Modal>
         </Stack>
-    )
+    );
 }

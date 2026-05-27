@@ -118,10 +118,29 @@ export function AdminPayoutsManagementPanel({ initialPayouts }: { initialPayouts
                         <Box padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM}>
                             <Stack direction={{ base: 'col', md: 'row' }} gap={STORE_TOKENS.SPACING.CONTAINER} align={{ base: 'stretch', md: 'center' }} justify="between">
                                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                    <Font variant="sub-tiny" color="success" weight="black" uppercase tracking="widest" opacity={STORE_TOKENS.OPACITY.MODAL}>Chave PIX</Font>
-                                    <Font variant="body-sm" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} weight="bold" breakAll>{formatPixKey(payout.payout_details)}</Font>
+                                    <Font
+                                        variant="sub-tiny"
+                                        weight="black"
+                                        uppercase
+                                        tracking="widest"
+                                        opacity={STORE_TOKENS.OPACITY.MODAL}
+                                        {...{
+                                            color: "success",
+                                        }}>Chave PIX</Font>
+                                    <Font
+                                        variant="body-sm"
+                                        weight="bold"
+                                        {...{
+                                            color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                                            breakAll: true,
+                                        }}>{formatPixKey(payout.payout_details)}</Font>
                                 </Stack>
-                                <Font variant="heading" color="success" weight="black">R$ {Number(payout.amount).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</Font>
+                                <Font
+                                    variant="heading"
+                                    weight="black"
+                                    {...{
+                                        color: "success",
+                                    }}>R$ {Number(payout.amount).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</Font>
                             </Stack>
                         </Box>
                     }
@@ -134,11 +153,26 @@ export function AdminPayoutsManagementPanel({ initialPayouts }: { initialPayouts
                             variant="zinc"
                         />
                         <Stack gap="none" minWidth={0}>
-                            <Font weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY} variant={{ base: 'body-sm', md: 'body' }} tracking="wider" truncate>
+                            <Font
+                                weight="black"
+                                uppercase
+                                italic
+                                variant={{ base: 'body-sm', md: 'body' }}
+                                tracking="wider"
+                                truncate
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                                }}>
                                 {payout.profiles?.full_name || 'Usuário Desconhecido'}
                             </Font>
                             <Box fullWidth minWidth={0} overflow="hidden">
-                                <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.DIM} lowercase truncate>
+                                <Font
+                                    variant="sub-tiny"
+                                    lowercase
+                                    truncate
+                                    {...{
+                                        color: STORE_TOKENS.COLORS.TEXT.DIM,
+                                    }}>
                                     {payout.profiles?.email}
                                 </Font>
                             </Box>
@@ -146,7 +180,6 @@ export function AdminPayoutsManagementPanel({ initialPayouts }: { initialPayouts
                     </Stack>
                 </ActionableListCard>
             ))}
-
             <Modal
                 isOpen={modalConfig.open}
                 onClose={() => setModalConfig({ ...modalConfig, open: false })}
@@ -161,7 +194,11 @@ export function AdminPayoutsManagementPanel({ initialPayouts }: { initialPayouts
                 confirmLabel={modalConfig.status === 'completed' ? "Confirmar" : "Rejeitar"}
             >
                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <Font variant="body" color={STORE_TOKENS.COLORS.TEXT.SECONDARY}>
+                    <Font
+                        variant="body"
+                        {...{
+                            color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
+                        }}>
                         {modalConfig.status === 'completed'
                             ? "Ao confirmar, o status do saque será atualizado para 'Pago' e o valor será deduzido permanentemente do saldo do afiliado."
                             : "Tem certeza que deseja rejeitar esta solicitação? O saldo retornará para a conta do afiliado."
@@ -170,5 +207,5 @@ export function AdminPayoutsManagementPanel({ initialPayouts }: { initialPayouts
                 </Stack>
             </Modal>
         </Stack>
-    )
+    );
 }

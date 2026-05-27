@@ -48,7 +48,13 @@ export function ErgogenicStudentHubCard({ student }: ErgogenicStudentHubCardProp
                         variant="primary"
                     />
                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT} flex1 minWidth={0}>
-                        <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} variant="h4" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} truncate>
+                        <Font
+                            {...STORE_TOKENS.TYPOGRAPHY.HEADING}
+                            variant="h4"
+                            truncate
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                            }}>
                             {student.full_name}
                         </Font>
                         <Badge
@@ -72,12 +78,16 @@ export function ErgogenicStudentHubCard({ student }: ErgogenicStudentHubCardProp
                 <Button variant="outline-primary" asChild shine fullWidth>
                     <Link href={href}>
                         <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                            <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color="primary">Abrir protocolo</Font>
+                            <Font
+                                {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                                {...{
+                                    color: "primary",
+                                }}>Abrir protocolo</Font>
                             <Icon icon={ArrowUpRight} size="xs" color="primary" />
                         </Stack>
                     </Link>
                 </Button>
             </Stack>
         </GlassPanel>
-    )
+    );
 }

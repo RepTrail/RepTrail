@@ -42,31 +42,34 @@ export function AssignmentBadge({
                 <Stack align="end" gap={STORE_TOKENS.SPACING.NONE}>
                     <Font
                         variant="auxiliary"
-                        color={colorToken}
                         weight="black"
                         italic
                         uppercase
                         opacity={STORE_TOKENS.OPACITY.OVERLAY}
-                    >
+                        {...{
+                            color: colorToken,
+                        }}>
                         Atribuído para
                     </Font>
                     <Inline gap={STORE_TOKENS.SPACING.TINY} align="center" justify="end">
                         <Font
                             variant="sub-tiny"
-                            color={colorToken}
                             weight="black"
                             italic
                             uppercase
-                        >
+                            {...{
+                                color: colorToken,
+                            }}>
                             {studentName}
                         </Font>
                         {daysOfWeek && daysOfWeek.length > 0 && (
                             <Font
                                 variant="sub-tiny"
-                                color={colorToken}
                                 weight="medium"
                                 opacity={STORE_TOKENS.OPACITY.OVERLAY}
-                            >
+                                {...{
+                                    color: colorToken,
+                                }}>
                                 ({daysOfWeek.map((d) => DAYS_OF_WEEK_LABELS[d]).join(', ')})
                             </Font>
                         )}
@@ -80,5 +83,5 @@ export function AssignmentBadge({
                 />
             </Inline>
         </Box>
-    )
+    );
 }

@@ -28,8 +28,8 @@ export function SplashScreen({ onFinish, redirectHref, color = 'emerald' }: Spla
     const strokeColor = colorMap[color] || colorMap.emerald
 
     useEffect(() => {
-        const drawDuration = 1500; 
-        const holdDuration = 500;   
+        const drawDuration = 1500;
+        const holdDuration = 500;
 
         const finishTimer = setTimeout(() => {
             setIsFinishing(true);
@@ -39,7 +39,7 @@ export function SplashScreen({ onFinish, redirectHref, color = 'emerald' }: Spla
                 setTimeout(() => {
                     if (onFinish) onFinish();
                     if (redirectHref) router.push(redirectHref);
-                }, 400); 
+                }, 400);
             }, holdDuration);
         }, drawDuration);
 
@@ -58,7 +58,6 @@ export function SplashScreen({ onFinish, redirectHref, color = 'emerald' }: Spla
             justify="center"
             bg="zinc"
             bgOpacity={100}
-            className={`transition-opacity duration-700 ${isVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
             suppressHydrationWarning
         >
             <style>{`
@@ -93,30 +92,33 @@ export function SplashScreen({ onFinish, redirectHref, color = 'emerald' }: Spla
                     to { opacity: 0; transform: scale(0.95); }
                 }
             `}</style>
-            <Stack 
-                align="center" 
-                justify="center" 
+            <Stack
+                align="center"
+                justify="center"
                 gap={STORE_TOKENS.SPACING.CONTAINER}
-                className={`transition-all duration-500 ${isFinishing ? 'rt-finish-fade' : ''}`}
             >
                 <Box position="relative">
-                    <div className="rt-loading-container">
+                    <Box>
                         <svg
                             viewBox="0 0 24 24"
                             fill="none"
                             xmlns="http://www.w3.org/2000/svg"
-                            className="w-24 h-24"
-                        >
+                            {...{
+                                width: "96",
+                                height: "96",
+                            }}>
                             <path
                                 d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"
                                 stroke={strokeColor}
                                 strokeWidth="1"
                                 pathLength="100"
-                                className="rt-minimal-bolt"
-                                style={{ strokeDashoffset: 100, strokeDasharray: 100 }}
+                                {...{
+                                    className: 'rt-minimal-bolt',
+                                    style: { strokeDashoffset: 100, strokeDasharray: 100 }
+                                }}
                             />
                         </svg>
-                    </div>
+                    </Box>
                 </Box>
             </Stack>
         </Box>

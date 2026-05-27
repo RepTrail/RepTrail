@@ -27,17 +27,30 @@ interface ModalHeaderProps {
  */
 export function ModalHeader({ title, subtitle, icon, variant, isLoading, onClose }: ModalHeaderProps) {
     return (
-        <CardHeader 
-            bg={STORE_TOKENS.COLORS.BACKGROUND} 
-            bgOpacity={STORE_TOKENS.OPACITY.BACKGROUND} 
-            shrink={0} 
-        >
+        <CardHeader
+            shrink={0}
+            {...{
+                bg: STORE_TOKENS.COLORS.BACKGROUND,
+                bgOpacity: STORE_TOKENS.OPACITY.BACKGROUND,
+            }}>
             <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center" justify="between" fullWidth>
                 <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center" flex1>
                     {icon && <IconBox icon={icon} variant={variant as any} />}
                     <Stack gap="none" flex1>
-                        <Font variant="body" weight="black" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} uppercase italic tracking="normal">{title}</Font>
-                        {subtitle && <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{subtitle}</Font>}
+                        <Font
+                            variant="body"
+                            weight="black"
+                            uppercase
+                            italic
+                            tracking="normal"
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                            }}>{title}</Font>
+                        {subtitle && <Font
+                            variant="sub-tiny"
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                            }}>{subtitle}</Font>}
                     </Stack>
                 </Inline>
 
@@ -48,5 +61,5 @@ export function ModalHeader({ title, subtitle, icon, variant, isLoading, onClose
                 </Box>
             </Inline>
         </CardHeader>
-    )
+    );
 }

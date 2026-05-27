@@ -38,36 +38,88 @@ export function ColorsSectionContent({ id }: { id?: string }) {
                 <GlassPanel padding="none">
                     <Stack gap="none">
                         <CardHeader>
-                            <Font variant="label-caps" color={STORE_TOKENS.COLORS.TEXT.MUTED}>Brand Color Spectrum (100%, 30%, 20%)</Font>
+                            <Font
+                                variant="label-caps"
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                }}>Brand Color Spectrum (100%, 30%, 20%)</Font>
                         </CardHeader>
-                        <CardContent padding={STORE_TOKENS.PADDING.CONTAINER}>
+                        <CardContent
+                            {...{
+                                padding: STORE_TOKENS.PADDING.CONTAINER,
+                            }}>
                             <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                                 {brandColors.map((c) => (
                                     <Grid key={c.color} cols={1} mdCols={3} gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
                                         {/* 100% Solid */}
                                         <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
-                                            <Swatch color={c.color} opacity={STORE_TOKENS.OPACITY.FULL} size="md" />
+                                            <Swatch
+                                                opacity={STORE_TOKENS.OPACITY.FULL}
+                                                size="md"
+                                                {...{
+                                                    color: c.color,
+                                                }} />
                                             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                                <Font variant="sub-tiny" weight="black" uppercase color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{c.name}</Font>
-                                                <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>Solid (100%)</Font>
+                                                <Font
+                                                    variant="sub-tiny"
+                                                    weight="black"
+                                                    uppercase
+                                                    {...{
+                                                        color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                                                    }}>{c.name}</Font>
+                                                <Font
+                                                    variant="sub-tiny"
+                                                    {...{
+                                                        color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                                    }}>Solid (100%)</Font>
                                             </Stack>
                                         </Stack>
 
                                         {/* 30% Opacity */}
                                         <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
-                                            <Swatch color={c.color} opacity={STORE_TOKENS.OPACITY.INTERMEDIATE} size="md" />
+                                            <Swatch
+                                                opacity={STORE_TOKENS.OPACITY.INTERMEDIATE}
+                                                size="md"
+                                                {...{
+                                                    color: c.color,
+                                                }} />
                                             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                                <Font variant="sub-tiny" weight="black" uppercase color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{c.name}</Font>
-                                                <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>Glass (30%)</Font>
+                                                <Font
+                                                    variant="sub-tiny"
+                                                    weight="black"
+                                                    uppercase
+                                                    {...{
+                                                        color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                                                    }}>{c.name}</Font>
+                                                <Font
+                                                    variant="sub-tiny"
+                                                    {...{
+                                                        color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                                    }}>Glass (30%)</Font>
                                             </Stack>
                                         </Stack>
 
                                         {/* 20% Opacity */}
                                         <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
-                                            <Swatch color={c.color} opacity={20} size="md" />
+                                            <Swatch
+                                                opacity={20}
+                                                size="md"
+                                                {...{
+                                                    color: c.color,
+                                                }} />
                                             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                                <Font variant="sub-tiny" weight="black" uppercase color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{c.name}</Font>
-                                                <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>Subtle (20%)</Font>
+                                                <Font
+                                                    variant="sub-tiny"
+                                                    weight="black"
+                                                    uppercase
+                                                    {...{
+                                                        color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                                                    }}>{c.name}</Font>
+                                                <Font
+                                                    variant="sub-tiny"
+                                                    {...{
+                                                        color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                                    }}>Subtle (20%)</Font>
                                             </Stack>
                                         </Stack>
                                     </Grid>
@@ -81,16 +133,38 @@ export function ColorsSectionContent({ id }: { id?: string }) {
                 <GlassPanel padding="none">
                     <Stack gap="none">
                         <CardHeader>
-                            <Font variant="label-caps" color={STORE_TOKENS.COLORS.TEXT.MUTED}>System & Background Tokens</Font>
+                            <Font
+                                variant="label-caps"
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                }}>System & Background Tokens</Font>
                         </CardHeader>
-                        <CardContent padding={STORE_TOKENS.PADDING.CONTAINER}>
+                        <CardContent
+                            {...{
+                                padding: STORE_TOKENS.PADDING.CONTAINER,
+                            }}>
                             <Grid cols={1} mdCols={4} gap={STORE_TOKENS.SPACING.CONTAINER}>
                                 {systemColors.map((c) => (
                                     <Stack key={c.name} gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                        <Swatch color={c.color as any} opacity={c.opacity as any} size="full" />
+                                        <Swatch
+                                            opacity={c.opacity as any}
+                                            size="full"
+                                            {...{
+                                                color: c.color as any,
+                                            }} />
                                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                            <Font variant="sub-tiny" weight="black" uppercase color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{c.name}</Font>
-                                            <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{c.value}</Font>
+                                            <Font
+                                                variant="sub-tiny"
+                                                weight="black"
+                                                uppercase
+                                                {...{
+                                                    color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                                                }}>{c.name}</Font>
+                                            <Font
+                                                variant="sub-tiny"
+                                                {...{
+                                                    color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                                }}>{c.value}</Font>
                                         </Stack>
                                     </Stack>
                                 ))}

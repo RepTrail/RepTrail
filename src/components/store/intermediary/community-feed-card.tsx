@@ -54,7 +54,6 @@ export function CommunityFeedCard({
                     transition
                 />
             </Box>
-
             {/* Base Overlay (Cinematic Darkening) */}
             <Box
                 position="absolute"
@@ -65,7 +64,6 @@ export function CommunityFeedCard({
                 groupHoverOpacity={10}
                 transition
             />
-            
             {/* Bottom Gradient (Ensures Footer Readability) */}
             <Box
                 position="absolute"
@@ -75,7 +73,6 @@ export function CommunityFeedCard({
                 zIndex={STORE_TOKENS.Z_INDEX.CONTENT}
                 bgGradient="bottom-dark"
             />
-
             {/* Content Container */}
             <Stack
                 position="relative"
@@ -107,10 +104,21 @@ export function CommunityFeedCard({
                                 size="sm"
                             />
                             <Stack gap="none">
-                                <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} variant="body-sm" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} lineClamp={1}>
+                                <Font
+                                    {...STORE_TOKENS.TYPOGRAPHY.HEADING}
+                                    variant="body-sm"
+                                    lineClamp={1}
+                                    {...{
+                                        color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                                    }}>
                                     {userName}
                                 </Font>
-                                <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} variant="tiny" color={STORE_TOKENS.COLORS.TEXT.DIM}>
+                                <Font
+                                    {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                                    variant="tiny"
+                                    {...{
+                                        color: STORE_TOKENS.COLORS.TEXT.DIM,
+                                    }}>
                                     VER PERFIL COMPLETO
                                 </Font>
                             </Stack>
@@ -130,5 +138,5 @@ export function CommunityFeedCard({
                 </GlassPanel>
             </Stack>
         </Box>
-    )
+    );
 }

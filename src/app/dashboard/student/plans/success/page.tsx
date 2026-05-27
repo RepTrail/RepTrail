@@ -1,42 +1,55 @@
 import { CheckCircle, ArrowRight, Dumbbell } from 'lucide-react'
 import Link from 'next/link'
+import { RegistryMain } from '@/components/store/advanced/registry-main'
+import { Box } from '@/components/store/base/box'
+import { Stack } from '@/components/store/base/stack'
+import { Font } from '@/components/store/base/font'
+import { Button } from '@/components/store/base/button'
+import { Icon } from '@/components/store/base/icon'
+import { Surface } from '@/components/store/base/surface'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 export default async function StudentAutoTrainingSuccessPage() {
     return (
-        <div className="min-h-screen bg-zinc-950 flex items-center justify-center p-6">
-            <div className="max-w-lg w-full text-center space-y-10">
-                <div className="flex justify-center">
-                    <div className="relative">
-                        <div className="w-28 h-28 rounded-full bg-emerald-500/10 border-2 border-emerald-500/30 flex items-center justify-center">
-                            <CheckCircle className="w-14 h-14 text-emerald-500" />
-                        </div>
-                        <div className="absolute -top-2 -right-2 w-10 h-10 rounded-full bg-zinc-900 border-2 border-zinc-800 flex items-center justify-center">
-                            <Dumbbell className="w-5 h-5 text-emerald-400" />
-                        </div>
-                    </div>
-                </div>
+        <RegistryMain
+            title="SUCESSO"
+            subtitle="Confirmação de ativação do seu plano."
+            icon="CheckCircle"
+            showTabs={false}
+        >
+            <Box alignSelf="center" maxWidth="md" width="full" padding={STORE_TOKENS.PADDING.CONTAINER}>
+                <Stack gap={STORE_TOKENS.SPACING.CONTAINER} align="center" textAlign="center">
+                    <Box position="relative">
+                        <Surface variant="glass" border="standard" padding={STORE_TOKENS.PADDING.CONTAINER} rounded="full">
+                            <Icon icon={CheckCircle} size="3xl" color="emerald" />
+                        </Surface>
+                        <Box position="absolute" top={0} right={0} zIndex={10}>
+                            <Surface variant="tonal-zinc" border="standard" padding={STORE_TOKENS.PADDING.ELEMENT} rounded="full">
+                                <Icon icon={Dumbbell} size="sm" color="emerald" />
+                            </Surface>
+                        </Box>
+                    </Box>
 
-                <div className="space-y-3">
-                    <h1 className="text-4xl font-black text-white italic uppercase tracking-tight">
-                        Pagamento Confirmado!
-                    </h1>
-                    <p className="text-zinc-400 text-lg">
-                        Seu plano <span className="font-black text-emerald-400">Auto-Training</span> foi ativado.
-                    </p>
-                </div>
+                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                        <Font variant="heading" weight="black" uppercase italic>
+                            Pagamento Confirmado!
+                        </Font>
+                        <Font variant="body" color={STORE_TOKENS.COLORS.TEXT.MUTED}>
+                            Seu plano <Font color="emerald" weight="black" as="span">Auto-Training</Font> foi ativado.
+                        </Font>
+                    </Stack>
 
-                <Link
-                    href="/dashboard/student"
-                    className="inline-flex items-center gap-3 pb-4px-8 py-4 bg-white hover:bg-zinc-100 text-zinc-950 font-black uppercase tracking-widest rounded-2xl transition-all hover:scale-105 active:scale-95"
-                >
-                    Ir para o Dashboard
-                    <ArrowRight className="w-5 h-5" />
-                </Link>
+                    <Link href="/dashboard/student" passHref legacyBehavior>
+                        <Button variant="primary" size="lg" icon={<Icon icon={ArrowRight} />}>
+                            Ir para o Dashboard
+                        </Button>
+                    </Link>
 
-                <p className="text-zinc-700 text-xs">
-                    Se o acesso não liberar imediatamente, atualize a página em alguns segundos.
-                </p>
-            </div>
-        </div>
+                    <Font variant="auxiliary" color={STORE_TOKENS.COLORS.TEXT.MUTED}>
+                        Se o acesso não liberar imediatamente, atualize a página em alguns segundos.
+                    </Font>
+                </Stack>
+            </Box>
+        </RegistryMain>
     )
 }

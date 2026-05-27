@@ -22,8 +22,16 @@ export function AffiliateOnboardingGuide() {
                         <Icon icon={LinkIcon} color={STORE_TOKENS.COLORS.BRAND} size="sm" />
                     </GlassPanel>
                     <Stack gap="none">
-                        <Font variant="auxiliary" color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>Divulgue seu link</Font>
-                        <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>Compartilhe em suas redes sociais ou site.</Font>
+                        <Font
+                            variant="auxiliary"
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                            }}>Divulgue seu link</Font>
+                        <Font
+                            variant="sub-tiny"
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                            }}>Compartilhe em suas redes sociais ou site.</Font>
                     </Stack>
                 </Stack>
                 <Stack direction="row" gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
@@ -31,8 +39,16 @@ export function AffiliateOnboardingGuide() {
                         <Icon icon={Users} color={STORE_TOKENS.COLORS.INFO} size="sm" />
                     </GlassPanel>
                     <Stack gap="none">
-                        <Font variant="auxiliary" color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>Atraia Personais</Font>
-                        <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>Convide profissionais para a plataforma.</Font>
+                        <Font
+                            variant="auxiliary"
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                            }}>Atraia Personais</Font>
+                        <Font
+                            variant="sub-tiny"
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                            }}>Convide profissionais para a plataforma.</Font>
                     </Stack>
                 </Stack>
                 <Stack direction="row" gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
@@ -40,11 +56,19 @@ export function AffiliateOnboardingGuide() {
                         <Icon icon={Award} color={STORE_TOKENS.COLORS.SUCCESS} size="sm" />
                     </GlassPanel>
                     <Stack gap="none">
-                        <Font variant="auxiliary" color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>Ganhe Comissões</Font>
-                        <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>Receba 10% sobre cada assinatura ativa.</Font>
+                        <Font
+                            variant="auxiliary"
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                            }}>Ganhe Comissões</Font>
+                        <Font
+                            variant="sub-tiny"
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                            }}>Receba 10% sobre cada assinatura ativa.</Font>
                     </Stack>
                 </Stack>
             </Stack>
         </GlassPanel>
-    )
+    );
 }

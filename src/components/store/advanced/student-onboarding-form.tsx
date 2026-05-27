@@ -12,6 +12,7 @@ import { FormCheckbox } from '@/components/store/base/form-checkbox'
 import { Textarea } from '@/components/store/base/textarea'
 import { Button } from '@/components/store/base/button'
 import { Box } from '@/components/store/base/box'
+import { Icon } from '@/components/store/base/icon'
 import { 
     Activity, 
     Target, 
@@ -22,7 +23,8 @@ import {
     Zap, 
     Calendar,
     ChevronRight,
-    ChevronLeft
+    ChevronLeft,
+    Loader2
 } from 'lucide-react'
 import { DomainStepCard } from '../intermediary/domain-step-card'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
@@ -97,16 +99,16 @@ export function StudentOnboardingForm({ defaultTrainerCode = '' }: { defaultTrai
                 flex1
                 disabled={pending}
             >
-                <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                <Stack direction="row" align="center" justify="center" gap="element">
                     {pending ? (
                         <>
-                            <span className="h-4 w-4 animate-spin rounded-full border-2 border-zinc-950 border-t-transparent" />
+                            <Icon icon={Loader2} animate="spin" size="sm" color="black" />
                             <Font variant="sub-tiny" weight="black" uppercase tracking="widest">Finalizando...</Font>
                         </>
                     ) : (
                         <>
                             <Font variant="sub-tiny" weight="black" uppercase tracking="widest">Finalizar Cadastro</Font>
-                            <ShieldCheck size={14} />
+                            <Icon icon={ShieldCheck} size="sm" color="black" />
                         </>
                     )}
                 </Stack>
@@ -116,33 +118,62 @@ export function StudentOnboardingForm({ defaultTrainerCode = '' }: { defaultTrai
 
     return (
         <RegistryProvider defaultColor="orange">
-            <form action={formAction} noValidate className="w-full">
+            <form
+                action={formAction}
+                noValidate
+                {...{
+                    className: "w-full",
+                }}>
                 {/* Hidden inputs to guarantee they are always submitted */}
-                <input type="hidden" name="height" value={height} />
-                <input type="hidden" name="startingWeight" value={startingWeight} />
-                <input type="hidden" name="estimatedBf" value={estimatedBf} />
-                <input type="hidden" name="birthDate" value={birthDate} />
-                <input type="hidden" name="goal" value={goal} />
-                <input type="hidden" name="activityLevel" value={activityLevel} />
-                <input type="hidden" name="imageAuth" value={imageAuth} />
-                <input type="hidden" name="trainerCode" value={trainerCode} />
-                <input type="hidden" name="observations" value={observations} />
-                {steroidUse && <input type="hidden" name="steroidUse" value="on" />}
+                <Box as="input" type="hidden" name="height" value={height} />
+                <Box as="input" type="hidden" name="startingWeight" value={startingWeight} />
+                <Box as="input" type="hidden" name="estimatedBf" value={estimatedBf} />
+                <Box as="input" type="hidden" name="birthDate" value={birthDate} />
+                <Box as="input" type="hidden" name="goal" value={goal} />
+                <Box as="input" type="hidden" name="activityLevel" value={activityLevel} />
+                <Box as="input" type="hidden" name="imageAuth" value={imageAuth} />
+                <Box as="input" type="hidden" name="trainerCode" value={trainerCode} />
+                <Box as="input" type="hidden" name="observations" value={observations} />
+                {steroidUse && <Box as="input" type="hidden" name="steroidUse" value="on" />}
 
                 <Stack gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
                     {/* Error Messages */}
                     {state?.message && (
                         <Box 
-                            padding={STORE_TOKENS.PADDING.CONTAINER} 
-                            rounded={STORE_TOKENS.RADIUS.SYSTEM} 
-                            className="bg-red-500/10 border border-red-500/20 text-red-500 text-center"
+                            padding="container" 
+                            rounded="system" 
+                            bg="red"
+                            bgOpacity={10}
+                            border
+                            borderColor="red"
+                            borderOpacity={20}
+                            textAlign="center"
                         >
-                            <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                <Font variant="sub-tiny" weight="black" uppercase tracking="widest">{state.message}</Font>
+                            <Stack gap="element">
+                                <Font
+                                    variant="sub-tiny"
+                                    weight="black"
+                                    uppercase
+                                    tracking="widest"
+                                    {...{
+                                        color: "error",
+                                    }}>{state.message}</Font>
                                 {state.errors && Object.keys(state.errors).length > 0 && (
-                                    <Stack gap="element" className="normal-case text-[10px]">
+                                    <Stack gap="element">
                                         {Object.entries(state.errors).map(([field, msgs]) => (
-                                            <div key={field}><strong>{field}:</strong> {msgs?.join(', ')}</div>
+                                            <Font
+                                                key={field}
+                                                variant="sub-tiny"
+                                                {...{
+                                                    color: "error",
+                                                }}>
+                                                <Font
+                                                    variant="sub-tiny"
+                                                    weight="bold"
+                                                    {...{
+                                                        color: "error",
+                                                    }}>{field}:</Font> {msgs?.join(', ')}
+                                            </Font>
                                         ))}
                                     </Stack>
                                 )}
@@ -278,7 +309,7 @@ export function StudentOnboardingForm({ defaultTrainerCode = '' }: { defaultTrai
                     )}
 
                     {/* Actions Navigation Bar */}
-                    <Stack direction={{ base: 'col', md: 'row' }} gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth className="flex-col-reverse md:flex-row pt-2">
+                    <Stack direction={{ base: 'col', md: 'row' }} gap="element" fullWidth>
                         {step > 1 && (
                             <Button 
                                 type="button" 
@@ -286,8 +317,8 @@ export function StudentOnboardingForm({ defaultTrainerCode = '' }: { defaultTrai
                                 size="lg" 
                                 onClick={prevStep}
                             >
-                                <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                    <ChevronLeft size={14} />
+                                <Stack direction="row" align="center" justify="center" gap="element">
+                                    <Icon icon={ChevronLeft} size="sm" />
                                     <Font variant="sub-tiny" weight="black" uppercase tracking="widest">Voltar</Font>
                                 </Stack>
                             </Button>
@@ -302,9 +333,9 @@ export function StudentOnboardingForm({ defaultTrainerCode = '' }: { defaultTrai
                                 disabled={step === 1 ? !isStep1Valid : !isStep2Valid}
                                 onClick={nextStep}
                             >
-                                <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                <Stack direction="row" align="center" justify="center" gap="element">
                                     <Font variant="sub-tiny" weight="black" uppercase tracking="widest">Próximo</Font>
-                                    <ChevronRight size={14} />
+                                    <Icon icon={ChevronRight} size="sm" />
                                 </Stack>
                             </Button>
                         ) : (
@@ -314,5 +345,5 @@ export function StudentOnboardingForm({ defaultTrainerCode = '' }: { defaultTrai
                 </Stack>
             </form>
         </RegistryProvider>
-    )
+    );
 }

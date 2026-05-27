@@ -44,7 +44,13 @@ export function ChartTooltip({ title, rows, layout = 'inline' }: ChartTooltipPro
             style={{ backdropFilter: 'blur(12px)', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)' }}
         >
             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                <Font variant="sub-tiny" weight="black" color="zinc-500" uppercase>
+                <Font
+                    variant="sub-tiny"
+                    weight="black"
+                    uppercase
+                    {...{
+                        color: "zinc-500",
+                    }}>
                     {title}
                 </Font>
 
@@ -55,7 +61,7 @@ export function ChartTooltip({ title, rows, layout = 'inline' }: ChartTooltipPro
                 {rows.map((row, i) =>
                     layout === 'spaced' ? (
                         /* ── Line chart style: label left / value right ── */
-                        <Box
+                        (<Box
                             key={i}
                             display="flex"
                             align="center"
@@ -72,17 +78,27 @@ export function ChartTooltip({ title, rows, layout = 'inline' }: ChartTooltipPro
                                         boxShadow: row.glow ? `0 0 10px ${row.color}` : undefined,
                                     }}
                                 />
-                                <Font variant="tiny" weight="bold" color="zinc-400">
+                                <Font
+                                    variant="tiny"
+                                    weight="bold"
+                                    {...{
+                                        color: "zinc-400",
+                                    }}>
                                     {row.label}
                                 </Font>
                             </Stack>
-                            <Font variant="tiny" weight="black" color="white">
+                            <Font
+                                variant="tiny"
+                                weight="black"
+                                {...{
+                                    color: "white",
+                                }}>
                                 {row.value}
                             </Font>
-                        </Box>
+                        </Box>)
                     ) : (
                         /* ── Status/adherence style: dot + label: value inline ── */
-                        <Stack key={i} direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                        (<Stack key={i} direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                             <Box
                                 width={8}
                                 height={8}
@@ -93,18 +109,28 @@ export function ChartTooltip({ title, rows, layout = 'inline' }: ChartTooltipPro
                                     boxShadow: row.glow ? `0 0 10px ${row.color}` : undefined,
                                 }}
                             />
-                            <Font variant="tiny" weight="bold" color="zinc-400">
+                            <Font
+                                variant="tiny"
+                                weight="bold"
+                                {...{
+                                    color: "zinc-400",
+                                }}>
                                 {row.label}:
                             </Font>
-                            <Font variant="tiny" weight="black" color="white">
+                            <Font
+                                variant="tiny"
+                                weight="black"
+                                {...{
+                                    color: "white",
+                                }}>
                                 {row.value}
                             </Font>
-                        </Stack>
+                        </Stack>)
                     )
                 )}
             </Stack>
         </Box>
-    )
+    );
 }
 
 // ── Recharts Adapter ────────────────────────────────────────────────────────────

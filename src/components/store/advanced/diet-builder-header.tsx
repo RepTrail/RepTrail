@@ -91,7 +91,12 @@ export function DietBuilderHeader({
                     <GlassPanel padding={STORE_TOKENS.SPACING.CONTAINER}>
                         <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED} uppercase>
+                                <Font
+                                    variant="sub-tiny"
+                                    uppercase
+                                    {...{
+                                        color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                    }}>
                                     Nome da Dieta
                                 </Font>
                                 <Input
@@ -114,7 +119,7 @@ export function DietBuilderHeader({
                                     fullWidth={{ base: true, md: false }}
                                 >
                                     <Icon icon={Check} size="xs" />
-                                    <span>Salvar</span>
+                                    Salvar
                                 </Button>
                                 <Button
                                     variant="outline-red"
@@ -123,7 +128,7 @@ export function DietBuilderHeader({
                                     fullWidth={{ base: true, md: false }}
                                 >
                                     <Icon icon={X} size="xs" />
-                                    <span>Cancelar</span>
+                                    Cancelar
                                 </Button>
                             </Stack>
                         </Stack>
@@ -140,13 +145,23 @@ export function DietBuilderHeader({
                             {contextLabel && (
                                 <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                                     <Icon icon={Utensils} color={(contextColor as any) || STORE_TOKENS.COLORS.BRAND} size="lg" />
-                                    <Font variant="auxiliary" color={(contextColor as any) || STORE_TOKENS.COLORS.BRAND} uppercase>
+                                    <Font
+                                        variant="auxiliary"
+                                        uppercase
+                                        {...{
+                                            color: (contextColor as any) || STORE_TOKENS.COLORS.BRAND,
+                                        }}>
                                         {contextLabel}
                                     </Font>
                                 </Inline>
                             )}
                             <Inline align="center" gap={STORE_TOKENS.SPACING.TINY}>
-                                <Font variant="h1" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} uppercase>
+                                <Font
+                                    variant="h1"
+                                    uppercase
+                                    {...{
+                                        color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                                    }}>
                                     {name}
                                 </Font>
                                 <Box
@@ -160,14 +175,17 @@ export function DietBuilderHeader({
                                     <Icon icon={Pencil} size="sm" color={STORE_TOKENS.COLORS.BRAND} />
                                 </Box>
                             </Inline>
-                            <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>
+                            <Font
+                                variant="description"
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                }}>
                                 {description || 'Toque para editar nome e detalhes'}
                             </Font>
                         </Stack>
                     </Box>
                 )}
             </Box>
-
             {/* Actions: estimate + assign */}
             {!isEditing && (
                 <Stack
@@ -196,7 +214,7 @@ export function DietBuilderHeader({
                         fullWidth={{ base: true, md: false }}
                     >
                         <Icon icon={isEstimatingAll ? Loader2 : Sparkles} size="sm" color={STORE_TOKENS.COLORS.BRAND} spin={isEstimatingAll} />
-                        <span>{isEstimatingAll ? 'Calculando...' : 'Calcular Macros'}</span>
+                        {isEstimatingAll ? 'Calculando...' : 'Calcular Macros'}
                     </Button>
 
                     {/* Assign diet */}
@@ -211,7 +229,7 @@ export function DietBuilderHeader({
                             >
                                 <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                                     <Icon icon={Calendar} size="sm" color={STORE_TOKENS.COLORS.BRAND} />
-                                    <span>{assignments?.length ? 'Gerenciar Atribuição' : 'Atribuir Dieta'}</span>
+                                    {assignments?.length ? 'Gerenciar Atribuição' : 'Atribuir Dieta'}
                                 </Inline>
                             </Button>
                         </Box>
@@ -231,5 +249,5 @@ export function DietBuilderHeader({
                 </Stack>
             )}
         </Stack>
-    )
+    );
 }

@@ -5,7 +5,7 @@ import { Stack } from '@/components/store/base/stack'
 import { Icon } from '@/components/store/base/icon'
 import { Input } from '@/components/store/base/input'
 import { Button } from '@/components/store/base/button'
-import { Surface } from '@/components/store/base/surface'
+import { GlassPanel } from '@/components/store/base/surface'
 import { Inline } from '@/components/store/base/layout'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { Plus } from 'lucide-react'
@@ -24,7 +24,7 @@ export function DietBuilderNewMeal({ onAdd }: DietBuilderNewMealProps) {
     }
 
     return (
-        <Surface variant="showcase" padding={STORE_TOKENS.SPACING.CONTAINER} border="dashed">
+        <GlassPanel padding={STORE_TOKENS.SPACING.CONTAINER} border="dashed">
             <Stack
                 direction={{ base: 'col', md: 'row' }}
                 gap={STORE_TOKENS.SPACING.ELEMENT}
@@ -48,9 +48,9 @@ export function DietBuilderNewMeal({ onAdd }: DietBuilderNewMealProps) {
                     fullWidth={{ base: true, md: false }}
                 >
                     <Icon icon={Plus} size="xs" />
-                    <span>Adicionar Refeição</span>
+                    Adicionar Refeição
                 </Button>
             </Stack>
-        </Surface>
-    )
+        </GlassPanel>
+    );
 }

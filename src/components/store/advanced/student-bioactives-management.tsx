@@ -38,14 +38,14 @@ export function StudentBioactivesManagement({ userId }: StudentBioactivesManagem
     })
 
     const toggleMutation = useMutation({
-        mutationFn: ({ id, currentStatus }: { id: string, currentStatus: boolean }) => 
+        mutationFn: ({ id, currentStatus }: { id: string, currentStatus: boolean }) =>
             toggleErgogenicLog(userId, id, !currentStatus),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ergogenics.logs(userId) })
         }
     })
 
-    if (isLoading) return <RegistrySection title="BIOATIVOS DE HOJE" icon={FlaskConical}><Box className="animate-pulse h-32 bg-zinc-900/50 rounded-3xl" /></RegistrySection>
+    if (isLoading) return <RegistrySection title="BIOATIVOS DE HOJE" subtitle="Gestão diária de protocolos auxiliares." icon={FlaskConical}><Box /></RegistrySection>
 
     // Timezone logic for Brazil
     const today = (() => {
@@ -64,7 +64,7 @@ export function StudentBioactivesManagement({ userId }: StudentBioactivesManagem
 
     if (todayItems.length === 0) {
         return (
-            <RegistrySection title="BIOATIVOS DE HOJE" icon={FlaskConical}>
+            <RegistrySection title="BIOATIVOS DE HOJE" subtitle="Gestão diária de protocolos auxiliares." icon={FlaskConical}>
                 <ErgogenicsList items={[]} status="empty" />
             </RegistrySection>
         )

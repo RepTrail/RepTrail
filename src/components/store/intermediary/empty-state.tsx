@@ -43,14 +43,26 @@ export function EmptyState({
         />
 
         <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-          <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} variant="heading" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} align="center">
+          <Font
+            {...STORE_TOKENS.TYPOGRAPHY.HEADING}
+            variant="heading"
+            align="center"
+            {...{
+              color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+            }}>
             {title}
           </Font>
-          <Font {...STORE_TOKENS.TYPOGRAPHY.DESCRIPTION} color={STORE_TOKENS.COLORS.TEXT.SECONDARY} align="center" uppercase={false}>
+          <Font
+            {...STORE_TOKENS.TYPOGRAPHY.DESCRIPTION}
+            align="center"
+            uppercase={false}
+            {...{
+              color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
+            }}>
             {description}
           </Font>
         </Stack>
       </Stack>
     </GlassPanel>
-  )
+  );
 }

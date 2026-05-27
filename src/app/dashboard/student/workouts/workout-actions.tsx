@@ -1,7 +1,7 @@
 'use client'
 
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/store/base/button'
 import { Plus } from 'lucide-react'
 import { UnifiedCreationDialog } from '@/components/store/advanced/unified-creation-dialog'
 

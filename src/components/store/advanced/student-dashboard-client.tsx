@@ -18,7 +18,7 @@ import { StudentNutritionAdherence } from '@/components/store/advanced/student-n
 import { AIProtocolEmptyStateSectionContent } from '@/components/store/sections/ai-protocol-empty-state-section-content'
 
 // Preserved Logic Components (Wrapped)
-import { AnamnesisForm } from '@/components/store/features(deprecated)/anamnesis-form'
+import { AnamnesisForm } from '@/components/store/advanced/student-anamnesis-form'
 import { StudentDashboardModals } from '@/components/store/advanced/student-dashboard-modals'
 
 interface StudentDashboardClientProps {
@@ -60,7 +60,7 @@ export function StudentDashboardClient({
             showTabs={false}
             showHeader={showHeader}
         >
-            <Stack gap={STORE_TOKENS.SPACING.SECTION} className="animate-in fade-in duration-500">
+            <Stack gap={STORE_TOKENS.SPACING.SECTION}>
                 {/* 1. Notifications (Overlay/Hidden logic preserved) */}
                 <StudentPaymentWarning relationship={trainerRel} />
 
@@ -97,10 +97,10 @@ export function StudentDashboardClient({
                 )}
 
                 {/* 5. System Orchestration Modals */}
-                <StudentDashboardModals 
-                    userId={userId} 
-                    showModal={showAutoTrainingModal} 
-                    hasTrainer={!!trainerRel} 
+                <StudentDashboardModals
+                    userId={userId}
+                    showModal={showAutoTrainingModal}
+                    hasTrainer={!!trainerRel}
                 />
             </Stack>
         </RegistryMain>

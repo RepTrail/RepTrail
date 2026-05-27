@@ -5,6 +5,9 @@ import { getQueryClient } from '@/lib/get-query-client'
 import { ensureDailyTracking } from '@/actions/tracking-actions'
 import { StudentDietManagementSmart } from '@/components/store/advanced/student-diet-management-smart'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
+import { Box } from '@/components/store/base/box'
+import { Surface } from '@/components/store/base/surface'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 import { PREFETCH_REGISTRY } from '@/lib/prefetch-registry'
 
@@ -40,12 +43,12 @@ export default async function StudentDietPage() {
             showTabs={false}
             rightElement={<StudentRegistryHeaderActions userId={userId} type="diet" />}
         >
-            <Suspense fallback={<div className="animate-pulse space-y-10"><div className="h-[500px] bg-zinc-900 rounded-[2.5rem]" /></div>}>
-                <div suppressHydrationWarning>
+            <Suspense fallback={<Surface animation="pulse" variant="sunken" border="none" gap={STORE_TOKENS.SPACING.CONTAINER}><Box bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.SURFACE} height={500} rounded={STORE_TOKENS.RADIUS.SYSTEM} /></Surface>}>
+                <Box suppressHydrationWarning>
                     <HydrationBoundary state={dehydrate(queryClient)}>
                         <StudentDietManagementSmart userId={userId} />
                     </HydrationBoundary>
-                </div>
+                </Box>
             </Suspense>
         </RegistryMain>
     )

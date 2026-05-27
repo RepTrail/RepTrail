@@ -42,7 +42,6 @@ interface StudentPublicProfileMainProps {
     profile: PublicProfile
     trainerData?: TrainerData
     evolutionContent: React.ReactNode
-    historyContent: React.ReactNode
     photosContent: React.ReactNode
 }
 
@@ -71,7 +70,6 @@ export function StudentPublicProfileMain({
 
     return (
         <Stack gap="section" fullWidth>
-
             {/* ── Hero Card (Upgraded to Liquid Glass) ──────────────────── */}
             <GlassPanel padding="container">
                 {/* Decorative background icon */}
@@ -104,7 +102,15 @@ export function StudentPublicProfileMain({
 
                         {/* Identity Info */}
                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align={{ base: 'center', md: 'start' }}>
-                            <Font variant="h1" align={{ base: 'center', md: 'left' }} weight="black" italic uppercase color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
+                            <Font
+                                variant="h1"
+                                align={{ base: 'center', md: 'left' }}
+                                weight="black"
+                                italic
+                                uppercase
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                                }}>
                                 {profile.full_name}
                             </Font>
 
@@ -131,40 +137,56 @@ export function StudentPublicProfileMain({
                         {/* Coach Box or Auto-Training Badge (Left Side) */}
                         <Box display="flex" width={{ base: 'full', md: 'auto' }} justify="center" align="stretch">
                             {trainerData ? (
-                                <Link href={`/personal/${trainerData.trainer_code || trainerData.id}`} style={{ width: '100%', display: 'flex' }}>
-                                    <Box
-                                        bg="primary"
-                                        bgOpacity={STORE_TOKENS.OPACITY.SUBTLE}
-                                        rounded={STORE_TOKENS.RADIUS.SYSTEM}
-                                        padding={STORE_TOKENS.PADDING.CONTAINER}
-                                        cursor="pointer"
-                                        transition
-                                        display="flex"
-                                        align="center"
-                                        fullWidth
-                                        border={true}
-                                        borderColor="primary"
-                                        borderOpacity={20}
-                                    >
-                                        <Inline gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
-                                            <BaseAvatar
-                                                initials={trainerData.full_name?.charAt(0) || '?'}
-                                                src={trainerData.avatar_url || undefined}
-                                                size="lg"
-                                                variant="zinc"
-                                            />
-                                            <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                                <Font variant="sub-tiny" weight="black" uppercase color="primary" opacity={60}>
-                                                    Coach Responsável
-                                                </Font>
-                                                <Font variant="body" weight="black" italic uppercase color="primary">
-                                                    {trainerData.full_name}
-                                                </Font>
-                                            </Stack>
-                                            <Icon icon={ChevronRight} size="md" color="primary" />
-                                        </Inline>
-                                    </Box>
-                                </Link>
+                                <Box width="full" display="flex">
+                                    <Link href={`/personal/${trainerData.trainer_code || trainerData.id}`}>
+                                        <Box
+                                            bg="primary"
+                                            bgOpacity={STORE_TOKENS.OPACITY.SUBTLE}
+                                            rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                                            padding={STORE_TOKENS.PADDING.CONTAINER}
+                                            cursor="pointer"
+                                            transition
+                                            display="flex"
+                                            align="center"
+                                            fullWidth
+                                            border={true}
+                                            borderColor="primary"
+                                            borderOpacity={20}
+                                        >
+                                            <Inline gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
+                                                <BaseAvatar
+                                                    initials={trainerData.full_name?.charAt(0) || '?'}
+                                                    src={trainerData.avatar_url || undefined}
+                                                    size="lg"
+                                                    variant="zinc"
+                                                />
+                                                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                                    <Font
+                                                        variant="sub-tiny"
+                                                        weight="black"
+                                                        uppercase
+                                                        opacity={60}
+                                                        {...{
+                                                            color: "primary",
+                                                        }}>
+                                                        Coach Responsável
+                                                    </Font>
+                                                    <Font
+                                                        variant="body"
+                                                        weight="black"
+                                                        italic
+                                                        uppercase
+                                                        {...{
+                                                            color: "primary",
+                                                        }}>
+                                                        {trainerData.full_name}
+                                                    </Font>
+                                                </Stack>
+                                                <Icon icon={ChevronRight} size="md" color="primary" />
+                                            </Inline>
+                                        </Box>
+                                    </Link>
+                                </Box>
                             ) : (
                                 <Box
                                     bg="primary"
@@ -182,10 +204,24 @@ export function StudentPublicProfileMain({
                                     <Inline gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
                                         <Icon icon={Sparkles} size="lg" color="primary" />
                                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                            <Font variant="sub-tiny" weight="black" uppercase color="primary" opacity={60}>
+                                            <Font
+                                                variant="sub-tiny"
+                                                weight="black"
+                                                uppercase
+                                                opacity={60}
+                                                {...{
+                                                    color: "primary",
+                                                }}>
                                                 Módulo
                                             </Font>
-                                            <Font variant="body" weight="black" italic uppercase color="primary">
+                                            <Font
+                                                variant="body"
+                                                weight="black"
+                                                italic
+                                                uppercase
+                                                {...{
+                                                    color: "primary",
+                                                }}>
                                                 Auto Treino RepTrail
                                             </Font>
                                         </Stack>
@@ -218,13 +254,11 @@ export function StudentPublicProfileMain({
                     </Box>
                 </Box>
             </GlassPanel>
-
             {/* ── Tab Content ───────────────────────────────── */}
             <Box fullWidth>
                 {activeTab === 'evolution' && evolutionContent}
                 {activeTab === 'photos' && photosContent}
             </Box>
-
         </Stack>
-    )
+    );
 }

@@ -20,7 +20,7 @@ export type FontVariant =
   | 'display'
   | 'hero'
 
-type FontColor = 
+export type FontColor = 
   | 'PRIMARY' | 'SECONDARY' | 'MUTED' | 'DIM'
   | 'zinc-400' | 'zinc-500' | 'zinc-600' | 'zinc-700'
   | 'primary' | 'success' | 'warning' | 'error' | 'white' | 'black' | 'inherit'

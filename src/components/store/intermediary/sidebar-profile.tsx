@@ -97,21 +97,26 @@ export function SidebarProfile({
             <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                 <BaseAvatar initials={initials} src={user?.avatar_url || undefined} size="md" />
                 <Stack gap="none" flex1 overflow="hidden" minWidth={0}>
-                    <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} variant="body-sm" color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
+                    <Font
+                        {...STORE_TOKENS.TYPOGRAPHY.HEADING}
+                        variant="body-sm"
+                        {...{
+                            color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                        }}>
                         {user?.name || 'Usuário'}
                     </Font>
                     <Font
                         variant="sub-tiny"
-                        color={STORE_TOKENS.COLORS.TEXT.DIM}
                         truncate
                         lowercase
                         display="block"
-                    >
+                        {...{
+                            color: STORE_TOKENS.COLORS.TEXT.DIM,
+                        }}>
                         {user?.email || ''}
                     </Font>
                 </Stack>
             </Stack>
-
             {/* Actions Area */}
             <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
                 {user?.isAdmin && !pathname.startsWith('/admin') && (
@@ -166,5 +171,5 @@ export function SidebarProfile({
                 </Box>
             </Stack>
         </Stack>
-    )
+    );
 }

@@ -59,23 +59,36 @@ export function AffiliateActivityChart({ clickDays, maxClicks }: AffiliateActivi
                   groupHoverDisplay="block"
                   zIndex={50}
                 >
-                   <Font variant="sub-tiny" color="white" weight="black" nowrap>{count} cliques</Font>
+                   <Font
+                     variant="sub-tiny"
+                     weight="black"
+                     nowrap
+                     {...{
+                       color: "white",
+                     }}>{count} cliques</Font>
                 </Box>
               </Box>
             </Stack>
-          )
+          );
         })}
       </Box>
-
       {/* X-Axis Labels */}
       <Box display="flex" justify="between" fullWidth padding={STORE_TOKENS.PADDING.ELEMENT}>
-        <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>
+        <Font
+          variant="sub-tiny"
+          {...{
+            color: STORE_TOKENS.COLORS.TEXT.MUTED,
+          }}>
           {recentDays[0]?.[0]}
         </Font>
-        <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>
+        <Font
+          variant="sub-tiny"
+          {...{
+            color: STORE_TOKENS.COLORS.TEXT.MUTED,
+          }}>
           Hoje
         </Font>
       </Box>
     </Stack>
-  )
+  );
 }

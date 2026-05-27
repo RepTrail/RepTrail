@@ -56,7 +56,7 @@ export function WorkoutDaySelector({ assignmentId, dayOfWeek }: WorkoutDaySelect
     }
 
     return (
-        <Box width="240px">
+        <Box width={240}>
             <Stack direction="row" align="center" gap="element" fullWidth>
                 {isPending && <Icon icon={Loader2} size="xs" color="primary" spin />}
                 <FormSelect

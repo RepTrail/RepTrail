@@ -68,7 +68,6 @@ export function StudentPublicMetrics({ fullMetrics, adherenceHistory, steroidUse
 
     return (
         <Stack gap={STORE_TOKENS.SPACING.SECTION}>
-
             {/* ── Stats Cards ─────────────────────────────────────────── */}
             <Grid cols={{ base: 1, md: 3 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
                 <StatsCard
@@ -76,24 +75,26 @@ export function StudentPublicMetrics({ fullMetrics, adherenceHistory, steroidUse
                     value={lastWeight ? `${lastWeight} kg` : '--'}
                     description={weightChange30d ? `${parseFloat(weightChange30d) > 0 ? '+' : ''}${weightChange30d} kg no último mês` : 'Sem histórico recente'}
                     icon={TrendingUp}
-                    color="primary"
-                />
+                    {...{
+                        color: "primary",
+                    }} />
                 <StatsCard
                     label="BF (Estimado)"
                     value={lastBF ? `${lastBF} %` : '--'}
                     description={bfChange30d ? `${parseFloat(bfChange30d) > 0 ? '+' : ''}${bfChange30d}% no último mês` : 'Sem histórico recente'}
                     icon={Droplet}
-                    color="primary"
-                />
+                    {...{
+                        color: "primary",
+                    }} />
                 <StatsCard
                     label="Adesão (30D)"
                     value={`${avgAdherence}%`}
                     description="Média consolidada dos 4 pilares"
                     icon={Target}
-                    color="primary"
-                />
+                    {...{
+                        color: "primary",
+                    }} />
             </Grid>
-
             {/* ── Consistência Section ────────────────────────────────── */}
             <RegistrySection
                 title="Consistência (30D)"
@@ -110,7 +111,6 @@ export function StudentPublicMetrics({ fullMetrics, adherenceHistory, steroidUse
                     </Box>
                 </GlassPanel>
             </RegistrySection>
-
             {/* ── Evolução Analítica Section ──────────────────────────── */}
             <RegistrySection
                 title="Evolução Analítica"
@@ -128,5 +128,5 @@ export function StudentPublicMetrics({ fullMetrics, adherenceHistory, steroidUse
                 </GlassPanel>
             </RegistrySection>
         </Stack>
-    )
+    );
 }

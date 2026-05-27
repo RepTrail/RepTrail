@@ -278,15 +278,20 @@ export function RegistryActionModal({
             case 'create_ergogenic' as any:
                 return (
                     <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
-
                         <Input
                             label="NOME DA SUBSTÂNCIA *"
                             defaultValue={initialData?.item}
                             placeholder="Ex: Durateston"
                         />
-
                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                            <Font variant="auxiliary" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="black" uppercase tracking="widest">
+                            <Font
+                                variant="auxiliary"
+                                weight="black"
+                                uppercase
+                                tracking="widest"
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                }}>
                                 DOSAGEM SEMANAL TOTAL *
                             </Font>
                             <Stack direction={{ base: 'col', md: 'row' }} gap={STORE_TOKENS.SPACING.ELEMENT} align="stretch">
@@ -310,13 +315,11 @@ export function RegistryActionModal({
                                 />
                             </Stack>
                         </Stack>
-
                         <WeekdayPicker
                             label="DIAS DE APLICAÇÃO *"
                             selectedDays={selectedDays}
                             onChange={setSelectedDays}
                         />
-
                         <Textarea
                             label="INSTRUÇÕES / NOTAS (OPCIONAL)"
                             placeholder="Ex: Aplicar no glúteo..."
@@ -324,29 +327,37 @@ export function RegistryActionModal({
                             rows={6}
                         />
                     </Stack>
-                )
+                );
 
             case 'confirm_duplicate':
                 return (
                     <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
-                        <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.SECONDARY}>
-                            Você está prestes a duplicar o registro <strong>{initialData?.name || 'selecionado'}</strong>. Uma nova cópia será criada com os mesmos parâmetros originais.
+                        <Font
+                            variant="description"
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
+                            }}>
+                            Você está prestes a duplicar o registro <Font weight='bold'>{initialData?.name || 'selecionado'}</Font>. Uma nova cópia será criada com os mesmos parâmetros originais.
                         </Font>
                         <Input label="TÍTULO DA CÓPIA" defaultValue={`${initialData?.name || 'Registro'} (Cópia)`} />
                     </Stack>
-                )
+                );
 
             case 'confirm_delete':
                 return (
                     <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                         <Callout variant="danger" title="Ação Irreversível">
-                            Você tem certeza que deseja excluir <strong>{initialData?.name || 'este registro'}</strong>? Todos os dados associados serão removidos permanentemente.
+                            Você tem certeza que deseja excluir <Font weight='bold'>{initialData?.name || 'este registro'}</Font>? Todos os dados associados serão removidos permanentemente.
                         </Callout>
-                        <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.SECONDARY}>
+                        <Font
+                            variant="description"
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
+                            }}>
                             Esta ação não poderá ser desfeita e impactará o histórico do aluno.
                         </Font>
                     </Stack>
-                )
+                );
 
             default:
                 return null

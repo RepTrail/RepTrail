@@ -1,7 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { AutoTrainingOnboardingModal } from '@/components/store/features(deprecated)/auto-training-onboarding-modal'
+import { Modal } from '@/components/store/advanced/modal'
+import { Font } from '@/components/store/base/font'
+import { Stack } from '@/components/store/base/stack'
+import { Sparkles } from 'lucide-react'
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { ENTITIES } from '@/lib/outbox-db'
@@ -62,12 +65,70 @@ export function StudentDashboardModals({ userId, showModal, hasTrainer }: Studen
     const handleClose = () => setIsModalOpen(false)
 
     return (
-        <AutoTrainingOnboardingModal
+        <Modal
             isOpen={isModalOpen && !isImpersonating}
-            onAccept={handleAccept}
-            onReject={handleReject}
-            onClose={handleClose}
-        />
-    )
+            onClose={handleReject}
+            title="Experimente o Auto Treino"
+            subtitle="Inteligência Artificial para sua Performance"
+            icon={Sparkles}
+            confirmLabel="Iniciar Teste Grátis"
+            cancelLabel="Agora Não"
+            onConfirm={handleAccept}
+            variant="orange"
+            confirmVariant="primary"
+        >
+            <Stack gap="container">
+                <Stack gap="element">
+                    <Font
+                        variant="body"
+                        weight="bold"
+                        {...{
+                            color: "white",
+                        }}>
+                        Monte seu treino, cardio e dieta de forma inteligente!
+                    </Font>
+                    <Font
+                        variant="description"
+                        {...{
+                            color: "zinc-400",
+                        }}>
+                        O Auto Treino utiliza nossa IA avançada para construir protocolos personalizados sob medida para o seu corpo e rotina.
+                    </Font>
+                </Stack>
+                <Stack gap="tiny">
+                    <Font
+                        variant="sub-tiny"
+                        weight="black"
+                        uppercase
+                        tracking="widest"
+                        {...{
+                            color: "primary",
+                        }}>
+                        ✓ IMPORTAÇÃO IA DE PDFS (TREINO/DIETA)
+                    </Font>
+                    <Font
+                        variant="sub-tiny"
+                        weight="black"
+                        uppercase
+                        tracking="widest"
+                        {...{
+                            color: "primary",
+                        }}>
+                        ✓ PLAYER DE TREINO PROFISSIONAL
+                    </Font>
+                    <Font
+                        variant="sub-tiny"
+                        weight="black"
+                        uppercase
+                        tracking="widest"
+                        {...{
+                            color: "primary",
+                        }}>
+                        ✓ GESTÃO DE CARDIO E ERGOGÊNICOS
+                    </Font>
+                </Stack>
+            </Stack>
+        </Modal>
+    );
 }
 

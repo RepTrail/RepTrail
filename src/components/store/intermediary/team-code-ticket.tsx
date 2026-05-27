@@ -23,13 +23,14 @@ export function TeamCodeTicket({ code }: TeamCodeTicketProps) {
             <Stack align="center" justify="center">
                 <Font
                     variant={{ base: 'h2', md: 'h1' }}
-                    color={STORE_TOKENS.COLORS.TEXT.PRIMARY}
                     weight="black"
                     align="center"
-                >
+                    {...{
+                        color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                    }}>
                     {resolvedCode}
                 </Font>
             </Stack>
         </GlassPanel>
-    )
+    );
 }

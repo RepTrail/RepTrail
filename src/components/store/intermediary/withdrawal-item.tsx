@@ -58,12 +58,21 @@ export function WithdrawalItem({
         <ActionableListCard 
             badges={
                 <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center" fullWidth>
-                    <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} color={STORE_TOKENS.COLORS.TEXT.PRIMARY} variant="body-sm">
+                    <Font
+                        {...STORE_TOKENS.TYPOGRAPHY.HEADING}
+                        variant="body-sm"
+                        {...{
+                            color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                        }}>
                         {amount}
                     </Font>
                     <Inline gap="element" align="center">
                         <Icon icon={QrCode} size="xs" color={STORE_TOKENS.COLORS.TEXT.DIM} />
-                        <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.DIM}>{method}</Font>
+                        <Font
+                            {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.DIM,
+                            }}>{method}</Font>
                     </Inline>
                     <Badge
                         label={config.label}
@@ -86,21 +95,34 @@ export function WithdrawalItem({
 
                 {/* Details Area */}
                 <Stack gap="none" flex1 overflow="hidden">
-                    <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} variant="body-sm" color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
+                    <Font
+                        {...STORE_TOKENS.TYPOGRAPHY.HEADING}
+                        variant="body-sm"
+                        {...{
+                            color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                        }}>
                         Saque #{id.slice(-6).toUpperCase()}
                     </Font>
                     <Box display={{ base: 'none', sm: 'block' }}>
-                        <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.DIM}>
+                        <Font
+                            {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.DIM,
+                            }}>
                             {date} • {recipient}
                         </Font>
                     </Box>
                     <Box display={{ base: 'block', sm: 'none' }}>
-                        <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.DIM}>
+                        <Font
+                            {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.DIM,
+                            }}>
                             {date}
                         </Font>
                     </Box>
                 </Stack>
             </Inline>
         </ActionableListCard>
-    )
+    );
 }

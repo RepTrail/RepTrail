@@ -158,12 +158,26 @@ export function AnamnesisForm({ initialData }: { initialData?: any }) {
                         <Stack gap={STORE_TOKENS.SPACING.CONTAINER} position="relative" zIndex={10}>
                             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                                 <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} wrap="wrap">
-                                    <Font variant="tiny" weight="black" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} italic uppercase tracking="widest">
+                                    <Font
+                                        variant="tiny"
+                                        weight="black"
+                                        italic
+                                        uppercase
+                                        tracking="widest"
+                                        {...{
+                                            color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                                        }}>
                                         Medições Antropométricas
                                     </Font>
                                     <Badge label="Precisão Máxima" color="emerald" variant="glass" size="xs" />
                                 </Stack>
-                                <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="bold" italic>
+                                <Font
+                                    variant="sub-tiny"
+                                    weight="bold"
+                                    italic
+                                    {...{
+                                        color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                    }}>
                                     Insira suas medidas exatas com fita métrica para o cálculo de elite.
                                 </Font>
                             </Stack>
@@ -239,7 +253,14 @@ export function AnamnesisForm({ initialData }: { initialData?: any }) {
                             >
                                 <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                                     <Stack direction="row" align="center" justify="between">
-                                        <Font variant="sub-tiny" weight="black" color={STORE_TOKENS.COLORS.TEXT.MUTED} uppercase tracking="widest">
+                                        <Font
+                                            variant="sub-tiny"
+                                            weight="black"
+                                            uppercase
+                                            tracking="widest"
+                                            {...{
+                                                color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                            }}>
                                             Estimativa Navy Seal
                                         </Font>
                                         {calculatedBF && <Icon icon={Check} color={STORE_TOKENS.COLORS.SUCCESS} size="sm" />}
@@ -247,10 +268,22 @@ export function AnamnesisForm({ initialData }: { initialData?: any }) {
 
                                     <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                         <Stack direction="row" align="baseline" gap="none">
-                                            <Font variant="h3" weight="black" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} italic>
+                                            <Font
+                                                variant="h3"
+                                                weight="black"
+                                                italic
+                                                {...{
+                                                    color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                                                }}>
                                                 {calculatedBF || '--.-'}
                                             </Font>
-                                            <Font variant="body" weight="black" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} italic>
+                                            <Font
+                                                variant="body"
+                                                weight="black"
+                                                italic
+                                                {...{
+                                                    color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                                                }}>
                                                 %
                                             </Font>
                                         </Stack>
@@ -261,18 +294,17 @@ export function AnamnesisForm({ initialData }: { initialData?: any }) {
 
                                         <Box flex1 display={{ base: 'none', lg: 'block' }}>
                                             <Stack gap="none">
-                                                <Font 
-                                                    variant="h3" 
-                                                    weight="black" 
-                                                    color={
-                                                        !calculatedBF ? STORE_TOKENS.COLORS.TEXT.MUTED : 
+                                                <Font
+                                                    variant="h3"
+                                                    weight="black"
+                                                    uppercase
+                                                    italic
+                                                    {...{
+                                                        color: !calculatedBF ? STORE_TOKENS.COLORS.TEXT.MUTED : 
                                                         parseFloat(calculatedBF) < 10 ? 'emerald' : 
                                                         parseFloat(calculatedBF) < 15 ? 'blue' : 
-                                                        parseFloat(calculatedBF) < 20 ? 'amber' : 'red'
-                                                    } 
-                                                    uppercase 
-                                                    italic
-                                                >
+                                                        parseFloat(calculatedBF) < 20 ? 'amber' : 'red',
+                                                    }}>
                                                     {calculatedBF ? (parseFloat(calculatedBF) < 10 ? 'ELITE' : parseFloat(calculatedBF) < 15 ? 'ATLETA' : parseFloat(calculatedBF) < 20 ? 'FITNESS' : 'INICIANTE') : 'Aguardando Medições'}
                                                 </Font>
                                             </Stack>
@@ -288,10 +320,9 @@ export function AnamnesisForm({ initialData }: { initialData?: any }) {
                                 size="lg" 
                                 fullWidth 
                                 gap="element"
-                                className="whitespace-normal text-center leading-tight"
                             >
                                 Salvar Dados Antropométricos
-                                <ArrowRight size={16} className="shrink-0" />
+                                <Icon icon={ArrowRight} size="sm" />
                             </Button>
                         </Stack>
                     </Grid>

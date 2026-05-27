@@ -286,7 +286,6 @@ export function UnifiedCreationDialog({
     return (
         <>
             {clonedTrigger}
-
             <Modal
                 isOpen={isOpen}
                 onClose={() => setIsOpen(false)}
@@ -298,7 +297,12 @@ export function UnifiedCreationDialog({
                 variant={colorScheme}
                 isLoading={isLoading}
             >
-                <form ref={formRef} onSubmit={handleSubmit} className="w-full">
+                <form
+                    ref={formRef}
+                    onSubmit={handleSubmit}
+                    {...{
+                        className: "w-full",
+                    }}>
                     <Stack gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
                         {error && (
                             <Box
@@ -309,7 +313,12 @@ export function UnifiedCreationDialog({
                                 rounded={STORE_TOKENS.RADIUS.SYSTEM}
                                 fullWidth
                             >
-                                <Font variant="body-sm" color="error" weight="bold">
+                                <Font
+                                    variant="body-sm"
+                                    weight="bold"
+                                    {...{
+                                        color: "error",
+                                    }}>
                                     {error}
                                 </Font>
                             </Box>
@@ -317,10 +326,12 @@ export function UnifiedCreationDialog({
 
                         {renderedFields}
 
-                        <button type="submit" className="hidden" />
+                        <Box display="none">
+                            <button type="submit" />
+                        </Box>
                     </Stack>
                 </form>
             </Modal>
         </>
-    )
+    );
 }

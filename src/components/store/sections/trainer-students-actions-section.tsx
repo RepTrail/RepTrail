@@ -14,6 +14,7 @@ import { CopyInviteButton } from '@/components/store/intermediary/copy-invite-bu
 import { Button } from '@/components/store/base/button'
 import { Icon } from '@/components/store/base/icon'
 import { Plus } from 'lucide-react'
+import { Font } from '../base/font'
 
 interface TrainerStudentsActionsSectionProps {
     userId: string
@@ -44,7 +45,7 @@ export function TrainerStudentsActionsSection({ userId }: TrainerStudentsActions
                         <Button variant="outline-emerald" shine fullWidth={{ base: true, sm: false }}>
                             <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                 <Icon icon={Plus} size="xs" />
-                                <span>Vincular Aluno</span>
+                                <Font>Vincular Aluno</Font>
                             </Stack>
                         </Button>
                     }

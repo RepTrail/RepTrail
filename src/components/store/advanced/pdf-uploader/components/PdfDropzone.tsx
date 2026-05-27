@@ -44,10 +44,21 @@ export function PdfDropzone({ uploading, parsing, onFileChange }: PdfDropzonePro
                                 <Icon icon={Loader2} size="xl" color="emerald" animate="spin" />
                             </Box>
                             <Stack align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                <Font variant="body" weight="bold" color="white" align="center">
+                                <Font
+                                    variant="body"
+                                    weight="bold"
+                                    align="center"
+                                    {...{
+                                        color: "white",
+                                    }}>
                                     {uploading ? 'Enviando arquivo...' : 'A IA está lendo o PDF...'}
                                 </Font>
-                                <Font variant="description" color="zinc-500" align="center">
+                                <Font
+                                    variant="description"
+                                    align="center"
+                                    {...{
+                                        color: "zinc-500",
+                                    }}>
                                     Isso pode levar alguns segundos dependendo do tamanho do documento.
                                 </Font>
                             </Stack>
@@ -58,11 +69,29 @@ export function PdfDropzone({ uploading, parsing, onFileChange }: PdfDropzonePro
                                 <Icon icon={Upload} size="lg" color="emerald" />
                             </Surface>
                             <Stack align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                <Font variant="heading" weight="black" uppercase italic color="white" align="center">Arraste seu arquivo aqui</Font>
-                                <Font variant="description" color="zinc-500" align="center">Ou clique para navegar pelo computador</Font>
+                                <Font
+                                    variant="heading"
+                                    weight="black"
+                                    uppercase
+                                    italic
+                                    align="center"
+                                    {...{
+                                        color: "white",
+                                    }}>Arraste seu arquivo aqui</Font>
+                                <Font
+                                    variant="description"
+                                    align="center"
+                                    {...{
+                                        color: "zinc-500",
+                                    }}>Ou clique para navegar pelo computador</Font>
                             </Stack>
                             <Box position="relative">
-                                <DSButton variant="outline-emerald" size="md" rounded="system">
+                                <DSButton
+                                    variant="outline-emerald"
+                                    size="md"
+                                    {...{
+                                        rounded: "system",
+                                    }}>
                                     Selecionar Arquivo
                                 </DSButton>
                                 <Box

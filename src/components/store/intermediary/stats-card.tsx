@@ -56,8 +56,9 @@ export function StatsCard({
                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth align="stretch">
                     <Font
                         {...STORE_TOKENS.TYPOGRAPHY.LABEL}
-                        color={STORE_TOKENS.COLORS.TEXT.MUTED}
-                    >
+                        {...{
+                            color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                        }}>
                         {label}
                     </Font>
 
@@ -71,13 +72,14 @@ export function StatsCard({
                     {description && (
                         <Font
                             {...STORE_TOKENS.TYPOGRAPHY.DESCRIPTION}
-                            color={STORE_TOKENS.COLORS.TEXT.DIM}
-                        >
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.DIM,
+                            }}>
                             {description}
                         </Font>
                     )}
                 </Stack>
             </Stack>
         </GlassPanel>
-    )
+    );
 }

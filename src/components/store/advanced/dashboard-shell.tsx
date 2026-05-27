@@ -76,7 +76,7 @@ export function DashboardShell({ children, color, links, mobileLinks, user, prof
     const setIsSidebarOpen = parentRegistry ? parentRegistry.setIsSidebarOpen : setLocalIsSidebarOpen
 
     const pathname = usePathname()
-    const isPlayerMode = pathname.includes('/workout/') && !pathname.endsWith('/workouts')
+    const isPlayerMode = pathname.includes('/workout/') && !pathname.includes('/workouts/') && !pathname.endsWith('/workouts')
 
     const visibleLinks = links.filter(l => !l.hidden)
     const bottomLinks = mobileLinks?.filter(l => !l.hidden) ?? visibleLinks.slice(0, 5)
@@ -104,7 +104,6 @@ export function DashboardShell({ children, color, links, mobileLinks, user, prof
 
             {/* Sidebar (Mobile Right Drawer / Desktop Static Left) */}
             <DashboardSidebar
-                color={color}
                 links={visibleLinks}
                 user={user}
                 isSidebarOpen={isSidebarOpen}
@@ -114,7 +113,9 @@ export function DashboardShell({ children, color, links, mobileLinks, user, prof
                 settingsHref={resolvedSettingsHref}
                 settingsVariant={resolvedSettingsVariant}
                 onOpenSettings={handleOpenSettings}
-            />
+                {...{
+                    color: color,
+                }} />
 
             {/* Mobile Header (Canonical) */}
             {!isPlayerMode && (
@@ -124,7 +125,11 @@ export function DashboardShell({ children, color, links, mobileLinks, user, prof
             )}
 
             {/* Mobile Bottom Nav */}
-            {!isPlayerMode && <DashboardBottomNav color={color} links={bottomLinks} />}
+            {!isPlayerMode && <DashboardBottomNav
+                links={bottomLinks}
+                {...{
+                    color: color,
+                }} />}
 
             {/* Main Content Area */}
             <Main
@@ -137,7 +142,10 @@ export function DashboardShell({ children, color, links, mobileLinks, user, prof
                 display="flex"
                 direction="col"
             >
-                <ImpersonationBar color={color} />
+                <ImpersonationBar
+                    {...{
+                        color: color,
+                    }} />
                 {children}
             </Main>
         </Surface>
@@ -190,7 +198,6 @@ function DashboardSidebar({
                     <></>
                 </Surface>
             )}
-
             <Box
                 as="aside"
                 position="fixed"
@@ -275,7 +282,10 @@ function DashboardSidebar({
                         </Stack>
                     </Box>
 
-                    <Divider color={STORE_TOKENS.COLORS.DIVIDER.SUBTLE} />
+                    <Divider
+                        {...{
+                            color: STORE_TOKENS.COLORS.DIVIDER.SUBTLE,
+                        }} />
 
                     <Box padding={STORE_TOKENS.PADDING.CONTAINER} shrink={0}>
                         <SidebarProfile
@@ -289,7 +299,7 @@ function DashboardSidebar({
                 </GlassPanel>
             </Box>
         </>
-    )
+    );
 }
 
 // ─── Bottom Nav Sub-component ───────────────────────────────────────────────

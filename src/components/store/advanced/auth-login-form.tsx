@@ -53,14 +53,28 @@ export function AuthLoginForm({
                 {/* Header */}
                 <Box padding={STORE_TOKENS.PADDING.CONTAINER}>
                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                        <Font variant="h2" align="center">Entrar no <Font variant="h2" color={STORE_TOKENS.COLORS.BRAND}>Painel</Font></Font>
-                        <Font variant="auxiliary" color={STORE_TOKENS.COLORS.TEXT.MUTED} align="center" uppercase tracking="widest">
+                        <Font variant="h2" align="center">Entrar no <Font
+                            variant="h2"
+                            {...{
+                                color: STORE_TOKENS.COLORS.BRAND,
+                            }}>Painel</Font></Font>
+                        <Font
+                            variant="auxiliary"
+                            align="center"
+                            uppercase
+                            tracking="widest"
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                            }}>
                             Acesse sua conta para continuar
                         </Font>
                     </Stack>
                 </Box>
 
-                <Divider color={STORE_TOKENS.COLORS.DIVIDER.SUBTLE} />
+                <Divider
+                    {...{
+                        color: STORE_TOKENS.COLORS.DIVIDER.SUBTLE,
+                    }} />
 
                 {/* Form Content */}
                 <Box padding={STORE_TOKENS.PADDING.CONTAINER}>
@@ -78,7 +92,14 @@ export function AuthLoginForm({
                                     borderColor="red-500/20"
                                     minHeight={44}
                                 >
-                                    <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.ERROR} weight="black" uppercase tracking="widest">
+                                    <Font
+                                        variant="sub-tiny"
+                                        weight="black"
+                                        uppercase
+                                        tracking="widest"
+                                        {...{
+                                            color: STORE_TOKENS.COLORS.ERROR,
+                                        }}>
                                         {translateAuthError(error)}
                                     </Font>
                                 </Surface>
@@ -95,7 +116,14 @@ export function AuthLoginForm({
 
                             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                                 <Stack direction="row" justify="between" align="center">
-                                    <Font variant="auxiliary" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="black" uppercase tracking="widest">
+                                    <Font
+                                        variant="auxiliary"
+                                        weight="black"
+                                        uppercase
+                                        tracking="widest"
+                                        {...{
+                                            color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                        }}>
                                         Senha de Acesso
                                     </Font>
                                 </Stack>
@@ -115,29 +143,45 @@ export function AuthLoginForm({
                                 fullWidth
                                 rounded={STORE_TOKENS.RADIUS.SYSTEM}
                                 height="anatomy-item"
-                                padding={STORE_TOKENS.PADDING.CONTAINER}
+                                gap="element"
                                 disabled={loading}
                             >
-                                <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} align="center" justify="center">
-                                    <Font variant="label-caps">
-                                        {loading ? 'Processando...' : 'Entrar Agora'}
-                                    </Font>
-                                    {!loading && <Icon icon={ArrowRight} size="xs" />}
-                                </Stack>
+                                <Font variant="label-caps">
+                                    {loading ? 'Processando...' : 'Entrar Agora'}
+                                </Font>
+                                {!loading && <Icon icon={ArrowRight} size="xs" />}
                             </Button>
                         </Stack>
                     </form>
                 </Box>
 
-                <Divider color={STORE_TOKENS.COLORS.DIVIDER.SUBTLE} />
+                <Divider
+                    {...{
+                        color: STORE_TOKENS.COLORS.DIVIDER.SUBTLE,
+                    }} />
 
                 {/* Footer */}
                 <Box padding={STORE_TOKENS.PADDING.CONTAINER} display="flex" align="center" justify="center" bg={STORE_TOKENS.COLORS.BLACK} bgOpacity={STORE_TOKENS.OPACITY.INTERMEDIATE}>
-                    <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED} align="center" weight="bold" uppercase tracking="widest">
-                        Ainda não é membro? <Link href={signupHref}><Font variant="sub-tiny" color={STORE_TOKENS.COLORS.BRAND} weight="black" cursor="pointer" underline>Cadastre-se grátis</Font></Link>
+                    <Font
+                        variant="sub-tiny"
+                        align="center"
+                        weight="bold"
+                        uppercase
+                        tracking="widest"
+                        {...{
+                            color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                        }}>
+                        Ainda não é membro? <Link href={signupHref}><Font
+                        variant="sub-tiny"
+                        weight="black"
+                        cursor="pointer"
+                        underline
+                        {...{
+                            color: STORE_TOKENS.COLORS.BRAND,
+                        }}>Cadastre-se grátis</Font></Link>
                     </Font>
                 </Box>
             </Stack>
         </Surface>
-    )
+    );
 }

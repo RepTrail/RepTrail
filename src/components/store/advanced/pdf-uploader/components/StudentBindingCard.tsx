@@ -116,26 +116,32 @@ export function StudentBindingCard({ bindingHooks, students }: StudentBindingCar
                     rounded="system"
                     width="fit-content"
                 >
-                    <Font variant="tiny" weight="bold" color="SECONDARY" uppercase>
+                    <Font
+                        variant="tiny"
+                        weight="bold"
+                        uppercase
+                        {...{
+                            color: "SECONDARY",
+                        }}>
                         Aluno Detectado no PDF: {detectedStudentName}
                     </Font>
                 </Box>
             )}
-
             <Stack direction={{ base: 'col', md: 'row' }} gap={STORE_TOKENS.SPACING.CONTAINER} align={{ base: 'stretch', md: 'center' }} justify="between" fullWidth>
                 <DSButton
                     id="tour-btn-create-student"
                     type="button"
                     variant={bindingMode === 'create' ? 'primary' : 'outline-zinc'}
                     size="md"
-                    height="12"
                     flex1={true}
                     onClick={() => {
                         setBindingMode('create');
                         setSelectedStudentId(null);
                         if (detectedStudentName && !placeholderName) setPlaceholderName(detectedStudentName);
                     }}
-                >
+                    {...{
+                        height: "12",
+                    }}>
                     Criar Novo Aluno
                 </DSButton>
 
@@ -143,10 +149,11 @@ export function StudentBindingCard({ bindingHooks, students }: StudentBindingCar
                     type="button"
                     variant={bindingMode === 'skip' ? 'primary' : 'outline-zinc'}
                     size="md"
-                    height="12"
                     flex1={true}
                     onClick={() => { setBindingMode('skip'); setSelectedStudentId(''); }}
-                >
+                    {...{
+                        height: "12",
+                    }}>
                     Não Vincular
                 </DSButton>
 
@@ -162,7 +169,6 @@ export function StudentBindingCard({ bindingHooks, students }: StudentBindingCar
                     />
                 </Box>
             </Stack>
-
             {bindingMode === 'create' && (
                 <StudentCreateForm
                     placeholderName={placeholderName}

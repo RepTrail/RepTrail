@@ -69,17 +69,22 @@ export function CardioTimerCard({
             <BackgroundIcon
                 icon={Activity}
                 size="100"
-                top={0}
-                right={0}
                 opacity={STORE_TOKENS.OPACITY.SUBTLE}
                 groupHoverOpacity={STORE_TOKENS.OPACITY.MEDIUM}
-            />
+                {...{
+                    top: 0,
+                    right: 0,
+                }} />
             <Box padding={STORE_TOKENS.PADDING.CONTAINER} position="relative" zIndex={STORE_TOKENS.Z_INDEX.CONTENT}>
                 <Stack gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
                     <Stack direction={{ base: 'col', lg: 'row' }} align={{ base: 'start', lg: 'center' }} justify="between" fullWidth gap={STORE_TOKENS.SPACING.CONTAINER}>
                         <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                             <Icon icon={Activity} color={isCompleted ? STORE_TOKENS.COLORS.SUCCESS : "orange"} size="sm" />
-                            <Font variant="h4" color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
+                            <Font
+                                variant="h4"
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                                }}>
                                 {title}
                             </Font>
                         </Stack>
@@ -113,10 +118,20 @@ export function CardioTimerCard({
                     </Stack>
 
                     <Stack gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
-                        <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.MUTED}>
+                        <Font
+                            {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                            }}>
                             {isCompleted ? 'DURAÇÃO TOTAL' : 'TEMPO RESTANTE'}
                         </Font>
-                        <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} variant="h1" color={isCompleted ? STORE_TOKENS.COLORS.SUCCESS : STORE_TOKENS.COLORS.TEXT.PRIMARY} align="center">
+                        <Font
+                            {...STORE_TOKENS.TYPOGRAPHY.HEADING}
+                            variant="h1"
+                            align="center"
+                            {...{
+                                color: isCompleted ? STORE_TOKENS.COLORS.SUCCESS : STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                            }}>
                             {isCompleted ? duration : remainingTime}
                         </Font>
                     </Stack>
@@ -167,14 +182,36 @@ export function CardioTimerCard({
 
                     <Grid cols={{ base: 2, lg: 2 }} gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
                         <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM} variant="glass" display="flex" direction="col" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                            <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={isCompleted ? STORE_TOKENS.COLORS.SUCCESS : STORE_TOKENS.COLORS.WARNING} opacity={80}>QUEIMA EST.</Font>
-                            <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} variant="h4" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} align="center">
+                            <Font
+                                {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                                opacity={80}
+                                {...{
+                                    color: isCompleted ? STORE_TOKENS.COLORS.SUCCESS : STORE_TOKENS.COLORS.WARNING,
+                                }}>CALORIAS</Font>
+                            <Font
+                                {...STORE_TOKENS.TYPOGRAPHY.HEADING}
+                                variant="body"
+                                align="center"
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                                }}>
                                 ~{estimatedBurn} KCAL
                             </Font>
                         </GlassPanel>
                         <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM} variant="glass" display="flex" direction="col" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                            <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={isCompleted ? STORE_TOKENS.COLORS.SUCCESS : STORE_TOKENS.COLORS.WARNING} opacity={80}>INTENSIDADE</Font>
-                            <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} variant="h4" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} align="center">
+                            <Font
+                                {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                                opacity={80}
+                                {...{
+                                    color: isCompleted ? STORE_TOKENS.COLORS.SUCCESS : STORE_TOKENS.COLORS.WARNING,
+                                }}>INTENSIDADE</Font>
+                            <Font
+                                {...STORE_TOKENS.TYPOGRAPHY.HEADING}
+                                variant="body"
+                                align="center"
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                                }}>
                                 {intensity}
                             </Font>
                         </GlassPanel>
@@ -182,5 +219,5 @@ export function CardioTimerCard({
                 </Stack>
             </Box>
         </GlassPanel>
-    )
+    );
 }

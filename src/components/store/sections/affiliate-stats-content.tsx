@@ -28,9 +28,12 @@ export function AffiliateStatsContent() {
     if (isLoading) {
         return (
             <Box padding={STORE_TOKENS.PADDING.CONTAINER} display="flex" justify="center">
-                <Font color={STORE_TOKENS.COLORS.TEXT.MUTED}>Carregando estatísticas...</Font>
+                <Font
+                    {...{
+                        color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                    }}>Carregando estatísticas...</Font>
             </Box>
-        )
+        );
     }
 
     if (!data) return null
@@ -53,27 +56,29 @@ export function AffiliateStatsContent() {
                         value={conversion.totalClicks.toLocaleString()}
                         description="CLIQUES ÚNICOS"
                         icon={MousePointerClick}
-                        color={STORE_TOKENS.COLORS.BRAND}
-                    />
+                        {...{
+                            color: STORE_TOKENS.COLORS.BRAND,
+                        }} />
 
                     <StatsCard
                         label="PASSO 2: LEADS"
                         value={conversion.totalReferrals.toLocaleString()}
                         description={`${conversion.clickToSignup}% CONVERSÃO`}
                         icon={UserPlus}
-                        color={STORE_TOKENS.COLORS.WARNING}
-                    />
+                        {...{
+                            color: STORE_TOKENS.COLORS.WARNING,
+                        }} />
 
                     <StatsCard
                         label="PASSO 3: VENDAS"
                         value={conversion.payingReferrals.toLocaleString()}
                         description={`${conversion.signupToPaid}% CONVERSÃO`}
                         icon={DollarSign}
-                        color={STORE_TOKENS.COLORS.SUCCESS}
-                    />
+                        {...{
+                            color: STORE_TOKENS.COLORS.SUCCESS,
+                        }} />
                 </Grid>
             </RegistrySection>
-
             <Grid cols={1} lgCols={3} gap={STORE_TOKENS.SPACING.SECTION}>
                 {/* Main Activities Chart */}
                 <Box lgColSpan={2}>

@@ -175,7 +175,6 @@ export function SettingsModal({ hasTrainer = false, isTrainer = false }: Setting
                         {!pwaInstalled && (
                             <SettingsActionCard
                                 icon={Smartphone}
-                                color="blue"
                                 title="APP REPTRAIL"
                                 subtitle="INSTALE PARA ACESSO RÁPIDO"
                                 actionLabel="INSTALAR"
@@ -184,12 +183,13 @@ export function SettingsModal({ hasTrainer = false, isTrainer = false }: Setting
                                 onAction={() => {
                                     setIsPwaModalOpen(true)
                                 }}
-                            />
+                                {...{
+                                    color: "blue",
+                                }} />
                         )}
 
                         <SettingsActionCard
                             icon={Bell}
-                            color="orange"
                             title="NOTIFICAÇÕES PUSH"
                             subtitle="RECEBA ALERTAS DE TREINOS E DIETAS"
                             actionLabel={notifications === 'on' ? 'CONFIGURAR' : 'ATIVAR'}
@@ -199,14 +199,15 @@ export function SettingsModal({ hasTrainer = false, isTrainer = false }: Setting
                                 setIsOpen(false)
                                 setIsNotificationModalOpen(true)
                             }}
-                        />
+                            {...{
+                                color: "orange",
+                            }} />
 
                         {!isTrainer && !hasTrainer && (
                             <>
                                 {autoTreinoStatus === 'available' && (
                                     <SettingsActionCard
                                         icon={Zap}
-                                        color="emerald"
                                         surfaceVariant="glass"
                                         title="TESTE GRÁTIS DISPONÍVEL"
                                         subtitle="EXPERIMENTE POR 7 DIAS SEM CUSTOS"
@@ -214,13 +215,14 @@ export function SettingsModal({ hasTrainer = false, isTrainer = false }: Setting
                                         buttonVariant="outline-emerald"
                                         actionIcon={Zap}
                                         onAction={enableAutoTrainingTrial}
-                                    />
+                                        {...{
+                                            color: "emerald",
+                                        }} />
                                 )}
 
                                 {autoTreinoStatus === 'subscription_active' && (
                                     <SettingsActionCard
                                         icon={Crown}
-                                        color="emerald"
                                         title="AUTO-TREINO ATIVO"
                                         subtitle="VOCÊ POSSUI ACESSO TOTAL ÀS FUNCIONALIDADES"
                                         actionLabel="GERENCIAR"
@@ -230,13 +232,14 @@ export function SettingsModal({ hasTrainer = false, isTrainer = false }: Setting
                                             setIsOpen(false)
                                             router.push('/dashboard/student/profile')
                                         }}
-                                    />
+                                        {...{
+                                            color: "emerald",
+                                        }} />
                                 )}
 
                                 {autoTreinoStatus === 'trial_active' && (
                                     <SettingsActionCard
                                         icon={Clock}
-                                        color="emerald"
                                         title="TESTE EM ANDAMENTO"
                                         subtitle={`VOCÊ TEM ${daysRemaining} DIAS RESTANTES`}
                                         actionLabel="ATIVO"
@@ -244,13 +247,14 @@ export function SettingsModal({ hasTrainer = false, isTrainer = false }: Setting
                                         buttonVariant="outline-emerald"
                                         onAction={() => { }}
                                         disabled
-                                    />
+                                        {...{
+                                            color: "emerald",
+                                        }} />
                                 )}
 
                                 {autoTreinoStatus === 'used' && (
                                     <SettingsActionCard
                                         icon={Zap}
-                                        color="zinc"
                                         surfaceVariant="glass"
                                         title="TESTE INDISPONÍVEL"
                                         subtitle="VOCÊ JÁ UTILIZOU SEU PERÍODO DE TESTE"
@@ -261,14 +265,15 @@ export function SettingsModal({ hasTrainer = false, isTrainer = false }: Setting
                                             setIsOpen(false)
                                             window.dispatchEvent(new CustomEvent('open-asaas', { detail: { tier: 'auto_training' } }))
                                         }}
-                                    />
+                                        {...{
+                                            color: "zinc",
+                                        }} />
                                 )}
                             </>
                         )}
 
                         <SettingsActionCard
                             icon={Trash2}
-                            color="red"
                             title="ZONA CRÍTICA"
                             subtitle="AÇÃO IRREVERSÍVEL E PERMANENTE"
                             actionLabel="DELETAR"
@@ -278,12 +283,13 @@ export function SettingsModal({ hasTrainer = false, isTrainer = false }: Setting
                                 setIsOpen(false)
                                 setIsDeleteModalOpen(true)
                             }}
-                        />
+                            {...{
+                                color: "red",
+                            }} />
 
                     </Stack>
                 </Box>
             </Modal>
-
             {/* Confirmation Modals */}
             <Modal
                 isOpen={isPwaModalOpen}
@@ -299,11 +305,14 @@ export function SettingsModal({ hasTrainer = false, isTrainer = false }: Setting
                     setIsPwaModalOpen(false)
                 }}
             >
-                <Font variant="body-sm" color={STORE_TOKENS.COLORS.TEXT.DIM}>
+                <Font
+                    variant="body-sm"
+                    {...{
+                        color: STORE_TOKENS.COLORS.TEXT.DIM,
+                    }}>
                     Ao instalar o PWA, você terá acesso rápido ao RepTrail direto da tela inicial do seu celular, com carregamento mais rápido e experiência de aplicativo nativo.
                 </Font>
             </Modal>
-
             <Modal
                 isOpen={isNotificationModalOpen}
                 onClose={() => {
@@ -334,11 +343,14 @@ export function SettingsModal({ hasTrainer = false, isTrainer = false }: Setting
                     setIsNotificationModalOpen(false)
                 }}
             >
-                <Font variant="body-sm" color={STORE_TOKENS.COLORS.TEXT.DIM}>
+                <Font
+                    variant="body-sm"
+                    {...{
+                        color: STORE_TOKENS.COLORS.TEXT.DIM,
+                    }}>
                     Permita que o RepTrail envie notificações push para avisar sobre novos treinos, feedbacks de dieta e mensagens importantes do seu personal.
                 </Font>
             </Modal>
-
             <Modal
                 isOpen={isDeleteModalOpen}
                 onClose={() => {
@@ -375,8 +387,12 @@ export function SettingsModal({ hasTrainer = false, isTrainer = false }: Setting
                         bg="red"
                         bgOpacity={10}
                     >
-                        <Font variant="body-sm" color="red">
-                            Atenção: Ao excluir sua conta, todos os seus protocolos, histórico de treinos e métricas serão apagados <strong>para sempre</strong>. Esta ação não pode ser desfeita.
+                        <Font
+                            variant="body-sm"
+                            {...{
+                                color: "red",
+                            }}>
+                            Atenção: Ao excluir sua conta, todos os seus protocolos, histórico de treinos e métricas serão apagados <Font weight='bold'>para sempre</Font>. Esta ação não pode ser desfeita.
                         </Font>
                     </Box>
                     <Input
@@ -389,5 +405,5 @@ export function SettingsModal({ hasTrainer = false, isTrainer = false }: Setting
                 </Stack>
             </Modal>
         </>
-    )
+    );
 }

@@ -51,31 +51,50 @@ export function SettingsActionCard({
 
     return (
         <Surface variant={resolvedSurfaceVariant} padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM} border="none">
-            <Stack direction={{ base: 'col', lg: 'row' }} align={{ base: 'start', lg: 'center' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
-                <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
+            <Stack direction={{ base: 'col', lg: 'row' }} align={{ base: 'start', lg: 'center' }} gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
+                <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.CONTAINER} flex1>
                     <Box bg={color} bgOpacity={20} padding={STORE_TOKENS.PADDING.ELEMENT} rounded="full">
                         <Icon icon={icon} color={safeColor} size="md" />
                     </Box>
                     <Stack flex1 gap="none">
-                        <Font variant="body" weight="black" uppercase italic color={safeColor}>{title}</Font>
-                        <Font variant="sub-tiny" weight="bold" color={safeColor} opacity={70}>{subtitle}</Font>
+                        <Font
+                            variant="body"
+                            weight="black"
+                            uppercase
+                            italic
+                            {...{
+                                color: safeColor,
+                            }}>{title}</Font>
+                        <Font
+                            variant="sub-tiny"
+                            weight="bold"
+                            opacity={70}
+                            {...{
+                                color: safeColor,
+                            }}>{subtitle}</Font>
                     </Stack>
                 </Stack>
                 <Button 
                     variant={buttonVariant} 
                     size="sm" 
                     fullWidth={{ base: true, lg: false }}
+                    shrink={0}
                     onClick={onAction}
                     disabled={disabled}
                     loading={isLoading}
                     gap="element"
                 >
                     {ActionIcon && (
-                        <ActionIcon size={16} strokeWidth={2.5} className="shrink-0" />
+                        <ActionIcon
+                            size={16}
+                            strokeWidth={2.5}
+                            {...{
+                                className: "shrink-0",
+                            }} />
                     )}
                     {actionLabel}
                 </Button>
             </Stack>
         </Surface>
-    )
+    );
 }

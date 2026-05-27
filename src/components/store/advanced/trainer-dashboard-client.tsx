@@ -76,7 +76,6 @@ export function TrainerDashboardClient({ userId, betaTesterMode }: TrainerDashbo
             showTabs={false}
         >
             <CodeAutoGenerator hasCode={!!profile?.trainer_code} />
-
             <RegistrySection
                 title="Métricas Principais"
                 subtitle="Visibilidade rápida da operação, faturamento e posição atual."
@@ -88,39 +87,42 @@ export function TrainerDashboardClient({ userId, betaTesterMode }: TrainerDashbo
                         value={String(activeStudents)}
                         icon={Users}
                         description={`Total de alunos ativos ${newStudentsThisMonth ? `(+ ${newStudentsThisMonth} este mês)` : ''}`}
-                        color="primary"
-                    />
+                        {...{
+                            color: "primary",
+                        }} />
                     <StatsCard
                         label="Receita Mensal"
                         value={`R$ ${monthlyRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
                         icon={DollarSign}
                         description={`Total Est.: R$ ${totalRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
-                        color="primary"
-                    />
+                        {...{
+                            color: "primary",
+                        }} />
                     <StatsCard
                         label="Ranking Geral"
                         value={`${userRank}º`}
                         icon={TierIcon}
                         description="Sua posição atual"
-                        color="primary"
-                    />
+                        {...{
+                            color: "primary",
+                        }} />
                     <StatsCard
                         label="Seu Nível"
                         value={tierName}
                         icon={TrendingUp}
                         description="Seu plano atual no RepTrail (Ativo)"
-                        color="primary"
-                    />
+                        {...{
+                            color: "primary",
+                        }} />
                 </Grid>
             </RegistrySection>
-
             <RegistrySection
                 title="Operação Diária"
                 subtitle="Atividade recente, atalhos operacionais e gestão do perfil público."
                 icon={Activity}
             >
                 <Grid cols={{ base: 1, lg: 12 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
-                    <Box lgColSpan={8} display="flex" direction="col" gap="container" overflow="hidden" fullWidth className="min-h-0">
+                    <Box lgColSpan={8} display="flex" direction="col" gap="container" overflow="hidden" fullWidth>
                         <ActivityFeed userId={userId} initialData={activities} />
                     </Box>
 
@@ -136,5 +138,5 @@ export function TrainerDashboardClient({ userId, betaTesterMode }: TrainerDashbo
                 </Grid>
             </RegistrySection>
         </RegistryMain>
-    )
+    );
 }

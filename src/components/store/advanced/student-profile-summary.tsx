@@ -79,16 +79,33 @@ export function StudentProfileSummary({ name, email, avatarUrl, userId }: Studen
                 />
 
                 <Stack align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <Font variant="h3" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} align="center">
+                    <Font
+                        variant="h3"
+                        align="center"
+                        {...{
+                            color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                        }}>
                         {name}
                     </Font>
-                    <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="black" uppercase tracking="widest">
+                    <Font
+                        variant="sub-tiny"
+                        weight="black"
+                        uppercase
+                        tracking="widest"
+                        {...{
+                            color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                        }}>
                         {email}
                     </Font>
                 </Stack>
 
                 {userId ? (
-                    <Link href={`/aluno/${userId}`} target="_blank" className="w-full">
+                    <Link
+                        href={`/aluno/${userId}`}
+                        target="_blank"
+                        {...{
+                            className: "w-full",
+                        }}>
                         <Button variant="outline-orange" fullWidth size="lg">
                             <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                 <Icon icon={ShieldCheck} size="xs" />
@@ -106,5 +123,5 @@ export function StudentProfileSummary({ name, email, avatarUrl, userId }: Studen
                 )}
             </Stack>
         </Surface>
-    )
+    );
 }

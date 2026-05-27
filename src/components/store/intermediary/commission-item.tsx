@@ -34,7 +34,12 @@ export function CommissionItem({
         <ActionableListCard 
             badges={
                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align={{ base: 'start', lg: 'end' }} fullWidth>
-                    <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} color={STORE_TOKENS.COLORS.SUCCESS} variant="body-sm">
+                    <Font
+                        {...STORE_TOKENS.TYPOGRAPHY.HEADING}
+                        variant="body-sm"
+                        {...{
+                            color: STORE_TOKENS.COLORS.SUCCESS,
+                        }}>
                         + {amount}
                     </Font>
                     <Badge
@@ -56,14 +61,23 @@ export function CommissionItem({
                 </Box>
 
                 <Stack gap="none" flex1 overflow="hidden">
-                    <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} variant="body-sm" color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
+                    <Font
+                        {...STORE_TOKENS.TYPOGRAPHY.HEADING}
+                        variant="body-sm"
+                        {...{
+                            color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                        }}>
                         {description}
                     </Font>
-                    <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.DIM}>
+                    <Font
+                        {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                        {...{
+                            color: STORE_TOKENS.COLORS.TEXT.DIM,
+                        }}>
                         {date} • {time}
                     </Font>
                 </Stack>
             </Inline>
         </ActionableListCard>
-    )
+    );
 }

@@ -54,18 +54,38 @@ export function AffiliateLinkSharingPanel({ id }: { id?: string }) {
                                 </Button>
                             </Inline>
 
-                            <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.DIM} italic>
+                            <Font
+                                variant="sub-tiny"
+                                italic
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.DIM,
+                                }}>
                                 Cookie persistido por 30 dias • Token oculto ao usuário • Conversões automáticas
                             </Font>
                         </Stack>
 
                         <Stack gap="none" align="end" display={{ base: 'none', md: 'flex' }} padding={STORE_TOKENS.PADDING.ELEMENT}>
-                            <Font variant="h1" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} weight="black" italic uppercase>10%</Font>
-                            <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="black" uppercase italic tracking="widest">De Comissão</Font>
+                            <Font
+                                variant="h1"
+                                weight="black"
+                                italic
+                                uppercase
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                                }}>10%</Font>
+                            <Font
+                                variant="sub-tiny"
+                                weight="black"
+                                uppercase
+                                italic
+                                tracking="widest"
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                }}>De Comissão</Font>
                         </Stack>
                     </Inline>
                 </Stack>
             </Surface>
         </RegistrySection>
-    )
+    );
 }

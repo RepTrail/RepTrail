@@ -5,8 +5,10 @@ import { getQueryClient } from '@/lib/get-query-client'
 import { StudentCardioManagementSmart } from '@/components/store/advanced/student-cardio-management-smart'
 import { PREFETCH_REGISTRY } from '@/lib/prefetch-registry'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
-
 import { StudentRegistryHeaderActions } from '@/components/store/advanced/student-registry-header-actions'
+import { Box } from '@/components/store/base/box'
+import { Stack } from '@/components/store/base/stack'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 export default async function StudentCardioPage() {
     const headerList = await headers()
@@ -35,12 +37,18 @@ export default async function StudentCardioPage() {
             showTabs={false}
             rightElement={<StudentRegistryHeaderActions userId={userId} type="cardio" />}
         >
-            <Suspense fallback={<div className="animate-pulse space-y-10"><div className="h-[400px] bg-zinc-900 rounded-[2.5rem]" /></div>}>
-                <div suppressHydrationWarning>
+            <Suspense fallback={
+                <Box fullWidth>
+                    <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
+                        <Box height={400} bg="zinc" bgOpacity={5} rounded="system" />
+                    </Stack>
+                </Box>
+            }>
+                <Box suppressHydrationWarning fullWidth>
                     <HydrationBoundary state={dehydrate(queryClient)}>
                         <StudentCardioManagementSmart userId={userId} />
                     </HydrationBoundary>
-                </div>
+                </Box>
             </Suspense>
         </RegistryMain>
     )

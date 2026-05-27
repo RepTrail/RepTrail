@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { getQueryClient } from '@/lib/get-query-client'
 import { QUERY_KEYS } from '@/lib/query-keys'
-import { StudentDietDetailClient } from "@/components/store/features(deprecated)/student-diet-detail-client"
+import { DietBuilderSmart } from "@/components/store/advanced/diet-builder-smart"
 import { RegistryMain } from "@/components/store/advanced/registry-main"
 import { headers } from "next/headers"
 
@@ -47,10 +47,14 @@ export default async function StudentDietEditPage({ params }: { params: Promise<
                 showTabs={false}
                 showHeader={false}
             >
-                <StudentDietDetailClient 
-                    dietId={id} 
-                    userId={userId} 
-                    initialData={diet} 
+                <DietBuilderSmart 
+                    diet={diet}
+                    backHref="/dashboard/student"
+                    canAssign={false}
+                    showAssignmentBadge={false}
+                    contextLabel="Dieta & Nutrição"
+                    icon="Utensils"
+                    contextColor="primary"
                 />
             </RegistryMain>
         </HydrationBoundary>

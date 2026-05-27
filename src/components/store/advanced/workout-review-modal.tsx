@@ -144,7 +144,13 @@ export function WorkoutReviewModal({
                 <Box padding={STORE_TOKENS.SPACING.EMPTY_STATE} display="flex" align="center" justify="center" fullWidth>
                     <Stack align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                         <Icon icon={Loader2} size="xl" color="emerald" spin />
-                        <Font variant="sub-tiny" weight="black" uppercase color="zinc-500">Carregando dados do treino...</Font>
+                        <Font
+                            variant="sub-tiny"
+                            weight="black"
+                            uppercase
+                            {...{
+                                color: "zinc-500",
+                            }}>Carregando dados do treino...</Font>
                     </Stack>
                 </Box>
             ) : (
@@ -178,7 +184,14 @@ export function WorkoutReviewModal({
 
                     {/* 2. Loads Review */}
                     <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
-                        <Font variant="sub-tiny" weight="black" uppercase italic color="zinc-500">
+                        <Font
+                            variant="sub-tiny"
+                            weight="black"
+                            uppercase
+                            italic
+                            {...{
+                                color: "zinc-500",
+                            }}>
                             Revisão de Séries e Cargas
                         </Font>
                         
@@ -197,7 +210,14 @@ export function WorkoutReviewModal({
                                     <Stack direction="row" align="center" justify="between" fullWidth gap={STORE_TOKENS.SPACING.ELEMENT}>
                                         <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                             <Icon icon={Zap} size="xs" color="emerald" />
-                                            <Font variant="tiny" weight="black" uppercase italic color="white">
+                                            <Font
+                                                variant="tiny"
+                                                weight="black"
+                                                uppercase
+                                                italic
+                                                {...{
+                                                    color: "white",
+                                                }}>
                                                 {exerciseName}
                                             </Font>
                                         </Stack>
@@ -205,11 +225,23 @@ export function WorkoutReviewModal({
                                         {/* Column Headers (Desktop Only) */}
                                         <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} display={{ base: 'none', md: 'flex' }}>
                                             <Box width={80} align="center">
-                                                <Font variant="sub-tiny" weight="black" uppercase color="zinc-500">Peso</Font>
+                                                <Font
+                                                    variant="sub-tiny"
+                                                    weight="black"
+                                                    uppercase
+                                                    {...{
+                                                        color: "zinc-500",
+                                                    }}>Peso</Font>
                                             </Box>
                                             <Box width={20} /> {/* Spacer for the 'x' icon */}
                                             <Box width={60} align="center">
-                                                <Font variant="sub-tiny" weight="black" uppercase color="zinc-500">Reps</Font>
+                                                <Font
+                                                    variant="sub-tiny"
+                                                    weight="black"
+                                                    uppercase
+                                                    {...{
+                                                        color: "zinc-500",
+                                                    }}>Reps</Font>
                                             </Box>
                                         </Stack>
                                     </Stack>
@@ -234,7 +266,13 @@ export function WorkoutReviewModal({
                                                         {/* Weight Column */}
                                                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT} flex1={ { base: true, md: false } }>
                                                             <Box display={{ base: 'block', md: 'none' }} padding="none">
-                                                                <Font variant="sub-tiny" weight="black" uppercase color="zinc-600">Peso</Font>
+                                                                <Font
+                                                                    variant="sub-tiny"
+                                                                    weight="black"
+                                                                    uppercase
+                                                                    {...{
+                                                                        color: "zinc-600",
+                                                                    }}>Peso</Font>
                                                             </Box>
                                                             <Box width={{ base: 'full', md: 80 }}>
                                                                     <Input 
@@ -249,13 +287,23 @@ export function WorkoutReviewModal({
                                                         </Stack>
                                                         
                                                         <Box width={{ base: 'auto', md: 20 }} align="center">
-                                                            <Font variant="tiny" color="zinc-600">×</Font>
+                                                            <Font
+                                                                variant="tiny"
+                                                                {...{
+                                                                    color: "zinc-600",
+                                                                }}>×</Font>
                                                         </Box>
 
                                                         {/* Reps Column */}
                                                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT} flex1={ { base: true, md: false } }>
                                                             <Box display={{ base: 'block', md: 'none' }} padding="none">
-                                                                <Font variant="sub-tiny" weight="black" uppercase color="zinc-600">Reps</Font>
+                                                                <Font
+                                                                    variant="sub-tiny"
+                                                                    weight="black"
+                                                                    uppercase
+                                                                    {...{
+                                                                        color: "zinc-600",
+                                                                    }}>Reps</Font>
                                                             </Box>
                                                             <Box width={{ base: 'full', md: 60 }}>
                                                                     <Input 
@@ -270,7 +318,7 @@ export function WorkoutReviewModal({
                                                     </Stack>
                                                 </Stack>
                                             </Box>
-                                        )
+                                        );
                                     })}
                                 </Stack>
                             </Box>

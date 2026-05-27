@@ -41,21 +41,31 @@ export function AdminPageShell({ children, user, pageTitle = '', subtitle, icon 
 
     return (
         <DashboardShell
-            color={STORE_TOKENS.COLORS.ERROR}
             links={ADMIN_LINKS}
             mobileLinks={ADMIN_MOBILE_LINKS}
             user={user}
-        >
+            {...{
+                color: STORE_TOKENS.COLORS.ERROR,
+            }}>
             <Stack gap={{ base: STORE_TOKENS.SPACING.EMPTY_STATE, md: STORE_TOKENS.SPACING.SECTION }}>
                 {/* Page Header — RegistryMain pattern */}
                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                     <Inline gap={STORE_TOKENS.SPACING.ELEMENT}>
                         <Icon icon={icon} color={STORE_TOKENS.COLORS.ERROR} size="lg" />
-                        <Font variant="auxiliary" color={STORE_TOKENS.COLORS.ERROR}>Painel Admin</Font>
+                        <Font
+                            variant="auxiliary"
+                            {...{
+                                color: STORE_TOKENS.COLORS.ERROR,
+                            }}>Painel Admin</Font>
                     </Inline>
                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                         <Font variant="h1" nowrap>
-                            {first}{rest ? <> <Font variant="h1" color={STORE_TOKENS.COLORS.ERROR} nowrap>{rest}</Font></> : null}
+                            {first}{rest ? <> <Font
+                            variant="h1"
+                            nowrap
+                            {...{
+                                color: STORE_TOKENS.COLORS.ERROR,
+                            }}>{rest}</Font></> : null}
                         </Font>
                         {subtitle && <Font variant="description">{subtitle}</Font>}
                     </Stack>
@@ -64,5 +74,5 @@ export function AdminPageShell({ children, user, pageTitle = '', subtitle, icon 
                 {children}
             </Stack>
         </DashboardShell>
-    )
+    );
 }

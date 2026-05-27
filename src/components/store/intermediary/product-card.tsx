@@ -96,20 +96,34 @@ export function ProductCard({
                     </Button>
                 </Box>
             </Box>
-
             {/* Product Info - Refined Typography */}
             <Stack padding={STORE_TOKENS.PADDING.CONTAINER} gap={STORE_TOKENS.SPACING.ELEMENT} flex1 justify="between">
                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} variant="body-sm" color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
+                    <Font
+                        {...STORE_TOKENS.TYPOGRAPHY.HEADING}
+                        variant="body-sm"
+                        {...{
+                            color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                        }}>
                         {cleanedName}
                     </Font>
                     {description && (
-                        <Font {...STORE_TOKENS.TYPOGRAPHY.DESCRIPTION} color={STORE_TOKENS.COLORS.TEXT.MUTED} lineClamp={2}>
+                        <Font
+                            {...STORE_TOKENS.TYPOGRAPHY.DESCRIPTION}
+                            lineClamp={2}
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                            }}>
                             {description}
                         </Font>
                     )}
                     <Box padding="element">
-                        <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} color={STORE_TOKENS.COLORS.SUCCESS} variant="heading">
+                        <Font
+                            {...STORE_TOKENS.TYPOGRAPHY.HEADING}
+                            variant="heading"
+                            {...{
+                                color: STORE_TOKENS.COLORS.SUCCESS,
+                            }}>
                             {price}
                         </Font>
                     </Box>
@@ -133,5 +147,5 @@ export function ProductCard({
                 </Box>
             </Stack>
         </GlassPanel>
-    )
+    );
 }

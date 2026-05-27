@@ -9,6 +9,11 @@ import { getQueryClient } from '@/lib/get-query-client'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { TrainerStudentErgogenicsShell } from '@/components/store/advanced/trainer-student-ergogenics-shell'
 
+import { Box } from '@/components/store/base/box'
+import { Font } from '@/components/store/base/font'
+import { Surface } from '@/components/store/base/surface'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
+
 export const metadata = {
     title: 'Ergogênicos & Ciclos | RepTrail',
 }
@@ -24,9 +29,11 @@ export default async function StudentErgogenicsPage({ params }: { params: Promis
 
     if (!relationship) {
         return (
-            <div className="p-10 text-center text-zinc-500 font-bold uppercase tracking-widest text-xs">
-                Dados não encontrados ou você não tem acesso a este aluno.
-            </div>
+            <Box fullWidth padding={STORE_TOKENS.PADDING.CONTAINER} textAlign="center">
+                <Font variant="auxiliary" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="bold">
+                    Dados não encontrados ou você não tem acesso a este aluno.
+                </Font>
+            </Box>
         )
     }
 
@@ -52,14 +59,14 @@ export default async function StudentErgogenicsPage({ params }: { params: Promis
     return (
         <Suspense
             fallback={
-                <div className="animate-pulse space-y-10">
-                    <div className="h-8 w-40 bg-zinc-900 rounded-lg" />
-                    <div className="h-[120px] bg-zinc-900 rounded-[2.5rem]" />
-                    <div className="h-[400px] bg-zinc-900 rounded-[2.5rem]" />
-                </div>
+                <Surface animation="pulse" variant="sunken" border="none" gap={STORE_TOKENS.SPACING.CONTAINER}>
+                    <Box bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.SURFACE} {...{ width: 160, height: 32 }} rounded={STORE_TOKENS.RADIUS.SYSTEM} />
+                    <Box bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.SURFACE} height={120} rounded={STORE_TOKENS.RADIUS.SYSTEM} />
+                    <Box bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.SURFACE} height={400} rounded={STORE_TOKENS.RADIUS.SYSTEM} />
+                </Surface>
             }
         >
-            <div suppressHydrationWarning>
+            <Box suppressHydrationWarning>
                 <HydrationBoundary state={dehydrate(queryClient)}>
                     <TrainerStudentErgogenicsShell
                         effectiveStudentId={effectiveStudentId}
@@ -67,7 +74,7 @@ export default async function StudentErgogenicsPage({ params }: { params: Promis
                         betaTesterMode={betaTesterMode}
                     />
                 </HydrationBoundary>
-            </div>
+            </Box>
         </Suspense>
     )
 }

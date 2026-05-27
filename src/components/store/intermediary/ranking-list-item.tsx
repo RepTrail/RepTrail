@@ -79,13 +79,14 @@ export function RankingListItem({ trainer, rank }: RankingListItemProps) {
             <Inline gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
                 {/* Rank Badge Style */}
                 <Box width={10} shrink={0} display="flex" justify="center">
-                    <Font 
-                        variant="h4" 
-                        weight="black" 
-                        color="zinc-700" 
-                        italic 
+                    <Font
+                        variant="h4"
+                        weight="black"
+                        italic
                         tracking="tight"
-                    >
+                        {...{
+                            color: "zinc-700",
+                        }}>
                         #{rank}
                     </Font>
                 </Box>
@@ -97,25 +98,27 @@ export function RankingListItem({ trainer, rank }: RankingListItemProps) {
                 />
 
                 <Stack gap="none" minWidth={0}>
-                    <Font 
-                        {...STORE_TOKENS.TYPOGRAPHY.HEADING} 
-                        variant={{ base: 'body-sm', md: 'body' }} 
-                        color={STORE_TOKENS.COLORS.TEXT.PRIMARY}
-                    >
+                    <Font
+                        {...STORE_TOKENS.TYPOGRAPHY.HEADING}
+                        variant={{ base: 'body-sm', md: 'body' }}
+                        {...{
+                            color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                        }}>
                         {trainer.full_name}
                     </Font>
-                    <Font 
-                        variant="sub-tiny" 
-                        weight="black" 
-                        color="zinc-600" 
-                        uppercase 
-                        italic 
+                    <Font
+                        variant="sub-tiny"
+                        weight="black"
+                        uppercase
+                        italic
                         tracking="widest"
-                    >
+                        {...{
+                            color: "zinc-600",
+                        }}>
                         Treinador Certificado
                     </Font>
                 </Stack>
             </Inline>
         </ActionableListCard>
-    )
+    );
 }

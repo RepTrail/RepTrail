@@ -203,7 +203,7 @@ export function CardioManagementSectionContent({
                         : undefined
 
                     return (
-                        <ManagementCardPremium 
+                        <ManagementCardPremium
                             key={cardio.id || idx}
                             title={cardio.name.toUpperCase()}
                             description={cardio.description || (mode === 'trainer' ? 'Sem descrição disponível.' : 'Protocolo oficial de cardio.')}
@@ -213,17 +213,17 @@ export function CardioManagementSectionContent({
                             date={new Date(cardio.created_at).toLocaleDateString('pt-BR')}
                             icon={Activity}
                             mode={mode}
-                            color={STORE_TOKENS.COLORS.BRAND as any}
                             registryType="cardio"
                             onSchedule={mode === 'auto' ? () => openAction('assign_cardio', cardio) : undefined}
                             onEdit={() => openAction('edit_cardio', cardio)}
                             onDelete={mode !== 'personal' ? () => openAction('confirm_delete', cardio) : undefined}
                             onDuplicate={mode !== 'personal' ? () => openAction('confirm_duplicate', cardio) : undefined}
-                        />
-                    )
+                            {...{
+                                color: STORE_TOKENS.COLORS.BRAND as any,
+                            }} />
+                    );
                 })}
             </Grid>
-
             <RegistryActionModal 
                 isOpen={actionModal.isOpen}
                 onClose={closeAction}
@@ -233,5 +233,5 @@ export function CardioManagementSectionContent({
                 students={students}
             />
         </>
-    )
+    );
 }

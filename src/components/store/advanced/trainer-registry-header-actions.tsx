@@ -131,7 +131,7 @@ function DirectCreateButton({
         <Button variant="outline-emerald" shine fullWidth={{ base: true, lg: false }} onClick={handleCreate} disabled={isPending}>
             <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                 {isPending ? <Icon icon={Loader2} size="xs" color="emerald" spin /> : <Icon icon={Plus} size="xs" color="emerald" />}
-                <span>{isPending ? 'Criando...' : label}</span>
+                {isPending ? 'Criando...' : label}
             </Stack>
         </Button>
     )
@@ -164,7 +164,7 @@ export function TrainerRegistryHeaderActions({
                     <Link href="/dashboard/trainer/import-pdf">
                         <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                             <Icon icon={FileUp} size="xs" color="orange" />
-                            <span>Importar PDF</span>
+                            Importar PDF
                         </Stack>
                     </Link>
                 </Button>
@@ -184,7 +184,7 @@ export function TrainerRegistryHeaderActions({
                             <Button variant="outline-emerald" shine fullWidth={{ base: true, lg: false }}>
                                 <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                     <Icon icon={Plus} size="xs" color="emerald" />
-                                    <span>{config.createLabel}</span>
+                                    {config.createLabel}
                                 </Stack>
                             </Button>
                         }

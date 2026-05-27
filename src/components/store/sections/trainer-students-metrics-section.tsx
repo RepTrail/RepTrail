@@ -55,21 +55,24 @@ export function TrainerStudentsMetricsSection({ userId }: TrainerStudentsMetrics
                     label="Alunos Ativos"
                     value={`${activeStudentsCount} / ${limitDisplay}`}
                     icon={Users}
-                    color="primary"
-                />
+                    {...{
+                        color: "primary",
+                    }} />
                 <StatsCard
                     label="Receita Mensal"
                     value={`R$ ${totalRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
                     icon={Wallet}
-                    color="primary"
-                />
+                    {...{
+                        color: "primary",
+                    }} />
                 <StatsCard
                     label="Ranking Geral"
                     value={`${userRank}º`}
                     icon={Activity}
-                    color="primary"
-                />
+                    {...{
+                        color: "primary",
+                    }} />
             </Grid>
         </RegistrySection>
-    )
+    );
 }

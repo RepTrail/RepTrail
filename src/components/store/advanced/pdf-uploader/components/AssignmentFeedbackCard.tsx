@@ -2,6 +2,7 @@ import React from 'react';
 import { Stack } from '@/components/store/base/stack';
 import { GlassPanel } from '@/components/store/base/surface';
 import { Font } from '@/components/store/base/font';
+import { Box } from '@/components/store/base/box';
 import { STORE_TOKENS } from '@/components/store/constants/tokens';
 import { useRegistry, RegistryColor } from '@/components/store/advanced/registry-context';
 import { cn } from '@/lib/utils';
@@ -42,8 +43,12 @@ export function AssignmentFeedbackCard({ bindingHooks, students }: AssignmentFee
             rightElement={isActive ? (
                 <GlassPanel padding={STORE_TOKENS.PADDING.ELEMENT}>
                     <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        <div className={cn('w-2 h-2 rounded-full animate-pulse', PULSE_DOT[primaryColor])} />
-                        <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color="primary">Vinculação Ativa</Font>
+                        <Box className={cn('w-2 h-2 rounded-full animate-pulse', PULSE_DOT[primaryColor])} />
+                        <Font
+                            {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                            {...{
+                                color: "primary",
+                            }}>Vinculação Ativa</Font>
                     </Stack>
                 </GlassPanel>
             ) : null}

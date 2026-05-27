@@ -88,18 +88,19 @@ export function SegmentedSwitch({
                   )}
                   <Font
                     {...STORE_TOKENS.TYPOGRAPHY.LABEL}
-                    color={(isActive ? colorToken : 'zinc-500') as any}
-                  >
+                    {...{
+                      color: (isActive ? colorToken : 'zinc-500') as any,
+                    }}>
                     {option.label}
                   </Font>
                 </Stack>
               </Button>
-            )
+            );
           })}
           {/* Spacer to ensure right padding on horizontal scroll */}
           <Box flex="none" width={STORE_TOKENS.SPACING.ELEMENT} height={1} />
         </Stack>
       </Box>
     </GlassPanel>
-  )
+  );
 }

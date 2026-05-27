@@ -97,7 +97,12 @@ export function ErgogenicCardPremium({
 
                 {/* Body Content */}
                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} variant="h3" color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
+                    <Font
+                        {...STORE_TOKENS.TYPOGRAPHY.HEADING}
+                        variant="h3"
+                        {...{
+                            color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                        }}>
                         {title}
                     </Font>
 
@@ -119,18 +124,34 @@ export function ErgogenicCardPremium({
                 {/* Info Rows */}
                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                     <Stack direction="row" align="center" justify="between">
-                        <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.DIM}>
+                        <Font
+                            {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.DIM,
+                            }}>
                             DOSAGEM
                         </Font>
-                        <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={color}>
+                        <Font
+                            {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                            {...{
+                                color: color,
+                            }}>
                             {dosage}
                         </Font>
                     </Stack>
                     <Stack direction="row" align="center" justify="between">
-                        <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.DIM}>
+                        <Font
+                            {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.DIM,
+                            }}>
                             FREQUÊNCIA
                         </Font>
-                        <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.SECONDARY}>
+                        <Font
+                            {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
+                            }}>
                             {frequency}
                         </Font>
                     </Stack>
@@ -145,7 +166,13 @@ export function ErgogenicCardPremium({
                         border
                         borderColor={STORE_TOKENS.COLORS.DIVIDER.STANDARD}
                     >
-                        <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} italic lineClamp={2}>
+                        <Font
+                            variant="sub-tiny"
+                            italic
+                            lineClamp={2}
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
+                            }}>
                             {notes}
                         </Font>
                     </Box>
@@ -157,7 +184,11 @@ export function ErgogenicCardPremium({
                         <Button variant={color as any} flex1 onClick={onEdit} shine>
                             <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                 <Icon icon={Edit3} size="xs" color={STORE_TOKENS.COLORS.BLACK} />
-                                <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.BLACK}>EDITAR</Font>
+                                <Font
+                                    {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                                    {...{
+                                        color: STORE_TOKENS.COLORS.BLACK,
+                                    }}>EDITAR</Font>
                             </Stack>
                         </Button>
                         <Button
@@ -174,5 +205,5 @@ export function ErgogenicCardPremium({
                 </Stack>
             </Stack>
         </GlassPanel>
-    )
+    );
 }

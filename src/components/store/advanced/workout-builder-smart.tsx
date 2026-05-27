@@ -18,8 +18,9 @@ import { Icon } from '@/components/store/base/icon'
 import { Button } from '@/components/store/base/button'
 import { Badge } from '@/components/store/base/badge'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
-import { Loader2, ArrowLeft } from 'lucide-react'
+import { Loader2, ArrowLeft, Dumbbell } from 'lucide-react'
 import Link from 'next/link'
+import { EmptyState } from '@/components/store/intermediary/empty-state'
 
 import { WorkoutBuilderHeader } from './workout-builder-header'
 import { WorkoutBuilderExerciseCard } from './workout-builder-exercise-card'
@@ -193,11 +194,20 @@ export function WorkoutBuilderSmart({
             <Box display="flex" direction="col" align="center" justify="center" minHeight="lg" gap={STORE_TOKENS.SPACING.SECTION}>
                 <Icon icon={Loader2} size="lg" color={STORE_TOKENS.COLORS.SUCCESS} spin />
                 <Stack align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <Font variant="heading" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} uppercase>Sincronizando Dados...</Font>
-                    <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>Preparando sua biblioteca de exercícios</Font>
+                    <Font
+                        variant="heading"
+                        uppercase
+                        {...{
+                            color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                        }}>Sincronizando Dados...</Font>
+                    <Font
+                        variant="description"
+                        {...{
+                            color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                        }}>Preparando sua biblioteca de exercícios</Font>
                 </Stack>
             </Box>
-        )
+        );
     }
 
     // HANDLERS
@@ -246,7 +256,6 @@ export function WorkoutBuilderSmart({
 
     return (
         <Stack gap={{ base: STORE_TOKENS.SPACING.SECTION, md: STORE_TOKENS.SPACING.SECTION }}>
-
             {!hideHeader && (
                 <WorkoutBuilderHeader
                     workoutId={workout.id}
@@ -273,10 +282,14 @@ export function WorkoutBuilderSmart({
                     contextColor={contextColor}
                 />
             )}
-
             <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                 <Stack direction={{ base: 'col', md: 'row' }} align={{ base: 'start', md: 'center' }} justify="between" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <Font variant="heading" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} uppercase>
+                    <Font
+                        variant="heading"
+                        uppercase
+                        {...{
+                            color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                        }}>
                         Exercícios no Treino
                     </Font>
                     <Badge
@@ -304,14 +317,13 @@ export function WorkoutBuilderSmart({
                         ))}
                     </Stack>
                 ) : (
-                    <Box padding={STORE_TOKENS.SPACING.EMPTY_STATE} rounded="system" textAlign="center">
-                        <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>
-                            Nenhum exercício adicionado. Use a busca abaixo.
-                        </Font>
-                    </Box>
+                    <EmptyState
+                        icon={Dumbbell}
+                        title="NENHUM EXERCÍCIO ADICIONADO"
+                        description="Use a busca abaixo para começar."
+                    />
                 )}
             </Stack>
-
             <WorkoutBuilderSearch
                 searchQuery={searchQuery}
                 isSearching={isSearching}
@@ -320,7 +332,6 @@ export function WorkoutBuilderSmart({
                 onAddExercise={(ex) => addExerciseMutate({ exerciseId: ex.id, workoutId: workout.id })}
                 onAddCustom={() => addCustomMutate({ name: searchQuery })}
             />
-
             <Box display="flex" justify="center">
                 <Button
                     asChild
@@ -332,10 +343,10 @@ export function WorkoutBuilderSmart({
                 >
                     <Link href={backHref}>
                         <Icon icon={ArrowLeft} size="xs" />
-                        <span>Voltar para a Biblioteca de Treinos</span>
+                        Voltar para a Biblioteca de Treinos
                     </Link>
                 </Button>
             </Box>
         </Stack>
-    )
+    );
 }

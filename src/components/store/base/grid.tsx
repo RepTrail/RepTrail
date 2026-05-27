@@ -48,7 +48,7 @@ export function Grid({
     element: 'gap-2.5',
     container: 'gap-5',
     empty_state: 'gap-[50px]',
-    section: 'gap-[100px]',
+    section: 'gap-[50px]',
     'title-content': 'gap-[30px]',
     'header-gap': 'gap-8'
   }
@@ -93,8 +93,14 @@ export function Grid({
 
   // Handle responsive gap
   const isRespGap = typeof gap === 'object'
-  const gapBase = isRespGap ? (gap as any).base : gap
-  const gapMd = isRespGap ? (gap as any).md : undefined
+  let gapBase = isRespGap ? (gap as any).base : gap
+  let gapMd = isRespGap ? (gap as any).md : undefined
+
+  // Auto-responsive tokens
+  if (gap === 'section' || gap === 'title-content') {
+    gapBase = gap
+    gapMd = gap
+  }
 
   const colClasses = {
     1: 'grid-cols-1',

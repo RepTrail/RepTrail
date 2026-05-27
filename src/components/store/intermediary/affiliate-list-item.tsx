@@ -78,16 +78,26 @@ export function AffiliateListItem({
                     size="md"
                 />
                 <Stack gap="none" minWidth={0}>
-                    <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} variant={{ base: 'body-sm', md: 'body' }} color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
+                    <Font
+                        {...STORE_TOKENS.TYPOGRAPHY.HEADING}
+                        variant={{ base: 'body-sm', md: 'body' }}
+                        {...{
+                            color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                        }}>
                         {name}
                     </Font>
                     <Box fullWidth minWidth={0} overflow="hidden" display="flex" align="center">
-                        <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.DIM} lowercase>
+                        <Font
+                            {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                            lowercase
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.DIM,
+                            }}>
                             {email}
                         </Font>
                     </Box>
                 </Stack>
             </Stack>
         </ActionableListCard>
-    )
+    );
 }

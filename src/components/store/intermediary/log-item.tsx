@@ -55,7 +55,13 @@ export function LogItem({
                 <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center" fullWidth>
                     <Icon icon={Info} size="xs" color={STORE_TOKENS.COLORS.INFO} />
                     <Box flex1 truncate>
-                        <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.MUTED} mono truncate>
+                        <Font
+                            {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                            mono
+                            truncate
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                            }}>
                             {detailString}
                         </Font>
                     </Box>
@@ -66,13 +72,22 @@ export function LogItem({
                 <IconBox icon={Zap} variant={variant as any} size="md" rounded={STORE_TOKENS.RADIUS.FULL} />
                 
                 <Stack gap="none">
-                    <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} variant="body-sm" color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
+                    <Font
+                        {...STORE_TOKENS.TYPOGRAPHY.HEADING}
+                        variant="body-sm"
+                        {...{
+                            color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                        }}>
                         {action.replace(/_/g, ' ')}
                     </Font>
                     <Box opacity={STORE_TOKENS.OPACITY.MEDIUM}>
                         <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                             <Icon icon={User} size="xs" color={STORE_TOKENS.COLORS.TEXT.MUTED} />
-                            <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.SECONDARY}>por {admin || 'Sistema'}</Font>
+                            <Font
+                                {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
+                                }}>por {admin || 'Sistema'}</Font>
                         </Inline>
                     </Box>
                 </Stack>

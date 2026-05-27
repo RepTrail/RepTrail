@@ -1,6 +1,7 @@
 import { getCardioDetails } from '@/actions/cardio-actions'
 import { getTrainerStudents } from '@/actions/trainer-actions'
-import { CardioBuilder } from '@/components/store/features(deprecated)/cardio-builder'
+import { CardioBuilderSmart } from "@/components/store/advanced/cardio-builder-smart"
+import { RegistryMain } from "@/components/store/advanced/registry-main"
 import { notFound } from 'next/navigation'
 
 interface Props {
@@ -17,8 +18,22 @@ export default async function CardioDetailPage({ params }: Props) {
     if (!cardio) notFound()
 
     return (
-        <div className="max-w-3xl mx-auto py-6  space-y-8">
-            <CardioBuilder cardio={cardio} students={students} />
-        </div>
+        <RegistryMain
+            title={cardio.name.toUpperCase()}
+            subtitle={cardio.description || "Protocolo de Cardio"}
+            icon="Flame"
+            contextLabel="Área do Personal"
+            showTabs={false}
+            showHeader={false}
+        >
+            <CardioBuilderSmart 
+                cardio={cardio}
+                students={students}
+                backHref="/dashboard/trainer/cardio"
+                contextLabel="Área do Personal"
+                icon="Flame"
+                contextColor="emerald"
+            />
+        </RegistryMain>
     )
 }

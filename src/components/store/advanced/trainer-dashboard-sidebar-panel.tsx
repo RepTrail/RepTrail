@@ -29,7 +29,6 @@ export function TrainerDashboardSidebarPanel({
     return (
         <Stack gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
             <TrainerTeamCodeCard trainerCode={trainerCode} />
-
             <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
                 <DashboardSidebarAction
                     href={editProfileHref}
@@ -46,18 +45,25 @@ export function TrainerDashboardSidebarPanel({
                     disabled={!publicProfileHref}
                 />
             </Stack>
-
             {showImportTeaser && (
                 <Surface variant="tonal-primary" padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM}>
                     <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                         <Box display="flex" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                             <Icon icon={FileUp} color="primary" size="sm" />
-                            <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color="primary">
+                            <Font
+                                {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                                {...{
+                                    color: "primary",
+                                }}>
                                 Importação Inteligente
                             </Font>
                         </Box>
 
-                        <Font {...STORE_TOKENS.TYPOGRAPHY.DESCRIPTION} color={STORE_TOKENS.COLORS.TEXT.MUTED}>
+                        <Font
+                            {...STORE_TOKENS.TYPOGRAPHY.DESCRIPTION}
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                            }}>
                             Tem uma planilha ou PDF? Nossa IA pode ler o arquivo e criar o treino ou dieta em segundos.
                         </Font>
 
@@ -73,5 +79,5 @@ export function TrainerDashboardSidebarPanel({
                 </Surface>
             )}
         </Stack>
-    )
+    );
 }

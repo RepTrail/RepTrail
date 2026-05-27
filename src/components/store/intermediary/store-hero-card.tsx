@@ -15,20 +15,27 @@ export function StoreHeroCard() {
                     <Box textAlign={{ base: 'center', md: 'left' }}>
                         <Font
                             variant="hero"
-                            color={STORE_TOKENS.COLORS.TEXT.PRIMARY}
-                        >
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                            }}>
                             PERFORMANCE
                         </Font>
-                        <br />
+
                         <Font
                             variant="hero"
-                            color="primary"
-                        >
+                            {...{
+                                color: "primary",
+                            }}>
                             EXTREMA
                         </Font>
                     </Box>
                     <Box maxWidth="md" textAlign={{ base: 'center', md: 'left' }}>
-                        <Font variant="body" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} weight="medium">
+                        <Font
+                            variant="body"
+                            weight="medium"
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
+                            }}>
                             A base sólida que seu corpo precisa para bater novos recordes todos os dias.
                         </Font>
                     </Box>

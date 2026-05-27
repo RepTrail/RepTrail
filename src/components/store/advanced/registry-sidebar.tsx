@@ -68,7 +68,6 @@ export function RegistrySidebar({
           <></>
         </Surface>
       )}
-
       <Box
         as="aside"
         position="fixed"
@@ -141,7 +140,10 @@ export function RegistrySidebar({
           </Box>
 
           {/* Divider (Full Width - Balanced Opacity) */}
-          <Divider color={STORE_TOKENS.COLORS.DIVIDER.SUBTLE} />
+          <Divider
+            {...{
+              color: STORE_TOKENS.COLORS.DIVIDER.SUBTLE,
+            }} />
 
           {/* Bottom Profile (Padded) */}
           <Box padding={STORE_TOKENS.PADDING.CONTAINER}>
@@ -156,5 +158,5 @@ export function RegistrySidebar({
         </GlassPanel>
       </Box>
     </>
-  )
+  );
 }

@@ -22,12 +22,12 @@ export interface StackProps extends Omit<BoxProps, 'gap'> {
 /**
  * Stack: Vertical or Horizontal layout with consistent spacing.
  */
-export function Stack({ 
-  children, 
-  direction = 'col', 
-  gap = "element", 
+export function Stack({
+  children,
+  direction = 'col',
+  gap = "element",
   divide,
-  align = 'stretch', 
+  align = 'stretch',
   justify = 'start',
   flex1,
   fullWidth,
@@ -35,10 +35,9 @@ export function Stack({
   className,
   ...props
 }: StackProps) {
-  
+
   const gapClasses = {
     none: 'gap-0',
-    tiny: 'gap-1',
     element: 'gap-2.5',
     container: 'gap-5',
     empty_state: 'gap-[50px]',
@@ -49,7 +48,6 @@ export function Stack({
 
   const gapMdClasses = {
     none: 'md:gap-0',
-    tiny: 'md:gap-1',
     element: 'md:gap-2.5',
     container: 'md:gap-5',
     empty_state: 'md:gap-[50px]',
@@ -64,13 +62,13 @@ export function Stack({
   let gapMd = isRespGap ? (gap as any).md : undefined
 
   // Auto-responsive tokens
-  if (gap === 'section') {
+  if (gap === 'section' || gap === 'title-content') {
     gapBase = gap
     gapMd = gap
   }
 
   return (
-    <Box 
+    <Box
       fullWidth={fullWidth}
       flex1={flex1}
       align={align}

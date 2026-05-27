@@ -33,12 +33,33 @@ export function PerformanceAnalysisSection({
                         <Icon icon={TrendingUp} size="xl" color="zinc-700" />
                     </Box>
                     <Stack align="center" gap={STORE_TOKENS.SPACING.ELEMENT} textAlign="center">
-                        <Font variant="h3" weight="black" italic uppercase color="primary">Gráficos de Evolução</Font>
-                        <Box style={{ maxWidth: 280 }}>
-                            <Font variant="sub-tiny" weight="black" uppercase color="zinc-500">
+                        <Font
+                            variant="h3"
+                            weight="black"
+                            italic
+                            uppercase
+                            {...{
+                                color: "primary",
+                            }}>Gráficos de Evolução</Font>
+                        <Box maxWidth="sm">
+                            <Font
+                                variant="sub-tiny"
+                                weight="black"
+                                uppercase
+                                {...{
+                                    color: "zinc-500",
+                                }}>
                                 {isStudentView
-                                    ? <>Esta função está disponível apenas para alunos de treinadores <span style={{ color: '#10b981' }}>PRO e ELITE</span>.</>
-                                    : <>Esta função está disponível apenas para treinadores <span style={{ color: '#10b981' }}>PRO e ELITE</span>.</>
+                                    ? <>Esta função está disponível apenas para alunos de treinadores <Font
+                                    weight="bold"
+                                    {...{
+                                        color: "emerald",
+                                    }}>PRO e ELITE</Font>.</>
+                                    : <>Esta função está disponível apenas para treinadores <Font
+                                    weight="bold"
+                                    {...{
+                                        color: "emerald",
+                                    }}>PRO e ELITE</Font>.</>
                                 }
                             </Font>
                         </Box>
@@ -50,7 +71,7 @@ export function PerformanceAnalysisSection({
                     )}
                 </Stack>
             </Box>
-        )
+        );
     }
 
     return (

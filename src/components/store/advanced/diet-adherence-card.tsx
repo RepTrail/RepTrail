@@ -30,10 +30,7 @@ function ProgressLocal({ value }: { value: number }) {
                 initial={{ width: 0 }}
                 animate={{ width: `${value}%` }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
-                className="bg-emerald-500"
-                style={{ 
-                    height: '100%'
-                }}
+                {...{ className: "bg-emerald-500", style: { height: '100%' } }}
             />
         </GlassPanel>
     )
@@ -89,28 +86,75 @@ export function DietAdherenceCard({
                         size="xs"
                     />
                     <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        <Font variant="h1" color={STORE_TOKENS.COLORS.SUCCESS}>
+                        <Font
+                            variant="h1"
+                            {...{
+                                color: STORE_TOKENS.COLORS.SUCCESS,
+                            }}>
                             {Math.round(percentage)}
                         </Font>
-                        <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.MUTED} scale={150}>
+                        <Font
+                            {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                scale: 150,
+                            }}>
                             %
                         </Font>
                     </Stack>
                 </Stack>
                 <ProgressLocal value={percentage} />
             </Stack>
-
             {/* Macros Grid */}
             <GlassPanel padding={STORE_TOKENS.PADDING.ELEMENT} variant="glass" rounded={STORE_TOKENS.RADIUS.SYSTEM}>
                 <Grid cols={6} gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <MacroBox label="CALORIAS" value={macros.calories} unit="KCAL" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} colSpan={3} mdColSpan={2} />
-                    <MacroBox label="PROTEÍNAS" value={macros.protein} unit="G" color={STORE_TOKENS.COLORS.SUCCESS} colSpan={3} mdColSpan={2} />
-                    <MacroBox label="CARBOS" value={macros.carbs} unit="G" color={STORE_TOKENS.COLORS.WARNING} colSpan={3} mdColSpan={2} />
-                    <MacroBox label="GORDURAS" value={macros.fat} unit="G" color={STORE_TOKENS.COLORS.ERROR} colSpan={3} mdColSpan={3} />
-                    <MacroBox label="FIBRAS" value={macros.fiber} unit="G" color={STORE_TOKENS.COLORS.INFO} colSpan={6} mdColSpan={3} />
+                    <MacroBox
+                        label="CALORIAS"
+                        value={macros.calories}
+                        unit="KCAL"
+                        colSpan={3}
+                        mdColSpan={2}
+                        {...{
+                            color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                        }} />
+                    <MacroBox
+                        label="PROTEÍNAS"
+                        value={macros.protein}
+                        unit="G"
+                        colSpan={3}
+                        mdColSpan={2}
+                        {...{
+                            color: STORE_TOKENS.COLORS.SUCCESS,
+                        }} />
+                    <MacroBox
+                        label="CARBOS"
+                        value={macros.carbs}
+                        unit="G"
+                        colSpan={3}
+                        mdColSpan={2}
+                        {...{
+                            color: STORE_TOKENS.COLORS.WARNING,
+                        }} />
+                    <MacroBox
+                        label="GORDURAS"
+                        value={macros.fat}
+                        unit="G"
+                        colSpan={3}
+                        mdColSpan={3}
+                        {...{
+                            color: STORE_TOKENS.COLORS.ERROR,
+                        }} />
+                    <MacroBox
+                        label="FIBRAS"
+                        value={macros.fiber}
+                        unit="G"
+                        colSpan={6}
+                        mdColSpan={3}
+                        {...{
+                            color: STORE_TOKENS.COLORS.INFO,
+                        }} />
                 </Grid>
             </GlassPanel>
-
             {/* Meals List with Accordion */}
             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                 {meals.map((meal) => (
@@ -123,7 +167,7 @@ export function DietAdherenceCard({
                 ))}
             </Stack>
         </Stack>
-    )
+    );
 }
 
 function MealAccordion({ meal, onToggleMeal, onToggleItem }: { meal: any, onToggleMeal: () => void, onToggleItem?: (id: string, s: boolean) => void }) {
@@ -152,22 +196,47 @@ function MealAccordion({ meal, onToggleMeal, onToggleItem }: { meal: any, onTogg
                             <CheckIndicator checked={meal.is_checked} />
                         </Box>
                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                            <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
+                            <Font
+                                {...STORE_TOKENS.TYPOGRAPHY.HEADING}
+                                variant="sub-tiny"
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                                }}>
                                 {meal.name.toLowerCase()}
                             </Font>
                             <Stack direction={{ base: 'col', md: 'row' }} align={{ base: 'start', md: 'center' }} gap={{ base: "element", md: STORE_TOKENS.SPACING.ELEMENT }}>
-                                <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.MUTED} tracking="wide">
+                                <Font
+                                    {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                                    tracking="wide"
+                                    {...{
+                                        color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                    }}>
                                     {meal.meal_items?.length || 0} ITENS
                                 </Font>
                                 <Box width="px" height="px" bg={STORE_TOKENS.COLORS.BACKGROUND} opacity={STORE_TOKENS.OPACITY.INTERMEDIATE} display={{ base: 'none', md: 'block' }} />
                                 <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                    <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.SUCCESS} tracking="wide">
+                                    <Font
+                                        {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                                        tracking="wide"
+                                        {...{
+                                            color: STORE_TOKENS.COLORS.SUCCESS,
+                                        }}>
                                         P: {Math.round(meal.meal_items?.reduce((acc: number, i: any) => acc + (i.protein || 0), 0) || 0)}G
                                     </Font>
-                                    <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.WARNING} tracking="wide">
+                                    <Font
+                                        {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                                        tracking="wide"
+                                        {...{
+                                            color: STORE_TOKENS.COLORS.WARNING,
+                                        }}>
                                         C: {Math.round(meal.meal_items?.reduce((acc: number, i: any) => acc + (i.carbs || 0), 0) || 0)}G
                                     </Font>
-                                    <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.ERROR} tracking="wide">
+                                    <Font
+                                        {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                                        tracking="wide"
+                                        {...{
+                                            color: STORE_TOKENS.COLORS.ERROR,
+                                        }}>
                                         G: {Math.round(meal.meal_items?.reduce((acc: number, i: any) => acc + (i.fat || 0), 0) || 0)}G
                                     </Font>
                                 </Stack>
@@ -179,7 +248,6 @@ function MealAccordion({ meal, onToggleMeal, onToggleItem }: { meal: any, onTogg
                     </Box>
                 </Stack>
             </Box>
-
             {/* Details (Open State) */}
             <AnimatePresence>
                 {isOpen && (
@@ -204,7 +272,11 @@ function MealAccordion({ meal, onToggleMeal, onToggleItem }: { meal: any, onTogg
                                     <Button variant="emerald" fullWidth onClick={onToggleMeal}>
                                         <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                             <Icon icon={Check} size="xs" color={STORE_TOKENS.COLORS.BLACK} />
-                                            <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.BLACK}>
+                                            <Font
+                                                {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                                                {...{
+                                                    color: STORE_TOKENS.COLORS.BLACK,
+                                                }}>
                                                 {meal.is_checked ? 'DESMARCAR REFEIÇÃO' : 'CONCLUIR REFEIÇÃO'}
                                             </Font>
                                         </Stack>
@@ -216,7 +288,7 @@ function MealAccordion({ meal, onToggleMeal, onToggleItem }: { meal: any, onTogg
                 )}
             </AnimatePresence>
         </GlassPanel>
-    )
+    );
 }
 
 function FoodItemRow({ item, isChecked, onToggle }: { item: any, isChecked?: boolean, onToggle: () => void }) {
@@ -233,18 +305,31 @@ function FoodItemRow({ item, isChecked, onToggle }: { item: any, isChecked?: boo
                 <CheckIndicator size="md" checked={isChecked} />
                 <Stack gap="none" flex1>
                     <Stack direction="row" align="baseline" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        <Font variant="body-sm" weight="black" color={item.is_substituted ? 'amber' : 'white'} italic nowrap>
+                        <Font
+                            variant="body-sm"
+                            weight="black"
+                            italic
+                            nowrap
+                            {...{
+                                color: item.is_substituted ? 'amber' : 'white',
+                            }}>
                             {item.is_substituted ? item.substituted_quantity : item.quantity}
                         </Font>
                         <Font
                             variant="body-sm"
-                            color={item.is_substituted ? 'amber' : 'zinc-400'}
                             weight="semibold"
-                        >
+                            {...{
+                                color: item.is_substituted ? 'amber' : 'zinc-400',
+                            }}>
                             {item.is_substituted ? item.substituted_food_name : (item.food_name || item.name)}
                         </Font>
                     </Stack>
-                    <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={item.is_substituted ? 'amber' : 'zinc-600'} opacity={80}>
+                    <Font
+                        {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                        opacity={80}
+                        {...{
+                            color: item.is_substituted ? 'amber' : 'zinc-600',
+                        }}>
                         P: {item.is_substituted ? item.substituted_protein : item.protein}G • 
                         C: {item.is_substituted ? item.substituted_carbs : item.carbs}G • 
                         G: {item.is_substituted ? item.substituted_fat : item.fat}G
@@ -263,7 +348,7 @@ function FoodItemRow({ item, isChecked, onToggle }: { item: any, isChecked?: boo
                 )}
             </Stack>
         </Surface>
-    )
+    );
 }
 
 function MacroBox({ label, value, unit, color, colSpan, mdColSpan, lgColSpan }: any) {
@@ -280,15 +365,28 @@ function MacroBox({ label, value, unit, color, colSpan, mdColSpan, lgColSpan }: 
             mdColSpan={mdColSpan}
             lgColSpan={lgColSpan}
         >
-            <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.MUTED} opacity={STORE_TOKENS.OPACITY.OVERLAY}>
+            <Font
+                {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                opacity={STORE_TOKENS.OPACITY.OVERLAY}
+                {...{
+                    color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                }}>
                 {label}
             </Font>
             <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                <Font variant="h3" color={color}>
+                <Font
+                    variant="h3"
+                    {...{
+                        color: color,
+                    }}>
                     {Math.round(value)}
                 </Font>
-                <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.DIM}>{unit}</Font>
+                <Font
+                    {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                    {...{
+                        color: STORE_TOKENS.COLORS.TEXT.DIM,
+                    }}>{unit}</Font>
             </Stack>
         </GlassPanel>
-    )
+    );
 }

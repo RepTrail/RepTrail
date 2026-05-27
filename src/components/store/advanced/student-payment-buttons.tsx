@@ -1,7 +1,10 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
-import { CreditCard, Loader2 } from 'lucide-react'
+import { Button } from '@/components/store/base/button'
+import { Stack } from '@/components/store/base/stack'
+import { Font } from '@/components/store/base/font'
+import { Icon } from '@/components/store/base/icon'
+import { CreditCard } from 'lucide-react'
 import { useToast } from "@/hooks/use-toast"
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
 import { ENTITIES } from '@/lib/outbox-db'
@@ -39,25 +42,32 @@ export function StudentPaymentButtons() {
     }
 
     return (
-        <div className="flex flex-col gap-3">
+        <Stack gap="element">
             <Button
                 onClick={() => handleAsaas('CREDIT_CARD')}
                 disabled={isPending}
-                className="w-full h-14 font-black uppercase tracking-[0.15em] bg-emerald-500 text-zinc-950 hover:bg-emerald-400 transition-all rounded-system shadow-xl shadow-emerald-500/20 flex items-center justify-center gap-2"
+                loading={isPending}
+                variant="emerald"
+                fullWidth
+                paddingY="container"
+                gap="element"
             >
-                {isPending ? (
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                ) : (
-                    <>
-                        <CreditCard className="w-5 h-5" />
-                        Assinar com Cartão
-                    </>
-                )}
+                <Icon icon={CreditCard} size="md" color="black" />
+                Assinar com Cartão
             </Button>
-            <p className="text-[9px] text-zinc-600 font-bold uppercase tracking-widest text-center mt-2">
+            <Font
+                variant="tiny"
+                weight="bold"
+                uppercase
+                tracking="widest"
+                align="center"
+                {...{
+                    color: "DIM",
+                }}>
                 Pagamento processado com segurança pelo Asaas
-            </p>
-        </div>
-    )
+            </Font>
+        </Stack>
+    );
 }
+
 

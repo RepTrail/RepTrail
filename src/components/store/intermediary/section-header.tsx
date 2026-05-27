@@ -32,11 +32,22 @@ export function SectionHeader({ title, subtitle, icon, primaryColor, rightElemen
             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                 <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                     <Icon icon={icon} color={primaryColor as any} size="lg" />
-                    <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
+                    <Font
+                        variant="heading"
+                        weight="black"
+                        uppercase
+                        italic
+                        {...{
+                            color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                        }}>
                         {title}
                     </Font>
                 </Inline>
-                <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>
+                <Font
+                    variant="description"
+                    {...{
+                        color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                    }}>
                     {subtitle}
                 </Font>
             </Stack>
@@ -46,5 +57,5 @@ export function SectionHeader({ title, subtitle, icon, primaryColor, rightElemen
                 </Box>
             )}
         </Stack>
-    )
+    );
 }

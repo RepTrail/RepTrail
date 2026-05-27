@@ -58,10 +58,22 @@ export function DomainStepCard({
                                 <Icon icon={icon} size="sm" color={accentColor as any} />
                             </Surface>
                             <Stack gap="none">
-                                <Font variant="h4" weight="black" uppercase italic color="white">
+                                <Font
+                                    variant="h4"
+                                    weight="black"
+                                    uppercase
+                                    italic
+                                    {...{
+                                        color: "white",
+                                    }}>
                                     {title}
                                 </Font>
-                                <Font variant="sub-tiny" color="zinc-500" weight="bold">
+                                <Font
+                                    variant="sub-tiny"
+                                    weight="bold"
+                                    {...{
+                                        color: "zinc-500",
+                                    }}>
                                     {description}
                                 </Font>
                             </Stack>
@@ -77,5 +89,5 @@ export function DomainStepCard({
                 {children}
             </Stack>
         </GlassPanel>
-    )
+    );
 }

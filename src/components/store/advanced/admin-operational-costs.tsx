@@ -221,15 +221,33 @@ export function AdminOperationalCosts({ initialCosts, totalMonthly, totalAllTime
                                 <Inline gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
                                     <CircleIcon
                                         icon={TrendingDown}
-                                        color={cost.type === 'fixed' ? 'blue' : 'orange'}
                                         size="sm"
-                                    />
+                                        {...{
+                                            color: cost.type === 'fixed' ? 'blue' : 'orange',
+                                        }} />
                                     <Stack gap="none" minWidth={0}>
-                                        <Font weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY} variant={{ base: 'body-sm', md: 'body' }} tracking="wider" truncate display="block">
+                                        <Font
+                                            weight="black"
+                                            uppercase
+                                            italic
+                                            variant={{ base: 'body-sm', md: 'body' }}
+                                            tracking="wider"
+                                            truncate
+                                            display="block"
+                                            {...{
+                                                color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                                            }}>
                                             {cost.description}
                                         </Font>
                                         <Box fullWidth minWidth={0} overflow="hidden">
-                                            <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.DIM} uppercase tracking="widest" display="block">
+                                            <Font
+                                                variant="sub-tiny"
+                                                uppercase
+                                                tracking="widest"
+                                                display="block"
+                                                {...{
+                                                    color: STORE_TOKENS.COLORS.TEXT.DIM,
+                                                }}>
                                                 - R$ {Number(cost.amount).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                                             </Font>
                                         </Box>
@@ -341,7 +359,11 @@ export function AdminOperationalCosts({ initialCosts, totalMonthly, totalAllTime
                 confirmLabel="Sim, Excluir"
                 onConfirm={() => deleteCostMutate({ id: selectedCost?.id || '' })}
             >
-                <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.SECONDARY}>
+                <Font
+                    variant="description"
+                    {...{
+                        color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
+                    }}>
                     Esta ação não pode ser desfeita e removerá o registro permanentemente do sistema.
                 </Font>
             </Modal>

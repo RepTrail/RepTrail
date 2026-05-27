@@ -102,7 +102,12 @@ export function WorkoutBuilderHeader({
                     <GlassPanel padding={STORE_TOKENS.SPACING.CONTAINER}>
                         <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED} uppercase>Nome do Treino</Font>
+                                <Font
+                                    variant="sub-tiny"
+                                    uppercase
+                                    {...{
+                                        color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                    }}>Nome do Treino</Font>
                                 <Input
                                     value={editName}
                                     onChange={e => setEditName(e.target.value)}
@@ -113,7 +118,12 @@ export function WorkoutBuilderHeader({
                                 />
                             </Stack>
                             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED} uppercase>Descrição (Opcional)</Font>
+                                <Font
+                                    variant="sub-tiny"
+                                    uppercase
+                                    {...{
+                                        color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                    }}>Descrição (Opcional)</Font>
                                 <Input
                                     value={editDesc}
                                     onChange={e => setEditDesc(e.target.value)}
@@ -129,7 +139,7 @@ export function WorkoutBuilderHeader({
                                     fullWidth={{ base: true, md: false }}
                                 >
                                     <Icon icon={Check} size="xs" />
-                                    <span>Salvar</span>
+                                    Salvar
                                 </Button>
                                 <Button
                                     variant="outline-red"
@@ -138,7 +148,7 @@ export function WorkoutBuilderHeader({
                                     fullWidth={{ base: true, sm: false }}
                                 >
                                     <Icon icon={X} size="xs" />
-                                    <span>Cancelar</span>
+                                    Cancelar
                                 </Button>
                             </Stack>
                         </Stack>
@@ -155,11 +165,21 @@ export function WorkoutBuilderHeader({
                             {contextLabel && IconComp && (
                                 <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                                     <Icon icon={IconComp} color={contextColor as any || STORE_TOKENS.COLORS.SUCCESS} size="lg" />
-                                    <Font variant="auxiliary" color={contextColor as any || STORE_TOKENS.COLORS.SUCCESS} uppercase>{contextLabel}</Font>
+                                    <Font
+                                        variant="auxiliary"
+                                        uppercase
+                                        {...{
+                                            color: contextColor as any || STORE_TOKENS.COLORS.SUCCESS,
+                                        }}>{contextLabel}</Font>
                                 </Inline>
                             )}
                             <Inline align="center" gap={STORE_TOKENS.SPACING.TINY}>
-                                <Font variant="h1" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} uppercase>{name}</Font>
+                                <Font
+                                    variant="h1"
+                                    uppercase
+                                    {...{
+                                        color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                                    }}>{name}</Font>
                                 <Box
                                     padding={STORE_TOKENS.SPACING.TINY}
                                     rounded="system"
@@ -172,14 +192,17 @@ export function WorkoutBuilderHeader({
                                     <Icon icon={Pencil} size="sm" color={STORE_TOKENS.COLORS.BRAND} />
                                 </Box>
                             </Inline>
-                            <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{description || 'Sem descrição'}</Font>
+                            <Font
+                                variant="description"
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                }}>{description || 'Sem descrição'}</Font>
 
 
                         </Stack>
                     </Box>
                 )}
             </Box>
-
             {canAssign && !isEditing && (
                 <Stack direction={{ base: 'col', md: 'row' }} align={{ base: 'stretch', md: 'center' }} justify="end" gap={STORE_TOKENS.SPACING.ELEMENT}>
                     {showAssignmentBadge && assignments && assignments.length > 0 && (
@@ -194,7 +217,7 @@ export function WorkoutBuilderHeader({
                         <Button variant="outline-orange" size="lg" shine fullWidth={{ base: true, md: false }} onClick={() => setIsAssignModalOpen(true)}>
                             <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                                 <Icon icon={Calendar} size="sm" color={STORE_TOKENS.COLORS.BRAND} />
-                                <span>{assignments?.length ? "Gerenciar Atribuição" : "Atribuir"}</span>
+                                {assignments?.length ? "Gerenciar Atribuição" : "Atribuir"}
                             </Inline>
                         </Button>
                     </Box>
@@ -212,5 +235,5 @@ export function WorkoutBuilderHeader({
                 </Stack>
             )}
         </Stack>
-    )
+    );
 }

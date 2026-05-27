@@ -29,7 +29,7 @@ export function StudentNutritionAdherence({ userId }: StudentNutritionAdherenceP
     })
 
     const mealMutation = useMutation({
-        mutationFn: ({ mealId, currentStatus }: { mealId: string, currentStatus: boolean }) => 
+        mutationFn: ({ mealId, currentStatus }: { mealId: string, currentStatus: boolean }) =>
             toggleMealGroup(mealId, !currentStatus),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: QUERY_KEYS.diets.today(userId) })
@@ -37,7 +37,7 @@ export function StudentNutritionAdherence({ userId }: StudentNutritionAdherenceP
     })
 
     const itemMutation = useMutation({
-        mutationFn: ({ itemId, currentStatus }: { itemId: string, currentStatus: boolean }) => 
+        mutationFn: ({ itemId, currentStatus }: { itemId: string, currentStatus: boolean }) =>
             toggleMealItem(itemId, !currentStatus),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: QUERY_KEYS.diets.today(userId) })
@@ -50,7 +50,7 @@ export function StudentNutritionAdherence({ userId }: StudentNutritionAdherenceP
         const allItems = diet.meals.flatMap((m: any) => m.meal_items || [])
         const totalItems = allItems.length
         const completedItems = allItems.filter((i: any) => i.is_checked).length
-        
+
         // Macros calculation
         const totals = diet.meals.reduce((acc: any, meal: any) => {
             const items = meal.meal_items || []
@@ -78,11 +78,11 @@ export function StudentNutritionAdherence({ userId }: StudentNutritionAdherenceP
         }
     }, [diet])
 
-    if (isLoading) return <RegistrySection title="DIETA DE HOJE" icon={Utensils}><Box className="animate-pulse h-64 bg-zinc-900/50 rounded-3xl" /></RegistrySection>
+    if (isLoading) return <RegistrySection title="DIETA DE HOJE" subtitle="Acompanhamento nutricional e macros." icon={Utensils}><Box /></RegistrySection>
 
     if (!diet || !stats) {
         return (
-            <RegistrySection title="DIETA DE HOJE" icon={Utensils}>
+            <RegistrySection title="DIETA DE HOJE" subtitle="Acompanhamento nutricional e macros." icon={Utensils}>
                 <DietAdherenceCard
                     completedItems={0}
                     totalItems={0}

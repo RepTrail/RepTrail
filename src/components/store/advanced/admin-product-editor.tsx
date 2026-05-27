@@ -105,7 +105,11 @@ export function AdminProductEditor({ isOpen, onClose, product, onSave, onImport 
                             <Box padding="element" rounded={STORE_TOKENS.RADIUS.SYSTEM} bg={STORE_TOKENS.COLORS.SUCCESS} bgOpacity={STORE_TOKENS.OPACITY.MEDIUM}>
                                 <Icon icon={Zap} size="xs" color={STORE_TOKENS.COLORS.SUCCESS} />
                             </Box>
-                            <Font variant="label-caps" color={STORE_TOKENS.COLORS.SUCCESS}>Auto-Importar Dados (IA)</Font>
+                            <Font
+                                variant="label-caps"
+                                {...{
+                                    color: STORE_TOKENS.COLORS.SUCCESS,
+                                }}>Auto-Importar Dados (IA)</Font>
                         </Stack>
                         <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} align="stretch">
                             <Input
@@ -203,5 +207,5 @@ export function AdminProductEditor({ isOpen, onClose, product, onSave, onImport 
                 </Stack>
             </Stack>
         </Modal>
-    )
+    );
 }

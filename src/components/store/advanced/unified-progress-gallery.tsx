@@ -95,7 +95,7 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
         mutationFn: async (variables: { photoId: string }) => variables,
         onMutate: (variables) => {
             const previous = queryClient.getQueryData(QUERY_KEYS.student.photos(studentId || 'me'))
-            queryClient.setQueryData(QUERY_KEYS.student.photos(studentId || 'me'), (old: any) => 
+            queryClient.setQueryData(QUERY_KEYS.student.photos(studentId || 'me'), (old: any) =>
                 Array.isArray(old) ? old.filter((item: any) => item.id !== variables.photoId) : old
             )
             return { previous }
@@ -117,7 +117,7 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
         mutationFn: async (variables: { photoId: string, newDate: string }) => variables,
         onMutate: (variables) => {
             const previous = queryClient.getQueryData(QUERY_KEYS.student.photos(studentId || 'me'))
-            queryClient.setQueryData(QUERY_KEYS.student.photos(studentId || 'me'), (old: any) => 
+            queryClient.setQueryData(QUERY_KEYS.student.photos(studentId || 'me'), (old: any) =>
                 Array.isArray(old) ? old.map((item: any) => item.id === variables.photoId ? { ...item, created_at: variables.newDate } : item) : old
             )
             setEditingSetId(null)
@@ -156,7 +156,7 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
 
     if (photos.length === 0) {
         return (
-            <EmptyState 
+            <EmptyState
                 icon={Camera}
                 title="NENHUMA FOTO ENCONTRADA"
                 description="Nenhum registro de progresso físico foi anexado a este perfil."
@@ -196,38 +196,39 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                         alt="Progresso"
                         fill
                         sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                        className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
-                    />
+                        {...{
+                            className: "object-cover grayscale group-hover:grayscale-0 transition-all duration-700",
+                        }} />
                     {/* Floating Badge Overlay (Top Left) */}
                     <Box position="absolute" top={2.5} left={2.5} pointerEvents="none">
                         <Badge variant="solid" color="primary" label={typeLabels[item.type]} size="xs" />
                     </Box>
- 
+
                     {/* Centered Hover Zoom Icon Overlay */}
-                    <Box 
-                        position="absolute" 
-                        pin="inset" 
-                        display="flex" 
-                        align="center" 
-                        justify="center" 
-                        bg="black" 
-                        bgOpacity={30} 
-                        opacity={0} 
+                    <Box
+                        position="absolute"
+                        pin="inset"
+                        display="flex"
+                        align="center"
+                        justify="center"
+                        bg="black"
+                        bgOpacity={30}
+                        opacity={0}
                         groupHoverOpacity={100}
                         transition
                         pointerEvents="none"
                     >
-                        <Box 
-                            width={40} 
-                            height={40} 
-                            rounded="full" 
-                            bg="primary" 
-                            bgOpacity={20} 
+                        <Box
+                            width={40}
+                            height={40}
+                            rounded="full"
+                            bg="primary"
+                            bgOpacity={20}
                             border={true}
                             borderColor="primary"
                             borderOpacity={50}
-                            display="flex" 
-                            align="center" 
+                            display="flex"
+                            align="center"
                             justify="center"
                             scale={90}
                             groupHoverScale={100}
@@ -238,7 +239,7 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                     </Box>
                 </Box>
             </Box>
-        )
+        );
     }
 
     return (
@@ -253,7 +254,7 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                 padding="none"
             >
                 <Box display="flex" align="center" gap="element" wrap="wrap" fullWidth>
-                    <Icon icon={Filter} size="xs" color="zinc-400" className="shrink-0 mr-1" />
+                    <Icon icon={Filter} size="xs" color="zinc-400" />
                     {filters.map((f) => {
                         const isActive = activeFilter === f.value
                         return (
@@ -272,9 +273,7 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                 </Box>
 
             </Box>
-
             <Separator opacity={10} />
-
             {/* Gallery Content */}
             {activeFilter === 'all' ? (
                 <Stack gap="container" fullWidth>
@@ -307,11 +306,17 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                                                 display="flex"
                                                 align="center"
                                                 justify="center"
-                                                className="shrink-0"
                                             >
                                                 <Icon icon={Calendar} size="md" color="primary" />
                                             </Box>
-                                            <Font variant="body" weight="black" uppercase italic color="white">
+                                            <Font
+                                                variant="body"
+                                                weight="black"
+                                                uppercase
+                                                italic
+                                                {...{
+                                                    color: "white",
+                                                }}>
                                                 Atualização de {new Date(set.created_at).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long' })}
                                             </Font>
                                         </Box>
@@ -320,13 +325,13 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                                             {canEdit && (
                                                 <>
                                                     {isEditing ? (
-                                                        <Box display="flex" align="center" gap="element" className="animate-in fade-in slide-in-from-right-4 duration-300">
+                                                        <Box display="flex" align="center" gap="element" animateIn="slide-right">
                                                             <Input
                                                                 type="date"
                                                                 value={editDate}
                                                                 onChange={(e) => setEditDate(e.target.value)}
-                                                                width="150px"
-                                                                className="!h-8 text-[11px]"
+                                                                width={150}
+                                                                size="sm"
                                                             />
                                                             <Box display="flex" gap="element">
                                                                 <Button
@@ -383,12 +388,12 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                                     </Grid>
                                 </Stack>
                             </React.Fragment>
-                        )
+                        );
                     })}
                 </Stack>
             ) : (
                 /* Photos Grid for filtered view (4 per row on md/lg screens) */
-                <Grid cols={{ base: 1, md: 4 }} gap="container">
+                (<Grid cols={{ base: 1, md: 4 }} gap="container">
                     {filteredItems.map((item, i) => {
                         const isEditing = editingSetId === item.setId
 
@@ -398,56 +403,67 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                                 {canEdit && (
                                     <Box display="flex" align="center" justify="between" padding="tiny">
                                         {isEditing ? (
-                                            <Box display="flex" align="center" gap="element" fullWidth className="animate-in fade-in zoom-in duration-300">
+                                            <Box display="flex" align="center" gap="element" fullWidth animateIn="zoom">
                                                 <Input
                                                     type="date"
                                                     value={editDate}
                                                     onChange={(e) => setEditDate(e.target.value)}
-                                                    className="h-7 px-2 text-[10px] bg-zinc-900 border-zinc-800 text-white rounded-system"
+                                                    size="sm"
+                                                    color="zinc"
                                                 />
                                                 <Box display="flex" gap="element">
                                                     <Button
-                                                        size="sm"
+                                                        size="xs"
+                                                        isIconOnly
                                                         variant="outline-emerald"
                                                         onClick={() => handleDateSave(item.setId)}
-                                                        className="h-7 w-7 p-0"
                                                     >
                                                         <Icon icon={Check} size="xs" />
                                                     </Button>
                                                     <Button
-                                                        size="sm"
+                                                        size="xs"
+                                                        isIconOnly
                                                         variant="outline-red"
                                                         onClick={() => setEditingSetId(null)}
-                                                        className="h-7 w-7 p-0"
                                                     >
                                                         <Icon icon={X} size="xs" />
                                                     </Button>
                                                 </Box>
                                             </Box>
                                         ) : (
-                                            <Box display="flex" align="center" justify="between" fullWidth className="group/date">
-                                                <Font variant="sub-tiny" weight="black" color="zinc-400" uppercase tracking="widest" className="flex items-center gap-1">
+                                            <Box display="flex" align="center" justify="between" fullWidth group>
+                                                <Box display="flex" align="center" gap="tiny">
                                                     <Icon icon={Calendar} size="xs" color="zinc-400" />
-                                                    {new Date(item.date).toLocaleDateString()}
-                                                </Font>
-                                                <Button
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    onClick={() => startEditing(item.setId, item.date)}
-                                                    className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white/10"
-                                                >
-                                                    <Icon icon={Pencil} size="xs" />
-                                                </Button>
+                                                    <Font
+                                                        variant="sub-tiny"
+                                                        weight="black"
+                                                        uppercase
+                                                        tracking="widest"
+                                                        {...{
+                                                            color: "zinc-400",
+                                                        }}>
+                                                        {new Date(item.date).toLocaleDateString()}
+                                                    </Font>
+                                                </Box>
+                                                <Box opacity={0} groupHoverOpacity={100} transition>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="xs"
+                                                        isIconOnly
+                                                        onClick={() => startEditing(item.setId, item.date)}
+                                                    >
+                                                        <Icon icon={Pencil} size="xs" />
+                                                    </Button>
+                                                </Box>
                                             </Box>
                                         )}
                                     </Box>
                                 )}
                             </Stack>
-                        )
+                        );
                     })}
-                </Grid>
+                </Grid>)
             )}
-
             {/* Lightbox Modal */}
             <Modal
                 isOpen={selectedPhotoIndex !== null}
@@ -469,26 +485,36 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                         fullWidth
                         bg="zinc"
                         bgOpacity={90}
-                        className="min-h-[50vh] md:min-h-[60vh] max-h-[70vh] overflow-hidden"
+                        padding="container"
                     >
-                        <div className="relative aspect-[3/4] w-full max-w-sm md:max-w-md overflow-hidden rounded-system my-5">
+                        <Box
+                            position="relative"
+                            aspectRatio="3/4"
+                            fullWidth
+                            maxWidth={{ base: 'sm', md: 'md' }}
+                            overflow="hidden"
+                            rounded="system"
+                        >
                             <Image
                                 src={filteredItems[selectedPhotoIndex].url}
                                 alt="Visualização"
                                 fill
                                 sizes="(max-width: 768px) 100vw, 50vw"
-                                className="object-cover"
                                 priority
-                            />
-                        </div>
+                                {...{
+                                    className: "object-cover",
+                                }} />
+                        </Box>
 
                         {/* Controls/Navigation inside content box */}
                         {selectedPhotoIndex > 0 && (
                             <Box
                                 position="absolute"
                                 left={2.5}
-                                top="50%"
-                                className="-translate-y-1/2"
+                                top={0}
+                                bottom={0}
+                                display="flex"
+                                align="center"
                             >
                                 <Button
                                     variant="outline-zinc"
@@ -507,8 +533,10 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                             <Box
                                 position="absolute"
                                 right={2.5}
-                                top="50%"
-                                className="-translate-y-1/2"
+                                top={0}
+                                bottom={0}
+                                display="flex"
+                                align="center"
                             >
                                 <Button
                                     variant="outline-zinc"
@@ -528,25 +556,45 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                             <Box
                                 position="absolute"
                                 bottom={2.5}
-                                left="50%"
-                                className="-translate-x-1/2"
-                                bg="black"
-                                bgOpacity={50}
-                                padding="element"
-                                rounded="system"
+                                left={0}
+                                right={0}
+                                display="flex"
+                                justify="center"
+                                pointerEvents="none"
                             >
-                                <Stack direction="row" align="center" gap="element">
-                                    <Font variant="sub-tiny" color="zinc-400" weight="bold" uppercase tracking="widest">Atleta:</Font>
-                                    <Font variant="sub-tiny" weight="black" uppercase italic color="primary">
-                                        {studentName}
-                                    </Font>
-                                </Stack>
+                                <Box
+                                    bg="black"
+                                    bgOpacity={50}
+                                    padding="element"
+                                    rounded="system"
+                                    pointerEvents="auto"
+                                >
+                                    <Stack direction="row" align="center" gap="element">
+                                        <Font
+                                            variant="sub-tiny"
+                                            weight="bold"
+                                            uppercase
+                                            tracking="widest"
+                                            {...{
+                                                color: "zinc-400",
+                                            }}>Atleta:</Font>
+                                        <Font
+                                            variant="sub-tiny"
+                                            weight="black"
+                                            uppercase
+                                            italic
+                                            {...{
+                                                color: "primary",
+                                            }}>
+                                            {studentName}
+                                        </Font>
+                                    </Stack>
+                                </Box>
                             </Box>
                         )}
                     </Box>
                 )}
             </Modal>
-
             {/* Deletion Confirmation Modal */}
             <Modal
                 isOpen={deleteTargetId !== null}
@@ -560,11 +608,16 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                 onConfirm={confirmDelete}
             >
                 <Box padding="none">
-                    <Font variant="body" color="zinc-400" align="center">
+                    <Font
+                        variant="body"
+                        align="center"
+                        {...{
+                            color: "zinc-400",
+                        }}>
                         Tem certeza que deseja remover este registro de fotos? Essa ação não poderá ser desfeita.
                     </Font>
                 </Box>
             </Modal>
         </Stack>
-    )
+    );
 }

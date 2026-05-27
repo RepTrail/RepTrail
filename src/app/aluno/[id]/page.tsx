@@ -3,11 +3,9 @@ import { createClient } from '@/lib/supabase/server'
 import { headers } from 'next/headers'
 import { StudentPublicProfileMain } from '@/components/store/advanced/student-public-profile-main'
 import { StudentPublicMetrics } from '@/components/store/advanced/student-public-metrics'
-import { StudentPublicHistory } from '@/components/store/advanced/student-public-history'
 import { StudentPublicPhotos } from '@/components/store/advanced/student-public-photos'
 import { getStudentFullMetrics } from '@/actions/metrics-actions'
 import { getStudentAdherenceHistory } from '@/actions/tracking-actions'
-import { getStudentWorkoutHistory } from '@/actions/log-actions'
 import { DashboardShell } from '@/components/store/advanced/dashboard-shell'
 import { RegistryProvider } from '@/components/store/advanced/registry-context'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
@@ -88,7 +86,7 @@ export default async function StudentPublicProfilePage({
     if (!profile) notFound()
 
     // ── Student Details & Data Fetches in Parallel ─────────────────────────────
-    const [detailsResult, trainerLinkResult, photosResult, fullMetrics, adherenceHistory, workoutHistory] = await Promise.all([
+    const [detailsResult, trainerLinkResult, photosResult, fullMetrics, adherenceHistory] = await Promise.all([
         supabase
             .from('student_details')
             .select('steroid_use')
@@ -113,7 +111,6 @@ export default async function StudentPublicProfilePage({
             .order('created_at', { ascending: false }),
         getStudentFullMetrics(studentId),
         getStudentAdherenceHistory(studentId, 30),
-        getStudentWorkoutHistory(studentId),
     ])
 
     const details = detailsResult.data
@@ -134,12 +131,6 @@ export default async function StudentPublicProfilePage({
         />
     )
 
-    const historyContent = (
-        <StudentPublicHistory 
-            key="student-history-workout"
-            history={workoutHistory || []} 
-        />
-    )
 
     const photosContent = (
         <StudentPublicPhotos
@@ -165,7 +156,6 @@ export default async function StudentPublicProfilePage({
                     profile={profile}
                     trainerData={trainerData}
                     evolutionContent={evolutionContent}
-                    historyContent={historyContent}
                     photosContent={photosContent}
                 />
             </RegistryMain>

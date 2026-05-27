@@ -24,7 +24,14 @@ export function TrainerProfileSubscriptionCard({ hasActiveSubscription = false }
             <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                 <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                     <Icon icon={CreditCard} size="sm" color="primary" />
-                    <Font variant="auxiliary" color="primary" weight="black" uppercase tracking="widest">
+                    <Font
+                        variant="auxiliary"
+                        weight="black"
+                        uppercase
+                        tracking="widest"
+                        {...{
+                            color: "primary",
+                        }}>
                         Assinatura & Faturamento
                     </Font>
                 </Stack>
@@ -32,16 +39,24 @@ export function TrainerProfileSubscriptionCard({ hasActiveSubscription = false }
                 <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                     <Stack direction="row" align="end" justify="between" gap={STORE_TOKENS.SPACING.ELEMENT}>
                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                            <Font variant="auxiliary" color={STORE_TOKENS.COLORS.TEXT.DIM} weight="black" uppercase tracking="widest">
+                            <Font
+                                variant="auxiliary"
+                                weight="black"
+                                uppercase
+                                tracking="widest"
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.DIM,
+                                }}>
                                 Status Atual
                             </Font>
                             <Font
                                 variant="heading"
-                                color={hasActiveSubscription ? 'emerald' : STORE_TOKENS.COLORS.TEXT.MUTED}
                                 weight="black"
                                 uppercase
                                 italic
-                            >
+                                {...{
+                                    color: hasActiveSubscription ? 'emerald' : STORE_TOKENS.COLORS.TEXT.MUTED,
+                                }}>
                                 {hasActiveSubscription ? 'Plano Ativo' : 'Plano Inativo'}
                             </Font>
                         </Stack>
@@ -59,13 +74,25 @@ export function TrainerProfileSubscriptionCard({ hasActiveSubscription = false }
                                 bg={hasActiveSubscription ? 'primary' : 'zinc'}
                                 bgOpacity={hasActiveSubscription ? 100 : 40}
                             />
-                            <Font variant="auxiliary" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} weight="bold" uppercase>
+                            <Font
+                                variant="auxiliary"
+                                weight="bold"
+                                uppercase
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
+                                }}>
                                 Ciclo On Demand Mensal
                             </Font>
                         </Inline>
                         <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                             <Box width={6} height={6} rounded="full" bg="zinc" bgOpacity={40} />
-                            <Font variant="auxiliary" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="bold" uppercase>
+                            <Font
+                                variant="auxiliary"
+                                weight="bold"
+                                uppercase
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                }}>
                                 Pagamento Seguro via Asaas
                             </Font>
                         </Inline>
@@ -78,7 +105,14 @@ export function TrainerProfileSubscriptionCard({ hasActiveSubscription = false }
                     <Button variant="white" fullWidth size="lg" asChild shine>
                         <Link href="/dashboard/trainer/plans">
                             <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                <Font variant="body-sm" weight="black" uppercase italic color={STORE_TOKENS.COLORS.BLACK}>
+                                <Font
+                                    variant="body-sm"
+                                    weight="black"
+                                    uppercase
+                                    italic
+                                    {...{
+                                        color: STORE_TOKENS.COLORS.BLACK,
+                                    }}>
                                     Explorar Planos
                                 </Font>
                                 <Icon icon={Zap} size="xs" color={STORE_TOKENS.COLORS.BLACK} />
@@ -88,14 +122,28 @@ export function TrainerProfileSubscriptionCard({ hasActiveSubscription = false }
                 )}
 
                 <Stack align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <Font variant="tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="bold" uppercase tracking="widest">
+                    <Font
+                        variant="tiny"
+                        weight="bold"
+                        uppercase
+                        tracking="widest"
+                        {...{
+                            color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                        }}>
                         Faturamento por
                     </Font>
-                    <Font variant="auxiliary" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} weight="black" uppercase italic>
+                    <Font
+                        variant="auxiliary"
+                        weight="black"
+                        uppercase
+                        italic
+                        {...{
+                            color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                        }}>
                         Asaas
                     </Font>
                 </Stack>
             </Stack>
         </Surface>
-    )
+    );
 }

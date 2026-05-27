@@ -10,15 +10,25 @@ import { LucideIcon } from 'lucide-react'
 import { useRegistry } from './registry-context'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
-interface RegistrySectionProps {
+interface BaseRegistrySectionProps {
   children: React.ReactNode
-  title?: string
-  subtitle?: string
-  icon?: LucideIcon
   id?: string
   rightElement?: React.ReactNode
   flex1?: boolean
 }
+
+type RegistrySectionProps = BaseRegistrySectionProps & (
+  | {
+      title?: never
+      subtitle?: never
+      icon?: never
+    }
+  | {
+      title: string
+      subtitle: string
+      icon: LucideIcon
+    }
+)
 
 export function RegistrySection({
   children,
@@ -32,7 +42,7 @@ export function RegistrySection({
   const { primaryColor } = useRegistry()
 
   return (
-    <Stack gap={STORE_TOKENS.SPACING.CONTAINER} id={id} fullWidth>
+    <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} id={id} fullWidth>
       {/* Section Header */}
       {(title || subtitle || rightElement) && (
         <Stack
@@ -46,13 +56,24 @@ export function RegistrySection({
               {title && (
                 <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                   {icon && <Icon icon={icon} color={primaryColor as any} size="lg" />}
-                  <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
+                  <Font
+                    variant="heading"
+                    weight="black"
+                    uppercase
+                    italic
+                    {...{
+                      color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                    }}>
                     {title}
                   </Font>
                 </Inline>
               )}
               {subtitle && (
-                <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>
+                <Font
+                  variant="description"
+                  {...{
+                    color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                  }}>
                   {subtitle}
                 </Font>
               )}

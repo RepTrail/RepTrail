@@ -56,7 +56,7 @@ export function ErgogenicManagementSectionContent({
                 const unit = item.unit || 'MG'
 
                 return (
-                    <ErgogenicCardPremium 
+                    <ErgogenicCardPremium
                         key={item.id || idx}
                         id={item.id}
                         title={item.name.toUpperCase()}
@@ -64,15 +64,16 @@ export function ErgogenicManagementSectionContent({
                         dosage={`${(weeklyDosage / frequency).toFixed(1)} ${unit.toUpperCase()}`}
                         frequency={`${frequency}X NA SEMANA`}
                         mode={mode}
-                        color={STORE_TOKENS.COLORS.BRAND as any}
                         onEdit={() => onEdit?.(item)}
                         onDelete={() => onDelete?.(item)}
                         onDuplicate={() => onDuplicate?.(item)}
                         onSchedule={() => onSchedule?.(item)}
                         notes={item.notes}
-                    />
-                )
+                        {...{
+                            color: STORE_TOKENS.COLORS.BRAND as any,
+                        }} />
+                );
             })}
         </Grid>
-    )
+    );
 }

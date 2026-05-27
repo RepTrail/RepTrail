@@ -30,7 +30,13 @@ export function StudentBodyCompositionPanel() {
                             <Font variant="body" weight="black" uppercase italic tracking="widest">
                                 ESTADO ATUAL
                             </Font>
-                            <Font variant="sub-tiny" weight="black" color={STORE_TOKENS.COLORS.TEXT.DIM} uppercase>
+                            <Font
+                                variant="sub-tiny"
+                                weight="black"
+                                uppercase
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.DIM,
+                                }}>
                                 ATUALIZADO EM 10 DE MAIO
                             </Font>
                         </Stack>
@@ -41,13 +47,24 @@ export function StudentBodyCompositionPanel() {
                         <Box height="px" fullWidth bg={STORE_TOKENS.COLORS.WHITE} opacity={STORE_TOKENS.OPACITY.LOW} />
                         <BodyMetricItem label="PERCENTUAL DE GORDURA (BF)" value="12.4" unit="%" />
                         <Box height="px" fullWidth bg={STORE_TOKENS.COLORS.WHITE} opacity={STORE_TOKENS.OPACITY.LOW} />
-                        <BodyMetricItem label="MASSA MAGRA ESTIMADA" value="75.2" unit="KG" color={STORE_TOKENS.COLORS.SUCCESS} />
+                        <BodyMetricItem
+                            label="MASSA MAGRA ESTIMADA"
+                            value="75.2"
+                            unit="KG"
+                            {...{
+                                color: STORE_TOKENS.COLORS.SUCCESS,
+                            }} />
                         <Box height="px" fullWidth bg={STORE_TOKENS.COLORS.WHITE} opacity={STORE_TOKENS.OPACITY.LOW} />
-                        <BodyMetricItem label="MASSA GORDA ESTIMADA" value="10.3" unit="KG" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} />
+                        <BodyMetricItem
+                            label="MASSA GORDA ESTIMADA"
+                            value="10.3"
+                            unit="KG"
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                            }} />
                     </Stack>
                 </Stack>
             </GlassPanel>
-
             {/* Card 2: Avaliação Física (Skinfolds) */}
             <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER} variant="glass" rounded={STORE_TOKENS.RADIUS.SYSTEM}>
                 <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
@@ -57,24 +74,70 @@ export function StudentBodyCompositionPanel() {
                             <Font variant="body" weight="black" uppercase italic tracking="widest">
                                 ÚLTIMA AVALIAÇÃO
                             </Font>
-                            <Font variant="sub-tiny" weight="black" color={STORE_TOKENS.COLORS.TEXT.DIM} uppercase>
+                            <Font
+                                variant="sub-tiny"
+                                weight="black"
+                                uppercase
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.DIM,
+                                }}>
                                 PROTOCOLO DE 7 DOBRAS
                             </Font>
                         </Stack>
                     </Stack>
 
                     <Grid cols={4} gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        <SkinfoldGauge label="PEITORAL" value={12} color={STORE_TOKENS.COLORS.SUCCESS} />
-                        <SkinfoldGauge label="ABDOMINAL" value={18} color={STORE_TOKENS.COLORS.WARNING} />
-                        <SkinfoldGauge label="COXA" value={14} color={STORE_TOKENS.COLORS.SUCCESS} />
-                        <SkinfoldGauge label="TRÍCEPS" value={8} color={STORE_TOKENS.COLORS.SUCCESS} />
-                        <SkinfoldGauge label="SUBESCAP." value={15} color={STORE_TOKENS.COLORS.WARNING} />
-                        <SkinfoldGauge label="SUPRAIL." value={11} color={STORE_TOKENS.COLORS.SUCCESS} />
-                        <SkinfoldGauge label="AXILAR" value={9} color={STORE_TOKENS.COLORS.SUCCESS} />
-                        <SkinfoldGauge label="MÉDIA" value={12.4} color={STORE_TOKENS.COLORS.WARNING} />
+                        <SkinfoldGauge
+                            label="PEITORAL"
+                            value={12}
+                            {...{
+                                color: STORE_TOKENS.COLORS.SUCCESS,
+                            }} />
+                        <SkinfoldGauge
+                            label="ABDOMINAL"
+                            value={18}
+                            {...{
+                                color: STORE_TOKENS.COLORS.WARNING,
+                            }} />
+                        <SkinfoldGauge
+                            label="COXA"
+                            value={14}
+                            {...{
+                                color: STORE_TOKENS.COLORS.SUCCESS,
+                            }} />
+                        <SkinfoldGauge
+                            label="TRÍCEPS"
+                            value={8}
+                            {...{
+                                color: STORE_TOKENS.COLORS.SUCCESS,
+                            }} />
+                        <SkinfoldGauge
+                            label="SUBESCAP."
+                            value={15}
+                            {...{
+                                color: STORE_TOKENS.COLORS.WARNING,
+                            }} />
+                        <SkinfoldGauge
+                            label="SUPRAIL."
+                            value={11}
+                            {...{
+                                color: STORE_TOKENS.COLORS.SUCCESS,
+                            }} />
+                        <SkinfoldGauge
+                            label="AXILAR"
+                            value={9}
+                            {...{
+                                color: STORE_TOKENS.COLORS.SUCCESS,
+                            }} />
+                        <SkinfoldGauge
+                            label="MÉDIA"
+                            value={12.4}
+                            {...{
+                                color: STORE_TOKENS.COLORS.WARNING,
+                            }} />
                     </Grid>
                 </Stack>
             </GlassPanel>
         </Grid>
-    )
+    );
 }

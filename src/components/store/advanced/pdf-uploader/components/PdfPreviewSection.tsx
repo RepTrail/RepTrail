@@ -37,7 +37,13 @@ export function PdfPreviewSection({ type, parsedData, setParsedData, selectionHo
             rightElement={
                 type === 'diet' && parsedData.parsed_data?.options?.length > 1 ? (
                     <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        <Font variant="sub-tiny" color="SECONDARY" uppercase weight="bold">Cardápio:</Font>
+                        <Font
+                            variant="sub-tiny"
+                            uppercase
+                            weight="bold"
+                            {...{
+                                color: "SECONDARY",
+                            }}>Cardápio:</Font>
                         <Box minWidth={180}>
                             <FormSelect
                                 options={selectOptions}
@@ -88,7 +94,26 @@ export function PdfPreviewSection({ type, parsedData, setParsedData, selectionHo
                     }
                     setParsedData(newData)
                 }}
-                onUpdateDietDays={(days: number[]) => setSelectedDietDays(days)}
+                onUpdateErgoUnit={(idx: number, unit: string) => {
+                    const newData = {
+                        ...parsedData,
+                        parsed_data: {
+                            ...parsedData.parsed_data,
+                            ergogenics: parsedData.parsed_data.ergogenics.map((e: any, i: number) =>
+                                i === idx ? { ...e, unit } : e
+                            )
+                        }
+                    }
+                    setParsedData(newData)
+                }}
+                onUpdateDietDays={(days: number[]) => {
+                    setSelectedDietDays(days)
+                    const newData = {
+                        ...parsedData,
+                        parsed_data: { ...parsedData.parsed_data, days_of_week: days }
+                    }
+                    setParsedData(newData)
+                }}
             />
         </RegistrySection>
     );

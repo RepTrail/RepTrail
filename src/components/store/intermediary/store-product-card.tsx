@@ -93,10 +93,25 @@ export function StoreProductCard({
             >
                 {/* Header Information */}
                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} variant="body-sm" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} lineClamp={2} uppercase weight="black" tracking="tight">
+                    <Font
+                        {...STORE_TOKENS.TYPOGRAPHY.HEADING}
+                        variant="body-sm"
+                        lineClamp={2}
+                        uppercase
+                        weight="black"
+                        tracking="tight"
+                        {...{
+                            color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                        }}>
                         {name}
                     </Font>
-                    <Font {...STORE_TOKENS.TYPOGRAPHY.DESCRIPTION} variant="tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED} lineClamp={2}>
+                    <Font
+                        {...STORE_TOKENS.TYPOGRAPHY.DESCRIPTION}
+                        variant="tiny"
+                        lineClamp={2}
+                        {...{
+                            color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                        }}>
                         {description}
                     </Font>
                 </Stack>
@@ -108,17 +123,39 @@ export function StoreProductCard({
                             {isOriginal && (
                                 <Stack direction="row" align="center" gap="element">
                                     <Icon icon={ShieldCheck} size="xs" color={STORE_TOKENS.COLORS.SUCCESS} />
-                                    <Font variant="tiny" weight="black" uppercase color={STORE_TOKENS.COLORS.SUCCESS}>
+                                    <Font
+                                        variant="tiny"
+                                        weight="black"
+                                        uppercase
+                                        {...{
+                                            color: STORE_TOKENS.COLORS.SUCCESS,
+                                        }}>
                                         Original
                                     </Font>
                                 </Stack>
                             )}
                             <Stack direction="row" align="baseline" gap="element">
-                                <Font variant="sub-tiny" weight="bold" color={STORE_TOKENS.COLORS.TEXT.MUTED}>R$</Font>
-                                <Font variant="h3" weight="black" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} tracking="tight">
+                                <Font
+                                    variant="sub-tiny"
+                                    weight="bold"
+                                    {...{
+                                        color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                    }}>R$</Font>
+                                <Font
+                                    variant="h3"
+                                    weight="black"
+                                    tracking="tight"
+                                    {...{
+                                        color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                                    }}>
                                     {Math.floor(price)}
                                 </Font>
-                                <Font variant="tiny" weight="bold" color={STORE_TOKENS.COLORS.TEXT.MUTED}>
+                                <Font
+                                    variant="tiny"
+                                    weight="bold"
+                                    {...{
+                                        color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                    }}>
                                     ,{(price % 1 || 0).toFixed(2).split('.')[1]}
                                 </Font>
                             </Stack>
@@ -130,14 +167,28 @@ export function StoreProductCard({
                                     <Icon key={i} icon={Star} size="xs" color={i <= Math.round(rating) ? STORE_TOKENS.COLORS.BRAND : STORE_TOKENS.COLORS.TEXT.DIM} />
                                 ))}
                             </Stack>
-                            <Font variant="tiny" weight="black" color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
-                                {rating.toFixed(1)} <Font variant="tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>/ 5.0</Font>
+                            <Font
+                                variant="tiny"
+                                weight="black"
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                                }}>
+                                {rating.toFixed(1)} <Font
+                                variant="tiny"
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                }}>/ 5.0</Font>
                             </Font>
                         </Stack>
                     </Stack>
 
                     <Button variant="emerald" size="lg" rounded={STORE_TOKENS.RADIUS.SYSTEM} fullWidth direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} onClick={onBuy}>
-                        <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} variant="label-caps" color={STORE_TOKENS.COLORS.BLACK}>COMPRAR AGORA</Font>
+                        <Font
+                            {...STORE_TOKENS.TYPOGRAPHY.HEADING}
+                            variant="label-caps"
+                            {...{
+                                color: STORE_TOKENS.COLORS.BLACK,
+                            }}>COMPRAR AGORA</Font>
                         <Icon icon={ExternalLink} size="xs" color={STORE_TOKENS.COLORS.BLACK} />
                     </Button>
                 </Stack>

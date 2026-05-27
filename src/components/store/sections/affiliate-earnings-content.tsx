@@ -45,18 +45,19 @@ export function AffiliateEarningsContent() {
                         value={`R$ ${checks.pending.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
                         description="Aguardando confirmação (30 dias)"
                         icon={Clock}
-                        color={STORE_TOKENS.COLORS.WARNING}
-                    />
+                        {...{
+                            color: STORE_TOKENS.COLORS.WARNING,
+                        }} />
                     <StatsCard
                         label="TOTAL RECEBIDO"
                         value={`R$ ${checks.paid.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
                         description="Já transferido para sua conta"
                         icon={DollarSign}
-                        color={STORE_TOKENS.COLORS.INFO}
-                    />
+                        {...{
+                            color: STORE_TOKENS.COLORS.INFO,
+                        }} />
                 </Grid>
             </RegistrySection>
-
             {/* Commissions and Payouts */}
             <Grid cols={1} lgCols={12} gap={STORE_TOKENS.SPACING.SECTION}>
                 <Box lgColSpan={8}>
@@ -80,5 +81,5 @@ export function AffiliateEarningsContent() {
                 </Box>
             </Grid>
         </React.Fragment>
-    )
+    );
 }

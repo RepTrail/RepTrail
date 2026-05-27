@@ -14,23 +14,25 @@ import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 export function MissionCompletedView() {
     return (
-        <Stack 
-            align="center" 
-            justify="center" 
-            flex1 
-            padding={STORE_TOKENS.PADDING.CONTAINER} 
+        <Stack
+            align="center"
+            justify="center"
+            flex1
+            padding={STORE_TOKENS.PADDING.CONTAINER}
             gap={STORE_TOKENS.SPACING.SECTION}
             minHeight="screen"
         >
             <Box position="relative">
-                <div 
-                    className="absolute inset-0 bg-emerald-500/20 rounded-full blur-3xl animate-pulse" 
+                <Box
+                    position="absolute"
+                    pin="inset"
+                    rounded="full"
                 />
-                <Surface 
-                    variant="tonal-zinc" 
-                    padding={STORE_TOKENS.PADDING.CONTAINER} 
-                    rounded="full" 
-                    border="standard" 
+                <Surface
+                    variant="tonal-zinc"
+                    padding={STORE_TOKENS.PADDING.CONTAINER}
+                    rounded="full"
+                    border="standard"
                     borderColor="emerald"
                     borderOpacity={30}
                     shadow="xl"
@@ -40,41 +42,72 @@ export function MissionCompletedView() {
                     </Box>
                 </Surface>
             </Box>
-
             <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                <Font variant="h2" weight="black" color="white" uppercase italic tracking="tight" align="center">
-                    Missão de Hoje <Font variant="h2" color="success">Concluída!</Font> ✅
+                <Font
+                    variant="h2"
+                    weight="black"
+                    uppercase
+                    italic
+                    tracking="tight"
+                    align="center"
+                    {...{
+                        color: "white",
+                    }}>
+                    Missão de Hoje <Font
+                    variant="h2"
+                    {...{
+                        color: "success",
+                    }}>Concluída!</Font> ✅
                 </Font>
-                <div style={{ maxWidth: '400px' }}>
-                    <Font 
-                        variant="sub-tiny" 
-                        color="zinc-500" 
-                        weight="black" 
-                        uppercase 
-                        tracking="widest" 
+                <Box maxWidth="sm">
+                    <Font
+                        variant="sub-tiny"
+                        weight="black"
+                        uppercase
+                        tracking="widest"
                         align="center"
-                    >
+                        {...{
+                            color: "zinc-500",
+                        }}>
                         Você já finalizou este treino hoje. Aproveite o descanso e volte amanhã para mais resultados!
                     </Font>
-                </div>
+                </Box>
             </Stack>
-
             <Stack gap={STORE_TOKENS.SPACING.ELEMENT} width="full" maxWidth="sm">
-                <Link href="/dashboard/student/workouts" passHref style={{ width: '100%' }}>
-                    <Button variant="white" fullWidth height="12">
-                        <Font variant="sub-tiny" weight="black" italic uppercase tracking="widest" color="black">
-                            Voltar aos Treinos
-                        </Font>
-                    </Button>
-                </Link>
-                <Link href="/dashboard/student" passHref style={{ width: '100%' }}>
-                    <Button variant="ghost" fullWidth height="12">
-                        <Font variant="tiny" weight="bold" uppercase tracking="widest" color="zinc-500">
-                            Ir para Dashboard
-                        </Font>
-                    </Button>
-                </Link>
+                <Box width="full">
+                    <Link href="/dashboard/student/workouts" passHref>
+                        <Button variant="white" fullWidth height="12">
+                            <Font
+                                variant="sub-tiny"
+                                weight="black"
+                                italic
+                                uppercase
+                                tracking="widest"
+                                {...{
+                                    color: "black",
+                                }}>
+                                Voltar aos Treinos
+                            </Font>
+                        </Button>
+                    </Link>
+                </Box>
+                <Box width="full">
+                    <Link href="/dashboard/student" passHref>
+                        <Button variant="ghost" fullWidth height="12">
+                            <Font
+                                variant="tiny"
+                                weight="bold"
+                                uppercase
+                                tracking="widest"
+                                {...{
+                                    color: "zinc-500",
+                                }}>
+                                Ir para Dashboard
+                            </Font>
+                        </Button>
+                    </Link>
+                </Box>
             </Stack>
         </Stack>
-    )
+    );
 }

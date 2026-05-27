@@ -61,7 +61,12 @@ export function DietPreviewDialog({ dietId, dietName, isOpen, onClose }: DietPre
                 <Box padding={STORE_TOKENS.SPACING.CONTAINER}>
                     <Stack align="center" justify="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
                         <Icon icon={Loader2} size="xl" color="emerald" spin />
-                        <Font variant="label-caps" color="SECONDARY" align="center">
+                        <Font
+                            variant="label-caps"
+                            align="center"
+                            {...{
+                                color: "SECONDARY",
+                            }}>
                             CARREGANDO DETALHES DA DIETA...
                         </Font>
                     </Stack>
@@ -70,7 +75,12 @@ export function DietPreviewDialog({ dietId, dietName, isOpen, onClose }: DietPre
                 <Box padding={STORE_TOKENS.SPACING.CONTAINER}>
                     <Stack align="center" justify="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
                         <Icon icon={Utensils} size="xl" color="muted" />
-                        <Font variant="h3" color="PRIMARY" align="center">
+                        <Font
+                            variant="h3"
+                            align="center"
+                            {...{
+                                color: "PRIMARY",
+                            }}>
                             NENHUMA REFEIÇÃO CADASTRADA
                         </Font>
                     </Stack>
@@ -127,13 +137,22 @@ export function DietPreviewDialog({ dietId, dietName, isOpen, onClose }: DietPre
                                 <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                                     {/* Meal Header */}
                                     <Stack direction="row" align="center" justify="between">
-                                        <Font variant="label-caps" color="primary">
+                                        <Font
+                                            variant="label-caps"
+                                            {...{
+                                                color: "primary",
+                                            }}>
                                             {mIdx + 1}. {meal.name}
                                         </Font>
                                         {meal.time_of_day && (
                                             <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                                 <Icon icon={Clock} size="sm" color="muted" />
-                                                <Font variant="sub-tiny" color="SECONDARY" mono>
+                                                <Font
+                                                    variant="sub-tiny"
+                                                    mono
+                                                    {...{
+                                                        color: "SECONDARY",
+                                                    }}>
                                                     {meal.time_of_day}
                                                 </Font>
                                             </Stack>
@@ -146,27 +165,67 @@ export function DietPreviewDialog({ dietId, dietName, isOpen, onClose }: DietPre
                                             {/* Header Row */}
                                             <Grid cols={12} gap={STORE_TOKENS.SPACING.ELEMENT}>
                                                 <Box colSpan={4}>
-                                                    <Font variant="sub-tiny" weight="black" uppercase italic tracking="widest" color="MUTED">
+                                                    <Font
+                                                        variant="sub-tiny"
+                                                        weight="black"
+                                                        uppercase
+                                                        italic
+                                                        tracking="widest"
+                                                        {...{
+                                                            color: "MUTED",
+                                                        }}>
                                                         ALIMENTO
                                                     </Font>
                                                 </Box>
                                                 <Box colSpan={2} textAlign="center">
-                                                    <Font variant="sub-tiny" weight="black" uppercase italic tracking="widest" color="MUTED">
+                                                    <Font
+                                                        variant="sub-tiny"
+                                                        weight="black"
+                                                        uppercase
+                                                        italic
+                                                        tracking="widest"
+                                                        {...{
+                                                            color: "MUTED",
+                                                        }}>
                                                         PROT
                                                     </Font>
                                                 </Box>
                                                 <Box colSpan={2} textAlign="center">
-                                                    <Font variant="sub-tiny" weight="black" uppercase italic tracking="widest" color="MUTED">
+                                                    <Font
+                                                        variant="sub-tiny"
+                                                        weight="black"
+                                                        uppercase
+                                                        italic
+                                                        tracking="widest"
+                                                        {...{
+                                                            color: "MUTED",
+                                                        }}>
                                                         CARB
                                                     </Font>
                                                 </Box>
                                                 <Box colSpan={2} textAlign="center">
-                                                    <Font variant="sub-tiny" weight="black" uppercase italic tracking="widest" color="MUTED">
+                                                    <Font
+                                                        variant="sub-tiny"
+                                                        weight="black"
+                                                        uppercase
+                                                        italic
+                                                        tracking="widest"
+                                                        {...{
+                                                            color: "MUTED",
+                                                        }}>
                                                         GORD
                                                     </Font>
                                                 </Box>
                                                 <Box colSpan={2} textAlign="right">
-                                                    <Font variant="sub-tiny" weight="black" uppercase italic tracking="widest" color="MUTED">
+                                                    <Font
+                                                        variant="sub-tiny"
+                                                        weight="black"
+                                                        uppercase
+                                                        italic
+                                                        tracking="widest"
+                                                        {...{
+                                                            color: "MUTED",
+                                                        }}>
                                                         KCAL
                                                     </Font>
                                                 </Box>
@@ -180,31 +239,61 @@ export function DietPreviewDialog({ dietId, dietName, isOpen, onClose }: DietPre
                                                     <Grid cols={12} gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                                                         <Box colSpan={4}>
                                                             <Stack gap="none">
-                                                                <Font variant="auxiliary" color="PRIMARY" truncate>
+                                                                <Font
+                                                                    variant="auxiliary"
+                                                                    truncate
+                                                                    {...{
+                                                                        color: "PRIMARY",
+                                                                    }}>
                                                                     {item.food_name || item.name}
                                                                 </Font>
-                                                                <Font variant="sub-tiny" color="SECONDARY">
+                                                                <Font
+                                                                    variant="sub-tiny"
+                                                                    {...{
+                                                                        color: "SECONDARY",
+                                                                    }}>
                                                                     {item.quantity || '1 porção'}
                                                                 </Font>
                                                             </Stack>
                                                         </Box>
                                                         <Box colSpan={2} textAlign="center">
-                                                            <Font variant="sub-tiny" color="SECONDARY" mono>
+                                                            <Font
+                                                                variant="sub-tiny"
+                                                                mono
+                                                                {...{
+                                                                    color: "SECONDARY",
+                                                                }}>
                                                                 {Math.round(item.protein || 0)}g
                                                             </Font>
                                                         </Box>
                                                         <Box colSpan={2} textAlign="center">
-                                                            <Font variant="sub-tiny" color="SECONDARY" mono>
+                                                            <Font
+                                                                variant="sub-tiny"
+                                                                mono
+                                                                {...{
+                                                                    color: "SECONDARY",
+                                                                }}>
                                                                 {Math.round(item.carbs || 0)}g
                                                             </Font>
                                                         </Box>
                                                         <Box colSpan={2} textAlign="center">
-                                                            <Font variant="sub-tiny" color="SECONDARY" mono>
+                                                            <Font
+                                                                variant="sub-tiny"
+                                                                mono
+                                                                {...{
+                                                                    color: "SECONDARY",
+                                                                }}>
                                                                 {Math.round(item.fat || 0)}g
                                                             </Font>
                                                         </Box>
                                                         <Box colSpan={2} textAlign="right">
-                                                            <Font variant="sub-tiny" color="success" weight="bold" mono>
+                                                            <Font
+                                                                variant="sub-tiny"
+                                                                weight="bold"
+                                                                mono
+                                                                {...{
+                                                                    color: "success",
+                                                                }}>
                                                                 {Math.round(item.calories || 0)}
                                                             </Font>
                                                         </Box>
@@ -216,43 +305,77 @@ export function DietPreviewDialog({ dietId, dietName, isOpen, onClose }: DietPre
                                             {/* Meal Subtotal Macros Row */}
                                             <Grid cols={12} gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                                                 <Box colSpan={4}>
-                                                    <Font variant="sub-tiny" color="SECONDARY" uppercase>
+                                                    <Font
+                                                        variant="sub-tiny"
+                                                        uppercase
+                                                        {...{
+                                                            color: "SECONDARY",
+                                                        }}>
                                                         TOTAL
                                                     </Font>
                                                 </Box>
                                                 <Box colSpan={2} textAlign="center">
-                                                    <Font variant="sub-tiny" color="PRIMARY" weight="bold" mono>
+                                                    <Font
+                                                        variant="sub-tiny"
+                                                        weight="bold"
+                                                        mono
+                                                        {...{
+                                                            color: "PRIMARY",
+                                                        }}>
                                                         {Math.round(mealP)}g
                                                     </Font>
                                                 </Box>
                                                 <Box colSpan={2} textAlign="center">
-                                                    <Font variant="sub-tiny" color="PRIMARY" weight="bold" mono>
+                                                    <Font
+                                                        variant="sub-tiny"
+                                                        weight="bold"
+                                                        mono
+                                                        {...{
+                                                            color: "PRIMARY",
+                                                        }}>
                                                         {Math.round(mealC)}g
                                                     </Font>
                                                 </Box>
                                                 <Box colSpan={2} textAlign="center">
-                                                    <Font variant="sub-tiny" color="PRIMARY" weight="bold" mono>
+                                                    <Font
+                                                        variant="sub-tiny"
+                                                        weight="bold"
+                                                        mono
+                                                        {...{
+                                                            color: "PRIMARY",
+                                                        }}>
                                                         {Math.round(mealF)}g
                                                     </Font>
                                                 </Box>
                                                 <Box colSpan={2} textAlign="right">
-                                                    <Font variant="sub-tiny" color="success" weight="black" mono>
+                                                    <Font
+                                                        variant="sub-tiny"
+                                                        weight="black"
+                                                        mono
+                                                        {...{
+                                                            color: "success",
+                                                        }}>
                                                         {Math.round(mealKcal)}
                                                     </Font>
                                                 </Box>
                                             </Grid>
                                         </Stack>
                                     ) : (
-                                        <Font variant="sub-tiny" color="MUTED" italic>
+                                        <Font
+                                            variant="sub-tiny"
+                                            italic
+                                            {...{
+                                                color: "MUTED",
+                                            }}>
                                             Nenhum alimento cadastrado.
                                         </Font>
                                     )}
                                 </Stack>
                             </GlassPanel>
-                        )
+                        );
                     })}
                 </Stack>
             )}
         </Modal>
-    )
+    );
 }

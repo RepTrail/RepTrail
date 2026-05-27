@@ -86,7 +86,14 @@ export function SummarySetRow({
                             {labelText}
                         </Font>
                         {lastSessionSet && (
-                            <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="bold" uppercase tracking="wider">
+                            <Font
+                                variant="sub-tiny"
+                                weight="bold"
+                                uppercase
+                                tracking="wider"
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                }}>
                                 Anterior: {lastSessionSet.weight}kg x {lastSessionSet.reps}
                             </Font>
                         )}
@@ -122,5 +129,5 @@ export function SummarySetRow({
                 </Box>
             </Stack>
         </Surface>
-    )
+    );
 }

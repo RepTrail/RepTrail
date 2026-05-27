@@ -59,7 +59,13 @@ export function ComponentsRegistryContent({ id }: { id?: string }) {
                     {/* System Radius Column - Solid Style */}
                     <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER}>
                         <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
-                            <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.DIM} weight="black" uppercase>System Radius (5px) - Solid Style</Font>
+                            <Font
+                                variant="sub-tiny"
+                                weight="black"
+                                uppercase
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.DIM,
+                                }}>System Radius (5px) - Solid Style</Font>
                             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                                 <Button variant="orange" size="lg" rounded={STORE_TOKENS.RADIUS.SYSTEM} fullWidth textColor={STORE_TOKENS.COLORS.BLACK}>
                                     <Inline gap={STORE_TOKENS.SPACING.ELEMENT}>
@@ -81,7 +87,13 @@ export function ComponentsRegistryContent({ id }: { id?: string }) {
                     {/* Pill Style Column - Glass Style (Transparent + Border) */}
                     <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER}>
                         <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
-                            <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.DIM} weight="black" uppercase>Pill Style (Full Radius) - Glass Style</Font>
+                            <Font
+                                variant="sub-tiny"
+                                weight="black"
+                                uppercase
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.DIM,
+                                }}>Pill Style (Full Radius) - Glass Style</Font>
                             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                                 <Button variant="outline-orange" size="lg" rounded={STORE_TOKENS.RADIUS.FULL} fullWidth>
                                     <Inline gap={STORE_TOKENS.SPACING.ELEMENT}>
@@ -111,26 +123,53 @@ export function ComponentsRegistryContent({ id }: { id?: string }) {
                     <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER}>
                         <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.DIM} weight="black" uppercase>Inline Row Actions</Font>
+                                <Font
+                                    variant="sub-tiny"
+                                    weight="black"
+                                    uppercase
+                                    {...{
+                                        color: STORE_TOKENS.COLORS.TEXT.DIM,
+                                    }}>Inline Row Actions</Font>
                                 <Cluster gap={STORE_TOKENS.SPACING.ELEMENT}>
                                     <Button variant="outline-blue" rounded={STORE_TOKENS.RADIUS.FULL} size="sm">
                                         <Inline gap={STORE_TOKENS.SPACING.ELEMENT}>
                                             <Icon icon={Eye} size="xs" color={STORE_TOKENS.COLORS.INFO} />
-                                            <Font variant="auxiliary" weight="black" italic uppercase color={STORE_TOKENS.COLORS.INFO}>Inspecionar</Font>
+                                            <Font
+                                                variant="auxiliary"
+                                                weight="black"
+                                                italic
+                                                uppercase
+                                                {...{
+                                                    color: STORE_TOKENS.COLORS.INFO,
+                                                }}>Inspecionar</Font>
                                         </Inline>
                                     </Button>
 
                                     <Button variant="outline-red" rounded={STORE_TOKENS.RADIUS.FULL} size="sm">
                                         <Inline gap={STORE_TOKENS.SPACING.ELEMENT}>
                                             <Icon icon={Trash2} size="xs" color={STORE_TOKENS.COLORS.ERROR} />
-                                            <Font variant="auxiliary" weight="black" italic uppercase color={STORE_TOKENS.COLORS.ERROR}>Deletar</Font>
+                                            <Font
+                                                variant="auxiliary"
+                                                weight="black"
+                                                italic
+                                                uppercase
+                                                {...{
+                                                    color: STORE_TOKENS.COLORS.ERROR,
+                                                }}>Deletar</Font>
                                         </Inline>
                                     </Button>
 
                                     <Button variant="outline-emerald" rounded={STORE_TOKENS.RADIUS.FULL} size="sm">
                                         <Inline gap={STORE_TOKENS.SPACING.ELEMENT}>
                                             <Icon icon={Check} size="xs" color={STORE_TOKENS.COLORS.SUCCESS} />
-                                            <Font variant="auxiliary" weight="black" italic uppercase color={STORE_TOKENS.COLORS.SUCCESS}>Finalizar</Font>
+                                            <Font
+                                                variant="auxiliary"
+                                                weight="black"
+                                                italic
+                                                uppercase
+                                                {...{
+                                                    color: STORE_TOKENS.COLORS.SUCCESS,
+                                                }}>Finalizar</Font>
                                         </Inline>
                                     </Button>
 
@@ -141,7 +180,13 @@ export function ComponentsRegistryContent({ id }: { id?: string }) {
                             </Stack>
 
                             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.DIM} weight="black" uppercase>Circular Icon Actions (Pill Style)</Font>
+                                <Font
+                                    variant="sub-tiny"
+                                    weight="black"
+                                    uppercase
+                                    {...{
+                                        color: STORE_TOKENS.COLORS.TEXT.DIM,
+                                    }}>Circular Icon Actions (Pill Style)</Font>
                                 <Cluster gap={STORE_TOKENS.SPACING.ELEMENT}>
                                     {iconOnlyVariants.map((v, i) => (
                                         <Button
@@ -163,7 +208,13 @@ export function ComponentsRegistryContent({ id }: { id?: string }) {
                     <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER}>
                         <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.DIM} weight="black" uppercase>Status Variations</Font>
+                                <Font
+                                    variant="sub-tiny"
+                                    weight="black"
+                                    uppercase
+                                    {...{
+                                        color: STORE_TOKENS.COLORS.TEXT.DIM,
+                                    }}>Status Variations</Font>
                                 <Cluster gap={STORE_TOKENS.SPACING.CONTAINER}>
                                     <Badge label="Pendente" color={STORE_TOKENS.COLORS.WARNING} variant="dot" />
                                     <Badge label="Concluído" color={STORE_TOKENS.COLORS.SUCCESS} variant="dot" />
@@ -172,7 +223,13 @@ export function ComponentsRegistryContent({ id }: { id?: string }) {
                             </Stack>
 
                             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.DIM} weight="black" uppercase>Identity Badge Variations</Font>
+                                <Font
+                                    variant="sub-tiny"
+                                    weight="black"
+                                    uppercase
+                                    {...{
+                                        color: STORE_TOKENS.COLORS.TEXT.DIM,
+                                    }}>Identity Badge Variations</Font>
                                 <Cluster gap={STORE_TOKENS.SPACING.ELEMENT}>
                                     {colors.map((v) => (
                                         <Badge
@@ -219,7 +276,13 @@ export function ComponentsRegistryContent({ id }: { id?: string }) {
                     {/* Basic & Identity Column */}
                     <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER}>
                         <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
-                            <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.DIM} weight="black" uppercase>Identity & Data</Font>
+                            <Font
+                                variant="sub-tiny"
+                                weight="black"
+                                uppercase
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.DIM,
+                                }}>Identity & Data</Font>
 
                             <Grid cols={1} mdCols={2} gap={STORE_TOKENS.SPACING.CONTAINER}>
                                 <Input label="Nome Completo" placeholder="Ex: Marcos Silva" icon={<Icon icon={User} size="xs" />} />
@@ -240,7 +303,13 @@ export function ComponentsRegistryContent({ id }: { id?: string }) {
                     {/* Search & Media Column */}
                     <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER}>
                         <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
-                            <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.DIM} weight="black" uppercase>Search & Media</Font>
+                            <Font
+                                variant="sub-tiny"
+                                weight="black"
+                                uppercase
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.DIM,
+                                }}>Search & Media</Font>
 
                             <Input
                                 label="Busca Global"
@@ -273,7 +342,13 @@ export function ComponentsRegistryContent({ id }: { id?: string }) {
                     {/* Switch */}
                     <GlassPanel shrink={0} padding={STORE_TOKENS.PADDING.CONTAINER}>
                         <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
-                            <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.DIM} weight="black" uppercase>Segmented Switch</Font>
+                            <Font
+                                variant="sub-tiny"
+                                weight="black"
+                                uppercase
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.DIM,
+                                }}>Segmented Switch</Font>
                             <FormSwitch
                                 label="Plano de Treino"
                                 options={[
@@ -298,7 +373,13 @@ export function ComponentsRegistryContent({ id }: { id?: string }) {
                     {/* Select */}
                     <GlassPanel shrink={0} position="relative" padding={STORE_TOKENS.PADDING.CONTAINER}>
                         <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
-                            <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.DIM} weight="black" uppercase>Custom Select</Font>
+                            <Font
+                                variant="sub-tiny"
+                                weight="black"
+                                uppercase
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.DIM,
+                                }}>Custom Select</Font>
                             <Box as="div">
                                 <FormSelect
                                     label="Nível do Aluno"
@@ -317,7 +398,13 @@ export function ComponentsRegistryContent({ id }: { id?: string }) {
                     {/* Checkbox */}
                     <GlassPanel shrink={0} padding={STORE_TOKENS.PADDING.CONTAINER}>
                         <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
-                            <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.DIM} weight="black" uppercase>Checkboxes</Font>
+                            <Font
+                                variant="sub-tiny"
+                                weight="black"
+                                uppercase
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.DIM,
+                                }}>Checkboxes</Font>
                             <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                                 <FormCheckbox
                                     label="Receber notificações"

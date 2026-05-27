@@ -1,6 +1,7 @@
 'use client'
 
 import Script from 'next/script'
+import { Img } from '@/components/store/base/img'
 
 export function StudentMetaPixel() {
     return (
@@ -20,7 +21,7 @@ export function StudentMetaPixel() {
                 `}
             </Script>
             <noscript>
-                <img height="1" width="1" style={{display: 'none'}} src="https://www.facebook.com/tr?id=795120573646319&ev=PageView&noscript=1" />
+                <Img height="1" width="1" {...{ style: { display: 'none' } }} src="https://www.facebook.com/tr?id=795120573646319&ev=PageView&noscript=1" alt="Meta Pixel" />
             </noscript>
         </>
     )

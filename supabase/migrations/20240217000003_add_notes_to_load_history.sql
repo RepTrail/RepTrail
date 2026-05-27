@@ -1,7 +1,0 @@
--- Add notes to load_history
-DO $$ 
-BEGIN 
-    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='load_history' AND column_name='notes') THEN
-        ALTER TABLE load_history ADD COLUMN notes text;
-    END IF;
-END $$;

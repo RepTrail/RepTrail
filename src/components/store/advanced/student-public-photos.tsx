@@ -42,7 +42,6 @@ export function StudentPublicPhotos({ studentId, isOwner, studentName, photos, i
                     </GlassPanel>
                 </RegistrySection>
             )}
-
             <Grid cols={{ base: 1, lg: 2 }} gap={STORE_TOKENS.SPACING.EMPTY_STATE}>
 
                 {/* ── Before vs After Section ──────────────────────────────── */}
@@ -82,7 +81,14 @@ export function StudentPublicPhotos({ studentId, isOwner, studentName, photos, i
                                                 align="center"
                                                 justify="center"
                                             >
-                                                <Font variant="sub-tiny" weight="black" italic uppercase color={STORE_TOKENS.COLORS.TEXT.DIM}>
+                                                <Font
+                                                    variant="sub-tiny"
+                                                    weight="black"
+                                                    italic
+                                                    uppercase
+                                                    {...{
+                                                        color: STORE_TOKENS.COLORS.TEXT.DIM,
+                                                    }}>
                                                     Sem foto
                                                 </Font>
                                             </Box>
@@ -127,7 +133,14 @@ export function StudentPublicPhotos({ studentId, isOwner, studentName, photos, i
                                                 align="center"
                                                 justify="center"
                                             >
-                                                <Font variant="sub-tiny" weight="black" italic uppercase color={STORE_TOKENS.COLORS.TEXT.DIM}>
+                                                <Font
+                                                    variant="sub-tiny"
+                                                    weight="black"
+                                                    italic
+                                                    uppercase
+                                                    {...{
+                                                        color: STORE_TOKENS.COLORS.TEXT.DIM,
+                                                    }}>
                                                     Sem foto
                                                 </Font>
                                             </Box>
@@ -190,5 +203,5 @@ export function StudentPublicPhotos({ studentId, isOwner, studentName, photos, i
                 </RegistrySection>
             </Grid>
         </Stack>
-    )
+    );
 }

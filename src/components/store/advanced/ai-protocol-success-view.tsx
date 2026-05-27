@@ -47,10 +47,29 @@ export function AIProtocolSuccessView({ summary }: AIProtocolSuccessViewProps) {
                     <Icon icon={Sparkles} size="lg" color="primary" />
                 </Surface>
                 <Stack gap="element" align="center">
-                    <Font variant="h2" weight="black" uppercase italic color="white">
-                        Protocolo <Font variant="h2" weight="black" uppercase italic color="primary">Gerado!</Font>
+                    <Font
+                        variant="h2"
+                        weight="black"
+                        uppercase
+                        italic
+                        {...{
+                            color: "white",
+                        }}>
+                        Protocolo <Font
+                        variant="h2"
+                        weight="black"
+                        uppercase
+                        italic
+                        {...{
+                            color: "primary",
+                        }}>Gerado!</Font>
                     </Font>
-                    <Font variant="description" color="zinc-500" align="center">Seu plano personalizado está pronto.</Font>
+                    <Font
+                        variant="description"
+                        align="center"
+                        {...{
+                            color: "zinc-500",
+                        }}>Seu plano personalizado está pronto.</Font>
                 </Stack>
                 <Grid cols={{ base: 2, md: 4 }} gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
                     <AIProtocolSummaryStat icon={Dumbbell} value={summary.workoutsCount} label="Treinos" />
@@ -63,5 +82,5 @@ export function AIProtocolSuccessView({ summary }: AIProtocolSuccessViewProps) {
                 </Button>
             </Stack>
         </GlassPanel>
-    )
+    );
 }

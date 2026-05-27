@@ -36,25 +36,27 @@ export function AffiliateReferralsContent() {
                         label="TOTAL DE CADASTROS"
                         value={String(total)}
                         icon={Users}
-                        color={STORE_TOKENS.COLORS.BRAND}
-                    />
+                        {...{
+                            color: STORE_TOKENS.COLORS.BRAND,
+                        }} />
                     <StatsCard
                         label="CLIENTES ATIVOS"
                         value={String(active)}
                         description="PAGANTES CONFIRMADOS"
                         icon={TrendingUp}
-                        color={STORE_TOKENS.COLORS.SUCCESS}
-                    />
+                        {...{
+                            color: STORE_TOKENS.COLORS.SUCCESS,
+                        }} />
                     <StatsCard
                         label="TAXA DE ASSINATURA"
                         value={`${conversion}%`}
                         description="DE CADASTRO PARA ATIVO"
                         icon={TrendingUp}
-                        color={STORE_TOKENS.COLORS.WARNING}
-                    />
+                        {...{
+                            color: STORE_TOKENS.COLORS.WARNING,
+                        }} />
                 </Grid>
             </RegistrySection>
-
             <RegistrySection
                 title={`Lista Completa de Indicados (${total})`}
                 subtitle="Histórico detalhado de todos os cadastros realizados."
@@ -87,6 +89,6 @@ export function AffiliateReferralsContent() {
                 </Stack>
             </RegistrySection>
         </>
-    )
+    );
 }
 

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { SplashScreen } from '@/components/store/advanced/splash-screen'
 import { usePathname } from 'next/navigation'
+import { Box } from '@/components/store/base/box'
 
 interface SplashManagerProps {
     children: React.ReactNode
@@ -39,8 +40,8 @@ export function SplashManager({ children }: SplashManagerProps) {
     if (view === 'none') {
         return (
             <>
-                <div className="fixed inset-0 bg-black z-[9999] pointer-events-none" />
-                <div className="opacity-0">{children}</div>
+                <Box position="fixed" inset={0} bg="black" pointerEvents="none" style={{ zIndex: 9999 }} />
+                <Box opacity={0}>{children}</Box>
             </>
         )
     }

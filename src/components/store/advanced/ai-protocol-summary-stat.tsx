@@ -25,10 +25,24 @@ export function AIProtocolSummaryStat({ icon, value, label }: AIProtocolSummaryS
             <Stack align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                 <Icon icon={icon} size="sm" color="primary" />
                 <Stack gap="none" align="center">
-                    <Font variant="h3" weight="black" uppercase italic color="white">{value}</Font>
-                    <Font variant="sub-tiny" color="zinc-500" weight="black" uppercase tracking="widest">{label}</Font>
+                    <Font
+                        variant="h3"
+                        weight="black"
+                        uppercase
+                        italic
+                        {...{
+                            color: "white",
+                        }}>{value}</Font>
+                    <Font
+                        variant="sub-tiny"
+                        weight="black"
+                        uppercase
+                        tracking="widest"
+                        {...{
+                            color: "zinc-500",
+                        }}>{label}</Font>
                 </Stack>
             </Stack>
         </Surface>
-    )
+    );
 }

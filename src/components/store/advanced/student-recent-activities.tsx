@@ -90,16 +90,30 @@ function ActivityRow({ item }: { item: ActivityItem }) {
                     rounded="system"
                 />
                 <Stack gap="none">
-                    <Font variant="body-sm" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
+                    <Font
+                        variant="body-sm"
+                        weight="black"
+                        uppercase
+                        italic
+                        {...{
+                            color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                        }}>
                         {item.name}
                     </Font>
-                    <Font variant="sub-tiny" weight="bold" color={STORE_TOKENS.COLORS.TEXT.MUTED} uppercase tracking="wide">
+                    <Font
+                        variant="sub-tiny"
+                        weight="bold"
+                        uppercase
+                        tracking="wide"
+                        {...{
+                            color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                        }}>
                         {item.formattedDate}
                     </Font>
                 </Stack>
             </Box>
         </ActionableListCard>
-    )
+    );
 }
 
 export function StudentRecentActivities({ activities }: StudentRecentActivitiesProps) {
@@ -126,7 +140,7 @@ export function StudentRecentActivities({ activities }: StudentRecentActivitiesP
                     </Inline>
                     {hasMore && (
                         <Button
-                            variant="outline"
+                            variant="outline-zinc"
                             size="xs"
                             onClick={() => setExpanded(v => !v)}
                         >
@@ -135,7 +149,10 @@ export function StudentRecentActivities({ activities }: StudentRecentActivitiesP
                     )}
                 </Inline>
             </CardHeader>
-            <CardContent padding="none">
+            <CardContent
+                {...{
+                    padding: "none",
+                }}>
                 <Box
                     fullWidth
                     display="flex"
@@ -169,5 +186,5 @@ export function StudentRecentActivities({ activities }: StudentRecentActivitiesP
                 </Box>
             </CardContent>
         </GlassPanel>
-    )
+    );
 }

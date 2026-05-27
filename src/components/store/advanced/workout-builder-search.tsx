@@ -37,13 +37,6 @@ export function WorkoutBuilderSearch({
             zIndex={searchResults.length > 0 ? 50 : undefined}
         >
             <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
-                <InlineWrapper>
-                    <Icon icon={PlusCircle} size="sm" color={STORE_TOKENS.COLORS.INFO} />
-                    <Font variant="heading" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} uppercase>
-                        Adicionar Exercício
-                    </Font>
-                </InlineWrapper>
-
                 {/* Relative container around input to position the dropdown overlay */}
                 <Box position="relative" width="full" zIndex={searchResults.length > 0 ? 50 : 'auto'}>
                     <Input
@@ -84,10 +77,18 @@ export function WorkoutBuilderSearch({
                                         cursor="pointer"
                                     >
                                         <Stack direction="col" gap="element" align="start">
-                                            <Font variant="label-caps" color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
+                                            <Font
+                                                variant="label-caps"
+                                                {...{
+                                                    color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                                                }}>
                                                 {ex.name}
                                             </Font>
-                                            <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.DIM}>
+                                            <Font
+                                                variant="sub-tiny"
+                                                {...{
+                                                    color: STORE_TOKENS.COLORS.TEXT.DIM,
+                                                }}>
                                                 {ex.is_system_default ? 'BIBLIOTECA' : 'PERSONALIZADO'}
                                             </Font>
                                         </Stack>
@@ -107,8 +108,17 @@ export function WorkoutBuilderSearch({
                         border="subtle"
                     >
                         <Stack direction={{ base: 'col', md: 'row' }} align={{ base: 'stretch', md: 'center' }} justify="between" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                            <Font variant="body" color={STORE_TOKENS.COLORS.TEXT.MUTED}>
-                                "{<Font variant="body" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} weight="bold">{searchQuery}</Font>}" não encontrado na biblioteca.
+                            <Font
+                                variant="body"
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                }}>
+                                "{<Font
+                                variant="body"
+                                weight="bold"
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                                }}>{searchQuery}</Font>}" não encontrado na biblioteca.
                             </Font>
                             <Button
                                 variant="outline-blue"
@@ -117,14 +127,14 @@ export function WorkoutBuilderSearch({
                                 size="sm"
                             >
                                 <Icon icon={Plus} size="xs" color="blue" />
-                                <span>Criar Novo Exercício</span>
+                                Criar Novo Exercício
                             </Button>
                         </Stack>
                     </Surface>
                 )}
             </Stack>
         </GlassPanel>
-    )
+    );
 }
 
 // Inline helper wrapping component conforming to design rules

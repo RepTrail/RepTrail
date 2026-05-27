@@ -35,17 +35,30 @@ export function WorkoutSummaryState({
 }: WorkoutSummaryStateProps) {
     return (
         <Stack gap={STORE_TOKENS.SPACING.CONTAINER} padding={STORE_TOKENS.PADDING.CONTAINER} flex1 width="full">
-            
             {/* Header */}
             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                <Font variant="h3" color="white" weight="black" uppercase italic tracking="tight">
+                <Font
+                    variant="h3"
+                    weight="black"
+                    uppercase
+                    italic
+                    tracking="tight"
+                    {...{
+                        color: "white",
+                    }}>
                     Última Sessão
                 </Font>
-                <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="black" uppercase tracking="widest">
+                <Font
+                    variant="sub-tiny"
+                    weight="black"
+                    uppercase
+                    tracking="widest"
+                    {...{
+                        color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                    }}>
                     Preencha os dados das séries realizadas
                 </Font>
             </Stack>
-
             {/* Exercise Name Card */}
             <Surface 
                 variant="tonal-zinc" 
@@ -66,12 +79,19 @@ export function WorkoutSummaryState({
                     >
                         <Icon icon={CheckCircle} size="xs" color="white" />
                     </Box>
-                    <Font variant="body" weight="black" color="white" uppercase italic tracking="tight">
+                    <Font
+                        variant="body"
+                        weight="black"
+                        uppercase
+                        italic
+                        tracking="tight"
+                        {...{
+                            color: "white",
+                        }}>
                         {currentExercise.exercise.name}
                     </Font>
                 </Stack>
             </Surface>
-
             {/* List of Sets */}
             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                 {setsToSummary.map((set: any, i: number) => {
@@ -95,10 +115,16 @@ export function WorkoutSummaryState({
                     )
                 })}
             </Stack>
-
             {/* Exercise Notes */}
             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="black" uppercase tracking="widest">
+                <Font
+                    variant="sub-tiny"
+                    weight="black"
+                    uppercase
+                    tracking="widest"
+                    {...{
+                        color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                    }}>
                     Observações do Exercício
                 </Font>
                 <Input
@@ -108,7 +134,6 @@ export function WorkoutSummaryState({
                     color="zinc"
                 />
             </Stack>
-
             {/* Save Button */}
             <Button 
                 variant="emerald" 
@@ -123,7 +148,6 @@ export function WorkoutSummaryState({
                     <Icon icon={CheckCircle} size="xs" />
                 </Stack>
             </Button>
-
         </Stack>
-    )
+    );
 }

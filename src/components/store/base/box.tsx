@@ -60,6 +60,7 @@ export interface BoxProps extends Omit<React.HTMLAttributes<HTMLElement>, 'color
   id?: string
   onClick?: (e: React.MouseEvent<HTMLElement>) => void
   style?: React.CSSProperties
+  ref?: React.Ref<any>
   group?: boolean
   groupHoverDisplay?: 'flex' | 'grid' | 'block' | 'none'
   groupHoverOpacity?: 0 | 5 | 10 | 20 | 30 | 40 | 50 | 60 | 70 | 80 | 90 | 95 | 100
@@ -91,7 +92,7 @@ export interface BoxProps extends Omit<React.HTMLAttributes<HTMLElement>, 'color
  * Box: A minimal semantic wrapper primitive.
  * Now evolved to handle complex layout scaffolding with zero manual classes.
  */
-export function Box({
+export const Box = React.forwardRef<HTMLElement, BoxProps>(function Box({
   children,
   as: Component = 'div',
   padding,
@@ -170,7 +171,7 @@ export function Box({
   snapMandatory,
   scrollSmooth,
   ...props
-}: BoxProps) {
+}: BoxProps, ref) {
   const { primaryColor } = useRegistry()
 
   const opacityClasses = {
@@ -252,6 +253,32 @@ export function Box({
     neutral: { 100: 'bg-neutral', 95: 'bg-neutral/95', 90: 'bg-neutral/90', 80: 'bg-neutral/80', 50: 'bg-neutral/50', 30: 'bg-neutral/30', 20: 'bg-neutral/20', 10: 'bg-neutral/10', 5: 'bg-neutral/5' }
   }
 
+  const borderColorMapping: Record<BoxColor, Record<number, string>> = {
+    orange: { 100: 'border-orange-500', 95: 'border-orange-500/95', 90: 'border-orange-500/90', 80: 'border-orange-500/80', 50: 'border-orange-500/50', 30: 'border-orange-500/30', 20: 'border-orange-500/20', 10: 'border-orange-500/10', 5: 'border-orange-500/5' },
+    emerald: { 100: 'border-emerald-500', 95: 'border-emerald-500/95', 90: 'border-emerald-500/90', 80: 'border-emerald-500/80', 50: 'border-emerald-500/50', 30: 'border-emerald-500/30', 20: 'border-emerald-500/20', 10: 'border-emerald-500/10', 5: 'border-emerald-500/5' },
+    amber: { 100: 'border-amber-500', 95: 'border-amber-500/95', 90: 'border-amber-500/90', 80: 'border-amber-500/80', 50: 'border-amber-500/50', 30: 'border-amber-500/30', 20: 'border-amber-500/20', 10: 'border-amber-500/10', 5: 'border-amber-500/5' },
+    red: { 100: 'border-red-500', 95: 'border-red-500/95', 90: 'border-red-500/90', 80: 'border-red-500/80', 50: 'border-red-500/50', 30: 'border-red-500/30', 20: 'border-red-500/20', 10: 'border-red-500/10', 5: 'border-red-500/5' },
+    blue: { 100: 'border-blue-500', 95: 'border-blue-500/95', 90: 'border-blue-500/90', 80: 'border-blue-500/80', 50: 'border-blue-500/50', 30: 'border-blue-500/30', 20: 'border-blue-500/20', 10: 'border-blue-500/10', 5: 'border-blue-500/5' },
+    zinc: { 100: 'border-zinc-500', 95: 'border-zinc-500/95', 90: 'border-zinc-500/90', 80: 'border-zinc-500/80', 50: 'border-zinc-500/50', 30: 'border-zinc-500/30', 20: 'border-zinc-500/20', 10: 'border-zinc-500/10', 5: 'border-zinc-500/5' },
+    white: { 100: 'border-white', 95: 'border-white/95', 90: 'border-white/90', 80: 'border-white/80', 50: 'border-white/50', 30: 'border-white/30', 20: 'border-white/20', 10: 'border-white/10', 5: 'border-white/5' },
+    black: { 100: 'border-black', 95: 'border-black/95', 90: 'border-black/90', 80: 'border-black/80', 50: 'border-black/50', 30: 'border-black/30', 20: 'border-black/20', 10: 'border-black/10', 5: 'border-black/5' },
+    transparent: { 100: 'border-transparent', 95: 'border-transparent', 90: 'border-transparent', 80: 'border-transparent', 50: 'border-transparent', 30: 'border-transparent', 20: 'border-transparent', 10: 'border-transparent', 5: 'border-transparent' },
+    primary: {
+      100: primaryColor === 'orange' ? 'border-orange-500' : primaryColor === 'emerald' ? 'border-emerald-500' : primaryColor === 'blue' ? 'border-blue-500' : primaryColor === 'red' ? 'border-red-500' : primaryColor === 'amber' ? 'border-amber-500' : 'border-blue-500',
+      95: primaryColor === 'orange' ? 'border-orange-500/95' : primaryColor === 'emerald' ? 'border-emerald-500/95' : primaryColor === 'blue' ? 'border-blue-500/95' : primaryColor === 'red' ? 'border-red-500/95' : primaryColor === 'amber' ? 'border-amber-500/95' : 'border-blue-500/95',
+      90: primaryColor === 'orange' ? 'border-orange-500/90' : primaryColor === 'emerald' ? 'border-emerald-500/90' : primaryColor === 'blue' ? 'border-blue-500/90' : primaryColor === 'red' ? 'border-red-500/90' : primaryColor === 'amber' ? 'border-amber-500/90' : 'border-blue-500/90',
+      80: primaryColor === 'orange' ? 'border-orange-500/80' : primaryColor === 'emerald' ? 'border-emerald-500/80' : primaryColor === 'blue' ? 'border-blue-500/80' : primaryColor === 'red' ? 'border-red-500/80' : primaryColor === 'amber' ? 'border-amber-500/80' : 'border-blue-500/80',
+      50: primaryColor === 'orange' ? 'border-orange-500/50' : primaryColor === 'emerald' ? 'border-emerald-500/50' : primaryColor === 'blue' ? 'border-blue-500/50' : primaryColor === 'red' ? 'border-red-500/50' : primaryColor === 'amber' ? 'border-amber-500/50' : 'border-blue-500/50',
+      30: primaryColor === 'orange' ? 'border-orange-500/30' : primaryColor === 'emerald' ? 'border-emerald-500/30' : primaryColor === 'blue' ? 'border-blue-500/30' : primaryColor === 'red' ? 'border-red-500/30' : primaryColor === 'amber' ? 'border-amber-500/30' : 'border-blue-500/30',
+      20: primaryColor === 'orange' ? 'border-orange-500/20' : primaryColor === 'emerald' ? 'border-emerald-500/20' : primaryColor === 'blue' ? 'border-blue-500/20' : primaryColor === 'red' ? 'border-red-500/20' : primaryColor === 'amber' ? 'border-amber-500/20' : 'border-blue-500/20',
+      10: primaryColor === 'orange' ? 'border-orange-500/10' : primaryColor === 'emerald' ? 'border-emerald-500/10' : primaryColor === 'blue' ? 'border-blue-500/10' : primaryColor === 'red' ? 'border-red-500/10' : primaryColor === 'amber' ? 'border-amber-500/10' : 'border-blue-500/10',
+      5: primaryColor === 'orange' ? 'border-orange-500/5' : primaryColor === 'emerald' ? 'border-emerald-500/5' : primaryColor === 'blue' ? 'border-blue-500/5' : primaryColor === 'red' ? 'border-red-500/5' : primaryColor === 'amber' ? 'border-amber-500/5' : 'border-blue-500/5'
+    },
+    success: { 100: 'border-emerald-500', 95: 'border-emerald-500/95', 90: 'border-emerald-500/90', 80: 'border-emerald-500/80', 50: 'border-emerald-500/50', 30: 'border-emerald-500/30', 20: 'border-emerald-500/20', 10: 'border-emerald-500/10', 5: 'border-emerald-500/5' },
+    warning: { 100: 'border-orange-500', 95: 'border-orange-500/95', 90: 'border-orange-500/90', 80: 'border-orange-500/80', 50: 'border-orange-500/50', 30: 'border-orange-500/30', 20: 'border-orange-500/20', 10: 'border-orange-500/10', 5: 'border-orange-500/5' },
+    neutral: { 100: 'border-zinc-500', 95: 'border-zinc-500/95', 90: 'border-zinc-500/90', 80: 'border-zinc-500/80', 50: 'border-zinc-500/50', 30: 'border-zinc-500/30', 20: 'border-zinc-500/20', 10: 'border-zinc-500/10', 5: 'border-zinc-500/5' }
+  }
+
   const borderMapping: Record<BoxColor, string> = {
     orange: 'border-orange-500',
     emerald: 'border-emerald-500',
@@ -330,7 +357,8 @@ export function Box({
     element: 'gap-2.5',
     container: 'gap-5',
     empty_state: 'gap-[50px]',
-    section: 'gap-[100px]',
+    section: 'gap-[50px]',
+    'title-content': 'gap-[30px]',
     dashboard_pc: 'gap-20',
     safe_area: 'gap-[100px]'
   }
@@ -512,8 +540,14 @@ export function Box({
 
 
   const isRespGap = typeof gap === 'object'
-  const gapBase = isRespGap ? (gap as any).base : gap
-  const gapMd = isRespGap ? (gap as any).md : undefined
+  let gapBase = isRespGap ? (gap as any).base : gap
+  let gapMd = isRespGap ? (gap as any).md : undefined
+
+  // Auto-responsive tokens
+  if (gap === 'section' || gap === 'title-content') {
+    gapBase = gap
+    gapMd = gap
+  }
 
   const isRespTranslateX = typeof translateX === 'object'
   const translateXBase = isRespTranslateX ? (translateX as any).base : translateX
@@ -538,6 +572,7 @@ export function Box({
 
   return (
     <Component
+      ref={ref}
       id={id}
       onClick={onClick}
       type={type}
@@ -683,7 +718,8 @@ export function Box({
                 gapMd === 7.5 ? 'md:gap-[30px]' :
                   gapMd === 10 ? 'md:gap-10' :
                     gapMd === 12.5 ? 'md:gap-[50px]' :
-                      gapMd === 'section' ? 'md:gap-[100px]' : ''
+                      gapMd === 'title-content' ? 'md:gap-[50px]' :
+                        gapMd === 'section' ? 'md:gap-[100px]' : ''
         ),
 
         // Layout Misc
@@ -762,6 +798,7 @@ export function Box({
         border && (borderWidth === 1 ? 'border' : 'border-2'),
         border && !borderColor && 'border-white/5',
         border && borderColor && (
+          borderColorMapping[borderColor as BoxColor]?.[borderOpacity || 100] ||
           (() => {
             const opacitySuffix = borderOpacity && borderOpacity !== 100 ? `/${borderOpacity}` : '';
             if (borderColor === 'primary') {
@@ -829,4 +866,4 @@ export function Box({
       {children}
     </Component>
   )
-}
+})

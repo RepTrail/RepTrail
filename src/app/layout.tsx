@@ -50,7 +50,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" suppressHydrationWarning className="dark" style={{ colorScheme: 'dark' }} data-scroll-behavior="smooth">
+    <html lang="pt-BR" suppressHydrationWarning {...{ className: "dark", style: { colorScheme: "dark" } }} data-scroll-behavior="smooth">
       <head>
         {/* Hotjar & Contentsquare Tracking Codes */}
         <Script id="hotjar-setup" strategy="afterInteractive">

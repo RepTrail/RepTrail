@@ -27,15 +27,23 @@ export function RegistryMainHeader({ title, subtitle, icon, primaryColor, contex
         <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
             <Inline gap={STORE_TOKENS.SPACING.ELEMENT}>
                 <Icon icon={icon} color={primaryColor as any} size="lg" />
-                <Font variant="auxiliary" color={primaryColor as any}>{contextLabel || 'Brand Guidelines'}</Font>
+                <Font
+                    variant="auxiliary"
+                    {...{
+                        color: primaryColor as any,
+                    }}>{contextLabel || 'Brand Guidelines'}</Font>
             </Inline>
-
             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                 <Font variant="h1" nowrap>
-                    {first} <Font variant="h1" color={primaryColor as any} nowrap>{rest.join(' ')}</Font>
+                    {first} <Font
+                    variant="h1"
+                    nowrap
+                    {...{
+                        color: primaryColor as any,
+                    }}>{rest.join(' ')}</Font>
                 </Font>
                 <Font variant="description">{subtitle}</Font>
             </Stack>
         </Stack>
-    )
+    );
 }

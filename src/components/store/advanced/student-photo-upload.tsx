@@ -7,6 +7,7 @@ import { Stack } from '@/components/store/base/stack'
 import { Grid } from '@/components/store/base/grid'
 import { Font } from '@/components/store/base/font'
 import { FileUpload } from '@/components/store/base/file-upload'
+import { Icon } from '@/components/store/base/icon'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { useToast } from '@/hooks/use-toast'
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
@@ -146,11 +147,8 @@ export function ProgressPhotoUpload({ studentId }: ProgressPhotoUploadProps) {
                     isUploading={uploading}
                 />
             </Grid>
-
             {/* Public sharing checkbox removed per user request */}
-
             {/* Instructions panel removed per user request */}
-
             <Button
                 onClick={handleSubmit}
                 disabled={uploading || !photos.front || !photos.back || !photos.side_left || !photos.side_right}
@@ -159,7 +157,8 @@ export function ProgressPhotoUpload({ studentId }: ProgressPhotoUploadProps) {
                 loading={uploading}
                 size="lg"
                 gap="element"
-                className="whitespace-normal h-auto py-4"
+                height="auto"
+                paddingY="element"
             >
                 <Font
                     variant="sub-tiny"
@@ -168,15 +167,16 @@ export function ProgressPhotoUpload({ studentId }: ProgressPhotoUploadProps) {
                     italic
                     tracking="widest"
                     align="center"
-                    color="inherit"
-                    className="leading-tight text-center"
-                >
+                    whitespace="normal"
+                    {...{
+                        color: "inherit",
+                    }}>
                     Enviar Novas Fotos de Progresso
                 </Font>
-                <ChevronRight className="w-5 h-5 shrink-0" />
+                <Icon icon={ChevronRight} size="sm" />
             </Button>
         </Stack>
-    )
+    );
 }
 
 

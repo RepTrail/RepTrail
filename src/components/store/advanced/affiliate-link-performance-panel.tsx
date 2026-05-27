@@ -19,29 +19,33 @@ export function AffiliateLinkPerformanceGrid() {
                 value="1"
                 description="TOTAL ACUMULADO"
                 icon={MousePointer2}
-                color={STORE_TOKENS.COLORS.BRAND}
-            />
+                {...{
+                    color: STORE_TOKENS.COLORS.BRAND,
+                }} />
             <StatsCard
                 label="Indicados"
                 value="0"
                 description="0 PERSONAIS ATIVOS"
                 icon={Users}
-                color={STORE_TOKENS.COLORS.BRAND}
-            />
+                {...{
+                    color: STORE_TOKENS.COLORS.BRAND,
+                }} />
             <StatsCard
                 label="Conversão"
                 value="0.0%"
                 description="CLICK → CADASTRO"
                 icon={TrendingUp}
-                color={STORE_TOKENS.COLORS.BRAND}
-            />
+                {...{
+                    color: STORE_TOKENS.COLORS.BRAND,
+                }} />
             <StatsCard
                 label="Ganhos Totais"
                 value="R$ 0,00"
                 description="R$ 0,00 PENDENTE"
                 icon={DollarSign}
-                color={STORE_TOKENS.COLORS.BRAND}
-            />
+                {...{
+                    color: STORE_TOKENS.COLORS.BRAND,
+                }} />
         </Grid>
-    )
+    );
 }

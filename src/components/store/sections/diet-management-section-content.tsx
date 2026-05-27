@@ -195,7 +195,7 @@ export function DietManagementSectionContent({
                         : `/dashboard/student/diet/${diet.id}`
 
                     return (
-                        <ManagementCardPremium 
+                        <ManagementCardPremium
                             key={diet.id || idx}
                             title={diet.name.toUpperCase()}
                             description={diet.description || (mode === 'trainer' ? 'Sem descrição disponível.' : 'Plano alimentar oficial.')}
@@ -205,18 +205,18 @@ export function DietManagementSectionContent({
                             date={new Date(diet.created_at).toLocaleDateString('pt-BR')}
                             icon={Utensils}
                             mode={mode}
-                            color={STORE_TOKENS.COLORS.BRAND as any}
                             registryType="diet"
                             onView={mode === 'personal' ? () => setPreviewDiet({ isOpen: true, dietId: diet.id, dietName: diet.name }) : undefined}
                             onSchedule={mode === 'auto' ? () => openAction('assign_diet', diet) : undefined}
                             onEdit={() => router.push(editPath)}
                             onDelete={mode !== 'personal' ? () => openAction('confirm_delete', diet) : undefined}
                             onDuplicate={mode !== 'personal' ? () => openAction('confirm_duplicate', diet) : undefined}
-                        />
-                    )
+                            {...{
+                                color: STORE_TOKENS.COLORS.BRAND as any,
+                            }} />
+                    );
                 })}
             </Grid>
-
             <RegistryActionModal 
                 isOpen={actionModal.isOpen}
                 onClose={closeAction}
@@ -224,7 +224,6 @@ export function DietManagementSectionContent({
                 onConfirm={handleConfirm}
                 initialData={actionModal.data}
             />
-
             <DietPreviewDialog
                 dietId={previewDiet.dietId}
                 dietName={previewDiet.dietName}
@@ -232,5 +231,5 @@ export function DietManagementSectionContent({
                 onClose={() => setPreviewDiet(prev => ({ ...prev, isOpen: false }))}
             />
         </>
-    )
+    );
 }

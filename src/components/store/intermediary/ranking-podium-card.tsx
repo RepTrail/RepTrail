@@ -49,11 +49,12 @@ export function RankingPodiumCard({ trainer, rank }: RankingPodiumCardProps) {
             <BackgroundIcon
                 icon={Trophy}
                 size="100"
-                top={5}
-                right={5}
                 opacity={10}
                 groupHoverOpacity={10}
-            />
+                {...{
+                    top: 5,
+                    right: 5,
+                }} />
             <Stack flex1 align="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
                 <Box position="relative">
                     <BaseAvatar
@@ -79,19 +80,25 @@ export function RankingPodiumCard({ trainer, rank }: RankingPodiumCardProps) {
 
                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center" fullWidth>
                     <Box fullWidth overflow="hidden">
-                        <Font 
-                            variant="h3" 
+                        <Font
+                            variant="h3"
                             weight="black"
-                            color={STORE_TOKENS.COLORS.TEXT.PRIMARY} 
                             align="center"
                             truncate
-                        >
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                            }}>
                             {trainer.full_name}
                         </Font>
                     </Box>
                     <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                         <Icon icon={MapPin} size="xs" color={STORE_TOKENS.COLORS.TEXT.DIM} />
-                        <Font variant="label-caps" color={STORE_TOKENS.COLORS.TEXT.MUTED} tracking="widest">
+                        <Font
+                            variant="label-caps"
+                            tracking="widest"
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                            }}>
                             {trainer.region || 'BRASIL'}
                         </Font>
                     </Stack>
@@ -109,29 +116,58 @@ export function RankingPodiumCard({ trainer, rank }: RankingPodiumCardProps) {
 
                 <Grid cols={2} gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
                     <Stack gap="none">
-                        <Font variant="sub-tiny" weight="black" color={STORE_TOKENS.COLORS.TEXT.DIM} uppercase tracking="widest">Alunos</Font>
-                        <Font variant="body" weight="black" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} italic>{trainer.studentCount}</Font>
+                        <Font
+                            variant="sub-tiny"
+                            weight="black"
+                            uppercase
+                            tracking="widest"
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.DIM,
+                            }}>Alunos</Font>
+                        <Font
+                            variant="body"
+                            weight="black"
+                            italic
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                            }}>{trainer.studentCount}</Font>
                     </Stack>
                     <Stack gap="none" align="end">
-                        <Font variant="sub-tiny" weight="black" color={STORE_TOKENS.COLORS.TEXT.DIM} uppercase tracking="widest">Impacto</Font>
-                        <Font variant="body" weight="black" color="orange" italic align="right">Score {trainer.score}</Font>
+                        <Font
+                            variant="sub-tiny"
+                            weight="black"
+                            uppercase
+                            tracking="widest"
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.DIM,
+                            }}>Impacto</Font>
+                        <Font
+                            variant="body"
+                            weight="black"
+                            italic
+                            align="right"
+                            {...{
+                                color: "orange",
+                            }}>Score {trainer.score}</Font>
                     </Stack>
                 </Grid>
 
                 {trainer.trainer_code ? (
-                    <Link href={`/personal/${trainer.trainer_code}`} className="w-full">
-                        <Button 
-                            variant="outline-emerald" 
-                            size="md" 
-                            fullWidth 
-                            rounded={STORE_TOKENS.RADIUS.SYSTEM} 
-                            gap={STORE_TOKENS.SPACING.ELEMENT}
-                            transition
-                        >
-                            <Font variant="sub-tiny" weight="black" uppercase tracking="widest">Ver Perfil</Font>
-                            <Icon icon={ArrowRight} size="xs" />
-                        </Button>
-                    </Link>
+                    <Box width="full">
+                        <Link href={`/personal/${trainer.trainer_code}`}>
+                            <Button 
+                                variant="outline-emerald" 
+                                size="md" 
+                                fullWidth 
+                                rounded={STORE_TOKENS.RADIUS.SYSTEM} 
+                                gap={STORE_TOKENS.SPACING.ELEMENT}
+                                transition
+                            >
+                                <Font variant="sub-tiny" weight="black" uppercase tracking="widest">Ver Perfil</Font>
+                                <Icon icon={ArrowRight} size="xs" />
+                            </Button>
+                        </Link>
+                    </Box>
                 ) : (
                     <Button 
                         variant="outline-emerald" 

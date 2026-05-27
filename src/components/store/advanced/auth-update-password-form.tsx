@@ -46,14 +46,28 @@ export function AuthUpdatePasswordForm({
                 {/* Header */}
                 <Box padding={STORE_TOKENS.PADDING.CONTAINER}>
                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                        <Font variant="h2" align="center">Nova <Font variant="h2" color={STORE_TOKENS.COLORS.BRAND}>Senha</Font></Font>
-                        <Font variant="auxiliary" color={STORE_TOKENS.COLORS.TEXT.MUTED} align="center" uppercase tracking="widest">
+                        <Font variant="h2" align="center">Nova <Font
+                            variant="h2"
+                            {...{
+                                color: STORE_TOKENS.COLORS.BRAND,
+                            }}>Senha</Font></Font>
+                        <Font
+                            variant="auxiliary"
+                            align="center"
+                            uppercase
+                            tracking="widest"
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                            }}>
                             Defina sua nova credencial de acesso
                         </Font>
                     </Stack>
                 </Box>
 
-                <Divider color={STORE_TOKENS.COLORS.DIVIDER.SUBTLE} />
+                <Divider
+                    {...{
+                        color: STORE_TOKENS.COLORS.DIVIDER.SUBTLE,
+                    }} />
 
                 {/* Form Content */}
                 <Box padding={STORE_TOKENS.PADDING.CONTAINER}>
@@ -61,7 +75,14 @@ export function AuthUpdatePasswordForm({
                         <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                             {error && (
                                 <Box padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM} display="flex" align="center" bg={STORE_TOKENS.COLORS.ERROR} bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} border minHeight={44}>
-                                    <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.ERROR} weight="black" uppercase tracking="widest">
+                                    <Font
+                                        variant="sub-tiny"
+                                        weight="black"
+                                        uppercase
+                                        tracking="widest"
+                                        {...{
+                                            color: STORE_TOKENS.COLORS.ERROR,
+                                        }}>
                                         {translateAuthError(error)}
                                     </Font>
                                 </Box>
@@ -92,20 +113,18 @@ export function AuthUpdatePasswordForm({
                                 fullWidth
                                 rounded={STORE_TOKENS.RADIUS.SYSTEM}
                                 height="anatomy-item"
-                                padding={STORE_TOKENS.PADDING.CONTAINER}
+                                gap="element"
                                 disabled={loading || (password !== confirmPassword && confirmPassword !== '')}
                             >
-                                <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} align="center" justify="center">
-                                    <Font variant="label-caps">
-                                        {loading ? 'Processando...' : 'Atualizar Senha'}
-                                    </Font>
-                                    {!loading && <Icon icon={ArrowRight} size="xs" />}
-                                </Stack>
+                                <Font variant="label-caps">
+                                    {loading ? 'Processando...' : 'Atualizar Senha'}
+                                </Font>
+                                {!loading && <Icon icon={ArrowRight} size="xs" />}
                             </Button>
                         </Stack>
                     </form>
                 </Box>
             </Stack>
         </Surface>
-    )
+    );
 }

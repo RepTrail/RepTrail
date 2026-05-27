@@ -45,9 +45,22 @@ export function WorkoutExecutionState({
             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                 <Stack direction="row" align="end" justify="between" padding="element">
                     <Stack gap="element">
-                        <Font variant="label-caps" color="SECONDARY">Progresso Geral</Font>
-                        <Font variant="h3" color="white" italic uppercase>
-                            {totalCompletedSets} <Font color="zinc-700">/ {totalSteps}</Font>
+                        <Font
+                            variant="label-caps"
+                            {...{
+                                color: "SECONDARY",
+                            }}>Progresso Geral</Font>
+                        <Font
+                            variant="h3"
+                            italic
+                            uppercase
+                            {...{
+                                color: "white",
+                            }}>
+                            {totalCompletedSets} <Font
+                            {...{
+                                color: "zinc-700",
+                            }}>/ {totalSteps}</Font>
                         </Font>
                     </Stack>
                     <Badge label={`${Math.round(progress)}%`} variant="solid" color="emerald" size="sm" />
@@ -56,10 +69,16 @@ export function WorkoutExecutionState({
                     <Box height="full" bg="emerald" transition style={{ width: `${progress}%` }} />
                 </Box>
             </Stack>
-
             {/* Execution State */}
             <Stack flex1 justify={{ base: 'start', md: 'center' }} gap={STORE_TOKENS.SPACING.CONTAINER} position="relative">
-                <BackgroundIcon icon={Play} size="100" opacity={10} top={0} right={0} />
+                <BackgroundIcon
+                    icon={Play}
+                    size="100"
+                    opacity={10}
+                    {...{
+                        top: 0,
+                        right: 0,
+                    }} />
 
                 {/* Main Exercise Card */}
                 <Surface variant="glass" border="standard" rounded={STORE_TOKENS.RADIUS.SYSTEM} padding={STORE_TOKENS.PADDING.CONTAINER} overflow="hidden" position="relative">
@@ -67,11 +86,19 @@ export function WorkoutExecutionState({
                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                             <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                 <Box width={6} height={6} bg="emerald" rounded="full" shrink={0} />
-                                <Font variant="label-caps" color="SECONDARY">
+                                <Font
+                                    variant="label-caps"
+                                    {...{
+                                        color: "SECONDARY",
+                                    }}>
                                     {isBiSet ? "EXERCÍCIO CONJUGADO" : "EXERCÍCIO ATUAL"}
                                 </Font>
                             </Stack>
-                            <Font variant="h1" color="white">
+                            <Font
+                                variant="h1"
+                                {...{
+                                    color: "white",
+                                }}>
                                 {isBiSet ? "BI-SET ATIVO" : currentStep.exerciseName}
                             </Font>
                         </Stack>
@@ -92,21 +119,50 @@ export function WorkoutExecutionState({
                 <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} width="full">
                     <Surface variant="tonal-zinc" flex1 padding={STORE_TOKENS.PADDING.ELEMENT} rounded="system" border="standard">
                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                            <Font variant="label-caps" color="SECONDARY">Alvo</Font>
-                            <Font variant="h3" color="white" mono>{expectedReps}</Font>
-                            <Font variant="tiny" color="zinc-600" weight="bold" uppercase>Reps</Font>
+                            <Font
+                                variant="label-caps"
+                                {...{
+                                    color: "SECONDARY",
+                                }}>Alvo</Font>
+                            <Font
+                                variant="h3"
+                                mono
+                                {...{
+                                    color: "white",
+                                }}>{expectedReps}</Font>
+                            <Font
+                                variant="tiny"
+                                weight="bold"
+                                uppercase
+                                {...{
+                                    color: "zinc-600",
+                                }}>Reps</Font>
                         </Stack>
                     </Surface>
                     <Surface variant="tonal-zinc" flex1 padding={STORE_TOKENS.PADDING.ELEMENT} rounded="system" border="standard">
                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                            <Font variant="label-caps" color="SECONDARY">Descanso</Font>
-                            <Font variant="h3" color="orange" mono>{currentExercise.rest_seconds}s</Font>
-                            <Font variant="tiny" color="zinc-600" weight="bold" uppercase>Recuperar</Font>
+                            <Font
+                                variant="label-caps"
+                                {...{
+                                    color: "SECONDARY",
+                                }}>Descanso</Font>
+                            <Font
+                                variant="h3"
+                                mono
+                                {...{
+                                    color: "orange",
+                                }}>{currentExercise.rest_seconds}s</Font>
+                            <Font
+                                variant="tiny"
+                                weight="bold"
+                                uppercase
+                                {...{
+                                    color: "zinc-600",
+                                }}>Recuperar</Font>
                         </Stack>
                     </Surface>
                 </Stack>
             </Stack>
-
             {/* Action Area */}
             <Box padding="none">
                 <Button 
@@ -117,11 +173,11 @@ export function WorkoutExecutionState({
                     onClick={onAction}
                 >
                     <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        <span>Registrar Série</span>
+                        Registrar Série
                         <Icon icon={Play} size="xs" />
                     </Stack>
                 </Button>
             </Box>
         </Stack>
-    )
+    );
 }

@@ -39,8 +39,20 @@ export function AIProtocolStepCard({ index, title, description, icon, children }
                                 <Icon icon={icon} size="sm" color="primary" />
                             </Surface>
                             <Stack gap="none">
-                                <Font variant="h4" weight="black" uppercase italic color="white">{title}</Font>
-                                <Font variant="sub-tiny" color="zinc-500" weight="bold">{description}</Font>
+                                <Font
+                                    variant="h4"
+                                    weight="black"
+                                    uppercase
+                                    italic
+                                    {...{
+                                        color: "white",
+                                    }}>{title}</Font>
+                                <Font
+                                    variant="sub-tiny"
+                                    weight="bold"
+                                    {...{
+                                        color: "zinc-500",
+                                    }}>{description}</Font>
                             </Stack>
                         </Stack>
                         
@@ -53,5 +65,5 @@ export function AIProtocolStepCard({ index, title, description, icon, children }
                 {children}
             </Stack>
         </GlassPanel>
-    )
+    );
 }

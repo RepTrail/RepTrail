@@ -23,6 +23,8 @@ import { Button } from '@/components/store/base/button'
 import { BackgroundEffects } from '@/components/store/base/background-effects'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
+import { EmptyState } from '@/components/store/intermediary/empty-state'
+
 export default function WorkoutPlayerClient({
     userId,
     workoutId,
@@ -66,19 +68,14 @@ export default function WorkoutPlayerClient({
         return (
             <Box display="flex" align="center" justify="center" minHeight="screen" width="full">
                 <BackgroundEffects variant="all" />
-                <Stack align="center" justify="center" gap={STORE_TOKENS.SPACING.CONTAINER} position="relative" zIndex={10} padding={STORE_TOKENS.PADDING.CONTAINER}>
-                    <Surface variant="glass" padding="container" rounded="full" border="standard">
-                        <Box>
-                            <Icon icon={Dumbbell} size="lg" color="zinc-700" />
-                        </Box>
-                    </Surface>
-                    <Stack gap="element" align="center">
-                        <Font variant="h3" weight="black" uppercase italic tracking="tight">Sem exercícios</Font>
-                        <Font variant="sub-tiny" color="zinc-500" weight="black" uppercase tracking="widest" align="center" style={{ maxWidth: '300px' }}>
-                            Este treino ainda não possui exercícios cadastrados.
-                        </Font>
-                    </Stack>
-                </Stack>
+                <Box position="relative" zIndex={10} width="full" padding={STORE_TOKENS.PADDING.CONTAINER} {...{ style: { maxWidth: '500px', margin: '0 auto' } }}>
+                    <EmptyState
+                        icon={Dumbbell}
+                        title="SEM EXERCÍCIOS"
+                        description="Este treino ainda não possui exercícios cadastrados."
+                        variant="emerald"
+                    />
+                </Box>
             </Box>
         )
     }
@@ -144,8 +141,10 @@ export default function WorkoutPlayerClient({
                                 />
                                 <Link href="/dashboard/student" passHref>
                                     <Button variant="outline-zinc" size="sm" rounded="full">
-                                        <ArrowLeft size={14} style={{ marginRight: '6px' }} />
-                                        Voltar
+                                        <Stack direction="row" align="center" gap={2.5}>
+                                            <Icon icon={ArrowLeft} size="xs" />
+                                            <Font variant="sub-tiny" weight="black" uppercase tracking="wider">Voltar</Font>
+                                        </Stack>
                                     </Button>
                                 </Link>
                             </Box>
@@ -154,7 +153,7 @@ export default function WorkoutPlayerClient({
                                 <Stack gap="element">
                                     <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                         <Box width={8} height={8} bg="emerald" rounded="full" style={{ boxShadow: '0 0 10px rgba(16,185,129,0.5)' }} />
-                                        <Font variant="h3" weight="black" color="white" uppercase italic tracking="tight" truncate style={{ maxWidth: '60vw' }}>
+                                        <Font variant="h3" weight="black" color="white" uppercase italic tracking="tight" truncate {...{ style: { maxWidth: '60vw' } }}>
                                             {workout.name}
                                         </Font>
                                     </Stack>

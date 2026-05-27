@@ -96,7 +96,10 @@ export function DietBuilderMealCard({
             scale={isDragged ? 95 : 100}
         >
             <GlassPanel border="subtle">
-                <CardHeader padding={STORE_TOKENS.SPACING.ELEMENT}>
+                <CardHeader
+                    {...{
+                        padding: STORE_TOKENS.SPACING.ELEMENT,
+                    }}>
                     {/* ── MOBILE: two rows ── */}
                     <Box display={{ base: 'flex', md: 'none' }} direction="col" gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
                         {/* Row 1: grip button ← → delete */}
@@ -115,7 +118,12 @@ export function DietBuilderMealCard({
                             </Button>
                         </Inline>
                         {/* Row 2: title alone */}
-                        <Font variant="heading" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} uppercase>
+                        <Font
+                            variant="heading"
+                            uppercase
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                            }}>
                             {meal.name && !meal.name.toLowerCase().includes('refeição') ? meal.name : `Refeição ${index + 1}`}
                         </Font>
                     </Box>
@@ -127,11 +135,20 @@ export function DietBuilderMealCard({
                                 <Icon icon={GripVertical} size="xs" />
                             </Button>
                             <Stack gap={STORE_TOKENS.SPACING.TINY}>
-                                <Font variant="heading" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} uppercase>
+                                <Font
+                                    variant="heading"
+                                    uppercase
+                                    {...{
+                                        color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                                    }}>
                                     Refeição {index + 1}
                                 </Font>
                                 {meal.name && !meal.name.toLowerCase().includes('refeição') && (
-                                    <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>
+                                    <Font
+                                        variant="description"
+                                        {...{
+                                            color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                        }}>
                                         {meal.name}
                                     </Font>
                                 )}
@@ -160,7 +177,10 @@ export function DietBuilderMealCard({
 
 
                 {/* Meal items list */}
-                <CardContent padding={STORE_TOKENS.SPACING.NONE}>
+                <CardContent
+                    {...{
+                        padding: STORE_TOKENS.SPACING.NONE,
+                    }}>
                     <Stack gap={STORE_TOKENS.SPACING.NONE} divide>
                         {items.map((item) => (
                             <DietBuilderMealItemRow
@@ -188,11 +208,11 @@ export function DietBuilderMealCard({
                             gap={STORE_TOKENS.SPACING.ELEMENT}
                         >
                             <Icon icon={PlusCircle} size="xs" color={STORE_TOKENS.COLORS.BRAND} />
-                            <span>Adicionar Item</span>
+                            Adicionar Item
                         </Button>
                     </Box>
                 </CardContent>
             </GlassPanel>
         </Box>
-    )
+    );
 }

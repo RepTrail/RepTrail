@@ -20,6 +20,8 @@ import { Button } from '@/components/store/base/button'
 import { Icon } from '@/components/store/base/icon'
 import { Stack } from '@/components/store/base/stack'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
+import { Grid } from '../base/grid'
+import { Box } from '../base/box'
 
 interface TrainerStudentErgogenicsSmartProps {
     effectiveStudentId: string
@@ -157,14 +159,14 @@ export function TrainerStudentErgogenicsSmart({ effectiveStudentId }: TrainerStu
 
     if (isLoading) {
         return (
-            <div className="animate-pulse space-y-6">
-                <div className="h-8 w-48 bg-zinc-900 rounded-lg" />
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <Stack gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
+                <Box height={8} width={48} bg="zinc" bgOpacity={10} rounded={STORE_TOKENS.RADIUS.SYSTEM} />
+                <Grid cols={{ base: 1, md: 2, lg: 3 }} gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
                     {[1, 2, 3].map((i) => (
-                        <div key={i} className="h-[280px] bg-zinc-900 rounded-[2rem]" />
+                        <Box key={i} height={280} bg="zinc" bgOpacity={10} rounded={STORE_TOKENS.RADIUS.SYSTEM} fullWidth />
                     ))}
-                </div>
-            </div>
+                </Grid>
+            </Stack>
         )
     }
 
@@ -183,7 +185,7 @@ export function TrainerStudentErgogenicsSmart({ effectiveStudentId }: TrainerStu
                     >
                         <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                             <Icon icon={Plus} size="xs" color="emerald" />
-                            <span>Adicionar Substância</span>
+                            Adicionar Substância
                         </Stack>
                     </Button>
                 }

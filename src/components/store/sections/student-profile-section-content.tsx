@@ -113,7 +113,6 @@ export function StudentProfileSectionContent({
                     <StudentProfileForm userId={userId} profile={profile} />
                 </Box>
             </Grid>
-
             {/* Confirmation Modals */}
             <Modal
                 isOpen={isTrialModalOpen}
@@ -127,15 +126,23 @@ export function StudentProfileSectionContent({
                 onConfirm={() => setIsTrialModalOpen(false)}
             >
                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <Font variant="body-sm" color={STORE_TOKENS.COLORS.TEXT.SECONDARY}>
+                    <Font
+                        variant="body-sm"
+                        {...{
+                            color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
+                        }}>
                         Ao ativar o período de teste, você terá acesso imediato a todas as ferramentas de Auto-Treino, Dieta e Ergogênicos do RepTrail.
                     </Font>
-                    <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="bold">
+                    <Font
+                        variant="sub-tiny"
+                        weight="bold"
+                        {...{
+                            color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                        }}>
                         * O teste é válido por 7 dias corridos e não requer cartão de crédito agora.
                     </Font>
                 </Stack>
             </Modal>
-
             <Modal
                 isOpen={isCancelModalOpen}
                 onClose={() => setIsCancelModalOpen(false)}
@@ -149,15 +156,25 @@ export function StudentProfileSectionContent({
                 onConfirm={() => setIsCancelModalOpen(false)}
             >
                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <Font variant="body-sm" color={STORE_TOKENS.COLORS.TEXT.SECONDARY}>
+                    <Font
+                        variant="body-sm"
+                        {...{
+                            color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
+                        }}>
                         Tem certeza que deseja cancelar sua assinatura do Auto-Treino? Você perderá o acesso aos seus protocolos e histórico ao final do ciclo atual.
                     </Font>
-                    <Font variant="sub-tiny" color="red" weight="black" uppercase italic>
+                    <Font
+                        variant="sub-tiny"
+                        weight="black"
+                        uppercase
+                        italic
+                        {...{
+                            color: "red",
+                        }}>
                         Esta ação não pode ser desfeita automaticamente.
                     </Font>
                 </Stack>
             </Modal>
-
             <AsaasPaymentModal
                 isOpen={isAsaasModalOpen}
                 onClose={() => setIsAsaasModalOpen(false)}
@@ -166,6 +183,6 @@ export function StudentProfileSectionContent({
                 currentName={name}
             />
         </>
-    )
+    );
 }
 

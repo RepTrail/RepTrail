@@ -6,6 +6,10 @@ import { getTrainerProfile } from '@/actions/trainer-actions'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { TrainerProfileSectionContent } from '@/components/store/sections/trainer-profile-section-content'
 
+import { Box } from '@/components/store/base/box'
+import { Font } from '@/components/store/base/font'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
+
 export const revalidate = 0
 
 export const metadata = {
@@ -21,9 +25,11 @@ export default async function TrainerProfilePage() {
     const profile = await getTrainerProfile(userId)
     if (!profile) {
         return (
-            <div className="p-10 text-center text-zinc-500 font-bold uppercase tracking-widest text-xs">
-                Perfil não encontrado.
-            </div>
+            <Box fullWidth padding={STORE_TOKENS.PADDING.CONTAINER} textAlign="center">
+                <Font variant="auxiliary" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="bold">
+                    Perfil não encontrado.
+                </Font>
+            </Box>
         )
     }
 

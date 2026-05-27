@@ -27,16 +27,33 @@ export function PriceDisplay({ label, value, subtitle }: PriceDisplayProps) {
             rounded="system"
         >
             <Stack align="center" gap="element">
-                <Font variant="sub-tiny" weight="black" uppercase color="zinc-500">
+                <Font
+                    variant="sub-tiny"
+                    weight="black"
+                    uppercase
+                    {...{
+                        color: "zinc-500",
+                    }}>
                     {label}
                 </Font>
-                <Font variant="h1" color="white">
+                <Font
+                    variant="h1"
+                    {...{
+                        color: "white",
+                    }}>
                     R$ {value.toFixed(2).replace('.', ',')}
                 </Font>
-                <Font variant="tiny" color="emerald" weight="black" uppercase italic>
+                <Font
+                    variant="tiny"
+                    weight="black"
+                    uppercase
+                    italic
+                    {...{
+                        color: "emerald",
+                    }}>
                     {subtitle}
                 </Font>
             </Stack>
         </Box>
-    )
+    );
 }

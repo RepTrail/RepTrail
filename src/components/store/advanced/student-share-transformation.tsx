@@ -395,12 +395,15 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
             >
                 <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                     <Icon icon={Share2} size="sm" />
-                    <Font variant="label-caps" color="white">
+                    <Font
+                        variant="label-caps"
+                        {...{
+                            color: "white",
+                        }}>
                         Gerar Antes e Depois
                     </Font>
                 </Stack>
             </Button>
-
             <Modal
                 isOpen={open}
                 onClose={previewUrl ? handleBack : handleClose}
@@ -438,7 +441,11 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
                             >
                                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                                     <Icon icon={Instagram} size="xl" color="zinc-600" />
-                                    <Font variant="label-caps" color="SECONDARY">
+                                    <Font
+                                        variant="label-caps"
+                                        {...{
+                                            color: "SECONDARY",
+                                        }}>
                                         Stories
                                     </Font>
                                 </Stack>
@@ -479,7 +486,11 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
                             >
                                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                                     <Icon icon={ImageIcon} size="xl" color="zinc-600" />
-                                    <Font variant="label-caps" color="SECONDARY">
+                                    <Font
+                                        variant="label-caps"
+                                        {...{
+                                            color: "SECONDARY",
+                                        }}>
                                         Feed
                                     </Font>
                                 </Stack>
@@ -512,10 +523,23 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
                             style={{ borderStyle: 'solid' }}
                         >
                             <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                                <Font variant="label-caps" color="SECONDARY" align="center">
-                                    PRONTO PARA <Font color="white">IMPACTAR</Font>?
+                                <Font
+                                    variant="label-caps"
+                                    align="center"
+                                    {...{
+                                        color: "SECONDARY",
+                                    }}>
+                                    PRONTO PARA <Font
+                                    {...{
+                                        color: "white",
+                                    }}>IMPACTAR</Font>?
                                 </Font>
-                                <Font variant="tiny" color="DIM" align="center">
+                                <Font
+                                    variant="tiny"
+                                    align="center"
+                                    {...{
+                                        color: "DIM",
+                                    }}>
                                     Sua evolução real com a identidade RepTrail.
                                 </Font>
                             </Stack>
@@ -558,7 +582,11 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
                             >
                                 <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                     <Icon icon={Share2} size="sm" />
-                                    <Font variant="label-caps" color="black">
+                                    <Font
+                                        variant="label-caps"
+                                        {...{
+                                            color: "black",
+                                        }}>
                                         Compartilhar Agora
                                     </Font>
                                 </Stack>
@@ -578,7 +606,11 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
                             >
                                 <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                     <Icon icon={Download} size="sm" />
-                                    <Font variant="label-caps" color="white">
+                                    <Font
+                                        variant="label-caps"
+                                        {...{
+                                            color: "white",
+                                        }}>
                                         Salvar Imagem
                                     </Font>
                                 </Stack>
@@ -587,8 +619,11 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
                     </Stack>
                 )}
             </Modal>
-
-            <canvas ref={canvasRef} style={{ display: 'none' }} />
+            <canvas
+                ref={canvasRef}
+                {...{
+                    style: { display: 'none' },
+                }} />
         </>
-    )
+    );
 }

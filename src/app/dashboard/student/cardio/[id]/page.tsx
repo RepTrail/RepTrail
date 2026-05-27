@@ -4,7 +4,8 @@ import { notFound, redirect } from 'next/navigation'
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { getQueryClient } from '@/lib/get-query-client'
 import { QUERY_KEYS } from '@/lib/query-keys'
-import { StudentCardioDetailClient } from "@/components/store/features(deprecated)/student-cardio-detail-client"
+import { CardioBuilderSmart } from "@/components/store/advanced/cardio-builder-smart"
+import { RegistryMain } from "@/components/store/advanced/registry-main"
 import { headers } from 'next/headers'
 
 interface Props {
@@ -37,18 +38,27 @@ export default async function StudentCardioDetailPage({ params }: Props) {
         queryFn: () => getCardioDetails(id)
     })
 
-    const cardio = queryClient.getQueryData(QUERY_KEYS.cardio.detail(id))
-    if (!cardio || (cardio as any).trainer_id !== userId) return notFound()
+    const cardio = queryClient.getQueryData(QUERY_KEYS.cardio.detail(id)) as any
+    if (!cardio || cardio.trainer_id !== userId) return notFound()
 
     return (
         <HydrationBoundary state={dehydrate(queryClient)}>
-            <div className="max-w-3xl mx-auto py-6 space-y-8">
-                <StudentCardioDetailClient 
-                    cardioId={id} 
-                    userId={userId} 
-                    initialData={cardio} 
+            <RegistryMain
+                title={cardio.name.toUpperCase()}
+                subtitle={cardio.description || "Protocolo de Cardio"}
+                icon="Flame"
+                contextLabel="Condicionamento & Saúde"
+                showTabs={false}
+                showHeader={false}
+            >
+                <CardioBuilderSmart 
+                    cardio={cardio}
+                    backHref="/dashboard/student/cardio"
+                    contextLabel="Condicionamento & Saúde"
+                    icon="Flame"
+                    contextColor="orange"
                 />
-            </div>
+            </RegistryMain>
         </HydrationBoundary>
     )
 }

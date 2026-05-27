@@ -22,16 +22,30 @@ export function StudentDashboardHeader() {
             gap={STORE_TOKENS.SPACING.CONTAINER}
         >
             <Font variant="h1" weight="black" uppercase italic tracking="tight">
-                {first} <Font variant="h1" color={STORE_TOKENS.COLORS.BRAND} weight="black" uppercase italic tracking="tight">{rest.join(' ')}</Font>
+                {first} <Font
+                variant="h1"
+                weight="black"
+                uppercase
+                italic
+                tracking="tight"
+                {...{
+                    color: STORE_TOKENS.COLORS.BRAND,
+                }}>{rest.join(' ')}</Font>
             </Font>
-
             <Surface 
                 variant="base" 
                 padding={STORE_TOKENS.PADDING.ELEMENT} 
                 rounded={STORE_TOKENS.RADIUS.SYSTEM}
             >
                 <Stack>
-                    <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="black" uppercase tracking="widest">
+                    <Font
+                        variant="sub-tiny"
+                        weight="black"
+                        uppercase
+                        tracking="widest"
+                        {...{
+                            color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                        }}>
                         Hoje
                     </Font>
                     <Font variant="body-sm" weight="black" uppercase italic>
@@ -40,5 +54,5 @@ export function StudentDashboardHeader() {
                 </Stack>
             </Surface>
         </Stack>
-    )
+    );
 }

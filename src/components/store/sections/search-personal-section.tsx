@@ -90,8 +90,24 @@ export function SearchPersonalSection() {
                                     <Icon icon={Search} size="lg" color="zinc-600" />
                                 </Surface>
                                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                                    <Font variant="h3" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY} align="center">Nenhum rastro encontrado</Font>
-                                    <Font variant="sub-tiny" weight="black" uppercase tracking="widest" color={STORE_TOKENS.COLORS.TEXT.DIM} align="center">
+                                    <Font
+                                        variant="h3"
+                                        weight="black"
+                                        uppercase
+                                        italic
+                                        align="center"
+                                        {...{
+                                            color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                                        }}>Nenhum rastro encontrado</Font>
+                                    <Font
+                                        variant="sub-tiny"
+                                        weight="black"
+                                        uppercase
+                                        tracking="widest"
+                                        align="center"
+                                        {...{
+                                            color: STORE_TOKENS.COLORS.TEXT.DIM,
+                                        }}>
                                         Não encontramos treinadores com esses critérios.
                                     </Font>
                                 </Stack>
@@ -101,5 +117,5 @@ export function SearchPersonalSection() {
                 </Stack>
             </RegistrySection>
         </Stack>
-    )
+    );
 }

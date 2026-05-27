@@ -1,7 +1,6 @@
 import { Suspense } from 'react'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { StudentGlobalModals } from '@/components/layout/student-global-modals'
 import { createClient } from '@/lib/supabase/server'
 import { getStudentTrainer } from '@/actions/student-actions'
 import { getQueryClient } from '@/lib/get-query-client'
@@ -9,6 +8,7 @@ import { QUERY_KEYS } from '@/lib/query-keys'
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { DashboardShell } from '@/components/store/advanced/dashboard-shell'
 import { RegistryProvider } from '@/components/store/advanced/registry-context'
+import { SettingsModal } from '@/components/store/advanced/student-settings-modal'
 
 export default async function StudentLayout({ children }: { children: React.ReactNode }) {
     const headerList = await headers()
@@ -110,7 +110,7 @@ async function StudentLayoutLoader({ userId, children }: { userId: string; child
                 >
                     {children}
                 </DashboardShell>
-                <StudentGlobalModals hasTrainer={hasTrainer} userId={userId} />
+                <SettingsModal isTrainer={false} hasTrainer={hasTrainer} />
             </HydrationBoundary>
         </RegistryProvider>
     )

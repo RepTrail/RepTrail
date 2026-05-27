@@ -1,11 +1,12 @@
 'use client'
 
 import { SplashScreen } from "@/components/store/advanced/splash-screen"
+import { Box } from "@/components/store/base/box"
 
 export default function SplashPage() {
     return (
-        <main className="min-h-screen bg-black overflow-hidden relative" suppressHydrationWarning>
+        <Box as="main" minHeight="screen" bg="black" overflow="hidden" position="relative" suppressHydrationWarning>
             <SplashScreen redirectHref="/" />
-        </main>
+        </Box>
     )
 }

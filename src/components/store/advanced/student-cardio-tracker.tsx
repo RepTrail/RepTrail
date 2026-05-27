@@ -282,7 +282,6 @@ export function StudentCardioTracker({ userId }: StudentCardioTrackerProps) {
                 onPause={handlePause}
                 onStop={handleStop}
             />
-
             <Modal
                 isOpen={isConfirmOpen}
                 onClose={() => setIsConfirmOpen(false)}
@@ -294,10 +293,14 @@ export function StudentCardioTracker({ userId }: StudentCardioTrackerProps) {
                 variant="red"
                 confirmVariant="outline-red"
             >
-                <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.SECONDARY}>
+                <Font
+                    variant="description"
+                    {...{
+                        color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
+                    }}>
                     Você realizou {Math.floor(seconds / 60)} minuto(s) de atividade. Ao encerrar agora, o progresso será salvo proporcionalmente.
                 </Font>
             </Modal>
         </RegistrySection>
-    )
+    );
 }

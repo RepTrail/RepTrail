@@ -47,7 +47,10 @@ export function WorkoutBuilderExerciseCard({
             scale={isDragged ? 95 : 100}
         >
             <GlassPanel border="subtle">
-                <CardHeader padding={STORE_TOKENS.SPACING.ELEMENT}>
+                <CardHeader
+                    {...{
+                        padding: STORE_TOKENS.SPACING.ELEMENT,
+                    }}>
                     <Stack direction="col" gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
                         <Box display={{ base: 'flex', md: 'none' }} align="center" justify="between" width="full">
                             <Button
@@ -56,9 +59,9 @@ export function WorkoutBuilderExerciseCard({
                                 size="sm"
                                 asChild
                             >
-                                <div>
+                                <Box>
                                     <Icon icon={GripVertical} size="sm" />
-                                </div>
+                                </Box>
                             </Button>
                             <Button
                                 variant="outline-red"
@@ -79,12 +82,17 @@ export function WorkoutBuilderExerciseCard({
                                         size="sm"
                                         asChild
                                     >
-                                        <div>
+                                        <Box>
                                             <Icon icon={GripVertical} size="sm" />
-                                        </div>
+                                        </Box>
                                     </Button>
                                 </Box>
-                                <Font variant="heading" color={STORE_TOKENS.COLORS.WHITE} uppercase>
+                                <Font
+                                    variant="heading"
+                                    uppercase
+                                    {...{
+                                        color: STORE_TOKENS.COLORS.WHITE,
+                                    }}>
                                     {item.exercise.name}
                                 </Font>
                             </Inline>
@@ -101,7 +109,10 @@ export function WorkoutBuilderExerciseCard({
                         </Box>
                     </Stack>
                 </CardHeader>
-                <CardContent padding={STORE_TOKENS.SPACING.ELEMENT}>
+                <CardContent
+                    {...{
+                        padding: STORE_TOKENS.SPACING.ELEMENT,
+                    }}>
                     <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                         <Grid cols={{ base: 1, lg: 3 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
                             
@@ -114,11 +125,21 @@ export function WorkoutBuilderExerciseCard({
                                 border
                             >
                                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                    <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED} uppercase weight="bold">Aquecimento</Font>
+                                    <Font
+                                        variant="sub-tiny"
+                                        uppercase
+                                        weight="bold"
+                                        {...{
+                                            color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                        }}>Aquecimento</Font>
                                     <Separator opacity={STORE_TOKENS.OPACITY.SUBTLE} />
                                     <Grid cols={{ base: 3 }} gap={STORE_TOKENS.SPACING.ELEMENT}>
                                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                            <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>Séries</Font>
+                                            <Font
+                                                variant="sub-tiny"
+                                                {...{
+                                                    color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                                }}>Séries</Font>
                                             <Input
                                                 type="number"
                                                 value={item.warmup_sets}
@@ -128,7 +149,11 @@ export function WorkoutBuilderExerciseCard({
                                             />
                                         </Stack>
                                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                            <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>Reps</Font>
+                                            <Font
+                                                variant="sub-tiny"
+                                                {...{
+                                                    color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                                }}>Reps</Font>
                                             <Input
                                                 defaultValue={item.warmup_reps}
                                                 onBlur={(e: any) => onUpdate(item.id, { warmup_reps: e.target.value })}
@@ -137,7 +162,11 @@ export function WorkoutBuilderExerciseCard({
                                             />
                                         </Stack>
                                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                            <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>Desc (s)</Font>
+                                            <Font
+                                                variant="sub-tiny"
+                                                {...{
+                                                    color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                                }}>Desc (s)</Font>
                                             <Input
                                                 type="number"
                                                 defaultValue={item.warmup_rest_seconds}
@@ -158,11 +187,21 @@ export function WorkoutBuilderExerciseCard({
                                 border
                             >
                                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                    <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED} uppercase weight="bold">Preparação (Feeder)</Font>
+                                    <Font
+                                        variant="sub-tiny"
+                                        uppercase
+                                        weight="bold"
+                                        {...{
+                                            color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                        }}>Preparação (Feeder)</Font>
                                     <Separator opacity={STORE_TOKENS.OPACITY.SUBTLE} />
                                     <Grid cols={{ base: 3 }} gap={STORE_TOKENS.SPACING.ELEMENT}>
                                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                            <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>Séries</Font>
+                                            <Font
+                                                variant="sub-tiny"
+                                                {...{
+                                                    color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                                }}>Séries</Font>
                                             <Input
                                                 type="number"
                                                 value={item.feeder_sets}
@@ -172,7 +211,11 @@ export function WorkoutBuilderExerciseCard({
                                             />
                                         </Stack>
                                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                            <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>Reps</Font>
+                                            <Font
+                                                variant="sub-tiny"
+                                                {...{
+                                                    color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                                }}>Reps</Font>
                                             <Input
                                                 defaultValue={item.feeder_reps}
                                                 onBlur={(e: any) => onUpdate(item.id, { feeder_reps: e.target.value })}
@@ -181,7 +224,11 @@ export function WorkoutBuilderExerciseCard({
                                             />
                                         </Stack>
                                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                            <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>Desc (s)</Font>
+                                            <Font
+                                                variant="sub-tiny"
+                                                {...{
+                                                    color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                                }}>Desc (s)</Font>
                                             <Input
                                                 type="number"
                                                 defaultValue={item.feeder_rest_seconds}
@@ -204,11 +251,22 @@ export function WorkoutBuilderExerciseCard({
                                 borderOpacity={STORE_TOKENS.OPACITY.MEDIUM}
                             >
                                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                    <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.INFO} uppercase weight="bold">Séries Validadas</Font>
+                                    <Font
+                                        variant="sub-tiny"
+                                        uppercase
+                                        weight="bold"
+                                        {...{
+                                            color: STORE_TOKENS.COLORS.INFO,
+                                        }}>Séries Validadas</Font>
                                     <Separator opacity={STORE_TOKENS.OPACITY.SUBTLE} />
                                     <Grid cols={{ base: 3 }} gap={STORE_TOKENS.SPACING.ELEMENT}>
                                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                            <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.INFO} opacity={STORE_TOKENS.OPACITY.MODAL}>Séries</Font>
+                                            <Font
+                                                variant="sub-tiny"
+                                                opacity={STORE_TOKENS.OPACITY.MODAL}
+                                                {...{
+                                                    color: STORE_TOKENS.COLORS.INFO,
+                                                }}>Séries</Font>
                                             <Input
                                                 type="number"
                                                 value={item.working_sets}
@@ -218,7 +276,12 @@ export function WorkoutBuilderExerciseCard({
                                             />
                                         </Stack>
                                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                            <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.INFO} opacity={STORE_TOKENS.OPACITY.MODAL}>Reps</Font>
+                                            <Font
+                                                variant="sub-tiny"
+                                                opacity={STORE_TOKENS.OPACITY.MODAL}
+                                                {...{
+                                                    color: STORE_TOKENS.COLORS.INFO,
+                                                }}>Reps</Font>
                                             <Input
                                                 value={item.working_reps}
                                                 onChange={(e: any) => onUpdate(item.id, { working_reps: e.target.value })}
@@ -226,7 +289,12 @@ export function WorkoutBuilderExerciseCard({
                                             />
                                         </Stack>
                                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                            <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.INFO} opacity={STORE_TOKENS.OPACITY.MODAL}>Desc (s)</Font>
+                                            <Font
+                                                variant="sub-tiny"
+                                                opacity={STORE_TOKENS.OPACITY.MODAL}
+                                                {...{
+                                                    color: STORE_TOKENS.COLORS.INFO,
+                                                }}>Desc (s)</Font>
                                             <Input
                                                 type="number"
                                                 defaultValue={item.rest_seconds}
@@ -240,26 +308,43 @@ export function WorkoutBuilderExerciseCard({
                         </Grid>
                         {/* NOTES SECTION */}
                         <GlassPanel border="subtle">
-                            <CardHeader padding={STORE_TOKENS.PADDING.ELEMENT}>
+                            <CardHeader
+                                {...{
+                                    padding: STORE_TOKENS.PADDING.ELEMENT,
+                                }}>
                                 <Stack gap={STORE_TOKENS.SPACING.TINY}>
-                                    <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="bold" uppercase>Orientações e Observações Técnicas</Font>
-                                    <Font variant="tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>Salva automaticamente ao sair do campo</Font>
+                                    <Font
+                                        variant="sub-tiny"
+                                        weight="bold"
+                                        uppercase
+                                        {...{
+                                            color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                        }}>Orientações e Observações Técnicas</Font>
+                                    <Font
+                                        variant="tiny"
+                                        {...{
+                                            color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                        }}>Salva automaticamente ao sair do campo</Font>
                                 </Stack>
                             </CardHeader>
-                            <CardContent padding={STORE_TOKENS.PADDING.NONE}>
+                            <CardContent
+                                {...{
+                                    padding: STORE_TOKENS.PADDING.NONE,
+                                }}>
                                 {/* EXCEPTION: Manual overrides to make embedded textarea seamless inside the card */}
                                 <Textarea
                                     defaultValue={item.notes}
                                     onBlur={(e) => onUpdate(item.id, { notes: e.target.value })}
                                     placeholder="Ex: Focar na contração lenta, 2s de isometria no pico..."
-                                    rounded="none"
-                                    className="border-0 bg-transparent min-h-[80px]"
-                                />
+                                    {...{
+                                        rounded: "none",
+                                        className: "border-0 bg-transparent min-h-[80px]",
+                                    }} />
                             </CardContent>
                         </GlassPanel>
                     </Stack>
                 </CardContent>
             </GlassPanel>
         </Box>
-    )
+    );
 }

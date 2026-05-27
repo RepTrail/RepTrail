@@ -8,6 +8,8 @@ import { PREFETCH_REGISTRY } from '@/lib/prefetch-registry'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { TrainerErgogenicsHubSmart } from '@/components/store/advanced/trainer-ergogenics-hub-smart'
 import { TrainerRegistryHeaderActions } from '@/components/store/advanced/trainer-registry-header-actions'
+import { Box } from '@/components/store/base/box'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 export const metadata = {
     title: 'Protocolo Ergogênicos | RepTrail',
@@ -54,16 +56,16 @@ export default async function TrainerErgogenicsHubPage() {
         >
             <Suspense
                 fallback={
-                    <div className="animate-pulse space-y-10">
-                        <div className="h-[280px] bg-zinc-900 rounded-[2.5rem]" />
-                    </div>
+                    <Box gap={STORE_TOKENS.SPACING.CONTAINER}>
+                        <Box bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.SURFACE} height={280} rounded={STORE_TOKENS.RADIUS.SYSTEM} />
+                    </Box>
                 }
             >
-                <div suppressHydrationWarning>
+                <Box suppressHydrationWarning>
                     <HydrationBoundary state={dehydrate(queryClient)}>
                         <TrainerErgogenicsHubSmart userId={userId} />
                     </HydrationBoundary>
-                </div>
+                </Box>
             </Suspense>
         </RegistryMain>
     )

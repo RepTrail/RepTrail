@@ -3,7 +3,7 @@ import { notFound, redirect } from "next/navigation"
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { getQueryClient } from '@/lib/get-query-client'
 import { QUERY_KEYS } from '@/lib/query-keys'
-import { StudentWorkoutDetailClient } from "@/components/store/features(deprecated)/student-workout-detail-client"
+import { WorkoutBuilderSmart } from "@/components/store/advanced/workout-builder-smart"
 import { RegistryMain } from "@/components/store/advanced/registry-main"
 import { headers } from "next/headers"
 
@@ -36,11 +36,16 @@ export default async function StudentWorkoutPage({
                 icon="Dumbbell"
                 contextLabel="Treinos & Performance"
                 showTabs={false}
+                showHeader={false}
             >
-                <StudentWorkoutDetailClient 
-                    workoutId={id} 
-                    userId={userId} 
-                    initialData={workout} 
+                <WorkoutBuilderSmart 
+                    workout={workout}
+                    backHref="/dashboard/student"
+                    canAssign={false}
+                    showAssignmentBadge={false}
+                    contextLabel="Treinos & Performance"
+                    icon="Dumbbell"
+                    contextColor="orange"
                 />
             </RegistryMain>
         </HydrationBoundary>

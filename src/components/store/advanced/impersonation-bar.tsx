@@ -57,6 +57,7 @@ export function ImpersonationBar({ color }: { color?: RegistryColor }) {
         <Box position="relative" fullWidth>
             <Surface
                 variant={`tonal-${primaryColor}` as any}
+                rounded={STORE_TOKENS.RADIUS.NONE}
                 padding={STORE_TOKENS.PADDING.CONTAINER}
             >
                 <Inline justify="between" align="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
@@ -69,7 +70,12 @@ export function ImpersonationBar({ color }: { color?: RegistryColor }) {
                             rounded={STORE_TOKENS.RADIUS.FULL}
                         />
                         <Box display={{ base: 'none', md: 'block' }}>
-                            <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} weight="bold">
+                            <Font
+                                variant="sub-tiny"
+                                weight="bold"
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
+                                }}>
                                 Você está visualizando a plataforma como outro usuário. Todas as ações afetarão a conta dele.
                             </Font>
                         </Box>
@@ -88,11 +94,15 @@ export function ImpersonationBar({ color }: { color?: RegistryColor }) {
                             ) : (
                                 <Icon icon={ArrowLeftRight} size="xs" color={safeIconColor as any} />
                             )}
-                            <Font variant="label-caps" color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>Voltar ao Admin</Font>
+                            <Font
+                                variant="label-caps"
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                                }}>Voltar ao Admin</Font>
                         </Inline>
                     </Button>
                 </Inline>
             </Surface>
         </Box>
-    )
+    );
 }

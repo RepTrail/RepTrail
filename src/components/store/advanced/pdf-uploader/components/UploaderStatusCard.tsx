@@ -24,10 +24,21 @@ export function UploaderStatusCard({ id, icon, label, value, isActive = true, ri
                         <Icon icon={icon} size="md" color={isActive ? 'primary' : 'zinc-500'} />
                     </GlassPanel>
                     <Stack gap="element">
-                        <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={isActive ? 'primary' : 'zinc-500'}>
+                        <Font
+                            {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                            {...{
+                                color: isActive ? 'primary' : 'zinc-500',
+                            }}>
                             {label}
                         </Font>
-                        <Font variant="heading" weight="black" uppercase italic color="white">
+                        <Font
+                            variant="heading"
+                            weight="black"
+                            uppercase
+                            italic
+                            {...{
+                                color: "white",
+                            }}>
                             {value}
                         </Font>
                     </Stack>

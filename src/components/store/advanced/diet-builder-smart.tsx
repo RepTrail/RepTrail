@@ -28,8 +28,9 @@ import { Badge } from '@/components/store/base/badge'
 import { GlassPanel } from '@/components/store/base/surface'
 import { Inline } from '@/components/store/base/layout'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
-import { Loader2, ArrowLeft } from 'lucide-react'
+import { Loader2, ArrowLeft, Utensils } from 'lucide-react'
 import Link from 'next/link'
+import { EmptyState } from '@/components/store/intermediary/empty-state'
 
 import { DietBuilderHeader } from './diet-builder-header'
 import { DietBuilderMealCard } from './diet-builder-meal-card'
@@ -317,21 +318,29 @@ export function DietBuilderSmart({
             <Box display="flex" direction="col" align="center" justify="center" minHeight="lg" gap={STORE_TOKENS.SPACING.SECTION}>
                 <Icon icon={Loader2} size="lg" color={STORE_TOKENS.COLORS.BRAND} spin />
                 <Stack align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <Font variant="heading" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} uppercase>
+                    <Font
+                        variant="heading"
+                        uppercase
+                        {...{
+                            color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                        }}>
                         Sincronizando Dados...
                     </Font>
-                    <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>
+                    <Font
+                        variant="description"
+                        {...{
+                            color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                        }}>
                         Preparando o protocolo alimentar
                     </Font>
                 </Stack>
             </Box>
-        )
+        );
     }
 
     // ── RENDER ────────────────────────────────────────────────────────────────
     return (
         <Stack gap={STORE_TOKENS.SPACING.SECTION}>
-
             {/* Header: name, macros bar, assign button */}
             {!hideHeader && (
                 <DietBuilderHeader
@@ -357,66 +366,143 @@ export function DietBuilderSmart({
                     contextColor={contextColor}
                 />
             )}
-
             {/* ── Macro totals bar (isolated section) ── */}
             {!hideHeader && (
                 <Grid cols={{ base: 6, md: 5 }} gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
                     {/* PROT */}
                     <GlassPanel padding={STORE_TOKENS.SPACING.ELEMENT} border="standard" colSpan={2} mdColSpan={1}>
                         <Stack gap={STORE_TOKENS.SPACING.TINY} align="center" justify="center">
-                            <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.DIM} uppercase weight="black">Prot</Font>
+                            <Font
+                                variant="sub-tiny"
+                                uppercase
+                                weight="black"
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.DIM,
+                                }}>Prot</Font>
                             <Inline align="baseline" justify="center" gap={STORE_TOKENS.SPACING.TINY}>
-                                <Font variant="h1" color={STORE_TOKENS.COLORS.INFO} weight="black">{Math.round(totals.p)}</Font>
-                                <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.DIM} weight="bold">g</Font>
+                                <Font
+                                    variant="h1"
+                                    weight="black"
+                                    {...{
+                                        color: STORE_TOKENS.COLORS.INFO,
+                                    }}>{Math.round(totals.p)}</Font>
+                                <Font
+                                    variant="sub-tiny"
+                                    weight="bold"
+                                    {...{
+                                        color: STORE_TOKENS.COLORS.TEXT.DIM,
+                                    }}>g</Font>
                             </Inline>
                         </Stack>
                     </GlassPanel>
                     {/* CARB */}
                     <GlassPanel padding={STORE_TOKENS.SPACING.ELEMENT} border="standard" colSpan={2} mdColSpan={1}>
                         <Stack gap={STORE_TOKENS.SPACING.TINY} align="center" justify="center">
-                            <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.DIM} uppercase weight="black">Carb</Font>
+                            <Font
+                                variant="sub-tiny"
+                                uppercase
+                                weight="black"
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.DIM,
+                                }}>Carb</Font>
                             <Inline align="baseline" justify="center" gap={STORE_TOKENS.SPACING.TINY}>
-                                <Font variant="h1" color={STORE_TOKENS.COLORS.BRAND} weight="black">{Math.round(totals.c)}</Font>
-                                <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.DIM} weight="bold">g</Font>
+                                <Font
+                                    variant="h1"
+                                    weight="black"
+                                    {...{
+                                        color: STORE_TOKENS.COLORS.BRAND,
+                                    }}>{Math.round(totals.c)}</Font>
+                                <Font
+                                    variant="sub-tiny"
+                                    weight="bold"
+                                    {...{
+                                        color: STORE_TOKENS.COLORS.TEXT.DIM,
+                                    }}>g</Font>
                             </Inline>
                         </Stack>
                     </GlassPanel>
                     {/* GORD */}
                     <GlassPanel padding={STORE_TOKENS.SPACING.ELEMENT} border="standard" colSpan={2} mdColSpan={1}>
                         <Stack gap={STORE_TOKENS.SPACING.TINY} align="center" justify="center">
-                            <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.DIM} uppercase weight="black">Gord</Font>
+                            <Font
+                                variant="sub-tiny"
+                                uppercase
+                                weight="black"
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.DIM,
+                                }}>Gord</Font>
                             <Inline align="baseline" justify="center" gap={STORE_TOKENS.SPACING.TINY}>
-                                <Font variant="h1" color={STORE_TOKENS.COLORS.WARNING} weight="black">{Math.round(totals.f)}</Font>
-                                <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.DIM} weight="bold">g</Font>
+                                <Font
+                                    variant="h1"
+                                    weight="black"
+                                    {...{
+                                        color: STORE_TOKENS.COLORS.WARNING,
+                                    }}>{Math.round(totals.f)}</Font>
+                                <Font
+                                    variant="sub-tiny"
+                                    weight="bold"
+                                    {...{
+                                        color: STORE_TOKENS.COLORS.TEXT.DIM,
+                                    }}>g</Font>
                             </Inline>
                         </Stack>
                     </GlassPanel>
                     {/* FIB */}
                     <GlassPanel padding={STORE_TOKENS.SPACING.ELEMENT} border="standard" colSpan={3} mdColSpan={1}>
                         <Stack gap={STORE_TOKENS.SPACING.TINY} align="center" justify="center">
-                            <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.DIM} uppercase weight="black">Fib</Font>
+                            <Font
+                                variant="sub-tiny"
+                                uppercase
+                                weight="black"
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.DIM,
+                                }}>Fib</Font>
                             <Inline align="baseline" justify="center" gap={STORE_TOKENS.SPACING.TINY}>
-                                <Font variant="h1" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} weight="black">{Math.round(totals.fib)}</Font>
-                                <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.DIM} weight="bold">g</Font>
+                                <Font
+                                    variant="h1"
+                                    weight="black"
+                                    {...{
+                                        color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
+                                    }}>{Math.round(totals.fib)}</Font>
+                                <Font
+                                    variant="sub-tiny"
+                                    weight="bold"
+                                    {...{
+                                        color: STORE_TOKENS.COLORS.TEXT.DIM,
+                                    }}>g</Font>
                             </Inline>
                         </Stack>
                     </GlassPanel>
                     {/* KCAL */}
                     <GlassPanel padding={STORE_TOKENS.SPACING.ELEMENT} border="standard" colSpan={3} mdColSpan={1}>
                         <Stack gap={STORE_TOKENS.SPACING.TINY} align="center" justify="center">
-                            <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} uppercase weight="black">Kcal</Font>
+                            <Font
+                                variant="sub-tiny"
+                                uppercase
+                                weight="black"
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                                }}>Kcal</Font>
                             <Inline align="baseline" justify="center" gap={STORE_TOKENS.SPACING.TINY}>
-                                <Font variant="h1" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} weight="black">
+                                <Font
+                                    variant="h1"
+                                    weight="black"
+                                    {...{
+                                        color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                                    }}>
                                     {Math.round((totals.p * 4) + (totals.c * 4) + (totals.f * 9))}
                                 </Font>
-                                <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.DIM} weight="bold">kcal</Font>
+                                <Font
+                                    variant="sub-tiny"
+                                    weight="bold"
+                                    {...{
+                                        color: STORE_TOKENS.COLORS.TEXT.DIM,
+                                    }}>kcal</Font>
                             </Inline>
                         </Stack>
                     </GlassPanel>
                 </Grid>
             )}
-
-
             {/* Meals section */}
             <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                 <Stack
@@ -425,7 +511,12 @@ export function DietBuilderSmart({
                     justify="between"
                     gap={STORE_TOKENS.SPACING.ELEMENT}
                 >
-                    <Font variant="heading" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} uppercase>
+                    <Font
+                        variant="heading"
+                        uppercase
+                        {...{
+                            color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                        }}>
                         Refeições
                     </Font>
                     <Badge
@@ -464,19 +555,17 @@ export function DietBuilderSmart({
                         ))}
                     </Stack>
                 ) : (
-                    <Box padding={STORE_TOKENS.SPACING.EMPTY_STATE} rounded="system" textAlign="center">
-                        <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>
-                            Nenhuma refeição adicionada. Use o formulário abaixo para começar.
-                        </Font>
-                    </Box>
+                    <EmptyState
+                        icon={Utensils}
+                        title="NENHUMA REFEIÇÃO ADICIONADA"
+                        description="Use o formulário abaixo para começar."
+                    />
                 )}
             </Stack>
-
             {/* Add new meal form */}
             <DietBuilderNewMeal
                 onAdd={(name) => addMealMutate({ dietId: diet.id, name })}
             />
-
             {/* Back navigation */}
             <Box display="flex" justify="center">
                 <Button
@@ -489,10 +578,10 @@ export function DietBuilderSmart({
                 >
                     <Link href={backHref}>
                         <Icon icon={ArrowLeft} size="xs" />
-                        <span>Voltar para a Biblioteca de Dietas</span>
+                        Voltar para a Biblioteca de Dietas
                     </Link>
                 </Button>
             </Box>
         </Stack>
-    )
+    );
 }

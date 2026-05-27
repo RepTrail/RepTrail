@@ -15,8 +15,6 @@ export const STORE_TOKENS = {
         /** 50px - Large padding for empty states or specialized sections */
         EMPTY_STATE: 'empty_state' as const,
         /** 4px - Tiny spacing for small elements */
-        TINY: 'tiny' as const,
-        /** 0px - No spacing */
         NONE: 'none' as const,
 
         /* Para ritmo vertical “hero” no `RegistryMain`, use `MAIN` no mobile — ver Design System §11–12.*/
@@ -33,13 +31,11 @@ export const STORE_TOKENS = {
         /** 50px - Large padding for empty states or specialized sections */
         EMPTY_STATE: 'empty_state' as const,
         /** 4px - Tiny spacing for small elements */
-        TINY: 'tiny' as const,
-        /** 0px - No spacing */
         NONE: 'none' as const,
         /** 20px - Large padding for empty states or specialized sections */
         SECTION_MOBILE: 'container' as const,
-        /** 20px - Large padding for empty states or specialized sections */
-        TITLE_CONTENT: { base: '30px', md: '50px' } as const,
+        /** 50px Desktop / 30px Mobile - Spacing between section title and content */
+        TITLE_CONTENT: 'title-content' as const,
     },
 
     /** Geometry and Border Radius tokens */

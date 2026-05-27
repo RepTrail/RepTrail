@@ -175,7 +175,6 @@ export function AIProtocolForm({ userId, onSuccess }: AIProtocolFormProps) {
                     </Stack>
                 </DomainStepCard>
             )}
-
             {/* 2. CARDIO */}
             {currentStep === 2 && (
                 <DomainStepCard
@@ -185,7 +184,14 @@ export function AIProtocolForm({ userId, onSuccess }: AIProtocolFormProps) {
                     icon={Zap}
                 >
                     <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
-                        <Font variant="sub-tiny" color="zinc-500" weight="black" uppercase tracking="widest">Modalidades Aceitas</Font>
+                        <Font
+                            variant="sub-tiny"
+                            weight="black"
+                            uppercase
+                            tracking="widest"
+                            {...{
+                                color: "zinc-500",
+                            }}>Modalidades Aceitas</Font>
                         <Grid cols={{ base: 2, md: 4 }} gap="element">
                             {['Esteira', 'Bike', 'Escada', 'Corrida', 'HIIT', 'Natação', 'Caminhada', 'Corda'].map(c => (
                                 <FormCheckbox
@@ -199,7 +205,6 @@ export function AIProtocolForm({ userId, onSuccess }: AIProtocolFormProps) {
                     </Stack>
                 </DomainStepCard>
             )}
-
             {/* 3. DIETA */}
             {currentStep === 3 && (
                 <DomainStepCard
@@ -222,14 +227,17 @@ export function AIProtocolForm({ userId, onSuccess }: AIProtocolFormProps) {
                     </Stack>
                 </DomainStepCard>
             )}
-
             {/* ACTION AREA */}
             <Stack gap="container">
                 {error && (
                     <Surface variant="tonal-red" padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM}>
                         <Stack direction="row" align="center" gap="element">
                             <Icon icon={AlertCircle} size="xs" color="red" />
-                            <Font variant="auxiliary" color="red">{error}</Font>
+                            <Font
+                                variant="auxiliary"
+                                {...{
+                                    color: "red",
+                                }}>{error}</Font>
                         </Stack>
                     </Surface>
                 )}
@@ -276,5 +284,5 @@ export function AIProtocolForm({ userId, onSuccess }: AIProtocolFormProps) {
                 )}
             </Stack>
         </Stack>
-    )
+    );
 }

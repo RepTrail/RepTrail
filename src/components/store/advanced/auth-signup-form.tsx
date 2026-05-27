@@ -18,7 +18,7 @@ import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { Modal } from '@/components/store/advanced/modal'
 import { SegmentedSwitch } from '@/components/store/intermediary/segmented-switch'
 import { STUDENT_TERMS, TRAINER_TERMS } from '@/lib/terms-content'
-import { ShieldCheck } from 'lucide-react'      
+import { ShieldCheck } from 'lucide-react'
 
 interface AuthSignUpFormProps {
     fullName?: string
@@ -80,14 +80,28 @@ export function AuthSignUpForm({
                 {/* Header */}
                 <Box padding={STORE_TOKENS.PADDING.CONTAINER}>
                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                        <Font variant="h2" align="center">Criar sua <Font variant="h2" color={STORE_TOKENS.COLORS.BRAND}>Conta</Font></Font>
-                        <Font variant="auxiliary" color={STORE_TOKENS.COLORS.TEXT.MUTED} align="center" uppercase tracking="widest">
+                        <Font variant="h2" align="center">Criar sua <Font
+                            variant="h2"
+                            {...{
+                                color: STORE_TOKENS.COLORS.BRAND,
+                            }}>Conta</Font></Font>
+                        <Font
+                            variant="auxiliary"
+                            align="center"
+                            uppercase
+                            tracking="widest"
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                            }}>
                             Preencha os dados para começar
                         </Font>
                     </Stack>
                 </Box>
 
-                <Divider color={STORE_TOKENS.COLORS.DIVIDER.SUBTLE} />
+                <Divider
+                    {...{
+                        color: STORE_TOKENS.COLORS.DIVIDER.SUBTLE,
+                    }} />
 
                 {/* Form Content */}
                 <Box padding={STORE_TOKENS.PADDING.CONTAINER}>
@@ -95,7 +109,14 @@ export function AuthSignUpForm({
                         <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                             {error && (
                                 <Surface padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM} display="flex" align="center" bg={STORE_TOKENS.COLORS.ERROR} bgOpacity={10} border="subtle" minHeight={44}>
-                                    <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.ERROR} weight="black" uppercase tracking="widest">
+                                    <Font
+                                        variant="sub-tiny"
+                                        weight="black"
+                                        uppercase
+                                        tracking="widest"
+                                        {...{
+                                            color: STORE_TOKENS.COLORS.ERROR,
+                                        }}>
                                         {translateAuthError(error)}
                                     </Font>
                                 </Surface>
@@ -156,8 +177,23 @@ export function AuthSignUpForm({
                                     onChange={setAcceptedTerms}
                                     color={STORE_TOKENS.COLORS.BRAND}
                                 />
-                                <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="bold" uppercase tracking="widest">
-                                    Eu aceito os <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.BRAND} weight="black" cursor="pointer" underline onClick={() => setShowTermsModal(true)}>termos de uso</Font>
+                                <Font
+                                    variant="sub-tiny"
+                                    weight="bold"
+                                    uppercase
+                                    tracking="widest"
+                                    {...{
+                                        color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                    }}>
+                                    Eu aceito os <Font
+                                    variant="sub-tiny"
+                                    weight="black"
+                                    cursor="pointer"
+                                    underline
+                                    onClick={() => setShowTermsModal(true)}
+                                    {...{
+                                        color: STORE_TOKENS.COLORS.BRAND,
+                                    }}>termos de uso</Font>
                                 </Font>
                             </Stack>
 
@@ -174,42 +210,63 @@ export function AuthSignUpForm({
                                     setShowTermsModal(false)
                                 }}
                             >
-                                <Box padding="none" maxHeight="60vh" overflowY="auto" className="scrollbar-thin scrollbar-thumb-zinc-800">
-                                    <Font variant="body" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} whitespace="pre-line">
+                                <Box padding="none" maxHeight="60vh" overflowY="auto">
+                                    <Font
+                                        variant="body"
+                                        whitespace="pre-line"
+                                        {...{
+                                            color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
+                                        }}>
                                         {activeRole === 'trainer' ? TRAINER_TERMS : STUDENT_TERMS}
                                     </Font>
                                 </Box>
                             </Modal>
 
-                        <Button
-                            type="submit"
-                            variant="primary"
-                            fullWidth
-                            rounded={STORE_TOKENS.RADIUS.SYSTEM}
-                            height="anatomy-item"
-                            padding={STORE_TOKENS.PADDING.CONTAINER}
-                            disabled={loading}
-                        >
-                            <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} align="center" justify="center">
+                            <Button
+                                type="submit"
+                                variant="primary"
+                                fullWidth
+                                rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                                height="anatomy-item"
+                                gap="element"
+                                disabled={loading}
+                            >
                                 <Font variant="label-caps">
                                     {loading ? 'Processando...' : 'Criar minha conta'}
                                 </Font>
                                 {!loading && <Icon icon={ArrowRight} size="xs" />}
-                            </Stack>
-                        </Button>
-                    </Stack>
-                </form>
-            </Box>
+                            </Button>
+                        </Stack>
+                    </form>
+                </Box>
 
-            <Divider color={STORE_TOKENS.COLORS.DIVIDER.SUBTLE} />
+                <Divider
+                    {...{
+                        color: STORE_TOKENS.COLORS.DIVIDER.SUBTLE,
+                    }} />
 
-            {/* Footer */}
-            <Box padding={STORE_TOKENS.PADDING.CONTAINER} display="flex" align="center" justify="center" bg={STORE_TOKENS.COLORS.BLACK} bgOpacity={STORE_TOKENS.OPACITY.INTERMEDIATE}>
-                <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED} align="center" weight="bold" uppercase tracking="widest">
-                    Já possui uma conta? <Link href="/auth/login"><Font variant="sub-tiny" color={STORE_TOKENS.COLORS.BRAND} weight="black" cursor="pointer" underline>Fazer login</Font></Link>
-                </Font>
-            </Box>
-        </Stack>
+                {/* Footer */}
+                <Box padding={STORE_TOKENS.PADDING.CONTAINER} display="flex" align="center" justify="center" bg={STORE_TOKENS.COLORS.BLACK} bgOpacity={STORE_TOKENS.OPACITY.INTERMEDIATE}>
+                    <Font
+                        variant="sub-tiny"
+                        align="center"
+                        weight="bold"
+                        uppercase
+                        tracking="widest"
+                        {...{
+                            color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                        }}>
+                        Já possui uma conta? <Link href="/auth/login"><Font
+                        variant="sub-tiny"
+                        weight="black"
+                        cursor="pointer"
+                        underline
+                        {...{
+                            color: STORE_TOKENS.COLORS.BRAND,
+                        }}>Fazer login</Font></Link>
+                    </Font>
+                </Box>
+            </Stack>
         </Surface >
-    )
+    );
 }

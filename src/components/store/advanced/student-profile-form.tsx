@@ -224,7 +224,14 @@ export function StudentProfileForm({
                     {/* Footer */}
                     <Stack direction={{ base: 'col', md: 'row' }} align="center" justify="between" gap={STORE_TOKENS.SPACING.CONTAINER}>
                         <Box flex1>
-                            <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="bold" uppercase tracking="tight">
+                            <Font
+                                variant="sub-tiny"
+                                weight="bold"
+                                uppercase
+                                tracking="tight"
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                }}>
                                 Após salvar, algumas informações podem levar alguns segundos para atualizar em todo o sistema.
                             </Font>
                         </Box>
@@ -238,6 +245,6 @@ export function StudentProfileForm({
                 </Stack>
             </form>
         </Surface>
-    )
+    );
 }
 

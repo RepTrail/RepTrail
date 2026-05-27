@@ -30,13 +30,18 @@ export function WorkoutRestState({
 
     return (
         <Stack gap={STORE_TOKENS.SPACING.SECTION} padding={STORE_TOKENS.PADDING.CONTAINER} flex1 align="center" justify="center" position="relative">
-            <BackgroundIcon icon={Play} size="100" opacity={10} top={0} right={0} />
-
+            <BackgroundIcon
+                icon={Play}
+                size="100"
+                opacity={10}
+                {...{
+                    top: 0,
+                    right: 0,
+                }} />
             {/* Top Icon and Badge */}
             <Stack align="center" gap="element">
                 <Badge label="Descanso Ativo" variant="glass" color={colorTheme} icon={Timer} animatePulse />
             </Stack>
-
             {/* Circle Timer */}
             <Box 
                 width={220} 
@@ -56,29 +61,57 @@ export function WorkoutRestState({
                 }}
             >
                 <Stack align="center" gap="element">
-                    <Font variant="display" color={colorTheme}>
+                    <Font
+                        variant="display"
+                        {...{
+                            color: colorTheme,
+                        }}>
                         {minutes}:{seconds.toString().padStart(2, '0')}
                     </Font>
-                    <Font variant="label-caps" color="SECONDARY">
+                    <Font
+                        variant="label-caps"
+                        {...{
+                            color: "SECONDARY",
+                        }}>
                         Recuperar
                     </Font>
                 </Stack>
             </Box>
-
             {nextSet && (
                 <Box width="full" maxWidth="md">
                     <Surface variant="glass" padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM} border="standard">
                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                             <Stack direction="row" align="center" gap="element">
-                                <Font variant="sub-tiny" weight="black" color="zinc-500" uppercase tracking="widest">A Seguir</Font>
+                                <Font
+                                    variant="sub-tiny"
+                                    weight="black"
+                                    uppercase
+                                    tracking="widest"
+                                    {...{
+                                        color: "zinc-500",
+                                    }}>A Seguir</Font>
                                 <Box flex1 height="px" bg="zinc" bgOpacity={20} />
                             </Stack>
                             <Stack direction="row" align="center" justify="between" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                    <Font variant={nextSet.isNewExercise ? 'h2' : 'h3'} weight="black" color={nextSet.variant === 'orange' ? 'orange' : nextSet.variant === 'emerald' ? 'emerald' : 'blue'} uppercase italic tracking="tight">
+                                    <Font
+                                        variant={nextSet.isNewExercise ? 'h2' : 'h3'}
+                                        weight="black"
+                                        uppercase
+                                        italic
+                                        tracking="tight"
+                                        {...{
+                                            color: nextSet.variant === 'orange' ? 'orange' : nextSet.variant === 'emerald' ? 'emerald' : 'blue',
+                                        }}>
                                         {nextSet.isNewExercise ? nextSet.exerciseName : `${nextSet.label} ${nextSet.set}`}
                                     </Font>
-                                    <Font variant="tiny" color="zinc-500" weight="bold" uppercase>{nextSet.isNewExercise ? "Novo Exercício" : "Próxima Série do Bloco"}</Font>
+                                    <Font
+                                        variant="tiny"
+                                        weight="bold"
+                                        uppercase
+                                        {...{
+                                            color: "zinc-500",
+                                        }}>{nextSet.isNewExercise ? "Novo Exercício" : "Próxima Série do Bloco"}</Font>
                                 </Stack>
                                 <Icon icon={ChevronRight} size="sm" color="zinc-700" />
                             </Stack>
@@ -86,15 +119,14 @@ export function WorkoutRestState({
                     </Surface>
                 </Box>
             )}
-
             <Box width="full" maxWidth="md">
                 <Button variant="outline-zinc" fullWidth onClick={onSkip}>
                     <Stack direction="row" align="center" gap="element">
                         <Icon icon={X} size="xs" />
-                        <span>Pular Descanso</span>
+                        Pular Descanso
                     </Stack>
                 </Button>
             </Box>
         </Stack>
-    )
+    );
 }

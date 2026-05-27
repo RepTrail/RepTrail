@@ -4,6 +4,7 @@ import { Stack } from '@/components/store/base/stack';
 import { GlassPanel } from '@/components/store/base/surface';
 import { Font } from '@/components/store/base/font';
 import { Icon } from '@/components/store/base/icon';
+import { Box } from '@/components/store/base/box';
 import { Input as DSInput } from '@/components/store/base/input';
 import { STORE_TOKENS } from '@/components/store/constants/tokens';
 import { Mail, Phone } from 'lucide-react';
@@ -41,9 +42,18 @@ export function StudentCreateForm({
                         value={placeholderEmail}
                         onChange={(e) => setPlaceholderEmail(e.target.value)}
                     />
-                    <Font variant="sub-tiny" color="zinc-600" weight="bold" uppercase tracking="widest" className="px-1">
-                        O aluno precisa criar a conta com esse email para sincronizar o protocolo automaticamente.
-                    </Font>
+                    <Box paddingX={2.5}>
+                        <Font
+                            variant="sub-tiny"
+                            weight="bold"
+                            uppercase
+                            tracking="widest"
+                            {...{
+                                color: "zinc-600",
+                            }}>
+                            O aluno precisa criar a conta com esse email para sincronizar o protocolo automaticamente.
+                        </Font>
+                    </Box>
                 </Stack>
 
                 <DSInput
@@ -55,9 +65,18 @@ export function StudentCreateForm({
                     onChange={(e) => setPlaceholderWhatsapp(e.target.value)}
                 />
 
-                <Font variant="sub-tiny" color="primary" weight="black" uppercase tracking="widest" className="px-1">
-                    * O email e WhatsApp são fundamentais para o envio automático do acesso.
-                </Font>
+                <Box paddingX={2.5}>
+                    <Font
+                        variant="sub-tiny"
+                        weight="black"
+                        uppercase
+                        tracking="widest"
+                        {...{
+                            color: "primary",
+                        }}>
+                        * O email e WhatsApp são fundamentais para o envio automático do acesso.
+                    </Font>
+                </Box>
             </Stack>
         </GlassPanel>
     );

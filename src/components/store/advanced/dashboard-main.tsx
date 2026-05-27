@@ -49,14 +49,15 @@ export function DashboardMain({
   const rest = words.slice(1).join(' ')
 
   return (
-    <Main 
-      fullWidth 
-      paddingX={STORE_TOKENS.PADDING.CONTAINER} 
-      paddingY={{ base: 'section', md: 'dashboard_pc' }}
-      minHeight="screen"
+    <Main
+      fullWidth
       display="flex"
       direction="col"
-    >
+      {...{
+        paddingX: STORE_TOKENS.PADDING.CONTAINER,
+        paddingY: { base: 'section', md: 'dashboard_pc' },
+        minHeight: "screen",
+      }}>
       <Stack flex1 gap={{ base: STORE_TOKENS.SPACING.EMPTY_STATE, md: STORE_TOKENS.SPACING.SECTION }}>
 
         {/* Header Section */}
@@ -64,7 +65,11 @@ export function DashboardMain({
           <Inline gap={STORE_TOKENS.SPACING.ELEMENT}>
             {icon && <Icon icon={icon} color={primaryColor as any} size="lg" />}
             {auxiliaryText && (
-              <Font variant="auxiliary" color={primaryColor as any}>
+              <Font
+                variant="auxiliary"
+                {...{
+                  color: primaryColor as any,
+                }}>
                 {auxiliaryText}
               </Font>
             )}
@@ -72,7 +77,12 @@ export function DashboardMain({
 
           <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
             <Font variant="h1" nowrap>
-              {first} {rest && <Font variant="h1" color={primaryColor} nowrap>{rest}</Font>}
+              {first} {rest && <Font
+              variant="h1"
+              nowrap
+              {...{
+                color: primaryColor,
+              }}>{rest}</Font>}
             </Font>
             {subtitle && <Font variant="description">{subtitle}</Font>}
           </Stack>
@@ -97,12 +107,16 @@ export function DashboardMain({
           <Box shrink={0}>
             <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER}>
               <Inline justify="between">
-                <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>RepTrail Dashboard v2.0 - 2026</Font>
+                <Font
+                  variant="sub-tiny"
+                  {...{
+                    color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                  }}>RepTrail Dashboard v2.0 - 2026</Font>
               </Inline>
             </GlassPanel>
           </Box>
         )}
       </Stack>
     </Main>
-  )
+  );
 }

@@ -5,8 +5,14 @@ import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
 import { useQueryClient } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { ENTITIES } from '@/lib/outbox-db'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { Button } from '@/components/store/base/button'
+import { Input } from '@/components/store/base/input'
+import { Box, BoxColor } from '@/components/store/base/box'
+import { Stack } from '@/components/store/base/stack'
+import { Font, FontColor } from '@/components/store/base/font'
+import { Icon } from '@/components/store/base/icon'
+import { Separator } from '@/components/store/base/separator'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { ChevronLeft, CheckCircle, Save, Dumbbell } from 'lucide-react'
 import Link from 'next/link'
 import { useToast } from '@/hooks/use-toast'
@@ -30,14 +36,13 @@ interface WorkoutLogReviewProps {
     loads: Load[]
 }
 
-const setTypeConfig: Record<string, { label: string; color: string; bg: string; border: string }> = {
-    WARMUP: { label: 'Aquec.', color: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/20' },
-    FEEDER: { label: 'Feeder', color: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/20' },
-    WORKING: { label: 'Trab.', color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' },
+const setTypeConfig: Record<string, { label: string; color: FontColor; bg: BoxColor; borderOpacity: number }> = {
+    WARMUP: { label: 'Aquec.', color: 'amber', bg: 'amber', borderOpacity: 20 },
+    FEEDER: { label: 'Feeder', color: 'blue', bg: 'blue', borderOpacity: 20 },
+    WORKING: { label: 'Trab.', color: 'emerald', bg: 'emerald', borderOpacity: 20 },
 }
 
-// Fallback configuration when set_type is unknown
-const DEFAULT_SET_TYPE = { label: 'Desconhecido', color: 'text-gray-400', bg: 'bg-gray-500/10', border: 'border-gray-500/20' };
+const DEFAULT_SET_TYPE = { label: 'Desconhecido', color: 'zinc' as FontColor, bg: 'zinc' as BoxColor, borderOpacity: 20 }
 
 export function WorkoutLogReview({ logId, userId, workoutName, completedAt, loads }: WorkoutLogReviewProps) {
     const { toast } = useToast()
@@ -61,7 +66,7 @@ export function WorkoutLogReview({ logId, userId, workoutName, completedAt, load
         queryKey: QUERY_KEYS.workouts.logs(userId),
         entity: ENTITIES.WORKOUT_LOG,
         actionName: 'update-load-entry',
-        mutationFn: async () => {}, // Single-writer
+        mutationFn: async () => { }, // Single-writer
     })
 
     // Group loads by exercise name
@@ -78,7 +83,7 @@ export function WorkoutLogReview({ logId, userId, workoutName, completedAt, load
             const w = parseFloat(weight)
             const r = parseInt(reps)
             if (isNaN(w) || isNaN(r)) return
-            
+
             updateMutation({ loadId, weightKg: w, repsPerformed: r })
         })
 
@@ -90,106 +95,188 @@ export function WorkoutLogReview({ logId, userId, workoutName, completedAt, load
     const time = new Date(completedAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
 
     return (
-        <div className="max-w-lg mx-auto space-y-4 md:pb-32">
-            {/* Header */}
-            <div className="space-y-3">
-                <Link
-                    href="/dashboard/student"
-                    className="flex items-center gap-2 text-zinc-500 hover:text-white text-[10px] font-black uppercase tracking-widest transition-colors"
+        <Box display="flex" justify="center" fullWidth>
+            <Box maxWidth="lg" display="flex" direction="col" gap="container" fullWidth>
+                {/* Header */}
+                <Stack gap="element">
+                    <Button variant="ghost" size="xs" gap="tiny" asChild justify="start">
+                        <Link href="/dashboard/student">
+                            <Icon icon={ChevronLeft} size="xs" />
+                            Voltar
+                        </Link>
+                    </Button>
+
+                    <Box display="flex" align="start" gap="container">
+                        <Box padding="element" bg="emerald" bgOpacity={10} rounded="system" border borderColor="emerald" borderOpacity={20}>
+                            <Icon icon={CheckCircle} size="md" color="emerald" />
+                        </Box>
+                        <Stack gap="tiny">
+                            <Font
+                                variant="h3"
+                                weight="black"
+                                uppercase
+                                italic
+                                {...{
+                                    color: "white",
+                                }}>
+                                {workoutName}
+                            </Font>
+                            <Box display="flex" align="center" gap="tiny">
+                                <Icon icon={CheckCircle} size="xs" color="emerald" />
+                                <Font
+                                    variant="sub-tiny"
+                                    weight="bold"
+                                    uppercase
+                                    tracking="widest"
+                                    {...{
+                                        color: "zinc-400",
+                                    }}>
+                                    Revisado em {date} às {time} • {Array.isArray(loads) ? loads.length : 0} séries
+                                </Font>
+                            </Box>
+                        </Stack>
+                    </Box>
+                </Stack>
+
+                {/* Exercises */}
+                <Stack gap="element">
+                    {Object.entries(grouped).map(([exerciseName, exerciseLoads]) => (
+                        <Box key={exerciseName} bg="zinc" bgOpacity={5} border borderColor="zinc" borderOpacity={10} rounded="system" overflow="hidden" display="flex" direction="col">
+                            {/* Exercise title */}
+                            <Box display="flex" align="center" gap="tiny" padding="element" bg="zinc" bgOpacity={10}>
+                                <Icon icon={Dumbbell} size="sm" color="orange" opacity={70} />
+                                <Font
+                                    variant="body-sm"
+                                    weight="black"
+                                    uppercase
+                                    italic
+                                    {...{
+                                        color: "white",
+                                    }}>
+                                    {exerciseName}
+                                </Font>
+                            </Box>
+                            <Separator opacity={5} />
+
+                            {/* Sets */}
+                            <Box display="flex" direction="col">
+                                {exerciseLoads.map((load, setIdx) => {
+                                    const cfg = setTypeConfig[load.set_type] ?? DEFAULT_SET_TYPE
+                                    const edit = edits[load.id] || { weight: '0', reps: '0' }
+                                    const isLast = setIdx === exerciseLoads.length - 1
+
+                                    return (
+                                        <Stack key={load.id} gap={STORE_TOKENS.SPACING.NONE}>
+                                            <Box
+                                                display="flex"
+                                                align="center"
+                                                gap="container"
+                                                padding="element"
+                                            >
+                                                {/* Set type badge */}
+                                                <Box
+                                                    bg={cfg.bg}
+                                                    bgOpacity={10}
+                                                    border
+                                                    borderColor={cfg.bg}
+                                                    borderOpacity={80}
+                                                    rounded="system"
+                                                    padding={STORE_TOKENS.PADDING.ELEMENT}
+                                                    shrink={0}
+                                                >
+                                                    <Font
+                                                        variant="sub-tiny"
+                                                        weight="black"
+                                                        uppercase
+                                                        {...{
+                                                            color: cfg.color,
+                                                        }}>
+                                                        {cfg.label}
+                                                    </Font>
+                                                </Box>
+
+                                                {/* Weight input */}
+                                                <Box flex={1} display="flex" align="center" gap="tiny">
+                                                    <Input
+                                                        type="number"
+                                                        step="0.5"
+                                                        min="0"
+                                                        value={edit.weight}
+                                                        onChange={e => setEdits(prev => ({ ...prev, [load.id]: { ...prev[load.id], weight: e.target.value } }))}
+                                                        width={80}
+                                                        textAlign="center"
+                                                        weight="bold"
+                                                        size="sm"
+                                                    />
+                                                    <Font
+                                                        variant="sub-tiny"
+                                                        weight="bold"
+                                                        {...{
+                                                            color: "zinc-500",
+                                                        }}>kg</Font>
+                                                </Box>
+
+                                                <Font
+                                                    variant="sub-tiny"
+                                                    weight="black"
+                                                    {...{
+                                                        color: "zinc-500",
+                                                    }}>×</Font>
+
+                                                {/* Reps input */}
+                                                <Box display="flex" align="center" gap="tiny">
+                                                    <Input
+                                                        type="number"
+                                                        min="0"
+                                                        value={edit.reps}
+                                                        onChange={e => setEdits(prev => ({ ...prev, [load.id]: { ...prev[load.id], reps: e.target.value } }))}
+                                                        width={64}
+                                                        textAlign="center"
+                                                        weight="bold"
+                                                        size="sm"
+                                                    />
+                                                    <Font
+                                                        variant="sub-tiny"
+                                                        weight="bold"
+                                                        {...{
+                                                            color: "zinc-500",
+                                                        }}>reps</Font>
+                                                </Box>
+                                            </Box>
+                                            {!isLast && <Separator opacity={3} />}
+                                        </Stack>
+                                    );
+                                })}
+                            </Box>
+                        </Box>
+                    ))}
+                </Stack>
+
+                {/* Save button — floating at the bottom */}
+                <Box
+                    position="fixed"
+                    bottom={24}
+                    left={0}
+                    right={0}
+                    zIndex={50}
+                    display="flex"
+                    justify="center"
+                    pointerEvents="none"
                 >
-                    <ChevronLeft className="w-4 h-4" />
-                    Voltar
-                </Link>
-
-                <div className="flex items-start gap-4">
-                    <div className="p-3 bg-emerald-500/10 rounded-system border border-emerald-500/20">
-                        <CheckCircle className="w-6 h-6 text-emerald-500" />
-                    </div>
-                    <div className="space-y-2 sm:space-y-5">
-                        <h1 className="text-3xl font-black text-white italic uppercase tracking-tight leading-none">
-                            {workoutName}
-                        </h1>
-                        <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest flex items-center gap-2">
-                            <CheckCircle className="w-3.5 h-3.5 text-emerald-500" />
-                            Revisado em {date} às {time} • {Array.isArray(loads) ? loads.length : 0} séries
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            {/* Exercises */}
-            <div className="space-y-2">
-                {Object.entries(grouped).map(([exerciseName, exerciseLoads]) => (
-                    <div key={exerciseName} className="bg-zinc-900/50 border border-zinc-800/60 rounded-system overflow-hidden">
-                        {/* Exercise title */}
-                        <div className="flex items-center gap-3 px-4 py-3 border-b border-zinc-800/40 bg-zinc-900/80">
-                            <Dumbbell className="w-4 h-4 text-orange-500/70 flex-shrink-0" />
-                            <p className="text-sm font-black text-white italic uppercase tracking-tight">
-                                {exerciseName}
-                            </p>
-                        </div>
-
-                        {/* Sets */}
-                        <div className="divide-y divide-zinc-800/30">
-                            {exerciseLoads.map((load, setIdx) => {
-                                const cfg = setTypeConfig[load.set_type] ?? DEFAULT_SET_TYPE
-
-// later in JSX
-
-                                const edit = edits[load.id] || { weight: '0', reps: '0' }
-
-                                return (
-                                    <div key={load.id} className="flex items-center gap-3 px-4 py-3">
-                                        {/* Set type badge */}
-                                        <span className={`flex-shrink-0 text-[9px] font-black px-2 py-0.5 rounded-system border uppercase ${cfg?.color ?? ''} ${cfg?.bg ?? ''} ${cfg?.border ?? ''}`}>
-                                            {cfg.label}
-                                        </span>
-
-                                        {/* Weight input */}
-                                        <div className="flex-1 flex items-center gap-1.5">
-                                            <Input
-                                                type="number"
-                                                step="0.5"
-                                                min="0"
-                                                value={edit.weight}
-                                                onChange={e => setEdits(prev => ({ ...prev, [load.id]: { ...prev[load.id], weight: e.target.value } }))}
-                                                className="h-9 bg-zinc-950 border-zinc-700 text-white text-center font-bold rounded-system text-sm focus:border-orange-500/50 w-20"
-                                            />
-                                            <span className="text-[10px] text-zinc-500 font-bold">kg</span>
-                                        </div>
-
-                                        <span className="text-zinc-700 text-xs font-black">×</span>
-
-                                        {/* Reps input */}
-                                        <div className="flex items-center gap-1.5">
-                                            <Input
-                                                type="number"
-                                                min="0"
-                                                value={edit.reps}
-                                                onChange={e => setEdits(prev => ({ ...prev, [load.id]: { ...prev[load.id], reps: e.target.value } }))}
-                                                className="h-9 bg-zinc-950 border-zinc-700 text-white text-center font-bold rounded-system text-sm focus:border-orange-500/50 w-16"
-                                            />
-                                            <span className="text-[10px] text-zinc-500 font-bold">reps</span>
-                                        </div>
-                                    </div>
-                                )
-                            })}
-                        </div>
-                    </div>
-                ))}
-            </div>
-
-            {/* Save button — floating at the bottom */}
-            <div className="fixed bottom-6 left-6 right-6 md:bottom-8 md:left-1/2 md:-translate-x-1/2 md:max-w-lg md:w-full z-50">
-                <Button
-                    onClick={handleSaveAll}
-                    className="w-full h-14 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black italic uppercase tracking-tight text-base rounded-system shadow-[0_8px_32px_rgba(16,185,129,0.3)] transition-all flex items-center justify-center gap-3 active:scale-[0.98] border-t border-emerald-400/20"
-                >
-                    <Save className="w-5 h-5" />
-                    Salvar Alterações
-                </Button>
-            </div>
-        </div>
-    )
+                    <Box maxWidth="sm" fullWidth pointerEvents="auto">
+                        <Button
+                            onClick={handleSaveAll}
+                            variant="emerald"
+                            size="lg"
+                            fullWidth
+                            gap="element"
+                        >
+                            <Icon icon={Save} size="sm" />
+                            Salvar Alterações
+                        </Button>
+                    </Box>
+                </Box>
+            </Box>
+        </Box>
+    );
 }
-

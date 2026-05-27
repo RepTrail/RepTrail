@@ -33,14 +33,22 @@ export function Callout({
     <Box padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM} bg={bg as any} bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} border borderColor={border as any}>
       <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
         {title && (
-          <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={color as any}>
+          <Font
+            {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+            {...{
+              color: color as any,
+            }}>
             {title}
           </Font>
         )}
-        <Font variant="body-sm" color={STORE_TOKENS.COLORS.TEXT.SECONDARY}>
+        <Font
+          variant="body-sm"
+          {...{
+            color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
+          }}>
           {children}
         </Font>
       </Stack>
     </Box>
-  )
+  );
 }

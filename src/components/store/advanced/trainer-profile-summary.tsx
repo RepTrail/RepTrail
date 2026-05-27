@@ -72,16 +72,34 @@ export function TrainerProfileSummary({ name, email, avatarUrl, trainerCode }: T
                 />
 
                 <Stack align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <Font variant="h3" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} align="center">
+                    <Font
+                        variant="h3"
+                        align="center"
+                        {...{
+                            color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                        }}>
                         {name}
                     </Font>
-                    <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="black" uppercase tracking="widest" align="center">
+                    <Font
+                        variant="sub-tiny"
+                        weight="black"
+                        uppercase
+                        tracking="widest"
+                        align="center"
+                        {...{
+                            color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                        }}>
                         {email}
                     </Font>
                 </Stack>
 
                 {publicHref ? (
-                    <Link href={publicHref} target="_blank" className="w-full">
+                    <Link
+                        href={publicHref}
+                        target="_blank"
+                        {...{
+                            className: "w-full",
+                        }}>
                         <Button variant="outline-orange" fullWidth size="lg">
                             <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                 <Icon icon={ShieldCheck} size="xs" />
@@ -103,5 +121,5 @@ export function TrainerProfileSummary({ name, email, avatarUrl, trainerCode }: T
                 )}
             </Stack>
         </Surface>
-    )
+    );
 }

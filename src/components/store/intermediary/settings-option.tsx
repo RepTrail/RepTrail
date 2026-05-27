@@ -62,10 +62,26 @@ export function SettingsOption({
                         <Icon icon={icon} size="sm" color={variant === 'zinc' ? 'zinc-400' : variant} />
                     </Box>
                     <Stack gap="none" flex1>
-                        <Font variant="body-sm" weight="black" color={variant === 'zinc' ? 'white' : variant} uppercase italic tracking="tight">
+                        <Font
+                            variant="body-sm"
+                            weight="black"
+                            uppercase
+                            italic
+                            tracking="tight"
+                            {...{
+                                color: variant === 'zinc' ? 'white' : variant,
+                            }}>
                             {title}
                         </Font>
-                        <Font variant="sub-tiny" color={variant === 'zinc' ? 'zinc-500' : variant} opacity={variant === 'zinc' ? 100 : 70} weight="bold" uppercase tracking="widest">
+                        <Font
+                            variant="sub-tiny"
+                            opacity={variant === 'zinc' ? 100 : 70}
+                            weight="bold"
+                            uppercase
+                            tracking="widest"
+                            {...{
+                                color: variant === 'zinc' ? 'zinc-500' : variant,
+                            }}>
                             {subtitle}
                         </Font>
                     </Stack>
@@ -74,7 +90,13 @@ export function SettingsOption({
                 <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                     {badge && (
                         <Box padding="element" bg={variant} bgOpacity={10} border borderColor={`${variant}/20`} rounded={STORE_TOKENS.RADIUS.FULL}>
-                            <Font variant="sub-tiny" weight="black" color={variant} uppercase>{badge}</Font>
+                            <Font
+                                variant="sub-tiny"
+                                weight="black"
+                                uppercase
+                                {...{
+                                    color: variant,
+                                }}>{badge}</Font>
                         </Box>
                     )}
                     {children ? (

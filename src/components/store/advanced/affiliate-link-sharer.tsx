@@ -38,14 +38,28 @@ export function AffiliateLinkSharer({ token }: AffiliateLinkSharerProps) {
         <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM}>
             <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="black" uppercase tracking="widest">
+                    <Font
+                        variant="sub-tiny"
+                        weight="black"
+                        uppercase
+                        tracking="widest"
+                        {...{
+                            color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                        }}>
                         Seu Link de Afiliado
                     </Font>
                     <Stack direction="row" gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
                         <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER} flex1 rounded={STORE_TOKENS.RADIUS.SYSTEM}>
                             <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                                 <Icon icon={LinkIcon} color={STORE_TOKENS.COLORS.BRAND} size="xs" />
-                                <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.BRAND} weight="bold" mono truncate>
+                                <Font
+                                    variant="sub-tiny"
+                                    weight="bold"
+                                    mono
+                                    truncate
+                                    {...{
+                                        color: STORE_TOKENS.COLORS.BRAND,
+                                    }}>
                                     {affiliateLink || 'Gerando link...'}
                                 </Font>
                             </Stack>
@@ -61,16 +75,34 @@ export function AffiliateLinkSharer({ token }: AffiliateLinkSharerProps) {
                         </Button>
 
                         <Stack gap="none" align="center">
-                            <Font variant="heading" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} weight="black">10%</Font>
-                            <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="black" uppercase italic tracking="widest">De Comissão</Font>
+                            <Font
+                                variant="heading"
+                                weight="black"
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                                }}>10%</Font>
+                            <Font
+                                variant="sub-tiny"
+                                weight="black"
+                                uppercase
+                                italic
+                                tracking="widest"
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                }}>De Comissão</Font>
                         </Stack>
                     </Stack>
                 </Stack>
 
-                <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.DIM} italic>
+                <Font
+                    variant="sub-tiny"
+                    italic
+                    {...{
+                        color: STORE_TOKENS.COLORS.TEXT.DIM,
+                    }}>
                     Cookie persistido por 30 dias • Token oculto ao usuário • Conversões automáticas
                 </Font>
             </Stack>
         </GlassPanel>
-    )
+    );
 }

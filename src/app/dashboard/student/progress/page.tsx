@@ -5,6 +5,10 @@ import { getQueryClient } from '@/lib/get-query-client'
 import { PREFETCH_REGISTRY } from '@/lib/prefetch-registry'
 import { StudentProgressPageContent } from '@/components/store/advanced/student-progress-content'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
+import { Box } from '@/components/store/base/box'
+import { Stack } from '@/components/store/base/stack'
+import { Grid } from '@/components/store/base/grid'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 export default async function StudentProgressPage() {
     const headerList = await headers()
@@ -32,7 +36,18 @@ export default async function StudentProgressPage() {
             contextLabel="Saúde & Performance"
             showTabs={false}
         >
-            <Suspense fallback={<div className="animate-pulse space-y-10"><div className="h-10 w-48 bg-zinc-900 rounded-xl" /><div className="grid grid-cols-1 md:grid-cols-3 gap-6"><div className="h-32 bg-zinc-900 rounded-2xl" /><div className="h-32 bg-zinc-900 rounded-2xl" /><div className="h-32 bg-zinc-900 rounded-2xl" /></div></div>}>
+            <Suspense fallback={
+                <Box fullWidth>
+                    <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
+                        <Box height={10} width={48} bg="zinc" bgOpacity={5} rounded="system" />
+                        <Grid cols={1} mdCols={3} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                            <Box height={32} bg="zinc" bgOpacity={5} rounded="system" />
+                            <Box height={32} bg="zinc" bgOpacity={5} rounded="system" />
+                            <Box height={32} bg="zinc" bgOpacity={5} rounded="system" />
+                        </Grid>
+                    </Stack>
+                </Box>
+            }>
                 <HydrationBoundary state={dehydrate(queryClient)}>
                     <StudentProgressPageContent userId={userId} />
                 </HydrationBoundary>

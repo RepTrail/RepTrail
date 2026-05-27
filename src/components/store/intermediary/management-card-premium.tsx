@@ -130,11 +130,20 @@ export function ManagementCardPremium({
                 {/* Body Content */}
                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} variant="h3" color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
+                        <Font
+                            {...STORE_TOKENS.TYPOGRAPHY.HEADING}
+                            variant="h3"
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                            }}>
                             {title}
                         </Font>
                         {description && (
-                            <Font {...STORE_TOKENS.TYPOGRAPHY.DESCRIPTION} color={STORE_TOKENS.COLORS.TEXT.DIM}>
+                            <Font
+                                {...STORE_TOKENS.TYPOGRAPHY.DESCRIPTION}
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.DIM,
+                                }}>
                                 {description}
                             </Font>
                         )}
@@ -171,10 +180,18 @@ export function ManagementCardPremium({
                 <Stack gap={STORE_TOKENS.SPACING.CONTAINER} shrink={0}>
                 {/* Meta Info */}
                 <Stack direction="row" align="center" justify="between">
-                    <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.MUTED}>
+                    <Font
+                        {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                        {...{
+                            color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                        }}>
                         {mainStat.value} {mainStat.label}
                     </Font>
-                    <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.TEXT.MUTED}>
+                    <Font
+                        {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                        {...{
+                            color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                        }}>
                         {date}
                     </Font>
                 </Stack>
@@ -187,7 +204,11 @@ export function ManagementCardPremium({
                                 <Button variant="primary" flex1 onClick={onEdit} shine>
                                     <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                         <Icon icon={Edit3} size="xs" color={STORE_TOKENS.COLORS.BLACK} />
-                                        <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.BLACK}>{resolvedEditLabel}</Font>
+                                        <Font
+                                            {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                                            {...{
+                                                color: STORE_TOKENS.COLORS.BLACK,
+                                            }}>{resolvedEditLabel}</Font>
                                     </Stack>
                                 </Button>
                                 {onDuplicate && (
@@ -218,7 +239,11 @@ export function ManagementCardPremium({
                                 >
                                     <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                         <Icon icon={Edit3} size="xs" color={STORE_TOKENS.COLORS.BLACK} />
-                                        <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.BLACK}>EDITAR</Font>
+                                        <Font
+                                            {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                                            {...{
+                                                color: STORE_TOKENS.COLORS.BLACK,
+                                            }}>EDITAR</Font>
                                     </Stack>
                                 </Button>
                                 {onDuplicate && (
@@ -246,5 +271,5 @@ export function ManagementCardPremium({
                 </Stack>
             </Stack>
         </GlassPanel>
-    )
+    );
 }

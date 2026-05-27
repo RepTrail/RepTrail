@@ -13,11 +13,19 @@ export function PdfFeatureBadges() {
             <Stack direction="row" gap={STORE_TOKENS.SPACING.CONTAINER} wrap="wrap">
                 <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                     <Icon icon={Sparkles} size="xs" color="zinc-600" />
-                    <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color="zinc-600">AI Powered Extraction</Font>
+                    <Font
+                        {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                        {...{
+                            color: "zinc-600",
+                        }}>AI Powered Extraction</Font>
                 </Stack>
                 <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                     <Icon icon={Check} size="xs" color="zinc-600" />
-                    <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color="zinc-600">Auto Structured JSON</Font>
+                    <Font
+                        {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                        {...{
+                            color: "zinc-600",
+                        }}>Auto Structured JSON</Font>
                 </Stack>
             </Stack>
         </Stack>

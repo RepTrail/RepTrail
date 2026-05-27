@@ -71,7 +71,11 @@ export function AdminTopProductsPanel() {
                                 minWidth={40}
                                 minHeight={40}
                             >
-                                <Font variant="label-caps" color={index === 0 ? STORE_TOKENS.COLORS.WARNING : STORE_TOKENS.COLORS.TEXT.SECONDARY}>
+                                <Font
+                                    variant="label-caps"
+                                    {...{
+                                        color: index === 0 ? STORE_TOKENS.COLORS.WARNING : STORE_TOKENS.COLORS.TEXT.SECONDARY,
+                                    }}>
                                     #{index + 1}
                                 </Font>
                             </Box>
@@ -119,11 +123,20 @@ export function AdminTopProductsPanel() {
                         <Stack align="end" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                             <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                                 <Icon icon={MousePointer2} size="xs" color={STORE_TOKENS.COLORS.SUCCESS} />
-                                <Font weight="black" variant="heading" color={STORE_TOKENS.COLORS.SUCCESS}>
+                                <Font
+                                    weight="black"
+                                    variant="heading"
+                                    {...{
+                                        color: STORE_TOKENS.COLORS.SUCCESS,
+                                    }}>
                                     {product.clicks}
                                 </Font>
                             </Stack>
-                            <Font variant="label-caps" color={STORE_TOKENS.COLORS.TEXT.MUTED}>
+                            <Font
+                                variant="label-caps"
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                }}>
                                 Cliques
                             </Font>
                         </Stack>
@@ -146,5 +159,5 @@ export function AdminTopProductsPanel() {
                 </GlassPanel>
             ))}
         </Stack>
-    )
+    );
 }

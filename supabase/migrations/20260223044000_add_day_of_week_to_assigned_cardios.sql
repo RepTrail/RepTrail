@@ -1,2 +1,0 @@
--- Column day_of_week already exists in assigned_cardios table
--- This migration can be deleted

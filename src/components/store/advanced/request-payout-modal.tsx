@@ -95,8 +95,18 @@ export function RequestPayoutModal({ isOpen, onClose, availableBalance }: Reques
                 {/* Balance Summary */}
                 <Box padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM} bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.LOW} border>
                     <Inline justify="between" align="center">
-                        <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} weight="medium">Saldo Disponível:</Font>
-                        <Font variant="body" color={STORE_TOKENS.COLORS.BRAND} weight="black">
+                        <Font
+                            variant="description"
+                            weight="medium"
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
+                            }}>Saldo Disponível:</Font>
+                        <Font
+                            variant="body"
+                            weight="black"
+                            {...{
+                                color: STORE_TOKENS.COLORS.BRAND,
+                            }}>
                             R$ {availableBalance.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                         </Font>
                     </Inline>
@@ -106,7 +116,14 @@ export function RequestPayoutModal({ isOpen, onClose, availableBalance }: Reques
                     {/* Amount Input */}
                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                         <Inline justify="between" align="center">
-                            <Font variant="sub-tiny" weight="black" uppercase tracking="widest" color={STORE_TOKENS.COLORS.TEXT.SECONDARY}>
+                            <Font
+                                variant="sub-tiny"
+                                weight="black"
+                                uppercase
+                                tracking="widest"
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
+                                }}>
                                 Valor do Saque (R$)
                             </Font>
                             <Button
@@ -114,7 +131,12 @@ export function RequestPayoutModal({ isOpen, onClose, availableBalance }: Reques
                                 padding="none"
                                 onClick={handleMaxAmount}
                             >
-                                <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.BRAND} weight="black">SAQUE TOTAL</Font>
+                                <Font
+                                    variant="sub-tiny"
+                                    weight="black"
+                                    {...{
+                                        color: STORE_TOKENS.COLORS.BRAND,
+                                    }}>SAQUE TOTAL</Font>
                             </Button>
                         </Inline>
 
@@ -129,13 +151,24 @@ export function RequestPayoutModal({ isOpen, onClose, availableBalance }: Reques
 
                         <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                             <Icon icon={AlertCircle} size="xs" color={STORE_TOKENS.COLORS.TEXT.MUTED} />
-                            <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>Mínimo de R$ 50,00</Font>
+                            <Font
+                                variant="sub-tiny"
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                }}>Mínimo de R$ 50,00</Font>
                         </Inline>
                     </Stack>
 
                     {/* PIX Key Input */}
                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        <Font variant="sub-tiny" weight="black" uppercase tracking="widest" color={STORE_TOKENS.COLORS.TEXT.SECONDARY}>
+                        <Font
+                            variant="sub-tiny"
+                            weight="black"
+                            uppercase
+                            tracking="widest"
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
+                            }}>
                             Chave PIX
                         </Font>
                         <Input
@@ -148,5 +181,5 @@ export function RequestPayoutModal({ isOpen, onClose, availableBalance }: Reques
                 </Stack>
             </Stack>
         </Modal>
-    )
+    );
 }
