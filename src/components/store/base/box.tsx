@@ -17,8 +17,8 @@ export interface BoxProps extends Omit<React.HTMLAttributes<HTMLElement>, 'color
   direction?: 'row' | 'col' | { base: 'row' | 'col', sm?: 'row' | 'col', md?: 'row' | 'col', lg?: 'row' | 'col' }
   position?: 'relative' | 'absolute' | 'fixed' | 'static' | 'sticky' | { base: 'relative' | 'absolute' | 'fixed' | 'static' | 'sticky', sm?: 'relative' | 'absolute' | 'fixed' | 'static' | 'sticky', md?: 'relative' | 'absolute' | 'fixed' | 'static' | 'sticky', lg?: 'relative' | 'absolute' | 'fixed' | 'static' | 'sticky' }
   pin?: 'left' | 'right' | 'top' | 'bottom' | 'inset' | { base: 'left' | 'right' | 'top' | 'bottom' | 'inset', md?: 'left' | 'right' | 'top' | 'bottom' | 'inset', lg?: 'left' | 'right' | 'top' | 'bottom' | 'inset' }
-  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | 'none' | 'auth-form' | { base: 'sm' | 'md' | 'lg' | 'xl' | 'none' | 'auth-form', md?: 'sm' | 'md' | 'lg' | 'xl' | 'none' | 'auth-form', lg?: 'sm' | 'md' | 'lg' | 'xl' | 'none' | 'auth-form' }
-  width?: 'full' | 'auto' | 'px' | 'half' | 'sidebar' | 'sidebar-wide' | '10' | number | string | { base?: 'full' | 'auto' | '10' | number | string, sm?: 'full' | 'half' | 'auto' | '10' | 'sidebar' | 'sidebar-wide' | number | string, md?: 'full' | 'half' | 'auto' | '10' | 'sidebar' | 'sidebar-wide' | number | string, lg?: 'full' | 'auto' | 'half' | 'sidebar' | 'sidebar-wide' | '10' | number | string }
+  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | 'none' | 'auth-form' | 'landing' | { base: 'sm' | 'md' | 'lg' | 'xl' | 'none' | 'auth-form' | 'landing', md?: 'sm' | 'md' | 'lg' | 'xl' | 'none' | 'auth-form' | 'landing', lg?: 'sm' | 'md' | 'lg' | 'xl' | 'none' | 'auth-form' | 'landing' }
+  width?: 'full' | 'auto' | 'px' | 'half' | '1/3' | '2/3' | 'sidebar' | 'sidebar-wide' | '10' | number | string | { base?: 'full' | 'auto' | '10' | number | string, sm?: 'full' | 'half' | '1/3' | '2/3' | 'auto' | '10' | 'sidebar' | 'sidebar-wide' | number | string, md?: 'full' | 'half' | '1/3' | '2/3' | 'auto' | '10' | 'sidebar' | 'sidebar-wide' | number | string, lg?: 'full' | 'auto' | 'half' | '1/3' | '2/3' | 'sidebar' | 'sidebar-wide' | '10' | number | string }
   height?: 'full' | 'auto' | 'screen' | 'px' | '10' | number | string | { base?: 'full' | 'auto' | 'screen' | 'px' | '10' | number | string, md?: 'full' | 'auto' | 'screen' | 'px' | '10' | number | string }
   minHeight?: 'screen' | 'full' | 'sm' | 'md' | 'lg' | 'xl' | number
   maxHeight?: number | string
@@ -50,12 +50,13 @@ export interface BoxProps extends Omit<React.HTMLAttributes<HTMLElement>, 'color
   mdColSpan?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 12
   lgColSpan?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 12
   cursor?: 'pointer' | 'default' | 'not-allowed'
-  textAlign?: 'center' | 'left' | 'right' | { base: 'center' | 'left' | 'right', md?: 'center' | 'left' | 'right', lg?: 'center' | 'left' | 'right' }
+  textAlign?: 'left' | 'center' | 'right' | { base: 'left' | 'center' | 'right', sm?: 'left' | 'center' | 'right', md?: 'left' | 'center' | 'right', lg?: 'left' | 'center' | 'right' }
   wrap?: 'wrap' | 'nowrap'
   gap?: SpacingToken | { base: SpacingToken, sm?: SpacingToken, md?: SpacingToken, lg?: SpacingToken }
   snap?: 'x' | 'y' | 'none'
   snapMandatory?: boolean
   scrollSmooth?: boolean
+  order?: 1 | 2 | 3 | 4 | 5 | 6 | 'first' | 'last' | 'none' | { base: 1 | 2 | 3 | 4 | 5 | 6 | 'first' | 'last' | 'none', md?: 1 | 2 | 3 | 4 | 5 | 6 | 'first' | 'last' | 'none', lg?: 1 | 2 | 3 | 4 | 5 | 6 | 'first' | 'last' | 'none' }
   className?: never
   id?: string
   onClick?: (e: React.MouseEvent<HTMLElement>) => void
@@ -170,6 +171,7 @@ export const Box = React.forwardRef<HTMLElement, BoxProps>(function Box({
   snap,
   snapMandatory,
   scrollSmooth,
+  order,
   ...props
 }: BoxProps, ref) {
   const { primaryColor } = useRegistry()
@@ -367,6 +369,8 @@ export const Box = React.forwardRef<HTMLElement, BoxProps>(function Box({
     full: 'w-full',
     auto: 'w-auto',
     half: 'w-1/2',
+    '1/3': 'w-1/3',
+    '2/3': 'w-2/3',
     px: 'w-px',
     'sidebar-wide': 'w-72',
     '10': 'w-10',
@@ -402,6 +406,7 @@ export const Box = React.forwardRef<HTMLElement, BoxProps>(function Box({
     xl: 'max-w-xl',
     none: 'max-w-none',
     'auth-form': 'max-w-[440px]',
+    'landing': 'max-w-[1300px]',
   }
 
   const zIndexClasses = {
@@ -515,6 +520,130 @@ export const Box = React.forwardRef<HTMLElement, BoxProps>(function Box({
     100: 'scale-100',
     105: 'scale-105',
     110: 'scale-110'
+  }
+
+  const orderClasses = {
+    1: 'order-1',
+    2: 'order-2',
+    3: 'order-3',
+    4: 'order-4',
+    5: 'order-5',
+    6: 'order-6',
+    'first': 'order-first',
+    'last': 'order-last',
+    'none': 'order-none'
+  }
+
+  const orderMdClasses = {
+    1: 'md:order-1',
+    2: 'md:order-2',
+    3: 'md:order-3',
+    4: 'md:order-4',
+    5: 'md:order-5',
+    6: 'md:order-6',
+    'first': 'md:order-first',
+    'last': 'md:order-last',
+    'none': 'md:order-none'
+  }
+
+  const orderLgClasses = {
+    1: 'lg:order-1',
+    2: 'lg:order-2',
+    3: 'lg:order-3',
+    4: 'lg:order-4',
+    5: 'lg:order-5',
+    6: 'lg:order-6',
+    'first': 'lg:order-first',
+    'last': 'lg:order-last',
+    'none': 'lg:order-none'
+  }
+
+  const alignClasses = {
+    start: 'items-start',
+    center: 'items-center',
+    end: 'items-end',
+    stretch: 'items-stretch',
+    baseline: 'items-baseline'
+  }
+
+  const alignSmClasses = {
+    start: 'sm:items-start',
+    center: 'sm:items-center',
+    end: 'sm:items-end',
+    stretch: 'sm:items-stretch',
+    baseline: 'sm:items-baseline'
+  }
+
+  const alignMdClasses = {
+    start: 'md:items-start',
+    center: 'md:items-center',
+    end: 'md:items-end',
+    stretch: 'md:items-stretch',
+    baseline: 'md:items-baseline'
+  }
+
+  const alignLgClasses = {
+    start: 'lg:items-start',
+    center: 'lg:items-center',
+    end: 'lg:items-end',
+    stretch: 'lg:items-stretch',
+    baseline: 'lg:items-baseline'
+  }
+
+  const justifyClasses = {
+    start: 'justify-start',
+    center: 'justify-center',
+    end: 'justify-end',
+    between: 'justify-between',
+    around: 'justify-around'
+  }
+
+  const justifySmClasses = {
+    start: 'sm:justify-start',
+    center: 'sm:justify-center',
+    end: 'sm:justify-end',
+    between: 'sm:justify-between',
+    around: 'sm:justify-around'
+  }
+
+  const justifyMdClasses = {
+    start: 'md:justify-start',
+    center: 'md:justify-center',
+    end: 'md:justify-end',
+    between: 'md:justify-between',
+    around: 'md:justify-around'
+  }
+
+  const justifyLgClasses = {
+    start: 'lg:justify-start',
+    center: 'lg:justify-center',
+    end: 'lg:justify-end',
+    between: 'lg:justify-between',
+    around: 'lg:justify-around'
+  }
+
+  const textAlignClasses = {
+    left: 'text-left',
+    center: 'text-center',
+    right: 'text-right'
+  }
+
+  const textAlignSmClasses = {
+    left: 'sm:text-left',
+    center: 'sm:text-center',
+    right: 'sm:text-right'
+  }
+
+  const textAlignMdClasses = {
+    left: 'md:text-left',
+    center: 'md:text-center',
+    right: 'md:text-right'
+  }
+
+  const textAlignLgClasses = {
+    left: 'lg:text-left',
+    center: 'lg:text-center',
+    right: 'lg:text-right'
   }
 
   // Responsive logic
@@ -634,18 +763,22 @@ export const Box = React.forwardRef<HTMLElement, BoxProps>(function Box({
         widthMd !== undefined && (
           widthMd === 'full' ? 'md:w-full' :
             widthMd === 'half' ? 'md:w-1/2' :
-              widthMd === 'sidebar' ? 'md:w-56' :
-                widthMd === 'sidebar-wide' ? 'md:w-72' :
-                  widthMd === 'auto' ? 'md:w-auto' :
-                    typeof widthMd === 'number' ? (widthMd === 0 ? 'md:w-0' : `md:w-[${widthMd}px]`) : `md:w-[${String(widthMd).replace(/\s+/g, '')}]`
+              widthMd === '1/3' ? 'md:w-1/3' :
+                widthMd === '2/3' ? 'md:w-2/3' :
+                  widthMd === 'sidebar' ? 'md:w-56' :
+                    widthMd === 'sidebar-wide' ? 'md:w-72' :
+                      widthMd === 'auto' ? 'md:w-auto' :
+                        typeof widthMd === 'number' ? (widthMd === 0 ? 'md:w-0' : `md:w-[${widthMd}px]`) : `md:w-[${String(widthMd).replace(/\s+/g, '')}]`
         ),
         widthLg !== undefined && (
           widthLg === 'full' ? 'lg:w-full' :
             widthLg === 'half' ? 'lg:w-1/2' :
-              widthLg === 'sidebar-wide' ? 'lg:w-72' :
-                widthLg === 'sidebar' ? 'lg:w-56' :
-                  widthLg === 'auto' ? 'lg:w-auto' :
-                    typeof widthLg === 'number' ? (widthLg === 0 ? 'lg:w-0' : `lg:w-[${widthLg}px]`) : `lg:w-[${String(widthLg).replace(/\s+/g, '')}]`
+              widthLg === '1/3' ? 'lg:w-1/3' :
+                widthLg === '2/3' ? 'lg:w-2/3' :
+                  widthLg === 'sidebar-wide' ? 'lg:w-72' :
+                    widthLg === 'sidebar' ? 'lg:w-56' :
+                      widthLg === 'auto' ? 'lg:w-auto' :
+                        typeof widthLg === 'number' ? (widthLg === 0 ? 'lg:w-0' : `lg:w-[${widthLg}px]`) : `lg:w-[${String(widthLg).replace(/\s+/g, '')}]`
         ),
         minWidthBase !== undefined && (
           minWidthBase === 'auto' ? 'min-w-auto' :
@@ -774,23 +907,37 @@ export const Box = React.forwardRef<HTMLElement, BoxProps>(function Box({
         hoverBg && colorMapping[hoverBg][hoverBgOpacity || 100].replace('bg-', 'hover:bg-'),
 
         // Alignment
-        align && (typeof align === 'string' ? `items-${align}` : cn(
-          align.base && `items-${align.base}`,
-          align.sm && `sm:items-${align.sm}`,
-          align.md && `md:items-${align.md}`,
-          align.lg && `lg:items-${align.lg}`
+        align && (typeof align === 'string' ? alignClasses[align as keyof typeof alignClasses] : cn(
+          align.base && alignClasses[align.base as keyof typeof alignClasses],
+          align.sm && alignSmClasses[align.sm as keyof typeof alignSmClasses],
+          align.md && alignMdClasses[align.md as keyof typeof alignMdClasses],
+          align.lg && alignLgClasses[align.lg as keyof typeof alignLgClasses]
         )),
         alignSelf && `self-${alignSelf}`,
-        justify && (typeof justify === 'string' ? `justify-${justify}` : cn(
-          justify.base && `justify-${justify.base}`,
-          justify.sm && `sm:justify-${justify.sm}`,
-          justify.md && `md:justify-${justify.md}`,
-          justify.lg && `lg:justify-${justify.lg}`
+        justify && (typeof justify === 'string' ? justifyClasses[justify as keyof typeof justifyClasses] : cn(
+          justify.base && justifyClasses[justify.base as keyof typeof justifyClasses],
+          justify.sm && justifySmClasses[justify.sm as keyof typeof justifySmClasses],
+          justify.md && justifyMdClasses[justify.md as keyof typeof justifyMdClasses],
+          justify.lg && justifyLgClasses[justify.lg as keyof typeof justifyLgClasses]
         )),
 
         translateXBase !== undefined && translateXClasses[translateXBase as keyof typeof translateXClasses],
         translateXMd !== undefined && translateXMdClasses[translateXMd as keyof typeof translateXMdClasses],
         translateXLg !== undefined && translateXLgClasses[translateXLg as keyof typeof translateXLgClasses],
+        
+        order !== undefined && (typeof order === 'object' ? cn(
+          order.base && orderClasses[order.base as keyof typeof orderClasses],
+          order.md && orderMdClasses[order.md as keyof typeof orderMdClasses],
+          order.lg && orderLgClasses[order.lg as keyof typeof orderLgClasses]
+        ) : orderClasses[order as keyof typeof orderClasses]),
+
+        textAlign && (typeof textAlign === 'string' ? textAlignClasses[textAlign as keyof typeof textAlignClasses] : cn(
+          textAlign.base && textAlignClasses[textAlign.base as keyof typeof textAlignClasses],
+          textAlign.sm && textAlignSmClasses[textAlign.sm as keyof typeof textAlignSmClasses],
+          textAlign.md && textAlignMdClasses[textAlign.md as keyof typeof textAlignMdClasses],
+          textAlign.lg && textAlignLgClasses[textAlign.lg as keyof typeof textAlignLgClasses]
+        )),
+
         translateY === 'full' && 'translate-y-full',
         translateY === '-full' && '-translate-y-full',
         translateY === 0 && 'translate-y-0',

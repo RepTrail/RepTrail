@@ -89,7 +89,7 @@ export function InactiveTrainerCard({ trainerName }: { trainerName: string | nul
                                 justify={{ base: 'center', md: 'start' }}
                                 fullWidth
                             >
-                                <Link href="/buscar-personal" passHref legacyBehavior>
+                                <Link href="/buscar-personal">
                                     <Button
                                         variant="white"
                                         size="lg"
@@ -99,7 +99,7 @@ export function InactiveTrainerCard({ trainerName }: { trainerName: string | nul
                                         Procurar Novo Personal
                                     </Button>
                                 </Link>
-                                <Link href="/dashboard/student/plans" passHref legacyBehavior>
+                                <Link href="/dashboard/student/plans">
                                     <Button
                                         variant="outline-primary"
                                         size="lg"

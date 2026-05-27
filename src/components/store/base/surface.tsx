@@ -112,12 +112,12 @@ export function Surface({
   }
 
   const primaryTonalClasses: Record<string, string> = {
-    orange: 'bg-orange-500/5 border-orange-500/50 transition-all duration-500 backdrop-blur-xl',
-    emerald: 'bg-emerald-500/5 border-emerald-500/50 transition-all duration-500 backdrop-blur-xl',
-    blue: 'bg-blue-500/5 border-blue-500/50 transition-all duration-500 backdrop-blur-xl',
-    amber: 'bg-amber-500/5 border-amber-500/50 transition-all duration-500 backdrop-blur-xl',
-    red: 'bg-red-500/5 border-red-500/50 transition-all duration-500 backdrop-blur-xl',
-    zinc: 'bg-zinc-500/5 border-zinc-500/50 transition-all duration-500 backdrop-blur-xl',
+    orange: 'border-2 bg-orange-500/5 border-orange-500/40 transition-all duration-500 backdrop-blur-xl',
+    emerald: 'border bg-emerald-500/5 border-emerald-500/50 transition-all duration-500 backdrop-blur-xl',
+    blue: 'border bg-blue-500/5 border-blue-500/50 transition-all duration-500 backdrop-blur-xl',
+    amber: 'border bg-amber-500/5 border-amber-500/50 transition-all duration-500 backdrop-blur-xl',
+    red: 'border bg-red-500/5 border-red-500/50 transition-all duration-500 backdrop-blur-xl',
+    zinc: 'border bg-zinc-500/5 border-zinc-500/50 transition-all duration-500 backdrop-blur-xl',
   }
 
   const variantClasses: Record<string, string> = {
@@ -129,12 +129,12 @@ export function Surface({
     raised: 'bg-zinc-800 border border-white/10 shadow-lg',
     interactive: 'bg-zinc-900 border border-white/5 transition-all cursor-pointer',
     showcase: 'bg-zinc-950/50 border border-white/5 border-dashed flex items-center justify-center',
-    'tonal-orange': 'bg-orange-500/5 border-orange-500/50 transition-all duration-500 backdrop-blur-xl',
-    'tonal-emerald': 'bg-emerald-500/5 border-emerald-500/50 transition-all duration-500 backdrop-blur-xl',
-    'tonal-amber': 'bg-amber-500/5 border-amber-500/50 transition-all duration-500 backdrop-blur-xl',
-    'tonal-red': 'bg-red-500/5 border-red-500/50 transition-all duration-500 backdrop-blur-xl',
-    'tonal-blue': 'bg-blue-500/5 border-blue-500/50 transition-all duration-500 backdrop-blur-xl',
-    'tonal-zinc': 'bg-white/5 border-white/10 transition-all duration-500 backdrop-blur-xl',
+    'tonal-orange': 'border-2 bg-orange-500/5 border-orange-500/40 transition-all duration-500 backdrop-blur-xl',
+    'tonal-emerald': 'border bg-emerald-500/5 border-emerald-500/50 transition-all duration-500 backdrop-blur-xl',
+    'tonal-amber': 'border bg-amber-500/5 border-amber-500/50 transition-all duration-500 backdrop-blur-xl',
+    'tonal-red': 'border bg-red-500/5 border-red-500/50 transition-all duration-500 backdrop-blur-xl',
+    'tonal-blue': 'border bg-blue-500/5 border-blue-500/50 transition-all duration-500 backdrop-blur-xl',
+    'tonal-zinc': 'border bg-white/5 border-white/10 transition-all duration-500 backdrop-blur-xl',
     'tonal-primary': primaryTonalClasses[primaryColor] || primaryTonalClasses.orange
   }
 

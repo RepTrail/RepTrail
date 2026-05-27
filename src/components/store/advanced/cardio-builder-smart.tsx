@@ -119,7 +119,7 @@ export function CardioBuilderSmart({
             {/* Back Button */}
             {backHref && (
                 <Box shrink={0}>
-                    <Link href={backHref} passHref legacyBehavior>
+                    <Link href={backHref}>
                         <Button variant="outline-zinc" size="sm" gap={STORE_TOKENS.SPACING.ELEMENT}>
                             <Icon icon={ArrowLeft} size="xs" />
                             Voltar

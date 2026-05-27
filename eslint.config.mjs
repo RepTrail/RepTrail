@@ -22,6 +22,7 @@ export default [
       "src/components/store/constants/**/*",
       "src/components/landing/**/*",
       "src/components/shared/**/*",
+      "src/components/store/base/iphone-mockup.tsx",
       "src/components/store/advanced/student-share-transformation.tsx",
       "src/app/aluno/**/*",
       "src/app/personal/**/*",

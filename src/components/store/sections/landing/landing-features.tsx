@@ -1,0 +1,273 @@
+'use client'
+
+import React from 'react'
+import Link from 'next/link'
+import { Box } from '@/components/store/base/box'
+import { Stack } from '@/components/store/base/stack'
+import { Grid } from '@/components/store/base/grid'
+import { Font } from '@/components/store/base/font'
+import { Button } from '@/components/store/base/button'
+import { Icon, IconBox } from '@/components/store/base/icon'
+import { Badge } from '@/components/store/base/badge'
+import { useRegistry } from '@/components/store/advanced/registry-context'
+import { 
+  ShieldCheck, ArrowRight, UserCheck, Sparkles, 
+  Smartphone, Dumbbell, Target, Zap, Search, 
+  MousePointerClick, DollarSign, Users 
+} from 'lucide-react'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
+import { LandingSection } from '@/components/store/advanced/landing-section'
+import { IphoneMockup } from '@/components/store/base/iphone-mockup'
+import { GlassPanel } from '@/components/store/base/surface'
+
+interface LandingFeaturesProps {
+  role?: 'trainer' | 'student' | 'affiliate'
+}
+
+export function LandingFeatures({ role = 'trainer' }: LandingFeaturesProps) {
+  const { primaryColor } = useRegistry()
+
+  const config = {
+    trainer: {
+      badgeText: 'Para Personal Trainers',
+      title1: 'Simplifique sua',
+      titleHighlight: 'Gestão de Alunos.',
+      subtitle: 'Com o RepTrail, você pode gerenciar seus pagamentos, renovações automáticas e CRM de alunos de forma eficiente, eliminando a confusão das planilhas.',
+      features: [
+        { label: 'Importação AI 5min', desc: 'Traga o protocolo do seu aluno de qualquer PDF para o app em segundos usando nossa IA.', icon: Sparkles, pulse: true },
+        { label: 'Gestão Escalável', desc: 'Painel completo para gerenciar de 10 a 1000 alunos.', icon: UserCheck, pulse: false },
+        { label: 'Templates Próprios', desc: 'Crie seus padrões de treinos e dietas para prescrição relâmpago.', icon: Dumbbell, pulse: false },
+        { label: 'Perfil de Vendas', desc: 'Sua landing page própria para captar novos alunos.', icon: Search, pulse: false }
+      ],
+      ctaText: 'Quero simplificar minha gestão agora',
+      ctaLink: '/auth/signup',
+      videoSrc: '/Videos/landing-page-do-personal.mp4',
+      mockupSide: 'right' as const,
+      mockupRotation: 2
+    },
+    student: {
+      badgeText: 'Para Alunos',
+      title1: 'A Experiência que',
+      titleHighlight: 'Você merece.',
+      subtitle: 'Visualize seus treinos, acompanhe sua dieta e monitore sua evolução física com um aplicativo profissional feito para acelerar seus resultados.',
+      features: [
+        { label: 'Experiência Mobile-First', desc: 'Acesse treinos, dietas e evolução diretamente no celular.', icon: Smartphone, pulse: false },
+        { label: 'Histórico de Cargas Reais', desc: 'Acompanhe suas cargas e histórico de evolução nos treinos.', icon: Dumbbell, pulse: false },
+        { label: 'Metas de Dieta e Macros', desc: 'Bata suas metas de macronutrientes com planos guiados.', icon: Target, pulse: false },
+        { label: 'Ranking Global Gamificado', desc: 'Participe da comunidade e suba no ranking motivacional.', icon: Zap, pulse: true }
+      ],
+      ctaText: 'Encontrar meu Treinador',
+      ctaLink: '#marketplace',
+      videoSrc: '/Videos/tela-de-treinos-dos-alunos.mp4',
+      mockupSide: 'left' as const,
+      mockupRotation: -2
+    },
+    affiliate: {
+      badgeText: 'Como funciona',
+      title1: 'Simples como',
+      titleHighlight: '1, 2, 3, 4',
+      subtitle: 'Do cadastro ao primeiro pagamento recorrente em pouquíssimos passos.',
+      features: [
+        { label: 'Crie sua conta', desc: 'Cadastro em menos de 1 minuto. Só nome, email e senha.', icon: Zap, step: '01', pulse: false },
+        { label: 'Compartilhe seu link', desc: 'Link exclusivo com seu token. Envie para personal trainers, colegas e grupos fitness.', icon: MousePointerClick, step: '02', pulse: false },
+        { label: 'Indicados se cadastram', desc: 'O sistema registra automaticamente quem veio pelo seu link. Cookie válido por 30 dias.', icon: Users, step: '03', pulse: false },
+        { label: 'Receba 10% recorrente', desc: 'Cada pagamento dos seus indicados gera 10% pra você. Para sempre, sem limite.', icon: DollarSign, step: '04', pulse: false }
+      ],
+      ctaText: 'Quero me tornar afiliado agora',
+      ctaLink: '/afiliados/cadastro',
+      videoSrc: '',
+      mockupSide: 'none' as const,
+      mockupRotation: 0
+    }
+  }
+
+  const activeConfig = config[role]
+
+  if (role === 'affiliate') {
+    return (
+      <LandingSection>
+        <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth align="center">
+            {/* Header */}
+            <Stack align={{ base: 'start', md: 'center' }} gap={STORE_TOKENS.SPACING.CONTAINER} textAlign={{ base: 'left', md: 'center' }} width={{ base: 'full', md: 'half' }} alignSelf="center">
+              <Badge label={activeConfig.badgeText} icon={ShieldCheck} color={STORE_TOKENS.COLORS.BRAND} variant="solid" />
+              <Font variant="h2" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} uppercase italic align={{ base: 'left', md: 'center' }}>
+                <span>{activeConfig.title1} </span>
+                <Font variant="h2" color={STORE_TOKENS.COLORS.BRAND} uppercase italic display="inline">
+                  {activeConfig.titleHighlight}
+                </Font>
+              </Font>
+              <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} align={{ base: 'left', md: 'center' }}>
+                {activeConfig.subtitle}
+              </Font>
+            </Stack>
+
+            {/* Grid of Steps */}
+            <Grid cols={1} mdCols={4} gap={STORE_TOKENS.SPACING.CONTAINER} width="full">
+              {activeConfig.features.map((item: any, idx) => (
+                <Box
+                  key={idx}
+                  position="relative"
+                  padding={STORE_TOKENS.PADDING.CONTAINER}
+                  bg={STORE_TOKENS.COLORS.BACKGROUND}
+                  bgOpacity={STORE_TOKENS.OPACITY.HIGH}
+                  border
+                  borderColor={STORE_TOKENS.COLORS.BACKGROUND}
+                  borderWidth={1}
+                  rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                  group
+                  transition
+                >
+                  <Stack gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
+                    <Box display="flex" align="start" justify="between" width="full">
+                      <IconBox icon={item.icon} variant="zinc" size="sm" />
+                      <Font variant="label-caps" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} opacity={40}>
+                        {item.step}
+                      </Font>
+                    </Box>
+
+                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                      <Font variant="h4" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} uppercase italic>
+                        {item.label}
+                      </Font>
+                      <Font variant="body-sm" color={STORE_TOKENS.COLORS.TEXT.MUTED}>
+                        {item.desc}
+                      </Font>
+                    </Stack>
+                  </Stack>
+                </Box>
+              ))}
+            </Grid>
+
+            {/* Final CTA Button */}
+            <Box align="center" width="full">
+              <Button
+                asChild
+                variant="primary"
+                size="lg"
+                activeScale={95}
+                shine
+              >
+                <Link href={activeConfig.ctaLink}>
+                  <Box as="span" display="flex" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} cursor="pointer">
+                    <span>{activeConfig.ctaText}</span>
+                    <Icon icon={ArrowRight} size="md" />
+                  </Box>
+                </Link>
+              </Button>
+            </Box>
+        </Stack>
+      </LandingSection>
+    )
+  }
+
+  return (
+    <LandingSection>
+      <Grid cols={1} mdCols={2} gap={STORE_TOKENS.SPACING.SECTION} align="center" width="full">
+          
+          {/* Left Side: Mockup (If configured on the left) */}
+          {activeConfig.mockupSide === 'left' && (
+            <Box position="relative" group fullWidth align="center" justify="start" order={{ base: 'first', md: 'none' }}>
+              <IphoneMockup className="w-full md:ml-0 md:mr-auto max-w-[300px]">
+                <video
+                  src={activeConfig.videoSrc}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+              </IphoneMockup>
+            </Box>
+          )}
+
+          {/* Text Content */}
+          <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
+            {/* Header Stack */}
+            <Stack align="start" gap={STORE_TOKENS.SPACING.CONTAINER}>
+              <Badge label={activeConfig.badgeText} icon={ShieldCheck} color={STORE_TOKENS.COLORS.BRAND} variant="solid" />
+              <Font variant="h2" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} uppercase italic>
+                <span>{activeConfig.title1} </span>
+                <Font variant="h2" color={STORE_TOKENS.COLORS.BRAND} uppercase italic display="inline">
+                  {activeConfig.titleHighlight}
+                </Font>
+              </Font>
+              <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.SECONDARY}>
+                {activeConfig.subtitle}
+              </Font>
+            </Stack>
+
+            {/* Features Checklist items */}
+            <Grid cols={1} mdCols={2} gap={STORE_TOKENS.SPACING.CONTAINER} width="full">
+              {activeConfig.features.map((item, idx) => (
+                <GlassPanel 
+                  key={idx} 
+                  display="flex" 
+                  align="start" 
+                  gap={STORE_TOKENS.SPACING.ELEMENT}
+                  padding={STORE_TOKENS.PADDING.ELEMENT}
+                  rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                  transition
+                  cursor="default"
+                >
+                  <IconBox icon={item.icon} variant="primary" size="sm" />
+                  <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                    <Font variant="body" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} uppercase italic weight="black">
+                      {item.label}
+                    </Font>
+                    <Font variant="body-sm" color={STORE_TOKENS.COLORS.TEXT.MUTED}>
+                      {item.desc}
+                    </Font>
+                  </Stack>
+                </GlassPanel>
+              ))}
+            </Grid>
+
+            {/* CTA Button */}
+            <Box width="full">
+              <Button
+                asChild
+                variant="primary"
+                size="lg"
+                activeScale={95}
+                fullWidth
+                shine
+              >
+                {activeConfig.ctaLink.startsWith('#') ? (
+                  <a href={activeConfig.ctaLink}>
+                    <Box as="span" display="flex" direction={{ base: 'col', md: 'row' }} align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT} cursor="pointer">
+                      <span>{activeConfig.ctaText}</span>
+                      <Icon icon={ArrowRight} size="md" />
+                    </Box>
+                  </a>
+                ) : (
+                  <Link href={activeConfig.ctaLink}>
+                    <Box as="span" display="flex" direction={{ base: 'col', md: 'row' }} align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT} cursor="pointer">
+                      <span>{activeConfig.ctaText}</span>
+                      <Icon icon={ArrowRight} size="md" />
+                    </Box>
+                  </Link>
+                )}
+              </Button>
+            </Box>
+          </Stack>
+
+          {/* Right Side: Mockup (If configured on the right) */}
+          {activeConfig.mockupSide === 'right' && (
+            <Box position="relative" group fullWidth align="center" justify="end" order={{ base: 'first', md: 'none' }}>
+              <IphoneMockup className="w-full md:mr-0 md:ml-auto max-w-[300px]">
+                <video
+                  src={activeConfig.videoSrc}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+              </IphoneMockup>
+            </Box>
+          )}
+
+      </Grid>
+    </LandingSection>
+  )
+}

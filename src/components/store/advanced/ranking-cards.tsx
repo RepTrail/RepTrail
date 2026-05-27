@@ -190,7 +190,7 @@ export function PodiumCard({ trainer, rank }: { trainer: TrainerRanking, rank: n
                     </Grid>
 
                     {trainer.trainer_code ? (
-                        <Link href={`/personal/${trainer.trainer_code.toUpperCase().trim()}`} passHref legacyBehavior>
+                        <Link href={`/personal/${trainer.trainer_code.toUpperCase().trim()}`}>
                             <Button
                                 variant="white"
                                 size="lg"
@@ -295,7 +295,7 @@ export function RankingRow({ trainer, rank }: { trainer: TrainerRanking, rank: n
                         }}>{trainer.studentCount}</Font>
                 </Stack>
                 {trainer.trainer_code ? (
-                    <Link href={`/personal/${trainer.trainer_code.toUpperCase().trim()}`} passHref legacyBehavior>
+                    <Link href={`/personal/${trainer.trainer_code.toUpperCase().trim()}`}>
                         <Button
                             variant="outline-zinc"
                             size="md"

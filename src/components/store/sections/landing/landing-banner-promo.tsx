@@ -1,0 +1,179 @@
+'use client'
+
+import React from 'react'
+import Link from 'next/link'
+import { Box } from '@/components/store/base/box'
+import { Stack } from '@/components/store/base/stack'
+import { Grid } from '@/components/store/base/grid'
+import { Font } from '@/components/store/base/font'
+import { Button } from '@/components/store/base/button'
+import { Icon } from '@/components/store/base/icon'
+import { Badge } from '@/components/store/base/badge'
+import { useRegistry } from '@/components/store/advanced/registry-context'
+import { fbqEvent } from '@/lib/meta-pixel'
+import { Zap, ShieldCheck, CheckCircle2, Users, ShieldOff, ArrowRight } from 'lucide-react'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
+import { LandingSection } from '@/components/store/advanced/landing-section'
+import { Surface } from '@/components/store/base/surface'
+
+interface LandingBannerPromoProps {
+  role?: 'trainer' | 'student'
+}
+
+export function LandingBannerPromo({ role = 'trainer' }: LandingBannerPromoProps) {
+  const { primaryColor } = useRegistry()
+
+  const config = {
+    trainer: {
+      badgeText: 'Comece agora sem custos',
+      badgeIcon: ShieldCheck,
+      title1: 'Grátis até',
+      titleHighlight: '5 Alunos.',
+      desc: 'No RepTrail você começa sem pagar nada e escala junto com seu negócio. Use todas as ferramentas de gestão profissional e prescrição gratuitamente para seus primeiros 5 alunos.',
+      ctaText: 'Quero transformar minha consultoria',
+      ctaLink: '/auth/signup',
+      ctaEvent: 'Guarantee Start Trainer',
+      bullets: [
+        'Ativação Instantânea',
+        'Sem Cartão de Crédito',
+        'Acesso Total Liberado',
+        'Suporte VIP Incluso'
+      ],
+      circleNumber: '05',
+      circleLabel: 'Alunos',
+      circleIcon: Users
+    },
+    student: {
+      badgeText: 'Módulo Auto-Treino',
+      badgeIcon: Zap,
+      title1: 'Treine Sozinho,',
+      titleHighlight: 'mas com Inteligência.',
+      desc: 'Não precisa de um personal agora? Use nossa inteligência para prescrever seus próprios treinos, controlar cargas e acompanhar sua evolução física.',
+      ctaText: 'Começar meu período grátis',
+      ctaLink: '/auth/signup',
+      ctaEvent: 'Auto Train Start',
+      bullets: [
+        'Treinos com AI',
+        'Cálculo de Macros AI',
+        'Importação de PDF (AI)',
+        'Dietas Inteligentes'
+      ],
+      circleNumber: '07',
+      circleLabel: 'Dias Grátis',
+      circleIcon: ShieldOff
+    }
+  }
+
+  const activeConfig = config[role]
+
+  return (
+    <LandingSection>
+      <Box width="full" position="relative" zIndex={STORE_TOKENS.Z_INDEX.CONTENT}>
+        <Surface
+          variant="tonal-emerald"
+          rounded={STORE_TOKENS.RADIUS.SYSTEM}
+          padding={{ base: STORE_TOKENS.PADDING.CONTAINER as any, md: STORE_TOKENS.PADDING.EMPTY_STATE as any }}
+          width="full"
+        >
+          <Grid
+            cols={1}
+            lgCols={12}
+            gap={{ base: STORE_TOKENS.SPACING.CONTAINER as any, md: STORE_TOKENS.SPACING.SECTION as any }}
+            align="center"
+            width="full"
+          >
+            {/* Left/Main Column - Content (Colspan 8) */}
+            <Box lgColSpan={8} width="full" zIndex={STORE_TOKENS.Z_INDEX.CONTENT}>
+              <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} align="start" textAlign="left" fullWidth>
+
+                {/* Header info */}
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                  <Badge label={activeConfig.badgeText} icon={activeConfig.badgeIcon} color={STORE_TOKENS.COLORS.BRAND} variant="solid" />
+                  <Font variant="h2" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} uppercase italic>
+                    <span>{activeConfig.title1} </span>
+                    <Font variant="h2" color={STORE_TOKENS.COLORS.BRAND} uppercase italic display="inline">
+                      {activeConfig.titleHighlight}
+                    </Font>
+                  </Font>
+                  <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.SECONDARY}>
+                    {activeConfig.desc}
+                  </Font>
+                </Stack>
+
+                {/* Bullets Grid */}
+                <Grid cols={1} mdCols={2} gap={STORE_TOKENS.SPACING.ELEMENT} width="full" padding={STORE_TOKENS.PADDING.NONE}>
+                  {activeConfig.bullets.map((bullet, index) => (
+                    <Stack key={index} direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                      <Icon icon={CheckCircle2} size="sm" color={STORE_TOKENS.COLORS.BRAND} />
+                      <Font variant="body-sm" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} uppercase weight="bold" italic>
+                        {bullet}
+                      </Font>
+                    </Stack>
+                  ))}
+                </Grid>
+
+                {/* CTA Button */}
+                <Box width="full" padding={STORE_TOKENS.PADDING.NONE}>
+                  <Button
+                    asChild
+                    onClick={() => fbqEvent('Lead', { content_name: activeConfig.ctaEvent, content_category: 'Landing Page' })}
+                    variant="primary"
+                    size="lg"
+                    padding="container"
+                    activeScale={95}
+                    fullWidth
+                    shine
+                  >
+                    <Link href={activeConfig.ctaLink}>
+                      <Box as="span" display="flex" direction={{ base: 'col', md: 'row' }} align="center" gap={STORE_TOKENS.SPACING.ELEMENT} cursor="pointer">
+                        <span>{activeConfig.ctaText}</span>
+                        <Icon icon={ArrowRight} size="md" />
+                      </Box>
+                    </Link>
+                  </Button>
+                </Box>
+
+              </Stack>
+            </Box>
+
+            {/* Right Column - Compliant Metrics Card (Colspan 4) */}
+            <Box lgColSpan={4} width="full" align="center" justify="center" zIndex={STORE_TOKENS.Z_INDEX.CONTENT} display={{ base: 'none', lg: 'flex' }}>
+              <Surface
+                variant="tonal-orange"
+                rounded="full"
+                padding={STORE_TOKENS.PADDING.CONTAINER}
+                width="full"
+                aspectRatio="square"
+                display="flex"
+                align="center"
+                justify="center"
+              >
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center" justify="center" fullWidth>
+                  <Font
+                    variant="hero"
+                    color="orange"
+                    weight="black"
+                    align="center"
+                    italic
+                  >
+                    {activeConfig.circleNumber}
+                  </Font>
+                  <Font
+                    variant="label-caps"
+                    color="orange"
+                    align="center"
+                    weight="black"
+                    tracking="widest"
+                  >
+                    {activeConfig.circleLabel}
+                  </Font>
+                </Stack>
+              </Surface>
+            </Box>
+
+          </Grid>
+        </Surface>
+      </Box>
+    </LandingSection>
+  )
+}

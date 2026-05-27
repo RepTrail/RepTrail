@@ -111,6 +111,24 @@ export function Font({
   const alignMd = isRespAlign ? (align as any).md : undefined
   const alignLg = isRespAlign ? (align as any).lg : undefined
 
+  const alignClasses = {
+    left: 'text-left block w-full',
+    center: 'text-center block w-full',
+    right: 'text-right block w-full'
+  }
+
+  const alignMdClasses = {
+    left: 'md:text-left',
+    center: 'md:text-center',
+    right: 'md:text-right'
+  }
+
+  const alignLgClasses = {
+    left: 'lg:text-left',
+    center: 'lg:text-center',
+    right: 'lg:text-right'
+  }
+
   const colorClasses = {
     PRIMARY: 'text-white',
     SECONDARY: 'text-zinc-400',
@@ -164,9 +182,9 @@ export function Font({
         variantLg && `lg:${variantClasses[variantLg as keyof typeof variantClasses]}`,
         color && colorClasses[color as keyof typeof colorClasses],
         weight && weightClasses[weight],
-        alignBase && `text-${alignBase} block w-full`,
-        alignMd && `md:text-${alignMd}`,
-        alignLg && `lg:text-${alignLg}`,
+        alignBase && alignClasses[alignBase as keyof typeof alignClasses],
+        alignMd && alignMdClasses[alignMd as keyof typeof alignMdClasses],
+        alignLg && alignLgClasses[alignLg as keyof typeof alignLgClasses],
         uppercase && 'uppercase',
         lowercase && 'lowercase',
         italic && 'italic',
