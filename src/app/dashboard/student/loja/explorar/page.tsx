@@ -217,9 +217,10 @@ export default function StoreExplorePage() {
                                             onClick={() => handleBuy(product)}
                                             variant="primary"
                                             fullWidth
-                                            icon={<Icon icon={ExternalLink} />}
+                                            gap={STORE_TOKENS.SPACING.ELEMENT}
                                         >
                                             Comprar Agora
+                                            <Icon icon={ExternalLink} />
                                         </Button>
                                     </Stack>
                                 </Box>
