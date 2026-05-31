@@ -4,13 +4,14 @@ import { Box, BoxProps, SpacingToken } from './box'
 
 type GapToken = SpacingToken
 
-export interface GridProps extends Omit<BoxProps, 'gap' | 'align' | 'padding'> {
+export interface GridProps extends Omit<BoxProps, 'gap' | 'align' | 'padding' | 'cols'> {
   children: React.ReactNode
   cols?: 1 | 2 | 3 | 4 | 5 | 6 | 10 | 12 | { base: number, md?: number, lg?: number }
   columns?: number
   smCols?: 1 | 2 | 3 | 4 | 5 | 6 | 10 | 12
   mdCols?: 1 | 2 | 3 | 4 | 5 | 6 | 10 | 12
   lgCols?: 1 | 2 | 3 | 4 | 5 | 6 | 10 | 12
+  xlCols?: 1 | 2 | 3 | 4 | 5 | 6 | 10 | 12
   gap?: GapToken | { base: GapToken, md: GapToken }
   align?: 'start' | 'center' | 'end' | 'stretch'
   padding?: SpacingToken
@@ -30,6 +31,7 @@ export function Grid({
   smCols,
   mdCols,
   lgCols,
+  xlCols,
   gap = "element",
   align = 'stretch',
   padding,
@@ -144,6 +146,20 @@ export function Grid({
     12: 'lg:grid-cols-12',
   }
 
+  const xlColClasses = {
+    1: 'xl:grid-cols-1',
+    2: 'xl:grid-cols-2',
+    3: 'xl:grid-cols-3',
+    4: 'xl:grid-cols-4',
+    5: 'xl:grid-cols-5',
+    6: 'xl:grid-cols-6',
+    7: 'xl:grid-cols-7',
+    8: 'xl:grid-cols-8',
+    9: 'xl:grid-cols-9',
+    10: 'xl:grid-cols-10',
+    12: 'xl:grid-cols-12',
+  }
+
   return (
     <Box 
       display="grid"
@@ -159,6 +175,7 @@ export function Grid({
         smCols && colClasses[smCols as keyof typeof colClasses], // simplified for sm
         mdCols && mdColClasses[mdCols as keyof typeof mdColClasses],
         lgCols && lgColClasses[lgCols as keyof typeof lgColClasses],
+        xlCols && xlColClasses[xlCols as keyof typeof xlColClasses],
 
         // Gap mapping
         gapBase !== undefined && gapClasses[gapBase as keyof typeof gapClasses],
