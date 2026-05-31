@@ -65,6 +65,7 @@ interface RegistryMainProps {
   showTabs?: boolean
   showHeader?: boolean
   rightElement?: React.ReactNode
+  backPath?: string
 }
 
 export function RegistryMain({
@@ -75,7 +76,8 @@ export function RegistryMain({
   contextLabel,
   showTabs = true,
   showHeader = true,
-  rightElement
+  rightElement,
+  backPath
 }: RegistryMainProps) {
   const { activeTab, setActiveTab, primaryColor } = useRegistry()
   const [first, ...rest] = title.split(' ')
