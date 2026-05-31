@@ -16,7 +16,6 @@ export function ContractInfoCard({ label, value }: ContractInfoCardProps) {
         <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM}>
             <Stack gap={STORE_TOKENS.SPACING.NONE}>
                 <Font
-                    variant="label-caps"
                     {...{
                         color: "SECONDARY",
                     }}>
