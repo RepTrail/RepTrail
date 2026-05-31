@@ -1,5 +1,5 @@
-'use client'
+import { redirect } from 'next/navigation';
 
-import StoreExplorePage from '@/app/dashboard/student/loja/explorar/page'
-
-export default StoreExplorePage
+export default function StoreExplorePage() {
+    redirect('/dashboard/trainer/loja');
+}
