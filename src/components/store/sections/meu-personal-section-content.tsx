@@ -3,7 +3,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
-import { RatingModal } from '@/components/store/features(deprecated)/student-rating-modal'
+
 import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { Stack } from '@/components/store/base/stack'
 import { Grid } from '@/components/store/base/grid'
@@ -173,22 +173,7 @@ export function MeuPersonalSectionContent({ trainer, trainerRel, existingReview 
                                     </Button>
                                 )}
 
-                                <Box fullWidth={{ base: true, md: false }} display="block">
-                                    <RatingModal
-                                        trainerId={trainer.id}
-                                        trainerName={trainer.full_name}
-                                        initialRating={existingReview?.rating}
-                                        initialComment={existingReview?.comment}
-                                        trigger={
-                                            <Button variant="outline-zinc" size="sm" fullWidth>
-                                                <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                                    {existingReview ? 'Editar Avaliação' : 'Avaliar Treinador'}
-                                                    <Icon icon={Star} size="xs" color={STORE_TOKENS.COLORS.WARNING} />
-                                                </Stack>
-                                            </Button>
-                                        }
-                                    />
-                                </Box>
+
                             </Stack>
                         </Stack>
                     </Stack>
