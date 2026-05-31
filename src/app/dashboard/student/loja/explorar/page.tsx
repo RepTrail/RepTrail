@@ -235,13 +235,15 @@ export default function StoreExplorePage() {
                                 <Surface variant="tonal-zinc" padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.FULL} border="standard">
                                     <Icon icon={ShoppingBag} color={STORE_TOKENS.COLORS.TEXT.DIM} size="xl" />
                                 </Surface>
-                                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                    <Font variant="heading" weight="black" uppercase italic>
+                                <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                                    <Font variant="heading" weight="black" uppercase italic align="center">
                                         Nenhum produto encontrado
                                     </Font>
-                                    <Font variant="auxiliary" color={STORE_TOKENS.COLORS.TEXT.MUTED} uppercase tracking="widest" maxWidth="xs" alignSelf="center">
-                                        Tente mudar os filtros ou o termo de busca.
-                                    </Font>
+                                    <Box maxWidth="xs">
+                                        <Font variant="auxiliary" color={STORE_TOKENS.COLORS.TEXT.MUTED} uppercase tracking="widest" align="center">
+                                            Tente mudar os filtros ou o termo de busca.
+                                        </Font>
+                                    </Box>
                                 </Stack>
                             </Stack>
                         </Surface>
