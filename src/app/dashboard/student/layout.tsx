@@ -103,7 +103,7 @@ async function StudentLayoutLoader({ userId, children }: { userId: string; child
         <RegistryProvider defaultColor="orange">
             <HydrationBoundary state={dehydrate(queryClient)}>
                 <DashboardShell
-                    color={STORE_TOKENS.COLORS.BRAND}
+                    color="orange"
                     links={allLinks}
                     mobileLinks={mobileLinks}
                     profileHref="/dashboard/student/profile"
