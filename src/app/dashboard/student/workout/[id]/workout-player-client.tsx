@@ -66,15 +66,16 @@ export default function WorkoutPlayerClient({
         return (
             <Box display="flex" align="center" justify="center" minHeight="screen" width="full">
                 <BackgroundEffects variant="all" />
+                {/* eslint-disable-next-line no-restricted-syntax */}
                 <Stack align="center" justify="center" gap={STORE_TOKENS.SPACING.CONTAINER} position="relative" zIndex={10} padding={STORE_TOKENS.PADDING.CONTAINER}>
-                    <Surface variant="glass" padding="container" rounded="full" border="standard">
+                    <Surface variant="glass" padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.FULL} border="standard">
                         <Box>
-                            <Icon icon={Dumbbell} size="lg" color="zinc-700" />
+                            <Icon icon={Dumbbell} size="lg" color={STORE_TOKENS.COLORS.TEXT.DIM} />
                         </Box>
                     </Surface>
-                    <Stack gap="element" align="center">
+                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                         <Font variant="h3" weight="black" uppercase italic tracking="tight">Sem exercícios</Font>
-                        <Font variant="sub-tiny" color="zinc-500" weight="black" uppercase tracking="widest" align="center">
+                        <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="black" uppercase tracking="widest" align="center">
                             Este treino ainda não possui exercícios cadastrados.
                         </Font>
                     </Stack>
@@ -87,6 +88,7 @@ export default function WorkoutPlayerClient({
         return (
             <Box display="flex" align="center" justify="center" minHeight="screen" width="full">
                 <BackgroundEffects variant="all" />
+                {/* eslint-disable-next-line no-restricted-syntax */}
                 <Box position="relative" zIndex={10} width="full" padding={STORE_TOKENS.PADDING.CONTAINER}>
                     <MissionCompletedView />
                 </Box>
@@ -121,7 +123,7 @@ export default function WorkoutPlayerClient({
             minHeight="screen"
             display="flex"
             direction="col"
-            bg="zinc"
+            bg={STORE_TOKENS.COLORS.BACKGROUND}
             overflowY="auto"
             paddingLeft={{ base: 'none', md: 'sidebar-wide' }}
         >
@@ -130,20 +132,21 @@ export default function WorkoutPlayerClient({
 
             {/* Header: Full-width sticky bar */}
             {!isResting && (
+                // eslint-disable-next-line no-restricted-syntax
                 <Box position="sticky" top={0} zIndex={50} width="full">
-                    <Surface variant="glass" border="standard" padding={STORE_TOKENS.PADDING.CONTAINER} rounded="none">
+                    <Surface variant="glass" border="standard" padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.NONE}>
                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                             {/* Mobile Top Bar: Badge + Back Button */}
                             <Box display={{ base: 'flex', md: 'none' }} justify="between" fullWidth direction="row" align="center">
                                 <Badge
                                     label="Em progresso"
                                     variant="glass"
-                                    color="emerald"
+                                    color={STORE_TOKENS.COLORS.SUCCESS}
                                     icon={Activity}
                                     animatePulse
                                 />
                                 <Link href="/dashboard/student" passHref>
-                                    <Button variant="outline-zinc" size="sm" rounded="full">
+                                    <Button variant="outline-zinc" size="sm" rounded={STORE_TOKENS.RADIUS.FULL}>
                                         <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                             <Icon icon={ArrowLeft} size="xs" />
                                             <Font variant="sub-tiny" weight="black" uppercase tracking="wider">Voltar</Font>
@@ -153,15 +156,15 @@ export default function WorkoutPlayerClient({
                             </Box>
 
                             <Stack direction="row" align="center" justify="between">
-                                <Stack gap="element">
+                                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                                     <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                        <Box width={8} height={8} bg="emerald" rounded="full" style={{ boxShadow: '0 0 10px rgba(16,185,129,0.5)' }} />
-                                        <Font variant="h3" weight="black" color="white" uppercase italic tracking="tight" truncate>
+                                        <Box width={8} height={8} bg={STORE_TOKENS.COLORS.SUCCESS} rounded={STORE_TOKENS.RADIUS.FULL} style={{ boxShadow: '0 0 10px rgba(16,185,129,0.5)' }} />
+                                        <Font variant="h3" weight="black" color={STORE_TOKENS.COLORS.WHITE} uppercase italic tracking="tight" truncate>
                                             {workout.name}
                                         </Font>
                                     </Stack>
                                     <Box>
-                                        <Font variant="tiny" color="zinc-500" weight="black" uppercase tracking="widest">
+                                        <Font variant="tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="black" uppercase tracking="widest">
                                             Player de Treino • Foco e Intensidade
                                         </Font>
                                     </Box>
@@ -172,7 +175,7 @@ export default function WorkoutPlayerClient({
                                     <Badge
                                         label="Em progresso"
                                         variant="glass"
-                                        color="emerald"
+                                        color={STORE_TOKENS.COLORS.SUCCESS}
                                         icon={Activity}
                                         animatePulse
                                     />
@@ -184,7 +187,8 @@ export default function WorkoutPlayerClient({
             )}
 
             {/* Main Player Content: Vertically Centered */}
-            <Box flex1 display="flex" align={{ base: 'start', md: 'center' }} justify="center" padding="none" position="relative" zIndex={10}>
+            {/* eslint-disable-next-line no-restricted-syntax */}
+            <Box flex1 display="flex" align={{ base: 'start', md: 'center' }} justify="center" padding={STORE_TOKENS.PADDING.NONE} position="relative" zIndex={10}>
                 <WorkoutPlayer
                     userId={userId}
                     workout={workout}

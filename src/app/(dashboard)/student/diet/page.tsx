@@ -102,11 +102,17 @@ export default async function StudentDietPage() {
                                 </Font>
                             </Stack>
                             <Stack align="end" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                <Font variant="sub-tiny" color="emerald" weight="black" uppercase tracking="widest">
+                                <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.SUCCESS} weight="black" uppercase tracking="widest">
                                     {progress}% Concluído
                                 </Font>
-                                <Box {...{ width: 128, height: 8 }} bg="zinc" bgOpacity={90} rounded="full" overflow="hidden">
-                                    <Box bg="emerald" fullHeight rounded="full" style={{ width: `${progress}%` }} />
+                                <Box 
+                                    {...{ width: 128, height: 8 }} 
+                                    bg={STORE_TOKENS.COLORS.BACKGROUND} 
+                                    bgOpacity={STORE_TOKENS.OPACITY.SHELF} 
+                                    rounded={STORE_TOKENS.RADIUS.FULL} 
+                                    overflow="hidden"
+                                >
+                                    <Box bg={STORE_TOKENS.COLORS.SUCCESS} fullHeight rounded={STORE_TOKENS.RADIUS.FULL} style={{ width: `${progress}%` }} />
                                 </Box>
                             </Stack>
                         </Stack>
@@ -126,14 +132,14 @@ export default async function StudentDietPage() {
                                     {/* Meal Header */}
                                     <Stack direction="row" align="center" justify="between" fullWidth>
                                         <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                            <Icon icon={Utensils} color="orange" size="md" />
+                                            <Icon icon={Utensils} color={STORE_TOKENS.COLORS.BRAND} size="md" />
                                             <Font variant="heading" weight="black" uppercase italic>
                                                 {meal.name}
                                             </Font>
                                         </Stack>
                                         {meal.time_of_day && (
-                                            <Surface variant="glass" padding={STORE_TOKENS.PADDING.ELEMENT} rounded="system">
-                                                <Font variant="auxiliary" color="orange" weight="black" tracking="widest">
+                                            <Surface variant="glass" padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM}>
+                                                <Font variant="auxiliary" color={STORE_TOKENS.COLORS.BRAND} weight="black" tracking="widest">
                                                     {meal.time_of_day.slice(0, 5)}
                                                 </Font>
                                             </Surface>
@@ -149,20 +155,20 @@ export default async function StudentDietPage() {
                                                 key={item.id}
                                                 variant="glass"
                                                 padding={STORE_TOKENS.PADDING.ELEMENT}
-                                                rounded="system"
+                                                rounded={STORE_TOKENS.RADIUS.SYSTEM}
                                             >
                                                 <Stack direction={{ base: 'row', md: 'col' }} align={{ base: 'center', md: 'start' }} justify="between" gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
                                                     <FormCheckbox
                                                         label={item.food_name}
-                                                        color="emerald"
+                                                        color={STORE_TOKENS.COLORS.SUCCESS}
                                                     />
                                                     <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                                        <Font variant="body" color="zinc-400">
+                                                        <Font variant="body" color={STORE_TOKENS.COLORS.TEXT.SECONDARY}>
                                                             {item.quantity}
                                                         </Font>
                                                         {item.approx_measure && (
-                                                            <Surface variant="glass" padding="tiny" rounded="system">
-                                                                <Font variant="sub-tiny" color="orange" weight="black" uppercase tracking="wider">
+                                                            <Surface variant="glass" padding={STORE_TOKENS.PADDING.NONE} rounded={STORE_TOKENS.RADIUS.SYSTEM}>
+                                                                <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.BRAND} weight="black" uppercase tracking="wider">
                                                                     Medida: {item.approx_measure}
                                                                 </Font>
                                                             </Surface>

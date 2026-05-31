@@ -4,6 +4,8 @@
 import { Button } from '@/components/store/base/button'
 import { Plus } from 'lucide-react'
 import { UnifiedCreationDialog } from '@/components/store/advanced/unified-creation-dialog'
+import { Icon } from '@/components/store/base/icon'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 interface WorkoutActionsProps {
     isAutoTrainingActive: boolean
@@ -18,8 +20,8 @@ export function WorkoutActions({ isAutoTrainingActive }: WorkoutActionsProps) {
             description="Crie um treino para seu plano de auto-training."
             triggerLabel="Criar Manualmente"
             trigger={
-                <Button className="w-full sm:w-auto bg-white text-zinc-900 hover:bg-zinc-200 font-bold uppercase italic tracking-tight rounded-xl h-11 transition-all active:scale-95">
-                    <Plus className="mr-2 h-4 w-4" /> Criar Manualmente
+                <Button variant="white" fullWidth gap={STORE_TOKENS.SPACING.ELEMENT}>
+                    <Icon icon={Plus} /> Criar Manualmente
                 </Button>
             }
             fields={[

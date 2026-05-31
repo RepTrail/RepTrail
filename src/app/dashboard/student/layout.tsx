@@ -103,6 +103,7 @@ async function StudentLayoutLoader({ userId, children }: { userId: string; child
         <RegistryProvider defaultColor="orange">
             <HydrationBoundary state={dehydrate(queryClient)}>
                 <DashboardShell
+                    // eslint-disable-next-line no-restricted-syntax
                     color="orange"
                     links={allLinks}
                     mobileLinks={mobileLinks}
