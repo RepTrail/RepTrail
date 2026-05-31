@@ -239,7 +239,7 @@ export default function StoreExplorePage() {
                                     <Font variant="heading" weight="black" uppercase italic align="center">
                                         Nenhum produto encontrado
                                     </Font>
-                                    <Box maxWidth="xs">
+                                    <Box maxWidth="sm">
                                         <Font variant="auxiliary" color={STORE_TOKENS.COLORS.TEXT.MUTED} uppercase tracking="widest" align="center">
                                             Tente mudar os filtros ou o termo de busca.
                                         </Font>
