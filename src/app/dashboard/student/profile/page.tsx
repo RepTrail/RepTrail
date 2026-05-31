@@ -1,9 +1,8 @@
 import { redirect } from 'next/navigation'
 import { headers } from 'next/headers'
 import { getQueryClient } from '@/lib/get-query-client'
-import { HydrationBoundary, dehydrate } from '@tanstack/react-query'
+import { actions, HydrationBoundary, dehydrate } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
-import { getStudentProfile, getStudentTrainer } from '@/actions/student-actions'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { StudentProfileSectionContent } from '@/components/store/sections/student-profile-section-content'
 
@@ -23,11 +22,11 @@ export default async function StudentProfilePage() {
     await Promise.all([
         queryClient.prefetchQuery({
             queryKey: QUERY_KEYS.student.details(userId),
-            queryFn: () => getStudentProfile(userId)
+            queryFn: () => actions.getStudentProfile(userId)
         }),
         queryClient.prefetchQuery({
             queryKey: QUERY_KEYS.profile.trainer(userId),
-            queryFn: () => getStudentTrainer(userId)
+            queryFn: () => actions.getStudentTrainer(userId)
         })
     ])
 

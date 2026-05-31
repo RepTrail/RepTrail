@@ -12,7 +12,7 @@ import { Badge } from '@/components/store/base/badge'
 import { GlassPanel } from '@/components/store/base/surface'
 import { BaseAvatar } from '@/components/store/base/avatar'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
-import type { TrainerErgogenicHubStudent } from '@/actions/ergogenics-actions'
+import type { TrainerErgogenicHubStudent } from '@/lib/dal/remote'
 
 interface ErgogenicStudentHubCardProps {
     student: TrainerErgogenicHubStudent

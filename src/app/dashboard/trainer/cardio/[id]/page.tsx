@@ -1,5 +1,4 @@
-import { getCardioDetails } from '@/actions/cardio-actions'
-import { getTrainerStudents } from '@/actions/trainer-actions'
+import { actions } from '@/lib/dal'
 import { CardioBuilderSmart } from "@/components/store/advanced/cardio-builder-smart"
 import { RegistryMain } from "@/components/store/advanced/registry-main"
 import { notFound } from 'next/navigation'
@@ -11,8 +10,8 @@ interface Props {
 export default async function CardioDetailPage({ params }: Props) {
     const { id } = await params
     const [cardio, students] = await Promise.all([
-        getCardioDetails(id),
-        getTrainerStudents()
+        actions.getCardioDetails(id),
+        actions.getTrainerStudents()
     ])
 
     if (!cardio) notFound()

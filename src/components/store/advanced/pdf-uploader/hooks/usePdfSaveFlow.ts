@@ -1,6 +1,6 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@/lib/dal';
 import { useToast } from '@/hooks/use-toast';
-import { saveParsedData } from '@/actions/save-actions';
+import { saveParsedData } from '@/lib/dal/remote';
 import { useTrainerOnboarding } from '@/hooks/use-trainer-onboarding';
 import { QUERY_KEYS } from '@/lib/query-keys';
 import { validateImportCompatibility } from '../lib/validators';

@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { getSupabaseServer } from '@/lib/dal'
 import { redirect } from 'next/navigation'
 import { headers } from 'next/headers'
 
@@ -7,7 +7,7 @@ export default async function DashboardPage() {
     const userId = headerList.get('x-user-id')
     if (!userId) redirect('/auth/login')
 
-    const supabase = await createClient()
+    const supabase = await getSupabaseServer()
 
     const { data: profile } = await supabase
         .from('profiles')

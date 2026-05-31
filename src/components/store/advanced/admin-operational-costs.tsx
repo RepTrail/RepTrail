@@ -13,7 +13,7 @@ import { FormSelect } from '@/components/store/base/form-select'
 import { Inline } from '@/components/store/base/layout'
 import { Modal } from '@/components/store/advanced/modal'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
-import { addOperationalCost, deleteOperationalCost, updateOperationalCost } from '@/actions/admin-actions'
+import { addOperationalCost, deleteOperationalCost, updateOperationalCost } from '@/lib/dal/remote'
 import { useToast } from '@/hooks/use-toast'
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
 import { ENTITIES } from '@/lib/outbox-db'
@@ -224,7 +224,6 @@ export function AdminOperationalCosts({ initialCosts, totalMonthly, totalAllTime
                                     <CircleIcon
                                         icon={TrendingDown}
                                         size="sm"
-                                        // eslint-disable-next-line no-restricted-syntax
                                         color={cost.type === 'fixed' ? 'blue' : 'orange'}
                                     />
                                     <Stack gap={STORE_TOKENS.SPACING.NONE} minWidth={0}>

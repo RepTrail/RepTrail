@@ -107,10 +107,10 @@ function DirectCreateButton({
             try {
                 let res;
                 if (actionType === 'create-manual-workout') {
-                    const { createManualWorkout } = await import('@/actions/workout-actions')
+                    const { createManualWorkout } = await import('@/lib/dal/remote')
                     res = await createManualWorkout({ name: 'Novo Treino' })
                 } else if (actionType === 'create-manual-diet') {
-                    const { createManualDiet } = await import('@/actions/diet-actions')
+                    const { createManualDiet } = await import('@/lib/dal/remote')
                     res = await createManualDiet({ name: 'Nova Dieta' })
                 }
 

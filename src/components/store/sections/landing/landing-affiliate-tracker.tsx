@@ -2,11 +2,11 @@
 
 import { useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
+import { getSupabaseClient } from '@/lib/dal'
 
 function TrackerContent() {
     const searchParams = useSearchParams()
-    const supabase = createClient()
+    const supabase = getSupabaseClient()
 
     useEffect(() => {
         const refToken = searchParams.get('ref')

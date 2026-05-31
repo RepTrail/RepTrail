@@ -34,12 +34,9 @@ export function WorkoutBuilderSearch({
             padding={STORE_TOKENS.SPACING.CONTAINER} 
             border="subtle"
             position="relative"
-            // eslint-disable-next-line no-restricted-syntax
             zIndex={searchResults.length > 0 ? STORE_TOKENS.Z_INDEX.OVERLAY : undefined}
         >
             <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
-                {/* Relative container around input to position the dropdown overlay */}
-                {/* eslint-disable-next-line no-restricted-syntax */}
                 <Box position="relative" width="full" zIndex={searchResults.length > 0 ? STORE_TOKENS.Z_INDEX.OVERLAY : 'auto'}>
                     <Input
                         icon={<Icon icon={Search} size="sm" />}

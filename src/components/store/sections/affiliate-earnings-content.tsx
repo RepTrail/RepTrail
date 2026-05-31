@@ -9,8 +9,8 @@ import { AffiliateCommissionsList } from '@/components/store/advanced/affiliate-
 import { AffiliateWithdrawalsList } from '@/components/store/advanced/affiliate-withdrawals-list'
 import { StatsCard } from '@/components/store/intermediary/stats-card'
 import { DollarSign, Clock, CheckCircle2, Wallet } from 'lucide-react'
-import { useQuery } from '@tanstack/react-query'
-import { getAffiliateTransactions } from '@/actions/affiliate-actions'
+import { useQuery } from '@/lib/dal'
+import { getAffiliateTransactions } from '@/lib/dal/remote'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 /**

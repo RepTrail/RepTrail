@@ -3,12 +3,7 @@
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 import { useState, useTransition } from 'react'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { QUERY_KEYS } from '@/lib/query-keys'
-import {
-    getAllUsers, deleteUser, impersonateUser, grantAutoTraining
-} from '@/actions/admin-actions'
-import { createClient } from '@/lib/supabase/client'
+import { useQueryClient, useAuthUser, useAdminStudents, useImpersonateUser, useDeleteUser, useGrantAutoTraining } from '@/lib/dal'
 import { RegistryProvider } from '@/components/store/advanced/registry-context'
 import { DashboardShell } from '@/components/store/advanced/dashboard-shell'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
@@ -33,25 +28,16 @@ export default function AdminAlunosPage() {
     })
     const { toast } = useToast()
 
-    const { data: allUsers = [], isLoading } = useQuery({
-        queryKey: QUERY_KEYS.admin.students,
-        queryFn: () => getAllUsers()
-    })
+    const { data: allUsers = [], isLoading } = useAdminStudents()
+    const { data: adminUser } = useAuthUser()
 
-    const { data: adminUser } = useQuery({
-        queryKey: QUERY_KEYS.auth.user,
-        queryFn: async () => {
-            const supabase = createClient()
-            const { data: { user: authUser } } = await supabase.auth.getUser()
-            if (!authUser) return null
-            const { data: profile } = await supabase.from('profiles').select('*').eq('id', authUser.id).single()
-            return profile || authUser
-        }
-    })
+    const impersonateMutation = useImpersonateUser()
+    const deleteUserMutation = useDeleteUser()
+    const grantAutoTrainingMutation = useGrantAutoTraining()
 
     async function handleImpersonate(userId: string) {
         startTransition(async () => {
-            const res = await impersonateUser(userId)
+            const res = await impersonateMutation.mutateAsync(userId)
             if (res?.error) toast({ variant: 'destructive', title: 'Erro ao inspecionar', description: res.error })
         })
     }
@@ -63,13 +49,11 @@ export default function AdminAlunosPage() {
     async function confirmDeleteUser() {
         if (!deleteModal.id) return
         startTransition(async () => {
-            const res = await deleteUser(deleteModal.id)
+            const res = await deleteUserMutation.mutateAsync(deleteModal.id)
             if (res.error) {
                 toast({ variant: 'destructive', title: 'Erro', description: res.error })
             } else {
                 toast({ title: 'Aluno deletado com sucesso!' })
-                queryClient.invalidateQueries({ queryKey: QUERY_KEYS.admin.students })
-                queryClient.invalidateQueries({ queryKey: QUERY_KEYS.admin.overview })
             }
             setDeleteModal({ open: false, id: '', name: '' })
         })
@@ -78,12 +62,10 @@ export default function AdminAlunosPage() {
     async function handleGrantAutoTraining(studentId: string, currentStatus: string) {
         const newStatus = currentStatus === 'active' ? 'none' : 'active'
         startTransition(async () => {
-            const res = await grantAutoTraining(studentId, newStatus)
+            const res = await grantAutoTrainingMutation.mutateAsync({ studentId, status: newStatus })
             if (res.error) toast({ variant: 'destructive', title: 'Erro', description: res.error })
             else {
                 toast({ title: newStatus === 'active' ? 'Auto-Treino concedido!' : 'Auto-Treino removido' })
-                queryClient.invalidateQueries({ queryKey: QUERY_KEYS.admin.students })
-                queryClient.invalidateQueries({ queryKey: QUERY_KEYS.admin.overview })
             }
         })
     }

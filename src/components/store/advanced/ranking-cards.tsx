@@ -49,7 +49,6 @@ export function PodiumCard({ trainer, rank }: { trainer: TrainerRanking, rank: n
                 <Icon
                     icon={Trophy}
                     size="100"
-                    // eslint-disable-next-line no-restricted-syntax
                     color={rank === 2 ? STORE_TOKENS.COLORS.TEXT.SECONDARY : STORE_TOKENS.COLORS.BRAND}
                 />
             </Box>

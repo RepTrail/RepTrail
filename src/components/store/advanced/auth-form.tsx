@@ -11,7 +11,7 @@ import {
     signUpAction, 
     forgotPasswordAction, 
     updatePasswordAction 
-} from '@/actions/auth-actions'
+} from '@/lib/dal/remote'
 import { useSearchParams } from 'next/navigation'
 
 interface AuthFormProps {

@@ -1,7 +1,6 @@
-import { getPublicFeed } from '@/actions/student-actions'
+import { actions, dehydrate, HydrationBoundary } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { getQueryClient } from '@/lib/get-query-client'
-import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { CommunityFeedSectionContent } from '@/components/store/sections/community-feed-section-content'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 
@@ -15,7 +14,7 @@ export default async function StudentFeedPage() {
     // Prefetch for SSR
     await queryClient.prefetchQuery({
         queryKey: QUERY_KEYS.public.feed,
-        queryFn: () => getPublicFeed()
+        queryFn: () => actions.getPublicFeed()
     })
 
     return (

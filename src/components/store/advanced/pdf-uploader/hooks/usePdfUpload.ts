@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { createClient } from '@/lib/supabase/client';
-import { parseUploadedPdf } from '@/actions/pdf-actions';
-import { findStudentByName } from '@/actions/trainer-actions';
+import { actions, getSupabaseClient } from '@/lib/dal';
 import { prepareCardios, prepareErgogenics } from '../lib/helpers';
 
 export function usePdfUpload({ type, role, bindingHooks, selectionHooks }: any) {
@@ -10,7 +8,7 @@ export function usePdfUpload({ type, role, bindingHooks, selectionHooks }: any) 
     const [parsing, setParsing] = useState(false);
     const [parsedData, setParsedData] = useState<any>(null);
     const { toast } = useToast();
-    const supabase = createClient();
+    const supabase = getSupabaseClient();
 
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files || e.target.files.length === 0) return;
@@ -29,7 +27,7 @@ export function usePdfUpload({ type, role, bindingHooks, selectionHooks }: any) 
             setUploading(false);
             setParsing(true);
 
-            const result = await parseUploadedPdf(filePath, type);
+            const result = await actions.parseUploadedPdf(filePath, type);
             if (result.error) throw new Error(result.error);
 
             setParsedData(result.data);
@@ -50,7 +48,7 @@ export function usePdfUpload({ type, role, bindingHooks, selectionHooks }: any) 
 
             if (role === 'trainer' && result.data?.detected_student_name) {
                 bindingHooks.setDetectedStudentName(result.data.detected_student_name);
-                const match = await findStudentByName(result.data.detected_student_name);
+                const match = await actions.findStudentByName(result.data.detected_student_name);
                 bindingHooks.setStudentMatch(match);
                 if (match.exact) {
                     bindingHooks.setSelectedStudentId(match.exact.student_id);

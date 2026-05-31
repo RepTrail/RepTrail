@@ -3,7 +3,7 @@ import { STORE_TOKENS } from '@/components/store/constants/tokens';
 
 import { useState, Suspense } from 'react'
 import { useRouter } from 'next/navigation'
-import { loginAndActivateAffiliate } from '@/actions/affiliate-actions'
+import { actions } from '@/lib/dal'
 
 // Design System V2 Components
 import { RegistryProvider } from '@/components/store/advanced/registry-context'
@@ -24,7 +24,7 @@ export default function AffiliadosLoginPage() {
         setLoading(true)
         setError(null)
 
-        const result = await loginAndActivateAffiliate(email, password)
+        const result = await actions.loginAndActivateAffiliate(email, password)
 
         if (result.error) {
             setError(result.error)

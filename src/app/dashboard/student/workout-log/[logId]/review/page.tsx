@@ -1,11 +1,11 @@
-import { getWorkoutLogForReview } from '@/actions/log-actions'
+import { actions } from '@/lib/dal'
 import { WorkoutLogReview } from '@/components/store/advanced/student-workout-log-review'
 import { notFound } from 'next/navigation'
 
 export default async function WorkoutLogReviewPage({ params }: { params: { logId: string } }) {
     const { logId } = await params
 
-    const log = await getWorkoutLogForReview(logId)
+    const log = await actions.getWorkoutLogForReview(logId)
 
     if (!log) return notFound()
 

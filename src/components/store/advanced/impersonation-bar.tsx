@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { impersonateUser } from '@/actions/admin-actions'
+import { impersonateUser } from '@/lib/dal/remote'
 import { Button } from '@/components/store/base/button'
 import { ShieldAlert, ArrowLeftRight, RefreshCw } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'

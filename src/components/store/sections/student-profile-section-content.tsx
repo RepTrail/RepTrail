@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery } from '@/lib/dal'
 import { Grid } from '@/components/store/base/grid'
 import { Box } from '@/components/store/base/box'
 import { Stack } from '@/components/store/base/stack'
@@ -19,7 +19,7 @@ import {
 } from 'lucide-react'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { QUERY_KEYS } from '@/lib/query-keys'
-import { getStudentProfile } from '@/actions/student-actions'
+import { getStudentProfile } from '@/lib/dal/remote'
 
 /**
  * StudentProfileSectionContent: A premium reconstruction of the student profile screen.

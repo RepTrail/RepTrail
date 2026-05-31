@@ -6,7 +6,7 @@ import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { EmptyState } from '@/components/store/intermediary/empty-state'
 import { ErgogenicStudentHubCard } from '@/components/store/intermediary/ergogenic-student-hub-card'
 import { FlaskConical } from 'lucide-react'
-import type { TrainerErgogenicHubStudent } from '@/actions/ergogenics-actions'
+import type { TrainerErgogenicHubStudent } from '@/lib/dal/remote'
 
 interface TrainerErgogenicsHubSectionContentProps {
     students?: TrainerErgogenicHubStudent[]

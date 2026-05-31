@@ -37,7 +37,7 @@ export function RequestPayoutModal({ isOpen, onClose, availableBalance }: Reques
         entityId: 'new',
         queryKey: QUERY_KEYS.affiliate.earnings,
         mutationFn: async (variables: { amount: number, method: string, details: string }) => {
-            const { requestPayout } = await import('@/actions/affiliate-actions')
+            const { requestPayout } = await import('@/lib/dal/remote')
             const res = await requestPayout(variables.amount, variables.method, variables.details)
             if (res.error) throw new Error(res.error)
             return res

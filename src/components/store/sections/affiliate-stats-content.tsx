@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { getAffiliateStatsDetails } from '@/actions/affiliate-actions'
+import { getAffiliateStatsDetails } from '@/lib/dal/remote'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { Grid } from '@/components/store/base/grid'
 import { Box } from '@/components/store/base/box'
@@ -10,7 +10,7 @@ import { StatsCard } from '@/components/store/intermediary/stats-card'
 import { AffiliateActivityChart } from '@/components/store/advanced/affiliate-activity-chart'
 import { AffiliatePerformanceInsights } from '@/components/store/advanced/affiliate-performance-insights'
 import { BarChart, Activity, UserPlus, MousePointerClick, DollarSign, TrendingUp } from 'lucide-react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery } from '@/lib/dal'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 /**

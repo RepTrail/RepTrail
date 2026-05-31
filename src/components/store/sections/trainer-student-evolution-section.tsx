@@ -1,10 +1,10 @@
 'use client'
 
 import React from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
-import { getStudentChartData } from '@/actions/metrics-actions'
-import { getStudentAdherenceHistory } from '@/actions/tracking-actions'
+import { getStudentChartData } from '@/lib/dal/remote'
+import { getStudentAdherenceHistory } from '@/lib/dal/remote'
 import { StudentPublicMetrics } from '@/components/store/advanced/student-public-metrics'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { Stack } from '@/components/store/base/stack'

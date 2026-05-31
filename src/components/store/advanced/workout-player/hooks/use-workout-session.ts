@@ -1,11 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useQueryClient } from '@tanstack/react-query'
+import { useQueryClient } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { ENTITIES } from '@/lib/outbox-db'
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
-import { startWorkoutLog, recordSetLoad, finishWorkoutLog, saveWorkoutLogState } from '@/actions/log-actions'
 
 interface UseWorkoutSessionProps {
     userId: string
@@ -23,9 +22,6 @@ export function useWorkoutSession({ userId, workoutId, initialLogId }: UseWorkou
         actionName: 'start-workout-log',
         queryKey: QUERY_KEYS.workouts.session,
         entity: ENTITIES.WORKOUT_LOG,
-        mutationFn: async (vars: { id: string, workoutId: string }) => {
-            return startWorkoutLog(vars.workoutId, vars.id)
-        },
         onMutate: (variables: any) => {
             const sessionData = {
                 id: variables.id,
@@ -41,19 +37,13 @@ export function useWorkoutSession({ userId, workoutId, initialLogId }: UseWorkou
     const recordSetMutation = useOptimisticMutation({
         actionName: 'record-set-load',
         queryKey: QUERY_KEYS.workouts.session,
-        entity: ENTITIES.WORKOUT_LOG,
-        mutationFn: async (vars: any) => {
-            return recordSetLoad(vars)
-        },
+        entity: ENTITIES.WORKOUT_LOG
     })
 
     const saveStateMutation = useOptimisticMutation({
         actionName: 'save-workout-state',
         queryKey: QUERY_KEYS.workouts.session,
-        entity: ENTITIES.WORKOUT_LOG,
-        mutationFn: async (vars: { logId: string, state: any }) => {
-            return saveWorkoutLogState(vars.logId, vars.state)
-        }
+        entity: ENTITIES.WORKOUT_LOG
     })
 
     const finishWorkoutMutation = useOptimisticMutation({
@@ -61,9 +51,6 @@ export function useWorkoutSession({ userId, workoutId, initialLogId }: UseWorkou
         queryKey: QUERY_KEYS.workouts.session,
         entity: ENTITIES.WORKOUT_LOG,
         additionalQueryKeys: [QUERY_KEYS.workouts.all(userId)],
-        mutationFn: async (vars: { id: string, feedback: string, perceivedEffort: number, adherenceStatus: any }) => {
-            return finishWorkoutLog(vars.id, vars.feedback, vars.perceivedEffort, vars.adherenceStatus)
-        },
         onMutate: (variables: any) => {
             queryClient.setQueryData(QUERY_KEYS.workouts.session, null)
             const statusKey = QUERY_KEYS.workouts.status(userId, workoutId)

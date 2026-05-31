@@ -1,17 +1,7 @@
-import {
-    getStudentRelationship,
-    getTrainerProfile
-} from '@/actions/trainer-actions'
-import { getStudentWorkoutHistory, getStudentRecentActivities } from '@/actions/log-actions'
-import { getStudentMetricsHistory, getStudentChartData } from '@/actions/metrics-actions'
-import { getStudentAdherenceHistory } from '@/actions/tracking-actions'
-import { getStudentCardioAssignments } from '@/actions/cardio-actions'
-import { getAssignedErgogenics } from '@/actions/ergogenics-actions'
-import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
+import { actions, dehydrate, HydrationBoundary } from '@/lib/dal'
 import { getQueryClient } from '@/lib/get-query-client'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
-import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { TrainerStudentProfileSection } from '@/components/store/sections/trainer-student-profile-section'
 import { TrainerStudentEvolutionSection } from '@/components/store/sections/trainer-student-evolution-section'
 import { TrainerStudentProtocolsSection } from '@/components/store/sections/trainer-student-protocols-section'
@@ -19,7 +9,6 @@ import { TrainerStudentPhotosActivitiesSection } from '@/components/store/sectio
 import { TrainerStudentDetailTabSwitcher } from '@/components/store/sections/trainer-student-detail-tab-switcher'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { Compass } from 'lucide-react'
 
 export const revalidate = 0
 
@@ -41,7 +30,7 @@ export default async function StudentDetailPage({
     const queryClient = getQueryClient()
 
     // ─── PARALLEL PREFETCHING (0ms Nav) ─────────────────────────────
-    const relationship = await getStudentRelationship(id)
+    const relationship = await actions.getStudentRelationship(id)
     if (!relationship || !relationship.student) {
         redirect('/dashboard/trainer/students')
     }
@@ -57,7 +46,7 @@ export default async function StudentDetailPage({
         }),
         queryClient.prefetchQuery({
             queryKey: QUERY_KEYS.profile.detail(userId),
-            queryFn: () => getTrainerProfile(userId)
+            queryFn: () => actions.getTrainerProfile(userId)
         })
     ]
 
@@ -65,31 +54,31 @@ export default async function StudentDetailPage({
         prefetchPromises.push(
             queryClient.prefetchQuery({
                 queryKey: QUERY_KEYS.trainer.studentHistory(studentId),
-                queryFn: () => getStudentWorkoutHistory(studentId)
+                queryFn: () => actions.getStudentWorkoutHistory(studentId)
             }),
             queryClient.prefetchQuery({
                 queryKey: QUERY_KEYS.trainer.studentMetrics(studentId),
-                queryFn: () => getStudentMetricsHistory(studentId)
+                queryFn: () => actions.getStudentMetricsHistory(studentId)
             }),
             queryClient.prefetchQuery({
                 queryKey: QUERY_KEYS.trainer.studentAdherence(studentId),
-                queryFn: () => getStudentAdherenceHistory(studentId, 30)
+                queryFn: () => actions.getStudentAdherenceHistory(studentId, 30)
             }),
             queryClient.prefetchQuery({
                 queryKey: QUERY_KEYS.trainer.studentChartData(studentId),
-                queryFn: () => getStudentChartData(studentId)
+                queryFn: () => actions.getStudentChartData(studentId)
             }),
             queryClient.prefetchQuery({
                 queryKey: ['student-recent-activities', studentId],
-                queryFn: () => getStudentRecentActivities(studentId, 50)
+                queryFn: () => actions.getStudentRecentActivities(studentId, 50)
             }),
             queryClient.prefetchQuery({
                 queryKey: QUERY_KEYS.cardio.assignments(studentId),
-                queryFn: () => getStudentCardioAssignments(studentId)
+                queryFn: () => actions.getStudentCardioAssignments(studentId)
             }),
             queryClient.prefetchQuery({
                 queryKey: QUERY_KEYS.ergogenics.all(studentId),
-                queryFn: () => getAssignedErgogenics(studentId)
+                queryFn: () => actions.getAssignedErgogenics(studentId)
             })
         )
     }

@@ -2,7 +2,7 @@ import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { getQueryClient } from '@/lib/get-query-client'
 import { QUERY_KEYS } from '@/lib/query-keys'
-import { getTrainerProfile } from '@/actions/trainer-actions'
+import { actions } from '@/lib/dal'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { TrainerProfileSectionContent } from '@/components/store/sections/trainer-profile-section-content'
 
@@ -22,7 +22,7 @@ export default async function TrainerProfilePage() {
 
     if (!userId) redirect('/auth/login')
 
-    const profile = await getTrainerProfile(userId)
+    const profile = await actions.getTrainerProfile(userId)
     if (!profile) {
         return (
             <Box fullWidth padding={STORE_TOKENS.PADDING.CONTAINER} textAlign="center">

@@ -1,5 +1,5 @@
 import { STORE_TOKENS } from '@/components/store/constants/tokens';
-import { createClient } from '@/lib/supabase/server'
+import { getSupabaseServer } from '@/lib/dal'
 import { redirect } from 'next/navigation'
 import { DashboardShell } from '@/components/store/advanced/dashboard-shell'
 import { RegistryProvider } from '@/components/store/advanced/registry-context'
@@ -11,7 +11,7 @@ export default async function AffiliateLayout({ children }: { children: React.Re
 
     if (!userId) redirect('/auth/login')
 
-    const supabase = await createClient()
+    const supabase = await getSupabaseServer()
 
     const { data: profile } = await supabase
         .from('profiles')

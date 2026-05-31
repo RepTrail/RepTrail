@@ -1,9 +1,6 @@
 import { headers } from 'next/headers'
 import { Suspense } from 'react'
-import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
-import { getQueryClient } from '@/lib/get-query-client'
 import { StudentCardioManagementSmart } from '@/components/store/advanced/student-cardio-management-smart'
-import { PREFETCH_REGISTRY } from '@/lib/prefetch-registry'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { StudentRegistryHeaderActions } from '@/components/store/advanced/student-registry-header-actions'
 import { Box } from '@/components/store/base/box'
@@ -15,18 +12,6 @@ export default async function StudentCardioPage() {
     const userId = headerList.get('x-user-id')
 
     if (!userId) return null
-
-    const queryClient = getQueryClient()
-
-    // ─── NON-BLOCKING PREFETCHING (0ms Nav) ─────────────────────────────
-    const configs = PREFETCH_REGISTRY['/dashboard/student/cardio']?.(userId) || []
-    await Promise.all(configs.map(config =>
-        queryClient.prefetchQuery({
-            queryKey: config.queryKey,
-            queryFn: config.queryFn,
-            staleTime: 1000 * 30
-        })
-    ))
 
     return (
         <RegistryMain
@@ -45,12 +30,11 @@ export default async function StudentCardioPage() {
                 </Box>
             }>
                 <Box suppressHydrationWarning fullWidth>
-                    <HydrationBoundary state={dehydrate(queryClient)}>
-                        <StudentCardioManagementSmart userId={userId} />
-                    </HydrationBoundary>
+                    <StudentCardioManagementSmart userId={userId} />
                 </Box>
             </Suspense>
         </RegistryMain>
     );
 }
+
 

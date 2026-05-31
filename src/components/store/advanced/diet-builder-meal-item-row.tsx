@@ -13,8 +13,8 @@ import { Separator } from '@/components/store/base/separator'
 import { Inline } from '@/components/store/base/layout'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
-import { useQueryClient } from '@tanstack/react-query'
-import { estimateMacros, suggestSubstitution } from '@/actions/diet-actions'
+import { useQueryClient } from '@/lib/dal'
+import { estimateMacros, suggestSubstitution } from '@/lib/dal/remote'
 import { ENTITIES } from '@/lib/outbox-db'
 import {
     GripVertical,

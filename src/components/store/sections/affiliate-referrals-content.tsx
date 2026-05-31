@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { getAffiliateReferrals } from '@/actions/affiliate-actions'
+import { getAffiliateReferrals } from '@/lib/dal/remote'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { Stack } from '@/components/store/base/stack'
 import { Grid } from '@/components/store/base/grid'
@@ -10,7 +10,7 @@ import { StatsCard } from '@/components/store/intermediary/stats-card'
 import { EmptyState } from '@/components/store/intermediary/empty-state'
 import { UserListItem } from '@/components/store/intermediary/user-list-item'
 import { Users, TrendingUp, Search } from 'lucide-react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery } from '@/lib/dal'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 export function AffiliateReferralsContent() {

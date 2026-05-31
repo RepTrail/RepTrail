@@ -13,7 +13,7 @@ import {
     Clock
 } from 'lucide-react'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
-import { getWorkoutExercises } from '@/actions/workout-actions'
+import { getWorkoutExercises } from '@/lib/dal/remote'
 
 interface SetInfo {
     sets: number

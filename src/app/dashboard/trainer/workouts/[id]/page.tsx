@@ -1,5 +1,4 @@
-import { getWorkoutDetails } from "@/actions/workout-actions"
-import { getTrainerStudents } from "@/actions/trainer-actions"
+import { actions } from "@/lib/dal"
 import { WorkoutBuilderSmart } from "@/components/store/advanced/workout-builder-smart"
 import { RegistryMain } from "@/components/store/advanced/registry-main"
 import { Box } from "@/components/store/base/box"
@@ -8,8 +7,8 @@ import { notFound } from "next/navigation"
 export default async function WorkoutEditPage({ params }: { params: { id: string } }) {
     const { id } = await params
     const [workout, students] = await Promise.all([
-        getWorkoutDetails(id),
-        getTrainerStudents()
+        actions.getWorkoutDetails(id),
+        actions.getTrainerStudents()
     ])
 
     if (!workout) {

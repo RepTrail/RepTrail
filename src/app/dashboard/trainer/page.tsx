@@ -1,6 +1,5 @@
 import { PREFETCH_REGISTRY } from '@/lib/prefetch-registry'
-import { getBetaTesterMode } from '@/actions/app-settings-actions'
-import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
+import { actions, dehydrate, HydrationBoundary } from '@/lib/dal'
 import { getQueryClient } from '@/lib/get-query-client'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { TrainerMetricsSection } from '@/components/store/sections/trainer-metrics-section'
@@ -21,7 +20,7 @@ export default async function TrainerDashboard() {
     const configs = PREFETCH_REGISTRY['/dashboard/trainer'](userId)
     await Promise.all(configs.map(c => queryClient.prefetchQuery(c)))
 
-    const betaTesterMode = await getBetaTesterMode()
+    const betaTesterMode = await actions.getBetaTesterMode()
 
     return (
         <HydrationBoundary state={dehydrate(queryClient)}>

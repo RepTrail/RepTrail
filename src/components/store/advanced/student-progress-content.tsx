@@ -1,16 +1,14 @@
-import { createClient } from '@/lib/supabase/server'
-import { getStudentFullMetrics } from '@/actions/metrics-actions'
-import { getAdherenceHistory } from '@/actions/tracking-actions'
+import { actions, getSupabaseServer } from '@/lib/dal'
 import { StudentPublicProfileMain } from '@/components/store/advanced/student-public-profile-main'
 import { StudentPublicPhotos } from '@/components/store/advanced/student-public-photos'
 import { StudentPublicMetrics } from '@/components/store/advanced/student-public-metrics'
 
 export async function StudentProgressPageContent({ userId }: { userId: string }) {
-    const supabase = await createClient()
+    const supabase = await getSupabaseServer()
 
     // Fetch real data
-    const fullMetrics = await getStudentFullMetrics(userId)
-    const adherenceHistory = await getAdherenceHistory(30)
+    const fullMetrics = await actions.getStudentFullMetrics(userId)
+    const adherenceHistory = await actions.getAdherenceHistory(30)
 
     const [profileResult, trainerLinkResult, progressPhotosResult] = await Promise.all([
         supabase

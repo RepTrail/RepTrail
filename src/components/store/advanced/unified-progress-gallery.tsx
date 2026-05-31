@@ -3,7 +3,7 @@
 import React, { useState, useTransition } from 'react'
 import { Camera, Calendar, X, Maximize2, Pencil, Check, ChevronLeft, ChevronRight, Filter } from 'lucide-react'
 import { Input } from '@/components/store/base/input'
-import { useQueryClient } from '@tanstack/react-query'
+import { useQueryClient } from '@/lib/dal'
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
 import { useToast } from '@/hooks/use-toast'
 import { ENTITIES } from '@/lib/outbox-db'

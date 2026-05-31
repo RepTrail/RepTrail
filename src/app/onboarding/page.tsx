@@ -1,5 +1,5 @@
 import { StudentOnboardingForm } from '@/components/store/advanced/student-onboarding-form'
-import { createClient } from '@/lib/supabase/server'
+import { getSupabaseServer } from '@/lib/dal'
 import { redirect } from 'next/navigation'
 import { Surface } from '@/components/store/base/surface'
 import { BackgroundEffects } from '@/components/store/base/background-effects'
@@ -8,7 +8,7 @@ import { Stack } from '@/components/store/base/stack'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 export default async function OnboardingPage() {
-    const supabase = await createClient()
+    const supabase = await getSupabaseServer()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) {

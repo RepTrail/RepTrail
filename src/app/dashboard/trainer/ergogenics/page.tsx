@@ -1,8 +1,7 @@
 import { headers } from 'next/headers'
 import { Suspense } from 'react'
 import { redirect } from 'next/navigation'
-import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
-import { getBetaTesterMode } from '@/actions/app-settings-actions'
+import { actions, dehydrate, HydrationBoundary } from '@/lib/dal'
 import { getQueryClient } from '@/lib/get-query-client'
 import { PREFETCH_REGISTRY } from '@/lib/prefetch-registry'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
@@ -36,7 +35,7 @@ export default async function TrainerErgogenicsHubPage() {
             )
             return qc
         })(),
-        getBetaTesterMode(),
+        actions.getBetaTesterMode(),
     ])
 
     return (

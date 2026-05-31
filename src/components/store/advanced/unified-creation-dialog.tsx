@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useRef, useEffect } from 'react'
-import { useQueryClient } from '@tanstack/react-query'
+import { useQueryClient } from '@/lib/dal'
 import { useToast } from '@/hooks/use-toast'
 import { Modal } from './modal'
 import { Button } from '@/components/store/base/button'
@@ -127,19 +127,19 @@ export function UnifiedCreationDialog({
             let res: any
 
             if (actionType === 'create-student') {
-                const { createStudent } = await import('@/actions/trainer-actions')
+                const { createStudent } = await import('@/lib/dal/remote')
                 res = await createStudent({}, formData)
             } else if (actionType === 'create-student-cardio') {
-                const { createStudentCardio } = await import('@/actions/student-content-actions')
+                const { createStudentCardio } = await import('@/lib/dal/remote')
                 res = await createStudentCardio(formData)
             } else if (actionType === 'create-student-ergogenic') {
-                const { createStudentErgogenic } = await import('@/actions/student-content-actions')
+                const { createStudentErgogenic } = await import('@/lib/dal/remote')
                 res = await createStudentErgogenic(formData)
             } else if (actionType === 'create-student-workout') {
-                const { createStudentWorkout } = await import('@/actions/student-content-actions')
+                const { createStudentWorkout } = await import('@/lib/dal/remote')
                 res = await createStudentWorkout(formData)
             } else if (actionType === 'create-student-diet') {
-                const { createStudentDiet } = await import('@/actions/student-content-actions')
+                const { createStudentDiet } = await import('@/lib/dal/remote')
                 res = await createStudentDiet(formData)
             }
 

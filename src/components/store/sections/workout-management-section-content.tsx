@@ -12,7 +12,6 @@ import { useRouter } from 'next/navigation'
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { ENTITIES } from '@/lib/outbox-db'
-import { deleteWorkout, duplicateWorkout, assignWorkout } from '@/actions/workout-actions'
 import { AssignedStudentInfo } from '@/components/store/intermediary/assigned-student-mini-card'
 
 interface WorkoutManagementSectionContentProps {
@@ -51,34 +50,19 @@ export function WorkoutManagementSectionContent({
     const { mutate: deleteMutation } = useOptimisticMutation({
         queryKey: activeQueryKey,
         entity: ENTITIES.WORKOUT,
-        actionName: 'delete-workout',
-        mutationFn: async ({ id }: { id: string }) => {
-            const res = await deleteWorkout(id)
-            if (res.error) throw new Error(res.error)
-            return res
-        }
+        actionName: 'delete-workout'
     })
 
     const { mutate: duplicateMutation } = useOptimisticMutation({
         queryKey: activeQueryKey,
         entity: ENTITIES.WORKOUT,
-        actionName: 'duplicate-workout',
-        mutationFn: async ({ id }: { id: string }) => {
-            const res = await duplicateWorkout(id)
-            if (res.error) throw new Error(res.error)
-            return res
-        }
+        actionName: 'duplicate-workout'
     })
 
     const { mutate: assignMutation } = useOptimisticMutation({
         queryKey: QUERY_KEYS.workouts.all(userId),
         entity: ENTITIES.WORKOUT,
-        actionName: 'assign-workout',
-        mutationFn: async ({ workoutId, day, studentId }: { workoutId: string, day: number, studentId: string }) => {
-            const res = await assignWorkout(workoutId, studentId, day)
-            if (res.error) throw new Error(res.error)
-            return res
-        }
+        actionName: 'assign-workout'
     })
 
     const handleConfirm = (data?: any) => {

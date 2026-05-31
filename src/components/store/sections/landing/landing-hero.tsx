@@ -265,7 +265,6 @@ export function LandingHero({ role = 'trainer' }: LandingHeroProps) {
                   padding={STORE_TOKENS.PADDING.ELEMENT}
                   rounded={STORE_TOKENS.RADIUS.SYSTEM}
                   shadow="xl"
-                  // eslint-disable-next-line no-restricted-syntax
                   zIndex={50}
                 >
                   <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
@@ -289,7 +288,6 @@ export function LandingHero({ role = 'trainer' }: LandingHeroProps) {
                   padding={STORE_TOKENS.PADDING.ELEMENT}
                   rounded={STORE_TOKENS.RADIUS.SYSTEM}
                   shadow="xl"
-                  // eslint-disable-next-line no-restricted-syntax
                   zIndex={50}
                 >
                   <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>

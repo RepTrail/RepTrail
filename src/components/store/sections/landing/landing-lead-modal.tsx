@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { createClient } from '@/lib/supabase/client'
+import { getSupabaseClient } from '@/lib/dal'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Box } from '@/components/store/base/box'
@@ -32,7 +32,7 @@ export function LandingLeadModal({ isOpen, onOpenChange, trainerName, trainerCod
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const router = useRouter()
-  const supabase = createClient()
+  const supabase = getSupabaseClient()
 
   const [animateState, setAnimateState] = useState<'closed' | 'open'>('closed')
 

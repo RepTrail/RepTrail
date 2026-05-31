@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useToast } from "@/hooks/use-toast"
 import { Ruler, Weight, User, ArrowRight, Target, Check } from "lucide-react"
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
-import { useQueryClient } from '@tanstack/react-query'
+import { useQueryClient } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { ENTITIES } from '@/lib/outbox-db'
 

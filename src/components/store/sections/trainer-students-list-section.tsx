@@ -2,9 +2,9 @@
 
 import React, { useState, useCallback } from 'react'
 import Link from 'next/link'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
-import { getTrainerStudents } from '@/actions/trainer-actions'
+import { getTrainerStudents } from '@/lib/dal/remote'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { ActionableListCard } from '@/components/store/intermediary/actionable-list-card'
 import { Input } from '@/components/store/base/input'
@@ -46,7 +46,7 @@ export function TrainerStudentsListSection({ userId }: TrainerStudentsListSectio
         if (!deactivateTarget) return
         setIsDeactivating(true)
         try {
-            const { deactivateAndPurgeStudent } = await import('@/actions/trainer-actions')
+            const { deactivateAndPurgeStudent } = await import('@/lib/dal/remote')
             const result = await deactivateAndPurgeStudent(deactivateTarget.id, deactivateTarget.student_id)
             if (result.success) {
                 window.location.reload()

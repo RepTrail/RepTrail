@@ -2,19 +2,13 @@
 
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useQueryClient, useAuthUser, actions } from '@/lib/dal'
 import { useTransition } from 'react'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import {
     BarChart3, TrendingUp, CreditCard, Activity,
     AlertCircle, HeartHandshake, Users2, Users, ShoppingBag
 } from 'lucide-react'
-import { 
-    getAdminOverview, getOperationalCosts,
-    addOperationalCost, deleteOperationalCost
-} from '@/actions/admin-actions'
-import { getAdminPayouts, updatePayoutStatus } from '@/actions/admin-affiliate-actions'
-import { createClient } from '@/lib/supabase/client'
 import { RegistryProvider } from '@/components/store/advanced/registry-context'
 import { DashboardShell } from '@/components/store/advanced/dashboard-shell'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
@@ -35,28 +29,19 @@ export default function AdminDashboardPage() {
 
     const { data: stats } = useQuery({
         queryKey: QUERY_KEYS.admin.overview,
-        queryFn: () => getAdminOverview()
+        queryFn: () => actions.getAdminOverview()
     })
 
-    const { data: adminUser } = useQuery({
-        queryKey: QUERY_KEYS.auth.user,
-        queryFn: async () => {
-            const supabase = createClient()
-            const { data: { user: authUser } } = await supabase.auth.getUser()
-            if (!authUser) return null
-            const { data: profile } = await supabase.from('profiles').select('*').eq('id', authUser.id).single()
-            return profile || authUser
-        }
-    })
+    const { data: adminUser } = useAuthUser()
 
     const { data: payouts } = useQuery({
         queryKey: QUERY_KEYS.admin.payouts,
-        queryFn: () => getAdminPayouts()
+        queryFn: () => actions.getAdminPayouts()
     })
 
     const { data: costs } = useQuery({
         queryKey: QUERY_KEYS.admin.costs,
-        queryFn: () => getOperationalCosts()
+        queryFn: () => actions.getOperationalCosts()
     })
 
     const loadAll = () => {
@@ -71,7 +56,7 @@ export default function AdminDashboardPage() {
     }
 
     const handlePayoutAction = async (id: string, status: 'completed' | 'rejected') => {
-        const res = await updatePayoutStatus(id, status)
+        const res = await actions.updatePayoutStatus(id, status)
         if (res.success) {
             queryClient.invalidateQueries({ queryKey: QUERY_KEYS.admin.payouts })
             queryClient.invalidateQueries({ queryKey: QUERY_KEYS.admin.overview })
@@ -82,7 +67,7 @@ export default function AdminDashboardPage() {
     }
 
     const handleAddCost = async (data: any) => {
-        const res = await addOperationalCost(data)
+        const res = await actions.addOperationalCost(data)
         if (res.success) {
             queryClient.invalidateQueries({ queryKey: QUERY_KEYS.admin.costs })
             queryClient.invalidateQueries({ queryKey: QUERY_KEYS.admin.overview })
@@ -93,7 +78,7 @@ export default function AdminDashboardPage() {
     }
 
     const handleDeleteCost = async (id: string) => {
-        const res = await deleteOperationalCost(id)
+        const res = await actions.deleteOperationalCost(id)
         if (res.success) {
             queryClient.invalidateQueries({ queryKey: QUERY_KEYS.admin.costs })
             queryClient.invalidateQueries({ queryKey: QUERY_KEYS.admin.overview })

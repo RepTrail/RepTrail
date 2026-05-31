@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient, QueryKey } from '@tanstack/react-query'
+import { useMutation, useQueryClient, QueryKey } from '@/lib/dal'
 import { outboxDB, EntityType } from '@/lib/outbox-db'
 import { syncEngine } from '@/lib/sync-engine'
 

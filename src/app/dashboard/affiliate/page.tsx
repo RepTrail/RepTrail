@@ -1,4 +1,4 @@
-import { getAffiliateData } from '@/actions/affiliate-actions'
+import { actions } from '@/lib/dal'
 import { redirect } from 'next/navigation'
 import { AffiliateDashboardClient } from './affiliate-dashboard-client'
 import { AffiliateMetaPixel } from './meta-pixel'
@@ -8,7 +8,7 @@ import { AffiliateMetaPixel } from './meta-pixel'
  * Now a Server Component to support async data fetching.
  */
 export default async function AffiliateDashboard() {
-    const data = await getAffiliateData()
+    const data = await actions.getAffiliateData()
 
     if (!data) {
         redirect('/auth/login')

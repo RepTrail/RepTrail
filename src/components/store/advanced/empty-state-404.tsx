@@ -29,7 +29,6 @@ export function EmptyState404() {
       justify="center"
       overflow="hidden"
       bg={STORE_TOKENS.COLORS.BACKGROUND}
-      // eslint-disable-next-line no-restricted-syntax
       zIndex={0}
     >
       {/* ─── Layer 1: Efeitos de Alta Fidelidade (Encapsulados) ───────── */}
@@ -42,7 +41,6 @@ export function EmptyState404() {
         justify="center"
 
         top={150}
-        // eslint-disable-next-line no-restricted-syntax
         zIndex={0}
       >
         <Font

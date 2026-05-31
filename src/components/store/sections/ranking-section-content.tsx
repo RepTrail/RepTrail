@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery } from '@/lib/dal'
 import { Stack } from '@/components/store/base/stack'
 import { Grid } from '@/components/store/base/grid'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
@@ -11,7 +11,7 @@ import { RankingListItem } from '@/components/store/intermediary/ranking-list-it
 import { EmptyState } from '@/components/store/intermediary/empty-state'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { QUERY_KEYS } from '@/lib/query-keys'
-import { getTrainerRanking } from '@/actions/trainer-actions'
+import { getTrainerRanking } from '@/lib/dal/remote'
 
 /**
  * RankingSectionContent: Composes Podium and General Ranking sections.

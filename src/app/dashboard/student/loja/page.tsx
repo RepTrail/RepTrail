@@ -1,7 +1,6 @@
-import { getStoreProducts } from '@/actions/store-actions'
+import { actions, dehydrate, HydrationBoundary } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { getQueryClient } from '@/lib/get-query-client'
-import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { MarketplaceSectionContent } from '@/components/store/sections/marketplace-section-content'
 
@@ -14,7 +13,7 @@ export default async function StudentStorePage() {
 
     await queryClient.prefetchQuery({
         queryKey: QUERY_KEYS.store.products,
-        queryFn: getStoreProducts
+        queryFn: actions.getStoreProducts
     })
 
     return (

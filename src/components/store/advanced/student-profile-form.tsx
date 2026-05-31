@@ -25,7 +25,7 @@ import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
 import { ENTITIES } from '@/lib/outbox-db'
 import { QUERY_KEYS } from '@/lib/query-keys'
-import { useQueryClient } from '@tanstack/react-query'
+import { useQueryClient } from '@/lib/dal'
 import { toast } from '@/hooks/use-toast'
 
 /**

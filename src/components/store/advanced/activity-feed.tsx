@@ -1,10 +1,9 @@
 'use client'
 
 import { useEffect } from 'react'
-import { ActivityItem, getTrainerActivityFeed } from '@/actions/trainer-actions'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { actions, useQuery, useQueryClient, getSupabaseClient, removeChannelWithGrace } from '@/lib/dal'
+import type { ActivityItem } from '@/lib/dal/remote'
 import { QUERY_KEYS } from '@/lib/query-keys'
-import { createClient, removeChannelWithGrace } from '@/lib/supabase/client'
 import {
     Clock,
     Activity as ActivityIcon
@@ -30,11 +29,11 @@ interface ActivityFeedProps {
 
 export function ActivityFeed({ userId, initialData }: ActivityFeedProps) {
     const queryClient = useQueryClient()
-    const supabase = createClient()
+    const supabase = getSupabaseClient()
 
     const { data: activities = [] } = useQuery({
         queryKey: QUERY_KEYS.trainer.activity(userId),
-        queryFn: () => getTrainerActivityFeed(userId),
+        queryFn: () => actions.getTrainerActivityFeed(userId),
         initialData
     })
 

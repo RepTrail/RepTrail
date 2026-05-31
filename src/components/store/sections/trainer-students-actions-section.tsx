@@ -1,9 +1,9 @@
 'use client'
 
 import React from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
-import { getTrainerProfile } from '@/actions/trainer-actions'
+import { getTrainerProfile } from '@/lib/dal/remote'
 import { Stack } from '@/components/store/base/stack'
 import { Box } from '@/components/store/base/box'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'

@@ -1,10 +1,10 @@
 'use client'
 
 import React from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
-import { getStudentRelationship } from '@/actions/trainer-actions'
-import { getStudentRecentActivities } from '@/actions/log-actions'
+import { getStudentRelationship } from '@/lib/dal/remote'
+import { getStudentRecentActivities } from '@/lib/dal/remote'
 import { StudentPublicPhotos } from '@/components/store/advanced/student-public-photos'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { StudentRecentActivities } from '@/components/store/advanced/student-recent-activities'

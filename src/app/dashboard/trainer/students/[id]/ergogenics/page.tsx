@@ -1,10 +1,7 @@
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { Suspense } from 'react'
-import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
-import { getBetaTesterMode } from '@/actions/app-settings-actions'
-import { getStudentRelationship } from '@/actions/trainer-actions'
-import { getStudentErgogenics } from '@/actions/ergogenics-actions'
+import { actions, dehydrate, HydrationBoundary } from '@/lib/dal'
 import { getQueryClient } from '@/lib/get-query-client'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { TrainerStudentErgogenicsShell } from '@/components/store/advanced/trainer-student-ergogenics-shell'
@@ -25,7 +22,7 @@ export default async function StudentErgogenicsPage({ params }: { params: Promis
 
     if (!trainerId) redirect('/auth/login')
 
-    const relationship = await getStudentRelationship(relationshipId)
+    const relationship = await actions.getStudentRelationship(relationshipId)
 
     if (!relationship) {
         return (
@@ -46,14 +43,14 @@ export default async function StudentErgogenicsPage({ params }: { params: Promis
             await qc.prefetchQuery({
                 queryKey: QUERY_KEYS.ergogenics.all(effectiveStudentId),
                 queryFn: async () => {
-                    const res = await getStudentErgogenics(effectiveStudentId)
+                    const res = await actions.getStudentErgogenics(effectiveStudentId)
                     return Array.isArray(res) ? res : []
                 },
                 staleTime: 1000 * 30,
             })
             return qc
         })(),
-        getBetaTesterMode(),
+        actions.getBetaTesterMode(),
     ])
 
     return (

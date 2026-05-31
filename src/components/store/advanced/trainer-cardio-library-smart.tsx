@@ -1,10 +1,10 @@
 'use client'
 
 import React from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
-import { getCardioLibrary } from '@/actions/cardio-actions'
-import { getTrainerStudents } from '@/actions/trainer-actions'
+import { getCardioLibrary } from '@/lib/dal/remote'
+import { getTrainerStudents } from '@/lib/dal/remote'
 import { useRealtimeSync } from '@/hooks/use-realtime-sync'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { CardioManagementSectionContent } from '@/components/store/sections/cardio-management-section-content'

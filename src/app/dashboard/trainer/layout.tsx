@@ -1,12 +1,9 @@
 import { STORE_TOKENS } from '@/components/store/constants/tokens';
-import { createClient } from '@/lib/supabase/server'
+import { actions, getSupabaseServer, dehydrate, HydrationBoundary } from '@/lib/dal'
 import { redirect } from 'next/navigation'
 import { headers } from 'next/headers'
-import { getBetaTesterMode } from '@/actions/app-settings-actions'
 import { getQueryClient } from '@/lib/get-query-client'
 import { QUERY_KEYS } from '@/lib/query-keys'
-import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
-import { getEffectiveTier, getTrainerProfile } from '@/actions/trainer-actions'
 import { TrainerTourManager } from '@/components/store/advanced/trainer-tour-manager'
 import { MobileTrainerTourManager } from '@/components/store/advanced/mobile-trainer-tour-manager'
 import { DashboardShell } from '@/components/store/advanced/dashboard-shell'
@@ -19,7 +16,7 @@ export default async function TrainerLayout({ children }: { children: React.Reac
 
     if (!userId) redirect('/auth/login')
 
-    const supabase = await createClient()
+    const supabase = await getSupabaseServer()
     
     const { data: profile } = await supabase
         .from('profiles')
@@ -32,13 +29,13 @@ export default async function TrainerLayout({ children }: { children: React.Reac
 
     const queryClient = getQueryClient()
     await Promise.all([
-        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.trainer.profile(userId), queryFn: () => getTrainerProfile(userId) }),
-        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.profile.detail(userId), queryFn: () => getTrainerProfile(userId) }),
-        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.trainer.effectiveTier(userId), queryFn: () => getEffectiveTier(userId) }),
+        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.trainer.profile(userId), queryFn: () => actions.getTrainerProfile(userId) }),
+        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.profile.detail(userId), queryFn: () => actions.getTrainerProfile(userId) }),
+        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.trainer.effectiveTier(userId), queryFn: () => actions.getEffectiveTier(userId) }),
     ])
 
     const dehydratedState = dehydrate(queryClient)
-    const betaTesterMode = await getBetaTesterMode()
+    const betaTesterMode = await actions.getBetaTesterMode()
 
     const links = [
         { href: '/dashboard/trainer',           label: 'Visão Geral',  icon: 'Home',         exact: true },

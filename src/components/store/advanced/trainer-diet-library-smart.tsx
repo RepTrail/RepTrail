@@ -1,9 +1,9 @@
 'use client'
 
 import React from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
-import { getTrainerDiets } from '@/actions/diet-actions'
+import { getTrainerDiets } from '@/lib/dal/remote'
 import { useRealtimeSync } from '@/hooks/use-realtime-sync'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { DietManagementSectionContent } from '@/components/store/sections/diet-management-section-content'

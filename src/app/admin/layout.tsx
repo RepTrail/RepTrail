@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { getSupabaseServer } from '@/lib/dal'
 import { redirect } from 'next/navigation'
 
 export default async function AdminLayout({
@@ -6,7 +6,7 @@ export default async function AdminLayout({
 }: {
     children: React.ReactNode
 }) {
-    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
+    const supabase = await getSupabaseServer()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) {

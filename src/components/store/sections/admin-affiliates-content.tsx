@@ -1,10 +1,10 @@
 'use client'
 
 import React from 'react'
-import { getAdminPayouts } from '@/actions/admin-affiliate-actions'
+import { getAdminPayouts } from '@/lib/dal/remote'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { HeartHandshake } from 'lucide-react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery } from '@/lib/dal'
 import { AdminPayoutsManagement } from '@/components/store/sections/admin-payouts-management'
 import { AdminAffiliatesList } from '@/components/store/advanced/admin-affiliates-list'
 

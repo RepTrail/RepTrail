@@ -7,11 +7,10 @@ import { Icon } from '@/components/store/base/icon'
 import { Button } from '@/components/store/base/button'
 import { BaseAvatar } from '@/components/store/base/avatar'
 import { LogOut, Settings, Briefcase, ArrowRightLeft } from 'lucide-react'
-import { signOutAction } from '@/actions/auth-actions'
+import { actions, getSupabaseClient } from '@/lib/dal'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { Box } from '@/components/store/base/box'
 import { usePathname } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
 
 import Link from 'next/link'
 
@@ -54,7 +53,7 @@ export function SidebarProfile({
         }
         if (!user?.id) return
 
-        const supabase = createClient()
+        const supabase = getSupabaseClient()
         supabase
             .from('profiles')
             .select('role')
@@ -154,7 +153,7 @@ export function SidebarProfile({
                 ) : null}
 
                 <Box flex1>
-                    <form action={signOutAction}>
+                    <form action={actions.signOutAction}>
                         <Button
                             variant="outline-red"
                             rounded={STORE_TOKENS.RADIUS.FULL}

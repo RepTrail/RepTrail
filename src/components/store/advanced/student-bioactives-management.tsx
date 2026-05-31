@@ -4,9 +4,9 @@ import React from 'react'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { ErgogenicsList } from '@/components/store/intermediary/ergogenics-list'
 import { FlaskConical } from 'lucide-react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
-import { getStudentErgogenics, getTodayErgogenicLogs, toggleErgogenicLog } from '@/actions/ergogenics-actions'
+import { getStudentErgogenics, getTodayErgogenicLogs, toggleErgogenicLog } from '@/lib/dal/remote'
 import { Box } from '@/components/store/base/box'
 
 interface StudentBioactivesManagementProps {

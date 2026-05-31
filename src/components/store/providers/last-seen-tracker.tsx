@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import { updateLastSeen } from '@/actions/profile-actions'
+import { updateLastSeen } from '@/lib/dal/remote'
 import { usePathname } from 'next/navigation'
 
 export function LastSeenTracker() {

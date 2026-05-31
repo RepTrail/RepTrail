@@ -2,11 +2,9 @@ import { STORE_TOKENS } from '@/components/store/constants/tokens';
 import { Suspense } from 'react'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
-import { getStudentTrainer } from '@/actions/student-actions'
+import { getSupabaseServer, actions, dehydrate, HydrationBoundary } from '@/lib/dal'
 import { getQueryClient } from '@/lib/get-query-client'
 import { QUERY_KEYS } from '@/lib/query-keys'
-import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { DashboardShell } from '@/components/store/advanced/dashboard-shell'
 import { RegistryProvider } from '@/components/store/advanced/registry-context'
 import { SettingsModal } from '@/components/store/advanced/student-settings-modal'
@@ -17,7 +15,7 @@ export default async function StudentLayout({ children }: { children: React.Reac
 
     if (!userId) redirect('/auth/login')
 
-    const supabase = await createClient()
+    const supabase = await getSupabaseServer()
     const { data: profile } = await supabase
         .from('profiles')
         .select('onboarding_completed, role, full_name, avatar_url, auto_training_status, auto_training_trial_end')
@@ -45,20 +43,20 @@ export default async function StudentLayout({ children }: { children: React.Reac
 
 async function StudentLayoutLoader({ userId, children }: { userId: string; children: React.ReactNode }) {
     const queryClient = getQueryClient()
-    const supabase = await createClient()
+    const supabase = await getSupabaseServer()
 
     const [profileRes, detailsRes, trainerRel] = await Promise.all([
         supabase.from('profiles').select('role, full_name, avatar_url, email, auto_training_status, auto_training_trial_end, is_admin, is_affiliate').eq('id', userId).single(),
         supabase.from('student_details').select('id, steroid_use').eq('id', userId).single(),
-        getStudentTrainer(userId),
-        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.workouts.session, queryFn: () => import('@/actions/log-actions').then(m => m.getActiveWorkoutSession()) }),
-        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.cardio.session, queryFn: () => import('@/actions/cardio-actions').then(m => m.getActiveCardioSession()) }),
-        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.student.details(userId), queryFn: () => import('@/actions/student-actions').then(m => m.getStudentProfile(userId)) }),
-        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.workouts.all(userId), queryFn: () => import('@/actions/workout-actions').then(m => m.getAssignedWorkouts(userId)) }),
-        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.diets.all(userId), queryFn: () => import('@/actions/diet-actions').then(m => m.getAssignedDiets(userId)) }),
-        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.ergogenics.all(userId), queryFn: () => import('@/actions/ergogenics-actions').then(m => m.getAssignedErgogenics(userId)) }),
-        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.cardio.all(userId), queryFn: () => import('@/actions/cardio-actions').then(m => m.getAssignedCardios(userId)) }),
-        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.profile.trainer(userId), queryFn: () => getStudentTrainer(userId) }),
+        actions.getStudentTrainer(userId),
+        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.workouts.session, queryFn: () => import('@/lib/dal/remote').then(m => m.getActiveWorkoutSession()) }),
+        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.cardio.session, queryFn: () => import('@/lib/dal/remote').then(m => m.getActiveCardioSession()) }),
+        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.student.details(userId), queryFn: () => import('@/lib/dal/remote').then(m => m.getStudentProfile(userId)) }),
+        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.workouts.all(userId), queryFn: () => import('@/lib/dal/remote').then(m => m.getAssignedWorkouts(userId)) }),
+        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.diets.all(userId), queryFn: () => import('@/lib/dal/remote').then(m => m.getAssignedDiets(userId)) }),
+        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.ergogenics.all(userId), queryFn: () => import('@/lib/dal/remote').then(m => m.getAssignedErgogenics(userId)) }),
+        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.cardio.all(userId), queryFn: () => import('@/lib/dal/remote').then(m => m.getAssignedCardios(userId)) }),
+        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.profile.trainer(userId), queryFn: () => actions.getStudentTrainer(userId) }),
     ])
 
     const p = profileRes.data
@@ -103,7 +101,6 @@ async function StudentLayoutLoader({ userId, children }: { userId: string; child
         <RegistryProvider defaultColor="orange">
             <HydrationBoundary state={dehydrate(queryClient)}>
                 <DashboardShell
-                    // eslint-disable-next-line no-restricted-syntax
                     color="orange"
                     links={allLinks}
                     mobileLinks={mobileLinks}

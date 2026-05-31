@@ -43,7 +43,7 @@ export function StudentDashboardModals({ userId, showModal, hasTrainer }: Studen
         entityId: userId,
         queryKey: QUERY_KEYS.student.all(userId),
         mutationFn: async () => {
-             const { enableAutoTrainingTrialForCurrentUser } = await import('@/actions/auto-training-actions')
+             const { enableAutoTrainingTrialForCurrentUser } = await import('@/lib/dal/remote')
              return await enableAutoTrainingTrialForCurrentUser()
         },
         onMutate: () => setIsModalOpen(false)
@@ -55,7 +55,7 @@ export function StudentDashboardModals({ userId, showModal, hasTrainer }: Studen
         entityId: userId,
         queryKey: QUERY_KEYS.student.all(userId),
         mutationFn: async () => {
-             const { dismissAutoTrainingForSession } = await import('@/actions/auto-training-actions')
+             const { dismissAutoTrainingForSession } = await import('@/lib/dal/remote')
              return await dismissAutoTrainingForSession(userId)
         },
         onMutate: () => setIsModalOpen(false)

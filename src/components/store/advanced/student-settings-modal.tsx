@@ -15,10 +15,10 @@ import {
     Loader2,
     Crown
 } from 'lucide-react'
-import { getTermsStatus } from '@/actions/terms-actions'
-import { getAutoTrainingTrialInfoForCurrentUser, enableAutoTrainingTrialForCurrentUser } from '@/actions/auto-training-actions'
+import { getTermsStatus } from '@/lib/dal/remote'
+import { getAutoTrainingTrialInfoForCurrentUser, enableAutoTrainingTrialForCurrentUser } from '@/lib/dal/remote'
 import { useToast } from '@/hooks/use-toast'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery } from '@/lib/dal'
 import { getQueryClient } from '@/lib/get-query-client'
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
 import { ENTITIES } from '@/lib/outbox-db'

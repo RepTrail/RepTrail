@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
-import { useQueryClient } from '@tanstack/react-query'
+import { useQueryClient } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { ENTITIES } from '@/lib/outbox-db'
 import { Button } from '@/components/store/base/button'

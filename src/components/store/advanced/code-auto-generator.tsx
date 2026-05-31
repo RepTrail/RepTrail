@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import { generateTrainerCode } from '@/actions/code-actions'
+import { generateTrainerCode } from '@/lib/dal/remote'
 
 export function CodeAutoGenerator({ hasCode }: { hasCode: boolean }) {
     useEffect(() => {

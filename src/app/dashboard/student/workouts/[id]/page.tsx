@@ -1,6 +1,5 @@
-import { getWorkoutDetails } from "@/actions/workout-actions"
+import { actions, dehydrate, HydrationBoundary } from "@/lib/dal"
 import { notFound, redirect } from "next/navigation"
-import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { getQueryClient } from '@/lib/get-query-client'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { WorkoutBuilderSmart } from "@/components/store/advanced/workout-builder-smart"
@@ -22,7 +21,7 @@ export default async function StudentWorkoutPage({
     // 1. Prefetch Workout Details
     await queryClient.prefetchQuery({
         queryKey: QUERY_KEYS.workouts.detail(id),
-        queryFn: () => getWorkoutDetails(id)
+        queryFn: () => actions.getWorkoutDetails(id)
     })
 
     const workout = queryClient.getQueryData(QUERY_KEYS.workouts.detail(id)) as any

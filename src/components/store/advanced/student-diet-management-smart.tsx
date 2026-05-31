@@ -1,10 +1,13 @@
 'use client'
 
 import React from 'react'
-import { useQuery } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/lib/query-keys'
-import { getAssignedDiets, getTrainerDiets } from '@/actions/diet-actions'
-import { getStudentProfile, getStudentTrainer } from '@/actions/student-actions'
+import { 
+    useProfile, 
+    useStudentTrainer, 
+    useAssignedDiets, 
+    useTrainerDiets 
+} from '@/lib/dal'
 import { useRealtimeSync } from '@/hooks/use-realtime-sync'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { DietManagementSectionContent } from '@/components/store/sections/diet-management-section-content'
@@ -17,37 +20,18 @@ interface StudentDietManagementSmartProps {
 }
 
 export function StudentDietManagementSmart({ userId }: StudentDietManagementSmartProps) {
-    // 1. Data Fetching
-    const { data: profile } = useQuery({
-        queryKey: QUERY_KEYS.student.details(userId),
-        queryFn: () => getStudentProfile(userId),
-        staleTime: 1000 * 60 * 5
-    })
-
-    const { data: trainerLink } = useQuery({
-        queryKey: QUERY_KEYS.profile.trainer(userId),
-        queryFn: () => getStudentTrainer(userId),
-        staleTime: 1000 * 60 * 5
-    })
-
-    const { data: assignedDiets = [] } = useQuery({
-        queryKey: QUERY_KEYS.diets.all(userId),
-        queryFn: () => getAssignedDiets(userId),
-        staleTime: 1000 * 60 * 5
-    })
+    // 1. Data Fetching via Local-First DAL
+    const { data: profile } = useProfile(userId)
+    const { data: trainerLink } = useStudentTrainer(userId)
+    const { data: assignedDiets = [] } = useAssignedDiets(userId)
 
     const isAutoTrainingActive = profile?.auto_training_status === 'active' || profile?.auto_training_status === 'trial'
     const hasTrainer = !!trainerLink
     const isAutoMode = isAutoTrainingActive && !hasTrainer
 
-    const { data: libraryDiets = [] } = useQuery({
-        queryKey: QUERY_KEYS.diets.library(userId),
-        queryFn: () => getTrainerDiets(userId),
-        enabled: isAutoMode,
-        staleTime: 1000 * 60 * 5
-    })
+    const { data: libraryDiets = [] } = useTrainerDiets(userId)
 
-    // 2. Realtime Sync
+    // 2. Realtime Sync (mediated by Sync Engine observers)
     useRealtimeSync({
         table: 'assigned_diets',
         queryKey: QUERY_KEYS.diets.all(userId),

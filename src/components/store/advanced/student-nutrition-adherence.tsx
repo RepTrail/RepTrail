@@ -4,10 +4,11 @@ import React, { useMemo } from 'react'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { DietAdherenceCard } from '@/components/store/advanced/diet-adherence-card'
 import { Utensils } from 'lucide-react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQueryClient } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
-import { getStudentDailyDiet } from '@/actions/diet-actions'
-import { toggleMealItem, toggleMealGroup } from '@/actions/tracking-actions'
+import { useStudentDailyDiet } from '@/lib/dal'
+import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { ENTITIES } from '@/lib/outbox-db'
 import { Box } from '@/components/store/base/box'
 
 interface StudentNutritionAdherenceProps {
@@ -16,31 +17,69 @@ interface StudentNutritionAdherenceProps {
 
 /**
  * StudentNutritionAdherence (Smart): Manages diet adherence and macros.
- * Now supports granular item tracking and dynamic progress.
+ * fully local-first offline-ready. Granular item tracking and dynamic sychronous progress.
  */
 export function StudentNutritionAdherence({ userId }: StudentNutritionAdherenceProps) {
     const queryClient = useQueryClient()
+    const todayQueryKey = QUERY_KEYS.diets.today(userId)
 
-    const { data: diet, isLoading } = useQuery({
-        queryKey: QUERY_KEYS.diets.today(userId),
-        queryFn: () => getStudentDailyDiet(userId),
-        staleTime: 1000 * 60 * 5,
-        refetchOnMount: false,
-    })
+    const { data: diet, isLoading } = useStudentDailyDiet(userId)
 
-    const mealMutation = useMutation({
-        mutationFn: ({ mealId, currentStatus }: { mealId: string, currentStatus: boolean }) =>
-            toggleMealGroup(mealId, !currentStatus),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: QUERY_KEYS.diets.today(userId) })
+    const mealMutation = useOptimisticMutation({
+        actionName: 'toggle-meal-group',
+        queryKey: todayQueryKey,
+        entity: ENTITIES.MEAL,
+        onMutate: (variables: any) => {
+            queryClient.setQueryData(todayQueryKey, (old: any) => {
+                if (!old || !old.meals) return old
+                return {
+                    ...old,
+                    meals: old.meals.map((m: any) => {
+                        if (m.id === variables.mealId) {
+                            const newStatus = !variables.currentStatus
+                            return {
+                                ...m,
+                                is_checked: newStatus,
+                                meal_items: (m.meal_items || []).map((i: any) => ({ ...i, is_checked: newStatus }))
+                            }
+                        }
+                        return m
+                    })
+                }
+            })
         }
     })
 
-    const itemMutation = useMutation({
-        mutationFn: ({ itemId, currentStatus }: { itemId: string, currentStatus: boolean }) =>
-            toggleMealItem(itemId, !currentStatus),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: QUERY_KEYS.diets.today(userId) })
+    const itemMutation = useOptimisticMutation({
+        actionName: 'toggle-meal-item',
+        queryKey: todayQueryKey,
+        entity: ENTITIES.MEAL_ITEM,
+        onMutate: (variables: any) => {
+            queryClient.setQueryData(todayQueryKey, (old: any) => {
+                if (!old || !old.meals) return old
+                return {
+                    ...old,
+                    meals: old.meals.map((m: any) => {
+                        const items = m.meal_items || []
+                        const hasItem = items.some((i: any) => i.id === variables.itemId)
+                        if (hasItem) {
+                            const newItems = items.map((i: any) => {
+                                if (i.id === variables.itemId) {
+                                    return { ...i, is_checked: !variables.currentStatus }
+                                }
+                                return i
+                            })
+                            const allChecked = newItems.every((i: any) => i.is_checked)
+                            return {
+                                ...m,
+                                is_checked: allChecked,
+                                meal_items: newItems
+                            }
+                        }
+                        return m
+                    })
+                }
+            })
         }
     })
 

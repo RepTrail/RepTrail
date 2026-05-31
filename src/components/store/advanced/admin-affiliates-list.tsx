@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { getAdminAffiliates, removeAffiliate } from '@/actions/admin-affiliate-actions'
+import { getAdminAffiliates, removeAffiliate } from '@/lib/dal/remote'
 import { Stack } from '@/components/store/base/stack'
 import { Font } from '@/components/store/base/font'
 import { Input } from '@/components/store/base/input'
@@ -9,7 +9,7 @@ import { Modal } from '@/components/store/advanced/modal'
 import { AffiliateListItem } from '@/components/store/intermediary/affiliate-list-item'
 import { EmptyState } from '@/components/store/intermediary/empty-state'
 import { HeartHandshake, Search, XCircle } from 'lucide-react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery } from '@/lib/dal'
 import { useToast } from '@/hooks/use-toast'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 

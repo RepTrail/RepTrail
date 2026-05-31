@@ -1,12 +1,12 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
+import { useQuery } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import {
     getTrainerProfile,
     getTrainerRanking,
     getTrainerActivityFeed
-} from '@/actions/trainer-actions'
+} from '@/lib/dal/remote'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { Grid } from '@/components/store/base/grid'

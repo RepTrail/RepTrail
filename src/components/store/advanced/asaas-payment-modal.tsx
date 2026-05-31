@@ -18,7 +18,7 @@ import {
     Loader2
 } from 'lucide-react'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
-import { createAsaasSubscription, searchAsaasCustomer } from '@/actions/asaas-actions'
+import { createAsaasSubscription, searchAsaasCustomer } from '@/lib/dal/remote'
 import { useToast } from '@/hooks/use-toast'
 
 interface AsaasPaymentModalProps {

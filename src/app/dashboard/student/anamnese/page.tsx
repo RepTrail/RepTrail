@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { getSupabaseServer } from '@/lib/dal'
 import { AnamnesisForm } from '@/components/store/advanced/student-anamnesis-form'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { headers } from 'next/headers'
@@ -9,7 +9,7 @@ export default async function AnamnesisPage() {
     const userId = headerList.get('x-user-id')
     if (!userId) redirect('/auth/login')
 
-    const supabase = await createClient()
+    const supabase = await getSupabaseServer()
 
     const { data: details } = await supabase
         .from('student_details')

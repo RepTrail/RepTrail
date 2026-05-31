@@ -24,9 +24,9 @@ import {
     ArrowRight
 } from 'lucide-react'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
-import { generateAIProtocol, AIProtocolPreferences } from '@/actions/ai-protocol-actions'
-import { saveParsedData } from '@/actions/save-actions'
-import { useQueryClient, useMutation } from '@tanstack/react-query'
+import { generateAIProtocol, AIProtocolPreferences } from '@/lib/dal/remote'
+import { saveParsedData } from '@/lib/dal/remote'
+import { useQueryClient, useMutation } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { useToast } from '@/hooks/use-toast'
 import { DomainStepCard } from '../intermediary/domain-step-card'

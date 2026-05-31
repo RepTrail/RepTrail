@@ -20,7 +20,7 @@ export function StudentPaymentButtons() {
         entityId: 'new',
         queryKey: QUERY_KEYS.student.all('me'),
         mutationFn: async (variables: { tier: string, type: string }) => {
-            const { createAsaasSubscription } = await import('@/actions/asaas-actions')
+            const { createAsaasSubscription } = await import('@/lib/dal/remote')
             return await createAsaasSubscription(variables.tier as any, variables.type as any)
         },
         onMutate: () => {

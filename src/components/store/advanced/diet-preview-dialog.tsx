@@ -2,8 +2,8 @@
 
 import React from 'react'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
-import { useQuery } from '@tanstack/react-query'
-import { getDietDetails } from '@/actions/diet-actions'
+import { useQuery } from '@/lib/dal'
+import { getDietDetails } from '@/lib/dal/remote'
 import { Modal } from '@/components/store/advanced/modal'
 import { Stack } from '@/components/store/base/stack'
 import { Font } from '@/components/store/base/font'

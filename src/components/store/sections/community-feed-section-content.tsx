@@ -2,7 +2,7 @@
 
 import React, { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { actions, useQuery, useQueryClient, getSupabaseClient } from '@/lib/dal'
 import { Grid } from '@/components/store/base/grid'
 import { CommunityFeedCard } from '@/components/store/intermediary/community-feed-card'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
@@ -10,8 +10,6 @@ import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { Users, TrendingUp } from 'lucide-react'
 import { EmptyState } from '@/components/store/intermediary/empty-state'
 import { QUERY_KEYS } from '@/lib/query-keys'
-import { getPublicFeed } from '@/actions/student-actions'
-import { createClient } from '@/lib/supabase/client'
 
 /**
  * CommunityFeedSectionContent: The composite content for the Community Feed section.
@@ -20,11 +18,11 @@ import { createClient } from '@/lib/supabase/client'
 export function CommunityFeedSectionContent({ isEmpty = false }: { isEmpty?: boolean }) {
     const router = useRouter()
     const queryClient = useQueryClient()
-    const supabase = createClient()
+    const supabase = getSupabaseClient()
 
     const { data: result, isLoading } = useQuery({
         queryKey: QUERY_KEYS.public.feed,
-        queryFn: async () => getPublicFeed(),
+        queryFn: async () => actions.getPublicFeed(),
         staleTime: 1000 * 60 * 5 // 5 minutes
     })
 

@@ -1,14 +1,14 @@
 'use client'
 
 import React from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import {
     getStudentErgogenics,
     deleteErgogenic,
     addErgogenic,
     updateErgogenic,
-} from '@/actions/ergogenics-actions'
+} from '@/lib/dal/remote'
 import { useRealtimeSync } from '@/hooks/use-realtime-sync'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { ErgogenicManagementSectionContent } from '@/components/store/sections/ergogenic-management-section-content'

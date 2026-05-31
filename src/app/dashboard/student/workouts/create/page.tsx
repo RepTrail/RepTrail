@@ -1,7 +1,6 @@
-import { createClient } from '@/lib/supabase/server'
+import { getSupabaseServer, actions } from '@/lib/dal'
 import { redirect } from 'next/navigation'
 import { headers } from 'next/headers'
-import { createStudentWorkout } from '@/actions/student-content-actions'
 import { Button } from '@/components/store/base/button'
 import { Input } from '@/components/store/base/input'
 import { Textarea } from '@/components/store/base/textarea'
@@ -17,7 +16,7 @@ export default async function CreateStudentWorkoutPage() {
     const userId = headerList.get('x-user-id')
     if (!userId) redirect('/auth/login')
 
-    const supabase = await createClient()
+    const supabase = await getSupabaseServer()
 
     // Verify auto-training is active
     const { data: profile } = await supabase
@@ -45,7 +44,7 @@ export default async function CreateStudentWorkoutPage() {
                     <CardContent>
                         <form action={async (formData) => {
                             "use server";
-                            const res = await createStudentWorkout(formData);
+                            const res = await actions.createStudentWorkout(formData);
                             if (res?.redirectUrl) {
                                 redirect(res.redirectUrl);
                             }

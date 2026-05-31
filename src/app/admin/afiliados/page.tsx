@@ -1,9 +1,7 @@
 'use client';
 import { STORE_TOKENS } from '@/components/store/constants/tokens';
 
-import { useQuery } from '@tanstack/react-query'
-import { QUERY_KEYS } from '@/lib/query-keys'
-import { createClient } from '@/lib/supabase/client'
+import { useAuthUser } from '@/lib/dal'
 import { DashboardShell } from '@/components/store/advanced/dashboard-shell'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { HeartHandshake } from 'lucide-react'
@@ -16,16 +14,7 @@ import { AdminAffiliatesContent } from '@/components/store/sections/admin-affili
 import { RegistryProvider } from '@/components/store/advanced/registry-context'
 
 export default function AdminAfiliadosPage() {
-    const { data: adminUser } = useQuery({
-        queryKey: QUERY_KEYS.auth.user,
-        queryFn: async () => {
-            const supabase = createClient()
-            const { data: { user: authUser } } = await supabase.auth.getUser()
-            if (!authUser) return null
-            const { data: profile } = await supabase.from('profiles').select('*').eq('id', authUser.id).single()
-            return profile || authUser
-        }
-    })
+    const { data: adminUser } = useAuthUser()
 
     return (
         <RegistryProvider defaultColor="red">

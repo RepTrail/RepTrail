@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery } from '@/lib/dal'
 import { Stack } from '@/components/store/base/stack'
 import { Grid } from '@/components/store/base/grid'
 import { Input } from '@/components/store/base/input'
@@ -13,7 +13,7 @@ import { FormSelect } from '@/components/store/base/form-select'
 import { Box } from '@/components/store/base/box'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { QUERY_KEYS } from '@/lib/query-keys'
-import { getStoreProducts, logProductClick } from '@/actions/store-actions'
+import { getStoreProducts, logProductClick } from '@/lib/dal/remote'
 
 /**
  * MarketplaceSectionContent: The composite content for the Marketplace & Performance section.

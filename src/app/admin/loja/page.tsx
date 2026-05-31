@@ -3,13 +3,8 @@
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 import { useState, useTransition } from 'react'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useQueryClient, useAuthUser, actions } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
-import { 
-    getAllStoreProducts, toggleProductStatus, deleteStoreProduct,
-    addStoreProduct, updateStoreProduct, fetchProductFromUrl
-} from '@/actions/admin-actions'
-import { createClient } from '@/lib/supabase/client'
 import { RegistryProvider } from '@/components/store/advanced/registry-context'
 import { DashboardShell } from '@/components/store/advanced/dashboard-shell'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
@@ -41,23 +36,14 @@ export default function AdminLojaPage() {
 
     const { data: products = [], isLoading } = useQuery({
         queryKey: QUERY_KEYS.store.products,
-        queryFn: () => getAllStoreProducts()
+        queryFn: () => actions.getAllStoreProducts()
     })
 
-    const { data: adminUser } = useQuery({
-        queryKey: QUERY_KEYS.auth.user,
-        queryFn: async () => {
-            const supabase = createClient()
-            const { data: { user: authUser } } = await supabase.auth.getUser()
-            if (!authUser) return null
-            const { data: profile } = await supabase.from('profiles').select('*').eq('id', authUser.id).single()
-            return profile || authUser
-        }
-    })
+    const { data: adminUser } = useAuthUser()
 
     async function handleProductToggle(productId: string, current: boolean) {
         startTransition(async () => {
-            const res = await toggleProductStatus(productId, !current)
+            const res = await actions.toggleProductStatus(productId, !current)
             if (res.error) toast({ variant: 'destructive', title: 'Erro', description: res.error })
             else {
                 toast({ title: !current ? 'Produto ativado!' : 'Produto desativado' })
@@ -74,7 +60,7 @@ export default function AdminLojaPage() {
     async function confirmDeleteProduct() {
         if (!deleteModal.id) return
         startTransition(async () => {
-            const res = await deleteStoreProduct(deleteModal.id)
+            const res = await actions.deleteStoreProduct(deleteModal.id)
             if (res.error) toast({ title: 'Erro ao deletar', description: res.error, variant: 'destructive' })
             else {
                 toast({ title: 'Produto removido com sucesso!' })
@@ -193,12 +179,12 @@ export default function AdminLojaPage() {
                         isOpen={productModalOpen}
                         onClose={() => setProductModalOpen(false)}
                         product={editingProduct}
-                        onImport={fetchProductFromUrl}
+                        onImport={actions.fetchProductFromUrl}
                         onSave={async (data: any) => {
                             startTransition(async () => {
                                 const res = editingProduct
-                                    ? await updateStoreProduct(editingProduct.id, data)
-                                    : await addStoreProduct(data)
+                                    ? await actions.updateStoreProduct(editingProduct.id, data)
+                                    : await actions.addStoreProduct(data)
                                 if ((res as any).error) toast({ variant: 'destructive', title: 'Erro', description: (res as any).error })
                                 else {
                                     toast({ title: editingProduct ? 'Produto atualizado!' : 'Produto adicionado!' })

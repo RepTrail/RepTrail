@@ -1,5 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
-import { getStudentTrainer } from '@/actions/student-actions'
+import { getSupabaseServer, actions } from '@/lib/dal'
 import { redirect } from 'next/navigation'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { MeuPersonalSectionContent } from '@/components/store/sections/meu-personal-section-content'
@@ -10,9 +9,9 @@ export default async function MeuPersonalPage() {
     const userId = headerList.get('x-user-id')
     if (!userId) redirect('/auth/login')
 
-    const supabase = await createClient()
+    const supabase = await getSupabaseServer()
 
-    const trainerRel = await getStudentTrainer(userId)
+    const trainerRel = await actions.getStudentTrainer(userId)
     if (!trainerRel || !trainerRel.trainer) redirect('/dashboard/student/buscar-personal')
 
     const trainer = trainerRel.trainer

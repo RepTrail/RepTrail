@@ -1,9 +1,9 @@
 'use client'
 
 import React from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
-import { getTrainerStudents, getTrainerProfile, getTrainerRanking } from '@/actions/trainer-actions'
+import { getTrainerStudents, getTrainerProfile, getTrainerRanking } from '@/lib/dal/remote'
 import { Grid } from '@/components/store/base/grid'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { StatsCard } from '@/components/store/intermediary/stats-card'

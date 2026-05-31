@@ -6,9 +6,9 @@ import { Stack } from '@/components/store/base/stack'
 import { CardioTimerCard } from '@/components/store/intermediary/cardio-timer-card'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { Activity, ChevronLeft, ChevronRight } from 'lucide-react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
-import { getTodayCardio, getCardioStatus } from '@/actions/cardio-actions'
+import { getTodayCardio, getCardioStatus } from '@/lib/dal/remote'
 import { Button } from '@/components/store/base/button'
 import { Icon } from '@/components/store/base/icon'
 import { Box } from '@/components/store/base/box'
@@ -18,8 +18,8 @@ import {
     updateCardioSession, 
     finishCardioSession, 
     getActiveCardioSession 
-} from '@/actions/cardio-actions'
-import { useQueryClient } from '@tanstack/react-query'
+} from '@/lib/dal/remote'
+import { useQueryClient } from '@/lib/dal'
 import { useToast } from '@/hooks/use-toast'
 import { Modal } from '@/components/store/advanced/modal'
 

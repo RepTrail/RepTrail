@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
+import { getSupabaseServer } from '@/lib/dal'
 import { headers } from 'next/headers'
 import { TrainerPublicProfileMain } from '@/components/store/advanced/trainer-public-profile-main'
 import { DashboardShell } from '@/components/store/advanced/dashboard-shell'
@@ -60,7 +60,7 @@ export default async function TrainerPublicProfilePage({
     params: Promise<{ slug: string }>
 }) {
     const { slug } = await params
-    const supabase = await createClient()
+    const supabase = await getSupabaseServer()
     const headerList = await headers()
     const viewerId = headerList.get('x-user-id')
 

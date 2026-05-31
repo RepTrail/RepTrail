@@ -1,9 +1,9 @@
 'use client'
 
 import React from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
-import { getTopProductsByClicks } from '@/actions/admin-actions'
+import { getTopProductsByClicks } from '@/lib/dal/remote'
 import { Stack } from '@/components/store/base/stack'
 import { Box } from '@/components/store/base/box'
 import { Font } from '@/components/store/base/font'

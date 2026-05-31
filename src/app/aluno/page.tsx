@@ -1,7 +1,6 @@
 import React from 'react'
 import { RegistryProvider } from '@/components/store/advanced/registry-context'
-import { getTrainerRanking } from '@/actions/trainer-actions'
-import { createClient } from '@/lib/supabase/server'
+import { getSupabaseServer, actions } from '@/lib/dal'
 import { LandingShell } from '@/components/store/advanced/landing-shell'
 
 // Landing Page Sections
@@ -19,8 +18,8 @@ import { LandingCTA } from '@/components/store/sections/landing/landing-cta'
 export const dynamic = 'force-dynamic'
 
 export default async function StudentLandingPage() {
-  const trainers = await getTrainerRanking()
-  const supabase = await createClient()
+  const trainers = await actions.getTrainerRanking()
+  const supabase = await getSupabaseServer()
 
   const { data: { user } } = await supabase.auth.getUser()
   let role = null

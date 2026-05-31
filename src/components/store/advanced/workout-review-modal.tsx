@@ -17,7 +17,7 @@ import {
 } from 'lucide-react'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
-import { getWorkoutLogForReview } from '@/actions/log-actions'
+import { getWorkoutLogForReview } from '@/lib/dal/remote'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { ENTITIES } from '@/lib/outbox-db'
 import { useToast } from '@/hooks/use-toast'

@@ -3,12 +3,8 @@
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 import { useState, useTransition } from 'react'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useQueryClient, useAuthUser, actions } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
-import {
-    getAllTrainers, updateUserPlanTier, impersonateUser, deleteUser
-} from '@/actions/admin-actions'
-import { createClient } from '@/lib/supabase/client'
 import { RegistryProvider } from '@/components/store/advanced/registry-context'
 import { DashboardShell } from '@/components/store/advanced/dashboard-shell'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
@@ -35,24 +31,15 @@ export default function AdminPersonaisPage() {
 
     const { data: trainers = [], isLoading } = useQuery({
         queryKey: QUERY_KEYS.admin.trainers,
-        queryFn: () => getAllTrainers()
+        queryFn: () => actions.getAllTrainers()
     })
 
-    const { data: adminUser } = useQuery({
-        queryKey: QUERY_KEYS.auth.user,
-        queryFn: async () => {
-            const supabase = createClient()
-            const { data: { user: authUser } } = await supabase.auth.getUser()
-            if (!authUser) return null
-            const { data: profile } = await supabase.from('profiles').select('*').eq('id', authUser.id).single()
-            return profile || authUser
-        }
-    })
+    const { data: adminUser } = useAuthUser()
 
     async function handleOnDemandToggle(userId: string, currentTier: string) {
         startTransition(async () => {
             const newTier = currentTier === 'on_demand' ? 'free' : 'on_demand'
-            const res = await updateUserPlanTier(userId, newTier)
+            const res = await actions.updateUserPlanTier(userId, newTier)
             if (res.error) toast({ variant: 'destructive', title: 'Erro', description: res.error })
             else {
                 toast({ title: newTier === 'on_demand' ? 'Plano On-Demand ativado!' : 'Plano removido' })
@@ -63,7 +50,7 @@ export default function AdminPersonaisPage() {
 
     async function handleImpersonate(userId: string) {
         startTransition(async () => {
-            const res = await impersonateUser(userId)
+            const res = await actions.impersonateUser(userId)
             if (res?.error) toast({ variant: 'destructive', title: 'Erro ao inspecionar', description: res.error })
         })
     }
@@ -75,7 +62,7 @@ export default function AdminPersonaisPage() {
     async function confirmDeleteUser() {
         if (!deleteModal.id) return
         startTransition(async () => {
-            const res = await deleteUser(deleteModal.id)
+            const res = await actions.deleteUser(deleteModal.id)
             if (res.error) {
                 toast({ variant: 'destructive', title: 'Erro', description: res.error })
             } else {

@@ -1,9 +1,9 @@
 'use client'
 
 import React from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
-import { getStudentRelationship } from '@/actions/trainer-actions'
+import { getStudentRelationship } from '@/lib/dal/remote'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { WorkoutManagementSectionContent } from '@/components/store/sections/workout-management-section-content'
 import { DietManagementSectionContent } from '@/components/store/sections/diet-management-section-content'

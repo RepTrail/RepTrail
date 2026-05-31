@@ -10,7 +10,7 @@ import { Button } from '@/components/store/base/button'
 import { FileUpload } from '@/components/store/base/file-upload'
 import { ShieldCheck } from 'lucide-react'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
-import { uploadTrainerAvatar } from '@/actions/trainer-actions'
+import { uploadTrainerAvatar } from '@/lib/dal/remote'
 import { useToast } from '@/hooks/use-toast'
 import { useRouter } from 'next/navigation'
 

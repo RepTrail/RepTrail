@@ -14,7 +14,7 @@ import { AssignmentBadge } from '@/components/store/intermediary/assignment-badg
 import { Pencil, Check, X, Calendar, Dumbbell, BarChart3, Users2, HeartHandshake, Zap, Users, ClipboardList, Activity, TrendingUp, Sparkles, Utensils, FlaskConical, FileUp, Flame, CreditCard, UserCheck, LayoutDashboard, LucideIcon } from 'lucide-react'
 import { RegistryActionModal } from '@/components/store/advanced/registry-action-modal'
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
-import { assignWorkout } from '@/actions/workout-actions'
+import { assignWorkout } from '@/lib/dal/remote'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { ENTITIES } from '@/lib/outbox-db'
 

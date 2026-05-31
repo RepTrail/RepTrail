@@ -5,10 +5,7 @@ import { WorkoutPlayer } from '@/components/store/advanced/workout-player'
 import { notFound } from 'next/navigation'
 import { Dumbbell, Activity, ArrowLeft } from 'lucide-react'
 import { MissionCompletedView } from '@/components/store/advanced/student-mission-completed'
-import { useQuery } from '@tanstack/react-query'
-import { QUERY_KEYS } from '@/lib/query-keys'
-import { getWorkoutDetails } from '@/actions/workout-actions'
-import { getActiveWorkoutSession, getWorkoutStatus } from '@/actions/log-actions'
+import { useWorkoutWithExercises, useWorkoutStatus, useActiveWorkoutSession } from '@/lib/dal'
 import Link from 'next/link'
 
 // Design System Primitives
@@ -33,23 +30,11 @@ export default function WorkoutPlayerClient({
     isForced?: boolean
 }) {
     // ─── DATA FETCHING (LOCAL-FIRST ELITE) ───────────────────────────────────
-    const { data: workoutData, isLoading: workoutLoading } = useQuery({
-        queryKey: QUERY_KEYS.workouts.detail(workoutId),
-        queryFn: () => getWorkoutDetails(workoutId),
-        enabled: !!workoutId
-    })
+    const { data: workoutData, isLoading: workoutLoading } = useWorkoutWithExercises(workoutId)
 
-    const { data: logsStatus, isLoading: logsLoading } = useQuery({
-        queryKey: QUERY_KEYS.workouts.status(userId, workoutId),
-        queryFn: () => getWorkoutStatus(userId, workoutId),
-        enabled: !!userId
-    })
+    const { data: logsStatus, isLoading: logsLoading } = useWorkoutStatus(userId, workoutId)
 
-    const { data: activeSession, isLoading: activeLoading } = useQuery({
-        queryKey: QUERY_KEYS.workouts.session,
-        queryFn: () => getActiveWorkoutSession(),
-        enabled: !!userId
-    })
+    const { data: activeSession, isLoading: activeLoading } = useActiveWorkoutSession()
 
     const [isResting, setIsResting] = useState(false)
 
@@ -60,13 +45,12 @@ export default function WorkoutPlayerClient({
     if (!workoutData) return notFound()
 
     const workout = workoutData
-    const exercises = workoutData.workout_exercises || []
+    const exercises = workoutData.workout_exercises || workoutData.exercises || []
 
     if (exercises.length === 0) {
         return (
             <Box display="flex" align="center" justify="center" minHeight="screen" width="full">
                 <BackgroundEffects variant="all" />
-                {/* eslint-disable-next-line no-restricted-syntax */}
                 <Stack align="center" justify="center" gap={STORE_TOKENS.SPACING.CONTAINER} position="relative" zIndex={10} padding={STORE_TOKENS.PADDING.CONTAINER}>
                     <Surface variant="glass" padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.FULL} border="standard">
                         <Box>
@@ -88,7 +72,6 @@ export default function WorkoutPlayerClient({
         return (
             <Box display="flex" align="center" justify="center" minHeight="screen" width="full">
                 <BackgroundEffects variant="all" />
-                {/* eslint-disable-next-line no-restricted-syntax */}
                 <Box position="relative" zIndex={10} width="full" padding={STORE_TOKENS.PADDING.CONTAINER}>
                     <MissionCompletedView />
                 </Box>
@@ -132,7 +115,6 @@ export default function WorkoutPlayerClient({
 
             {/* Header: Full-width sticky bar */}
             {!isResting && (
-                // eslint-disable-next-line no-restricted-syntax
                 <Box position="sticky" top={0} zIndex={50} width="full">
                     <Surface variant="glass" border="standard" padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.NONE}>
                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
@@ -187,7 +169,6 @@ export default function WorkoutPlayerClient({
             )}
 
             {/* Main Player Content: Vertically Centered */}
-            {/* eslint-disable-next-line no-restricted-syntax */}
             <Box flex1 display="flex" align={{ base: 'start', md: 'center' }} justify="center" padding={STORE_TOKENS.PADDING.NONE} position="relative" zIndex={10}>
                 <WorkoutPlayer
                     userId={userId}

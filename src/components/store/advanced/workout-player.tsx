@@ -5,7 +5,7 @@
     import { useToast } from "@/hooks/use-toast"
 
     // Business Logic & Actions
-    import { getWorkoutLastSession } from '@/actions/log-actions'
+    import { getWorkoutLastSession } from '@/lib/dal/remote'
     import { generateExecutionSteps } from '@/lib/workout-flow-engine'
 
     // Hooks (Refactored Layer)

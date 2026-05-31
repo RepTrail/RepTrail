@@ -1,10 +1,9 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useCardioDetails, useQueryClient } from '@/lib/dal'
 import { useToast } from '@/hooks/use-toast'
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
-import { getCardioDetails } from '@/actions/cardio-actions'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { ENTITIES } from '@/lib/outbox-db'
 
@@ -44,11 +43,7 @@ export function CardioBuilderSmart({
     const queryClient = useQueryClient()
     const queryKey = QUERY_KEYS.cardio.detail(initialCardio.id)
 
-    const { data: cardioData } = useQuery({
-        queryKey,
-        queryFn: () => getCardioDetails(initialCardio.id),
-        initialData: initialCardio,
-    })
+    const { data: cardioData } = useCardioDetails(initialCardio.id)
 
     const cardio = cardioData as any | null
 

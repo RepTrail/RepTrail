@@ -3,10 +3,8 @@
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 import { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useAuthUser, actions } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
-import { getAdminLogs } from '@/actions/admin-actions'
-import { createClient } from '@/lib/supabase/client'
 import { RegistryProvider } from '@/components/store/advanced/registry-context'
 import { DashboardShell } from '@/components/store/advanced/dashboard-shell'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
@@ -31,19 +29,10 @@ export default function AdminLogsPage() {
     const [search, setSearch] = useState('')
     const { data: logs = [], isLoading } = useQuery({
         queryKey: QUERY_KEYS.admin.logs,
-        queryFn: () => getAdminLogs()
+        queryFn: () => actions.getAdminLogs()
     })
 
-    const { data: adminUser } = useQuery({
-        queryKey: QUERY_KEYS.auth.user,
-        queryFn: async () => {
-            const supabase = createClient()
-            const { data: { user: authUser } } = await supabase.auth.getUser()
-            if (!authUser) return null
-            const { data: profile } = await supabase.from('profiles').select('*').eq('id', authUser.id).single()
-            return profile || authUser
-        }
-    })
+    const { data: adminUser } = useAuthUser()
 
     const filtered = logs.filter(log => 
         !search || 

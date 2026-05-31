@@ -1,22 +1,9 @@
 import { headers } from 'next/headers'
 import { Suspense } from 'react'
-import { getStudentTrainer, getStudentDetails, getStudentProfile } from '@/actions/student-actions'
-import { getStudentAutoTrainingStatus } from '@/actions/auto-training-actions'
-import { getTrainerRanking } from '@/actions/trainer-actions'
-import { checkStudentHasProtocol } from '@/actions/ai-protocol-actions'
+import { actions, dehydrate, HydrationBoundary } from '@/lib/dal'
 import { StudentMetaPixel } from './meta-pixel'
-
-
-import { ensureDailyTracking } from '@/actions/tracking-actions'
-import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { getQueryClient } from '@/lib/get-query-client'
 import { QUERY_KEYS } from '@/lib/query-keys'
-import { getTodayWorkout } from '@/actions/workout-actions'
-import { getTodayCardio, getCardioStatus } from '@/actions/cardio-actions'
-import { getStudentDailyDiet } from '@/actions/diet-actions'
-import { getStudentErgogenics, getTodayErgogenicLogs } from '@/actions/ergogenics-actions'
-import { getMetricsSummary } from '@/actions/metrics-actions'
-import { getActiveWorkoutSession } from '@/actions/log-actions'
 import { StudentDashboardClient } from '@/components/store/advanced/student-dashboard-client'
 import { InactiveTrainerCard } from '@/components/store/advanced/inactive-trainer-card'
 import { StudentNoPlanSection } from '@/components/store/sections/student-no-plan-section'
@@ -44,13 +31,13 @@ async function StudentDashboardContent({ userId }: { userId: string }) {
     // ─── STAGE 1: CORE PARALLEL FETCH ──────────────────────────────────────────
     // Parallelize basic info + initial assignments to extract IDs
     const [trainerRel, autoTrainingStatus, details, ranking, protocolStatus, todayWorkout, todayCardio] = await Promise.all([
-        getStudentTrainer(userId),
-        getStudentAutoTrainingStatus(userId),
-        getStudentDetails(userId),
-        queryClient.fetchQuery({ queryKey: QUERY_KEYS.trainer.ranking(), queryFn: () => getTrainerRanking() }),
-        queryClient.fetchQuery({ queryKey: QUERY_KEYS.student.hasProtocol(userId), queryFn: () => checkStudentHasProtocol(userId) }),
-        getTodayWorkout(userId),
-        getTodayCardio(userId)
+        actions.getStudentTrainer(userId),
+        actions.getStudentAutoTrainingStatus(userId),
+        actions.getStudentDetails(userId),
+        queryClient.fetchQuery({ queryKey: QUERY_KEYS.trainer.ranking(), queryFn: () => actions.getTrainerRanking() }),
+        queryClient.fetchQuery({ queryKey: QUERY_KEYS.student.hasProtocol(userId), queryFn: () => actions.checkStudentHasProtocol(userId) }),
+        actions.getTodayWorkout(userId),
+        actions.getTodayCardio(userId)
     ])
 
     // Hydrate the initial data into the cache
@@ -71,11 +58,11 @@ async function StudentDashboardContent({ userId }: { userId: string }) {
         ...workoutIds.flatMap((id: string) => [
             queryClient.prefetchQuery({
                 queryKey: QUERY_KEYS.workouts.status(userId, id),
-                queryFn: () => import('@/actions/log-actions').then(m => m.getWorkoutStatus(userId, id))
+                queryFn: () => import('@/lib/dal/remote').then(m => m.getWorkoutStatus(userId, id))
             }),
             queryClient.prefetchQuery({
                 queryKey: QUERY_KEYS.workouts.detail(id),
-                queryFn: () => import('@/actions/workout-actions').then(m => m.getWorkoutDetails(id))
+                queryFn: () => import('@/lib/dal/remote').then(m => m.getWorkoutDetails(id))
             })
         ]),
         workoutIds.length === 0 ? queryClient.setQueryData(QUERY_KEYS.workouts.status(userId, 'no-workout'), { status: 'empty' }) : Promise.resolve(),
@@ -84,56 +71,56 @@ async function StudentDashboardContent({ userId }: { userId: string }) {
         ...cardioIds.map((id: string) =>
             queryClient.prefetchQuery({
                 queryKey: QUERY_KEYS.cardio.detail(id),
-                queryFn: () => import('@/actions/cardio-actions').then(m => m.getAssignedCardios(userId))
+                queryFn: () => import('@/lib/dal/remote').then(m => m.getAssignedCardios(userId))
             })
         ),
 
         queryClient.prefetchQuery({
             queryKey: QUERY_KEYS.cardio.logs(userId),
-            queryFn: () => getCardioStatus(userId)
+            queryFn: () => actions.getCardioStatus(userId)
         }),
 
         // Ergogenics Chain
         queryClient.prefetchQuery({
             queryKey: QUERY_KEYS.ergogenics.logs(userId),
-            queryFn: () => getTodayErgogenicLogs(userId)
+            queryFn: () => actions.getTodayErgogenicLogs(userId)
         }),
         queryClient.prefetchQuery({
             queryKey: QUERY_KEYS.ergogenics.all(userId),
-            queryFn: () => getStudentErgogenics(userId)
+            queryFn: () => actions.getStudentErgogenics(userId)
         }),
 
         // Diet Chain (Fix #3: explicit Stage 2 prefetch — eliminates DietCard skeleton)
         queryClient.prefetchQuery({
             queryKey: QUERY_KEYS.diets.today(userId),
-            queryFn: () => getStudentDailyDiet(userId)
+            queryFn: () => actions.getStudentDailyDiet(userId)
         }),
 
         // Cardio Session (prefetch eliminates CardioPlayer skeleton)
         queryClient.prefetchQuery({
             queryKey: QUERY_KEYS.cardio.session,
-            queryFn: () => import('@/actions/cardio-actions').then(m => m.getActiveCardioSession())
+            queryFn: () => import('@/lib/dal/remote').then(m => m.getActiveCardioSession())
         }),
 
         // Workout Session (Fix for 🚨 UNEXPECTED FETCH)
         queryClient.prefetchQuery({
             queryKey: QUERY_KEYS.workouts.session,
-            queryFn: () => getActiveWorkoutSession()
+            queryFn: () => actions.getActiveWorkoutSession()
         }),
 
         // Metrics & Profile
         queryClient.prefetchQuery({
             queryKey: QUERY_KEYS.student.metricsSummary(userId),
-            queryFn: () => getMetricsSummary(userId)
+            queryFn: () => actions.getMetricsSummary(userId)
         }),
         queryClient.prefetchQuery({
             queryKey: QUERY_KEYS.student.details(userId),
-            queryFn: () => getStudentProfile(userId)
+            queryFn: () => actions.getStudentProfile(userId)
         })
     ])
 
     // Fire and forget background tracking
-    ensureDailyTracking(userId).catch(console.error)
+    actions.ensureDailyTracking(userId).catch(console.error)
 
     // ─── CASE LOGIC ──────────────────────────────────────────────────────────
     const hasAutoTraining = autoTrainingStatus?.auto_training_status === 'active' ||

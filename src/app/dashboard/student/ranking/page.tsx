@@ -1,7 +1,6 @@
-import { getTrainerRanking } from '@/actions/trainer-actions'
+import { actions, dehydrate, HydrationBoundary } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { getQueryClient } from '@/lib/get-query-client'
-import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { RankingSectionContent } from '@/components/store/sections/ranking-section-content'
 
@@ -14,7 +13,7 @@ export default async function StudentRankingPage() {
 
     await queryClient.prefetchQuery({
         queryKey: QUERY_KEYS.admin.trainers,
-        queryFn: () => getTrainerRanking()
+        queryFn: () => actions.getTrainerRanking()
     })
 
     return (

@@ -1,4 +1,4 @@
-import { getTrainerStudents } from '@/actions/trainer-actions'
+import { actions } from '@/lib/dal'
 import { redirect } from 'next/navigation'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { ImportPdfSectionContent } from '@/components/store/sections/import-pdf-section-content'
@@ -14,7 +14,7 @@ export default async function TrainerImportPdfPage() {
 
     if (!userId) redirect('/auth/login')
 
-    const students = await getTrainerStudents(userId)
+    const students = await actions.getTrainerStudents(userId)
 
     return (
         <RegistryMain

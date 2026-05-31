@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { searchTrainers } from '@/actions/student-actions'
+import { searchTrainers } from '@/lib/dal/remote'
 import { Search, Trophy } from 'lucide-react'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { Stack } from '@/components/store/base/stack'
@@ -13,7 +13,7 @@ import { Font } from '@/components/store/base/font'
 import { Icon } from '@/components/store/base/icon'
 import { RankingPodiumCard } from '@/components/store/intermediary/ranking-podium-card'
 import { fbqEvent } from '@/lib/meta-pixel'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 

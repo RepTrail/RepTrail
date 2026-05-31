@@ -97,4 +97,77 @@ export default [
       ],
     },
   },
+  {
+    files: [
+      "src/components/store/advanced/**/*.{ts,tsx}",
+      "src/components/store/sections/**/*.{ts,tsx}",
+      "src/hooks/**/*.{ts,tsx}",
+      "src/app/**/*.{ts,tsx}"
+    ],
+    ignores: [
+      "src/app/api/**/*",
+      "src/actions/**/*",
+      "src/services/**/*",
+      "src/lib/dal/**/*",
+      "src/lib/supabase/**/*",
+      "src/hooks/use-realtime-sync.ts"
+    ],
+    plugins: {
+      "@typescript-eslint": ts,
+    },
+    languageOptions: {
+      parser: tsParser,
+      parserOptions: {
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
+    },
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            {
+              name: "@tanstack/react-query",
+              message: "Direct use of react-query is prohibited in UI components. You MUST use hooks exported from `@/lib/dal`."
+            },
+            {
+              name: "@supabase/supabase-js",
+              message: "Direct use of Supabase client is prohibited in UI components. All queries and mutations must go through the local-first DAL (`@/lib/dal`)."
+            },
+            {
+              name: "@supabase/ssr",
+              message: "Direct use of Supabase client is prohibited in UI components. All queries and mutations must go through the local-first DAL (`@/lib/dal`)."
+            }
+          ],
+          patterns: [
+            {
+              group: ["**/lib/supabase/*", "@/lib/supabase/*"],
+              message: "Direct use of Supabase clients is prohibited in UI components. All queries and mutations must go through the local-first DAL (`@/lib/dal`)."
+            },
+            {
+              group: ["**/actions/*", "@/actions/*"],
+              message: "Direct invocation of Server Actions is prohibited in UI components to ensure offline-first support. Use mutations/actions via local-first DAL (`@/lib/dal`)."
+            }
+          ]
+        }
+      ],
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: "CallExpression[callee.name='fetch']",
+          message: "Direct use of fetch() is prohibited in UI components. All network interactions must be mediated by the local-first DAL (`@/lib/dal`) or outbox queue."
+        },
+        {
+          selector: "CallExpression[callee.name='axios']",
+          message: "Direct use of axios is prohibited in UI components. All network interactions must be mediated by the local-first DAL (`@/lib/dal`) or outbox queue."
+        },
+        {
+          selector: "ImportExpression[source.value=/actions/]",
+          message: "Dynamic import of Server Actions is prohibited in UI components to ensure offline-first support. Use actions/mutations via local-first DAL (`@/lib/dal`)."
+        }
+      ]
+    }
+  }
 ];

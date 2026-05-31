@@ -343,14 +343,24 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
         }
     }
 
+    const dataURLtoBlob = (dataUrl: string) => {
+        const arr = dataUrl.split(',')
+        const mime = arr[0].match(/:(.*?);/)?.[1] || 'image/png'
+        const bstr = atob(arr[1])
+        let n = bstr.length
+        const u8arr = new Uint8Array(n)
+        while (n--) {
+            u8arr[n] = bstr.charCodeAt(n)
+        }
+        return new Blob([u8arr], { type: mime })
+    }
+
     const handleShare = async () => {
         if (!previewUrl) return
 
         try {
-            const response = await fetch(previewUrl)
-            const blob = await response.blob()
+            const blob = dataURLtoBlob(previewUrl)
             const file = new File([blob], `reptrail-evolucao-${studentName.toLowerCase().replace(/\s+/g, '-')}.png`, { type: 'image/png' })
-
             if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
                 await navigator.share({
                     files: [file],

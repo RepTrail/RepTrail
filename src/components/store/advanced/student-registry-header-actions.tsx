@@ -1,8 +1,8 @@
 'use client'
 
 import React from 'react'
-import { useQuery } from '@tanstack/react-query'
-import { getStudentTrainer } from '@/actions/student-actions'
+import { useQuery } from '@/lib/dal'
+import { getStudentTrainer } from '@/lib/dal/remote'
 import { Button } from '@/components/store/base/button'
 import { Icon } from '@/components/store/base/icon'
 import { Stack } from '@/components/store/base/stack'
@@ -34,7 +34,7 @@ export function StudentRegistryHeaderActions({ userId, type }: StudentRegistryHe
     const handleCreateWorkout = () => {
         startTransition(async () => {
             try {
-                const { createStudentWorkout } = await import('@/actions/student-content-actions')
+                const { createStudentWorkout } = await import('@/lib/dal/remote')
                 const fd = new FormData()
                 fd.append('name', 'Novo Treino')
                 const res = await createStudentWorkout(fd)
@@ -50,7 +50,7 @@ export function StudentRegistryHeaderActions({ userId, type }: StudentRegistryHe
     const handleCreateDiet = () => {
         startTransition(async () => {
             try {
-                const { createStudentDiet } = await import('@/actions/student-content-actions')
+                const { createStudentDiet } = await import('@/lib/dal/remote')
                 const fd = new FormData()
                 fd.append('name', 'Nova Dieta')
                 const res = await createStudentDiet(fd)

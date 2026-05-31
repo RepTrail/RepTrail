@@ -1,11 +1,9 @@
 import { notFound } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
+import { getSupabaseServer, actions } from '@/lib/dal'
 import { headers } from 'next/headers'
 import { StudentPublicProfileMain } from '@/components/store/advanced/student-public-profile-main'
 import { StudentPublicMetrics } from '@/components/store/advanced/student-public-metrics'
 import { StudentPublicPhotos } from '@/components/store/advanced/student-public-photos'
-import { getStudentFullMetrics } from '@/actions/metrics-actions'
-import { getStudentAdherenceHistory } from '@/actions/tracking-actions'
 import { DashboardShell } from '@/components/store/advanced/dashboard-shell'
 import { RegistryProvider } from '@/components/store/advanced/registry-context'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
@@ -60,7 +58,7 @@ export default async function StudentPublicProfilePage({
     params: Promise<{ id: string }>
 }) {
     const { id: studentId } = await params
-    const supabase = await createClient()
+    const supabase = await getSupabaseServer()
     const headerList = await headers()
     const viewerId = headerList.get('x-user-id')
     const isOwner = viewerId === studentId
@@ -109,8 +107,8 @@ export default async function StudentPublicProfilePage({
             .eq('student_id', studentId)
             .eq('is_private', false)
             .order('created_at', { ascending: false }),
-        getStudentFullMetrics(studentId),
-        getStudentAdherenceHistory(studentId, 30),
+        actions.getStudentFullMetrics(studentId),
+        actions.getStudentAdherenceHistory(studentId, 30),
     ])
 
     const details = detailsResult.data

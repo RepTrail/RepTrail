@@ -2,7 +2,7 @@
 
 import React, { useState, useActionState } from 'react'
 import { useFormStatus } from 'react-dom'
-import { submitOnboarding } from '@/actions/onboarding-actions'
+import { submitOnboarding } from '@/lib/dal/remote'
 import { Stack } from '@/components/store/base/stack'
 import { Font } from '@/components/store/base/font'
 import { Grid } from '@/components/store/base/grid'
