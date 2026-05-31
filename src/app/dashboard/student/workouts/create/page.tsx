@@ -43,7 +43,13 @@ export default async function CreateStudentWorkoutPage() {
                         <Font variant="heading" weight="bold">Novo Treino</Font>
                     </CardHeader>
                     <CardContent>
-                        <form action={createStudentWorkout}>
+                        <form action={async (formData) => {
+                            "use server";
+                            const res = await createStudentWorkout(formData);
+                            if (res?.redirectUrl) {
+                                redirect(res.redirectUrl);
+                            }
+                        }}>
                             <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                                 <Input
                                     label="Nome do Treino"
