@@ -66,7 +66,24 @@ export function WorkoutManagementSectionContent({
     const { mutate: assignMutation } = useOptimisticMutation({
         queryKey: QUERY_KEYS.workouts.all(userId),
         entity: ENTITIES.WORKOUT,
-        actionName: 'assign-workout'
+        actionName: 'assign-workout',
+        updateFn: (oldData: any, variables: any) => {
+            if (!Array.isArray(oldData)) return oldData;
+            return oldData.map((item: any) => {
+                if (item.id === variables.workoutId) {
+                    const newAssignment = {
+                        day_of_week: variables.day,
+                        student_id: variables.studentId
+                    }
+                    if (mode === 'trainer') {
+                        return { ...item, assignments: [...(item.assignments || []), newAssignment] }
+                    } else {
+                        return { ...item, assigned_workouts: [...(item.assigned_workouts || []), newAssignment] }
+                    }
+                }
+                return item;
+            })
+        }
     })
 
     const handleConfirm = (data?: any) => {

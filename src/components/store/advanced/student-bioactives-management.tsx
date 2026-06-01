@@ -44,11 +44,11 @@ export function StudentBioactivesManagement({ userId }: StudentBioactivesManagem
         entityId: 'none',
         updateFn: (oldData: any, variables: any) => {
             if (!Array.isArray(oldData)) return []
-            const exists = oldData.some((l: any) => l.ergogenic_id === variables.id)
+            const exists = oldData.some((l: any) => l.ergogenic_id === variables.ergogenic_id)
             if (exists) {
-                return oldData.filter((l: any) => l.ergogenic_id !== variables.id)
+                return oldData.filter((l: any) => l.ergogenic_id !== variables.ergogenic_id)
             } else {
-                return [...oldData, { id: crypto.randomUUID(), student_id: userId, ergogenic_id: variables.id, created_at: new Date().toISOString() }]
+                return [...oldData, { id: crypto.randomUUID(), student_id: userId, ergogenic_id: variables.ergogenic_id, created_at: new Date().toISOString() }]
             }
         }
     })
@@ -92,7 +92,11 @@ export function StudentBioactivesManagement({ userId }: StudentBioactivesManagem
                     isCompleted: !!logs?.some((l: any) => l.ergogenic_id === item.id)
                 }))}
                 status="active"
-                onToggle={(id, currentStatus) => toggleMutation.mutate({ id, currentStatus })}
+                onToggle={(id, currentStatus) => toggleMutation.mutate({ 
+                    student_id: userId, 
+                    ergogenic_id: id, 
+                    status: !currentStatus 
+                })}
             />
         </RegistrySection>
     )

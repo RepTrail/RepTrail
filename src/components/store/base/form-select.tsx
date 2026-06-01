@@ -212,7 +212,7 @@ export function FormSelect({
                         'text-left outline-none',
                         open
                             ? activeClasses
-                            : 'border-white/5 hover:border-white/10',
+                            : 'border-white/10 hover:border-white/20',
                         error && 'border-red-500/50'
                     )}
                 >

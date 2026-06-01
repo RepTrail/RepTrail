@@ -61,7 +61,24 @@ export function CardioManagementSectionContent({
     const { mutate: assignMutation } = useOptimisticMutation({
         queryKey: QUERY_KEYS.cardio.all(userId),
         entity: ENTITIES.CARDIO,
-        actionName: 'assign-cardio'
+        actionName: 'assign-cardio',
+        updateFn: (oldData: any, variables: any) => {
+            if (!Array.isArray(oldData)) return oldData;
+            return oldData.map((item: any) => {
+                if (item.id === variables.cardioId) {
+                    const newAssignments = variables.daysOfWeek.map((day: number) => ({
+                        day_of_week: day,
+                        student_id: variables.studentId
+                    }))
+                    if (mode === 'trainer') {
+                        return { ...item, assignments: newAssignments }
+                    } else {
+                        return { ...item, assigned_cardios: newAssignments }
+                    }
+                }
+                return item;
+            })
+        }
     })
 
     const { mutate: updateMutation } = useOptimisticMutation({

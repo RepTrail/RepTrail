@@ -63,6 +63,7 @@ export function ErgogenicCardPremium({
             group
             flex1
             fullHeight
+            overflow="hidden"
         >
             <Stack
                 flex1
@@ -96,10 +97,11 @@ export function ErgogenicCardPremium({
                 </Stack>
 
                 {/* Body Content */}
-                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT} minWidth={0}>
                     <Font
                         {...STORE_TOKENS.TYPOGRAPHY.HEADING}
-                        variant="h3"
+                        variant="h4"
+                        truncate
                         {...{
                             color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
                         }}>

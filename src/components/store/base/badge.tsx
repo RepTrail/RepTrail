@@ -119,7 +119,7 @@ export function Badge({
         <div 
             style={{ borderRadius: typeof rounded === 'number' ? rounded : undefined }}
             className={cn(
-                'flex items-center justify-center border w-fit gap-2 backdrop-blur-md transition-all',
+                'flex items-center justify-center border-2 w-fit gap-2 backdrop-blur-md transition-all',
                 currentSize.padding,
                 variant === 'glass' && current.glass,
                 variant === 'outline' && cn('bg-transparent', current.border),

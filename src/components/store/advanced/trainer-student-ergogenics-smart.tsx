@@ -97,14 +97,14 @@ export function TrainerStudentErgogenicsSmart({ effectiveStudentId }: TrainerStu
         queryKey: QUERY_KEYS.ergogenics.all(effectiveStudentId),
         entity: ENTITIES.ERGOGENIC,
         actionName: 'add-ergogenic',
-        mutationFn: async ({ data }: { data: any }) => {
-            const res = await addErgogenic({
-                ...data,
-                student_id: effectiveStudentId,
-            })
-            if (res.error) throw new Error(res.error)
-            return res
-        },
+        updateFn: (oldData: any, variables: any) => {
+            const newItem = {
+                id: variables.id || crypto.randomUUID(),
+                ...variables,
+                created_at: new Date().toISOString()
+            };
+            return Array.isArray(oldData) ? [...oldData, newItem] : [newItem];
+        }
     })
 
     const { mutate: updateMutation } = useOptimisticMutation({
@@ -148,7 +148,7 @@ export function TrainerStudentErgogenicsSmart({ effectiveStudentId }: TrainerStu
                 }
                 break
             case 'create_ergogenic':
-                createMutation({ data })
+                createMutation({ ...data, student_id: effectiveStudentId })
                 break
             case 'edit_ergogenic':
                 updateMutation({ id: actionModal.data.id, data: { ...data, student_id: effectiveStudentId } })

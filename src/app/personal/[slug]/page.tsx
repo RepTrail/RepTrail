@@ -80,23 +80,21 @@ export default async function TrainerPublicProfilePage({
         notFound()
     }
 
-    // ── Enforce default trainer 'emerald' theme for content elements ───────────
+    // ── Content Elements (Theme will be inherited or explicitly wrapped) ───
     const mainContent = (
-        <RegistryProvider defaultColor="emerald">
-            <RegistryMain
-                title="PERFIL DO TREINADOR"
-                subtitle="Acompanhe a biografia, metodologia, depoimentos e transformações do seu coach."
-                icon="UserCheck"
-                contextLabel="Perfil Público"
-                showTabs={false}
-            >
-                <TrainerPublicProfileMain
-                    trainer={trainer}
-                    reviews={reviews || []}
-                    photos={photos || []}
-                />
-            </RegistryMain>
-        </RegistryProvider>
+        <RegistryMain
+            title="PERFIL DO TREINADOR"
+            subtitle="Acompanhe a biografia, metodologia, depoimentos e transformações do seu coach."
+            icon="UserCheck"
+            contextLabel="Perfil Público"
+            showTabs={false}
+        >
+            <TrainerPublicProfileMain
+                trainer={trainer}
+                reviews={reviews || []}
+                photos={photos || []}
+            />
+        </RegistryMain>
     )
 
     // ── Render with Sidebar Shell if Logged In, otherwise render pure page ──────
@@ -141,7 +139,9 @@ export default async function TrainerPublicProfilePage({
         >
             <BackgroundEffects variant="all" />
             <Box position="relative" zIndex={STORE_TOKENS.Z_INDEX.CONTENT} flex1>
-                {mainContent}
+                <RegistryProvider defaultColor="emerald">
+                    {mainContent}
+                </RegistryProvider>
             </Box>
         </Surface>
     );

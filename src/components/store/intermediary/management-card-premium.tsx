@@ -86,6 +86,7 @@ export function ManagementCardPremium({
             group
             flex1
             fullHeight
+            overflow="hidden"
         >
             <Stack flex1 fullHeight justify="between" gap={STORE_TOKENS.SPACING.CONTAINER} minHeight={0}>
                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT} flex1 minHeight={0}>
@@ -128,11 +129,12 @@ export function ManagementCardPremium({
                 </Stack>
 
                 {/* Body Content */}
-                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT} minWidth={0}>
+                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT} minWidth={0}>
                         <Font
                             {...STORE_TOKENS.TYPOGRAPHY.HEADING}
-                            variant="h3"
+                            variant="h4"
+                            truncate
                             {...{
                                 color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
                             }}>
@@ -141,6 +143,7 @@ export function ManagementCardPremium({
                         {description && (
                             <Font
                                 {...STORE_TOKENS.TYPOGRAPHY.DESCRIPTION}
+                                truncate
                                 {...{
                                     color: STORE_TOKENS.COLORS.TEXT.DIM,
                                 }}>

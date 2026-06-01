@@ -7,7 +7,7 @@ interface SeparatorProps {
 export function Separator({ opacity = 20 }: SeparatorProps) {
   return (
     <div
-      className="w-full h-px bg-white"
+      className="w-full h-[2px] bg-white"
       style={{ opacity: opacity / 100 }}
     />
   )

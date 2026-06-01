@@ -113,10 +113,13 @@ export function StudentErgogenicManagementSmart({ userId }: StudentErgogenicMana
         queryKey: QUERY_KEYS.ergogenics.all(userId),
         entity: ENTITIES.ERGOGENIC,
         actionName: 'add-ergogenic',
-        mutationFn: async (data: any) => {
-            const res = await addErgogenic({ ...data, student_id: userId })
-            if (res.error) throw new Error(res.error)
-            return res
+        updateFn: (oldData: any, variables: any) => {
+            const newItem = {
+                id: variables.id || crypto.randomUUID(),
+                ...variables,
+                created_at: new Date().toISOString()
+            };
+            return Array.isArray(oldData) ? [...oldData, newItem] : [newItem];
         }
     })
 
@@ -136,7 +139,7 @@ export function StudentErgogenicManagementSmart({ userId }: StudentErgogenicMana
                 }
                 break
             case ('create_ergogenic' as any):
-                createMutation(data)
+                createMutation({ ...data, student_id: userId })
                 break
         }
         closeAction()

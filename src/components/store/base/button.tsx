@@ -123,18 +123,18 @@ export function Button({
     red: 'bg-red-500 text-black shadow-lg shadow-red-500/20',
     blue: 'bg-blue-500 text-black shadow-lg shadow-blue-500/20',
     indigo: 'bg-indigo-500 text-black shadow-lg shadow-indigo-500/20',
-    zinc: 'bg-zinc-800 text-white border border-white/5',
+    zinc: 'bg-zinc-800 text-white border-2 border-white/5',
     white: 'bg-white text-black',
     ghost: 'bg-transparent text-zinc-400',
-    close: 'bg-white/5 text-zinc-500 border border-white/5',
+    close: 'bg-white/5 text-zinc-500 border-2 border-white/5',
     
-    'outline-orange': 'bg-orange-500/10 text-orange-500 border border-orange-500/20',
-    'outline-emerald': 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20',
-    'outline-amber': 'bg-amber-500/10 text-amber-500 border border-amber-500/20',
-    'outline-red': 'bg-red-500/10 text-red-500 border border-red-500/20',
-    'outline-blue': 'bg-blue-500/10 text-blue-500 border border-blue-500/20',
-    'outline-indigo': 'bg-indigo-500/10 text-indigo-500 border border-indigo-500/20',
-    'outline-zinc': 'bg-white/5 text-zinc-400 border border-white/10',
+    'outline-orange': 'bg-orange-500/10 text-orange-500 border-2 border-orange-500/20',
+    'outline-emerald': 'bg-emerald-500/10 text-emerald-500 border-2 border-emerald-500/20',
+    'outline-amber': 'bg-amber-500/10 text-amber-500 border-2 border-amber-500/20',
+    'outline-red': 'bg-red-500/10 text-red-500 border-2 border-red-500/20',
+    'outline-blue': 'bg-blue-500/10 text-blue-500 border-2 border-blue-500/20',
+    'outline-indigo': 'bg-indigo-500/10 text-indigo-500 border-2 border-indigo-500/20',
+    'outline-zinc': 'bg-white/5 text-zinc-400 border-2 border-white/10',
   }
 
   const sizeClasses = {

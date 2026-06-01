@@ -66,7 +66,24 @@ export function DietManagementSectionContent({
     const { mutate: assignMutation } = useOptimisticMutation({
         queryKey: QUERY_KEYS.diets.all(userId),
         entity: ENTITIES.DIET,
-        actionName: 'assign-diet'
+        actionName: 'assign-diet',
+        updateFn: (oldData: any, variables: any) => {
+            if (!Array.isArray(oldData)) return oldData;
+            return oldData.map((item: any) => {
+                if (item.id === variables.dietId) {
+                    const newAssignments = variables.daysOfWeek.map((day: number) => ({
+                        day_of_week: day,
+                        student_id: variables.studentId
+                    }))
+                    if (mode === 'trainer') {
+                        return { ...item, assignments: newAssignments }
+                    } else {
+                        return { ...item, assigned_diets: newAssignments }
+                    }
+                }
+                return item;
+            })
+        }
     })
 
     const { mutate: updateMutation } = useOptimisticMutation({

@@ -202,12 +202,13 @@ export function TrainerPublicProfileMain({
                                 />
                             )}
 
-                            <Box display="flex" direction={{ base: 'col', md: 'row' }} gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
-                                <Box flex1={{ base: false, md: true }} fullWidth display="flex">
+                            <Stack direction={{ base: 'col', md: 'row' }} gap={STORE_TOKENS.SPACING.ELEMENT} width={{ base: 'full', md: 'auto' }}>
+                                <Box width={{ base: 'full', md: 'auto' }} display="flex">
                                     {trainer.whatsapp ? (
                                         <Link
                                             href={`https://wa.me/${trainer.whatsapp?.replace(/\D/g, '')}?text=Olá ${trainer.full_name}, vi seu perfil no RepTrail e gostaria de saber mais sobre sua consultoria!`}
                                             target="_blank"
+                                            style={{ width: '100%' }}
                                         >
                                             <Button variant="outline-primary" size="sm" fullWidth>
                                                 <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
@@ -227,11 +228,12 @@ export function TrainerPublicProfileMain({
                                 </Box>
 
                                 {trainer.instagram && (
-                                    <Box flex1={{ base: false, md: true }} fullWidth display="flex">
+                                    <Box width={{ base: 'full', md: 'auto' }} display="flex">
                                         <Link
                                             href={`https://instagram.com/${trainer.instagram.replace(/^@/, '')}`}
                                             target="_blank"
                                             rel="noopener noreferrer"
+                                            style={{ width: '100%' }}
                                         >
                                             <Button variant="outline-zinc" size="sm" fullWidth>
                                                 <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
@@ -242,7 +244,7 @@ export function TrainerPublicProfileMain({
                                         </Link>
                                     </Box>
                                 )}
-                            </Box>
+                            </Stack>
                         </Stack>
                     </Box>
 
@@ -256,7 +258,7 @@ export function TrainerPublicProfileMain({
                         width={{ base: 'full', lg: 'auto' }}
                     >
                         {/* Tab Switcher Stack */}
-                        <Stack gap={STORE_TOKENS.SPACING.ELEMENT} width={{ base: 'full', md: 'auto' }} flex1>
+                        <Stack gap={STORE_TOKENS.SPACING.ELEMENT} width={{ base: 'full', md: '48' }}>
                             {TABS.map((tab) => {
                                 const isActive = activeTab === tab.id
                                 return (
@@ -265,13 +267,12 @@ export function TrainerPublicProfileMain({
                                         variant={isActive ? 'outline-primary' : 'outline-zinc'}
                                         size="sm"
                                         onClick={() => setActiveTab(tab.id)}
-                                        gap={STORE_TOKENS.SPACING.ELEMENT}
                                         fullWidth
-                                        flex1={true}
-                                        height="full"
                                     >
-                                        <Icon icon={tab.icon} size="sm" color={isActive ? STORE_TOKENS.COLORS.BRAND : STORE_TOKENS.COLORS.TEXT.SECONDARY} />
-                                        {tab.label}
+                                        <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                            <Icon icon={tab.icon} size="sm" color={isActive ? STORE_TOKENS.COLORS.BRAND : STORE_TOKENS.COLORS.TEXT.SECONDARY} />
+                                            <Font variant="sub-tiny" weight="black" uppercase italic>{tab.label}</Font>
+                                        </Stack>
                                     </Button>
                                 );
                             })}

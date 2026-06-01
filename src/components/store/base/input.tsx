@@ -133,7 +133,7 @@ export function Input({
           type={inputType}
           className={cn(
             'w-full bg-zinc-950/40 border-2 placeholder:text-zinc-600 outline-none transition-all',
-            resolvedColor ? `border-${resolvedColor}-500/40` : 'border-white/5',
+            'border-white/10',
             height === 'full' ? 'flex-1 min-h-[48px]' : (size === 'sm' ? 'h-8 text-xs' : 'h-12'),
             resolvedColor ? textColors[resolvedColor as keyof typeof textColors] : 'text-white',
             weight && weightClasses[weight],

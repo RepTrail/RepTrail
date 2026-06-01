@@ -113,28 +113,28 @@ export function Surface({
 
   const primaryTonalClasses: Record<string, string> = {
     orange: 'border-2 bg-orange-500/5 border-orange-500/40 transition-all duration-500 backdrop-blur-xl',
-    emerald: 'border bg-emerald-500/5 border-emerald-500/50 transition-all duration-500 backdrop-blur-xl',
-    blue: 'border bg-blue-500/5 border-blue-500/50 transition-all duration-500 backdrop-blur-xl',
-    amber: 'border bg-amber-500/5 border-amber-500/50 transition-all duration-500 backdrop-blur-xl',
-    red: 'border bg-red-500/5 border-red-500/50 transition-all duration-500 backdrop-blur-xl',
-    zinc: 'border bg-zinc-500/5 border-zinc-500/50 transition-all duration-500 backdrop-blur-xl',
+    emerald: 'border-2 bg-emerald-500/5 border-emerald-500/50 transition-all duration-500 backdrop-blur-xl',
+    blue: 'border-2 bg-blue-500/5 border-blue-500/50 transition-all duration-500 backdrop-blur-xl',
+    amber: 'border-2 bg-amber-500/5 border-amber-500/50 transition-all duration-500 backdrop-blur-xl',
+    red: 'border-2 bg-red-500/5 border-red-500/50 transition-all duration-500 backdrop-blur-xl',
+    zinc: 'border-2 bg-zinc-500/5 border-zinc-500/50 transition-all duration-500 backdrop-blur-xl',
   }
 
   const variantClasses: Record<string, string> = {
-    base: 'bg-zinc-900 border border-white/5',
-    glass: 'bg-gradient-to-br from-white/[0.05] to-white/[0.02] border border-white/[0.05] backdrop-blur-md',
-    'glass-diagonal': 'bg-gradient-to-br from-white/[0.07] to-white/[0.04] border border-white/[0.05] backdrop-blur-md',
-    'glass-dark': 'bg-gradient-to-br from-black/80 to-black/60 border border-white/5 backdrop-blur-xl',
-    sunken: 'bg-zinc-950/40 border border-white/5',
-    raised: 'bg-zinc-800 border border-white/10 shadow-lg',
-    interactive: 'bg-zinc-900 border border-white/5 transition-all cursor-pointer',
-    showcase: 'bg-zinc-950/50 border border-white/5 border-dashed flex items-center justify-center',
+    base: 'bg-zinc-900 border-2 border-white/5',
+    glass: 'bg-gradient-to-br from-white/[0.05] to-white/[0.02] border-2 border-white/[0.05] backdrop-blur-md',
+    'glass-diagonal': 'bg-gradient-to-br from-white/[0.07] to-white/[0.04] border-2 border-white/[0.05] backdrop-blur-md',
+    'glass-dark': 'bg-gradient-to-br from-black/80 to-black/60 border-2 border-white/5 backdrop-blur-xl',
+    sunken: 'bg-zinc-950/40 border-2 border-white/5',
+    raised: 'bg-zinc-800 border-2 border-white/10 shadow-lg',
+    interactive: 'bg-zinc-900 border-2 border-white/5 transition-all cursor-pointer',
+    showcase: 'bg-zinc-950/50 border-2 border-white/5 border-dashed flex items-center justify-center',
     'tonal-orange': 'border-2 bg-orange-500/5 border-orange-500/40 transition-all duration-500 backdrop-blur-xl',
-    'tonal-emerald': 'border bg-emerald-500/5 border-emerald-500/50 transition-all duration-500 backdrop-blur-xl',
-    'tonal-amber': 'border bg-amber-500/5 border-amber-500/50 transition-all duration-500 backdrop-blur-xl',
-    'tonal-red': 'border bg-red-500/5 border-red-500/50 transition-all duration-500 backdrop-blur-xl',
-    'tonal-blue': 'border bg-blue-500/5 border-blue-500/50 transition-all duration-500 backdrop-blur-xl',
-    'tonal-zinc': 'border bg-white/5 border-white/10 transition-all duration-500 backdrop-blur-xl',
+    'tonal-emerald': 'border-2 bg-emerald-500/5 border-emerald-500/50 transition-all duration-500 backdrop-blur-xl',
+    'tonal-amber': 'border-2 bg-amber-500/5 border-amber-500/50 transition-all duration-500 backdrop-blur-xl',
+    'tonal-red': 'border-2 bg-red-500/5 border-red-500/50 transition-all duration-500 backdrop-blur-xl',
+    'tonal-blue': 'border-2 bg-blue-500/5 border-blue-500/50 transition-all duration-500 backdrop-blur-xl',
+    'tonal-zinc': 'border-2 bg-white/5 border-white/10 transition-all duration-500 backdrop-blur-xl',
     'tonal-primary': primaryTonalClasses[primaryColor] || primaryTonalClasses.orange
   }
 
@@ -146,8 +146,8 @@ export function Surface({
 
   const borderClasses = {
     none: 'border-none',
-    subtle: 'border border-white/5',
-    standard: 'border border-white/10',
+    subtle: 'border-2 border-white/5',
+    standard: 'border-2 border-white/10',
     bold: 'border-2',
     dashed: 'border border-dashed'
   }
