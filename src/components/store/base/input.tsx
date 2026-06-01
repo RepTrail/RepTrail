@@ -111,7 +111,7 @@ export function Input({
   }
 
   return (
-    <Stack gap={STORE_TOKENS.SPACING.ELEMENT} flex1={flex1} width={width as any} className={cn(!width && "w-full")}>
+    <Stack gap={STORE_TOKENS.SPACING.ELEMENT} flex1={flex1} width={width as any} fullWidth={!width}>
       {label && (
         <Font variant="auxiliary" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="black" uppercase tracking="widest">
           {label}
@@ -177,7 +177,7 @@ export function Input({
       </div>
 
       {error && (
-        <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.ERROR} weight="black" uppercase tracking="widest" className="pl-1">
+        <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.ERROR} weight="black" uppercase tracking="widest">
           {error}
         </Font>
       )}

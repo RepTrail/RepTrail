@@ -72,7 +72,6 @@ export function RankingPodiumCard({ trainer, rank }: RankingPodiumCardProps) {
                         <Badge 
                             label={`#${rank}`} 
                             variant="solid" 
-                            // eslint-disable-next-line no-restricted-syntax
                             color={rank === 1 ? STORE_TOKENS.COLORS.BRAND : STORE_TOKENS.COLORS.BACKGROUND} 
                             size="xs" 
                         />

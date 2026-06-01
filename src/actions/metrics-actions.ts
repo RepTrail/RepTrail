@@ -158,7 +158,31 @@ export async function getAdherenceForDates(
         if ((steroidUse && ergoDays.has(dow)) || (steroidUse && (doneErgo || isPartialErgo))) {
             possible += 1
             if (doneErgo) points += 1
-            else if (isPartialErgo) points += (day.ergogenics_percentage || 0) / 100
+            else if (isPartialErgo) {
+                let assignedErgosCount = 0
+                if (ae) {
+                    ae.forEach((a: any) => {
+                        let days = a.application_days
+                        if (typeof days === 'string') {
+                            try { days = JSON.parse(days) } catch { days = [] }
+                        }
+                        if (Array.isArray(days) && days.map(Number).includes(dow)) {
+                            assignedErgosCount++
+                        }
+                    })
+                }
+                const trackingPct = day?.ergogenics_percentage
+                let calculatedPct = 0
+                if (trackingPct !== undefined && trackingPct !== null && trackingPct > 0) {
+                    calculatedPct = trackingPct
+                } else if (assignedErgosCount > 0) {
+                    const dayLogsCount = eLogs?.filter(l => formatToBrazilDate(l.created_at) === dateStr).length || 0
+                    calculatedPct = Math.min(Math.round((dayLogsCount / assignedErgosCount) * 100), 100)
+                } else {
+                    calculatedPct = 50 // fallback for partial
+                }
+                points += calculatedPct / 100
+            }
         }
 
         // --- RULE 6: Calculation ---

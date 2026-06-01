@@ -15,26 +15,26 @@ export default [
   },
   {
     files: [
-      "src/**/*.{ts,tsx}"
+      "**/src/**/*.{ts,tsx}"
     ],
     ignores: [
-      "src/components/store/base/**/*",
-      "src/components/store/constants/**/*",
-      "src/components/landing/**/*",
-      "src/components/shared/**/*",
-      "src/components/store/base/iphone-mockup.tsx",
-      "src/components/store/advanced/student-share-transformation.tsx",
-      "src/app/aluno/**/*",
-      "src/app/personal/**/*",
-      "src/app/afiliados/**/*",
-      "src/app/page.tsx",
-      "src/app/buscar-personal/**/*",
-      "src/app/design-system/**/*",
-      "src/actions/**/*",
-      "src/hooks/**/*",
-      "src/lib/**/*",
-      "src/services/**/*",
-      "src/types/**/*"
+      "**/components/store/base/**",
+      "**/components/store/constants/**",
+      "**/components/landing/**",
+      "**/components/shared/**",
+      "**/components/store/base/iphone-mockup.tsx",
+      "**/components/store/advanced/student-share-transformation.tsx",
+      "**/app/aluno/**",
+      "**/app/personal/**",
+      "**/app/afiliados/**",
+      "**/app/page.tsx",
+      "**/app/buscar-personal/**",
+      "**/app/design-system/**",
+      "**/actions/**",
+      "**/hooks/**",
+      "**/lib/**",
+      "**/services/**",
+      "**/types/**"
     ],
     plugins: {
       "@typescript-eslint": ts,
@@ -98,19 +98,21 @@ export default [
     },
   },
   {
+    // Bloco Principal para Proteção da UI contra Regressões Local-First
     files: [
-      "src/components/store/advanced/**/*.{ts,tsx}",
-      "src/components/store/sections/**/*.{ts,tsx}",
-      "src/hooks/**/*.{ts,tsx}",
-      "src/app/**/*.{ts,tsx}"
+      "**/components/store/advanced/**/*.{ts,tsx}",
+      "**/components/store/sections/**/*.{ts,tsx}",
+      "**/hooks/**/*.{ts,tsx}",
+      "**/app/**/*.{ts,tsx}"
     ],
     ignores: [
-      "src/app/api/**/*",
-      "src/actions/**/*",
-      "src/services/**/*",
-      "src/lib/dal/**/*",
-      "src/lib/supabase/**/*",
-      "src/hooks/use-realtime-sync.ts"
+      "**/app/api/**",
+      "**/actions/**",
+      "**/services/**",
+      "**/lib/dal/**",
+      "**/lib/supabase/**",
+      "**/hooks/use-realtime-sync.ts",
+      "**/components/store/sections/landing/**"
     ],
     plugins: {
       "@typescript-eslint": ts,
@@ -142,30 +144,138 @@ export default [
             }
           ],
           patterns: [
+            // Bloquear imports de DAL proibidos
+            // Evita imports diretos de Supabase na UI.
+            // Risco Local-First: Conexões diretas evitam a fila local do IndexedDB e do Outbox.
+            // Protege o fluxo: UI -> DAL.
             {
-              group: ["**/lib/supabase/*", "@/lib/supabase/*"],
+              group: ["**/lib/supabase/**", "@/lib/supabase/**"],
               message: "Direct use of Supabase clients is prohibited in UI components. All queries and mutations must go through the local-first DAL (`@/lib/dal`)."
             },
+            // Evita imports diretos de API remota na UI.
+            // Risco Local-First: Impede funcionamento correto em modo offline e bypassa a DAL local.
+            // Protege o fluxo: UI -> DAL.
             {
-              group: ["**/actions/*", "@/actions/*"],
+              group: ["**/lib/api/**", "@/lib/api/**"],
+              message: "Direct use of API clients is prohibited in UI components. All queries and mutations must go through the local-first DAL (`@/lib/dal`)."
+            },
+            // Evita imports diretos de utilitários do servidor na UI.
+            // Risco Local-First: Chamadas diretas de servidor falham em ambiente offline e não guardam dados no IndexedDB.
+            // Protege o fluxo: UI -> DAL.
+            {
+              group: ["**/lib/server/**", "@/lib/server/**"],
+              message: "Direct use of server utilities is prohibited in UI components. All queries and mutations must go through the local-first DAL (`@/lib/dal`)."
+            },
+            // Evita chamadas diretas a Server Actions na UI.
+            // Risco Local-First: Bypass da DAL e quebra do suporte a mutações offline resilientes.
+            // Protege o fluxo: UI -> DAL.
+            {
+              group: ["**/actions/**", "@/actions/**"],
               message: "Direct invocation of Server Actions is prohibited in UI components to ensure offline-first support. Use mutations/actions via local-first DAL (`@/lib/dal`)."
+            },
+            // Evita imports de Services na UI.
+            // Risco Local-First: Services executam requisições HTTP e operações diretas de banco remoto.
+            // Protege o fluxo: UI -> DAL.
+            {
+              group: ["**/services/**", "@/services/**"],
+              message: "Services são proibidos na UI. Utilize exclusivamente a DAL Local-First."
             }
           ]
         }
       ],
       "no-restricted-syntax": [
         "error",
-        {
-          selector: "CallExpression[callee.name='fetch']",
-          message: "Direct use of fetch() is prohibited in UI components. All network interactions must be mediated by the local-first DAL (`@/lib/dal`) or outbox queue."
-        },
-        {
-          selector: "CallExpression[callee.name='axios']",
-          message: "Direct use of axios is prohibited in UI components. All network interactions must be mediated by the local-first DAL (`@/lib/dal`) or outbox queue."
-        },
+        // Bloquear Import Dinâmico de Actions/Services/Supabase na UI
         {
           selector: "ImportExpression[source.value=/actions/]",
           message: "Dynamic import of Server Actions is prohibited in UI components to ensure offline-first support. Use actions/mutations via local-first DAL (`@/lib/dal`)."
+        },
+        {
+          selector: "ImportExpression[source.value=/services/]",
+          message: "Dynamic import of Services is prohibited in UI components to ensure offline-first support. Use actions/mutations via local-first DAL (`@/lib/dal`)."
+        },
+        {
+          selector: "ImportExpression[source.value=/supabase/]",
+          message: "Dynamic import of Supabase is prohibited in UI components to ensure offline-first support. Use actions/mutations via local-first DAL (`@/lib/dal`)."
+        }
+      ]
+    }
+  },
+  {
+    // Criar zona segura para Local-First (Safe Zone Whitelist)
+    files: [
+      "**/src/**/*.{ts,tsx}"
+    ],
+    ignores: [
+      "**/lib/dal/**",
+      "**/lib/outbox/**",
+      "**/lib/sync/**",
+      "**/lib/background-sync/**",
+      "**/lib/supabase/**",
+      "**/app/api/**",
+      "**/actions/**",
+      "**/services/**",
+      "**/components/store/sections/landing/**",
+      "**/hooks/use-realtime-sync.ts",
+      "**/lib/asaas.ts",
+      "**/lib/meta-capi.ts",
+      "**/lib/notifications.ts",
+      "**/proxy.ts"
+    ],
+    plugins: {
+      "@typescript-eslint": ts,
+    },
+    languageOptions: {
+      parser: tsParser,
+    },
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        // 1. Evitar consultas do Supabase (.from())
+        {
+          selector: "CallExpression[callee.type='MemberExpression'][callee.object.name=/^(supabase|adminClient)$/][callee.property.name='from']",
+          message: "Supabase .from() queries are restricted to the Local-First Safe Zone (dal, outbox, sync, background-sync, supabase)."
+        },
+        // 2. Evitar chamadas RPC (.rpc())
+        {
+          selector: "CallExpression[callee.type='MemberExpression'][callee.object.name=/^(supabase|adminClient)$/][callee.property.name='rpc']",
+          message: "Supabase RPCs (.rpc) are restricted to the Local-First Safe Zone (dal, outbox, sync, background-sync, supabase)."
+        },
+        // 3. Evitar canais realtime (.channel())
+        {
+          selector: "CallExpression[callee.type='MemberExpression'][callee.object.name=/^(supabase|adminClient)$/][callee.property.name='channel']",
+          message: "Supabase Realtime channels are restricted to the Local-First Safe Zone (dal, outbox, sync, background-sync, supabase)."
+        },
+        // 4. Evitar acesso a auth (.auth)
+        {
+          selector: "MemberExpression[object.name=/^(supabase|adminClient)$/][property.name='auth']",
+          message: "Supabase auth is restricted to the Local-First Safe Zone (dal, outbox, sync, background-sync, supabase)."
+        },
+        // 5. Evitar acesso a storage (.storage)
+        {
+          selector: "MemberExpression[object.name=/^(supabase|adminClient)$/][property.name='storage']",
+          message: "Supabase storage is restricted to the Local-First Safe Zone (dal, outbox, sync, background-sync, supabase)."
+        },
+        // 6. Evitar chamadas HTTP diretas
+        {
+          selector: "CallExpression[callee.name='fetch']",
+          message: "Direct fetch() calls are restricted to the Local-First Safe Zone (dal, outbox, sync, background-sync)."
+        },
+        {
+          selector: "CallExpression[callee.name='axios']",
+          message: "Direct axios() calls are restricted to the Local-First Safe Zone (dal, outbox, sync, background-sync)."
+        },
+        {
+          selector: "MemberExpression[object.name='axios']",
+          message: "Direct axios methods are restricted to the Local-First Safe Zone (dal, outbox, sync, background-sync)."
+        },
+        {
+          selector: "CallExpression[callee.name='ky']",
+          message: "Direct ky() calls are restricted to the Local-First Safe Zone (dal, outbox, sync, background-sync)."
+        },
+        {
+          selector: "MemberExpression[object.name='ky']",
+          message: "Direct ky methods are restricted to the Local-First Safe Zone (dal, outbox, sync, background-sync)."
         }
       ]
     }

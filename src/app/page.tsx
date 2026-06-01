@@ -1,6 +1,6 @@
 import React from 'react'
 import { RegistryProvider } from '@/components/store/advanced/registry-context'
-import { getSupabaseServer } from '@/lib/dal'
+import { getLandingSessionInfo } from '@/lib/dal/server'
 import { LandingShell } from '@/components/store/advanced/landing-shell'
 
 // Landing Page Sections
@@ -16,23 +16,7 @@ import { LandingFAQ } from '@/components/store/sections/landing/landing-faq'
 export const dynamic = 'force-dynamic'
 
 export default async function LandingPage() {
-  const supabase = await getSupabaseServer()
-
-  const { data: { user } } = await supabase.auth.getUser()
-  let role = null
-  let isAffiliate = false
-
-  if (user) {
-    const { data: userData } = await supabase.from('profiles').select('role').eq('id', user.id).maybeSingle()
-    role = userData?.role
-
-    const { count } = await supabase.from('affiliates').select('*', { count: 'exact', head: true }).eq('user_id', user.id)
-    isAffiliate = Boolean(count && count > 0)
-  }
-
-  const dashboardUrl = role === 'admin' ? '/admin' :
-    role === 'trainer' ? '/dashboard/trainer' :
-      '/dashboard/student'
+  const { user, role, isAffiliate, dashboardUrl } = await getLandingSessionInfo()
 
   const navActions = !user ? [
     { label: 'Login', href: '/auth/login', variant: 'outline-zinc' as const },

@@ -134,7 +134,7 @@ export function DietBuilderMealCard({
                             <Button variant="outline-primary" isIconOnly size="sm">
                                 <Icon icon={GripVertical} size="xs" />
                             </Button>
-                            <Stack gap={STORE_TOKENS.SPACING.TINY}>
+                            <Stack gap={'tiny'}>
                                 <Font
                                     variant="heading"
                                     uppercase

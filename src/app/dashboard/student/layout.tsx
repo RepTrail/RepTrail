@@ -2,7 +2,8 @@ import { STORE_TOKENS } from '@/components/store/constants/tokens';
 import { Suspense } from 'react'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { getSupabaseServer, actions, dehydrate, HydrationBoundary } from '@/lib/dal'
+import { dehydrate, HydrationBoundary } from '@/lib/dal'
+import { getProfile, getStudentLayoutData, actions } from '@/lib/dal/server'
 import { getQueryClient } from '@/lib/get-query-client'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { DashboardShell } from '@/components/store/advanced/dashboard-shell'
@@ -15,12 +16,7 @@ export default async function StudentLayout({ children }: { children: React.Reac
 
     if (!userId) redirect('/auth/login')
 
-    const supabase = await getSupabaseServer()
-    const { data: profile } = await supabase
-        .from('profiles')
-        .select('onboarding_completed, role, full_name, avatar_url, auto_training_status, auto_training_trial_end')
-        .eq('id', userId)
-        .single()
+    const profile = await getProfile(userId)
 
     if (profile?.role && profile.role !== 'student') {
         redirect('/dashboard')
@@ -43,11 +39,9 @@ export default async function StudentLayout({ children }: { children: React.Reac
 
 async function StudentLayoutLoader({ userId, children }: { userId: string; children: React.ReactNode }) {
     const queryClient = getQueryClient()
-    const supabase = await getSupabaseServer()
 
-    const [profileRes, detailsRes, trainerRel] = await Promise.all([
-        supabase.from('profiles').select('role, full_name, avatar_url, email, auto_training_status, auto_training_trial_end, is_admin, is_affiliate').eq('id', userId).single(),
-        supabase.from('student_details').select('id, steroid_use').eq('id', userId).single(),
+    const [layoutData, trainerRel] = await Promise.all([
+        getStudentLayoutData(userId),
         actions.getStudentTrainer(userId),
         queryClient.prefetchQuery({ queryKey: QUERY_KEYS.workouts.session, queryFn: () => import('@/lib/dal/remote').then(m => m.getActiveWorkoutSession()) }),
         queryClient.prefetchQuery({ queryKey: QUERY_KEYS.cardio.session, queryFn: () => import('@/lib/dal/remote').then(m => m.getActiveCardioSession()) }),
@@ -59,8 +53,8 @@ async function StudentLayoutLoader({ userId, children }: { userId: string; child
         queryClient.prefetchQuery({ queryKey: QUERY_KEYS.profile.trainer(userId), queryFn: () => actions.getStudentTrainer(userId) }),
     ])
 
-    const p = profileRes.data
-    const details = detailsRes.data
+    const p = layoutData.profile
+    const details = layoutData.details
     const hasTrainer = !!trainerRel
 
     const now = new Date()

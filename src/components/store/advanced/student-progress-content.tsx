@@ -1,42 +1,17 @@
-import { actions, getSupabaseServer } from '@/lib/dal'
+import { getStudentProgressPageData, actions } from '@/lib/dal/server'
 import { StudentPublicProfileMain } from '@/components/store/advanced/student-public-profile-main'
 import { StudentPublicPhotos } from '@/components/store/advanced/student-public-photos'
 import { StudentPublicMetrics } from '@/components/store/advanced/student-public-metrics'
 
 export async function StudentProgressPageContent({ userId }: { userId: string }) {
-    const supabase = await getSupabaseServer()
-
     // Fetch real data
     const fullMetrics = await actions.getStudentFullMetrics(userId)
     const adherenceHistory = await actions.getAdherenceHistory(30)
 
-    const [profileResult, trainerLinkResult, progressPhotosResult] = await Promise.all([
-        supabase
-            .from('profiles')
-            .select('id, full_name, avatar_url, created_at')
-            .eq('id', userId)
-            .single(),
-        supabase
-            .from('trainer_students')
-            .select(`
-                active,
-                trainer:profiles!trainer_id(
-                    id, full_name, avatar_url, trainer_code
-                )
-            `)
-            .eq('student_id', userId)
-            .eq('active', true)
-            .maybeSingle(),
-        supabase
-            .from('progress_photos')
-            .select('id, front_url, back_url, side_right_url, side_left_url, created_at')
-            .eq('student_id', userId)
-            .order('created_at', { ascending: false })
-    ])
+    const data = await getStudentProgressPageData(userId)
+    if (!data) return null
 
-    const profile = profileResult.data
-    const trainerLink = trainerLinkResult.data
-    const progressPhotos = progressPhotosResult.data || []
+    const { profile, trainerLink, progressPhotos } = data
 
     const trainerData = trainerLink?.trainer as any
 
@@ -66,7 +41,6 @@ export async function StudentProgressPageContent({ userId }: { userId: string })
             profile={profile}
             trainerData={trainerData}
             evolutionContent={evolutionContent}
-            historyContent={null}
             photosContent={photosContent}
         />
     )

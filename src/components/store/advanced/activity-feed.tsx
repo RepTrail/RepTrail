@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import { actions, useQuery, useQueryClient, getSupabaseClient, removeChannelWithGrace } from '@/lib/dal'
+import { actions, useQuery, useQueryClient, subscribeToActivityFeed } from '@/lib/dal'
 import type { ActivityItem } from '@/lib/dal/remote'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import {
@@ -29,7 +29,6 @@ interface ActivityFeedProps {
 
 export function ActivityFeed({ userId, initialData }: ActivityFeedProps) {
     const queryClient = useQueryClient()
-    const supabase = getSupabaseClient()
 
     const { data: activities = [] } = useQuery({
         queryKey: QUERY_KEYS.trainer.activity(userId),
@@ -39,29 +38,10 @@ export function ActivityFeed({ userId, initialData }: ActivityFeedProps) {
 
     // ─── Realtime Logic ──────────────────────────────────────────────────────
     useEffect(() => {
-        const channel = supabase
-            .channel('trainer-activity-refetch')
-            .on(
-                'postgres_changes',
-                { event: '*', schema: 'public', table: 'workout_logs' },
-                () => queryClient.invalidateQueries({ queryKey: QUERY_KEYS.trainer.activity(userId) })
-            )
-            .on(
-                'postgres_changes',
-                { event: '*', schema: 'public', table: 'meal_logs' },
-                () => queryClient.invalidateQueries({ queryKey: QUERY_KEYS.trainer.activity(userId) })
-            )
-            .on(
-                'postgres_changes',
-                { event: '*', schema: 'public', table: 'cardio_logs' },
-                () => queryClient.invalidateQueries({ queryKey: QUERY_KEYS.trainer.activity(userId) })
-            )
-            .subscribe()
-
-        return () => {
-            removeChannelWithGrace(supabase, channel)
-        }
-    }, [supabase, queryClient, userId])
+        return subscribeToActivityFeed(userId, () => {
+            queryClient.invalidateQueries({ queryKey: QUERY_KEYS.trainer.activity(userId) })
+        })
+    }, [queryClient, userId])
 
     // Render all activities and let the custom scrollbar handle the overflow limit dynamically
 

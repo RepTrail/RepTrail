@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { useQuery } from '@/lib/dal'
-import { getStudentTrainer } from '@/lib/dal/remote'
+import { getStudentTrainer, getStudentProfile } from '@/lib/dal/remote'
 import { Button } from '@/components/store/base/button'
 import { Icon } from '@/components/store/base/icon'
 import { Stack } from '@/components/store/base/stack'
@@ -23,13 +23,14 @@ export function StudentRegistryHeaderActions({ userId, type }: StudentRegistryHe
     const router = useRouter()
     const [isPending, startTransition] = React.useTransition()
 
-    const { data: trainerLink } = useQuery({
-        queryKey: QUERY_KEYS.profile.trainer(userId),
-        queryFn: () => getStudentTrainer(userId),
+    const { data: profile } = useQuery({
+        queryKey: QUERY_KEYS.student.details(userId),
+        queryFn: () => getStudentProfile(userId),
         staleTime: 1000 * 60 * 5
     })
-    
-    const isAutoMode = !trainerLink
+
+    const isAutoTrainingActive = profile?.auto_training_status === 'active' || profile?.auto_training_status === 'trial'
+    const isAutoMode = isAutoTrainingActive
 
     const handleCreateWorkout = () => {
         startTransition(async () => {

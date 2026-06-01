@@ -1,5 +1,6 @@
 import { STORE_TOKENS } from '@/components/store/constants/tokens';
-import { actions, getSupabaseServer, dehydrate, HydrationBoundary } from '@/lib/dal'
+import { dehydrate, HydrationBoundary } from '@/lib/dal'
+import { getProfile, actions } from '@/lib/dal/server'
 import { redirect } from 'next/navigation'
 import { headers } from 'next/headers'
 import { getQueryClient } from '@/lib/get-query-client'
@@ -16,13 +17,7 @@ export default async function TrainerLayout({ children }: { children: React.Reac
 
     if (!userId) redirect('/auth/login')
 
-    const supabase = await getSupabaseServer()
-    
-    const { data: profile } = await supabase
-        .from('profiles')
-        .select('role, plan_tier, full_name, avatar_url, email, is_admin, is_affiliate')
-        .eq('id', userId)
-        .single()
+    const profile = await getProfile(userId)
 
     if (!profile) redirect('/auth/login')
     if (profile.role !== 'trainer') redirect('/dashboard/student')

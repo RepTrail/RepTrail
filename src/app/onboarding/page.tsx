@@ -1,5 +1,5 @@
 import { StudentOnboardingForm } from '@/components/store/advanced/student-onboarding-form'
-import { getSupabaseServer } from '@/lib/dal'
+import { getOnboardingSessionInfo } from '@/lib/dal/server'
 import { redirect } from 'next/navigation'
 import { Surface } from '@/components/store/base/surface'
 import { BackgroundEffects } from '@/components/store/base/background-effects'
@@ -8,30 +8,19 @@ import { Stack } from '@/components/store/base/stack'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 export default async function OnboardingPage() {
-    const supabase = await getSupabaseServer()
-    const { data: { user } } = await supabase.auth.getUser()
+    const { user, role, onboardingCompleted, trainerCode } = await getOnboardingSessionInfo()
 
     if (!user) {
         redirect('/auth/login')
     }
 
-    const { data: profile } = await supabase
-        .from('profiles')
-        .select('role, onboarding_completed')
-        .eq('id', user.id)
-        .single()
-
-    const role = profile?.role || user.user_metadata?.role
-
     if (role === 'trainer') {
         redirect('/dashboard/trainer')
     }
 
-    if (profile?.onboarding_completed) {
+    if (onboardingCompleted) {
         redirect('/dashboard/student')
     }
-
-    const trainerCode = user.user_metadata?.trainer_code || ''
 
     return (
         <RegistryProvider defaultColor="orange">

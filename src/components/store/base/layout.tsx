@@ -318,6 +318,7 @@ export function ModalContainer({
     <div
       id={id}
       className={computedContainerClassName}
+      style={{ maxHeight: '90vh' }}
     >
       {children}
     </div>

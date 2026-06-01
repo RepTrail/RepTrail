@@ -1,6 +1,7 @@
 import { headers } from 'next/headers'
 import { Suspense } from 'react'
-import { actions, dehydrate, HydrationBoundary } from '@/lib/dal'
+import { dehydrate, HydrationBoundary } from '@/lib/dal'
+import { actions } from '@/lib/dal/server'
 import { StudentMetaPixel } from './meta-pixel'
 import { getQueryClient } from '@/lib/get-query-client'
 import { QUERY_KEYS } from '@/lib/query-keys'

@@ -109,7 +109,7 @@ export const STORE_TOKENS = {
         /** Content floating over backgrounds/images */
         CONTENT: 10,
         /** Top-level overlays and badges */
-        OVERLAY: 20
+        OVERLAY: 50
     },
 
     /** Typographic Presets (Combinations of Font props) */

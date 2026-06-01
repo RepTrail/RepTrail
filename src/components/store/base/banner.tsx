@@ -35,12 +35,14 @@ export function Banner({
             }}
         >
             {/* Background Image */}
-            <Box position="absolute" pin="inset" style={{ zIndex: 0 }}>
+            <Box position="absolute" pin="inset" zIndex={0}>
                 <Img 
                     src={src} 
                     alt="Banner" 
                     fallbackIcon={ImageIcon}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.6 }} 
+                    fullWidth
+                    fullHeight
+                    objectFit="cover"
                 />
             </Box>
             {/* Standard Liquid Glass Gradients */}

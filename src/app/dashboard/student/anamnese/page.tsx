@@ -1,4 +1,4 @@
-import { getSupabaseServer } from '@/lib/dal'
+import { getStudentDetails } from '@/lib/dal/server'
 import { AnamnesisForm } from '@/components/store/advanced/student-anamnesis-form'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { headers } from 'next/headers'
@@ -9,13 +9,7 @@ export default async function AnamnesisPage() {
     const userId = headerList.get('x-user-id')
     if (!userId) redirect('/auth/login')
 
-    const supabase = await getSupabaseServer()
-
-    const { data: details } = await supabase
-        .from('student_details')
-        .select('*')
-        .eq('id', userId)
-        .single()
+    const details = await getStudentDetails(userId)
 
     return (
         <RegistryMain

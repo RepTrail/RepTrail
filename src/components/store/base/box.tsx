@@ -720,6 +720,8 @@ export const Box = React.forwardRef<HTMLElement, BoxProps>(function Box({
         ...(typeof minWidthBase === 'number' ? { minWidth: `${minWidthBase}px` } : {}),
         ...(typeof width === 'number' ? { width: `${width}px` } : {}),
         ...(typeof height === 'number' ? { height: `${height}px` } : {}),
+        ...(typeof maxHeight === 'number' ? { maxHeight: `${maxHeight}px` } : {}),
+        ...(typeof maxHeight === 'string' ? { maxHeight: maxHeight } : {}),
         ...style
       }}
       className={cn(

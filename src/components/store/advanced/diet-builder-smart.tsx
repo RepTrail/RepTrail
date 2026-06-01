@@ -371,7 +371,7 @@ export function DietBuilderSmart({
                 <Grid cols={{ base: 6, md: 5 }} gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
                     {/* PROT */}
                     <GlassPanel padding={STORE_TOKENS.SPACING.ELEMENT} border="standard" colSpan={2} mdColSpan={1}>
-                        <Stack gap={STORE_TOKENS.SPACING.TINY} align="center" justify="center">
+                        <Stack gap={'tiny'} align="center" justify="center">
                             <Font
                                 variant="sub-tiny"
                                 uppercase
@@ -379,7 +379,7 @@ export function DietBuilderSmart({
                                 {...{
                                     color: STORE_TOKENS.COLORS.TEXT.DIM,
                                 }}>Prot</Font>
-                            <Inline align="baseline" justify="center" gap={STORE_TOKENS.SPACING.TINY}>
+                            <Inline align="baseline" justify="center" gap={'tiny'}>
                                 <Font
                                     variant="h1"
                                     weight="black"
@@ -397,7 +397,7 @@ export function DietBuilderSmart({
                     </GlassPanel>
                     {/* CARB */}
                     <GlassPanel padding={STORE_TOKENS.SPACING.ELEMENT} border="standard" colSpan={2} mdColSpan={1}>
-                        <Stack gap={STORE_TOKENS.SPACING.TINY} align="center" justify="center">
+                        <Stack gap={'tiny'} align="center" justify="center">
                             <Font
                                 variant="sub-tiny"
                                 uppercase
@@ -405,7 +405,7 @@ export function DietBuilderSmart({
                                 {...{
                                     color: STORE_TOKENS.COLORS.TEXT.DIM,
                                 }}>Carb</Font>
-                            <Inline align="baseline" justify="center" gap={STORE_TOKENS.SPACING.TINY}>
+                            <Inline align="baseline" justify="center" gap={'tiny'}>
                                 <Font
                                     variant="h1"
                                     weight="black"
@@ -423,7 +423,7 @@ export function DietBuilderSmart({
                     </GlassPanel>
                     {/* GORD */}
                     <GlassPanel padding={STORE_TOKENS.SPACING.ELEMENT} border="standard" colSpan={2} mdColSpan={1}>
-                        <Stack gap={STORE_TOKENS.SPACING.TINY} align="center" justify="center">
+                        <Stack gap={'tiny'} align="center" justify="center">
                             <Font
                                 variant="sub-tiny"
                                 uppercase
@@ -431,7 +431,7 @@ export function DietBuilderSmart({
                                 {...{
                                     color: STORE_TOKENS.COLORS.TEXT.DIM,
                                 }}>Gord</Font>
-                            <Inline align="baseline" justify="center" gap={STORE_TOKENS.SPACING.TINY}>
+                            <Inline align="baseline" justify="center" gap={'tiny'}>
                                 <Font
                                     variant="h1"
                                     weight="black"
@@ -449,7 +449,7 @@ export function DietBuilderSmart({
                     </GlassPanel>
                     {/* FIB */}
                     <GlassPanel padding={STORE_TOKENS.SPACING.ELEMENT} border="standard" colSpan={3} mdColSpan={1}>
-                        <Stack gap={STORE_TOKENS.SPACING.TINY} align="center" justify="center">
+                        <Stack gap={'tiny'} align="center" justify="center">
                             <Font
                                 variant="sub-tiny"
                                 uppercase
@@ -457,7 +457,7 @@ export function DietBuilderSmart({
                                 {...{
                                     color: STORE_TOKENS.COLORS.TEXT.DIM,
                                 }}>Fib</Font>
-                            <Inline align="baseline" justify="center" gap={STORE_TOKENS.SPACING.TINY}>
+                            <Inline align="baseline" justify="center" gap={'tiny'}>
                                 <Font
                                     variant="h1"
                                     weight="black"
@@ -475,7 +475,7 @@ export function DietBuilderSmart({
                     </GlassPanel>
                     {/* KCAL */}
                     <GlassPanel padding={STORE_TOKENS.SPACING.ELEMENT} border="standard" colSpan={3} mdColSpan={1}>
-                        <Stack gap={STORE_TOKENS.SPACING.TINY} align="center" justify="center">
+                        <Stack gap={'tiny'} align="center" justify="center">
                             <Font
                                 variant="sub-tiny"
                                 uppercase
@@ -483,7 +483,7 @@ export function DietBuilderSmart({
                                 {...{
                                     color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
                                 }}>Kcal</Font>
-                            <Inline align="baseline" justify="center" gap={STORE_TOKENS.SPACING.TINY}>
+                            <Inline align="baseline" justify="center" gap={'tiny'}>
                                 <Font
                                     variant="h1"
                                     weight="black"

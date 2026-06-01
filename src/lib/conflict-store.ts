@@ -42,18 +42,3 @@ class ConflictStore {
 }
 
 export const conflictStore = new ConflictStore();
-
-/**
- * Hook to use conflicts in React components if needed
- */
-import { useState, useEffect } from 'react';
-
-export function useConflicts() {
-  const [conflicts, setConflicts] = useState<Conflict[]>(conflictStore.getConflicts());
-
-  useEffect(() => {
-    return conflictStore.subscribe(setConflicts);
-  }, []);
-
-  return conflicts;
-}

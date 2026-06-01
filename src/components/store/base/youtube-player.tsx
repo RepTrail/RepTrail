@@ -108,7 +108,6 @@ export function YouTubePlayer({ videoId, className, iframeClassName }: YouTubePl
         )}
         style={{ opacity: showThumb ? 1 : 0 }}
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img 
           src={`https://img.youtube.com/vi/${parsedId}/maxresdefault.jpg`} 
           alt=""

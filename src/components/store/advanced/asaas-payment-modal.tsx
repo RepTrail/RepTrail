@@ -18,7 +18,7 @@ import {
     Loader2
 } from 'lucide-react'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
-import { createAsaasSubscription, searchAsaasCustomer } from '@/lib/dal/remote'
+import { actions } from '@/lib/dal'
 import { useToast } from '@/hooks/use-toast'
 
 interface AsaasPaymentModalProps {
@@ -82,7 +82,7 @@ export function AsaasPaymentModal({
                 const timer = setTimeout(async () => {
                     setFetchingName(true)
                     try {
-                        const res = await searchAsaasCustomer(clean)
+                        const res = await actions.searchAsaasCustomer(clean)
                         if (res.success && res.name) {
                             setFullName(res.name)
                         }
@@ -128,7 +128,7 @@ export function AsaasPaymentModal({
             const [month, year] = cardData.expiry.split('/')
             const fullYear = `20${year}`
 
-            const res = await createAsaasSubscription(
+            const res = await actions.createAsaasSubscription(
                 tier,
                 'CREDIT_CARD',
                 cpf.replace(/\D/g, ''),

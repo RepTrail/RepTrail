@@ -101,7 +101,7 @@ export function FormCheckbox({
             </button>
 
             {error && (
-                <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.ERROR} weight="black" uppercase tracking="widest" className="pl-8">
+                <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.ERROR} weight="black" uppercase tracking="widest">
                     {error}
                 </Font>
             )}

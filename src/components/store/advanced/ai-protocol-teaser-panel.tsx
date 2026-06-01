@@ -33,8 +33,8 @@ export function AIProtocolTeaserPanel({ userId = 'me' }: { userId?: string }) {
     }
 
     return (
-        <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM} variant="glass">
-            <Stack gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
+        <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM} variant="glass" flex1={true} display="flex" direction="col" justify="center">
+            <Stack gap={STORE_TOKENS.SPACING.CONTAINER} align="center" justify="center" flex1={true}>
                 {/* Visual Header */}
                 <Box position="relative">
                     <Surface 
@@ -58,7 +58,7 @@ export function AIProtocolTeaserPanel({ userId = 'me' }: { userId?: string }) {
                             align="center"
                             {...{
                                 color: "white",
-                            }}>Você ainda não tem 
+                            }}>Você ainda não tem{" "}
                             <Font
                                 variant="h2"
                                 weight="black"

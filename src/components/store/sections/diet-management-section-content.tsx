@@ -50,7 +50,11 @@ export function DietManagementSectionContent({
     const { mutate: deleteMutation } = useOptimisticMutation({
         queryKey: activeQueryKey,
         entity: ENTITIES.DIET,
-        actionName: 'delete-diet'
+        actionName: 'delete-diet',
+        updateFn: (oldData: any, variables: any) => {
+            if (!Array.isArray(oldData)) return oldData
+            return oldData.filter((item: any) => item.id !== variables.id)
+        }
     })
 
     const { mutate: duplicateMutation } = useOptimisticMutation({
@@ -82,10 +86,10 @@ export function DietManagementSectionContent({
 
         switch (actionModal.type) {
             case 'confirm_delete':
-                deleteMutation({ id: actionModal.data.id })
+                deleteMutation({ id: actionModal.data.id, userId })
                 break
             case 'confirm_duplicate':
-                duplicateMutation({ id: actionModal.data.id })
+                duplicateMutation({ id: actionModal.data.id, userId })
                 break
             case 'assign_diet':
                 if (data?.selectedDays && Array.isArray(data.selectedDays)) {
@@ -101,7 +105,8 @@ export function DietManagementSectionContent({
                     createMutation({
                         name: data.name,
                         description: data.description,
-                        daysOfWeek: data.selectedDays
+                        daysOfWeek: data.selectedDays,
+                        userId
                     })
                 }
                 break

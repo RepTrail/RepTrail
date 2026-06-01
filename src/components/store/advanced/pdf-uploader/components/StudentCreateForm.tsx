@@ -42,7 +42,7 @@ export function StudentCreateForm({
                         value={placeholderEmail}
                         onChange={(e) => setPlaceholderEmail(e.target.value)}
                     />
-                    <Box paddingX={STORE_TOKENS.PADDING.ELEMENT}>
+                    <Box padding={STORE_TOKENS.PADDING.ELEMENT}>
                         <Font
                             variant="sub-tiny"
                             weight="bold"
@@ -65,7 +65,7 @@ export function StudentCreateForm({
                     onChange={(e) => setPlaceholderWhatsapp(e.target.value)}
                 />
 
-                <Box paddingX={STORE_TOKENS.PADDING.ELEMENT}>
+                <Box padding={STORE_TOKENS.PADDING.ELEMENT}>
                     <Font
                         variant="sub-tiny"
                         weight="black"

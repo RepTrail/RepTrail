@@ -1,4 +1,4 @@
-import { actions } from '@/lib/dal'
+import { actions } from '@/lib/dal/server'
 import { redirect } from 'next/navigation'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { ImportPdfSectionContent } from '@/components/store/sections/import-pdf-section-content'

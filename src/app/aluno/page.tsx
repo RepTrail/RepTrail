@@ -1,6 +1,6 @@
 import React from 'react'
 import { RegistryProvider } from '@/components/store/advanced/registry-context'
-import { getSupabaseServer, actions } from '@/lib/dal'
+import { getLandingSessionInfo, actions } from '@/lib/dal/server'
 import { LandingShell } from '@/components/store/advanced/landing-shell'
 
 // Landing Page Sections
@@ -19,19 +19,7 @@ export const dynamic = 'force-dynamic'
 
 export default async function StudentLandingPage() {
   const trainers = await actions.getTrainerRanking()
-  const supabase = await getSupabaseServer()
-
-  const { data: { user } } = await supabase.auth.getUser()
-  let role = null
-
-  if (user) {
-    const { data: userData } = await supabase.from('profiles').select('role').eq('id', user.id).maybeSingle()
-    role = userData?.role
-  }
-
-  const dashboardUrl = role === 'admin' ? '/admin' :
-    role === 'trainer' ? '/dashboard/trainer' :
-      '/dashboard/student'
+  const { user, role, dashboardUrl } = await getLandingSessionInfo()
 
   const navActions = !user ? [
     { label: 'Login', href: '/auth/login', variant: 'outline-zinc' as const },

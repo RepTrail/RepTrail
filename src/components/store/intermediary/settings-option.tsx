@@ -75,7 +75,6 @@ export function SettingsOption({
                         </Font>
                         <Font
                             variant="sub-tiny"
-                            // eslint-disable-next-line no-restricted-syntax
                             opacity={variant === 'zinc' ? STORE_TOKENS.OPACITY.FULL : STORE_TOKENS.OPACITY.OVERLAY}
                             weight="bold"
                             uppercase

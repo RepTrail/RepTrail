@@ -312,7 +312,7 @@ export function WorkoutBuilderExerciseCard({
                                 {...{
                                     padding: STORE_TOKENS.PADDING.ELEMENT,
                                 }}>
-                                <Stack gap={STORE_TOKENS.SPACING.TINY}>
+                                <Stack gap={'tiny'}>
                                     <Font
                                         variant="sub-tiny"
                                         weight="bold"

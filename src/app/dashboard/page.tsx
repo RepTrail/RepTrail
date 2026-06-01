@@ -1,4 +1,4 @@
-import { getSupabaseServer } from '@/lib/dal'
+import { getProfile } from '@/lib/dal/server'
 import { redirect } from 'next/navigation'
 import { headers } from 'next/headers'
 
@@ -7,13 +7,7 @@ export default async function DashboardPage() {
     const userId = headerList.get('x-user-id')
     if (!userId) redirect('/auth/login')
 
-    const supabase = await getSupabaseServer()
-
-    const { data: profile } = await supabase
-        .from('profiles')
-        .select('role, is_affiliate, full_name')
-        .eq('id', userId)
-        .single()
+    const profile = await getProfile(userId)
 
     const role = profile?.role
 

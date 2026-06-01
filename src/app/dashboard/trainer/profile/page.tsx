@@ -2,7 +2,7 @@ import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { getQueryClient } from '@/lib/get-query-client'
 import { QUERY_KEYS } from '@/lib/query-keys'
-import { actions } from '@/lib/dal'
+import { actions } from '@/lib/dal/server'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { TrainerProfileSectionContent } from '@/components/store/sections/trainer-profile-section-content'
 

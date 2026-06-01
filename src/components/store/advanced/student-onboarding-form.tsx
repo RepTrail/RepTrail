@@ -125,16 +125,16 @@ export function StudentOnboardingForm({ defaultTrainerCode = '' }: { defaultTrai
                     className: "w-full",
                 }}>
                 {/* Hidden inputs to guarantee they are always submitted */}
-                <Box as="input" type="hidden" name="height" value={height} />
-                <Box as="input" type="hidden" name="startingWeight" value={startingWeight} />
-                <Box as="input" type="hidden" name="estimatedBf" value={estimatedBf} />
-                <Box as="input" type="hidden" name="birthDate" value={birthDate} />
-                <Box as="input" type="hidden" name="goal" value={goal} />
-                <Box as="input" type="hidden" name="activityLevel" value={activityLevel} />
-                <Box as="input" type="hidden" name="imageAuth" value={imageAuth} />
-                <Box as="input" type="hidden" name="trainerCode" value={trainerCode} />
-                <Box as="input" type="hidden" name="observations" value={observations} />
-                {steroidUse && <Box as="input" type="hidden" name="steroidUse" value="on" />}
+                <input type="hidden" name="height" value={height} />
+                <input type="hidden" name="startingWeight" value={startingWeight} />
+                <input type="hidden" name="estimatedBf" value={estimatedBf} />
+                <input type="hidden" name="birthDate" value={birthDate} />
+                <input type="hidden" name="goal" value={goal} />
+                <input type="hidden" name="activityLevel" value={activityLevel} />
+                <input type="hidden" name="imageAuth" value={imageAuth} />
+                <input type="hidden" name="trainerCode" value={trainerCode} />
+                <input type="hidden" name="observations" value={observations} />
+                {steroidUse && <input type="hidden" name="steroidUse" value="on" />}
 
                 <Stack gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
                     {/* Error Messages */}

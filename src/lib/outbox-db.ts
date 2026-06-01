@@ -90,6 +90,52 @@ export const outboxDB = {
     });
   },
 
+  /**
+   * OUTBOX COALESCING (ADR §5).
+   * Compacts consecutive pending mutations for the same entityId into a single
+   * record (keeping the latest payload). Runs atomically before dispatch.
+   * Returns the number of records compacted.
+   */
+  async coalesce(): Promise<number> {
+    const db = await getDB();
+    const all: OutboxRecord[] = await db.getAll(STORE_NAME);
+    const pending = all
+      .filter(r => r.status === 'pending')
+      .sort((a, b) => a.createdAt - b.createdAt);
+
+    // Group by entity + entityId → keep only the LAST record's payload
+    const grouped = new Map<string, OutboxRecord[]>();
+    for (const r of pending) {
+      const key = `${r.entity}:${r.entityId}`;
+      if (!grouped.has(key)) grouped.set(key, []);
+      grouped.get(key)!.push(r);
+    }
+
+    let coalesced = 0;
+    const tx = db.transaction(STORE_NAME, 'readwrite');
+    const store = tx.objectStore(STORE_NAME);
+
+    for (const [, group] of grouped) {
+      if (group.length <= 1) continue;
+      // Keep the latest (last by createdAt), delete the rest
+      const winner = group[group.length - 1];
+      for (let i = 0; i < group.length - 1; i++) {
+        await store.delete(group[i].id);
+        coalesced++;
+      }
+      // Merge all payloads into winner so no field is lost
+      const merged = group.reduce((acc, r) => ({ ...acc, ...r.payload }), {});
+      const updated = { ...winner, payload: merged };
+      await store.put(updated);
+    }
+
+    await tx.done;
+    if (coalesced > 0) {
+      console.log(`[Outbox] ⚡ Coalesced ${coalesced} redundant mutation(s).`);
+    }
+    return coalesced;
+  },
+
   async dequeue(id: string): Promise<void> {
     const db = await getDB();
     await db.delete(STORE_NAME, id);

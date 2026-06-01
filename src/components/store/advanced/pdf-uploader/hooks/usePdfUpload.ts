@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { actions, getSupabaseClient } from '@/lib/dal';
+import { actions, uploadPdf } from '@/lib/dal';
 import { prepareCardios, prepareErgogenics } from '../lib/helpers';
 
 export function usePdfUpload({ type, role, bindingHooks, selectionHooks }: any) {
@@ -8,7 +8,6 @@ export function usePdfUpload({ type, role, bindingHooks, selectionHooks }: any) 
     const [parsing, setParsing] = useState(false);
     const [parsedData, setParsedData] = useState<any>(null);
     const { toast } = useToast();
-    const supabase = getSupabaseClient();
 
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files || e.target.files.length === 0) return;
@@ -20,7 +19,7 @@ export function usePdfUpload({ type, role, bindingHooks, selectionHooks }: any) 
             const fileName = `${Math.random()}.${fileExt}`;
             const filePath = `${fileName}`;
 
-            const { error: uploadError } = await supabase.storage.from('pdfs').upload(filePath, file);
+            const { error: uploadError } = await uploadPdf(filePath, file);
             if (uploadError) throw uploadError;
 
             toast({ title: "Arquivo enviado!", description: "Iniciando processamento com IA..." });

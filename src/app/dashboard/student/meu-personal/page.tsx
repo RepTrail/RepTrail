@@ -1,4 +1,4 @@
-import { getSupabaseServer, actions } from '@/lib/dal'
+import { getStudentTrainerReview, actions } from '@/lib/dal/server'
 import { redirect } from 'next/navigation'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { MeuPersonalSectionContent } from '@/components/store/sections/meu-personal-section-content'
@@ -9,20 +9,13 @@ export default async function MeuPersonalPage() {
     const userId = headerList.get('x-user-id')
     if (!userId) redirect('/auth/login')
 
-    const supabase = await getSupabaseServer()
-
     const trainerRel = await actions.getStudentTrainer(userId)
     if (!trainerRel || !trainerRel.trainer) redirect('/dashboard/student/buscar-personal')
 
     const trainer = trainerRel.trainer
 
     // Fetch existing review for the student and trainer
-    const { data: existingReview } = await supabase
-        .from('trainer_reviews')
-        .select('*')
-        .eq('student_id', userId)
-        .eq('trainer_id', trainer.id)
-        .maybeSingle()
+    const existingReview = await getStudentTrainerReview(userId, trainer.id)
 
     return (
         <RegistryMain

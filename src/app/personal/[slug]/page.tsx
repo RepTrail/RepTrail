@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { getSupabaseServer } from '@/lib/dal'
+import { getTrainerPublicProfileData } from '@/lib/dal/server'
 import { headers } from 'next/headers'
 import { TrainerPublicProfileMain } from '@/components/store/advanced/trainer-public-profile-main'
 import { DashboardShell } from '@/components/store/advanced/dashboard-shell'
@@ -60,7 +60,6 @@ export default async function TrainerPublicProfilePage({
     params: Promise<{ slug: string }>
 }) {
     const { slug } = await params
-    const supabase = await getSupabaseServer()
     const headerList = await headers()
     const viewerId = headerList.get('x-user-id')
 
@@ -71,30 +70,14 @@ export default async function TrainerPublicProfilePage({
         notFound()
     }
 
-    // Use the RPC to fetch all data at once securely
-    const { data: publicData, error: rpcError } = await supabase
-        .rpc('get_trainer_public_profile', { trainer_slug: normalizedSlug })
+    const trainerProfileData = await getTrainerPublicProfileData(normalizedSlug, viewerId)
+    if (!trainerProfileData) notFound()
 
-    if (rpcError || !publicData) {
-        console.error('Error fetching public profile via RPC:', rpcError)
-        notFound()
-    }
-
+    const { publicData, viewerProfile } = trainerProfileData
     const { trainer, reviews, photos } = publicData
 
     if (!trainer || !trainer.trainer_code) {
         notFound()
-    }
-
-    // ── Get Viewer Profile if Logged In (to determine sidebar role/color) ───────
-    let viewerProfile: any = null
-    if (viewerId) {
-        const { data } = await supabase
-            .from('profiles')
-            .select('role, full_name, avatar_url, email, is_admin, is_affiliate')
-            .eq('id', viewerId)
-            .single()
-        viewerProfile = data
     }
 
     // ── Enforce default trainer 'emerald' theme for content elements ───────────

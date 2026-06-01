@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-export { useQuery, useMutation, useQueryClient, dehydrate, HydrationBoundary } from '@tanstack/react-query'
+export { useQuery, useMutation, useQueryClient, dehydrate, HydrationBoundary, QueryClient, QueryClientProvider } from '@tanstack/react-query'
 export type { QueryKey } from '@tanstack/react-query'
 import { localGetAll, localGet, localPut, localDelete } from './localDb'
 import { syncMutationToRemote } from './sync'
@@ -64,7 +64,7 @@ export function useAssignedWorkout(workoutId: string, studentId: string) {
     queryKey: ['assigned-workout', workoutId, studentId],
     queryFn: async () => {
       const allAssigned = await localGetAll<any>('assigned_workouts')
-      return allAssigned.find((aw: any) => aw.workout_id === workoutId && aw.student_id === studentId && aw.active === true)
+      return allAssigned.find((aw: any) => aw.workout_id === workoutId && aw.student_id === studentId && aw.active === true) ?? null
     },
     staleTime: 1000 * 60 * 5,
     enabled: !!workoutId && !!studentId,
@@ -75,10 +75,38 @@ export function useCreateWorkout() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (workout: any) => {
-      await localPut('workouts', workout)
-      const result = await syncMutationToRemote('workouts', 'upsert', workout)
-      if (!result.success) console.error('[dal] Falha ao sincronizar treino:', result.error)
-      return workout
+      const clientMutationId = crypto.randomUUID()
+      let localClientId = typeof window !== 'undefined' ? localStorage.getItem('reptrail_client_id') : null
+      if (!localClientId && typeof window !== 'undefined') {
+        localClientId = crypto.randomUUID()
+        localStorage.setItem('reptrail_client_id', localClientId)
+      }
+
+      const workoutWithMeta = {
+        ...workout,
+        id: workout.id || crypto.randomUUID(),
+        clientMutationId,
+        clientId: localClientId || 'server'
+      }
+
+      await localPut('workouts', workoutWithMeta)
+
+      const { outboxDB } = await import('@/lib/outbox-db')
+      const { syncEngine } = await import('@/lib/sync-engine')
+
+      await outboxDB.enqueue({
+        id: crypto.randomUUID(),
+        clientMutationId,
+        clientId: localClientId || 'server',
+        action: 'create-manual-workout',
+        payload: workoutWithMeta,
+        entity: 'workouts',
+        entityId: workoutWithMeta.id
+      } as any)
+
+      syncEngine.trigger()
+
+      return workoutWithMeta
     },
     onSuccess: () => { 
       queryClient.invalidateQueries({ queryKey: ['workouts'] }) 
@@ -91,7 +119,7 @@ export function useDailyTracking(userId: string, date: string) {
   return useQuery({
     queryKey: ['daily_tracking', userId, date],
     queryFn: () => localGetAll<any>('daily_tracking').then(
-      rows => rows.find((r: any) => r.user_id === userId && r.date === date)
+      rows => rows.find((r: any) => r.user_id === userId && r.date === date) ?? null
     ),
     staleTime: 1000 * 60 * 2,
     enabled: !!userId && !!date,
@@ -218,7 +246,7 @@ export function useDeleteUser() {
 export function useGrantAutoTraining() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({ studentId, status }: { studentId: string; status: string }) => 
+    mutationFn: ({ studentId, status }: { studentId: string; status: 'active' | 'none' }) => 
       import('@/actions/admin-actions').then(m => m.grantAutoTraining(studentId, status)),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-students'] })

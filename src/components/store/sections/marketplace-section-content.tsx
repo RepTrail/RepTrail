@@ -5,7 +5,6 @@ import { useQuery } from '@/lib/dal'
 import { Stack } from '@/components/store/base/stack'
 import { Grid } from '@/components/store/base/grid'
 import { Input } from '@/components/store/base/input'
-import { StoreHeroCard } from '@/components/store/intermediary/store-hero-card'
 import { StoreProductCard } from '@/components/store/intermediary/store-product-card'
 import { ShoppingBag, Search } from 'lucide-react'
 import { EmptyState } from '@/components/store/intermediary/empty-state'
@@ -70,7 +69,6 @@ export function MarketplaceSectionContent() {
 
     return (
         <Stack gap={STORE_TOKENS.SPACING.EMPTY_STATE}>
-            <StoreHeroCard />
             {/* Search + Category Filter block */}
             <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                 <Box 

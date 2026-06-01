@@ -87,6 +87,52 @@ export async function ensureDailyTracking(userId: string) {
     }
 }
 
+export async function recalculateDietAdherence(userId: string, dateStr: string) {
+    const supabase = await createClient()
+    const dow = new Date(dateStr + 'T12:00:00').getDay()
+
+    const { data: ad } = await supabase
+        .from('assigned_diets')
+        .select('days_of_week, diet:diets(meals(meal_items(id)))')
+        .eq('student_id', userId)
+        .eq('active', true)
+
+    const dowDiets = (ad as any[] || []).filter((a: any) => {
+        let days = a.days_of_week
+        if (typeof days === "string") {
+            try { days = JSON.parse(days) } catch { days = [] }
+        }
+        return Array.isArray(days) && days.map(Number).includes(dow)
+    })
+
+    const totalItems = dowDiets.reduce((acc: number, a: any) => {
+        const meals = a.diet?.meals || []
+        return acc + meals.reduce((mAcc: number, m: any) => mAcc + (m.meal_items?.length || 0), 0)
+    }, 0)
+
+    if (totalItems === 0) return
+
+    const { data: logs } = await supabase
+        .from('meal_item_logs')
+        .select('id')
+        .eq('user_id', userId)
+        .eq('date', dateStr)
+
+    const logsCount = logs?.length || 0
+    const percentage = Math.min(Math.round((logsCount / totalItems) * 100), 100)
+
+    await supabase
+        .from('daily_tracking')
+        .upsert({
+            user_id: userId,
+            date: dateStr,
+            diet_percentage: percentage,
+            updated_at: new Date().toISOString()
+        }, {
+            onConflict: 'user_id, date'
+        })
+}
+
 export async function toggleMealItem(itemId: string, status: boolean, date?: string) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
@@ -133,6 +179,8 @@ export async function toggleMealItem(itemId: string, status: boolean, date?: str
                     .lt('consumed_at', end)
             }
         }
+
+        await recalculateDietAdherence(user.id, targetDate)
 
         revalidatePath('/dashboard/student')
         return { success: true }
@@ -202,6 +250,8 @@ export async function toggleMealGroup(mealId: string, status: boolean, date?: st
                 .lt('consumed_at', end)
         }
 
+        await recalculateDietAdherence(user.id, targetDate)
+
         revalidatePath('/dashboard/student')
         revalidatePath('/dashboard/student/diet')
         return { success: true }
@@ -236,6 +286,8 @@ export async function substituteMealItem(itemId: string, substituteData: any, da
             })
 
         if (error) throw error
+
+        await recalculateDietAdherence(user.id, targetDate)
 
         revalidatePath('/dashboard/student')
         revalidatePath('/dashboard/student/diet')
@@ -303,6 +355,8 @@ export async function toggleSubstitution(itemId: string, date?: string) {
 
             if (insertError) throw insertError
         }
+
+        await recalculateDietAdherence(user.id, targetDate)
 
         revalidatePath('/dashboard/student')
         revalidatePath('/dashboard/student/diet')
@@ -485,15 +539,32 @@ export async function getAdherenceHistory(days: number = 30) {
 
         const logsCount = ergoLogsCount.get(dateStr) || 0
 
-        if (logsCount > 0) {
-            ergoPercentage = assignedErgosCount > 0 ? Math.min(Math.round((logsCount / assignedErgosCount) * 100), 100) : 100
-            ergoStatus = ergoPercentage >= 100 ? 'completed' : 'partial'
-        } else {
-            if (assignedErgosCount === 0) {
-                ergoStatus = 'none'
+        // Strict historical preservation: if it's a day in the past and we have a tracked state, trust it
+        if (isPast && found && found.ergogenics_status && found.ergogenics_status !== 'none') {
+            ergoStatus = found.ergogenics_status
+            if (typeof found.ergogenics_percentage === 'number' && found.ergogenics_percentage > 0) {
+                ergoPercentage = found.ergogenics_percentage
+            } else if (ergoStatus === 'completed') {
+                ergoPercentage = 100
+            } else if (ergoStatus === 'partial') {
+                ergoPercentage = assignedErgosCount > 0 ? Math.min(Math.round((logsCount / assignedErgosCount) * 100), 100) : 50
             } else {
-                if (ergoStatus === 'none') ergoStatus = 'assigned'
-                if (ergoStatus === 'assigned' && isPast) ergoStatus = 'skipped'
+                ergoPercentage = 0
+            }
+            if (ergoStatus === 'assigned' && isPast) {
+                ergoStatus = 'skipped'
+            }
+        } else {
+            if (logsCount > 0) {
+                ergoPercentage = assignedErgosCount > 0 ? Math.min(Math.round((logsCount / assignedErgosCount) * 100), 100) : 100
+                ergoStatus = ergoPercentage >= 100 ? 'completed' : 'partial'
+            } else {
+                if (assignedErgosCount === 0) {
+                    ergoStatus = 'none'
+                } else {
+                    if (ergoStatus === 'none') ergoStatus = 'assigned'
+                    if (ergoStatus === 'assigned' && isPast) ergoStatus = 'skipped'
+                }
             }
         }
 
@@ -505,14 +576,26 @@ export async function getAdherenceHistory(days: number = 30) {
             return acc + meals.reduce((mAcc: number, m: any) => mAcc + (m.meal_items?.length || 0), 0)
         }, 0)
 
-        if (dietPercentage === 0 && totalItems > 0) {
+        // Strict historical preservation for diets
+        if (isPast && found && typeof found.diet_percentage === 'number' && found.diet_percentage > 0) {
+            dietPercentage = found.diet_percentage
+        } else if (dietPercentage === 0) {
             const dayLogsCount = (mLogs || []).filter((l: any) => l.date === dateStr).length
-            dietPercentage = Math.min(Math.round((dayLogsCount / totalItems) * 100), 100)
+            if (totalItems > 0) {
+                dietPercentage = Math.min(Math.round((dayLogsCount / totalItems) * 100), 100)
+            } else if (dayLogsCount > 0) {
+                // If diet was deleted but logs exist for that date, default to fully completed
+                dietPercentage = 100
+            }
         }
+
         if (dietPercentage >= 100) dietStatus = 'completed'
         else if (dietPercentage > 0) dietStatus = 'partial'
         else if (totalItems > 0) {
             dietStatus = isPast ? 'skipped' : 'assigned'
+        } else if (isPast && found && found.diet_percentage === 0 && (workoutStatus !== 'none' || cardioStatus !== 'none' || ergoStatus !== 'none')) {
+            // If they had daily tracking but no active diet now, it was a skipped day historically
+            dietStatus = 'skipped'
         }
 
         historyArr.push({ date: dateStr, diet_percentage: dietPercentage, diet_status: dietStatus, workout_status: workoutStatus, workout_percentage: workoutPercentage, cardio_status: cardioStatus, cardio_percentage: cardioPercentage, ergogenics_status: ergoStatus, ergogenics_percentage: ergoPercentage })
@@ -662,15 +745,32 @@ export async function getStudentAdherenceHistory(studentId: string, days: number
 
         const logsCount = ergoLogsCount.get(dateStr) || 0
 
-        if (logsCount > 0) {
-            ergoPercentage = assignedErgosCount > 0 ? Math.min(Math.round((logsCount / assignedErgosCount) * 100), 100) : 100
-            ergoStatus = ergoPercentage >= 100 ? 'completed' : 'partial'
-        } else {
-            if (assignedErgosCount === 0) {
-                ergoStatus = 'none'
+        // Strict historical preservation: if it's a day in the past and we have a tracked state, trust it
+        if (isPast && found && found.ergogenics_status && found.ergogenics_status !== 'none') {
+            ergoStatus = found.ergogenics_status
+            if (typeof found.ergogenics_percentage === 'number' && found.ergogenics_percentage > 0) {
+                ergoPercentage = found.ergogenics_percentage
+            } else if (ergoStatus === 'completed') {
+                ergoPercentage = 100
+            } else if (ergoStatus === 'partial') {
+                ergoPercentage = assignedErgosCount > 0 ? Math.min(Math.round((logsCount / assignedErgosCount) * 100), 100) : 50
             } else {
-                if (ergoStatus === 'none') ergoStatus = 'assigned'
-                if (ergoStatus === 'assigned' && isPast) ergoStatus = 'skipped'
+                ergoPercentage = 0
+            }
+            if (ergoStatus === 'assigned' && isPast) {
+                ergoStatus = 'skipped'
+            }
+        } else {
+            if (logsCount > 0) {
+                ergoPercentage = assignedErgosCount > 0 ? Math.min(Math.round((logsCount / assignedErgosCount) * 100), 100) : 100
+                ergoStatus = ergoPercentage >= 100 ? 'completed' : 'partial'
+            } else {
+                if (assignedErgosCount === 0) {
+                    ergoStatus = 'none'
+                } else {
+                    if (ergoStatus === 'none') ergoStatus = 'assigned'
+                    if (ergoStatus === 'assigned' && isPast) ergoStatus = 'skipped'
+                }
             }
         }
 
@@ -682,14 +782,26 @@ export async function getStudentAdherenceHistory(studentId: string, days: number
             return acc + meals.reduce((mAcc: number, m: any) => mAcc + (m.meal_items?.length || 0), 0)
         }, 0)
 
-        if (dietPercentage === 0 && totalItems > 0) {
+        // Strict historical preservation for diets
+        if (isPast && found && typeof found.diet_percentage === 'number' && found.diet_percentage > 0) {
+            dietPercentage = found.diet_percentage
+        } else if (dietPercentage === 0) {
             const dayLogsCount = (mLogs || []).filter((l: any) => l.date === dateStr).length
-            dietPercentage = Math.min(Math.round((dayLogsCount / totalItems) * 100), 100)
+            if (totalItems > 0) {
+                dietPercentage = Math.min(Math.round((dayLogsCount / totalItems) * 100), 100)
+            } else if (dayLogsCount > 0) {
+                // If diet was deleted but logs exist for that date, default to fully completed
+                dietPercentage = 100
+            }
         }
+
         if (dietPercentage >= 100) dietStatus = 'completed'
         else if (dietPercentage > 0) dietStatus = 'partial'
         else if (totalItems > 0) {
             dietStatus = isPast ? 'skipped' : 'assigned'
+        } else if (isPast && found && found.diet_percentage === 0 && (workoutStatus !== 'none' || cardioStatus !== 'none' || ergoStatus !== 'none')) {
+            // If they had daily tracking but no active diet now, it was a skipped day historically
+            dietStatus = 'skipped'
         }
 
         historyArr.push({ date: dateStr, diet_percentage: dietPercentage, diet_status: dietStatus, workout_status: workoutStatus, workout_percentage: workoutPercentage, cardio_status: cardioStatus, cardio_percentage: cardioPercentage, ergogenics_status: ergoStatus, ergogenics_percentage: ergoPercentage })

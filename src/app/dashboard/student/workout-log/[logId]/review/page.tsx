@@ -1,4 +1,4 @@
-import { actions } from '@/lib/dal'
+import { actions } from '@/lib/dal/server'
 import { WorkoutLogReview } from '@/components/store/advanced/student-workout-log-review'
 import { notFound } from 'next/navigation'
 

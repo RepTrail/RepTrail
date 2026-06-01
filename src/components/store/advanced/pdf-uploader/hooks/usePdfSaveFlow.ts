@@ -13,6 +13,47 @@ export function usePdfSaveFlow({ type, userId, role, initialStudentId, parsedDat
 
     const { mutate: handleSaveFinal, isPending: isSaving } = useMutation({
         mutationFn: async (variables: any) => {
+            const clientMutationId = crypto.randomUUID();
+            let localClientId = typeof window !== 'undefined' ? localStorage.getItem('reptrail_client_id') : null;
+            if (!localClientId && typeof window !== 'undefined') {
+                localClientId = crypto.randomUUID();
+                localStorage.setItem('reptrail_client_id', localClientId);
+            }
+
+            const payload = {
+                ...variables,
+                clientMutationId,
+                clientId: localClientId || 'server'
+            };
+
+            if (typeof navigator !== 'undefined' && !navigator.onLine) {
+                console.log('[usePdfSaveFlow] 📡 Offline: Enqueueing saveParsedData to Outbox.');
+                const { outboxDB } = await import('@/lib/outbox-db');
+                const { syncEngine } = await import('@/lib/sync-engine');
+
+                const tempPlaceholderId = variables.createPlaceholder ? crypto.randomUUID() : undefined;
+
+                await outboxDB.enqueue({
+                    id: crypto.randomUUID(),
+                    clientMutationId,
+                    clientId: localClientId || 'server',
+                    action: 'save-parsed-data',
+                    payload: payload,
+                    entity: (variables.type === 'workout' ? 'workouts' : 'diets') as any,
+                    entityId: variables.studentId || tempPlaceholderId || 'none'
+                } as any);
+
+                syncEngine.trigger();
+
+                return { 
+                    success: true, 
+                    localOnly: true,
+                    results: tempPlaceholderId ? { placeholderId: tempPlaceholderId } : undefined,
+                    data: tempPlaceholderId ? { placeholderId: tempPlaceholderId } : undefined,
+                    error: undefined as string | undefined
+                };
+            }
+
             return await saveParsedData(variables.type, variables.data, variables.studentId, variables.createPlaceholder);
         },
         onSuccess: (result, variables) => {

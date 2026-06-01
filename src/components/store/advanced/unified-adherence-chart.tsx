@@ -67,7 +67,7 @@ export function UnifiedAdherenceChart({ history, showErgogenics = false, noCard 
 
     const content = (
         <Stack fullWidth minWidth={0} gap={STORE_TOKENS.SPACING.CONTAINER} padding={noCard ? STORE_TOKENS.PADDING.NONE : { base: STORE_TOKENS.PADDING.NONE, md: STORE_TOKENS.PADDING.CONTAINER }}>
-            <Box overflowX="auto" width="full" minWidth={0} noScrollbar={true}>
+            <Box overflowX="auto" width="full" minWidth={0} className="custom-scrollbar">
                 <Box minWidth={750}>
                     <Stack fullWidth gap={STORE_TOKENS.SPACING.CONTAINER}>
                         {rows.map(row => (

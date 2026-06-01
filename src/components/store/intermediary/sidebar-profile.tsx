@@ -7,7 +7,7 @@ import { Icon } from '@/components/store/base/icon'
 import { Button } from '@/components/store/base/button'
 import { BaseAvatar } from '@/components/store/base/avatar'
 import { LogOut, Settings, Briefcase, ArrowRightLeft } from 'lucide-react'
-import { actions, getSupabaseClient } from '@/lib/dal'
+import { actions, getProfileRole } from '@/lib/dal'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { Box } from '@/components/store/base/box'
 import { usePathname } from 'next/navigation'
@@ -53,17 +53,11 @@ export function SidebarProfile({
         }
         if (!user?.id) return
 
-        const supabase = getSupabaseClient()
-        supabase
-            .from('profiles')
-            .select('role')
-            .eq('id', user.id)
-            .single()
-            .then(({ data }) => {
-                if (data?.role) {
-                    setUserRole(data.role)
-                }
-            })
+        getProfileRole(user.id).then((role) => {
+            if (role) {
+                setUserRole(role)
+            }
+        })
     }, [user?.id, user?.role])
 
     const isSwitchIcon = SettingsIcon === ArrowRightLeft

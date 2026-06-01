@@ -71,13 +71,13 @@ export function RegistrySidebar({
       <Box
         as="aside"
         position="fixed"
-        pin={{ base: 'right', lg: 'left' }}
+        pin={{ base: 'left', lg: 'left' }}
         top={0}
         height="screen"
         width="sidebar-wide"
-        zIndex={STORE_TOKENS.Z_INDEX.OVERLAY}
+        zIndex={100}
         transition
-        translateX={{ base: isSidebarOpen ? 0 : 'full', lg: 0 }}
+        translateX={{ base: isSidebarOpen ? 0 : '-full', lg: 0 }}
       >
         <GlassPanel
           fullWidth
@@ -88,22 +88,8 @@ export function RegistrySidebar({
           display="flex"
           direction="col"
         >
-          {/* Left border for mobile drawer */}
+          {/* Drawer Border (Right) */}
           <Surface 
-              display={{ base: 'block', lg: 'none' }} 
-              position="absolute" 
-              pin="left" 
-              top={0} 
-              fullHeight 
-              width="px" 
-              bg={STORE_TOKENS.COLORS.WHITE} 
-              bgOpacity={STORE_TOKENS.OPACITY.LOW}
-          >
-            <></>
-          </Surface>
-          {/* Right border for desktop static */}
-          <Surface 
-              display={{ base: 'none', lg: 'block' }} 
               position="absolute" 
               pin="right" 
               top={0} 

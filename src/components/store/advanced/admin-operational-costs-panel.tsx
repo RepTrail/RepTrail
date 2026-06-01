@@ -10,7 +10,7 @@ import { Button } from '@/components/store/base/button'
 import { Badge } from '@/components/store/base/badge'
 import { Inline } from '@/components/store/base/layout'
 import { Modal } from '@/components/store/advanced/modal'
-import { addOperationalCost, deleteOperationalCost, updateOperationalCost } from '@/lib/dal/remote'
+import { actions } from '@/lib/dal'
 import { useToast } from '@/hooks/use-toast'
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
 import { ENTITIES } from '@/lib/outbox-db'
@@ -58,7 +58,7 @@ export function AdminOperationalCostsPanel({ initialCosts }: { initialCosts: Ope
         entity: ENTITIES.OPERATIONAL_COST,
         queryKey: ['admin', 'operational-costs'],
         additionalQueryKeys: [['admin', 'overview']],
-        mutationFn: async (variables: any) => (await addOperationalCost(variables)) as any,
+        mutationFn: async (variables: any) => (await actions.addOperationalCost(variables)) as any,
         onMutate: (variables) => {
             const tempId = crypto.randomUUID()
             const newCost = { ...variables, id: tempId, created_at: new Date().toISOString() }
@@ -81,7 +81,7 @@ export function AdminOperationalCostsPanel({ initialCosts }: { initialCosts: Ope
         entity: ENTITIES.OPERATIONAL_COST,
         queryKey: ['admin', 'operational-costs'],
         additionalQueryKeys: [['admin', 'overview']],
-        mutationFn: async (variables: { id: string }) => (await deleteOperationalCost(variables.id)) as any,
+        mutationFn: async (variables: { id: string }) => (await actions.deleteOperationalCost(variables.id)) as any,
         onMutate: (variables) => {
             const previousCosts = [...costs]
             setCosts(prev => prev.filter(c => c.id !== variables.id))
@@ -102,7 +102,7 @@ export function AdminOperationalCostsPanel({ initialCosts }: { initialCosts: Ope
         entity: ENTITIES.OPERATIONAL_COST,
         queryKey: ['admin', 'operational-costs'],
         additionalQueryKeys: [['admin', 'overview']],
-        mutationFn: async (variables: any) => (await updateOperationalCost(variables.id, variables)) as any,
+        mutationFn: async (variables: any) => (await actions.updateOperationalCost(variables.id, variables)) as any,
         onMutate: (variables) => {
             const previousCosts = [...costs]
             setCosts(prev => prev.map(c => c.id === variables.id ? { ...c, ...variables } : c))

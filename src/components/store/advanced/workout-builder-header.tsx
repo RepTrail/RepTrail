@@ -173,7 +173,7 @@ export function WorkoutBuilderHeader({
                                         }}>{contextLabel}</Font>
                                 </Inline>
                             )}
-                            <Inline align="center" gap={STORE_TOKENS.SPACING.TINY}>
+                            <Inline align="center" gap={'tiny'}>
                                 <Font
                                     variant="h1"
                                     uppercase
@@ -181,7 +181,7 @@ export function WorkoutBuilderHeader({
                                         color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
                                     }}>{name}</Font>
                                 <Box
-                                    padding={STORE_TOKENS.SPACING.TINY}
+                                    padding={'tiny'}
                                     rounded={STORE_TOKENS.RADIUS.SYSTEM}
                                     hoverBg={STORE_TOKENS.COLORS.BACKGROUND}
                                     display="flex"

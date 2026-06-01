@@ -35,7 +35,7 @@ export function Textarea({
   const activeClasses = colorMap[primaryColor as keyof typeof colorMap]
 
   return (
-    <Stack gap={STORE_TOKENS.SPACING.ELEMENT} className="w-full" flex1={flex1}>
+    <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth flex1={flex1}>
       {label && (
         <Font variant="auxiliary" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="black" uppercase tracking="widest">
           {label}
@@ -53,7 +53,7 @@ export function Textarea({
         {...props}
       />
       {error && (
-        <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.ERROR} weight="black" uppercase tracking="widest" className="pl-1">
+        <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.ERROR} weight="black" uppercase tracking="widest">
           {error}
         </Font>
       )}

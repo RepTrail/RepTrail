@@ -1,4 +1,5 @@
-import { actions, dehydrate, HydrationBoundary } from '@/lib/dal'
+import { dehydrate, HydrationBoundary } from '@/lib/dal'
+import { actions } from '@/lib/dal/server'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { getQueryClient } from '@/lib/get-query-client'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
@@ -30,4 +31,3 @@ export default async function StudentStorePage() {
         </RegistryMain>
     )
 }
-

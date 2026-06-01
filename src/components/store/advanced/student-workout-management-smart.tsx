@@ -34,8 +34,7 @@ export function StudentWorkoutManagementSmart({ userId }: StudentWorkoutManageme
     })
 
     const isAutoTrainingActive = profile?.auto_training_status === 'active' || profile?.auto_training_status === 'trial'
-    const hasTrainer = !!trainerLink
-    const isAutoMode = isAutoTrainingActive && !hasTrainer
+    const isAutoMode = isAutoTrainingActive
 
     const { data: libraryWorkouts = [] } = useQuery({
         queryKey: QUERY_KEYS.workouts.library(userId),

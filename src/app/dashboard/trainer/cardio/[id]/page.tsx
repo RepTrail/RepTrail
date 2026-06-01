@@ -1,4 +1,4 @@
-import { actions } from '@/lib/dal'
+import { actions } from '@/lib/dal/server'
 import { CardioBuilderSmart } from "@/components/store/advanced/cardio-builder-smart"
 import { RegistryMain } from "@/components/store/advanced/registry-main"
 import { notFound } from 'next/navigation'

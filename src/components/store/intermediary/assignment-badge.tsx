@@ -51,7 +51,7 @@ export function AssignmentBadge({
                         }}>
                         Atribuído para
                     </Font>
-                    <Inline gap={STORE_TOKENS.SPACING.TINY} align="center" justify="end">
+                    <Inline gap={'tiny'} align="center" justify="end">
                         <Font
                             variant="sub-tiny"
                             weight="black"

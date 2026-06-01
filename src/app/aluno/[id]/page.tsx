@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { getSupabaseServer, actions } from '@/lib/dal'
+import { getStudentPublicProfileData, actions } from '@/lib/dal/server'
 import { headers } from 'next/headers'
 import { StudentPublicProfileMain } from '@/components/store/advanced/student-public-profile-main'
 import { StudentPublicMetrics } from '@/components/store/advanced/student-public-metrics'
@@ -58,62 +58,20 @@ export default async function StudentPublicProfilePage({
     params: Promise<{ id: string }>
 }) {
     const { id: studentId } = await params
-    const supabase = await getSupabaseServer()
     const headerList = await headers()
     const viewerId = headerList.get('x-user-id')
     const isOwner = viewerId === studentId
 
-    // ── Get Viewer Profile if Logged In (to determine sidebar role/color) ───────
-    let viewerProfile: any = null
-    if (viewerId) {
-        const { data } = await supabase
-            .from('profiles')
-            .select('role, full_name, avatar_url, email, is_admin, is_affiliate')
-            .eq('id', viewerId)
-            .single()
-        viewerProfile = data
-    }
+    const publicProfileData = await getStudentPublicProfileData(studentId, viewerId)
+    if (!publicProfileData) notFound()
 
-    // ── Core Profile (Fast) ────────────────────────────────────────────────────
-    const { data: profile } = await supabase
-        .from('profiles')
-        .select('id, full_name, avatar_url, created_at')
-        .eq('id', studentId)
-        .single()
-
-    if (!profile) notFound()
+    const { viewerProfile, profile, details, trainerLink, photos } = publicProfileData
 
     // ── Student Details & Data Fetches in Parallel ─────────────────────────────
-    const [detailsResult, trainerLinkResult, photosResult, fullMetrics, adherenceHistory] = await Promise.all([
-        supabase
-            .from('student_details')
-            .select('steroid_use')
-            .eq('id', studentId)
-            .single(),
-        supabase
-            .from('trainer_students')
-            .select(`
-                active,
-                trainer:profiles!trainer_id(
-                    id, full_name, avatar_url, trainer_code
-                )
-            `)
-            .eq('student_id', studentId)
-            .eq('active', true)
-            .maybeSingle(),
-        supabase
-            .from('progress_photos')
-            .select('*')
-            .eq('student_id', studentId)
-            .eq('is_private', false)
-            .order('created_at', { ascending: false }),
+    const [fullMetrics, adherenceHistory] = await Promise.all([
         actions.getStudentFullMetrics(studentId),
         actions.getStudentAdherenceHistory(studentId, 30),
     ])
-
-    const details = detailsResult.data
-    const trainerLink = trainerLinkResult.data
-    const photos = photosResult.data
 
     const trainerData = trainerLink?.trainer as
         | { id: string; full_name: string; avatar_url: string; trainer_code?: string }

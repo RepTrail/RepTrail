@@ -75,7 +75,6 @@ export function WorkoutSummaryState({
                         display="flex" 
                         align="center" 
                         justify="center"
-                        style={{ width: '10px', height: '10px' }}
                     >
                         <Icon icon={CheckCircle} size="xs" color={STORE_TOKENS.COLORS.WHITE} />
                     </Box>
@@ -139,7 +138,8 @@ export function WorkoutSummaryState({
                 variant="emerald" 
                 fullWidth 
                 onClick={onSave}
-                style={{ position: 'relative', overflow: 'hidden' }}
+                position="relative"
+                overflow="hidden"
             >
                 <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                     <Font variant="body" weight="black" uppercase italic tracking="widest">

@@ -85,108 +85,122 @@ export function Modal({
   return (
     <ModalOverlay onClose={onClose} animateState={animateState}>
       <ModalContainer animateState={animateState}>
-        <Surface variant="base" padding={STORE_TOKENS.PADDING.NONE} rounded={STORE_TOKENS.RADIUS.SYSTEM} direction="col" flex1 minHeight={0} overflow="hidden">
-          <Box flex1 direction="col" minHeight={0} overflow="hidden">
-            {/* Header */}
-            <CardHeader
-              shrink={0}
-              {...{
-                bg: STORE_TOKENS.COLORS.BACKGROUND,
-                bgOpacity: STORE_TOKENS.OPACITY.BACKGROUND,
-              }}>
-              <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center" justify="between" fullWidth>
-                <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center" flex1>
-                  {icon && <IconBox icon={icon} variant={variant as any} />}
-                  <Stack gap={STORE_TOKENS.SPACING.NONE} flex1 justify="center">
-                    <Font
-                      variant="body"
-                      weight="black"
-                      uppercase
-                      italic
-                      tracking="normal"
-                      {...{
-                        color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
-                      }}>{title}</Font>
-                    {subtitle && <Font
-                      variant="sub-tiny"
-                      {...{
-                        color: STORE_TOKENS.COLORS.TEXT.MUTED,
-                      }}>{subtitle}</Font>}
-                  </Stack>
-                </Inline>
-
-                <Box display={{ base: 'none', md: 'block' }}>
-                  <Button variant="close" rounded={STORE_TOKENS.RADIUS.SYSTEM} isIconOnly onClick={onClose} disabled={isLoading}>
-                    <Icon icon={X} size="sm" />
-                  </Button>
-                </Box>
+        <Surface 
+          variant="base" 
+          padding={STORE_TOKENS.PADDING.NONE} 
+          rounded={STORE_TOKENS.RADIUS.SYSTEM} 
+          minHeight={0} 
+          overflow="hidden" 
+          style={{ 
+            display: 'grid', 
+            gridTemplateRows: 'auto auto 1fr auto auto', 
+            maxHeight: '90vh' 
+          }}
+        >
+          {/* Header */}
+          <CardHeader
+            shrink={0}
+            {...{
+              bg: STORE_TOKENS.COLORS.BACKGROUND,
+              bgOpacity: STORE_TOKENS.OPACITY.BACKGROUND,
+            }}>
+            <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center" justify="between" fullWidth>
+              <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center" flex1>
+                {icon && <IconBox icon={icon} variant={variant as any} />}
+                <Stack gap={STORE_TOKENS.SPACING.NONE} flex1 justify="center">
+                  <Font
+                    variant="body"
+                    weight="black"
+                    uppercase
+                    italic
+                    tracking="normal"
+                    {...{
+                      color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                    }}>{title}</Font>
+                  {subtitle && <Font
+                    variant="sub-tiny"
+                    {...{
+                      color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                    }}>{subtitle}</Font>}
+                </Stack>
               </Inline>
-            </CardHeader>
 
-            <Divider
-              {...{
-                color: STORE_TOKENS.COLORS.DIVIDER.SUBTLE,
-              }} />
+              <Box display={{ base: 'none', md: 'block' }}>
+                <Button variant="close" rounded={STORE_TOKENS.RADIUS.SYSTEM} isIconOnly onClick={onClose} disabled={isLoading}>
+                  <Icon icon={X} size="sm" />
+                </Button>
+              </Box>
+            </Inline>
+          </CardHeader>
 
-            {/* Content Area */}
-            <Box 
-              flex1 
-              overflowY="auto" 
-              bg={STORE_TOKENS.COLORS.BACKGROUND} 
-              bgOpacity={STORE_TOKENS.OPACITY.BACKGROUND} 
-              padding={noPadding ? STORE_TOKENS.PADDING.NONE : STORE_TOKENS.PADDING.CONTAINER} 
-              minHeight={0}
-            >
-              {children ? children : (
-                <Font
-                  variant="description"
-                  {...{
-                    color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
-                  }}>
-                  Configure as opções do seu perfil e preferências de sistema aqui.
-                  Todas as alterações são aplicadas instantaneamente ao seu ambiente de trabalho.
-                </Font>
-              )}
-            </Box>
+          <Divider
+            {...{
+              color: STORE_TOKENS.COLORS.DIVIDER.SUBTLE,
+            }} />
 
-            <Divider
-              {...{
-                color: STORE_TOKENS.COLORS.DIVIDER.SUBTLE,
-              }} />
+          {/* Content Area */}
+          <Box 
+            overflowY="auto" 
+            overflowX="hidden"
+            bg={STORE_TOKENS.COLORS.BACKGROUND} 
+            bgOpacity={STORE_TOKENS.OPACITY.BACKGROUND} 
+            padding={noPadding ? STORE_TOKENS.PADDING.NONE : STORE_TOKENS.PADDING.CONTAINER} 
+            minHeight={0}
+            style={{ 
+              overflowY: 'auto', 
+              overflowX: 'hidden', 
+              minHeight: 0 
+            }}
+          >
+            {children ? children : (
+              <Font
+                variant="description"
+                {...{
+                  color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
+                }}>
+                Configure as opções do seu perfil e preferências de sistema aqui.
+                Todas as alterações são aplicadas instantaneamente ao seu ambiente de trabalho.
+              </Font>
+            )}
+          </Box>
 
-            {/* Footer Actions */}
-            <Box shrink={0} bg={STORE_TOKENS.COLORS.SURFACE} bgOpacity={STORE_TOKENS.OPACITY.SURFACE} padding={STORE_TOKENS.PADDING.CONTAINER}>
-              <Stack direction={{ base: 'col', md: 'row' }} gap={STORE_TOKENS.SPACING.ELEMENT} flex1>
-                {!hideCancel && (
-                  <Button 
-                    variant="outline-red" 
-                    rounded={STORE_TOKENS.RADIUS.SYSTEM} 
-                    fullWidth 
-                    flex1
-                    onClick={onClose}
-                    disabled={isLoading}
-                  >
-                    {cancelLabel}
-                  </Button>
-                )}
+          <Divider
+            {...{
+              color: STORE_TOKENS.COLORS.DIVIDER.SUBTLE,
+            }} />
+
+          {/* Footer Actions */}
+          <Box shrink={0} bg={STORE_TOKENS.COLORS.SURFACE} bgOpacity={100} zIndex={10} position="relative" padding={STORE_TOKENS.PADDING.CONTAINER}>
+            <Stack direction={{ base: 'col', md: 'row' }} gap={STORE_TOKENS.SPACING.ELEMENT} flex1>
+              {!hideCancel && (
                 <Button 
-                  variant={confirmVariant || 'outline-emerald'} 
+                  variant="outline-red" 
                   rounded={STORE_TOKENS.RADIUS.SYSTEM} 
                   fullWidth 
                   flex1
-                  onClick={onConfirm || onClose}
-                  disabled={disabled || isLoading}
-                  gap={STORE_TOKENS.SPACING.ELEMENT}
+                  onClick={onClose}
+                  disabled={isLoading}
                 >
-                  {isLoading ? 'Carregando...' : (
-                    <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                      {confirmIcon && <Icon icon={confirmIcon} size="xs" />}
-                      {confirmLabel}
-                    </Stack>
-                  )}
+                  {cancelLabel}
                 </Button>
-              </Stack>
-            </Box>
+              )}
+              <Button 
+                variant={confirmVariant || 'outline-emerald'} 
+                rounded={STORE_TOKENS.RADIUS.SYSTEM} 
+                fullWidth 
+                flex1
+                onClick={onConfirm || onClose}
+                disabled={disabled || isLoading}
+                gap={STORE_TOKENS.SPACING.ELEMENT}
+              >
+                {isLoading ? 'Carregando...' : (
+                  <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                    {confirmIcon && <Icon icon={confirmIcon} size="xs" />}
+                    {confirmLabel}
+                  </Stack>
+                )}
+              </Button>
+            </Stack>
           </Box>
         </Surface>
       </ModalContainer>

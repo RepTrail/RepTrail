@@ -2,10 +2,11 @@
 import { STORE_TOKENS } from '@/components/store/constants/tokens';
 
 import React from 'react'
-import { StudentWorkoutHistory } from '@/components/store/features(deprecated)/student-workout-history'
 import { History } from 'lucide-react'
 import { GlassPanel } from '@/components/store/base/surface'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
+import { UnifiedAdherenceChart } from '@/components/store/advanced/unified-adherence-chart'
+import { Box } from '@/components/store/base/box'
 
 interface StudentPublicHistoryProps {
     history: any[]
@@ -18,13 +19,13 @@ export function StudentPublicHistory({ history }: StudentPublicHistoryProps) {
             subtitle="Relação completa de todos os treinos executados e registrados na plataforma."
             icon={History}
         >
-            {/* History Content Card using Liquid Glass */}
-            <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER}>
-                <StudentWorkoutHistory
-                    history={history}
-                    isBlocked={false}
-                    mode="student"
-                />
+            <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER} minWidth={0}>
+                <Box fullWidth minWidth={0} overflow="hidden">
+                    <UnifiedAdherenceChart
+                        history={history}
+                        noCard={true}
+                    />
+                </Box>
             </GlassPanel>
         </RegistrySection>
     );

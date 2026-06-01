@@ -1,13 +1,3 @@
-import { createClient as createBrowserClient, removeChannelWithGrace as removeChannelGrace } from '@/lib/supabase/client'
-
-export function getSupabaseClient() {
-  return createBrowserClient()
-}
-
-export function removeChannelWithGrace(supabase: any, channel: any) {
-  return removeChannelGrace(supabase, channel)
-}
-
 export * from '@/actions/admin-actions'
 export * from '@/actions/admin-affiliate-actions'
 export * from '@/actions/affiliate-actions'

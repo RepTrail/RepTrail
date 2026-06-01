@@ -11,7 +11,7 @@ import { AIProtocolTeaserPanel } from '@/components/store/advanced/ai-protocol-t
  */
 export function AIProtocolEmptyStateSectionContent({ userId = 'me' }: { userId?: string }) {
     return (
-        <Stack fullWidth>
+        <Stack fullWidth flex1 justify="center">
             <AIProtocolTeaserPanel userId={userId} />
         </Stack>
     )

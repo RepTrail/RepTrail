@@ -102,8 +102,8 @@ const ToastAction = React.forwardRef<
             display="flex" 
             align="center" 
             justify="center"
-            className="px-3"
-            style={{ flexShrink: 0 }}
+            padding={STORE_TOKENS.PADDING.ELEMENT}
+            shrink={0}
         >
             <Font variant="auxiliary" weight="bold" color={STORE_TOKENS.COLORS.WHITE} uppercase italic tracking="widest">
                 {props.children}

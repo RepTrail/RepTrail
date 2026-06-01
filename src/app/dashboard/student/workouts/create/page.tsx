@@ -1,4 +1,4 @@
-import { getSupabaseServer, actions } from '@/lib/dal'
+import { getProfile, actions } from '@/lib/dal/server'
 import { redirect } from 'next/navigation'
 import { headers } from 'next/headers'
 import { Button } from '@/components/store/base/button'
@@ -16,14 +16,7 @@ export default async function CreateStudentWorkoutPage() {
     const userId = headerList.get('x-user-id')
     if (!userId) redirect('/auth/login')
 
-    const supabase = await getSupabaseServer()
-
-    // Verify auto-training is active
-    const { data: profile } = await supabase
-        .from('profiles')
-        .select('auto_training_status')
-        .eq('id', userId)
-        .single()
+    const profile = await getProfile(userId)
 
     const isAutoTrainingActive = profile?.auto_training_status === 'active' || profile?.auto_training_status === 'trial'
     if (!isAutoTrainingActive) redirect('/dashboard/student/workouts')

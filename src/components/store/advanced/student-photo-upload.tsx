@@ -156,24 +156,25 @@ export function ProgressPhotoUpload({ studentId }: ProgressPhotoUploadProps) {
                 fullWidth
                 loading={uploading}
                 size="lg"
-                gap={STORE_TOKENS.SPACING.ELEMENT}
                 height="auto"
                 paddingY={STORE_TOKENS.PADDING.ELEMENT}
             >
-                <Font
-                    variant="sub-tiny"
-                    weight="black"
-                    uppercase
-                    italic
-                    tracking="widest"
-                    align="center"
-                    whitespace="normal"
-                    {...{
-                        color: "inherit",
-                    }}>
-                    Enviar Novas Fotos de Progresso
-                </Font>
-                <Icon icon={ChevronRight} size="sm" />
+                <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                    <Icon icon={ChevronRight} size="sm" />
+                    <Font
+                        variant="sub-tiny"
+                        weight="black"
+                        uppercase
+                        italic
+                        tracking="widest"
+                        align="center"
+                        whitespace="normal"
+                        {...{
+                            color: "inherit",
+                        }}>
+                        Enviar Novas Fotos de Progresso
+                    </Font>
+                </Stack>
             </Button>
         </Stack>
     );

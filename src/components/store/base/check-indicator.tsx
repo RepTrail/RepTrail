@@ -55,7 +55,6 @@ export function CheckIndicator({
                 icon={checked ? Check : Circle} 
                 size={size === 'lg' ? 'md' : 'sm'} 
                 color={checked ? STORE_TOKENS.COLORS.BLACK : STORE_TOKENS.COLORS.TEXT.DIM} 
-                className={cn("transition-all", checked ? "scale-110" : "opacity-40")}
             />
         </Box>
     );

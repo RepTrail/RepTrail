@@ -2,7 +2,7 @@
 
 import React, { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { actions, useQuery, useQueryClient, getSupabaseClient } from '@/lib/dal'
+import { actions, useQuery, useQueryClient, subscribeToPublicFeed } from '@/lib/dal'
 import { Grid } from '@/components/store/base/grid'
 import { CommunityFeedCard } from '@/components/store/intermediary/community-feed-card'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
@@ -18,7 +18,6 @@ import { QUERY_KEYS } from '@/lib/query-keys'
 export function CommunityFeedSectionContent({ isEmpty = false }: { isEmpty?: boolean }) {
     const router = useRouter()
     const queryClient = useQueryClient()
-    const supabase = getSupabaseClient()
 
     const { data: result, isLoading } = useQuery({
         queryKey: QUERY_KEYS.public.feed,
@@ -28,21 +27,10 @@ export function CommunityFeedSectionContent({ isEmpty = false }: { isEmpty?: boo
 
     // Realtime invalidation for the public feed
     useEffect(() => {
-        const channel = supabase
-            .channel('public-feed-sync')
-            .on(
-                'postgres_changes',
-                { event: '*', schema: 'public', table: 'progress_photos' },
-                () => {
-                    queryClient.invalidateQueries({ queryKey: QUERY_KEYS.public.feed })
-                }
-            )
-            .subscribe()
-
-        return () => {
-            supabase.removeChannel(channel)
-        }
-    }, [queryClient, supabase])
+        return subscribeToPublicFeed(() => {
+            queryClient.invalidateQueries({ queryKey: QUERY_KEYS.public.feed })
+        })
+    }, [queryClient])
 
     const publicPhotos = (result?.success ? result.data : []) ?? []
 

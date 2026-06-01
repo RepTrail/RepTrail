@@ -377,7 +377,12 @@ export async function toggleErgogenicLog(studentId: string, ergogenicId: string,
         ? (logsCount >= plannedTodayCount ? 'completed' : (logsCount > 0 ? 'partial' : 'none'))
         : 'none'
 
-    await upsertDailyTracking(studentId, { ergogenics_status: adherenceStatus })
+    const ergoPct = plannedTodayCount > 0 ? Math.min(Math.round((logsCount / plannedTodayCount) * 100), 100) : 0
+
+    await upsertDailyTracking(studentId, { 
+        ergogenics_status: adherenceStatus,
+        ergogenics_percentage: ergoPct
+    })
 
     revalidatePath('/dashboard/student')
     revalidatePath('/dashboard/student/ergogenics')

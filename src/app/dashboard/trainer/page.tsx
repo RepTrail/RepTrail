@@ -1,5 +1,6 @@
 import { PREFETCH_REGISTRY } from '@/lib/prefetch-registry'
-import { actions, dehydrate, HydrationBoundary } from '@/lib/dal'
+import { dehydrate, HydrationBoundary } from '@/lib/dal'
+import { actions } from '@/lib/dal/server'
 import { getQueryClient } from '@/lib/get-query-client'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { TrainerMetricsSection } from '@/components/store/sections/trainer-metrics-section'

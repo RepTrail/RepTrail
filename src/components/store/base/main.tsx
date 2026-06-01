@@ -148,7 +148,7 @@ export function Scaffold({
   return (
     <Box
       as={as}
-      className={cn(
+      {...{ className: cn(
         paddingYClassName,
         paddingXBase !== undefined && paddingXMapping[paddingXBase as keyof typeof paddingXMapping],
         paddingXMd !== undefined && `md:${paddingXMapping[paddingXMd as keyof typeof paddingXMapping]}`,
@@ -156,7 +156,7 @@ export function Scaffold({
         paddingLeftMd !== undefined && paddingLeftMdMapping[paddingLeftMd as keyof typeof paddingLeftMdMapping],
         paddingLeftLg !== undefined && paddingLeftLgMapping[paddingLeftLg as keyof typeof paddingLeftLgMapping],
         className
-      )}
+      ) } as any}
       {...props}
     />
   )

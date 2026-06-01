@@ -25,7 +25,7 @@ type RegistrySectionProps = BaseRegistrySectionProps & (
     }
   | {
       title: string
-      subtitle: string
+      subtitle?: string
       icon: LucideIcon
     }
 )

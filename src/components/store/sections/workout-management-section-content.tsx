@@ -50,7 +50,11 @@ export function WorkoutManagementSectionContent({
     const { mutate: deleteMutation } = useOptimisticMutation({
         queryKey: activeQueryKey,
         entity: ENTITIES.WORKOUT,
-        actionName: 'delete-workout'
+        actionName: 'delete-workout',
+        updateFn: (oldData: any, variables: any) => {
+            if (!Array.isArray(oldData)) return oldData
+            return oldData.filter((item: any) => item.id !== variables.id)
+        }
     })
 
     const { mutate: duplicateMutation } = useOptimisticMutation({
@@ -70,10 +74,10 @@ export function WorkoutManagementSectionContent({
 
         switch (actionModal.type) {
             case 'confirm_delete':
-                deleteMutation({ id: actionModal.data.id })
+                deleteMutation({ id: actionModal.data.id, userId })
                 break
             case 'confirm_duplicate':
-                duplicateMutation({ id: actionModal.data.id })
+                duplicateMutation({ id: actionModal.data.id, userId })
                 break
             case 'assign_training':
                 // RegistryActionModal returns the selected days

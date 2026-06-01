@@ -265,7 +265,7 @@ export function LandingHero({ role = 'trainer' }: LandingHeroProps) {
                   padding={STORE_TOKENS.PADDING.ELEMENT}
                   rounded={STORE_TOKENS.RADIUS.SYSTEM}
                   shadow="xl"
-                  zIndex={50}
+                  zIndex={STORE_TOKENS.Z_INDEX.OVERLAY}
                 >
                   <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                     <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} uppercase weight="bold">
@@ -288,7 +288,7 @@ export function LandingHero({ role = 'trainer' }: LandingHeroProps) {
                   padding={STORE_TOKENS.PADDING.ELEMENT}
                   rounded={STORE_TOKENS.RADIUS.SYSTEM}
                   shadow="xl"
-                  zIndex={50}
+                  zIndex={STORE_TOKENS.Z_INDEX.OVERLAY}
                 >
                   <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                     <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} uppercase weight="bold">

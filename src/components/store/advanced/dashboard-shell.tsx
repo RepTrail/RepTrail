@@ -108,6 +108,7 @@ export function DashboardShell({ children, color, links, mobileLinks, user, prof
             {/* Sidebar (Mobile Right Drawer / Desktop Static Left) */}
             <DashboardSidebar
                 links={visibleLinks}
+                bottomLinks={bottomLinks}
                 user={user}
                 isSidebarOpen={isSidebarOpen}
                 setIsSidebarOpen={setIsSidebarOpen}
@@ -164,10 +165,11 @@ export function DashboardShell({ children, color, links, mobileLinks, user, prof
 // ─── Sidebar Sub-component ───────────────────────────────────────────────────
 
 function DashboardSidebar({
-    color, links, user, isSidebarOpen, setIsSidebarOpen, profileHref, profileIcon, settingsHref, settingsVariant, onOpenSettings
+    color, links, bottomLinks, user, isSidebarOpen, setIsSidebarOpen, profileHref, profileIcon, settingsHref, settingsVariant, onOpenSettings
 }: {
     color: RegistryColor
     links: DashboardNavLink[]
+    bottomLinks?: DashboardNavLink[]
     user?: DashboardUser
     isSidebarOpen: boolean
     setIsSidebarOpen: (v: boolean) => void
@@ -209,8 +211,8 @@ function DashboardSidebar({
                 zIndex={STORE_TOKENS.Z_INDEX.OVERLAY}
                 width="sidebar-wide"
                 transition
-                pin={{ base: 'right', lg: 'left' }}
-                translateX={{ base: isSidebarOpen ? 0 : 'full', lg: 0 }}
+                pin={{ base: 'left', lg: 'left' }}
+                translateX={{ base: isSidebarOpen ? 0 : '-full', lg: 0 }}
             >
                 <GlassPanel
                     fullWidth
@@ -221,21 +223,8 @@ function DashboardSidebar({
                     rounded={STORE_TOKENS.RADIUS.NONE}
                     border="none"
                 >
-                    {/* Drawer Border (Mobile Left / Desktop Right) */}
+                    {/* Drawer Border (Right) */}
                     <Surface 
-                        display={{ base: 'block', lg: 'none' }} 
-                        position="absolute" 
-                        pin="left" 
-                        top={0} 
-                        fullHeight 
-                        width="px" 
-                        bg={STORE_TOKENS.COLORS.WHITE} 
-                        bgOpacity={STORE_TOKENS.OPACITY.LOW}
-                    >
-                        <></>
-                    </Surface>
-                    <Surface 
-                        display={{ base: 'none', lg: 'block' }} 
                         position="absolute" 
                         pin="right" 
                         top={0} 
@@ -264,20 +253,27 @@ function DashboardSidebar({
                                                        link.label === "Alunos" ? "tour-sidebar-students" : 
                                                        undefined
 
+                                        const isLinkInBottomNav = bottomLinks?.some(bl => bl.href === link.href)
+
                                         return (
-                                            <SidebarItem
+                                            <Box
                                                 key={link.href}
-                                                id={tourId}
-                                                label={link.label}
-                                                icon={IconComp ?? Home}
-                                                active={active}
-                                                variant={color as any}
-                                                onClick={link.onClick ? () => {
-                                                    link.onClick?.()
-                                                    setIsSidebarOpen(false)
-                                                } : undefined}
-                                                href={link.onClick ? undefined : link.href}
-                                            />
+                                                display={isLinkInBottomNav ? { base: 'none', lg: 'block' } : 'block'}
+                                                fullWidth
+                                            >
+                                                <SidebarItem
+                                                    id={tourId}
+                                                    label={link.label}
+                                                    icon={IconComp ?? Home}
+                                                    active={active}
+                                                    variant={color as any}
+                                                    onClick={link.onClick ? () => {
+                                                        link.onClick?.()
+                                                        setIsSidebarOpen(false)
+                                                    } : undefined}
+                                                    href={link.onClick ? undefined : link.href}
+                                                />
+                                            </Box>
                                         )
                                     })}
                                 </Stack>

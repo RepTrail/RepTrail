@@ -79,6 +79,23 @@ export function useRealtimeSync({
                     return
                 }
 
+                // ─── PERSIST TO INDEXEDDB (Atômico) ──────────────────────────────────────
+                try {
+                    const { localPut, localDelete, getLocalDb } = await import('@/lib/dal')
+                    const db = await getLocalDb()
+                    if (db.objectStoreNames.contains(table as any)) {
+                        if (payload.eventType === 'DELETE') {
+                            await localDelete(table as any, entityId)
+                            console.log(`[RealtimeSync] 💾 Persisted DELETE to IndexedDB store ${table}:${entityId}`)
+                        } else {
+                            await localPut(table as any, incoming)
+                            console.log(`[RealtimeSync] 💾 Persisted ${payload.eventType} to IndexedDB store ${table}:${entityId}`)
+                        }
+                    }
+                } catch (dbErr) {
+                    console.error('[RealtimeSync] Failed to persist realtime change to IndexedDB:', dbErr)
+                }
+
                 // ─── DETERMINISTIC RECONCILIATION ────────────────────────────────────────
                 // Bypass client-side merge for complex joined tables where raw row structure doesn't match cached objects
                 const relationshipTables = ['assigned_workouts', 'assigned_diets', 'assigned_cardio']

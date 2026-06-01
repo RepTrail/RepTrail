@@ -45,7 +45,11 @@ export function CardioManagementSectionContent({
     const { mutate: deleteMutation } = useOptimisticMutation({
         queryKey: activeQueryKey,
         entity: ENTITIES.CARDIO,
-        actionName: 'delete-cardio'
+        actionName: 'delete-cardio',
+        updateFn: (oldData: any, variables: any) => {
+            if (!Array.isArray(oldData)) return oldData
+            return oldData.filter((item: any) => item.id !== variables.id)
+        }
     })
 
     const { mutate: duplicateMutation } = useOptimisticMutation({
@@ -77,10 +81,10 @@ export function CardioManagementSectionContent({
 
         switch (actionModal.type) {
             case 'confirm_delete':
-                deleteMutation({ id: actionModal.data.id })
+                deleteMutation({ id: actionModal.data.id, userId })
                 break
             case 'confirm_duplicate':
-                duplicateMutation({ id: actionModal.data.id })
+                duplicateMutation({ id: actionModal.data.id, userId })
                 break
             case 'assign_cardio':
                 if (data?.selectedDays && Array.isArray(data.selectedDays)) {
@@ -97,7 +101,8 @@ export function CardioManagementSectionContent({
                     name: data?.name || actionModal.data.name,
                     description: data?.description || actionModal.data.description,
                     duration: data?.duration || actionModal.data.duration_minutes,
-                    intensity: data?.intensity || actionModal.data.suggested_intensity
+                    intensity: data?.intensity || actionModal.data.suggested_intensity,
+                    userId
                 })
                 if (data?.selectedDays && data.selectedDays.length > 0) {
                     const targetStudentId = mode === 'trainer' ? data.student_id : userId
@@ -117,7 +122,8 @@ export function CardioManagementSectionContent({
                         description: data.description,
                         duration: data.duration,
                         intensity: data.intensity,
-                        daysOfWeek: data.selectedDays
+                        daysOfWeek: data.selectedDays,
+                        userId
                     })
                 }
                 break

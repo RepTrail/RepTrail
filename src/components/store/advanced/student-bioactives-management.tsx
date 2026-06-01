@@ -4,7 +4,7 @@ import React from 'react'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { ErgogenicsList } from '@/components/store/intermediary/ergogenics-list'
 import { FlaskConical } from 'lucide-react'
-import { useQuery, useMutation, useQueryClient } from '@/lib/dal'
+import { useQuery, useQueryClient, useOptimisticMutation } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { getStudentErgogenics, getTodayErgogenicLogs, toggleErgogenicLog } from '@/lib/dal/remote'
 import { Box } from '@/components/store/base/box'
@@ -37,11 +37,19 @@ export function StudentBioactivesManagement({ userId }: StudentBioactivesManagem
         refetchOnMount: false,
     })
 
-    const toggleMutation = useMutation({
-        mutationFn: ({ id, currentStatus }: { id: string, currentStatus: boolean }) =>
-            toggleErgogenicLog(userId, id, !currentStatus),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ergogenics.logs(userId) })
+    const toggleMutation = useOptimisticMutation({
+        queryKey: QUERY_KEYS.ergogenics.logs(userId),
+        actionName: 'toggle-ergogenic-log',
+        entity: 'ergogenic_log' as any,
+        entityId: 'none',
+        updateFn: (oldData: any, variables: any) => {
+            if (!Array.isArray(oldData)) return []
+            const exists = oldData.some((l: any) => l.ergogenic_id === variables.id)
+            if (exists) {
+                return oldData.filter((l: any) => l.ergogenic_id !== variables.id)
+            } else {
+                return [...oldData, { id: crypto.randomUUID(), student_id: userId, ergogenic_id: variables.id, created_at: new Date().toISOString() }]
+            }
         }
     })
 

@@ -46,7 +46,7 @@ export function BaseBottomNavLink({
             icon={icon}
             size="sm"
             color={(active ? variant : STORE_TOKENS.COLORS.WHITE) as any}
-            className={active ? 'opacity-100' : 'opacity-40'}
+            opacity={active ? 100 : 40}
         />
     </div>
   )

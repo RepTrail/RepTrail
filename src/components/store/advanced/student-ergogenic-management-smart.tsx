@@ -71,6 +71,10 @@ export function StudentErgogenicManagementSmart({ userId }: StudentErgogenicMana
         queryKey: QUERY_KEYS.ergogenics.all(userId),
         entity: ENTITIES.ERGOGENIC,
         actionName: 'delete-ergogenic',
+        updateFn: (oldData: any, variables: any) => {
+            if (!Array.isArray(oldData)) return oldData
+            return oldData.filter((item: any) => item.id !== variables.id)
+        },
         mutationFn: async ({ id }: { id: string }) => {
             const res = await deleteErgogenic(id, userId)
             if (res.error) throw new Error(res.error)
@@ -121,7 +125,7 @@ export function StudentErgogenicManagementSmart({ userId }: StudentErgogenicMana
 
         switch (actionModal.type) {
             case 'confirm_delete':
-                deleteMutation({ id: actionModal.data.id })
+                deleteMutation({ id: actionModal.data.id, userId })
                 break
             case 'confirm_duplicate':
                 duplicateMutation({ item: actionModal.data })

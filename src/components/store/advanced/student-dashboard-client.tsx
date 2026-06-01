@@ -60,7 +60,7 @@ export function StudentDashboardClient({
             showTabs={false}
             showHeader={showHeader}
         >
-            <Stack gap={STORE_TOKENS.SPACING.SECTION}>
+            <Stack gap={STORE_TOKENS.SPACING.SECTION} flex1={!hasProtocol}>
                 {/* 1. Notifications (Overlay/Hidden logic preserved) */}
                 <StudentPaymentWarning relationship={trainerRel} />
 

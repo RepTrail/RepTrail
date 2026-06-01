@@ -37,8 +37,7 @@ export function StudentCardioManagementSmart({ userId }: StudentCardioManagement
     })
 
     const isAutoTrainingActive = profile?.auto_training_status === 'active' || profile?.auto_training_status === 'trial'
-    const hasTrainer = !!trainerLink
-    const isAutoMode = isAutoTrainingActive && !hasTrainer
+    const isAutoMode = isAutoTrainingActive
 
     const { data: libraryCardios = [] } = useQuery({
         queryKey: QUERY_KEYS.cardio.library(userId),

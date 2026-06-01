@@ -1,4 +1,5 @@
-import { actions, dehydrate, HydrationBoundary } from '@/lib/dal'
+import { dehydrate, HydrationBoundary } from '@/lib/dal'
+import { actions } from '@/lib/dal/server'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { getQueryClient } from '@/lib/get-query-client'
 import { CommunityFeedSectionContent } from '@/components/store/sections/community-feed-section-content'

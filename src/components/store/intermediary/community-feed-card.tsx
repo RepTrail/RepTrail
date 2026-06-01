@@ -42,7 +42,6 @@ export function CommunityFeedCard({
             direction="col"
         >
             {/* Background Image */}
-            {/* eslint-disable-next-line no-restricted-syntax */}
             <Box position="absolute" pin="inset" zIndex={0}>
                 <Img
                     src={imageUrl}

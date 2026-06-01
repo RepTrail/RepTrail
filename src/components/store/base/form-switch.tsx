@@ -73,7 +73,7 @@ export function FormSwitch({
                     fullWidth
                     overflow="auto"
                     noScrollbar
-                    className="snap-x snap-mandatory scroll-smooth"
+                    {...{ className: 'snap-x snap-mandatory scroll-smooth' } as any}
                 >
                     {options.map((opt) => {
                         const isActive = selected === opt.value
@@ -92,12 +92,12 @@ export function FormSwitch({
                                 display="flex"
                                 align="center"
                                 justify="center"
-                                className={cn(
+                                {...{ className: cn(
                                     'border-2 whitespace-nowrap snap-center',
                                     isActive
                                         ? cn("shadow-lg", colorClasses[resolvedColor])
                                         : 'bg-transparent border-transparent text-zinc-500 hover:text-zinc-300 hover:bg-white/5'
-                                )}
+                                ) } as any}
                             >
                                 <Font
                                     variant="auxiliary"

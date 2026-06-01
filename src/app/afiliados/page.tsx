@@ -18,8 +18,6 @@ export default function AfiliadosPage() {
     <RegistryProvider defaultColor="amber">
       <LandingShell
         navActions={[
-          { label: 'Sou aluno', href: '/aluno', variant: 'ghost' as const, desktopOnly: true },
-          { label: 'Sou personal', href: '/', variant: 'ghost' as const, desktopOnly: true },
           { label: 'Login', href: '/afiliados/login', variant: 'outline-zinc' as const },
           { label: 'Começar agora', href: '/afiliados/cadastro', variant: 'outline-primary' as const, desktopOnly: true },
         ]}

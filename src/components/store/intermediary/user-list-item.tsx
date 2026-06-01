@@ -70,7 +70,6 @@ export function UserListItem({
                     <Badge 
                         label={roleLabel} 
                         variant="glass" 
-                        // eslint-disable-next-line no-restricted-syntax
                         color={role === 'personal' ? STORE_TOKENS.COLORS.BRAND : STORE_TOKENS.COLORS.SUCCESS} 
                         size="xs"
                     />
