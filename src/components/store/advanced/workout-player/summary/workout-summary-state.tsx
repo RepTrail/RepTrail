@@ -138,8 +138,6 @@ export function WorkoutSummaryState({
                 variant="emerald" 
                 fullWidth 
                 onClick={onSave}
-                position="relative"
-                overflow="hidden"
             >
                 <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                     <Font variant="body" weight="black" uppercase italic tracking="widest">
