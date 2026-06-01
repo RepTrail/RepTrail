@@ -13,6 +13,7 @@ import { Button } from '@/components/store/base/button'
 import { Icon } from '@/components/store/base/icon'
 import { Box } from '@/components/store/base/box'
 import { Font } from '@/components/store/base/font'
+import { Surface } from '@/components/store/base/surface'
 import { 
     startCardioSession, 
     updateCardioSession, 
@@ -219,7 +220,7 @@ export function StudentCardioTracker({ userId }: StudentCardioTrackerProps) {
         return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
     }
 
-    if (isLoading) return <RegistrySection title="CARDIO DE HOJE" icon={Activity}><Box className="animate-pulse h-48 bg-zinc-900/50 rounded-3xl" /></RegistrySection>
+    if (isLoading) return <RegistrySection title="CARDIO DE HOJE" icon={Activity}><Surface height={192} bg="zinc" bgOpacity={50} rounded={STORE_TOKENS.RADIUS.SYSTEM} animation="pulse"><span /></Surface></RegistrySection>
 
     if (!cardios || cardios.length === 0) {
         return (
