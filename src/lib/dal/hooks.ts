@@ -38,11 +38,31 @@ export function useWorkoutWithExercises(id: string) {
   return useQuery({
     queryKey: ['workout-with-exercises', id],
     queryFn: async () => {
-      const workout = await localGet<any>('workouts', id)
-      if (!workout) return null
-      
-      const allWorkoutExercises = await localGetAll<any>('workout_exercises')
-      const allExercises = await localGetAll<any>('exercises')
+      let workout = await localGet<any>('workouts', id)
+      let allWorkoutExercises = await localGetAll<any>('workout_exercises')
+      let allExercises = await localGetAll<any>('exercises')
+
+      if (!workout) {
+        console.warn(`[LocalFirst] Workout ${id} not found locally, falling back to remote...`)
+        const { getWorkoutDetails } = await import('@/actions/workout-actions')
+        const remoteData = await getWorkoutDetails(id)
+        if (!remoteData) return null
+
+        // Cache it locally so it works offline next time
+        await localPut('workouts', remoteData)
+        if (remoteData.workout_exercises) {
+          for (const we of remoteData.workout_exercises) {
+            await localPut('workout_exercises', we)
+            if (we.exercise) {
+              await localPut('exercises', we.exercise)
+            }
+          }
+        }
+        
+        workout = await localGet<any>('workouts', id)
+        allWorkoutExercises = await localGetAll<any>('workout_exercises')
+        allExercises = await localGetAll<any>('exercises')
+      }
       
       const exercises = allWorkoutExercises
         .filter((we: any) => we.workout_id === id)

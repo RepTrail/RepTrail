@@ -144,11 +144,11 @@ export async function toggleMealItem(itemId: string, status: boolean, date?: str
         if (status) {
             await supabase
                 .from('meal_item_logs')
-                .insert({
+                .upsert({
                     user_id: user.id,
                     meal_item_id: itemId,
                     date: targetDate
-                })
+                }, { onConflict: 'user_id, meal_item_id, date' })
         } else {
             const { getTodayRangeBrazil } = await import('@/lib/date-utils')
             const { start, end } = getTodayRangeBrazil()
@@ -217,7 +217,7 @@ export async function toggleMealGroup(mealId: string, status: boolean, date?: st
 
             const { error } = await supabase
                 .from('meal_item_logs')
-                .insert(rows)
+                .upsert(rows, { onConflict: 'user_id, meal_item_id, date' })
 
             if (error) throw error
 

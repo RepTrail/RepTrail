@@ -95,8 +95,8 @@ export const ACTION_REGISTRY: Record<string, ActionFn> = {
   'duplicate-cardio': async (p) => { const { duplicateCardio } = await import('@/actions/cardio-actions'); return wrap(duplicateCardio(p.id)); },
   
   // ─── Tracking ─────────────────────────────────────────────────────────────────
-  'toggle-meal-item': async (p) => { const { toggleMealItem } = await import('@/actions/tracking-actions'); return wrap(toggleMealItem(p.itemId, p.status)); },
-  'toggle-meal-group': async (p) => { const { toggleMealGroup } = await import('@/actions/tracking-actions'); return wrap(toggleMealGroup(p.mealId, p.status)); },
+  'toggle-meal-item': async (p) => { const { toggleMealItem } = await import('@/actions/tracking-actions'); return wrap(toggleMealItem(p.itemId, !p.currentStatus)); },
+  'toggle-meal-group': async (p) => { const { toggleMealGroup } = await import('@/actions/tracking-actions'); return wrap(toggleMealGroup(p.mealId, !p.currentStatus)); },
   'toggle-substitution': async (p) => { const { toggleSubstitution } = await import('@/actions/tracking-actions'); return wrap(toggleSubstitution(p.itemId, p.date)); },
   'substitute-item': async (p) => { const { substituteMealItem } = await import('@/actions/tracking-actions'); return wrap(substituteMealItem(p.itemId, p.substituteData, p.date)); },
   'generate-ai-protocol': async (p) => {
