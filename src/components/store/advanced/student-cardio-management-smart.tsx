@@ -3,8 +3,7 @@
 import React from 'react'
 import { useQuery } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
-import { getStudentCardioAssignments, getCardioLibrary } from '@/lib/dal/remote'
-import { getStudentProfile, getStudentTrainer } from '@/lib/dal/remote'
+import { actions } from '@/lib/dal'
 import { useRealtimeSync } from '@/hooks/use-realtime-sync'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { CardioManagementSectionContent } from '@/components/store/sections/cardio-management-section-content'
@@ -20,19 +19,19 @@ export function StudentCardioManagementSmart({ userId }: StudentCardioManagement
     // 1. Data Fetching
     const { data: profile } = useQuery({
         queryKey: QUERY_KEYS.student.details(userId),
-        queryFn: () => getStudentProfile(userId),
+        queryFn: () => actions.getStudentProfile(userId),
         staleTime: 1000 * 60 * 5
     })
 
     const { data: trainerLink } = useQuery({
         queryKey: QUERY_KEYS.profile.trainer(userId),
-        queryFn: () => getStudentTrainer(userId),
+        queryFn: () => actions.getStudentTrainer(userId),
         staleTime: 1000 * 60 * 5
     })
 
     const { data: assignments = [] } = useQuery({
         queryKey: QUERY_KEYS.cardio.all(userId),
-        queryFn: () => getStudentCardioAssignments(userId),
+        queryFn: () => actions.getStudentCardioAssignments(userId),
         staleTime: 1000 * 60 * 5
     })
 
@@ -41,7 +40,7 @@ export function StudentCardioManagementSmart({ userId }: StudentCardioManagement
 
     const { data: libraryCardios = [] } = useQuery({
         queryKey: QUERY_KEYS.cardio.library(userId),
-        queryFn: () => getCardioLibrary(userId),
+        queryFn: () => actions.getCardioLibrary(userId),
         enabled: isAutoMode,
         staleTime: 1000 * 60 * 5
     })

@@ -8,18 +8,13 @@ import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { Activity, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useQuery } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
-import { getTodayCardio, getCardioStatus } from '@/lib/dal/remote'
+import { actions } from '@/lib/dal'
 import { Button } from '@/components/store/base/button'
 import { Icon } from '@/components/store/base/icon'
 import { Box } from '@/components/store/base/box'
 import { Font } from '@/components/store/base/font'
 import { Surface } from '@/components/store/base/surface'
-import { 
-    startCardioSession, 
-    updateCardioSession, 
-    finishCardioSession, 
-    getActiveCardioSession 
-} from '@/lib/dal/remote'
+
 import { useQueryClient } from '@/lib/dal'
 import { useToast } from '@/hooks/use-toast'
 import { Modal } from '@/components/store/advanced/modal'
@@ -47,19 +42,19 @@ export function StudentCardioTracker({ userId }: StudentCardioTrackerProps) {
 
     const { data: cardios, isLoading } = useQuery<any[]>({
         queryKey: QUERY_KEYS.cardio.today(userId),
-        queryFn: () => getTodayCardio(userId),
+        queryFn: () => actions.getTodayCardio(userId),
         staleTime: 1000 * 60 * 5,
     })
 
     const { data: cardioLogs } = useQuery<any[]>({
         queryKey: QUERY_KEYS.cardio.logs(userId),
-        queryFn: () => getCardioStatus(userId),
+        queryFn: () => actions.getCardioStatus(userId),
         staleTime: 1000 * 60 * 5,
     })
 
     const { data: activeSession } = useQuery({
         queryKey: QUERY_KEYS.cardio.session,
-        queryFn: () => getActiveCardioSession(),
+        queryFn: () => actions.getActiveCardioSession(),
         staleTime: 1000 * 30
     })
 
@@ -99,7 +94,7 @@ export function StudentCardioTracker({ userId }: StudentCardioTrackerProps) {
             const hasTimeProgressed = Math.abs(lastSyncRef.current.seconds - seconds) >= 10
 
             if (hasStatusChanged || hasTimeProgressed) {
-                updateCardioSession(logId, seconds, status === 'running')
+                actions.updateCardioSession(logId, seconds, status === 'running')
                 lastSyncRef.current = { seconds, status }
             }
         }, 10000)
@@ -119,7 +114,7 @@ export function StudentCardioTracker({ userId }: StudentCardioTrackerProps) {
                     setSeconds(0)
                     setLogId(null)
                     
-                    finishCardioSession(logId, 'Concluído automaticamente', undefined, 100).then((res) => {
+                    actions.finishCardioSession(logId, 'Concluído automaticamente', undefined, 100).then((res) => {
                         if (res.success) {
                             queryClient.invalidateQueries({ queryKey: QUERY_KEYS.cardio.logs(userId) })
                             queryClient.invalidateQueries({ queryKey: QUERY_KEYS.cardio.session })
@@ -152,7 +147,7 @@ export function StudentCardioTracker({ userId }: StudentCardioTrackerProps) {
         if (!currentCardio) return
 
         if (!logId) {
-            const res = await startCardioSession(currentCardio.id)
+            const res = await actions.startCardioSession(currentCardio.id)
             if (res.success && res.logId) {
                 setLogId(res.logId)
                 setStatus('running')
@@ -166,7 +161,7 @@ export function StudentCardioTracker({ userId }: StudentCardioTrackerProps) {
             }
         } else {
             setStatus('running')
-            updateCardioSession(logId, seconds, true)
+            actions.updateCardioSession(logId, seconds, true)
             startTimer(Date.now() - (seconds * 1000))
         }
     }
@@ -175,7 +170,7 @@ export function StudentCardioTracker({ userId }: StudentCardioTrackerProps) {
         setStatus('paused')
         stopTimer()
         if (logId) {
-            updateCardioSession(logId, seconds, false)
+            actions.updateCardioSession(logId, seconds, false)
         }
     }
 
@@ -190,7 +185,7 @@ export function StudentCardioTracker({ userId }: StudentCardioTrackerProps) {
         const targetSeconds = (currentCardio?.duration_minutes || 30) * 60
         const progress = Math.min(Math.round((seconds / targetSeconds) * 100), 100)
 
-        const res = await finishCardioSession(logId, undefined, undefined, progress)
+        const res = await actions.finishCardioSession(logId, undefined, undefined, progress)
         if (res.success) {
             setStatus('idle')
             setSeconds(0)
