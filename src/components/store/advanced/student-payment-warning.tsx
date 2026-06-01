@@ -8,6 +8,7 @@ import { Surface } from '@/components/store/base/surface'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { CreditCard, AlertTriangle } from 'lucide-react'
 import { Box } from '@/components/store/base/box'
+import { Divider } from '@/components/store/base/layout'
 
 interface StudentPaymentWarningProps {
     relationship: any
@@ -95,7 +96,7 @@ export function StudentPaymentWarning({ relationship }: StudentPaymentWarningPro
                                     color: STORE_TOKENS.COLORS.WARNING,
                                 }}>DIA {relationship?.payment_day}</Font>
                         </Stack>
-                        <Box className="h-[1px] w-full bg-white/5" />
+                        <Divider color="white/5" />
                         <Stack direction="row" justify="between">
                             <Font
                                 variant="sub-tiny"
