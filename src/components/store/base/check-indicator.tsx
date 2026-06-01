@@ -7,10 +7,11 @@ import { Circle, Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
-interface CheckIndicatorProps extends Omit<BoxProps, 'children'> {
+interface CheckIndicatorProps extends Omit<BoxProps, 'children' | 'className'> {
     checked?: boolean
     color?: 'emerald' | 'zinc'
     size?: 'sm' | 'md' | 'lg'
+    className?: string
 }
 
 /**
@@ -33,29 +34,22 @@ export function CheckIndicator({
     const resolvedSize = sizeMap[size] as any
 
     return (
-        <Box
-            width={resolvedSize}
-            height={resolvedSize}
-            rounded={STORE_TOKENS.RADIUS.FULL}
-            bg={checked ? STORE_TOKENS.COLORS.SUCCESS : STORE_TOKENS.COLORS.BACKGROUND}
-            bgOpacity={checked ? STORE_TOKENS.OPACITY.FULL : STORE_TOKENS.OPACITY.FULL}
-            display="flex"
-            align="center"
-            justify="center"
-            shrink={0}
-            transition
+        <div
             className={cn(
+                "flex items-center justify-center shrink-0 transition-all duration-500 ease-out",
+                size === 'sm' ? 'w-8 h-8' : size === 'md' ? 'w-10 h-10' : 'w-12 h-12',
+                STORE_TOKENS.RADIUS.FULL === 'full' ? 'rounded-full' : 'rounded-[5px]',
                 "aspect-square shadow-lg",
                 checked ? "bg-emerald-500 shadow-emerald-500/20" : "bg-zinc-950 shadow-black/40",
                 className
             )}
-            {...props}
+            {...(props as any)}
         >
             <Icon 
                 icon={checked ? Check : Circle} 
                 size={size === 'lg' ? 'md' : 'sm'} 
                 color={checked ? STORE_TOKENS.COLORS.BLACK : STORE_TOKENS.COLORS.TEXT.DIM} 
             />
-        </Box>
+        </div>
     );
 }
