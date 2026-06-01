@@ -60,7 +60,7 @@ export function FileUpload({ label, variant = 'generic', currentImageUrl, onFile
                 className={cn(
                     "cursor-pointer group transition-all duration-300 relative",
                     "border-2 border-dashed border-white/5 bg-zinc-950/40",
-                    "hover:border-emerald-500/50 hover:bg-emerald-500/5",
+                    "hover:border-emerald-500/50 hover:bg-emerald-500/5 hover:text-emerald-500",
                     "flex items-center justify-center overflow-hidden",
                     variant === 'profile'
                         ? "w-24 h-24 rounded-full self-start"
@@ -86,7 +86,8 @@ export function FileUpload({ label, variant = 'generic', currentImageUrl, onFile
                             icon={variant === 'profile' ? User : ImageIcon}
                             size="sm"
                             color={STORE_TOKENS.COLORS.TEXT.MUTED}
-                            className="group-hover:text-emerald-500 transition-colors"
+                            groupHoverColor="current"
+                            transition
                         />
                     </div>
                 )}
