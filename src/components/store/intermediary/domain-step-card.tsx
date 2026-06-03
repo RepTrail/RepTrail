@@ -59,7 +59,7 @@ export function DomainStepCard({
                             </Surface>
                             <Stack gap={STORE_TOKENS.SPACING.NONE}>
                                 <Font
-                                    variant="h4"
+                                    variant="h5"
                                     weight="black"
                                     uppercase
                                     italic

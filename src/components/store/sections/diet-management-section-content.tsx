@@ -176,23 +176,24 @@ export function DietManagementSectionContent({
             <Grid cols={{ base: 1, md: 2, lg: 3 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
                 {diets.map((diet, idx) => {
                     const daySet = new Set<number>()
+                    const allAssignments = [
+                        ...(diet.assignments || []),
+                        ...(diet.assigned_diets || [])
+                    ]
 
-                    if (mode === 'trainer') {
-                        ;(diet.assignments || []).forEach((a: any) => {
-                            const days = Array.isArray(a.days_of_week)
-                                ? a.days_of_week
-                                : typeof a.days_of_week === 'string'
-                                    ? JSON.parse(a.days_of_week)
-                                    : []
-                            days.forEach((d: number) => daySet.add(d))
-                        })
-                    } else {
-                        ;(diet.assigned_diets || []).forEach((a: any) => {
-                            if (a.day_of_week !== null && a.day_of_week !== undefined) {
-                                daySet.add(a.day_of_week)
-                            }
-                        })
-                    }
+                    allAssignments.forEach((a: any) => {
+                        let days: number[] = []
+                        if (Array.isArray(a.days_of_week)) {
+                            days = a.days_of_week
+                        } else if (typeof a.days_of_week === 'string') {
+                            try { days = JSON.parse(a.days_of_week) } catch(e) {}
+                        }
+                        days.forEach(d => daySet.add(d))
+
+                        if (a.day_of_week !== null && a.day_of_week !== undefined) {
+                            daySet.add(a.day_of_week)
+                        }
+                    })
 
                     const assignedDays = Array.from(daySet)
                         .sort((a, b) => a - b)
@@ -203,14 +204,23 @@ export function DietManagementSectionContent({
                         ?? diet.meals_count
                         ?? 0
 
-                    const assignedStudents: AssignedStudentInfo[] | undefined = mode === 'trainer'
-                        ? (diet.assignments || []).map((a: any) => ({
-                            id: a.student_id || `pending-${a.id}`,
-                            name: a.student?.full_name || 'Aluno',
-                            avatarUrl: a.student?.avatar_url,
-                            isPlaceholder: a.is_placeholder,
-                        }))
-                        : undefined
+                    const assignedStudentsMap = new Map<string, AssignedStudentInfo>()
+                    if (mode === 'trainer') {
+                        allAssignments.forEach((a: any) => {
+                            if (a.student_id || a.student) {
+                                const sid = a.student_id || `pending-${a.id}`
+                                if (!assignedStudentsMap.has(sid)) {
+                                    assignedStudentsMap.set(sid, {
+                                        id: sid,
+                                        name: a.student?.full_name || 'Aluno',
+                                        avatarUrl: a.student?.avatar_url,
+                                        isPlaceholder: a.is_placeholder,
+                                    })
+                                }
+                            }
+                        })
+                    }
+                    const assignedStudents = mode === 'trainer' ? Array.from(assignedStudentsMap.values()) : undefined
 
                     const editPath = mode === 'trainer'
                         ? `/dashboard/trainer/diets/${diet.id}`
@@ -224,7 +234,7 @@ export function DietManagementSectionContent({
                             days={assignedDays}
                             assignedStudents={assignedStudents}
                             mainStat={{ label: 'REFEIÇÕES', value: mealsCount }}
-                            date={new Date(diet.created_at).toLocaleDateString('pt-BR')}
+                            date={diet.created_at ? new Date(diet.created_at).toLocaleDateString('pt-BR') : 'Data Indisponível'}
                             icon={Utensils}
                             mode={mode}
                             registryType="diet"

@@ -128,30 +128,34 @@ export function LandingShell({
             {/* Desktop Navigation */}
             <Box as="nav" display={{ base: 'none', md: 'flex' }} align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
               {desktopActions.map((action, i) => (
-                <Link key={i} href={action.href}>
-                  <Button
-                    variant={action.variant ?? 'ghost'}
-                    size="md"
-                    activeScale={95}
-                  >
+                <Button
+                  key={i}
+                  asChild
+                  variant={action.variant ?? 'ghost'}
+                  size="md"
+                  activeScale={95}
+                >
+                  <Link href={action.href}>
                     {action.label}
-                  </Button>
-                </Link>
+                  </Link>
+                </Button>
               ))}
             </Box>
 
             {/* Mobile Navigation */}
             <Box display={{ base: 'flex', md: 'none' }} align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
               {mobileActions.map((action, i) => (
-                <Link key={i} href={action.href}>
-                  <Button
-                    variant={action.variant ?? 'primary'}
-                    size="md"
-                    activeScale={95}
-                  >
+                <Button
+                  key={i}
+                  asChild
+                  variant={action.variant ?? 'primary'}
+                  size="md"
+                  activeScale={95}
+                >
+                  <Link href={action.href}>
                     {action.label}
-                  </Button>
-                </Link>
+                  </Link>
+                </Button>
               ))}
             </Box>
           </Box>

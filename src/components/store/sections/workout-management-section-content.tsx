@@ -155,31 +155,41 @@ export function WorkoutManagementSectionContent({
                     }
 
                     const daySet = new Set<number>()
+                    const allAssignments = [
+                        ...(workout.assignments || []),
+                        ...(workout.assigned_workouts || [])
+                    ]
 
-                    if (mode === 'trainer') {
-                        ;(workout.assignments || []).forEach((a: any) => {
-                            ;(a.days_of_week || []).forEach((d: number) => daySet.add(d))
-                        })
-                    } else {
-                        ;(workout.assigned_workouts || []).forEach((a: any) => {
-                            if (a.day_of_week !== null && a.day_of_week !== undefined) {
-                                daySet.add(a.day_of_week)
-                            }
-                        })
-                    }
+                    allAssignments.forEach((a: any) => {
+                        if (a.days_of_week && Array.isArray(a.days_of_week)) {
+                            a.days_of_week.forEach((d: number) => daySet.add(d))
+                        }
+                        if (a.day_of_week !== null && a.day_of_week !== undefined) {
+                            daySet.add(a.day_of_week)
+                        }
+                    })
 
                     const assignedDays = Array.from(daySet)
                         .sort((a, b) => a - b)
                         .map((d) => dayNamesShort[d % 7])
 
-                    const assignedStudents: AssignedStudentInfo[] | undefined = mode === 'trainer'
-                        ? (workout.assignments || []).map((a: any) => ({
-                            id: a.student_id || `pending-${a.id}`,
-                            name: a.student?.full_name || 'Aluno',
-                            avatarUrl: a.student?.avatar_url,
-                            isPlaceholder: a.is_placeholder,
-                        }))
-                        : undefined
+                    const assignedStudentsMap = new Map<string, AssignedStudentInfo>()
+                    if (mode === 'trainer') {
+                        allAssignments.forEach((a: any) => {
+                            if (a.student_id || a.student) {
+                                const sid = a.student_id || `pending-${a.id}`
+                                if (!assignedStudentsMap.has(sid)) {
+                                    assignedStudentsMap.set(sid, {
+                                        id: sid,
+                                        name: a.student?.full_name || 'Aluno',
+                                        avatarUrl: a.student?.avatar_url,
+                                        isPlaceholder: a.is_placeholder,
+                                    })
+                                }
+                            }
+                        })
+                    }
+                    const assignedStudents = mode === 'trainer' ? Array.from(assignedStudentsMap.values()) : undefined
 
                     const editPath = mode === 'trainer'
                         ? `/dashboard/trainer/workouts/${workout.id}`
@@ -193,7 +203,7 @@ export function WorkoutManagementSectionContent({
                             days={assignedDays}
                             assignedStudents={assignedStudents}
                             mainStat={{ label: 'EXERCÍCIOS', value: exercisesCount }}
-                            date={new Date(workout.created_at).toLocaleDateString('pt-BR')}
+                            date={workout.created_at ? new Date(workout.created_at).toLocaleDateString('pt-BR') : 'Data Indisponível'}
                             icon={Dumbbell}
                             mode={mode}
                             registryType="training"

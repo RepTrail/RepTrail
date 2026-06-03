@@ -12,7 +12,7 @@ import { FormSelect } from '@/components/store/base/form-select'
 import { Box } from '@/components/store/base/box'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { QUERY_KEYS } from '@/lib/query-keys'
-import { getStoreProducts, logProductClick } from '@/lib/dal/remote'
+import { getStoreProducts, logProductClick } from '@/actions/store-actions'
 
 /**
  * MarketplaceSectionContent: The composite content for the Marketplace & Performance section.
@@ -57,12 +57,12 @@ export function MarketplaceSectionContent() {
         return <EmptyState icon={ShoppingBag} title="CARREGANDO..." description="BUSCANDO OS PRODUTOS DA LOJA." />
     }
 
-    if (filtered.length === 0 && !isLoading) {
+    if (products.length === 0 && !isLoading) {
         return (
             <EmptyState
                 icon={ShoppingBag}
                 title="LOJA INDISPONÍVEL"
-                description={search ? 'NENHUM PRODUTO ENCONTRADO PARA SUA BUSCA.' : 'NÃO HÁ PRODUTOS DISPONÍVEIS NO MOMENTO.'}
+                description="NÃO HÁ PRODUTOS DISPONÍVEIS NO MOMENTO."
             />
         )
     }

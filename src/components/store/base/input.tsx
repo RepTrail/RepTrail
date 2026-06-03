@@ -121,7 +121,7 @@ export function Input({
         {/* Left icon */}
         {icon && (
           <div className={cn(
-            "absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 transition-colors flex items-center z-10",
+            "absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 transition-colors flex items-center z-10 [&>*]:text-current",
             size === 'sm' && "left-2 text-xs scale-90",
             activeClasses.split(' ').find(c => c.startsWith('group-focus-within:'))
           )}>

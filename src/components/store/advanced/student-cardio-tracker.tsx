@@ -215,11 +215,11 @@ export function StudentCardioTracker({ userId }: StudentCardioTrackerProps) {
         return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
     }
 
-    if (isLoading) return <RegistrySection title="CARDIO DE HOJE" icon={Activity}><Surface height={192} bg="zinc" bgOpacity={50} rounded={STORE_TOKENS.RADIUS.SYSTEM} animation="pulse"><span /></Surface></RegistrySection>
+    if (isLoading) return <RegistrySection title="CARDIO DE HOJE" subtitle="Monitoramento de atividades aeróbicas e cronômetros." icon={Activity}><Surface height={192} bg="zinc" bgOpacity={50} rounded={STORE_TOKENS.RADIUS.SYSTEM} animation="pulse"><span /></Surface></RegistrySection>
 
     if (!cardios || cardios.length === 0) {
         return (
-            <RegistrySection title="CARDIO DE HOJE" icon={Activity}>
+            <RegistrySection title="CARDIO DE HOJE" subtitle="Monitoramento de atividades aeróbicas e cronômetros." icon={Activity}>
                 <CardioTimerCard
                     title="SEM CARDIO"
                     duration="0 MIN"

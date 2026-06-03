@@ -81,7 +81,32 @@ export async function getOnboardingSessionInfo() {
 
   const role = profile?.role || user.user_metadata?.role || null
   const onboardingCompleted = !!profile?.onboarding_completed
-  const trainerCode = user.user_metadata?.trainer_code || ''
+  let trainerCode = user.user_metadata?.trainer_code || ''
+
+  // Se o aluno já tiver um vínculo ativo (ex: migração de ghost profile), puxamos o código automaticamente
+  if (!trainerCode && role === 'student') {
+    const { createAdminClient } = await import('@/lib/supabase/admin')
+    const adminSupabase = await createAdminClient()
+    
+    const { data: trainerLink, error: linkError } = await adminSupabase
+      .from('trainer_students')
+      .select('trainer:profiles!trainer_id(trainer_code)')
+      .eq('student_id', user.id)
+      .eq('active', true)
+      .maybeSingle()
+
+    if (linkError) {
+      console.error('[ONBOARDING] Error fetching trainer link:', linkError)
+    }
+
+    if (trainerLink?.trainer) {
+      const t = Array.isArray(trainerLink.trainer) ? trainerLink.trainer[0] : trainerLink.trainer;
+      if (t?.trainer_code) {
+        console.log(`[ONBOARDING] Found trainer code from link: ${t.trainer_code}`)
+        trainerCode = t.trainer_code
+      }
+    }
+  }
 
   return {
     user,

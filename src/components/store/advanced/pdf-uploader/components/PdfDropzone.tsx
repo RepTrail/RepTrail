@@ -16,7 +16,7 @@ interface PdfDropzoneProps {
 
 export function PdfDropzone({ uploading, parsing, onFileChange }: PdfDropzoneProps) {
     return (
-        <Box position="relative" group fullWidth>
+        <Box position="relative" group fullWidth flex1 display="flex" direction="col">
             <Surface
                 id="tour-dropzone"
                 variant="tonal-emerald"
@@ -30,6 +30,7 @@ export function PdfDropzone({ uploading, parsing, onFileChange }: PdfDropzonePro
                 justify="center"
                 transition
                 fullWidth
+                flex1
                 pointerEvents={uploading || parsing ? 'none' : 'auto'}
                 cursor={uploading || parsing ? 'default' : 'pointer'}
                 opacity={uploading || parsing ? STORE_TOKENS.OPACITY.SHELF : STORE_TOKENS.OPACITY.FULL}

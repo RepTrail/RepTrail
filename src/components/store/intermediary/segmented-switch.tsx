@@ -46,8 +46,6 @@ export function SegmentedSwitch({
         overflowX="auto"
         noScrollbar
         fullWidth
-        snap="x"
-        snapMandatory
         scrollSmooth
         minWidth={0}
         position="relative"
@@ -69,6 +67,7 @@ export function SegmentedSwitch({
             return (
               <Button
                 key={option.id}
+                type="button"
                 onClick={() => onSelect(option.id)}
                 variant={isActive ? variant : 'ghost'}
                 rounded={STORE_TOKENS.RADIUS.FULL}
@@ -76,7 +75,6 @@ export function SegmentedSwitch({
                 flex1={{ base: isFewOptions, md: true }}
                 shrink={{ base: isFewOptions ? 1 : 0, md: 1 }}
                 transition
-                snapCenter
               >
                 <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} wrap="nowrap">
                   {option.icon && (

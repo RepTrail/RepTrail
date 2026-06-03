@@ -80,7 +80,9 @@ export function RegistryMain({
   backPath
 }: RegistryMainProps) {
   const { activeTab, setActiveTab, primaryColor } = useRegistry()
-  const [first, ...rest] = title.split(' ')
+  const words = title.trim().split(' ')
+  const lastWord = words.pop() || ''
+  const firstPart = words.join(' ')
 
   const IconComp = typeof icon === 'string' ? (iconMap[icon] || BarChart3) : icon
 
@@ -147,11 +149,13 @@ export function RegistryMain({
 
               <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                 <Font variant="h1">
-                  {first} <Font
-                  variant="h1"
-                  {...{
-                    color: primaryColor,
-                  }}>{rest.join(' ')}</Font>
+                  {firstPart ? (
+                    <>
+                      {firstPart} <Font variant="h1" {...{ color: primaryColor }}>{lastWord}</Font>
+                    </>
+                  ) : (
+                    lastWord
+                  )}
                 </Font>
                 <Font variant="description">{subtitle}</Font>
               </Stack>

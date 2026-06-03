@@ -181,6 +181,13 @@ ${text}
 
             console.log(`[PDF] Sending ${text.length} chars to AI. Sample: ${text.substring(0, 100)}...`)
             parsedData = await callAI(client, prompt, DEFAULT_AI_MODEL, 4096)
+            
+            // Corrige possível alucinação da IA que retorna diets em vez de options
+            if (resolvedType === 'diet' && parsedData?.diets && !parsedData?.options && !parsedData?.meals) {
+                parsedData.options = parsedData.diets;
+                delete parsedData.diets;
+            }
+
             method = 'openrouter-ai'
             const mealCount = parsedData?.meals?.length || (parsedData?.options || []).reduce((acc: number, opt: any) => acc + (opt.meals?.length || 0), 0)
             console.log(`[PDF] AI parse complete. Meals found: ${mealCount}`)

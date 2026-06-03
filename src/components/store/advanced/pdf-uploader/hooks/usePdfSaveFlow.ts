@@ -62,6 +62,10 @@ export function usePdfSaveFlow({ type, userId, role, initialStudentId, parsedDat
                 return;
             }
 
+            if (typeof window !== 'undefined') {
+                window.dispatchEvent(new CustomEvent('reptrail_tour_advance_from_save'));
+            }
+
             setParsedData(null);
             bindingHooks.setSelectedStudentId(null);
             selectionHooks.setSelectedOptionIndex(0);

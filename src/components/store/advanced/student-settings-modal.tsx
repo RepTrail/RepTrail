@@ -15,6 +15,7 @@ import {
     Loader2,
     Crown
 } from 'lucide-react'
+import { selfDeleteAction } from '@/actions/auth-actions'
 import { getTermsStatus } from '@/lib/dal/remote'
 import { getAutoTrainingTrialInfoForCurrentUser, enableAutoTrainingTrialForCurrentUser } from '@/lib/dal/remote'
 import { useToast } from '@/hooks/use-toast'
@@ -363,18 +364,25 @@ export function SettingsModal({ hasTrainer = false, isTrainer = false }: Setting
                 variant="red"
                 confirmLabel="Excluir"
                 isLoading={isDeleting}
-                onConfirm={() => {
+                onConfirm={async () => {
                     if (!deletePassword) {
                         toast({ variant: 'destructive', title: "Senha obrigatória", description: "Digite sua senha para confirmar a exclusão." })
                         return
                     }
                     setIsDeleting(true)
-                    setTimeout(() => {
-                        toast({ title: "Conta excluída", description: "Sua conta e todos os dados foram removidos com sucesso." })
+                    
+                    const res = await selfDeleteAction(deletePassword)
+                    
+                    if (res?.error) {
+                        toast({ variant: 'destructive', title: "Erro na exclusão", description: res.error })
                         setIsDeleting(false)
-                        setIsDeleteModalOpen(false)
-                        router.push('/login')
-                    }, 1500)
+                        return
+                    }
+
+                    toast({ title: "Conta excluída", description: "Sua conta e todos os dados foram removidos com sucesso." })
+                    setIsDeleting(false)
+                    setIsDeleteModalOpen(false)
+                    router.push('/auth/login')
                 }}
             >
                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>

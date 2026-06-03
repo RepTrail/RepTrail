@@ -431,7 +431,7 @@ export function parseDietLocally(text: string) {
     }
 
     return {
-        diets: diets.map(meal => ({
+        meals: diets.map(meal => ({
             ...meal,
             foods: meal.foods.filter(f =>
                 f.name.length > 2 &&

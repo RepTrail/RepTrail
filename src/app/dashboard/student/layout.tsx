@@ -73,7 +73,7 @@ async function StudentLayoutLoader({ userId, children }: { userId: string; child
         { href: '/dashboard/student/diet',         label: 'Minha Dieta',    icon: 'Utensils',      hidden: !hasPlan },
         { href: '/dashboard/student/ergogenics',   label: 'Ergogênicos',    icon: 'Syringe',       hidden: !hasPlan || !steroidUse },
         { href: '/dashboard/student/progress',     label: 'Evolução',       icon: 'TrendingUp',    hidden: !hasPlan },
-        { href: '/dashboard/student/import-pdf',   label: 'Importar PDF',   icon: 'Sparkles',      hidden: hasTrainer },
+        { href: '/dashboard/student/import-pdf',   label: 'Importar PDF',   icon: 'Sparkles',      hidden: hasTrainer || !isAutoTrainingActive },
         { href: '/dashboard/student/anamnese',     label: 'Anamnese',       icon: 'ClipboardList', hidden: !hasTrainer },
         { href: '/dashboard/student/buscar-personal',                label: 'Buscar Personal', icon: 'Search',       hidden: hasTrainer || isAutoTrainingActive },
         { href: '/dashboard/student/feed',         label: 'Feed de Alunos', icon: 'UserCheck' },

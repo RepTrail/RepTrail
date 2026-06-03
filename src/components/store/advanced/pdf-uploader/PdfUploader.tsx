@@ -32,7 +32,7 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
     });
 
     return (
-        <Stack id="tour-import-card" fullWidth gap={STORE_TOKENS.SPACING.SECTION}>
+        <Stack id="tour-import-card" fullWidth flex1 gap={STORE_TOKENS.SPACING.SECTION}>
             {!parsedData ? (
                 <PdfDropzone 
                     uploading={uploading} 
@@ -55,21 +55,23 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
                         </RegistrySection>
                     )}
 
-                    <PdfPreviewSection 
-                        type={currentType}
-                        parsedData={parsedData}
-                        setParsedData={setParsedData}
-                        selectionHooks={selectionHooks}
-                    />
+                    <Stack id="tour-review-section" gap={STORE_TOKENS.SPACING.SECTION} fullWidth>
+                        <PdfPreviewSection 
+                            type={currentType}
+                            parsedData={parsedData}
+                            setParsedData={setParsedData}
+                            selectionHooks={selectionHooks}
+                        />
 
-                    <PdfActionsFooter 
-                        type={currentType}
-                        role={role}
-                        isSaving={isSaving}
-                        bindingHooks={bindingHooks}
-                        setParsedData={setParsedData}
-                        onSave={handleSave}
-                    />
+                        <PdfActionsFooter 
+                            type={currentType}
+                            role={role}
+                            isSaving={isSaving}
+                            bindingHooks={bindingHooks}
+                            setParsedData={setParsedData}
+                            onSave={handleSave}
+                        />
+                    </Stack>
                 </Stack>
             )}
         </Stack>

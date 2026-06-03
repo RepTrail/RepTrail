@@ -101,6 +101,7 @@ export function RankingListItem({ trainer, rank }: RankingListItemProps) {
                     <Font
                         {...STORE_TOKENS.TYPOGRAPHY.HEADING}
                         variant={{ base: 'body-sm', md: 'body' }}
+                        truncate
                         {...{
                             color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
                         }}>

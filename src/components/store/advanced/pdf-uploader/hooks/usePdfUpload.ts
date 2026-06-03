@@ -47,16 +47,9 @@ export function usePdfUpload({ type, role, bindingHooks, selectionHooks }: any) 
 
             if (role === 'trainer' && result.data?.detected_student_name) {
                 bindingHooks.setDetectedStudentName(result.data.detected_student_name);
-                const match = await actions.findStudentByName(result.data.detected_student_name);
-                bindingHooks.setStudentMatch(match);
-                if (match.exact) {
-                    bindingHooks.setSelectedStudentId(match.exact.student_id);
-                    bindingHooks.setBindingMode('matched');
-                } else if (match.suggestions.length === 0) {
-                    bindingHooks.setBindingMode('create');
-                } else {
-                    bindingHooks.setBindingMode('skip');
-                }
+                // Sistema de auto-vínculo desativado a pedido do usuário
+                bindingHooks.setStudentMatch(null);
+                bindingHooks.setBindingMode('skip');
             } else {
                 bindingHooks.setDetectedStudentName(null);
                 bindingHooks.setStudentMatch(null);

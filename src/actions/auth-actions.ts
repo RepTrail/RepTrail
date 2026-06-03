@@ -60,6 +60,36 @@ export async function signUpAction(formData: FormData) {
         return { error: signUpError?.message || 'Erro ao criar conta.' }
     }
 
+    // --- GHOST PROFILE MIGRATION ---
+    // If the trainer created a placeholder with this email, transfer the linkages
+    try {
+        const { adminClient } = await import('@/lib/supabase/admin')
+        
+        const { data: ghost } = await adminClient
+            .from('profiles')
+            .select('id')
+            .eq('email', email)
+            .eq('is_placeholder', true)
+            .maybeSingle()
+
+        if (ghost) {
+            console.log(`[AUTH] Migrating ghost profile ${ghost.id} to new user ${user.id}`)
+            
+            // Transfer relationships
+            await adminClient.from('trainer_students').update({ student_id: user.id }).eq('student_id', ghost.id)
+            await adminClient.from('assigned_workouts').update({ student_id: user.id }).eq('student_id', ghost.id)
+            await adminClient.from('assigned_diets').update({ student_id: user.id }).eq('student_id', ghost.id)
+            await adminClient.from('assigned_cardios').update({ student_id: user.id }).eq('student_id', ghost.id)
+            await adminClient.from('ergogenics').update({ student_id: user.id }).eq('student_id', ghost.id)
+            
+            // Delete ghost profile
+            await adminClient.from('profiles').delete().eq('id', ghost.id)
+        }
+    } catch (migErr) {
+        console.error('[AUTH] Ghost migration failed:', migErr)
+    }
+    // -------------------------------
+
     // Safety-net upsert: ensures profile row exists even if trigger was
     // slow or the DB trigger is not yet deployed in this environment.
     // Uses the authenticated session (established by signUp above).
@@ -118,4 +148,33 @@ export async function updatePasswordAction(formData: FormData) {
 
     revalidatePath('/', 'layout')
     redirect('/dashboard')
+}
+
+export async function selfDeleteAction(password: string) {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    
+    if (!user || !user.email) {
+        return { error: 'Usuário não autenticado.' }
+    }
+
+    // Validar a senha
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: user.email,
+        password: password,
+    })
+
+    if (signInError) {
+        return { error: 'Senha incorreta.' }
+    }
+
+    const { adminClient } = await import('@/lib/supabase/admin')
+    const { error: deleteError } = await adminClient.auth.admin.deleteUser(user.id)
+
+    if (deleteError) {
+        return { error: deleteError.message || 'Erro ao excluir conta.' }
+    }
+
+    await supabase.auth.signOut()
+    return { success: true }
 }

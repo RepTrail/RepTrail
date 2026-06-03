@@ -8,6 +8,7 @@ export type FontVariant =
   | 'h2'
   | 'h3'
   | 'h4'
+  | 'h5'
   | 'heading'
   | 'description'
   | 'body'
@@ -88,6 +89,7 @@ export function Font({
     h2: 'text-2xl md:text-4xl font-black tracking-tight uppercase italic',
     h3: 'text-xl md:text-3xl font-black tracking-tight uppercase italic',
     h4: 'text-lg md:text-2xl font-black tracking-tight uppercase italic',
+    h5: 'text-base md:text-xl font-black tracking-tight uppercase italic',
     heading: 'text-xl md:text-2xl font-bold tracking-tight',
     description: 'text-base md:text-lg text-zinc-400 leading-relaxed',
     body: 'text-sm md:text-base leading-relaxed',

@@ -8,6 +8,7 @@ import { TrainerStudentEvolutionSection } from '@/components/store/sections/trai
 import { TrainerStudentProtocolsSection } from '@/components/store/sections/trainer-student-protocols-section'
 import { TrainerStudentPhotosActivitiesSection } from '@/components/store/sections/trainer-student-photos-activities-section'
 import { TrainerStudentDetailTabSwitcher } from '@/components/store/sections/trainer-student-detail-tab-switcher'
+import { PlaceholderStudentAccessBanner } from '@/components/store/sections/placeholder-student-access-banner'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 
@@ -96,6 +97,8 @@ export default async function StudentDetailPage({
                 contextLabel="Gestão de Alunos"
                 showTabs={false}
             >
+                <PlaceholderStudentAccessBanner relationship={relationship} />
+                
                 <TrainerStudentDetailTabSwitcher activeTab={activeTab} />
 
                 {activeTab === 'protocols' && (

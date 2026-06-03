@@ -105,28 +105,7 @@ export function StudentBindingCard({ bindingHooks, students }: StudentBindingCar
 
     return (
         <Stack gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
-            {detectedStudentName && (
-                <Box 
-                    padding={STORE_TOKENS.PADDING.NONE} 
-                    bg={STORE_TOKENS.COLORS.BACKGROUND} 
-                    bgOpacity={STORE_TOKENS.OPACITY.LOW} 
-                    border 
-                    borderColor={STORE_TOKENS.COLORS.BACKGROUND} 
-                    borderOpacity={STORE_TOKENS.OPACITY.SUBTLE} 
-                    rounded={STORE_TOKENS.RADIUS.SYSTEM}
-                    width="fit-content"
-                >
-                    <Font
-                        variant="tiny"
-                        weight="bold"
-                        uppercase
-                        {...{
-                            color: "SECONDARY",
-                        }}>
-                        Aluno Detectado no PDF: {detectedStudentName}
-                    </Font>
-                </Box>
-            )}
+
             <Stack direction={{ base: 'col', md: 'row' }} gap={STORE_TOKENS.SPACING.CONTAINER} align={{ base: 'stretch', md: 'center' }} justify="between" fullWidth>
                 <DSButton
                     id="tour-btn-create-student"

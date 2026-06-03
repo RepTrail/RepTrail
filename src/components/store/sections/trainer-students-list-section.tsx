@@ -77,7 +77,7 @@ export function TrainerStudentsListSection({ userId }: TrainerStudentsListSectio
             >
                 {filteredStudents.length > 0 ? (
                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
-                        {filteredStudents.map((item: any) => {
+                        {filteredStudents.map((item: any, index: number) => {
                             const todayDay = new Date().getDate()
                             const paymentDay = item.payment_day
                             const lastPayment = item.last_payment_date
@@ -140,6 +140,7 @@ export function TrainerStudentsListSection({ userId }: TrainerStudentsListSectio
                                                 asChild
                                             >
                                                 <Link
+                                                    id={index === 0 ? 'tour-open-profile' : undefined}
                                                     href={`/dashboard/trainer/students/${item.id}`}
                                                     aria-label="Abrir página do aluno"
                                                 >

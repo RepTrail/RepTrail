@@ -15,12 +15,15 @@ import { RankingSectionContent } from '@/components/store/sections/ranking-secti
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { Sparkles, ArrowRight, Zap } from 'lucide-react'
 import Link from 'next/link'
+import { useState } from 'react'
+import { AsaasPaymentModal } from '@/components/store/advanced/asaas-payment-modal'
 
 interface StudentNoPlanSectionProps {
     ranking?: any[]
 }
 
 export function StudentNoPlanSection({ ranking }: StudentNoPlanSectionProps) {
+    const [isAsaasOpen, setIsAsaasOpen] = useState(false);
 
     return (
         <RegistryMain
@@ -155,17 +158,15 @@ export function StudentNoPlanSection({ ranking }: StudentNoPlanSectionProps) {
                                 Protocolos gerados instantaneamente com base na sua rotina, objetivos e equipamentos disponíveis de forma inteligente.
                             </Font>
                             <Box padding={STORE_TOKENS.PADDING.NONE}>
-                                <Link href="/dashboard/student/plans">
-                                    <Button variant="orange" size="lg" rounded={STORE_TOKENS.RADIUS.SYSTEM} gap={STORE_TOKENS.SPACING.ELEMENT} transition>
-                                        <Font
-                                            variant="label-caps"
-                                            weight="black"
-                                            {...{
-                                                color: "black",
-                                            }}>Ativar por R$ 10,90/mês</Font>
-                                        <Icon icon={ArrowRight} size="sm" color={STORE_TOKENS.COLORS.BLACK} />
-                                    </Button>
-                                </Link>
+                                <Button variant="orange" size="lg" rounded={STORE_TOKENS.RADIUS.SYSTEM} gap={STORE_TOKENS.SPACING.ELEMENT} transition onClick={() => setIsAsaasOpen(true)}>
+                                    <Font
+                                        variant="label-caps"
+                                        weight="black"
+                                        {...{
+                                            color: "black",
+                                        }}>Ativar por R$ 10,90/mês</Font>
+                                    <Icon icon={ArrowRight} size="sm" color={STORE_TOKENS.COLORS.BLACK} />
+                                </Button>
                             </Box>
                         </Stack>
                     </Surface>
@@ -174,6 +175,13 @@ export function StudentNoPlanSection({ ranking }: StudentNoPlanSectionProps) {
                 {/* Design System Ranking Section */}
                 <RankingSectionContent />
             </Stack>
+
+            <AsaasPaymentModal
+                isOpen={isAsaasOpen}
+                onClose={() => setIsAsaasOpen(false)}
+                tier="auto_training"
+                monthlyTotal={10.90}
+            />
         </RegistryMain>
     );
 }

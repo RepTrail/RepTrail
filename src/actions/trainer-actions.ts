@@ -582,6 +582,7 @@ export async function getTrainerRanking() {
     try {
         // Prefer DB-side aggregation (RPC) to avoid loading all trainer_students rows into Node memory.
         const { data: stats, error: statsError } = await supabase.rpc('get_trainer_ranking_stats')
+        console.log("DEBUG STATS:", stats?.[0])
 
         if (statsError) {
             console.error('Error fetching trainer ranking stats (RPC):', statsError)
@@ -596,11 +597,26 @@ export async function getTrainerRanking() {
             elite: 500,
         }
 
-        const ranking = (stats || [])
-            .filter((row: any) => row.plan_tier && row.plan_tier !== 'none' && row.trainer_code)
-            .map((row: any) => {
+        const filteredStats = (stats || []).filter((row: any) => row.plan_tier && row.plan_tier !== 'none' && row.trainer_code)
+
+        // Enrich rating from profiles since RPC might not return it
+        const trainerIds = filteredStats.map((row: any) => row.trainer_id).filter(Boolean)
+        const ratingsMap: Record<string, number> = {}
+        
+        if (trainerIds.length > 0) {
+            const { data: profiles } = await supabase
+                .from('profiles')
+                .select('id, average_rating')
+                .in('id', trainerIds)
+                
+            profiles?.forEach(p => {
+                ratingsMap[p.id] = Number(p.average_rating || 0)
+            })
+        }
+
+        const ranking = filteredStats.map((row: any) => {
                 const studentCount = Number(row.student_count || 0)
-                const rating = Number(row.rating || 0)
+                const rating = ratingsMap[row.trainer_id] || Number(row.average_rating || row.rating || 0)
                 const prestigePoints = tierPoints[row.plan_tier as string] || 0
 
                 // Prestige-based Score Formula: 
