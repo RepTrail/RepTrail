@@ -82,14 +82,11 @@ export function AuthLoginForm({
                         <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                             {error && (
                                 <Surface 
+                                    variant="tonal-red"
                                     padding={STORE_TOKENS.PADDING.ELEMENT} 
                                     rounded={STORE_TOKENS.RADIUS.SYSTEM} 
                                     display="flex" 
                                     align="center" 
-                                    bg={STORE_TOKENS.COLORS.ERROR} 
-                                    bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} 
-                                    border="subtle" 
-                                    borderColor={STORE_TOKENS.COLORS.ERROR}
                                     minHeight={44}
                                 >
                                     <Font

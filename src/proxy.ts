@@ -59,8 +59,8 @@ export async function proxy(request: NextRequest) {
         return NextResponse.redirect(new URL('/admin/dashboard', request.url))
     }
 
-    // Redirect authenticated users away from /auth
-    if (request.nextUrl.pathname.startsWith('/auth') && userId) {
+    // Redirect authenticated users away from /auth (except logout)
+    if (request.nextUrl.pathname.startsWith('/auth') && !request.nextUrl.pathname.startsWith('/auth/logout') && userId) {
         return NextResponse.redirect(new URL('/dashboard', request.url))
     }
 

@@ -74,7 +74,14 @@ export function AuthUpdatePasswordForm({
                     <form onSubmit={onSubmit || ((e) => e.preventDefault())}>
                         <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                             {error && (
-                                <Box padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM} display="flex" align="center" bg={STORE_TOKENS.COLORS.ERROR} bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} border minHeight={44}>
+                                <Surface 
+                                    variant="tonal-red"
+                                    padding={STORE_TOKENS.PADDING.ELEMENT} 
+                                    rounded={STORE_TOKENS.RADIUS.SYSTEM} 
+                                    display="flex" 
+                                    align="center" 
+                                    minHeight={44}
+                                >
                                     <Font
                                         variant="sub-tiny"
                                         weight="black"
@@ -85,7 +92,7 @@ export function AuthUpdatePasswordForm({
                                         }}>
                                         {translateAuthError(error)}
                                     </Font>
-                                </Box>
+                                </Surface>
                             )}
 
                             <Input

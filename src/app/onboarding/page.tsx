@@ -8,10 +8,14 @@ import { Stack } from '@/components/store/base/stack'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 export default async function OnboardingPage() {
-    const { user, role, onboardingCompleted, trainerCode } = await getOnboardingSessionInfo()
+    const { user, role, onboardingCompleted, trainerCode, profileExists } = await getOnboardingSessionInfo()
 
     if (!user) {
         redirect('/auth/login')
+    }
+
+    if (!profileExists) {
+        redirect('/auth/logout')
     }
 
     if (role === 'trainer') {

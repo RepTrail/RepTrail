@@ -103,7 +103,14 @@ export function AuthForgotPasswordForm({
                     <form onSubmit={onSubmit || ((e) => e.preventDefault())}>
                         <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                             {error && (
-                                <Surface padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM} display="flex" align="center" bg={STORE_TOKENS.COLORS.ERROR} bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} border="subtle" minHeight={44}>
+                                <Surface 
+                                    variant="tonal-red"
+                                    padding={STORE_TOKENS.PADDING.ELEMENT} 
+                                    rounded={STORE_TOKENS.RADIUS.SYSTEM} 
+                                    display="flex" 
+                                    align="center" 
+                                    minHeight={44}
+                                >
                                     <Font
                                         variant="sub-tiny"
                                         weight="black"

@@ -13,6 +13,12 @@ export default async function DashboardLayout({
     const userId = headerList.get('x-user-id')
     if (!userId) redirect('/auth/login')
 
+    const { getProfile } = await import('@/lib/dal/server')
+    const profile = await getProfile(userId)
+    if (!profile) {
+        redirect('/auth/logout')
+    }
+
     return (
         <Box minHeight="screen" width="full" bg={STORE_TOKENS.COLORS.BACKGROUND}>
             <LastSeenTracker />

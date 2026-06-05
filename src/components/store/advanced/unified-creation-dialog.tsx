@@ -11,6 +11,7 @@ import { Textarea } from '@/components/store/base/textarea'
 import { WeekdayPicker } from '@/components/store/base/weekday-picker'
 import { Stack } from '@/components/store/base/stack'
 import { Box } from '@/components/store/base/box'
+import { Surface } from '@/components/store/base/surface'
 import { Grid } from '@/components/store/base/grid'
 import { Font } from '@/components/store/base/font'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
@@ -305,13 +306,13 @@ export function UnifiedCreationDialog({
                     }}>
                     <Stack gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
                         {error && (
-                            <Box
+                            <Surface
+                                variant="tonal-red"
                                 padding={STORE_TOKENS.PADDING.ELEMENT}
-                                bg={STORE_TOKENS.COLORS.ERROR}
-                                bgOpacity={STORE_TOKENS.OPACITY.SUBTLE}
-                                border
                                 rounded={STORE_TOKENS.RADIUS.SYSTEM}
-                                fullWidth
+                                display="flex"
+                                align="center"
+                                minHeight={44}
                             >
                                 <Font
                                     variant="body-sm"
@@ -321,7 +322,7 @@ export function UnifiedCreationDialog({
                                     }}>
                                     {error}
                                 </Font>
-                            </Box>
+                            </Surface>
                         )}
 
                         {renderedFields}

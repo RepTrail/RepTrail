@@ -77,8 +77,9 @@ export async function getOnboardingSessionInfo() {
     .from('profiles')
     .select('role, onboarding_completed')
     .eq('id', user.id)
-    .single()
+    .maybeSingle()
 
+  const profileExists = !!profile
   const role = profile?.role || user.user_metadata?.role || null
   const onboardingCompleted = !!profile?.onboarding_completed
   let trainerCode = user.user_metadata?.trainer_code || ''
@@ -106,13 +107,64 @@ export async function getOnboardingSessionInfo() {
         trainerCode = t.trainer_code
       }
     }
+
+    // Fallback 1: Verificar pending_student_links (caso o link tenha sido criado pela nova arquitetura)
+    if (!trainerCode && user.email) {
+      const { data: pendingLink } = await adminSupabase
+        .from('pending_student_links')
+        .select('trainer:profiles!trainer_id(trainer_code)')
+        .ilike('student_email', user.email)
+        .eq('status', 'pending')
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle()
+
+      if (pendingLink?.trainer) {
+        const t = Array.isArray(pendingLink.trainer) ? pendingLink.trainer[0] : pendingLink.trainer;
+        if (t?.trainer_code) {
+          console.log(`[ONBOARDING] Found trainer code from pending_student_links: ${t.trainer_code}`)
+          trainerCode = t.trainer_code
+        }
+      }
+    }
+
+    // Fallback 2: Verificar Ghost Profiles não migrados (ex: login via Google OAuth)
+    if (!trainerCode && user.email) {
+      const { data: ghostProfile } = await adminSupabase
+        .from('profiles')
+        .select('id')
+        .ilike('email', user.email)
+        .eq('is_placeholder', true)
+        .limit(1)
+        .maybeSingle()
+
+      if (ghostProfile) {
+        const { data: ghostLink } = await adminSupabase
+          .from('trainer_students')
+          .select('trainer:profiles!trainer_id(trainer_code)')
+          .eq('student_id', ghostProfile.id)
+          .eq('active', true)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle()
+
+        if (ghostLink?.trainer) {
+          const t = Array.isArray(ghostLink.trainer) ? ghostLink.trainer[0] : ghostLink.trainer;
+          if (t?.trainer_code) {
+            console.log(`[ONBOARDING] Found trainer code from ghost profile: ${t.trainer_code}`)
+            trainerCode = t.trainer_code
+          }
+        }
+      }
+    }
   }
 
   return {
     user,
     role,
     onboardingCompleted,
-    trainerCode
+    trainerCode,
+    profileExists
   }
 }
 

@@ -12,6 +12,7 @@ import { FormCheckbox } from '@/components/store/base/form-checkbox'
 import { Textarea } from '@/components/store/base/textarea'
 import { Button } from '@/components/store/base/button'
 import { Box } from '@/components/store/base/box'
+import { Surface } from '@/components/store/base/surface'
 import { Icon } from '@/components/store/base/icon'
 import { 
     Activity, 
@@ -139,15 +140,13 @@ export function StudentOnboardingForm({ defaultTrainerCode = '' }: { defaultTrai
                 <Stack gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
                     {/* Error Messages */}
                     {state?.message && (
-                        <Box 
-                            padding={STORE_TOKENS.PADDING.CONTAINER} 
+                        <Surface 
+                            variant="tonal-red"
+                            padding={STORE_TOKENS.PADDING.ELEMENT} 
                             rounded={STORE_TOKENS.RADIUS.SYSTEM} 
-                            bg={STORE_TOKENS.COLORS.ERROR}
-                            bgOpacity={STORE_TOKENS.OPACITY.SUBTLE}
-                            border
-                            borderColor={STORE_TOKENS.COLORS.ERROR}
-                            borderOpacity={STORE_TOKENS.OPACITY.MEDIUM}
-                            textAlign="center"
+                            display="flex" 
+                            align="center" 
+                            minHeight={44}
                         >
                             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                                 <Font
@@ -178,7 +177,7 @@ export function StudentOnboardingForm({ defaultTrainerCode = '' }: { defaultTrai
                                     </Stack>
                                 )}
                             </Stack>
-                        </Box>
+                        </Surface>
                     )}
 
                     {/* STEP 1: Biometrics */}

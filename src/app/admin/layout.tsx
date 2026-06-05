@@ -12,6 +12,12 @@ export default async function AdminLayout({
         redirect('/auth/login')
     }
 
+    const { getProfile } = await import('@/lib/dal/server')
+    const profile = await getProfile(user.id)
+    if (!profile) {
+        redirect('/auth/logout')
+    }
+
     if (!isAdmin) {
         redirect('/dashboard')
     }

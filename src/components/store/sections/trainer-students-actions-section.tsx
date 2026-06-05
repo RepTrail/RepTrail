@@ -45,7 +45,7 @@ export function TrainerStudentsActionsSection({ userId }: TrainerStudentsActions
                         <Button variant="outline-emerald" shine fullWidth={{ base: true, sm: false }}>
                             <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                 <Icon icon={Plus} size="xs" />
-                                <Font>Vincular Aluno</Font>
+                                Vincular Aluno
                             </Stack>
                         </Button>
                     }

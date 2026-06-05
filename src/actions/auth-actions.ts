@@ -18,13 +18,26 @@ export async function signInAction(formData: FormData) {
     
     const supabase = await createClient()
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data: { user }, error } = await supabase.auth.signInWithPassword({
         email,
         password,
     })
 
     if (error) {
         return { error: error.message }
+    }
+
+    if (user) {
+        const { data: profile } = await supabase
+            .from('profiles')
+            .select('id')
+            .eq('id', user.id)
+            .maybeSingle()
+
+        if (!profile) {
+            await supabase.auth.signOut()
+            return { error: 'Esta conta foi excluída ou desativada.' }
+        }
     }
 
     revalidatePath('/', 'layout')

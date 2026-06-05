@@ -33,6 +33,7 @@ import { Box } from '@/components/store/base/box'
 import { Input } from '@/components/store/base/input'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { SettingsActionCard } from '@/components/store/intermediary/settings-action-card'
+import { Surface } from '@/components/store/base/surface'
 
 interface SettingsModalProps {
     hasTrainer?: boolean
@@ -370,9 +371,9 @@ export function SettingsModal({ hasTrainer = false, isTrainer = false }: Setting
                         return
                     }
                     setIsDeleting(true)
-                    
+
                     const res = await selfDeleteAction(deletePassword)
-                    
+
                     if (res?.error) {
                         toast({ variant: 'destructive', title: "Erro na exclusão", description: res.error })
                         setIsDeleting(false)
@@ -386,14 +387,13 @@ export function SettingsModal({ hasTrainer = false, isTrainer = false }: Setting
                 }}
             >
                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <Box
+                    <Surface
+                        variant="tonal-red"
                         padding={STORE_TOKENS.PADDING.ELEMENT}
                         rounded={STORE_TOKENS.RADIUS.SYSTEM}
-                        border
-                        borderColor={STORE_TOKENS.COLORS.ERROR}
-                        borderOpacity={STORE_TOKENS.OPACITY.MEDIUM}
-                        bg={STORE_TOKENS.COLORS.ERROR}
-                        bgOpacity={STORE_TOKENS.OPACITY.SUBTLE}
+                        display="flex"
+                        align="center"
+                        minHeight={44}
                     >
                         <Font
                             variant="body-sm"
@@ -402,7 +402,7 @@ export function SettingsModal({ hasTrainer = false, isTrainer = false }: Setting
                             }}>
                             Atenção: Ao excluir sua conta, todos os seus protocolos, histórico de treinos e métricas serão apagados <Font weight='bold'>para sempre</Font>. Esta ação não pode ser desfeita.
                         </Font>
-                    </Box>
+                    </Surface>
                     <Input
                         type="password"
                         label="SENHA DE CONFIRMAÇÃO"
