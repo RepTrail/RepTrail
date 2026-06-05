@@ -48,7 +48,7 @@ export function AffiliateLinkSharer({ token }: AffiliateLinkSharerProps) {
                         }}>
                         Seu Link de Afiliado
                     </Font>
-                    <Stack direction="row" gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
+                    <Stack direction={{ base: 'col', md: 'row' }} gap={STORE_TOKENS.SPACING.CONTAINER} align={{ base: 'stretch', md: 'center' }}>
                         <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER} flex1 rounded={STORE_TOKENS.RADIUS.SYSTEM}>
                             <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                                 <Icon icon={LinkIcon} color={STORE_TOKENS.COLORS.BRAND} size="xs" />
@@ -65,31 +65,33 @@ export function AffiliateLinkSharer({ token }: AffiliateLinkSharerProps) {
                             </Stack>
                         </GlassPanel>
                         
-                        <Button 
-                            variant={copied ? 'primary' : 'outline-primary'} 
-                            rounded={STORE_TOKENS.RADIUS.SYSTEM} 
-                            padding={STORE_TOKENS.PADDING.CONTAINER} 
-                            onClick={handleCopy}
-                        >
-                            <Icon icon={copied ? Check : Copy} size="xs" />
-                        </Button>
+                        <Stack direction="row" gap={STORE_TOKENS.SPACING.CONTAINER} align="center" justify={{ base: 'between', md: 'start' }}>
+                            <Button 
+                                variant={copied ? 'primary' : 'outline-primary'} 
+                                rounded={STORE_TOKENS.RADIUS.SYSTEM} 
+                                padding={STORE_TOKENS.PADDING.CONTAINER} 
+                                onClick={handleCopy}
+                            >
+                                <Icon icon={copied ? Check : Copy} size="xs" />
+                            </Button>
 
-                        <Stack gap={STORE_TOKENS.SPACING.NONE} align="center">
-                            <Font
-                                variant="heading"
-                                weight="black"
-                                {...{
-                                    color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
-                                }}>10%</Font>
-                            <Font
-                                variant="sub-tiny"
-                                weight="black"
-                                uppercase
-                                italic
-                                tracking="widest"
-                                {...{
-                                    color: STORE_TOKENS.COLORS.TEXT.MUTED,
-                                }}>De Comissão</Font>
+                            <Stack gap={STORE_TOKENS.SPACING.NONE} align={{ base: 'end', md: 'center' }}>
+                                <Font
+                                    variant="heading"
+                                    weight="black"
+                                    {...{
+                                        color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                                    }}>10%</Font>
+                                <Font
+                                    variant="sub-tiny"
+                                    weight="black"
+                                    uppercase
+                                    italic
+                                    tracking="widest"
+                                    {...{
+                                        color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                                    }}>De Comissão</Font>
+                            </Stack>
                         </Stack>
                     </Stack>
                 </Stack>

@@ -7,6 +7,7 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { getGeminiApiKey } from './app-settings-actions'
 import { createOpenRouterClient, callAI } from '@/lib/ai-client'
+import { AUTO_TRAINING_PRICE } from '@/lib/constants'
 
 async function checkAdmin() {
     const supabase = await createClient()
@@ -38,23 +39,27 @@ export async function getAdminOverview() {
             { data: allCosts },
             { count: productClicks },
             { count: totalProducts },
-            { count: recentSignups }
+            { count: recentSignups },
+            fetchedPlanPricing
         ] = await Promise.all([
             supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'trainer'),
             supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'student'),
             supabase.from('trainer_students').select('*', { count: 'exact', head: true }),
             supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('is_affiliate', true),
             supabase.from('profiles').select('affiliate_balance').eq('is_affiliate', true),
-            supabase.from('profiles').select('id, plan_tier, created_at, elite_until').eq('role', 'trainer'),
+            supabase.from('profiles').select('id, plan_tier, created_at, elite_until, is_billing_exempt').eq('role', 'trainer'),
             supabase.from('trainer_students').select('student_id, trainer_id').eq('active', true),
-            supabase.from('profiles').select('id, created_at').eq('role', 'student').eq('auto_training_status', 'active'),
-            supabase.from('trainer_students').select('monthly_fee, active, created_at'),
+            supabase.from('profiles').select('id, created_at, is_billing_exempt').eq('role', 'student').eq('auto_training_status', 'active'),
+            supabase.from('trainer_students').select('monthly_fee, active, created_at, trainer_id'),
             supabase.from('affiliate_commissions').select('amount, created_at, status'),
             supabase.from('operational_costs').select('amount, type, created_at'),
             supabase.from('product_clicks').select('*', { count: 'exact', head: true }),
             supabase.from('store_products').select('*', { count: 'exact', head: true }).eq('is_active', true),
-            supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'student').gte('created_at', sevenDaysAgo)
+            supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'student').gte('created_at', sevenDaysAgo),
+            getPlanPricing()
         ])
+
+        const planPricing = fetchedPlanPricing || { on_demand: { monthly: 0, price_per_student: 20, free_students_limit: 5 } }
 
         const affiliateDebt = affiliateBalances?.reduce((acc, curr) => acc + (Number(curr.affiliate_balance) || 0), 0) || 0
 
@@ -63,13 +68,11 @@ export async function getAdminOverview() {
             if (s.trainer_id) trainerStudentCounts[s.trainer_id] = (trainerStudentCounts[s.trainer_id] || 0) + 1
         })
 
-        const prices: any = { on_demand: 0 }
-        const usageRules: any = { on_demand: { limit: 5, price_per_extra: 10.90 } }
-
         let monthlySubsRevenue = 0
         let totalSubsRevenue = 0
         let trialCount = 0
         let studentsInTrial = 0
+        let payingTrainersCount = 0
 
         trainers?.forEach(t => {
             const isTrialActive = t.elite_until && new Date(t.elite_until) > new Date()
@@ -79,35 +82,62 @@ export async function getAdminOverview() {
                 return
             }
 
+            if (t.is_billing_exempt) return
+
             const p = t.plan_tier || 'on_demand'
-            const fixedPrice = prices[p] || 0
+            const tierPricing = planPricing[p] || planPricing.on_demand
+            const fixedPrice = tierPricing?.monthly || 0
             let revenue = fixedPrice
             const count = trainerStudentCounts[t.id] || 0
-            const { limit, price_per_extra } = usageRules.on_demand
+            
+            const limit = tierPricing?.free_students_limit !== undefined ? tierPricing.free_students_limit : 5
+            const price_per_extra = tierPricing?.price_per_student !== undefined ? tierPricing.price_per_student : AUTO_TRAINING_PRICE
+            
             if (count > limit) {
                 revenue += (count - limit) * price_per_extra
             }
-            monthlySubsRevenue += revenue
+            
+            if (revenue > 0) {
+                payingTrainersCount++
+                monthlySubsRevenue += revenue
+            }
+            
             const start = new Date(t.created_at)
             const now = new Date()
             const months = Math.max(1, (now.getFullYear() - start.getFullYear()) * 12 + (now.getMonth() - start.getMonth()) + 1)
             totalSubsRevenue += (revenue * months)
         })
 
-        const studentAutoTrainingPrice = 10.90
-        const monthlyStudentRevenue = (autoTrainingStudents?.length || 0) * studentAutoTrainingPrice
-        monthlySubsRevenue += monthlyStudentRevenue
-
+        const studentAutoTrainingPrice = AUTO_TRAINING_PRICE
+        let payingAutoTrainingCount = 0
+        
         autoTrainingStudents?.forEach(s => {
+            if (s.is_billing_exempt) return
+            payingAutoTrainingCount++
+            
             const start = new Date(s.created_at)
             const now = new Date()
             const months = Math.max(1, (now.getFullYear() - start.getFullYear()) * 12 + (now.getMonth() - start.getMonth()) + 1)
             totalSubsRevenue += (studentAutoTrainingPrice * months)
         })
+        
+        const monthlyStudentRevenue = payingAutoTrainingCount * studentAutoTrainingPrice
+        monthlySubsRevenue += monthlyStudentRevenue
+
+        let trainersWithRevenueCount = 0;
+        const trainerVolumes: Record<string, number> = {}
 
         const monthlyTrainerVolume = studentsData?.reduce((acc, curr) => {
-            return curr.active ? acc + (Number(curr.monthly_fee) || 0) : acc
+            if (curr.active) {
+                if (curr.trainer_id) {
+                    trainerVolumes[curr.trainer_id] = (trainerVolumes[curr.trainer_id] || 0) + (Number(curr.monthly_fee) || 0)
+                }
+                return acc + (Number(curr.monthly_fee) || 0)
+            }
+            return acc
         }, 0) || 0
+
+        trainersWithRevenueCount = Object.values(trainerVolumes).filter(v => v > 0).length
 
         const totalTrainerVolume = studentsData?.reduce((acc, curr) => {
             if (!curr.active) return acc
@@ -148,9 +178,8 @@ export async function getAdminOverview() {
         const monthlyNetProfit = monthlyGrossRevenue - commissionsThisMonth - monthlyOperationalCosts
         const totalNetProfit = totalGrossRevenue - affiliateTotalEarnings - totalOperationalCosts
 
-        const activeTrainersCount = totalTrainers || 0
-        const platformTicketPerTrainer = activeTrainersCount > 0 ? (monthlyGrossRevenue / activeTrainersCount) : 0
-        const trainerAverageTicket = activeTrainersCount > 0 ? (monthlyTrainerVolume / activeTrainersCount) : 0
+        const platformTicketPerTrainer = payingTrainersCount > 0 ? (monthlyGrossRevenue / payingTrainersCount) : 0
+        const trainerAverageTicket = trainersWithRevenueCount > 0 ? (monthlyTrainerVolume / trainersWithRevenueCount) : 0
 
         return {
             trainers: totalTrainers || 0,
