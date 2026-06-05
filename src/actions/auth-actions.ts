@@ -78,25 +78,33 @@ export async function signUpAction(formData: FormData) {
     try {
         const { adminClient } = await import('@/lib/supabase/admin')
         
+        const targetEmail = user?.email || email.trim().toLowerCase()
+        
         const { data: ghost } = await adminClient
             .from('profiles')
             .select('id')
-            .eq('email', email)
+            .eq('email', targetEmail)
             .eq('is_placeholder', true)
             .maybeSingle()
 
         if (ghost) {
             console.log(`[AUTH] Migrating ghost profile ${ghost.id} to new user ${user.id}`)
             
-            // Transfer relationships
-            await adminClient.from('trainer_students').update({ student_id: user.id }).eq('student_id', ghost.id)
-            await adminClient.from('assigned_workouts').update({ student_id: user.id }).eq('student_id', ghost.id)
-            await adminClient.from('assigned_diets').update({ student_id: user.id }).eq('student_id', ghost.id)
-            await adminClient.from('assigned_cardios').update({ student_id: user.id }).eq('student_id', ghost.id)
-            await adminClient.from('ergogenics').update({ student_id: user.id }).eq('student_id', ghost.id)
-            
-            // Delete ghost profile
-            await adminClient.from('profiles').delete().eq('id', ghost.id)
+            if (ghost.id === user.id) {
+                // The DB trigger updated the ghost profile in-place!
+                // Relationships cascaded automatically. Just unset the placeholder flag.
+                await adminClient.from('profiles').update({ is_placeholder: false }).eq('id', user.id)
+            } else {
+                // Transfer relationships manually
+                await adminClient.from('trainer_students').update({ student_id: user.id }).eq('student_id', ghost.id)
+                await adminClient.from('assigned_workouts').update({ student_id: user.id }).eq('student_id', ghost.id)
+                await adminClient.from('assigned_diets').update({ student_id: user.id }).eq('student_id', ghost.id)
+                await adminClient.from('assigned_cardios').update({ student_id: user.id }).eq('student_id', ghost.id)
+                await adminClient.from('ergogenics').update({ student_id: user.id }).eq('student_id', ghost.id)
+                
+                // Delete old ghost profile
+                await adminClient.from('profiles').delete().eq('id', ghost.id)
+            }
         }
     } catch (migErr) {
         console.error('[AUTH] Ghost migration failed:', migErr)

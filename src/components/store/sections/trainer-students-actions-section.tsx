@@ -50,7 +50,9 @@ export function TrainerStudentsActionsSection({ userId }: TrainerStudentsActions
                         </Button>
                     }
                     fields={[
+                        { name: 'name', label: 'Nome do Aluno', placeholder: 'ex: João Silva', type: 'text', required: true },
                         { name: 'email', label: 'Email da Conta', placeholder: 'ex: aluno@email.com', type: 'text', required: true },
+                        { name: 'whatsapp', label: 'WhatsApp', placeholder: '(11) 99999-9999', type: 'text', required: false },
                         { name: 'monthlyFee', label: 'Valor da Mensalidade (R$)', placeholder: '0.00', type: 'number', required: false }
                     ]}
                     actionType="create-student"

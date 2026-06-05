@@ -22,10 +22,15 @@ export function PlaceholderStudentAccessBanner({ relationship }: PlaceholderStud
     const student = relationship.student || {}
 
     const handleSendWhatsapp = () => {
-        if (!student.whatsapp) return
-        const whatsappNumber = student.whatsapp.replace(/\D/g, '')
-        const message = `Olá ${student.full_name}! Seu perfil no RepTrail foi criado e seus protocolos já estão disponíveis.\n\nPara acessar, baixe o aplicativo e faça o cadastro utilizando este exato email: *${student.email}*\n\nBons treinos!`
-        window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`, '_blank')
+        const message = `Olá ${student.full_name || 'Aluno'}! Seu perfil no RepTrail foi criado e seus protocolos já estão disponíveis.\n\nPara acessar, baixe o aplicativo e faça o cadastro utilizando este exato email: *${student.email}*\n\nBons treinos!`
+        
+        if (student.whatsapp) {
+            const whatsappNumber = student.whatsapp.replace(/\D/g, '')
+            window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`, '_blank')
+        } else {
+            // Se não tem número cadastrado, abre o WhatsApp para escolher o contato manualmente
+            window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank')
+        }
     }
 
     return (
@@ -57,25 +62,23 @@ export function PlaceholderStudentAccessBanner({ relationship }: PlaceholderStud
                         </Box>
                     </Stack>
 
-                    {student.whatsapp && (
-                        <Button 
-                            id="tour-whatsapp-access"
-                            variant="outline-orange" 
-                            size="sm" 
-                            rounded={STORE_TOKENS.RADIUS.FULL}
-                            fullWidth={{ base: true, md: false }}
-                            onClick={handleSendWhatsapp}
-                        >
-                            <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                                <Icon icon={Send} size="xs" color="orange" />
-                                <Font
-                                    variant="label-caps"
-                                    {...{
-                                        color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
-                                    }}>Enviar Acesso</Font>
-                            </Inline>
-                        </Button>
-                    )}
+                    <Button 
+                        id="tour-whatsapp-access"
+                        variant="outline-orange" 
+                        size="sm" 
+                        rounded={STORE_TOKENS.RADIUS.FULL}
+                        fullWidth={{ base: true, md: false }}
+                        onClick={handleSendWhatsapp}
+                    >
+                        <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                            <Icon icon={Send} size="xs" color="orange" />
+                            <Font
+                                variant="label-caps"
+                                {...{
+                                    color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                                }}>Enviar Acesso</Font>
+                        </Inline>
+                    </Button>
                 </Stack>
             </Surface>
         </Box>
