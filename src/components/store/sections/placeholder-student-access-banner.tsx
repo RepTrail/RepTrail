@@ -29,7 +29,7 @@ export function PlaceholderStudentAccessBanner({ relationship }: PlaceholderStud
     }
 
     return (
-        <Box position="relative" fullWidth mb={STORE_TOKENS.SPACING.SECTION}>
+        <Box position="relative" fullWidth style={{ marginBottom: '50px' }}>
             <Surface
                 variant="tonal-orange"
                 rounded={STORE_TOKENS.RADIUS.SYSTEM}
