@@ -89,7 +89,7 @@ self.addEventListener('fetch', (event) => {
     requestUrl.pathname.startsWith('/fonts') ||
     requestUrl.pathname.startsWith('/icons') ||
     event.request.destination === 'font' ||
-    event.request.destination === 'image';
+    (event.request.destination === 'image' && requestUrl.origin === self.location.origin);
 
   if (isStaticAsset) {
     event.respondWith(
