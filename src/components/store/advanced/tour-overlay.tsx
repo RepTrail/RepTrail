@@ -181,7 +181,7 @@ export function TourOverlay({
                         pointerEvents: 'auto'
                     }}
                 >
-                    <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM} variant="glass" border="emerald">
+                    <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM} variant="glass" border="standard" borderColor="emerald">
                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                             <Stack direction="row" align="start" justify="between">
                                 <Font {...STORE_TOKENS.TYPOGRAPHY.HEADING} variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>
@@ -194,12 +194,12 @@ export function TourOverlay({
                                 )}
                             </Stack>
                             
-                            <Font variant="body-sm" color={STORE_TOKENS.COLORS.TEXT.MUTED} leading="relaxed">
+                            <Font variant="body-sm" color={STORE_TOKENS.COLORS.TEXT.MUTED}>
                                 {content}
                             </Font>
 
                             {subtext && (
-                                <Font variant="label" color={STORE_TOKENS.COLORS.BRAND} italic>
+                                <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL} color={STORE_TOKENS.COLORS.BRAND}>
                                     {subtext}
                                 </Font>
                             )}
