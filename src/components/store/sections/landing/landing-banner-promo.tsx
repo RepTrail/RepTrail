@@ -18,9 +18,10 @@ import { Surface } from '@/components/store/base/surface'
 
 interface LandingBannerPromoProps {
   role?: 'trainer' | 'student'
+  freeLimit?: number
 }
 
-export function LandingBannerPromo({ role = 'trainer' }: LandingBannerPromoProps) {
+export function LandingBannerPromo({ role = 'trainer', freeLimit = 5 }: LandingBannerPromoProps) {
   const { primaryColor } = useRegistry()
 
   const config = {
@@ -28,8 +29,8 @@ export function LandingBannerPromo({ role = 'trainer' }: LandingBannerPromoProps
       badgeText: 'Comece agora sem custos',
       badgeIcon: ShieldCheck,
       title1: 'Grátis até',
-      titleHighlight: '5 Alunos.',
-      desc: 'No RepTrail você começa sem pagar nada e escala junto com seu negócio. Use todas as ferramentas de gestão profissional e prescrição gratuitamente para seus primeiros 5 alunos.',
+      titleHighlight: `${freeLimit} Alunos.`,
+      desc: `No RepTrail você começa sem pagar nada e escala junto com seu negócio. Use todas as ferramentas de gestão profissional e prescrição gratuitamente para seus primeiros ${freeLimit} alunos.`,
       ctaText: 'Quero transformar minha consultoria',
       ctaLink: '/auth/signup',
       ctaEvent: 'Guarantee Start Trainer',
@@ -39,7 +40,7 @@ export function LandingBannerPromo({ role = 'trainer' }: LandingBannerPromoProps
         'Acesso Total Liberado',
         'Suporte VIP Incluso'
       ],
-      circleNumber: '05',
+      circleNumber: freeLimit.toString().padStart(2, '0'),
       circleLabel: 'Alunos',
       circleIcon: Users
     },

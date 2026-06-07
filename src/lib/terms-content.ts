@@ -6,8 +6,8 @@ Bem-vindo ao RepTrail. Ao utilizar nossa plataforma como Personal Trainer, você
 1. **Ativação do Plano On-Demand**: Ao criar sua conta, você adere automaticamente ao plano **On-Demand**. Este plano permite que você gerencie todos os aspectos da sua consultoria sem mensalidade fixa.
 
 2. **Política de Cobrança**:
-   - **Limite Gratuito**: Você pode gerenciar até **5 alunos ativos** sem custo algum.
-   - **Alunos Extras**: A partir do 6º aluno ativo, será cobrada uma taxa de **R$ 10,90 por aluno excedente** ao mês.
+   - **Limite Gratuito**: Você pode gerenciar até o limite de alunos definido no plano gratuito vigente sem custo algum.
+   - **Alunos Extras**: Acima deste limite, será cobrada uma taxa por aluno excedente ao mês.
    - **Método de Pagamento**: Para manter o acesso a alunos acima do limite gratuito, você deverá cadastrar um método de pagamento válido via Asaas.
 
 3. **Responsabilidade Profissional**: Você é o único responsável técnico pelas prescrições de treinos, dietas e orientações fornecidas aos seus alunos através da plataforma.

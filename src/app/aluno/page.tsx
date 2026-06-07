@@ -1,6 +1,7 @@
 import React from 'react'
 import { RegistryProvider } from '@/components/store/advanced/registry-context'
 import { getLandingSessionInfo, actions } from '@/lib/dal/server'
+import { getPublicPlanPricing } from '@/actions/trainer-actions'
 import { LandingShell } from '@/components/store/advanced/landing-shell'
 
 // Landing Page Sections
@@ -18,8 +19,12 @@ import { LandingCTA } from '@/components/store/sections/landing/landing-cta'
 export const dynamic = 'force-dynamic'
 
 export default async function StudentLandingPage() {
-  const trainers = await actions.getTrainerRanking()
-  const { user, role, dashboardUrl } = await getLandingSessionInfo()
+  const [trainers, { user, role, dashboardUrl }, pricing] = await Promise.all([
+    actions.getTrainerRanking(),
+    getLandingSessionInfo(),
+    getPublicPlanPricing()
+  ])
+  const freeLimit = pricing?.on_demand?.free_students_limit ?? 5
 
   const navActions = !user ? [
     { label: 'Login', href: '/auth/login', variant: 'outline-zinc' as const },
@@ -45,9 +50,9 @@ export default async function StudentLandingPage() {
         ]}
       >
         <AffiliateTracker />
-        <LandingHero role="student" />
+        <LandingHero role="student" freeLimit={freeLimit} />
         <LandingVideoShowcase />
-        <LandingBannerPromo role="student" />
+        <LandingBannerPromo role="student" freeLimit={freeLimit} />
         <LandingFeatures role="student" />
         <LandingSocialProof role="student" />
         <LandingAbout role="student" />

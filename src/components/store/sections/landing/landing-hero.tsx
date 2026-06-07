@@ -24,9 +24,10 @@ import { GlassPanel, Surface } from '@/components/store/base/surface'
 
 interface LandingHeroProps {
   role?: 'trainer' | 'student' | 'affiliate'
+  freeLimit?: number
 }
 
-export function LandingHero({ role = 'trainer' }: LandingHeroProps) {
+export function LandingHero({ role = 'trainer', freeLimit = 5 }: LandingHeroProps) {
   const { primaryColor } = useRegistry()
 
   // Track page view event
@@ -50,7 +51,7 @@ export function LandingHero({ role = 'trainer' }: LandingHeroProps) {
         link: '/auth/signup',
         event: 'Hero Start Trainer'
       },
-      trustSignals: ['Montagem em 2min', 'Grátis até 5 alunos', 'Suporte VIP'],
+      trustSignals: ['Montagem em 2min', `Grátis até ${freeLimit} alunos`, 'Suporte VIP'],
       mockupType: 'macbook' as const,
       videoId: 'JEMOCa62khw',
       floatingBadge1: { title: 'Faturamento Mensal', value: 'R$ 12.450,00', isPrimary: true },

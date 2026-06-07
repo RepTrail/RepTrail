@@ -1,6 +1,9 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
+import { cookies } from 'next/headers'
+import { getPlanPricing } from '@/actions/admin-actions'
+import { AUTO_TRAINING_PRICE, DEFAULT_FREE_STUDENTS_LIMIT } from '@/lib/constants'
 import { revalidatePath } from 'next/cache'
 import { normalizeDays } from '@/lib/utils'
 import { createAdminClient } from '@/lib/supabase/admin'
@@ -1083,7 +1086,7 @@ export async function getPublicPlanPricing() {
         free_students_limit?: number;
         pro_features_threshold?: number;
     }> = {
-        on_demand: { monthly: 0, quarterly_discount: 0, annual_discount: 0, student_limit: 9999, photo_updates_limit: 2, price_per_student: 20, free_students_limit: 5, pro_features_threshold: 8 },
+        on_demand: { monthly: 0, quarterly_discount: 0, annual_discount: 0, student_limit: 9999, photo_updates_limit: 2, price_per_student: 20, free_students_limit: DEFAULT_FREE_STUDENTS_LIMIT, pro_features_threshold: 8 },
         start: { monthly: 49.90, quarterly_discount: 15, annual_discount: 20, student_limit: 10, photo_updates_limit: 2 },
         pro: { monthly: 149.90, quarterly_discount: 15, annual_discount: 20, student_limit: 50, photo_updates_limit: 4 },
         elite: { monthly: 299.90, quarterly_discount: 15, annual_discount: 20, student_limit: 120, photo_updates_limit: 9999 },
@@ -1137,11 +1140,14 @@ export async function toggleStudentStatus(relationshipId: string, isActive: bool
                 .eq('trainer_id', user.id)
                 .eq('active', true)
 
+            const planPricing = await getPublicPlanPricing()
+            const freeStudentsLimit = planPricing?.on_demand?.free_students_limit ?? DEFAULT_FREE_STUDENTS_LIMIT
+
             const activeCount = count || 0
-            if (activeCount >= 5 && !profile?.asaas_subscription_id && !profile?.is_billing_exempt) {
+            if (activeCount >= freeStudentsLimit && !profile?.asaas_subscription_id && !profile?.is_billing_exempt) {
                 return {
                     success: false,
-                    error: 'Limite gratuito atingido. Para ter mais de 5 alunos ativos, você precisa configurar sua assinatura no menu Planos.'
+                    error: `Limite gratuito atingido. Para ter mais de ${freeStudentsLimit} alunos ativos, você precisa configurar sua assinatura no menu Planos.`
                 }
             }
         }

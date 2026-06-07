@@ -3,7 +3,8 @@
 import { createClient } from '@/lib/supabase/server'
 import { fetchAsaas } from '@/lib/asaas'
 import { revalidatePath } from 'next/cache'
-import { FREE_STUDENTS_LIMIT, ON_DEMAND_PRICE_PER_STUDENT } from '@/lib/constants'
+import { DEFAULT_FREE_STUDENTS_LIMIT, ON_DEMAND_PRICE_PER_STUDENT } from '@/lib/constants'
+import { getPlanPricing } from '@/actions/admin-actions'
 
 export async function searchAsaasCustomer(cpfCnpj: string) {
     try {
@@ -126,8 +127,11 @@ export async function createAsaasSubscription(
                 .eq('trainer_id', user.id)
                 .eq('active', true)
 
+            const planPricing = await getPlanPricing()
+            const freeStudentsLimit = planPricing?.on_demand?.free_students_limit ?? DEFAULT_FREE_STUDENTS_LIMIT
+
             const totalStudents = count || 0
-            const billable = Math.max(0, totalStudents - FREE_STUDENTS_LIMIT)
+            const billable = Math.max(0, totalStudents - freeStudentsLimit)
             value = billable * ON_DEMAND_PRICE_PER_STUDENT
         }
 

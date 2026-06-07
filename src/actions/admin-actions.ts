@@ -7,7 +7,7 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { getGeminiApiKey } from './app-settings-actions'
 import { createOpenRouterClient, callAI } from '@/lib/ai-client'
-import { AUTO_TRAINING_PRICE } from '@/lib/constants'
+import { AUTO_TRAINING_PRICE, DEFAULT_FREE_STUDENTS_LIMIT } from '@/lib/constants'
 
 async function checkAdmin() {
     const supabase = await createClient()
@@ -59,7 +59,7 @@ export async function getAdminOverview() {
             getPlanPricing()
         ])
 
-        const planPricing = fetchedPlanPricing || { on_demand: { monthly: 0, price_per_student: 20, free_students_limit: 5 } }
+        const planPricing = fetchedPlanPricing || { on_demand: { monthly: 0, price_per_student: 20, free_students_limit: DEFAULT_FREE_STUDENTS_LIMIT } }
 
         const affiliateDebt = affiliateBalances?.reduce((acc, curr) => acc + (Number(curr.affiliate_balance) || 0), 0) || 0
 
@@ -90,7 +90,7 @@ export async function getAdminOverview() {
             let revenue = fixedPrice
             const count = trainerStudentCounts[t.id] || 0
             
-            const limit = tierPricing?.free_students_limit !== undefined ? tierPricing.free_students_limit : 5
+            const limit = tierPricing?.free_students_limit !== undefined ? tierPricing.free_students_limit : DEFAULT_FREE_STUDENTS_LIMIT
             const price_per_extra = tierPricing?.price_per_student !== undefined ? tierPricing.price_per_student : AUTO_TRAINING_PRICE
             
             if (count > limit) {
@@ -487,7 +487,7 @@ export async function getPlanPricing() {
         ])
 
     const result: Record<string, any> = {
-        on_demand: { monthly: 0, quarterly_discount: 0, annual_discount: 0, price_per_student: 20, free_students_limit: 5, pro_features_threshold: 8 },
+        on_demand: { monthly: 0, quarterly_discount: 0, annual_discount: 0, price_per_student: 20, free_students_limit: DEFAULT_FREE_STUDENTS_LIMIT, pro_features_threshold: 8 },
         start: { ...DEFAULT_PRICES.start },
         pro: { ...DEFAULT_PRICES.pro },
         elite: { ...DEFAULT_PRICES.elite },

@@ -4,6 +4,7 @@ import React from 'react'
 import { useQuery } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { getTrainerStudents, getTrainerProfile, getTrainerRanking } from '@/lib/dal/remote'
+import { getPublicPlanPricing } from '@/actions/trainer-actions'
 import { Grid } from '@/components/store/base/grid'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { StatsCard } from '@/components/store/intermediary/stats-card'
@@ -27,15 +28,18 @@ export function TrainerStudentsMetricsSection({ userId }: TrainerStudentsMetrics
         queryKey: QUERY_KEYS.trainer.ranking(),
         queryFn: getTrainerRanking,
     })
+    const { data: pricing } = useQuery({
+        queryKey: ['plan-pricing'],
+        queryFn: getPublicPlanPricing,
+    })
 
     const currentTier = (profile?.plan_tier as 'on_demand' | 'start' | 'pro' | 'elite') || 'on_demand'
-    const TIER_LIMITS = {
-        on_demand: 5,
-        start: 10,
-        pro: 50,
-        elite: Infinity
-    }
-    const limit = TIER_LIMITS[currentTier] || 5
+    
+    const limit = currentTier === 'elite' ? Infinity : (
+        currentTier === 'on_demand' 
+            ? ((pricing as any)?.on_demand?.free_students_limit ?? 5)
+            : ((pricing as any)?.[currentTier]?.student_limit ?? 5)
+    )
     const limitDisplay = limit === Infinity ? '∞' : String(limit)
 
     const userRankIndex = fullRanking.findIndex((t: any) => t.id === userId)

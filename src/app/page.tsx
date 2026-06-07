@@ -1,6 +1,7 @@
 import React from 'react'
 import { RegistryProvider } from '@/components/store/advanced/registry-context'
 import { getLandingSessionInfo } from '@/lib/dal/server'
+import { getPublicPlanPricing } from '@/actions/trainer-actions'
 import { LandingShell } from '@/components/store/advanced/landing-shell'
 
 // Landing Page Sections
@@ -16,7 +17,11 @@ import { LandingFAQ } from '@/components/store/sections/landing/landing-faq'
 export const dynamic = 'force-dynamic'
 
 export default async function LandingPage() {
-  const { user, role, isAffiliate, dashboardUrl } = await getLandingSessionInfo()
+  const [{ user, role, isAffiliate, dashboardUrl }, pricing] = await Promise.all([
+    getLandingSessionInfo(),
+    getPublicPlanPricing()
+  ])
+  const freeLimit = pricing?.on_demand?.free_students_limit ?? 5
 
   const navActions = !user ? [
     { label: 'Login', href: '/auth/login', variant: 'outline-zinc' as const },
@@ -47,14 +52,14 @@ export default async function LandingPage() {
         ]}
       >
         <AffiliateTracker />
-        <LandingHero role="trainer" />
+        <LandingHero role="trainer" freeLimit={freeLimit} />
         <LandingVideoShowcase />
         <LandingAbout role="trainer" />
         <LandingAbout role="trainer-authority" />
         <LandingSocialProof role="trainer" />
         <LandingFeatures role="trainer" />
         <LandingAbout role="trainer-differentials" />
-        <LandingBannerPromo role="trainer" />
+        <LandingBannerPromo role="trainer" freeLimit={freeLimit} />
         <LandingFAQ role="trainer" />
       </LandingShell>
     </RegistryProvider>
