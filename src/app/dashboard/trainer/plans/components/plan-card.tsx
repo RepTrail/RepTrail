@@ -14,16 +14,12 @@ import { PlanFeatures } from '@/types'
 import { AsaasPaymentModal } from '@/components/store/advanced/asaas-payment-modal'
 
 const featureLabels: Partial<Record<keyof PlanFeatures, string>> = {
-    has_ergogenics: 'Módulo de Ergogênicos',
-    has_import_pdf_ai: 'Importação de PDF via IA',
-    has_public_profile: 'Perfil Público',
-    has_public_feed: 'Feed Público',
-    has_store: 'Loja de Auto Treino',
-    has_ranking: 'Participação no Ranking',
-    has_elite_badge: 'Selo Elite',
     has_workouts: 'Construtor de Treinos',
     has_diets: 'Planos Alimentares',
     has_cardio: 'Prescrição de Cardio',
+    has_ergogenics: 'Módulo de Ergogênicos',
+    has_import_pdf_ai: 'Importação de PDF via IA',
+    has_public_profile: 'Perfil Público',
 }
 
 interface PlanCardProps {

@@ -50,10 +50,6 @@ export function PlanForm({ initialData, onSuccess }: PlanFormProps) {
     const [hasErgogenics, setHasErgogenics] = useState(initialData?.plan_features_dynamic?.has_ergogenics ?? false)
     const [hasImportPdfAi, setHasImportPdfAi] = useState(initialData?.plan_features_dynamic?.has_import_pdf_ai ?? false)
     const [hasPublicProfile, setHasPublicProfile] = useState(initialData?.plan_features_dynamic?.has_public_profile ?? false)
-    const [hasPublicFeed, setHasPublicFeed] = useState(initialData?.plan_features_dynamic?.has_public_feed ?? false)
-    const [hasStore, setHasStore] = useState(initialData?.plan_features_dynamic?.has_store ?? false)
-    const [hasRanking, setHasRanking] = useState(initialData?.plan_features_dynamic?.has_ranking ?? false)
-    const [hasEliteBadge, setHasEliteBadge] = useState(initialData?.plan_features_dynamic?.has_elite_badge ?? false)
 
     // Card Theme
     const [cardTheme, setCardTheme] = useState<string>(initialData?.card_theme || 'default')
@@ -92,10 +88,10 @@ export function PlanForm({ initialData, onSuccess }: PlanFormProps) {
                 has_ergogenics: hasErgogenics,
                 has_import_pdf_ai: hasImportPdfAi,
                 has_public_profile: hasPublicProfile,
-                has_public_feed: hasPublicFeed,
-                has_store: hasStore,
-                has_ranking: hasRanking,
-                has_elite_badge: hasEliteBadge
+                has_public_feed: false,
+                has_store: false,
+                has_ranking: true,
+                has_elite_badge: false
             }
         }
 
@@ -188,7 +184,7 @@ export function PlanForm({ initialData, onSuccess }: PlanFormProps) {
 
                             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                                 <Input
-                                    label="Limite de Fotos (Mês)"
+                                    label="Limite de Fotos por Aluno (Mês)"
                                     type="number"
                                     value={photoUpdatesUnlimited ? '' : photoUpdatesLimit}
                                     onChange={(e) => setPhotoUpdatesLimit(e.target.value)}
@@ -225,10 +221,6 @@ export function PlanForm({ initialData, onSuccess }: PlanFormProps) {
                             <FormCheckbox label="Ergogênicos" checked={hasErgogenics} onChange={setHasErgogenics} />
                             <FormCheckbox label="Importação de PDF (IA)" checked={hasImportPdfAi} onChange={setHasImportPdfAi} />
                             <FormCheckbox label="Perfil Público" checked={hasPublicProfile} onChange={setHasPublicProfile} />
-                            <FormCheckbox label="Feed Público" checked={hasPublicFeed} onChange={setHasPublicFeed} />
-                            <FormCheckbox label="Loja" checked={hasStore} onChange={setHasStore} />
-                            <FormCheckbox label="Ranking" checked={hasRanking} onChange={setHasRanking} />
-                            <FormCheckbox label="Selo Elite" checked={hasEliteBadge} onChange={setHasEliteBadge} color="amber" />
                         </Grid>
                     </Stack>
                 </Surface>
