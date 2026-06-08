@@ -5,8 +5,6 @@ import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { useState } from 'react'
 import { useQuery, useAuthUser, actions } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
-import { RegistryProvider } from '@/components/store/advanced/registry-context'
-import { DashboardShell } from '@/components/store/advanced/dashboard-shell'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { Stack } from '@/components/store/base/stack'
@@ -41,29 +39,7 @@ export default function AdminLogsPage() {
     )
 
     return (
-        <RegistryProvider defaultColor="red">
-            <DashboardShell
-                color={STORE_TOKENS.COLORS.ERROR}
-                links={[
-                    { href: '/admin/dashboard', label: 'Início', icon: 'BarChart3', exact: true },
-                    { href: '/admin/personais', label: 'Personais', icon: 'UserCheck' },
-                    { href: '/admin/alunos', label: 'Alunos', icon: 'Users' },
-                    { href: '/admin/afiliados', label: 'Afiliados', icon: 'HeartHandshake' },
-                    { href: '/admin/loja', label: 'Loja', icon: 'ShoppingBag' },
-                    { href: '/admin/logs', label: 'Logs', icon: 'Activity' },
-                ]}
-                user={{
-                    id: adminUser?.id || 'admin',
-                    name: adminUser?.full_name || 'Admin RepTrail',
-                    email: adminUser?.email || 'admin@reptrail.com.br',
-                    avatar_url: adminUser?.avatar_url || null,
-                    isAdmin: true,
-                    isAffiliate: adminUser?.is_affiliate || false,
-                }}
-                profileHref="/dashboard"
-                profileIcon="ArrowRightLeft"
-            >
-                <RegistryMain
+        <RegistryMain
                     title="LOGS DE ATIVIDADE"
                     subtitle="Rastro de auditoria de todas as ações realizadas no painel administrativo."
                     icon={Activity}
@@ -106,7 +82,5 @@ export default function AdminLogsPage() {
                         </Stack>
                     </RegistrySection>
                 </RegistryMain>
-            </DashboardShell>
-        </RegistryProvider>
     );
 }

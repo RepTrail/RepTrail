@@ -42,6 +42,7 @@ export default async function TrainerLayout({ children }: { children: React.Reac
         { href: '/dashboard/trainer/import-pdf', label: 'Importar PDF', icon: 'FileUp',      hidden: betaTesterMode },
         { href: '/dashboard/trainer/loja',       label: 'Loja',         icon: 'ShoppingBag' },
         { href: '/dashboard/trainer/ranking',    label: 'Ranking',      icon: 'Trophy' },
+        { href: '/dashboard/trainer/plans',      label: 'Planos',       icon: 'CreditCard' },
         { href: '/dashboard/trainer/profile',    label: 'Meu Perfil',   icon: 'User' },
     ]
 

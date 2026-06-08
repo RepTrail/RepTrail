@@ -10,7 +10,7 @@ import { Box } from '@/components/store/base/box'
 import { Award, Activity, Zap, Sparkles, Crown } from 'lucide-react'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
-type TrainerTier = 'on_demand' | 'start' | 'pro' | 'elite'
+type TrainerTier = 'on_demand'
 
 interface TrainerProfileGamificationCardProps {
     planTier?: string
@@ -20,12 +20,9 @@ interface TrainerProfileGamificationCardProps {
 
 const TIER_CONFIG: Record<
     TrainerTier,
-    { icon: typeof Activity; color: 'zinc-500' | 'blue' | 'emerald' | 'amber'; surface: 'tonal-zinc' | 'tonal-blue' | 'tonal-emerald' | 'tonal-amber' }
+    { icon: typeof Activity; color: 'zinc-500'; surface: 'tonal-zinc' }
 > = {
     on_demand: { icon: Activity, color: 'zinc-500', surface: 'tonal-zinc' },
-    start: { icon: Zap, color: 'blue', surface: 'tonal-blue' },
-    pro: { icon: Sparkles, color: 'emerald', surface: 'tonal-emerald' },
-    elite: { icon: Crown, color: 'amber', surface: 'tonal-amber' },
 }
 
 export function TrainerProfileGamificationCard({

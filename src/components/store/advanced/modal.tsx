@@ -28,6 +28,9 @@ interface ModalProps {
   disabled?: boolean
   noPadding?: boolean
   hideCancel?: boolean
+  hideFooter?: boolean
+  confirmType?: 'button' | 'submit'
+  formId?: string
 }
 
 export function Modal({
@@ -46,7 +49,10 @@ export function Modal({
   isLoading = false,
   disabled = false,
   noPadding = false,
-  hideCancel = false
+  hideCancel = false,
+  hideFooter = false,
+  confirmType,
+  formId
 }: ModalProps) {
   const [shouldRender, setShouldRender] = useState(false)
   const [animateState, setAnimateState] = useState<'closed' | 'open'>('closed')
@@ -144,7 +150,6 @@ export function Modal({
             overflowX="hidden"
             bg={STORE_TOKENS.COLORS.BACKGROUND} 
             bgOpacity={STORE_TOKENS.OPACITY.BACKGROUND} 
-            padding={noPadding ? STORE_TOKENS.PADDING.NONE : STORE_TOKENS.PADDING.CONTAINER} 
             minHeight={0}
             style={{ 
               overflowY: 'auto', 
@@ -152,16 +157,18 @@ export function Modal({
               minHeight: 0 
             }}
           >
-            {children ? children : (
-              <Font
-                variant="description"
-                {...{
-                  color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
-                }}>
-                Configure as opções do seu perfil e preferências de sistema aqui.
-                Todas as alterações são aplicadas instantaneamente ao seu ambiente de trabalho.
-              </Font>
-            )}
+            <Box padding={noPadding ? STORE_TOKENS.PADDING.NONE : STORE_TOKENS.PADDING.CONTAINER}>
+              {children ? children : (
+                <Font
+                  variant="description"
+                  {...{
+                    color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
+                  }}>
+                  Configure as opções do seu perfil e preferências de sistema aqui.
+                  Todas as alterações são aplicadas instantaneamente ao seu ambiente de trabalho.
+                </Font>
+              )}
+            </Box>
           </Box>
 
           <Divider
@@ -170,8 +177,9 @@ export function Modal({
             }} />
 
           {/* Footer Actions */}
-          <Box shrink={0} bg={STORE_TOKENS.COLORS.SURFACE} bgOpacity={100} zIndex={10} position="relative" padding={STORE_TOKENS.PADDING.CONTAINER}>
-            <Stack direction={{ base: 'col', md: 'row' }} gap={STORE_TOKENS.SPACING.ELEMENT} flex1>
+          {!hideFooter && (
+            <Box shrink={0} bg={STORE_TOKENS.COLORS.SURFACE} bgOpacity={100} zIndex={10} position="relative" padding={STORE_TOKENS.PADDING.CONTAINER}>
+              <Stack direction={{ base: 'col', md: 'row' }} gap={STORE_TOKENS.SPACING.ELEMENT} flex1>
               {!hideCancel && (
                 <Button 
                   variant="outline-red" 
@@ -185,11 +193,13 @@ export function Modal({
                 </Button>
               )}
               <Button 
+                type={confirmType || 'button'}
+                form={formId}
                 variant={confirmVariant || 'outline-emerald'} 
                 rounded={STORE_TOKENS.RADIUS.SYSTEM} 
                 fullWidth 
                 flex1
-                onClick={onConfirm || onClose}
+                onClick={confirmType === 'submit' ? undefined : (onConfirm || onClose)}
                 disabled={disabled || isLoading}
                 gap={STORE_TOKENS.SPACING.ELEMENT}
               >
@@ -202,6 +212,7 @@ export function Modal({
               </Button>
             </Stack>
           </Box>
+          )}
         </Surface>
       </ModalContainer>
     </ModalOverlay>

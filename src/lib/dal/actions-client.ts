@@ -1,4 +1,6 @@
 export * from '@/actions/admin-actions'
+export * from '@/actions/admin-plan-actions'
+export * from '@/actions/plan-features-actions'
 export * from '@/actions/admin-affiliate-actions'
 export * from '@/actions/affiliate-actions'
 export * from '@/actions/ai-protocol-actions'

@@ -36,6 +36,25 @@ export async function checkAdminSession() {
   return { user, isAdmin: !!profile?.is_admin }
 }
 
+export async function getTrainerPlansSession() {
+  const supabase = await getSupabaseServer()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { user: null, planId: null, pricingData: null }
+
+  const [profileRes, { getPublicPlanPricing }] = await Promise.all([
+    supabase.from('profiles').select('plan_id').eq('id', user.id).single(),
+    import('@/actions/trainer-actions')
+  ])
+
+  const pricingData = await getPublicPlanPricing()
+
+  return {
+    user,
+    planId: profileRes.data?.plan_id,
+    pricingData
+  }
+}
+
 export async function getLandingSessionInfo() {
   const supabase = await getSupabaseServer()
   const { data: { user } } = await supabase.auth.getUser()

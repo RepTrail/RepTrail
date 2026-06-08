@@ -264,10 +264,7 @@ export async function searchTrainers(filters: {
 
     const tierPoints: Record<string, number> = {
         'none': 0,
-        'start': 0,
         'on_demand': 50,
-        'pro': 100,
-        'elite': 500
     }
 
     const enrichedProfiles = profiles.map(p => {

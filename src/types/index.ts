@@ -1,4 +1,3 @@
-
 export type Profile = {
     id: string;
     email: string;
@@ -11,6 +10,7 @@ export type Profile = {
     rating?: number;
     is_verified?: boolean;
     created_at: string;
+    plan_tier?: string;
 };
 
 export type StudentDetails = {
@@ -31,7 +31,7 @@ export type TrainerStudent = {
     monthly_fee: number;
     active: boolean;
     billing_source: 'marketplace' | 'external' | 'manual';
-    plan_tier: 'none' | 'on_demand' | 'start' | 'pro' | 'elite';
+    plan_tier?: string;
     student?: Profile;
 };
 
@@ -102,3 +102,38 @@ export type LoadHistory = {
     reps_performed: number | null;
     recorded_at: string;
 };
+
+export type Plan = {
+  id: string
+  slug: string
+  name: string
+  description: string | null
+  billing_type: 'monthly' | 'annual' | 'on_demand'
+  base_price_cents: number
+  sort_order: number
+  card_theme: 'default' | 'highlighted' | 'premium'
+  is_active: boolean
+  created_at: string
+}
+
+export type PlanFeatures = {
+  plan_id: string
+  student_limit: number | null
+  free_students_limit: number | null
+  price_per_student_cents: number | null
+  photo_updates_limit: number | null
+  prestige_points: number
+  has_workouts: boolean
+  has_diets: boolean
+  has_cardio: boolean
+  has_ergogenics: boolean
+  has_import_pdf_ai: boolean
+  has_public_profile: boolean
+  has_public_feed: boolean
+  has_store: boolean
+  has_ranking: boolean
+  has_elite_badge: boolean
+}
+
+export type PlanWithFeatures = Plan & { plan_features_dynamic: PlanFeatures }
+export type PlanWithStats = PlanWithFeatures & { subscriber_count: number }

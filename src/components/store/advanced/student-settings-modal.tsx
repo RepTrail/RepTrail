@@ -15,7 +15,7 @@ import {
     Loader2,
     Crown
 } from 'lucide-react'
-import { selfDeleteAction } from '@/actions/auth-actions'
+import { actions } from '@/lib/dal'
 import { getTermsStatus } from '@/lib/dal/remote'
 import { getAutoTrainingTrialInfoForCurrentUser, enableAutoTrainingTrialForCurrentUser } from '@/lib/dal/remote'
 import { useToast } from '@/hooks/use-toast'
@@ -372,7 +372,7 @@ export function SettingsModal({ hasTrainer = false, isTrainer = false }: Setting
                     }
                     setIsDeleting(true)
 
-                    const res = await selfDeleteAction(deletePassword)
+                    const res = await actions.selfDeleteAction(deletePassword)
 
                     if (res?.error) {
                         toast({ variant: 'destructive', title: "Erro na exclusão", description: res.error })

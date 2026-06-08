@@ -46,12 +46,18 @@ export async function POST(req: Request) {
                 const externalRef = body.payment?.externalReference || body.subscription?.externalReference
 
                 if (externalRef) {
-                    const [userId, tier] = externalRef.split('_')
+                    const parts = externalRef.split('_')
+                    const userId = parts[0]
+                    const tier = parts[1]
+                    const planId = parts[2]
 
                     if (tier === 'auto_training') {
                         updatePayload.auto_training_status = 'active'
-                    } else if (tier === 'on_demand') {
-                        updatePayload.plan_tier = 'on_demand'
+                    } else {
+                        updatePayload.plan_tier = tier
+                        if (planId) {
+                            updatePayload.plan_id = planId
+                        }
                     }
 
                     const { error } = await (admin as any)

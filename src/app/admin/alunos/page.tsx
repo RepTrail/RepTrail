@@ -4,8 +4,6 @@ import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 import { useState, useTransition } from 'react'
 import { useQueryClient, useAuthUser, useAdminStudents, useImpersonateUser, useDeleteUser, useGrantAutoTraining } from '@/lib/dal'
-import { RegistryProvider } from '@/components/store/advanced/registry-context'
-import { DashboardShell } from '@/components/store/advanced/dashboard-shell'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { Modal } from '@/components/store/advanced/modal'
@@ -79,29 +77,7 @@ export default function AdminAlunosPage() {
         )
 
     return (
-        <RegistryProvider defaultColor="red">
-            <DashboardShell
-                color={STORE_TOKENS.COLORS.ERROR}
-                links={[
-                    { href: '/admin/dashboard', label: 'Início', icon: 'BarChart3', exact: true },
-                    { href: '/admin/personais', label: 'Personais', icon: 'UserCheck' },
-                    { href: '/admin/alunos', label: 'Alunos', icon: 'Users' },
-                    { href: '/admin/afiliados', label: 'Afiliados', icon: 'HeartHandshake' },
-                    { href: '/admin/loja', label: 'Loja', icon: 'ShoppingBag' },
-                    { href: '/admin/logs', label: 'Logs', icon: 'Activity' },
-                ]}
-                user={{
-                    id: adminUser?.id || 'admin',
-                    name: adminUser?.full_name || 'Admin RepTrail',
-                    email: adminUser?.email || 'admin@reptrail.com.br',
-                    avatar_url: adminUser?.avatar_url || null,
-                    isAdmin: true,
-                    isAffiliate: adminUser?.is_affiliate || false,
-                }}
-                profileHref="/dashboard"
-                profileIcon="ArrowRightLeft"
-            >
-                <RegistryMain
+        <RegistryMain
                     title="GESTÃO DE ALUNOS"
                     subtitle="Monitoramento da base de alunos e ativação de planos automatizados."
                     icon={GraduationCap}
@@ -164,7 +140,5 @@ export default function AdminAlunosPage() {
                         </Font>
                     </Modal>
                 </RegistryMain>
-            </DashboardShell>
-        </RegistryProvider>
-    );
+    )
 }

@@ -9,8 +9,6 @@ import {
     BarChart3, TrendingUp, CreditCard, Activity,
     AlertCircle, HeartHandshake, Users2, Users, ShoppingBag
 } from 'lucide-react'
-import { RegistryProvider } from '@/components/store/advanced/registry-context'
-import { DashboardShell } from '@/components/store/advanced/dashboard-shell'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { Stack } from '@/components/store/base/stack'
@@ -89,29 +87,7 @@ export default function AdminDashboardPage() {
     }
 
     return (
-        <RegistryProvider defaultColor="red">
-            <DashboardShell
-                color={STORE_TOKENS.COLORS.ERROR}
-                links={[
-                    { href: '/admin/dashboard', label: 'Início', icon: 'BarChart3', exact: true },
-                    { href: '/admin/personais', label: 'Personais', icon: 'UserCheck' },
-                    { href: '/admin/alunos', label: 'Alunos', icon: 'Users' },
-                    { href: '/admin/afiliados', label: 'Afiliados', icon: 'HeartHandshake' },
-                    { href: '/admin/loja', label: 'Loja', icon: 'ShoppingBag' },
-                    { href: '/admin/logs', label: 'Logs', icon: 'Activity' },
-                ]}
-                user={{
-                    id: adminUser?.id || 'admin',
-                    name: adminUser?.full_name || 'Admin RepTrail',
-                    email: adminUser?.email || 'admin@reptrail.com.br',
-                    avatar_url: adminUser?.avatar_url || null,
-                    isAdmin: true,
-                    isAffiliate: adminUser?.is_affiliate || false,
-                }}
-                profileHref="/dashboard"
-                profileIcon="ArrowRightLeft"
-            >
-                <RegistryMain
+        <RegistryMain
                     title="Visão Geral"
                     subtitle="Visão geral financeira e operacional da plataforma RepTrail."
                     icon={BarChart3}
@@ -200,7 +176,5 @@ export default function AdminDashboardPage() {
 
                     </Stack>
                 </RegistryMain>
-            </DashboardShell>
-        </RegistryProvider>
     );
 }

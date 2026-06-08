@@ -1,7 +1,6 @@
 import React from 'react'
 import { RegistryProvider } from '@/components/store/advanced/registry-context'
 import { getLandingSessionInfo, actions } from '@/lib/dal/server'
-import { getPublicPlanPricing } from '@/actions/trainer-actions'
 import { LandingShell } from '@/components/store/advanced/landing-shell'
 
 // Landing Page Sections
@@ -22,9 +21,11 @@ export default async function StudentLandingPage() {
   const [trainers, { user, role, dashboardUrl }, pricing] = await Promise.all([
     actions.getTrainerRanking(),
     getLandingSessionInfo(),
-    getPublicPlanPricing()
+    actions.getPublicPlanPricing()
   ])
-  const freeLimit = pricing?.on_demand?.free_students_limit ?? 5
+  const onDemandPlan = pricing?.find((p: any) => p.slug === 'on_demand' || p.billing_type === 'on_demand')
+  const feats = Array.isArray(onDemandPlan?.plan_features_dynamic) ? onDemandPlan.plan_features_dynamic[0] : onDemandPlan?.plan_features_dynamic
+  const freeLimit = feats?.free_students_limit ?? 5
 
   const navActions = !user ? [
     { label: 'Login', href: '/auth/login', variant: 'outline-zinc' as const },

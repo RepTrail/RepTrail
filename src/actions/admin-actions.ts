@@ -39,15 +39,25 @@ export async function getAdminOverview() {
             { data: allCosts },
             { count: productClicks },
             { count: totalProducts },
-            { count: recentSignups },
-            fetchedPlanPricing
+            { count: recentSignups }
         ] = await Promise.all([
             supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'trainer'),
             supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'student'),
             supabase.from('trainer_students').select('*', { count: 'exact', head: true }),
             supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('is_affiliate', true),
             supabase.from('profiles').select('affiliate_balance').eq('is_affiliate', true),
-            supabase.from('profiles').select('id, plan_tier, created_at, elite_until, is_billing_exempt').eq('role', 'trainer'),
+            supabase.from('profiles').select(`
+                id, 
+                created_at, 
+                elite_until, 
+                is_billing_exempt,
+                plans (
+                    plan_features_dynamic (
+                        free_students_limit,
+                        price_per_student_cents
+                    )
+                )
+            `).eq('role', 'trainer'),
             supabase.from('trainer_students').select('student_id, trainer_id').eq('active', true),
             supabase.from('profiles').select('id, created_at, is_billing_exempt').eq('role', 'student').eq('auto_training_status', 'active'),
             supabase.from('trainer_students').select('monthly_fee, active, created_at, trainer_id'),
@@ -56,10 +66,7 @@ export async function getAdminOverview() {
             supabase.from('product_clicks').select('*', { count: 'exact', head: true }),
             supabase.from('store_products').select('*', { count: 'exact', head: true }).eq('is_active', true),
             supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'student').gte('created_at', sevenDaysAgo),
-            getPlanPricing()
         ])
-
-        const planPricing = fetchedPlanPricing || { on_demand: { monthly: 0, price_per_student: 20, free_students_limit: DEFAULT_FREE_STUDENTS_LIMIT } }
 
         const affiliateDebt = affiliateBalances?.reduce((acc, curr) => acc + (Number(curr.affiliate_balance) || 0), 0) || 0
 
@@ -84,14 +91,15 @@ export async function getAdminOverview() {
 
             if (t.is_billing_exempt) return
 
-            const p = t.plan_tier || 'on_demand'
-            const tierPricing = planPricing[p] || planPricing.on_demand
-            const fixedPrice = tierPricing?.monthly || 0
-            let revenue = fixedPrice
+            const plans = t.plans as any
+            const features = Array.isArray(plans) ? plans[0]?.plan_features_dynamic : plans?.plan_features_dynamic
+            const f = Array.isArray(features) ? features[0] : features
+
             const count = trainerStudentCounts[t.id] || 0
+            let revenue = 0
             
-            const limit = tierPricing?.free_students_limit !== undefined ? tierPricing.free_students_limit : DEFAULT_FREE_STUDENTS_LIMIT
-            const price_per_extra = tierPricing?.price_per_student !== undefined ? tierPricing.price_per_student : AUTO_TRAINING_PRICE
+            const limit = f?.free_students_limit !== undefined && f?.free_students_limit !== null ? f.free_students_limit : DEFAULT_FREE_STUDENTS_LIMIT
+            const price_per_extra = f?.price_per_student_cents !== undefined && f?.price_per_student_cents !== null ? f.price_per_student_cents / 100 : AUTO_TRAINING_PRICE
             
             if (count > limit) {
                 revenue += (count - limit) * price_per_extra
@@ -227,7 +235,8 @@ export async function getAllTrainers() {
     const { data } = await supabase
         .from('profiles')
         .select(`
-            id, full_name, email, plan_tier, average_rating, total_reviews, is_elite, created_at, avatar_url, trainer_code, specialty, region, is_billing_exempt,
+            id, full_name, email, plan_id, average_rating, total_reviews, is_elite, created_at, avatar_url, trainer_code, specialty, region, is_billing_exempt,
+            plans (slug),
             students:trainer_students!trainer_id(monthly_fee, active, created_at)
         `)
         .eq('role', 'trainer')
@@ -283,15 +292,26 @@ export async function getAllTrainers() {
     return processedData
 }
 
-export async function updateUserPlanTier(userId: string, planTier: string) {
+export async function updateUserPlan(userId: string, planSlug: string) {
     const { supabase, userId: adminId } = await checkAdmin()
-    const { error } = await supabase.from('profiles').update({
-        plan_tier: planTier,
+    
+    // Find the plan id for the given slug
+    const { data: planData } = await supabase.from('plans').select('id').eq('slug', planSlug).single()
+    const planId = planData?.id
+
+    const updatePayload: any = {
         is_billing_exempt: true,
         elite_until: null
-    }).eq('id', userId)
+    }
+
+    if (planId) {
+        updatePayload.plan_id = planId
+    }
+
+    const { error } = await supabase.from('profiles').update(updatePayload).eq('id', userId)
     if (error) return { error: error.message }
-    await supabase.from('admin_logs').insert({ admin_id: adminId, action: 'update_plan_tier', target_id: userId, details: { plan_tier: planTier } })
+    
+    await supabase.from('admin_logs').insert({ admin_id: adminId, action: 'update_plan', target_id: userId, details: { plan_slug: planSlug, plan_id: planId } })
     revalidatePath('/admin')
     revalidatePath('/dashboard/trainer', 'layout')
     revalidatePath('/dashboard/trainer/plans')
@@ -324,7 +344,6 @@ export async function grantEliteTrial(userId: string) {
     const eliteUntil = new Date()
     eliteUntil.setDate(eliteUntil.getDate() + 15)
     const { error } = await supabase.from('profiles').update({
-        plan_tier: 'elite',
         is_elite: true,
         elite_until: eliteUntil.toISOString(),
         trial_activated_at: new Date().toISOString()
@@ -466,12 +485,6 @@ export async function getRecentStudentActivity() {
         .slice(0, 20)
 }
 
-const DEFAULT_PRICES: Record<string, { monthly: number; quarterly_discount: number; annual_discount: number }> = {
-    start: { monthly: 49.90, quarterly_discount: 15, annual_discount: 20 },
-    pro: { monthly: 149.90, quarterly_discount: 15, annual_discount: 20 },
-    elite: { monthly: 299.90, quarterly_discount: 15, annual_discount: 20 },
-}
-
 export async function getPlanPricing() {
     const supabase = await createClient()
     const { data } = await supabase
@@ -488,9 +501,6 @@ export async function getPlanPricing() {
 
     const result: Record<string, any> = {
         on_demand: { monthly: 0, quarterly_discount: 0, annual_discount: 0, price_per_student: 20, free_students_limit: DEFAULT_FREE_STUDENTS_LIMIT, pro_features_threshold: 8 },
-        start: { ...DEFAULT_PRICES.start },
-        pro: { ...DEFAULT_PRICES.pro },
-        elite: { ...DEFAULT_PRICES.elite },
     }
 
     for (const row of data || []) {

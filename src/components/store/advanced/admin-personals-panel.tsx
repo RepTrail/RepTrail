@@ -1,8 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { useQuery } from '@/lib/dal'
-import { getPublicPlanPricing } from '@/actions/trainer-actions'
+import { useQuery, actions } from '@/lib/dal'
 import { Stack } from '@/components/store/base/stack'
 import { UserListItem } from '@/components/store/intermediary/user-list-item'
 import { EmptyState } from '@/components/store/intermediary/empty-state'
@@ -26,11 +25,11 @@ export function AdminPersonalsPanel({ onDelete, onInspect }: AdminPersonalsPanel
         'Juliana Silva': false,
     })
 
-    const { data: pricing } = useQuery({
-        queryKey: ['plan-pricing'],
-        queryFn: getPublicPlanPricing,
+    const { data: pricingData } = useQuery({
+        queryKey: ['publicPricing'],
+        queryFn: () => actions.getPublicPlanPricing()
     })
-    const limit = (pricing as any)?.on_demand?.free_students_limit ?? 5
+    const limit = (pricingData as any)?.on_demand?.free_students_limit ?? 5
 
     const toggleService = (name: string) => {
         setUserServices(prev => ({ ...prev, [name]: !prev[name] }))

@@ -5,8 +5,6 @@ import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { useState, useTransition } from 'react'
 import { useQuery, useQueryClient, useAuthUser, actions } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
-import { RegistryProvider } from '@/components/store/advanced/registry-context'
-import { DashboardShell } from '@/components/store/advanced/dashboard-shell'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { Modal } from '@/components/store/advanced/modal'
@@ -73,29 +71,7 @@ export default function AdminLojaPage() {
     const filtered = products.filter(p => !search || p.name?.toLowerCase().includes(search.toLowerCase()))
 
     return (
-        <RegistryProvider defaultColor="red">
-            <DashboardShell
-                color={STORE_TOKENS.COLORS.ERROR}
-                links={[
-                    { href: '/admin/dashboard', label: 'Início', icon: 'BarChart3', exact: true },
-                    { href: '/admin/personais', label: 'Personais', icon: 'UserCheck' },
-                    { href: '/admin/alunos', label: 'Alunos', icon: 'Users' },
-                    { href: '/admin/afiliados', label: 'Afiliados', icon: 'HeartHandshake' },
-                    { href: '/admin/loja', label: 'Loja', icon: 'ShoppingBag' },
-                    { href: '/admin/logs', label: 'Logs', icon: 'Activity' },
-                ]}
-                user={{
-                    id: adminUser?.id || 'admin',
-                    name: adminUser?.full_name || 'Admin RepTrail',
-                    email: adminUser?.email || 'admin@reptrail.com.br',
-                    avatar_url: adminUser?.avatar_url || null,
-                    isAdmin: true,
-                    isAffiliate: adminUser?.is_affiliate || false,
-                }}
-                profileHref="/dashboard"
-                profileIcon="ArrowRightLeft"
-            >
-                <RegistryMain
+        <RegistryMain
                     title="CATÁLOGO DA LOJA"
                     subtitle="Gestão de itens da loja oficial, suplementação e equipamentos."
                     icon={ShoppingBag}
@@ -195,7 +171,5 @@ export default function AdminLojaPage() {
                         }}
                     />
                 </RegistryMain>
-            </DashboardShell>
-        </RegistryProvider>
     );
 }

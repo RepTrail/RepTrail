@@ -74,7 +74,7 @@ export function RegistryMain({
   subtitle,
   icon,
   contextLabel,
-  showTabs = true,
+  showTabs = false,
   showHeader = true,
   rightElement,
   backPath

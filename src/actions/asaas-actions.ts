@@ -5,6 +5,7 @@ import { fetchAsaas } from '@/lib/asaas'
 import { revalidatePath } from 'next/cache'
 import { DEFAULT_FREE_STUDENTS_LIMIT, ON_DEMAND_PRICE_PER_STUDENT } from '@/lib/constants'
 import { getPlanPricing } from '@/actions/admin-actions'
+import { getTrainerPlanFeatures } from '@/actions/plan-features-actions'
 
 export async function searchAsaasCustomer(cpfCnpj: string) {
     try {
@@ -97,7 +98,8 @@ export async function createAsaasSubscription(
         ccv: string,
         postalCode: string,
         addressNumber: string
-    }
+    },
+    planId?: string
 ) {
     const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
@@ -107,7 +109,10 @@ export async function createAsaasSubscription(
         const { data: profile } = await supabase.from('profiles').select('is_billing_exempt, email, whatsapp, cpf_cnpj').eq('id', user.id).single()
 
         if (profile?.is_billing_exempt) {
-            await supabase.from('profiles').update({ plan_tier: tier }).eq('id', user.id)
+            await supabase.from('profiles').update({ 
+                plan_tier: tier,
+                ...(planId ? { plan_id: planId } : {})
+            }).eq('id', user.id)
             revalidatePath('/')
             return { success: true }
         }
@@ -118,6 +123,7 @@ export async function createAsaasSubscription(
         let value: number
 
         if (tier === 'auto_training') {
+            // TODO: Auto-training price could also be dynamic, but keeping fallback for now
             value = ON_DEMAND_PRICE_PER_STUDENT
         } else {
             // Calculate value for on_demand (price per student after the first few free)
@@ -127,12 +133,14 @@ export async function createAsaasSubscription(
                 .eq('trainer_id', user.id)
                 .eq('active', true)
 
-            const planPricing = await getPlanPricing()
-            const freeStudentsLimit = planPricing?.on_demand?.free_students_limit ?? DEFAULT_FREE_STUDENTS_LIMIT
+            const features = await getTrainerPlanFeatures(user.id)
+            const freeStudentsLimit = features?.free_students_limit ?? DEFAULT_FREE_STUDENTS_LIMIT
+            const pricePerStudentCents = features?.price_per_student_cents ?? (ON_DEMAND_PRICE_PER_STUDENT * 100)
+            const pricePerStudent = pricePerStudentCents / 100
 
             const totalStudents = count || 0
             const billable = Math.max(0, totalStudents - freeStudentsLimit)
-            value = billable * ON_DEMAND_PRICE_PER_STUDENT
+            value = billable * pricePerStudent
         }
 
         console.log(`[ASAAS_DEBUG] Subscription value: ${value} for tier: ${tier}`)
@@ -155,7 +163,7 @@ export async function createAsaasSubscription(
             nextDueDate: new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString().split('T')[0], // Amanhã
             cycle: 'MONTHLY',
             description: `Assinatura RepTrail - ${tier}`,
-            externalReference: `${user.id}_${tier}`
+            externalReference: planId ? `${user.id}_${tier}_${planId}` : `${user.id}_${tier}`
         }
 
         if (billingType === 'CREDIT_CARD' && creditCardData) {

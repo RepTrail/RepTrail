@@ -40,9 +40,6 @@ export function TrainerDashboardClient({ userId, betaTesterMode }: TrainerDashbo
         queryFn: () => getTrainerActivityFeed(userId),
     })
 
-    // ─── Derived State ───────────────────────────────────────────────────
-    const currentTier = profile?.plan_tier || 'on_demand'
-
     // Stats (These come from the profile/ranking or separate queries if needed)
     // For now we use the ones available in the profile or provided initial data
     const activeStudents = profile?.stats?.active_students || 0
@@ -53,17 +50,8 @@ export function TrainerDashboardClient({ userId, betaTesterMode }: TrainerDashbo
     const userRankIndex = fullRanking.findIndex((t: any) => t.id === userId)
     const userRank = userRankIndex !== -1 ? userRankIndex + 1 : '-'
 
-    const tierName = profile?.plan_tier
-        ? profile.plan_tier.split('_').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
-        : 'On Demand'
-
-    const tierIcons: Record<string, any> = {
-        on_demand: Activity,
-        start: Zap,
-        pro: Sparkles,
-        elite: Crown
-    }
-    const TierIcon = tierIcons[currentTier] || Activity
+    const tierName = Array.isArray(profile?.plans) ? profile.plans[0]?.name : (profile?.plans?.name || 'On Demand')
+    const TierIcon = Activity
     const trainerCode = profile?.trainer_code?.trim().toUpperCase()
     const publicProfileHref = trainerCode ? `/personal/${trainerCode}` : undefined
 

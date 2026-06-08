@@ -21,7 +21,6 @@ export function TrainerMetricsSection({ userId }: { userId: string }) {
         queryFn: getTrainerRanking,
     })
 
-    const currentTier = profile?.plan_tier || 'on_demand'
 
     const activeStudents = profile?.stats?.active_students || 0
     const newStudentsThisMonth = profile?.stats?.new_students_this_month || 0
@@ -31,17 +30,8 @@ export function TrainerMetricsSection({ userId }: { userId: string }) {
     const userRankIndex = fullRanking.findIndex((t: any) => t.id === userId)
     const userRank = userRankIndex !== -1 ? userRankIndex + 1 : '-'
 
-    const tierName = profile?.plan_tier
-        ? profile.plan_tier.split('_').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
-        : 'On Demand'
-
-    const tierIcons: Record<string, any> = {
-        on_demand: Activity,
-        start: Zap,
-        pro: Sparkles,
-        elite: Crown
-    }
-    const TierIcon = tierIcons[currentTier] || Activity
+    const tierName = Array.isArray(profile?.plans) ? profile.plans[0]?.name : (profile?.plans?.name || 'On Demand')
+    const TierIcon = Activity
 
     return (
         <RegistrySection

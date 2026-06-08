@@ -21,6 +21,7 @@ const ADMIN_LINKS = [
     { href: '/admin/dashboard', label: 'Início', icon: 'BarChart3', exact: true },
     { href: '/admin/personais', label: 'Personais', icon: 'UserCheck' },
     { href: '/admin/alunos', label: 'Alunos', icon: 'Users' },
+    { href: '/admin/plans', label: 'Planos', icon: 'CreditCard' },
     { href: '/admin/afiliados', label: 'Afiliados', icon: 'HeartHandshake' },
     { href: '/admin/loja', label: 'Loja', icon: 'ShoppingBag' },
     { href: '/admin/logs', label: 'Logs', icon: 'Activity' },
@@ -30,6 +31,7 @@ const ADMIN_MOBILE_LINKS = [
     { href: '/admin/dashboard', label: 'Início', icon: 'BarChart3', exact: true },
     { href: '/admin/personais', label: 'Personais', icon: 'UserCheck' },
     { href: '/admin/alunos', label: 'Alunos', icon: 'Users' },
+    { href: '/admin/plans', label: 'Planos', icon: 'CreditCard' },
     { href: '/admin/loja', label: 'Loja', icon: 'ShoppingBag' },
     { href: '/admin/logs', label: 'Logs', icon: 'Activity' },
 ]

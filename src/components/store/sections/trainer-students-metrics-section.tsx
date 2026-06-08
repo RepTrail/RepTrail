@@ -1,10 +1,9 @@
 'use client'
 
 import React from 'react'
-import { useQuery } from '@/lib/dal'
+import { useQuery, actions } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { getTrainerStudents, getTrainerProfile, getTrainerRanking } from '@/lib/dal/remote'
-import { getPublicPlanPricing } from '@/actions/trainer-actions'
 import { Grid } from '@/components/store/base/grid'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { StatsCard } from '@/components/store/intermediary/stats-card'
@@ -28,19 +27,13 @@ export function TrainerStudentsMetricsSection({ userId }: TrainerStudentsMetrics
         queryKey: QUERY_KEYS.trainer.ranking(),
         queryFn: getTrainerRanking,
     })
-    const { data: pricing } = useQuery({
-        queryKey: ['plan-pricing'],
-        queryFn: getPublicPlanPricing,
+    const { data: studentLimitFromDb } = useQuery({
+        queryKey: ['plan-student-limit', userId],
+        queryFn: () => actions.trainerFeatureLimit(userId, 'student_limit'),
     })
 
-    const currentTier = (profile?.plan_tier as 'on_demand' | 'start' | 'pro' | 'elite') || 'on_demand'
-    
-    const limit = currentTier === 'elite' ? Infinity : (
-        currentTier === 'on_demand' 
-            ? ((pricing as any)?.on_demand?.free_students_limit ?? 5)
-            : ((pricing as any)?.[currentTier]?.student_limit ?? 5)
-    )
-    const limitDisplay = limit === Infinity ? '∞' : String(limit)
+    const limit = studentLimitFromDb === undefined ? 9999 : (studentLimitFromDb ?? 9999)
+    const limitDisplay = limit === 9999 ? '∞' : String(limit)
 
     const userRankIndex = fullRanking.findIndex((t: any) => t.id === userId)
     const userRank = userRankIndex !== -1 ? userRankIndex + 1 : '-'

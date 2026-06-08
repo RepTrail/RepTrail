@@ -29,6 +29,8 @@ interface AsaasPaymentModalProps {
     currentName?: string
     monthlyTotal: number
     userId?: string
+    plan_id?: string
+    plan_slug?: string
 }
 
 type Step = 'info' | 'payment' | 'card_details'
@@ -40,7 +42,9 @@ export function AsaasPaymentModal({
     currentCpf,
     currentName,
     monthlyTotal,
-    userId
+    userId,
+    plan_id,
+    plan_slug
 }: AsaasPaymentModalProps) {
     const [cpf, setCpf] = useState(currentCpf || '')
     const [fullName, setFullName] = useState(currentName || '')
@@ -141,7 +145,8 @@ export function AsaasPaymentModal({
                     ccv: cardData.cvv,
                     postalCode: cardData.postalCode.replace(/\D/g, ''),
                     addressNumber: cardData.addressNumber
-                }
+                },
+                plan_id
             )
 
             if (res.success) {
