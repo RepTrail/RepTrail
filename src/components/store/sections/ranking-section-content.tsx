@@ -4,7 +4,9 @@ import React from 'react'
 import { useQuery } from '@/lib/dal'
 import { Stack } from '@/components/store/base/stack'
 import { Grid } from '@/components/store/base/grid'
-import { RegistrySection } from '@/components/store/advanced/registry-section'
+import { Font } from '@/components/store/base/font'
+import { Icon } from '@/components/store/base/icon'
+import { Inline } from '@/components/store/base/layout'
 import { Trophy, TrendingUp } from 'lucide-react'
 import { RankingPodiumCard } from '@/components/store/intermediary/ranking-podium-card'
 import { RankingListItem } from '@/components/store/intermediary/ranking-list-item'
@@ -44,11 +46,16 @@ export function RankingSectionContent() {
     return (
         <Stack gap={STORE_TOKENS.SPACING.EMPTY_STATE}>
             {/* 1. Pódio Section */}
-            <RegistrySection
-                title="PÓDIO REPTRAIL"
-                subtitle="O top 3 do momento na nossa comunidade."
-                icon={TrendingUp}
-            >
+            <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT}>
+                <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                        <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                            <Icon icon={TrendingUp} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                            <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>PÓDIO REPTRAIL</Font>
+                        </Inline>
+                        <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>O top 3 do momento na nossa comunidade.</Font>
+                    </Stack>
+                </Stack>
                 <Grid cols={{ base: 1, md: 3 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
                     {podium.map((trainer: any, idx: number) => (
                         <RankingPodiumCard
@@ -58,15 +65,20 @@ export function RankingSectionContent() {
                         />
                     ))}
                 </Grid>
-            </RegistrySection>
+            </Stack>
 
             {/* 2. Classificação Geral Section (only if there are more than 3) */}
             {generalList.length > 0 && (
-                <RegistrySection
-                    title="CLASSIFICAÇÃO GERAL"
-                    subtitle="Todos os treinadores certificados e ativos."
-                    icon={Trophy}
-                >
+                <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT}>
+                    <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                        <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                            <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                                <Icon icon={Trophy} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                                <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>CLASSIFICAÇÃO GERAL</Font>
+                            </Inline>
+                            <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>Todos os treinadores certificados e ativos.</Font>
+                        </Stack>
+                    </Stack>
                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                         {generalList.map((trainer: any, idx: number) => (
                             <RankingListItem
@@ -76,7 +88,7 @@ export function RankingSectionContent() {
                             />
                         ))}
                     </Stack>
-                </RegistrySection>
+                </Stack>
             )}
         </Stack>
     )

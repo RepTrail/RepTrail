@@ -6,8 +6,6 @@ import { Grid } from '@/components/store/base/grid'
 import { Font } from '@/components/store/base/font'
 import { Swatch } from '@/components/store/base/swatch'
 import { GlassPanel, CardHeader, CardContent } from '@/components/store/base/surface'
-import { RegistrySection } from '@/components/store/advanced/registry-section'
-import { Palette } from 'lucide-react'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 export function ColorsSectionContent({ id }: { id?: string }) {
@@ -27,12 +25,7 @@ export function ColorsSectionContent({ id }: { id?: string }) {
     ] as const
 
     return (
-        <RegistrySection 
-            id={id}
-            title="Paleta de Cores" 
-            icon={Palette} 
-            subtitle="Cores institucionais e funcionais aplicadas no ecossistema RepTrail."
-        >
+        <Stack gap={STORE_TOKENS.SPACING.CONTAINER} id={id}>
             <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                 {/* Brand Colors with Opacity Variations */}
                 <GlassPanel padding={STORE_TOKENS.PADDING.NONE}>
@@ -173,6 +166,6 @@ export function ColorsSectionContent({ id }: { id?: string }) {
                     </Stack>
                 </GlassPanel>
             </Stack>
-        </RegistrySection>
+        </Stack>
     );
 }

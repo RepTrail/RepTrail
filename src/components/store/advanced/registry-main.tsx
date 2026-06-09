@@ -33,7 +33,6 @@ import { useRegistry } from '@/components/store/advanced/registry-context'
 import { SegmentedSwitch } from '@/components/store/intermediary/segmented-switch'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { AdminSectionContent } from '../sections/admin-section-content'
-import { AffiliateSectionContent } from '../sections/affiliate-section-content'
 import { StudentRegistryContent } from '../sections/student-registry-content'
 
 const iconMap: Record<string, LucideIcon> = {
@@ -66,6 +65,8 @@ interface RegistryMainProps {
   showHeader?: boolean
   rightElement?: React.ReactNode
   backPath?: string
+  hideFooter?: boolean
+  noPadding?: boolean
 }
 
 export function RegistryMain({
@@ -77,7 +78,9 @@ export function RegistryMain({
   showTabs = false,
   showHeader = true,
   rightElement,
-  backPath
+  backPath,
+  hideFooter = false,
+  noPadding = false
 }: RegistryMainProps) {
   const { activeTab, setActiveTab, primaryColor } = useRegistry()
   const words = title.trim().split(' ')
@@ -103,7 +106,7 @@ export function RegistryMain({
       case 'admin':
         return <AdminSectionContent />
       case 'afiliado':
-        return <AffiliateSectionContent />
+        return null // AffiliateSectionContent was removed
       case 'aluno':
         return <StudentRegistryContent id="aluno-content" />
       default:
@@ -124,16 +127,16 @@ export function RegistryMain({
       direction="col"
       flex1
       {...{
-        paddingX: STORE_TOKENS.PADDING.CONTAINER,
+        paddingX: noPadding ? undefined : STORE_TOKENS.PADDING.CONTAINER,
 
-        paddingY: {
+        paddingY: noPadding ? undefined : {
           base: STORE_TOKENS.PADDING.SAFE_AREA_INSET,
           md: STORE_TOKENS.PADDING.CONTAINER,
         },
 
         minHeight: "screen",
       }}>
-      <Stack flex1 gap={{ base: STORE_TOKENS.SPACING.EMPTY_STATE, md: STORE_TOKENS.SPACING.SECTION }}>
+      <Stack flex1 gap={noPadding ? undefined : { base: STORE_TOKENS.SPACING.EMPTY_STATE as any, md: STORE_TOKENS.SPACING.SECTION as any }}>
         {/* Header Section title*/}
         {showHeader && (
           <Stack direction={{ base: 'col', md: 'row' }} justify="between" align={{ base: 'start', md: 'center' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
@@ -179,22 +182,24 @@ export function RegistryMain({
         )}
 
         {/* Content Sections */}
-        <Stack flex1 gap={{ base: STORE_TOKENS.SPACING.EMPTY_STATE, md: STORE_TOKENS.SPACING.SECTION }} fullWidth>
+        <Stack flex1 gap={noPadding ? undefined : { base: STORE_TOKENS.SPACING.EMPTY_STATE as any, md: STORE_TOKENS.SPACING.SECTION as any }} fullWidth>
           {renderContent()}
         </Stack>
 
         {/* Footer Area - Upgraded to Liquid Glass */}
-        <Box shrink={0}>
-          <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER}>
-            <Inline justify="between">
-              <Font
-                variant="sub-tiny"
-                {...{
-                  color: STORE_TOKENS.COLORS.TEXT.MUTED,
-                }}>RepTrail Design System v2.0 - 2026</Font>
-            </Inline>
-          </GlassPanel>
-        </Box>
+        {!hideFooter && (
+          <Box shrink={0}>
+            <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER}>
+              <Inline justify="between">
+                <Font
+                  variant="sub-tiny"
+                  {...{
+                    color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                  }}>RepTrail Design System v2.0 - 2026</Font>
+              </Inline>
+            </GlassPanel>
+          </Box>
+        )}
       </Stack>
     </Scaffold>
   );

@@ -5,7 +5,6 @@ import Link from 'next/link'
 import { useQuery } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { getTrainerStudents } from '@/lib/dal/remote'
-import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { ActionableListCard } from '@/components/store/intermediary/actionable-list-card'
 import { Input } from '@/components/store/base/input'
 import { Stack } from '@/components/store/base/stack'
@@ -59,22 +58,29 @@ export function TrainerStudentsListSection({ userId }: TrainerStudentsListSectio
 
     return (
         <>
-            <RegistrySection
-                title="Lista da Matrícula"
-                subtitle="Gerencie seus alunos ativos e suas informações."
-                icon={Users}
-                rightElement={
-                    <Box width={{ base: 'full', md: 'auto' }}>
-                        <Input
-                            type="text"
-                            placeholder="Buscar aluno..."
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                            icon={<Icon icon={Search} size="xs" />}
-                        />
+        <Stack gap={STORE_TOKENS.SPACING.SECTION} fullWidth>
+            <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT}>
+                <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                        <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                            <Icon icon={Users} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                            <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>Lista da Matrícula</Font>
+                        </Inline>
+                        <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>Gerencie seus alunos ativos e suas informações.</Font>
+                    </Stack>
+                    <Box display="flex" align="end" fullWidth={{ base: true, lg: false }}>
+                        <Box width={{ base: 'full', md: 'auto' }}>
+                            <Input
+                                type="text"
+                                placeholder="Buscar aluno..."
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                                icon={<Icon icon={Search} size="xs" />}
+                            />
+                        </Box>
                     </Box>
-                }
-            >
+                </Stack>
+                <Box fullWidth display="flex" direction="col">
                 {filteredStudents.length > 0 ? (
                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
                         {filteredStudents.map((item: any, index: number) => {
@@ -213,7 +219,9 @@ export function TrainerStudentsListSection({ userId }: TrainerStudentsListSectio
                         variant="zinc"
                     />
                 )}
-            </RegistrySection>
+                </Box>
+            </Stack>
+        </Stack>
             <Modal
                 isOpen={!!deactivateTarget}
                 onClose={() => setDeactivateTarget(null)}

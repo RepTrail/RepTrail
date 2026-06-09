@@ -436,7 +436,7 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
                                 cursor={isGenerating ? "not-allowed" : "pointer"}
                                 fullWidth
                                 border
-                                borderWidth={1}
+                                borderWidth={2}
                                 borderColor={STORE_TOKENS.COLORS.DIVIDER.STANDARD}
                                 display="flex"
                                 direction="col"
@@ -481,7 +481,7 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
                                 fullWidth
                                 aspectRatio="square"
                                 border
-                                borderWidth={1}
+                                borderWidth={2}
                                 borderColor={STORE_TOKENS.COLORS.DIVIDER.STANDARD}
                                 display="flex"
                                 direction="col"
@@ -525,7 +525,7 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
                             bgOpacity={STORE_TOKENS.OPACITY.MODAL}
                             rounded={STORE_TOKENS.RADIUS.SYSTEM}
                             border
-                            borderWidth={1}
+                            borderWidth={2}
                             borderColor={STORE_TOKENS.COLORS.DIVIDER.STANDARD}
                             padding={STORE_TOKENS.PADDING.CONTAINER}
                             position="relative"
@@ -540,9 +540,9 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
                                         color: "SECONDARY",
                                     }}>
                                     PRONTO PARA <Font
-                                    {...{
-                                        color: "white",
-                                    }}>IMPACTAR</Font>?
+                                        {...{
+                                            color: "white",
+                                        }}>IMPACTAR</Font>?
                                 </Font>
                                 <Font
                                     variant="tiny"
@@ -562,7 +562,7 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
                             rounded={STORE_TOKENS.RADIUS.SYSTEM}
                             overflow="hidden"
                             border
-                            borderWidth={1}
+                            borderWidth={2}
                             borderColor={STORE_TOKENS.COLORS.DIVIDER.STANDARD}
                             display="flex"
                             align="center"

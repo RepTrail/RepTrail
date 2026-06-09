@@ -1,16 +1,12 @@
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { Suspense } from 'react'
 import { dehydrate, HydrationBoundary } from '@/lib/dal'
 import { actions } from '@/lib/dal/server'
 import { getQueryClient } from '@/lib/get-query-client'
 import { QUERY_KEYS } from '@/lib/query-keys'
-import { TrainerStudentErgogenicsShell } from '@/components/store/advanced/trainer-student-ergogenics-shell'
-
-import { Box } from '@/components/store/base/box'
-import { Font } from '@/components/store/base/font'
-import { Surface } from '@/components/store/base/surface'
-import { STORE_TOKENS } from '@/components/store/constants/tokens'
+import { RegistryMain } from '@/components/store/advanced/registry-main'
+import { TrainerStudentErgogenicsSection } from '@/components/store/sections/trainer-student-ergogenics-section'
+import { TrainerStudentNotFoundSection } from '@/components/store/sections/trainer-student-not-found-section'
 
 export const metadata = {
     title: 'Ergogênicos & Ciclos | RepTrail',
@@ -27,11 +23,15 @@ export default async function StudentErgogenicsPage({ params }: { params: Promis
 
     if (!relationship) {
         return (
-            <Box fullWidth padding={STORE_TOKENS.PADDING.CONTAINER} textAlign="center">
-                <Font variant="auxiliary" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="bold">
-                    Dados não encontrados ou você não tem acesso a este aluno.
-                </Font>
-            </Box>
+            <RegistryMain
+                title="ERGOGÊNICOS DO ALUNO"
+                subtitle="Gerenciamento de ergogênicos"
+                icon="FlaskConical"
+                contextLabel="Área do Personal"
+                showTabs={false}
+            >
+                <TrainerStudentNotFoundSection />
+            </RegistryMain>
         )
     }
 
@@ -55,24 +55,20 @@ export default async function StudentErgogenicsPage({ params }: { params: Promis
     ])
 
     return (
-        <Suspense
-            fallback={
-                <Surface animation="pulse" variant="sunken" border="none" gap={STORE_TOKENS.SPACING.CONTAINER}>
-                    <Box bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.SURFACE} {...{ width: 160, height: 32 }} rounded={STORE_TOKENS.RADIUS.SYSTEM} />
-                    <Box bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.SURFACE} height={120} rounded={STORE_TOKENS.RADIUS.SYSTEM} />
-                    <Box bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.SURFACE} height={400} rounded={STORE_TOKENS.RADIUS.SYSTEM} />
-                </Surface>
-            }
+        <RegistryMain
+            title={`ERGOGÊNICOS DE ${studentName.toUpperCase()}`}
+            subtitle="Gerencie protocolos farmacológicos e suplementação do aluno."
+            icon="FlaskConical"
+            contextLabel="Área do Personal"
+            showTabs={false}
         >
-            <Box suppressHydrationWarning>
-                <HydrationBoundary state={dehydrate(queryClient)}>
-                    <TrainerStudentErgogenicsShell
-                        effectiveStudentId={effectiveStudentId}
-                        studentName={studentName}
-                        betaTesterMode={betaTesterMode}
-                    />
-                </HydrationBoundary>
-            </Box>
-        </Suspense>
+            <HydrationBoundary state={dehydrate(queryClient)}>
+                <TrainerStudentErgogenicsSection 
+                    effectiveStudentId={effectiveStudentId}
+                    studentName={studentName}
+                    betaTesterMode={betaTesterMode}
+                />
+            </HydrationBoundary>
+        </RegistryMain>
     )
 }

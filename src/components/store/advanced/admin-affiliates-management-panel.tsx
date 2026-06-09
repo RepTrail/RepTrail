@@ -1,10 +1,13 @@
 'use client'
 
+import { Icon } from '@/components/store/base/icon'
+import { Inline } from '@/components/store/base/layout'
+import { Font } from '@/components/store/base/font'
+
 import React from 'react'
 import { Stack } from '@/components/store/base/stack'
 import { AffiliateListItem } from '@/components/store/intermediary/affiliate-list-item'
 import { EmptyState } from '@/components/store/intermediary/empty-state'
-import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { HeartHandshake } from 'lucide-react'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
@@ -19,11 +22,17 @@ interface AdminAffiliatesManagementPanelProps {
  */
 export function AdminAffiliatesManagementPanel({ onDelete }: AdminAffiliatesManagementPanelProps) {
     return (
-        <RegistrySection
-            title="Gestão de Afiliados"
-            icon={HeartHandshake}
-            subtitle="Administração de parceiros comerciais, comissões e indicações."
-        >
+        <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
+            <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                    <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                        <Icon icon={HeartHandshake} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                        <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{"Gestão de Afiliados"}</Font>
+                    </Inline>
+                    <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{"Administração de parceiros comerciais, comissões e indicações."}</Font>
+                </Stack>
+            </Stack>
+            <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                 <AffiliateListItem 
                     name="Thiago Nigro"
@@ -54,6 +63,7 @@ export function AdminAffiliatesManagementPanel({ onDelete }: AdminAffiliatesMana
                     description="Não há registros de parceiros comerciais para os filtros selecionados (Demonstração)."
                 />
             </Stack>
-        </RegistrySection>
+          </Stack>
+        </Stack>
     )
 }

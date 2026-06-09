@@ -3,19 +3,11 @@ import { Stack } from '@/components/store/base/stack'
 import { Font } from '@/components/store/base/font'
 import { Grid } from '@/components/store/base/grid'
 import { GlassPanel, Surface } from '@/components/store/base/surface'
-import { RegistrySection } from '@/components/store/advanced/registry-section'
-import { Type } from 'lucide-react'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 export function TypographyContent({ id }: { id?: string }) {
     return (
-        <RegistrySection
-            id={id}
-            title="Tipografia & Escala"
-            icon={Type}
-            subtitle="Definições de hierarquia visual e legibilidade para interfaces RepTrail."
-        >
-            <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
+        <Stack gap={STORE_TOKENS.SPACING.CONTAINER} id={id}>
                 {/* Main Typographic Scale */}
                 <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER}>
                     <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
@@ -135,6 +127,5 @@ export function TypographyContent({ id }: { id?: string }) {
                     </Grid>
                 </GlassPanel>
             </Stack>
-        </RegistrySection>
     );
 }

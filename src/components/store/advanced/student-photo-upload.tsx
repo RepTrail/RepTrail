@@ -13,12 +13,15 @@ import { useToast } from '@/hooks/use-toast'
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
 import { ENTITIES } from '@/lib/outbox-db'
 import { QUERY_KEYS } from '@/lib/query-keys'
+import { usePlanLimits } from '@/lib/dal'
+import { AlertTriangle } from 'lucide-react'
 
 interface ProgressPhotoUploadProps {
     studentId: string
+    existingPhotos?: any[]
 }
 
-export function ProgressPhotoUpload({ studentId }: ProgressPhotoUploadProps) {
+export function ProgressPhotoUpload({ studentId, existingPhotos = [] }: ProgressPhotoUploadProps) {
     const [uploading, setUploading] = useState(false)
     const [photos, setPhotos] = useState<{
         front: File | null
@@ -50,11 +53,11 @@ export function ProgressPhotoUpload({ studentId }: ProgressPhotoUploadProps) {
         actionName: 'save-progress-photos',
         entity: ENTITIES.PROGRESS_PHOTO,
         queryKey: QUERY_KEYS.student.photos(studentId),
-        mutationFn: async () => {}, // Sync Engine handles binary upload
+        mutationFn: async () => { }, // Sync Engine handles binary upload
         updateFn: (oldData: any, variables: any) => {
             const list = Array.isArray(oldData) ? oldData : (oldData?.data || [])
             const optimisticId = crypto.randomUUID()
-            
+
             // Create object URLs for local preview
             const newRecord = {
                 id: optimisticId,
@@ -102,6 +105,8 @@ export function ProgressPhotoUpload({ studentId }: ProgressPhotoUploadProps) {
         reader.readAsDataURL(file)
     }
 
+    const { data: limitsData } = usePlanLimits()
+
     const handleSubmit = () => {
         if (!photos.front || !photos.back || !photos.side_left || !photos.side_right) {
             toast({
@@ -117,6 +122,26 @@ export function ProgressPhotoUpload({ studentId }: ProgressPhotoUploadProps) {
             ...photos,
             allowPublic
         })
+    }
+
+    const currentCycleStart = limitsData?.quotas?.currentCycleStart || new Date(0).toISOString()
+    const maxPhotos = limitsData?.quotas?.maxPhotosPerStudent || 2
+
+    const photosThisCycle = existingPhotos.filter((p: any) => new Date(p.created_at) >= new Date(currentCycleStart)).length
+    const hasReachedLimit = photosThisCycle >= maxPhotos
+
+    if (hasReachedLimit) {
+        return (
+            <Stack align="center" justify="center" gap={STORE_TOKENS.SPACING.CONTAINER} padding={STORE_TOKENS.PADDING.CONTAINER}>
+                <Icon icon={AlertTriangle} size="xl" color={STORE_TOKENS.COLORS.WARNING} />
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center" textAlign="center">
+                    <Font variant="body" weight="bold">Limite Atingido</Font>
+                    <Font variant="tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>
+                        Você já enviou {photosThisCycle} de {maxPhotos} fotos permitidas neste ciclo do plano.
+                    </Font>
+                </Stack>
+            </Stack>
+        )
     }
 
     return (

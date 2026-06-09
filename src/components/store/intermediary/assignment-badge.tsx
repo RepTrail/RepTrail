@@ -29,7 +29,7 @@ export function AssignmentBadge({
     return (
         <Box
             border
-            borderWidth={1}
+            borderWidth={2}
             borderColor={colorToken}
             borderOpacity={STORE_TOKENS.OPACITY.INTERMEDIATE}
             padding={STORE_TOKENS.SPACING.ELEMENT}

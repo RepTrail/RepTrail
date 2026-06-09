@@ -1,4 +1,3 @@
-import { STORE_TOKENS } from '@/components/store/constants/tokens';
 import { Suspense } from 'react'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'

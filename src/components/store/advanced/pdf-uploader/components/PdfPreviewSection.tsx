@@ -6,7 +6,8 @@ import { FileText } from 'lucide-react';
 import { FormSelect } from '@/components/store/base/form-select';
 import { Box } from '@/components/store/base/box';
 import { PdfDataView } from '@/components/store/advanced/pdf-data-view';
-import { RegistrySection } from '@/components/store/advanced/registry-section';
+import { Inline } from '@/components/store/base/layout';
+import { Icon } from '@/components/store/base/icon';
 
 interface PdfPreviewSectionProps {
     type: 'workout' | 'diet';
@@ -29,33 +30,37 @@ export function PdfPreviewSection({ type, parsedData, setParsedData, selectionHo
     })) || []
 
     return (
-        <RegistrySection 
-            id="tour-parsed-data"
-            title="Dados Extraídos"
-            subtitle="Confira abaixo as informações interpretadas pela inteligência artificial a partir do seu arquivo."
-            icon={FileText}
-            rightElement={
-                type === 'diet' && parsedData.parsed_data?.options?.length > 1 ? (
-                    <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        <Font
-                            variant="sub-tiny"
-                            uppercase
-                            weight="bold"
-                            {...{
-                                color: "SECONDARY",
-                            }}>Cardápio:</Font>
-                        <Box minWidth={180}>
-                            <FormSelect
-                                options={selectOptions}
-                                value={selectedOptionIndex.toString()}
-                                onChange={(v) => setSelectedOptionIndex(parseInt(v))}
-                                placeholder="Escolher Cardápio..."
-                            />
-                        </Box>
+        <Stack gap={STORE_TOKENS.SPACING.SECTION} id="tour-parsed-data">
+            <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
+                <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                        <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                            <Icon icon={FileText} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                            <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{"Dados Extraídos"}</Font>
+                        </Inline>
+                        <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{"Confira abaixo as informações interpretadas pela inteligência artificial a partir do seu arquivo."}</Font>
                     </Stack>
-                ) : null
-            }
-        >
+                    {type === 'diet' && parsedData.parsed_data?.options?.length > 1 ? (
+                        <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                            <Font
+                                variant="sub-tiny"
+                                uppercase
+                                weight="bold"
+                                {...{
+                                    color: "SECONDARY",
+                                }}>Cardápio:</Font>
+                            <Box minWidth={180}>
+                                <FormSelect
+                                    options={selectOptions}
+                                    value={selectedOptionIndex.toString()}
+                                    onChange={(v) => setSelectedOptionIndex(parseInt(v))}
+                                    placeholder="Escolher Cardápio..."
+                                />
+                            </Box>
+                        </Stack>
+                    ) : null}
+                </Stack>
+            </Stack>
             <PdfDataView
                 type={type}
                 data={type === 'diet' && parsedData.parsed_data?.options?.length > 0
@@ -115,6 +120,6 @@ export function PdfPreviewSection({ type, parsedData, setParsedData, selectionHo
                     setParsedData(newData)
                 }}
             />
-        </RegistrySection>
+        </Stack>
     );
 }

@@ -16,12 +16,12 @@ export function Logo({
 }: LogoProps) {
     const sizeMap = {
         sm: {
-            container: 'p-2 rounded-lg',
+            container: 'p-2 rounded-[8px]',
             icon: 'w-4 h-4',
             text: 'text-2xl'
         },
         md: {
-            container: 'p-2.5 rounded-xl',
+            container: 'p-2.5 rounded-[12px]',
             icon: 'w-5 h-5',
             text: 'text-3xl'
         },

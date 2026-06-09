@@ -535,20 +535,92 @@ export async function uploadProgressPhotos(formData: FormData) {
             .eq('id', user.id)
             .single()
 
+        // Check if student has an active trainer
+        const { data: trainerRel } = await supabase
+            .from('trainer_students')
+            .select('trainer_id')
+            .eq('student_id', user.id)
+            .eq('active', true)
+            .maybeSingle()
+
+        let photoLimit: number | null = 4 // Default fallback
+        let billingResetDate = new Date()
+        let isTrainerBased = false
+
+        if (trainerRel?.trainer_id) {
+            // Fetch trainer's profile (created_at, trial_activated_at) and their plan features
+            const { data: trainerProfile } = await supabase
+                .from('profiles')
+                .select(`
+                    created_at,
+                    trial_activated_at,
+                    plans (
+                        plan_features_dynamic (
+                            photo_updates_limit
+                        )
+                    )
+                `)
+                .eq('id', trainerRel.trainer_id)
+                .single()
+
+            if (trainerProfile) {
+                isTrainerBased = true
+                const plans = trainerProfile.plans as any
+                const features = Array.isArray(plans) ? plans[0]?.plan_features_dynamic : plans?.plan_features_dynamic
+                const f = Array.isArray(features) ? features[0] : features
+                photoLimit = f ? (f.photo_updates_limit ?? null) : 2 // Default to 2 if plan features aren't found
+
+                // Calculate trainer's last billing reset date
+                const baseDate = trainerProfile.trial_activated_at 
+                    ? new Date(trainerProfile.trial_activated_at) 
+                    : new Date(trainerProfile.created_at || Date.now())
+                
+                const billingDay = baseDate.getDate()
+                const now = new Date()
+
+                const getResetForMonth = (year: number, month: number) => {
+                    const maxDays = new Date(year, month + 1, 0).getDate()
+                    const day = Math.min(billingDay, maxDays)
+                    return new Date(year, month, day, 0, 0, 0, 0)
+                }
+
+                let resetDate = getResetForMonth(now.getFullYear(), now.getMonth())
+                if (now < resetDate) {
+                    resetDate = getResetForMonth(now.getFullYear(), now.getMonth() - 1)
+                }
+                billingResetDate = resetDate
+            }
+        }
+
         const now = new Date()
         const lastReset = profile?.last_photo_reset ? new Date(profile.last_photo_reset) : new Date(0)
 
-        // Reset count if it's a new month
         let currentCount = profile?.monthly_photo_count || 0
-        if (now.getMonth() !== lastReset.getMonth() || now.getFullYear() !== lastReset.getFullYear()) {
-            currentCount = 0
-            await supabase.from('profiles')
-                .update({ monthly_photo_count: 0, last_photo_reset: now.toISOString() })
-                .eq('id', user.id)
+
+        if (isTrainerBased) {
+            // Reset if last reset happened before the trainer's billing reset date
+            if (lastReset < billingResetDate) {
+                currentCount = 0
+                await supabase.from('profiles')
+                    .update({ monthly_photo_count: 0, last_photo_reset: now.toISOString() })
+                    .eq('id', user.id)
+            }
+        } else {
+            // Calendar month reset fallback
+            if (now.getMonth() !== lastReset.getMonth() || now.getFullYear() !== lastReset.getFullYear()) {
+                currentCount = 0
+                await supabase.from('profiles')
+                    .update({ monthly_photo_count: 0, last_photo_reset: now.toISOString() })
+                    .eq('id', user.id)
+            }
         }
 
-        if (currentCount >= 4) {
-            return { success: false, error: 'Você atingiu o limite de 4 atualizações de fotos este mês. Aguarde o próximo mês!' }
+        if (photoLimit !== null && currentCount >= photoLimit) {
+            if (isTrainerBased) {
+                return { success: false, error: `Você atingiu o limite de ${photoLimit} atualizações de fotos deste ciclo de faturamento do seu personal. Aguarde o próximo vencimento!` }
+            } else {
+                return { success: false, error: `Você atingiu o limite de ${photoLimit} atualizações de fotos este mês. Aguarde o próximo mês!` }
+            }
         }
         // ---------------------------------
 

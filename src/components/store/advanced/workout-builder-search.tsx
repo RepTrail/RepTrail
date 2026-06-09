@@ -9,7 +9,7 @@ import { Button } from '@/components/store/base/button'
 import { Icon } from '@/components/store/base/icon'
 import { GlassPanel, Card, Surface } from '@/components/store/base/surface'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
-import { PlusCircle, Search, Plus } from 'lucide-react'
+import { Search, Plus } from 'lucide-react'
 
 
 interface WorkoutBuilderSearchProps {

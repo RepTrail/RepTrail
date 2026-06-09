@@ -1,4 +1,6 @@
 'use client'
+import { Icon } from '@/components/store/base/icon'
+import { Inline } from '@/components/store/base/layout'
 
 import React, { useState } from 'react'
 import { Grid } from '@/components/store/base/grid'
@@ -7,7 +9,7 @@ import { Font } from '@/components/store/base/font'
 import { Box } from '@/components/store/base/box'
 import { ProductCard } from '@/components/store/intermediary/product-card'
 import { EmptyState } from '@/components/store/intermediary/empty-state'
-import { RegistrySection } from '@/components/store/advanced/registry-section'
+
 import { Modal } from '@/components/store/advanced/modal'
 import { Callout } from '@/components/store/intermediary/callout'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
@@ -34,11 +36,17 @@ export function AdminProductsCatalogPanel() {
 
     return (
         <Stack gap={{ base: STORE_TOKENS.SPACING.EMPTY_STATE, md: STORE_TOKENS.SPACING.SECTION }}>
-            <RegistrySection
-                title="Catálogo de Produtos"
-                icon={Package}
-                subtitle="Gestão de itens da loja oficial, suplementação e equipamentos."
-            >
+            <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
+            <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                    <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                        <Icon icon={Package} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                        <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{"Catálogo de Produtos"}</Font>
+                    </Inline>
+                    <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{"Gestão de itens da loja oficial, suplementação e equipamentos."}</Font>
+                </Stack>
+            </Stack>
+            <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
                 <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                     <Grid cols={1} mdCols={2} lgCols={4} gap={STORE_TOKENS.SPACING.CONTAINER}>
                         <ProductCard 
@@ -77,7 +85,8 @@ export function AdminProductsCatalogPanel() {
                         description="Você visualizou todos os produtos ativos na loja no momento."
                     />
                 </Stack>
-            </RegistrySection>
+              </Stack>
+        </Stack>
             {/* MODALS REUSE */}
             <Modal
                 isOpen={modalState.type === 'delete'}

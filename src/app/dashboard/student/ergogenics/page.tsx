@@ -1,14 +1,10 @@
 import { headers } from 'next/headers'
-import { Suspense } from 'react'
 import { dehydrate, HydrationBoundary } from '@/lib/dal'
 import { getQueryClient } from '@/lib/get-query-client'
-import { StudentErgogenicManagementSmart } from '@/components/store/advanced/student-ergogenic-management-smart'
 import { PREFETCH_REGISTRY } from '@/lib/prefetch-registry'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { StudentRegistryHeaderActions } from '@/components/store/advanced/student-registry-header-actions'
-import { Box } from '@/components/store/base/box'
-import { Stack } from '@/components/store/base/stack'
-import { STORE_TOKENS } from '@/components/store/constants/tokens'
+import { StudentErgogenicsSection } from '@/components/store/sections/student-ergogenics-section'
 
 export default async function ErgogenicsPage() {
     const headerList = await headers()
@@ -37,19 +33,9 @@ export default async function ErgogenicsPage() {
             showTabs={false}
             rightElement={<StudentRegistryHeaderActions userId={userId} type="ergogenic" />}
         >
-            <Suspense fallback={
-                <Box fullWidth>
-                    <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
-                        <Box height={400} bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.LOW} rounded={STORE_TOKENS.RADIUS.SYSTEM} />
-                    </Stack>
-                </Box>
-            }>
-                <Box suppressHydrationWarning fullWidth>
-                    <HydrationBoundary state={dehydrate(queryClient)}>
-                        <StudentErgogenicManagementSmart userId={userId} />
-                    </HydrationBoundary>
-                </Box>
-            </Suspense>
+            <HydrationBoundary state={dehydrate(queryClient)}>
+                <StudentErgogenicsSection userId={userId} />
+            </HydrationBoundary>
         </RegistryMain>
     );
 }

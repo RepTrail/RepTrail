@@ -7,7 +7,6 @@ import { Font } from '@/components/store/base/font'
 import { Surface } from '@/components/store/base/surface'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { CreditCard, AlertTriangle } from 'lucide-react'
-import { Box } from '@/components/store/base/box'
 import { Divider } from '@/components/store/base/layout'
 
 interface StudentPaymentWarningProps {

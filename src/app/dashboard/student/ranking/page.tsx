@@ -3,6 +3,7 @@ import { actions } from '@/lib/dal/server'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { getQueryClient } from '@/lib/get-query-client'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
+import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { RankingSectionContent } from '@/components/store/sections/ranking-section-content'
 
 export const metadata = {
@@ -25,9 +26,11 @@ export default async function StudentRankingPage() {
             contextLabel="Social & Performance"
             showTabs={false}
         >
-            <HydrationBoundary state={dehydrate(queryClient)}>
-                <RankingSectionContent />
-            </HydrationBoundary>
+            <RegistrySection>
+                <HydrationBoundary state={dehydrate(queryClient)}>
+                    <RankingSectionContent />
+                </HydrationBoundary>
+            </RegistrySection>
         </RegistryMain>
     )
 }

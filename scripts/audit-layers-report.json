@@ -1,0 +1,21 @@
+{
+  "generated_at": "2026-06-09T04:02:32.818Z",
+  "scope": "full",
+  "summary": {
+    "total_violations": 0,
+    "by_severity": {
+      "HIGH": 0,
+      "MEDIUM": 0,
+      "LOW": 0
+    },
+    "by_layer": {
+      "pages": 0,
+      "sections": 0,
+      "advanced": 0,
+      "intermediary": 0,
+      "base": 0,
+      "tokens": 0
+    }
+  },
+  "violations": []
+}

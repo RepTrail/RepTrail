@@ -15,8 +15,8 @@ interface ModalProps {
   isOpen: boolean
   onClose: () => void
   title: string
-  subtitle?: string
-  icon?: LucideIcon
+  subtitle: string
+  icon: LucideIcon
   children?: React.ReactNode
   confirmLabel?: string
   confirmIcon?: LucideIcon
@@ -151,33 +151,33 @@ export function Modal({
             bg={STORE_TOKENS.COLORS.BACKGROUND} 
             bgOpacity={STORE_TOKENS.OPACITY.BACKGROUND} 
             minHeight={0}
+            padding={noPadding ? STORE_TOKENS.PADDING.NONE : STORE_TOKENS.PADDING.CONTAINER}
             style={{ 
               overflowY: 'auto', 
               overflowX: 'hidden', 
               minHeight: 0 
             }}
           >
-            <Box padding={noPadding ? STORE_TOKENS.PADDING.NONE : STORE_TOKENS.PADDING.CONTAINER}>
-              {children ? children : (
-                <Font
-                  variant="description"
-                  {...{
-                    color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
-                  }}>
-                  Configure as opções do seu perfil e preferências de sistema aqui.
-                  Todas as alterações são aplicadas instantaneamente ao seu ambiente de trabalho.
-                </Font>
-              )}
-            </Box>
+            {children ? children : (
+              <Font
+                variant="description"
+                {...{
+                  color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
+                }}>
+                Configure as opções do seu perfil e preferências de sistema aqui.
+                Todas as alterações são aplicadas instantaneamente ao seu ambiente de trabalho.
+              </Font>
+            )}
           </Box>
 
-          <Divider
-            {...{
-              color: STORE_TOKENS.COLORS.DIVIDER.SUBTLE,
-            }} />
+          {!hideFooter && (
+            <>
+              <Divider
+                {...{
+                  color: STORE_TOKENS.COLORS.DIVIDER.SUBTLE,
+                }} />
 
           {/* Footer Actions */}
-          {!hideFooter && (
             <Box shrink={0} bg={STORE_TOKENS.COLORS.SURFACE} bgOpacity={100} zIndex={10} position="relative" padding={STORE_TOKENS.PADDING.CONTAINER}>
               <Stack direction={{ base: 'col', md: 'row' }} gap={STORE_TOKENS.SPACING.ELEMENT} flex1>
               {!hideCancel && (
@@ -212,6 +212,7 @@ export function Modal({
               </Button>
             </Stack>
           </Box>
+            </>
           )}
         </Surface>
       </ModalContainer>

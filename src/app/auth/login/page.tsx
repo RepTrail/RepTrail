@@ -1,12 +1,11 @@
 'use client'
 
-import { AuthForm } from '@/components/store/advanced/auth-form'
-import { Suspense } from 'react'
-
+import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { RegistryProvider } from '@/components/store/advanced/registry-context'
-import { AuthShell } from '@/components/store/advanced/auth-shell'
+import { RegistrySection } from '@/components/store/advanced/registry-section'
+import { AuthLoginSection } from '@/components/store/sections/auth-login-section'
 import Script from 'next/script'
-import { Box } from '@/components/store/base/box'
+import { Lock } from 'lucide-react'
 
 export default function LoginPage() {
     return (
@@ -26,16 +25,25 @@ export default function LoginPage() {
                 `}
             </Script>
             
-            <AuthShell>
-                <Suspense fallback={null}>
-                    <AuthForm view="login" />
-                </Suspense>
-            </AuthShell>
+            <RegistryMain
+                title="RepTrail Login"
+                subtitle="Acesso ao sistema RepTrail"
+                icon={Lock}
+                showHeader={false}
+            >
+                <RegistrySection
+                    title="Acesso ao Sistema"
+                    subtitle="Faça login com suas credenciais."
+                    icon={Lock}
+                >
+                    <AuthLoginSection />
+                </RegistrySection>
+            </RegistryMain>
 
             <noscript>
-                <Box as="span" display="none">
+                <span style={{ display: 'none' }}>
                     <img height="1" width="1" src="https://www.facebook.com/tr?id=795120573646319&ev=PageView&noscript=1" />
-                </Box>
+                </span>
             </noscript>
         </RegistryProvider>
     )

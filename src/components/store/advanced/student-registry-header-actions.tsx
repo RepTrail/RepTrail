@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { useQuery } from '@/lib/dal'
-import { getStudentTrainer, getStudentProfile } from '@/lib/dal/remote'
+import { getStudentProfile } from '@/lib/dal/remote'
 import { Button } from '@/components/store/base/button'
 import { Icon } from '@/components/store/base/icon'
 import { Stack } from '@/components/store/base/stack'

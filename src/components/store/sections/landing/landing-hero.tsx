@@ -14,7 +14,7 @@ import { fbqEvent } from '@/lib/meta-pixel'
 import { LandingSection } from '@/components/store/advanced/landing-section'
 import {
   ArrowRight, Users, Trophy, Star, ShieldCheck, CheckCircle2,
-  Search, Zap, Smartphone, Dumbbell, PlayCircle, Megaphone,
+  Search, Zap, Smartphone, Dumbbell, Megaphone,
   MousePointerClick, DollarSign, TrendingUp
 } from 'lucide-react'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
@@ -250,7 +250,7 @@ export function LandingHero({ role = 'trainer', freeLimit = 5 }: LandingHeroProp
                   maxWidth="sm"
                   transition
                 >
-                  <IphoneMockup className="w-full">
+                  <IphoneMockup>
                     <YouTubePlayer videoId={activeConfig.videoId} iframeClassName="w-[135%] h-[105%] max-w-none" />
                   </IphoneMockup>
                 </Box>

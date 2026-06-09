@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useState, useTransition } from 'react'
-import Link from 'next/link'
 import { Surface } from '@/components/store/base/surface'
 import { Stack } from '@/components/store/base/stack'
 import { Font } from '@/components/store/base/font'
@@ -16,6 +15,7 @@ import { AsaasPaymentModal } from '@/components/store/advanced/asaas-payment-mod
 import { Modal } from '@/components/store/advanced/modal'
 import { PlanForm } from '@/components/store/advanced/plan-form'
 import { actions } from '@/lib/dal'
+import { Settings } from 'lucide-react'
 import { Callout } from '@/components/store/intermediary/callout'
 const featureLabels: Partial<Record<keyof PlanFeatures, string>> = {
     has_workouts: 'Construtor de Treinos',
@@ -237,6 +237,7 @@ export function PlanCard({ plan, isCurrentPlan = false, adminMode = false, onTog
                     onClose={() => setIsEditModalOpen(false)}
                     title={`Editar Plano - ${plan.name}`}
                     subtitle="Altere os dados do plano abaixo."
+                    icon={Settings}
                     confirmType="submit"
                     formId="plan-form"
                     confirmLabel="Salvar Plano"
@@ -251,6 +252,7 @@ export function PlanCard({ plan, isCurrentPlan = false, adminMode = false, onTog
                     onClose={() => setIsDeleteModalOpen(false)}
                     title="Excluir Plano"
                     subtitle="Confirme a exclusão do plano"
+                    icon={Trash2}
                     variant="red"
                     confirmVariant="outline-red"
                     confirmLabel={isPendingDelete ? "Excluindo..." : "Excluir Plano"}

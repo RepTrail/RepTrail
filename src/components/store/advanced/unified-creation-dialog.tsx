@@ -292,7 +292,7 @@ export function UnifiedCreationDialog({
                 onClose={() => setIsOpen(false)}
                 title={title}
                 subtitle={description}
-                icon={icon || getActionIcon(actionType)}
+                icon={icon || getActionIcon(actionType) || Activity}
                 confirmLabel={footerLabel}
                 onConfirm={handleConfirm}
                 variant={colorScheme}

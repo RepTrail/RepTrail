@@ -31,6 +31,8 @@ export {
   QueryClientProvider
 } from './hooks'
 
+export { usePlanLimits, getPlanLimitsDetails } from './plan-limits'
+
 export { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
 
 export type { QueryKey } from './hooks'

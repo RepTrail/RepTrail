@@ -1,7 +1,9 @@
 'use client'
+import { Icon } from '@/components/store/base/icon'
+import { Inline } from '@/components/store/base/layout'
+import { Font } from '@/components/store/base/font'
 
 import React from 'react'
-import { RegistrySection } from './registry-section'
 import { Stack } from '../base/stack'
 import { STORE_TOKENS } from '../constants/tokens'
 import { LucideIcon } from 'lucide-react'
@@ -29,15 +31,22 @@ export function ManagementRegistrySection({
     fullWidth
 }: ManagementRegistrySectionProps) {
     return (
-        <RegistrySection
-            title={title}
-            subtitle={subtitle}
-            icon={icon}
-        >
+        <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
+            <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                    <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                        <Icon icon={icon} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                        <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{title}</Font>
+                    </Inline>
+                    {subtitle && <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{subtitle}</Font>}
+                </Stack>
+            </Stack>
+            <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
             <Stack gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth={fullWidth}>
                 <ContentComponent mode={mode} />
                 <ContentComponent mode={mode} isEmpty={true} />
             </Stack>
-        </RegistrySection>
+          </Stack>
+        </Stack>
     )
 }

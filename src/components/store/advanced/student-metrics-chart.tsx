@@ -170,14 +170,14 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
                     }} />
             </Stack>
             {/* overflow-x: auto no wrapper, gráfico com largura fixa para evitar vazamento */}
-            <div
+            <Box
                 ref={scrollRef}
-                className="custom-scrollbar"
+                customScrollbar
+                overflowX="auto"
+                overflowY="hidden"
                 style={{
                     width: '100%',
                     height: 320,
-                    overflowX: 'auto',
-                    overflowY: 'hidden',
                 }}
             >
                 {mounted ? (
@@ -285,7 +285,7 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
                 ) : (
                     <Box fullWidth fullHeight bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} rounded={STORE_TOKENS.RADIUS.SYSTEM} />
                 )}
-            </div>
+            </Box>
         </Stack>
     );
 }

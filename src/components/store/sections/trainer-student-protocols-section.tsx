@@ -4,7 +4,8 @@ import React from 'react'
 import { useQuery } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { getStudentRelationship } from '@/lib/dal/remote'
-import { RegistrySection } from '@/components/store/advanced/registry-section'
+import { Font } from '@/components/store/base/font'
+import { Inline } from '@/components/store/base/layout'
 import { WorkoutManagementSectionContent } from '@/components/store/sections/workout-management-section-content'
 import { DietManagementSectionContent } from '@/components/store/sections/diet-management-section-content'
 import { CardioManagementSectionContent } from '@/components/store/sections/cardio-management-section-content'
@@ -101,65 +102,74 @@ export function TrainerStudentProtocolsSection({
 
     return (
         <Stack gap={STORE_TOKENS.SPACING.SECTION} fullWidth>
-            <RegistrySection
-                title="Treinamentos de Força"
-                subtitle="Visualize, organize e prescreva os templates de treinamento de força ativos para o aluno."
-                icon={Dumbbell}
-                rightElement={
+            <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
+                <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                        <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                            <Icon icon={Dumbbell} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                            <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>Treinamentos de Força</Font>
+                        </Inline>
+                        <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>Visualize, organize e prescreva os templates de treinamento de força ativos para o aluno.</Font>
+                    </Stack>
                     <TrainerRegistryHeaderActions
                         userId={trainerId}
                         variant="workout"
                         betaTesterMode={false}
                         hideImportPdf={true}
                     />
-                }
-            >
+                </Stack>
                 <WorkoutManagementSectionContent
                     userId={studentId}
                     workouts={displayWorkouts}
                     mode="trainer"
                 />
-            </RegistrySection>
+            </Stack>
 
-            <RegistrySection
-                title="Protocolos Alimentares"
-                subtitle="Planeje e gerencie as refeições, calorias e macros da rotina alimentar do aluno."
-                icon={Utensils}
-                rightElement={
+            <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
+                <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                        <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                            <Icon icon={Utensils} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                            <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>Protocolos Alimentares</Font>
+                        </Inline>
+                        <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>Planeje e gerencie as refeições, calorias e macros da rotina alimentar do aluno.</Font>
+                    </Stack>
                     <TrainerRegistryHeaderActions
                         userId={trainerId}
                         variant="diet"
                         betaTesterMode={false}
                         hideImportPdf={true}
                     />
-                }
-            >
+                </Stack>
                 <DietManagementSectionContent
                     userId={studentId}
                     diets={displayDiets}
                     mode="trainer"
                 />
-            </RegistrySection>
+            </Stack>
 
-            <RegistrySection
-                title="Atividades Cardiorrespiratórias"
-                subtitle="Defina metas de cardio, frequências semanais e intensidades sugeridas."
-                icon={Activity}
-                rightElement={
+            <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
+                <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                        <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                            <Icon icon={Activity} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                            <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>Atividades Cardiorrespiratórias</Font>
+                        </Inline>
+                        <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>Defina metas de cardio, frequências semanais e intensidades sugeridas.</Font>
+                    </Stack>
                     <TrainerRegistryHeaderActions
                         userId={trainerId}
                         variant="cardio"
                         betaTesterMode={false}
                         hideImportPdf={true}
                     />
-                }
-            >
+                </Stack>
                 <CardioManagementSectionContent
                     userId={studentId}
                     cardios={displayCardios}
                     mode="trainer"
                 />
-            </RegistrySection>
+            </Stack>
 
             <TrainerStudentErgogenicsSmart effectiveStudentId={studentId} />
         </Stack>

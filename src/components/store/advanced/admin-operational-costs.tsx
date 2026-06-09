@@ -12,7 +12,6 @@ import { Badge } from '@/components/store/base/badge'
 import { FormSelect } from '@/components/store/base/form-select'
 import { Inline } from '@/components/store/base/layout'
 import { Modal } from '@/components/store/advanced/modal'
-import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { addOperationalCost, deleteOperationalCost, updateOperationalCost } from '@/lib/dal/remote'
 import { useToast } from '@/hooks/use-toast'
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
@@ -147,11 +146,15 @@ export function AdminOperationalCosts({ initialCosts, totalMonthly, totalAllTime
 
     return (
         <Stack gap={STORE_TOKENS.SPACING.SECTION}>
-            <RegistrySection
-                title="Custos Operacionais"
-                subtitle="Infraestrutura e operação mensal da plataforma."
-                icon={TrendingDown}
-                rightElement={
+            <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
+                <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                        <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                            <Icon icon={TrendingDown} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                            <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{"Custos Operacionais"}</Font>
+                        </Inline>
+                        <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{"Infraestrutura e operação mensal da plataforma."}</Font>
+                    </Stack>
                     <Stack direction="row" gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
                         <Badge
                             label={`R$ ${(costs.reduce((sum, c) => sum + Number(c.amount), 0)).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} / mês`}
@@ -178,10 +181,10 @@ export function AdminOperationalCosts({ initialCosts, totalMonthly, totalAllTime
                             </Stack>
                         </Button>
                     </Stack>
-                }
-            >
-                <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
-                    {/* Listagem de Custos */}
+                </Stack>
+            </Stack>
+            <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
+                {/* Listagem de Custos */}
                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                         {costs.map((cost) => {
                             const badgeColor = cost.type === 'fixed' ? STORE_TOKENS.COLORS.INFO : STORE_TOKENS.COLORS.BRAND;
@@ -267,7 +270,6 @@ export function AdminOperationalCosts({ initialCosts, totalMonthly, totalAllTime
                         )}
                     </Stack>
                 </Stack>
-            </RegistrySection>
             {/* Modal de Adição */}
             <Modal
                 isOpen={isAddModalOpen}

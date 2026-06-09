@@ -337,4 +337,4 @@ export async function getStudentProgressPageData(userId: string) {
 }
 
 export * as actions from './remote'
-
+export { getTrainerPlanFeatures } from '@/actions/plan-features-actions'

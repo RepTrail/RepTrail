@@ -7,6 +7,7 @@ import { getQueryClient } from '@/lib/get-query-client'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { StudentDashboardClient } from '@/components/store/advanced/student-dashboard-client'
 import { InactiveTrainerCard } from '@/components/store/advanced/inactive-trainer-card'
+import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { StudentNoPlanSection } from '@/components/store/sections/student-no-plan-section'
 
 export default async function StudentDashboardPage() {
@@ -149,7 +150,15 @@ async function StudentDashboardContent({ userId }: { userId: string }) {
         return (
             <HydrationBoundary state={dehydrate(queryClient)}>
                 <StudentMetaPixel />
-                <StudentNoPlanSection ranking={ranking} />
+                <RegistryMain
+                    title="BEM-VINDO"
+                    subtitle="Você ainda não possui um plano ativo no RepTrail."
+                    icon="Sparkles"
+                    contextLabel="Área do Aluno"
+                    showTabs={false}
+                >
+                    <StudentNoPlanSection ranking={ranking} />
+                </RegistryMain>
             </HydrationBoundary>
         )
     }

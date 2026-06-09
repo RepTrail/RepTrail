@@ -1,4 +1,8 @@
 'use client'
+import { Icon } from '@/components/store/base/icon'
+import { Inline } from '@/components/store/base/layout'
+import { Font } from '@/components/store/base/font'
+import { Stack } from '@/components/store/base/stack'
 
 import { useQuery } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
@@ -7,13 +11,13 @@ import {
     getTrainerRanking,
     getTrainerActivityFeed
 } from '@/lib/dal/remote'
-import { RegistryMain } from '@/components/store/advanced/registry-main'
-import { RegistrySection } from '@/components/store/advanced/registry-section'
+
+
 import { Grid } from '@/components/store/base/grid'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { StatsCard } from '@/components/store/intermediary/stats-card'
 import { Box } from '@/components/store/base/box'
-import { LayoutDashboard, Users, DollarSign, TrendingUp, Zap, Sparkles, Crown, Activity } from 'lucide-react'
+import { LayoutDashboard, Users, DollarSign, TrendingUp, Activity } from 'lucide-react'
 import { TrainerDashboardSidebarSectionContent } from '@/components/store/sections/trainer-dashboard-sidebar-section-content'
 
 // Deprecated features
@@ -56,19 +60,30 @@ export function TrainerDashboardClient({ userId, betaTesterMode }: TrainerDashbo
     const publicProfileHref = trainerCode ? `/personal/${trainerCode}` : undefined
 
     return (
-        <RegistryMain
-            title="VISÃO GERAL"
-            subtitle="Bem-vindo de volta. Acompanhe o desempenho do seu time."
-            icon={LayoutDashboard}
-            contextLabel="Área do Personal"
-            showTabs={false}
-        >
+        <Stack gap={STORE_TOKENS.SPACING.SECTION} fullWidth>
+            <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
+                <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                        <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                            <Icon icon={LayoutDashboard} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                            <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{"VISÃO GERAL"}</Font>
+                        </Inline>
+                        <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{"Bem-vindo de volta. Acompanhe o desempenho do seu time."}</Font>
+                    </Stack>
+                </Stack>
+            </Stack>
             <CodeAutoGenerator hasCode={!!profile?.trainer_code} />
-            <RegistrySection
-                title="Métricas Principais"
-                subtitle="Visibilidade rápida da operação, faturamento e posição atual."
-                icon={TrendingUp}
-            >
+            <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
+            <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                    <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                        <Icon icon={TrendingUp} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                        <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{"Métricas Principais"}</Font>
+                    </Inline>
+                    <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{"Visibilidade rápida da operação, faturamento e posição atual."}</Font>
+                </Stack>
+            </Stack>
+            <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
                 <Grid cols={{ base: 1, md: 2, lg: 4 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
                     <StatsCard
                         label="Alunos Ativos"
@@ -103,12 +118,19 @@ export function TrainerDashboardClient({ userId, betaTesterMode }: TrainerDashbo
                             color: "primary",
                         }} />
                 </Grid>
-            </RegistrySection>
-            <RegistrySection
-                title="Operação Diária"
-                subtitle="Atividade recente, atalhos operacionais e gestão do perfil público."
-                icon={Activity}
-            >
+              </Stack>
+        </Stack>
+            <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
+            <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                    <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                        <Icon icon={Activity} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                        <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{"Operação Diária"}</Font>
+                    </Inline>
+                    <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{"Atividade recente, atalhos operacionais e gestão do perfil público."}</Font>
+                </Stack>
+            </Stack>
+            <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
                 <Grid cols={{ base: 1, lg: 12 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
                     <Box lgColSpan={8} display="flex" direction="col" gap={STORE_TOKENS.SPACING.CONTAINER} overflow="hidden" fullWidth>
                         <ActivityFeed userId={userId} initialData={activities} />
@@ -124,7 +146,8 @@ export function TrainerDashboardClient({ userId, betaTesterMode }: TrainerDashbo
                         />
                     </Box>
                 </Grid>
-            </RegistrySection>
-        </RegistryMain>
+              </Stack>
+        </Stack>
+        </Stack>
     );
 }

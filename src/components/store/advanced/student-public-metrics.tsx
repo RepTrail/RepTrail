@@ -1,4 +1,7 @@
 'use client'
+import { Icon } from '@/components/store/base/icon'
+import { Inline } from '@/components/store/base/layout'
+import { Font } from '@/components/store/base/font'
 
 import React from 'react'
 import { PerformanceAnalysisSection } from '@/components/store/advanced/performance-analysis-section'
@@ -9,7 +12,7 @@ import { Stack } from '@/components/store/base/stack'
 import { Grid } from '@/components/store/base/grid'
 import { Box } from '@/components/store/base/box'
 import { GlassPanel } from '@/components/store/base/surface'
-import { RegistrySection } from '@/components/store/advanced/registry-section'
+
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 interface StudentPublicMetricsProps {
@@ -96,11 +99,17 @@ export function StudentPublicMetrics({ fullMetrics, adherenceHistory, steroidUse
                     }} />
             </Grid>
             {/* ── Consistência Section ────────────────────────────────── */}
-            <RegistrySection
-                title="Consistência (30D)"
-                subtitle="Acompanhamento diário da consistência de treinos, dieta, cardio e ergogênicos nas últimas 4 semanas."
-                icon={Target}
-            >
+            <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
+            <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                    <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                        <Icon icon={Target} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                        <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{"Consistência (30D)"}</Font>
+                    </Inline>
+                    <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{"Acompanhamento diário da consistência de treinos, dieta, cardio e ergogênicos nas últimas 4 semanas."}</Font>
+                </Stack>
+            </Stack>
+            <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
                 <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER} minWidth={0}>
                     <Box fullWidth minWidth={0} overflow="hidden">
                         <UnifiedAdherenceChart
@@ -110,13 +119,20 @@ export function StudentPublicMetrics({ fullMetrics, adherenceHistory, steroidUse
                         />
                     </Box>
                 </GlassPanel>
-            </RegistrySection>
+              </Stack>
+        </Stack>
             {/* ── Evolução Analítica Section ──────────────────────────── */}
-            <RegistrySection
-                title="Evolução Analítica"
-                subtitle="Histórico estatístico do percentual de gordura corporal, peso e frequência de treinos semanais."
-                icon={TrendingUp}
-            >
+            <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
+            <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                    <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                        <Icon icon={TrendingUp} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                        <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{"Evolução Analítica"}</Font>
+                    </Inline>
+                    <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{"Histórico estatístico do percentual de gordura corporal, peso e frequência de treinos semanais."}</Font>
+                </Stack>
+            </Stack>
+            <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
                 <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER}>
                     <PerformanceAnalysisSection
                         weights={fullMetrics.weights}
@@ -126,7 +142,8 @@ export function StudentPublicMetrics({ fullMetrics, adherenceHistory, steroidUse
                         isStudentView={true}
                     />
                 </GlassPanel>
-            </RegistrySection>
+              </Stack>
+        </Stack>
         </Stack>
     );
 }

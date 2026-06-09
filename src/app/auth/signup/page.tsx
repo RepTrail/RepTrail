@@ -1,12 +1,11 @@
 'use client'
 
-import { AuthForm } from '@/components/store/advanced/auth-form'
-import { Suspense } from 'react'
-
+import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { RegistryProvider } from '@/components/store/advanced/registry-context'
-import { AuthShell } from '@/components/store/advanced/auth-shell'
-import { Box } from '@/components/store/base/box'
+import { RegistrySection } from '@/components/store/advanced/registry-section'
+import { AuthSignupSection } from '@/components/store/sections/auth-signup-section'
 import Script from 'next/script'
+import { UserPlus } from 'lucide-react'
 
 export default function SignupPage() {
     return (
@@ -26,16 +25,25 @@ export default function SignupPage() {
                 `}
             </Script>
 
-            <AuthShell>
-                <Suspense fallback={null}>
-                    <AuthForm view="signup" />
-                </Suspense>
-            </AuthShell>
+            <RegistryMain
+                title="Criar Conta"
+                subtitle="Crie sua conta no RepTrail"
+                icon={UserPlus}
+                showHeader={false}
+            >
+                <RegistrySection
+                    title="Criar Conta"
+                    subtitle="Crie sua conta no RepTrail."
+                    icon={UserPlus}
+                >
+                    <AuthSignupSection />
+                </RegistrySection>
+            </RegistryMain>
 
             <noscript>
-                <Box as="span" display="none">
+                <span style={{ display: 'none' }}>
                     <img height="1" width="1" src="https://www.facebook.com/tr?id=795120573646319&ev=PageView&noscript=1" />
-                </Box>
+                </span>
             </noscript>
         </RegistryProvider>
     )

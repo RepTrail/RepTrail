@@ -3,6 +3,7 @@ import { dehydrate, HydrationBoundary } from '@/lib/dal'
 import { actions } from '@/lib/dal/server'
 import { getQueryClient } from '@/lib/get-query-client'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
+import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { TrainerMetricsSection } from '@/components/store/sections/trainer-metrics-section'
 import { TrainerDailyOperationSection } from '@/components/store/sections/trainer-daily-operation-section'
 import { TrainerMetaPixel } from './meta-pixel'
@@ -33,8 +34,12 @@ export default async function TrainerDashboard() {
                 contextLabel="Área do Personal"
                 showTabs={false}
             >
-                <TrainerMetricsSection userId={userId} />
-                <TrainerDailyOperationSection userId={userId} betaTesterMode={betaTesterMode} />
+                <RegistrySection>
+                    <TrainerMetricsSection userId={userId} />
+                </RegistrySection>
+                <RegistrySection>
+                    <TrainerDailyOperationSection userId={userId} betaTesterMode={betaTesterMode} />
+                </RegistrySection>
             </RegistryMain>
         </HydrationBoundary>
     )

@@ -12,7 +12,6 @@ import {
     Trash2,
     Edit3,
     Copy,
-    Calendar,
     Syringe
 } from 'lucide-react'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'

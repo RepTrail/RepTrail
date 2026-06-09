@@ -31,7 +31,7 @@ interface SurfaceProps extends Omit<BoxProps, 'padding' | 'zIndex' | 'border' | 
   rounded?: 'none' | 'full' | 'system'
   minHeight?: 'screen' | 'sm' | 'md' | 'lg' | 'xl' | number
   border?: 'none' | 'subtle' | 'standard' | 'bold' | 'dashed'
-  borderWidth?: 1 | 2 | 4
+  borderWidth?: 2 | 4
   borderColor?: string
   hoverBorder?: string
   bg?: BoxColor
@@ -149,7 +149,7 @@ export function Surface({
     subtle: 'border-2 border-white/5',
     standard: 'border-2 border-white/10',
     bold: 'border-2',
-    dashed: 'border border-dashed'
+    dashed: 'border-2 border-dashed'
   }
 
   const opacityClasses = {

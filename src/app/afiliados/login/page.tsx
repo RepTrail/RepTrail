@@ -1,57 +1,28 @@
-'use client';
-import { STORE_TOKENS } from '@/components/store/constants/tokens';
+'use client'
 
-import { useState, Suspense } from 'react'
-import { useRouter } from 'next/navigation'
-import { actions } from '@/lib/dal'
-
-// Design System V2 Components
+import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { RegistryProvider } from '@/components/store/advanced/registry-context'
-import { AuthShell } from '@/components/store/advanced/auth-shell'
-import { AuthLoginForm } from '@/components/store/advanced/auth-login-form'
-
+import { RegistrySection } from '@/components/store/advanced/registry-section'
+import { AuthAfiliadosLoginSection } from '@/components/store/sections/auth-afiliados-login-section'
+import { Link2, LogIn } from 'lucide-react'
 
 export default function AffiliadosLoginPage() {
-    const router = useRouter()
-
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [loading, setLoading] = useState(false)
-    const [error, setError] = useState<string | null>(null)
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
-        setLoading(true)
-        setError(null)
-
-        const result = await actions.loginAndActivateAffiliate(email, password)
-
-        if (result.error) {
-            setError(result.error)
-            setLoading(false)
-            return
-        }
-
-        router.replace('/dashboard/affiliate')
-    }
-
     return (
         <RegistryProvider defaultColor="amber">
-            <AuthShell>
-                <Suspense fallback={null}>
-                    <AuthLoginForm 
-                        email={email}
-                        setEmail={setEmail}
-                        password={password}
-                        setPassword={setPassword}
-                        onSubmit={handleSubmit}
-                        loading={loading}
-                        error={error}
-                        color={STORE_TOKENS.COLORS.WARNING}
-                        signupHref="/afiliados/cadastro"
-                    />
-                </Suspense>
-            </AuthShell>
+            <RegistryMain
+                title="Portal do Afiliado"
+                subtitle="Gerencie suas indicações e comissões"
+                icon={Link2}
+                showHeader={false}
+            >
+                <RegistrySection
+                    title="Acesso de Afiliado"
+                    subtitle="Entre no seu painel de parceiro."
+                    icon={LogIn}
+                >
+                    <AuthAfiliadosLoginSection />
+                </RegistrySection>
+            </RegistryMain>
         </RegistryProvider>
-    );
+    )
 }

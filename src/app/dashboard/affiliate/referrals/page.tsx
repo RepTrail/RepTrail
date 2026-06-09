@@ -1,14 +1,8 @@
-'use client'
-
-import React from 'react'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
-import { AffiliateReferralsContent } from '@/components/store/sections/affiliate-referrals-content'
-import { Users } from 'lucide-react'
+import { RegistrySection } from '@/components/store/advanced/registry-section'
+import { AffiliateReferralsSection } from '@/components/store/sections/affiliate-referrals-section'
+import { Users, UserPlus } from 'lucide-react'
 
-/**
- * AffiliateReferralsPage: Standardized entry point.
- * Logic is decoupled into AffiliateReferralsContent section.
- */
 export default function AffiliateReferralsPage() {
     return (
         <RegistryMain
@@ -18,8 +12,9 @@ export default function AffiliateReferralsPage() {
             contextLabel="Área do Afiliado"
             showTabs={false}
         >
-            <AffiliateReferralsContent />
+            <RegistrySection title="Painel de Rede" subtitle="Visualize as métricas e a lista da sua rede de indicações" icon={UserPlus}>
+                <AffiliateReferralsSection />
+            </RegistrySection>
         </RegistryMain>
     )
 }
-

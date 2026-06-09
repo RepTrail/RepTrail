@@ -1,7 +1,9 @@
 'use client'
 
 import React from 'react'
-import { RegistrySection } from '@/components/store/advanced/registry-section'
+import { Font } from '@/components/store/base/font'
+import { Inline } from '@/components/store/base/layout'
+import { Icon } from '@/components/store/base/icon'
 import { Stack } from '@/components/store/base/stack'
 import { Grid } from '@/components/store/base/grid'
 import {
@@ -123,43 +125,68 @@ export function StudentRegistryContent({ id }: { id: string }) {
                 fullWidth
             />
             {/* 14. Fluxo de Onboarding (Aluno) */}
-            <RegistrySection
-                title="FLUXO DE ONBOARDING (ALUNO)"
-                icon={Activity}
-                subtitle="Visualização sequencial das etapas de cadastro inicial do ecossistema RepTrail."
-            >
+            <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
+                <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                        <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                            <Icon icon={Activity} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                            <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>FLUXO DE ONBOARDING (ALUNO)</Font>
+                        </Inline>
+                        <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>Visualização sequencial das etapas de cadastro inicial do ecossistema RepTrail.</Font>
+                    </Stack>
+                </Stack>
                 <StudentOnboardingSectionContent />
-            </RegistrySection>
+            </Stack>
             {/* 15. Perfil do Aluno (Reconstrução DS) */}
-            <RegistrySection
-                title="MEU PERFIL (RECONSTRUÇÃO DS)"
-                icon={User}
-                subtitle="Versão ultra-premium reconstruída 100% com componentes base do design system."
-            >
+            <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
+                <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                        <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                            <Icon icon={User} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                            <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>MEU PERFIL (RECONSTRUÇÃO DS)</Font>
+                        </Inline>
+                        <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>Versão ultra-premium reconstruída 100% com componentes base do design system.</Font>
+                    </Stack>
+                </Stack>
                 <StudentProfileSectionContent showVariants={true} />
-            </RegistrySection>
+            </Stack>
             {/* 16. Gerador de Protocolo IA (Reconstrução DS) */}
-            <RegistrySection
-                title="GERADOR DE PROTOCOLO IA (RECONSTRUÇÃO DS)"
-                icon={Sparkles}
-                subtitle="O cérebro da plataforma. Reconstruído com a estética premium do onboarding."
-            >
+            <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
+                <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                        <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                            <Icon icon={Sparkles} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                            <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>GERADOR DE PROTOCOLO IA (RECONSTRUÇÃO DS)</Font>
+                        </Inline>
+                        <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>O cérebro da plataforma. Reconstruído com a estética premium do onboarding.</Font>
+                    </Stack>
+                </Stack>
                 <AIProtocolSectionContent />
-            </RegistrySection>
+            </Stack>
             {/* 17. Empty State Auto Treino (Reconstrução DS) */}
-            <RegistrySection
-                title="EMPTY STATE AUTO TREINO (RECONSTRUÇÃO DS)"
-                icon={Sparkles}
-                subtitle="Banner de boas-vindas exibido quando o aluno tem auto treino mas sem protocolo."
-            >
+            <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
+                <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                        <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                            <Icon icon={Sparkles} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                            <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>EMPTY STATE AUTO TREINO (RECONSTRUÇÃO DS)</Font>
+                        </Inline>
+                        <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>Banner de boas-vindas exibido quando o aluno tem auto treino mas sem protocolo.</Font>
+                    </Stack>
+                </Stack>
                 <AIProtocolEmptyStateSectionContent />
-            </RegistrySection>
+            </Stack>
             {/* 18. Compartilhamento de Evolução (Antes e Depois) */}
-            <RegistrySection
-                title="COMPARTILHAMENTO DE EVOLUÇÃO (ANTES E DEPOIS)"
-                icon={TrendingUp}
-                subtitle="Modal premium de geração de imagem de evolução."
-            >
+            <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
+                <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                        <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                            <Icon icon={TrendingUp} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                            <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>COMPARTILHAMENTO DE EVOLUÇÃO (ANTES E DEPOIS)</Font>
+                        </Inline>
+                        <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>Modal premium de geração de imagem de evolução.</Font>
+                    </Stack>
+                </Stack>
                 <Stack align="start" padding={STORE_TOKENS.PADDING.CONTAINER}>
                     <ShareTransformation
                         studentName="Marcos Roberto"
@@ -169,7 +196,7 @@ export function StudentRegistryContent({ id }: { id: string }) {
                         afterDate="2026-05-19"
                     />
                 </Stack>
-            </RegistrySection>
+            </Stack>
         </Stack>
     );
 }

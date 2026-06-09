@@ -1,8 +1,7 @@
 import { actions } from "@/lib/dal"
-import { DietBuilderSmart } from "@/components/store/advanced/diet-builder-smart"
 import { RegistryMain } from "@/components/store/advanced/registry-main"
-import { Box } from "@/components/store/base/box"
 import { notFound } from "next/navigation"
+import { TrainerDietBuilderSection } from "@/components/store/sections/trainer-diet-builder-section"
 
 export default async function DietEditPage({ params }: { params: { id: string } }) {
     const { id } = await params
@@ -24,15 +23,7 @@ export default async function DietEditPage({ params }: { params: { id: string } 
             showTabs={false}
             showHeader={false}
         >
-            <Box fullWidth>
-                <DietBuilderSmart
-                    diet={diet as any}
-                    students={students}
-                    contextLabel="ÁREA DO PERSONAL"
-                    icon="Utensils"
-                    contextColor="emerald"
-                />
-            </Box>
+            <TrainerDietBuilderSection diet={diet} students={students} />
         </RegistryMain>
     )
 }

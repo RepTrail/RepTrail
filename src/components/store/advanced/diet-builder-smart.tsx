@@ -6,13 +6,6 @@ import { useToast } from '@/hooks/use-toast'
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
 import {
     getDietDetails,
-    addMealToDiet,
-    removeMeal,
-    addMealItem,
-    removeMealItem,
-    updateMealsOrder,
-    updateMealItemsOrder,
-    updateDietMeta,
     estimateAllDietMacros
 } from '@/lib/dal/remote'
 import { QUERY_KEYS } from '@/lib/query-keys'

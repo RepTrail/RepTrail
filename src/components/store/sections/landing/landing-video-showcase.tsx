@@ -85,7 +85,7 @@ export function LandingVideoShowcase() {
                 >
                   <Box position="relative" display="flex" direction="col" align="center" gap={STORE_TOKENS.SPACING.CONTAINER} width="full">
                     <Box position="relative" width="full" maxWidth="sm" transition>
-                      <IphoneMockup className="w-full">
+                      <IphoneMockup>
                         <YouTubePlayer videoId={vid.videoId} iframeClassName="w-[135%] h-[105%] max-w-none" />
                       </IphoneMockup>
                     </Box>   {/* Captions */}

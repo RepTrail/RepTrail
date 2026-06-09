@@ -9,10 +9,9 @@ import { AdminUsersManagementPanel } from '@/components/store/advanced/admin-use
 import { AdminProductsCatalogPanel } from '@/components/store/advanced/admin-products-catalog-panel'
 import { LogItem } from '@/components/store/intermediary/log-item'
 import { History } from 'lucide-react'
-import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { AdminAnalyticsGrid } from '@/components/store/advanced/admin-analytics-grid'
-import { AdminPayoutsManagement } from '@/components/store/sections/admin-payouts-management'
-import { AdminOperationalCosts } from '@/components/store/sections/admin-operational-costs'
+import { AdminPayoutsManagementPanel } from '@/components/store/advanced/admin-payouts-management-panel'
+import { AdminOperationalCostsPanel } from '@/components/store/advanced/admin-operational-costs-panel'
 import { EmptyState } from '@/components/store/intermediary/empty-state'
 import { Stack } from '@/components/store/base/stack'
 
@@ -20,18 +19,13 @@ export function AdminSectionContent({ id }: { id?: string }) {
     return (
         <Stack gap={{ base: STORE_TOKENS.SPACING.EMPTY_STATE, md: STORE_TOKENS.SPACING.SECTION }}>
             {/* Dashboard Overview */}
-            <RegistrySection 
-                id={id}
-                title="Dashboard Admin" 
-                icon={TrendingUp} 
-                subtitle="Componentes analíticos e de gestão financeira para a interface administrativa."
-            >
+            <Stack>
                 <AdminAnalyticsGrid />
-            </RegistrySection>
+            </Stack>
 
             {/* Gestão Financeira: Saques e Custos */}
             <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
-                <AdminPayoutsManagement 
+                <AdminPayoutsManagementPanel 
                     initialPayouts={[
                         {
                             id: '1',
@@ -54,7 +48,7 @@ export function AdminSectionContent({ id }: { id?: string }) {
             </Stack>
 
             <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
-                <AdminOperationalCosts 
+                <AdminOperationalCostsPanel 
                     initialCosts={[
                         {
                             id: 'c1',
@@ -71,8 +65,6 @@ export function AdminSectionContent({ id }: { id?: string }) {
                             created_at: new Date().toISOString()
                         }
                     ]}
-                    totalMonthly={165.50}
-                    totalAllTime={1240.80}
                 />
 
                 <EmptyState 
@@ -89,11 +81,7 @@ export function AdminSectionContent({ id }: { id?: string }) {
             <AdminProductsCatalogPanel />
 
             {/* Logs de Atividade */}
-            <RegistrySection
-                title="Logs de Atividade"
-                icon={History}
-                subtitle="Rastro de auditoria de todas as ações realizadas no painel administrativo."
-            >
+            <Stack>
                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                     <LogItem 
                         action="UPDATE_USER_ROLE"
@@ -126,7 +114,7 @@ export function AdminSectionContent({ id }: { id?: string }) {
                         description="Não há registros adicionais de auditoria para o período selecionado."
                     />
                 </Stack>
-            </RegistrySection>
+            </Stack>
         </Stack>
     )
 }

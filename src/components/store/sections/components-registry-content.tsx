@@ -8,7 +8,6 @@ import { Icon } from '@/components/store/base/icon'
 import { Button } from '@/components/store/base/button'
 import { Grid } from '@/components/store/base/grid'
 import { Box } from '@/components/store/base/box'
-import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { Badge } from '@/components/store/base/badge'
 import { Inline, Cluster } from '@/components/store/base/layout'
 import { GlassPanel } from '@/components/store/base/surface'
@@ -47,14 +46,18 @@ export function ComponentsRegistryContent({ id }: { id?: string }) {
     ]
 
     return (
-        <React.Fragment>
+        <Stack gap={STORE_TOKENS.SPACING.SECTION} id={id}>
             {/* New Main Buttons Section */}
-            <RegistrySection
-                id={id}
-                title="Ações Principais (Call to Action)"
-                icon={MousePointer2}
-                subtitle="Botões de destaque para fluxos principais e conversão no ecossistema RepTrail."
-            >
+            <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT}>
+                <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                        <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                            <Icon icon={MousePointer2} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                            <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>Ações Principais (Call to Action)</Font>
+                        </Inline>
+                        <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>Botões de destaque para fluxos principais e conversão no ecossistema RepTrail.</Font>
+                    </Stack>
+                </Stack>
                 <Grid cols={1} mdCols={2} gap={STORE_TOKENS.SPACING.CONTAINER}>
                     {/* System Radius Column - Solid Style */}
                     <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER}>
@@ -112,12 +115,17 @@ export function ComponentsRegistryContent({ id }: { id?: string }) {
                         </Stack>
                     </GlassPanel>
                 </Grid>
-            </RegistrySection>
-            <RegistrySection
-                title="Grid & Row Actions"
-                icon={Dumbbell}
-                subtitle="Ações de alta densidade e indicadores de estado para listagens administrativas."
-            >
+            </Stack>
+            <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT}>
+                <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                        <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                            <Icon icon={Dumbbell} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                            <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>Grid & Row Actions</Font>
+                        </Inline>
+                        <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>Ações de alta densidade e indicadores de estado para listagens administrativas.</Font>
+                    </Stack>
+                </Stack>
                 <Grid cols={1} mdCols={2} gap={STORE_TOKENS.SPACING.CONTAINER}>
                     {/* Actions Column (50%) */}
                     <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER}>
@@ -245,12 +253,17 @@ export function ComponentsRegistryContent({ id }: { id?: string }) {
                         </Stack>
                     </GlassPanel>
                 </Grid>
-            </RegistrySection>
-            <RegistrySection
-                title="Trainer Dashboard Sidebar"
-                icon={Shield}
-                subtitle="Sidebar operacional do personal com código da equipe, atalhos do perfil público e teaser de importação."
-            >
+            </Stack>
+            <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT}>
+                <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                        <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                            <Icon icon={Shield} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                            <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>Trainer Dashboard Sidebar</Font>
+                        </Inline>
+                        <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>Sidebar operacional do personal com código da equipe, atalhos do perfil público e teaser de importação.</Font>
+                    </Stack>
+                </Stack>
                 <Grid cols={{ base: 1, lg: 2 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
                     <TrainerDashboardSidebarPanel
                         trainerCode="2EBCED"
@@ -266,12 +279,17 @@ export function ComponentsRegistryContent({ id }: { id?: string }) {
                         showImportTeaser={false}
                     />
                 </Grid>
-            </RegistrySection>
-            <RegistrySection
-                title="Inputs & Form Control"
-                icon={Settings}
-                subtitle="Componentes de captura de dados com máscaras inteligentes, validação visual e estados de foco emerald."
-            >
+            </Stack>
+            <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT}>
+                <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                        <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                            <Icon icon={Settings} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                            <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>Inputs & Form Control</Font>
+                        </Inline>
+                        <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>Componentes de captura de dados com máscaras inteligentes, validação visual e estados de foco emerald.</Font>
+                    </Stack>
+                </Stack>
                 <Grid cols={1} mdCols={2} gap={STORE_TOKENS.SPACING.EMPTY_STATE}>
                     {/* Basic & Identity Column */}
                     <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER}>
@@ -332,12 +350,17 @@ export function ComponentsRegistryContent({ id }: { id?: string }) {
                         </Stack>
                     </GlassPanel>
                 </Grid>
-            </RegistrySection>
-            <RegistrySection
-                title="Selection & Choices"
-                icon={Check}
-                subtitle="Controles de seleção customizados: switch segmentado, dropdown e checkbox com estados visuais premium."
-            >
+            </Stack>
+            <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT}>
+                <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                        <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                            <Icon icon={Check} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                            <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>Selection & Choices</Font>
+                        </Inline>
+                        <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>Controles de seleção customizados: switch segmentado, dropdown e checkbox com estados visuais premium.</Font>
+                    </Stack>
+                </Stack>
                 <Grid cols={1} mdCols={3} gap={STORE_TOKENS.SPACING.CONTAINER} align="start">
                     {/* Switch */}
                     <GlassPanel shrink={0} padding={STORE_TOKENS.PADDING.CONTAINER}>
@@ -427,7 +450,7 @@ export function ComponentsRegistryContent({ id }: { id?: string }) {
                         </Stack>
                     </GlassPanel>
                 </Grid>
-            </RegistrySection>
-        </React.Fragment>
+            </Stack>
+        </Stack>
     );
 }

@@ -1,11 +1,16 @@
 'use client'
+import { Icon } from '@/components/store/base/icon'
+import { Inline } from '@/components/store/base/layout'
+import { Font } from '@/components/store/base/font'
+import { Stack } from '@/components/store/base/stack'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
+import { LayoutDashboard } from 'lucide-react'
 
 import React from 'react'
 import { useQuery } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { getTrainerErgogenicStudents } from '@/lib/dal/remote'
 import { useRealtimeSync } from '@/hooks/use-realtime-sync'
-import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { TrainerErgogenicsHubSectionContent } from '@/components/store/sections/trainer-ergogenics-hub-section-content'
 
 interface TrainerErgogenicsHubSmartProps {
@@ -36,8 +41,19 @@ export function TrainerErgogenicsHubSmart({ userId }: TrainerErgogenicsHubSmartP
     })
 
     return (
-        <RegistrySection>
+        <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
+            <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                    <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                        <Icon icon={LayoutDashboard} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                        <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{"Section"}</Font>
+                    </Inline>
+                    
+                </Stack>
+            </Stack>
+            <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
             <TrainerErgogenicsHubSectionContent students={students} />
-        </RegistrySection>
+          </Stack>
+        </Stack>
     )
 }

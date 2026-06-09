@@ -14,7 +14,6 @@ import { CopyInviteButton } from '@/components/store/intermediary/copy-invite-bu
 import { Button } from '@/components/store/base/button'
 import { Icon } from '@/components/store/base/icon'
 import { Plus } from 'lucide-react'
-import { Font } from '../base/font'
 
 interface TrainerStudentsActionsSectionProps {
     userId: string

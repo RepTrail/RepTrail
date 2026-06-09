@@ -1,6 +1,5 @@
 import React from 'react';
 import { Stack } from '@/components/store/base/stack';
-import { Separator } from '@/components/store/base/separator';
 import { Icon } from '@/components/store/base/icon';
 import { Button as DSButton } from '@/components/store/base/button';
 import { STORE_TOKENS } from '@/components/store/constants/tokens';

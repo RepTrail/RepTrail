@@ -1,7 +1,10 @@
 'use client'
-
+import { Icon } from '@/components/store/base/icon'
+import { Inline } from '@/components/store/base/layout'
+import { Font } from '@/components/store/base/font'
+import { Stack } from '@/components/store/base/stack'
+import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import React, { useMemo } from 'react'
-import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { DietAdherenceCard } from '@/components/store/advanced/diet-adherence-card'
 import { Utensils } from 'lucide-react'
 import { useQueryClient } from '@/lib/dal'
@@ -117,11 +120,32 @@ export function StudentNutritionAdherence({ userId }: StudentNutritionAdherenceP
         }
     }, [diet])
 
-    if (isLoading) return <RegistrySection title="DIETA DE HOJE" subtitle="Acompanhamento nutricional e macros." icon={Utensils}><Box /></RegistrySection>
+    if (isLoading) return <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
+            <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                    <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                        <Icon icon={Utensils} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                        <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{"DIETA DE HOJE"}</Font>
+                    </Inline>
+                    <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{"Acompanhamento nutricional e macros."}</Font>
+                </Stack>
+            </Stack>
+            <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth><Box />  </Stack>
+        </Stack>
 
     if (!diet || !stats) {
         return (
-            <RegistrySection title="DIETA DE HOJE" subtitle="Acompanhamento nutricional e macros." icon={Utensils}>
+            <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
+            <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                    <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                        <Icon icon={Utensils} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                        <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{"DIETA DE HOJE"}</Font>
+                    </Inline>
+                    <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{"Acompanhamento nutricional e macros."}</Font>
+                </Stack>
+            </Stack>
+            <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
                 <DietAdherenceCard
                     completedItems={0}
                     totalItems={0}
@@ -130,16 +154,23 @@ export function StudentNutritionAdherence({ userId }: StudentNutritionAdherenceP
                     meals={[]}
                     status="empty"
                 />
-            </RegistrySection>
+              </Stack>
+        </Stack>
         )
     }
 
     return (
-        <RegistrySection
-            title="DIETA DE HOJE"
-            subtitle="Acompanhamento nutricional e macros."
-            icon={Utensils}
-        >
+        <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
+            <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                    <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                        <Icon icon={Utensils} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                        <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{"DIETA DE HOJE"}</Font>
+                    </Inline>
+                    <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{"Acompanhamento nutricional e macros."}</Font>
+                </Stack>
+            </Stack>
+            <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
             <DietAdherenceCard
                 completedItems={stats.completedItems}
                 totalItems={stats.totalItems}
@@ -150,6 +181,7 @@ export function StudentNutritionAdherence({ userId }: StudentNutritionAdherenceP
                 onToggleItem={(itemId, currentStatus) => itemMutation.mutate({ itemId, currentStatus })}
                 status="active"
             />
-        </RegistrySection>
+          </Stack>
+        </Stack>
     )
 }

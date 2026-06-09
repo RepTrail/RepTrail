@@ -8,7 +8,7 @@ import { Inline } from '@/components/store/base/layout'
 import { Icon } from '@/components/store/base/icon'
 import { Input } from '@/components/store/base/input'
 import { Surface } from '@/components/store/base/surface'
-import { RegistrySection } from '@/components/store/advanced/registry-section'
+
 import { useRegistry } from '@/components/store/advanced/registry-context'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { Link as LinkIcon, Copy } from 'lucide-react'
@@ -17,12 +17,17 @@ export function AffiliateLinkSharingPanel({ id }: { id?: string }) {
     const { primaryColor } = useRegistry()
 
     return (
-        <RegistrySection
-            id={id}
-            title="Marketing de Afiliados"
-            icon={LinkIcon}
-            subtitle="Compartilhe seu link exclusivo e ganhe comissões recorrentes sobre cada novo personal ou aluno indicado."
-        >
+        <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
+            <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                    <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                        <Icon icon={LinkIcon} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                        <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{"Marketing de Afiliados"}</Font>
+                    </Inline>
+                    <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{"Compartilhe seu link exclusivo e ganhe comissões recorrentes sobre cada novo personal ou aluno indicado."}</Font>
+                </Stack>
+            </Stack>
+            <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
             <Surface variant="glass" padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM}>
                 <Stack gap={STORE_TOKENS.SPACING.CONTAINER} width="full">
                     <Inline justify="between" align="end" wrap gap={STORE_TOKENS.SPACING.CONTAINER}>
@@ -42,9 +47,8 @@ export function AffiliateLinkSharingPanel({ id }: { id?: string }) {
                                 <Button
                                     variant="outline-primary"
                                     isIconOnly
+                                    size="lg"
                                     rounded={STORE_TOKENS.RADIUS.SYSTEM}
-                                    height="12"
-                                    width="12"
                                     shrink={0}
                                     onClick={() => {
                                         navigator.clipboard.writeText('https://reptrail.com.br/?ref=5w6loo6iks')
@@ -86,6 +90,7 @@ export function AffiliateLinkSharingPanel({ id }: { id?: string }) {
                     </Inline>
                 </Stack>
             </Surface>
-        </RegistrySection>
+          </Stack>
+        </Stack>
     );
 }

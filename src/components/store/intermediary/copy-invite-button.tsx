@@ -5,7 +5,6 @@ import { Copy, Check } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import { Button } from '@/components/store/base/button'
 import { Icon } from '@/components/store/base/icon'
-import { Font } from '@/components/store/base/font'
 import { Stack } from '@/components/store/base/stack'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 

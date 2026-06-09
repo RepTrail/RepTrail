@@ -1,11 +1,7 @@
 import { headers } from 'next/headers'
-import { Suspense } from 'react'
-import { StudentCardioManagementSmart } from '@/components/store/advanced/student-cardio-management-smart'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { StudentRegistryHeaderActions } from '@/components/store/advanced/student-registry-header-actions'
-import { Box } from '@/components/store/base/box'
-import { Stack } from '@/components/store/base/stack'
-import { STORE_TOKENS } from '@/components/store/constants/tokens'
+import { StudentCardioSection } from '@/components/store/sections/student-cardio-section'
 
 export default async function StudentCardioPage() {
     const headerList = await headers()
@@ -22,17 +18,7 @@ export default async function StudentCardioPage() {
             showTabs={false}
             rightElement={<StudentRegistryHeaderActions userId={userId} type="cardio" />}
         >
-            <Suspense fallback={
-                <Box fullWidth>
-                    <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
-                        <Box height={400} bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.LOW} rounded={STORE_TOKENS.RADIUS.SYSTEM} />
-                    </Stack>
-                </Box>
-            }>
-                <Box suppressHydrationWarning fullWidth>
-                    <StudentCardioManagementSmart userId={userId} />
-                </Box>
-            </Suspense>
+            <StudentCardioSection userId={userId} />
         </RegistryMain>
     );
 }

@@ -163,7 +163,7 @@ export function LandingFeatures({ role = 'trainer' }: LandingFeaturesProps) {
           {/* Left Side: Mockup (If configured on the left) */}
           {activeConfig.mockupSide === 'left' && (
             <Box position="relative" group fullWidth align="center" justify="start" order={{ base: 'first', md: 'none' }}>
-              <IphoneMockup className="w-full md:ml-0 md:mr-auto max-w-[300px]">
+              <IphoneMockup>
                 <YouTubePlayer videoId={activeConfig.videoId} iframeClassName="w-[135%] h-[105%] max-w-none" />
               </IphoneMockup>
             </Box>
@@ -243,7 +243,7 @@ export function LandingFeatures({ role = 'trainer' }: LandingFeaturesProps) {
           {/* Right Side: Mockup (If configured on the right) */}
           {activeConfig.mockupSide === 'right' && (
             <Box position="relative" group fullWidth align="center" justify="end" order={{ base: 'first', md: 'none' }}>
-              <IphoneMockup className="w-full md:mr-0 md:ml-auto max-w-[300px]">
+              <IphoneMockup>
                 <YouTubePlayer videoId={activeConfig.videoId} iframeClassName="w-[135%] h-[105%] max-w-none" />
               </IphoneMockup>
             </Box>

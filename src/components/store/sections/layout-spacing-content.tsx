@@ -6,19 +6,12 @@ import { Font } from '@/components/store/base/font'
 import { Inline } from '@/components/store/base/layout'
 import { Box } from '@/components/store/base/box'
 import { GlassPanel, CardHeader, CardContent } from '@/components/store/base/surface'
-import { RegistrySection } from '@/components/store/advanced/registry-section'
-import { Layout } from 'lucide-react'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 export function LayoutSpacingContent({ id }: { id?: string }) {
-  return (
-      <RegistrySection
-          id={id}
-          title="Layout & Espaçamento"
-          icon={Layout}
-          subtitle="Regras de arquitetura de layout, raios de borda e padding obrigatório."
-      >
-          {/* Radii & Padding Rules */}
+    return (
+        <Stack gap={STORE_TOKENS.SPACING.CONTAINER} id={id}>
+            {/* Radii & Padding Rules */}
           <GlassPanel padding={STORE_TOKENS.PADDING.NONE}>
               <Stack gap={STORE_TOKENS.SPACING.NONE}>
                   <CardHeader>
@@ -78,8 +71,8 @@ export function LayoutSpacingContent({ id }: { id?: string }) {
                   </CardContent>
               </Stack>
           </GlassPanel>
-      </RegistrySection>
-  );
+        </Stack>
+    );
 }
 
 interface RadiusItemProps {

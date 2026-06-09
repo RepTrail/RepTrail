@@ -1,6 +1,7 @@
 import { getStudentTrainerReview, actions } from '@/lib/dal/server'
 import { redirect } from 'next/navigation'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
+import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { MeuPersonalSectionContent } from '@/components/store/sections/meu-personal-section-content'
 import { headers } from 'next/headers'
 
@@ -25,11 +26,13 @@ export default async function MeuPersonalPage() {
             contextLabel="Relacionamento & Performance"
             showTabs={false}
         >
-            <MeuPersonalSectionContent
-                trainer={trainer}
-                trainerRel={trainerRel}
-                existingReview={existingReview}
-            />
+            <RegistrySection>
+                <MeuPersonalSectionContent
+                    trainer={trainer}
+                    trainerRel={trainerRel}
+                    existingReview={existingReview}
+                />
+            </RegistrySection>
         </RegistryMain>
     )
 }

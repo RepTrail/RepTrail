@@ -3,8 +3,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
-
-import { RegistrySection } from '@/components/store/advanced/registry-section'
+import { getPlanLimitsDetails } from '@/lib/dal'
 import { Stack } from '@/components/store/base/stack'
 import { Grid } from '@/components/store/base/grid'
 import { Box } from '@/components/store/base/box'
@@ -26,9 +25,10 @@ interface MeuPersonalSectionContentProps {
 }
 
 export function MeuPersonalSectionContent({ trainer, trainerRel, existingReview }: MeuPersonalSectionContentProps) {
+    const trainerPlanLimits = getPlanLimitsDetails(trainer.plan_tier)
+
     return (
-        <RegistrySection>
-            <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
+        <Stack gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
                 {/* Perfil do Personal */}
                 <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM}>
                     <Stack direction={{ base: 'col', md: 'row' }} gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
@@ -40,7 +40,7 @@ export function MeuPersonalSectionContent({ trainer, trainerRel, existingReview 
                                 size="xxl"
                                 variant="zinc"
                             />
-                            {trainer.is_elite && (
+                            {trainerPlanLimits.features.hasEliteBadge && (
                                 <Badge
                                     label="Elite Trainer"
                                     variant="solid"
@@ -309,7 +309,6 @@ export function MeuPersonalSectionContent({ trainer, trainerRel, existingReview 
                         )}
                     </Grid>
                 )}
-            </Stack>
-        </RegistrySection>
+        </Stack>
     );
 }

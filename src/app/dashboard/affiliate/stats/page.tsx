@@ -1,14 +1,8 @@
-'use client'
-
-import React from 'react'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
-import { AffiliateStatsContent } from '@/components/store/sections/affiliate-stats-content'
-import { BarChart } from 'lucide-react'
+import { RegistrySection } from '@/components/store/advanced/registry-section'
+import { AffiliateStatsSection } from '@/components/store/sections/affiliate-stats-section'
+import { BarChart, TrendingUp } from 'lucide-react'
 
-/**
- * AffiliateStatsPage: Standardized entry point.
- * Logic is decoupled into AffiliateStatsContent section.
- */
 export default function AffiliateStatsPage() {
     return (
         <RegistryMain
@@ -18,8 +12,9 @@ export default function AffiliateStatsPage() {
             contextLabel="Área do Afiliado"
             showTabs={false}
         >
-            <AffiliateStatsContent />
+            <RegistrySection title="Métricas de Conversão" subtitle="Análise completa do seu funil e cliques" icon={TrendingUp}>
+                <AffiliateStatsSection />
+            </RegistrySection>
         </RegistryMain>
     )
 }
-

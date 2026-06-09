@@ -9,6 +9,7 @@ import { Surface } from '@/components/store/base/surface'
 import { BackgroundEffects } from '@/components/store/base/background-effects'
 import { Box } from '@/components/store/base/box'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
+import { PublicProfileShell } from '@/components/store/advanced/public-profile-shell'
 
 export const metadata = {
     title: 'Perfil do Treinador | RepTrail',
@@ -128,21 +129,8 @@ export default async function TrainerPublicProfilePage({
     }
 
     return (
-        <Surface
-            minHeight="screen"
-            bg={STORE_TOKENS.COLORS.BACKGROUND}
-            bgOpacity={STORE_TOKENS.OPACITY.BACKGROUND}
-            overflowX="hidden"
-            display="flex"
-            direction="col"
-            position="relative"
-        >
-            <BackgroundEffects variant="all" />
-            <Box position="relative" zIndex={STORE_TOKENS.Z_INDEX.CONTENT} flex1>
-                <RegistryProvider defaultColor="emerald">
-                    {mainContent}
-                </RegistryProvider>
-            </Box>
-        </Surface>
+        <PublicProfileShell color="emerald">
+            {mainContent}
+        </PublicProfileShell>
     );
 }

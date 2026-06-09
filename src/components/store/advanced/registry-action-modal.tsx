@@ -3,10 +3,8 @@
 import React from 'react'
 import { Modal } from './modal'
 import { Stack } from '@/components/store/base/stack'
-import { Inline } from '@/components/store/base/layout'
 import { Grid } from '@/components/store/base/grid'
 import { Font } from '@/components/store/base/font'
-import { Icon } from '@/components/store/base/icon'
 import { Input } from '@/components/store/base/input'
 import { FormSelect } from '@/components/store/base/form-select'
 import { FormSwitch } from '@/components/store/base/form-switch'
@@ -15,7 +13,6 @@ import { Callout } from '../intermediary/callout'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import {
     Clock,
-    Calendar,
     Dumbbell,
     Utensils,
     Activity,

@@ -1,9 +1,10 @@
-'use client';
+'use client'
+import { Icon } from '@/components/store/base/icon'
+import { Inline } from '@/components/store/base/layout'
 import { STORE_TOKENS } from '@/components/store/constants/tokens';
 
-import { Activity } from 'lucide-react'
-import { RegistryMain } from '@/components/store/advanced/registry-main'
-import { RegistrySection } from '@/components/store/advanced/registry-section'
+import { LayoutDashboard } from 'lucide-react'
+
 import { Stack } from '@/components/store/base/stack'
 import { Box } from '@/components/store/base/box'
 import { Font } from '@/components/store/base/font'
@@ -12,14 +13,18 @@ import Link from 'next/link'
 
 export function InactiveTrainerCard({ trainerName }: { trainerName: string | null }) {
     return (
-        <RegistryMain
-            title="STATUS DO PLANO"
-            subtitle="Atenção necessária: seu personal trainer está inativo."
-            icon={Activity}
-            contextLabel="Área do Aluno"
-            showTabs={false}
-        >
-            <RegistrySection>
+        <Stack gap={STORE_TOKENS.SPACING.SECTION} fullWidth>
+            <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
+            <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                    <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                        <Icon icon={LayoutDashboard} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                        <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{"Status do Plano"}</Font>
+                    </Inline>
+                    
+                </Stack>
+            </Stack>
+            <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
                 <Box
                     position="relative"
                     overflow="hidden"
@@ -114,7 +119,8 @@ export function InactiveTrainerCard({ trainerName }: { trainerName: string | nul
                         </Stack>
                     </Stack>
                 </Box>
-            </RegistrySection>
-        </RegistryMain>
+              </Stack>
+        </Stack>
+        </Stack>
     );
 }

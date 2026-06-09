@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { searchTrainers } from '@/lib/dal/remote'
 import { Search, Trophy } from 'lucide-react'
-import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { Stack } from '@/components/store/base/stack'
 import { Surface } from '@/components/store/base/surface'
 import { Box } from '@/components/store/base/box'
@@ -11,6 +10,7 @@ import { Grid } from '@/components/store/base/grid'
 import { Input } from '@/components/store/base/input'
 import { Font } from '@/components/store/base/font'
 import { Icon } from '@/components/store/base/icon'
+import { Inline } from '@/components/store/base/layout'
 import { RankingPodiumCard } from '@/components/store/intermediary/ranking-podium-card'
 import { fbqEvent } from '@/lib/meta-pixel'
 import { useQuery } from '@/lib/dal'
@@ -44,11 +44,16 @@ export function SearchPersonalSection() {
 
     return (
         <Stack gap={{ base: STORE_TOKENS.SPACING.EMPTY_STATE as any, md: STORE_TOKENS.SPACING.SECTION }}>
-            <RegistrySection
-                title="Profissionais Disponíveis"
-                subtitle={`${trainers.length} treinadores encontrados`}
-                icon={Trophy}
-            >
+            <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT}>
+                <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                        <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                            <Icon icon={Trophy} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                            <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>Profissionais Disponíveis</Font>
+                        </Inline>
+                        <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{`${trainers.length} treinadores encontrados`}</Font>
+                    </Stack>
+                </Stack>
                 <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                     <Box width="full">
                         <Input
@@ -115,7 +120,7 @@ export function SearchPersonalSection() {
                         </Surface>
                     )}
                 </Stack>
-            </RegistrySection>
+            </Stack>
         </Stack>
     );
 }

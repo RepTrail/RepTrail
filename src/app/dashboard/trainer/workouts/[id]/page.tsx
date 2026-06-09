@@ -1,8 +1,7 @@
 import { actions } from "@/lib/dal"
-import { WorkoutBuilderSmart } from "@/components/store/advanced/workout-builder-smart"
 import { RegistryMain } from "@/components/store/advanced/registry-main"
-import { Box } from "@/components/store/base/box"
 import { notFound } from "next/navigation"
+import { TrainerWorkoutBuilderSection } from "@/components/store/sections/trainer-workout-builder-section"
 
 export default async function WorkoutEditPage({ params }: { params: { id: string } }) {
     const { id } = await params
@@ -24,15 +23,7 @@ export default async function WorkoutEditPage({ params }: { params: { id: string
             showTabs={false}
             showHeader={false}
         >
-            <Box fullWidth>
-                <WorkoutBuilderSmart 
-                    workout={workout as any} 
-                    students={students} 
-                    contextLabel="ÁREA DO PERSONAL"
-                    icon="Dumbbell"
-                    contextColor="emerald"
-                />
-            </Box>
+            <TrainerWorkoutBuilderSection workout={workout} students={students} />
         </RegistryMain>
     )
 }

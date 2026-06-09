@@ -3,8 +3,8 @@
 import React from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { SegmentedSwitch } from '@/components/store/intermediary/segmented-switch'
-import { RegistrySection } from '@/components/store/advanced/registry-section'
-import { User, TrendingUp, ClipboardList, ImageIcon, Compass } from 'lucide-react'
+
+import { User, TrendingUp, ClipboardList, ImageIcon } from 'lucide-react'
 
 interface TrainerStudentDetailTabSwitcherProps {
     activeTab: string
@@ -28,13 +28,11 @@ export function TrainerStudentDetailTabSwitcher({ activeTab }: TrainerStudentDet
     }
 
     return (
-        <RegistrySection>
             <SegmentedSwitch
                 options={tabs}
                 activeId={activeTab}
                 onSelect={handleSelect}
             />
-        </RegistrySection>
     )
 }
 

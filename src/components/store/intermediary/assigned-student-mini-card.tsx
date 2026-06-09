@@ -2,7 +2,6 @@
 
 import React from 'react'
 import { Stack } from '@/components/store/base/stack'
-import { Font } from '@/components/store/base/font'
 import { BaseAvatar } from '@/components/store/base/avatar'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 

@@ -1,17 +1,28 @@
-import { AuthForm } from '@/components/store/advanced/auth-form'
-import { Suspense } from 'react'
+'use client'
 
+import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { RegistryProvider } from '@/components/store/advanced/registry-context'
-import { AuthShell } from '@/components/store/advanced/auth-shell'
+import { RegistrySection } from '@/components/store/advanced/registry-section'
+import { AuthAfiliadosCadastroSection } from '@/components/store/sections/auth-afiliados-cadastro-section'
+import { UserPlus } from 'lucide-react'
 
 export default function AffiliadosCadastroPage() {
     return (
         <RegistryProvider defaultColor="amber">
-            <AuthShell>
-                <Suspense fallback={null}>
-                    <AuthForm view="affiliate-signup" />
-                </Suspense>
-            </AuthShell>
+            <RegistryMain
+                title="Cadastro de Parceiro"
+                subtitle="Torne-se um afiliado RepTrail"
+                icon={UserPlus}
+                showHeader={false}
+            >
+                <RegistrySection
+                    title="Cadastro de Afiliado"
+                    subtitle="Torne-se um parceiro RepTrail."
+                    icon={UserPlus}
+                >
+                    <AuthAfiliadosCadastroSection />
+                </RegistrySection>
+            </RegistryMain>
         </RegistryProvider>
     )
 }

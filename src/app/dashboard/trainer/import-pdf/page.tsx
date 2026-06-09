@@ -4,6 +4,7 @@ import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { ImportPdfSectionContent } from '@/components/store/sections/import-pdf-section-content'
 import { headers } from 'next/headers'
 
+
 export const metadata = {
     title: 'Importar PDF | RepTrail'
 }
@@ -13,6 +14,11 @@ export default async function TrainerImportPdfPage() {
     const userId = headerList.get('x-user-id')
 
     if (!userId) redirect('/auth/login')
+
+    const features = await actions.getTrainerPlanFeatures(userId)
+    if (features && !features.has_import_pdf_ai) {
+        redirect('/dashboard/trainer')
+    }
 
     const students = await actions.getTrainerStudents(userId)
 

@@ -1,14 +1,9 @@
-import { Suspense } from 'react'
 import { headers } from 'next/headers'
 import { dehydrate, HydrationBoundary } from '@/lib/dal'
 import { getQueryClient } from '@/lib/get-query-client'
 import { PREFETCH_REGISTRY } from '@/lib/prefetch-registry'
-import { StudentProgressPageContent } from '@/components/store/advanced/student-progress-content'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
-import { Box } from '@/components/store/base/box'
-import { Stack } from '@/components/store/base/stack'
-import { Grid } from '@/components/store/base/grid'
-import { STORE_TOKENS } from '@/components/store/constants/tokens'
+import { StudentProgressSection } from '@/components/store/sections/student-progress-section'
 
 export default async function StudentProgressPage() {
     const headerList = await headers()
@@ -36,22 +31,9 @@ export default async function StudentProgressPage() {
             contextLabel="Saúde & Performance"
             showTabs={false}
         >
-            <Suspense fallback={
-                <Box fullWidth>
-                    <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
-                        <Box height={10} width={48} bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.LOW} rounded={STORE_TOKENS.RADIUS.SYSTEM} />
-                        <Grid cols={1} mdCols={3} gap={STORE_TOKENS.SPACING.CONTAINER}>
-                            <Box height={32} bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.LOW} rounded={STORE_TOKENS.RADIUS.SYSTEM} />
-                            <Box height={32} bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.LOW} rounded={STORE_TOKENS.RADIUS.SYSTEM} />
-                            <Box height={32} bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.LOW} rounded={STORE_TOKENS.RADIUS.SYSTEM} />
-                        </Grid>
-                    </Stack>
-                </Box>
-            }>
-                <HydrationBoundary state={dehydrate(queryClient)}>
-                    <StudentProgressPageContent userId={userId} />
-                </HydrationBoundary>
-            </Suspense>
+            <HydrationBoundary state={dehydrate(queryClient)}>
+                <StudentProgressSection userId={userId} />
+            </HydrationBoundary>
         </RegistryMain>
     );
 }

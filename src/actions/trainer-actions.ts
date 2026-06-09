@@ -300,6 +300,47 @@ export async function createStudent(prevState: any, formData: FormData) {
             }
         }
 
+        // Check student limit if this is a new link or reactivating
+        const { data: currentRelation } = studentId ? await supabase
+            .from('trainer_students')
+            .select('active')
+            .eq('trainer_id', user.id)
+            .eq('student_id', studentId)
+            .maybeSingle() : { data: null }
+
+        const isActivating = !currentRelation || !currentRelation.active
+
+        if (isActivating) {
+            const { data: trainerProfile } = await supabase
+                .from('profiles')
+                .select(`
+                    plans (
+                        plan_features_dynamic (
+                            student_limit
+                        )
+                    )
+                `)
+                .eq('id', user.id)
+                .single()
+
+            const plans = trainerProfile?.plans as any
+            const features = Array.isArray(plans) ? plans[0]?.plan_features_dynamic : plans?.plan_features_dynamic
+            const f = Array.isArray(features) ? features[0] : features
+            const studentLimit = f?.student_limit ?? null
+
+            if (studentLimit !== null) {
+                const { count: activeCount } = await supabase
+                    .from('trainer_students')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('trainer_id', user.id)
+                    .eq('active', true)
+
+                if ((activeCount || 0) >= studentLimit) {
+                    return { success: false, message: `Você atingiu o limite de ${studentLimit} alunos ativos para o seu plano.` }
+                }
+            }
+        }
+
         // 2. Link/Update Student to Trainer (Unified Upsert)
         const { error: linkError } = await supabase
             .from('trainer_students')
@@ -1137,7 +1178,8 @@ export async function toggleStudentStatus(relationshipId: string, isActive: bool
                     is_billing_exempt,
                     plans (
                         plan_features_dynamic (
-                            free_students_limit
+                            free_students_limit,
+                            student_limit
                         )
                     )
                 `)
@@ -1154,9 +1196,18 @@ export async function toggleStudentStatus(relationshipId: string, isActive: bool
             const features = Array.isArray(plans) ? plans[0]?.plan_features_dynamic : plans?.plan_features_dynamic
             const f = Array.isArray(features) ? features[0] : features
 
+            const studentLimit = f?.student_limit ?? null
+            const activeCount = count || 0
+
+            if (studentLimit !== null && activeCount >= studentLimit) {
+                return {
+                    success: false,
+                    error: `Você atingiu o limite de ${studentLimit} alunos ativos para o seu plano.`
+                }
+            }
+
             const freeStudentsLimit = f?.free_students_limit ?? DEFAULT_FREE_STUDENTS_LIMIT
 
-            const activeCount = count || 0
             if (activeCount >= freeStudentsLimit && !profile?.asaas_subscription_id && !profile?.is_billing_exempt) {
                 return {
                     success: false,

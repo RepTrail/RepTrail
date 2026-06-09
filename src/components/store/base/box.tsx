@@ -41,6 +41,7 @@ export interface BoxProps extends Omit<React.AllHTMLAttributes<HTMLElement>, 'co
   translateX?: 0 | '-full' | 'full' | { base: 0 | '-full' | 'full', md?: 0 | '-full' | 'full', lg?: 0 | '-full' | 'full' }
   translateY?: 0 | '-full' | 'full'
   noScrollbar?: boolean
+  customScrollbar?: boolean
   truncate?: boolean
   breakAll?: boolean
   transition?: boolean
@@ -78,7 +79,7 @@ export interface BoxProps extends Omit<React.AllHTMLAttributes<HTMLElement>, 'co
   hoverBg?: BoxColor
   hoverBgOpacity?: 5 | 10 | 20 | 30 | 50 | 80 | 90 | 100
   border?: boolean
-  borderWidth?: 1 | 2
+  borderWidth?: 2
   borderColor?: BoxColor | string
   type?: 'button' | 'submit' | 'reset'
   scale?: 90 | 95 | 100 | 105 | 110
@@ -119,6 +120,7 @@ export const Box = React.forwardRef<HTMLElement, BoxProps>(function Box({
   translateX,
   translateY,
   noScrollbar,
+  customScrollbar,
   top,
   right,
   bottom,
@@ -945,8 +947,9 @@ export const Box = React.forwardRef<HTMLElement, BoxProps>(function Box({
         translateY === 'full' && 'translate-y-full',
         translateY === '-full' && '-translate-y-full',
         translateY === 0 && 'translate-y-0',
+        customScrollbar && 'custom-scrollbar',
 
-        border && (borderWidth === 1 ? 'border' : 'border-2'),
+        border && 'border-2',
         border && !borderColor && 'border-white/5',
         border && borderColor && (
           borderColorMapping[borderColor as BoxColor]?.[borderOpacity || 100] ||

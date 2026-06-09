@@ -2,16 +2,10 @@
 import React from 'react';
 import { Stack } from '@/components/store/base/stack';
 import { Box } from '@/components/store/base/box';
-import { Surface } from '@/components/store/base/surface';
-import { Font } from '@/components/store/base/font';
-import { Icon } from '@/components/store/base/icon';
 import { Button as DSButton } from '@/components/store/base/button';
-import { Separator } from '@/components/store/base/separator';
-import { Badge } from '@/components/store/base/badge';
 import { STORE_TOKENS } from '@/components/store/constants/tokens';
 import { useRegistry, RegistryColor } from '@/components/store/advanced/registry-context';
 import { User } from 'lucide-react';
-import { cn } from '@/lib/utils';
 
 const ACTIVE_GLOW: Record<RegistryColor, string> = {
     orange: 'shadow-[0_0_20px_rgba(249,115,22,0.15)]',

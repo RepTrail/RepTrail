@@ -6,7 +6,6 @@ import { Icon } from '@/components/store/base/icon'
 import { Input } from '@/components/store/base/input'
 import { Button } from '@/components/store/base/button'
 import { GlassPanel } from '@/components/store/base/surface'
-import { Inline } from '@/components/store/base/layout'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { Plus } from 'lucide-react'
 

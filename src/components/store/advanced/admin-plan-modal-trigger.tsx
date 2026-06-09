@@ -4,7 +4,6 @@ import React, { useState } from 'react'
 import { Button } from '@/components/store/base/button'
 import { Modal } from '@/components/store/advanced/modal'
 import { PlanForm } from '@/components/store/advanced/plan-form'
-import { Box } from '@/components/store/base/box'
 import { Plus } from 'lucide-react'
 
 export function AdminPlanModalTrigger() {
@@ -20,6 +19,8 @@ export function AdminPlanModalTrigger() {
             <Modal
                 isOpen={isOpen}
                 onClose={() => setIsOpen(false)}
+                icon={Plus}
+                variant="emerald"
                 title="Novo Plano"
                 subtitle="Preencha os dados do novo plano."
                 confirmType="submit"

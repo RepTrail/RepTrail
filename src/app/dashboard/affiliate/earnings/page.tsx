@@ -1,14 +1,8 @@
-'use client'
-
-import React from 'react'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
-import { AffiliateEarningsContent } from '@/components/store/sections/affiliate-earnings-content'
-import { DollarSign } from 'lucide-react'
+import { RegistrySection } from '@/components/store/advanced/registry-section'
+import { AffiliateEarningsSection } from '@/components/store/sections/affiliate-earnings-section'
+import { DollarSign, Wallet } from 'lucide-react'
 
-/**
- * AffiliateEarningsPage: Standardized entry point.
- * Logic is decoupled into AffiliateEarningsContent section.
- */
 export default function AffiliateEarningsPage() {
     return (
         <RegistryMain
@@ -18,8 +12,9 @@ export default function AffiliateEarningsPage() {
             contextLabel="Área do Afiliado"
             showTabs={false}
         >
-            <AffiliateEarningsContent />
+            <RegistrySection title="Painel de Ganhos" subtitle="Controle e visualize seu desempenho como afiliado" icon={Wallet}>
+                <AffiliateEarningsSection />
+            </RegistrySection>
         </RegistryMain>
     )
 }
-

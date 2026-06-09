@@ -225,7 +225,8 @@ export function MobileNavContainer({ children, id }: { children: React.ReactNode
   return (
     <nav
       id={id}
-      className="fixed left-0 bottom-0 h-20 w-full bg-gradient-to-t from-black/40 to-black/20 border-t border-black/40 backdrop-blur-md md:hidden z-40 px-5 flex items-center justify-around"
+      className="fixed left-0 bottom-0 h-20 w-full bg-gradient-to-t from-black/40 to-black/20 backdrop-blur-md md:hidden z-40 px-5 flex items-center justify-around"
+      style={{ borderTop: '1px solid rgba(0,0,0,0.4)' }}
     >
       {children}
     </nav>
@@ -239,7 +240,8 @@ export function MobileHeaderContainer({ children, id }: { children: React.ReactN
   return (
     <header
       id={id}
-      className="fixed left-0 top-0 w-full h-20 bg-zinc-950 border-b border-white/5 md:hidden z-40 px-5 flex items-center"
+      className="fixed left-0 top-0 w-full h-20 bg-zinc-950 md:hidden z-40 px-5 flex items-center"
+      style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}
     >
       {children}
     </header>
@@ -343,9 +345,9 @@ export function Divider({
     <div 
       className={cn(
         'shrink-0',
-        dirBase === 'horizontal' ? 'w-full h-px' : 'h-full w-px',
-        dirMd === 'horizontal' && 'md:w-full md:h-px',
-        dirMd === 'vertical' && 'md:h-full md:w-px',
+        dirBase === 'horizontal' ? 'w-full h-[2px]' : 'h-full w-[2px]',
+        dirMd === 'horizontal' && 'md:w-full md:h-[2px]',
+        dirMd === 'vertical' && 'md:h-full md:w-[2px]',
         color === 'white/50' && 'bg-white/50',
         color === 'white/30' && 'bg-white/30',
         color === 'white/20' && 'bg-white/20',

@@ -2,7 +2,6 @@
 
 import React from 'react'
 import { Box } from '@/components/store/base/box'
-import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 interface LandingSectionProps {
   children: React.ReactNode

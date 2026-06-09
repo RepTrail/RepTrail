@@ -37,8 +37,7 @@ export function StoreMobileHeader({ onMenuClick }: StoreMobileHeaderProps) {
                     as="button"
                     id="tour-mobile-hamburger"
                     onClick={handleToggle}
-                    width="10"
-                    height="10"
+                    padding={STORE_TOKENS.PADDING.ELEMENT}
                     display="flex"
                     align="center"
                     justify="center"

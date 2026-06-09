@@ -1,11 +1,13 @@
 'use client'
+import { Icon } from '@/components/store/base/icon'
+import { Inline } from '@/components/store/base/layout'
+import { Font } from '@/components/store/base/font'
 
 import React, { useState } from 'react'
 import { useQuery, actions } from '@/lib/dal'
 import { Stack } from '@/components/store/base/stack'
 import { UserListItem } from '@/components/store/intermediary/user-list-item'
 import { EmptyState } from '@/components/store/intermediary/empty-state'
-import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { Search, UserCheck } from 'lucide-react'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
@@ -36,11 +38,17 @@ export function AdminPersonalsPanel({ onDelete, onInspect }: AdminPersonalsPanel
     }
 
     return (
-        <RegistrySection
-            title="Gestão de Personals"
-            icon={UserCheck}
-            subtitle="Administração de profissionais parceiros e status de serviço On-Demand."
-        >
+        <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
+            <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                    <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                        <Icon icon={UserCheck} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                        <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{"Gestão de Personals"}</Font>
+                    </Inline>
+                    <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{"Administração de profissionais parceiros e status de serviço On-Demand."}</Font>
+                </Stack>
+            </Stack>
+            <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                 <UserListItem 
                     name="Marcos Vinicius"
@@ -75,6 +83,7 @@ export function AdminPersonalsPanel({ onDelete, onInspect }: AdminPersonalsPanel
                     description="Tente ajustar os filtros de busca para encontrar o profissional desejado."
                 />
             </Stack>
-        </RegistrySection>
+          </Stack>
+        </Stack>
     )
 }

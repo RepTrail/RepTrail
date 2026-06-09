@@ -7,7 +7,7 @@ import { Surface } from '@/components/store/base/surface'
 import { Icon } from '@/components/store/base/icon'
 import { Grid } from '@/components/store/base/grid'
 import { Box } from '@/components/store/base/box'
-import { Award, Activity, Zap, Sparkles, Crown } from 'lucide-react'
+import { Award, Activity } from 'lucide-react'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 type TrainerTier = 'on_demand'

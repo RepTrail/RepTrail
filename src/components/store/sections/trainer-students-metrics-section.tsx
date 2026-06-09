@@ -7,7 +7,10 @@ import { getTrainerStudents, getTrainerProfile, getTrainerRanking } from '@/lib/
 import { Grid } from '@/components/store/base/grid'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { StatsCard } from '@/components/store/intermediary/stats-card'
-import { RegistrySection } from '@/components/store/advanced/registry-section'
+import { Stack } from '@/components/store/base/stack'
+import { Font } from '@/components/store/base/font'
+import { Icon } from '@/components/store/base/icon'
+import { Inline } from '@/components/store/base/layout'
 import { Users, Wallet, Activity, BarChart3 } from 'lucide-react'
 
 interface TrainerStudentsMetricsSectionProps {
@@ -42,11 +45,16 @@ export function TrainerStudentsMetricsSection({ userId }: TrainerStudentsMetrics
     const totalRevenue = students.filter((s: any) => s.active).reduce((acc: number, curr: any) => acc + (Number(curr.monthly_fee) || 0), 0)
 
     return (
-        <RegistrySection
-            title="Resumo Financeiro"
-            subtitle="Visão geral dos seus indicadores de desempenho."
-            icon={BarChart3}
-        >
+        <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT}>
+            <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                    <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                        <Icon icon={BarChart3} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                        <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>Resumo Financeiro</Font>
+                    </Inline>
+                    <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>Visão geral dos seus indicadores de desempenho.</Font>
+                </Stack>
+            </Stack>
             <Grid cols={{ base: 1, md: 3 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
                 <StatsCard
                     label="Alunos Ativos"
@@ -70,6 +78,6 @@ export function TrainerStudentsMetricsSection({ userId }: TrainerStudentsMetrics
                         color: "primary",
                     }} />
             </Grid>
-        </RegistrySection>
+        </Stack>
     );
 }

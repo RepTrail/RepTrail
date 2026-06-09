@@ -1,8 +1,9 @@
 'use client'
 
 import React, { useState } from 'react'
-import { RegistrySection } from '@/components/store/advanced/registry-section'
+import { Inline } from '@/components/store/base/layout'
 import { Stack } from '@/components/store/base/stack'
+import { Font } from '@/components/store/base/font'
 import { ProtocolCard } from '@/components/store/intermediary/protocol-card'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { Dumbbell, ChevronLeft, ChevronRight } from 'lucide-react'
@@ -41,18 +42,44 @@ export function StudentTrainingProtocols({ userId }: StudentTrainingProtocolsPro
         refetchOnMount: false,
     })
 
-    if (isLoading) return <RegistrySection title="TREINO DE HOJE" subtitle="Protocolos de musculação e treinamento de força." icon={Dumbbell}><Box /></RegistrySection>
+    if (isLoading) return (
+        <Stack gap={STORE_TOKENS.SPACING.SECTION}>
+            <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
+                <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                        <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                            <Icon icon={Dumbbell} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                            <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{"TREINO DE HOJE"}</Font>
+                        </Inline>
+                        <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{"Protocolos de musculação e treinamento de força."}</Font>
+                    </Stack>
+                </Stack>
+            </Stack>
+            <Box />
+        </Stack>
+    )
 
     if (!workouts || workouts.length === 0) {
         return (
-            <RegistrySection title="TREINO DE HOJE" subtitle="Protocolos de musculação e treinamento de força." icon={Dumbbell}>
-                <ProtocolCard
-                    title="DIA DE DESCANSO"
-                    subtitle="Nenhum protocolo de treino para hoje."
-                    icon={Dumbbell}
-                    status="empty"
-                />
-            </RegistrySection>
+        <Stack gap={STORE_TOKENS.SPACING.SECTION}>
+            <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
+                <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                        <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                            <Icon icon={Dumbbell} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                            <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{"TREINO DE HOJE"}</Font>
+                        </Inline>
+                        <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{"Protocolos de musculação e treinamento de força."}</Font>
+                    </Stack>
+                </Stack>
+            </Stack>
+            <ProtocolCard
+                title="DIA DE DESCANSO"
+                subtitle="Nenhum protocolo de treino para hoje."
+                icon={Dumbbell}
+                status="empty"
+            />
+        </Stack>
         )
     }
 
@@ -60,14 +87,25 @@ export function StudentTrainingProtocols({ userId }: StudentTrainingProtocolsPro
 
     if (!currentWorkout || !currentWorkout.id || !currentWorkout.name) {
         return (
-            <RegistrySection title="TREINO DE HOJE" subtitle="Protocolos de musculação e treinamento de força." icon={Dumbbell}>
-                <ProtocolCard
-                    title="DIA DE DESCANSO"
-                    subtitle="Nenhum protocolo de treino para hoje."
-                    icon={Dumbbell}
-                    status="empty"
-                />
-            </RegistrySection>
+        <Stack gap={STORE_TOKENS.SPACING.SECTION}>
+            <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
+                <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                        <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                            <Icon icon={Dumbbell} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                            <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{"TREINO DE HOJE"}</Font>
+                        </Inline>
+                        <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{"Protocolos de musculação e treinamento de força."}</Font>
+                    </Stack>
+                </Stack>
+            </Stack>
+            <ProtocolCard
+                title="DIA DE DESCANSO"
+                subtitle="Nenhum protocolo de treino para hoje."
+                icon={Dumbbell}
+                status="empty"
+            />
+        </Stack>
         )
     }
 
@@ -85,21 +123,28 @@ export function StudentTrainingProtocols({ userId }: StudentTrainingProtocolsPro
     }
 
     return (
-        <RegistrySection
-            title="TREINO DE HOJE"
-            subtitle="Protocolos de musculação e treinamento de força."
-            icon={Dumbbell}
-            rightElement={workouts.length > 1 ? (
-                <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <Button variant="outline-zinc" isIconOnly size="sm" onClick={prev}>
-                        <Icon icon={ChevronLeft} size="xs" />
-                    </Button>
-                    <Button variant="outline-zinc" isIconOnly size="sm" onClick={next}>
-                        <Icon icon={ChevronRight} size="xs" />
-                    </Button>
+        <Stack gap={STORE_TOKENS.SPACING.SECTION}>
+            <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
+                <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                        <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                            <Icon icon={Dumbbell} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                            <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{"TREINO DE HOJE"}</Font>
+                        </Inline>
+                        <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{"Protocolos de musculação e treinamento de força."}</Font>
+                    </Stack>
+                    {workouts.length > 1 ? (
+                        <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                            <Button variant="outline-zinc" isIconOnly size="sm" onClick={prev}>
+                                <Icon icon={ChevronLeft} size="xs" />
+                            </Button>
+                            <Button variant="outline-zinc" isIconOnly size="sm" onClick={next}>
+                                <Icon icon={ChevronRight} size="xs" />
+                            </Button>
+                        </Stack>
+                    ) : undefined}
                 </Stack>
-            ) : undefined}
-        >
+            </Stack>
             <ProtocolCard
                 title={currentWorkout.name.toUpperCase()}
                 subtitle={`${currentWorkout.workout_exercises?.length || 0} EXERCÍCIOS • ${status === 'completed' ? 'CONCLUÍDO' : 'FOCO DO DIA'}`}
@@ -111,6 +156,6 @@ export function StudentTrainingProtocols({ userId }: StudentTrainingProtocolsPro
                 onAction={handleAction}
                 statusLabel={workouts.length > 1 ? `TREINO ${currentIndex + 1}/${workouts.length}` : undefined}
             />
-        </RegistrySection>
+        </Stack>
     )
 }

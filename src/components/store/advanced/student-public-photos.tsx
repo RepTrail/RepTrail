@@ -1,4 +1,6 @@
 'use client'
+import { Icon } from '@/components/store/base/icon'
+import { Inline } from '@/components/store/base/layout'
 
 import React from 'react'
 import { Trophy, Activity, Camera } from 'lucide-react'
@@ -12,7 +14,7 @@ import { Font } from '@/components/store/base/font'
 import { Badge } from '@/components/store/base/badge'
 import { Img } from '@/components/store/base/img'
 import { GlassPanel } from '@/components/store/base/surface'
-import { RegistrySection } from '@/components/store/advanced/registry-section'
+
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { EmptyState } from '@/components/store/intermediary/empty-state'
 
@@ -32,24 +34,37 @@ export function StudentPublicPhotos({ studentId, isOwner, studentName, photos, i
         <Stack gap={STORE_TOKENS.SPACING.EMPTY_STATE} fullWidth>
             {/* Conditional upload section for internal student view */}
             {isStudentView && (
-                <RegistrySection
-                    title="Novo Registro"
-                    subtitle="Envie suas fotos para avaliação."
-                    icon={Camera}
-                >
+                <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
+            <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                    <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                        <Icon icon={Camera} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                        <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{"Novo Registro"}</Font>
+                    </Inline>
+                    <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{"Envie suas fotos para avaliação."}</Font>
+                </Stack>
+            </Stack>
+            <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
                     <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER}>
-                        <ProgressPhotoUpload studentId={studentId} />
+                        <ProgressPhotoUpload studentId={studentId} existingPhotos={photos} />
                     </GlassPanel>
-                </RegistrySection>
+                  </Stack>
+        </Stack>
             )}
             <Grid cols={{ base: 1, lg: 2 }} gap={STORE_TOKENS.SPACING.EMPTY_STATE}>
 
                 {/* ── Before vs After Section ──────────────────────────────── */}
-                <RegistrySection
-                    title="Antes vs Depois"
-                    subtitle="Contraste visual entre o ponto de partida e a evolução mais recente."
-                    icon={Trophy}
-                >
+                <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
+            <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                    <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                        <Icon icon={Trophy} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                        <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{"Antes vs Depois"}</Font>
+                    </Inline>
+                    <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{"Contraste visual entre o ponto de partida e a evolução mais recente."}</Font>
+                </Stack>
+            </Stack>
+            <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
                     {photos.length > 0 ? (
                         <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER}>
                             <Stack gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
@@ -176,14 +191,21 @@ export function StudentPublicPhotos({ studentId, isOwner, studentName, photos, i
                             description="Envie fotos de progresso para acompanhar a sua evolução visual de antes e depois."
                         />
                     )}
-                </RegistrySection>
+                  </Stack>
+        </Stack>
 
                 {/* ── Gallery Section ──────────────────────────────────────── */}
-                <RegistrySection
-                    title="Galeria de Progresso"
-                    subtitle="Histórico completo de fotos de acompanhamento físico do aluno."
-                    icon={Activity}
-                >
+                <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
+            <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                    <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                        <Icon icon={Activity} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                        <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{"Galeria de Progresso"}</Font>
+                    </Inline>
+                    <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{"Histórico completo de fotos de acompanhamento físico do aluno."}</Font>
+                </Stack>
+            </Stack>
+            <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
                     {photos.length > 0 ? (
                         <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER}>
                             <UnifiedProgressGallery
@@ -200,7 +222,8 @@ export function StudentPublicPhotos({ studentId, isOwner, studentName, photos, i
                             description="Nenhum registro de progresso físico foi anexado a este perfil."
                         />
                     )}
-                </RegistrySection>
+                  </Stack>
+        </Stack>
             </Grid>
         </Stack>
     );

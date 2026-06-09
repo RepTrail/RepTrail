@@ -10,7 +10,6 @@ import { MobileTrainerTourManager } from '@/components/store/advanced/mobile-tra
 import { DashboardShell } from '@/components/store/advanced/dashboard-shell'
 import { RegistryProvider } from '@/components/store/advanced/registry-context'
 import { SettingsModal } from '@/components/store/advanced/student-settings-modal'
-
 export default async function TrainerLayout({ children }: { children: React.ReactNode }) {
     const headerList = await headers()
     const userId = headerList.get('x-user-id')
@@ -31,15 +30,22 @@ export default async function TrainerLayout({ children }: { children: React.Reac
 
     const dehydratedState = dehydrate(queryClient)
     const betaTesterMode = await actions.getBetaTesterMode()
+    const features = await actions.getTrainerPlanFeatures(userId)
+
+    const hasWorkouts = features?.has_workouts ?? true
+    const hasDiets = features?.has_diets ?? true
+    const hasCardio = features?.has_cardio ?? true
+    const hasErgogenics = features?.has_ergogenics ?? false
+    const hasImportPdf = features?.has_import_pdf_ai ?? false
 
     const links = [
         { href: '/dashboard/trainer',           label: 'Visão Geral',  icon: 'Home',         exact: true },
         { href: '/dashboard/trainer/students',   label: 'Alunos',       icon: 'Users' },
-        { href: '/dashboard/trainer/workouts',   label: 'Treinos',      icon: 'Dumbbell' },
-        { href: '/dashboard/trainer/diets',      label: 'Dietas',       icon: 'Utensils' },
-        { href: '/dashboard/trainer/cardio',     label: 'Cardio',       icon: 'Activity' },
-        { href: '/dashboard/trainer/ergogenics', label: 'Ergogênicos',  icon: 'FlaskConical' },
-        { href: '/dashboard/trainer/import-pdf', label: 'Importar PDF', icon: 'FileUp',      hidden: betaTesterMode },
+        { href: '/dashboard/trainer/workouts',   label: 'Treinos',      icon: 'Dumbbell',     hidden: !hasWorkouts },
+        { href: '/dashboard/trainer/diets',      label: 'Dietas',       icon: 'Utensils',     hidden: !hasDiets },
+        { href: '/dashboard/trainer/cardio',     label: 'Cardio',       icon: 'Activity',     hidden: !hasCardio },
+        { href: '/dashboard/trainer/ergogenics', label: 'Ergogênicos',  icon: 'FlaskConical',  hidden: !hasErgogenics },
+        { href: '/dashboard/trainer/import-pdf', label: 'Importar PDF', icon: 'FileUp',      hidden: betaTesterMode || !hasImportPdf },
         { href: '/dashboard/trainer/loja',       label: 'Loja',         icon: 'ShoppingBag' },
         { href: '/dashboard/trainer/ranking',    label: 'Ranking',      icon: 'Trophy' },
         { href: '/dashboard/trainer/plans',      label: 'Planos',       icon: 'CreditCard' },

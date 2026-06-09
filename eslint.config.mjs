@@ -3,6 +3,7 @@ import ts from "@typescript-eslint/eslint-plugin";
 import tsParser from "@typescript-eslint/parser";
 import react from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
+import unusedImports from "eslint-plugin-unused-imports";
 
 export default [
   {
@@ -40,6 +41,7 @@ export default [
       "@typescript-eslint": ts,
       react: react,
       "react-hooks": reactHooks,
+      "unused-imports": unusedImports,
     },
     languageOptions: {
       parser: tsParser,
@@ -50,6 +52,7 @@ export default [
       },
     },
     rules: {
+      "unused-imports/no-unused-imports": "error",
       "no-restricted-syntax": [
         "error",
         // 1. Prohibit className Usage (Strict Rule 1)
@@ -93,6 +96,50 @@ export default [
         {
           selector: "JSXOpeningElement[name.name=/^(div|span|p|h1|h2|h3|h4|h5|h6|br|strong|em|b|i|ul|li|ol|dl|dt|dd|table|thead|tbody|tfoot|tr|td|th|aside|article|nav|header|footer|main|section|blockquote|pre|code|small|sub|sup|mark|hr|input|label|select|textarea)$/]",
           message: "Primitive HTML tag is prohibited outside 'src/components/store/base/'. Replace with design system components: div/section → Box, span/p/h1-h6/strong → Font, ul/li → Stack, button → Button, input → Input, label → Font, textarea → Textarea, select → FormSelect, hr → Separator."
+        },
+        // 11. Modal Constraints
+        {
+          selector: "JSXOpeningElement[name.name='Modal']:not(:has(JSXAttribute[name.name='title']))",
+          message: "Modals MUST have a 'title' prop according to the Design System."
+        },
+        {
+          selector: "JSXOpeningElement[name.name='Modal']:not(:has(JSXAttribute[name.name='subtitle']))",
+          message: "Modals MUST have a 'subtitle' prop according to the Design System."
+        },
+        {
+          selector: "JSXOpeningElement[name.name='Modal']:not(:has(JSXAttribute[name.name='icon']))",
+          message: "Modals MUST have an 'icon' prop according to the Design System."
+        },
+        // 12. RegistrySection Constraints
+        {
+          selector: "JSXOpeningElement[name.name='RegistrySection']:has(JSXAttribute[name.name='title']):not(:has(JSXAttribute[name.name='subtitle']))",
+          message: "RegistrySections with a 'title' MUST also have a 'subtitle'."
+        },
+        {
+          selector: "JSXOpeningElement[name.name='RegistrySection']:has(JSXAttribute[name.name='title']):not(:has(JSXAttribute[name.name='icon']))",
+          message: "RegistrySections with a 'title' MUST also have an 'icon'."
+        },
+        {
+          selector: "JSXOpeningElement[name.name='RegistrySection']:has(JSXAttribute[name.name='subtitle']):not(:has(JSXAttribute[name.name='title']))",
+          message: "RegistrySections with a 'subtitle' MUST also have a 'title'."
+        },
+        {
+          selector: "JSXOpeningElement[name.name='RegistrySection']:has(JSXAttribute[name.name='icon']):not(:has(JSXAttribute[name.name='title']))",
+          message: "RegistrySections with an 'icon' MUST also have a 'title'."
+        },
+        // 13. Border and Divider Constraints (2px)
+        {
+          selector: "JSXAttribute[name.name='borderWidth'][value.expression.value!=2]",
+          message: "Toda borda e divisória tem que ser em 2px de espessura."
+        },
+        {
+          selector: "JSXAttribute[name.name='className'][value.value=/(?<!-)border-[13456789]/]",
+          message: "Toda borda e divisória tem que ser em 2px de espessura. Não use classes border-* que não sejam 2px (se usar className autorizado)."
+        },
+        // 14. Empty State Standardization
+        {
+          selector: "JSXElement:has(> JSXOpeningElement[name.name='Box']):has(> JSXElement JSXOpeningElement[name.name='Font']):has(> JSXElement JSXOpeningElement[name.name=/Icon|[A-Z].*Icon/])",
+          message: "Todo local que precise de um empty state deve usar o padrão do design system (<EmptyState />). Nada de versão customizada ou improvisada."
         }
       ],
     },
@@ -276,6 +323,46 @@ export default [
         {
           selector: "MemberExpression[object.name='ky']",
           message: "Direct ky methods are restricted to the Local-First Safe Zone (dal, outbox, sync, background-sync)."
+        }
+      ]
+    }
+  },
+  {
+    // Restrições Específicas para page.tsx
+    files: [
+      "**/app/**/page.tsx"
+    ],
+    ignores: [
+      "**/app/api/**",
+      "**/app/page.tsx", // Root landing page
+      "**/app/aluno/**",
+      "**/app/personal/**",
+      "**/app/afiliados/**"
+    ],
+    plugins: {
+      "@typescript-eslint": ts,
+    },
+    languageOptions: {
+      parser: tsParser,
+      parserOptions: { ecmaFeatures: { jsx: true } },
+    },
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: "JSXOpeningElement[name.name=/^(Box|Stack|Font|Grid|Surface|Card|Badge|Icon|IconBox|Button|Input|Img|GlassPanel|Separator|Divider|Avatar|SidebarLink|FormSwitch|FormSelect|FormCheckbox|FileUpload)$/]",
+          message: "Base components (Box, Stack, Font, etc) are prohibited directly in page.tsx. The page must only render RegistryMain and delegate content to *Section components."
+        }
+      ],
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["@/components/store/base/**"],
+              message: "Base components cannot be imported in page.tsx. Delegate your layout to a Section component."
+            }
+          ]
         }
       ]
     }

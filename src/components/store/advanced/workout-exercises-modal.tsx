@@ -140,8 +140,7 @@ export function WorkoutExercisesModal({
                                     <Stack direction="row" align="start" fullWidth gap={STORE_TOKENS.SPACING.CONTAINER}>
                                         {/* Left Container: Index Circle */}
                                         <Box 
-                                            width="10" 
-                                            height="10" 
+                                            padding={STORE_TOKENS.PADDING.ELEMENT}
                                             rounded={STORE_TOKENS.RADIUS.FULL} 
                                             bg={STORE_TOKENS.COLORS.SUCCESS} 
                                             bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} 

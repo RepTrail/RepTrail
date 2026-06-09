@@ -5,10 +5,7 @@ import { QUERY_KEYS } from '@/lib/query-keys'
 import { actions } from '@/lib/dal/server'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { TrainerProfileSectionContent } from '@/components/store/sections/trainer-profile-section-content'
-
-import { Box } from '@/components/store/base/box'
-import { Font } from '@/components/store/base/font'
-import { STORE_TOKENS } from '@/components/store/constants/tokens'
+import { TrainerProfileNotFoundSection } from '@/components/store/sections/trainer-profile-not-found-section'
 
 export const revalidate = 0
 
@@ -25,11 +22,15 @@ export default async function TrainerProfilePage() {
     const profile = await actions.getTrainerProfile(userId)
     if (!profile) {
         return (
-            <Box fullWidth padding={STORE_TOKENS.PADDING.CONTAINER} textAlign="center">
-                <Font variant="auxiliary" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="bold">
-                    Perfil não encontrado.
-                </Font>
-            </Box>
+            <RegistryMain
+                title="MEU PERFIL"
+                subtitle="Gerencie sua identidade profissional e acompanhe seu progresso na plataforma."
+                icon="UserCheck"
+                contextLabel="Conta & Segurança"
+                showTabs={false}
+            >
+                <TrainerProfileNotFoundSection />
+            </RegistryMain>
         )
     }
 

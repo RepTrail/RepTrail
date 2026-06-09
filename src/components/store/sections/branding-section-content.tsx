@@ -6,8 +6,6 @@ import { GlassPanel, CardHeader, CardContent, Surface } from '@/components/store
 import { Box } from '@/components/store/base/box'
 import { Logo } from '@/components/store/base/logo'
 import { Badge } from '@/components/store/base/badge'
-import { RegistrySection } from '@/components/store/advanced/registry-section'
-import { Zap } from 'lucide-react'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 export function BrandingSectionContent({ id }: { id?: string }) {
@@ -19,13 +17,7 @@ export function BrandingSectionContent({ id }: { id?: string }) {
     ] as const
 
     return (
-        <RegistrySection
-            id={id}
-            title="Logos & Identidade"
-            icon={Zap}
-            subtitle="Diretrizes de marca para as diferentes instâncias do ecossistema RepTrail."
-        >
-            <GlassPanel padding={STORE_TOKENS.PADDING.NONE}>
+        <GlassPanel padding={STORE_TOKENS.PADDING.NONE} id={id}>
                 <Stack gap={STORE_TOKENS.SPACING.NONE}>
                     <CardHeader>
                         <Font weight="bold">Logos & Identidade</Font>
@@ -68,6 +60,5 @@ export function BrandingSectionContent({ id }: { id?: string }) {
                     </CardContent>
                 </Stack>
             </GlassPanel>
-        </RegistrySection>
     );
 }

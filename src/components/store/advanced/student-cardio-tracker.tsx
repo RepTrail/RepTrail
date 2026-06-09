@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { RegistrySection } from '@/components/store/advanced/registry-section'
+import { Inline } from '@/components/store/base/layout'
 import { Stack } from '@/components/store/base/stack'
 import { CardioTimerCard } from '@/components/store/intermediary/cardio-timer-card'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
@@ -11,7 +11,6 @@ import { QUERY_KEYS } from '@/lib/query-keys'
 import { actions } from '@/lib/dal'
 import { Button } from '@/components/store/base/button'
 import { Icon } from '@/components/store/base/icon'
-import { Box } from '@/components/store/base/box'
 import { Font } from '@/components/store/base/font'
 import { Surface } from '@/components/store/base/surface'
 
@@ -215,20 +214,46 @@ export function StudentCardioTracker({ userId }: StudentCardioTrackerProps) {
         return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
     }
 
-    if (isLoading) return <RegistrySection title="CARDIO DE HOJE" subtitle="Monitoramento de atividades aeróbicas e cronômetros." icon={Activity}><Surface height={192} bg="zinc" bgOpacity={50} rounded={STORE_TOKENS.RADIUS.SYSTEM} animation="pulse"><span /></Surface></RegistrySection>
+    if (isLoading) return (
+        <Stack gap={STORE_TOKENS.SPACING.SECTION}>
+            <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
+                <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                        <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                            <Icon icon={Activity} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                            <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{"CARDIO DE HOJE"}</Font>
+                        </Inline>
+                        <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{"Monitoramento de atividades aeróbicas e cronômetros."}</Font>
+                    </Stack>
+                </Stack>
+            </Stack>
+            <Surface height={192} bg="zinc" bgOpacity={50} rounded={STORE_TOKENS.RADIUS.SYSTEM} animation="pulse"><span /></Surface>
+        </Stack>
+    )
 
     if (!cardios || cardios.length === 0) {
         return (
-            <RegistrySection title="CARDIO DE HOJE" subtitle="Monitoramento de atividades aeróbicas e cronômetros." icon={Activity}>
-                <CardioTimerCard
-                    title="SEM CARDIO"
-                    duration="0 MIN"
-                    intensity="-"
-                    remainingTime="00:00"
-                    estimatedBurn="0"
-                    status="empty"
-                />
-            </RegistrySection>
+        <Stack gap={STORE_TOKENS.SPACING.SECTION}>
+            <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
+                <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                        <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                            <Icon icon={Activity} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                            <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{"CARDIO DE HOJE"}</Font>
+                        </Inline>
+                        <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{"Monitoramento de atividades aeróbicas e cronômetros."}</Font>
+                    </Stack>
+                </Stack>
+            </Stack>
+            <CardioTimerCard
+                title="SEM CARDIO"
+                duration="0 MIN"
+                intensity="-"
+                remainingTime="00:00"
+                estimatedBurn="0"
+                status="empty"
+            />
+        </Stack>
         )
     }
 
@@ -250,21 +275,28 @@ export function StudentCardioTracker({ userId }: StudentCardioTrackerProps) {
     const progress = Math.min((seconds / (targetMinutes * 60)) * 100, 100)
 
     return (
-        <RegistrySection
-            title="CARDIO DE HOJE"
-            subtitle="Monitoramento de atividades aeróbicas e cronômetros."
-            icon={Activity}
-            rightElement={cardios.length > 1 && status === 'idle' ? (
-                <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <Button variant="outline-zinc" isIconOnly size="sm" onClick={prev}>
-                        <Icon icon={ChevronLeft} size="xs" />
-                    </Button>
-                    <Button variant="outline-zinc" isIconOnly size="sm" onClick={next}>
-                        <Icon icon={ChevronRight} size="xs" />
-                    </Button>
+        <Stack gap={STORE_TOKENS.SPACING.SECTION}>
+            <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
+                <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                        <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                            <Icon icon={Activity} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                            <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{"CARDIO DE HOJE"}</Font>
+                        </Inline>
+                        <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{"Monitoramento de atividades aeróbicas e cronômetros."}</Font>
+                    </Stack>
+                    {cardios.length > 1 && status === 'idle' ? (
+                        <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                            <Button variant="outline-zinc" isIconOnly size="sm" onClick={prev}>
+                                <Icon icon={ChevronLeft} size="xs" />
+                            </Button>
+                            <Button variant="outline-zinc" isIconOnly size="sm" onClick={next}>
+                                <Icon icon={ChevronRight} size="xs" />
+                            </Button>
+                        </Stack>
+                    ) : undefined}
                 </Stack>
-            ) : undefined}
-        >
+            </Stack>
             <CardioTimerCard
                 title={currentCardio.cardio?.name?.toUpperCase() || currentCardio.name?.toUpperCase() || 'ATIVIDADE AERÓBICA'}
                 duration={`${displayMinutes} MIN`}
@@ -280,6 +312,7 @@ export function StudentCardioTracker({ userId }: StudentCardioTrackerProps) {
             />
             <Modal
                 isOpen={isConfirmOpen}
+                icon={Activity}
                 onClose={() => setIsConfirmOpen(false)}
                 onConfirm={handleStopConfirm}
                 title="Encerrar Atividade?"
@@ -297,6 +330,6 @@ export function StudentCardioTracker({ userId }: StudentCardioTrackerProps) {
                     Você realizou {Math.floor(seconds / 60)} minuto(s) de atividade. Ao encerrar agora, o progresso será salvo proporcionalmente.
                 </Font>
             </Modal>
-        </RegistrySection>
+        </Stack>
     );
 }

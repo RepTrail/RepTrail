@@ -1,13 +1,7 @@
 'use client'
 
 import React, { useTransition } from 'react'
-import Link from 'next/link'
 import { Stack } from '@/components/store/base/stack'
-import { Box } from '@/components/store/base/box'
-import { Font } from '@/components/store/base/font'
-import { Surface } from '@/components/store/base/surface'
-import { Button } from '@/components/store/base/button'
-import { Badge } from '@/components/store/base/badge'
 import { Grid } from '@/components/store/base/grid'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { EmptyState } from '@/components/store/intermediary/empty-state'

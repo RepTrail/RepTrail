@@ -1,13 +1,20 @@
 'use client';
-import { STORE_TOKENS } from '@/components/store/constants/tokens';
 
+import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { SplashScreen } from "@/components/store/advanced/splash-screen"
-import { Box } from "@/components/store/base/box"
+import { MonitorPlay } from 'lucide-react'
 
 export default function SplashPage() {
     return (
-        <Box as="main" minHeight="screen" bg={STORE_TOKENS.COLORS.BLACK} overflow="hidden" position="relative" suppressHydrationWarning>
+        <RegistryMain
+            title="RepTrail"
+            subtitle="Carregando..."
+            icon={MonitorPlay}
+            showHeader={false}
+            noPadding
+            hideFooter
+        >
             <SplashScreen redirectHref="/" />
-        </Box>
+        </RegistryMain>
     );
 }

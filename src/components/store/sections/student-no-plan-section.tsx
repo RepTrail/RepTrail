@@ -1,7 +1,6 @@
 'use client'
 
 import React from 'react'
-import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { Stack } from '@/components/store/base/stack'
 import { Box } from '@/components/store/base/box'
 import { Grid } from '@/components/store/base/grid'
@@ -26,13 +25,7 @@ export function StudentNoPlanSection({ ranking }: StudentNoPlanSectionProps) {
     const [isAsaasOpen, setIsAsaasOpen] = useState(false);
 
     return (
-        <RegistryMain
-            title="BEM-VINDO"
-            subtitle="Você ainda não possui um plano ativo no RepTrail."
-            icon={Sparkles}
-            contextLabel="Área do Aluno"
-            showTabs={false}
-        >
+        <>
             <Stack gap={{ base: STORE_TOKENS.SPACING.EMPTY_STATE as any, md: STORE_TOKENS.SPACING.SECTION }}>
                 <Grid cols={{ base: 1, lg: 2 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
                     {/* Hero Section - Marketplace Entry (Personal Trainer) */}
@@ -182,6 +175,6 @@ export function StudentNoPlanSection({ ranking }: StudentNoPlanSectionProps) {
                 tier="auto_training"
                 monthlyTotal={10.90}
             />
-        </RegistryMain>
+        </>
     );
 }

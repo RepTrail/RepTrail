@@ -11,7 +11,6 @@ import { FormSelect } from '@/components/store/base/form-select'
 import { FormCheckbox } from '@/components/store/base/form-checkbox'
 import { Textarea } from '@/components/store/base/textarea'
 import { Button } from '@/components/store/base/button'
-import { Box } from '@/components/store/base/box'
 import { Surface } from '@/components/store/base/surface'
 import { Icon } from '@/components/store/base/icon'
 import { 

@@ -2,7 +2,6 @@ import { actions, checkAdminSession } from '@/lib/dal/server'
 import { AdminPlansListPanel } from '@/components/store/advanced/admin-plans-list-panel'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
-import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { AdminPlanModalTrigger } from '@/components/store/advanced/admin-plan-modal-trigger'
 
 export default async function AdminPlansPage() {

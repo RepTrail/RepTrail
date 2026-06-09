@@ -1,11 +1,14 @@
 'use client'
+import { Icon } from '@/components/store/base/icon'
+import { Inline } from '@/components/store/base/layout'
+import { Font } from '@/components/store/base/font'
+import { LayoutDashboard } from 'lucide-react'
 
 import React from 'react'
 import { useQuery } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { actions } from '@/lib/dal'
 import { useRealtimeSync } from '@/hooks/use-realtime-sync'
-import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { CardioManagementSectionContent } from '@/components/store/sections/cardio-management-section-content'
 import { Stack } from '@/components/store/base/stack'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
@@ -113,13 +116,24 @@ export function StudentCardioManagementSmart({ userId }: StudentCardioManagement
         <Grid cols={{ base: 1, md: 12 }} gap={STORE_TOKENS.SPACING.SECTION} fullWidth flex1>
             {/* Cardio Management */}
             <Stack mdColSpan={12} flex1 gap={STORE_TOKENS.SPACING.SECTION}>
-                <RegistrySection>
+                <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
+            <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                    <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                        <Icon icon={LayoutDashboard} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                        <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{"Section"}</Font>
+                    </Inline>
+                    
+                </Stack>
+            </Stack>
+            <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
                     <CardioManagementSectionContent 
                         userId={userId}
                         cardios={displayCardios}
                         mode={isAutoMode ? 'auto' : 'personal'}
                     />
-                </RegistrySection>
+                  </Stack>
+        </Stack>
             </Stack>
         </Grid>
     )

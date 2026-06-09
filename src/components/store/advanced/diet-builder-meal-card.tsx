@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React from 'react'
 import { Stack } from '@/components/store/base/stack'
 import { Box } from '@/components/store/base/box'
 import { Font } from '@/components/store/base/font'
@@ -12,7 +12,7 @@ import { Separator } from '@/components/store/base/separator'
 import { Inline } from '@/components/store/base/layout'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { DietBuilderMealItemRow } from './diet-builder-meal-item-row'
-import { GripVertical, Trash2, PlusCircle, Utensils } from 'lucide-react'
+import { GripVertical, Trash2, PlusCircle } from 'lucide-react'
 
 interface MealItem {
     id: string
