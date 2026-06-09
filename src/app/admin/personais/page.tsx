@@ -1,3 +1,5 @@
+'use client'
+
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { AdminPersonaisSection } from '@/components/store/sections/admin-personais-section'
@@ -12,11 +14,7 @@ export default function AdminPersonaisPage() {
             contextLabel="Painel Admin"
             showTabs={false}
         >
-            <RegistrySection
-                title="Diretório de Profissionais"
-                subtitle="Administre os profissionais parceiros e suas credenciais de acesso."
-                icon={UserCheck}
-            >
+            <RegistrySection>
                 <AdminPersonaisSection />
             </RegistrySection>
         </RegistryMain>

@@ -4,7 +4,6 @@ import { redirect } from 'next/navigation'
 import { dehydrate, HydrationBoundary } from '@/lib/dal'
 import { getQueryClient } from '@/lib/get-query-client'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
-import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { TrainerStudentsActionsSection } from '@/components/store/sections/trainer-students-actions-section'
 import { TrainerStudentsMetricsSection } from '@/components/store/sections/trainer-students-metrics-section'
 import { TrainerStudentsListSection } from '@/components/store/sections/trainer-students-list-section'
@@ -31,12 +30,8 @@ export default async function StudentsPage() {
                 showTabs={false}
                 rightElement={<TrainerStudentsActionsSection userId={userId} />}
             >
-                <RegistrySection>
-                    <TrainerStudentsMetricsSection userId={userId} />
-                </RegistrySection>
-                <RegistrySection>
-                    <TrainerStudentsListSection userId={userId} />
-                </RegistrySection>
+                <TrainerStudentsMetricsSection userId={userId} />
+                <TrainerStudentsListSection userId={userId} />
             </RegistryMain>
         </HydrationBoundary>
     )

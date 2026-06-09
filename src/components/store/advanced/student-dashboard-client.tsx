@@ -1,13 +1,11 @@
 'use client'
 
 import { Activity } from 'lucide-react'
-import { Font } from '@/components/store/base/font'
-import { Inline } from '@/components/store/base/layout'
-import { Icon } from '@/components/store/base/icon'
 import { Stack } from '@/components/store/base/stack'
 import { Grid } from '@/components/store/base/grid'
 import { Box } from '@/components/store/base/box'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
+import { RegistryMain } from '@/components/store/advanced/registry-main'
 
 // Store Advanced Components (Smart Layer)
 import { StudentPaymentWarning } from '@/components/store/advanced/student-payment-warning'
@@ -54,20 +52,14 @@ export function StudentDashboardClient({
     const showHeader = !!trainerRel || hasProtocol
 
     return (
-        <Stack gap={STORE_TOKENS.SPACING.SECTION} fullWidth>
-            {showHeader && (
-                <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
-                    <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
-                        <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                            <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                                <Icon icon={Activity} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
-                                <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{"DASHBOARD DO ALUNO"}</Font>
-                            </Inline>
-                            <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{"Protocolos, treinos e acompanhamento da sua evolução."}</Font>
-                        </Stack>
-                    </Stack>
-                </Stack>
-            )}
+        <RegistryMain
+            title="DASHBOARD DO ALUNO"
+            subtitle="Protocolos, treinos e acompanhamento da sua evolução."
+            icon={Activity}
+            contextLabel="Área do Aluno"
+            showTabs={false}
+            showHeader={showHeader}
+        >
             <Stack gap={STORE_TOKENS.SPACING.SECTION} flex1={!hasProtocol}>
                 {/* 1. Notifications (Overlay/Hidden logic preserved) */}
                 <StudentPaymentWarning relationship={trainerRel} />
@@ -111,6 +103,6 @@ export function StudentDashboardClient({
                     hasTrainer={!!trainerRel}
                 />
             </Stack>
-        </Stack>
+        </RegistryMain>
     )
 }

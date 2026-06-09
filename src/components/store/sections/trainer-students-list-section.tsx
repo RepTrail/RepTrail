@@ -19,6 +19,7 @@ import { EmptyState } from '@/components/store/intermediary/empty-state'
 import { Modal } from '@/components/store/advanced/modal'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { Users, Search, ArrowUpRight, UserMinus, AlertTriangle } from 'lucide-react'
+import { RegistrySection } from '@/components/store/advanced/registry-section'
 
 interface TrainerStudentsListSectionProps {
     userId: string
@@ -58,28 +59,22 @@ export function TrainerStudentsListSection({ userId }: TrainerStudentsListSectio
 
     return (
         <>
-        <Stack gap={STORE_TOKENS.SPACING.SECTION} fullWidth>
-            <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT}>
-                <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
-                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                            <Icon icon={Users} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
-                            <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>Lista da Matrícula</Font>
-                        </Inline>
-                        <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>Gerencie seus alunos ativos e suas informações.</Font>
-                    </Stack>
-                    <Box display="flex" align="end" fullWidth={{ base: true, lg: false }}>
-                        <Box width={{ base: 'full', md: 'auto' }}>
-                            <Input
-                                type="text"
-                                placeholder="Buscar aluno..."
-                                value={search}
-                                onChange={(e) => setSearch(e.target.value)}
-                                icon={<Icon icon={Search} size="xs" />}
-                            />
-                        </Box>
-                    </Box>
-                </Stack>
+        <RegistrySection
+            title="Lista da Matrícula"
+            subtitle="Gerencie seus alunos ativos e suas informações."
+            icon={Users}
+            rightElement={
+                <Box width={{ base: 'full', md: 'auto' }}>
+                    <Input
+                        type="text"
+                        placeholder="Buscar aluno..."
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        icon={<Icon icon={Search} size="xs" />}
+                    />
+                </Box>
+            }
+        >
                 <Box fullWidth display="flex" direction="col">
                 {filteredStudents.length > 0 ? (
                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
@@ -220,8 +215,7 @@ export function TrainerStudentsListSection({ userId }: TrainerStudentsListSectio
                     />
                 )}
                 </Box>
-            </Stack>
-        </Stack>
+        </RegistrySection>
             <Modal
                 isOpen={!!deactivateTarget}
                 onClose={() => setDeactivateTarget(null)}

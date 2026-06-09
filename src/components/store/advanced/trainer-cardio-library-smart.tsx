@@ -1,12 +1,7 @@
 'use client'
-import { Icon } from '@/components/store/base/icon'
-import { Inline } from '@/components/store/base/layout'
-import { Font } from '@/components/store/base/font'
+
 import { Stack } from '@/components/store/base/stack'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
-import { LayoutDashboard } from 'lucide-react'
-
-import React from 'react'
 import { useQuery } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { getCardioLibrary } from '@/lib/dal/remote'
@@ -49,23 +44,15 @@ export function TrainerCardioLibrarySmart({ userId }: TrainerCardioLibrarySmartP
 
     return (
         <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
-            <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
-                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                        <Icon icon={LayoutDashboard} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
-                        <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{"Section"}</Font>
-                    </Inline>
-                    
-                </Stack>
-            </Stack>
+
             <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
-            <CardioManagementSectionContent
-                userId={userId}
-                cardios={cardios}
-                students={students}
-                mode="trainer"
-            />
-          </Stack>
+                <CardioManagementSectionContent
+                    userId={userId}
+                    cardios={cardios}
+                    students={students}
+                    mode="trainer"
+                />
+            </Stack>
         </Stack>
     )
 }

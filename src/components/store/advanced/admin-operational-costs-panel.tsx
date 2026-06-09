@@ -9,6 +9,7 @@ import { Icon } from '@/components/store/base/icon'
 import { Button } from '@/components/store/base/button'
 import { Badge } from '@/components/store/base/badge'
 import { Inline } from '@/components/store/base/layout'
+import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { Modal } from '@/components/store/advanced/modal'
 import { actions } from '@/lib/dal'
 import { useToast } from '@/hooks/use-toast'
@@ -152,31 +153,37 @@ export function AdminOperationalCostsPanel({ initialCosts }: { initialCosts: Ope
     const totalMonthly = costs.reduce((sum, c) => sum + Number(c.amount), 0)
 
     return (
-        <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
-            <Stack direction="row" justify="end" align="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
-                <Badge
-                    label={`R$ ${totalMonthly.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} / mês`}
-                    color={STORE_TOKENS.COLORS.SUCCESS}
-                    variant="solid"
-                    rounded={STORE_TOKENS.RADIUS.SYSTEM}
-                    size="md"
-                />
-                <Button
-                    variant="outline-red"
-                    rounded={STORE_TOKENS.RADIUS.SYSTEM}
-                    onClick={() => {
-                        resetForm()
-                        setIsAddModalOpen(true)
-                    }}
-                    paddingX={STORE_TOKENS.PADDING.CONTAINER}
-                    size="md"
-                >
-                    <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                        <Icon icon={Plus} size="sm" />
-                        <Font variant="label-caps">Adicionar Custo</Font>
-                    </Stack>
-                </Button>
-            </Stack>
+        <RegistrySection
+            title="Custos Operacionais"
+            subtitle="Infraestrutura e operação mensal da plataforma."
+            icon={TrendingDown}
+            rightElement={
+                <Stack direction="row" justify="end" align="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
+                    <Badge
+                        label={`R$ ${totalMonthly.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} / mês`}
+                        color={STORE_TOKENS.COLORS.SUCCESS}
+                        variant="solid"
+                        rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                        size="md"
+                    />
+                    <Button
+                        variant="outline-red"
+                        rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                        onClick={() => {
+                            resetForm()
+                            setIsAddModalOpen(true)
+                        }}
+                        paddingX={STORE_TOKENS.PADDING.CONTAINER}
+                        size="sm"
+                    >
+                        <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                            <Icon icon={Plus} size="xs" />
+                            <Font variant="label-caps">Adicionar Custo</Font>
+                        </Stack>
+                    </Button>
+                </Stack>
+            }
+        >
             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                 {costs.map((cost) => {
                     const badgeColor = cost.type === 'fixed' ? STORE_TOKENS.COLORS.INFO : STORE_TOKENS.COLORS.BRAND;
@@ -309,6 +316,6 @@ export function AdminOperationalCostsPanel({ initialCosts }: { initialCosts: Ope
                     Esta ação não pode ser desfeita e removerá o registro permanentemente do sistema.
                 </Font>
             </Modal>
-        </Stack>
+        </RegistrySection>
     );
 }

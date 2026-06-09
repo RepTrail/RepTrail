@@ -1,11 +1,8 @@
 'use client'
 
-import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { RegistryProvider } from '@/components/store/advanced/registry-context'
-import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { AuthSignupSection } from '@/components/store/sections/auth-signup-section'
 import Script from 'next/script'
-import { UserPlus } from 'lucide-react'
 
 export default function SignupPage() {
     return (
@@ -25,20 +22,7 @@ export default function SignupPage() {
                 `}
             </Script>
 
-            <RegistryMain
-                title="Criar Conta"
-                subtitle="Crie sua conta no RepTrail"
-                icon={UserPlus}
-                showHeader={false}
-            >
-                <RegistrySection
-                    title="Criar Conta"
-                    subtitle="Crie sua conta no RepTrail."
-                    icon={UserPlus}
-                >
-                    <AuthSignupSection />
-                </RegistrySection>
-            </RegistryMain>
+            <AuthSignupSection />
 
             <noscript>
                 <span style={{ display: 'none' }}>

@@ -1,8 +1,5 @@
 'use client'
-import { Icon } from '@/components/store/base/icon'
-import { Inline } from '@/components/store/base/layout'
-import { Font } from '@/components/store/base/font'
-import { LayoutDashboard } from 'lucide-react'
+
 import { Stack } from '@/components/store/base/stack'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import React from 'react'
@@ -93,10 +90,10 @@ export function StudentErgogenicManagementSmart({ userId }: StudentErgogenicMana
         actionName: 'duplicate-ergogenic',
         mutationFn: async ({ item }: { item: any }) => {
             const { id, created_at, updated_at, ...data } = item
-            const res = await addErgogenic({ 
-                ...data, 
+            const res = await addErgogenic({
+                ...data,
                 name: `${item.name} (Cópia)`,
-                student_id: userId 
+                student_id: userId
             })
             if (res.error) throw new Error(res.error)
             return res
@@ -151,15 +148,15 @@ export function StudentErgogenicManagementSmart({ userId }: StudentErgogenicMana
     }
 
     const openAction = (type: RegistryActionType, data?: any) => {
-        setActionModal({ 
-            isOpen: true, 
-            type, 
-            data: { 
-                ...data, 
-                item: data?.name, 
+        setActionModal({
+            isOpen: true,
+            type,
+            data: {
+                ...data,
+                item: data?.name,
                 dosage: data?.weekly_dosage,
-                selectedDays: data?.application_days || [] 
-            } 
+                selectedDays: data?.application_days || []
+            }
         })
     }
 
@@ -167,34 +164,26 @@ export function StudentErgogenicManagementSmart({ userId }: StudentErgogenicMana
 
     return (
         <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
-            <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
-                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                        <Icon icon={LayoutDashboard} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
-                        <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{"Section"}</Font>
-                    </Inline>
-                    
-                </Stack>
-            </Stack>
-            <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
-            <ErgogenicManagementSectionContent 
-                items={ergogenics}
-                mode={isAutoMode ? 'auto' : 'personal'}
-                onEdit={(item) => openAction('edit_ergogenic', item)}
-                onDelete={(item) => openAction('confirm_delete', item)}
-                onDuplicate={(item) => openAction('confirm_duplicate', item)}
-                onSchedule={(item) => openAction('assign_ergogenic', item)}
-            />
 
-            <RegistryActionModal 
-                isOpen={actionModal.isOpen}
-                onClose={closeAction}
-                type={actionModal.type}
-                onConfirm={handleConfirm}
-                initialData={actionModal.data}
-                isLoading={false}
-            />
-          </Stack>
+            <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
+                <ErgogenicManagementSectionContent
+                    items={ergogenics}
+                    mode={isAutoMode ? 'auto' : 'personal'}
+                    onEdit={(item) => openAction('edit_ergogenic', item)}
+                    onDelete={(item) => openAction('confirm_delete', item)}
+                    onDuplicate={(item) => openAction('confirm_duplicate', item)}
+                    onSchedule={(item) => openAction('assign_ergogenic', item)}
+                />
+
+                <RegistryActionModal
+                    isOpen={actionModal.isOpen}
+                    onClose={closeAction}
+                    type={actionModal.type}
+                    onConfirm={handleConfirm}
+                    initialData={actionModal.data}
+                    isLoading={false}
+                />
+            </Stack>
         </Stack>
     )
 }

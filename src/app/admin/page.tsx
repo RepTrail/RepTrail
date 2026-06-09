@@ -1,3 +1,5 @@
+'use client'
+
 import { redirect } from 'next/navigation'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { Loader2 } from 'lucide-react'

@@ -10,9 +10,8 @@ import {
     updateErgogenic,
 } from '@/lib/dal/remote'
 import { useRealtimeSync } from '@/hooks/use-realtime-sync'
-import { Font } from '@/components/store/base/font'
-import { Inline } from '@/components/store/base/layout'
 import { ErgogenicManagementSectionContent } from '@/components/store/sections/ergogenic-management-section-content'
+import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { RegistryActionModal, RegistryActionType } from '@/components/store/advanced/registry-action-modal'
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
 import { ENTITIES } from '@/lib/outbox-db'
@@ -173,29 +172,24 @@ export function TrainerStudentErgogenicsSmart({ effectiveStudentId }: TrainerStu
 
     return (
         <>
-            <Stack gap={STORE_TOKENS.SPACING.SECTION}>
-                <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
-                    <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
-                        <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                            <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                                <Icon icon={Syringe} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
-                                <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{"PROTOCOLO ATIVO"}</Font>
-                            </Inline>
-                            <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{"Gerencie e acompanhe a dosagem e cronograma de ergogênicos e suplementação avançada."}</Font>
+            <RegistrySection
+                title="PROTOCOLO ATIVO"
+                subtitle="Gerencie e acompanhe a dosagem e cronograma de ergogênicos e suplementação avançada."
+                icon={Syringe}
+                rightElement={
+                    <Button
+                        variant="outline-emerald"
+                        shine
+                        onClick={() => openAction('create_ergogenic')}
+                        fullWidth={{ base: true, lg: false }}
+                    >
+                        <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                            <Icon icon={Plus} size="xs" color={STORE_TOKENS.COLORS.SUCCESS} />
+                            Adicionar Substância
                         </Stack>
-                        <Button
-                            variant="outline-emerald"
-                            shine
-                            onClick={() => openAction('create_ergogenic')}
-                            fullWidth={{ base: true, lg: false }}
-                        >
-                            <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                <Icon icon={Plus} size="xs" color={STORE_TOKENS.COLORS.SUCCESS} />
-                                Adicionar Substância
-                            </Stack>
-                        </Button>
-                    </Stack>
-                </Stack>
+                    </Button>
+                }
+            >
                 <ErgogenicManagementSectionContent
                     items={ergogenics}
                     mode="trainer"
@@ -205,7 +199,7 @@ export function TrainerStudentErgogenicsSmart({ effectiveStudentId }: TrainerStu
                     onDuplicate={(item) => openAction('confirm_duplicate', item)}
                     onSchedule={(item) => openAction('assign_ergogenic', item)}
                 />
-            </Stack>
+            </RegistrySection>
             <RegistryActionModal
                 isOpen={actionModal.isOpen}
                 onClose={closeAction}

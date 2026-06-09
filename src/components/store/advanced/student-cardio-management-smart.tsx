@@ -1,10 +1,5 @@
 'use client'
-import { Icon } from '@/components/store/base/icon'
-import { Inline } from '@/components/store/base/layout'
-import { Font } from '@/components/store/base/font'
-import { LayoutDashboard } from 'lucide-react'
 
-import React from 'react'
 import { useQuery } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { actions } from '@/lib/dal'
@@ -63,13 +58,13 @@ export function StudentCardioManagementSmart({ userId }: StudentCardioManagement
 
     // 3. Logic: Group assignments and determine display data
     let displayCardios = []
-    
+
     if (isAutoMode) {
         const assignmentsByCardio = assignments.reduce((acc: any, curr: any) => {
             const cId = curr.cardio_id
             if (!cId) return acc
             if (!acc[cId]) acc[cId] = []
-            
+
             if (curr.days_of_week && Array.isArray(curr.days_of_week)) {
                 curr.days_of_week.forEach((d: number) => {
                     if (!acc[cId].includes(d)) acc[cId].push(d)
@@ -94,7 +89,7 @@ export function StudentCardioManagementSmart({ userId }: StudentCardioManagement
                     assigned_cardios: []
                 }
             }
-            
+
             const addDay = (d: number) => {
                 if (!acc[cId].assigned_cardios.some((a: any) => a.day_of_week === d)) {
                     acc[cId].assigned_cardios.push({ day_of_week: d })
@@ -106,7 +101,7 @@ export function StudentCardioManagementSmart({ userId }: StudentCardioManagement
             } else if (curr.day_of_week !== null && curr.day_of_week !== undefined) {
                 addDay(curr.day_of_week)
             }
-            
+
             return acc
         }, {})
         displayCardios = Object.values(grouped)
@@ -117,23 +112,15 @@ export function StudentCardioManagementSmart({ userId }: StudentCardioManagement
             {/* Cardio Management */}
             <Stack mdColSpan={12} flex1 gap={STORE_TOKENS.SPACING.SECTION}>
                 <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
-            <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
-                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                        <Icon icon={LayoutDashboard} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
-                        <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{"Section"}</Font>
-                    </Inline>
-                    
+
+                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
+                        <CardioManagementSectionContent
+                            userId={userId}
+                            cardios={displayCardios}
+                            mode={isAutoMode ? 'auto' : 'personal'}
+                        />
+                    </Stack>
                 </Stack>
-            </Stack>
-            <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
-                    <CardioManagementSectionContent 
-                        userId={userId}
-                        cardios={displayCardios}
-                        mode={isAutoMode ? 'auto' : 'personal'}
-                    />
-                  </Stack>
-        </Stack>
             </Stack>
         </Grid>
     )

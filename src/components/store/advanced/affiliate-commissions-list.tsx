@@ -1,8 +1,6 @@
 'use client'
 
-import React from 'react'
 import { Stack } from '@/components/store/base/stack'
-import { Box } from '@/components/store/base/box'
 import { CommissionItem } from '@/components/store/intermediary/commission-item'
 import { EmptyState } from '@/components/store/intermediary/empty-state'
 import { DollarSign } from 'lucide-react'
@@ -36,13 +34,11 @@ export function AffiliateCommissionsList({ commissions }: AffiliateCommissionsLi
 
     if (commissions.length === 0) {
         return (
-            <Box padding={STORE_TOKENS.PADDING.CONTAINER}>
-                <EmptyState
-                    icon={DollarSign}
-                    title="Nenhuma comissão registrada"
-                    description="Suas vendas aparecerão aqui em tempo real."
-                />
-            </Box>
+            <EmptyState
+                icon={DollarSign}
+                title="Nenhuma comissão registrada"
+                description="Suas vendas aparecerão aqui em tempo real."
+            />
         )
     }
 

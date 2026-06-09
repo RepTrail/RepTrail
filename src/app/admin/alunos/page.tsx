@@ -14,11 +14,7 @@ export default function AdminAlunosPage() {
             contextLabel="Painel Admin"
             showTabs={false}
         >
-            <RegistrySection
-                title="Matrículas e Acessos"
-                subtitle="Monitore a base de alunos e gerencie privilégios de acesso."
-                icon={GraduationCap}
-            >
+            <RegistrySection>
                 <AdminAlunosSection />
             </RegistrySection>
         </RegistryMain>

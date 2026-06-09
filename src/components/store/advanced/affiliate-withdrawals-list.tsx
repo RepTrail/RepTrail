@@ -1,8 +1,6 @@
 'use client'
 
-import React from 'react'
 import { Stack } from '@/components/store/base/stack'
-import { Box } from '@/components/store/base/box'
 import { WithdrawalItem } from '@/components/store/intermediary/withdrawal-item'
 import { EmptyState } from '@/components/store/intermediary/empty-state'
 import { AlertCircle } from 'lucide-react'
@@ -20,13 +18,11 @@ interface AffiliateWithdrawalsListProps {
 export function AffiliateWithdrawalsList({ payouts }: AffiliateWithdrawalsListProps) {
     if (payouts.length === 0) {
         return (
-            <Box padding={STORE_TOKENS.PADDING.CONTAINER}>
-                <EmptyState
-                    icon={AlertCircle}
-                    title="Sem saques"
-                    description="Seus pagamentos aparecerão aqui."
-                />
-            </Box>
+            <EmptyState
+                icon={AlertCircle}
+                title="Sem saques"
+                description="Seus pagamentos aparecerão aqui."
+            />
         )
     }
 

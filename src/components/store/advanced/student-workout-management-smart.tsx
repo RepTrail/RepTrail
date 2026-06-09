@@ -1,11 +1,7 @@
 'use client'
-import { Icon } from '@/components/store/base/icon'
-import { Inline } from '@/components/store/base/layout'
-import { Font } from '@/components/store/base/font'
-import { LayoutDashboard } from 'lucide-react'
+
 import { Stack } from '@/components/store/base/stack'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
-import React from 'react'
 import { useQuery } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { getAssignedWorkouts, getTrainerWorkouts } from '@/lib/dal/remote'
@@ -62,9 +58,9 @@ export function StudentWorkoutManagementSmart({ userId }: StudentWorkoutManageme
 
     // 3. Logic: Group assignments and determine display data
     const dayNamesShort = ["DOM", "SEG", "TER", "QUA", "QUI", "SEX", "SAB"]
-    
+
     let displayWorkouts = []
-    
+
     if (isAutoMode) {
         // In Auto Mode, each library workout is a card.
         // We need to inject the assigned days into each library workout.
@@ -99,22 +95,14 @@ export function StudentWorkoutManagementSmart({ userId }: StudentWorkoutManageme
 
     return (
         <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
-            <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
-                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                        <Icon icon={LayoutDashboard} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
-                        <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{"Section"}</Font>
-                    </Inline>
-                    
-                </Stack>
-            </Stack>
+
             <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
-            <WorkoutManagementSectionContent 
-                userId={userId}
-                workouts={displayWorkouts}
-                mode={isAutoMode ? 'auto' : 'personal'}
-            />
-          </Stack>
+                <WorkoutManagementSectionContent
+                    userId={userId}
+                    workouts={displayWorkouts}
+                    mode={isAutoMode ? 'auto' : 'personal'}
+                />
+            </Stack>
         </Stack>
     )
 }

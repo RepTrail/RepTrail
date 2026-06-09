@@ -1,18 +1,17 @@
 'use client'
 
-import React from 'react'
 import { useQuery } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { getStudentRelationship } from '@/lib/dal/remote'
 import { getStudentRecentActivities } from '@/lib/dal/remote'
 import { StudentPublicPhotos } from '@/components/store/advanced/student-public-photos'
-import { Font } from '@/components/store/base/font'
-import { Inline } from '@/components/store/base/layout'
+
 import { StudentRecentActivities } from '@/components/store/advanced/student-recent-activities'
 import { Stack } from '@/components/store/base/stack'
 import { Icon } from '@/components/store/base/icon'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { Activity, Loader2 } from 'lucide-react'
+import { RegistrySection } from '@/components/store/advanced/registry-section'
 
 interface TrainerStudentPhotosActivitiesSectionProps {
     relationshipId: string
@@ -54,18 +53,13 @@ export function TrainerStudentPhotosActivitiesSection({
                 photos={student.progress_photos || []}
                 isStudentView={false}
             />
-            <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
-                <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
-                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                            <Icon icon={Activity} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
-                            <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>Atividades Recentes</Font>
-                        </Inline>
-                        <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>Histórico cronológico detalhado das últimas ações e logs de treinamento registrados pelo aluno.</Font>
-                    </Stack>
-                </Stack>
+            <RegistrySection
+                title="Atividades Recentes"
+                subtitle="Histórico cronológico detalhado das últimas ações e logs de treinamento registrados pelo aluno."
+                icon={Activity}
+            >
                 <StudentRecentActivities activities={recentActivities} />
-            </Stack>
+            </RegistrySection>
         </Stack>
     )
 }

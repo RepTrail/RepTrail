@@ -1,11 +1,11 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Inline } from '@/components/store/base/layout'
 import { Stack } from '@/components/store/base/stack'
 import { CardioTimerCard } from '@/components/store/intermediary/cardio-timer-card'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { Activity, ChevronLeft, ChevronRight } from 'lucide-react'
+import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { useQuery } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { actions } from '@/lib/dal'
@@ -30,7 +30,7 @@ export function StudentCardioTracker({ userId }: StudentCardioTrackerProps) {
     const { toast } = useToast()
     const queryClient = useQueryClient()
     const [currentIndex, setCurrentIndex] = useState(0)
-    
+
     // Player State
     const [status, setStatus] = useState<'idle' | 'running' | 'paused'>('idle')
     const [seconds, setSeconds] = useState(0)
@@ -64,19 +64,19 @@ export function StudentCardioTracker({ userId }: StudentCardioTrackerProps) {
             if (assignment) {
                 const idx = cardios?.findIndex(c => c.id === assignment.id) ?? 0
                 setCurrentIndex(idx)
-                
+
                 setLogId(activeSession.id)
                 let currentElapsed = activeSession.elapsed_seconds || 0
-                
+
                 if (activeSession.is_running) {
                     const lastResumed = new Date(activeSession.last_resumed_at || activeSession.last_heartbeat_at).getTime()
                     const diff = Math.floor((Date.now() - lastResumed) / 1000)
                     currentElapsed += Math.max(0, diff)
                 }
-                
+
                 setSeconds(currentElapsed)
                 setStatus(activeSession.is_running ? 'running' : 'paused')
-                
+
                 if (activeSession.is_running) {
                     startTimer(Date.now() - (currentElapsed * 1000))
                 }
@@ -112,7 +112,7 @@ export function StudentCardioTracker({ userId }: StudentCardioTrackerProps) {
                     setStatus('idle')
                     setSeconds(0)
                     setLogId(null)
-                    
+
                     actions.finishCardioSession(logId, 'Concluído automaticamente', undefined, 100).then((res) => {
                         if (res.success) {
                             queryClient.invalidateQueries({ queryKey: QUERY_KEYS.cardio.logs(userId) })
@@ -215,45 +215,36 @@ export function StudentCardioTracker({ userId }: StudentCardioTrackerProps) {
     }
 
     if (isLoading) return (
-        <Stack gap={STORE_TOKENS.SPACING.SECTION}>
-            <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
-                <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
-                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                            <Icon icon={Activity} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
-                            <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{"CARDIO DE HOJE"}</Font>
-                        </Inline>
-                        <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{"Monitoramento de atividades aeróbicas e cronômetros."}</Font>
-                    </Stack>
-                </Stack>
-            </Stack>
+        <RegistrySection
+            title="CARDIO DE HOJE"
+            subtitle="Monitoramento de atividades aeróbicas e cronômetros."
+            icon={Activity}
+        >
             <Surface height={192} bg="zinc" bgOpacity={50} rounded={STORE_TOKENS.RADIUS.SYSTEM} animation="pulse"><span /></Surface>
-        </Stack>
+        </RegistrySection>
     )
 
     if (!cardios || cardios.length === 0) {
         return (
-        <Stack gap={STORE_TOKENS.SPACING.SECTION}>
-            <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
-                <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
-                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                            <Icon icon={Activity} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
-                            <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{"CARDIO DE HOJE"}</Font>
-                        </Inline>
-                        <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{"Monitoramento de atividades aeróbicas e cronômetros."}</Font>
-                    </Stack>
-                </Stack>
-            </Stack>
-            <CardioTimerCard
-                title="SEM CARDIO"
-                duration="0 MIN"
-                intensity="-"
-                remainingTime="00:00"
-                estimatedBurn="0"
-                status="empty"
-            />
-        </Stack>
+            <RegistrySection
+                title="CARDIO DE HOJE"
+                subtitle="Monitoramento de atividades aeróbicas e cronômetros."
+                icon={Activity}
+            >
+                <CardioTimerCard
+                    title="SEM CARDIO"
+                    duration="0 MIN"
+                    intensity="N/A"
+                    remainingTime="00:00"
+                    estimatedBurn="0"
+                    status="empty"
+                    isRunning={false}
+                    progress={0}
+                    onPlay={() => { }}
+                    onPause={() => { }}
+                    onStop={() => { }}
+                />
+            </RegistrySection>
         )
     }
 
@@ -275,28 +266,23 @@ export function StudentCardioTracker({ userId }: StudentCardioTrackerProps) {
     const progress = Math.min((seconds / (targetMinutes * 60)) * 100, 100)
 
     return (
-        <Stack gap={STORE_TOKENS.SPACING.SECTION}>
-            <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
-                <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
-                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                            <Icon icon={Activity} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
-                            <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{"CARDIO DE HOJE"}</Font>
-                        </Inline>
-                        <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{"Monitoramento de atividades aeróbicas e cronômetros."}</Font>
+        <RegistrySection
+            title="CARDIO DE HOJE"
+            subtitle="Monitoramento de atividades aeróbicas e cronômetros."
+            icon={Activity}
+            rightElement={
+                cardios.length > 1 && status === 'idle' ? (
+                    <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                        <Button variant="outline-zinc" isIconOnly size="sm" onClick={prev}>
+                            <Icon icon={ChevronLeft} size="xs" />
+                        </Button>
+                        <Button variant="outline-zinc" isIconOnly size="sm" onClick={next}>
+                            <Icon icon={ChevronRight} size="xs" />
+                        </Button>
                     </Stack>
-                    {cardios.length > 1 && status === 'idle' ? (
-                        <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                            <Button variant="outline-zinc" isIconOnly size="sm" onClick={prev}>
-                                <Icon icon={ChevronLeft} size="xs" />
-                            </Button>
-                            <Button variant="outline-zinc" isIconOnly size="sm" onClick={next}>
-                                <Icon icon={ChevronRight} size="xs" />
-                            </Button>
-                        </Stack>
-                    ) : undefined}
-                </Stack>
-            </Stack>
+                ) : undefined
+            }
+        >
             <CardioTimerCard
                 title={currentCardio.cardio?.name?.toUpperCase() || currentCardio.name?.toUpperCase() || 'ATIVIDADE AERÓBICA'}
                 duration={`${displayMinutes} MIN`}
@@ -330,6 +316,6 @@ export function StudentCardioTracker({ userId }: StudentCardioTrackerProps) {
                     Você realizou {Math.floor(seconds / 60)} minuto(s) de atividade. Ao encerrar agora, o progresso será salvo proporcionalmente.
                 </Font>
             </Modal>
-        </Stack>
+        </RegistrySection>
     );
 }

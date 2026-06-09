@@ -1,3 +1,5 @@
+'use client'
+
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { AdminLojaSection } from '@/components/store/sections/admin-loja-section'
@@ -12,11 +14,7 @@ export default function AdminLojaPage() {
             contextLabel="Painel Admin"
             showTabs={false}
         >
-            <RegistrySection
-                title="Inventário Disponível"
-                subtitle="Gerencie os itens disponíveis na loja, preços e estoque."
-                icon={ShoppingBag}
-            >
+            <RegistrySection>
                 <AdminLojaSection />
             </RegistrySection>
         </RegistryMain>

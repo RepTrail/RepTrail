@@ -1,11 +1,8 @@
 'use client'
 
-import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { RegistryProvider } from '@/components/store/advanced/registry-context'
-import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { AuthLoginSection } from '@/components/store/sections/auth-login-section'
 import Script from 'next/script'
-import { Lock } from 'lucide-react'
 
 export default function LoginPage() {
     return (
@@ -25,20 +22,7 @@ export default function LoginPage() {
                 `}
             </Script>
             
-            <RegistryMain
-                title="RepTrail Login"
-                subtitle="Acesso ao sistema RepTrail"
-                icon={Lock}
-                showHeader={false}
-            >
-                <RegistrySection
-                    title="Acesso ao Sistema"
-                    subtitle="Faça login com suas credenciais."
-                    icon={Lock}
-                >
-                    <AuthLoginSection />
-                </RegistrySection>
-            </RegistryMain>
+            <AuthLoginSection />
 
             <noscript>
                 <span style={{ display: 'none' }}>

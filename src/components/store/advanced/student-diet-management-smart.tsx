@@ -1,17 +1,12 @@
 'use client'
-import { Icon } from '@/components/store/base/icon'
-import { Inline } from '@/components/store/base/layout'
-import { Font } from '@/components/store/base/font'
-import { LayoutDashboard } from 'lucide-react'
 
-import React from 'react'
 import { useQuery } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
-import { 
-    getStudentProfile, 
-    getStudentTrainer, 
-    getAssignedDiets, 
-    getTrainerDiets 
+import {
+    getStudentProfile,
+    getStudentTrainer,
+    getAssignedDiets,
+    getTrainerDiets
 } from '@/lib/dal/remote'
 import { useRealtimeSync } from '@/hooks/use-realtime-sync'
 import { DietManagementSectionContent } from '@/components/store/sections/diet-management-section-content'
@@ -68,7 +63,7 @@ export function StudentDietManagementSmart({ userId }: StudentDietManagementSmar
 
     // 3. Logic: Group assignments and determine display data
     let displayDiets = []
-    
+
     if (isAutoMode) {
         const assignmentsByDiet = (assignedDiets || []).reduce((acc: any, curr: any) => {
             const dId = curr.diet_id || curr.diet?.id
@@ -109,23 +104,15 @@ export function StudentDietManagementSmart({ userId }: StudentDietManagementSmar
             {/* Diet Management */}
             <Stack mdColSpan={12} flex1 gap={STORE_TOKENS.SPACING.SECTION}>
                 <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
-            <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
-                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                        <Icon icon={LayoutDashboard} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
-                        <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{"Section"}</Font>
-                    </Inline>
-                    
+
+                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
+                        <DietManagementSectionContent
+                            userId={userId}
+                            diets={displayDiets}
+                            mode={isAutoMode ? 'auto' : 'personal'}
+                        />
+                    </Stack>
                 </Stack>
-            </Stack>
-            <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
-                    <DietManagementSectionContent 
-                        userId={userId}
-                        diets={displayDiets}
-                        mode={isAutoMode ? 'auto' : 'personal'}
-                    />
-                  </Stack>
-        </Stack>
             </Stack>
         </Grid>
     )

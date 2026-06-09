@@ -1,3 +1,5 @@
+'use client'
+
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { AdminLogsSection } from '@/components/store/sections/admin-logs-section'
@@ -12,11 +14,7 @@ export default function AdminLogsPage() {
             contextLabel="Auditoria do Sistema"
             showTabs={false}
         >
-            <RegistrySection
-                title="Registro de Eventos"
-                subtitle="Acompanhe todas as ações administrativas realizadas na plataforma."
-                icon={Activity}
-            >
+            <RegistrySection>
                 <AdminLogsSection />
             </RegistrySection>
         </RegistryMain>

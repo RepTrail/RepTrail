@@ -3,7 +3,6 @@ import { actions } from '@/lib/dal/server'
 import { getQueryClient } from '@/lib/get-query-client'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
-import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { TrainerStudentProfileSection } from '@/components/store/sections/trainer-student-profile-section'
 import { TrainerStudentEvolutionSection } from '@/components/store/sections/trainer-student-evolution-section'
 import { TrainerStudentProtocolsSection } from '@/components/store/sections/trainer-student-protocols-section'
@@ -99,33 +98,23 @@ export default async function StudentDetailPage({
                 showTabs={false}
             >
                 <PlaceholderStudentAccessBanner relationship={relationship} />
-                
-                <RegistrySection>
-                    <TrainerStudentDetailTabSwitcher activeTab={activeTab} />
-                </RegistrySection>
+
+                <TrainerStudentDetailTabSwitcher activeTab={activeTab} />
 
                 {activeTab === 'protocols' && (
-                    <RegistrySection>
-                        <TrainerStudentProtocolsSection relationshipId={id} studentId={studentId} trainerId={userId} />
-                    </RegistrySection>
+                    <TrainerStudentProtocolsSection relationshipId={id} studentId={studentId} trainerId={userId} />
                 )}
 
                 {activeTab === 'evolution' && (
-                    <RegistrySection>
-                        <TrainerStudentEvolutionSection studentId={studentId} studentDetails={student.details} />
-                    </RegistrySection>
+                    <TrainerStudentEvolutionSection studentId={studentId} studentDetails={student.details} />
                 )}
 
                 {activeTab === 'photos_activities' && (
-                    <RegistrySection>
-                        <TrainerStudentPhotosActivitiesSection relationshipId={id} studentId={studentId} />
-                    </RegistrySection>
+                    <TrainerStudentPhotosActivitiesSection relationshipId={id} studentId={studentId} />
                 )}
 
                 {activeTab === 'profile' && (
-                    <RegistrySection>
-                        <TrainerStudentProfileSection studentId={studentId} student={student} />
-                    </RegistrySection>
+                    <TrainerStudentProfileSection studentId={studentId} student={student} />
                 )}
             </RegistryMain>
         </HydrationBoundary>
