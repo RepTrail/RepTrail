@@ -17,6 +17,7 @@ import { FormCheckbox } from '@/components/store/base/form-checkbox'
 import { Modal } from '@/components/store/advanced/modal'
 import { ShieldCheck } from 'lucide-react'
 import { AFFILIATE_TERMS } from '@/lib/terms-content'
+import { PRIVACY_POLICY } from '@/lib/privacy-content'
 import Link from 'next/link'
 
 interface AuthAffiliateSignUpFormProps {
@@ -48,6 +49,7 @@ export function AuthAffiliateSignUpForm({
 }: AuthAffiliateSignUpFormProps) {
     const { primaryColor, setPrimaryColor } = useRegistry()
     const [showTermsModal, setShowTermsModal] = React.useState(false)
+    const [showPrivacyModal, setShowPrivacyModal] = React.useState(false)
 
     React.useEffect(() => {
         if (syncColor) {
@@ -89,12 +91,12 @@ export function AuthAffiliateSignUpForm({
                     <form onSubmit={onSubmit || ((e) => e.preventDefault())}>
                         <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                             {error && (
-                                <Surface 
+                                <Surface
                                     variant="tonal-red"
-                                    padding={STORE_TOKENS.PADDING.ELEMENT} 
-                                    rounded={STORE_TOKENS.RADIUS.SYSTEM} 
-                                    display="flex" 
-                                    align="center" 
+                                    padding={STORE_TOKENS.PADDING.ELEMENT}
+                                    rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                                    display="flex"
+                                    align="center"
                                     minHeight={44}
                                 >
                                     <Font
@@ -164,15 +166,23 @@ export function AuthAffiliateSignUpForm({
                                     {...{
                                         color: STORE_TOKENS.COLORS.TEXT.MUTED,
                                     }}>
-                                    Eu aceito os <Font
-                                    variant="sub-tiny"
-                                    weight="black"
-                                    cursor="pointer"
-                                    underline
-                                    onClick={() => setShowTermsModal(true)}
-                                    {...{
-                                        color: STORE_TOKENS.COLORS.BRAND,
-                                    }}>termos de uso</Font>
+                                    Eu aceito os{' '}<Font
+                                        variant="sub-tiny"
+                                        weight="black"
+                                        cursor="pointer"
+                                        underline
+                                        onClick={() => setShowTermsModal(true)}
+                                        {...{
+                                            color: STORE_TOKENS.COLORS.BRAND,
+                                        }}>termos de uso</Font>{' '}e a{' '}<Font
+                                            variant="sub-tiny"
+                                            weight="black"
+                                            cursor="pointer"
+                                            underline
+                                            onClick={() => setShowPrivacyModal(true)}
+                                            {...{
+                                                color: STORE_TOKENS.COLORS.BRAND,
+                                            }}>política de privacidade</Font>
                                 </Font>
                             </Stack>
 
@@ -197,6 +207,28 @@ export function AuthAffiliateSignUpForm({
                                             color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
                                         }}>
                                         {AFFILIATE_TERMS}
+                                    </Font>
+                                </Box>
+                            </Modal>
+
+                            <Modal
+                                isOpen={showPrivacyModal}
+                                onClose={() => setShowPrivacyModal(false)}
+                                title="Política de Privacidade"
+                                subtitle="Como tratamos seus dados pessoais (LGPD)"
+                                icon={ShieldCheck}
+                                variant="emerald"
+                                confirmLabel="Entendido"
+                                onConfirm={() => setShowPrivacyModal(false)}
+                            >
+                                <Box padding={STORE_TOKENS.PADDING.NONE} maxHeight="60vh" overflowY="auto">
+                                    <Font
+                                        variant="body"
+                                        whitespace="pre-line"
+                                        {...{
+                                            color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
+                                        }}>
+                                        {PRIVACY_POLICY}
                                     </Font>
                                 </Box>
                             </Modal>
@@ -236,13 +268,13 @@ export function AuthAffiliateSignUpForm({
                             color: STORE_TOKENS.COLORS.TEXT.MUTED,
                         }}>
                         Já possui uma conta? <Link href="/afiliados/login"><Font
-                        variant="sub-tiny"
-                        weight="black"
-                        cursor="pointer"
-                        underline
-                        {...{
-                            color: STORE_TOKENS.COLORS.BRAND,
-                        }}>Fazer login</Font></Link>
+                            variant="sub-tiny"
+                            weight="black"
+                            cursor="pointer"
+                            underline
+                            {...{
+                                color: STORE_TOKENS.COLORS.BRAND,
+                            }}>Fazer login</Font></Link>
                     </Font>
                 </Box>
             </Stack>

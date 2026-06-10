@@ -26,22 +26,22 @@ export function LandingBannerPromo({ role = 'trainer', freeLimit = 5 }: LandingB
 
   const config = {
     trainer: {
-      badgeText: 'Comece agora sem custos',
+      badgeText: 'Próximo nível',
       badgeIcon: ShieldCheck,
-      title1: 'Grátis até',
-      titleHighlight: `${freeLimit} Alunos.`,
-      desc: `No RepTrail você começa sem pagar nada e escala junto com seu negócio. Use todas as ferramentas de gestão profissional e prescrição gratuitamente para seus primeiros ${freeLimit} alunos.`,
-      ctaText: 'Quero transformar minha consultoria',
+      title1: 'Qual é o próximo nível',
+      titleHighlight: 'da sua consultoria?',
+      desc: 'Comece com o plano ideal para o seu momento e tenha a estrutura que os melhores profissionais usam para crescer, reter mais alunos e aumentar o faturamento — sem depender de WhatsApp.',
+      ctaText: 'Escolher meu plano agora',
       ctaLink: '/auth/signup',
       ctaEvent: 'Guarantee Start Trainer',
       bullets: [
-        'Ativação Instantânea',
-        'Sem Cartão de Crédito',
-        'Acesso Total Liberado',
-        'Suporte VIP Incluso'
+        'Ativação em menos de 2 minutos',
+        'Suporte VIP incluído em todos os planos',
+        'Escale de plano quando quiser',
+        'Cancele a qualquer momento'
       ],
-      circleNumber: freeLimit.toString().padStart(2, '0'),
-      circleLabel: 'Alunos',
+      circleNumber: 'PRO',
+      circleLabel: 'Mais Popular',
       circleIcon: Users
     },
     student: {

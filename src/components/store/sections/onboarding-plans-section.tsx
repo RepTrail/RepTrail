@@ -1,10 +1,12 @@
 'use client'
 
 import React from 'react'
-import { Stack } from '@/components/store/base/stack'
-import { Font } from '@/components/store/base/font'
+import { Box } from '@/components/store/base/box'
+import { Surface } from '@/components/store/base/surface'
+import { BackgroundEffects } from '@/components/store/base/background-effects'
 import { TrainerPlansSection } from '@/components/store/sections/trainer-plans-section'
-import { AuthShell } from '@/components/store/advanced/auth-shell'
+import { RegistryMain } from '@/components/store/advanced/registry-main'
+import { OnboardingLogoutButton } from '@/components/store/advanced/onboarding-logout-button'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 interface OnboardingPlansSectionProps {
@@ -12,30 +14,35 @@ interface OnboardingPlansSectionProps {
 }
 
 export function OnboardingPlansSection({ plans }: OnboardingPlansSectionProps) {
-    const hasPublicPlans = Array.isArray(plans) && plans.length > 0
-
     return (
-        <AuthShell>
-            <Stack gap={STORE_TOKENS.SPACING.SECTION} fullWidth>
-                <Stack gap={STORE_TOKENS.SPACING.CONTAINER} align="center" textAlign="center">
-                    <Font variant="h2" weight="black" uppercase italic color="white">
-                        Escolha seu Plano
-                    </Font>
-                    <Font variant="body" color="zinc-400">
-                        Para acessar a plataforma, selecione o plano que melhor atende às suas necessidades.
-                    </Font>
-                </Stack>
-
-                {hasPublicPlans ? (
+        <Surface
+            minHeight="screen"
+            bg={STORE_TOKENS.COLORS.BACKGROUND}
+            bgOpacity={STORE_TOKENS.OPACITY.BACKGROUND}
+            overflow="hidden"
+            position="relative"
+        >
+            <BackgroundEffects variant="all" />
+            <Box
+                position="relative"
+                zIndex={STORE_TOKENS.Z_INDEX.CONTENT}
+                fullWidth
+                padding={STORE_TOKENS.PADDING.CONTAINER}
+            >
+                <RegistryMain
+                    title="Escolha seu Plano"
+                    subtitle="Selecione o plano que melhor atende às suas necessidades para acessar a plataforma."
+                    icon="CreditCard"
+                    contextLabel="Onboarding"
+                    showHeader={true}
+                    showTabs={false}
+                    noPadding={true}
+                    noMinHeight={true}
+                    rightElement={<OnboardingLogoutButton />}
+                >
                     <TrainerPlansSection plans={plans} />
-                ) : (
-                    <Stack align="center" fullWidth>
-                        <Font variant="body" color="zinc-500">
-                            Nenhum plano disponível no momento.
-                        </Font>
-                    </Stack>
-                )}
-            </Stack>
-        </AuthShell>
+                </RegistryMain>
+            </Box>
+        </Surface>
     )
 }

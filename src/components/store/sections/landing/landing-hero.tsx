@@ -41,21 +41,21 @@ export function LandingHero({ role = 'trainer', freeLimit = 5 }: LandingHeroProp
   // Dynamic contents per role
   const config = {
     trainer: {
-      badge1: { label: '+500 treinadores ativos', icon: Users, color: STORE_TOKENS.COLORS.BRAND },
-      badge2: { label: 'Foco total em Performance', icon: ShieldCheck, color: 'orange' as const },
-      title1: 'Transforme sua',
-      title2: 'Consultoria.',
-      desc: 'Aumente a retenção dos seus alunos e simplifique sua gestão com a plataforma preferida dos profissionais de elite.',
+      badge1: { label: '+500 consultorias ativas', icon: Users, color: STORE_TOKENS.COLORS.BRAND },
+      badge2: { label: 'Sistema Operacional Fitness', icon: ShieldCheck, color: 'orange' as const },
+      title1: 'Pare de gerenciar alunos',
+      title2: 'no WhatsApp.',
+      desc: 'Construa uma consultoria profissional que cresce sem aumentar sua carga de trabalho.',
       cta: {
-        text: 'Começar Agora',
+        text: 'Escolher meu plano',
         link: '/auth/signup',
         event: 'Hero Start Trainer'
       },
-      trustSignals: ['Montagem em 2min', `Grátis até ${freeLimit} alunos`, 'Suporte VIP'],
+      trustSignals: ['Ativação em 2 minutos', 'Suporte VIP incluído', 'Cancele quando quiser'],
       mockupType: 'macbook' as const,
       videoId: 'JEMOCa62khw',
       floatingBadge1: { title: 'Faturamento Mensal', value: 'R$ 12.450,00', isPrimary: true },
-      floatingBadge2: { title: 'Novos Alunos', value: '+12 hoje', isPrimary: true },
+      floatingBadge2: { title: 'Taxa de Retenção', value: '98%', isPrimary: true },
       stats: [
         { label: 'Consultorias Ativas', value: '500+', icon: Trophy },
         { label: 'Treinos Prescritos', value: '100k+', icon: Dumbbell },

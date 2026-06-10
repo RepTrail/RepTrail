@@ -28,24 +28,24 @@ export function LandingFAQ({ role = 'trainer' }: LandingFAQProps) {
       subtitle: 'Tudo o que você precisa saber para alavancar com o RepTrail.',
       faqs: [
         {
-          question: 'Como o Motor de Prescrição funciona?',
-          answer: 'O nosso sistema possui uma interface simples e intuitiva onde você pode salvar seus próprios templates (dietas, treinos) e prescrevê-los em segundos. Chega de digitar a mesma série dezenas de vezes.'
+          question: 'Qual plano é certo para mim?',
+          answer: 'Se você está estruturando sua operação com até 10 alunos, o Starter é o ponto de entrada ideal. Para quem já vende consultoria e quer escalar até 30 alunos com recursos avançados (importação de PDF por IA, módulo de ergogênicos), o Pro é o mais popular. O Elite é para consultorias em crescimento acelerado que precisam de alunos ilimitados e infraestrutura sem teto.'
+        },
+        {
+          question: 'Como funciona a prescrição de treinos e dietas?',
+          answer: 'O RepTrail tem um motor de prescrição onde você salva seus próprios templates e aplica em segundos. Com o Pro e Elite, você também importa treinos de qualquer PDF via IA — o sistema converte automaticamente para o formato interativo do app, com exercícios, séries, cargas e vídeos.'
         },
         {
           question: 'O aplicativo é gratuito para meus alunos?',
-          answer: 'Sim! Os alunos têm acesso 100% gratuito ao aplicativo. Apenas o treinador (você) assina os planos do RepTrail para gerenciar seus alunos e negócios.'
+          answer: 'Sim. Seus alunos acessam o aplicativo sem nenhum custo. Eles visualizam treinos, registram execuções, acompanham dieta, evolução física e participam do ranking — tudo pelo app. Você investe no plano, eles usam sem pagar.'
         },
         {
-          question: 'Como funciona a Máquina de Vendas?',
-          answer: 'Nós oferecemos uma landing page pública que funciona como sua vitrine no nosso marketplace. Interessados podem te encontrar e nós convertemos leads diretamente para a sua base, sem a necessidade de você vender no orgânico.'
+          question: 'Posso cancelar ou mudar de plano?',
+          answer: 'Sim, sem burocracia. Você faz upgrade, downgrade ou cancelamento a qualquer momento diretamente no painel, sem fidelidade ou multa.'
         },
         {
-          question: 'Posso cancelar minha conta a qualquer momento?',
-          answer: 'Sim! Trabalhamos com planos sem fidelidade. Você pode evoluir de plano conforme cresce sua base ou cancelar a qualquer momento diretamente no seu painel.'
-        },
-        {
-          question: 'Como a Análise de Performance me ajuda?',
-          answer: 'O RepTrail gera métricas baseadas em comparativos de fotos, de cargas progressivas, e evolução do percentual de gordura. O software organiza as informações e cria feedbacks visuais para reter seu aluno por mais tempo.'
+          question: 'Como o RepTrail aumenta minha retenção de alunos?',
+          answer: 'Alunos que vêem sua evolução ficam. O RepTrail entrega dashboards de progresso com comparativo de fotos, métricas corporais e progressão de cargas. O sistema de ranking gamificado cria engajamento diário. Menos cancelamento = mais receita recorrente sem esforço de recontratar.'
         }
       ]
     },

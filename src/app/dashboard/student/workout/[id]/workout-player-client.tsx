@@ -140,7 +140,7 @@ export default function WorkoutPlayerClient({
                             <Stack direction="row" align="center" justify="between">
                                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                                     <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                        <Box width={8} height={8} bg={STORE_TOKENS.COLORS.SUCCESS} rounded={STORE_TOKENS.RADIUS.FULL} style={{ boxShadow: '0 0 10px rgba(16,185,129,0.5)' }} />
+                                        <Box width={8} height={8} bg={STORE_TOKENS.COLORS.SUCCESS} rounded={STORE_TOKENS.RADIUS.FULL} />
                                         <Font variant="h3" weight="black" color={STORE_TOKENS.COLORS.WHITE} uppercase italic tracking="tight" truncate>
                                             {workout.name}
                                         </Font>

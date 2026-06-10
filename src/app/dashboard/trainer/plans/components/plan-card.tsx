@@ -67,7 +67,6 @@ export function PlanCard({ plan, isCurrentPlan }: PlanCardProps) {
                     padding={STORE_TOKENS.PADDING.CONTAINER}
                     rounded={STORE_TOKENS.RADIUS.SYSTEM}
                     border={isPremium || isHighlighted ? 'none' : 'standard'}
-                    style={{ height: '100%', display: 'flex', flexDirection: 'column' }}
                 >
                     <Stack gap={STORE_TOKENS.SPACING.CONTAINER} flex1>
                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center" textAlign="center">

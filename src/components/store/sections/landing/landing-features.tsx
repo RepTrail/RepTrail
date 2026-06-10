@@ -31,16 +31,16 @@ export function LandingFeatures({ role = 'trainer' }: LandingFeaturesProps) {
   const config = {
     trainer: {
       badgeText: 'Para Personal Trainers',
-      title1: 'Simplifique sua',
-      titleHighlight: 'Gestão de Alunos.',
-      subtitle: 'Com o RepTrail, você pode gerenciar seus pagamentos, renovações automáticas e CRM de alunos de forma eficiente, eliminando a confusão das planilhas.',
+      title1: 'Da prescrição à',
+      titleHighlight: 'gestão escalável.',
+      subtitle: 'Tudo que você precisa para parar de improvisar e começar a operar como uma consultoria profissional — num único sistema integrado.',
       features: [
-        { label: 'Importação AI 5min', desc: 'Traga o protocolo do seu aluno de qualquer PDF para o app em segundos usando nossa IA.', icon: Sparkles, pulse: true },
-        { label: 'Gestão Escalável', desc: 'Painel completo para gerenciar de 10 a 1000 alunos.', icon: UserCheck, pulse: false },
-        { label: 'Templates Próprios', desc: 'Crie seus padrões de treinos e dietas para prescrição relâmpago.', icon: Dumbbell, pulse: false },
-        { label: 'Perfil de Vendas', desc: 'Sua landing page própria para captar novos alunos.', icon: Search, pulse: false }
+        { label: 'Importação de PDF por IA', desc: 'Transforme qualquer treino em PDF em protocolo ativo no app em menos de 1 minuto. Incluso no Pro e Elite.', icon: Sparkles, pulse: true },
+        { label: 'Gestão de 10 a 200+ alunos', desc: 'Painel centralizado que escala sem aumentar sua carga de trabalho.', icon: UserCheck, pulse: false },
+        { label: 'Templates de prescrição relâmpago', desc: 'Salve seus protocolos favoritos e prescriva em segundos, não em horas.', icon: Dumbbell, pulse: false },
+        { label: 'Perfil público no marketplace', desc: 'Capte novos alunos sem esforço adicional de marketing.', icon: Search, pulse: false }
       ],
-      ctaText: 'Quero simplificar minha gestão agora',
+      ctaText: 'Quero minha consultoria estruturada',
       ctaLink: '/auth/signup',
       videoId: 'CPVt1ZB0hrM',
       mockupSide: 'right' as const,

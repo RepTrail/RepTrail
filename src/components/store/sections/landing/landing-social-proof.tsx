@@ -24,22 +24,22 @@ export function LandingSocialProof({ role = 'trainer' }: LandingSocialProofProps
   const config = {
     trainer: {
       badgeText: 'Resultados Reais',
-      title1: 'O que dizem os',
-      titleHighlight: 'Elite.',
-      subtitle: 'Junte-se a mais de 500 treinadores que já profissionalizaram sua consultoria.',
+      title1: 'Quem parou de',
+      titleHighlight: 'improvisar.',
+      subtitle: 'Mais de 500 consultores fitness já trocaram planilhas e WhatsApp pela operação profissional do RepTrail.',
       testimonials: [
         {
           rating: 5,
-          quote: 'Antes perdia horas no WhatsApp. Com o RepTrail, dobrei minha base para 120 alunos mantendo o suporte impecável.',
+          quote: 'Antes perdia 3 horas por dia no WhatsApp. Hoje gerencio 120 alunos com o mesmo tempo que usava para 40. O RepTrail me devolveu minha vida.',
           initials: 'RM',
           author: 'Rafael M.',
           location: 'São Paulo • SP',
-          metric: '120+ Alunos',
+          metric: '3x mais alunos',
           featured: false
         },
         {
           rating: 5,
-          quote: 'O marketplace é um divisor de águas. Hoje faturamos R$ 22k/mês escalando com as automações do app.',
+          quote: 'Em 6 meses saí de R$ 8k para R$ 22k/mês. Não foi sorte — foi ter um sistema que me deixou focar em resultado, não em administração.',
           initials: 'JP',
           author: 'Júlia P.',
           location: 'Rio de Janeiro • RJ',
@@ -48,16 +48,16 @@ export function LandingSocialProof({ role = 'trainer' }: LandingSocialProofProps
         },
         {
           rating: 5,
-          quote: 'A gamificação viciou meus alunos. O engajamento disparou e minha taxa de cancelamento caiu para quase zero.',
+          quote: 'Minha taxa de cancelamento era de 30% ao mês. Com o acompanhamento de evolução do RepTrail, caiu para menos de 2%. Isso representa milhares a mais todo mês.',
           initials: 'MC',
           author: 'Marcelo C.',
           location: 'Curitiba • PR',
-          metric: 'Retenção 98%',
+          metric: 'Churn −28%',
           featured: false
         },
         {
           rating: 5,
-          quote: 'O setup foi muito rápido. Em 2 dias já estava com todos os meus templates migrados e prescrevendo dietas em segundos.',
+          quote: 'Em 48h migrei todos os meus alunos e templates para o RepTrail. No terceiro dia já estava prescrevendo três vezes mais rápido. Não tem volta.',
           initials: 'BS',
           author: 'Bruno S.',
           location: 'Interior • SP',

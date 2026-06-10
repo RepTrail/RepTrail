@@ -35,8 +35,34 @@ export async function signInAction(formData: FormData) {
             .maybeSingle()
 
         if (!profile) {
-            await supabase.auth.signOut()
-            return { error: 'Esta conta foi excluída ou desativada.' }
+            // Tentativa de recuperação de perfil (caso o trigger ou o upsert inicial tenha falhado)
+            try {
+                const { adminClient } = await import('@/lib/supabase/admin')
+                const metadata = user.user_metadata || {}
+                const profilePayload: Record<string, any> = {
+                    id: user.id,
+                    email: user.email,
+                    full_name: metadata.full_name || 'Usuário',
+                    role: metadata.role || 'trainer',
+                }
+                if (metadata.whatsapp) profilePayload.whatsapp = metadata.whatsapp
+
+                // Removido a atribuição de plan_id para que caia no paywall
+
+                const { error: recoveryError } = await adminClient
+                    .from('profiles')
+                    .upsert(profilePayload)
+                
+                if (recoveryError) {
+                    console.error('Erro na recuperação do perfil:', recoveryError)
+                    await supabase.auth.signOut()
+                    return { error: 'Esta conta foi excluída ou desativada.' }
+                }
+            } catch (e) {
+                console.error('Exceção na recuperação do perfil:', e)
+                await supabase.auth.signOut()
+                return { error: 'Esta conta foi excluída ou desativada.' }
+            }
         }
     }
 
@@ -124,6 +150,9 @@ export async function signUpAction(formData: FormData) {
 
     try {
         const { adminClient } = await import('@/lib/supabase/admin')
+
+        // Removido a atribuição de plan_id para que caia no paywall
+
         const { error: profileError } = await adminClient
             .from('profiles')
             .upsert(profilePayload, { onConflict: 'id', ignoreDuplicates: false })
@@ -136,10 +165,15 @@ export async function signUpAction(formData: FormData) {
     }
 
     // Auto-login immediately after sign up
-    await supabase.auth.signInWithPassword({
+    const { error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
     })
+
+    if (signInError) {
+        console.error('Auto-login error:', signInError)
+        return { error: 'Conta criada, mas falha no login automático: ' + signInError.message }
+    }
 
     revalidatePath('/', 'layout')
     redirect('/dashboard')

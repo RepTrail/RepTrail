@@ -28,88 +28,88 @@ export function LandingAbout({ role = 'trainer' }: LandingAboutProps) {
 
   const config = {
     trainer: {
-      badgeText: 'Sobre o RepTrail',
+      badgeText: 'O problema que te trava',
       badgeIcon: ShieldCheck,
-      title1: 'Infraestrutura',
-      titleHighlight: 'Professional.',
-      desc: 'Não somos apenas um app de treino. Entregamos o ecossistema completo para você profissionalizar sua consultoria e focar no que realmente importa: o resultado do seu aluno.',
+      title1: 'Pare de improvisar.',
+      titleHighlight: 'Comece a operar.',
+      desc: 'Planilhas e WhatsApp não escalam. Enquanto você passa horas administrando mensagens, arquivos perdidos e cobranças manuais, outros profissionais estão construindo consultorias estruturadas que crescem sem aumentar a carga de trabalho.',
       features: [
         {
           icon: Layers,
-          title: 'O sistema de gestão de back-office',
-          description: 'Elimine a confusão das planilhas and gerencie seus pagamentos, renovações automáticas e CRM de alunos de forma eficiente.',
-          bullets: ['Faturamento Mensal', 'Lembretes Automáticos', 'Pipeline de Vendas']
+          title: 'Gestão centralizada de alunos',
+          description: 'Fim das planilhas e mensagens perdidas. Controle pagamentos, protocolos, renovações e o histórico de cada aluno em um painel único e profissional.',
+          bullets: ['CRM de alunos integrado', 'Controle de pagamentos', 'Histórico completo por aluno']
         },
         {
           icon: Zap,
-          title: 'Crie treinos personalizados',
-          description: 'Crie treinos complexos e dietas personalizadas em segundos, usando seus próprios templates na sua estrutura.',
-          bullets: ['Templates Personalizados', 'Cálculo Nutricional', 'Biblioteca 1k+ Exercícios']
+          title: 'Prescrição em segundos',
+          description: 'Crie treinos e dietas usando seus próprios templates. Prescrito em segundos, entregue diretamente no app do seu aluno.',
+          bullets: ['Templates personalizados', 'Biblioteca 1k+ exercícios', 'Cálculo nutricional automático']
         },
         {
           icon: BarChart,
-          title: 'Monitore a evolução de seus alunos',
-          description: 'Tome decisões baseadas em dados e monitore a evolução real de seus alunos com comparativos de fotos, métricas corporais e carga progressiva.',
-          bullets: ['Dashboards de Evolução', 'Relatórios Trimestrais', 'Checkpoint de Resultados']
+          title: 'Acompanhamento que retém',
+          description: 'Monitore evolução real com fotos, métricas corporais e progressão de cargas. Aluno que vê resultado fica — e vira seu melhor vendedor.',
+          bullets: ['Dashboards de evolução', 'Comparativo de fotos', 'Progressão de cargas']
         },
         {
           icon: ShoppingBag,
-          title: 'Aumente suas vendas',
-          description: 'Aumente suas vendas e capte novos leads com sua vitrine profissional dentro de nosso marketplace oficial.',
-          bullets: ['Página Pública Premium', 'Lead Capture Modal', 'SEO para Treinadores']
+          title: 'Vitrine que capta alunos',
+          description: 'Seu perfil público no marketplace RepTrail. Novos alunos chegam até você, veem seus depoimentos e fecham — sem você depender do orgânico.',
+          bullets: ['Perfil público profissional', 'Captação de leads', 'SEO para treinadores']
         }
       ]
     },
     'trainer-differentials': {
-      badgeText: 'Diferenciais',
+      badgeText: 'Diferencial competitivo',
       badgeIcon: Zap,
-      title1: 'Por que o',
-      titleHighlight: 'RepTrail?',
-      desc: 'Desenvolvido por quem vive o esporte, para quem respira performance.',
+      title1: 'Enquanto outros usam',
+      titleHighlight: 'WhatsApp, você escala.',
+      desc: 'A diferença entre um personal freelancer e uma consultoria fitness profissional está na infraestrutura. O RepTrail é essa infraestrutura.',
       features: [
         {
           icon: ShieldCheck,
-          title: 'Sistema Operacional Completo',
-          description: 'Substitua planilhas, PDFs e WhatsApp bagunçado por um único ambiente profissional que centraliza toda a gestão.'
+          title: 'Um sistema. Zero improviso.',
+          description: 'Substitua planilha + WhatsApp + PDF + Google Drive por um único ambiente profissional com tudo integrado e centralizado.'
         },
         {
           icon: TrendingUp,
-          title: 'Escalabilidade Infinita',
-          description: 'Estrutura pronta para gerenciar 10, 50 ou 200 alunos com o mesmo esforço e eficiência.'
+          title: 'Mais alunos. Mesmas horas.',
+          description: 'Estrutura pensada para quem quer sair dos 10 alunos e chegar nos 100 sem sacrificar mais tempo ou qualidade.'
         },
         {
           icon: Globe,
-          title: 'Sua Marca Global',
-          description: 'Tenha uma landing page de vendas profissional dentro da plataforma para atrair alunos de qualquer lugar.'
+          title: 'Sua marca no maior marketplace fitness',
+          description: 'Perfil público profissional que coloca você na vitrine de quem está procurando personal trainer agora.'
         },
         {
           icon: Zap,
-          title: 'Engajamento Viciante',
-          description: 'Sistema de ranking e níveis que incentiva a consistência real dos seus alunos, aumentando a retenção.'
+          title: 'Retenção que vira faturamento',
+          description: 'Rankings, metas e dashboard de progresso que criam vício positivo no aluno. Menos cancelamento = mais receita recorrente.'
         }
       ]
     },
     'trainer-authority': {
-      badgeText: 'DNA de Performance',
+      badgeText: 'Feito por quem vive o mercado',
       badgeIcon: HeartPulse,
-      title1: 'Desenvolvido por quem',
-      titleHighlight: 'Vive a Performance.',
-      desc: 'Não somos apenas desenvolvedores de software. Somos entusiastas do fitness e profissionais que entendem as dores reais de quem trabalha com consultoria. O RepTrail foi criado para resolver a falta de ferramentas profissionais que realmente entregam o que prometem.',
+      title1: 'Construído por quem',
+      titleHighlight: 'entende suas dores.',
+      desc: 'Não somos uma startup de software genérico. O RepTrail foi criado por profissionais que viveram na pele a frustração de gerenciar consultorias no WhatsApp, perder alunos por falta de acompanhamento e trabalhar 60 horas por semana sem conseguir escalar.',
       features: [
         {
           icon: HeartPulse,
-          title: 'Foco total no Aluno',
-          description: 'Nossa interface foi desenhada para que o aluno nunca queira sair. Retenção é o segredo do lucro.'
+          title: 'Zero curva de aprendizado',
+          description: 'Interface pensada para quem está na academia, não em frente ao computador. Configure em minutos e comece a prescrever no mesmo dia.'
         },
         {
           icon: Zap,
-          title: 'Escalabilidade Real',
-          description: 'Sistemas pensados para quem quer sair dos 10 alunos e chegar nos 1000 sem perder a qualidade.'
+          title: 'Escala real, não promessa',
+          description: 'Estrutura testada por trainers que gerenciam de 10 a 200 alunos com o mesmo esforço. Você cresce, o sistema acompanha.'
         },
         {
           icon: ShieldCheck,
-          title: 'Segurança de Dados',
-          description: 'Seus dados e os dados dos seus alunos protegidos com tecnologia bancária de ponta.'
+          title: 'Dados que protegem e vendem',
+          description: 'Histórico completo de cada aluno armazenado com segurança. Nunca mais perca dados — e use a evolução como prova social para captar novos clientes.'
         }
       ]
     },

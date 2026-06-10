@@ -67,6 +67,7 @@ interface RegistryMainProps {
   backPath?: string
   hideFooter?: boolean
   noPadding?: boolean
+  noMinHeight?: boolean
 }
 
 export function RegistryMain({
@@ -80,7 +81,8 @@ export function RegistryMain({
   rightElement,
   backPath,
   hideFooter = false,
-  noPadding = false
+  noPadding = false,
+  noMinHeight = false
 }: RegistryMainProps) {
   const { activeTab, setActiveTab, primaryColor } = useRegistry()
   const words = title.trim().split(' ')
@@ -134,9 +136,9 @@ export function RegistryMain({
           md: STORE_TOKENS.PADDING.CONTAINER,
         },
 
-        minHeight: "screen",
+        minHeight: noMinHeight ? undefined : "screen",
       }}>
-      <Stack flex1 gap={noPadding ? undefined : { base: STORE_TOKENS.SPACING.EMPTY_STATE as any, md: STORE_TOKENS.SPACING.SECTION as any }}>
+      <Stack flex1 gap={{ base: STORE_TOKENS.SPACING.EMPTY_STATE as any, md: STORE_TOKENS.SPACING.SECTION as any }}>
         {/* Header Section title*/}
         {showHeader && (
           <Stack direction={{ base: 'col', md: 'row' }} justify="between" align={{ base: 'start', md: 'center' }} gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>

@@ -99,7 +99,7 @@ export function Modal({
           overflow="hidden" 
           style={{ 
             display: 'grid', 
-            gridTemplateRows: 'auto auto 1fr auto auto', 
+            gridTemplateRows: 'auto 1fr auto auto', 
             maxHeight: '90vh' 
           }}
         >
@@ -138,11 +138,6 @@ export function Modal({
               </Box>
             </Inline>
           </CardHeader>
-
-          <Divider
-            {...{
-              color: STORE_TOKENS.COLORS.DIVIDER.SUBTLE,
-            }} />
 
           {/* Content Area */}
           <Box 

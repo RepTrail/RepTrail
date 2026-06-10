@@ -18,6 +18,7 @@ import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { Modal } from '@/components/store/advanced/modal'
 import { SegmentedSwitch } from '@/components/store/intermediary/segmented-switch'
 import { STUDENT_TERMS, TRAINER_TERMS } from '@/lib/terms-content'
+import { PRIVACY_POLICY } from '@/lib/privacy-content'
 import { ShieldCheck } from 'lucide-react'
 
 interface AuthSignUpFormProps {
@@ -56,6 +57,7 @@ export function AuthSignUpForm({
     const { primaryColor, setPrimaryColor } = useRegistry()
     const [internalRole, setInternalRole] = React.useState<'student' | 'trainer'>('trainer')
     const [showTermsModal, setShowTermsModal] = React.useState(false)
+    const [showPrivacyModal, setShowPrivacyModal] = React.useState(false)
 
     const activeRole = role || internalRole
     const handleSetRole = (id: string) => {
@@ -192,7 +194,7 @@ export function AuthSignUpForm({
                                     {...{
                                         color: STORE_TOKENS.COLORS.TEXT.MUTED,
                                     }}>
-                                    Eu aceito os <Font
+                                    Eu aceito os{' '}<Font
                                     variant="sub-tiny"
                                     weight="black"
                                     cursor="pointer"
@@ -200,7 +202,15 @@ export function AuthSignUpForm({
                                     onClick={() => setShowTermsModal(true)}
                                     {...{
                                         color: STORE_TOKENS.COLORS.BRAND,
-                                    }}>termos de uso</Font>
+                                    }}>termos de uso</Font>{' '}e a{' '}<Font
+                                    variant="sub-tiny"
+                                    weight="black"
+                                    cursor="pointer"
+                                    underline
+                                    onClick={() => setShowPrivacyModal(true)}
+                                    {...{
+                                        color: STORE_TOKENS.COLORS.BRAND,
+                                    }}>política de privacidade</Font>
                                 </Font>
                             </Stack>
 
@@ -225,6 +235,28 @@ export function AuthSignUpForm({
                                             color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
                                         }}>
                                         {activeRole === 'trainer' ? TRAINER_TERMS : STUDENT_TERMS}
+                                    </Font>
+                                </Box>
+                            </Modal>
+
+                            <Modal
+                                isOpen={showPrivacyModal}
+                                onClose={() => setShowPrivacyModal(false)}
+                                title="Política de Privacidade"
+                                subtitle="Como tratamos seus dados pessoais (LGPD)"
+                                icon={ShieldCheck}
+                                variant={activeRole === 'trainer' ? 'emerald' : 'orange'}
+                                confirmLabel="Entendido"
+                                onConfirm={() => setShowPrivacyModal(false)}
+                            >
+                                <Box padding={STORE_TOKENS.PADDING.NONE} maxHeight="60vh" overflowY="auto">
+                                    <Font
+                                        variant="body"
+                                        whitespace="pre-line"
+                                        {...{
+                                            color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
+                                        }}>
+                                        {PRIVACY_POLICY}
                                     </Font>
                                 </Box>
                             </Modal>
