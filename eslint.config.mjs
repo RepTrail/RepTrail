@@ -85,9 +85,8 @@ export default [
         },
         // 6. Prohibit inline style Attribute (Strict Rule 2)
         {
-          // Only prohibit inline style on non-base components/HTML elements
-          selector: "JSXOpeningElement:not(:matches([name.name='Box'], [name.name='Stack'], [name.name='Grid'], [name.name='Font'], [name.name='Button'], [name.name='Input'], [name.name='Icon'], [name.name='Img'], [name.name='Badge'], [name.name='Card'], [name.name='Separator'], [name.name='Logo'], [name.name='FileUpload'], [name.name='FormSwitch'], [name.name='FormSelect'], [name.name='FormCheckbox'], [name.name='Avatar'], [name.name='SidebarLink'], [name.name='Surface'], [name.name='GlassPanel'], [name.name='IconBox'])) > JSXAttribute[name.name='style']",
-          message: "Inline styles (style prop) are strictly prohibited outside of base primitives. Use base design system components (Box, Stack, etc.) for layout and styling."
+          selector: "JSXAttribute[name.name='style']",
+          message: "Inline styles (style prop) are strictly prohibited outside of 'src/components/store/base/'. Use base design system components (Box, Stack, Grid) with standard props for layout and styling."
         },
 
         // 10. Prohibit primitive HTML tags outside base/ (Architecture Rule §4 + §1)

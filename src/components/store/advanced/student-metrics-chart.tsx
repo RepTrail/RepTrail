@@ -151,7 +151,8 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
     const chartWidth = mounted ? Math.max(chartData.length * 40, 600) : 600
 
     return (
-        <Stack fullWidth gap={STORE_TOKENS.SPACING.SECTION} style={{ minWidth: 0 }}>
+        <div style={{ minWidth: 0, width: '100%' }}>
+            <Stack fullWidth gap={STORE_TOKENS.SPACING.SECTION}>
             <Stack direction="row" wrap="wrap" gap={STORE_TOKENS.SPACING.CONTAINER} align="center" justify="end">
                 <LegendItem
                     label="Performance"
@@ -289,6 +290,7 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
                 )}
             </div>
         </Stack>
+        </div>
     );
 }
 

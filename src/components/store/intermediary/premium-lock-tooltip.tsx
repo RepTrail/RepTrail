@@ -32,7 +32,7 @@ export function PremiumLockTooltip({ children, locked, tooltipText, enabled = tr
                             <Icon icon={Lock} size="xs" color="amber" />
                             <Font variant="body-sm" weight="bold" color="amber">Recurso Premium</Font>
                         </Stack>
-                        <Font variant="description" color="zinc-300">{tooltipText}</Font>
+                        <Font variant="description" color="zinc-400">{tooltipText}</Font>
                     </Stack>
                 </TooltipContent>
             </Tooltip>

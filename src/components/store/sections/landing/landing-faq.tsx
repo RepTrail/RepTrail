@@ -8,7 +8,7 @@ import { Font } from '@/components/store/base/font'
 import { Icon } from '@/components/store/base/icon'
 import { Badge } from '@/components/store/base/badge'
 import { useRegistry } from '@/components/store/advanced/registry-context'
-import { ChevronDown, HelpCircle } from 'lucide-react'
+import { ChevronDown, ChevronUp, HelpCircle } from 'lucide-react'
 import { LandingSection } from '@/components/store/advanced/landing-section'
 import { Surface } from '@/components/store/base/surface'
 
@@ -151,18 +151,14 @@ export function LandingFAQ({ role = 'trainer' }: LandingFAQProps) {
                   padding={STORE_TOKENS.PADDING.CONTAINER}
                   width="full"
                   gap={STORE_TOKENS.SPACING.ELEMENT}
-                  style={{ cursor: 'pointer', background: 'transparent' }}
+                  cursor="pointer"
+                  bg={STORE_TOKENS.COLORS.TRANSPARENT}
                 >
                   <Font variant="body" color={STORE_TOKENS.COLORS.BRAND} weight="black" uppercase italic>
                     {faq.question}
                   </Font>
-                  <Box
-                    transition
-                    style={{
-                      transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)'
-                    }}
-                  >
-                    <Icon icon={ChevronDown} size="sm" color={STORE_TOKENS.COLORS.BRAND} />
+                  <Box transition>
+                    <Icon icon={isOpen ? ChevronUp : ChevronDown} size="sm" color={STORE_TOKENS.COLORS.BRAND} />
                   </Box>
                 </Box>
                 {/* Content area */}

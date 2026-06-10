@@ -19,9 +19,10 @@ interface TrainerProfileSummaryProps {
     email: string
     avatarUrl?: string | null
     trainerCode?: string | null
+    hasPublicProfile?: boolean
 }
 
-export function TrainerProfileSummary({ name, email, avatarUrl, trainerCode }: TrainerProfileSummaryProps) {
+export function TrainerProfileSummary({ name, email, avatarUrl, trainerCode, hasPublicProfile }: TrainerProfileSummaryProps) {
     const { toast } = useToast()
     const router = useRouter()
     const [isUploading, setIsUploading] = useState(false)
@@ -58,7 +59,7 @@ export function TrainerProfileSummary({ name, email, avatarUrl, trainerCode }: T
         }
     }
 
-    const publicHref = trainerCode ? `/personal/${trainerCode}` : null
+    const publicHref = (hasPublicProfile && trainerCode) ? `/personal/${trainerCode}` : null
 
     return (
         <Surface variant="glass" padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM} border="none">

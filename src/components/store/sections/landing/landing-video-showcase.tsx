@@ -65,6 +65,7 @@ export function LandingVideoShowcase() {
               gap={STORE_TOKENS.SPACING.SECTION}
               width="full"
               transition
+              // eslint-disable-next-line no-restricted-syntax
               style={{ 
                 transform: typeof window !== 'undefined' && window.innerWidth < 768 
                   ? `translateX(calc(-${activeIndex * 100}% - ${activeIndex * 50}px))` 
