@@ -3,18 +3,22 @@ export const TRAINER_TERMS = `
 
 Bem-vindo ao RepTrail. Ao utilizar nossa plataforma como Personal Trainer, você concorda com as seguintes condições:
 
-1. **Ativação do Plano On-Demand**: Ao criar sua conta, você adere automaticamente ao plano **On-Demand**. Este plano permite que você gerencie todos os aspectos da sua consultoria sem mensalidade fixa.
+1. **Uso da Plataforma**: O RepTrail fornece uma ferramenta tecnológica para auxiliar no gerenciamento de alunos, treinos e dietas. Você atua de forma independente e não há vínculo empregatício com o RepTrail.
 
-2. **Política de Cobrança**:
-   - **Limite Gratuito**: Você pode gerenciar até o limite de alunos definido no plano gratuito vigente sem custo algum.
-   - **Alunos Extras**: Acima deste limite, será cobrada uma taxa por aluno excedente ao mês.
-   - **Método de Pagamento**: Para manter o acesso a alunos acima do limite gratuito, você deverá cadastrar um método de pagamento válido via Asaas.
+2. **Política de Pagamento**:
+   - O uso da plataforma pode estar sujeito a cobranças baseadas no número de alunos ou em planos específicos.
+   - Para manter o acesso a recursos ou alunos acima de eventuais limites gratuitos, é necessário manter um método de pagamento válido cadastrado.
 
-3. **Responsabilidade Profissional**: Você é o único responsável técnico pelas prescrições de treinos, dietas e orientações fornecidas aos seus alunos através da plataforma.
+3. **Responsabilidade Profissional**: Você é o único e exclusivo responsável técnico e legal pelas prescrições de treinos, dietas e orientações fornecidas aos seus alunos. O RepTrail não se responsabiliza por quaisquer danos ou lesões decorrentes do acompanhamento prestado.
 
-4. **Privacidade**: Seus dados e os dados de seus alunos são protegidos. O RepTrail não compartilha informações confidenciais com terceiros sem sua autorização expressa.
+4. **Isenção e Limitação de Responsabilidade**: A plataforma é fornecida "no estado em que se encontra", sem garantias de disponibilidade ininterrupta. O RepTrail não será responsável por falhas técnicas, lucros cessantes, perdas de dados ou qualquer prejuízo direto ou indireto decorrente do uso da plataforma.
 
-5. **Cancelamento**: Você pode encerrar sua conta a qualquer momento, cessando cobranças futuras de alunos extras.
+5. **Coleta de Dados, Privacidade e LGPD**:
+   - Nós utilizamos cookies, pixels de rastreamento e outras tecnologias semelhantes para análises de desempenho, segurança, melhoria da plataforma e ações de marketing.
+   - Ao utilizar o RepTrail, você concorda com a coleta e o processamento de seus dados de navegação e utilização em conformidade com a Lei Geral de Proteção de Dados (LGPD).
+   - O RepTrail compromete-se a proteger as informações pessoais.
+
+6. **Cancelamento**: Você pode encerrar sua conta a qualquer momento, o que cessará futuras cobranças aplicáveis, sem direito a reembolso de valores já pagos.
 `.trim()
 
 export const STUDENT_TERMS = `
@@ -22,15 +26,20 @@ export const STUDENT_TERMS = `
 
 Ao utilizar o RepTrail para acompanhar seu treinamento, você concorda com o seguinte:
 
-1. **Uso da Plataforma**: O RepTrail é uma ferramenta de suporte para visualização de protocolos enviados por seu treinador ou gerados via Auto-Training.
+1. **Uso da Plataforma**: O RepTrail é uma ferramenta tecnológica de suporte para visualização de protocolos enviados por seu treinador ou gerados de forma automatizada (IA).
 
-2. **Privacidade e Dados**:
-   - Seus dados biométricos e fotos de evolução são armazenados de forma segura.
-   - Suas fotos de evolução são privadas por padrão e visíveis apenas para você e seu treinador.
+2. **Isenção Médica e Responsabilidade**:
+   - O RepTrail não presta serviços médicos, nutricionais ou de educação física de forma direta.
+   - Qualquer treino, dieta ou sugestão algorítmica (Auto-Training) disponibilizada na plataforma possui caráter apenas informativo ou de sugestão baseada em dados.
+   - **Consulte sempre um médico e um profissional de educação física** antes de iniciar atividades físicas intensas ou mudanças drásticas na dieta. O RepTrail não se responsabiliza por lesões ou problemas de saúde decorrentes das atividades.
 
-3. **Auto-Training (IA)**: Caso utilize as ferramentas de IA para gerar treinos ou dietas, você reconhece que estas são sugestões algorítmicas. Consulte sempre um profissional de saúde antes de iniciar atividades físicas intensas ou mudanças drásticas na dieta.
+3. **Privacidade e Direito de Imagem**:
+   - Seus dados biométricos e fotos de evolução são armazenados de forma segura e visíveis apenas para você e seu treinador, salvo autorização explícita em contrário.
+   - O uso da plataforma implica na aceitação de que seu treinador gerencie seus dados para fins de acompanhamento.
 
-4. **Direito de Imagem**: O uso da plataforma implica na aceitação de que seu treinador possa gerenciar seus dados de evolução para fins de acompanhamento profissional.
+4. **Coleta de Dados, Pixels e LGPD**:
+   - A plataforma utiliza tecnologias de rastreamento, como pixels e cookies, para análises de uso, melhorias no sistema e ações de marketing.
+   - O processamento destes dados é feito de acordo com a LGPD e você consente com essa coleta ao utilizar o aplicativo.
 `.trim()
 
 export const AFFILIATE_TERMS = `
@@ -38,16 +47,20 @@ export const AFFILIATE_TERMS = `
 
 Bem-vindo ao Programa de Parceiros RepTrail. Ao se cadastrar como afiliado, você concorda com as seguintes condições:
 
-1. **Comissões Recorrentes**: Você receberá uma comissão de **10% sobre cada mensalidade paga** por usuários (Personal Trainers) que se cadastrarem através do seu link de indicação exclusivo.
+1. **Comissões**: Você receberá comissões baseadas nas regras vigentes do programa de afiliados sobre os pagamentos confirmados de usuários que se cadastrarem através do seu link exclusivo.
 
 2. **Processamento de Pagamentos**:
-   - As comissões são contabilizadas assim que o pagamento do indicado é confirmado.
-   - O resgate dos valores acumulados segue o cronograma de liberação da plataforma (padrão de 30 dias para a primeira transação).
-   - É necessário possuir uma conta válida para recebimento via Asaas.
+   - As comissões são contabilizadas após a confirmação do pagamento.
+   - O resgate segue o cronograma de liberação da plataforma. É necessário possuir uma conta válida para o recebimento.
 
 3. **Regras de Divulgação**:
-   - É estritamente proibido o uso de SPAM, publicidade enganosa ou práticas que prejudiquem a imagem da marca RepTrail.
-   - Você é livre para criar conteúdos educativos e promocionais, desde que respeite a identidade visual e os valores da plataforma.
+   - É estritamente proibido o uso de SPAM, publicidade enganosa, promessas irreais ou práticas que prejudiquem a marca RepTrail.
+   - A divulgação deve sempre respeitar a identidade visual e os valores da plataforma.
 
-4. **Vigência**: A parceria pode ser encerrada por qualquer uma das partes a qualquer momento. Em caso de fraude comprovada, o saldo acumulado poderá ser retido.
+4. **Coleta de Dados, Privacidade e LGPD**:
+   - Ao se cadastrar, você concorda com o uso de cookies, pixels e tecnologias de rastreamento para fins de operação, segurança e marketing, nos moldes da LGPD.
+
+5. **Isenção de Responsabilidade e Vigência**:
+   - A parceria pode ser encerrada por qualquer uma das partes a qualquer momento.
+   - Em caso de fraude comprovada ou violação destas regras, a conta do afiliado poderá ser banida e o saldo retido. O RepTrail não se responsabiliza por perdas financeiras decorrentes de indisponibilidade do sistema.
 `.trim()

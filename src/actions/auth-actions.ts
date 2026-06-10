@@ -113,7 +113,6 @@ export async function signUpAction(formData: FormData) {
 
     // Safety-net upsert: ensures profile row exists even if trigger was
     // slow or the DB trigger is not yet deployed in this environment.
-    // Uses the authenticated session (established by signUp above).
     const profilePayload: Record<string, any> = {
         id: user.id,
         email: email,
@@ -123,14 +122,24 @@ export async function signUpAction(formData: FormData) {
     if (whatsapp) profilePayload.whatsapp = whatsapp
     if (referredBy) profilePayload.referred_by_id = referredBy
 
-    const { error: profileError } = await supabase
-        .from('profiles')
-        .upsert(profilePayload, { onConflict: 'id', ignoreDuplicates: false })
+    try {
+        const { adminClient } = await import('@/lib/supabase/admin')
+        const { error: profileError } = await adminClient
+            .from('profiles')
+            .upsert(profilePayload, { onConflict: 'id', ignoreDuplicates: false })
 
-    if (profileError) {
-        console.error('Profile upsert error:', profileError)
-        // Not fatal — the trigger may have already created the row
+        if (profileError) {
+            console.error('Profile upsert error:', profileError)
+        }
+    } catch (err) {
+        console.error('Error during profile safety-net upsert:', err)
     }
+
+    // Auto-login immediately after sign up
+    await supabase.auth.signInWithPassword({
+        email,
+        password,
+    })
 
     revalidatePath('/', 'layout')
     redirect('/dashboard')
