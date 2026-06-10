@@ -138,11 +138,11 @@ export function LandingPricing() {
 
                 {/* Price */}
                 <Stack gap={STORE_TOKENS.SPACING.NONE} align="start">
-                  <Box display="flex" align="end" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                  <Box display="flex" align="baseline" gap={STORE_TOKENS.SPACING.ELEMENT}>
                     <Font variant="h2" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} weight="black" italic>
                       {plan.price}
                     </Font>
-                    <Font variant="body-sm" color={STORE_TOKENS.COLORS.TEXT.MUTED} {...{ style: { paddingBottom: '6px' } }}>
+                    <Font variant="body-sm" color={STORE_TOKENS.COLORS.TEXT.MUTED}>
                       {plan.period}
                     </Font>
                   </Box>
