@@ -286,115 +286,115 @@ export function TrainerPublicProfileMain({
                     <Stack gap={STORE_TOKENS.SPACING.SECTION} fullWidth>
                         {/* Biography Section */}
                         <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
-            <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
-                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                        <Icon icon={ShieldCheck} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
-                        <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{"Biografia & Metodologia"}</Font>
-                    </Inline>
-                    <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{"Conheça a trajetória profissional e a abordagem metodológica do seu coach."}</Font>
-                </Stack>
-            </Stack>
-            <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
-                            <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER}>
-                                <Font
-                                    variant="body-sm"
-                                    {...{
-                                        color: "SECONDARY",
-                                    }}>
-                                    {trainer.bio || "Treinador focado em resultados e alta performance. Especialista em ajudar alunos a atingirem seu potencial máximo."}
-                                </Font>
-                            </GlassPanel>
-                          </Stack>
-        </Stack>
+                            <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                    <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                                        <Icon icon={ShieldCheck} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                                        <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{"Biografia & Metodologia"}</Font>
+                                    </Inline>
+                                    <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{"Conheça a trajetória profissional e a abordagem metodológica do seu coach."}</Font>
+                                </Stack>
+                            </Stack>
+                            <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
+                                <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER}>
+                                    <Font
+                                        variant="body-sm"
+                                        {...{
+                                            color: "SECONDARY",
+                                        }}>
+                                        {trainer.bio || "Treinador focado em resultados e alta performance. Especialista em ajudar alunos a atingirem seu potencial máximo."}
+                                    </Font>
+                                </GlassPanel>
+                            </Stack>
+                        </Stack>
 
                         {/* Differentials Cards Section */}
                         <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
-            <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
-                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                        <Icon icon={Trophy} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
-                        <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{"Diferenciais"}</Font>
-                    </Inline>
-                    <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{"Os pilares fundamentais que estruturam o programa de acompanhamento físico."}</Font>
-                </Stack>
-            </Stack>
-            <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
-                            <Grid cols={{ base: 1, md: 3 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
-                                {/* Card 1 */}
-                                <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER}>
-                                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                        <Box padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM} bg={STORE_TOKENS.COLORS.BRAND} bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} display="flex" align="center" justify="center">
-                                            <Icon icon={Users} size="md" color={STORE_TOKENS.COLORS.BRAND} />
-                                        </Box>
-                                        <Stack gap={STORE_TOKENS.SPACING.NONE}>
-                                            <Font
-                                                variant="h4"
-                                                weight="black"
-                                                uppercase
-                                                italic
-                                                {...{
-                                                    color: "PRIMARY",
-                                                }}>Transformações</Font>
-                                            <Font
-                                                variant="description"
-                                                {...{
-                                                    color: "SECONDARY",
-                                                }}>Alunos que mudaram de vida.</Font>
+                            <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                    <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                                        <Icon icon={Trophy} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                                        <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{"Diferenciais"}</Font>
+                                    </Inline>
+                                    <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{"Os pilares fundamentais que estruturam o programa de acompanhamento físico."}</Font>
+                                </Stack>
+                            </Stack>
+                            <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
+                                <Grid cols={{ base: 1, md: 3 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                                    {/* Card 1 */}
+                                    <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER}>
+                                        <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="start">
+                                            <Box padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM} bg={STORE_TOKENS.COLORS.BRAND} bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} display="inline-flex" align="center" justify="center">
+                                                <Icon icon={Users} size="md" color={STORE_TOKENS.COLORS.BRAND} />
+                                            </Box>
+                                            <Stack gap={STORE_TOKENS.SPACING.NONE}>
+                                                <Font
+                                                    variant="h4"
+                                                    weight="black"
+                                                    uppercase
+                                                    italic
+                                                    {...{
+                                                        color: "PRIMARY",
+                                                    }}>Transformações</Font>
+                                                <Font
+                                                    variant="description"
+                                                    {...{
+                                                        color: "SECONDARY",
+                                                    }}>Alunos que mudaram de vida.</Font>
+                                            </Stack>
                                         </Stack>
-                                    </Stack>
-                                </GlassPanel>
+                                    </GlassPanel>
 
-                                {/* Card 2 */}
-                                <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER}>
-                                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                        <Box padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM} bg={STORE_TOKENS.COLORS.BRAND} bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} display="flex" align="center" justify="center">
-                                            <Icon icon={Dumbbell} size="md" color={STORE_TOKENS.COLORS.BRAND} />
-                                        </Box>
-                                        <Stack gap={STORE_TOKENS.SPACING.NONE}>
-                                            <Font
-                                                variant="h4"
-                                                weight="black"
-                                                uppercase
-                                                italic
-                                                {...{
-                                                    color: "PRIMARY",
-                                                }}>Metodologia</Font>
-                                            <Font
-                                                variant="description"
-                                                {...{
-                                                    color: "SECONDARY",
-                                                }}>Treinos periodizados com foco na evolução.</Font>
+                                    {/* Card 2 */}
+                                    <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER}>
+                                        <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="start">
+                                            <Box padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM} bg={STORE_TOKENS.COLORS.BRAND} bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} display="inline-flex" align="center" justify="center">
+                                                <Icon icon={Dumbbell} size="md" color={STORE_TOKENS.COLORS.BRAND} />
+                                            </Box>
+                                            <Stack gap={STORE_TOKENS.SPACING.NONE}>
+                                                <Font
+                                                    variant="h4"
+                                                    weight="black"
+                                                    uppercase
+                                                    italic
+                                                    {...{
+                                                        color: "PRIMARY",
+                                                    }}>Metodologia</Font>
+                                                <Font
+                                                    variant="description"
+                                                    {...{
+                                                        color: "SECONDARY",
+                                                    }}>Treinos periodizados com foco na evolução.</Font>
+                                            </Stack>
                                         </Stack>
-                                    </Stack>
-                                </GlassPanel>
+                                    </GlassPanel>
 
-                                {/* Card 3 */}
-                                <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER}>
-                                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                        <Box padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM} bg={STORE_TOKENS.COLORS.BRAND} bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} display="flex" align="center" justify="center">
-                                            <Icon icon={Activity} size="md" color={STORE_TOKENS.COLORS.BRAND} />
-                                        </Box>
-                                        <Stack gap={STORE_TOKENS.SPACING.NONE}>
-                                            <Font
-                                                variant="h4"
-                                                weight="black"
-                                                uppercase
-                                                italic
-                                                {...{
-                                                    color: "PRIMARY",
-                                                }}>Suporte Total</Font>
-                                            <Font
-                                                variant="description"
-                                                {...{
-                                                    color: "SECONDARY",
-                                                }}>Acompanhamento próximo e constante.</Font>
+                                    {/* Card 3 */}
+                                    <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER}>
+                                        <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="start">
+                                            <Box padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM} bg={STORE_TOKENS.COLORS.BRAND} bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} display="inline-flex" align="center" justify="center">
+                                                <Icon icon={Activity} size="md" color={STORE_TOKENS.COLORS.BRAND} />
+                                            </Box>
+                                            <Stack gap={STORE_TOKENS.SPACING.NONE}>
+                                                <Font
+                                                    variant="h4"
+                                                    weight="black"
+                                                    uppercase
+                                                    italic
+                                                    {...{
+                                                        color: "PRIMARY",
+                                                    }}>Suporte Total</Font>
+                                                <Font
+                                                    variant="description"
+                                                    {...{
+                                                        color: "SECONDARY",
+                                                    }}>Acompanhamento próximo e constante.</Font>
+                                            </Stack>
                                         </Stack>
-                                    </Stack>
-                                </GlassPanel>
-                            </Grid>
-                          </Stack>
-        </Stack>
+                                    </GlassPanel>
+                                </Grid>
+                            </Stack>
+                        </Stack>
 
                         {/* Instagram Promotion Card */}
                         {trainer.instagram && (
@@ -463,111 +463,111 @@ export function TrainerPublicProfileMain({
                             ))
                         ) : (
                             <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
-            <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
-                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                        <Icon icon={Trophy} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
-                        <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{"Transformações Reais"}</Font>
-                    </Inline>
-                    <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{"Galeria de evolução corporal com resultados práticos compartilhados pelos alunos."}</Font>
-                </Stack>
-            </Stack>
-            <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
-                                <EmptyState
-                                    variant="zinc"
-                                    icon={ImageIcon}
-                                    title="Nenhum registro"
-                                    description="Nenhuma transformação de aluno registrada publicamente ainda."
-                                />
-                              </Stack>
-        </Stack>
+                                <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                        <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                                            <Icon icon={Trophy} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                                            <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{"Transformações Reais"}</Font>
+                                        </Inline>
+                                        <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{"Galeria de evolução corporal com resultados práticos compartilhados pelos alunos."}</Font>
+                                    </Stack>
+                                </Stack>
+                                <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
+                                    <EmptyState
+                                        variant="zinc"
+                                        icon={ImageIcon}
+                                        title="Nenhum registro"
+                                        description="Nenhuma transformação de aluno registrada publicamente ainda."
+                                    />
+                                </Stack>
+                            </Stack>
                         )}
                     </Stack>
                 )}
 
                 {activeTab === 'reviews' && (
                     <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
-            <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
-                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                        <Icon icon={Star} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
-                        <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{"Depoimentos de Alunos"}</Font>
-                    </Inline>
-                    <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{"Avaliações, feedback e experiências de quem treina e evolui diariamente."}</Font>
-                </Stack>
-            </Stack>
-            <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
-                        {reviews && reviews.length > 0 ? (
-                            <Grid cols={{ base: 1, md: 2 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
-                                {reviews.map((review) => (
-                                    <GlassPanel key={review.id} padding={STORE_TOKENS.PADDING.CONTAINER} position="relative" overflow="hidden">
-                                        <BackgroundIcon icon={Quote} />
-                                        <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth position="relative" zIndex={STORE_TOKENS.Z_INDEX.CONTENT}>
-                                            <Box display="flex" align="center" justify="between" gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
-                                                <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                                                    <BaseAvatar
-                                                        initials={review.student?.full_name?.substring(0, 2).toUpperCase() || 'A'}
-                                                        src={review.student?.avatar_url || undefined}
-                                                        size="md"
-                                                        variant="zinc"
-                                                    />
-                                                    <Stack gap={STORE_TOKENS.SPACING.NONE}>
-                                                        <Font
-                                                            variant="body"
-                                                            weight="black"
-                                                            uppercase
-                                                            italic
-                                                            {...{
-                                                                color: "PRIMARY",
-                                                            }}>
-                                                            {review.student?.full_name || 'Aluno'}
-                                                        </Font>
-                                                        <Font
-                                                            variant="sub-tiny"
-                                                            {...{
-                                                                color: "MUTED",
-                                                            }}>
-                                                            {new Date(review.created_at).toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' })}
-                                                        </Font>
-                                                    </Stack>
+                        <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                            <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                                    <Icon icon={Star} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                                    <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{"Depoimentos de Alunos"}</Font>
+                                </Inline>
+                                <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{"Avaliações, feedback e experiências de quem treina e evolui diariamente."}</Font>
+                            </Stack>
+                        </Stack>
+                        <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
+                            {reviews && reviews.length > 0 ? (
+                                <Grid cols={{ base: 1, md: 2 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                                    {reviews.map((review) => (
+                                        <GlassPanel key={review.id} padding={STORE_TOKENS.PADDING.CONTAINER} position="relative" overflow="hidden">
+                                            <BackgroundIcon icon={Quote} />
+                                            <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth position="relative" zIndex={STORE_TOKENS.Z_INDEX.CONTENT}>
+                                                <Box display="flex" align="center" justify="between" gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
+                                                    <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                                                        <BaseAvatar
+                                                            initials={review.student?.full_name?.substring(0, 2).toUpperCase() || 'A'}
+                                                            src={review.student?.avatar_url || undefined}
+                                                            size="md"
+                                                            variant="zinc"
+                                                        />
+                                                        <Stack gap={STORE_TOKENS.SPACING.NONE}>
+                                                            <Font
+                                                                variant="body"
+                                                                weight="black"
+                                                                uppercase
+                                                                italic
+                                                                {...{
+                                                                    color: "PRIMARY",
+                                                                }}>
+                                                                {review.student?.full_name || 'Aluno'}
+                                                            </Font>
+                                                            <Font
+                                                                variant="sub-tiny"
+                                                                {...{
+                                                                    color: "MUTED",
+                                                                }}>
+                                                                {new Date(review.created_at).toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' })}
+                                                            </Font>
+                                                        </Stack>
+                                                    </Inline>
+                                                </Box>
+
+                                                <Inline gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                                    {[1, 2, 3, 4, 5].map((star) => (
+                                                        <Icon
+                                                            key={star}
+                                                            icon={Star}
+                                                            size="xs"
+                                                            color={star <= review.rating ? STORE_TOKENS.COLORS.WARNING : STORE_TOKENS.COLORS.TEXT.MUTED}
+                                                        />
+                                                    ))}
                                                 </Inline>
-                                            </Box>
 
-                                            <Inline gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                                {[1, 2, 3, 4, 5].map((star) => (
-                                                    <Icon
-                                                        key={star}
-                                                        icon={Star}
-                                                        size="xs"
-                                                        color={star <= review.rating ? STORE_TOKENS.COLORS.WARNING : STORE_TOKENS.COLORS.TEXT.MUTED}
-                                                    />
-                                                ))}
-                                            </Inline>
-
-                                            {review.comment && (
-                                                <Font
-                                                    variant="body-sm"
-                                                    italic
-                                                    {...{
-                                                        color: "SECONDARY",
-                                                    }}>
-                                                    "{review.comment}"
-                                                </Font>
-                                            )}
-                                        </Stack>
-                                    </GlassPanel>
-                                ))}
-                            </Grid>
-                        ) : (
-                            <EmptyState
-                                variant="zinc"
-                                icon={Star}
-                                title="Sem Avaliações"
-                                description="Seja o primeiro aluno a avaliar este treinador após contratá-lo."
-                            />
-                        )}
-                      </Stack>
-        </Stack>
+                                                {review.comment && (
+                                                    <Font
+                                                        variant="body-sm"
+                                                        italic
+                                                        {...{
+                                                            color: "SECONDARY",
+                                                        }}>
+                                                        "{review.comment}"
+                                                    </Font>
+                                                )}
+                                            </Stack>
+                                        </GlassPanel>
+                                    ))}
+                                </Grid>
+                            ) : (
+                                <EmptyState
+                                    variant="zinc"
+                                    icon={Star}
+                                    title="Sem Avaliações"
+                                    description="Seja o primeiro aluno a avaliar este treinador após contratá-lo."
+                                />
+                            )}
+                        </Stack>
+                    </Stack>
                 )}
             </Box>
         </Stack>

@@ -7,9 +7,10 @@ import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 interface TrainerErgogenicsSectionProps {
     userId: string
+    hasErgogenics?: boolean
 }
 
-export function TrainerErgogenicsSection({ userId }: TrainerErgogenicsSectionProps) {
+export function TrainerErgogenicsSection({ userId, hasErgogenics }: TrainerErgogenicsSectionProps) {
     return (
         <Suspense
             fallback={
@@ -19,7 +20,7 @@ export function TrainerErgogenicsSection({ userId }: TrainerErgogenicsSectionPro
             }
         >
             <Box suppressHydrationWarning>
-                <TrainerErgogenicsHubSmart userId={userId} />
+                <TrainerErgogenicsHubSmart userId={userId} hasErgogenics={hasErgogenics} />
             </Box>
         </Suspense>
     )

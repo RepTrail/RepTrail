@@ -19,7 +19,10 @@ export default async function TrainerProfilePage() {
 
     if (!userId) redirect('/auth/login')
 
-    const profile = await actions.getTrainerProfile(userId)
+    const [profile, features] = await Promise.all([
+        actions.getTrainerProfile(userId),
+        actions.getTrainerPlanFeatures(userId)
+    ])
     if (!profile) {
         return (
             <RegistryMain
@@ -45,7 +48,11 @@ export default async function TrainerProfilePage() {
             contextLabel="Conta & Segurança"
             showTabs={false}
         >
-            <TrainerProfileSectionContent userId={userId} profile={profile} />
+            <TrainerProfileSectionContent 
+                userId={userId} 
+                profile={profile} 
+                hasPublicProfile={features?.has_public_profile ?? false}
+            />
         </RegistryMain>
     )
 }

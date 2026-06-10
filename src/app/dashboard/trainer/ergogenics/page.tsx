@@ -5,6 +5,7 @@ import { actions } from '@/lib/dal/server'
 import { getQueryClient } from '@/lib/get-query-client'
 import { PREFETCH_REGISTRY } from '@/lib/prefetch-registry'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
+import { PremiumLockOverlay } from '@/components/store/intermediary/premium-lock-overlay'
 import { TrainerRegistryHeaderActions } from '@/components/store/advanced/trainer-registry-header-actions'
 import { TrainerErgogenicsSection } from '@/components/store/sections/trainer-ergogenics-section'
 
@@ -20,10 +21,8 @@ export default async function TrainerErgogenicsHubPage() {
     if (!userId) redirect('/auth/login')
 
     const features = await actions.getTrainerPlanFeatures(userId)
-    if (features && !features.has_ergogenics) {
-        redirect('/dashboard/trainer')
-    }
-
+    const hasErgogenics = features?.has_ergogenics ?? false
+    const hasImportPdfAi = features?.has_import_pdf_ai ?? false
     const [queryClient, betaTesterMode] = await Promise.all([
         (async () => {
             const qc = getQueryClient()
@@ -50,16 +49,28 @@ export default async function TrainerErgogenicsHubPage() {
             contextLabel="Área do Personal"
             showTabs={false}
             rightElement={
-                <TrainerRegistryHeaderActions
-                    userId={userId}
-                    variant="ergogenic"
-                    betaTesterMode={betaTesterMode}
-                />
+                hasErgogenics ? (
+                    <TrainerRegistryHeaderActions
+                        userId={userId}
+                        variant="ergogenic"
+                        betaTesterMode={betaTesterMode}
+                        hideImportPdf={!hasImportPdfAi}
+                    />
+                ) : null
             }
         >
-            <HydrationBoundary state={dehydrate(queryClient)}>
-                <TrainerErgogenicsSection userId={userId} />
-            </HydrationBoundary>
+            <PremiumLockOverlay 
+                variant="area" 
+                locked={!hasErgogenics} 
+                title="Protocolos Ergogênicos" 
+                description="Seu plano não inclui o módulo de ergogênicos. Faça upgrade para montar e enviar protocolos para seus alunos."
+            >
+                {hasErgogenics && (
+                    <HydrationBoundary state={dehydrate(queryClient)}>
+                        <TrainerErgogenicsSection userId={userId} hasErgogenics={hasErgogenics} />
+                    </HydrationBoundary>
+                )}
+            </PremiumLockOverlay>
         </RegistryMain>
     )
 }

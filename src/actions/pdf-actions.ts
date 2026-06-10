@@ -352,6 +352,16 @@ ${text}
         detected_student_name: detectedStudentName || parsedData.detected_student_name,
     }
 
+    if (method === 'openrouter-ai') {
+        try {
+            console.log(`[PDF] Incrementing AI usage counter for user ${user.id}...`)
+            await supabase.rpc('increment_ai_pdf_count', { user_id: user.id })
+        } catch (e: any) {
+            console.error(`[PDF] Failed to increment AI usage:`, e)
+            // Continue even if it fails, don't break the flow
+        }
+    }
+
     console.log(`[PDF] Success! Method: ${method}`)
     return { success: true, data: responseData }
 }

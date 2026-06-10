@@ -33,6 +33,7 @@ export function PlanForm({ initialData, onSuccess }: PlanFormProps) {
     const [basePrice, setBasePrice] = useState(initialData ? (initialData.base_price_cents / 100).toString() : '0')
     const [sortOrder, setSortOrder] = useState(initialData?.sort_order?.toString() || '0')
     const [isActive, setIsActive] = useState(initialData ? initialData.is_active : true)
+    const [isPublic, setIsPublic] = useState(initialData?.is_public ?? true)
 
     // Limits
     const [studentLimit, setStudentLimit] = useState<string>(initialData?.plan_features_dynamic?.student_limit?.toString() ?? '')
@@ -45,13 +46,21 @@ export function PlanForm({ initialData, onSuccess }: PlanFormProps) {
     const [photoUpdatesUnlimited, setPhotoUpdatesUnlimited] = useState(initialData ? initialData.plan_features_dynamic?.photo_updates_limit === null : false)
     const [prestigePoints, setPrestigePoints] = useState<string>(initialData?.plan_features_dynamic?.prestige_points?.toString() ?? '0')
 
+    const [pdfImportLimit, setPdfImportLimit] = useState<string>(initialData?.plan_features_dynamic?.pdf_import_limit?.toString() ?? '')
+    const [pdfImportLimitUnlimited, setPdfImportLimitUnlimited] = useState(initialData ? initialData.plan_features_dynamic?.pdf_import_limit === null : true)
+
     // Features
+    const [hasWorkouts, setHasWorkouts] = useState(initialData?.plan_features_dynamic?.has_workouts ?? true)
+    const [hasDiets, setHasDiets] = useState(initialData?.plan_features_dynamic?.has_diets ?? true)
+    const [hasCardio, setHasCardio] = useState(initialData?.plan_features_dynamic?.has_cardio ?? true)
     const [hasErgogenics, setHasErgogenics] = useState(initialData?.plan_features_dynamic?.has_ergogenics ?? false)
     const [hasImportPdfAi, setHasImportPdfAi] = useState(initialData?.plan_features_dynamic?.has_import_pdf_ai ?? false)
-    const [hasPublicProfile, setHasPublicProfile] = useState(initialData?.plan_features_dynamic?.has_public_profile ?? false)
 
-    // Card Theme
-    const [cardTheme, setCardTheme] = useState<string>(initialData?.card_theme || 'default')
+    // Card Theme & Icon
+    const rawTheme = initialData?.card_theme || 'default'
+    const [cardTheme, setCardTheme] = useState<string>(rawTheme.split(':')[0] || 'default')
+    const [cardIcon, setCardIcon] = useState<string>(rawTheme.split(':')[1] || 'Dumbbell')
+    const [badgeText, setBadgeText] = useState<string>(rawTheme.split(':')[2] || '')
 
     const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newName = e.target.value
@@ -74,19 +83,21 @@ export function PlanForm({ initialData, onSuccess }: PlanFormProps) {
             base_price_cents: Math.round(Number(basePrice) * 100),
             sort_order: Number(sortOrder),
             is_active: isActive,
-            card_theme: cardTheme,
+            is_public: isPublic,
+            card_theme: `${cardTheme}:${cardIcon}:${badgeText}`,
             features: {
                 student_limit: studentLimitUnlimited ? null : (studentLimit === '' ? null : Number(studentLimit)),
                 free_students_limit: billingType === 'on_demand' && freeStudentsLimit !== '' ? Number(freeStudentsLimit) : null,
                 price_per_student_cents: billingType === 'on_demand' && pricePerStudent !== '' ? Math.round(Number(pricePerStudent) * 100) : null,
                 photo_updates_limit: photoUpdatesUnlimited ? null : (photoUpdatesLimit === '' ? null : Number(photoUpdatesLimit)),
+                pdf_import_limit: pdfImportLimitUnlimited ? null : (pdfImportLimit === '' ? null : Number(pdfImportLimit)),
                 prestige_points: prestigePoints === '' ? 0 : Number(prestigePoints),
-                has_workouts: true,
-                has_diets: true,
-                has_cardio: true,
+                has_workouts: hasWorkouts,
+                has_diets: hasDiets,
+                has_cardio: hasCardio,
                 has_ergogenics: hasErgogenics,
                 has_import_pdf_ai: hasImportPdfAi,
-                has_public_profile: hasPublicProfile,
+                has_public_profile: true,
                 has_public_feed: false,
                 has_store: false,
                 has_ranking: true,
@@ -156,7 +167,10 @@ export function PlanForm({ initialData, onSuccess }: PlanFormProps) {
                         </Grid>
 
                         <Box padding={STORE_TOKENS.PADDING.ELEMENT}>
-                            <FormCheckbox label="Status Ativo" checked={isActive} onChange={setIsActive} />
+                            <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                <FormCheckbox label="Status Ativo (Permite assinaturas)" checked={isActive} onChange={setIsActive} />
+                                <FormCheckbox label="Público (Aparece na tela de Planos)" checked={isPublic} onChange={setIsPublic} />
+                            </Stack>
                         </Box>
                     </Stack>
                 </Surface>
@@ -213,13 +227,31 @@ export function PlanForm({ initialData, onSuccess }: PlanFormProps) {
                         </Stack>
 
                         <Grid cols={{ base: 1, md: 2 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
-                            <FormCheckbox label="Treinos (Sempre ativo)" checked={true} />
-                            <FormCheckbox label="Dietas (Sempre ativo)" checked={true} />
-                            <FormCheckbox label="Cardio (Sempre ativo)" checked={true} />
+                            <FormCheckbox label="Treinos" checked={hasWorkouts} onChange={setHasWorkouts} />
+                            <FormCheckbox label="Dietas" checked={hasDiets} onChange={setHasDiets} />
+                            <FormCheckbox label="Cardio" checked={hasCardio} onChange={setHasCardio} />
 
                             <FormCheckbox label="Ergogênicos" checked={hasErgogenics} onChange={setHasErgogenics} />
                             <FormCheckbox label="Importação de PDF (IA)" checked={hasImportPdfAi} onChange={setHasImportPdfAi} />
-                            <FormCheckbox label="Perfil Público" checked={hasPublicProfile} onChange={setHasPublicProfile} />
+                            
+                            {hasImportPdfAi && (
+                                <Box padding={STORE_TOKENS.PADDING.ELEMENT} border borderColor={STORE_TOKENS.COLORS.DIVIDER.SUBTLE}>
+                                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                        <FormCheckbox label="Sem limite de importação" checked={pdfImportLimitUnlimited} onChange={setPdfImportLimitUnlimited} />
+                                        {!pdfImportLimitUnlimited && (
+                                            <Input
+                                                label="Limite de PDFs por Mês"
+                                                type="number"
+                                                value={pdfImportLimit}
+                                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPdfImportLimit(e.target.value)}
+                                                placeholder="Ex: 5"
+                                            />
+                                        )}
+                                    </Stack>
+                                </Box>
+                            )}
+
+
                         </Grid>
                     </Stack>
                 </Surface>
@@ -232,19 +264,46 @@ export function PlanForm({ initialData, onSuccess }: PlanFormProps) {
                             <Separator />
                         </Stack>
 
-                        <FormSelect
-                            label="Tema do Card (Cor)"
-                            value={cardTheme}
-                            onChange={(val) => setCardTheme(val)}
-                            options={[
-                                { label: 'Padrão (Glass Panel)', value: 'default' },
-                                { label: 'Azul', value: 'blue' },
-                                { label: 'Esmeralda', value: 'emerald' },
-                                { label: 'Laranja', value: 'orange' },
-                                { label: 'Amarelo (Âmbar)', value: 'amber' },
-                                { label: 'Vermelho', value: 'red' }
-                            ]}
-                        />
+                        <Grid cols={{ base: 1, md: 2 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                            <FormSelect
+                                label="Tema do Card (Cor)"
+                                value={cardTheme}
+                                onChange={setCardTheme}
+                                options={[
+                                    { value: 'default', label: 'Padrão (Glass Panel)' },
+                                    { value: 'highlighted', label: 'Destaque (Cores da Marca)' },
+                                    { value: 'premium', label: 'Premium (Dourado/Ouro)' },
+                                    { value: 'blue', label: 'Azul (Especial)' },
+                                    { value: 'emerald', label: 'Esmeralda (Sucesso)' },
+                                    { value: 'orange', label: 'Laranja (Energia)' },
+                                    { value: 'red', label: 'Vermelho (Alerta)' },
+                                ]}
+                            />
+                            <Input
+                                label="Texto de Destaque (Badge)"
+                                value={badgeText}
+                                onChange={(e) => setBadgeText(e.target.value)}
+                                placeholder="Ex: MAIS POPULAR, ELITE"
+                            />
+                            
+                            <FormSelect
+                                label="Ícone de Fundo"
+                                value={cardIcon}
+                                onChange={setCardIcon}
+                                options={[
+                                    { value: 'Dumbbell', label: 'Halter (Força/Treino)' },
+                                    { value: 'Rocket', label: 'Foguete (Performance)' },
+                                    { value: 'Crown', label: 'Coroa (Premium/Elite)' },
+                                    { value: 'Star', label: 'Estrela (Destaque)' },
+                                    { value: 'Zap', label: 'Raio (Energia/Cardio)' },
+                                    { value: 'Flame', label: 'Fogo (Intensidade)' },
+                                    { value: 'Target', label: 'Alvo (Objetivo)' },
+                                    { value: 'Trophy', label: 'Troféu (Conquista)' },
+                                    { value: 'HeartPulse', label: 'Coração (Saúde)' },
+                                    { value: 'Medal', label: 'Medalha (Ranking)' },
+                                ]}
+                            />
+                        </Grid>
                     </Stack>
                 </Surface>
             </Stack>

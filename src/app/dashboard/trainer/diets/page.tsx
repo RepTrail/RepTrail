@@ -2,6 +2,7 @@ import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { dehydrate, HydrationBoundary } from '@/lib/dal'
 import { actions } from '@/lib/dal/server'
+import { PremiumLockOverlay } from '@/components/store/intermediary/premium-lock-overlay'
 import { getQueryClient } from '@/lib/get-query-client'
 import { PREFETCH_REGISTRY } from '@/lib/prefetch-registry'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
@@ -20,9 +21,8 @@ export default async function TrainerDietsPage() {
     if (!userId) redirect('/auth/login')
 
     const features = await actions.getTrainerPlanFeatures(userId)
-    if (features && !features.has_diets) {
-        redirect('/dashboard/trainer')
-    }
+    const hasDiets = features?.has_diets ?? false
+    const hasImportPdfAi = features?.has_import_pdf_ai ?? false
 
     const [queryClient, betaTesterMode] = await Promise.all([
         (async () => {
@@ -50,16 +50,28 @@ export default async function TrainerDietsPage() {
             contextLabel="Área do Personal"
             showTabs={false}
             rightElement={
-                <TrainerRegistryHeaderActions
-                    userId={userId}
-                    betaTesterMode={betaTesterMode}
-                    variant="diet"
-                />
+                hasDiets ? (
+                    <TrainerRegistryHeaderActions
+                        userId={userId}
+                        betaTesterMode={betaTesterMode}
+                        variant="diet"
+                        hideImportPdf={!hasImportPdfAi}
+                    />
+                ) : null
             }
         >
-            <HydrationBoundary state={dehydrate(queryClient)}>
-                <TrainerDietsSection userId={userId} betaTesterMode={betaTesterMode} />
-            </HydrationBoundary>
+            <PremiumLockOverlay 
+                variant="area" 
+                locked={!hasDiets} 
+                title="Planos Alimentares" 
+                description="Seu plano não inclui o módulo de dietas. Faça upgrade para prescrever planos alimentares para seus alunos."
+            >
+                {hasDiets && (
+                    <HydrationBoundary state={dehydrate(queryClient)}>
+                        <TrainerDietsSection userId={userId} betaTesterMode={betaTesterMode} />
+                    </HydrationBoundary>
+                )}
+            </PremiumLockOverlay>
         </RegistryMain>
     )
 }

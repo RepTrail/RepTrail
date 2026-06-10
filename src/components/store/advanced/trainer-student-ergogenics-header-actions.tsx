@@ -36,6 +36,7 @@ interface TrainerStudentErgogenicsHeaderActionsProps {
     effectiveStudentId: string
     studentName: string
     betaTesterMode?: boolean
+    hideImportPdf?: boolean
 }
 
 /**
@@ -45,6 +46,7 @@ export function TrainerStudentErgogenicsHeaderActions({
     effectiveStudentId,
     studentName,
     betaTesterMode = false,
+    hideImportPdf = false,
 }: TrainerStudentErgogenicsHeaderActionsProps) {
     return (
         <Stack
@@ -53,7 +55,7 @@ export function TrainerStudentErgogenicsHeaderActions({
             gap={STORE_TOKENS.SPACING.ELEMENT}
             fullWidth
         >
-            {!betaTesterMode && (
+            {!betaTesterMode && !hideImportPdf && (
                 <Button variant="outline-orange" asChild shine fullWidth={{ base: true, lg: false }}>
                     <Link href="/dashboard/trainer/import-pdf">
                         <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>

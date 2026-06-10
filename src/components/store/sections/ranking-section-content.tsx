@@ -35,7 +35,7 @@ export function RankingSectionContent() {
             <EmptyState
                 icon={Trophy}
                 title="RANKING INDISPONÍVEL"
-                description="AGUARDANDO O FECHAMENTO DO CICLO PARA GERAR O PÓDIO."
+                description="AINDA NÃO HÁ AVALIAÇÕES SUFICIENTES PARA GERAR O PÓDIO."
             />
         )
     }

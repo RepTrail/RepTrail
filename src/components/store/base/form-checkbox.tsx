@@ -16,6 +16,7 @@ interface FormCheckboxProps {
     onChange?: (checked: boolean) => void
     color?: 'emerald' | 'orange' | 'amber' | 'blue' | 'primary'
     error?: string
+    disabled?: boolean
 }
 
 export function FormCheckbox({
@@ -26,7 +27,8 @@ export function FormCheckbox({
     defaultChecked,
     onChange,
     color = 'emerald',
-    error
+    error,
+    disabled
 }: FormCheckboxProps) {
     const { primaryColor } = useRegistry()
     const [isChecked, setIsChecked] = useState(defaultChecked ?? checked ?? false)
@@ -42,6 +44,7 @@ export function FormCheckbox({
     const activeColor = colorMap[resolvedColor as keyof typeof colorMap] || colorMap.emerald
 
     const handleToggle = () => {
+        if (disabled) return;
         const next = !isChecked
         setIsChecked(next)
         onChange?.(next)
@@ -63,7 +66,8 @@ export function FormCheckbox({
                 onClick={handleToggle}
                 className={cn(
                     "flex items-center group cursor-pointer",
-                    (label || description) && "gap-2.5"
+                    (label || description) && "gap-2.5",
+                    disabled && "cursor-not-allowed opacity-50"
                 )}
             >
                 {/* Checkbox Box */}

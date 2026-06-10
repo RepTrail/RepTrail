@@ -8,14 +8,14 @@ import { Box } from '@/components/store/base/box'
 import { Button } from '@/components/store/base/button'
 import { Badge } from '@/components/store/base/badge'
 import { Icon } from '@/components/store/base/icon'
-import { CheckCircle2, X, Trash2 } from 'lucide-react'
+import * as LucideIcons from 'lucide-react'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
+import { Settings, Trash2 } from 'lucide-react'
 import { PlanFeatures } from '@/types'
 import { AsaasPaymentModal } from '@/components/store/advanced/asaas-payment-modal'
 import { Modal } from '@/components/store/advanced/modal'
 import { PlanForm } from '@/components/store/advanced/plan-form'
 import { actions } from '@/lib/dal'
-import { Settings } from 'lucide-react'
 import { Callout } from '@/components/store/intermediary/callout'
 const featureLabels: Partial<Record<keyof PlanFeatures, string>> = {
     has_workouts: 'Construtor de Treinos',
@@ -23,7 +23,6 @@ const featureLabels: Partial<Record<keyof PlanFeatures, string>> = {
     has_cardio: 'Prescrição de Cardio',
     has_ergogenics: 'Módulo de Ergogênicos',
     has_import_pdf_ai: 'Importação de PDF via IA',
-    has_public_profile: 'Perfil Público',
 }
 
 interface PlanCardProps {
@@ -51,7 +50,9 @@ export function PlanCard({ plan, isCurrentPlan = false, adminMode = false, onTog
         })
     }
     const features = Array.isArray(plan.plan_features_dynamic) ? plan.plan_features_dynamic[0] : plan.plan_features_dynamic
-    const theme = plan.card_theme || 'default'
+    const [rawTheme, iconName, badgeText] = (plan.card_theme || 'default').split(':')
+    const theme = rawTheme || 'default'
+    const SelectedIcon = (LucideIcons as any)[iconName || 'Dumbbell'] || LucideIcons.Dumbbell
 
     const validColors = ['blue', 'emerald', 'orange', 'amber', 'red']
     const isColorTheme = validColors.includes(theme)
@@ -87,20 +88,27 @@ export function PlanCard({ plan, isCurrentPlan = false, adminMode = false, onTog
                 display="flex"
                 direction="col"
             >
-                <Stack gap={STORE_TOKENS.SPACING.CONTAINER} flex1>
-                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center" textAlign="center">
-                        {(isPremium || isHighlighted) && !adminMode && (
-                            <Box display="flex" justify="center">
-                                <Badge
-                                    label={isPremium ? "Elite" : "Mais Popular"}
-                                    color={isPremium ? "amber" : (isColorTheme ? theme as any : STORE_TOKENS.COLORS.BRAND)}
-                                    variant="solid"
-                                    size="sm"
-                                />
-                            </Box>
-                        )}
+                <Box position="relative" zIndex={0} width="100%" height="100%" display="flex" direction="col" flex1>
+                    {/* Background Icon */}
+                    <Box position="absolute" top={0} right={0} opacity={5} pointerEvents="none" zIndex={0}>
+                        <SelectedIcon size={120} strokeWidth={1} />
+                    </Box>
+
+                    <Stack gap={STORE_TOKENS.SPACING.CONTAINER} flex1 position="relative" zIndex={10}>
+                        <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="start" textAlign="left">
+                            {(isPremium || isHighlighted || badgeText) && !adminMode && (
+                                <Box display="flex" justify="start">
+                                    <Badge
+                                        label={badgeText || (isPremium ? "Elite" : "Mais Popular")}
+                                        color={isPremium ? "amber" : (isColorTheme ? theme as any : STORE_TOKENS.COLORS.BRAND)}
+                                        variant="solid"
+                                        size="sm"
+                                        icon={SelectedIcon}
+                                    />
+                                </Box>
+                            )}
                         {adminMode && (
-                            <Box display="flex" justify="center" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                            <Box display="flex" justify="start" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                 <Badge
                                     label={plan.is_active ? 'Ativo' : 'Inativo'}
                                     color={plan.is_active ? STORE_TOKENS.COLORS.SUCCESS : STORE_TOKENS.COLORS.WARNING}
@@ -116,13 +124,13 @@ export function PlanCard({ plan, isCurrentPlan = false, adminMode = false, onTog
                             </Box>
                         )}
                         <Font variant="h3" weight="black" uppercase italic color={isPremium ? 'amber' : (isColorTheme ? theme as any : 'primary')}>
-                            {plan.name}
+                            Plano {plan.name}
                         </Font>
                         <Font variant="body-sm" color="zinc-400">
                             {plan.description}
                         </Font>
 
-                        <Stack align="center">
+                        <Stack align="start">
                             <Font variant="h1" weight="black" color="white">
                                 {priceDisplay}
                             </Font>
@@ -140,23 +148,42 @@ export function PlanCard({ plan, isCurrentPlan = false, adminMode = false, onTog
                         {plan.slug === 'on_demand' && features?.price_per_student_cents ? (
                             <>
                                 <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                    <Icon icon={CheckCircle2} size="xs" color={STORE_TOKENS.COLORS.SUCCESS} />
+                                    <Icon icon={LucideIcons.CheckCircle2} size="xs" color={STORE_TOKENS.COLORS.SUCCESS} />
                                     <Font variant="body-sm" color="zinc-400">{features.free_students_limit || 0} Alunos Iniciais (Grátis)</Font>
                                 </Stack>
                                 <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                    <Icon icon={CheckCircle2} size="xs" color={STORE_TOKENS.COLORS.SUCCESS} />
+                                    <Icon icon={LucideIcons.CheckCircle2} size="xs" color={STORE_TOKENS.COLORS.SUCCESS} />
                                     <Font variant="body-sm" color="zinc-400">R$ {(features.price_per_student_cents / 100).toFixed(2).replace('.', ',')} / aluno excedente</Font>
                                 </Stack>
                             </>
                         ) : null}
 
                         {Object.entries(featureLabels).map(([key, label]) => {
-                            const hasFeature = features?.[key] === true
+                            const hasFeature = features?.[key as keyof typeof features] === true
                             if (!hasFeature) return null
+                            
+                            let displayLabel = label
+                            if (key === 'has_import_pdf_ai') {
+                                const limit = features?.pdf_import_limit
+                                displayLabel += ` (${limit === null || limit === undefined ? 'Ilimitado' : `${limit}/mês`})`
+                            }
+
                             return (
                                 <Stack key={key} direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                    <Icon icon={CheckCircle2} size="xs" color={STORE_TOKENS.COLORS.SUCCESS} />
-                                    <Font variant="body-sm" color="zinc-400">{label}</Font>
+                                    <Icon icon={LucideIcons.CheckCircle2} size="xs" color={STORE_TOKENS.COLORS.SUCCESS} />
+                                    <Font variant="body-sm" color="zinc-400">{displayLabel}</Font>
+                                </Stack>
+                            )
+                        })}
+
+                        {/* Mostrar as não inclusas */}
+                        {Object.entries(featureLabels).map(([key, label]) => {
+                            const hasFeature = features?.[key as keyof typeof features] === true
+                            if (hasFeature) return null
+                            return (
+                                <Stack key={key} direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} opacity={50}>
+                                    <Icon icon={LucideIcons.X} size="xs" color="red" />
+                                    <del className="text-zinc-500 text-sm">{label}</del>
                                 </Stack>
                             )
                         })}
@@ -202,23 +229,41 @@ export function PlanCard({ plan, isCurrentPlan = false, adminMode = false, onTog
                                 onClick={() => setIsDeleteModalOpen(true)}
                                 disabled={isPending || isPendingDelete}
                             >
-                                <Icon icon={X} size="sm" />
+                                <Icon icon={LucideIcons.Trash2} size="sm" />
                             </Button>
                         </Stack>
                     ) : (
                         <Button
-                            variant={isCurrentPlan ? 'outline-zinc' : (isPremium ? 'primary' : 'white')}
+                            variant="outline-emerald"
                             fullWidth
-                            disabled={isCurrentPlan}
+                            disabled={isCurrentPlan || isPendingDelete}
                             onClick={() => {
-                                if (!isCurrentPlan) setIsPaymentModalOpen(true)
+                                if (isCurrentPlan) return
+                                if (isFree) {
+                                    startDeleteTransition(async () => {
+                                        const { assignFreePlan } = await import('@/actions/asaas-actions')
+                                        const res = await assignFreePlan(plan.id, plan.slug)
+                                        if (res.success) {
+                                            window.location.href = '/dashboard/trainer'
+                                        } else {
+                                            alert(res.error || 'Erro ao assinar o plano.')
+                                        }
+                                    })
+                                } else {
+                                    setIsPaymentModalOpen(true)
+                                }
                             }}
                         >
-                            {isCurrentPlan ? 'Plano Atual' : 'Assinar Plano'}
+                            <Box display="flex" justify="center" align="center" fullWidth>
+                                <Font variant="auxiliary" color="emerald">
+                                    {isCurrentPlan ? 'Plano Atual' : (isPendingDelete ? 'Assinando...' : 'ASSINAR PLANO')}
+                                </Font>
+                            </Box>
                         </Button>
                     )}
                 </Stack>
-            </Surface>
+            </Box>
+        </Surface>
 
             {!isCurrentPlan && !adminMode && (
                 <AsaasPaymentModal

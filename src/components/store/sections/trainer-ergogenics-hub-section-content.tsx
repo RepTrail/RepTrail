@@ -10,9 +10,10 @@ import type { TrainerErgogenicHubStudent } from '@/lib/dal/remote'
 
 interface TrainerErgogenicsHubSectionContentProps {
     students?: TrainerErgogenicHubStudent[]
+    hasErgogenics?: boolean
 }
 
-export function TrainerErgogenicsHubSectionContent({ students = [] }: TrainerErgogenicsHubSectionContentProps) {
+export function TrainerErgogenicsHubSectionContent({ students = [], hasErgogenics }: TrainerErgogenicsHubSectionContentProps) {
     if (!students.length) {
         return (
             <EmptyState
@@ -26,7 +27,7 @@ export function TrainerErgogenicsHubSectionContent({ students = [] }: TrainerErg
     return (
         <Grid cols={{ base: 1, md: 2, lg: 3 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
             {students.map((student) => (
-                <ErgogenicStudentHubCard key={student.id} student={student} />
+                <ErgogenicStudentHubCard key={student.id} student={student} hasErgogenics={hasErgogenics} />
             ))}
         </Grid>
     )

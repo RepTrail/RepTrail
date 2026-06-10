@@ -115,10 +115,26 @@ export async function updatePlan(id: string, data: PlanFormData): Promise<{ succ
 
     if (planError) return { success: false, error: planError.message }
 
-    const { error: featuresError } = await supabase
+    const { data: existingFeature } = await supabase
         .from('plan_features_dynamic')
-        .update(features)
+        .select('plan_id')
         .eq('plan_id', id)
+        .maybeSingle()
+
+    let featuresError;
+
+    if (existingFeature) {
+        const { error } = await supabase
+            .from('plan_features_dynamic')
+            .update(features)
+            .eq('plan_id', id)
+        featuresError = error
+    } else {
+        const { error } = await supabase
+            .from('plan_features_dynamic')
+            .insert({ plan_id: id, ...features })
+        featuresError = error
+    }
 
     if (featuresError) return { success: false, error: featuresError.message }
 

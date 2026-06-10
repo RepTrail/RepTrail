@@ -32,7 +32,7 @@ export function TrainerStudentsMetricsSection({ userId }: TrainerStudentsMetrics
     })
 
     const limit = studentLimitFromDb === undefined ? 9999 : (studentLimitFromDb ?? 9999)
-    const limitDisplay = limit === 9999 ? '∞' : String(limit)
+    const limitDisplay = (limit === 9999 || limit === 0) ? '∞' : String(limit)
 
     const userRankIndex = fullRanking.findIndex((t: any) => t.id === userId)
     const userRank = userRankIndex !== -1 ? userRankIndex + 1 : '-'

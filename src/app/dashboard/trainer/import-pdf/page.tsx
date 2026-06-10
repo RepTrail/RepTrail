@@ -1,3 +1,4 @@
+import { getProfile } from '@/lib/dal/server'
 import { actions } from '@/lib/dal/server'
 import { redirect } from 'next/navigation'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
@@ -16,11 +17,11 @@ export default async function TrainerImportPdfPage() {
     if (!userId) redirect('/auth/login')
 
     const features = await actions.getTrainerPlanFeatures(userId)
-    if (features && !features.has_import_pdf_ai) {
-        redirect('/dashboard/trainer')
-    }
-
     const students = await actions.getTrainerStudents(userId)
+    const profile = await getProfile(userId)
+
+    const importLimit = features?.pdf_import_limit ?? null
+    const importsUsed = profile?.ai_pdfs_imported_this_month ?? 0
 
     return (
         <RegistryMain
@@ -30,7 +31,14 @@ export default async function TrainerImportPdfPage() {
             contextLabel="Inteligência Artificial"
             showTabs={false}
         >
-            <ImportPdfSectionContent role="trainer" userId={userId} students={students} />
+            <ImportPdfSectionContent 
+                role="trainer" 
+                userId={userId} 
+                students={students} 
+                hasImportPdf={features?.has_import_pdf_ai ?? false}
+                importLimit={importLimit}
+                importsUsed={importsUsed}
+            />
         </RegistryMain>
     )
 }

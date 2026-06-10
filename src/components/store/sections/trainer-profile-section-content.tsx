@@ -11,9 +11,10 @@ import { STORE_TOKENS } from '@/components/store/constants/tokens'
 interface TrainerProfileSectionContentProps {
     userId: string
     profile: any
+    hasPublicProfile?: boolean
 }
 
-export function TrainerProfileSectionContent({ userId, profile }: TrainerProfileSectionContentProps) {
+export function TrainerProfileSectionContent({ userId, profile, hasPublicProfile = true }: TrainerProfileSectionContentProps) {
     if (!profile) {
         return (
             <Stack gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
@@ -31,6 +32,7 @@ export function TrainerProfileSectionContent({ userId, profile }: TrainerProfile
                     email={(profile.email || '').toUpperCase()}
                     avatarUrl={profile.avatar_url}
                     trainerCode={profile.trainer_code}
+                    hasPublicProfile={hasPublicProfile}
                 />
             </Box>
 

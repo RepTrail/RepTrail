@@ -2,6 +2,7 @@ import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { dehydrate, HydrationBoundary } from '@/lib/dal'
 import { actions } from '@/lib/dal/server'
+import { PremiumLockOverlay } from '@/components/store/intermediary/premium-lock-overlay'
 import { getQueryClient } from '@/lib/get-query-client'
 import { PREFETCH_REGISTRY } from '@/lib/prefetch-registry'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
@@ -19,9 +20,8 @@ export default async function TrainerWorkoutsPage() {
     if (!userId) redirect('/auth/login')
 
     const features = await actions.getTrainerPlanFeatures(userId)
-    if (features && !features.has_workouts) {
-        redirect('/dashboard/trainer')
-    }
+    const hasWorkouts = features?.has_workouts ?? false
+    const hasImportPdfAi = features?.has_import_pdf_ai ?? false
 
     const [queryClient, betaTesterMode] = await Promise.all([
         (async () => {
@@ -43,16 +43,34 @@ export default async function TrainerWorkoutsPage() {
 
     return (
         <RegistryMain
-            title="BIBLIOTECA DE TREINOS"
-            subtitle="Gerencie seus modelos de treino e atribua-os aos seus alunos."
+            title="SISTEMA DE TREINOS"
+            subtitle="Crie, importe e gerencie o acervo de treinos dos seus alunos com inteligência."
             icon="Dumbbell"
             contextLabel="Área do Personal"
             showTabs={false}
-            rightElement={<TrainerRegistryHeaderActions userId={userId} betaTesterMode={betaTesterMode} variant="workout" />}
+            rightElement={
+                hasWorkouts ? (
+                    <TrainerRegistryHeaderActions
+                        userId={userId}
+                        variant="workout"
+                        betaTesterMode={betaTesterMode}
+                        hideImportPdf={!hasImportPdfAi}
+                    />
+                ) : null
+            }
         >
-            <HydrationBoundary state={dehydrate(queryClient)}>
-                <TrainerWorkoutsSection userId={userId} betaTesterMode={betaTesterMode} />
-            </HydrationBoundary>
+            <PremiumLockOverlay 
+                variant="area" 
+                locked={!hasWorkouts} 
+                title="Construtor de Treinos" 
+                description="Seu plano não inclui o módulo de treinos. Faça upgrade para montar e enviar treinos para seus alunos."
+            >
+                {hasWorkouts && (
+                    <HydrationBoundary state={dehydrate(queryClient)}>
+                        <TrainerWorkoutsSection userId={userId} betaTesterMode={betaTesterMode} />
+                    </HydrationBoundary>
+                )}
+            </PremiumLockOverlay>
         </RegistryMain>
     )
 }

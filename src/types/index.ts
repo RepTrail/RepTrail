@@ -11,6 +11,10 @@ export type Profile = {
     is_verified?: boolean;
     created_at: string;
     plan_tier?: string;
+    elite_until: string | null;
+    trial_activated_at: string | null;
+    ai_pdfs_imported_this_month: number;
+    pdf_import_limit: number;
 };
 
 export type StudentDetails = {
@@ -113,6 +117,7 @@ export type Plan = {
   sort_order: number
   card_theme: 'default' | 'highlighted' | 'premium'
   is_active: boolean
+  is_public?: boolean
   created_at: string
 }
 
@@ -122,6 +127,7 @@ export type PlanFeatures = {
   free_students_limit: number | null
   price_per_student_cents: number | null
   photo_updates_limit: number | null
+  pdf_import_limit: number | null
   prestige_points: number
   has_workouts: boolean
   has_diets: boolean

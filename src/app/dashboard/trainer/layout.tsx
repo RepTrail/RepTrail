@@ -20,6 +20,7 @@ export default async function TrainerLayout({ children }: { children: React.Reac
 
     if (!profile) redirect('/auth/login')
     if (profile.role !== 'trainer') redirect('/dashboard/student')
+    if (!profile.plan_id) redirect('/onboarding/plans')
 
     const queryClient = getQueryClient()
     await Promise.all([
@@ -38,17 +39,20 @@ export default async function TrainerLayout({ children }: { children: React.Reac
     const hasErgogenics = features?.has_ergogenics ?? false
     const hasImportPdf = features?.has_import_pdf_ai ?? false
 
+    const publicPlans = await actions.getPublicPlanPricing()
+    const hasPublicPlans = Array.isArray(publicPlans) && publicPlans.length > 0
+
     const links = [
         { href: '/dashboard/trainer',           label: 'Visão Geral',  icon: 'Home',         exact: true },
         { href: '/dashboard/trainer/students',   label: 'Alunos',       icon: 'Users' },
-        { href: '/dashboard/trainer/workouts',   label: 'Treinos',      icon: 'Dumbbell',     hidden: !hasWorkouts },
-        { href: '/dashboard/trainer/diets',      label: 'Dietas',       icon: 'Utensils',     hidden: !hasDiets },
-        { href: '/dashboard/trainer/cardio',     label: 'Cardio',       icon: 'Activity',     hidden: !hasCardio },
-        { href: '/dashboard/trainer/ergogenics', label: 'Ergogênicos',  icon: 'FlaskConical',  hidden: !hasErgogenics },
-        { href: '/dashboard/trainer/import-pdf', label: 'Importar PDF', icon: 'FileUp',      hidden: betaTesterMode || !hasImportPdf },
+        { href: '/dashboard/trainer/workouts',   label: 'Treinos',      icon: 'Dumbbell' },
+        { href: '/dashboard/trainer/diets',      label: 'Dietas',       icon: 'Utensils' },
+        { href: '/dashboard/trainer/cardio',     label: 'Cardio',       icon: 'Activity' },
+        { href: '/dashboard/trainer/ergogenics', label: 'Ergogênicos',  icon: 'FlaskConical' },
+        { href: '/dashboard/trainer/import-pdf', label: 'Importar PDF', icon: 'FileUp',      hidden: betaTesterMode },
         { href: '/dashboard/trainer/loja',       label: 'Loja',         icon: 'ShoppingBag' },
         { href: '/dashboard/trainer/ranking',    label: 'Ranking',      icon: 'Trophy' },
-        { href: '/dashboard/trainer/plans',      label: 'Planos',       icon: 'CreditCard' },
+        { href: '/dashboard/trainer/plans',      label: 'Planos',       icon: 'CreditCard',   hidden: !hasPublicPlans },
         { href: '/dashboard/trainer/profile',    label: 'Meu Perfil',   icon: 'User' },
     ]
 

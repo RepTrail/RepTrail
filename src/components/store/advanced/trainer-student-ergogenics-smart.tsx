@@ -172,24 +172,7 @@ export function TrainerStudentErgogenicsSmart({ effectiveStudentId }: TrainerStu
 
     return (
         <>
-            <RegistrySection
-                title="PROTOCOLO ATIVO"
-                subtitle="Gerencie e acompanhe a dosagem e cronograma de ergogênicos e suplementação avançada."
-                icon={Syringe}
-                rightElement={
-                    <Button
-                        variant="outline-emerald"
-                        shine
-                        onClick={() => openAction('create_ergogenic')}
-                        fullWidth={{ base: true, lg: false }}
-                    >
-                        <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                            <Icon icon={Plus} size="xs" color={STORE_TOKENS.COLORS.SUCCESS} />
-                            Adicionar Substância
-                        </Stack>
-                    </Button>
-                }
-            >
+            <Box fullWidth>
                 <ErgogenicManagementSectionContent
                     items={ergogenics}
                     mode="trainer"
@@ -199,7 +182,7 @@ export function TrainerStudentErgogenicsSmart({ effectiveStudentId }: TrainerStu
                     onDuplicate={(item) => openAction('confirm_duplicate', item)}
                     onSchedule={(item) => openAction('assign_ergogenic', item)}
                 />
-            </RegistrySection>
+            </Box>
             <RegistryActionModal
                 isOpen={actionModal.isOpen}
                 onClose={closeAction}

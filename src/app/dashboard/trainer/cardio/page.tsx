@@ -2,6 +2,7 @@ import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { dehydrate, HydrationBoundary } from '@/lib/dal'
 import { actions } from '@/lib/dal/server'
+import { PremiumLockOverlay } from '@/components/store/intermediary/premium-lock-overlay'
 import { getQueryClient } from '@/lib/get-query-client'
 import { PREFETCH_REGISTRY } from '@/lib/prefetch-registry'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
@@ -20,9 +21,8 @@ export default async function TrainerCardioPage() {
     if (!userId) redirect('/auth/login')
 
     const features = await actions.getTrainerPlanFeatures(userId)
-    if (features && !features.has_cardio) {
-        redirect('/dashboard/trainer')
-    }
+    const hasCardio = features?.has_cardio ?? false
+    const hasImportPdfAi = features?.has_import_pdf_ai ?? false
 
     const [queryClient, betaTesterMode] = await Promise.all([
         (async () => {
@@ -50,16 +50,28 @@ export default async function TrainerCardioPage() {
             contextLabel="Área do Personal"
             showTabs={false}
             rightElement={
-                <TrainerRegistryHeaderActions
-                    userId={userId}
-                    variant="cardio"
-                    betaTesterMode={betaTesterMode}
-                />
+                hasCardio ? (
+                    <TrainerRegistryHeaderActions
+                        userId={userId}
+                        variant="cardio"
+                        betaTesterMode={betaTesterMode}
+                        hideImportPdf={!hasImportPdfAi}
+                    />
+                ) : null
             }
         >
-            <HydrationBoundary state={dehydrate(queryClient)}>
-                <TrainerCardioSection userId={userId} />
-            </HydrationBoundary>
+            <PremiumLockOverlay 
+                variant="area" 
+                locked={!hasCardio} 
+                title="Modelos de Cardio" 
+                description="Seu plano não inclui o módulo de cardio. Faça upgrade para montar e enviar cardios para seus alunos."
+            >
+                {hasCardio && (
+                    <HydrationBoundary state={dehydrate(queryClient)}>
+                        <TrainerCardioSection userId={userId} />
+                    </HydrationBoundary>
+                )}
+            </PremiumLockOverlay>
         </RegistryMain>
     )
 }

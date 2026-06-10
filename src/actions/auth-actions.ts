@@ -120,7 +120,6 @@ export async function signUpAction(formData: FormData) {
         full_name: fullName,
         role: role,
     }
-    profilePayload.plan_tier = 'on_demand'
     if (whatsapp) profilePayload.whatsapp = whatsapp
     if (referredBy) profilePayload.referred_by_id = referredBy
 

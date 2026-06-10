@@ -118,8 +118,8 @@ export function StudentPublicMetrics({ fullMetrics, adherenceHistory, steroidUse
                 subtitle="Histórico estatístico do percentual de gordura corporal, peso e frequência de treinos semanais."
                 icon={TrendingUp}
             >
-                <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
-                    <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER}>
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth style={{ minWidth: 0, maxWidth: '100%' }}>
+                    <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER} overflow="hidden" style={{ minWidth: 0, maxWidth: '100%' }}>
                         <PerformanceAnalysisSection
                             weights={fullMetrics.weights}
                             bfs={fullMetrics.bfs}

@@ -6,6 +6,8 @@ import { Box } from '@/components/store/base/box'
 import { Surface } from '@/components/store/base/surface'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
+import { PremiumLockOverlay } from '@/components/store/intermediary/premium-lock-overlay'
+
 interface TrainerStudentErgogenicsSectionProps {
     effectiveStudentId: string
     studentName: string

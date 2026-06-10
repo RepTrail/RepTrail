@@ -658,11 +658,7 @@ export async function getTrainerRanking() {
 
         const filteredStats = (stats || []).filter((row: any) => {
             if (!row.trainer_code) return false;
-            const profile = profileMap[row.trainer_id];
-            const plans = profile?.plans;
-            const features = Array.isArray(plans) ? plans[0]?.plan_features_dynamic : plans?.plan_features_dynamic;
-            const f = Array.isArray(features) ? features[0] : features;
-            return f?.has_ranking === true;
+            return true;
         })
 
         const ranking = filteredStats.map((row: any) => {
@@ -1117,6 +1113,7 @@ export const getPublicPlanPricing = unstable_cache(
         plan_features_dynamic (*)
       `)
       .eq('is_active', true)
+      .eq('is_public', true)
       .order('sort_order')
 
     if (error || !data) return []

@@ -12,9 +12,10 @@ interface PdfDropzoneProps {
     uploading: boolean;
     parsing: boolean;
     onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    locked?: boolean;
 }
 
-export function PdfDropzone({ uploading, parsing, onFileChange }: PdfDropzoneProps) {
+export function PdfDropzone({ uploading, parsing, onFileChange, locked = false }: PdfDropzoneProps) {
     return (
         <Box position="relative" group fullWidth flex1 display="flex" direction="col">
             <Surface
@@ -31,11 +32,11 @@ export function PdfDropzone({ uploading, parsing, onFileChange }: PdfDropzonePro
                 transition
                 fullWidth
                 flex1
-                pointerEvents={uploading || parsing ? 'none' : 'auto'}
-                cursor={uploading || parsing ? 'default' : 'pointer'}
-                opacity={uploading || parsing ? STORE_TOKENS.OPACITY.SHELF : STORE_TOKENS.OPACITY.FULL}
-                hoverBorder="emerald-400"
-                hoverBg={STORE_TOKENS.COLORS.SUCCESS}
+                pointerEvents={uploading || parsing || locked ? 'none' : 'auto'}
+                cursor={uploading || parsing || locked ? 'default' : 'pointer'}
+                opacity={uploading || parsing || locked ? STORE_TOKENS.OPACITY.SHELF : STORE_TOKENS.OPACITY.FULL}
+                hoverBorder={locked ? undefined : "emerald-400"}
+                hoverBg={locked ? undefined : STORE_TOKENS.COLORS.SUCCESS}
                 hoverBgOpacity={STORE_TOKENS.OPACITY.LOW}
             >
                 <Stack align="center" fullWidth>

@@ -151,7 +151,7 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
     const chartWidth = mounted ? Math.max(chartData.length * 40, 600) : 600
 
     return (
-        <Stack fullWidth gap={STORE_TOKENS.SPACING.SECTION}>
+        <Stack fullWidth gap={STORE_TOKENS.SPACING.SECTION} style={{ minWidth: 0 }}>
             <Stack direction="row" wrap="wrap" gap={STORE_TOKENS.SPACING.CONTAINER} align="center" justify="end">
                 <LegendItem
                     label="Performance"
@@ -170,14 +170,16 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
                     }} />
             </Stack>
             {/* overflow-x: auto no wrapper, gráfico com largura fixa para evitar vazamento */}
-            <Box
-                ref={scrollRef}
-                customScrollbar
-                overflowX="auto"
-                overflowY="hidden"
+            <div
+                ref={scrollRef as any}
+                className="scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent"
                 style={{
                     width: '100%',
+                    maxWidth: '100%',
+                    minWidth: 0,
                     height: 320,
+                    overflowX: 'auto',
+                    overflowY: 'hidden'
                 }}
             >
                 {mounted ? (
@@ -285,7 +287,7 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
                 ) : (
                     <Box fullWidth fullHeight bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} rounded={STORE_TOKENS.RADIUS.SYSTEM} />
                 )}
-            </Box>
+            </div>
         </Stack>
     );
 }

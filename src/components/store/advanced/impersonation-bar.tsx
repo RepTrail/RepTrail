@@ -54,7 +54,7 @@ export function ImpersonationBar({ color }: { color?: RegistryColor }) {
     const safeIconColor = primaryColor === 'zinc' ? 'zinc-400' : primaryColor
 
     return (
-        <Box position="relative" fullWidth>
+        <Box position="relative" fullWidth display={{ base: 'none', md: 'block' }}>
             <Surface
                 variant={`tonal-${primaryColor}` as any}
                 rounded={STORE_TOKENS.RADIUS.NONE}

@@ -2,11 +2,15 @@
 
 import React from 'react'
 import { PdfUploader } from '@/components/store/advanced/pdf-uploader/PdfUploader'
+import { PremiumLockOverlay } from '@/components/store/intermediary/premium-lock-overlay'
 
 interface ImportPdfSectionContentProps {
     userId: string
     role?: 'trainer' | 'student'
     students?: any[]
+    hasImportPdf?: boolean
+    importLimit?: number | null
+    importsUsed?: number
 }
 
 /**
@@ -19,14 +23,26 @@ export function ImportPdfSectionContent({
     userId,
     role = 'student',
     students,
+    hasImportPdf = true,
+    importLimit = null,
+    importsUsed = 0,
 }: ImportPdfSectionContentProps) {
     return (
-        <PdfUploader
-            type="workout"
-            students={students}
-            role={role}
-            userId={userId}
-        />
+        <PremiumLockOverlay 
+            variant="area" 
+            locked={!hasImportPdf} 
+            title="Importação via IA" 
+            description="Seu plano não inclui inteligência artificial. Faça upgrade para importar arquivos PDF."
+        >
+            <PdfUploader
+                type="workout"
+                students={students}
+                role={role}
+                userId={userId}
+                importLimit={importLimit}
+                importsUsed={importsUsed}
+            />
+        </PremiumLockOverlay>
     )
 }
 

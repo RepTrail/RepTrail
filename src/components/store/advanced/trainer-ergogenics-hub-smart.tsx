@@ -10,13 +10,14 @@ import { TrainerErgogenicsHubSectionContent } from '@/components/store/sections/
 
 interface TrainerErgogenicsHubSmartProps {
     userId: string
+    hasErgogenics?: boolean
 }
 
 /**
  * TrainerErgogenicsHubSmart
  * Lists students with ergogenic protocols enabled (trainer hub).
  */
-export function TrainerErgogenicsHubSmart({ userId }: TrainerErgogenicsHubSmartProps) {
+export function TrainerErgogenicsHubSmart({ userId, hasErgogenics }: TrainerErgogenicsHubSmartProps) {
     const { data: students = [] } = useQuery({
         queryKey: QUERY_KEYS.ergogenics.hub(userId),
         queryFn: () => getTrainerErgogenicStudents(userId),
@@ -39,7 +40,7 @@ export function TrainerErgogenicsHubSmart({ userId }: TrainerErgogenicsHubSmartP
         <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
 
             <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
-                <TrainerErgogenicsHubSectionContent students={students} />
+                <TrainerErgogenicsHubSectionContent students={students} hasErgogenics={hasErgogenics} />
             </Stack>
         </Stack>
     )

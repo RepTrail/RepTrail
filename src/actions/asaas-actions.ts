@@ -307,4 +307,29 @@ export async function createAsaasTransfer(params: {
     }
 }
 
+export async function assignFreePlan(planId: string, planSlug: string) {
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return { error: 'Não autorizado' }
+
+    try {
+        const { error } = await supabase
+            .from('profiles')
+            .update({ 
+                plan_id: planId,
+                plan_tier: planSlug === 'on_demand' ? 'on_demand' : 'none' // backward compatibility
+            })
+            .eq('id', user.id)
+
+        if (error) throw error
+
+        revalidatePath('/')
+        return { success: true }
+    } catch (e: any) {
+        console.error('[ASSIGN_FREE_PLAN_ERROR]', e)
+        return { error: 'Erro ao assinar plano gratuito.' }
+    }
+}
+
+
 

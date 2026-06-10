@@ -139,7 +139,7 @@ export function RegistryMain({
       <Stack flex1 gap={noPadding ? undefined : { base: STORE_TOKENS.SPACING.EMPTY_STATE as any, md: STORE_TOKENS.SPACING.SECTION as any }}>
         {/* Header Section title*/}
         {showHeader && (
-          <Stack direction={{ base: 'col', md: 'row' }} justify="between" align={{ base: 'start', md: 'center' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+          <Stack direction={{ base: 'col', md: 'row' }} justify="between" align={{ base: 'start', md: 'center' }} gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
               <Inline gap={STORE_TOKENS.SPACING.ELEMENT}>
                 <Icon icon={IconComp} color={primaryColor as any} size="lg" />

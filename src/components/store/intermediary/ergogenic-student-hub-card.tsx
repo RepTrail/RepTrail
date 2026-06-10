@@ -12,17 +12,19 @@ import { Badge } from '@/components/store/base/badge'
 import { GlassPanel } from '@/components/store/base/surface'
 import { BaseAvatar } from '@/components/store/base/avatar'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
+import { PremiumLockOverlay } from '@/components/store/intermediary/premium-lock-overlay'
 import type { TrainerErgogenicHubStudent } from '@/lib/dal/remote'
 
 interface ErgogenicStudentHubCardProps {
     student: TrainerErgogenicHubStudent
+    hasErgogenics?: boolean
 }
 
 /**
  * ErgogenicStudentHubCard
  * Trainer hub entry: student with active ergogenic protocol.
  */
-export function ErgogenicStudentHubCard({ student }: ErgogenicStudentHubCardProps) {
+export function ErgogenicStudentHubCard({ student, hasErgogenics = true }: ErgogenicStudentHubCardProps) {
     const initials = student.full_name
         ? student.full_name.split(' ').map((n) => n[0]).slice(0, 2).join('').toUpperCase()
         : '?'
@@ -75,18 +77,25 @@ export function ErgogenicStudentHubCard({ student }: ErgogenicStudentHubCardProp
                     </Box>
                 </Stack>
 
-                <Button variant="outline-primary" asChild shine fullWidth>
-                    <Link href={href}>
-                        <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                            <Font
-                                {...STORE_TOKENS.TYPOGRAPHY.LABEL}
-                                {...{
-                                    color: "primary",
-                                }}>Abrir protocolo</Font>
-                            <Icon icon={ArrowUpRight} size="xs" color={STORE_TOKENS.COLORS.BRAND} />
-                        </Stack>
-                    </Link>
-                </Button>
+                <PremiumLockOverlay
+                    variant="button"
+                    locked={!hasErgogenics}
+                    title="Recurso Ergogênicos indisponível no seu plano"
+                    description="Faça upgrade para acessar e criar novos protocolos."
+                >
+                    <Button variant="outline-primary" asChild shine fullWidth disabled={!hasErgogenics}>
+                        <Link href={hasErgogenics ? href : '#'}>
+                            <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                <Font
+                                    {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                                    {...{
+                                        color: "primary",
+                                    }}>Abrir protocolo</Font>
+                                <Icon icon={ArrowUpRight} size="xs" color={STORE_TOKENS.COLORS.BRAND} />
+                            </Stack>
+                        </Link>
+                    </Button>
+                </PremiumLockOverlay>
             </Stack>
         </GlassPanel>
     );
