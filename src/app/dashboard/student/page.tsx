@@ -5,7 +5,7 @@ import { actions } from '@/lib/dal/server'
 import { StudentMetaPixel } from './meta-pixel'
 import { getQueryClient } from '@/lib/get-query-client'
 import { QUERY_KEYS } from '@/lib/query-keys'
-import { StudentDashboardClient } from '@/components/store/advanced/student-dashboard-client'
+import { StudentDashboardClient } from './client'
 import { InactiveTrainerCard } from '@/components/store/advanced/inactive-trainer-card'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { StudentNoPlanSection } from '@/components/store/sections/student-no-plan-section'
@@ -140,7 +140,7 @@ async function StudentDashboardContent({ userId }: { userId: string }) {
         return (
             <HydrationBoundary state={dehydrate(queryClient)}>
                 <StudentMetaPixel />
-                <InactiveTrainerCard trainerName={trainerRel.trainer.full_name} />
+                <InactiveTrainerCard trainerName={trainerRel.trainer?.full_name} />
             </HydrationBoundary>
         )
     }

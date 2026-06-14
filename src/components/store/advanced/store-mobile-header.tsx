@@ -7,7 +7,7 @@ import { Menu } from 'lucide-react'
 import { MobileHeaderContainer, Inline } from '@/components/store/base/layout'
 import { Box } from '@/components/store/base/box'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
-import { useRegistry } from './registry-context'
+import { useRegistry } from '@/components/store/base/registry-context'
 
 interface StoreMobileHeaderProps {
     onMenuClick?: () => void

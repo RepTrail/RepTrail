@@ -48,12 +48,12 @@ export function AffiliateConversionTracker({ recentReferrals, recentCommissions 
                             recentReferrals.slice(0, 3).map((r: any) => (
                                 <UserListItem
                                     key={r.id}
-                                    name={r.full_name || r.email}
+                                    name={r?.full_name || r.email}
                                     email={r.email}
                                     registrationDate={new Date(r.created_at).toLocaleDateString('pt-BR')}
                                     role={r.role === 'trainer' ? 'personal' : 'aluno'}
                                     roleLabel={r.role === 'trainer' ? 'PERSONAL' : 'ALUNO'}
-                                    initials={r.full_name?.substring(0, 2).toUpperCase() || '?'}
+                                    initials={r?.full_name?.substring(0, 2).toUpperCase() || '?'}
                                     avatarVariant={r.role === 'trainer' ? 'emerald' : 'orange'}
                                 />
                             ))
@@ -80,7 +80,7 @@ export function AffiliateConversionTracker({ recentReferrals, recentCommissions 
                                     id={c.id.substring(0, 8)}
                                     amount={`R$ ${Number(c.amount).toFixed(2)}`}
                                     date={new Date(c.created_at).toLocaleDateString('pt-BR')}
-                                    method={c.description || 'Comissão'}
+                                    method={c?.description || 'Comissão'}
                                     recipient=""
                                     status={c.status === 'confirmed' ? 'completed' : 'pending'}
                                 />

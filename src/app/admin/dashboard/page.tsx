@@ -3,7 +3,7 @@
 import { useQuery, useQueryClient, useAuthUser, actions } from '@/lib/dal'
 import { useTransition } from 'react'
 import { QUERY_KEYS } from '@/lib/query-keys'
-import { BarChart3, Activity, Banknote, TrendingUp } from 'lucide-react'
+import { BarChart3, Activity, Banknote, TrendingUp, TrendingDown } from 'lucide-react'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { useToast } from '@/hooks/use-toast'
@@ -105,7 +105,13 @@ export default function AdminDashboardPage() {
                 />
             </RegistrySection>
 
-            <AdminOperationalCostsPanel initialCosts={costs || []} />
+            <RegistrySection
+                title="Custos Operacionais"
+                subtitle="Infraestrutura e operação mensal da plataforma."
+                icon={TrendingDown}
+            >
+                <AdminOperationalCostsPanel initialCosts={costs || []} />
+            </RegistrySection>
 
             <RegistrySection
                 title="Produtos Mais Clicados"

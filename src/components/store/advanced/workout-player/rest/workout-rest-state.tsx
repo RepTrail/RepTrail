@@ -44,8 +44,8 @@ export function WorkoutRestState({
             </Stack>
             {/* Circle Timer */}
             <Box 
-                width={220} 
-                height={220} 
+                width="220px" 
+                height="220px" 
                 rounded={STORE_TOKENS.RADIUS.FULL} 
                 bg={colorTheme} 
                 bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} 
@@ -55,10 +55,6 @@ export function WorkoutRestState({
                 display="flex" 
                 align="center" 
                 justify="center"
-                style={{
-                    boxShadow: `0 0 40px ${shadowColor}, inset 0 0 20px rgba(255, 255, 255, 0.02)`,
-                    borderWidth: '2px'
-                }}
             >
                 <Stack align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                     <Font

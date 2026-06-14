@@ -122,8 +122,8 @@ export const ACTION_REGISTRY: Record<string, ActionFn> = {
   'update-meal-item': async (p) => { const { updateMealItem } = await import('@/actions/diet-actions'); return wrap(updateMealItem(p.id, p.dietId, p.data)); },
   'delete-diet': async (p) => { const { deleteDiet } = await import('@/actions/diet-actions'); return wrap(deleteDiet(p.id)); },
   'delete-cardio': async (p) => { const { deleteCardio } = await import('@/actions/cardio-actions'); return wrap(deleteCardio(p.id)); },
-  'create-cardio': async (p) => { const { createCardio } = await import('@/actions/cardio-actions'); return wrap(createCardio(p.name, p.description, p.duration, p.intensity, p.daysOfWeek || p.selectedDays)); },
-  'update-cardio': async (p) => { const { updateCardioMeta } = await import('@/actions/cardio-actions'); return wrap(updateCardioMeta(p.id, p.name, p.description, p.duration, p.intensity)); },
+  'create-cardio': async (p) => { const { createCardio } = await import('@/actions/cardio-actions'); return wrap(createCardio(p.name, p?.description, p.duration, p.intensity, p.daysOfWeek || p.selectedDays)); },
+  'update-cardio': async (p) => { const { updateCardioMeta } = await import('@/actions/cardio-actions'); return wrap(updateCardioMeta(p.id, p.name, p?.description, p.duration, p.intensity)); },
   'update-diet-meta': async (p) => { const { updateDietMeta } = await import('@/actions/diet-actions'); return wrap(updateDietMeta(p.id, p.data)); },
 
   // ─── Specialized Assignments ──────────────────────────────────────────────────

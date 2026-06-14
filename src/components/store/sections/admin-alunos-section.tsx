@@ -69,16 +69,16 @@ export function AdminAlunosSection() {
         .filter(s => s.role === 'student')
         .filter(s =>
             !search ||
-            s.full_name?.toLowerCase().includes(search.toLowerCase()) ||
+            s?.full_name?.toLowerCase().includes(search.toLowerCase()) ||
             s.email?.toLowerCase().includes(search.toLowerCase())
         )
 
     return (
         <>
-                <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
-                    {/* Search */}
-                    <Input
-                        value={search}
+            <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
+            {/* Search */}
+            <Input
+                value={search}
                         onChange={e => setSearch(e.target.value)}
                         placeholder="Buscar aluno por nome ou email..."
                         icon={<Search size={16} />}
@@ -90,18 +90,18 @@ export function AdminAlunosSection() {
                     {!isLoading && students.map(student => (
                         <UserListItem
                             key={student.id}
-                            name={student.full_name || 'Sem nome'}
+                            name={student?.full_name || 'Sem nome'}
                             email={student.email || ''}
                             registrationDate={new Date(student.created_at).toLocaleDateString('pt-BR')}
                             role="aluno"
                             roleLabel={(student as any).auto_training_status === 'active' ? 'AUTO-TREINO' : 'ALUNO'}
-                            initials={(student.full_name || '??').substring(0, 2).toUpperCase()}
+                            initials={(student?.full_name || '??').substring(0, 2).toUpperCase()}
                             avatarVariant="emerald"
                             avatarUrl={student.avatar_url}
                             onInspect={() => handleImpersonate(student.id)}
                             onAction={() => handleGrantAutoTraining(student.id, (student as any).auto_training_status)}
                             isActionActive={(student as any).auto_training_status === 'active'}
-                            onDelete={() => handleDeleteUser(student.id, student.full_name || student.email)}
+                            onDelete={() => handleDeleteUser(student.id, student?.full_name || student.email)}
                         />
                     ))}
 

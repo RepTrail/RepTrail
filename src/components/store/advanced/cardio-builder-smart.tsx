@@ -56,7 +56,7 @@ export function CardioBuilderSmart({
     useEffect(() => {
         if (!isEditingMeta && cardio) {
             setEditName(cardio.name)
-            setEditDesc(cardio.description || '')
+            setEditDesc(cardio?.description || '')
             setEditDuration(cardio.duration_minutes || 30)
             setEditIntensity(cardio.suggested_intensity || 'Moderada')
         }
@@ -74,7 +74,7 @@ export function CardioBuilderSmart({
             queryClient.setQueryData(queryKey, (old: any) => ({ 
                 ...old, 
                 name: variables.name,
-                description: variables.description,
+                description: variables?.description,
                 duration_minutes: variables.duration,
                 suggested_intensity: variables.intensity
             }))
@@ -126,7 +126,7 @@ export function CardioBuilderSmart({
             <CardioBuilderHeader
                 cardioId={cardio.id}
                 name={cardio.name}
-                description={cardio.description || ''}
+                description={cardio?.description || ''}
                 isEditing={isEditingMeta}
                 setIsEditing={setIsEditingMeta}
                 editName={editName}
@@ -136,7 +136,7 @@ export function CardioBuilderSmart({
                 onSave={handleSave}
                 onCancel={() => {
                     setEditName(cardio.name)
-                    setEditDesc(cardio.description || '')
+                    setEditDesc(cardio?.description || '')
                     setEditDuration(cardio.duration_minutes || 30)
                     setEditIntensity(cardio.suggested_intensity || 'Moderada')
                     setIsEditingMeta(false)

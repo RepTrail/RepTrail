@@ -15,7 +15,7 @@ import { BackgroundEffects } from '@/components/store/base/background-effects'
 import { ImpersonationBar } from './impersonation-bar'
 import { StoreMobileHeader } from './store-mobile-header'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
-import { RegistryColor, RegistryProvider, RegistryContext } from './registry-context'
+import { RegistryColor, RegistryProvider, RegistryContext } from '@/components/store/base/registry-context'
 import {
     Home, Users, Dumbbell, Utensils, Activity, FlaskConical,
     ShoppingBag, CreditCard, Trophy, User, FileUp, Search,
@@ -74,7 +74,7 @@ export function DashboardShell({ children, color, links, mobileLinks, user, prof
 
     const isSidebarOpen = parentRegistry ? parentRegistry.isSidebarOpen : localIsSidebarOpen
     const setIsSidebarOpen = parentRegistry ? parentRegistry.setIsSidebarOpen : setLocalIsSidebarOpen
-    
+
     // Resolve the active color from the parent registry if it exists, otherwise fallback to the prop
     const activeColor = parentRegistry ? parentRegistry.primaryColor : color
 
@@ -190,113 +190,115 @@ function DashboardSidebar({
 
     return (
         <>
-            {/* Mobile Overlay */}
-            {isSidebarOpen && (
-                <Surface
-                    position="fixed"
-                    pin="inset"
-                    variant="glass-dark"
-                    zIndex={STORE_TOKENS.Z_INDEX.OVERLAY}
-                    display={{ base: 'block', lg: 'none' }}
-                    onClick={() => setIsSidebarOpen(false)}
-                >
-                    <></>
-                </Surface>
-            )}
-            <Box
-                as="aside"
+        {/* Mobile Overlay */ }
+            {
+        isSidebarOpen && (
+            <Surface
                 position="fixed"
-                top={0}
-                height="screen"
+                pin="inset"
+                variant="glass-dark"
                 zIndex={STORE_TOKENS.Z_INDEX.OVERLAY}
-                width="sidebar-wide"
-                transition
-                pin={{ base: 'left', lg: 'left' }}
-                translateX={{ base: isSidebarOpen ? 0 : '-full', lg: 0 }}
+                display={{ base: 'block', lg: 'none' }}
+                onClick={() => setIsSidebarOpen(false)}
             >
-                <GlassPanel
-                    fullWidth
-                    fullHeight
-                    variant="glass"
-                    display="flex"
-                    direction="col"
-                    rounded={STORE_TOKENS.RADIUS.NONE}
-                    border="none"
-                >
-                    {/* Drawer Border (Right) */}
-                    <Surface 
-                        position="absolute" 
-                        pin="right" 
-                        top={0} 
-                        fullHeight 
-                        width="px" 
-                        bg={STORE_TOKENS.COLORS.WHITE} 
-                        bgOpacity={STORE_TOKENS.OPACITY.LOW}
-                    >
-                        <></>
-                    </Surface>
+                {null}
+            </Surface >
+        )
+    }
+    <Box
+        as="aside"
+        position="fixed"
+        top={0}
+        height="screen"
+        zIndex={STORE_TOKENS.Z_INDEX.OVERLAY}
+        width="sidebar-wide"
+        transition
+        pin={{ base: 'left', lg: 'left' }}
+        translateX={{ base: isSidebarOpen ? 0 : '-full', lg: 0 }}
+    >
+        <GlassPanel
+            fullWidth
+            fullHeight
+            variant="glass"
+            display="flex"
+            direction="col"
+            rounded={STORE_TOKENS.RADIUS.NONE}
+            border="none"
+        >
+            {/* Drawer Border (Right) */}
+            <Surface
+                position="absolute"
+                pin="right"
+                top={0}
+                fullHeight
+                width="px"
+                bg={STORE_TOKENS.COLORS.WHITE}
+                bgOpacity={STORE_TOKENS.OPACITY.LOW}
+            >
+                {null}
+            </Surface>
 
-                    <Box fullWidth padding={STORE_TOKENS.PADDING.CONTAINER} flex1 display="flex" direction="col" overflow="hidden">
-                        <Stack gap={STORE_TOKENS.SPACING.EMPTY_STATE} fullWidth flex1 overflow="hidden">
-                            {/* Logo */}
-                            <Box shrink={0}>
-                                <Logo size="md" color={color as any} />
-                            </Box>
+            <Box fullWidth padding={STORE_TOKENS.PADDING.CONTAINER} flex1 display="flex" direction="col" overflow="hidden">
+                <Stack gap={STORE_TOKENS.SPACING.EMPTY_STATE} fullWidth flex1 overflow="hidden">
+                    {/* Logo */}
+                    <Box shrink={0}>
+                        <Logo size="md" color={color as any} />
+                    </Box>
 
-                            {/* Navigation */}
-                            <Box as="nav" flex1 fullWidth overflowY="auto" noScrollbar>
-                                <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
-                                    {links.map((link) => {
-                                        const IconComp = iconMap[link.icon]
-                                        const active = isActive(link)
-                                        const tourId = link.label === "Importar PDF" ? "tour-import-pdf" : 
-                                                       link.label === "Alunos" ? "tour-sidebar-students" : 
-                                                       undefined
+                    {/* Navigation */}
+                    <Box as="nav" flex1 fullWidth overflowY="auto" noScrollbar>
+                        <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
+                            {links.map((link) => {
+                                const IconComp = iconMap[link.icon]
+                                const active = isActive(link)
+                                const tourId = link.label === "Importar PDF" ? "tour-import-pdf" :
+                                    link.label === "Alunos" ? "tour-sidebar-students" :
+                                        undefined
 
-                                        const isLinkInBottomNav = bottomLinks?.some(bl => bl.href === link.href)
+                                const isLinkInBottomNav = bottomLinks?.some(bl => bl.href === link.href)
 
-                                        return (
-                                            <Box
-                                                key={link.href}
-                                                display={isLinkInBottomNav ? { base: 'none', lg: 'block' } : 'block'}
-                                                fullWidth
-                                            >
-                                                <SidebarItem
-                                                    id={tourId}
-                                                    label={link.label}
-                                                    icon={IconComp ?? Home}
-                                                    active={active}
-                                                    variant={color as any}
-                                                    onClick={link.onClick ? () => {
-                                                        link.onClick?.()
-                                                        setIsSidebarOpen(false)
-                                                    } : undefined}
-                                                    href={link.onClick ? undefined : link.href}
-                                                />
-                                            </Box>
-                                        )
-                                    })}
-                                </Stack>
-                            </Box>
+                                return (
+                                    <Box
+                                        key={link.href}
+                                        display={isLinkInBottomNav ? { base: 'none', lg: 'block' } : 'block'}
+                                        fullWidth
+                                    >
+                                        <SidebarItem
+                                            id={tourId}
+                                            label={link.label}
+                                            icon={IconComp ?? Home}
+                                            active={active}
+                                            variant={color as any}
+                                            onClick={link.onClick ? () => {
+                                                link.onClick?.()
+                                                setIsSidebarOpen(false)
+                                            } : undefined}
+                                            href={link.onClick ? undefined : link.href}
+                                        />
+                                    </Box>
+                                )
+                            })}
                         </Stack>
                     </Box>
-
-                    <Divider
-                        {...{
-                            color: STORE_TOKENS.COLORS.DIVIDER.SUBTLE,
-                        }} />
-
-                    <Box padding={STORE_TOKENS.PADDING.CONTAINER} shrink={0}>
-                        <SidebarProfile
-                            user={user}
-                            settingsIcon={profileIcon}
-                            settingsHref={settingsHref}
-                            settingsVariant={settingsVariant}
-                            onOpenSettings={onOpenSettings}
-                        />
-                    </Box>
-                </GlassPanel>
+                </Stack>
             </Box>
+
+            <Divider
+                {...{
+                    color: STORE_TOKENS.COLORS.DIVIDER.SUBTLE,
+                }} />
+
+            <Box padding={STORE_TOKENS.PADDING.CONTAINER} shrink={0}>
+                <SidebarProfile
+                    user={user}
+                    settingsIcon={profileIcon}
+                    settingsHref={settingsHref}
+                    settingsVariant={settingsVariant}
+                    onOpenSettings={onOpenSettings}
+                />
+            </Box>
+        </GlassPanel>
+    </Box >
         </>
     );
 }

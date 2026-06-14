@@ -4,7 +4,7 @@ import { Stack } from '@/components/store/base/stack';
 import { Box } from '@/components/store/base/box';
 import { Button as DSButton } from '@/components/store/base/button';
 import { STORE_TOKENS } from '@/components/store/constants/tokens';
-import { useRegistry, RegistryColor } from '@/components/store/advanced/registry-context';
+import { useRegistry, RegistryColor } from '@/components/store/base/registry-context';
 import { User } from 'lucide-react';
 
 const ACTIVE_GLOW: Record<RegistryColor, string> = {
@@ -55,7 +55,7 @@ export function StudentBindingCard({ bindingHooks, students }: StudentBindingCar
 
     const studentOptions = [
         ...(studentMatch?.suggestions?.filter((s: any) => s.active !== false).map((s: any) => ({
-            label: `${s.full_name} (Sugerido)`,
+            label: `${s?.full_name} (Sugerido)`,
             value: s.student_id
         })) || []),
         ...students.filter(s => s.active && !studentMatch?.suggestions?.find((ms: any) => ms.student_id === s.student_id)).map(s => ({

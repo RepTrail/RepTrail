@@ -47,7 +47,7 @@ export function StudentDietDetailClient({ id, userId }: StudentDietDetailClientP
     return (
         <RegistryMain
             title={`Protocolo Alimentar - ${diet.name}`}
-            subtitle={diet.description || "Criador de Dieta Automático"}
+            subtitle={diet?.description || "Criador de Dieta Automático"}
             icon="Utensils"
             contextLabel="Dieta & Nutrição"
             showTabs={false}

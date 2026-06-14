@@ -1,6 +1,5 @@
 import { getOnboardingSessionInfo } from '@/lib/dal/server'
 import { redirect } from 'next/navigation'
-import { RegistryProvider } from '@/components/store/advanced/registry-context'
 import { StudentOnboardingSection } from '@/components/store/sections/student-onboarding-section'
 
 export default async function OnboardingPage() {
@@ -22,9 +21,5 @@ export default async function OnboardingPage() {
         redirect('/dashboard/student')
     }
 
-    return (
-        <RegistryProvider defaultColor="orange">
-            <StudentOnboardingSection trainerCode={trainerCode} />
-        </RegistryProvider>
-    );
+    return <StudentOnboardingSection trainerCode={trainerCode} />
 }

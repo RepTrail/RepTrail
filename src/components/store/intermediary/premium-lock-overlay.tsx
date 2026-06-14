@@ -43,7 +43,7 @@ export function PremiumLockOverlay({
                 align="center"
                 justify="center"
                 padding={variant === 'area' ? STORE_TOKENS.PADDING.EMPTY_STATE : STORE_TOKENS.PADDING.ELEMENT}
-                style={{ backdropFilter: 'blur(4px)' }}
+                backdropBlur="sm"
                 fullWidth
                 fullHeight
             >

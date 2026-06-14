@@ -150,7 +150,7 @@ export async function getTrainerProfile(trainerId?: string) {
     const activeStudents = students.filter(s => s.active).length
     
     const monthlyRevenue = students.reduce((sum: number, s: any) => {
-        return s.active ? sum + (Number(s.monthly_fee) || 0) : sum
+        return s.active ? sum + (Number(s?.monthly_fee) || 0) : sum
     }, 0)
 
     const now = new Date()
@@ -162,7 +162,7 @@ export async function getTrainerProfile(trainerId?: string) {
         const start = new Date(s.created_at)
         const diffMonths = (now.getFullYear() - start.getFullYear()) * 12 + (now.getMonth() - start.getMonth())
         const months = Math.max(1, diffMonths + 1)
-        return sum + ((Number(s.monthly_fee) || 0) * months)
+        return sum + ((Number(s?.monthly_fee) || 0) * months)
     }, 0)
 
     return {
@@ -528,7 +528,7 @@ export async function getStudentRelationship(relationshipId: string) {
             student_id: pending.id, // Use link ID as student_id for placeholders
             is_placeholder: true,
             active: pending.status === 'pending',
-            monthly_fee: metadata.monthly_fee || 0,
+            monthly_fee: metadata?.monthly_fee || 0,
             payment_day: metadata.payment_day || null,
             created_at: pending.created_at,
             student: {
@@ -538,8 +538,8 @@ export async function getStudentRelationship(relationshipId: string) {
                 avatar_url: null,
                 details: {
                     starting_weight: metadata.weight,
-                    height: metadata.height,
-                    body_fat: metadata.body_fat,
+                    height: metadata?.height,
+                    body_fat: metadata?.body_fat,
                     steroid_use: metadata.steroid_use || (pending.ergogenic_data as any[])?.some(e => !e.__metadata),
                 },
                 progress_photos: [],
@@ -686,7 +686,7 @@ export async function getTrainerRanking() {
 
                 return {
                     id: row.trainer_id,
-                    full_name: row.full_name || 'Treinador sem nome',
+                    full_name: row?.full_name || 'Treinador sem nome',
                     avatar_url: row.avatar_url,
                     plan_tier: row.plan_tier,
                     region: 'Brasil',
@@ -1067,7 +1067,7 @@ export async function getTrainerActivityFeed(trainerId?: string): Promise<Activi
                     id: `${a.id}-alert`,
                     type: 'alert',
                     subType: 'inactivity',
-                    studentName: a.full_name || 'Aluno',
+                    studentName: a?.full_name || 'Aluno',
                     studentAvatar: a.avatar_url,
                     contentName: 'Está inativo há mais de 48 horas ⚠️',
                     timestamp: a.last_seen_at,
@@ -1268,11 +1268,11 @@ export async function findStudentByName(name: string) {
         const student = Array.isArray(r.student) ? r.student[0] : r.student
         if (!student) return
 
-        const studentName = (student.full_name || '').toLowerCase().trim()
+        const studentName = (student?.full_name || '').toLowerCase().trim()
         
         const matchData = {
             student_id: student.id,
-            full_name: student.full_name,
+            full_name: student?.full_name,
             email: student.email,
             is_placeholder: !!student.is_placeholder
         }

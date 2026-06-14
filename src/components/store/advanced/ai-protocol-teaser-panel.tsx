@@ -17,7 +17,7 @@ import {
     ArrowRight
 } from 'lucide-react'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
-import { AIProtocolSectionContent } from '@/components/store/sections/ai-protocol-section-content'
+import { AIProtocolContent } from '@/components/store/advanced/ai-protocol-content'
 
 /**
  * AIProtocolTeaserPanel: Premium teaser for the AI Protocol Generator.
@@ -29,7 +29,7 @@ export function AIProtocolTeaserPanel({ userId = 'me' }: { userId?: string }) {
     const [showGenerator, setShowGenerator] = useState(false)
 
     if (showGenerator) {
-        return <AIProtocolSectionContent userId={userId} />
+        return <AIProtocolContent userId={userId} />
     }
 
     return (

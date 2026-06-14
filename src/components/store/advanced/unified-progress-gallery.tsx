@@ -219,8 +219,8 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                         pointerEvents="none"
                     >
                         <Box
-                            width={40}
-                            height={40}
+                            width="40px"
+                            height="40px"
                             rounded={STORE_TOKENS.RADIUS.FULL}
                             bg={STORE_TOKENS.COLORS.BRAND}
                             bgOpacity={STORE_TOKENS.OPACITY.MEDIUM}
@@ -324,13 +324,14 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                                         <Box display="flex" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                             {canEdit && (
                                                 <>
-                                                    {isEditing ? (
-                                                        <Box display="flex" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} animateIn="slide-right">
+                                                {
+                                                    isEditing?(
+                                                        <Box display = "flex" align = "center" gap = { STORE_TOKENS.SPACING.ELEMENT } animateIn = "slide-right" >
                                                             <Input
                                                                 type="date"
                                                                 value={editDate}
                                                                 onChange={(e) => setEditDate(e.target.value)}
-                                                                width={150}
+                                                                width="150px"
                                                                 size="sm"
                                                             />
                                                             <Box display="flex" gap={STORE_TOKENS.SPACING.ELEMENT}>
@@ -352,272 +353,273 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                                                                 </Button>
                                                             </Box>
                                                         </Box>
-                                                    ) : (
-                                                        <Box display="flex" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                                            <Button
-                                                                variant="outline-zinc"
-                                                                size="sm"
-                                                                onClick={() => startEditing(set.id, set.created_at)}
-                                                                gap={STORE_TOKENS.SPACING.ELEMENT}
-                                                            >
-                                                                <Icon icon={Pencil} size="xs" />
-                                                                Editar Data
-                                                            </Button>
-                                                            <Button
-                                                                variant="outline-zinc"
-                                                                size="sm"
-                                                                isIconOnly
-                                                                rounded={STORE_TOKENS.RADIUS.FULL}
-                                                                onClick={() => handleDelete(set.id)}
-                                                            >
-                                                                <Icon icon={X} size="xs" />
-                                                            </Button>
-                                                        </Box>
+                                        ) : (
+                                        <Box display="flex" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                            <Button
+                                                variant="outline-zinc"
+                                                size="sm"
+                                                onClick={() => startEditing(set.id, set.created_at)}
+                                                gap={STORE_TOKENS.SPACING.ELEMENT}
+                                            >
+                                                <Icon icon={Pencil} size="xs" />
+                                                Editar Data
+                                            </Button>
+                                            <Button
+                                                variant="outline-zinc"
+                                                size="sm"
+                                                isIconOnly
+                                                rounded={STORE_TOKENS.RADIUS.FULL}
+                                                onClick={() => handleDelete(set.id)}
+                                            >
+                                                <Icon icon={X} size="xs" />
+                                            </Button>
+                                        </Box>
                                                     )}
                                                 </>
                                             )}
-                                        </Box>
-                                    </Stack>
-
-                                    {/* Photos Grid for this session (4 per row on md/lg screens) */}
-                                    <Grid cols={{ base: 1, md: 4 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
-                                        {sessionPhotos.map((photo, pIdx) => {
-                                            const globalIdx = allItems.findIndex(ai => ai.url === photo.url)
-                                            return renderPhotoCard({ ...photo, date: set.created_at, setId: set.id }, globalIdx)
-                                        })}
-                                    </Grid>
+                                    </Box>
                                 </Stack>
-                            </React.Fragment>
-                        );
-                    })}
-                </Stack>
-            ) : (
-                /* Photos Grid for filtered view (4 per row on md/lg screens) */
-                (<Grid cols={{ base: 1, md: 4 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
-                    {filteredItems.map((item, i) => {
-                        const isEditing = editingSetId === item.setId
 
-                        return (
-                            <Stack key={`${item.url}-${i}`} gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                {renderPhotoCard(item, i)}
-                                {canEdit && (
-                                    <Box display="flex" align="center" justify="between" padding={STORE_TOKENS.PADDING.NONE}>
-                                        {isEditing ? (
-                                            <Box display="flex" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth animateIn="zoom">
-                                                <Input
-                                                    type="date"
-                                                    value={editDate}
-                                                    onChange={(e) => setEditDate(e.target.value)}
-                                                    size="sm"
-                                                    color={STORE_TOKENS.COLORS.BACKGROUND}
-                                                />
-                                                <Box display="flex" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                                    <Button
-                                                        size="xs"
-                                                        isIconOnly
-                                                        variant="outline-emerald"
-                                                        onClick={() => handleDateSave(item.setId)}
-                                                    >
-                                                        <Icon icon={Check} size="xs" />
-                                                    </Button>
-                                                    <Button
-                                                        size="xs"
-                                                        isIconOnly
-                                                        variant="outline-red"
-                                                        onClick={() => setEditingSetId(null)}
-                                                    >
-                                                        <Icon icon={X} size="xs" />
-                                                    </Button>
-                                                </Box>
-                                            </Box>
-                                        ) : (
-                                            <Box display="flex" align="center" justify="between" fullWidth group>
-                                                <Box display="flex" align="center" gap={STORE_TOKENS.SPACING.NONE}>
-                                                    <Icon icon={Calendar} size="xs" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} />
-                                                    <Font
-                                                        variant="sub-tiny"
-                                                        weight="black"
-                                                        uppercase
-                                                        tracking="widest"
-                                                        {...{
-                                                            color: "zinc-400",
-                                                        }}>
-                                                        {new Date(item.date).toLocaleDateString()}
-                                                    </Font>
-                                                </Box>
-                                                <Box opacity={STORE_TOKENS.OPACITY.NONE} groupHoverOpacity={STORE_TOKENS.OPACITY.FULL} transition>
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="xs"
-                                                        isIconOnly
-                                                        onClick={() => startEditing(item.setId, item.date)}
-                                                    >
-                                                        <Icon icon={Pencil} size="xs" />
-                                                    </Button>
-                                                </Box>
-                                            </Box>
-                                        )}
+                                {/* Photos Grid for this session (4 per row on md/lg screens) */}
+                                <Grid cols={{ base: 1, md: 4 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+                                    {sessionPhotos.map((photo, pIdx) => {
+                                        const globalIdx = allItems.findIndex(ai => ai.url === photo.url)
+                                        return renderPhotoCard({ ...photo, date: set.created_at, setId: set.id }, globalIdx)
+                                    })}
+                                </Grid>
+                            </Stack>
+                            </React.Fragment>
+            );
+})}
+        </Stack >
+    ) : (
+        /* Photos Grid for filtered view (4 per row on md/lg screens) */
+        (<Grid cols={{ base: 1, md: 4 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
+            {filteredItems.map((item, i) => {
+                const isEditing = editingSetId === item.setId
+
+                return (
+                    <Stack key={`${item.url}-${i}`} gap={STORE_TOKENS.SPACING.ELEMENT}>
+                        {renderPhotoCard(item, i)}
+                        {canEdit && (
+                            <Box display="flex" align="center" justify="between" padding={STORE_TOKENS.PADDING.NONE}>
+                                {isEditing ? (
+                                    <Box display="flex" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth animateIn="zoom">
+                                        <Input
+                                            type="date"
+                                            value={editDate}
+                                            onChange={(e) => setEditDate(e.target.value)}
+                                            size="sm"
+                                            color={STORE_TOKENS.COLORS.BACKGROUND}
+                                        />
+                                        <Box display="flex" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                            <Button
+                                                size="xs"
+                                                isIconOnly
+                                                variant="outline-emerald"
+                                                onClick={() => handleDateSave(item.setId)}
+                                            >
+                                                <Icon icon={Check} size="xs" />
+                                            </Button>
+                                            <Button
+                                                size="xs"
+                                                isIconOnly
+                                                variant="outline-red"
+                                                onClick={() => setEditingSetId(null)}
+                                            >
+                                                <Icon icon={X} size="xs" />
+                                            </Button>
+                                        </Box>
+                                    </Box>
+                                ) : (
+                                    <Box display="flex" align="center" justify="between" fullWidth group>
+                                        <Box display="flex" align="center" gap={STORE_TOKENS.SPACING.NONE}>
+                                            <Icon icon={Calendar} size="xs" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} />
+                                            <Font
+                                                variant="sub-tiny"
+                                                weight="black"
+                                                uppercase
+                                                tracking="widest"
+                                                {...{
+                                                    color: "zinc-400",
+                                                }}>
+                                                {new Date(item.date).toLocaleDateString()}
+                                            </Font>
+                                        </Box>
+                                        <Box opacity={STORE_TOKENS.OPACITY.NONE} groupHoverOpacity={STORE_TOKENS.OPACITY.FULL} transition>
+                                            <Button
+                                                variant="ghost"
+                                                size="xs"
+                                                isIconOnly
+                                                onClick={() => startEditing(item.setId, item.date)}
+                                            >
+                                                <Icon icon={Pencil} size="xs" />
+                                            </Button>
+                                        </Box>
                                     </Box>
                                 )}
-                            </Stack>
-                        );
-                    })}
-                </Grid>)
-            )}
-            {/* Lightbox Modal */}
-            <Modal
-                isOpen={selectedPhotoIndex !== null}
-                onClose={() => setSelectedPhotoIndex(null)}
-                title={selectedPhotoIndex !== null ? typeLabels[filteredItems[selectedPhotoIndex].type] : 'Visualização'}
-                subtitle={selectedPhotoIndex !== null ? new Date(filteredItems[selectedPhotoIndex].date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' }) : ''}
-                icon={Camera}
-                hideCancel={true}
-                confirmLabel="Fechar"
-                onConfirm={() => setSelectedPhotoIndex(null)}
-                noPadding
+                            </Box>
+                        )}
+                    </Stack>
+                );
+            })}
+        </Grid>)
+    )
+}
+{/* Lightbox Modal */ }
+<Modal
+    isOpen={selectedPhotoIndex !== null}
+    onClose={() => setSelectedPhotoIndex(null)}
+    title={selectedPhotoIndex !== null ? typeLabels[filteredItems[selectedPhotoIndex].type] : 'Visualização'}
+    subtitle={selectedPhotoIndex !== null ? new Date(filteredItems[selectedPhotoIndex].date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' }) : ''}
+    icon={Camera}
+    hideCancel={true}
+    confirmLabel="Fechar"
+    onConfirm={() => setSelectedPhotoIndex(null)}
+    noPadding
+>
+    {selectedPhotoIndex !== null && (
+        <Box
+            position="relative"
+            display="flex"
+            align="center"
+            justify="center"
+            fullWidth
+            bg={STORE_TOKENS.COLORS.BACKGROUND}
+            bgOpacity={STORE_TOKENS.OPACITY.SHELF}
+            padding={STORE_TOKENS.PADDING.CONTAINER}
+        >
+            <Box
+                position="relative"
+                aspectRatio="3/4"
+                fullWidth
+                maxWidth={{ base: 'sm', md: 'md' }}
+                overflow="hidden"
+                rounded={STORE_TOKENS.RADIUS.SYSTEM}
             >
-                {selectedPhotoIndex !== null && (
-                    <Box
-                        position="relative"
-                        display="flex"
-                        align="center"
-                        justify="center"
-                        fullWidth
-                        bg={STORE_TOKENS.COLORS.BACKGROUND}
-                        bgOpacity={STORE_TOKENS.OPACITY.SHELF}
-                        padding={STORE_TOKENS.PADDING.CONTAINER}
+                <Image
+                    src={filteredItems[selectedPhotoIndex].url}
+                    alt="Visualização"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    priority
+                    {...{
+                        className: "object-cover",
+                    }} />
+            </Box>
+
+            {/* Controls/Navigation inside content box */}
+            {selectedPhotoIndex > 0 && (
+                <Box
+                    position="absolute"
+                    left={2.5}
+                    top={0}
+                    bottom={0}
+                    display="flex"
+                    align="center"
+                >
+                    <Button
+                        variant="outline-zinc"
+                        isIconOnly
+                        onClick={(e) => {
+                            e.stopPropagation()
+                            setSelectedPhotoIndex(selectedPhotoIndex - 1)
+                        }}
                     >
-                        <Box
-                            position="relative"
-                            aspectRatio="3/4"
-                            fullWidth
-                            maxWidth={{ base: 'sm', md: 'md' }}
-                            overflow="hidden"
-                            rounded={STORE_TOKENS.RADIUS.SYSTEM}
-                        >
-                            <Image
-                                src={filteredItems[selectedPhotoIndex].url}
-                                alt="Visualização"
-                                fill
-                                sizes="(max-width: 768px) 100vw, 50vw"
-                                priority
-                                {...{
-                                    className: "object-cover",
-                                }} />
-                        </Box>
-
-                        {/* Controls/Navigation inside content box */}
-                        {selectedPhotoIndex > 0 && (
-                            <Box
-                                position="absolute"
-                                left={2.5}
-                                top={0}
-                                bottom={0}
-                                display="flex"
-                                align="center"
-                            >
-                                <Button
-                                    variant="outline-zinc"
-                                    isIconOnly
-                                    onClick={(e) => {
-                                        e.stopPropagation()
-                                        setSelectedPhotoIndex(selectedPhotoIndex - 1)
-                                    }}
-                                >
-                                    <Icon icon={ChevronLeft} size="sm" />
-                                </Button>
-                            </Box>
-                        )}
-
-                        {selectedPhotoIndex < filteredItems.length - 1 && (
-                            <Box
-                                position="absolute"
-                                right={2.5}
-                                top={0}
-                                bottom={0}
-                                display="flex"
-                                align="center"
-                            >
-                                <Button
-                                    variant="outline-zinc"
-                                    isIconOnly
-                                    onClick={(e) => {
-                                        e.stopPropagation()
-                                        setSelectedPhotoIndex(selectedPhotoIndex + 1)
-                                    }}
-                                >
-                                    <Icon icon={ChevronRight} size="sm" />
-                                </Button>
-                            </Box>
-                        )}
-
-                        {/* Extra athlete info */}
-                        {studentName && (
-                            <Box
-                                position="absolute"
-                                bottom={2.5}
-                                left={0}
-                                right={0}
-                                display="flex"
-                                justify="center"
-                                pointerEvents="none"
-                            >
-                                <Box
-                                    bg={STORE_TOKENS.COLORS.BLACK}
-                                    bgOpacity={STORE_TOKENS.OPACITY.MODAL}
-                                    padding={STORE_TOKENS.PADDING.ELEMENT}
-                                    rounded={STORE_TOKENS.RADIUS.SYSTEM}
-                                    pointerEvents="auto"
-                                >
-                                    <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                        <Font
-                                            variant="sub-tiny"
-                                            weight="bold"
-                                            uppercase
-                                            tracking="widest"
-                                            {...{
-                                                color: "zinc-400",
-                                            }}>Atleta:</Font>
-                                        <Font
-                                            variant="sub-tiny"
-                                            weight="black"
-                                            uppercase
-                                            italic
-                                            {...{
-                                                color: "primary",
-                                            }}>
-                                            {studentName}
-                                        </Font>
-                                    </Stack>
-                                </Box>
-                            </Box>
-                        )}
-                    </Box>
-                )}
-            </Modal>
-            {/* Deletion Confirmation Modal */}
-            <Modal
-                isOpen={deleteTargetId !== null}
-                onClose={() => setDeleteTargetId(null)}
-                title="Excluir Registro"
-                subtitle="Esta ação removerá permanentemente esta atualização de fotos do seu histórico."
-                icon={X}
-                variant="red"
-                confirmLabel="Remover"
-                cancelLabel="Cancelar"
-                onConfirm={confirmDelete}
-            >
-                <Box padding={STORE_TOKENS.PADDING.NONE}>
-                    <Font
-                        variant="body"
-                        align="center"
-                        {...{
-                            color: "zinc-400",
-                        }}>
-                        Tem certeza que deseja remover este registro de fotos? Essa ação não poderá ser desfeita.
-                    </Font>
+                        <Icon icon={ChevronLeft} size="sm" />
+                    </Button>
                 </Box>
-            </Modal>
-        </Stack>
+            )}
+
+            {selectedPhotoIndex < filteredItems.length - 1 && (
+                <Box
+                    position="absolute"
+                    right={2.5}
+                    top={0}
+                    bottom={0}
+                    display="flex"
+                    align="center"
+                >
+                    <Button
+                        variant="outline-zinc"
+                        isIconOnly
+                        onClick={(e) => {
+                            e.stopPropagation()
+                            setSelectedPhotoIndex(selectedPhotoIndex + 1)
+                        }}
+                    >
+                        <Icon icon={ChevronRight} size="sm" />
+                    </Button>
+                </Box>
+            )}
+
+            {/* Extra athlete info */}
+            {studentName && (
+                <Box
+                    position="absolute"
+                    bottom={2.5}
+                    left={0}
+                    right={0}
+                    display="flex"
+                    justify="center"
+                    pointerEvents="none"
+                >
+                    <Box
+                        bg={STORE_TOKENS.COLORS.BLACK}
+                        bgOpacity={STORE_TOKENS.OPACITY.MODAL}
+                        padding={STORE_TOKENS.PADDING.ELEMENT}
+                        rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                        pointerEvents="auto"
+                    >
+                        <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                            <Font
+                                variant="sub-tiny"
+                                weight="bold"
+                                uppercase
+                                tracking="widest"
+                                {...{
+                                    color: "zinc-400",
+                                }}>Atleta:</Font>
+                            <Font
+                                variant="sub-tiny"
+                                weight="black"
+                                uppercase
+                                italic
+                                {...{
+                                    color: "primary",
+                                }}>
+                                {studentName}
+                            </Font>
+                        </Stack>
+                    </Box>
+                </Box>
+            )}
+        </Box>
+    )}
+</Modal>
+{/* Deletion Confirmation Modal */ }
+<Modal
+    isOpen={deleteTargetId !== null}
+    onClose={() => setDeleteTargetId(null)}
+    title="Excluir Registro"
+    subtitle="Esta ação removerá permanentemente esta atualização de fotos do seu histórico."
+    icon={X}
+    variant="red"
+    confirmLabel="Remover"
+    cancelLabel="Cancelar"
+    onConfirm={confirmDelete}
+>
+    <Box padding={STORE_TOKENS.PADDING.NONE}>
+        <Font
+            variant="body"
+            align="center"
+            {...{
+                color: "zinc-400",
+            }}>
+            Tem certeza que deseja remover este registro de fotos? Essa ação não poderá ser desfeita.
+        </Font>
+    </Box>
+</Modal>
+        </Stack >
     );
 }

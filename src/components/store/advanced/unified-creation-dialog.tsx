@@ -8,20 +8,20 @@ import { Button } from '@/components/store/base/button'
 import { Input } from '@/components/store/base/input'
 import { FormSelect } from '@/components/store/base/form-select'
 import { Textarea } from '@/components/store/base/textarea'
-import { WeekdayPicker } from '@/components/store/base/weekday-picker'
+import { WeekdayPicker } from '@/components/store/intermediary/weekday-picker'
 import { Stack } from '@/components/store/base/stack'
 import { Box } from '@/components/store/base/box'
 import { Surface } from '@/components/store/base/surface'
 import { Grid } from '@/components/store/base/grid'
 import { Font } from '@/components/store/base/font'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
-import { 
-    Users, 
-    Dumbbell, 
-    Utensils, 
-    Activity, 
-    FlaskConical, 
-    LucideIcon 
+import {
+    Users,
+    Dumbbell,
+    Utensils,
+    Activity,
+    FlaskConical,
+    LucideIcon
 } from 'lucide-react'
 
 const getActionIcon = (actionType: string): LucideIcon | undefined => {
@@ -266,6 +266,7 @@ export function UnifiedCreationDialog({
         }
     }
 
+
     const defaultTrigger = (
         <Button variant="outline-emerald" shine fullWidth={{ base: true, sm: false }}>
             {triggerLabel || 'Criar'}
@@ -334,5 +335,5 @@ export function UnifiedCreationDialog({
                 </form>
             </Modal>
         </>
-    );
+    )
 }

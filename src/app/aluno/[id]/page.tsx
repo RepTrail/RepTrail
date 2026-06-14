@@ -5,7 +5,7 @@ import { StudentPublicProfileMain } from '@/components/store/advanced/student-pu
 import { StudentPublicMetrics } from '@/components/store/advanced/student-public-metrics'
 import { StudentPublicPhotos } from '@/components/store/advanced/student-public-photos'
 import { DashboardShell } from '@/components/store/advanced/dashboard-shell'
-import { RegistryProvider } from '@/components/store/advanced/registry-context'
+import { RegistryProvider } from '@/components/store/base/registry-context'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 
 export const metadata = {
@@ -13,43 +13,43 @@ export const metadata = {
 }
 
 const STUDENT_LINKS = [
-    { href: '/dashboard/student',              label: 'Home',           icon: 'Home',          exact: true },
-    { href: '/dashboard/student/workouts',     label: 'Meus Treinos',   icon: 'Dumbbell' },
-    { href: '/dashboard/student/cardio',       label: 'Cardio',         icon: 'Activity' },
-    { href: '/dashboard/student/diet',         label: 'Minha Dieta',    icon: 'Utensils' },
-    { href: '/dashboard/student/ergogenics',   label: 'Ergogênicos',    icon: 'Syringe' },
-    { href: '/dashboard/student/progress',     label: 'Evolução',       icon: 'TrendingUp' },
-    { href: '/dashboard/student/feed',         label: 'Feed de Alunos', icon: 'UserCheck' },
-    { href: '/dashboard/student/ranking',      label: 'Ranking',        icon: 'Trophy' },
-    { href: '/dashboard/student/loja',         label: 'Loja',           icon: 'ShoppingBag' },
-    { href: '/dashboard/student/profile',      label: 'Meu Perfil',     icon: 'User' },
+    { href: '/dashboard/student', label: 'Home', icon: 'Home', exact: true },
+    { href: '/dashboard/student/workouts', label: 'Meus Treinos', icon: 'Dumbbell' },
+    { href: '/dashboard/student/cardio', label: 'Cardio', icon: 'Activity' },
+    { href: '/dashboard/student/diet', label: 'Minha Dieta', icon: 'Utensils' },
+    { href: '/dashboard/student/ergogenics', label: 'Ergogênicos', icon: 'Syringe' },
+    { href: '/dashboard/student/progress', label: 'Evolução', icon: 'TrendingUp' },
+    { href: '/dashboard/student/feed', label: 'Feed de Alunos', icon: 'UserCheck' },
+    { href: '/dashboard/student/ranking', label: 'Ranking', icon: 'Trophy' },
+    { href: '/dashboard/student/loja', label: 'Loja', icon: 'ShoppingBag' },
+    { href: '/dashboard/student/profile', label: 'Meu Perfil', icon: 'User' },
 ]
 
 const STUDENT_MOBILE_LINKS = [
-    { href: '/dashboard/student',              label: 'Home',    icon: 'Home',       exact: true },
-    { href: '/dashboard/student/workouts',     label: 'Treinos', icon: 'Dumbbell' },
-    { href: '/dashboard/student/cardio',       label: 'Cardio',  icon: 'Activity' },
-    { href: '/dashboard/student/loja',         label: 'Loja',    icon: 'ShoppingBag' },
-    { href: '/dashboard/student/profile',      label: 'Meu Perfil', icon: 'User' },
+    { href: '/dashboard/student', label: 'Home', icon: 'Home', exact: true },
+    { href: '/dashboard/student/workouts', label: 'Treinos', icon: 'Dumbbell' },
+    { href: '/dashboard/student/cardio', label: 'Cardio', icon: 'Activity' },
+    { href: '/dashboard/student/loja', label: 'Loja', icon: 'ShoppingBag' },
+    { href: '/dashboard/student/profile', label: 'Meu Perfil', icon: 'User' },
 ]
 
 const TRAINER_LINKS = [
-    { href: '/dashboard/trainer',           label: 'Visão Geral',  icon: 'Home',         exact: true },
-    { href: '/dashboard/trainer/students',   label: 'Alunos',       icon: 'Users' },
-    { href: '/dashboard/trainer/workouts',   label: 'Treinos',      icon: 'Dumbbell' },
-    { href: '/dashboard/trainer/diets',      label: 'Dietas',       icon: 'Utensils' },
-    { href: '/dashboard/trainer/cardio',     label: 'Cardio',       icon: 'Activity' },
-    { href: '/dashboard/trainer/ergogenics', label: 'Ergogênicos',  icon: 'FlaskConical' },
-    { href: '/dashboard/trainer/loja',       label: 'Loja',         icon: 'ShoppingBag' },
-    { href: '/dashboard/trainer/ranking',    label: 'Ranking',      icon: 'Trophy' },
-    { href: '/dashboard/trainer/profile',    label: 'Meu Perfil',   icon: 'User' },
+    { href: '/dashboard/trainer', label: 'Visão Geral', icon: 'Home', exact: true },
+    { href: '/dashboard/trainer/students', label: 'Alunos', icon: 'Users' },
+    { href: '/dashboard/trainer/workouts', label: 'Treinos', icon: 'Dumbbell' },
+    { href: '/dashboard/trainer/diets', label: 'Dietas', icon: 'Utensils' },
+    { href: '/dashboard/trainer/cardio', label: 'Cardio', icon: 'Activity' },
+    { href: '/dashboard/trainer/ergogenics', label: 'Ergogênicos', icon: 'FlaskConical' },
+    { href: '/dashboard/trainer/loja', label: 'Loja', icon: 'ShoppingBag' },
+    { href: '/dashboard/trainer/ranking', label: 'Ranking', icon: 'Trophy' },
+    { href: '/dashboard/trainer/profile', label: 'Meu Perfil', icon: 'User' },
 ]
 
 const TRAINER_MOBILE_LINKS = [
-    { href: '/dashboard/trainer',            label: 'Início',  icon: 'Home',        exact: true },
-    { href: '/dashboard/trainer/students',   label: 'Alunos',  icon: 'Users' },
-    { href: '/dashboard/trainer/loja',       label: 'Loja',    icon: 'ShoppingBag' },
-    { href: '/dashboard/trainer/ranking',    label: 'Ranking', icon: 'Trophy' },
+    { href: '/dashboard/trainer', label: 'Início', icon: 'Home', exact: true },
+    { href: '/dashboard/trainer/students', label: 'Alunos', icon: 'Users' },
+    { href: '/dashboard/trainer/loja', label: 'Loja', icon: 'ShoppingBag' },
+    { href: '/dashboard/trainer/ranking', label: 'Ranking', icon: 'Trophy' },
 ]
 
 export default async function StudentPublicProfilePage({
@@ -79,11 +79,11 @@ export default async function StudentPublicProfilePage({
 
     // ── Compose streamed tab content as ReactNode ──────────────────────────────
     const evolutionContent = (
-        <StudentPublicMetrics 
+        <StudentPublicMetrics
             key="student-evolution-metrics"
-            fullMetrics={fullMetrics} 
-            adherenceHistory={adherenceHistory || []} 
-            steroidUse={!!details?.steroid_use} 
+            fullMetrics={fullMetrics}
+            adherenceHistory={adherenceHistory || []}
+            steroidUse={!!details?.steroid_use}
         />
     )
 
@@ -93,7 +93,7 @@ export default async function StudentPublicProfilePage({
             key="student-photos-gallery"
             studentId={studentId}
             isOwner={isOwner}
-            studentName={profile.full_name}
+            studentName={profile?.full_name}
             photos={photos || []}
         />
     )
@@ -135,7 +135,7 @@ export default async function StudentPublicProfilePage({
                     profileHref={profileHref}
                     user={{
                         id: viewerId!,
-                        name: viewerProfile.full_name,
+                        name: viewerProfile?.full_name,
                         email: viewerProfile.email,
                         avatar_url: viewerProfile.avatar_url,
                         isAdmin: viewerProfile.is_admin,

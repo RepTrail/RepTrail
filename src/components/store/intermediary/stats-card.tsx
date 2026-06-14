@@ -6,7 +6,7 @@ import { GlassPanel } from '@/components/store/base/surface'
 import { Box } from '@/components/store/base/box'
 import { LucideIcon } from 'lucide-react'
 
-import { useRegistry } from '@/components/store/advanced/registry-context'
+import { useRegistry } from '@/components/store/base/registry-context'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 interface StatsCardProps {

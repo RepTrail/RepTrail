@@ -25,8 +25,8 @@ interface ErgogenicStudentHubCardProps {
  * Trainer hub entry: student with active ergogenic protocol.
  */
 export function ErgogenicStudentHubCard({ student, hasErgogenics = true }: ErgogenicStudentHubCardProps) {
-    const initials = student.full_name
-        ? student.full_name.split(' ').map((n) => n[0]).slice(0, 2).join('').toUpperCase()
+    const initials = student?.full_name
+        ? student?.full_name.split(' ').map((n) => n[0]).slice(0, 2).join('').toUpperCase()
         : '?'
 
     const href = `/dashboard/trainer/students/${student.id}/ergogenics`
@@ -57,7 +57,7 @@ export function ErgogenicStudentHubCard({ student, hasErgogenics = true }: Ergog
                             {...{
                                 color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
                             }}>
-                            {student.full_name}
+                            {student?.full_name}
                         </Font>
                         <Badge
                             label={student.is_placeholder ? 'Convite pendente' : 'Protocolo ativo'}

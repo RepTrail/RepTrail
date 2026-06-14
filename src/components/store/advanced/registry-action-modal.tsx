@@ -23,7 +23,7 @@ import {
     Plus,
     UserPlus
 } from 'lucide-react'
-import { WeekdayPicker } from '@/components/store/base/weekday-picker'
+import { WeekdayPicker } from '@/components/store/intermediary/weekday-picker'
 
 export type RegistryActionType =
     | 'assign_training'

@@ -35,7 +35,7 @@ export function MeuPersonalSectionContent({ trainer, trainerRel, existingReview 
                         {/* Left: Avatar & Badge */}
                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                             <BaseAvatar
-                                initials={trainer.full_name?.substring(0, 2).toUpperCase() || 'TR'}
+                                initials={trainer?.full_name?.substring(0, 2).toUpperCase() || 'TR'}
                                 src={trainer.avatar_url}
                                 size="xxl"
                                 variant="zinc"
@@ -58,7 +58,7 @@ export function MeuPersonalSectionContent({ trainer, trainerRel, existingReview 
                                     {...{
                                         color: "PRIMARY",
                                     }}>
-                                    {trainer.full_name}
+                                    {trainer?.full_name}
                                 </Font>
                                 <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} wrap="wrap" justify={{ base: 'center', md: 'start' }}>
                                     {trainer.location && (
@@ -133,7 +133,7 @@ export function MeuPersonalSectionContent({ trainer, trainerRel, existingReview 
                                     <Box fullWidth={{ base: true, md: false }} display="block">
                                         <Box width="full" display="block">
                                             <Link
-                                                href={`https://wa.me/${trainer.whatsapp?.replace(/\D/g, '')}?text=Olá ${trainer.full_name}, tenho uma dúvida sobre meu treino!`}
+                                                href={`https://wa.me/${trainer.whatsapp?.replace(/\D/g, '')}?text=Olá ${trainer?.full_name}, tenho uma dúvida sobre meu treino!`}
                                                 target="_blank"
                                             >
                                                 <Button variant="outline-primary" size="sm" fullWidth>
@@ -273,9 +273,9 @@ export function MeuPersonalSectionContent({ trainer, trainerRel, existingReview 
                 </Grid>
 
                 {/* Contract Info */}
-                {(trainerRel.monthly_fee || trainerRel.payment_day) && (
+                {(trainerRel?.monthly_fee || trainerRel.payment_day) && (
                     <Grid gap={STORE_TOKENS.SPACING.CONTAINER} cols={{ base: 1, md: 2 }}>
-                        {trainerRel.monthly_fee && (
+                        {trainerRel?.monthly_fee && (
                             <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM}>
                                 <Stack gap={STORE_TOKENS.SPACING.NONE}>
                                     <Font
@@ -287,7 +287,7 @@ export function MeuPersonalSectionContent({ trainer, trainerRel, existingReview 
                                         variant="h2"
                                         {...{
                                             color: "PRIMARY",
-                                        }}>R$ {Number(trainerRel.monthly_fee).toFixed(2)}</Font>
+                                        }}>R$ {Number(trainerRel?.monthly_fee).toFixed(2)}</Font>
                                 </Stack>
                             </GlassPanel>
                         )}

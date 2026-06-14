@@ -19,7 +19,7 @@ export default async function CardioDetailPage({ params }: Props) {
     return (
         <RegistryMain
             title={cardio.name.toUpperCase()}
-            subtitle={cardio.description || "Protocolo de Cardio"}
+            subtitle={cardio?.description || "Protocolo de Cardio"}
             icon="Flame"
             contextLabel="Área do Personal"
             showTabs={false}

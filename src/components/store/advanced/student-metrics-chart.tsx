@@ -11,7 +11,7 @@ import {
     Tooltip,
 } from 'recharts'
 import { Stack } from '@/components/store/base/stack'
-import { Box } from '@/components/store/base/box'
+import { Box, BoxColor } from '@/components/store/base/box'
 import { Font } from '@/components/store/base/font'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { RechartsChartTooltip } from '@/components/store/intermediary/chart-tooltip'
@@ -151,153 +151,138 @@ export function StudentMetricsChart({ weights, bfs, frequency }: StudentMetricsC
     const chartWidth = mounted ? Math.max(chartData.length * 40, 600) : 600
 
     return (
-        <div style={{ minWidth: 0, width: '100%' }}>
+        <Box fullWidth minWidth={0}>
             <Stack fullWidth gap={STORE_TOKENS.SPACING.SECTION}>
-            <Stack direction="row" wrap="wrap" gap={STORE_TOKENS.SPACING.CONTAINER} align="center" justify="end">
-                <LegendItem
-                    label="Performance"
-                    {...{
-                        color: "#10b981",
-                    }} />
-                <LegendItem
-                    label="Peso"
-                    {...{
-                        color: "#eab308",
-                    }} />
-                <LegendItem
-                    label="BF%"
-                    {...{
-                        color: "#ef4444",
-                    }} />
+                <Stack direction="row" wrap="wrap" gap={STORE_TOKENS.SPACING.CONTAINER} align="center" justify="end">
+                    <LegendItem label="Performance" color="success" />
+                    <LegendItem label="Peso" color="warning" />
+                    <LegendItem label="BF%" color="red" />
+                </Stack>
+                {/* overflow-x: auto no wrapper, gráfico com largura fixa para evitar vazamento */}
+                <Box
+                    ref={scrollRef as any}
+                    fullWidth
+                    minWidth={0}
+                    height="320px"
+                    overflowX="auto"
+                    overflowY="hidden"
+                    customScrollbar
+                >
+                    {mounted ? (
+                        <LineChart
+                            width={chartWidth}
+                            height={300}
+                            data={chartData}
+                            margin={{ top: 10, right: 0, left: -25, bottom: 0 }}
+                        >
+                            <CartesianGrid strokeDasharray="3 3" stroke="#27272a" vertical={false} />
+                            <XAxis
+                                dataKey="displayDate"
+                                stroke="#52525b"
+                                tick={{ fontSize: 10, fontWeight: 800, fill: '#71717a' }}
+                                tickLine={false}
+                                axisLine={false}
+                                interval="preserveStartEnd"
+                                minTickGap={30}
+                            />
+
+                            {/* Left Y Axis - Performance % */}
+                            <YAxis
+                                yAxisId="left"
+                                orientation="left"
+                                stroke="#10b981"
+                                tick={{ fontSize: 10, fontWeight: 800, fill: '#10b981' }}
+                                tickLine={false}
+                                axisLine={false}
+                                domain={[0, 100]}
+                                unit="%"
+                                width={35}
+                            />
+
+                            {/* Right Y Axis - Weight */}
+                            <YAxis
+                                yAxisId="right"
+                                orientation="right"
+                                stroke="#eab308"
+                                tick={{ fontSize: 10, fontWeight: 800, fill: '#eab308' }}
+                                tickLine={false}
+                                axisLine={false}
+                                domain={weightDomain}
+                                unit="kg"
+                                width={35}
+                            />
+
+                            {/* Hidden Y Axis - BF */}
+                            <YAxis
+                                yAxisId="bf-axis"
+                                orientation="right"
+                                stroke="#ef4444"
+                                domain={bfDomain}
+                                unit="%"
+                                hide={true}
+                            />
+
+                            <Tooltip
+                                content={<RechartsChartTooltip layout="spaced" />}
+                                wrapperStyle={{ zIndex: 50, outline: 'none' }}
+                                cursor={{ stroke: STORE_TOKENS.COLORS.DIVIDER.STANDARD, strokeWidth: 1, strokeDasharray: '4 4' }}
+                            />
+
+                            {/* Performance Line */}
+                            <Line
+                                yAxisId="left"
+                                type="monotone"
+                                dataKey="performance"
+                                name="Performance"
+                                stroke="#10b981"
+                                strokeWidth={3}
+                                dot={false}
+                                activeDot={{ r: 4, fill: '#10b981', stroke: '#064e3b', strokeWidth: 2 }}
+                                connectNulls={true}
+                                unit="%"
+                            />
+
+                            {/* Weight Line */}
+                            <Line
+                                yAxisId="right"
+                                type="linear"
+                                dataKey="weight"
+                                name="Peso"
+                                stroke="#eab308"
+                                strokeWidth={2}
+                                dot={<CustomWeightDot />}
+                                activeDot={{ r: 6, fill: '#eab308' }}
+                                connectNulls={true}
+                                unit="kg"
+                            />
+
+                            {/* BF Line */}
+                            <Line
+                                yAxisId="bf-axis"
+                                type="linear"
+                                dataKey="bf"
+                                name="Gordura"
+                                stroke="#ef4444"
+                                strokeWidth={3}
+                                dot={<CustomBfDot />}
+                                activeDot={{ r: 6, fill: '#ef4444' }}
+                                connectNulls={true}
+                                unit="%"
+                            />
+                        </LineChart>
+                    ) : (
+                        <Box fullWidth fullHeight bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} rounded={STORE_TOKENS.RADIUS.SYSTEM} />
+                    )}
+                </Box>
             </Stack>
-            {/* overflow-x: auto no wrapper, gráfico com largura fixa para evitar vazamento */}
-            <div
-                ref={scrollRef as any}
-                className="scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent"
-                style={{
-                    width: '100%',
-                    maxWidth: '100%',
-                    minWidth: 0,
-                    height: 320,
-                    overflowX: 'auto',
-                    overflowY: 'hidden'
-                }}
-            >
-                {mounted ? (
-                    <LineChart
-                        width={chartWidth}
-                        height={300}
-                        data={chartData}
-                        margin={{ top: 10, right: 0, left: -25, bottom: 0 }}
-                    >
-                        <CartesianGrid strokeDasharray="3 3" stroke="#27272a" vertical={false} />
-                        <XAxis
-                            dataKey="displayDate"
-                            stroke="#52525b"
-                            tick={{ fontSize: 10, fontWeight: 800, fill: '#71717a' }}
-                            tickLine={false}
-                            axisLine={false}
-                            interval="preserveStartEnd"
-                            minTickGap={30}
-                        />
-
-                        {/* Left Y Axis - Performance % */}
-                        <YAxis
-                            yAxisId="left"
-                            orientation="left"
-                            stroke="#10b981"
-                            tick={{ fontSize: 10, fontWeight: 800, fill: '#10b981' }}
-                            tickLine={false}
-                            axisLine={false}
-                            domain={[0, 100]}
-                            unit="%"
-                            width={35}
-                        />
-
-                        {/* Right Y Axis - Weight */}
-                        <YAxis
-                            yAxisId="right"
-                            orientation="right"
-                            stroke="#eab308"
-                            tick={{ fontSize: 10, fontWeight: 800, fill: '#eab308' }}
-                            tickLine={false}
-                            axisLine={false}
-                            domain={weightDomain}
-                            unit="kg"
-                            width={35}
-                        />
-
-                        {/* Hidden Y Axis - BF */}
-                        <YAxis
-                            yAxisId="bf-axis"
-                            orientation="right"
-                            stroke="#ef4444"
-                            domain={bfDomain}
-                            unit="%"
-                            hide={true}
-                        />
-
-                        <Tooltip
-                            content={<RechartsChartTooltip layout="spaced" />}
-                            wrapperStyle={{ zIndex: 50, outline: 'none' }}
-                            cursor={{ stroke: STORE_TOKENS.COLORS.DIVIDER.STANDARD, strokeWidth: 1, strokeDasharray: '4 4' }}
-                        />
-
-                        {/* Performance Line */}
-                        <Line
-                            yAxisId="left"
-                            type="monotone"
-                            dataKey="performance"
-                            name="Performance"
-                            stroke="#10b981"
-                            strokeWidth={3}
-                            dot={false}
-                            activeDot={{ r: 4, fill: '#10b981', stroke: '#064e3b', strokeWidth: 2 }}
-                            connectNulls={true}
-                            unit="%"
-                        />
-
-                        {/* Weight Line */}
-                        <Line
-                            yAxisId="right"
-                            type="linear"
-                            dataKey="weight"
-                            name="Peso"
-                            stroke="#eab308"
-                            strokeWidth={2}
-                            dot={<CustomWeightDot />}
-                            activeDot={{ r: 6, fill: '#eab308' }}
-                            connectNulls={true}
-                            unit="kg"
-                        />
-
-                        {/* BF Line */}
-                        <Line
-                            yAxisId="bf-axis"
-                            type="linear"
-                            dataKey="bf"
-                            name="Gordura"
-                            stroke="#ef4444"
-                            strokeWidth={3}
-                            dot={<CustomBfDot />}
-                            activeDot={{ r: 6, fill: '#ef4444' }}
-                            connectNulls={true}
-                            unit="%"
-                        />
-                    </LineChart>
-                ) : (
-                    <Box fullWidth fullHeight bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} rounded={STORE_TOKENS.RADIUS.SYSTEM} />
-                )}
-            </div>
-        </Stack>
-        </div>
+        </Box>
     );
 }
 
-function LegendItem({ color, label }: { color: string, label: string }) {
+function LegendItem({ color, label }: { color: BoxColor, label: string }) {
     return (
         <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-            <Box width={8} height={8} rounded={STORE_TOKENS.RADIUS.FULL} style={{ backgroundColor: color, boxShadow: `0 0 0 2px rgba(9, 9, 11, 0.5), 0 0 0 4px ${color}` }} />
+            <Box width="8px" height="8px" rounded={STORE_TOKENS.RADIUS.FULL} bg={color} />
             <Font
                 variant="sub-tiny"
                 weight="black"

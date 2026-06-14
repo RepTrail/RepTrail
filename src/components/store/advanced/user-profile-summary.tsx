@@ -10,23 +10,34 @@ import { Button } from '@/components/store/base/button'
 import { FileUpload } from '@/components/store/base/file-upload'
 import { ShieldCheck } from 'lucide-react'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
-import { uploadAvatar } from '@/lib/dal/remote'
+import { uploadAvatar, uploadTrainerAvatar } from '@/lib/dal/remote'
 import { useToast } from '@/hooks/use-toast'
 import { useRouter } from 'next/navigation'
 
-interface StudentProfileSummaryProps {
+export interface UserProfileSummaryProps {
+    type: 'student' | 'trainer'
     name: string
     email: string
     avatarUrl?: string | null
     userId?: string
+    trainerCode?: string | null
+    hasPublicProfile?: boolean
 }
 
 /**
- * StudentProfileSummary: Advanced component for the main profile identification card.
- * Extracted from StudentProfileSectionContent.
+ * UserProfileSummary: Advanced component for the main profile identification card.
+ * Consolidates the old StudentProfileSummary and TrainerProfileSummary.
  * Preserves exact alignment, padding, and token usage.
  */
-export function StudentProfileSummary({ name, email, avatarUrl, userId }: StudentProfileSummaryProps) {
+export function UserProfileSummary({ 
+    type, 
+    name, 
+    email, 
+    avatarUrl, 
+    userId, 
+    trainerCode, 
+    hasPublicProfile 
+}: UserProfileSummaryProps) {
     const { toast } = useToast()
     const router = useRouter()
     const [isUploading, setIsUploading] = useState(false)
@@ -42,7 +53,9 @@ export function StudentProfileSummary({ name, email, avatarUrl, userId }: Studen
             const formData = new FormData()
             formData.append('file', file)
 
-            const res = await uploadAvatar(formData)
+            const uploadFn = type === 'trainer' ? uploadTrainerAvatar : uploadAvatar
+            const res = await uploadFn(formData)
+            
             if (res.success) {
                 toast({
                     title: "Foto atualizada!",
@@ -65,6 +78,13 @@ export function StudentProfileSummary({ name, email, avatarUrl, userId }: Studen
         } finally {
             setIsUploading(false)
         }
+    }
+
+    let publicHref: string | null = null;
+    if (type === 'student' && userId) {
+        publicHref = `/aluno/${userId}`;
+    } else if (type === 'trainer' && hasPublicProfile && trainerCode) {
+        publicHref = `/personal/${trainerCode}`;
     }
 
     return (
@@ -92,6 +112,7 @@ export function StudentProfileSummary({ name, email, avatarUrl, userId }: Studen
                         weight="black"
                         uppercase
                         tracking="widest"
+                        align="center"
                         {...{
                             color: STORE_TOKENS.COLORS.TEXT.MUTED,
                         }}>
@@ -99,9 +120,9 @@ export function StudentProfileSummary({ name, email, avatarUrl, userId }: Studen
                     </Font>
                 </Stack>
 
-                {userId ? (
+                {publicHref ? (
                     <Link
-                        href={`/aluno/${userId}`}
+                        href={publicHref}
                         target="_blank"
                         {...{
                             className: "w-full",

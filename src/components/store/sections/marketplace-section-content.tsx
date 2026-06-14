@@ -40,7 +40,7 @@ export function MarketplaceSectionContent() {
     const filtered = products.filter((p: any) => {
         const q = search.toLowerCase()
         const matchesSearch = p.name?.toLowerCase().includes(q) ||
-            p.description?.toLowerCase().includes(q) ||
+            p?.description?.toLowerCase().includes(q) ||
             p.category?.toLowerCase().includes(q)
         
         const matchesCategory = selectedCategory === 'ALL' || p.category === selectedCategory
@@ -112,7 +112,7 @@ export function MarketplaceSectionContent() {
                                 key={product.id}
                                 id={String(product.id)}
                                 name={product.name}
-                                description={product.description || ''}
+                                description={product?.description || ''}
                                 category={product.category || 'OFERTA'}
                                 price={product.official_price || 0}
                                 rating={product.rating || 5}

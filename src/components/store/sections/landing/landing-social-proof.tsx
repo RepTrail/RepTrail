@@ -8,10 +8,10 @@ import { Font } from '@/components/store/base/font'
 import { Icon } from '@/components/store/base/icon'
 import { Badge } from '@/components/store/base/badge'
 import { BaseAvatar } from '@/components/store/base/avatar'
-import { useRegistry } from '@/components/store/advanced/registry-context'
+import { useRegistry } from '@/components/store/base/registry-context'
 import { Star } from 'lucide-react'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
-import { LandingSection } from '@/components/store/advanced/landing-section'
+import { LandingSection } from '@/components/store/intermediary/landing-section'
 import { GlassPanel, Surface } from '@/components/store/base/surface'
 
 interface LandingSocialProofProps {

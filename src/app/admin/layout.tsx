@@ -1,6 +1,6 @@
 import { checkAdminSession } from '@/lib/dal/server'
 import { redirect } from 'next/navigation'
-import { RegistryProvider } from '@/components/store/advanced/registry-context'
+import { RegistryProvider } from '@/components/store/base/registry-context'
 import { DashboardShell } from '@/components/store/advanced/dashboard-shell'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
@@ -40,7 +40,7 @@ export default async function AdminLayout({
                 ]}
                 user={{
                     id: profile.id,
-                    name: profile.full_name || 'Admin',
+                    name: profile?.full_name || 'Admin',
                     email: user.email || '',
                     avatar_url: profile.avatar_url,
                     isAdmin: true,

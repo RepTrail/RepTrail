@@ -7,9 +7,9 @@ import { Stack } from '@/components/store/base/stack'
 import { Font } from '@/components/store/base/font'
 import { Icon } from '@/components/store/base/icon'
 import { Badge } from '@/components/store/base/badge'
-import { useRegistry } from '@/components/store/advanced/registry-context'
+import { useRegistry } from '@/components/store/base/registry-context'
 import { ChevronDown, ChevronUp, HelpCircle } from 'lucide-react'
-import { LandingSection } from '@/components/store/advanced/landing-section'
+import { LandingSection } from '@/components/store/intermediary/landing-section'
 import { Surface } from '@/components/store/base/surface'
 
 interface LandingFAQProps {

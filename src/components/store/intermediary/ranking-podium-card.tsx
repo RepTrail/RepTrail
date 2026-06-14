@@ -58,7 +58,7 @@ export function RankingPodiumCard({ trainer, rank }: RankingPodiumCardProps) {
             <Stack flex1 align="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
                 <Box position="relative">
                     <BaseAvatar
-                        initials={trainer.full_name.substring(0, 2).toUpperCase()}
+                        initials={trainer?.full_name.substring(0, 2).toUpperCase()}
                         src={trainer.avatar_url}
                         size="xxl"
                         variant={rank === 1 ? 'orange' : rank === 2 ? 'zinc' : 'amber'}
@@ -88,7 +88,7 @@ export function RankingPodiumCard({ trainer, rank }: RankingPodiumCardProps) {
                             {...{
                                 color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
                             }}>
-                            {trainer.full_name}
+                            {trainer?.full_name}
                         </Font>
                     </Box>
                     <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>

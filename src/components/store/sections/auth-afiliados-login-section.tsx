@@ -4,6 +4,7 @@ import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { useState, Suspense } from 'react'
 import { useRouter } from 'next/navigation'
 import { actions } from '@/lib/dal'
+import { RegistryProvider } from '@/components/store/base/registry-context'
 import { AuthShell } from '@/components/store/advanced/auth-shell'
 import { AuthLoginForm } from '@/components/store/advanced/auth-login-form'
 
@@ -32,20 +33,22 @@ export function AuthAfiliadosLoginSection() {
     }
 
     return (
-        <AuthShell>
-            <Suspense fallback={null}>
-                <AuthLoginForm 
-                    email={email}
-                    setEmail={setEmail}
-                    password={password}
-                    setPassword={setPassword}
-                    onSubmit={handleSubmit}
-                    loading={loading}
-                    error={error}
-                    color={STORE_TOKENS.COLORS.WARNING}
-                    signupHref="/afiliados/cadastro"
-                />
-            </Suspense>
-        </AuthShell>
+        <RegistryProvider defaultColor="amber">
+            <AuthShell>
+                <Suspense fallback={null}>
+                    <AuthLoginForm 
+                        email={email}
+                        setEmail={setEmail}
+                        password={password}
+                        setPassword={setPassword}
+                        onSubmit={handleSubmit}
+                        loading={loading}
+                        error={error}
+                        color={STORE_TOKENS.COLORS.WARNING}
+                        signupHref="/afiliados/cadastro"
+                    />
+                </Suspense>
+            </AuthShell>
+        </RegistryProvider>
     )
 }

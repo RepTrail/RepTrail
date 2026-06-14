@@ -18,7 +18,7 @@ import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { StatsCard } from '@/components/store/intermediary/stats-card'
 import { Box } from '@/components/store/base/box'
 import { LayoutDashboard, Users, DollarSign, TrendingUp, Activity } from 'lucide-react'
-import { TrainerDashboardSidebarSectionContent } from '@/components/store/sections/trainer-dashboard-sidebar-section-content'
+import { TrainerDashboardSidebarPanel } from '@/components/store/advanced/trainer-dashboard-sidebar-panel'
 
 // Deprecated features
 import { ActivityFeed } from '@/components/store/advanced/activity-feed'
@@ -137,7 +137,7 @@ export function TrainerDashboardClient({ userId, betaTesterMode }: TrainerDashbo
                     </Box>
 
                     <Box lgColSpan={4}>
-                        <TrainerDashboardSidebarSectionContent
+                        <TrainerDashboardSidebarPanel
                             trainerCode={profile?.trainer_code}
                             editProfileHref="/dashboard/trainer/profile"
                             publicProfileHref={publicProfileHref}

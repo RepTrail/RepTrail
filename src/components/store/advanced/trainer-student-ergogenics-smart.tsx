@@ -5,7 +5,7 @@ import { useQueryClient, useQuery, actions } from '@/lib/dal'
 import { Box } from '@/components/store/base/box'
 import { Stack } from '@/components/store/base/stack'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
-import { ErgogenicManagementSectionContent } from '@/components/store/sections/ergogenic-management-section-content'
+import { ErgogenicManagementList } from '@/components/store/advanced/ergogenic-management-list'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { Surface } from '@/components/store/base/surface'
 
@@ -34,8 +34,8 @@ export function TrainerStudentErgogenicsSmart({
         return (
             <Surface animation="pulse" variant="sunken" border="none" gap={STORE_TOKENS.SPACING.CONTAINER}>
                 <Box bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.SURFACE} {...{ width: 160, height: 32 }} rounded={STORE_TOKENS.RADIUS.SYSTEM} />
-                <Box bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.SURFACE} height={120} rounded={STORE_TOKENS.RADIUS.SYSTEM} />
-                <Box bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.SURFACE} height={400} rounded={STORE_TOKENS.RADIUS.SYSTEM} />
+                <Box bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.SURFACE} height="120px" rounded={STORE_TOKENS.RADIUS.SYSTEM} />
+                <Box bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.SURFACE} height="400px" rounded={STORE_TOKENS.RADIUS.SYSTEM} />
             </Surface>
         )
     }
@@ -43,7 +43,7 @@ export function TrainerStudentErgogenicsSmart({
     return (
         <Stack gap={STORE_TOKENS.SPACING.SECTION}>
             <Box>
-                <ErgogenicManagementSectionContent 
+                <ErgogenicManagementList 
                     items={items}
                     mode={isPersonalMode ? 'personal' : 'trainer'}
                     isEmpty={items.length === 0}

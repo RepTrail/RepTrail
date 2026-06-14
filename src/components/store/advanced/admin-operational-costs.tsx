@@ -138,7 +138,7 @@ export function AdminOperationalCosts({ initialCosts, totalMonthly, totalAllTime
 
     function openEditModal(cost: OperationalCost) {
         setSelectedCost(cost)
-        setDescription(cost.description)
+        setDescription(cost?.description)
         setAmount(cost.amount.toString())
         setType(cost.type)
         setIsEditModalOpen(true)
@@ -185,10 +185,10 @@ export function AdminOperationalCosts({ initialCosts, totalMonthly, totalAllTime
             </Stack>
             <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                 {/* Listagem de Custos */}
-                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        {costs.map((cost) => {
-                            const badgeColor = cost.type === 'fixed' ? STORE_TOKENS.COLORS.INFO : STORE_TOKENS.COLORS.BRAND;
-                            return (
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                    {costs.map((cost) => {
+                        const badgeColor = cost.type === 'fixed' ? STORE_TOKENS.COLORS.INFO : STORE_TOKENS.COLORS.BRAND;
+                        return (
                             <ActionableListCard
                                 key={cost.id}
                                 badges={
@@ -241,7 +241,7 @@ export function AdminOperationalCosts({ initialCosts, totalMonthly, totalAllTime
                                             {...{
                                                 color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
                                             }}>
-                                            {cost.description}
+                                            {cost?.description}
                                         </Font>
                                         <Box fullWidth minWidth={0} overflow="hidden">
                                             <Font
@@ -258,22 +258,23 @@ export function AdminOperationalCosts({ initialCosts, totalMonthly, totalAllTime
                                     </Stack>
                                 </Inline>
                             </ActionableListCard>
-                            );
-                        })}
+                        );
+                    })}
 
-                        {costs.length === 0 && (
-                            <EmptyState
-                                icon={TrendingDown}
-                                title="Sem Custos"
-                                description="Nenhum custo operacional cadastrado no momento."
-                            />
-                        )}
-                    </Stack>
+                    {costs.length === 0 && (
+                        <EmptyState
+                            icon={TrendingDown}
+                            title="Sem Custos"
+                            description="Nenhum custo operacional cadastrado no momento."
+                        />
+                    )}
                 </Stack>
+            </Stack >
             {/* Modal de Adição */}
-            <Modal
+            < Modal
                 isOpen={isAddModalOpen}
-                onClose={() => setIsAddModalOpen(false)}
+                onClose={() => setIsAddModalOpen(false)
+                }
                 title="Adicionar Custo"
                 subtitle="Registre gastos de infraestrutura ou marketing."
                 icon={TrendingDown}
@@ -311,9 +312,9 @@ export function AdminOperationalCosts({ initialCosts, totalMonthly, totalAllTime
                         </Box>
                     </Stack>
                 </Stack>
-            </Modal>
+            </Modal >
             {/* Modal de Edição */}
-            <Modal
+            < Modal
                 isOpen={isEditModalOpen}
                 onClose={() => setIsEditModalOpen(false)}
                 title="Editar Custo"
@@ -351,9 +352,9 @@ export function AdminOperationalCosts({ initialCosts, totalMonthly, totalAllTime
                         </Box>
                     </Stack>
                 </Stack>
-            </Modal>
+            </Modal >
             {/* Modal de Exclusão */}
-            <Modal
+            < Modal
                 isOpen={isDeleteModalOpen}
                 onClose={() => setIsDeleteModalOpen(false)}
                 title="Confirmar Exclusão"
@@ -370,7 +371,7 @@ export function AdminOperationalCosts({ initialCosts, totalMonthly, totalAllTime
                     }}>
                     Esta ação não pode ser desfeita e removerá o registro permanentemente do sistema.
                 </Font>
-            </Modal>
-        </Stack>
+            </Modal >
+        </Stack >
     );
 }

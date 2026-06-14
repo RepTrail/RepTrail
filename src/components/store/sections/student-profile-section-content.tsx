@@ -8,7 +8,7 @@ import { Stack } from '@/components/store/base/stack'
 import { Font } from '@/components/store/base/font'
 import { Modal } from '@/components/store/advanced/modal'
 import { AsaasPaymentModal } from '@/components/store/advanced/asaas-payment-modal'
-import { StudentProfileSummary } from '@/components/store/advanced/student-profile-summary'
+import { UserProfileSummary } from '@/components/store/advanced/user-profile-summary'
 import { StudentSubscriptionStatus } from '@/components/store/advanced/student-subscription-status'
 import { StudentProfileForm } from '@/components/store/advanced/student-profile-form'
 import {
@@ -72,77 +72,79 @@ export function StudentProfileSectionContent({
     return (
         <>
             <Grid mdCols={12} gap={STORE_TOKENS.SPACING.SECTION} fullWidth>
-                {/* Left Column: Profile Card & Statuses (4 cols) */}
-                <Box mdColSpan={4}>
-                    <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
-                        <StudentProfileSummary
-                            name={name}
-                            email={email}
-                            avatarUrl={avatarUrl}
-                            userId={userId}
-                        />
+            {/* Left Column: Profile Card & Statuses (4 cols) */}
+            <Box mdColSpan={4}>
+                <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
+                    <UserProfileSummary
+                        type="student"
+                        name={name}
+                        email={email}
+                        avatarUrl={avatarUrl}
+                        userId={userId}
+                    />
 
-                        <StudentSubscriptionStatus
-                            status={subscriptionStatus}
-                            onActivateTrial={() => setIsTrialModalOpen(true)}
-                            onCancelSubscription={() => setIsCancelModalOpen(true)}
-                            onRenewSubscription={() => setIsAsaasModalOpen(true)}
-                        />
+                    <StudentSubscriptionStatus
+                        status={subscriptionStatus}
+                        onActivateTrial={() => setIsTrialModalOpen(true)}
+                        onCancelSubscription={() => setIsCancelModalOpen(true)}
+                        onRenewSubscription={() => setIsAsaasModalOpen(true)}
+                    />
 
-                        {showVariants && (
-                            <>
-                                <StudentSubscriptionStatus
-                                    status="trial_available"
-                                    onActivateTrial={() => setIsTrialModalOpen(true)}
-                                    onCancelSubscription={() => setIsCancelModalOpen(true)}
-                                    onRenewSubscription={() => setIsAsaasModalOpen(true)}
-                                />
-                                <StudentSubscriptionStatus
-                                    status="expired"
-                                    onActivateTrial={() => setIsTrialModalOpen(true)}
-                                    onCancelSubscription={() => setIsCancelModalOpen(true)}
-                                    onRenewSubscription={() => setIsAsaasModalOpen(true)}
-                                />
-                            </>
-                        )}
-                    </Stack>
-                </Box>
-
-                {/* Right Column: Edit Form (8 cols) */}
-                <Box mdColSpan={8}>
-                    <StudentProfileForm userId={userId} profile={profile} />
-                </Box>
-            </Grid>
-            {/* Confirmation Modals */}
-            <Modal
-                isOpen={isTrialModalOpen}
-                onClose={() => setIsTrialModalOpen(false)}
-                title="ATIVAR TESTE GRÁTIS"
-                subtitle="Você terá acesso total por 7 dias."
-                icon={Zap}
-                variant="orange"
-                confirmLabel="ATIVAR AGORA"
-                confirmIcon={CheckCircle}
-                onConfirm={() => setIsTrialModalOpen(false)}
-            >
-                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <Font
-                        variant="body-sm"
-                        {...{
-                            color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
-                        }}>
-                        Ao ativar o período de teste, você terá acesso imediato a todas as ferramentas de Auto-Treino, Dieta e Ergogênicos do RepTrail.
-                    </Font>
-                    <Font
-                        variant="sub-tiny"
-                        weight="bold"
-                        {...{
-                            color: STORE_TOKENS.COLORS.TEXT.MUTED,
-                        }}>
-                        * O teste é válido por 7 dias corridos e não requer cartão de crédito agora.
-                    </Font>
+                    {showVariants && (
+                        <>
+                            <StudentSubscriptionStatus
+                                status="trial_available"
+                                onActivateTrial={() => setIsTrialModalOpen(true)}
+                                onCancelSubscription={() => setIsCancelModalOpen(true)}
+                                onRenewSubscription={() => setIsAsaasModalOpen(true)}
+                            />
+                            <StudentSubscriptionStatus
+                                status="expired"
+                                onActivateTrial={() => setIsTrialModalOpen(true)}
+                                onCancelSubscription={() => setIsCancelModalOpen(true)}
+                                onRenewSubscription={() => setIsAsaasModalOpen(true)}
+                            />
+                        </>
+                    )}
                 </Stack>
-            </Modal>
+            </Box>
+
+            {/* Right Column: Edit Form (8 cols) */}
+            <Box mdColSpan={8}>
+                <StudentProfileForm userId={userId} profile={profile} />
+            </Box>
+        </Grid >
+        {/* Confirmation Modals */ }
+        < Modal
+    isOpen = { isTrialModalOpen }
+    onClose = {() => setIsTrialModalOpen(false)
+}
+title = "ATIVAR TESTE GRÁTIS"
+subtitle = "Você terá acesso total por 7 dias."
+icon = { Zap }
+variant = "orange"
+confirmLabel = "ATIVAR AGORA"
+confirmIcon = { CheckCircle }
+onConfirm = {() => setIsTrialModalOpen(false)}
+            >
+    <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+        <Font
+            variant="body-sm"
+            {...{
+                color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
+            }}>
+            Ao ativar o período de teste, você terá acesso imediato a todas as ferramentas de Auto-Treino, Dieta e Ergogênicos do RepTrail.
+        </Font>
+        <Font
+            variant="sub-tiny"
+            weight="bold"
+            {...{
+                color: STORE_TOKENS.COLORS.TEXT.MUTED,
+            }}>
+            * O teste é válido por 7 dias corridos e não requer cartão de crédito agora.
+        </Font>
+    </Stack>
+            </Modal >
             <Modal
                 isOpen={isCancelModalOpen}
                 onClose={() => setIsCancelModalOpen(false)}

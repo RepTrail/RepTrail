@@ -6,7 +6,7 @@ import { useQuery } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { getTrainerErgogenicStudents } from '@/lib/dal/remote'
 import { useRealtimeSync } from '@/hooks/use-realtime-sync'
-import { TrainerErgogenicsHubSectionContent } from '@/components/store/sections/trainer-ergogenics-hub-section-content'
+import { TrainerErgogenicsHubList } from '@/components/store/advanced/trainer-ergogenics-hub-list'
 
 interface TrainerErgogenicsHubSmartProps {
     userId: string
@@ -40,7 +40,7 @@ export function TrainerErgogenicsHubSmart({ userId, hasErgogenics }: TrainerErgo
         <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
 
             <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
-                <TrainerErgogenicsHubSectionContent students={students} hasErgogenics={hasErgogenics} />
+                <TrainerErgogenicsHubList students={students} hasErgogenics={hasErgogenics} />
             </Stack>
         </Stack>
     )

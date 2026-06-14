@@ -4,7 +4,7 @@ import { useQuery } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { actions } from '@/lib/dal'
 import { useRealtimeSync } from '@/hooks/use-realtime-sync'
-import { CardioManagementSectionContent } from '@/components/store/sections/cardio-management-section-content'
+import { CardioManagementList } from '@/components/store/advanced/cardio-management-list'
 import { Stack } from '@/components/store/base/stack'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { Grid } from '@/components/store/base/grid'
@@ -114,7 +114,7 @@ export function StudentCardioManagementSmart({ userId }: StudentCardioManagement
                 <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
 
                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
-                        <CardioManagementSectionContent
+                        <CardioManagementList
                             userId={userId}
                             cardios={displayCardios}
                             mode={isAutoMode ? 'auto' : 'personal'}

@@ -3,7 +3,7 @@ import { STORE_TOKENS } from '@/components/store/constants/tokens';
 import React from 'react'
 import { Font } from './font'
 import { cn } from '@/lib/utils'
-import { useRegistry } from '@/components/store/advanced/registry-context'
+import { useRegistry } from '@/components/store/base/registry-context'
 
 interface BaseAvatarProps {
     initials: string

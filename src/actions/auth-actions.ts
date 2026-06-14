@@ -42,7 +42,7 @@ export async function signInAction(formData: FormData) {
                 const profilePayload: Record<string, any> = {
                     id: user.id,
                     email: user.email,
-                    full_name: metadata.full_name || 'Usuário',
+                    full_name: metadata?.full_name || 'Usuário',
                     role: metadata.role || 'trainer',
                 }
                 if (metadata.whatsapp) profilePayload.whatsapp = metadata.whatsapp

@@ -6,7 +6,6 @@ import { useQuery } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { getTrainerStudents } from '@/lib/dal/remote'
 import { ActionableListCard } from '@/components/store/intermediary/actionable-list-card'
-import { Input } from '@/components/store/base/input'
 import { Stack } from '@/components/store/base/stack'
 import { Inline } from '@/components/store/base/layout'
 import { Font } from '@/components/store/base/font'
@@ -18,15 +17,16 @@ import { Icon } from '@/components/store/base/icon'
 import { EmptyState } from '@/components/store/intermediary/empty-state'
 import { Modal } from '@/components/store/advanced/modal'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
-import { Users, Search, ArrowUpRight, UserMinus, AlertTriangle } from 'lucide-react'
-import { RegistrySection } from '@/components/store/advanced/registry-section'
+import { useSearchParams } from 'next/navigation'
+import { ArrowUpRight, UserMinus, AlertTriangle, Users } from 'lucide-react'
 
 interface TrainerStudentsListSectionProps {
     userId: string
 }
 
 export function TrainerStudentsListSection({ userId }: TrainerStudentsListSectionProps) {
-    const [search, setSearch] = useState('')
+    const searchParams = useSearchParams()
+    const search = searchParams?.get('q') || ''
     const [deactivateTarget, setDeactivateTarget] = useState<any>(null)
     const [isDeactivating, setIsDeactivating] = useState(false)
 
@@ -59,23 +59,7 @@ export function TrainerStudentsListSection({ userId }: TrainerStudentsListSectio
 
     return (
         <>
-        <RegistrySection
-            title="Lista da Matrícula"
-            subtitle="Gerencie seus alunos ativos e suas informações."
-            icon={Users}
-            rightElement={
-                <Box width={{ base: 'full', md: 'auto' }}>
-                    <Input
-                        type="text"
-                        placeholder="Buscar aluno..."
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        icon={<Icon icon={Search} size="xs" />}
-                    />
-                </Box>
-            }
-        >
-                <Box fullWidth display="flex" direction="col">
+            <Box fullWidth display="flex" direction="col">
                 {filteredStudents.length > 0 ? (
                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
                         {filteredStudents.map((item: any, index: number) => {
@@ -93,7 +77,7 @@ export function TrainerStudentsListSection({ userId }: TrainerStudentsListSectio
                             }
 
                             const avatarInitials = item.student?.full_name?.substring(0, 2) || 'AL'
-                            const formattedValue = `R$ ${Number(item.monthly_fee).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
+                            const formattedValue = `R$ ${Number(item?.monthly_fee).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
                             const formattedDay = item.payment_day ? `Dia ${item.payment_day}` : null
 
                             return (
@@ -108,11 +92,11 @@ export function TrainerStudentsListSection({ userId }: TrainerStudentsListSectio
                                                 {item.is_placeholder ? (
                                                     <Badge label="Aguardando Cadastro" variant="glass" color={STORE_TOKENS.COLORS.WARNING} size="xs" />
                                                 ) : (
-                                                    <Badge 
-                                                        label={item.active ? 'Ativo' : 'Inativo'} 
-                                                        variant={item.active ? 'glass' : 'outline'} 
-                                                        color={item.active ? STORE_TOKENS.COLORS.SUCCESS : STORE_TOKENS.COLORS.BACKGROUND} 
-                                                        size="xs" 
+                                                    <Badge
+                                                        label={item.active ? 'Ativo' : 'Inativo'}
+                                                        variant={item.active ? 'glass' : 'outline'}
+                                                        color={item.active ? STORE_TOKENS.COLORS.SUCCESS : STORE_TOKENS.COLORS.BACKGROUND}
+                                                        size="xs"
                                                     />
                                                 )}
                                                 {paymentStatus === 'overdue' && !item.is_placeholder && (
@@ -130,11 +114,11 @@ export function TrainerStudentsListSection({ userId }: TrainerStudentsListSectio
                                     }
                                     actions={
                                         <>
-                                            <Button 
-                                                variant="outline-zinc" 
-                                                size="sm" 
-                                                rounded={STORE_TOKENS.RADIUS.FULL} 
-                                                isIconOnly 
+                                            <Button
+                                                variant="outline-zinc"
+                                                size="sm"
+                                                rounded={STORE_TOKENS.RADIUS.FULL}
+                                                isIconOnly
                                                 hoverScale={110}
                                                 activeScale={95}
                                                 transition
@@ -149,11 +133,11 @@ export function TrainerStudentsListSection({ userId }: TrainerStudentsListSectio
                                                 </Link>
                                             </Button>
                                             {item.active && (
-                                                <Button 
-                                                    variant="outline-red" 
-                                                    size="sm" 
-                                                    rounded={STORE_TOKENS.RADIUS.FULL} 
-                                                    isIconOnly 
+                                                <Button
+                                                    variant="outline-red"
+                                                    size="sm"
+                                                    rounded={STORE_TOKENS.RADIUS.FULL}
+                                                    isIconOnly
                                                     hoverScale={110}
                                                     activeScale={95}
                                                     transition
@@ -214,8 +198,7 @@ export function TrainerStudentsListSection({ userId }: TrainerStudentsListSectio
                         variant="zinc"
                     />
                 )}
-                </Box>
-        </RegistrySection>
+            </Box>
             <Modal
                 isOpen={!!deactivateTarget}
                 onClose={() => setDeactivateTarget(null)}
@@ -236,11 +219,11 @@ export function TrainerStudentsListSection({ userId }: TrainerStudentsListSectio
                         color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
                     }}>
                     Tem certeza que deseja desativar <Font
-                    variant="description"
-                    weight="black"
-                    {...{
-                        color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
-                    }}>{deactivateTarget?.student?.full_name}</Font>? Isso removerá todos os treinos, dietas e cardios atribuídos por você.
+                        variant="description"
+                        weight="black"
+                        {...{
+                            color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                        }}>{deactivateTarget?.student?.full_name}</Font>? Isso removerá todos os treinos, dietas e cardios atribuídos por você.
                 </Font>
             </Modal>
         </>

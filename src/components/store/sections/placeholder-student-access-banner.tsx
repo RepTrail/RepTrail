@@ -22,7 +22,7 @@ export function PlaceholderStudentAccessBanner({ relationship }: PlaceholderStud
     const student = relationship.student || {}
 
     const handleSendWhatsapp = () => {
-        const message = `Olá ${student.full_name || 'Aluno'}! Seu perfil no RepTrail foi criado e seus protocolos já estão disponíveis.\n\nPara acessar, baixe o aplicativo e faça o cadastro utilizando este exato email: *${student.email}*\n\nBons treinos!`
+        const message = `Olá ${student?.full_name || 'Aluno'}! Seu perfil no RepTrail foi criado e seus protocolos já estão disponíveis.\n\nPara acessar, baixe o aplicativo e faça o cadastro utilizando este exato email: *${student.email}*\n\nBons treinos!`
         
         if (student.whatsapp) {
             const whatsappNumber = student.whatsapp.replace(/\D/g, '')

@@ -32,7 +32,7 @@ export function AdminAffiliatesList() {
     const affiliates = (affiliatesData?.data || [])
         .filter((a: any) =>
             !search ||
-            a.full_name?.toLowerCase().includes(search.toLowerCase()) ||
+            a?.full_name?.toLowerCase().includes(search.toLowerCase()) ||
             a.email?.toLowerCase().includes(search.toLowerCase())
         )
 
@@ -77,7 +77,7 @@ export function AdminAffiliatesList() {
                     <AffiliateListItem
                         key={affiliate.id}
                         affiliateId={affiliate.id}
-                        name={affiliate.full_name || 'Usuário sem nome'}
+                        name={affiliate?.full_name || 'Usuário sem nome'}
                         email={affiliate.email || ''}
                         registrationDate={new Date(affiliate.created_at).toLocaleDateString('pt-BR')}
                         referrals={{
@@ -87,7 +87,7 @@ export function AdminAffiliatesList() {
                         revenue={`R$ ${Number(affiliate.revenue_generated || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
                         commission={`R$ ${Number(affiliate.monthly_commission || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
                         rate={affiliate.commission_rate ?? 10}
-                        onDelete={() => handleRemoveAffiliate(affiliate.id, affiliate.full_name || 'afiliado')}
+                        onDelete={() => handleRemoveAffiliate(affiliate.id, affiliate?.full_name || 'afiliado')}
                     />
                 ))
             )}

@@ -145,176 +145,177 @@ export function SettingsModal({ hasTrainer = false, isTrainer = false }: Setting
 
     return (
         <>
-            <Modal
-                isOpen={isOpen}
-                onClose={() => setIsOpen(false)}
-                title="CONFIGURAÇÕES DO SISTEMA"
-                subtitle="Gerencie suas preferências e recursos premium."
-                icon={Settings2}
-                variant="primary"
-                confirmLabel="SALVAR PREFERÊNCIAS"
-                onConfirm={() => setIsOpen(false)}
-            >
-                <Box position="relative">
-                    {(loadingTerms || loadingTrial) && (
-                        <Box
-                            position="absolute"
-                            pin="inset"
-                            zIndex={STORE_TOKENS.Z_INDEX.OVERLAY}
-                            display="flex"
-                            align="center"
-                            justify="center"
-                            rounded={STORE_TOKENS.RADIUS.SYSTEM}
-                            bg={STORE_TOKENS.COLORS.BLACK}
-                            bgOpacity={STORE_TOKENS.OPACITY.MEDIUM}
-                        >
-                            <Icon icon={Loader2} color={STORE_TOKENS.COLORS.SUCCESS} size="md" animate="spin" />
-                        </Box>
+        <Modal
+            isOpen={isOpen}
+            onClose={() => setIsOpen(false)}
+            title="CONFIGURAÇÕES DO SISTEMA"
+            subtitle="Gerencie suas preferências e recursos premium."
+            icon={Settings2}
+            variant="primary"
+            confirmLabel="SALVAR PREFERÊNCIAS"
+            onConfirm={() => setIsOpen(false)}
+        >
+            <Box position="relative">
+                {(loadingTerms || loadingTrial) && (
+                    <Box
+                        position="absolute"
+                        pin="inset"
+                        zIndex={STORE_TOKENS.Z_INDEX.OVERLAY}
+                        display="flex"
+                        align="center"
+                        justify="center"
+                        rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                        bg={STORE_TOKENS.COLORS.BLACK}
+                        bgOpacity={STORE_TOKENS.OPACITY.MEDIUM}
+                    >
+                        <Icon icon={Loader2} color={STORE_TOKENS.COLORS.SUCCESS} size="md" animate="spin" />
+                    </Box>
+                )}
+
+                <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
+
+                    {!pwaInstalled && (
+                        <SettingsActionCard
+                            icon={Smartphone}
+                            title="APP REPTRAIL"
+                            subtitle="INSTALE PARA ACESSO RÁPIDO"
+                            actionLabel="INSTALAR"
+                            buttonVariant="outline-blue"
+                            actionIcon={Download}
+                            onAction={() => {
+                                setIsPwaModalOpen(true)
+                            }}
+                            {...{
+                                color: "blue",
+                            }} />
                     )}
 
-                    <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
+                    <SettingsActionCard
+                        icon={Bell}
+                        title="NOTIFICAÇÕES PUSH"
+                        subtitle="RECEBA ALERTAS DE TREINOS E DIETAS"
+                        actionLabel={notifications === 'on' ? 'CONFIGURAR' : 'ATIVAR'}
+                        buttonVariant="outline-orange"
+                        actionIcon={Bell}
+                        onAction={() => {
+                            setIsOpen(false)
+                            setIsNotificationModalOpen(true)
+                        }}
+                        {...{
+                            color: "orange",
+                        }} />
 
-                        {!pwaInstalled && (
+                    {!isTrainer && !hasTrainer && (
+                        <>
+                        { autoTreinoStatus === 'available' && (
                             <SettingsActionCard
-                                icon={Smartphone}
-                                title="APP REPTRAIL"
-                                subtitle="INSTALE PARA ACESSO RÁPIDO"
-                                actionLabel="INSTALAR"
-                                buttonVariant="outline-blue"
-                                actionIcon={Download}
-                                onAction={() => {
-                                    setIsPwaModalOpen(true)
-                                }}
+                                icon={Zap}
+                                surfaceVariant="glass"
+                                title="TESTE GRÁTIS DISPONÍVEL"
+                                subtitle="EXPERIMENTE POR 7 DIAS SEM CUSTOS"
+                                actionLabel="HABILITAR"
+                                buttonVariant="outline-emerald"
+                                actionIcon={Zap}
+                                onAction={enableAutoTrainingTrial}
                                 {...{
-                                    color: "blue",
+                                    color: "emerald",
                                 }} />
                         )}
 
+                    {autoTreinoStatus === 'subscription_active' && (
                         <SettingsActionCard
-                            icon={Bell}
-                            title="NOTIFICAÇÕES PUSH"
-                            subtitle="RECEBA ALERTAS DE TREINOS E DIETAS"
-                            actionLabel={notifications === 'on' ? 'CONFIGURAR' : 'ATIVAR'}
-                            buttonVariant="outline-orange"
-                            actionIcon={Bell}
+                            icon={Crown}
+                            title="AUTO-TREINO ATIVO"
+                            subtitle="VOCÊ POSSUI ACESSO TOTAL ÀS FUNCIONALIDADES"
+                            actionLabel="GERENCIAR"
+                            actionIcon={CheckCircle2}
+                            buttonVariant="outline-emerald"
                             onAction={() => {
                                 setIsOpen(false)
-                                setIsNotificationModalOpen(true)
+                                router.push('/dashboard/student/profile')
                             }}
                             {...{
-                                color: "orange",
+                                color: "emerald",
                             }} />
+                    )}
 
-                        {!isTrainer && !hasTrainer && (
-                            <>
-                                {autoTreinoStatus === 'available' && (
-                                    <SettingsActionCard
-                                        icon={Zap}
-                                        surfaceVariant="glass"
-                                        title="TESTE GRÁTIS DISPONÍVEL"
-                                        subtitle="EXPERIMENTE POR 7 DIAS SEM CUSTOS"
-                                        actionLabel="HABILITAR"
-                                        buttonVariant="outline-emerald"
-                                        actionIcon={Zap}
-                                        onAction={enableAutoTrainingTrial}
-                                        {...{
-                                            color: "emerald",
-                                        }} />
-                                )}
-
-                                {autoTreinoStatus === 'subscription_active' && (
-                                    <SettingsActionCard
-                                        icon={Crown}
-                                        title="AUTO-TREINO ATIVO"
-                                        subtitle="VOCÊ POSSUI ACESSO TOTAL ÀS FUNCIONALIDADES"
-                                        actionLabel="GERENCIAR"
-                                        actionIcon={CheckCircle2}
-                                        buttonVariant="outline-emerald"
-                                        onAction={() => {
-                                            setIsOpen(false)
-                                            router.push('/dashboard/student/profile')
-                                        }}
-                                        {...{
-                                            color: "emerald",
-                                        }} />
-                                )}
-
-                                {autoTreinoStatus === 'trial_active' && (
-                                    <SettingsActionCard
-                                        icon={Clock}
-                                        title="TESTE EM ANDAMENTO"
-                                        subtitle={`VOCÊ TEM ${daysRemaining} DIAS RESTANTES`}
-                                        actionLabel="ATIVO"
-                                        actionIcon={CheckCircle2}
-                                        buttonVariant="outline-emerald"
-                                        onAction={() => { }}
-                                        disabled
-                                        {...{
-                                            color: "emerald",
-                                        }} />
-                                )}
-
-                                {autoTreinoStatus === 'used' && (
-                                    <SettingsActionCard
-                                        icon={Zap}
-                                        surfaceVariant="glass"
-                                        title="TESTE INDISPONÍVEL"
-                                        subtitle="VOCÊ JÁ UTILIZOU SEU PERÍODO DE TESTE"
-                                        actionLabel="ASSINAR"
-                                        buttonVariant="outline-zinc"
-                                        actionIcon={CreditCard}
-                                        onAction={() => {
-                                            setIsOpen(false)
-                                            window.dispatchEvent(new CustomEvent('open-asaas', { detail: { tier: 'auto_training' } }))
-                                        }}
-                                        {...{
-                                            color: "zinc",
-                                        }} />
-                                )}
-                            </>
-                        )}
-
+                    {autoTreinoStatus === 'trial_active' && (
                         <SettingsActionCard
-                            icon={Trash2}
-                            title="ZONA CRÍTICA"
-                            subtitle="AÇÃO IRREVERSÍVEL E PERMANENTE"
-                            actionLabel="DELETAR"
-                            buttonVariant="outline-red"
-                            actionIcon={Trash2}
+                            icon={Clock}
+                            title="TESTE EM ANDAMENTO"
+                            subtitle={`VOCÊ TEM ${daysRemaining} DIAS RESTANTES`}
+                            actionLabel="ATIVO"
+                            actionIcon={CheckCircle2}
+                            buttonVariant="outline-emerald"
+                            onAction={() => { }}
+                            disabled
+                            {...{
+                                color: "emerald",
+                            }} />
+                    )}
+
+                    {autoTreinoStatus === 'used' && (
+                        <SettingsActionCard
+                            icon={Zap}
+                            surfaceVariant="glass"
+                            title="TESTE INDISPONÍVEL"
+                            subtitle="VOCÊ JÁ UTILIZOU SEU PERÍODO DE TESTE"
+                            actionLabel="ASSINAR"
+                            buttonVariant="outline-zinc"
+                            actionIcon={CreditCard}
                             onAction={() => {
                                 setIsOpen(false)
-                                setIsDeleteModalOpen(true)
+                                window.dispatchEvent(new CustomEvent('open-asaas', { detail: { tier: 'auto_training' } }))
                             }}
                             {...{
-                                color: "red",
+                                color: "zinc",
                             }} />
+                    )}
+                    </>
+                )}
 
-                    </Stack>
-                </Box>
-            </Modal>
-            {/* Confirmation Modals */}
-            <Modal
-                isOpen={isPwaModalOpen}
-                onClose={() => setIsPwaModalOpen(false)}
-                title="INSTALAR APLICATIVO"
-                subtitle="Tenha o RepTrail sempre com você."
-                icon={Download}
-                variant="emerald"
-                confirmLabel="INSTALAR AGORA"
-                onConfirm={() => {
-                    toast({ title: "Instalando...", description: "O aplicativo está sendo instalado no seu dispositivo." })
-                    setPwaInstalled(true)
-                    setIsPwaModalOpen(false)
-                }}
+                    <SettingsActionCard
+                        icon={Trash2}
+                        title="ZONA CRÍTICA"
+                        subtitle="AÇÃO IRREVERSÍVEL E PERMANENTE"
+                        actionLabel="DELETAR"
+                        buttonVariant="outline-red"
+                        actionIcon={Trash2}
+                        onAction={() => {
+                            setIsOpen(false)
+                            setIsDeleteModalOpen(true)
+                        }}
+                        {...{
+                            color: "red",
+                        }} />
+
+                </Stack>
+            </Box>
+        </Modal >
+        {/* Confirmation Modals */ }
+        < Modal
+    isOpen = { isPwaModalOpen }
+    onClose = {() => setIsPwaModalOpen(false)
+}
+title = "INSTALAR APLICATIVO"
+subtitle = "Tenha o RepTrail sempre com você."
+icon = { Download }
+variant = "emerald"
+confirmLabel = "INSTALAR AGORA"
+onConfirm = {() => {
+    toast({ title: "Instalando...", description: "O aplicativo está sendo instalado no seu dispositivo." })
+    setPwaInstalled(true)
+    setIsPwaModalOpen(false)
+}}
             >
-                <Font
-                    variant="body-sm"
-                    {...{
-                        color: STORE_TOKENS.COLORS.TEXT.DIM,
-                    }}>
-                    Ao instalar o PWA, você terá acesso rápido ao RepTrail direto da tela inicial do seu celular, com carregamento mais rápido e experiência de aplicativo nativo.
-                </Font>
-            </Modal>
+    <Font
+        variant="body-sm"
+        {...{
+            color: STORE_TOKENS.COLORS.TEXT.DIM,
+        }}>
+        Ao instalar o PWA, você terá acesso rápido ao RepTrail direto da tela inicial do seu celular, com carregamento mais rápido e experiência de aplicativo nativo.
+    </Font>
+            </Modal >
             <Modal
                 isOpen={isNotificationModalOpen}
                 onClose={() => {

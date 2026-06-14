@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { Box } from '@/components/store/base/box'
-import { RegistryColor, useRegistry } from './registry-context'
+import { RegistryColor, useRegistry } from '@/components/store/base/registry-context'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { BackgroundEffects } from '@/components/store/base/background-effects'
 

@@ -3,7 +3,7 @@ import { Surface } from '@/components/store/base/surface'
 import { BackgroundEffects } from '@/components/store/base/background-effects'
 import { Box } from '@/components/store/base/box'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
-import { RegistryProvider } from '@/components/store/advanced/registry-context'
+import { RegistryProvider } from '@/components/store/base/registry-context'
 
 interface PublicProfileShellProps {
     children: React.ReactNode

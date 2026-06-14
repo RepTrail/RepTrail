@@ -82,6 +82,8 @@ export function RegistryProvider({
     `
   }, [primaryColor])
 
+  console.log('RegistryProvider render, primaryColor:', primaryColor)
+
   return (
     <RegistryContext.Provider value={{
       primaryColor,
@@ -108,6 +110,7 @@ function hexToRgb(hex: string) {
 export function useRegistry() {
   const context = useContext(RegistryContext)
   if (!context) {
+    console.warn('useRegistry called without RegistryProvider!')
     return {
       primaryColor: 'zinc' as RegistryColor,
       setPrimaryColor: () => {},

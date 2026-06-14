@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils'
 import { GlassPanel } from './surface'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { Box } from './box'
-import { useRegistry } from '@/components/store/advanced/registry-context'
+import { useRegistry } from '@/components/store/base/registry-context'
 
 export type SwitchOption = {
     label: string

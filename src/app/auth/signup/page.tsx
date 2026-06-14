@@ -1,12 +1,11 @@
 'use client'
 
-import { RegistryProvider } from '@/components/store/advanced/registry-context'
 import { AuthSignupSection } from '@/components/store/sections/auth-signup-section'
 import Script from 'next/script'
 
 export default function SignupPage() {
     return (
-        <RegistryProvider>
+        <>
             <Script id="meta-pixel-signup" strategy="afterInteractive">
                 {`
                     !function(f,b,e,v,n,t,s)
@@ -29,6 +28,6 @@ export default function SignupPage() {
                     <img height="1" width="1" src="https://www.facebook.com/tr?id=795120573646319&ev=PageView&noscript=1" />
                 </span>
             </noscript>
-        </RegistryProvider>
+        </>
     )
 }

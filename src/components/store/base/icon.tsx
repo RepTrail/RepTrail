@@ -3,7 +3,7 @@ import { STORE_TOKENS } from '@/components/store/constants/tokens';
 import React from 'react'
 import { LucideIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { useRegistry } from '@/components/store/advanced/registry-context'
+import { useRegistry } from '@/components/store/base/registry-context'
 
 interface IconProps {
   icon: LucideIcon

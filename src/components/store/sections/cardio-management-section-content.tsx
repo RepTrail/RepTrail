@@ -24,7 +24,7 @@ interface CardioManagementSectionContentProps {
 /**
  * CardioManagementSectionContent: Grid of premium cardio cards.
  */
-export function CardioManagementSectionContent({ 
+export function CardioManagementSectionContent({
     userId = 'mock-id',
     cardios,
     students = [],
@@ -105,18 +105,18 @@ export function CardioManagementSectionContent({
                 break
             case 'assign_cardio':
                 if (data?.selectedDays && Array.isArray(data.selectedDays)) {
-                    assignMutation({ 
-                        cardioId: actionModal.data.id, 
-                        studentId: mode === 'trainer' ? data.student_id : userId, 
-                        daysOfWeek: data.selectedDays 
+                    assignMutation({
+                        cardioId: actionModal.data.id,
+                        studentId: mode === 'trainer' ? data.student_id : userId,
+                        daysOfWeek: data.selectedDays
                     })
                 }
                 break
             case 'edit_cardio':
-                updateMutation({ 
-                    id: actionModal.data.id, 
+                updateMutation({
+                    id: actionModal.data.id,
                     name: data?.name || actionModal.data.name,
-                    description: data?.description || actionModal.data.description,
+                    description: data?.description || actionModal.data?.description,
                     duration: data?.duration || actionModal.data.duration_minutes,
                     intensity: data?.intensity || actionModal.data.suggested_intensity,
                     userId
@@ -124,10 +124,10 @@ export function CardioManagementSectionContent({
                 if (data?.selectedDays && data.selectedDays.length > 0) {
                     const targetStudentId = mode === 'trainer' ? data.student_id : userId
                     if (targetStudentId) {
-                        assignMutation({ 
-                            cardioId: actionModal.data.id, 
-                            studentId: targetStudentId, 
-                            daysOfWeek: data.selectedDays 
+                        assignMutation({
+                            cardioId: actionModal.data.id,
+                            studentId: targetStudentId,
+                            daysOfWeek: data.selectedDays
                         })
                     }
                 }
@@ -136,7 +136,7 @@ export function CardioManagementSectionContent({
                 if (data?.name) {
                     createMutation({
                         name: data.name,
-                        description: data.description,
+                        description: data?.description,
                         duration: data.duration,
                         intensity: data.intensity,
                         daysOfWeek: data.selectedDays,
@@ -161,10 +161,10 @@ export function CardioManagementSectionContent({
 
     const openAction = (type: RegistryActionType, data?: any) => {
         const selectedDays = (data.assigned_cardios || []).map((a: any) => a.day_of_week)
-        setActionModal({ 
-            isOpen: true, 
-            type, 
-            data: { ...data, selectedDays } 
+        setActionModal({
+            isOpen: true,
+            type,
+            data: { ...data, selectedDays }
         })
     }
 
@@ -172,7 +172,7 @@ export function CardioManagementSectionContent({
 
     if (isEmpty || !cardios || cardios.length === 0) {
         return (
-            <EmptyState 
+            <EmptyState
                 icon={Activity}
                 title="SEM CARDIOS"
                 description={
@@ -233,7 +233,7 @@ export function CardioManagementSectionContent({
                         <ManagementCardPremium
                             key={cardio.id || idx}
                             title={cardio.name.toUpperCase()}
-                            description={cardio.description || (mode === 'trainer' ? 'Sem descrição disponível.' : 'Protocolo oficial de cardio.')}
+                            description={cardio?.description || (mode === 'trainer' ? 'Sem descrição disponível.' : 'Protocolo oficial de cardio.')}
                             days={assignedDays}
                             assignedStudents={assignedStudents}
                             mainStat={{ label: 'MINUTOS', value: cardio.duration_minutes || 0 }}
@@ -260,5 +260,6 @@ export function CardioManagementSectionContent({
                 students={students}
             />
         </>
+
     );
 }

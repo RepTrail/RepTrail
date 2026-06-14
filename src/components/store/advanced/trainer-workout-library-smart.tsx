@@ -8,7 +8,7 @@ import { useQuery } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { getTrainerWorkouts } from '@/lib/dal/remote'
 import { useRealtimeSync } from '@/hooks/use-realtime-sync'
-import { WorkoutManagementSectionContent } from '@/components/store/sections/workout-management-section-content'
+import { WorkoutManagementList } from '@/components/store/advanced/workout-management-list'
 
 interface TrainerWorkoutLibrarySmartProps {
     userId: string
@@ -42,7 +42,7 @@ export function TrainerWorkoutLibrarySmart({ userId, betaTesterMode = false }: T
         <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
 
             <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
-                <WorkoutManagementSectionContent
+                <WorkoutManagementList
                     userId={userId}
                     workouts={workouts}
                     mode="trainer"

@@ -2,7 +2,7 @@
 import { STORE_TOKENS } from '@/components/store/constants/tokens';
 
 import React from 'react'
-import { EmptyState404 } from '@/components/store/advanced/empty-state-404'
+import { EmptyState404 } from '@/components/store/intermediary/empty-state-404'
 import { Box } from '@/components/store/base/box'
 
 export default function NotFound() {

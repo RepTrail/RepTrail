@@ -20,7 +20,7 @@ function ProgressLocal({ value }: { value: number }) {
         <GlassPanel
             padding={STORE_TOKENS.PADDING.NONE}
             fullWidth
-            height={8}
+            height="8px"
             variant="glass"
             rounded={STORE_TOKENS.RADIUS.FULL}
             overflow="hidden"

@@ -29,20 +29,20 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
     const [open, setOpen] = useState(false)
 
     const drawImageCover = (ctx: CanvasRenderingContext2D, img: HTMLImageElement, x: number, y: number, w: number, h: number) => {
-        const imgRatio = img.width / img.height
+        const imgRatio = img.width / img?.height
         const targetRatio = w / h
         let sWidth, sHeight, sx, sy
 
         if (imgRatio > targetRatio) {
-            sHeight = img.height
-            sWidth = img.height * targetRatio
+            sHeight = img?.height
+            sWidth = img?.height * targetRatio
             sx = (img.width - sWidth) / 2
             sy = 0
         } else {
             sWidth = img.width
             sHeight = img.width / targetRatio
             sx = 0
-            sy = (img.height - sHeight) / 2
+            sy = (img?.height - sHeight) / 2
         }
         ctx.save()
         // Round corners for photos
@@ -446,7 +446,7 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
                                 overflow="hidden"
                                 transition
                                 group
-                                style={{ aspectRatio: '9/16', borderStyle: 'solid' }}
+                                aspectRatio="9/16"
                                 {...({ disabled: isGenerating } as any)}
                             >
                                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
@@ -491,7 +491,6 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
                                 overflow="hidden"
                                 transition
                                 group
-                                style={{ borderStyle: 'solid' }}
                                 {...({ disabled: isGenerating } as any)}
                             >
                                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
@@ -530,7 +529,6 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
                             padding={STORE_TOKENS.PADDING.CONTAINER}
                             position="relative"
                             overflow="hidden"
-                            style={{ borderStyle: 'solid' }}
                         >
                             <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                                 <Font
@@ -567,12 +565,8 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
                             display="flex"
                             align="center"
                             justify="center"
-                            style={{
-                                height: '400px',
-                                margin: '0 auto',
-                                borderStyle: 'solid',
-                                aspectRatio: currentFormat === 'story' ? '9/16' : '1/1'
-                            }}
+                            height="400px"
+                            aspectRatio={currentFormat === 'story' ? 'portrait' : 'square'}
                         >
                             <Img
                                 src={previewUrl}
@@ -631,9 +625,7 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
             </Modal>
             <canvas
                 ref={canvasRef}
-                {...{
-                    style: { display: 'none' },
-                }} />
+                hidden />
         </>
     );
 }

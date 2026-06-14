@@ -4,7 +4,7 @@ import { GlassPanel } from '@/components/store/base/surface';
 import { Font } from '@/components/store/base/font';
 import { Box } from '@/components/store/base/box';
 import { STORE_TOKENS } from '@/components/store/constants/tokens';
-import { useRegistry, RegistryColor } from '@/components/store/advanced/registry-context';
+import { useRegistry, RegistryColor } from '@/components/store/base/registry-context';
 import { User } from 'lucide-react';
 import { UploaderStatusCard } from './UploaderStatusCard';
 

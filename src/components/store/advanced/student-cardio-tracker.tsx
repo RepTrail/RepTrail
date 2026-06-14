@@ -5,7 +5,6 @@ import { Stack } from '@/components/store/base/stack'
 import { CardioTimerCard } from '@/components/store/intermediary/cardio-timer-card'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { Activity, ChevronLeft, ChevronRight } from 'lucide-react'
-import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { useQuery } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { actions } from '@/lib/dal'
@@ -215,36 +214,24 @@ export function StudentCardioTracker({ userId }: StudentCardioTrackerProps) {
     }
 
     if (isLoading) return (
-        <RegistrySection
-            title="CARDIO DE HOJE"
-            subtitle="Monitoramento de atividades aeróbicas e cronômetros."
-            icon={Activity}
-        >
-            <Surface height={192} bg="zinc" bgOpacity={50} rounded={STORE_TOKENS.RADIUS.SYSTEM} animation="pulse"><span /></Surface>
-        </RegistrySection>
+        <Surface height="192px" bg="zinc" bgOpacity={50} rounded={STORE_TOKENS.RADIUS.SYSTEM} animation="pulse"><span /></Surface>
     )
 
     if (!cardios || cardios.length === 0) {
         return (
-            <RegistrySection
-                title="CARDIO DE HOJE"
-                subtitle="Monitoramento de atividades aeróbicas e cronômetros."
-                icon={Activity}
-            >
-                <CardioTimerCard
-                    title="SEM CARDIO"
-                    duration="0 MIN"
-                    intensity="N/A"
-                    remainingTime="00:00"
-                    estimatedBurn="0"
-                    status="empty"
-                    isRunning={false}
-                    progress={0}
-                    onPlay={() => { }}
-                    onPause={() => { }}
-                    onStop={() => { }}
-                />
-            </RegistrySection>
+            <CardioTimerCard
+                title="SEM CARDIO"
+                duration="0 MIN"
+                intensity="N/A"
+                remainingTime="00:00"
+                estimatedBurn="0"
+                status="empty"
+                isRunning={false}
+                progress={0}
+                onPlay={() => { }}
+                onPause={() => { }}
+                onStop={() => { }}
+            />
         )
     }
 
@@ -266,23 +253,17 @@ export function StudentCardioTracker({ userId }: StudentCardioTrackerProps) {
     const progress = Math.min((seconds / (targetMinutes * 60)) * 100, 100)
 
     return (
-        <RegistrySection
-            title="CARDIO DE HOJE"
-            subtitle="Monitoramento de atividades aeróbicas e cronômetros."
-            icon={Activity}
-            rightElement={
-                cardios.length > 1 && status === 'idle' ? (
-                    <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        <Button variant="outline-zinc" isIconOnly size="sm" onClick={prev}>
-                            <Icon icon={ChevronLeft} size="xs" />
-                        </Button>
-                        <Button variant="outline-zinc" isIconOnly size="sm" onClick={next}>
-                            <Icon icon={ChevronRight} size="xs" />
-                        </Button>
-                    </Stack>
-                ) : undefined
-            }
-        >
+        <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+            {cardios.length > 1 && status === 'idle' && (
+                <Stack direction="row" justify="end" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                    <Button variant="outline-zinc" isIconOnly size="sm" onClick={prev}>
+                        <Icon icon={ChevronLeft} size="xs" />
+                    </Button>
+                    <Button variant="outline-zinc" isIconOnly size="sm" onClick={next}>
+                        <Icon icon={ChevronRight} size="xs" />
+                    </Button>
+                </Stack>
+            )}
             <CardioTimerCard
                 title={currentCardio.cardio?.name?.toUpperCase() || currentCardio.name?.toUpperCase() || 'ATIVIDADE AERÓBICA'}
                 duration={`${displayMinutes} MIN`}
@@ -316,6 +297,6 @@ export function StudentCardioTracker({ userId }: StudentCardioTrackerProps) {
                     Você realizou {Math.floor(seconds / 60)} minuto(s) de atividade. Ao encerrar agora, o progresso será salvo proporcionalmente.
                 </Font>
             </Modal>
-        </RegistrySection>
+        </Stack>
     );
 }

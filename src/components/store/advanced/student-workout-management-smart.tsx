@@ -7,7 +7,7 @@ import { QUERY_KEYS } from '@/lib/query-keys'
 import { getAssignedWorkouts, getTrainerWorkouts } from '@/lib/dal/remote'
 import { getStudentProfile, getStudentTrainer } from '@/lib/dal/remote'
 import { useRealtimeSync } from '@/hooks/use-realtime-sync'
-import { WorkoutManagementSectionContent } from '@/components/store/sections/workout-management-section-content'
+import { WorkoutManagementList } from '@/components/store/advanced/workout-management-list'
 
 interface StudentWorkoutManagementSmartProps {
     userId: string
@@ -97,7 +97,7 @@ export function StudentWorkoutManagementSmart({ userId }: StudentWorkoutManageme
         <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
 
             <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
-                <WorkoutManagementSectionContent
+                <WorkoutManagementList
                     userId={userId}
                     workouts={displayWorkouts}
                     mode={isAutoMode ? 'auto' : 'personal'}

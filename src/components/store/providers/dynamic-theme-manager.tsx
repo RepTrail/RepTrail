@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import { useRegistry } from '@/components/store/advanced/registry-context'
+import { useRegistry } from '@/components/store/base/registry-context'
 
 export function DynamicThemeManager() {
   const { primaryColor } = useRegistry()

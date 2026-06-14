@@ -10,7 +10,7 @@ import { Icon } from '@/components/store/base/icon'
 import { Box } from '@/components/store/base/box'
 import { Divider } from '@/components/store/base/layout'
 import { Lock, ArrowRight } from 'lucide-react'
-import { useRegistry } from '@/components/store/advanced/registry-context'
+import { useRegistry } from '@/components/store/base/registry-context'
 import { translateAuthError } from '@/lib/auth-errors'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 

@@ -9,9 +9,9 @@ import { Font } from '@/components/store/base/font'
 import { Button } from '@/components/store/base/button'
 import { Badge } from '@/components/store/base/badge'
 import { Icon, IconBox } from '@/components/store/base/icon'
-import { useRegistry } from '@/components/store/advanced/registry-context'
+import { useRegistry } from '@/components/store/base/registry-context'
 import { fbqEvent } from '@/lib/meta-pixel'
-import { LandingSection } from '@/components/store/advanced/landing-section'
+import { LandingSection } from '@/components/store/intermediary/landing-section'
 import {
   ArrowRight, Users, Trophy, Star, ShieldCheck, CheckCircle2,
   Search, Zap, Smartphone, Dumbbell, Megaphone,

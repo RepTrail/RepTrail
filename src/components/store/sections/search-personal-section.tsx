@@ -2,8 +2,9 @@
 
 import { useState } from 'react'
 import { searchTrainers } from '@/lib/dal/remote'
-import { Search, Trophy } from 'lucide-react'
 import { Stack } from '@/components/store/base/stack'
+import { Search, Trophy } from 'lucide-react'
+import { useRegistry } from '@/components/store/base/registry-context'
 import { Surface } from '@/components/store/base/surface'
 import { Box } from '@/components/store/base/box'
 import { Grid } from '@/components/store/base/grid'
@@ -23,6 +24,13 @@ export function SearchPersonalSection() {
         region: '',
         specialty: '',
         sortBy: 'rating' as any
+    })
+
+    const { setPrimaryColor } = useRegistry()
+
+    // Forces orange theme to match student dashboard style
+    useState(() => {
+        setPrimaryColor('orange')
     })
 
     const { data: trainers = [], isLoading: loading } = useQuery({

@@ -1,7 +1,7 @@
 'use client'
 import React from 'react'
 import { cn } from '@/lib/utils'
-import { useRegistry } from '@/components/store/advanced/registry-context'
+import { useRegistry } from '@/components/store/base/registry-context'
 
 export type SpacingToken = 'container' | 'element' | 'section' | 'empty_state' | 'tiny' | 'none' | 'dashboard_pc' | 'safe_area' | 'title-content' | 'header-gap'
 

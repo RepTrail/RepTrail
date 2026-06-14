@@ -56,7 +56,7 @@ export async function generateAIProtocol(preferences: AIProtocolPreferences) {
   const multiplier = activityMultipliers[details?.activity_level || ''] || 1.55
   const tdee = Math.round(bmr * multiplier)
 
-  const goal = preferences.goal || details?.goal || 'maintenance'
+  const goal = preferences?.goal || details?.goal || 'maintenance'
   const caloricAdjustment = goal === 'cutting' ? -400
     : goal === 'bulking' ? +400 : 0
   const targetCalories = tdee + caloricAdjustment
@@ -81,7 +81,7 @@ export async function generateAIProtocol(preferences: AIProtocolPreferences) {
 Você é um Personal Trainer e Nutricionista de elite. Crie um protocolo completo e individualizado baseado nos dados abaixo.
 
 ## DADOS DO ATLETA
-- Nome: ${profileData.full_name || 'Atleta'}
+- Nome: ${profileData?.full_name || 'Atleta'}
 - Peso: ${weight}kg | Altura: ${height}cm | BF: ${bf}%
 - Massa Magra: ${lbm.toFixed(1)}kg
 - TMB (Katch-McArdle): ${bmr} kcal

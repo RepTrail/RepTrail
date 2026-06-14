@@ -34,7 +34,7 @@ export function WorkoutFinishedState({
     return (
         <Stack align="center" justify="center" padding={STORE_TOKENS.PADDING.CONTAINER} gap={STORE_TOKENS.SPACING.CONTAINER} flex1>
             <Box position="relative">
-                <Box position="absolute" pin="inset" bg={STORE_TOKENS.COLORS.SUCCESS} bgOpacity={STORE_TOKENS.OPACITY.MEDIUM} rounded={STORE_TOKENS.RADIUS.FULL} style={{ filter: 'blur(40px)' }} />
+                <Box position="absolute" pin="inset" bg={STORE_TOKENS.COLORS.SUCCESS} bgOpacity={STORE_TOKENS.OPACITY.MEDIUM} rounded={STORE_TOKENS.RADIUS.FULL} />
                 <Surface variant="glass" border="standard" padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.FULL}>
                     <Box>
                         <Icon icon={CheckCircle} size="lg" color={STORE_TOKENS.COLORS.SUCCESS} />

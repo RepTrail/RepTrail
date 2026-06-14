@@ -29,7 +29,7 @@ import {
   LayoutDashboard,
   LucideIcon
 } from 'lucide-react'
-import { useRegistry } from '@/components/store/advanced/registry-context'
+import { useRegistry } from '@/components/store/base/registry-context'
 import { SegmentedSwitch } from '@/components/store/intermediary/segmented-switch'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { AdminSectionContent } from '../sections/admin-section-content'
@@ -117,7 +117,7 @@ export function RegistryMain({
             variant={primaryColor as any}
             icon={IconComp}
             title="Em Breve"
-            description={`A seção ${activeTab.toUpperCase()} está sendo preparada para o sistema RepTrail.`}          />
+            description={`A seção ${activeTab.toUpperCase()} está sendo preparada para o sistema RepTrail.`} />
         )
     }
   }
@@ -155,41 +155,43 @@ export function RegistryMain({
               <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                 <Font variant="h1">
                   {firstPart ? (
-                    <>
-                      {firstPart} <Font variant="h1" {...{ color: primaryColor }}>{lastWord}</Font>
-                    </>
-                  ) : (
-                    lastWord
+                    <>{firstPart} <Font variant="h1" {...{ color: primaryColor as any }}>{lastWord}</Font></>
+                ) : (
+                lastWord
                   )}
-                </Font>
-                <Font variant="description">{subtitle}</Font>
-              </Stack>
+              </Font>
+              <Font variant="description">{subtitle}</Font>
             </Stack>
-            
-            {rightElement && (
-              <Box display="flex" fullWidth={{ base: true, md: false }}>
-                {rightElement}
-              </Box>
-            )}
           </Stack>
-        )}
 
-        {/* Tab Navigation System (Pill Style with Contextual Colors) */}
-        {showTabs && (
+      {rightElement && (
+          <Box display="flex" fullWidth={{ base: true, md: false }}>
+            {rightElement}
+          </Box>
+        )}
+      </Stack>
+      )
+}
+
+      {/* Tab Navigation System (Pill Style with Contextual Colors) */}
+      {
+        showTabs && (
           <SegmentedSwitch
             options={tabs}
             activeId={activeTab}
             onSelect={setActiveTab}
           />
-        )}
+        )
+      }
 
-        {/* Content Sections */}
-        <Stack flex1 gap={noPadding ? undefined : { base: STORE_TOKENS.SPACING.EMPTY_STATE as any, md: STORE_TOKENS.SPACING.SECTION as any }} fullWidth>
-          {renderContent()}
-        </Stack>
+      {/* Content Sections */}
+      <Stack flex1 gap={noPadding ? undefined : { base: STORE_TOKENS.SPACING.EMPTY_STATE as any, md: STORE_TOKENS.SPACING.SECTION as any }} fullWidth>
+        {renderContent()}
+      </Stack>
 
-        {/* Footer Area - Upgraded to Liquid Glass */}
-        {!hideFooter && (
+      {/* Footer Area - Upgraded to Liquid Glass */}
+      {
+        !hideFooter && (
           <Box shrink={0}>
             <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER}>
               <Inline justify="between">
@@ -201,8 +203,9 @@ export function RegistryMain({
               </Inline>
             </GlassPanel>
           </Box>
-        )}
-      </Stack>
-    </Scaffold>
+        )
+      }
+    </Stack >
+    </Scaffold >
   );
 }

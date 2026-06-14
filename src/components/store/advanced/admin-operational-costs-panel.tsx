@@ -9,7 +9,6 @@ import { Icon } from '@/components/store/base/icon'
 import { Button } from '@/components/store/base/button'
 import { Badge } from '@/components/store/base/badge'
 import { Inline } from '@/components/store/base/layout'
-import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { Modal } from '@/components/store/advanced/modal'
 import { actions } from '@/lib/dal'
 import { useToast } from '@/hooks/use-toast'
@@ -48,7 +47,7 @@ export function AdminOperationalCostsPanel({ initialCosts }: { initialCosts: Ope
     const [isEditModalOpen, setIsEditModalOpen] = useState(false)
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
     const [selectedCost, setSelectedCost] = useState<OperationalCost | null>(null)
-    
+
     // Form state
     const [description, setDescription] = useState('')
     const [amount, setAmount] = useState('')
@@ -144,7 +143,7 @@ export function AdminOperationalCostsPanel({ initialCosts }: { initialCosts: Ope
 
     function openEditModal(cost: OperationalCost) {
         setSelectedCost(cost)
-        setDescription(cost.description)
+        setDescription(cost?.description)
         setAmount(cost.amount.toString())
         setType(cost.type)
         setIsEditModalOpen(true)
@@ -153,11 +152,12 @@ export function AdminOperationalCostsPanel({ initialCosts }: { initialCosts: Ope
     const totalMonthly = costs.reduce((sum, c) => sum + Number(c.amount), 0)
 
     return (
-        <RegistrySection
-            title="Custos Operacionais"
-            subtitle="Infraestrutura e operação mensal da plataforma."
-            icon={TrendingDown}
-            rightElement={
+        <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+            <Stack direction="row" justify="between" align="center">
+                <Stack gap={STORE_TOKENS.SPACING.NONE}>
+                    <Font variant="h3" weight="black" color="primary">Custos Operacionais</Font>
+                    <Font variant="body-sm" color="zinc-400">Infraestrutura e operação mensal da plataforma.</Font>
+                </Stack>
                 <Stack direction="row" justify="end" align="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
                     <Badge
                         label={`R$ ${totalMonthly.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} / mês`}
@@ -182,34 +182,33 @@ export function AdminOperationalCostsPanel({ initialCosts }: { initialCosts: Ope
                         </Stack>
                     </Button>
                 </Stack>
-            }
-        >
+            </Stack>
             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                 {costs.map((cost) => {
                     const badgeColor = cost.type === 'fixed' ? STORE_TOKENS.COLORS.INFO : STORE_TOKENS.COLORS.BRAND;
                     return (
-                    <ActionableListCard
-                        key={cost.id}
-                        badges={
-                            <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                                <Badge
-                                    label={new Date(cost.created_at).toLocaleDateString('pt-BR')}
-                                    variant="glass"
-                                    size="xs"
-                                    rounded={STORE_TOKENS.RADIUS.SYSTEM}
-                                />
-                                <Badge
-                                    label={cost.type === 'fixed' ? 'Fixo' : 'Variável'}
-                                    variant="glass"
-                                    color={badgeColor}
-                                    size="xs"
-                                    rounded={STORE_TOKENS.RADIUS.SYSTEM}
-                                />
-                            </Inline>
-                        }
-                        actions={
-                            <>
-                                <ActionIconButton
+                        <ActionableListCard
+                            key={cost.id}
+                            badges={
+                                <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                                    <Badge
+                                        label={new Date(cost.created_at).toLocaleDateString('pt-BR')}
+                                        variant="glass"
+                                        size="xs"
+                                        rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                                    />
+                                    <Badge
+                                        label={cost.type === 'fixed' ? 'Fixo' : 'Variável'}
+                                        variant="glass"
+                                        color={badgeColor}
+                                        size="xs"
+                                        rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                                    />
+                                </Inline>
+                            }
+                            actions={
+                                <>
+                                    <ActionIconButton
                                     icon={Edit3}
                                     variant="outline-blue"
                                     onClick={() => openEditModal(cost)}
@@ -219,53 +218,55 @@ export function AdminOperationalCostsPanel({ initialCosts }: { initialCosts: Ope
                                     variant="outline-red"
                                     onClick={() => openDeleteModal(cost)}
                                 />
-                            </>
-                        }
-                    >
-                        <Inline gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
-                            <CircleIcon
-                                icon={TrendingDown}
-                                size="sm"
-                                color={cost.type === 'fixed' ? 'blue' : 'orange'}
-                            />
-                            <Stack gap={STORE_TOKENS.SPACING.NONE} minWidth={0}>
-                                <Font
-                                    weight="black"
-                                    uppercase
-                                    italic
-                                    variant={{ base: 'body-sm', md: 'body' }}
-                                    tracking="wider"
-                                    truncate
-                                    {...{
-                                        color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
-                                    }}>
-                                    {cost.description}
-                                </Font>
-                                <Box fullWidth minWidth={0} overflow="hidden">
+                                </>
+                            }
+                        >
+                            <Inline gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
+                                <CircleIcon
+                                    icon={TrendingDown}
+                                    size="sm"
+                                    color={cost.type === 'fixed' ? 'blue' : 'orange'}
+                                />
+                                <Stack gap={STORE_TOKENS.SPACING.NONE} minWidth={0}>
                                     <Font
-                                        variant="sub-tiny"
+                                        weight="black"
                                         uppercase
-                                        tracking="widest"
+                                        italic
+                                        variant={{ base: 'body-sm', md: 'body' }}
+                                        tracking="wider"
+                                        truncate
                                         {...{
-                                            color: STORE_TOKENS.COLORS.TEXT.DIM,
+                                            color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
                                         }}>
-                                        - R$ {Number(cost.amount).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                                        {cost?.description}
                                     </Font>
-                                </Box>
-                            </Stack>
-                        </Inline>
-                    </ActionableListCard>
+                                    <Box fullWidth minWidth={0} overflow="hidden">
+                                        <Font
+                                            variant="sub-tiny"
+                                            uppercase
+                                            tracking="widest"
+                                            {...{
+                                                color: STORE_TOKENS.COLORS.TEXT.DIM,
+                                            }}>
+                                            - R$ {Number(cost.amount).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                                        </Font>
+                                    </Box>
+                                </Stack>
+                            </Inline>
+                        </ActionableListCard>
                     );
                 })}
 
-                {costs.length === 0 && (
-                    <EmptyState
-                        icon={TrendingDown}
-                        title="Sem Custos"
-                        description="Nenhum custo operacional cadastrado no momento."
-                    />
-                )}
-            </Stack>
+                {
+                    costs.length === 0 && (
+                        <EmptyState
+                            icon={TrendingDown}
+                            title="Sem Custos"
+                            description="Nenhum custo operacional cadastrado no momento."
+                        />
+                    )
+                }
+            </Stack >
             <Modal
                 isOpen={isAddModalOpen}
                 onClose={() => setIsAddModalOpen(false)}
@@ -276,7 +277,7 @@ export function AdminOperationalCostsPanel({ initialCosts }: { initialCosts: Ope
                 onConfirm={handleAddCost}
                 variant="red"
             >
-                <OperationalCostForm 
+                <OperationalCostForm
                     description={description} setDescription={setDescription}
                     amount={amount} setAmount={setAmount}
                     type={type} setType={setType}
@@ -292,7 +293,7 @@ export function AdminOperationalCostsPanel({ initialCosts }: { initialCosts: Ope
                 onConfirm={handleEditCost}
                 variant="blue"
             >
-                <OperationalCostForm 
+                <OperationalCostForm
                     description={description} setDescription={setDescription}
                     amount={amount} setAmount={setAmount}
                     type={type} setType={setType}
@@ -316,6 +317,6 @@ export function AdminOperationalCostsPanel({ initialCosts }: { initialCosts: Ope
                     Esta ação não pode ser desfeita e removerá o registro permanentemente do sistema.
                 </Font>
             </Modal>
-        </RegistrySection>
+        </Stack>
     );
 }

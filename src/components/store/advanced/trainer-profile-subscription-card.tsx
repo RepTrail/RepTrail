@@ -68,8 +68,8 @@ export function TrainerProfileSubscriptionCard({ hasActiveSubscription = false }
                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                         <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                             <Box
-                                width={6}
-                                height={6}
+                                width="6px"
+                                height="6px"
                                 rounded={STORE_TOKENS.RADIUS.FULL}
                                 bg={hasActiveSubscription ? STORE_TOKENS.COLORS.BRAND : STORE_TOKENS.COLORS.BACKGROUND}
                                 bgOpacity={hasActiveSubscription ? STORE_TOKENS.OPACITY.FULL : STORE_TOKENS.OPACITY.SIDEBAR}
@@ -85,7 +85,7 @@ export function TrainerProfileSubscriptionCard({ hasActiveSubscription = false }
                             </Font>
                         </Inline>
                         <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                            <Box width={6} height={6} rounded={STORE_TOKENS.RADIUS.FULL} bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.SIDEBAR} />
+                            <Box width="6px" height="6px" rounded={STORE_TOKENS.RADIUS.FULL} bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.SIDEBAR} />
                             <Font
                                 variant="auxiliary"
                                 weight="bold"

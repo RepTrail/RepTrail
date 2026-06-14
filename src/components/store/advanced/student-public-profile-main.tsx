@@ -94,7 +94,7 @@ export function StudentPublicProfileMain({
                     >
                         {/* Avatar */}
                         <BaseAvatar
-                            initials={profile.full_name?.charAt(0) || '?'}
+                            initials={profile?.full_name?.charAt(0) || '?'}
                             src={profile.avatar_url || undefined}
                             size="xxl"
                             variant="primary"
@@ -111,7 +111,7 @@ export function StudentPublicProfileMain({
                                 {...{
                                     color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
                                 }}>
-                                {profile.full_name}
+                                {profile?.full_name}
                             </Font>
 
                             <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
@@ -155,7 +155,7 @@ export function StudentPublicProfileMain({
                                         >
                                             <Inline gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
                                                 <BaseAvatar
-                                                    initials={trainerData.full_name?.charAt(0) || '?'}
+                                                    initials={trainerData?.full_name?.charAt(0) || '?'}
                                                     src={trainerData.avatar_url || undefined}
                                                     size="lg"
                                                     variant="zinc"
@@ -179,7 +179,7 @@ export function StudentPublicProfileMain({
                                                         {...{
                                                             color: "primary",
                                                         }}>
-                                                        {trainerData.full_name}
+                                                        {trainerData?.full_name}
                                                     </Font>
                                                 </Stack>
                                                 <Icon icon={ChevronRight} size="md" color={STORE_TOKENS.COLORS.BRAND} />

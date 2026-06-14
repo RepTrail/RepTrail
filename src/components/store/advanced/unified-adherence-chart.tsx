@@ -72,7 +72,7 @@ export function UnifiedAdherenceChart({ history, showErgogenics = false, noCard 
                     <Stack fullWidth gap={STORE_TOKENS.SPACING.CONTAINER}>
                         {rows.map(row => (
                             <Box key={row.id} display="flex" direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
-                                <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} width={80} shrink={0}>
+                                <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} width="80px" shrink={0}>
                                     <Icon icon={row.icon} size="sm" color={row.color as any} />
                                     <Font
                                         variant="tiny"
@@ -201,7 +201,7 @@ export function UnifiedAdherenceChart({ history, showErgogenics = false, noCard 
 function LegendItem({ color, label }: { color: string, label: string }) {
     return (
         <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-            <Box width={8} height={8} rounded={STORE_TOKENS.RADIUS.FULL} bg={color as any} bgOpacity={STORE_TOKENS.OPACITY.FULL} />
+            <Box width="8px" height="8px" rounded={STORE_TOKENS.RADIUS.FULL} bg={color as any} bgOpacity={STORE_TOKENS.OPACITY.FULL} />
             <Font
                 variant="tiny"
                 weight="black"

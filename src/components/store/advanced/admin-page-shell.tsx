@@ -62,12 +62,12 @@ export function AdminPageShell({ children, user, pageTitle = '', subtitle, icon 
                     </Inline>
                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                         <Font variant="h1" nowrap>
-                            {first}{rest ? <> <Font
-                            variant="h1"
-                            nowrap
-                            {...{
-                                color: STORE_TOKENS.COLORS.ERROR,
-                            }}>{rest}</Font></> : null}
+                            {first}{rest ? <Font
+                                variant="h1"
+                                nowrap
+                                {...{
+                                    color: STORE_TOKENS.COLORS.ERROR,
+                                }}>{rest}</Font> : null}
                         </Font>
                         {subtitle && <Font variant="description">{subtitle}</Font>}
                     </Stack>
@@ -75,6 +75,6 @@ export function AdminPageShell({ children, user, pageTitle = '', subtitle, icon 
 
                 {children}
             </Stack>
-        </DashboardShell>
+        </DashboardShell >
     );
 }

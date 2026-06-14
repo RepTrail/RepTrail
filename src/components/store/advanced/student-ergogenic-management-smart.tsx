@@ -9,7 +9,7 @@ import { getStudentErgogenics, deleteErgogenic, addErgogenic, updateErgogenic } 
 import { getStudentProfile, getStudentTrainer } from '@/lib/dal/remote'
 import { useRealtimeSync } from '@/hooks/use-realtime-sync'
 
-import { ErgogenicManagementSectionContent } from '@/components/store/sections/ergogenic-management-section-content'
+import { ErgogenicManagementList } from '@/components/store/advanced/ergogenic-management-list'
 import { RegistryActionModal, RegistryActionType } from '@/components/store/advanced/registry-action-modal'
 import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
 import { ENTITIES } from '@/lib/outbox-db'
@@ -166,7 +166,7 @@ export function StudentErgogenicManagementSmart({ userId }: StudentErgogenicMana
         <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
 
             <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
-                <ErgogenicManagementSectionContent
+                <ErgogenicManagementList
                     items={ergogenics}
                     mode={isAutoMode ? 'auto' : 'personal'}
                     onEdit={(item) => openAction('edit_ergogenic', item)}

@@ -70,11 +70,11 @@ export async function submitOnboarding(prevState: OnboardingState, formData: For
         .upsert({
             id: user.id,
             birth_date: data.birthDate,
-            height: data.height,
+            height: data?.height,
             starting_weight: data.startingWeight,
             body_fat: data.estimatedBf, // Add BF
             activity_level: data.activityLevel,
-            goal: data.goal,
+            goal: data?.goal,
             steroid_use: data.steroidUse,
             observations: data.observations,
             image_publication_authorized: data.imageAuth,

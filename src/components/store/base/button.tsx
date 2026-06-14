@@ -3,7 +3,7 @@ import React from 'react'
 import { Slot, Slottable } from '@radix-ui/react-slot'
 import { Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { useRegistry } from '@/components/store/advanced/registry-context'
+import { useRegistry } from '@/components/store/base/registry-context'
 
 export type ButtonVariant = 
   | 'orange' 

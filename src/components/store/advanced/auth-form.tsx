@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import { AuthLoginForm } from './auth-login-form'
 import { AuthSignUpForm } from './auth-signup-form'
-import { AuthAffiliateSignUpForm } from './auth-affiliate-signup-form'
+
 import { AuthForgotPasswordForm } from './auth-forgot-password-form'
 import { AuthUpdatePasswordForm } from './auth-update-password-form'
 import { 
@@ -26,7 +26,7 @@ export function AuthForm({ view }: AuthFormProps) {
     const [password, setPassword] = useState('')
     const [fullName, setFullName] = useState('')
     const [whatsapp, setWhatsapp] = useState('')
-    const [role, setRole] = useState<'student' | 'trainer'>('trainer')
+    const [role, setRole] = useState<'student' | 'trainer' | 'affiliate'>('trainer')
     const [acceptedTerms, setAcceptedTerms] = useState(true)
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
@@ -140,7 +140,8 @@ export function AuthForm({ view }: AuthFormProps) {
             )
         case 'affiliate-signup':
             return (
-                <AuthAffiliateSignUpForm 
+                <AuthSignUpForm 
+                    role="affiliate"
                     fullName={fullName} setFullName={setFullName}
                     email={email} setEmail={setEmail}
                     whatsapp={whatsapp} setWhatsapp={setWhatsapp}

@@ -68,8 +68,8 @@ export function WorkoutSummaryState({
             >
                 <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                     <Box 
-                        width={10} 
-                        height={10} 
+                        width="10px" 
+                        height="10px" 
                         bg={STORE_TOKENS.COLORS.SUCCESS} 
                         rounded={STORE_TOKENS.RADIUS.FULL} 
                         display="flex" 

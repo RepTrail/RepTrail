@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { cn } from '@/lib/utils'
-import { useRegistry } from '@/components/store/advanced/registry-context'
+import { useRegistry } from '@/components/store/base/registry-context'
 
 interface BackgroundEffectsProps {
     variant?: 'grid' | 'orbs' | 'all'
@@ -38,19 +38,22 @@ export function BackgroundEffects({ variant = 'all' }: BackgroundEffectsProps) {
 
     return (
         <>
-            {showGrid && (
-                <div
-                    className="fixed inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(to_bottom,white_0%,transparent_90%)] opacity-[0.22] pointer-events-none z-0"
-                />
-            )}
+        { showGrid && (
+            <div
+                className="fixed inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(to_bottom,white_0%,transparent_90%)] opacity-[0.22] pointer-events-none z-0"
+            />
+        )}
 
-            {showOrbs && (
-                <>
-                    {/* Primary Large Orb (Top Right) */}
-                    <div
-                        className={cn(
+{
+    showOrbs && (
+        <>
+        {/* Primary Large Orb (Top Right) */ }
+        < div
+                        className = {
+        cn(
                             "fixed -top-[10%] -right-[5%] w-[60%] h-[60%] rounded-full blur-[150px] pointer-events-none transition-colors duration-1000 z-0",
-                            `bg-gradient-to-br ${lightColorMap[primaryColor as keyof typeof lightColorMap]} to-transparent`
+                            `bg-gradient-to-br ${lightColorMap[primaryColor as keyof typeof lightColorMap]
+    } to - transparent`
                         )}
                     />
 

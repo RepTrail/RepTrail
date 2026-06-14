@@ -3,7 +3,7 @@ import React from 'react'
 import { cn } from '@/lib/utils'
 import { Box, BoxProps, SpacingToken } from './box'
 import { Separator } from './separator'
-import { useRegistry } from '@/components/store/advanced/registry-context'
+import { useRegistry } from '@/components/store/base/registry-context'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 export type SurfaceVariant = 

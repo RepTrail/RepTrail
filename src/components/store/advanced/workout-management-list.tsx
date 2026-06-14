@@ -14,7 +14,7 @@ import { QUERY_KEYS } from '@/lib/query-keys'
 import { ENTITIES } from '@/lib/outbox-db'
 import { AssignedStudentInfo } from '@/components/store/intermediary/assigned-student-mini-card'
 
-interface WorkoutManagementSectionContentProps {
+interface WorkoutManagementListProps {
     userId?: string
     workouts?: any[]
     mode?: 'auto' | 'personal' | 'trainer'
@@ -23,16 +23,16 @@ interface WorkoutManagementSectionContentProps {
 }
 
 /**
- * WorkoutManagementSectionContent: Grid of premium training cards using the unified component.
+ * WorkoutManagementList: Grid of premium training cards using the unified component.
  * Faithful to Image 27.
  */
-export function WorkoutManagementSectionContent({ 
+export function WorkoutManagementList({
     userId = 'mock-id',
     workouts,
     mode = 'auto',
     isEmpty = false,
     betaTesterMode = false
-}: WorkoutManagementSectionContentProps) {
+}: WorkoutManagementListProps) {
     const libraryQueryKey = QUERY_KEYS.workouts.library(userId)
     const assignedQueryKey = QUERY_KEYS.workouts.all(userId)
     const activeQueryKey = mode === 'auto' || mode === 'trainer' ? libraryQueryKey : assignedQueryKey
@@ -111,21 +111,21 @@ export function WorkoutManagementSectionContent({
     const openAction = (type: RegistryActionType, data?: any) => {
         // Map assigned days for the modal
         const selectedDays = (data.assigned_workouts || []).map((a: any) => a.day_of_week)
-        setActionModal({ 
-            isOpen: true, 
-            type, 
-            data: { ...data, selectedDays } 
+        setActionModal({
+            isOpen: true,
+            type,
+            data: { ...data, selectedDays }
         })
     }
 
     const closeAction = () => setActionModal(prev => ({ ...prev, isOpen: false }))
-    
+
     const openView = (workout: any) => setViewModal({ isOpen: true, workoutId: workout.id, workoutName: workout.name })
     const closeView = () => setViewModal(prev => ({ ...prev, isOpen: false }))
 
     if (isEmpty || !workouts || workouts.length === 0) {
         return (
-            <EmptyState 
+            <EmptyState
                 icon={Dumbbell}
                 title="SEM TREINOS"
                 description={
@@ -199,7 +199,7 @@ export function WorkoutManagementSectionContent({
                         <ManagementCardPremium
                             key={workout.id || idx}
                             title={workout.name.toUpperCase()}
-                            description={workout.description || (mode === 'trainer' ? 'Sem descrição disponível.' : 'Ficha oficial de treinamento.')}
+                            description={workout?.description || (mode === 'trainer' ? 'Sem descrição disponível.' : 'Ficha oficial de treinamento.')}
                             days={assignedDays}
                             assignedStudents={assignedStudents}
                             mainStat={{ label: 'EXERCÍCIOS', value: exercisesCount }}

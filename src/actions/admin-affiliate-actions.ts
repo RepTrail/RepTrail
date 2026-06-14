@@ -63,7 +63,7 @@ export async function getAdminAffiliates() {
         const monthlyVolume = referrals.reduce((sum: number, r: any) => {
             if (r.role === 'student' && r.trainer_students) {
                 const activeSub = r.trainer_students.find((ts: any) => ts.active)
-                if (activeSub) return sum + (activeSub.monthly_fee || 0)
+                if (activeSub) return sum + (activeSub?.monthly_fee || 0)
             }
             return sum
         }, 0)
@@ -72,7 +72,7 @@ export async function getAdminAffiliates() {
 
         return {
             id: a.id,
-            full_name: a.full_name,
+            full_name: a?.full_name,
             email: a.email,
             is_affiliate: a.is_affiliate,
             affiliate_token: a.affiliate_token,
@@ -179,7 +179,7 @@ export async function toggleAffiliateStatus(userId: string, isAffiliate: boolean
 
         if (!targetProfile.affiliate_token) {
             // Generate token: slug of name or email prefix + random
-            const base = (targetProfile.full_name || targetProfile.email || 'user')
+            const base = (targetProfile?.full_name || targetProfile.email || 'user')
                 .split('@')[0]
                 .replace(/[^a-zA-Z0-9]/g, '')
                 .toLowerCase()

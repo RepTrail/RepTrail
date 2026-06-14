@@ -8,7 +8,7 @@ import { QUERY_KEYS } from '@/lib/query-keys'
 import { TrainerTourManager } from '@/components/store/advanced/trainer-tour-manager'
 import { MobileTrainerTourManager } from '@/components/store/advanced/mobile-trainer-tour-manager'
 import { DashboardShell } from '@/components/store/advanced/dashboard-shell'
-import { RegistryProvider } from '@/components/store/advanced/registry-context'
+import { RegistryProvider } from '@/components/store/base/registry-context'
 import { SettingsModal } from '@/components/store/advanced/student-settings-modal'
 export default async function TrainerLayout({ children }: { children: React.ReactNode }) {
     const headerList = await headers()

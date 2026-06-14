@@ -2,8 +2,10 @@ import React from 'react'
 import { redirect } from 'next/navigation'
 import { headers } from 'next/headers'
 import { getProfile, actions } from '@/lib/dal/server'
-import { RegistryProvider } from '@/components/store/advanced/registry-context'
-import { OnboardingPlansSection } from '@/components/store/sections/onboarding-plans-section'
+import { RegistryMain } from '@/components/store/advanced/registry-main'
+import { OnboardingLogoutButton } from '@/components/store/intermediary/onboarding-logout-button'
+import { TrainerOnboardingPlansShell } from '@/components/store/sections/trainer-plans-section'
+import { TrainerPlansSection } from '@/components/store/sections/trainer-plans-section'
 
 export default async function OnboardingPlansPage() {
     const headerList = await headers()
@@ -22,8 +24,20 @@ export default async function OnboardingPlansPage() {
     const publicPlans = await actions.getPublicPlanPricing()
 
     return (
-        <RegistryProvider defaultColor="emerald">
-            <OnboardingPlansSection plans={publicPlans} />
-        </RegistryProvider>
+        <TrainerOnboardingPlansShell>
+            <RegistryMain
+                title="Escolha seu Plano"
+                subtitle="Selecione o plano que melhor atende às suas necessidades para acessar a plataforma."
+                icon="CreditCard"
+                contextLabel="Onboarding"
+                showHeader={true}
+                showTabs={false}
+                noPadding={true}
+                noMinHeight={true}
+                rightElement={<OnboardingLogoutButton />}
+            >
+                <TrainerPlansSection plans={publicPlans} />
+            </RegistryMain>
+        </TrainerOnboardingPlansShell>
     )
 }

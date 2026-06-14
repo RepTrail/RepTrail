@@ -69,27 +69,27 @@ export function FileUpload({ label, variant = 'generic', currentImageUrl, onFile
             >
                 {preview ? (
                     <>
-                        <img src={preview} alt="Preview" className={cn("w-full h-full object-cover", isUploading && "opacity-40")} />
+                    <img src={preview} alt="Preview" className={cn("w-full h-full object-cover", isUploading && "opacity-40")} />
                         {!isUploading && (
-                            <button
-                                type="button"
-                                onClick={(e) => { e.stopPropagation(); clearFile() }}
-                                className="absolute top-1 right-1 bg-black/60 rounded-full p-0.5 hover:bg-red-500 transition-colors"
-                            >
-                                <Icon icon={X} size="xs" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} />
-                            </button>
-                        )}
+                    <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); clearFile() }}
+                        className="absolute top-1 right-1 bg-black/60 rounded-full p-0.5 hover:bg-red-500 transition-colors"
+                    >
+                        <Icon icon={X} size="xs" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} />
+                    </button>
+                )}
                     </>
                 ) : (
-                    <div className="flex flex-col items-center gap-1">
-                        <Icon
-                            icon={variant === 'profile' ? User : ImageIcon}
-                            size="sm"
-                            color={STORE_TOKENS.COLORS.TEXT.MUTED}
-                            groupHoverColor="current"
-                            transition
-                        />
-                    </div>
+                <div className="flex flex-col items-center gap-1">
+                    <Icon
+                        icon={variant === 'profile' ? User : ImageIcon}
+                        size="sm"
+                        color={STORE_TOKENS.COLORS.TEXT.MUTED}
+                        groupHoverColor="current"
+                        transition
+                    />
+                </div>
                 )}
 
                 {isUploading && (
@@ -98,6 +98,6 @@ export function FileUpload({ label, variant = 'generic', currentImageUrl, onFile
                     </div>
                 )}
             </div>
-        </div>
+        </div >
     )
 }

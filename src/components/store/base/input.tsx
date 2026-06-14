@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { cn } from '@/lib/utils'
 import { Font } from './font'
 import { Eye, EyeOff } from 'lucide-react'
-import { useRegistry } from '@/components/store/advanced/registry-context'
+import { useRegistry } from '@/components/store/base/registry-context'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { Stack } from './stack'
 

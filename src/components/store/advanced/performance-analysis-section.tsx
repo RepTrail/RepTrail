@@ -51,11 +51,11 @@ export function PerformanceAnalysisSection({
                                 }}>
                                 {isStudentView
                                     ? <>Esta função está disponível apenas para alunos de treinadores <Font
-                                    weight="bold"
-                                    {...{
-                                        color: "emerald",
-                                    }}>PRO e ELITE</Font>.</>
-                                    : <>Esta função está disponível apenas para treinadores <Font
+                                        weight="bold"
+                                        {...{
+                                            color: "emerald",
+                                        }}>PRO e ELITE</Font>.</>
+                                : <>Esta função está disponível apenas para treinadores <Font
                                     weight="bold"
                                     {...{
                                         color: "emerald",
@@ -63,14 +63,15 @@ export function PerformanceAnalysisSection({
                                 }
                             </Font>
                         </Box>
-                    </Stack>
+                    </Stack >
                     {!isStudentView && (
                         <Button asChild variant="emerald" size="lg" hoverScale={105} transition>
                             <Link href="/dashboard/trainer/profile">Fazer Upgrade Agora</Link>
                         </Button>
-                    )}
-                </Stack>
-            </Box>
+                    )
+                    }
+                </Stack >
+            </Box >
         );
     }
 

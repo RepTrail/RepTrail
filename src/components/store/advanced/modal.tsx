@@ -91,16 +91,16 @@ export function Modal({
   return (
     <ModalOverlay onClose={onClose} animateState={animateState}>
       <ModalContainer animateState={animateState}>
-        <Surface 
-          variant="base" 
-          padding={STORE_TOKENS.PADDING.NONE} 
-          rounded={STORE_TOKENS.RADIUS.SYSTEM} 
-          minHeight={0} 
-          overflow="hidden" 
-          style={{ 
-            display: 'grid', 
-            gridTemplateRows: 'auto 1fr auto auto', 
-            maxHeight: '90vh' 
+        <Surface
+          variant="base"
+          padding={STORE_TOKENS.PADDING.NONE}
+          rounded={STORE_TOKENS.RADIUS.SYSTEM}
+          minHeight={0}
+          overflow="hidden"
+          style={{
+            display: 'grid',
+            gridTemplateRows: 'auto 1fr auto auto',
+            maxHeight: '90vh'
           }}
         >
           {/* Header */}
@@ -140,17 +140,17 @@ export function Modal({
           </CardHeader>
 
           {/* Content Area */}
-          <Box 
-            overflowY="auto" 
+          <Box
+            overflowY="auto"
             overflowX="hidden"
-            bg={STORE_TOKENS.COLORS.BACKGROUND} 
-            bgOpacity={STORE_TOKENS.OPACITY.BACKGROUND} 
+            bg={STORE_TOKENS.COLORS.BACKGROUND}
+            bgOpacity={STORE_TOKENS.OPACITY.BACKGROUND}
             minHeight={0}
             padding={noPadding ? STORE_TOKENS.PADDING.NONE : STORE_TOKENS.PADDING.CONTAINER}
-            style={{ 
-              overflowY: 'auto', 
-              overflowX: 'hidden', 
-              minHeight: 0 
+            style={{
+              overflowY: 'auto',
+              overflowX: 'hidden',
+              minHeight: 0
             }}
           >
             {children ? children : (
@@ -167,50 +167,47 @@ export function Modal({
 
           {!hideFooter && (
             <>
-              <Divider
-                {...{
-                  color: STORE_TOKENS.COLORS.DIVIDER.SUBTLE,
-                }} />
+              <Divider color={STORE_TOKENS.COLORS.DIVIDER.SUBTLE} />
 
-          {/* Footer Actions */}
-            <Box shrink={0} bg={STORE_TOKENS.COLORS.SURFACE} bgOpacity={100} zIndex={10} position="relative" padding={STORE_TOKENS.PADDING.CONTAINER}>
-              <Stack direction={{ base: 'col', md: 'row' }} gap={STORE_TOKENS.SPACING.ELEMENT} flex1>
-              {!hideCancel && (
-                <Button 
-                  variant="outline-red" 
-                  rounded={STORE_TOKENS.RADIUS.SYSTEM} 
-                  fullWidth 
-                  flex1
-                  onClick={onClose}
-                  disabled={isLoading}
-                >
-                  {cancelLabel}
-                </Button>
-              )}
-              <Button 
-                type={confirmType || 'button'}
-                form={formId}
-                variant={confirmVariant || 'outline-emerald'} 
-                rounded={STORE_TOKENS.RADIUS.SYSTEM} 
-                fullWidth 
-                flex1
-                onClick={confirmType === 'submit' ? undefined : (onConfirm || onClose)}
-                disabled={disabled || isLoading}
-                gap={STORE_TOKENS.SPACING.ELEMENT}
-              >
-                {isLoading ? 'Carregando...' : (
-                  <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    {confirmIcon && <Icon icon={confirmIcon} size="xs" />}
-                    {confirmLabel}
-                  </Stack>
-                )}
-              </Button>
-            </Stack>
-          </Box>
+              {/* Footer Actions */}
+              <Box shrink={0} bg={STORE_TOKENS.COLORS.SURFACE} bgOpacity={100} zIndex={10} position="relative" padding={STORE_TOKENS.PADDING.CONTAINER}>
+                <Stack direction={{ base: 'col', md: 'row' }} gap={STORE_TOKENS.SPACING.ELEMENT} flex1>
+                  {!hideCancel && (
+                    <Button
+                      variant="outline-red"
+                      rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                      fullWidth
+                      flex1
+                      onClick={onClose}
+                      disabled={isLoading}
+                    >
+                      {cancelLabel}
+                    </Button>
+                  )}
+                  <Button
+                    type={confirmType || 'button'}
+                    form={formId}
+                    variant={confirmVariant || 'outline-emerald'}
+                    rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                    fullWidth
+                    flex1
+                    onClick={confirmType === 'submit' ? undefined : (onConfirm || onClose)}
+                    disabled={disabled || isLoading}
+                    gap={STORE_TOKENS.SPACING.ELEMENT}
+                  >
+                    {isLoading ? 'Carregando...' : (
+                      <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                        {confirmIcon && <Icon icon={confirmIcon} size="xs" />}
+                        {confirmLabel}
+                      </Stack>
+                    )}
+                  </Button>
+                </Stack>
+              </Box>
             </>
           )}
         </Surface>
       </ModalContainer>
     </ModalOverlay>
-  );
+  )
 }

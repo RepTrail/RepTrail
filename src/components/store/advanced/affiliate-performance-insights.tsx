@@ -86,7 +86,7 @@ export function AffiliatePerformanceInsights() {
                                     <Box 
                                         height="full" 
                                         bg={source.color as any} 
-                                        style={{ width: source.width }} 
+                                        width={source.width} 
                                     />
                                 </Box>
                             </Stack>

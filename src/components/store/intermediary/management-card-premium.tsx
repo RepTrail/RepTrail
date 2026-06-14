@@ -73,8 +73,8 @@ export function ManagementCardPremium({
     const showManagementActions = isAuto || isTrainer
     const resolvedEditLabel = editLabel ?? (
         registryType === 'diet' ? 'Editar Dieta'
-        : registryType === 'cardio' ? 'Editar Protocolo'
-        : 'Editar Treino'
+            : registryType === 'cardio' ? 'Editar Protocolo'
+                : 'Editar Treino'
     )
 
     return (
@@ -90,120 +90,120 @@ export function ManagementCardPremium({
         >
             <Stack flex1 fullHeight justify="between" gap={STORE_TOKENS.SPACING.CONTAINER} minHeight={0}>
                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT} flex1 minHeight={0}>
-                {/* Header Actions */}
-                <Stack direction="row" align="center" justify="between">
-                    <Box
-                        padding={STORE_TOKENS.PADDING.ELEMENT}
-                        rounded={STORE_TOKENS.RADIUS.SYSTEM}
-                        bg={STORE_TOKENS.COLORS.BRAND}
-                        bgOpacity={STORE_TOKENS.OPACITY.SUBTLE}
-                        cursor="pointer"
-                        transition
-                    >
-                        <Icon icon={icon} size="md" color={STORE_TOKENS.COLORS.BRAND} />
-                    </Box>
-                    <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        {isAuto && registryType === 'training' && onPlay && (
-                            <Button
-                                variant="outline-emerald"
-                                isIconOnly
-                                shine
-                                onClick={onPlay}
-                                rounded={STORE_TOKENS.RADIUS.SYSTEM}
-                            >
-                                <Icon icon={Play} size="md" color={STORE_TOKENS.COLORS.SUCCESS} />
-                            </Button>
-                        )}
-                        {showManagementActions && onDelete && (
-                            <Button 
-                                variant="outline-red"
-                                isIconOnly
-                                shine
-                                onClick={onDelete}
-                                rounded={STORE_TOKENS.RADIUS.SYSTEM}
-                            >
-                                <Icon icon={Trash2} size="md" color={STORE_TOKENS.COLORS.ERROR} />
-                            </Button>
-                        )}
+                    {/* Header Actions */}
+                    <Stack direction="row" align="center" justify="between">
+                        <Box
+                            padding={STORE_TOKENS.PADDING.ELEMENT}
+                            rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                            bg={STORE_TOKENS.COLORS.BRAND}
+                            bgOpacity={STORE_TOKENS.OPACITY.SUBTLE}
+                            cursor="pointer"
+                            transition
+                        >
+                            <Icon icon={icon} size="md" color={STORE_TOKENS.COLORS.BRAND} />
+                        </Box>
+                        <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                            {isAuto && registryType === 'training' && onPlay && (
+                                <Button
+                                    variant="outline-emerald"
+                                    isIconOnly
+                                    shine
+                                    onClick={onPlay}
+                                    rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                                >
+                                    <Icon icon={Play} size="md" color={STORE_TOKENS.COLORS.SUCCESS} />
+                                </Button>
+                            )}
+                            {showManagementActions && onDelete && (
+                                <Button
+                                    variant="outline-red"
+                                    isIconOnly
+                                    shine
+                                    onClick={onDelete}
+                                    rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                                >
+                                    <Icon icon={Trash2} size="md" color={STORE_TOKENS.COLORS.ERROR} />
+                                </Button>
+                            )}
+                        </Stack>
                     </Stack>
-                </Stack>
 
-                {/* Body Content */}
-                <Stack gap={STORE_TOKENS.SPACING.ELEMENT} minWidth={0}>
+                    {/* Body Content */}
                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT} minWidth={0}>
-                        <Font
-                            {...STORE_TOKENS.TYPOGRAPHY.HEADING}
-                            variant="h4"
-                            truncate
-                            {...{
-                                color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
-                            }}>
-                            {title}
-                        </Font>
-                        {description && (
+                        <Stack gap={STORE_TOKENS.SPACING.ELEMENT} minWidth={0}>
                             <Font
-                                {...STORE_TOKENS.TYPOGRAPHY.DESCRIPTION}
+                                {...STORE_TOKENS.TYPOGRAPHY.HEADING}
+                                variant="h4"
                                 truncate
                                 {...{
-                                    color: STORE_TOKENS.COLORS.TEXT.DIM,
+                                    color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
                                 }}>
-                                {description}
+                                {title}
                             </Font>
+                            {description && (
+                                <Font
+                                    {...STORE_TOKENS.TYPOGRAPHY.DESCRIPTION}
+                                    truncate
+                                    {...{
+                                        color: STORE_TOKENS.COLORS.TEXT.DIM,
+                                    }}>
+                                    {description}
+                                </Font>
+                            )}
+                        </Stack>
+
+                        {isTrainer && assignedStudents && assignedStudents.length > 0 && (
+                            <AssignedStudentsAvatarRow students={assignedStudents} />
                         )}
-                    </Stack>
 
-                    {isTrainer && assignedStudents && assignedStudents.length > 0 && (
-                        <AssignedStudentsAvatarRow students={assignedStudents} />
-                    )}
-
-                    <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} wrap="wrap">
-                        {days.length > 0 ? (
-                            days.map((day) => (
+                        <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} wrap="wrap">
+                            {days.length > 0 ? (
+                                days.map((day) => (
+                                    <Badge
+                                        key={day}
+                                        label={day}
+                                        variant="glass"
+                                        color={color}
+                                        size="xs"
+                                    />
+                                ))
+                            ) : isTrainer ? (
                                 <Badge
-                                    key={day}
-                                    label={day}
-                                    variant="glass"
-                                    color={color}
+                                    label="Não agendado"
+                                    icon={Calendar}
+                                    variant="outline"
+                                    color={STORE_TOKENS.COLORS.BRAND}
                                     size="xs"
                                 />
-                            ))
-                        ) : isTrainer ? (
-                            <Badge
-                                label="Não agendado"
-                                icon={Calendar}
-                                variant="outline"
-                                color={STORE_TOKENS.COLORS.BRAND}
-                                size="xs"
-                            />
-                        ) : null}
+                            ) : null}
+                        </Stack>
                     </Stack>
-                </Stack>
                 </Stack>
 
                 <Stack gap={STORE_TOKENS.SPACING.CONTAINER} shrink={0}>
-                {/* Meta Info */}
-                <Stack direction="row" align="center" justify="between">
-                    <Font
-                        {...STORE_TOKENS.TYPOGRAPHY.LABEL}
-                        {...{
-                            color: STORE_TOKENS.COLORS.TEXT.MUTED,
-                        }}>
-                        {mainStat.value} {mainStat.label}
-                    </Font>
-                    <Font
-                        {...STORE_TOKENS.TYPOGRAPHY.LABEL}
-                        {...{
-                            color: STORE_TOKENS.COLORS.TEXT.MUTED,
-                        }}>
-                        {date}
-                    </Font>
-                </Stack>
+                    {/* Meta Info */}
+                    <Stack direction="row" align="center" justify="between">
+                        <Font
+                            {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                            }}>
+                            {mainStat.value} {mainStat.label}
+                        </Font>
+                        <Font
+                            {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                            {...{
+                                color: STORE_TOKENS.COLORS.TEXT.MUTED,
+                            }}>
+                            {date}
+                        </Font>
+                    </Stack>
 
-                {/* Footer Buttons & Actions */}
-                {(isAuto || isTrainer || onView) && (
-                    <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        {isTrainer && onEdit ? (
-                            <>
+                    {/* Footer Buttons & Actions */}
+                    {(isAuto || isTrainer || onView) && (
+                        <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                            {isTrainer && onEdit ? (
+                                <>
                                 <Button variant="primary" flex1 onClick={onEdit} shine>
                                     <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                         <Icon icon={Edit3} size="xs" color={STORE_TOKENS.COLORS.BLACK} />
@@ -215,64 +215,64 @@ export function ManagementCardPremium({
                                     </Stack>
                                 </Button>
                                 {onDuplicate && (
-                                    <Button
-                                        variant="outline-zinc"
-                                        isIconOnly
-                                        size="sm"
-                                        rounded={STORE_TOKENS.RADIUS.SYSTEM}
-                                        onClick={onDuplicate}
-                                    >
-                                        <Icon icon={Copy} size="xs" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} />
-                                    </Button>
-                                )}
-                            </>
-                        ) : isAuto ? (
-                            <>
-                                <Button variant={`outline-${color}`} flex1 onClick={onSchedule}>
-                                    <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                        <Icon icon={Calendar} size="xs" />
-                                        <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL}>AGENDAR</Font>
-                                    </Stack>
-                                </Button>
-                                <Button 
-                                    variant="primary" 
-                                    flex1 
-                                    onClick={onEdit}
-                                    shine
+                                <Button
+                                    variant="outline-zinc"
+                                    isIconOnly
+                                    size="sm"
+                                    rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                                    onClick={onDuplicate}
                                 >
-                                    <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                        <Icon icon={Edit3} size="xs" color={STORE_TOKENS.COLORS.BLACK} />
-                                        <Font
-                                            {...STORE_TOKENS.TYPOGRAPHY.LABEL}
-                                            {...{
-                                                color: STORE_TOKENS.COLORS.BLACK,
-                                            }}>EDITAR</Font>
-                                    </Stack>
+                                    <Icon icon={Copy} size="xs" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} />
                                 </Button>
-                                {onDuplicate && (
-                                    <Button 
-                                        variant="outline-zinc" 
-                                        isIconOnly 
-                                        size="sm" 
-                                        rounded={STORE_TOKENS.RADIUS.SYSTEM}
-                                        onClick={onDuplicate}
-                                    >
-                                        <Icon icon={Copy} size="xs" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} />
-                                    </Button>
-                                )}
-                            </>
-                        ) : (
+                            )}
+                                </>
+                            ) : isAuto ? (
+                                <>
+                            <Button variant={`outline-${color}`} flex1 onClick={onSchedule}>
+                                <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                    <Icon icon={Calendar} size="xs" />
+                                    <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL}>AGENDAR</Font>
+                                </Stack>
+                            </Button>
+                            <Button
+                                variant="primary"
+                                flex1
+                                onClick={onEdit}
+                                shine
+                            >
+                                <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                    <Icon icon={Edit3} size="xs" color={STORE_TOKENS.COLORS.BLACK} />
+                                    <Font
+                                        {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                                        {...{
+                                            color: STORE_TOKENS.COLORS.BLACK,
+                                        }}>EDITAR</Font>
+                                </Stack>
+                            </Button>
+                            {onDuplicate && (
+                                <Button
+                                    variant="outline-zinc"
+                                    isIconOnly
+                                    size="sm"
+                                    rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                                    onClick={onDuplicate}
+                                >
+                                    <Icon icon={Copy} size="xs" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} />
+                                </Button>
+                            )}
+                                </>
+                            ) : (
                             <Button variant={`outline-${color}`} flex1 onClick={onView}>
                                 <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                     <Icon icon={Eye} size="xs" />
                                     <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL}>VISUALIZAR</Font>
                                 </Stack>
                             </Button>
-                        )}
-                    </Stack>
-                )}
+                            )}
+                        </Stack>
+                    )}
                 </Stack>
-            </Stack>
-        </GlassPanel>
+            </Stack >
+        </GlassPanel >
     );
 }

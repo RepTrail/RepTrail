@@ -70,7 +70,7 @@ export function AdminLojaSection() {
 
     return (
         <>
-                <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
+            <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                     {/* Toolbar */}
                     <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
                         <Box flex1>
@@ -104,7 +104,7 @@ export function AdminLojaSection() {
                                 <ProductCard
                                     key={product.id}
                                     name={product.name}
-                                    description={product.description}
+                                    description={product?.description}
                                     price={product.official_price ? `R$ ${Number(product.official_price).toFixed(2)}` : 'Sob consulta'}
                                     category={product.category}
                                     image={product.image_url}

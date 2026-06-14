@@ -8,11 +8,11 @@ import { Font } from '@/components/store/base/font'
 import { Button } from '@/components/store/base/button'
 import { Icon } from '@/components/store/base/icon'
 import { Badge } from '@/components/store/base/badge'
-import { useRegistry } from '@/components/store/advanced/registry-context'
+import { useRegistry } from '@/components/store/base/registry-context'
 import { fbqEvent } from '@/lib/meta-pixel'
 import { ArrowRight, Search, Zap, CheckCircle2, Trophy } from 'lucide-react'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
-import { LandingSection } from '@/components/store/advanced/landing-section'
+import { LandingSection } from '@/components/store/intermediary/landing-section'
 
 interface LandingCTAProps {
   role?: 'trainer' | 'student' | 'affiliate'

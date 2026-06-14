@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { GlassPanel } from '@/components/store/base/surface'
 import { Stack } from '@/components/store/base/stack'
+import { Box } from '@/components/store/base/box'
 import { Font } from '@/components/store/base/font'
 import { Button } from '@/components/store/base/button'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
@@ -53,7 +54,7 @@ export function TourOverlay({
                         Math.abs(prev.top - newRect.top) > 2 || 
                         Math.abs(prev.left - newRect.left) > 2 ||
                         Math.abs(prev.width - newRect.width) > 2 ||
-                        Math.abs(prev.height - newRect.height) > 2) {
+                        Math.abs(prev?.height - newRect?.height) > 2) {
                         return newRect
                     }
                     return prev
@@ -113,7 +114,7 @@ export function TourOverlay({
         top: rect.top - padding,
         left: rect.left - padding,
         width: rect.width + padding * 2,
-        height: rect.height + padding * 2,
+        height: rect?.height + padding * 2,
         x: 0,
         y: 0
     } : { top: 0, left: 0, width: 0, height: 0 }
@@ -145,7 +146,7 @@ export function TourOverlay({
     }
 
     return (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 9999, pointerEvents: 'none' }}>
+        <Box position="fixed" pin="inset" zIndex={100} pointerEvents="none">
             <AnimatePresence>
                 <motion.div
                     key="spotlight"
@@ -188,9 +189,9 @@ export function TourOverlay({
                                     {title}
                                 </Font>
                                 {onClose && (
-                                    <div onClick={onClose} style={{ cursor: 'pointer', opacity: 0.5, transition: 'opacity 0.2s' }}>
+                                    <Box onClick={onClose} cursor="pointer" opacity={50} transition>
                                         <X size={16} />
-                                    </div>
+                                    </Box>
                                 )}
                             </Stack>
                             
@@ -205,16 +206,16 @@ export function TourOverlay({
                             )}
 
                             {buttonText && onNext && (
-                                <div style={{ marginTop: '8px' }}>
+                                <Box fullWidth>
                                     <Button variant="outline-emerald" fullWidth onClick={onNext}>
                                         {buttonText}
                                     </Button>
-                                </div>
+                                </Box>
                             )}
                         </Stack>
                     </GlassPanel>
                 </motion.div>
             </AnimatePresence>
-        </div>
+        </Box>
     );
 }

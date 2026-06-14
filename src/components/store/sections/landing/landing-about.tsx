@@ -6,7 +6,7 @@ import { Stack } from '@/components/store/base/stack'
 import { Grid } from '@/components/store/base/grid'
 import { Font } from '@/components/store/base/font'
 import { Icon } from '@/components/store/base/icon'
-import { useRegistry } from '@/components/store/advanced/registry-context'
+import { useRegistry } from '@/components/store/base/registry-context'
 import { 
   Zap, Layers, BarChart, ShoppingBag, Check, 
   PlayCircle, Camera, Beef, Search, Infinity, 
@@ -14,7 +14,7 @@ import {
   ShieldCheck, Globe, HeartPulse, MousePointerClick
 } from 'lucide-react'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
-import { LandingSection } from '@/components/store/advanced/landing-section'
+import { LandingSection } from '@/components/store/intermediary/landing-section'
 import { GlassPanel } from '@/components/store/base/surface'
 import { BackgroundIcon } from '@/components/store/base/background-icon'
 import { Badge } from '@/components/store/base/badge'
@@ -253,7 +253,7 @@ export function LandingAbout({ role = 'trainer' }: LandingAboutProps) {
                     </Font>
 
                     <Font variant="body-sm" color={STORE_TOKENS.COLORS.TEXT.MUTED}>
-                      {feature.description}
+                      {feature?.description}
                     </Font>
 
                   </Stack>

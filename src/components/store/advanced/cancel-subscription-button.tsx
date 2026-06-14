@@ -79,7 +79,7 @@ export function CancelSubscriptionButton() {
             >
                 <Box padding={STORE_TOKENS.PADDING.CONTAINER} bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.MODAL} border borderColor={STORE_TOKENS.COLORS.BACKGROUND} borderOpacity={STORE_TOKENS.OPACITY.SUBTLE} rounded={STORE_TOKENS.RADIUS.SYSTEM}>
                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        <Box display="flex" align="center" gap={STORE_TOKENS.SPACING.NONE} style={{ paddingBottom: '10px' }}>
+                        <Box display="flex" align="center" gap={STORE_TOKENS.SPACING.NONE} padding={STORE_TOKENS.PADDING.ELEMENT}>
                             <Icon icon={AlertTriangle} size="xs" color={STORE_TOKENS.COLORS.BRAND} />
                             <Font
                                 variant="label-caps"

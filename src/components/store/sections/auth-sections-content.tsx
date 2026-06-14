@@ -4,7 +4,6 @@ import React from 'react'
 import { Stack } from '@/components/store/base/stack'
 import { AuthLoginForm } from '@/components/store/advanced/auth-login-form'
 import { AuthSignUpForm } from '@/components/store/advanced/auth-signup-form'
-import { AuthAffiliateSignUpForm } from '@/components/store/advanced/auth-affiliate-signup-form'
 import { AuthForgotPasswordForm } from '@/components/store/advanced/auth-forgot-password-form'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
@@ -26,7 +25,7 @@ export function AuthSectionsContent({ id }: { id?: string }) {
                     <AuthSignUpForm syncColor={false} />
                 </Stack>
                 <Stack gap={STORE_TOKENS.SPACING.CONTAINER} align="center" width="full" maxWidth="auth-form">
-                    <AuthAffiliateSignUpForm syncColor={false} />
+                    <AuthSignUpForm role="affiliate" syncColor={false} />
                 </Stack>
                 <Stack gap={STORE_TOKENS.SPACING.CONTAINER} align="center" width="full" maxWidth="auth-form">
                     <AuthForgotPasswordForm syncColor={false} />

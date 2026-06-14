@@ -82,8 +82,8 @@ export function AdminTopProductsPanel() {
                             {/* Product Image */}
                             <Box
                                 bg={STORE_TOKENS.COLORS.BLACK}
-                                width={48}
-                                height={48}
+                                width="48px"
+                                height="48px"
                                 overflow="hidden"
                                 rounded={STORE_TOKENS.RADIUS.SYSTEM}
                             >

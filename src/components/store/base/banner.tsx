@@ -17,28 +17,28 @@ interface BannerProps {
  * Banner: A base primitive for hero sections and banners with background images and glass gradients.
  * Follows Rule 4 of the Design System for unique customizations like background images.
  */
-export function Banner({ 
-    children, 
-    src, 
-    overlay = 'gradient', 
-    minHeight = '350px' 
+export function Banner({
+    children,
+    src,
+    overlay = 'gradient',
+    minHeight = '350px'
 }: BannerProps) {
     return (
-        <Box 
-            position="relative" 
-            overflow="hidden" 
-            rounded={STORE_TOKENS.RADIUS.SYSTEM} 
-            bg={STORE_TOKENS.COLORS.BACKGROUND} 
-            style={{ 
-                minHeight, 
-                border: '1px solid rgba(255, 255, 255, 0.05)' 
+        <Box
+            position="relative"
+            overflow="hidden"
+            rounded={STORE_TOKENS.RADIUS.SYSTEM}
+            bg={STORE_TOKENS.COLORS.BACKGROUND}
+            style={{
+                minHeight,
+                border: '1px solid rgba(255, 255, 255, 0.05)'
             }}
         >
             {/* Background Image */}
             <Box position="absolute" pin="inset" zIndex={0}>
-                <Img 
-                    src={src} 
-                    alt="Banner" 
+                <Img
+                    src={src}
+                    alt="Banner"
                     fallbackIcon={ImageIcon}
                     fullWidth
                     fullHeight
@@ -67,20 +67,20 @@ export function Banner({
                 </>
             )}
             {/* Content Area */}
-            <Box 
-                position="relative" 
-                padding={{ base: STORE_TOKENS.PADDING.CONTAINER, md: STORE_TOKENS.PADDING.EMPTY_STATE }} 
-                display="flex" 
-                direction="col" 
-                justify="center" 
-                style={{ 
-                    zIndex: 20, 
-                    height: '100%', 
-                    minHeight 
+            <Box
+                position="relative"
+                padding={{ base: STORE_TOKENS.PADDING.CONTAINER, md: STORE_TOKENS.PADDING.EMPTY_STATE }}
+                display="flex"
+                direction="col"
+                justify="center"
+                style={{
+                    zIndex: 20,
+                    height: '100%',
+                    minHeight
                 }}
             >
                 {children}
             </Box>
-        </Box>
+        </Box >
     );
 }

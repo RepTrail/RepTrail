@@ -1,5 +1,5 @@
 import React from 'react'
-import { RegistryProvider } from '@/components/store/advanced/registry-context'
+import { RegistryProvider } from '@/components/store/base/registry-context'
 import { getLandingSessionInfo } from '@/lib/dal/server'
 import { actions } from '@/lib/dal/server'
 import { LandingShell } from '@/components/store/advanced/landing-shell'

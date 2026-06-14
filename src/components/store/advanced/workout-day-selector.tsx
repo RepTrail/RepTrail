@@ -78,7 +78,7 @@ export function WorkoutDaySelector({ userId, assignmentId, dayOfWeek }: WorkoutD
     }
 
     return (
-        <Box width={240}>
+        <Box width="240px">
             <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
                 {isPending && <Icon icon={Loader2} size="xs" color={STORE_TOKENS.COLORS.BRAND} spin />}
                 <FormSelect

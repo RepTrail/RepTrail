@@ -55,7 +55,7 @@ export function AdminProductEditor({ isOpen, onClose, product, onSave, onImport 
             setForm(prev => ({
                 ...prev,
                 name: data.title || prev.name,
-                description: data.description || prev.description,
+                description: data?.description || prev?.description,
                 image_url: data.image || prev.image_url,
                 official_price: data.price || prev.official_price,
                 link_url: prev.link_url,
@@ -99,7 +99,7 @@ export function AdminProductEditor({ isOpen, onClose, product, onSave, onImport 
         >
             <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                 {/* Auto-Import */}
-                <Box padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM} border borderColor={STORE_TOKENS.COLORS.SUCCESS} borderOpacity={STORE_TOKENS.OPACITY.SHELF} bg={STORE_TOKENS.COLORS.SUCCESS} bgOpacity={STORE_TOKENS.OPACITY.LOW} style={{ borderColor: 'rgb(16 185 129 / 0.8)' }}>
+                <Box padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM} border borderColor={STORE_TOKENS.COLORS.SUCCESS} borderOpacity={STORE_TOKENS.OPACITY.SHELF} bg={STORE_TOKENS.COLORS.SUCCESS} bgOpacity={STORE_TOKENS.OPACITY.LOW}>
                     <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                         <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                             <Box padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM} bg={STORE_TOKENS.COLORS.SUCCESS} bgOpacity={STORE_TOKENS.OPACITY.MEDIUM}>
@@ -152,7 +152,7 @@ export function AdminProductEditor({ isOpen, onClose, product, onSave, onImport 
                     <Input
                         label="Descrição Curta"
                         icon={<Icon icon={Pencil} size="xs" />}
-                        value={form.description}
+                        value={form?.description}
                         onChange={e => setForm(prev => ({ ...prev, description: e.target.value }))}
                     />
 

@@ -71,7 +71,7 @@ export function WorkoutBuilderSmart({
     useEffect(() => {
         if (!isEditingMeta && workout) {
             setEditName(workout.name)
-            setEditDesc(workout.description || '')
+            setEditDesc(workout?.description || '')
         }
     }, [workout?.name, workout?.description, isEditingMeta])
 
@@ -257,7 +257,7 @@ export function WorkoutBuilderSmart({
                 <WorkoutBuilderHeader
                     workoutId={workout.id}
                     name={workout.name}
-                    description={workout.description}
+                    description={workout?.description}
                     isEditing={isEditingMeta}
                     setIsEditing={setIsEditingMeta}
                     editName={editName}
@@ -267,7 +267,7 @@ export function WorkoutBuilderSmart({
                     onSave={() => mutateMeta({ id: workout.id, name: editName, description: editDesc })}
                     onCancel={() => {
                         setEditName(workout.name)
-                        setEditDesc(workout.description || '')
+                        setEditDesc(workout?.description || '')
                         setIsEditingMeta(false)
                     }}
                     showAssignmentBadge={showAssignmentBadge}

@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { Font } from './font'
 import { Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { useRegistry } from '@/components/store/advanced/registry-context'
+import { useRegistry } from '@/components/store/base/registry-context'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 interface FormCheckboxProps {

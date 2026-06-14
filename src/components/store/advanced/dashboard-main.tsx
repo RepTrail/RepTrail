@@ -6,7 +6,7 @@ import { Icon } from '@/components/store/base/icon'
 import { Inline } from '@/components/store/base/layout'
 import { GlassPanel } from '@/components/store/base/surface'
 import { LucideIcon } from 'lucide-react'
-import { useRegistry } from './registry-context'
+import { useRegistry } from '@/components/store/base/registry-context'
 import { SegmentedSwitch } from '../intermediary/segmented-switch'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 

@@ -1,8 +1,9 @@
 'use client'
 
 import { RegistryMain } from '@/components/store/advanced/registry-main'
-import { AffiliateEarningsSection } from '@/components/store/sections/affiliate-earnings-section'
-import { DollarSign } from 'lucide-react'
+import { RegistrySection } from '@/components/store/advanced/registry-section'
+import { AffiliateEarningsWalletContent, AffiliateEarningsHistorySection } from '@/components/store/sections/affiliate-earnings-section'
+import { DollarSign, Wallet } from 'lucide-react'
 
 export default function AffiliateEarningsPage() {
     return (
@@ -13,7 +14,16 @@ export default function AffiliateEarningsPage() {
             contextLabel="Área do Afiliado"
             showTabs={false}
         >
-            <AffiliateEarningsSection />
+            <RegistrySection
+                title="Sua Carteira"
+                subtitle="Gestão de saldo e solicitações de saque de comissões."
+                icon={Wallet}
+            >
+                <AffiliateEarningsWalletContent />
+            </RegistrySection>
+            
+            
+            <AffiliateEarningsHistorySection />
         </RegistryMain>
     )
 }

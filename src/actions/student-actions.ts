@@ -44,12 +44,12 @@ export async function updateStudentData(
         // 2. Update physical data (student_details) - USE UPSERT for Ghost Profiles
         if (
             data.weight !== undefined || 
-            data.body_fat !== undefined || 
+            data?.body_fat !== undefined || 
             data.steroid_use !== undefined ||
-            data.height !== undefined ||
+            data?.height !== undefined ||
             data.age !== undefined ||
             data.sex !== undefined ||
-            data.activity_level !== undefined ||
+            data?.activity_level !== undefined ||
             data.observations !== undefined
         ) {
             const upsertDetails: any = { 
@@ -57,12 +57,12 @@ export async function updateStudentData(
                 updated_at: new Date().toISOString() 
             }
             if (data.weight !== undefined) upsertDetails.current_weight = data.weight
-            if (data.height !== undefined) upsertDetails.height = data.height
+            if (data?.height !== undefined) upsertDetails.height = data?.height
             if (data.age !== undefined) upsertDetails.age = data.age
             if (data.sex !== undefined) upsertDetails.sex = data.sex
-            if (data.activity_level !== undefined) upsertDetails.activity_level = data.activity_level
+            if (data?.activity_level !== undefined) upsertDetails.activity_level = data?.activity_level
             if (data.observations !== undefined) upsertDetails.observations = data.observations
-            if (data.body_fat !== undefined) upsertDetails.body_fat = data.body_fat
+            if (data?.body_fat !== undefined) upsertDetails.body_fat = data?.body_fat
             if (data.steroid_use !== undefined) upsertDetails.steroid_use = data.steroid_use
 
             const { error: detailsError } = await supabase
@@ -86,11 +86,11 @@ export async function updateStudentData(
         }
 
         // 3. Update financial data
-        if (data.monthly_fee !== undefined || data.payment_day !== undefined) {
+        if (data?.monthly_fee !== undefined || data.payment_day !== undefined) {
             const { error: relationshipError } = await supabase
                 .from('trainer_students')
                 .update({
-                    monthly_fee: data.monthly_fee,
+                    monthly_fee: data?.monthly_fee,
                     payment_day: data.payment_day
                 })
                 .eq('id', relationshipId)
@@ -173,7 +173,7 @@ export async function getStudentTrainer(studentId: string) {
 
         // Validate trainer_code exists
         if (data && data.trainer && !data.trainer.trainer_code) {
-            console.warn(`Trainer ${data.trainer.id} (${data.trainer.full_name}) does not have a trainer_code`)
+            console.warn(`Trainer ${data.trainer.id} (${data.trainer?.full_name}) does not have a trainer_code`)
         }
 
         return data
@@ -352,11 +352,11 @@ export async function updateStudentProfile(data: {
 
     try {
         // 1. Update Profile (profiles table)
-        if (data.full_name !== undefined || data.whatsapp !== undefined) {
+        if (data?.full_name !== undefined || data.whatsapp !== undefined) {
             const { error: profileError } = await supabase
                 .from('profiles')
                 .update({
-                    full_name: data.full_name,
+                    full_name: data?.full_name,
                     whatsapp: data.whatsapp
                 })
                 .eq('id', user.id)
@@ -371,11 +371,11 @@ export async function updateStudentProfile(data: {
         if (data.birth_date !== undefined) detailsUpdate.birth_date = data.birth_date
         if (data.age !== undefined) detailsUpdate.age = typeof data.age === 'string' ? parseInt(data.age) : data.age
         if (data.sex !== undefined) detailsUpdate.sex = data.sex
-        if (data.height !== undefined) detailsUpdate.height = typeof data.height === 'string' ? parseFloat(data.height) : data.height
+        if (data?.height !== undefined) detailsUpdate.height = typeof data?.height === 'string' ? parseFloat(data?.height) : data?.height
         if (data.weight !== undefined) detailsUpdate.current_weight = typeof data.weight === 'string' ? parseFloat(data.weight) : data.weight
-        if (data.body_fat !== undefined) detailsUpdate.body_fat = typeof data.body_fat === 'string' ? parseFloat(data.body_fat) : data.body_fat
-        if (data.goal !== undefined) detailsUpdate.goal = data.goal
-        if (data.activity_level !== undefined) detailsUpdate.activity_level = data.activity_level
+        if (data?.body_fat !== undefined) detailsUpdate.body_fat = typeof data?.body_fat === 'string' ? parseFloat(data?.body_fat) : data?.body_fat
+        if (data?.goal !== undefined) detailsUpdate.goal = data?.goal
+        if (data?.activity_level !== undefined) detailsUpdate.activity_level = data?.activity_level
         if (data.observations !== undefined) detailsUpdate.observations = data.observations
         if (data.steroid_use !== undefined) detailsUpdate.steroid_use = data.steroid_use
         if (data.neck_cm !== undefined) detailsUpdate.neck_cm = typeof data.neck_cm === 'string' ? parseFloat(data.neck_cm) : data.neck_cm
@@ -402,8 +402,8 @@ export async function updateStudentProfile(data: {
             )
         }
 
-        if (data.body_fat !== undefined) {
-            const bfVal = typeof data.body_fat === 'string' ? parseFloat(data.body_fat) : data.body_fat
+        if (data?.body_fat !== undefined) {
+            const bfVal = typeof data?.body_fat === 'string' ? parseFloat(data?.body_fat) : data?.body_fat
             historyPromises.push(
                 supabase.from('bf_history').insert({
                     student_id: user.id,

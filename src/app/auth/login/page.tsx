@@ -1,12 +1,11 @@
 'use client'
 
-import { RegistryProvider } from '@/components/store/advanced/registry-context'
 import { AuthLoginSection } from '@/components/store/sections/auth-login-section'
 import Script from 'next/script'
 
 export default function LoginPage() {
     return (
-        <RegistryProvider>
+        <>
             <Script id="meta-pixel-login" strategy="afterInteractive">
                 {`
                     !function(f,b,e,v,n,t,s)
@@ -29,6 +28,6 @@ export default function LoginPage() {
                     <img height="1" width="1" src="https://www.facebook.com/tr?id=795120573646319&ev=PageView&noscript=1" />
                 </span>
             </noscript>
-        </RegistryProvider>
+        </>
     )
 }

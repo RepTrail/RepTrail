@@ -3,7 +3,7 @@ import { getTrainerPublicProfileData } from '@/lib/dal/server'
 import { headers } from 'next/headers'
 import { TrainerPublicProfileMain } from '@/components/store/advanced/trainer-public-profile-main'
 import { DashboardShell } from '@/components/store/advanced/dashboard-shell'
-import { RegistryProvider } from '@/components/store/advanced/registry-context'
+import { RegistryProvider } from '@/components/store/base/registry-context'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { Surface } from '@/components/store/base/surface'
 import { BackgroundEffects } from '@/components/store/base/background-effects'
@@ -115,7 +115,7 @@ export default async function TrainerPublicProfilePage({
                     profileHref={profileHref}
                     user={{
                         id: viewerId!,
-                        name: viewerProfile.full_name,
+                        name: viewerProfile?.full_name,
                         email: viewerProfile.email,
                         avatar_url: viewerProfile.avatar_url,
                         isAdmin: viewerProfile.is_admin,

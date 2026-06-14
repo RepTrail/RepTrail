@@ -1,0 +1,48 @@
+{
+  "generated_at": "2026-06-12T22:06:46.516Z",
+  "scope_directory": "src/components/store/intermediary/",
+  "summary": {
+    "total_groups": 2,
+    "total_files_affected": 5,
+    "ambiguous_targets": 2
+  },
+  "groups": [
+    {
+      "id": "d0526616-dc62-4d36-9216-b4a9b5652f33",
+      "candidates": [
+        "body-metric-item.tsx",
+        "price-display.tsx",
+        "student-dashboard-header.tsx"
+      ],
+      "target": "body-metric-item.tsx",
+      "target_ambiguous": true,
+      "criteria_met": [
+        "CRIT-1",
+        "CRIT-3"
+      ],
+      "rationale": "Possuem árvore JSX virtualmente idêntica (>= 80% de sobreposição estrutural), variando apenas props e chamadas de hook específicas de domínio, que poderiam ser injetadas por prop.",
+      "prop_mapping": [],
+      "affected_files": [],
+      "deprecated_component": "A definir",
+      "consolidated": false
+    },
+    {
+      "id": "6dd4f6b9-3c8e-4400-af45-54113d4541f9",
+      "candidates": [
+        "copy-invite-button.tsx",
+        "onboarding-logout-button.tsx"
+      ],
+      "target": "copy-invite-button.tsx",
+      "target_ambiguous": true,
+      "criteria_met": [
+        "CRIT-1",
+        "CRIT-3"
+      ],
+      "rationale": "Possuem árvore JSX virtualmente idêntica (>= 80% de sobreposição estrutural), variando apenas props e chamadas de hook específicas de domínio, que poderiam ser injetadas por prop.",
+      "prop_mapping": [],
+      "affected_files": [],
+      "deprecated_component": "A definir",
+      "consolidated": false
+    }
+  ]
+}

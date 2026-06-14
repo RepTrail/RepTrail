@@ -1,0 +1,149 @@
+{
+  "generated_at": "2026-06-12T10:12:51.544Z",
+  "scope": "advanced",
+  "summary": {
+    "total_violations": 12,
+    "by_severity": {
+      "HIGH": 0,
+      "MEDIUM": 2,
+      "LOW": 10
+    },
+    "by_layer": {
+      "advanced": 12
+    }
+  },
+  "violations": [
+    {
+      "id": "e5878f49-2510-4672-b06b-650e2f6e15d6",
+      "rule_id": "ADV-005",
+      "severity": "LOW",
+      "layer": "advanced",
+      "file": "src/components/store/intermediary/cardio-timer-card.tsx",
+      "line": 141,
+      "description": "Uso de width ou height fixos numéricos/px/rem",
+      "snippet": "width={80}",
+      "fixed": false
+    },
+    {
+      "id": "9b45fa9e-06d0-4900-937f-0425134310a4",
+      "rule_id": "ADV-005",
+      "severity": "LOW",
+      "layer": "advanced",
+      "file": "src/components/store/intermediary/cardio-timer-card.tsx",
+      "line": 142,
+      "description": "Uso de width ou height fixos numéricos/px/rem",
+      "snippet": "height={80}",
+      "fixed": false
+    },
+    {
+      "id": "5793c039-9e6a-4411-9488-89d67e4cab25",
+      "rule_id": "ADV-005",
+      "severity": "LOW",
+      "layer": "advanced",
+      "file": "src/components/store/intermediary/cardio-timer-card.tsx",
+      "line": 162,
+      "description": "Uso de width ou height fixos numéricos/px/rem",
+      "snippet": "width={60}",
+      "fixed": false
+    },
+    {
+      "id": "97e91789-c322-4207-a485-cbb1893c0adc",
+      "rule_id": "ADV-005",
+      "severity": "LOW",
+      "layer": "advanced",
+      "file": "src/components/store/intermediary/cardio-timer-card.tsx",
+      "line": 163,
+      "description": "Uso de width ou height fixos numéricos/px/rem",
+      "snippet": "height={60}",
+      "fixed": false
+    },
+    {
+      "id": "1184131c-723b-4cd4-bec4-db8d208df119",
+      "rule_id": "ADV-005",
+      "severity": "LOW",
+      "layer": "advanced",
+      "file": "src/components/store/intermediary/chart-tooltip.tsx",
+      "line": 74,
+      "description": "Uso de width ou height fixos numéricos/px/rem",
+      "snippet": "width={8}",
+      "fixed": false
+    },
+    {
+      "id": "d1b934af-08e7-4018-bde3-13bb0cfe4cd1",
+      "rule_id": "ADV-005",
+      "severity": "LOW",
+      "layer": "advanced",
+      "file": "src/components/store/intermediary/chart-tooltip.tsx",
+      "line": 75,
+      "description": "Uso de width ou height fixos numéricos/px/rem",
+      "snippet": "height={8}",
+      "fixed": false
+    },
+    {
+      "id": "0299fdb8-3d13-4c5d-92cd-91a45d72cff5",
+      "rule_id": "ADV-003",
+      "severity": "MEDIUM",
+      "layer": "advanced",
+      "file": "src/components/store/intermediary/chart-tooltip.tsx",
+      "line": 77,
+      "description": "Uso de style inline (proibido)",
+      "snippet": "style={{",
+      "fixed": false
+    },
+    {
+      "id": "d45c5e29-af6c-4a32-84cb-0c8864f82afe",
+      "rule_id": "ADV-005",
+      "severity": "LOW",
+      "layer": "advanced",
+      "file": "src/components/store/intermediary/chart-tooltip.tsx",
+      "line": 105,
+      "description": "Uso de width ou height fixos numéricos/px/rem",
+      "snippet": "width={8}",
+      "fixed": false
+    },
+    {
+      "id": "6b9cc320-f5ab-4394-85a1-b7b5cea7dd22",
+      "rule_id": "ADV-005",
+      "severity": "LOW",
+      "layer": "advanced",
+      "file": "src/components/store/intermediary/chart-tooltip.tsx",
+      "line": 106,
+      "description": "Uso de width ou height fixos numéricos/px/rem",
+      "snippet": "height={8}",
+      "fixed": false
+    },
+    {
+      "id": "e1b8a175-6fda-469d-8654-f01eb1398057",
+      "rule_id": "ADV-003",
+      "severity": "MEDIUM",
+      "layer": "advanced",
+      "file": "src/components/store/intermediary/chart-tooltip.tsx",
+      "line": 108,
+      "description": "Uso de style inline (proibido)",
+      "snippet": "style={{",
+      "fixed": false
+    },
+    {
+      "id": "b791cb26-1299-45d7-bd4f-4a529988b298",
+      "rule_id": "ADV-005",
+      "severity": "LOW",
+      "layer": "advanced",
+      "file": "src/components/store/intermediary/ranking-list-item.tsx",
+      "line": 81,
+      "description": "Uso de width ou height fixos numéricos/px/rem",
+      "snippet": "<Box width={10} shrink={0} display=\"flex\" justify=\"center\">",
+      "fixed": false
+    },
+    {
+      "id": "264a007c-2745-405c-991e-748d352ca041",
+      "rule_id": "ADV-005",
+      "severity": "LOW",
+      "layer": "advanced",
+      "file": "src/components/store/intermediary/segmented-switch.tsx",
+      "line": 99,
+      "description": "Uso de width ou height fixos numéricos/px/rem",
+      "snippet": "<Box flex=\"none\" width={STORE_TOKENS.SPACING.ELEMENT} height={1} />",
+      "fixed": false
+    }
+  ]
+}

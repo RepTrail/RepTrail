@@ -9,14 +9,14 @@ import { Font } from '@/components/store/base/font'
 import { Button } from '@/components/store/base/button'
 import { Icon, IconBox } from '@/components/store/base/icon'
 import { Badge } from '@/components/store/base/badge'
-import { useRegistry } from '@/components/store/advanced/registry-context'
+import { useRegistry } from '@/components/store/base/registry-context'
 import { 
   ShieldCheck, ArrowRight, UserCheck, Sparkles, 
   Smartphone, Dumbbell, Target, Zap, Search, 
   MousePointerClick, DollarSign, Users 
 } from 'lucide-react'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
-import { LandingSection } from '@/components/store/advanced/landing-section'
+import { LandingSection } from '@/components/store/intermediary/landing-section'
 import { IphoneMockup } from '@/components/store/base/iphone-mockup'
 import { GlassPanel } from '@/components/store/base/surface'
 import { YouTubePlayer } from '@/components/store/base/youtube-player'

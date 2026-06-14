@@ -11,7 +11,7 @@ import {
   Users,
   Dumbbell
 } from 'lucide-react'
-import { useRegistry } from './registry-context'
+import { useRegistry } from '@/components/store/base/registry-context'
 import { MobileNavContainer } from '@/components/store/base/layout'
 import { Button } from '@/components/store/base/button'
 

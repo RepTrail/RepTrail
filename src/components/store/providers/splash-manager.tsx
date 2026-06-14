@@ -58,7 +58,7 @@ export function SplashManager({ children }: SplashManagerProps) {
                     color={getSplashColor()}
                     onFinish={() => setView('ready')}
                 />
-                {!isStandalone && children}
+                { !isStandalone && children }
             </>
         )
     }

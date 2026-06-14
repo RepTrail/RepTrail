@@ -13,14 +13,14 @@ import { Textarea } from '@/components/store/base/textarea'
 import { Button } from '@/components/store/base/button'
 import { Surface } from '@/components/store/base/surface'
 import { Icon } from '@/components/store/base/icon'
-import { 
-    Activity, 
-    Target, 
-    ShieldCheck, 
-    Ruler, 
-    Weight, 
-    Code, 
-    Zap, 
+import {
+    Activity,
+    Target,
+    ShieldCheck,
+    Ruler,
+    Weight,
+    Code,
+    Zap,
     Calendar,
     ChevronRight,
     ChevronLeft,
@@ -28,7 +28,7 @@ import {
 } from 'lucide-react'
 import { DomainStepCard } from '../intermediary/domain-step-card'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
-import { RegistryProvider } from './registry-context'
+import { RegistryProvider } from '@/components/store/base/registry-context'
 
 const initialState = {
     message: '',
@@ -44,7 +44,7 @@ const initialState = {
 export function StudentOnboardingForm({ defaultTrainerCode = '' }: { defaultTrainerCode?: string }) {
     const [state, formAction] = useActionState(submitOnboarding, initialState)
     const [step, setStep] = useState(1)
-    
+
     // Step 1 States
     const [height, setHeight] = useState('')
     const [startingWeight, setStartingWeight] = useState('')
@@ -110,9 +110,10 @@ export function StudentOnboardingForm({ defaultTrainerCode = '' }: { defaultTrai
                             <Font variant="sub-tiny" weight="black" uppercase tracking="widest">Finalizar Cadastro</Font>
                             <Icon icon={ShieldCheck} size="sm" color={STORE_TOKENS.COLORS.BLACK} />
                         </>
-                    )}
-                </Stack>
-            </Button>
+                    )
+                    }
+                </Stack >
+            </Button >
         );
     }
 
@@ -139,12 +140,12 @@ export function StudentOnboardingForm({ defaultTrainerCode = '' }: { defaultTrai
                 <Stack gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
                     {/* Error Messages */}
                     {state?.message && (
-                        <Surface 
+                        <Surface
                             variant="tonal-red"
-                            padding={STORE_TOKENS.PADDING.ELEMENT} 
-                            rounded={STORE_TOKENS.RADIUS.SYSTEM} 
-                            display="flex" 
-                            align="center" 
+                            padding={STORE_TOKENS.PADDING.ELEMENT}
+                            rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                            display="flex"
+                            align="center"
                             minHeight={44}
                         >
                             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
@@ -181,47 +182,47 @@ export function StudentOnboardingForm({ defaultTrainerCode = '' }: { defaultTrai
 
                     {/* STEP 1: Biometrics */}
                     {step === 1 && (
-                        <DomainStepCard 
+                        <DomainStepCard
                             index={1}
-                            title="Biometria de Elite" 
+                            title="Biometria de Elite"
                             description="Dados corporais fundamentais para o cálculo de protocolos."
                             icon={Activity}
                             accentColor="orange"
                         >
                             <Grid cols={{ base: 1, md: 2 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
-                                <Input 
+                                <Input
                                     id="height"
-                                    label="Altura (cm)" 
-                                    placeholder="Ex: 175" 
+                                    label="Altura (cm)"
+                                    placeholder="Ex: 175"
                                     type="number"
                                     value={height}
                                     onChange={(e) => setHeight(e.target.value)}
                                     icon={<Ruler size={16} />}
                                 />
-                                <Input 
+                                <Input
                                     id="startingWeight"
-                                    label="Peso Atual (kg)" 
-                                    placeholder="Ex: 80.5" 
+                                    label="Peso Atual (kg)"
+                                    placeholder="Ex: 80.5"
                                     type="number"
                                     step="0.1"
                                     value={startingWeight}
                                     onChange={(e) => setStartingWeight(e.target.value)}
                                     icon={<Weight size={16} />}
                                 />
-                                <Input 
+                                <Input
                                     id="estimatedBf"
-                                    label="Gordura Estimada (%)" 
-                                    placeholder="Opcional" 
+                                    label="Gordura Estimada (%)"
+                                    placeholder="Opcional"
                                     type="number"
                                     step="0.1"
                                     value={estimatedBf}
                                     onChange={(e) => setEstimatedBf(e.target.value)}
                                     icon={<Zap size={16} />}
                                 />
-                                <Input 
+                                <Input
                                     id="displayBirthDate"
-                                    label="Data de Nascimento" 
-                                    placeholder="DD/MM/AAAA" 
+                                    label="Data de Nascimento"
+                                    placeholder="DD/MM/AAAA"
                                     mask="date"
                                     value={displayBirthDate}
                                     onChange={handleBirthDateChange}
@@ -233,15 +234,15 @@ export function StudentOnboardingForm({ defaultTrainerCode = '' }: { defaultTrai
 
                     {/* STEP 2: Lifestyle & Goal */}
                     {step === 2 && (
-                        <DomainStepCard 
+                        <DomainStepCard
                             index={2}
-                            title="Perfil Metabólico" 
+                            title="Perfil Metabólico"
                             description="Seu ritmo atual e onde você quer chegar."
                             icon={Target}
                             accentColor="orange"
                         >
                             <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
-                                <FormSelect 
+                                <FormSelect
                                     label="Nível de Atividade"
                                     placeholder="Selecione seu ritmo..."
                                     value={activityLevel}
@@ -254,10 +255,10 @@ export function StudentOnboardingForm({ defaultTrainerCode = '' }: { defaultTrai
                                         { value: 'athlete', label: 'Elite', description: 'Atleta Profissional' },
                                     ]}
                                 />
-                                <Input 
+                                <Input
                                     id="goal"
-                                    label="Objetivo Principal" 
-                                    placeholder="Ex: Hipertrofia Máxima, Definição..." 
+                                    label="Objetivo Principal"
+                                    placeholder="Ex: Hipertrofia Máxima, Definição..."
                                     value={goal}
                                     onChange={(e) => setGoal(e.target.value)}
                                     icon={<Target size={16} />}
@@ -268,15 +269,15 @@ export function StudentOnboardingForm({ defaultTrainerCode = '' }: { defaultTrai
 
                     {/* STEP 3: Governança & Vínculo */}
                     {step === 3 && (
-                        <DomainStepCard 
+                        <DomainStepCard
                             index={3}
-                            title="Governança & Vínculo" 
+                            title="Governança & Vínculo"
                             description="Dados de segurança e conexão com seu treinador."
                             icon={ShieldCheck}
                             accentColor="orange"
                         >
                             <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
-                                <Textarea 
+                                <Textarea
                                     id="observations"
                                     label="Observações Médicas / Lesões"
                                     placeholder="Ex: Dores no joelho, cirurgias, limitações..."
@@ -285,19 +286,19 @@ export function StudentOnboardingForm({ defaultTrainerCode = '' }: { defaultTrai
                                     onChange={(e) => setObservations(e.target.value)}
                                 />
 
-                                <FormCheckbox 
+                                <FormCheckbox
                                     name="steroidUse"
-                                    label="FAÇO USO DE RECURSOS ERGOGÊNICOS" 
+                                    label="FAÇO USO DE RECURSOS ERGOGÊNICOS"
                                     description="Informação confidencial para ajuste fino de volume e intensidade pelo seu treinador."
                                     color={STORE_TOKENS.COLORS.BRAND}
                                     checked={steroidUse}
                                     onChange={setSteroidUse}
                                 />
 
-                                <Input 
+                                <Input
                                     id="trainerCode"
-                                    label="Código do Personal" 
-                                    placeholder="Ex: TREINADOR123" 
+                                    label="Código do Personal"
+                                    placeholder="Ex: TREINADOR123"
                                     value={trainerCode}
                                     onChange={(e) => setTrainerCode(e.target.value)}
                                     icon={<Code size={16} />}
@@ -309,10 +310,10 @@ export function StudentOnboardingForm({ defaultTrainerCode = '' }: { defaultTrai
                     {/* Actions Navigation Bar */}
                     <Stack direction={{ base: 'col', md: 'row' }} gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
                         {step > 1 && (
-                            <Button 
-                                type="button" 
-                                variant="outline-primary" 
-                                size="lg" 
+                            <Button
+                                type="button"
+                                variant="outline-primary"
+                                size="lg"
                                 onClick={prevStep}
                             >
                                 <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
@@ -321,12 +322,12 @@ export function StudentOnboardingForm({ defaultTrainerCode = '' }: { defaultTrai
                                 </Stack>
                             </Button>
                         )}
-                        
+
                         {step < 3 ? (
-                            <Button 
-                                type="button" 
-                                variant="primary" 
-                                size="lg" 
+                            <Button
+                                type="button"
+                                variant="primary"
+                                size="lg"
                                 flex1
                                 disabled={step === 1 ? !isStep1Valid : !isStep2Valid}
                                 onClick={nextStep}

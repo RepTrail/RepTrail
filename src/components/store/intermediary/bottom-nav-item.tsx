@@ -1,7 +1,7 @@
 'use client'
 
 import { LucideIcon } from 'lucide-react'
-import { RegistryColor } from '@/components/store/advanced/registry-context'
+import { RegistryColor } from '@/components/store/base/registry-context'
 import { BaseBottomNavLink } from '@/components/store/base/bottom-nav-link'
 
 interface BottomNavItemProps {

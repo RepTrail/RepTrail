@@ -7,7 +7,7 @@ import { QUERY_KEYS } from '@/lib/query-keys'
 import { getCardioLibrary } from '@/lib/dal/remote'
 import { getTrainerStudents } from '@/lib/dal/remote'
 import { useRealtimeSync } from '@/hooks/use-realtime-sync'
-import { CardioManagementSectionContent } from '@/components/store/sections/cardio-management-section-content'
+import { CardioManagementList } from '@/components/store/advanced/cardio-management-list'
 
 interface TrainerCardioLibrarySmartProps {
     userId: string
@@ -46,7 +46,7 @@ export function TrainerCardioLibrarySmart({ userId }: TrainerCardioLibrarySmartP
         <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
 
             <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
-                <CardioManagementSectionContent
+                <CardioManagementList
                     userId={userId}
                     cardios={cardios}
                     students={students}

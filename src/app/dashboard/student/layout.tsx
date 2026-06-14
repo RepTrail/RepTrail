@@ -6,7 +6,7 @@ import { getProfile, getStudentLayoutData, actions } from '@/lib/dal/server'
 import { getQueryClient } from '@/lib/get-query-client'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { DashboardShell } from '@/components/store/advanced/dashboard-shell'
-import { RegistryProvider } from '@/components/store/advanced/registry-context'
+import { RegistryProvider } from '@/components/store/base/registry-context'
 import { SettingsModal } from '@/components/store/advanced/student-settings-modal'
 
 export default async function StudentLayout({ children }: { children: React.ReactNode }) {

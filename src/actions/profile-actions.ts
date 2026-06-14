@@ -21,7 +21,7 @@ export async function updateTrainerProfile(data: {
         const { error } = await supabase
             .from('profiles')
             .update({
-                full_name: data.full_name,
+                full_name: data?.full_name,
                 bio: data.bio,
                 specialties: data.specialties,
                 whatsapp: data.whatsapp,

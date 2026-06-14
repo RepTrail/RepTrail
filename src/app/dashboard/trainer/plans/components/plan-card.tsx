@@ -42,97 +42,100 @@ export function PlanCard({ plan, isCurrentPlan }: PlanCardProps) {
     const priceDisplay = isFree ? 'Grátis' : `R$ ${(plan.base_price_cents / 100).toFixed(2).replace('.', ',')}`
 
     return (
+
         <>
-            <Box
-                position="relative"
-                style={{
-                    padding: (isPremium || isHighlighted) ? '2px' : '0',
-                    background: isPremium ? premiumBorder : (isHighlighted ? highlightedBorder : 'transparent'),
-                    borderRadius: STORE_TOKENS.RADIUS.SYSTEM,
-                }}
-            >
-                {isHighlighted && (
-                    <Box position="absolute" top="-12px" left="50%" style={{ transform: 'translateX(-50%)', zIndex: 10 }}>
-                        <Badge label="Mais Popular" color={STORE_TOKENS.COLORS.BRAND} variant="solid" size="sm" />
-                    </Box>
-                )}
-                {isPremium && (
-                    <Box position="absolute" top="-12px" left="50%" style={{ transform: 'translateX(-50%)', zIndex: 10 }}>
-                        <Badge label="Elite" color="amber" variant="solid" size="sm" />
-                    </Box>
-                )}
-
-                <Surface
-                    variant="glass"
-                    padding={STORE_TOKENS.PADDING.CONTAINER}
-                    rounded={STORE_TOKENS.RADIUS.SYSTEM}
-                    border={isPremium || isHighlighted ? 'none' : 'standard'}
-                >
-                    <Stack gap={STORE_TOKENS.SPACING.CONTAINER} flex1>
-                        <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center" textAlign="center">
-                            <Font variant="h3" weight="black" uppercase italic color={isPremium ? 'emerald' : 'primary'}>
-                                {plan.name}
-                            </Font>
-                            <Font variant="body-sm" color="zinc-400">
-                                {plan.description}
-                            </Font>
-
-                            <Stack align="center">
-                                <Font variant="h1" weight="black" color="white">
-                                    {priceDisplay}
-                                </Font>
-                                {plan.slug === 'on_demand' && features?.price_per_student_cents ? (
-                                    <Font variant="tiny" color="zinc-500" uppercase tracking="widest" weight="bold">
-                                        + R$ {(features.price_per_student_cents / 100).toFixed(2).replace('.', ',')}/aluno após os {features.free_students_limit || 0} grátis
-                                    </Font>
-                                ) : null}
-                            </Stack>
-                        </Stack>
-
-                        <Stack gap={STORE_TOKENS.SPACING.ELEMENT} flex1>
-                            <Box padding={STORE_TOKENS.PADDING.ELEMENT}>
-                                <Stack direction="row" justify="between" align="center">
-                                    <Font variant="body-sm" weight="bold" color="zinc-400">Limite de Alunos</Font>
-                                    <Font variant="body-sm" weight="bold" color="white">{features?.student_limit ?? 'Ilimitado'}</Font>
-                                </Stack>
-                            </Box>
-
-                            {Object.entries(featureLabels).map(([key, label]) => {
-                                const hasFeature = features?.[key] === true
-                                if (!hasFeature) return null
-                                return (
-                                    <Stack key={key} direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                        <Icon icon={CheckCircle2} size="xs" color={STORE_TOKENS.COLORS.SUCCESS} />
-                                        <Font variant="body-sm" color="zinc-400">{label}</Font>
-                                    </Stack>
-                                )
-                            })}
-                        </Stack>
-
-                        <Button
-                            variant={isCurrentPlan ? 'outline-zinc' : (isPremium ? 'primary' : 'white')}
-                            fullWidth
-                            disabled={isCurrentPlan}
-                            onClick={() => {
-                                if (!isCurrentPlan) setIsModalOpen(true)
-                            }}
-                        >
-                            {isCurrentPlan ? 'Plano Atual' : 'Assinar Plano'}
-                        </Button>
-                    </Stack>
-                </Surface>
-            </Box>
-
-            {!isCurrentPlan && (
-                <AsaasPaymentModal
-                    isOpen={isModalOpen}
-                    onClose={() => setIsModalOpen(false)}
-                    tier={plan.slug as any} // mantido para fallback
-                    plan_id={plan.id}
-                    plan_slug={plan.slug}
-                    monthlyTotal={plan.base_price_cents / 100}
-                />
+        <Box
+            position="relative"
+            style={{
+                padding: (isPremium || isHighlighted) ? '2px' : '0',
+                background: isPremium ? premiumBorder : (isHighlighted ? highlightedBorder : 'transparent'),
+                borderRadius: STORE_TOKENS.RADIUS.SYSTEM,
+            }}
+        >
+            {isHighlighted && (
+                <Box position="absolute" top="-12px" left="50%" style={{ transform: 'translateX(-50%)', zIndex: 10 }}>
+                    <Badge label="Mais Popular" color={STORE_TOKENS.COLORS.BRAND} variant="solid" size="sm" />
+                </Box>
             )}
+            {isPremium && (
+                <Box position="absolute" top="-12px" left="50%" style={{ transform: 'translateX(-50%)', zIndex: 10 }}>
+                    <Badge label="Elite" color="amber" variant="solid" size="sm" />
+                </Box>
+            )}
+
+            <Surface
+                variant="glass"
+                padding={STORE_TOKENS.PADDING.CONTAINER}
+                rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                border={isPremium || isHighlighted ? 'none' : 'standard'}
+            >
+                <Stack gap={STORE_TOKENS.SPACING.CONTAINER} flex1>
+                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center" textAlign="center">
+                        <Font variant="h3" weight="black" uppercase italic color={isPremium ? 'emerald' : 'primary'}>
+                            {plan.name}
+                        </Font>
+                        <Font variant="body-sm" color="zinc-400">
+                            {plan?.description}
+                        </Font>
+
+                        <Stack align="center">
+                            <Font variant="h1" weight="black" color="white">
+                                {priceDisplay}
+                            </Font>
+                            {plan.slug === 'on_demand' && features?.price_per_student_cents ? (
+                                <Font variant="tiny" color="zinc-500" uppercase tracking="widest" weight="bold">
+                                    + R$ {(features.price_per_student_cents / 100).toFixed(2).replace('.', ',')}/aluno após os {features.free_students_limit || 0} grátis
+                                </Font>
+                            ) : null}
+                        </Stack>
+                    </Stack>
+
+                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT} flex1>
+                        <Box padding={STORE_TOKENS.PADDING.ELEMENT}>
+                            <Stack direction="row" justify="between" align="center">
+                                <Font variant="body-sm" weight="bold" color="zinc-400">Limite de Alunos</Font>
+                                <Font variant="body-sm" weight="bold" color="white">{features?.student_limit ?? 'Ilimitado'}</Font>
+                            </Stack>
+                        </Box>
+
+                        {Object.entries(featureLabels).map(([key, label]) => {
+                            const hasFeature = features?.[key] === true
+                            if (!hasFeature) return null
+                            return (
+                                <Stack key={key} direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                    <Icon icon={CheckCircle2} size="xs" color={STORE_TOKENS.COLORS.SUCCESS} />
+                                    <Font variant="body-sm" color="zinc-400">{label}</Font>
+                                </Stack>
+                            )
+                        })}
+                    </Stack>
+
+                    <Button
+                        variant={isCurrentPlan ? 'outline-zinc' : (isPremium ? 'primary' : 'white')}
+                        fullWidth
+                        disabled={isCurrentPlan}
+                        onClick={() => {
+                            if (!isCurrentPlan) setIsModalOpen(true)
+                        }}
+                    >
+                        {isCurrentPlan ? 'Plano Atual' : 'Assinar Plano'}
+                    </Button>
+                </Stack>
+            </Surface>
+        </Box>
+
+            {
+        !isCurrentPlan && (
+            <AsaasPaymentModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                tier={plan.slug as any} // mantido para fallback
+                plan_id={plan.id}
+                plan_slug={plan.slug}
+                monthlyTotal={plan.base_price_cents / 100}
+            />
+        )
+    }
         </>
     )
 }

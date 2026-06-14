@@ -126,7 +126,7 @@ export function TrainerPublicProfileMain({
                         {/* Avatar & Elite Badge */}
                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                             <BaseAvatar
-                                initials={trainer.full_name?.substring(0, 2).toUpperCase() || 'TR'}
+                                initials={trainer?.full_name?.substring(0, 2).toUpperCase() || 'TR'}
                                 src={trainer.avatar_url || undefined}
                                 size="xxl"
                                 variant="primary"
@@ -152,7 +152,7 @@ export function TrainerPublicProfileMain({
                                 {...{
                                     color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
                                 }}>
-                                {trainer.full_name}
+                                {trainer?.full_name}
                             </Font>
 
                             <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} wrap="wrap" justify={{ base: 'center', md: 'start' }}>
@@ -206,9 +206,8 @@ export function TrainerPublicProfileMain({
                                 <Box width={{ base: 'full', md: 'auto' }} display="flex">
                                     {trainer.whatsapp ? (
                                         <Link
-                                            href={`https://wa.me/${trainer.whatsapp?.replace(/\D/g, '')}?text=Olá ${trainer.full_name}, vi seu perfil no RepTrail e gostaria de saber mais sobre sua consultoria!`}
+                                            href={`https://wa.me/${trainer.whatsapp?.replace(/\D/g, '')}?text=Olá ${trainer?.full_name}, vi seu perfil no RepTrail e gostaria de saber mais sobre sua consultoria!`}
                                             target="_blank"
-                                            style={{ width: '100%' }}
                                         >
                                             <Button variant="outline-primary" size="sm" fullWidth>
                                                 <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
@@ -233,7 +232,6 @@ export function TrainerPublicProfileMain({
                                             href={`https://instagram.com/${trainer.instagram.replace(/^@/, '')}`}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            style={{ width: '100%' }}
                                         >
                                             <Button variant="outline-zinc" size="sm" fullWidth>
                                                 <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>

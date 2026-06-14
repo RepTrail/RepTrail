@@ -8,7 +8,7 @@ import { Stack } from '@/components/store/base/stack'
 import { Grid } from '@/components/store/base/grid'
 import { Box } from '@/components/store/base/box'
 import { GlassPanel } from '@/components/store/base/surface'
-import { RegistrySection } from '@/components/store/advanced/registry-section'
+import { Font } from '@/components/store/base/font'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 interface StudentPublicMetricsProps {
@@ -95,41 +95,37 @@ export function StudentPublicMetrics({ fullMetrics, adherenceHistory, steroidUse
                     }} />
             </Grid>
             {/* ── Consistência Section ────────────────────────────────── */}
-            <RegistrySection
-                title="Consistência (30D)"
-                subtitle="Acompanhamento diário da consistência de treinos, dieta, cardio e ergogênicos nas últimas 4 semanas."
-                icon={Target}
-            >
-                <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
-                    <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER} minWidth={0}>
-                        <Box fullWidth minWidth={0} overflow="hidden">
-                            <UnifiedAdherenceChart
-                                history={adherenceHistory || []}
-                                showErgogenics={steroidUse}
-                                noCard={true}
-                            />
-                        </Box>
-                    </GlassPanel>
+            <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                    <Font variant="h3" weight="black" color="primary">Consistência (30D)</Font>
+                    <Font variant="body-sm" color="zinc-400">Acompanhamento diário da consistência de treinos, dieta, cardio e ergogênicos nas últimas 4 semanas.</Font>
                 </Stack>
-            </RegistrySection>
-            {/* ── Evolução Analítica Section ──────────────────────────── */}
-            <RegistrySection
-                title="Evolução Analítica"
-                subtitle="Histórico estatístico do percentual de gordura corporal, peso e frequência de treinos semanais."
-                icon={TrendingUp}
-            >
-                <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth minWidth={0}>
-                    <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER} overflow="hidden" minWidth={0}>
-                        <PerformanceAnalysisSection
-                            weights={fullMetrics.weights}
-                            bfs={fullMetrics.bfs}
-                            frequency={fullMetrics.frequency}
-                            trainerTier="elite"
-                            isStudentView={true}
+                <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER} minWidth={0}>
+                    <Box fullWidth minWidth={0} overflow="hidden">
+                        <UnifiedAdherenceChart
+                            history={adherenceHistory || []}
+                            showErgogenics={steroidUse}
+                            noCard={true}
                         />
-                    </GlassPanel>
+                    </Box>
+                </GlassPanel>
+            </Stack>
+            {/* ── Evolução Analítica Section ──────────────────────────── */}
+            <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth minWidth={0}>
+                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                    <Font variant="h3" weight="black" color="primary">Evolução Analítica</Font>
+                    <Font variant="body-sm" color="zinc-400">Histórico estatístico do percentual de gordura corporal, peso e frequência de treinos semanais.</Font>
                 </Stack>
-            </RegistrySection>
+                <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER} overflow="hidden" minWidth={0}>
+                    <PerformanceAnalysisSection
+                        weights={fullMetrics.weights}
+                        bfs={fullMetrics.bfs}
+                        frequency={fullMetrics.frequency}
+                        trainerTier="elite"
+                        isStudentView={true}
+                    />
+                </GlassPanel>
+            </Stack>
         </Stack>
     );
 }

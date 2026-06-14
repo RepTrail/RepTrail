@@ -8,7 +8,7 @@ import { Surface, GlassPanel } from '@/components/store/base/surface'
 import { SidebarItem } from '../intermediary/sidebar-item'
 import { SidebarProfile } from '../intermediary/sidebar-profile'
 import { Zap, Activity, Users, Dumbbell } from 'lucide-react'
-import { useRegistry } from '@/components/store/advanced/registry-context'
+import { useRegistry } from '@/components/store/base/registry-context'
 import { usePathname } from 'next/navigation'
 import { Divider } from '@/components/store/base/layout'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
@@ -19,10 +19,10 @@ interface SidebarSection {
   icon: any
 }
 
-export function RegistrySidebar({ 
+export function RegistrySidebar({
   onOpenSettings,
   sections: externalSections
-}: { 
+}: {
   onOpenSettings?: () => void,
   sections?: SidebarSection[]
 }) {
@@ -53,96 +53,98 @@ export function RegistrySidebar({
 
   return (
     <>
-      {/* Mobile Overlay */}
-      {isSidebarOpen && (
-        <Surface
-            position="fixed"
-            pin="inset"
-            variant="glass-dark"
-            bg={STORE_TOKENS.COLORS.BLACK}
-            bgOpacity={STORE_TOKENS.OPACITY.MODAL}
-            zIndex={STORE_TOKENS.Z_INDEX.OVERLAY}
-            display={{ base: 'block', lg: 'none' }}
-            onClick={() => setIsSidebarOpen(false)}
-        >
-          <></>
-        </Surface>
-      )}
-      <Box
-        as="aside"
+    {/* Mobile Overlay */ }
+      {
+    isSidebarOpen && (
+      <Surface
         position="fixed"
-        pin={{ base: 'left', lg: 'left' }}
-        top={0}
-        height="screen"
-        width="sidebar-wide"
-        zIndex={100}
-        transition
-        translateX={{ base: isSidebarOpen ? 0 : '-full', lg: 0 }}
+        pin="inset"
+        variant="glass-dark"
+        bg={STORE_TOKENS.COLORS.BLACK}
+        bgOpacity={STORE_TOKENS.OPACITY.MODAL}
+        zIndex={STORE_TOKENS.Z_INDEX.OVERLAY}
+        display={{ base: 'block', lg: 'none' }}
+        onClick={() => setIsSidebarOpen(false)}
       >
-        <GlassPanel
-          fullWidth
-          fullHeight
-          variant="glass"
-          border="none"
-          rounded={STORE_TOKENS.RADIUS.NONE}
-          display="flex"
-          direction="col"
-        >
-          {/* Drawer Border (Right) */}
-          <Surface 
-              position="absolute" 
-              pin="right" 
-              top={0} 
-              fullHeight 
-              width="px" 
-              bg={STORE_TOKENS.COLORS.WHITE} 
-              bgOpacity={STORE_TOKENS.OPACITY.LOW}
-          >
-            <></>
-          </Surface>
-          {/* Top Content (Padded) */}
-          <Box flex1 padding={STORE_TOKENS.PADDING.CONTAINER} display="flex" direction="col" overflow="hidden" position="relative">
+        {null}
+      </Surface >
+    )
+  }
+  <Box
+    as="aside"
+    position="fixed"
+    pin={{ base: 'left', lg: 'left' }}
+    top={0}
+    height="screen"
+    width="sidebar-wide"
+    zIndex={100}
+    transition
+    translateX={{ base: isSidebarOpen ? 0 : '-full', lg: 0 }}
+  >
+    <GlassPanel
+      fullWidth
+      fullHeight
+      variant="glass"
+      border="none"
+      rounded={STORE_TOKENS.RADIUS.NONE}
+      display="flex"
+      direction="col"
+    >
+      {/* Drawer Border (Right) */}
+      <Surface
+        position="absolute"
+        pin="right"
+        top={0}
+        fullHeight
+        width="px"
+        bg={STORE_TOKENS.COLORS.WHITE}
+        bgOpacity={STORE_TOKENS.OPACITY.LOW}
+      >
+        {null}
+      </Surface>
+      {/* Top Content (Padded) */}
+      <Box flex1 padding={STORE_TOKENS.PADDING.CONTAINER} display="flex" direction="col" overflow="hidden" position="relative">
 
-            <Stack gap={STORE_TOKENS.SPACING.EMPTY_STATE} flex1 overflow="hidden">
-              <Box>
-                <Logo size="md" color={primaryColor as any} />
-              </Box>
+        <Stack gap={STORE_TOKENS.SPACING.EMPTY_STATE} flex1 overflow="hidden">
+          <Box>
+            <Logo size="md" color={primaryColor as any} />
+          </Box>
 
-              <Box as="nav" flex1 fullWidth overflow="auto" noScrollbar>
-                <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
-                  {sections.map((section) => (
-                    <SidebarItem
-                      key={section.id}
-                      label={section.label}
-                      icon={section.icon}
-                      active={activeSection === section.id}
-                      variant={primaryColor as any}
-                      onClick={() => scrollToSection(section.id)}
-                    />
-                  ))}
-                </Stack>
-              </Box>
+          <Box as="nav" flex1 fullWidth overflow="auto" noScrollbar>
+            <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
+              {sections.map((section) => (
+                <SidebarItem
+                  key={section.id}
+                  label={section.label}
+                  icon={section.icon}
+                  active={activeSection === section.id}
+                  variant={primaryColor as any}
+                  onClick={() => scrollToSection(section.id)}
+                />
+              ))}
             </Stack>
           </Box>
-
-          {/* Divider (Full Width - Balanced Opacity) */}
-          <Divider
-            {...{
-              color: STORE_TOKENS.COLORS.DIVIDER.SUBTLE,
-            }} />
-
-          {/* Bottom Profile (Padded) */}
-          <Box padding={STORE_TOKENS.PADDING.CONTAINER}>
-            <SidebarProfile 
-              onOpenSettings={onOpenSettings} 
-              user={{
-                name: 'Usuário',
-                email: 'suporte@reptrail.com'
-              }}
-            />
-          </Box>
-        </GlassPanel>
+        </Stack>
       </Box>
+
+      {/* Divider (Full Width - Balanced Opacity) */}
+      <Divider
+        {...{
+          color: STORE_TOKENS.COLORS.DIVIDER.SUBTLE,
+        }} />
+
+      {/* Bottom Profile (Padded) */}
+      <Box padding={STORE_TOKENS.PADDING.CONTAINER}>
+        <SidebarProfile
+          onOpenSettings={onOpenSettings}
+          user={{
+            name: 'Usuário',
+            email: 'suporte@reptrail.com'
+          }}
+        />
+      </Box>
+    </GlassPanel>
+  </Box >
     </>
   );
 }

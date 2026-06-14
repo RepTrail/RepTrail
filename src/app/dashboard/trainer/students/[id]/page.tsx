@@ -5,8 +5,12 @@ import { QUERY_KEYS } from '@/lib/query-keys'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { TrainerStudentProfileSection } from '@/components/store/sections/trainer-student-profile-section'
 import { TrainerStudentEvolutionSection } from '@/components/store/sections/trainer-student-evolution-section'
-import { TrainerStudentProtocolsSection } from '@/components/store/sections/trainer-student-protocols-section'
-import { TrainerStudentPhotosActivitiesSection } from '@/components/store/sections/trainer-student-photos-activities-section'
+import { TrainerStudentWorkoutsContent, TrainerStudentDietsContent, TrainerStudentCardioContent } from '@/components/store/sections/trainer-student-protocols-section'
+import { RegistrySection } from '@/components/store/advanced/registry-section'
+import { TrainerRegistryHeaderActions } from '@/components/store/advanced/trainer-registry-header-actions'
+import { TrainerStudentErgogenicsSmart } from '@/components/store/advanced/trainer-student-ergogenics-smart'
+import { Dumbbell, Utensils, Activity, Pill, User } from 'lucide-react'
+import { TrainerStudentPhotosContent, TrainerStudentRecentActivitiesContent } from '@/components/store/sections/trainer-student-photos-activities-section'
 import { TrainerStudentDetailTabSwitcher } from '@/components/store/sections/trainer-student-detail-tab-switcher'
 import { PlaceholderStudentAccessBanner } from '@/components/store/sections/placeholder-student-access-banner'
 import { headers } from 'next/headers'
@@ -39,7 +43,7 @@ export default async function StudentDetailPage({
 
     const studentId = relationship.student_id
     const student = relationship.student
-    const studentName = student.full_name.toUpperCase()
+    const studentName = student?.full_name.toUpperCase()
 
     const prefetchPromises = [
         queryClient.prefetchQuery({
@@ -102,7 +106,42 @@ export default async function StudentDetailPage({
                 <TrainerStudentDetailTabSwitcher activeTab={activeTab} />
 
                 {activeTab === 'protocols' && (
-                    <TrainerStudentProtocolsSection relationshipId={id} studentId={studentId} trainerId={userId} />
+                    <>
+                        <RegistrySection
+                            title="Treinamentos de Força"
+                            subtitle="Visualize, organize e prescreva os templates de treinamento de força ativos para o aluno."
+                            icon={Dumbbell}
+                            rightElement={<TrainerRegistryHeaderActions userId={userId} variant="workout" betaTesterMode={false} hideImportPdf={true} />}
+                        >
+                            <TrainerStudentWorkoutsContent relationshipId={id} studentId={studentId} />
+                        </RegistrySection>
+                        
+                        <RegistrySection
+                            title="Protocolos Alimentares"
+                            subtitle="Planeje e gerencie as refeições, calorias e macros da rotina alimentar do aluno."
+                            icon={Utensils}
+                            rightElement={<TrainerRegistryHeaderActions userId={userId} variant="diet" betaTesterMode={false} hideImportPdf={true} />}
+                        >
+                            <TrainerStudentDietsContent relationshipId={id} studentId={studentId} />
+                        </RegistrySection>
+
+                        <RegistrySection
+                            title="Atividades Cardiorrespiratórias"
+                            subtitle="Defina metas de cardio, frequências semanais e intensidades sugeridas."
+                            icon={Activity}
+                            rightElement={<TrainerRegistryHeaderActions userId={userId} variant="cardio" betaTesterMode={false} hideImportPdf={true} />}
+                        >
+                            <TrainerStudentCardioContent relationshipId={id} studentId={studentId} />
+                        </RegistrySection>
+
+                        <RegistrySection
+                            title="Recursos Ergogênicos"
+                            subtitle="Gerenciamento inteligente de ergogênicos e fitoterápicos."
+                            icon={Pill}
+                        >
+                            <TrainerStudentErgogenicsSmart effectiveStudentId={studentId} />
+                        </RegistrySection>
+                    </>
                 )}
 
                 {activeTab === 'evolution' && (
@@ -110,13 +149,34 @@ export default async function StudentDetailPage({
                 )}
 
                 {activeTab === 'photos_activities' && (
-                    <TrainerStudentPhotosActivitiesSection relationshipId={id} studentId={studentId} />
+                    <>
+                        <RegistrySection
+                            title="Fotos de Evolução"
+                            subtitle="Acompanhamento fotográfico do progresso do aluno."
+                            icon={User}
+                        >
+                            <TrainerStudentPhotosContent relationshipId={id} studentId={studentId} />
+                        </RegistrySection>
+                        <RegistrySection
+                            title="Atividades Recentes"
+                            subtitle="Histórico cronológico detalhado das últimas ações e logs de treinamento registrados pelo aluno."
+                            icon={Activity}
+                        >
+                            <TrainerStudentRecentActivitiesContent studentId={studentId} />
+                        </RegistrySection>
+                    </>
                 )}
 
                 {activeTab === 'profile' && (
-                    <TrainerStudentProfileSection studentId={studentId} student={student} />
+                    <RegistrySection
+                        title="Perfil & Dados Gerais"
+                        subtitle="Consulte e edite as informações cadastrais, contatos e dados gerais de perfil do aluno."
+                        icon={User}
+                    >
+                        <TrainerStudentProfileSection studentId={studentId} student={student} />
+                    </RegistrySection>
                 )}
             </RegistryMain>
-        </HydrationBoundary>
+        </HydrationBoundary >
     )
 }

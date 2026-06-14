@@ -53,7 +53,7 @@ export function AnamnesisForm({ initialData }: { initialData?: any }) {
     const [calculatedBF, setCalculatedBF] = useState<string | null>(null)
 
     useEffect(() => {
-        const h = parseFloat(formData.height)
+        const h = parseFloat(formData?.height)
         const neck = parseFloat(formData.neck_cm)
         const waist = parseFloat(formData.waist_cm)
         const hip = parseFloat(formData.hip_cm)
@@ -126,7 +126,7 @@ export function AnamnesisForm({ initialData }: { initialData?: any }) {
                             icon={<Icon icon={Ruler} size="xs" />}
                             type="number"
                             placeholder="Ex: 180"
-                            value={formData.height}
+                            value={formData?.height}
                             onChange={e => setFormData(prev => ({ ...prev, height: e.target.value }))}
                         />
                         <Input
@@ -226,7 +226,7 @@ export function AnamnesisForm({ initialData }: { initialData?: any }) {
 
                             <FormSelect
                                 label="NÍVEL DE ATIVIDADE"
-                                value={formData.activity_level}
+                                value={formData?.activity_level}
                                 onChange={(v) => setFormData(prev => ({ ...prev, activity_level: v }))}
                                 options={[
                                     { value: 'sedentary', label: 'Sedentário (Nenhum exercício)' },

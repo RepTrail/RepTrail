@@ -12,7 +12,6 @@ import { useRealtimeSync } from '@/hooks/use-realtime-sync'
 import { Button } from '@/components/store/base/button'
 import { Icon } from '@/components/store/base/icon'
 import { Box } from '@/components/store/base/box'
-import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { useRouter } from 'next/navigation'
 
 interface StudentTrainingProtocolsProps {
@@ -42,29 +41,17 @@ export function StudentTrainingProtocols({ userId }: StudentTrainingProtocolsPro
     })
 
     if (isLoading) return (
-        <RegistrySection
-            title="TREINO DE HOJE"
-            subtitle="Protocolos de musculação e treinamento de força."
-            icon={Dumbbell}
-        >
-            <Box />
-        </RegistrySection>
+        <Box />
     )
 
     if (!workouts || workouts.length === 0) {
         return (
-            <RegistrySection
-                title="TREINO DE HOJE"
-                subtitle="Protocolos de musculação e treinamento de força."
+            <ProtocolCard
+                title="DIA DE DESCANSO"
+                subtitle="Nenhum protocolo de treino para hoje."
                 icon={Dumbbell}
-            >
-                <ProtocolCard
-                    title="DIA DE DESCANSO"
-                    subtitle="Nenhum protocolo de treino para hoje."
-                    icon={Dumbbell}
-                    status="empty"
-                />
-            </RegistrySection>
+                status="empty"
+            />
         )
     }
 
@@ -72,18 +59,12 @@ export function StudentTrainingProtocols({ userId }: StudentTrainingProtocolsPro
 
     if (!currentWorkout || !currentWorkout.id || !currentWorkout.name) {
         return (
-            <RegistrySection
-                title="TREINO DE HOJE"
-                subtitle="Protocolos de musculação e treinamento de força."
+            <ProtocolCard
+                title="DIA DE DESCANSO"
+                subtitle="Nenhum protocolo de treino para hoje."
                 icon={Dumbbell}
-            >
-                <ProtocolCard
-                    title="DIA DE DESCANSO"
-                    subtitle="Nenhum protocolo de treino para hoje."
-                    icon={Dumbbell}
-                    status="empty"
-                />
-            </RegistrySection>
+                status="empty"
+            />
         )
     }
 
@@ -101,23 +82,17 @@ export function StudentTrainingProtocols({ userId }: StudentTrainingProtocolsPro
     }
 
     return (
-        <RegistrySection
-            title="TREINO DE HOJE"
-            subtitle="Protocolos de musculação e treinamento de força."
-            icon={Dumbbell}
-            rightElement={
-                workouts.length > 1 ? (
-                    <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        <Button variant="outline-zinc" isIconOnly size="sm" onClick={prev}>
-                            <Icon icon={ChevronLeft} size="xs" />
-                        </Button>
-                        <Button variant="outline-zinc" isIconOnly size="sm" onClick={next}>
-                            <Icon icon={ChevronRight} size="xs" />
-                        </Button>
-                    </Stack>
-                ) : undefined
-            }
-        >
+        <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+            {workouts.length > 1 && (
+                <Stack direction="row" justify="end" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                    <Button variant="outline-zinc" isIconOnly size="sm" onClick={prev}>
+                        <Icon icon={ChevronLeft} size="xs" />
+                    </Button>
+                    <Button variant="outline-zinc" isIconOnly size="sm" onClick={next}>
+                        <Icon icon={ChevronRight} size="xs" />
+                    </Button>
+                </Stack>
+            )}
             <ProtocolCard
                 title={currentWorkout.name.toUpperCase()}
                 subtitle={`${currentWorkout.workout_exercises?.length || 0} EXERCÍCIOS • ${status === 'completed' ? 'CONCLUÍDO' : 'FOCO DO DIA'}`}
@@ -129,6 +104,6 @@ export function StudentTrainingProtocols({ userId }: StudentTrainingProtocolsPro
                 onAction={handleAction}
                 statusLabel={workouts.length > 1 ? `TREINO ${currentIndex + 1}/${workouts.length}` : undefined}
             />
-        </RegistrySection>
+        </Stack>
     )
 }

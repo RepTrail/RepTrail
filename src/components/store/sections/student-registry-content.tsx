@@ -23,17 +23,17 @@ import { StudentTrainingProtocols } from '@/components/store/advanced/student-tr
 import { StudentCardioTracker } from '@/components/store/advanced/student-cardio-tracker'
 import { StudentNutritionAdherence } from '@/components/store/advanced/student-nutrition-adherence'
 import { StudentBioactivesManagement } from '@/components/store/advanced/student-bioactives-management'
-import { WorkoutManagementSectionContent } from '@/components/store/sections/workout-management-section-content'
-import { DietManagementSectionContent } from '@/components/store/sections/diet-management-section-content'
-import { ErgogenicManagementSectionContent } from '@/components/store/sections/ergogenic-management-section-content'
+import { WorkoutManagementList } from '@/components/store/advanced/workout-management-list'
+import { DietManagementList } from '@/components/store/advanced/diet-management-list'
+import { ErgogenicManagementList } from '@/components/store/advanced/ergogenic-management-list'
 import { RankingSectionContent } from '@/components/store/sections/ranking-section-content'
 import { StudentOnboardingSectionContent } from '@/components/store/sections/student-onboarding-section-content'
 import { StudentProfileSectionContent } from '@/components/store/sections/student-profile-section-content'
-import { AIProtocolSectionContent } from '@/components/store/sections/ai-protocol-section-content'
-import { AIProtocolEmptyStateSectionContent } from '@/components/store/sections/ai-protocol-empty-state-section-content'
+import { AIProtocolContent } from '@/components/store/advanced/ai-protocol-content'
+import { AIProtocolEmptyState } from '@/components/store/advanced/ai-protocol-empty-state'
 import { Box } from '@/components/store/base/box'
 import { STORE_TOKENS } from '@/components/store/constants/tokens';
-import { ManagementRegistrySection } from '@/components/store/advanced/management-registry-section'
+import { ManagementRegistrySection } from '@/components/store/intermediary/management-registry-section'
 import { ShareTransformation } from '@/components/store/advanced/student-share-transformation'
 
 /**
@@ -64,7 +64,7 @@ export function StudentRegistryContent({ id }: { id: string }) {
                 title="GERENCIAMENTO DE TREINOS (AUTO TREINO)"
                 subtitle="Versão com permissões completas de edição e organização."
                 icon={Dumbbell}
-                ContentComponent={WorkoutManagementSectionContent}
+                ContentComponent={WorkoutManagementList}
                 mode="auto"
             />
             {/* 6. Seção de Gerenciamento de Treinos (Personal Trainer) */}
@@ -72,7 +72,7 @@ export function StudentRegistryContent({ id }: { id: string }) {
                 title="GERENCIAMENTO DE TREINOS (PERSONAL TRAINER)"
                 subtitle="Versão para alunos com acompanhamento de personal (Apenas visualização)."
                 icon={Dumbbell}
-                ContentComponent={WorkoutManagementSectionContent}
+                ContentComponent={WorkoutManagementList}
                 mode="personal"
             />
             {/* 7. Seção de Gerenciamento de Dieta (Auto Dieta) */}
@@ -80,7 +80,7 @@ export function StudentRegistryContent({ id }: { id: string }) {
                 title="GERENCIAMENTO DE DIETA (AUTO DIETA)"
                 subtitle="Visualize e organize seus protocolos alimentares ativos."
                 icon={Utensils}
-                ContentComponent={DietManagementSectionContent}
+                ContentComponent={DietManagementList}
                 mode="auto"
             />
             {/* 8. Seção de Gerenciamento de Dieta (Personal Diet) */}
@@ -88,7 +88,7 @@ export function StudentRegistryContent({ id }: { id: string }) {
                 title="GERENCIAMENTO DE DIETA (PERSONAL DIET)"
                 subtitle="Versão para alunos com acompanhamento nutricional (Apenas visualização)."
                 icon={Utensils}
-                ContentComponent={DietManagementSectionContent}
+                ContentComponent={DietManagementList}
                 mode="personal"
             />
             {/* 9. Seção de Gestão de Ergogênicos (Auto) */}
@@ -96,7 +96,7 @@ export function StudentRegistryContent({ id }: { id: string }) {
                 title="GESTÃO DE ERGOGÊNICOS (AUTO)"
                 subtitle="Visualize e organize seus protocolos de substâncias."
                 icon={FlaskConical}
-                ContentComponent={ErgogenicManagementSectionContent}
+                ContentComponent={ErgogenicManagementList}
                 mode="auto"
             />
             {/* 10. Seção de Gestão de Ergogênicos (Personal) */}
@@ -104,7 +104,7 @@ export function StudentRegistryContent({ id }: { id: string }) {
                 title="GESTÃO DE ERGOGÊNICOS (PERSONAL)"
                 subtitle="Versão para alunos com acompanhamento de coach (Apenas visualização)."
                 icon={FlaskConical}
-                ContentComponent={ErgogenicManagementSectionContent}
+                ContentComponent={ErgogenicManagementList}
                 mode="personal"
             />
             {/* 11. Feed da Comunidade */}
@@ -161,7 +161,7 @@ export function StudentRegistryContent({ id }: { id: string }) {
                         <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>O cérebro da plataforma. Reconstruído com a estética premium do onboarding.</Font>
                     </Stack>
                 </Stack>
-                <AIProtocolSectionContent />
+                <AIProtocolContent />
             </Stack>
             {/* 17. Empty State Auto Treino (Reconstrução DS) */}
             <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
@@ -174,7 +174,7 @@ export function StudentRegistryContent({ id }: { id: string }) {
                         <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>Banner de boas-vindas exibido quando o aluno tem auto treino mas sem protocolo.</Font>
                     </Stack>
                 </Stack>
-                <AIProtocolEmptyStateSectionContent />
+                <AIProtocolEmptyState />
             </Stack>
             {/* 18. Compartilhamento de Evolução (Antes e Depois) */}
             <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>

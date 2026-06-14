@@ -5,7 +5,7 @@ import { Box } from '@/components/store/base/box'
 import { Stack } from '@/components/store/base/stack'
 import { Font } from '@/components/store/base/font'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
-import { useRegistry } from '@/components/store/advanced/registry-context'
+import { useRegistry } from '@/components/store/base/registry-context'
 
 interface AffiliateActivityChartProps {
   clickDays: [string, number][]
@@ -21,7 +21,7 @@ export function AffiliateActivityChart({ clickDays, maxClicks }: AffiliateActivi
   return (
     <Stack gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
       <Box 
-        height={160} 
+        height="160px" 
         fullWidth 
         display="flex" 
         align="end" 
@@ -39,7 +39,7 @@ export function AffiliateActivityChart({ clickDays, maxClicks }: AffiliateActivi
                 bg={isToday ? primaryColor as any : STORE_TOKENS.COLORS.BACKGROUND} 
                 bgOpacity={isToday ? STORE_TOKENS.OPACITY.FULL : STORE_TOKENS.OPACITY.MEDIUM}
                 rounded={STORE_TOKENS.RADIUS.SYSTEM}
-                style={{ height: `${Math.max(heightPercent, 5)}%` }}
+                height={`${Math.max(heightPercent, 5)}%`}
                 transition
                 hoverBgOpacity={STORE_TOKENS.OPACITY.SHELF}
                 cursor="pointer"

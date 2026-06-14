@@ -65,8 +65,8 @@ export function WorkoutExecutionState({
                     </Stack>
                     <Badge label={`${Math.round(progress)}%`} variant="solid" color={STORE_TOKENS.COLORS.SUCCESS} size="sm" />
                 </Stack>
-                <Box bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.MODAL} rounded={STORE_TOKENS.RADIUS.FULL} overflow="hidden" height={6}>
-                    <Box height="full" bg={STORE_TOKENS.COLORS.SUCCESS} transition style={{ width: `${progress}%` }} />
+                <Box bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.MODAL} rounded={STORE_TOKENS.RADIUS.FULL} overflow="hidden" height="6px">
+                    <Box height="full" bg={STORE_TOKENS.COLORS.SUCCESS} transition width={`${progress}%`} />
                 </Box>
             </Stack>
             {/* Execution State */}
@@ -85,7 +85,7 @@ export function WorkoutExecutionState({
                     <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                             <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                <Box width={6} height={6} bg={STORE_TOKENS.COLORS.SUCCESS} rounded={STORE_TOKENS.RADIUS.FULL} shrink={0} />
+                                <Box width="6px" height="6px" bg={STORE_TOKENS.COLORS.SUCCESS} rounded={STORE_TOKENS.RADIUS.FULL} shrink={0} />
                                 <Font
                                     variant="label-caps"
                                     {...{

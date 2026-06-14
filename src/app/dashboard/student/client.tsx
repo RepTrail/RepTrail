@@ -1,11 +1,12 @@
 'use client'
 
-import { Activity } from 'lucide-react'
+import { Activity, Dumbbell, Pill } from 'lucide-react'
 import { Stack } from '@/components/store/base/stack'
 import { Grid } from '@/components/store/base/grid'
 import { Box } from '@/components/store/base/box'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
+import { RegistrySection } from '@/components/store/advanced/registry-section'
 
 // Store Advanced Components (Smart Layer)
 import { StudentPaymentWarning } from '@/components/store/advanced/student-payment-warning'
@@ -15,7 +16,7 @@ import { StudentBioactivesManagement } from '@/components/store/advanced/student
 import { StudentNutritionAdherence } from '@/components/store/advanced/student-nutrition-adherence'
 
 // Sections
-import { AIProtocolEmptyStateSectionContent } from '@/components/store/sections/ai-protocol-empty-state-section-content'
+import { AIProtocolEmptyState } from '@/components/store/advanced/ai-protocol-empty-state'
 
 // Preserved Logic Components (Wrapped)
 import { AnamnesisForm } from '@/components/store/advanced/student-anamnesis-form'
@@ -35,7 +36,7 @@ interface StudentDashboardClientProps {
 
 /**
  * StudentDashboardClient (Migrated): Orchestrates the student home experience.
- * Now follows strict RepTrail Store architecture and governance.
+ * Moved to app layer to allow use of RegistryMain and RegistrySection structurally.
  */
 export function StudentDashboardClient({
     userId,
@@ -72,7 +73,7 @@ export function StudentDashboardClient({
                 )}
 
                 {!hasProtocol && (
-                    <AIProtocolEmptyStateSectionContent userId={userId} />
+                    <AIProtocolEmptyState userId={userId} />
                 )}
 
                 {/* 4. Main Performance Grid (8/4 Split) */}
@@ -81,9 +82,15 @@ export function StudentDashboardClient({
                         {/* Left Column: Intensity & Volume (8 cols) */}
                         <Box lgColSpan={8} fullWidth>
                             <Stack gap={STORE_TOKENS.SPACING.SECTION} fullWidth>
-                                <StudentTrainingProtocols userId={userId} />
-                                <StudentCardioTracker userId={userId} />
-                                <StudentBioactivesManagement userId={userId} />
+                                <RegistrySection title="TREINO DE HOJE" subtitle="Protocolos de musculação e treinamento de força." icon={Dumbbell}>
+                                    <StudentTrainingProtocols userId={userId} />
+                                </RegistrySection>
+                                <RegistrySection title="CARDIO DE HOJE" subtitle="Monitoramento de atividades aeróbicas e cronômetros." icon={Activity}>
+                                    <StudentCardioTracker userId={userId} />
+                                </RegistrySection>
+                                <RegistrySection title="BIOATIVOS" subtitle="Gestão de suplementos e ergogênicos." icon={Pill}>
+                                    <StudentBioactivesManagement userId={userId} />
+                                </RegistrySection>
                             </Stack>
                         </Box>
 

@@ -30,7 +30,7 @@ export async function StudentProgressPageContent({ userId }: { userId: string })
         <StudentPublicPhotos
             studentId={userId}
             isOwner={true}
-            studentName={profile.full_name}
+            studentName={profile?.full_name}
             photos={progressPhotos}
             isStudentView={true}
         />

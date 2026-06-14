@@ -70,8 +70,8 @@ export function SummarySetRow({
                     width={{ base: 'full', md: 200 }}
                 >
                     <Box 
-                        width={6} 
-                        height={6} 
+                        width="6px" 
+                        height="6px" 
                         rounded={STORE_TOKENS.RADIUS.FULL} 
                         bg={badgeColor}
                         bgOpacity={STORE_TOKENS.OPACITY.MEDIUM}
@@ -79,7 +79,6 @@ export function SummarySetRow({
                         borderColor={badgeColor}
                         borderOpacity={STORE_TOKENS.OPACITY.HIGH}
                         shrink={0}
-                        style={{ borderWidth: '2px', flexShrink: 0, width: '6px', height: '6px' }}
                     />
                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="stretch" justify="start">
                         <Font variant="body" weight="black" uppercase italic tracking="tight">

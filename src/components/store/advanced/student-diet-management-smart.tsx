@@ -9,7 +9,7 @@ import {
     getTrainerDiets
 } from '@/lib/dal/remote'
 import { useRealtimeSync } from '@/hooks/use-realtime-sync'
-import { DietManagementSectionContent } from '@/components/store/sections/diet-management-section-content'
+import { DietManagementList } from '@/components/store/advanced/diet-management-list'
 import { Stack } from '@/components/store/base/stack'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { Grid } from '@/components/store/base/grid'
@@ -106,7 +106,7 @@ export function StudentDietManagementSmart({ userId }: StudentDietManagementSmar
                 <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
 
                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
-                        <DietManagementSectionContent
+                        <DietManagementList
                             userId={userId}
                             diets={displayDiets}
                             mode={isAutoMode ? 'auto' : 'personal'}

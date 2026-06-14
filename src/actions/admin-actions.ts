@@ -82,7 +82,7 @@ export async function getAdminOverview() {
         let payingTrainersCount = 0
 
         trainers?.forEach(t => {
-            const isTrialActive = t.elite_until && new Date(t.elite_until) > new Date()
+            const isTrialActive = t?.elite_until && new Date(t?.elite_until) > new Date()
             if (isTrialActive) {
                 trialCount++
                 studentsInTrial += (trainerStudentCounts[t.id] || 0)
@@ -138,9 +138,9 @@ export async function getAdminOverview() {
         const monthlyTrainerVolume = studentsData?.reduce((acc, curr) => {
             if (curr.active) {
                 if (curr.trainer_id) {
-                    trainerVolumes[curr.trainer_id] = (trainerVolumes[curr.trainer_id] || 0) + (Number(curr.monthly_fee) || 0)
+                    trainerVolumes[curr.trainer_id] = (trainerVolumes[curr.trainer_id] || 0) + (Number(curr?.monthly_fee) || 0)
                 }
-                return acc + (Number(curr.monthly_fee) || 0)
+                return acc + (Number(curr?.monthly_fee) || 0)
             }
             return acc
         }, 0) || 0
@@ -152,7 +152,7 @@ export async function getAdminOverview() {
             const start = new Date(curr.created_at)
             const now = new Date()
             const months = Math.max(1, (now.getFullYear() - start.getFullYear()) * 12 + (now.getMonth() - start.getMonth()) + 1)
-            return acc + ((Number(curr.monthly_fee) || 0) * months)
+            return acc + ((Number(curr?.monthly_fee) || 0) * months)
         }, 0) || 0
 
         const affiliateTotalEarnings = allCommissions?.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0) || 0
@@ -271,7 +271,7 @@ export async function getAllTrainers() {
 
         const students = t.students || []
         const monthlyRevenue = students.reduce((sum: number, s: any) => {
-            return s.active ? sum + (Number(s.monthly_fee) || 0) : sum
+            return s.active ? sum + (Number(s?.monthly_fee) || 0) : sum
         }, 0)
         const totalRevenue = students.reduce((sum: number, s: any) => {
             if (!s.active) return sum
@@ -279,7 +279,7 @@ export async function getAllTrainers() {
             const now = new Date()
             const diffMonths = (now.getFullYear() - start.getFullYear()) * 12 + (now.getMonth() - start.getMonth())
             const months = Math.max(1, diffMonths + 1)
-            return sum + ((Number(s.monthly_fee) || 0) * months)
+            return sum + ((Number(s?.monthly_fee) || 0) * months)
         }, 0)
 
         return {
@@ -768,7 +768,7 @@ export async function fetchProductFromUrl(url: string) {
                         price: product.offers?.price || product.offers?.[0]?.price,
                         rating: product.aggregateRating?.ratingValue,
                         reviews_count: product.aggregateRating?.reviewCount,
-                        description: product.description
+                        description: product?.description
                     }
                 }
             } catch (e) {}
@@ -776,7 +776,7 @@ export async function fetchProductFromUrl(url: string) {
 
         let finalData: any = { 
             title: jsonLdData.title || fallbackTitle, 
-            description: (jsonLdData.description || fallbackDescription).substring(0, 150), 
+            description: (jsonLdData?.description || fallbackDescription).substring(0, 150), 
             image: jsonLdData.image || fallbackImage, 
             price: jsonLdData.price || fallbackPrice, 
             rating: jsonLdData.rating || fallbackRating || 0,

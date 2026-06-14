@@ -3,7 +3,7 @@ import React from 'react'
 import { cn } from '@/lib/utils'
 import { Stack } from './stack'
 import { Font } from './font'
-import { useRegistry } from '@/components/store/advanced/registry-context'
+import { useRegistry } from '@/components/store/base/registry-context'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {

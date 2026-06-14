@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils'
 import { Font } from './font'
 import { Icon } from './icon'
 import { LucideIcon } from 'lucide-react'
-import { useRegistry } from '@/components/store/advanced/registry-context'
+import { useRegistry } from '@/components/store/base/registry-context'
 import { STORE_TOKENS } from '@/components/store/constants/tokens';
 
 interface BadgeProps {

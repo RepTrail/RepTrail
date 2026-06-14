@@ -47,7 +47,7 @@ export function AffiliateCommissionsList({ commissions }: AffiliateCommissionsLi
             {commissions.map((c: any) => (
                 <CommissionItem
                     key={c.id}
-                    description={c.description || 'Comissão de Venda'}
+                    description={c?.description || 'Comissão de Venda'}
                     amount={Number(c.amount).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                     date={new Date(c.created_at).toLocaleDateString('pt-BR')}
                     time={new Date(c.created_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}

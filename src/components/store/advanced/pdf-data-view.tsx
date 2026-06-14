@@ -152,8 +152,8 @@ function ExtraCardios({
                                             <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                                 {/* Custom checkbox */}
                                                 <Box
-                                                    width={16}
-                                                    height={16}
+                                                    width="16px"
+                                                    height="16px"
                                                     rounded={STORE_TOKENS.RADIUS.SYSTEM}
                                                     border
                                                     borderWidth={2}
@@ -183,7 +183,7 @@ function ExtraCardios({
                                             )}
                                         </Stack>
                                         <Stack direction="row" gap={STORE_TOKENS.SPACING.NONE}>
-                                            <Box width={28} shrink={0} />
+                                            <Box width="28px" shrink={0} />
                                             <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                                                 <Font
                                                     variant="tiny"
@@ -214,7 +214,7 @@ function ExtraCardios({
                                         </Stack>
                                         {isSelected && (
                                             <Stack direction="row" gap={STORE_TOKENS.SPACING.NONE} onClick={(e) => e.stopPropagation()}>
-                                                <Box width={28} shrink={0} />
+                                                <Box width="28px" shrink={0} />
                                                 <Box flex1>
                                                     <DaySelector
                                                         selectedDays={c.application_days || []}
@@ -281,8 +281,8 @@ function ExtraErgogenics({
                                             <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                                 {/* Custom checkbox */}
                                                 <Box
-                                                    width={16}
-                                                    height={16}
+                                                    width="16px"
+                                                    height="16px"
                                                     rounded={STORE_TOKENS.RADIUS.SYSTEM}
                                                     border
                                                     borderWidth={2}
@@ -315,7 +315,7 @@ function ExtraErgogenics({
                                         </Stack>
                                         {isSelected && (
                                             <Stack direction="row" gap={STORE_TOKENS.SPACING.NONE} onClick={(e) => e.stopPropagation()}>
-                                                <Box width={28} shrink={0} />
+                                                <Box width="28px" shrink={0} />
                                                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT} flex1>
                                                     <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                                         <Font

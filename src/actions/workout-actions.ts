@@ -163,7 +163,7 @@ export async function duplicateWorkout(workoutId: string) {
             .insert({
                 trainer_id: user.id,
                 name: `${original.name} (cópia)`,
-                description: original.description
+                description: original?.description
             })
             .select('id')
             .single()

@@ -42,7 +42,7 @@ export function UserListItem({
     onAction,
     onDelete
 }: UserListItemProps) {
-    
+
     const actionConfig = {
         aluno: {
             icon: Sparkles,
@@ -67,96 +67,96 @@ export function UserListItem({
             badges={
                 <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                     <Badge label={registrationDate} variant="glass" size="xs" />
-                    <Badge 
-                        label={roleLabel} 
-                        variant="glass" 
-                        color={role === 'personal' ? STORE_TOKENS.COLORS.BRAND : STORE_TOKENS.COLORS.SUCCESS} 
+                    <Badge
+                        label={roleLabel}
+                        variant="glass"
+                        color={role === 'personal' ? STORE_TOKENS.COLORS.BRAND : STORE_TOKENS.COLORS.SUCCESS}
                         size="xs"
                     />
                 </Inline>
             }
             actions={hasActions ? (
                 <>
-                    {onInspect && (
-                        <ActionButton 
-                            icon={Eye} 
-                            variant="outline-blue" 
-                            onClick={onInspect} 
-                        />
-                    )}
-                    {onAction && (
-                        <ActionButton 
-                            icon={currentAction.icon} 
-                            variant={isActionActive ? currentAction.outlineVariant : 'outline-zinc'} 
-                            onClick={onAction} 
-                        />
-                    )}
-                    {onDelete && (
-                        <ActionButton 
-                            icon={Trash2} 
-                            variant="outline-red" 
-                            onClick={onDelete} 
-                        />
-                    )}
+                { onInspect && (
+                    <ActionButton
+                        icon={Eye}
+                        variant="outline-blue"
+                        onClick={onInspect}
+                    />
+                )}
+            {onAction && (
+                <ActionButton
+                    icon={currentAction.icon}
+                    variant={isActionActive ? currentAction.outlineVariant : 'outline-zinc'}
+                    onClick={onAction}
+                />
+            )}
+            {onDelete && (
+                <ActionButton
+                    icon={Trash2}
+                    variant="outline-red"
+                    onClick={onDelete}
+                />
+            )}
                 </>
             ) : undefined}
         >
-            <Inline
-                gap={STORE_TOKENS.SPACING.CONTAINER}
-                align="center"
-                fullWidth
-                {...{
-                    minWidth: 0,
-                }}>
-                <Box shrink={0}>
-                    <BaseAvatar src={avatarUrl || undefined} initials={initials} variant={avatarVariant} size="md" />
-                </Box>
-                <Stack gap={STORE_TOKENS.SPACING.NONE} minWidth={0} flex1>
-                    <Box fullWidth minWidth={0} overflow="hidden">
-                        <Font
-                            {...STORE_TOKENS.TYPOGRAPHY.HEADING}
-                            variant={{ base: 'body-sm', md: 'body' }}
-                            truncate
-                            display="block"
-                            {...{
-                                color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
-                            }}>
-                            {name}
-                        </Font>
-                    </Box>
-                    <Box fullWidth minWidth={0} overflow="hidden">
-                        <Font
-                            {...STORE_TOKENS.TYPOGRAPHY.LABEL}
-                            lowercase
-                            truncate
-                            display="block"
-                            {...{
-                                color: STORE_TOKENS.COLORS.TEXT.DIM,
-                            }}>
-                            {email || 'Sem email cadastrado'}
-                        </Font>
-                    </Box>
-                </Stack>
-            </Inline>
-        </ActionableListCard>
+    <Inline
+        gap={STORE_TOKENS.SPACING.CONTAINER}
+        align="center"
+        fullWidth
+        {...{
+            minWidth: 0,
+        }}>
+        <Box shrink={0}>
+            <BaseAvatar src={avatarUrl || undefined} initials={initials} variant={avatarVariant} size="md" />
+        </Box>
+        <Stack gap={STORE_TOKENS.SPACING.NONE} minWidth={0} flex1>
+            <Box fullWidth minWidth={0} overflow="hidden">
+                <Font
+                    {...STORE_TOKENS.TYPOGRAPHY.HEADING}
+                    variant={{ base: 'body-sm', md: 'body' }}
+                    truncate
+                    display="block"
+                    {...{
+                        color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
+                    }}>
+                    {name}
+                </Font>
+            </Box>
+            <Box fullWidth minWidth={0} overflow="hidden">
+                <Font
+                    {...STORE_TOKENS.TYPOGRAPHY.LABEL}
+                    lowercase
+                    truncate
+                    display="block"
+                    {...{
+                        color: STORE_TOKENS.COLORS.TEXT.DIM,
+                    }}>
+                    {email || 'Sem email cadastrado'}
+                </Font>
+            </Box>
+        </Stack>
+    </Inline>
+        </ActionableListCard >
     );
 }
 
-function ActionButton({ 
-    icon: IconComp, 
-    variant, 
-    onClick 
-}: { 
-    icon: LucideIcon, 
-    variant: any, 
+function ActionButton({
+    icon: IconComp,
+    variant,
+    onClick
+}: {
+    icon: LucideIcon,
+    variant: any,
     onClick?: () => void
 }) {
     return (
-        <Button 
-            variant={variant} 
-            size="sm" 
-            rounded={STORE_TOKENS.RADIUS.FULL} 
-            isIconOnly 
+        <Button
+            variant={variant}
+            size="sm"
+            rounded={STORE_TOKENS.RADIUS.FULL}
+            isIconOnly
             onClick={onClick}
             hoverScale={110}
             activeScale={95}

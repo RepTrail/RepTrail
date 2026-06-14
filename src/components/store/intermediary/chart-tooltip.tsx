@@ -41,7 +41,8 @@ export function ChartTooltip({ title, rows, layout = 'inline' }: ChartTooltipPro
             bgOpacity={STORE_TOKENS.OPACITY.SHELF}
             padding={STORE_TOKENS.SPACING.ELEMENT}
             rounded={STORE_TOKENS.RADIUS.SYSTEM}
-            style={{ backdropFilter: 'blur(12px)', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)' }}
+            backdropBlur="md"
+            shadow="xl"
         >
             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                 <Font
@@ -55,7 +56,7 @@ export function ChartTooltip({ title, rows, layout = 'inline' }: ChartTooltipPro
                 </Font>
 
                 {layout === 'spaced' && (
-                    <Box style={{ width: '100%', height: 1, backgroundColor: 'rgba(255,255,255,0.05)' }} />
+                    <Box fullWidth height="px" bg="white" bgOpacity={5} />
                 )}
 
                 {rows.map((row, i) =>
@@ -65,7 +66,8 @@ export function ChartTooltip({ title, rows, layout = 'inline' }: ChartTooltipPro
                             key={i}
                             display="flex"
                             align="center"
-                            style={{ justifyContent: 'space-between', gap: 24 }}
+                            justify="between"
+                            gap={STORE_TOKENS.SPACING.CONTAINER}
                         >
                             <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                 <Box

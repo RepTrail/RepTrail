@@ -458,7 +458,7 @@ export async function getTrainerErgogenicStudents(trainerId?: string): Promise<T
         .filter((s: any) => s.student?.details?.steroid_use)
         .map((s: any) => ({
             id: s.id,
-            full_name: s.student.full_name,
+            full_name: s.student?.full_name,
             avatar_url: s.student.avatar_url,
             is_placeholder: false,
         }))

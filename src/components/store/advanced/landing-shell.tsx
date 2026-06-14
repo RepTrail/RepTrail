@@ -9,7 +9,7 @@ import { Button } from '@/components/store/base/button'
 import { Logo } from '@/components/store/base/logo'
 import { BackgroundEffects } from '@/components/store/base/background-effects'
 import { GlassPanel } from '@/components/store/base/surface'
-import { useRegistry } from '@/components/store/advanced/registry-context'
+import { useRegistry } from '@/components/store/base/registry-context'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 export interface LandingNavAction {

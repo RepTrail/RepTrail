@@ -295,7 +295,7 @@ export async function createAsaasTransfer(params: {
                 value: params.amount,
                 pixAddressKey: params.pixAddressKey,
                 pixAddressKeyType: params.pixAddressKeyType,
-                description: params.description,
+                description: params?.description,
                 operationType: 'PIX'
             })
         })

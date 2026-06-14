@@ -94,6 +94,6 @@ export function ActionableListCard({ children, badges, actions, isLogItem, isStr
                     </>
                 )}
             </Stack>
-        </GlassPanel>
+        </GlassPanel >
     );
 }

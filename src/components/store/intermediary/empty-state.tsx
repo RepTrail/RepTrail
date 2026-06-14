@@ -6,7 +6,7 @@ import { Font } from '@/components/store/base/font'
 import { IconBox } from '@/components/store/base/icon'
 import { GlassPanel } from '@/components/store/base/surface'
 import { LucideIcon } from 'lucide-react'
-import { RegistryContext, RegistryColor } from '@/components/store/advanced/registry-context'
+import { RegistryContext, RegistryColor } from '@/components/store/base/registry-context'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 interface EmptyStateProps {

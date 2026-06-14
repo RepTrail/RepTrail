@@ -68,7 +68,7 @@ export function AdminPersonaisSection() {
         })
     }
 
-    const filtered = trainers.filter(t => t.full_name?.toLowerCase().includes(search.toLowerCase()) || t.email?.toLowerCase().includes(search.toLowerCase()))
+    const filtered = trainers.filter(t => t?.full_name?.toLowerCase().includes(search.toLowerCase()) || t.email?.toLowerCase().includes(search.toLowerCase()))
 
     return (
         <>
@@ -86,18 +86,18 @@ export function AdminPersonaisSection() {
                 {!isLoading && filtered.map(trainer => (
                     <UserListItem
                         key={trainer.id}
-                        name={trainer.full_name || 'Sem nome'}
+                        name={trainer?.full_name || 'Sem nome'}
                         email={trainer.email || ''}
                         registrationDate={new Date(trainer.created_at).toLocaleDateString('pt-BR')}
                         role="personal"
                         roleLabel={trainer.students ? `${trainer.students.length} ALUNO${trainer.students.length !== 1 ? 'S' : ''}` : "0 ALUNOS"}
-                        initials={(trainer.full_name || '??').substring(0, 2).toUpperCase()}
+                        initials={(trainer?.full_name || '??').substring(0, 2).toUpperCase()}
                         avatarVariant="orange"
                         avatarUrl={trainer.avatar_url}
                         onInspect={() => handleImpersonate(trainer.id)}
                         onAction={() => handleOnDemandToggle(trainer.id, (Array.isArray(trainer.plans) ? trainer.plans[0]?.slug : (trainer.plans as any)?.slug) || 'start')}
                         isActionActive={(Array.isArray(trainer.plans) ? trainer.plans[0]?.slug : (trainer.plans as any)?.slug) === 'on_demand'}
-                        onDelete={() => handleDeleteUser(trainer.id, trainer.full_name || trainer.email)}
+                        onDelete={() => handleDeleteUser(trainer.id, trainer?.full_name || trainer.email)}
                     />
                 ))}
 
@@ -120,6 +120,7 @@ export function AdminPersonaisSection() {
                     Esta ação é irreversível e removerá todos os dados do profissional, incluindo acesso à plataforma de gestão.
                 </Font>
             </Modal>
+
         </>
     )
 }

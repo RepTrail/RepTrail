@@ -54,7 +54,7 @@ export function PdfUploader({ type, students = [], role = 'trainer', userId, stu
                                     {importsUsed} / {importLimit}
                                 </Font>
                             </Stack>
-                            <Box width="100%" height={4} rounded="full" bg="white" bgOpacity={5}>
+                            <Box width="100%" height="4px" rounded="full" bg="white" bgOpacity={5}>
                                 <Box width={`${Math.min(100, (importsUsed / importLimit) * 100)}%`} height="100%" rounded="full" bg={isLimitReached ? "red" : STORE_TOKENS.COLORS.BRAND} />
                             </Box>
                         </Box>

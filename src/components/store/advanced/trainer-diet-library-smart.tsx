@@ -6,7 +6,7 @@ import { useQuery } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { getTrainerDiets } from '@/lib/dal/remote'
 import { useRealtimeSync } from '@/hooks/use-realtime-sync'
-import { DietManagementSectionContent } from '@/components/store/sections/diet-management-section-content'
+import { DietManagementList } from '@/components/store/advanced/diet-management-list'
 
 interface TrainerDietLibrarySmartProps {
     userId: string
@@ -40,7 +40,7 @@ export function TrainerDietLibrarySmart({ userId, betaTesterMode = false }: Trai
         <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
 
             <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
-                <DietManagementSectionContent
+                <DietManagementList
                     userId={userId}
                     diets={diets}
                     mode="trainer"

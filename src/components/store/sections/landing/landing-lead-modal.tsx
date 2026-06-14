@@ -11,7 +11,7 @@ import { Button } from '@/components/store/base/button'
 import { Input } from '@/components/store/base/input'
 import { ModalOverlay, ModalContainer } from '@/components/store/base/layout'
 import { Icon } from '@/components/store/base/icon'
-import { useRegistry } from '@/components/store/advanced/registry-context'
+import { useRegistry } from '@/components/store/base/registry-context'
 import { ArrowRight, Loader2 } from 'lucide-react'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 

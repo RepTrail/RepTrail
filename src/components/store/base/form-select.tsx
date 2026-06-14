@@ -7,7 +7,7 @@ import { Icon } from './icon'
 import { ChevronDown, Check } from 'lucide-react'
 import { Input } from './input'
 import { cn } from '@/lib/utils'
-import { useRegistry } from '@/components/store/advanced/registry-context'
+import { useRegistry } from '@/components/store/base/registry-context'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 interface SelectOption {
@@ -273,12 +273,12 @@ export function FormSelect({
                                         >
                                             {opt.label}
                                         </Font>
-                                        {opt.description && (
+                                        {opt?.description && (
                                             <Font
                                                 variant="sub-tiny"
                                                 color={STORE_TOKENS.COLORS.TEXT.DIM}
                                             >
-                                                {opt.description}
+                                                {opt?.description}
                                             </Font>
                                         )}
                                     </div>

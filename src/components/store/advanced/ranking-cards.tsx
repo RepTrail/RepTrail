@@ -64,7 +64,7 @@ export function PodiumCard({ trainer, rank }: { trainer: TrainerRanking, rank: n
                         />
                         <BaseAvatar
                             src={trainer.avatar_url}
-                            initials={trainer.full_name?.substring(0, 2).toUpperCase() || 'TR'}
+                            initials={trainer?.full_name?.substring(0, 2).toUpperCase() || 'TR'}
                             size="xxl"
                             variant="orange"
                         />
@@ -72,8 +72,8 @@ export function PodiumCard({ trainer, rank }: { trainer: TrainerRanking, rank: n
                             position="absolute"
                             bottom={-8}
                             right={-8}
-                            width={48}
-                            height={48}
+                            width="48px"
+                            height="48px"
                             rounded={STORE_TOKENS.RADIUS.SYSTEM}
                             shadow="xl"
                             bg={STORE_TOKENS.COLORS.BACKGROUND}
@@ -110,7 +110,7 @@ export function PodiumCard({ trainer, rank }: { trainer: TrainerRanking, rank: n
                                 {...{
                                     color: "PRIMARY",
                                 }}>
-                                {trainer.full_name}
+                                {trainer?.full_name}
                             </Font>
 
                             <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.NONE}>
@@ -245,7 +245,7 @@ export function RankingRow({ trainer, rank }: { trainer: TrainerRanking, rank: n
             <Stack flex1 direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} minWidth={0}>
                 <BaseAvatar
                     src={trainer.avatar_url}
-                    initials={trainer.full_name?.substring(0, 2).toUpperCase() || 'TR'}
+                    initials={trainer?.full_name?.substring(0, 2).toUpperCase() || 'TR'}
                     size="lg"
                     variant="zinc"
                 />
@@ -259,7 +259,7 @@ export function RankingRow({ trainer, rank }: { trainer: TrainerRanking, rank: n
                         {...{
                             color: "white",
                         }}>
-                        {trainer.full_name}
+                        {trainer?.full_name}
                     </Font>
                     <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.NONE} wrap="wrap">
                         <Icon icon={Star} size="xs" color={STORE_TOKENS.COLORS.BRAND} opacity={STORE_TOKENS.OPACITY.MODAL} />

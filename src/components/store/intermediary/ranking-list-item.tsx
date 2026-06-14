@@ -92,7 +92,7 @@ export function RankingListItem({ trainer, rank }: RankingListItemProps) {
                 </Box>
 
                 <BaseAvatar 
-                    initials={trainer.full_name.substring(0, 2).toUpperCase()} 
+                    initials={trainer?.full_name.substring(0, 2).toUpperCase()} 
                     src={trainer.avatar_url} 
                     size="md" 
                 />
@@ -105,7 +105,7 @@ export function RankingListItem({ trainer, rank }: RankingListItemProps) {
                         {...{
                             color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
                         }}>
-                        {trainer.full_name}
+                        {trainer?.full_name}
                     </Font>
                     <Font
                         variant="sub-tiny"

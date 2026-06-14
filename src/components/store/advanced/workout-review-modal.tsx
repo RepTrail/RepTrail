@@ -224,7 +224,7 @@ export function WorkoutReviewModal({
 
                                         {/* Column Headers (Desktop Only) */}
                                         <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} display={{ base: 'none', md: 'flex' }}>
-                                            <Box width={80} align="center">
+                                            <Box width="80px" align="center">
                                                 <Font
                                                     variant="sub-tiny"
                                                     weight="black"
@@ -233,8 +233,8 @@ export function WorkoutReviewModal({
                                                         color: "zinc-500",
                                                     }}>Peso</Font>
                                             </Box>
-                                            <Box width={20} /> {/* Spacer for the 'x' icon */}
-                                            <Box width={60} align="center">
+                                            <Box width="20px" /> {/* Spacer for the 'x' icon */}
+                                            <Box width="60px" align="center">
                                                 <Font
                                                     variant="sub-tiny"
                                                     weight="black"

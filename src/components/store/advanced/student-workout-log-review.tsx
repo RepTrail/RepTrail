@@ -203,7 +203,7 @@ export function WorkoutLogReview({ logId, userId, workoutName, completedAt, load
                                                         min="0"
                                                         value={edit.weight}
                                                         onChange={e => setEdits(prev => ({ ...prev, [load.id]: { ...prev[load.id], weight: e.target.value } }))}
-                                                        width={80}
+                                                        width="80px"
                                                         textAlign="center"
                                                         weight="bold"
                                                         size="sm"
@@ -230,7 +230,7 @@ export function WorkoutLogReview({ logId, userId, workoutName, completedAt, load
                                                         min="0"
                                                         value={edit.reps}
                                                         onChange={e => setEdits(prev => ({ ...prev, [load.id]: { ...prev[load.id], reps: e.target.value } }))}
-                                                        width={64}
+                                                        width="64px"
                                                         textAlign="center"
                                                         weight="bold"
                                                         size="sm"

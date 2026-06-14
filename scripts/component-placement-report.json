@@ -1,0 +1,349 @@
+{
+  "generated_at": "2026-06-12T21:49:33.668Z",
+  "summary": {
+    "analyzed": 151,
+    "correct": 123,
+    "misplaced": 28,
+    "by_violation": {
+      "PLC-002": 9,
+      "PLC-004": 19
+    }
+  },
+  "violations": [
+    {
+      "id": "eaeeb58d-50b8-4603-9e09-495702036493",
+      "violation": "PLC-002",
+      "component": "admin-affiliates-management-panel",
+      "current_layer": "advanced",
+      "recommended_layer": "intermediary",
+      "confidence": 1,
+      "reason": [],
+      "file": "src/components/store/advanced/admin-affiliates-management-panel.tsx",
+      "fixed": false
+    },
+    {
+      "id": "8c9413d2-e59c-48e5-b5be-624672a3e56a",
+      "violation": "PLC-002",
+      "component": "admin-analytics-grid",
+      "current_layer": "advanced",
+      "recommended_layer": "intermediary",
+      "confidence": 1,
+      "reason": [],
+      "file": "src/components/store/advanced/admin-analytics-grid.tsx",
+      "fixed": false
+    },
+    {
+      "id": "a930c9f0-c991-4e8b-a0da-fc2cd71b1fce",
+      "violation": "PLC-004",
+      "component": "admin-page-shell",
+      "current_layer": "advanced",
+      "recommended_layer": "intermediary",
+      "confidence": 0.8,
+      "reason": [
+        "Lida com entidades de domínio: Plan"
+      ],
+      "file": "src/components/store/advanced/admin-page-shell.tsx",
+      "fixed": false
+    },
+    {
+      "id": "a88dceb5-fb90-4a54-9768-d6c26d3cd3b8",
+      "violation": "PLC-004",
+      "component": "affiliate-onboarding-guide",
+      "current_layer": "advanced",
+      "recommended_layer": "intermediary",
+      "confidence": 0.8,
+      "reason": [],
+      "file": "src/components/store/advanced/affiliate-onboarding-guide.tsx",
+      "fixed": false
+    },
+    {
+      "id": "d94c8ba9-336b-497c-b613-29fd1109584e",
+      "violation": "PLC-004",
+      "component": "affiliate-performance-insights",
+      "current_layer": "advanced",
+      "recommended_layer": "intermediary",
+      "confidence": 0.8,
+      "reason": [],
+      "file": "src/components/store/advanced/affiliate-performance-insights.tsx",
+      "fixed": false
+    },
+    {
+      "id": "56462847-3ee9-43c0-ad7c-68ece041150a",
+      "violation": "PLC-002",
+      "component": "affiliate-referrers-list",
+      "current_layer": "advanced",
+      "recommended_layer": "intermediary",
+      "confidence": 1,
+      "reason": [],
+      "file": "src/components/store/advanced/affiliate-referrers-list.tsx",
+      "fixed": false
+    },
+    {
+      "id": "b02f6f8d-b3c6-454d-b8a0-d51b803e9ee7",
+      "violation": "PLC-004",
+      "component": "ai-protocol-step-card",
+      "current_layer": "advanced",
+      "recommended_layer": "intermediary",
+      "confidence": 0.8,
+      "reason": [],
+      "file": "src/components/store/advanced/ai-protocol-step-card.tsx",
+      "fixed": false
+    },
+    {
+      "id": "9afe3394-fad5-4ddf-aca4-f477d90461b0",
+      "violation": "PLC-004",
+      "component": "ai-protocol-summary-stat",
+      "current_layer": "advanced",
+      "recommended_layer": "intermediary",
+      "confidence": 0.8,
+      "reason": [],
+      "file": "src/components/store/advanced/ai-protocol-summary-stat.tsx",
+      "fixed": false
+    },
+    {
+      "id": "cee467c2-a5ae-45eb-82ea-cb9d3c9a876d",
+      "violation": "PLC-004",
+      "component": "auth-form-skeleton",
+      "current_layer": "advanced",
+      "recommended_layer": "intermediary",
+      "confidence": 0.8,
+      "reason": [],
+      "file": "src/components/store/advanced/auth-form-skeleton.tsx",
+      "fixed": false
+    },
+    {
+      "id": "0545822b-7788-4208-96b8-1911b1eecee2",
+      "violation": "PLC-004",
+      "component": "cardio-builder-header",
+      "current_layer": "advanced",
+      "recommended_layer": "intermediary",
+      "confidence": 0.8,
+      "reason": [],
+      "file": "src/components/store/advanced/cardio-builder-header.tsx",
+      "fixed": false
+    },
+    {
+      "id": "4e93dfa6-f792-4ac9-8970-b0759cb85446",
+      "violation": "PLC-004",
+      "component": "code-auto-generator",
+      "current_layer": "advanced",
+      "recommended_layer": "intermediary",
+      "confidence": 0.8,
+      "reason": [
+        "Lida com entidades de domínio: Trainer"
+      ],
+      "file": "src/components/store/advanced/code-auto-generator.tsx",
+      "fixed": false
+    },
+    {
+      "id": "a5ef4a63-39d3-4bec-8558-29d1549c2612",
+      "violation": "PLC-002",
+      "component": "contract-info-card",
+      "current_layer": "advanced",
+      "recommended_layer": "intermediary",
+      "confidence": 1,
+      "reason": [
+        "Compõe apenas 1-3 componentes base de forma isolada"
+      ],
+      "file": "src/components/store/advanced/contract-info-card.tsx",
+      "fixed": false
+    },
+    {
+      "id": "6f88b0cc-7cbe-4116-ac45-3e18fa8046fa",
+      "violation": "PLC-004",
+      "component": "diet-builder-meal-card",
+      "current_layer": "advanced",
+      "recommended_layer": "intermediary",
+      "confidence": 0.8,
+      "reason": [],
+      "file": "src/components/store/advanced/diet-builder-meal-card.tsx",
+      "fixed": false
+    },
+    {
+      "id": "0e79d7e9-9093-4d64-9bbd-a78980e7e0e7",
+      "violation": "PLC-004",
+      "component": "empty-state-404",
+      "current_layer": "advanced",
+      "recommended_layer": "intermediary",
+      "confidence": 0.8,
+      "reason": [],
+      "file": "src/components/store/advanced/empty-state-404.tsx",
+      "fixed": false
+    },
+    {
+      "id": "3fc9f469-1377-45bf-ae15-f1224b082a9b",
+      "violation": "PLC-002",
+      "component": "ergogenic-management-list",
+      "current_layer": "advanced",
+      "recommended_layer": "intermediary",
+      "confidence": 1,
+      "reason": [],
+      "file": "src/components/store/advanced/ergogenic-management-list.tsx",
+      "fixed": false
+    },
+    {
+      "id": "bbc9ea97-0a2a-41f0-8f83-41ae07ce74d9",
+      "violation": "PLC-002",
+      "component": "icon-label-button",
+      "current_layer": "advanced",
+      "recommended_layer": "intermediary",
+      "confidence": 1,
+      "reason": [
+        "Compõe apenas 1-3 componentes base de forma isolada"
+      ],
+      "file": "src/components/store/advanced/icon-label-button.tsx",
+      "fixed": false
+    },
+    {
+      "id": "19ebd0e7-3edd-40f2-8bfe-795fdd906769",
+      "violation": "PLC-004",
+      "component": "inactive-trainer-card",
+      "current_layer": "advanced",
+      "recommended_layer": "intermediary",
+      "confidence": 0.8,
+      "reason": [
+        "Lida com entidades de domínio: Trainer, Plan"
+      ],
+      "file": "src/components/store/advanced/inactive-trainer-card.tsx",
+      "fixed": false
+    },
+    {
+      "id": "30669078-8a64-4767-9460-735756ed1595",
+      "violation": "PLC-002",
+      "component": "landing-section",
+      "current_layer": "advanced",
+      "recommended_layer": "intermediary",
+      "confidence": 1,
+      "reason": [
+        "Compõe apenas 1-3 componentes base de forma isolada"
+      ],
+      "file": "src/components/store/advanced/landing-section.tsx",
+      "fixed": false
+    },
+    {
+      "id": "1fbf69c3-458f-4977-ac95-aafc813031fa",
+      "violation": "PLC-004",
+      "component": "management-registry-section",
+      "current_layer": "advanced",
+      "recommended_layer": "intermediary",
+      "confidence": 0.8,
+      "reason": [],
+      "file": "src/components/store/advanced/management-registry-section.tsx",
+      "fixed": false
+    },
+    {
+      "id": "af8dfd92-364d-45d7-bc1e-e08d898bd6ac",
+      "violation": "PLC-004",
+      "component": "mobile-trainer-tour-manager",
+      "current_layer": "advanced",
+      "recommended_layer": "intermediary",
+      "confidence": 0.8,
+      "reason": [
+        "Lida com entidades de domínio: Trainer"
+      ],
+      "file": "src/components/store/advanced/mobile-trainer-tour-manager.tsx",
+      "fixed": false
+    },
+    {
+      "id": "c1d682d4-1e98-4e84-9338-cfa605a4dc60",
+      "violation": "PLC-002",
+      "component": "onboarding-logout-button",
+      "current_layer": "advanced",
+      "recommended_layer": "intermediary",
+      "confidence": 1,
+      "reason": [
+        "Compõe apenas 1-3 componentes base de forma isolada"
+      ],
+      "file": "src/components/store/advanced/onboarding-logout-button.tsx",
+      "fixed": false
+    },
+    {
+      "id": "81941fb8-00e5-4cfb-8dbe-5ceba1b0203a",
+      "violation": "PLC-004",
+      "component": "public-profile-shell",
+      "current_layer": "advanced",
+      "recommended_layer": "intermediary",
+      "confidence": 0.8,
+      "reason": [
+        "Lida com entidades de domínio: Profile"
+      ],
+      "file": "src/components/store/advanced/public-profile-shell.tsx",
+      "fixed": false
+    },
+    {
+      "id": "7777985f-5a25-4abf-94c4-d9b048e40e7d",
+      "violation": "PLC-004",
+      "component": "ranking-cards",
+      "current_layer": "advanced",
+      "recommended_layer": "intermediary",
+      "confidence": 0.8,
+      "reason": [
+        "Lida com entidades de domínio: Trainer"
+      ],
+      "file": "src/components/store/advanced/ranking-cards.tsx",
+      "fixed": false
+    },
+    {
+      "id": "ffdd142d-a243-49ab-8bcf-33c8906bb621",
+      "violation": "PLC-004",
+      "component": "registry-mobile-navigation",
+      "current_layer": "advanced",
+      "recommended_layer": "intermediary",
+      "confidence": 0.8,
+      "reason": [],
+      "file": "src/components/store/advanced/registry-mobile-navigation.tsx",
+      "fixed": false
+    },
+    {
+      "id": "029b6205-dfdd-43be-bcfb-68c020d50415",
+      "violation": "PLC-002",
+      "component": "request-payout-button",
+      "current_layer": "advanced",
+      "recommended_layer": "intermediary",
+      "confidence": 0.75,
+      "reason": [
+        "Compõe apenas 1-3 componentes base de forma isolada",
+        "Gerencia estado interno"
+      ],
+      "file": "src/components/store/advanced/request-payout-button.tsx",
+      "fixed": false
+    },
+    {
+      "id": "6781dd3d-1815-4e13-bfeb-e84fed4871b5",
+      "violation": "PLC-004",
+      "component": "student-mission-completed",
+      "current_layer": "advanced",
+      "recommended_layer": "intermediary",
+      "confidence": 0.8,
+      "reason": [],
+      "file": "src/components/store/advanced/student-mission-completed.tsx",
+      "fixed": false
+    },
+    {
+      "id": "f9b97c16-c7e7-4b34-ba75-392405761fb8",
+      "violation": "PLC-004",
+      "component": "workout-builder-exercise-card",
+      "current_layer": "advanced",
+      "recommended_layer": "intermediary",
+      "confidence": 0.8,
+      "reason": [
+        "Lida com entidades de domínio: Workout, Exercise"
+      ],
+      "file": "src/components/store/advanced/workout-builder-exercise-card.tsx",
+      "fixed": false
+    },
+    {
+      "id": "9adc73e6-56cc-419c-88d5-2e5ce2bcb99d",
+      "violation": "PLC-004",
+      "component": "workout-builder-search",
+      "current_layer": "advanced",
+      "recommended_layer": "intermediary",
+      "confidence": 0.8,
+      "reason": [
+        "Lida com entidades de domínio: Workout, Exercise"
+      ],
+      "file": "src/components/store/advanced/workout-builder-search.tsx",
+      "fixed": false
+    }
+  ]
+}

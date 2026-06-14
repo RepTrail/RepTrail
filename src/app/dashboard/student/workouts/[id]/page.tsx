@@ -31,7 +31,7 @@ export default async function StudentWorkoutPage({
         <HydrationBoundary state={dehydrate(queryClient)}>
             <RegistryMain
                 title={workout.name.toUpperCase()}
-                subtitle={workout.description || "Importado via PDF"}
+                subtitle={workout?.description || "Importado via PDF"}
                 icon="Dumbbell"
                 contextLabel="Treinos & Performance"
                 showTabs={false}

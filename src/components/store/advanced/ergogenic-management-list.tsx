@@ -7,7 +7,7 @@ import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { FlaskConical } from 'lucide-react'
 import { EmptyState } from '@/components/store/intermediary/empty-state'
 
-interface ErgogenicManagementSectionContentProps {
+export interface ErgogenicManagementListProps {
     items?: any[]
     mode?: 'auto' | 'personal' | 'trainer'
     isEmpty?: boolean
@@ -18,9 +18,9 @@ interface ErgogenicManagementSectionContentProps {
 }
 
 /**
- * ErgogenicManagementSectionContent: Grid of premium ergogenic cards.
+ * ErgogenicManagementList: Grid of premium ergogenic cards.
  */
-export function ErgogenicManagementSectionContent({ 
+export function ErgogenicManagementList({ 
     items = [],
     mode = 'auto',
     isEmpty = false,
@@ -28,7 +28,7 @@ export function ErgogenicManagementSectionContent({
     onDelete,
     onDuplicate,
     onSchedule
-}: ErgogenicManagementSectionContentProps) {
+}: ErgogenicManagementListProps) {
     if (isEmpty || !items || items.length === 0) {
         return (
             <EmptyState 

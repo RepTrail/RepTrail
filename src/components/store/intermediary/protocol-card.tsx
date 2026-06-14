@@ -10,7 +10,7 @@ import { GlassPanel } from '@/components/store/base/surface'
 import { BackgroundIcon } from '@/components/store/base/background-icon'
 import { Icon } from '@/components/store/base/icon'
 import { LucideIcon, CheckCircle, Sparkles, Zap, Eye } from 'lucide-react'
-import { RegistryColor } from '@/components/store/advanced/registry-context'
+import { RegistryColor } from '@/components/store/base/registry-context'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { EmptyState } from './empty-state'
 import { WorkoutReviewModal } from '@/components/store/advanced/workout-review-modal'
@@ -48,7 +48,7 @@ export function ProtocolCard({
 }: ProtocolCardProps) {
     const [isReviewOpen, setIsReviewOpen] = React.useState(false)
     const [isExercisesOpen, setIsExercisesOpen] = React.useState(false)
-    
+
     const isCompleted = status === 'completed'
     const isInProgress = status === 'in_progress'
     const isEmpty = status === 'empty'
@@ -185,14 +185,16 @@ export function ProtocolCard({
                     </Stack>
                 </Box>
             </GlassPanel>
-            {isCompleted && logId && userId && (
-                <WorkoutReviewModal 
-                    isOpen={isReviewOpen}
-                    onClose={() => setIsReviewOpen(false)}
-                    logId={logId}
-                    userId={userId}
-                />
-            )}
+            {
+                isCompleted && logId && userId && (
+                    <WorkoutReviewModal
+                        isOpen={isReviewOpen}
+                        onClose={() => setIsReviewOpen(false)}
+                        logId={logId}
+                        userId={userId}
+                    />
+                )
+            }
             <WorkoutExercisesModal
                 isOpen={isExercisesOpen}
                 onClose={() => setIsExercisesOpen(false)}

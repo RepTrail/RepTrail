@@ -47,7 +47,7 @@ export function StudentCardioDetailClient({ id, userId }: StudentCardioDetailCli
     return (
         <RegistryMain
             title={cardio.name.toUpperCase()}
-            subtitle={cardio.description || "Protocolo de Cardio"}
+            subtitle={cardio?.description || "Protocolo de Cardio"}
             icon="Flame"
             contextLabel="Condicionamento & Saúde"
             showTabs={false}

@@ -142,7 +142,7 @@ export async function getAffiliateData() {
     return {
         profile: {
             id: profile.id,
-            full_name: profile.full_name,
+            full_name: profile?.full_name,
             avatar_url: profile.avatar_url,
             affiliate_token: profile.affiliate_token,
             affiliate_balance: Number(profile.affiliate_balance) || 0,

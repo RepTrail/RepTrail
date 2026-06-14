@@ -79,34 +79,34 @@ export function PlanCard({ plan, isCurrentPlan = false, adminMode = false, onTog
 
     return (
         <>
-            <Surface
-                variant={surfaceVariant}
-                padding={STORE_TOKENS.PADDING.CONTAINER}
-                rounded={STORE_TOKENS.RADIUS.SYSTEM}
-                border={isPremium || isHighlighted ? 'bold' : 'standard'}
-                height="full"
-                display="flex"
-                direction="col"
-            >
-                <Box position="relative" zIndex={0} width="100%" height="100%" display="flex" direction="col" flex1>
-                    {/* Background Icon */}
-                    <Box position="absolute" top={0} right={0} opacity={5} pointerEvents="none" zIndex={0}>
-                        <SelectedIcon size={120} strokeWidth={1} />
-                    </Box>
+        <Surface
+            variant={surfaceVariant}
+            padding={STORE_TOKENS.PADDING.CONTAINER}
+            rounded={STORE_TOKENS.RADIUS.SYSTEM}
+            border={isPremium || isHighlighted ? 'bold' : 'standard'}
+            height="full"
+            display="flex"
+            direction="col"
+        >
+            <Box position="relative" zIndex={0} fullWidth height="full" display="flex" direction="col" flex1>
+                {/* Background Icon */}
+                <Box position="absolute" top={0} right={0} opacity={5} pointerEvents="none" zIndex={0}>
+                    <SelectedIcon size={120} strokeWidth={1} />
+                </Box>
 
-                    <Stack gap={STORE_TOKENS.SPACING.CONTAINER} flex1 position="relative" zIndex={10}>
-                        <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="start" textAlign="left">
-                            {(isPremium || isHighlighted || badgeText) && !adminMode && (
-                                <Box display="flex" justify="start">
-                                    <Badge
-                                        label={badgeText || (isPremium ? "Elite" : "Mais Popular")}
-                                        color={isPremium ? "amber" : (isColorTheme ? theme as any : STORE_TOKENS.COLORS.BRAND)}
-                                        variant="solid"
-                                        size="sm"
-                                        icon={SelectedIcon}
-                                    />
-                                </Box>
-                            )}
+                <Stack gap={STORE_TOKENS.SPACING.CONTAINER} flex1 position="relative" zIndex={10}>
+                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="start" textAlign="left">
+                        {(isPremium || isHighlighted || badgeText) && !adminMode && (
+                            <Box display="flex" justify="start">
+                                <Badge
+                                    label={badgeText || (isPremium ? "Elite" : "Mais Popular")}
+                                    color={isPremium ? "amber" : (isColorTheme ? theme as any : STORE_TOKENS.COLORS.BRAND)}
+                                    variant="solid"
+                                    size="sm"
+                                    icon={SelectedIcon}
+                                />
+                            </Box>
+                        )}
                         {adminMode && (
                             <Box display="flex" justify="start" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                 <Badge
@@ -127,7 +127,7 @@ export function PlanCard({ plan, isCurrentPlan = false, adminMode = false, onTog
                             Plano {plan.name}
                         </Font>
                         <Font variant="body-sm" color="zinc-400">
-                            {plan.description}
+                            {plan?.description}
                         </Font>
 
                         <Stack align="start">
@@ -161,7 +161,7 @@ export function PlanCard({ plan, isCurrentPlan = false, adminMode = false, onTog
                         {Object.entries(featureLabels).map(([key, label]) => {
                             const hasFeature = features?.[key as keyof typeof features] === true
                             if (!hasFeature) return null
-                            
+
                             let displayLabel = label
                             if (key === 'has_import_pdf_ai') {
                                 const limit = features?.pdf_import_limit
@@ -183,7 +183,7 @@ export function PlanCard({ plan, isCurrentPlan = false, adminMode = false, onTog
                             return (
                                 <Stack key={key} direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} opacity={50}>
                                     <Icon icon={LucideIcons.X} size="xs" color="red" />
-                                    <del className="text-zinc-500 text-sm">{label}</del>
+                                    <del><Font variant="body-sm" color="zinc-500">{label}</Font></del>
                                 </Stack>
                             )
                         })}
@@ -263,57 +263,63 @@ export function PlanCard({ plan, isCurrentPlan = false, adminMode = false, onTog
                     )}
                 </Stack>
             </Box>
-        </Surface>
+        </Surface >
 
-            {!isCurrentPlan && !adminMode && (
-                <AsaasPaymentModal
-                    isOpen={isPaymentModalOpen}
-                    onClose={() => setIsPaymentModalOpen(false)}
-                    tier={plan.slug as any} // mantido para fallback
-                    plan_id={plan.id}
-                    plan_slug={plan.slug}
-                    monthlyTotal={plan.base_price_cents / 100}
-                />
-            )}
+        {
+        !isCurrentPlan && !adminMode && (
+            <AsaasPaymentModal
+                isOpen={isPaymentModalOpen}
+                onClose={() => setIsPaymentModalOpen(false)}
+                tier={plan.slug as any} // mantido para fallback
+                plan_id={plan.id}
+                plan_slug={plan.slug}
+                monthlyTotal={plan.base_price_cents / 100}
+            />
+        )
+    }
 
-            {adminMode && (
-                <Modal
-                    isOpen={isEditModalOpen}
-                    onClose={() => setIsEditModalOpen(false)}
-                    title={`Editar Plano - ${plan.name}`}
-                    subtitle="Altere os dados do plano abaixo."
-                    icon={Settings}
-                    confirmType="submit"
-                    formId="plan-form"
-                    confirmLabel="Salvar Plano"
-                >
-                    <PlanForm initialData={plan} onSuccess={() => setIsEditModalOpen(false)} />
-                </Modal>
-            )}
+    {
+        adminMode && (
+            <Modal
+                isOpen={isEditModalOpen}
+                onClose={() => setIsEditModalOpen(false)}
+                title={`Editar Plano - ${plan.name}`}
+                subtitle="Altere os dados do plano abaixo."
+                icon={Settings}
+                confirmType="submit"
+                formId="plan-form"
+                confirmLabel="Salvar Plano"
+            >
+                <PlanForm initialData={plan} onSuccess={() => setIsEditModalOpen(false)} />
+            </Modal>
+        )
+    }
 
-            {adminMode && (
-                <Modal
-                    isOpen={isDeleteModalOpen}
-                    onClose={() => setIsDeleteModalOpen(false)}
-                    title="Excluir Plano"
-                    subtitle="Confirme a exclusão do plano"
-                    icon={Trash2}
-                    variant="red"
-                    confirmVariant="outline-red"
-                    confirmLabel={isPendingDelete ? "Excluindo..." : "Excluir Plano"}
-                    onConfirm={handleDelete}
-                    isLoading={isPendingDelete}
-                >
-                    <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
-                        <Callout variant="danger" title="Ação Irreversível">
-                            Você tem certeza que deseja excluir o plano <Font weight="bold">{plan.name}</Font>? Todos os dados associados serão removidos permanentemente.
-                        </Callout>
-                        <Font variant="description" color="zinc-400">
-                            Esta ação não poderá ser desfeita e impactará todos os assinantes ativos deste plano.
-                        </Font>
-                    </Stack>
-                </Modal>
-            )}
+    {
+        adminMode && (
+            <Modal
+                isOpen={isDeleteModalOpen}
+                onClose={() => setIsDeleteModalOpen(false)}
+                title="Excluir Plano"
+                subtitle="Confirme a exclusão do plano"
+                icon={Trash2}
+                variant="red"
+                confirmVariant="outline-red"
+                confirmLabel={isPendingDelete ? "Excluindo..." : "Excluir Plano"}
+                onConfirm={handleDelete}
+                isLoading={isPendingDelete}
+            >
+                <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
+                    <Callout variant="danger" title="Ação Irreversível">
+                        Você tem certeza que deseja excluir o plano <Font weight="bold">{plan.name}</Font>? Todos os dados associados serão removidos permanentemente.
+                    </Callout>
+                    <Font variant="description" color="zinc-400">
+                        Esta ação não poderá ser desfeita e impactará todos os assinantes ativos deste plano.
+                    </Font>
+                </Stack>
+            </Modal>
+        )
+    }
         </>
     )
 }

@@ -54,7 +54,7 @@ export async function fetchAsaas(endpoint: string, options: RequestInit = {}) {
 
         if (data.errors && Array.isArray(data.errors)) {
             // Join all error descriptions if multiple exist
-            description = data.errors.map((e: any) => e.description).join(' | ')
+            description = data.errors.map((e: any) => e?.description).join(' | ')
         } else if (data.message) {
             description = data.message
         } else if (response.status === 401) {

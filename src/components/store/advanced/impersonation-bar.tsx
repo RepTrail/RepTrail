@@ -11,7 +11,7 @@ import { Font } from '@/components/store/base/font'
 import { Icon } from '@/components/store/base/icon'
 import { Badge } from '@/components/store/base/badge'
 import { Surface } from '@/components/store/base/surface'
-import { RegistryColor } from './registry-context'
+import { RegistryColor } from '@/components/store/base/registry-context'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 export function ImpersonationBar({ color }: { color?: RegistryColor }) {

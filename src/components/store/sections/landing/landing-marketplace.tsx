@@ -8,12 +8,12 @@ import { Font } from '@/components/store/base/font'
 import { Input } from '@/components/store/base/input'
 import { Icon } from '@/components/store/base/icon'
 import { Badge } from '@/components/store/base/badge'
-import { useRegistry } from '@/components/store/advanced/registry-context'
+import { useRegistry } from '@/components/store/base/registry-context'
 import { RankingPodiumCard } from '@/components/store/intermediary/ranking-podium-card'
 import { LandingLeadModal } from './landing-lead-modal'
 import { Search, Users } from 'lucide-react'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
-import { LandingSection } from '@/components/store/advanced/landing-section'
+import { LandingSection } from '@/components/store/intermediary/landing-section'
 
 interface Trainer {
   id: string
@@ -38,7 +38,7 @@ export function LandingMarketplace({ initialTrainers }: MarketplaceSectionProps)
 
   const filteredTrainers = initialTrainers.filter(trainer =>
     trainer.trainer_code && (
-      trainer.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      trainer?.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       trainer.trainer_code?.toLowerCase().includes(searchTerm.toLowerCase())
     )
   )
@@ -90,7 +90,7 @@ export function LandingMarketplace({ initialTrainers }: MarketplaceSectionProps)
                 key={`${trainer.id}-${index}`}
                 rank={index + 1}
                 trainer={{
-                  full_name: trainer.full_name,
+                  full_name: trainer?.full_name,
                   avatar_url: trainer.avatar_url,
                   region: trainer.specialties?.[0] || 'CONSULTORIA',
                   rating: trainer.rating || 5.0,

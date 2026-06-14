@@ -9,7 +9,7 @@ import { Icon } from '@/components/store/base/icon'
 import { Input } from '@/components/store/base/input'
 import { Surface } from '@/components/store/base/surface'
 
-import { useRegistry } from '@/components/store/advanced/registry-context'
+import { useRegistry } from '@/components/store/base/registry-context'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { Link as LinkIcon, Copy } from 'lucide-react'
 
