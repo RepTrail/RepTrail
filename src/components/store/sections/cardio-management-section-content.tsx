@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import React from 'react'
 import { Grid } from '@/components/store/base/grid'
@@ -7,7 +7,6 @@ import { ManagementCardPremium } from '@/components/store/intermediary/managemen
 import { Activity } from 'lucide-react'
 import { EmptyState } from '@/components/store/intermediary/empty-state'
 import { RegistryActionModal, RegistryActionType } from '@/components/store/advanced/registry-action-modal'
-import { useRouter } from 'next/navigation'
 import { useOptimisticMutation } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { ENTITIES } from '@/lib/outbox-db'
@@ -40,8 +39,6 @@ export function CardioManagementSectionContent({
         type: 'assign_cardio'
     })
 
-    const router = useRouter()
-
     const { mutate: deleteMutation } = useOptimisticMutation({
         queryKey: activeQueryKey,
         entity: ENTITIES.CARDIO,
@@ -72,9 +69,8 @@ export function CardioManagementSectionContent({
                     }))
                     if (mode === 'trainer') {
                         return { ...item, assignments: newAssignments }
-                    } else {
-                        return { ...item, assigned_cardios: newAssignments }
                     }
+                    return { ...item, assigned_cardios: newAssignments }
                 }
                 return item;
             })
@@ -170,18 +166,16 @@ export function CardioManagementSectionContent({
 
     const closeAction = () => setActionModal(prev => ({ ...prev, isOpen: false }))
 
+    let emptyDescription = "Seu treinador ainda não atribuiu cardios para sua conta.";
+    if (mode === 'trainer') emptyDescription = 'Crie seu primeiro modelo de cardio para começar a atribuir.';
+    else if (mode === 'auto') emptyDescription = "Você ainda não possui protocolos de cardio cadastrados.";
+
     if (isEmpty || !cardios || cardios.length === 0) {
         return (
             <EmptyState
                 icon={Activity}
                 title="SEM CARDIOS"
-                description={
-                    mode === 'trainer'
-                        ? 'Crie seu primeiro modelo de cardio para comeÃ§ar a atribuir.'
-                        : mode === 'auto'
-                            ? "VocÃª ainda nÃ£o possui protocolos de cardio cadastrados."
-                            : "Seu treinador ainda nÃ£o atribuiu cardios para sua conta."
-                }
+                description={emptyDescription}
             />
         )
     }

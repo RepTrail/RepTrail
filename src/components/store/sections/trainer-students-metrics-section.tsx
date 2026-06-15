@@ -2,7 +2,7 @@
 
 import { useQuery, actions } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
-import { getTrainerStudents, getTrainerProfile, getTrainerRanking } from '@/lib/dal/remote'
+import { getTrainerStudents, getTrainerRanking } from '@/lib/dal/remote'
 import { Grid } from '@/components/store/base/grid'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { StatsCard } from '@/components/store/intermediary/stats-card'
@@ -16,10 +16,6 @@ export function TrainerStudentsMetricsSection({ userId }: TrainerStudentsMetrics
     const { data: students = [] } = useQuery({
         queryKey: QUERY_KEYS.trainer.students(userId),
         queryFn: () => getTrainerStudents(userId),
-    })
-    const { data: profile } = useQuery({
-        queryKey: QUERY_KEYS.trainer.profile(userId),
-        queryFn: () => getTrainerProfile(userId),
     })
     const { data: fullRanking = [] } = useQuery({
         queryKey: QUERY_KEYS.trainer.ranking(),

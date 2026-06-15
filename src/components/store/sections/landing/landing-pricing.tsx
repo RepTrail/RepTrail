@@ -80,7 +80,7 @@ const PLANS = [
 ]
 
 export function LandingPricing() {
-  const { primaryColor } = useRegistry()
+  const { primaryColor: _primaryColor } = useRegistry()
 
   return (
     <LandingSection>

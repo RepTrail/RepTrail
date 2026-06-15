@@ -17,7 +17,7 @@ interface LandingFAQProps {
 }
 
 export function LandingFAQ({ role = 'trainer' }: LandingFAQProps) {
-  const { primaryColor } = useRegistry()
+  const { primaryColor: _primaryColor } = useRegistry()
   const [openIndex, setOpenIndex] = useState<number | null>(null)
 
   const config = {

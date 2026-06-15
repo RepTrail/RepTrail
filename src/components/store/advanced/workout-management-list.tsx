@@ -77,9 +77,9 @@ export function WorkoutManagementList({
                     }
                     if (mode === 'trainer') {
                         return { ...item, assignments: [...(item.assignments || []), newAssignment] }
-                    } else {
+                    } 
                         return { ...item, assigned_workouts: [...(item.assigned_workouts || []), newAssignment] }
-                    }
+                    
                 }
                 return item;
             })

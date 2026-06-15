@@ -4,6 +4,7 @@ export function getSupabaseClient() {
   return createBrowserClient()
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function removeChannelWithGrace(supabase: any, channel: any) {
   return removeChannelGrace(supabase, channel)
 }

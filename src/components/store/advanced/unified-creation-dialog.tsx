@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import React, { useState, useRef, useEffect } from 'react'
 import { useQueryClient } from '@/lib/dal'
@@ -51,7 +51,7 @@ interface FormField {
     required?: boolean
     gridCols?: number
     merged?: boolean
-    defaultValue?: any
+    defaultValue?: string | number | readonly string[] | undefined
     options?: Array<{ label: string; value: string }>
 }
 
@@ -59,7 +59,7 @@ interface UnifiedCreationDialogProps {
     title: string
     description: string
     icon?: LucideIcon
-    trigger?: React.ReactElement<any>
+    trigger?: React.ReactElement<{ onClick?: (e: React.MouseEvent) => void }>
     triggerLabel?: string
     fields: FormField[]
     actionType: string
@@ -96,7 +96,9 @@ export function UnifiedCreationDialog({
 
     // Initial days state
     const daysField = fields.find((f) => f.type === 'days')
-    const [selectedDays, setSelectedDays] = useState<number[]>(daysField?.defaultValue || [])
+    const [selectedDays, setSelectedDays] = useState<number[]>(
+        Array.isArray(daysField?.defaultValue) ? daysField.defaultValue.map(Number) : []
+    )
 
     const formRef = useRef<HTMLFormElement>(null)
 
@@ -105,7 +107,7 @@ export function UnifiedCreationDialog({
         if (isOpen) {
             setError(null)
             setIsLoading(false)
-            setSelectedDays(daysField?.defaultValue || [])
+            setSelectedDays(Array.isArray(daysField?.defaultValue) ? daysField.defaultValue.map(Number) : [])
         }
     }, [isOpen, daysField?.defaultValue])
 
@@ -125,7 +127,7 @@ export function UnifiedCreationDialog({
         }
 
         try {
-            let res: any
+            let res: { error?: string, message?: string, success?: boolean, redirectUrl?: string } | undefined
 
             if (actionType === 'create-student') {
                 const { createStudent } = await import('@/lib/dal/remote')
@@ -164,8 +166,8 @@ export function UnifiedCreationDialog({
                     window.location.reload()
                 }
             }
-        } catch (err: any) {
-            setError(err.message || 'Um erro inesperado ocorreu.')
+        } catch (err: unknown) {
+            setError((err as Error).message || 'Um erro inesperado ocorreu.')
         } finally {
             setIsLoading(false)
         }
@@ -208,7 +210,7 @@ export function UnifiedCreationDialog({
                         name={field.name}
                         label={field.label}
                         options={field.options || []}
-                        defaultValue={field.defaultValue}
+                        defaultValue={field.defaultValue as string}
                         placeholder={field.placeholder}
                     />
                 )

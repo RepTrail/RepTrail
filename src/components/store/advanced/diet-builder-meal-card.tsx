@@ -88,8 +88,8 @@ export function DietBuilderMealCard({
         <Box
             as="div"
             draggable
-            onDragStart={(e: any) => onMealDragStart(e, meal.id)}
-            onDragOver={(e: any) => onMealDragOver(e, meal.id)}
+            onDragStart={(e: React.DragEvent) => onMealDragStart(e, meal.id)}
+            onDragOver={(e: React.DragEvent) => onMealDragOver(e, meal.id)}
             onDragEnd={onMealDragEnd}
             transition
             opacity={isDragged ? STORE_TOKENS.OPACITY.SIDEBAR : STORE_TOKENS.OPACITY.FULL}

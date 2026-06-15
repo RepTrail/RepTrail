@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import React, { useState, useEffect } from 'react'
 import { useQuery, useQueryClient } from '@/lib/dal'
@@ -233,8 +233,7 @@ export function WorkoutBuilderSmart({
         if (!draggedId || !workout) return
         setDraggedId(null)
         reorderMutate({
-            orderedIds: exercises.map((ex: any) => ex.id),
-            workoutId: workout.id
+            orderedIds: exercises.map((ex: any) => ex.id)
         })
     }
 

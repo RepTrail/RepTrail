@@ -77,9 +77,9 @@ export function DietManagementList({
                     }))
                     if (mode === 'trainer') {
                         return { ...item, assignments: newAssignments }
-                    } else {
+                    } 
                         return { ...item, assigned_diets: newAssignments }
-                    }
+                    
                 }
                 return item;
             })

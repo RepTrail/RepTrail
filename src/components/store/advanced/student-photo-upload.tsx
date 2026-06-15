@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useState } from 'react'
 import { ChevronRight } from 'lucide-react'
@@ -18,11 +18,11 @@ import { AlertTriangle } from 'lucide-react'
 
 interface ProgressPhotoUploadProps {
     studentId: string
-    existingPhotos?: any[]
+    existingPhotos?: Record<string, unknown>[]
 }
 
 export function ProgressPhotoUpload({ studentId, existingPhotos = [] }: ProgressPhotoUploadProps) {
-    const [uploading, setUploading] = useState(false)
+    const [uploading] = useState(false)
     const [photos, setPhotos] = useState<{
         front: File | null
         back: File | null
@@ -45,7 +45,7 @@ export function ProgressPhotoUpload({ studentId, existingPhotos = [] }: Progress
         side_left: null,
         side_right: null
     })
-    const [allowPublic, setAllowPublic] = useState(true)
+    const [allowPublic] = useState(true)
 
     const { toast } = useToast()
 
@@ -54,8 +54,9 @@ export function ProgressPhotoUpload({ studentId, existingPhotos = [] }: Progress
         entity: ENTITIES.PROGRESS_PHOTO,
         queryKey: QUERY_KEYS.student.photos(studentId),
         mutationFn: async () => { }, // Sync Engine handles binary upload
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         updateFn: (oldData: any, variables: any) => {
-            const list = Array.isArray(oldData) ? oldData : (oldData?.data || [])
+            const list = Array.isArray(oldData) ? oldData : (oldData?.data as Record<string, unknown>[] || [])
             const optimisticId = crypto.randomUUID()
 
             // Create object URLs for local preview
@@ -81,7 +82,7 @@ export function ProgressPhotoUpload({ studentId, existingPhotos = [] }: Progress
             setPhotos({ front: null, back: null, side_left: null, side_right: null })
             setPreviews({ front: null, back: null, side_left: null, side_right: null })
         },
-        onError: (err: any) => {
+        onError: (err: Error) => {
             toast({
                 title: 'Erro no envio',
                 description: err.message || 'Ocorreu uma falha ao enviar as fotos.',
@@ -127,7 +128,7 @@ export function ProgressPhotoUpload({ studentId, existingPhotos = [] }: Progress
     const currentCycleStart = limitsData?.quotas?.currentCycleStart || new Date(0).toISOString()
     const maxPhotos = limitsData?.quotas?.maxPhotosPerStudent || 2
 
-    const photosThisCycle = existingPhotos.filter((p: any) => new Date(p.created_at) >= new Date(currentCycleStart)).length
+    const photosThisCycle = existingPhotos.filter((p: Record<string, unknown>) => new Date(p.created_at as string) >= new Date(currentCycleStart)).length
     const hasReachedLimit = photosThisCycle >= maxPhotos
 
     if (hasReachedLimit) {

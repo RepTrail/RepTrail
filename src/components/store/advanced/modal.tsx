@@ -64,7 +64,7 @@ export function Modal({
         setAnimateState('open')
       }, 10)
       return () => clearTimeout(timer)
-    } else {
+    } 
       if (shouldRender) {
         setAnimateState('closed')
         const timer = setTimeout(() => {
@@ -72,7 +72,7 @@ export function Modal({
         }, 200)
         return () => clearTimeout(timer)
       }
-    }
+    
   }, [isOpen, shouldRender])
 
   // Lock page scrolling when modal is active/rendered to avoid backscroll

@@ -13,7 +13,7 @@ import { syncMutationToRemote } from './sync'
 export function useProfile(userId: string) {
   return useQuery({
     queryKey: ['profile', userId],
-    queryFn: () => localGet<any>('profiles', userId),
+    queryFn: () => localGet<Record<string, unknown>>('profiles', userId),
     staleTime: 1000 * 60 * 5,
     enabled: !!userId,
   })
@@ -22,7 +22,7 @@ export function useProfile(userId: string) {
 export function useWorkouts(userId: string) {
   return useQuery({
     queryKey: ['workouts', userId],
-    queryFn: () => localGetAll<any>('workouts'),
+    queryFn: () => localGetAll<Record<string, unknown>>('workouts'),
     staleTime: 1000 * 60 * 5,
     enabled: !!userId,
   })
@@ -31,7 +31,7 @@ export function useWorkouts(userId: string) {
 export function useWorkout(id: string) {
   return useQuery({
     queryKey: ['workout', id],
-    queryFn: () => localGet<any>('workouts', id),
+    queryFn: () => localGet<Record<string, unknown>>('workouts', id),
     staleTime: 1000 * 60 * 5,
     enabled: !!id,
   })
@@ -44,9 +44,9 @@ export function useWorkoutWithExercises(id: string) {
   return useQuery({
     queryKey: ['workout-with-exercises', id],
     queryFn: async () => {
-      let workout = await localGet<any>('workouts', id)
-      let allWorkoutExercises = await localGetAll<any>('workout_exercises')
-      let allExercises = await localGetAll<any>('exercises')
+      let workout = await localGet<Record<string, unknown>>('workouts', id)
+      let allWorkoutExercises = await localGetAll<Record<string, unknown>>('workout_exercises')
+      let allExercises = await localGetAll<Record<string, unknown>>('exercises')
 
       if (!workout) {
         console.warn(`[LocalFirst] Workout ${id} not found locally, falling back to remote...`)
@@ -65,18 +65,18 @@ export function useWorkoutWithExercises(id: string) {
           }
         }
 
-        workout = await localGet<any>('workouts', id)
-        allWorkoutExercises = await localGetAll<any>('workout_exercises')
-        allExercises = await localGetAll<any>('exercises')
+        workout = await localGet<Record<string, unknown>>('workouts', id)
+        allWorkoutExercises = await localGetAll<Record<string, unknown>>('workout_exercises')
+        allExercises = await localGetAll<Record<string, unknown>>('exercises')
       }
 
       const exercises = allWorkoutExercises
-        .filter((we: any) => we.workout_id === id)
-        .map((we: any) => {
-          const ex = allExercises.find((e: any) => e.id === we.exercise_id)
+        .filter((we: Record<string, unknown>) => we.workout_id === id)
+        .map((we: Record<string, unknown>) => {
+          const ex = allExercises.find((e: Record<string, unknown>) => e.id === we.exercise_id)
           return { ...we, exercise: ex }
         })
-        .sort((a: any, b: any) => (a.order_index ?? 0) - (b.order_index ?? 0))
+        .sort((a: Record<string, unknown>, b: Record<string, unknown>) => (Number(a.order_index) ?? 0) - (Number(b.order_index) ?? 0))
 
       return { ...workout, exercises }
     },
@@ -89,8 +89,8 @@ export function useAssignedWorkout(workoutId: string, studentId: string) {
   return useQuery({
     queryKey: ['assigned-workout', workoutId, studentId],
     queryFn: async () => {
-      const allAssigned = await localGetAll<any>('assigned_workouts')
-      return allAssigned.find((aw: any) => aw.workout_id === workoutId && aw.student_id === studentId && aw.active === true) ?? null
+      const allAssigned = await localGetAll<Record<string, unknown>>('assigned_workouts')
+      return allAssigned.find((aw: Record<string, unknown>) => aw.workout_id === workoutId && aw.student_id === studentId && aw.active === true) ?? null
     },
     staleTime: 1000 * 60 * 5,
     enabled: !!workoutId && !!studentId,
@@ -100,7 +100,7 @@ export function useAssignedWorkout(workoutId: string, studentId: string) {
 export function useCreateWorkout() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async (workout: any) => {
+    mutationFn: async (workout: Record<string, unknown>) => {
       const clientMutationId = crypto.randomUUID()
       let localClientId = typeof window !== 'undefined' ? localStorage.getItem('reptrail_client_id') : null
       if (!localClientId && typeof window !== 'undefined') {
@@ -115,7 +115,8 @@ export function useCreateWorkout() {
         clientId: localClientId || 'server'
       }
 
-      await localPut('workouts', workoutWithMeta)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await localPut('workouts', workoutWithMeta as any)
 
       const { outboxDB } = await import('@/lib/outbox-db')
       const { syncEngine } = await import('@/services/sync-engine')
@@ -128,14 +129,14 @@ export function useCreateWorkout() {
         payload: workoutWithMeta,
         entity: 'workouts',
         entityId: workoutWithMeta.id
-      } as any)
+      } as unknown as import('@/lib/outbox-db').OutboxRecord)
 
-      syncEngine.trigger()
+      void syncEngine.trigger()
 
       return workoutWithMeta
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['workouts'] })
+      void queryClient.invalidateQueries({ queryKey: ['workouts'] })
     },
     onError: (error) => { console.error('[dal] Erro crÃ­tico em useCreateWorkout:', error) }
   })
@@ -144,8 +145,8 @@ export function useCreateWorkout() {
 export function useDailyTracking(userId: string, date: string) {
   return useQuery({
     queryKey: ['daily_tracking', userId, date],
-    queryFn: () => localGetAll<any>('daily_tracking').then(
-      rows => rows.find((r: any) => r.user_id === userId && r.date === date) ?? null
+    queryFn: () => localGetAll<Record<string, unknown>>('daily_tracking').then(
+      rows => rows.find((r: Record<string, unknown>) => r.user_id === userId && r.date === date) ?? null
     ),
     staleTime: 1000 * 60 * 2,
     enabled: !!userId && !!date,
@@ -231,7 +232,7 @@ export function useAuthUser() {
       const supabase = createClient()
       const { data: { user: authUser } } = await supabase.auth.getUser()
       if (!authUser) return null
-      const profile = await localGet<any>('profiles', authUser.id)
+      const profile = await localGet<Record<string, unknown>>('profiles', authUser.id)
       if (profile) return profile
 
       const { data: remoteProfile } = await supabase.from('profiles').select('*').eq('id', authUser.id).single()
@@ -264,7 +265,7 @@ export function useDeleteUser() {
   return useMutation({
     mutationFn: (userId: string) => import('@/actions/admin-actions').then(m => m.deleteUser(userId)),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-students'] })
+      void queryClient.invalidateQueries({ queryKey: ['admin-students'] })
     }
   })
 }
@@ -275,7 +276,7 @@ export function useGrantAutoTraining() {
     mutationFn: ({ studentId, status }: { studentId: string; status: 'active' | 'none' }) =>
       import('@/actions/admin-actions').then(m => m.grantAutoTraining(studentId, status)),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-students'] })
+      void queryClient.invalidateQueries({ queryKey: ['admin-students'] })
     }
   })
 }
@@ -287,15 +288,15 @@ interface UseOptimisticMutationOptions<TData, TVariables, TContext> {
   entity: EntityType
   entityId?: string
   mutationFn?: (variables: TVariables) => Promise<TData>
-  updateFn?: (oldData: any, variables: TVariables) => any
+  updateFn?: (oldData: unknown, variables: TVariables) => unknown
   onMutate?: (variables: TVariables) => Promise<TContext> | TContext
-  onSuccess?: (data: TData, variables: TVariables, context: any) => void
-  onError?: (error: Error, variables: TVariables, context: any) => void
-  onSettled?: (data: TData | undefined, error: Error | null, variables: TVariables, context: any) => void
+  onSuccess?: (data: TData, variables: TVariables, context: TContext) => void
+  onError?: (error: Error, variables: TVariables, context: TContext) => void
+  onSettled?: (data: TData | undefined, error: Error | null, variables: TVariables, context: TContext) => void
   additionalQueryKeys?: import('@tanstack/react-query').QueryKey[]
 }
 
-export function useOptimisticMutation<TData = any, TVariables = any, TContext = any>({
+export function useOptimisticMutation<TData = unknown, TVariables = Record<string, unknown>, TContext = unknown>({
   queryKey,
   actionName,
   entity,
@@ -310,9 +311,10 @@ export function useOptimisticMutation<TData = any, TVariables = any, TContext = 
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async (variables: any) => {
-      return variables as any
+    mutationFn: async (variables: TVariables) => {
+      return variables as unknown as TData
     },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onMutate: (rawVariables: any) => {
       const clientMutationId = crypto.randomUUID()
       let localClientId = typeof window !== 'undefined' ? localStorage.getItem('reptrail_client_id') : null
@@ -332,7 +334,7 @@ export function useOptimisticMutation<TData = any, TVariables = any, TContext = 
       const previousData = queryKey ? queryClient.getQueryData(queryKey) : undefined
 
       if (updateFn && queryKey) {
-        queryClient.setQueryData(queryKey, (oldData: any) => updateFn(oldData, variables))
+        queryClient.setQueryData(queryKey, (oldData: unknown) => updateFn(oldData, variables as unknown as TVariables))
       }
 
       if (onMutate) onMutate(variables)
@@ -349,21 +351,24 @@ export function useOptimisticMutation<TData = any, TVariables = any, TContext = 
           payload: variables,
           entity,
           entityId,
-        } as any).then(() => {
-          syncEngine.trigger()
+        } as unknown as import('@/lib/outbox-db').OutboxRecord).then(() => {
+          void syncEngine.trigger()
         }).catch(err => console.error('[OptimisticMutation] Outbox Enqueue Error:', err))
       }, 0)
 
       return { previousData, clientMutationId }
     },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onSuccess: async (data: any, variables: any, context: any) => {
       if (onSuccess) onSuccess(data, variables, context)
     },
-    onError: async (err, variables: any, context: any) => {
-      if (context?.previousData && queryKey) queryClient.setQueryData(queryKey, context.previousData)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onError: async (err: any, variables: any, context: any) => {
+      if ((context as Record<string, unknown>)?.previousData && queryKey) queryClient.setQueryData(queryKey, (context as Record<string, unknown>).previousData)
       if (onError) onError(err as Error, variables, context)
     },
-    onSettled: (data, error, variables: any, context) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onSettled: (data: any, error: any, variables: any, context: any) => {
       if (onSettled) onSettled(data, error, variables, context)
     },
   })
@@ -391,17 +396,17 @@ export function useRealtimeSync({
   const supabase = createClient()
 
   useEffect(() => {
-    const processPayload = async (payload: any) => {
-      const incoming = payload.new || payload.old
+    const processPayload = async (payload: Record<string, unknown>) => {
+      const incoming = (payload.new || payload.old) as Record<string, unknown>
       if (!incoming?.[idField]) return
 
-      const entityId = incoming[idField]
+      const entityId = incoming[idField] as string
       const mutexKey = `${table}:${entityId}`
       if (processingIds.has(mutexKey)) return
       processingIds.add(mutexKey)
 
       try {
-        const mutationId = incoming.client_mutation_id
+        const mutationId = incoming.client_mutation_id as string | undefined
         const localClientId = typeof window !== 'undefined' ? localStorage.getItem('reptrail_client_id') : null
         if (incoming.client_id && incoming.client_id === localClientId) return
 
@@ -419,11 +424,12 @@ export function useRealtimeSync({
         try {
           const { localPut, localDelete, getLocalDb } = await import('@/lib/dal')
           const db = await getLocalDb()
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           if (db.objectStoreNames.contains(table as any)) {
             if (payload.eventType === 'DELETE') {
-              await localDelete(table as any, entityId)
+              await localDelete(table as keyof import('./localDb').RepTrailDB, entityId)
             } else {
-              await localPut(table as any, incoming)
+              await localPut(table as keyof import('./localDb').RepTrailDB, incoming as any)
             }
           }
         } catch (dbErr) {
@@ -432,23 +438,23 @@ export function useRealtimeSync({
 
         const relationshipTables = ['assigned_workouts', 'assigned_diets', 'assigned_cardio']
         if (relationshipTables.includes(table)) {
-          queryClient.invalidateQueries({ queryKey })
+          void queryClient.invalidateQueries({ queryKey })
           return
         }
 
-        queryClient.setQueryData(queryKey, (oldData: any) => {
+        queryClient.setQueryData(queryKey, (oldData: unknown) => {
           if (!oldData) return oldData
           if (Array.isArray(oldData)) {
-            const cleanOldData = oldData.filter((i: any) => i && i[idField] !== undefined && i[idField] !== null)
-            if (payload.eventType === 'DELETE') return cleanOldData.filter((i: any) => i[idField] !== entityId)
-            const map = new Map(cleanOldData.map((i: any) => [i[idField], i]))
+            const cleanOldData = oldData.filter((i: Record<string, unknown>) => i && i[idField] !== undefined && i[idField] !== null)
+            if (payload.eventType === 'DELETE') return cleanOldData.filter((i: Record<string, unknown>) => i[idField] !== entityId)
+            const map = new Map(cleanOldData.map((i: Record<string, unknown>) => [i[idField], i]))
             const prev = map.get(entityId)
             map.set(entityId, { ...prev, ...incoming, _optimistic: prev?._optimistic ?? false, _pending: prev?._pending ?? false, _error: undefined })
             return Array.from(map.values())
           }
-          if (typeof oldData === 'object' && oldData[idField] === entityId) {
+          if (typeof oldData === 'object' && (oldData as Record<string, unknown>)[idField] === entityId) {
             if (payload.eventType === 'DELETE') return null
-            return { ...oldData, ...incoming, _optimistic: oldData?._optimistic ?? false, _pending: oldData?._pending ?? false, _error: undefined }
+            return { ...oldData, ...incoming, _optimistic: (oldData as Record<string, unknown>)?._optimistic ?? false, _pending: (oldData as Record<string, unknown>)?._pending ?? false, _error: undefined }
           }
           return oldData
         })
@@ -458,7 +464,7 @@ export function useRealtimeSync({
     }
 
     let channelConfig = supabase.channel(`realtime:${table}:${JSON.stringify(queryKey)}`).on(
-      'postgres_changes' as any,
+      'postgres_changes' as never,
       { event: '*', schema, table, filter },
       processPayload
     )

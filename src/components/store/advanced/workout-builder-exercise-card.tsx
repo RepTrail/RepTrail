@@ -16,13 +16,13 @@ import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { GripVertical, Trash2 } from 'lucide-react'
 
 export interface WorkoutBuilderExerciseCardProps {
-    item: any
+    item: Record<string, any>
     isDragged: boolean
     onDragStart: (e: React.DragEvent, id: string) => void
     onDragOver: (e: React.DragEvent, id: string) => void
     onDragEnd: () => void
     onRemove: (id: string) => void
-    onUpdate: (id: string, data: any) => void
+    onUpdate: (id: string, data: Record<string, unknown>) => void
 }
 
 export function WorkoutBuilderExerciseCard({
@@ -38,8 +38,8 @@ export function WorkoutBuilderExerciseCard({
         <Box
             as="div"
             draggable
-            onDragStart={(e: any) => onDragStart(e, item.id)}
-            onDragOver={(e: any) => onDragOver(e, item.id)}
+            onDragStart={(e: React.DragEvent) => onDragStart(e, item.id)}
+            onDragOver={(e: React.DragEvent) => onDragOver(e, item.id)}
             onDragEnd={onDragEnd}
             transition
             cursor="pointer"
@@ -143,8 +143,8 @@ export function WorkoutBuilderExerciseCard({
                                             <Input
                                                 type="number"
                                                 value={item.warmup_sets}
-                                                onChange={(e: any) => onUpdate(item.id, { warmup_sets: parseInt(e.target.value) || 0 })}
-                                                onBlur={(e: any) => { if (!e.target.value) onUpdate(item.id, { warmup_sets: 0 }) }}
+                                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => onUpdate(item.id, { warmup_sets: parseInt(e.target.value) || 0 })}
+                                                onBlur={(e: React.FocusEvent<HTMLInputElement>) => { if (!e.target.value) onUpdate(item.id, { warmup_sets: 0 }) }}
                                                 textAlign="center"
                                             />
                                         </Stack>
@@ -156,7 +156,7 @@ export function WorkoutBuilderExerciseCard({
                                                 }}>Reps</Font>
                                             <Input
                                                 defaultValue={item.warmup_reps}
-                                                onBlur={(e: any) => onUpdate(item.id, { warmup_reps: e.target.value })}
+                                                onBlur={(e: React.FocusEvent<HTMLInputElement>) => onUpdate(item.id, { warmup_reps: e.target.value })}
                                                 textAlign="center"
                                                 placeholder="Reps"
                                             />
@@ -170,7 +170,7 @@ export function WorkoutBuilderExerciseCard({
                                             <Input
                                                 type="number"
                                                 defaultValue={item.warmup_rest_seconds}
-                                                onBlur={(e: any) => onUpdate(item.id, { warmup_rest_seconds: parseInt(e.target.value) || 0 })}
+                                                onBlur={(e: React.FocusEvent<HTMLInputElement>) => onUpdate(item.id, { warmup_rest_seconds: parseInt(e.target.value) || 0 })}
                                                 textAlign="center"
                                             />
                                         </Stack>
@@ -205,8 +205,8 @@ export function WorkoutBuilderExerciseCard({
                                             <Input
                                                 type="number"
                                                 value={item.feeder_sets}
-                                                onChange={(e: any) => onUpdate(item.id, { feeder_sets: parseInt(e.target.value) || 0 })}
-                                                onBlur={(e: any) => { if (!e.target.value) onUpdate(item.id, { feeder_sets: 0 }) }}
+                                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => onUpdate(item.id, { feeder_sets: parseInt(e.target.value) || 0 })}
+                                                onBlur={(e: React.FocusEvent<HTMLInputElement>) => { if (!e.target.value) onUpdate(item.id, { feeder_sets: 0 }) }}
                                                 textAlign="center"
                                             />
                                         </Stack>
@@ -218,7 +218,7 @@ export function WorkoutBuilderExerciseCard({
                                                 }}>Reps</Font>
                                             <Input
                                                 defaultValue={item.feeder_reps}
-                                                onBlur={(e: any) => onUpdate(item.id, { feeder_reps: e.target.value })}
+                                                onBlur={(e: React.FocusEvent<HTMLInputElement>) => onUpdate(item.id, { feeder_reps: e.target.value })}
                                                 textAlign="center"
                                                 placeholder="Reps"
                                             />
@@ -232,7 +232,7 @@ export function WorkoutBuilderExerciseCard({
                                             <Input
                                                 type="number"
                                                 defaultValue={item.feeder_rest_seconds}
-                                                onBlur={(e: any) => onUpdate(item.id, { feeder_rest_seconds: parseInt(e.target.value) || 0 })}
+                                                onBlur={(e: React.FocusEvent<HTMLInputElement>) => onUpdate(item.id, { feeder_rest_seconds: parseInt(e.target.value) || 0 })}
                                                 textAlign="center"
                                             />
                                         </Stack>
@@ -270,8 +270,8 @@ export function WorkoutBuilderExerciseCard({
                                             <Input
                                                 type="number"
                                                 value={item.working_sets}
-                                                onChange={(e: any) => onUpdate(item.id, { working_sets: parseInt(e.target.value) || 0 })}
-                                                onBlur={(e: any) => { if (!e.target.value) onUpdate(item.id, { working_sets: 0 }) }}
+                                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => onUpdate(item.id, { working_sets: parseInt(e.target.value) || 0 })}
+                                                onBlur={(e: React.FocusEvent<HTMLInputElement>) => { if (!e.target.value) onUpdate(item.id, { working_sets: 0 }) }}
                                                 textAlign="center"
                                             />
                                         </Stack>
@@ -284,7 +284,7 @@ export function WorkoutBuilderExerciseCard({
                                                 }}>Reps</Font>
                                             <Input
                                                 value={item.working_reps}
-                                                onChange={(e: any) => onUpdate(item.id, { working_reps: e.target.value })}
+                                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => onUpdate(item.id, { working_reps: e.target.value })}
                                                 placeholder="Ex: 8-10"
                                             />
                                         </Stack>
@@ -298,7 +298,7 @@ export function WorkoutBuilderExerciseCard({
                                             <Input
                                                 type="number"
                                                 defaultValue={item.rest_seconds}
-                                                onBlur={(e: any) => onUpdate(item.id, { rest_seconds: parseInt(e.target.value) || 0 })}
+                                                onBlur={(e: React.FocusEvent<HTMLInputElement>) => onUpdate(item.id, { rest_seconds: parseInt(e.target.value) || 0 })}
                                                 textAlign="center"
                                             />
                                         </Stack>

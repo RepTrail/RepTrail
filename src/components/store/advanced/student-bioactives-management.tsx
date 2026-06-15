@@ -50,9 +50,9 @@ export function StudentBioactivesManagement({ userId }: StudentBioactivesManagem
             const exists = oldData.some((l: any) => l.ergogenic_id === variables.ergogenic_id)
             if (exists) {
                 return oldData.filter((l: any) => l.ergogenic_id !== variables.ergogenic_id)
-            } else {
+            } 
                 return [...oldData, { id: crypto.randomUUID(), student_id: userId, ergogenic_id: variables.ergogenic_id, created_at: new Date().toISOString() }]
-            }
+            
         }
     })
 

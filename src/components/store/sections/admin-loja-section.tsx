@@ -1,8 +1,8 @@
-﻿'use client'
+'use client'
 
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { useState, useTransition } from 'react'
-import { useQuery, useQueryClient, useAuthUser, actions } from '@/lib/dal'
+import { useQuery, useQueryClient, actions } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { Modal } from '@/components/store/advanced/modal'
 import { Stack } from '@/components/store/base/stack'
@@ -27,15 +27,13 @@ export function AdminLojaSection() {
         open: false,
         id: ''
     })
-    const [isPending, startTransition] = useTransition()
+    const [_, startTransition] = useTransition()
     const { toast } = useToast()
 
     const { data: products = [], isLoading } = useQuery({
         queryKey: QUERY_KEYS.store.products,
         queryFn: () => actions.getAllStoreProducts()
     })
-
-    const { data: adminUser } = useAuthUser()
 
     async function handleProductToggle(productId: string, current: boolean) {
         startTransition(async () => {

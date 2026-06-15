@@ -182,7 +182,7 @@ export function ErgogenicCardPremium({
                 {/* Footer Buttons - Hidden in Personal Mode */}
                 {showActions && (
                     <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        <Button variant={color as any} flex1 onClick={onEdit} shine>
+                        <Button variant={color as "emerald"} flex1 onClick={onEdit} shine>
                             <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                 <Icon icon={Edit3} size="xs" color={STORE_TOKENS.COLORS.BLACK} />
                                 <Font

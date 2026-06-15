@@ -43,31 +43,31 @@ export class WorkoutService {
                 }
 
                 // Grouping logic for trainer view
-                const grouped = (workouts || []).map((workout: any) => {
-                    const studentMap: Record<string, any> = {}
+                const grouped = (workouts || []).map((workout: Record<string, unknown>) => {
+                    const studentMap: Record<string, Record<string, unknown> & { days_of_week: number[] }> = {}
 
                     // 1. Process real assignments
-                    ;(workout.assignments || []).forEach((a: any) => {
+                    ;((workout.assignments as Record<string, unknown>[]) || []).forEach((a: Record<string, unknown>) => {
                         if (!a.active) return
-                        if (!studentMap[a.student_id]) {
-                            studentMap[a.student_id] = { ...a, days_of_week: [] }
+                        if (!studentMap[a.student_id as string]) {
+                            studentMap[a.student_id as string] = { ...a, days_of_week: [] }
                         }
                         if (a.day_of_week !== null && a.day_of_week !== undefined) {
-                            if (!studentMap[a.student_id].days_of_week.includes(a.day_of_week)) {
-                                studentMap[a.student_id].days_of_week.push(a.day_of_week)
+                            if (!studentMap[a.student_id as string].days_of_week.includes(a.day_of_week as number)) {
+                                studentMap[a.student_id as string].days_of_week.push(a.day_of_week as number)
                             }
                         }
                     })
 
                     // 2. Process pending assignments (Placeholders)
-                    ;(pendingLinks || []).forEach((link: any) => {
-                        if (link.workout_ids?.includes(workout.id)) {
+                    ;(pendingLinks || []).forEach((link: Record<string, unknown>) => {
+                        if ((link.workout_ids as string[])?.includes(workout.id as string)) {
                             const placeholderId = `pending-${link.id}`
                             
                             // Find day metadata for this specific workout
-                            const metadata = (link.ergogenic_data || []).find((e: any) => e?.__metadata === true)
-                            const workoutMeta = metadata?.workout_days?.find((wd: any) => wd.id === workout.id)
-                            const dayOfWeek = workoutMeta?.day
+                            const metadata = ((link.ergogenic_data as Record<string, unknown>[]) || []).find((e: Record<string, unknown>) => e?.__metadata === true)
+                            const workoutMeta = (metadata?.workout_days as Record<string, unknown>[])?.find((wd: Record<string, unknown>) => wd.id === workout.id)
+                            const dayOfWeek = workoutMeta?.day as number | undefined
 
                             if (!studentMap[placeholderId]) {
                                 studentMap[placeholderId] = {
@@ -123,19 +123,19 @@ export class WorkoutService {
                 }
 
                 // Grouping logic
-                const studentMap: Record<string, any> = {}
-                    ; (workout.assignments || []).forEach((a: any) => {
+                const studentMap: Record<string, Record<string, unknown> & { days_of_week: number[] }> = {}
+                    ; ((workout.assignments as Record<string, unknown>[]) || []).forEach((a: Record<string, unknown>) => {
                         if (!a.active || (userId && a.student_id === userId)) return
 
-                        if (!studentMap[a.student_id]) {
-                            studentMap[a.student_id] = {
+                        if (!studentMap[a.student_id as string]) {
+                            studentMap[a.student_id as string] = {
                                 ...a,
                                 days_of_week: []
                             }
                         }
                         if (a.day_of_week !== null && a.day_of_week !== undefined) {
-                            if (!studentMap[a.student_id].days_of_week.includes(a.day_of_week)) {
-                                studentMap[a.student_id].days_of_week.push(a.day_of_week)
+                            if (!studentMap[a.student_id as string].days_of_week.includes(a.day_of_week as number)) {
+                                studentMap[a.student_id as string].days_of_week.push(a.day_of_week as number)
                             }
                         }
                     })
@@ -192,15 +192,16 @@ export class WorkoutService {
 
                     if (!assignment || !assignment.workout) return null
 
-                    const workout = assignment.workout as any
+                    const rawWorkout = Array.isArray(assignment.workout) ? assignment.workout[0] : assignment.workout
+                    const workout = rawWorkout as Record<string, unknown>
 
                     if (workout.trainer_id && workout.trainer_id !== studentId) {
-                        const isLinked = trainerLinks?.some((l: any) => l.trainer_id === workout.trainer_id)
+                        const isLinked = trainerLinks?.some((l: Record<string, unknown>) => l.trainer_id === workout.trainer_id)
                         if (!isLinked) return null
                     }
 
                     if (workout.workout_exercises) {
-                        workout.workout_exercises.sort((a: any, b: any) => a.order_index - b.order_index)
+                        (workout.workout_exercises as Record<string, unknown>[]).sort((a: Record<string, unknown>, b: Record<string, unknown>) => (a.order_index as number) - (b.order_index as number))
                     }
 
                     return workout

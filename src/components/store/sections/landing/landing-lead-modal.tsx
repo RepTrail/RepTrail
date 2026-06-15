@@ -23,7 +23,7 @@ interface LeadCaptureModalProps {
 }
 
 export function LandingLeadModal({ isOpen, onOpenChange, trainerName, trainerCode }: LeadCaptureModalProps) {
-  const { primaryColor } = useRegistry()
+  const { primaryColor: _primaryColor } = useRegistry()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [fullName, setFullName] = useState('')

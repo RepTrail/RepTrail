@@ -138,13 +138,14 @@ export function SidebarProfile({
                     </Link>
                 )}
 
-                {settingsHref ? (
+                {settingsHref && (
                     <Link href={settingsHref}>
                         {settingsTrigger}
                     </Link>
-                ) : onOpenSettings ? (
+                )}
+                {!settingsHref && onOpenSettings && (
                     settingsTrigger
-                ) : null}
+                )}
 
                 <Box flex1>
                     <form action={actions.signOutAction}>

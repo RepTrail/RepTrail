@@ -16,7 +16,6 @@ export function useTrainerOnboarding(userId: string, stats: { activeStudents: nu
     const [ghostData, setGhostData] = useState<{ name?: string, email?: string } | null>(null)
     const [isTourActive, setIsTourActive] = useState(false)
     const [isMounted, setIsMounted] = useState(false)
-    const pathname = usePathname()
     const router = useRouter()
 
     // Extract primitive values to avoid infinite loops when object reference changes
@@ -77,9 +76,10 @@ export function useTrainerOnboarding(userId: string, stats: { activeStudents: nu
             }
         }
         
-        const handleCustomUpdate = (e: any) => {
-            if (e.detail?.step) {
-                setStep(e.detail.step)
+        const handleCustomUpdate = (e: Event) => {
+            const customEvent = e as CustomEvent
+            if (customEvent.detail?.step) {
+                setStep(customEvent.detail.step)
             }
         }
 

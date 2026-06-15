@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import React, { useState } from 'react'
 import { Stack } from '@/components/store/base/stack'
@@ -74,12 +74,12 @@ export function StudentProfileForm({
 
             queryClient.setQueryData(QUERY_KEYS.student.details(profile?.id), (old: any) => {
                 if(!old) return old
-                return { ...old, ...variables.obj, _optimistic: true }
+                return { ...old, ...(variables as any).data, _optimistic: true }
             })
             
             queryClient.setQueryData(QUERY_KEYS.trainer.studentDetail(profile?.id), (old: any) => {
                 if(!old) return old
-                return { ...old, ...variables.obj, _optimistic: true }
+                return { ...old, ...(variables as any).data, _optimistic: true }
             })
 
             return { previousDetails, previousDetail }

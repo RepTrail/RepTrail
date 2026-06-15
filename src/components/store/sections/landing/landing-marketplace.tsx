@@ -31,7 +31,7 @@ interface MarketplaceSectionProps {
 }
 
 export function LandingMarketplace({ initialTrainers }: MarketplaceSectionProps) {
-  const { primaryColor } = useRegistry()
+  const { primaryColor: _primaryColor } = useRegistry()
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedTrainer, setSelectedTrainer] = useState<Trainer | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -43,7 +43,7 @@ export function LandingMarketplace({ initialTrainers }: MarketplaceSectionProps)
     )
   )
 
-  const handleContact = (trainer: Trainer) => {
+  const _handleContact = (trainer: Trainer) => {
     setSelectedTrainer(trainer)
     setIsModalOpen(true)
   }

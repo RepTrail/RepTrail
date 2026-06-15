@@ -24,7 +24,7 @@ interface MeuPersonalSectionContentProps {
     existingReview?: any
 }
 
-export function MeuPersonalSectionContent({ trainer, trainerRel, existingReview }: MeuPersonalSectionContentProps) {
+export function MeuPersonalSectionContent({ trainer, trainerRel, existingReview: _existingReview }: MeuPersonalSectionContentProps) {
     const trainerPlanLimits = getPlanLimitsDetails(trainer.plan_tier)
 
     return (

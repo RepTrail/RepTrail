@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { Stack } from '@/components/store/base/stack'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
@@ -130,7 +130,7 @@ export function StudentErgogenicManagementSmart({ userId }: StudentErgogenicMana
 
         switch (actionModal.type) {
             case 'confirm_delete':
-                deleteMutation({ id: actionModal.data.id, userId })
+                deleteMutation({ id: actionModal.data.id })
                 break
             case 'confirm_duplicate':
                 duplicateMutation({ item: actionModal.data })

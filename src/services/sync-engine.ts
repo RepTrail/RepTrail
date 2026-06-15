@@ -7,7 +7,7 @@ import { logSyncMetric } from '../lib/dal/localDb';
 
 class SyncEngine {
   private isProcessing = false;
-  private timeoutId: any = null;
+  private timeoutId: ReturnType<typeof setTimeout> | null = null;
   private retryCounts: Record<string, number> = {};
   private currentDelay = 2000;
   private maxDelay = 60000;
@@ -134,6 +134,7 @@ class SyncEngine {
       for (const record of pending) {
         console.log(`[SyncEngine] 📡 Syncing ${record.action} (${record.id}) - Payload:`, JSON.stringify(record.payload));
         try {
+          // eslint-disable-next-line no-await-in-loop
           await this.syncRecord(record);
         } catch (e) {
           hasError = true;
@@ -176,34 +177,34 @@ class SyncEngine {
       // ─── PHASES 4, 8 & 10: STRICT EXECUTION PIPELINE ─────────────────────
       
       // 1. executeAction()
-      const result = await executeAction(record.action, record.payload) as any;
+      const result = await executeAction(record.action, record.payload) as Record<string, unknown>;
 
       if (result.success) {
         console.log(`✅ Mutation ${record.id} synced successfully.`);
         
         // 2. apply cache patch (queryClient.setQueryData)
         if (this.queryClient) {
-          const userId = record.payload.userId || record.payload.studentId || record.payload.student_id || record.payload.trainerId || record.payload.trainer_id;
+          const userId = (record.payload.userId || record.payload.studentId || record.payload.student_id || record.payload.trainerId || record.payload.trainer_id) as string;
           
           if (result.data) {
             const incoming = result.data;
             const queryKey = this.getQueryKeyForEntity(record.entity, record.payload, record.entityId);
             
             if (queryKey) {
-              this.queryClient.setQueryData(queryKey, (old: any) => {
-                if (!incoming?.id) return old;
+              this.queryClient.setQueryData(queryKey, (old: unknown) => {
+                if (!(incoming as any)?.id) return old;
 
                 // CASE A: Array-based Cache (Most entities)
                 if (Array.isArray(old)) {
-                  const map = new Map(old.map((i: any) => [i.id, i]));
+                  const map = new Map((old as Record<string, unknown>[]).map((i: Record<string, unknown>) => [i.id, i]));
                   
                   // RECONCILIATION: If record.payload.id (local UUID) exists, delete it
-                  if (record.payload.id && record.payload.id !== incoming.id) {
+                  if (record.payload.id && record.payload.id !== (incoming as any).id) {
                       map.delete(record.payload.id);
                   }
 
-                  map.set(incoming.id, {
-                    ...incoming,
+                  map.set((incoming as any).id, {
+                    ...(incoming as any),
                     _optimistic: false,
                     _pending: false
                   });
@@ -215,7 +216,7 @@ class SyncEngine {
                     // If IDs match OR it's a known single-instance cache
                     return {
                         ...old,
-                        ...incoming,
+                        ...(incoming as any),
                         _optimistic: false,
                         _pending: false
                     };
@@ -252,9 +253,9 @@ class SyncEngine {
               this.queryClient.refetchQueries({ queryKey: QUERY_KEYS.cardio.session });
 
               // 🚨 NEW: Invalidate trainer students if a placeholder was created
-              if ((result.results?.placeholderId || result.data?.placeholderId) && record.payload.userId) {
-                  console.log(`[SyncEngine] Placeholder detected (${result.results?.placeholderId || result.data?.placeholderId}). Invalidating trainer students cache for ${record.payload.userId}`);
-                  this.queryClient.invalidateQueries({ queryKey: QUERY_KEYS.trainer.students(record.payload.userId) });
+              if (((result as any).results?.placeholderId || (result as any).data?.placeholderId) && record.payload.userId) {
+                  console.log(`[SyncEngine] Placeholder detected (${(result as any).results?.placeholderId || (result as any).data?.placeholderId}). Invalidating trainer students cache for ${record.payload.userId}`);
+                  this.queryClient.invalidateQueries({ queryKey: QUERY_KEYS.trainer.students(record.payload.userId as string) });
               }
 
               // 🚨 NEW: Handle student status toggle and unassign/delete invalidation
@@ -275,8 +276,8 @@ class SyncEngine {
               if (studentContentActions.includes(record.action)) {
                   // 🚀 LOCAL-FIRST ELITE: Only invalidate if there are no more pending mutations for this relationship/student
                   // This prevents "flickering" when processing multiple unassignments.
-                  const relationshipId = record.payload.relationshipId || record.entityId;
-                  const studentId = record.payload.studentId || record.payload.student_id;
+                  const relationshipId = (record.payload.relationshipId || record.entityId) as string;
+                  const studentId = (record.payload.studentId || record.payload.student_id) as string;
                   
                   const pendingCount = await outboxDB.countPendingForStudent(relationshipId, studentId);
                   
@@ -296,9 +297,9 @@ class SyncEngine {
                               this.queryClient.invalidateQueries({ queryKey: QUERY_KEYS.diets.assignments(studentId) })
                           ]);
                       }
-                      const userId = record.payload.trainerId || record.payload.userId;
-                      if (userId) {
-                          await this.queryClient.invalidateQueries({ queryKey: QUERY_KEYS.trainer.students(userId) });
+                      const userId2 = (record.payload.trainerId || record.payload.userId) as string;
+                      if (userId2) {
+                          await this.queryClient.invalidateQueries({ queryKey: QUERY_KEYS.trainer.students(userId2) });
                       }
                   } else {
                       console.log(`[SyncEngine] Skipping invalidation: ${pendingCount-1} more mutations pending for student.`);
@@ -364,10 +365,11 @@ class SyncEngine {
         throw new Error(errorMsg);
       }
 
-    } catch (error: any) {
-      console.error(`❌ Failed to sync mutation ${record.id} [Action: ${record.action}]:`, error.message);
+    } catch (error: unknown) {
+      const errMessage = error instanceof Error ? error.message : String(error);
+      console.error(`❌ Failed to sync mutation ${record.id} [Action: ${record.action}]:`, errMessage);
       
-      const lowerError = String(error.message || '').toLowerCase();
+      const lowerError = String(errMessage || '').toLowerCase();
       if (lowerError.includes('violates foreign key constraint')) {
           console.warn(`⚠️ [SyncEngine] Catch: Obsolete/Unrecoverable mutation caught. Dequeuing ${record.id}.`);
           await outboxDB.markMutationAsProcessed(record.clientMutationId);
@@ -403,8 +405,8 @@ class SyncEngine {
     }
   }
 
-  private getQueryKeyForEntity(entity: string, payload: any, entityId?: string): any[] | null {
-    const userId = payload.userId || payload.studentId || payload.student_id;
+  private getQueryKeyForEntity(entity: string, payload: Record<string, unknown>, entityId?: string): unknown[] | null {
+    const userId = (payload.userId || payload.studentId || payload.student_id) as string;
 
     switch (entity) {
       case ENTITIES.WORKOUT: 
@@ -438,7 +440,7 @@ class SyncEngine {
       case ENTITIES.OPERATIONAL_COST:
         return [...QUERY_KEYS.admin.costs];
       default: 
-        return [entity as any];
+        return [entity];
     }
   }
 

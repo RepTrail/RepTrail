@@ -31,14 +31,6 @@ export function StatsCard({
     const { primaryColor } = useRegistry()
     const resolvedColor = color === 'primary' ? (primaryColor as any) : color
 
-    const colorMap = {
-        emerald: 'bg-emerald-500/10 text-emerald-500',
-        orange: 'bg-orange-500/10 text-orange-500',
-        amber: 'bg-amber-500/10 text-amber-500',
-        red: 'bg-red-500/10 text-red-500',
-        blue: 'bg-blue-500/10 text-blue-500'
-    }
-
     return (
         <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM} group>
             <Stack gap={STORE_TOKENS.SPACING.CONTAINER} align="start">

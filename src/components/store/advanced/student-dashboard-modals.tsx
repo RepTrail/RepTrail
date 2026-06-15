@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 import { STORE_TOKENS } from '@/components/store/constants/tokens';
 
 import { useState, useEffect } from 'react'
@@ -61,8 +61,10 @@ export function StudentDashboardModals({ userId, showModal, hasTrainer }: Studen
         onMutate: () => setIsModalOpen(false)
     })
 
-    const handleAccept = async () => acceptMutate(undefined)
-    const handleReject = async () => rejectMutate(undefined)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const handleAccept = async () => acceptMutate({} as any)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const handleReject = async () => rejectMutate({} as any)
     const handleClose = () => setIsModalOpen(false)
 
     return (

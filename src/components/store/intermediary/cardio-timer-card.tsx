@@ -39,7 +39,7 @@ export function CardioTimerCard({
     estimatedBurn,
     status = 'not_started',
     isRunning = false,
-    progress = 0,
+    progress: _progress = 0,
     onAction,
     onPlay,
     onPause,
@@ -57,6 +57,26 @@ export function CardioTimerCard({
     }
 
     const isCompleted = status === 'completed'
+
+    let buttonBg: string = STORE_TOKENS.COLORS.BRAND;
+    let buttonBorder: string = STORE_TOKENS.COLORS.DIVIDER.STANDARD;
+    let buttonIcon = Play;
+    let buttonIconColor: string = STORE_TOKENS.COLORS.BRAND;
+    let buttonOnClick = onPlay || onAction;
+
+    if (isCompleted) {
+        buttonBg = STORE_TOKENS.COLORS.SUCCESS;
+        buttonBorder = STORE_TOKENS.COLORS.SUCCESS;
+        buttonIcon = CheckCircle;
+        buttonIconColor = STORE_TOKENS.COLORS.SUCCESS;
+        buttonOnClick = undefined;
+    } else if (isRunning) {
+        buttonBg = STORE_TOKENS.COLORS.BRAND;
+        buttonBorder = STORE_TOKENS.COLORS.WARNING;
+        buttonIcon = remainingTime === "00:00" ? CheckCircle : Pause;
+        buttonIconColor = STORE_TOKENS.COLORS.BRAND;
+        buttonOnClick = onPause;
+    }
 
     return (
         <GlassPanel
@@ -141,7 +161,8 @@ export function CardioTimerCard({
                             width={80}
                             height={80}
                             rounded={STORE_TOKENS.RADIUS.FULL}
-                            bg={isCompleted ? STORE_TOKENS.COLORS.SUCCESS : isRunning ? STORE_TOKENS.COLORS.BRAND : STORE_TOKENS.COLORS.BRAND}
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                            bg={buttonBg as any}
                             bgOpacity={STORE_TOKENS.OPACITY.INTERMEDIATE}
                             display="flex"
                             align="center"
@@ -151,10 +172,11 @@ export function CardioTimerCard({
                             transition
                             hoverBgOpacity={STORE_TOKENS.OPACITY.MEDIUM}
                             border={true}
-                            borderColor={isCompleted ? STORE_TOKENS.COLORS.SUCCESS : isRunning ? STORE_TOKENS.COLORS.WARNING : STORE_TOKENS.COLORS.DIVIDER.STANDARD}
-                            onClick={isCompleted ? undefined : isRunning ? onPause : onPlay || onAction}
+                            borderColor={buttonBorder}
+                            onClick={buttonOnClick}
                         >
-                            <Icon icon={isCompleted ? CheckCircle : isRunning ? (remainingTime === "00:00" ? CheckCircle : Pause) : Play} size="lg" color={isCompleted ? STORE_TOKENS.COLORS.SUCCESS : isRunning ? STORE_TOKENS.COLORS.BRAND : STORE_TOKENS.COLORS.BRAND} />
+                            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                            <Icon icon={buttonIcon} size="lg" color={buttonIconColor as any} />
                         </Box>
 
                         {isRunning && (

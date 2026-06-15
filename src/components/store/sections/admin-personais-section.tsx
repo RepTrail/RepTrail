@@ -1,8 +1,8 @@
-﻿'use client'
+'use client'
 
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { useState, useTransition } from 'react'
-import { useQuery, useQueryClient, useAuthUser, actions } from '@/lib/dal'
+import { useQuery, useQueryClient, actions } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { Modal } from '@/components/store/advanced/modal'
 import { Stack } from '@/components/store/base/stack'
@@ -16,7 +16,7 @@ import { UserCheck, Search, XCircle } from 'lucide-react'
 export function AdminPersonaisSection() {
     const queryClient = useQueryClient()
     const [search, setSearch] = useState('')
-    const [isPending, startTransition] = useTransition()
+    const [_, startTransition] = useTransition()
     const [deleteModal, setDeleteModal] = useState<{ open: boolean, id: string, name: string }>({
         open: false,
         id: '',
@@ -28,8 +28,6 @@ export function AdminPersonaisSection() {
         queryKey: QUERY_KEYS.admin.trainers,
         queryFn: () => actions.getAllTrainers()
     })
-
-    const { data: adminUser } = useAuthUser()
 
     async function handleOnDemandToggle(userId: string, currentSlug: string) {
         startTransition(async () => {

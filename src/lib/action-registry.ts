@@ -65,7 +65,7 @@ export const ACTION_REGISTRY: Record<string, ActionFn> = {
   'create-student': async (p) => { const { createStudent } = await import('@/actions/trainer-actions'); return wrap(createStudent(null, p)); },
   'toggle-student-status': async (p) => { const { toggleStudentStatus } = await import('@/actions/trainer-actions'); return wrap(toggleStudentStatus(p.relationshipId || p.studentId || p.id, p.active)); },
   'update-trainer-profile': async (p) => { const { updateTrainerProfile } = await import('@/actions/trainer-actions'); return wrap(updateTrainerProfile(p.data)); },
-  'cancel-asaas-subscription': async (p) => { const { cancelAsaasSubscription } = await import('@/actions/asaas-actions'); return wrap(cancelAsaasSubscription()); },
+  'cancel-asaas-subscription': async (_p) => { const { cancelAsaasSubscription } = await import('@/actions/asaas-actions'); return wrap(cancelAsaasSubscription()); },
   'update-student-data': async (p) => { const { updateStudentData } = await import('@/actions/student-actions'); return wrap(updateStudentData(p.relationshipId, p.studentId, p.trainerId, p.data || p)); },
   'update-student-profile': async (p) => { const { updateStudentProfile } = await import('@/actions/student-actions'); return wrap(updateStudentProfile(p.obj || p.data || p)); },
   'update-load-entry': async (p) => { const { updateLoadEntry } = await import('@/actions/log-actions'); return wrap(updateLoadEntry(p.loadId, p.weightKg, p.repsPerformed)); },

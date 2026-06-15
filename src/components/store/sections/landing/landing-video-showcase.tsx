@@ -32,7 +32,7 @@ const videos = [
 ]
 
 export function LandingVideoShowcase() {
-  const { primaryColor } = useRegistry()
+  const { primaryColor: _primaryColor } = useRegistry()
   const [activeIndex, setActiveIndex] = useState(0)
 
   useEffect(() => {

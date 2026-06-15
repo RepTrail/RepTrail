@@ -59,7 +59,7 @@ export function EditWorkoutClient({ id, userId }: EditWorkoutClientProps) {
             <Stack fullWidth gap={STORE_TOKENS.SPACING.ELEMENT}>
                 {assignment?.id ? (
                     <Box display="flex" justify="end">
-                        <WorkoutDaySelector userId={userId} assignmentId={assignment.id} dayOfWeek={assignment.day_of_week ?? null} />
+                        <WorkoutDaySelector userId={userId} assignmentId={assignment.id as string} dayOfWeek={(assignment.day_of_week as number) ?? null} />
                     </Box>
                 ) : null}
                 <WorkoutBuilderSmart 

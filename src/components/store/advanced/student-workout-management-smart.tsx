@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { Stack } from '@/components/store/base/stack'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
@@ -74,7 +74,8 @@ export function StudentWorkoutManagementSmart({ userId }: StudentWorkoutManageme
 
         displayWorkouts = libraryWorkouts.map(w => ({
             ...w,
-            assigned_workouts: (assignmentsByWorkout[w.id] || []).map((d: number) => ({ day_of_week: d }))
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            assigned_workouts: (assignmentsByWorkout[(w as any).id] || []).map((d: number) => ({ day_of_week: d }))
         }))
     } else {
         // In Personal Mode, we group assigned workouts by workout ID.

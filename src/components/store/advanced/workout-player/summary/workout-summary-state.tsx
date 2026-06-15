@@ -12,10 +12,25 @@ import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { CheckCircle } from 'lucide-react'
 import { SummarySetRow } from './summary-set-row'
 
+interface ExerciseInfo {
+    exercise: { name: string }
+}
+
+interface SummarySet {
+    exerciseId: string
+    type: string
+    subIndex?: number
+    [key: string]: unknown
+}
+
+interface LastSession {
+    loads?: Array<{ exercise_id: string, set_type: string, sub_index?: number, weight?: number | string, reps?: number | string }>
+}
+
 interface WorkoutSummaryStateProps {
-    currentExercise: any
-    setsToSummary: any[]
-    lastSession: any
+    currentExercise: ExerciseInfo
+    setsToSummary: SummarySet[]
+    lastSession: LastSession | null
     summaryInputs: Record<number, { weight: string, reps: string }>
     exerciseNote: string
     onUpdateInput: (index: number, weight: string, reps: string) => void
@@ -93,8 +108,8 @@ export function WorkoutSummaryState({
             </Surface>
             {/* List of Sets */}
             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                {setsToSummary.map((set: any, i: number) => {
-                    const lastSessionSet = lastSession?.loads?.find((l: any) =>
+                {setsToSummary.map((set, i: number) => {
+                    const lastSessionSet = lastSession?.loads?.find((l) =>
                         l.exercise_id === set.exerciseId &&
                         l.set_type === set.type &&
                         l.sub_index === set.subIndex
@@ -106,7 +121,8 @@ export function WorkoutSummaryState({
                         <SummarySetRow
                             key={i}
                             set={set}
-                            lastSessionSet={lastSessionSet}
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                            lastSessionSet={lastSessionSet as any}
                             initialWeight={currentInput.weight}
                             initialReps={currentInput.reps}
                             onUpdate={(w, r) => onUpdateInput(i, w, r)}

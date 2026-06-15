@@ -17,13 +17,13 @@ export function prepareCardios(cardios: any[], isStudent: boolean) {
                 return { ...c, application_days: normalizeDays(rawDays) };
             }
             return c;
-        } else {
+        } 
             if (isStudent && i === 0) {
                 initialCardios.add(i);
                 return { ...c, application_days: [0, 1, 2, 3, 4, 5, 6] };
             }
             return { ...c, application_days: normalizeDays(rawDays || []) };
-        }
+        
     });
 
     return { updatedCardios, initialCardios };

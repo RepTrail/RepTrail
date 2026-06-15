@@ -24,7 +24,7 @@ export function EmptyState({
 }: EmptyStateProps) {
 
   const ctx = useContext(RegistryContext)
-  const activeVariant = variant || (ctx?.primaryColor ?? 'zinc')
+  const _activeVariant = variant || (ctx?.primaryColor ?? 'zinc')
 
   return (
     <GlassPanel

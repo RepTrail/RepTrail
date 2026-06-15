@@ -1,38 +1,38 @@
 import { openDB, DBSchema, IDBPDatabase } from 'idb'
 
 export interface RepTrailDB extends DBSchema {
-  profiles:              { key: string; value: any }
-  student_details:       { key: string; value: any }
-  workouts:              { key: string; value: any }
-  workout_exercises:     { key: string; value: any }
-  exercises:             { key: string; value: any }
-  workout_logs:          { key: string; value: any }
-  daily_tracking:        { key: string; value: any; indexes: { 'by-user-date': [string, string] } }
-  assigned_workouts:     { key: string; value: any }
-  trainer_students:      { key: string; value: any }
-  bf_history:            { key: string; value: any }
-  weight_history:        { key: string; value: any }
-  progress_photos:       { key: string; value: any }
-  affiliate_commissions: { key: string; value: any }
-  affiliate_payouts:     { key: string; value: any }
-  affiliate_clicks:      { key: string; value: any }
-  trainer_reviews:       { key: string; value: any }
-  app_settings:          { key: string; value: any }
-  push_subscriptions:    { key: string; value: any }
-  plan_features:         { key: string; value: any }
-  store_products:        { key: string; value: any }
-  product_clicks:        { key: string; value: any }
-  admin_logs:            { key: string; value: any }
-  diets:                 { key: string; value: any }
-  meals:                 { key: string; value: any }
-  meal_items:            { key: string; value: any }
-  cardios:               { key: string; value: any }
-  assigned_cardios:      { key: string; value: any }
-  assigned_diets:        { key: string; value: any }
-  ergogenics:            { key: string; value: any }
-  ergogenic_logs:        { key: string; value: any }
-  sync_metadata:         { key: string; value: any }
-  sync_metrics:          { key: string; value: any }
+  profiles:              { key: string; value: Record<string, unknown> }
+  student_details:       { key: string; value: Record<string, unknown> }
+  workouts:              { key: string; value: Record<string, unknown> }
+  workout_exercises:     { key: string; value: Record<string, unknown> }
+  exercises:             { key: string; value: Record<string, unknown> }
+  workout_logs:          { key: string; value: Record<string, unknown> }
+  daily_tracking:        { key: string; value: Record<string, unknown>; indexes: { 'by-user-date': [string, string] } }
+  assigned_workouts:     { key: string; value: Record<string, unknown> }
+  trainer_students:      { key: string; value: Record<string, unknown> }
+  bf_history:            { key: string; value: Record<string, unknown> }
+  weight_history:        { key: string; value: Record<string, unknown> }
+  progress_photos:       { key: string; value: Record<string, unknown> }
+  affiliate_commissions: { key: string; value: Record<string, unknown> }
+  affiliate_payouts:     { key: string; value: Record<string, unknown> }
+  affiliate_clicks:      { key: string; value: Record<string, unknown> }
+  trainer_reviews:       { key: string; value: Record<string, unknown> }
+  app_settings:          { key: string; value: Record<string, unknown> }
+  push_subscriptions:    { key: string; value: Record<string, unknown> }
+  plan_features:         { key: string; value: Record<string, unknown> }
+  store_products:        { key: string; value: Record<string, unknown> }
+  product_clicks:        { key: string; value: Record<string, unknown> }
+  admin_logs:            { key: string; value: Record<string, unknown> }
+  diets:                 { key: string; value: Record<string, unknown> }
+  meals:                 { key: string; value: Record<string, unknown> }
+  meal_items:            { key: string; value: Record<string, unknown> }
+  cardios:               { key: string; value: Record<string, unknown> }
+  assigned_cardios:      { key: string; value: Record<string, unknown> }
+  assigned_diets:        { key: string; value: Record<string, unknown> }
+  ergogenics:            { key: string; value: Record<string, unknown> }
+  ergogenic_logs:        { key: string; value: Record<string, unknown> }
+  sync_metadata:         { key: string; value: Record<string, unknown> }
+  sync_metrics:          { key: string; value: Record<string, unknown> }
 }
 
 let db: IDBPDatabase<RepTrailDB> | null = null
@@ -52,6 +52,7 @@ export async function getLocalDb(): Promise<IDBPDatabase<RepTrailDB>> {
         'ergogenics', 'ergogenic_logs'
       ]
       for (const store of stores) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         if (!database.objectStoreNames.contains(store as any)) {
           database.createObjectStore(store as any, { keyPath: 'id' })
         }
@@ -67,9 +68,11 @@ export async function getLocalDb(): Promise<IDBPDatabase<RepTrailDB>> {
 
       // ─── V3: Operational Metrics store (ADR §10) ─────────────────────────────
       if (!database.objectStoreNames.contains('sync_metrics')) {
-        const metricsStore = database.createObjectStore('sync_metrics' as any, { keyPath: 'id', autoIncrement: true })
-        ;(metricsStore as any).createIndex('by-event', 'event')
-        ;(metricsStore as any).createIndex('by-ts', 'ts')
+        const metricsStore = database.createObjectStore('sync_metrics', { keyPath: 'id', autoIncrement: true })
+        // @ts-expect-error createIndex is missing in some IDBPObjectStore typings
+        ;metricsStore.createIndex('by-event', 'event')
+        // @ts-expect-error createIndex is missing in some IDBPObjectStore typings
+        ;metricsStore.createIndex('by-ts', 'ts')
       }
       if (!database.objectStoreNames.contains('daily_tracking')) {
         const dtStore = database.createObjectStore('daily_tracking', { keyPath: 'id' })
@@ -91,9 +94,9 @@ export async function localGetAll<T>(store: keyof RepTrailDB): Promise<T[]> {
   return database.getAll(store as any) as Promise<T[]>
 }
 
-export async function localPut<T extends { id: string }>(store: keyof RepTrailDB, value: T): Promise<void> {
+export async function localPut<T extends { id?: string }>(store: keyof RepTrailDB, value: T): Promise<void> {
   const database = await getLocalDb()
-  await database.put(store as any, value)
+  await database.put(store as any, value as any)
 }
 
 export async function localDelete(store: keyof RepTrailDB, id: string): Promise<void> {
@@ -128,19 +131,21 @@ const METRICS_TTL_MS   = 30 * 24 * 60 * 60 * 1000 // 30 days
 export async function logSyncMetric(metric: SyncMetric): Promise<void> {
   try {
     const database = await getLocalDb()
-    await database.add('sync_metrics' as any, metric)
+    await database.add('sync_metrics', metric as any)
 
     // Rolling window: prune old entries (TTL + cap)
-    const tx = database.transaction('sync_metrics' as any, 'readwrite')
-    const store = tx.objectStore('sync_metrics' as any)
+    const tx = database.transaction('sync_metrics', 'readwrite')
+    const store = tx.objectStore('sync_metrics')
     const now = Date.now()
     let cursor = await store.openCursor()
     let count = await store.count()
     while (cursor) {
-      if (now - cursor.value.ts > METRICS_TTL_MS || count > METRICS_MAX_ROWS) {
+      if (now - (cursor.value as any).ts > METRICS_TTL_MS || count > METRICS_MAX_ROWS) {
+        // eslint-disable-next-line no-await-in-loop
         await cursor.delete()
         count--
       }
+      // eslint-disable-next-line no-await-in-loop
       cursor = await cursor.continue()
     }
     await tx.done

@@ -1,4 +1,4 @@
-﻿    'use client'
+    'use client'
 
     import React, { useState, useEffect } from 'react'
     import { useRouter } from 'next/navigation'
@@ -157,13 +157,15 @@
             return (
                 <WorkoutSummaryState
                     currentExercise={flow.currentExercise}
-                    setsToSummary={summary.setsToSummary}
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    setsToSummary={summary.setsToSummary as any}
                     lastSession={lastSession}
                     summaryInputs={summary.summaryInputs}
                     exerciseNote={summary.exerciseNote}
                     onUpdateInput={(idx, w, r) => summary.setSummaryInputs(prev => ({ ...prev, [idx]: { weight: w, reps: r } }))}
                     onUpdateNote={summary.setExerciseNote}
-                    onSave={() => summary.handleSave(logId, mutations.recordSet)}
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    onSave={() => summary.handleSave(logId, mutations.recordSet as any)}
                 />
             )
         }

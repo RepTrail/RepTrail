@@ -2,7 +2,7 @@
 
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { useState } from 'react'
-import { useQuery, useAuthUser, actions } from '@/lib/dal'
+import { useQuery, actions } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { Stack } from '@/components/store/base/stack'
 import { LogItem } from '@/components/store/intermediary/log-item'
@@ -26,8 +26,6 @@ export function AdminLogsSection() {
         queryKey: QUERY_KEYS.admin.logs,
         queryFn: () => actions.getAdminLogs()
     })
-
-    const { data: adminUser } = useAuthUser()
 
     const filtered = logs.filter(log =>
         !search ||

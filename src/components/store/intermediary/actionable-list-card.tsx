@@ -15,7 +15,7 @@ export interface ActionableListCardProps {
     footer?: React.ReactNode // Optional footer area (e.g. for log details)
 }
 
-export function ActionableListCard({ children, badges, actions, isLogItem, isStrictHorizontal, footer }: ActionableListCardProps) {
+export function ActionableListCard({ children, badges, actions, isStrictHorizontal, footer }: ActionableListCardProps) {
     const hasActions = !!actions
 
     return (

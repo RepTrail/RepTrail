@@ -31,12 +31,12 @@ export function getQueryClient() {
     if (isServer) {
         // Server: always make a new query client
         return makeQueryClient()
-    } else {
+    } 
         // Browser: make a new query client if we don't already have one
         // This is very important, so we don't re-make a new client if React
         // suspends during hydration, or during a secondary render if the
         // component suspends
         if (!browserQueryClient) browserQueryClient = makeQueryClient()
         return browserQueryClient
-    }
+    
 }

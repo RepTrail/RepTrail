@@ -99,9 +99,8 @@ export function SettingsOption({
                                 }}>{badge}</Font>
                         </Box>
                     )}
-                    {children ? (
-                        children
-                    ) : onClick ? (
+                    {children && children}
+                    {!children && onClick && (
                         <Icon 
                             icon={rightIcon} 
                             size="sm" 
@@ -110,7 +109,7 @@ export function SettingsOption({
                             groupHoverColor={!disabled ? 'current' : undefined}
                             groupHoverTranslateX={!disabled ? 1 : undefined}
                         />
-                    ) : null}
+                    )}
                 </Stack>
             </Stack>
         </Surface>

@@ -202,6 +202,7 @@ export async function getStudentLayoutData(userId: string) {
 export async function getStudentPublicProfileData(studentId: string, viewerId?: string | null) {
   const supabase = await getSupabaseServer()
   
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let viewerProfile: any = null
   if (viewerId) {
     const { data } = await supabase
@@ -286,6 +287,7 @@ export async function getTrainerPublicProfileData(normalizedSlug: string, viewer
     return null
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let viewerProfile: any = null
   if (viewerId) {
     const { data } = await supabase

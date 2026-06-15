@@ -79,6 +79,14 @@ export function ProtocolCard({
         setIsExercisesOpen(true)
     }
 
+    let btnVariant: "outline-primary" | "outline-emerald" | "outline-amber" = 'outline-primary'
+    if (isCompleted) btnVariant = 'outline-emerald'
+    else if (isInProgress) btnVariant = 'outline-amber'
+
+    let btnLabel = actionLabel.toUpperCase()
+    if (isCompleted) btnLabel = 'REVISAR ANOTAÇÕES'
+    else if (isInProgress) btnLabel = 'CONTINUAR TREINO'
+
     return (
         <>
             <GlassPanel
@@ -105,7 +113,7 @@ export function ProtocolCard({
                     <Stack gap={STORE_TOKENS.SPACING.CONTAINER} position="relative">
                         <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                             <Box>
-                                {isCompleted ? (
+                                {isCompleted && (
                                     <Badge
                                         variant="glass"
                                         color={STORE_TOKENS.COLORS.SUCCESS}
@@ -113,7 +121,8 @@ export function ProtocolCard({
                                         icon={CheckCircle}
                                         size="sm"
                                     />
-                                ) : isInProgress ? (
+                                )}
+                                {!isCompleted && isInProgress && (
                                     <Badge
                                         variant="glass"
                                         color={STORE_TOKENS.COLORS.WARNING}
@@ -121,7 +130,8 @@ export function ProtocolCard({
                                         icon={Zap}
                                         size="sm"
                                     />
-                                ) : (
+                                )}
+                                {!isCompleted && !isInProgress && (
                                     <Badge
                                         variant="glass"
                                         color={STORE_TOKENS.COLORS.BRAND}
@@ -153,12 +163,12 @@ export function ProtocolCard({
 
                         <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT}>
                             <Button
-                                variant={isCompleted ? 'outline-emerald' : isInProgress ? 'outline-amber' : 'outline-primary'}
+                                variant={btnVariant}
                                 flex1
                                 size="sm"
                                 onClick={handleButtonClick}
                             >
-                                {isCompleted ? 'REVISAR ANOTAÇÕES' : isInProgress ? 'CONTINUAR TREINO' : actionLabel.toUpperCase()}
+                                {btnLabel}
                             </Button>
 
                             <Button

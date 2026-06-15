@@ -12,9 +12,17 @@ import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { ChevronRight, X, Timer, Play } from 'lucide-react'
 import { BackgroundIcon } from '@/components/store/base/background-icon'
 
+interface NextSetInfo {
+    variant?: 'orange' | 'emerald' | 'blue'
+    isNewExercise?: boolean
+    exerciseName?: string
+    label?: string
+    set?: number
+}
+
 interface WorkoutRestStateProps {
     restTimeLeft: number
-    nextSet: any
+    nextSet: NextSetInfo | null
     onSkip: () => void
 }
 
@@ -26,7 +34,6 @@ export function WorkoutRestState({
     const minutes = Math.floor(restTimeLeft / 60)
     const seconds = restTimeLeft % 60
     const colorTheme = nextSet?.variant || 'orange'
-    const shadowColor = colorTheme === 'orange' ? 'rgba(249, 115, 22, 0.05)' : colorTheme === 'blue' ? 'rgba(59, 130, 246, 0.05)' : 'rgba(16, 185, 129, 0.05)'
 
     return (
         <Stack gap={STORE_TOKENS.SPACING.SECTION} padding={STORE_TOKENS.PADDING.CONTAINER} flex1 align="center" justify="center" position="relative">
@@ -97,7 +104,7 @@ export function WorkoutRestState({
                                         italic
                                         tracking="tight"
                                         {...{
-                                            color: nextSet.variant === 'orange' ? 'orange' : nextSet.variant === 'emerald' ? 'emerald' : 'blue',
+                                            color: colorTheme,
                                         }}>
                                         {nextSet.isNewExercise ? nextSet.exerciseName : `${nextSet.label} ${nextSet.set}`}
                                     </Font>

@@ -1,8 +1,8 @@
-﻿'use client'
+'use client'
 
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { useState, useTransition } from 'react'
-import { useQueryClient, useAuthUser, useAdminStudents, useImpersonateUser, useDeleteUser, useGrantAutoTraining } from '@/lib/dal'
+import { useAdminStudents, useImpersonateUser, useDeleteUser, useGrantAutoTraining } from '@/lib/dal'
 import { Modal } from '@/components/store/advanced/modal'
 import { Stack } from '@/components/store/base/stack'
 import { UserListItem } from '@/components/store/intermediary/user-list-item'
@@ -13,9 +13,8 @@ import { useToast } from '@/components/store/hooks/use-toast'
 import { GraduationCap, Search, XCircle } from 'lucide-react'
 
 export function AdminAlunosSection() {
-    const queryClient = useQueryClient()
     const [search, setSearch] = useState('')
-    const [isPending, startTransition] = useTransition()
+    const [_, startTransition] = useTransition()
     const [deleteModal, setDeleteModal] = useState<{ open: boolean, id: string, name: string }>({
         open: false,
         id: '',
@@ -24,7 +23,6 @@ export function AdminAlunosSection() {
     const { toast } = useToast()
 
     const { data: allUsers = [], isLoading } = useAdminStudents()
-    const { data: adminUser } = useAuthUser()
 
     const impersonateMutation = useImpersonateUser()
     const deleteUserMutation = useDeleteUser()

@@ -26,7 +26,7 @@ interface LandingFeaturesProps {
 }
 
 export function LandingFeatures({ role = 'trainer' }: LandingFeaturesProps) {
-  const { primaryColor } = useRegistry()
+  const { primaryColor: _primaryColor } = useRegistry()
 
   const config = {
     trainer: {

@@ -44,7 +44,7 @@ async function getCursor(table: SyncableTable): Promise<SyncCursor | null> {
   try {
     const db = await getLocalDb()
     const cursor = await db.get('sync_metadata', table)
-    return cursor ?? null
+    return (cursor as unknown as SyncCursor) ?? null
   } catch {
     return null
   }
@@ -91,28 +91,31 @@ export async function syncFromRemote(table: SyncableTable, userId: string): Prom
     let newLastId = cursor?.lastPulledId
 
     for (const diet of data) {
-      const { meals, ...dietData } = diet as any
+      const { meals, ...dietData } = diet as Record<string, unknown>
       // ─── SOFT-DELETE GUARD ────────────────────────────────────────────────
-      if ((dietData as SyncEntity).is_deleted) {
+      if ((dietData as unknown as SyncEntity).is_deleted) {
         // Keep it locally so UI can filter — but mark it
       }
+      // eslint-disable-next-line no-await-in-loop
       await localPut('diets', dietData)
 
       // Track latest cursor
-      if (!newLastAt || (dietData as SyncEntity).updated_at > newLastAt) {
-        newLastAt = (dietData as SyncEntity).updated_at
-        newLastId = (dietData as SyncEntity).id
-      } else if ((dietData as SyncEntity).updated_at === newLastAt &&
-                 (dietData as SyncEntity).id > (newLastId ?? '')) {
-        newLastId = (dietData as SyncEntity).id
+      if (!newLastAt || (dietData as unknown as SyncEntity).updated_at > newLastAt) {
+        newLastAt = (dietData as unknown as SyncEntity).updated_at
+        newLastId = (dietData as unknown as SyncEntity).id
+      } else if ((dietData as unknown as SyncEntity).updated_at === newLastAt &&
+                 (dietData as unknown as SyncEntity).id > (newLastId ?? '')) {
+        newLastId = (dietData as unknown as SyncEntity).id
       }
 
       if (meals) {
-        for (const meal of meals) {
+        for (const meal of meals as Record<string, unknown>[]) {
           const { meal_items, ...mealData } = meal
+          // eslint-disable-next-line no-await-in-loop
           await localPut('meals', mealData)
           if (meal_items) {
-            for (const item of meal_items) {
+            for (const item of meal_items as Record<string, unknown>[]) {
+              // eslint-disable-next-line no-await-in-loop
               await localPut('meal_items', item)
             }
           }
@@ -184,6 +187,7 @@ export async function syncFromRemote(table: SyncableTable, userId: string): Prom
   for (const row of data) {
     // ─── SOFT-DELETE GUARD ─────────────────────────────────────────────────
     // Write even soft-deleted rows — UI will filter by is_deleted === true
+    // eslint-disable-next-line no-await-in-loop
     await localPut(table, row)
 
     const entity = row as SyncEntity
@@ -200,7 +204,7 @@ export async function syncFromRemote(table: SyncableTable, userId: string): Prom
 
 // ─── WRITE MUTATIONS TO REMOTE ────────────────────────────────────────────────
 
-export async function syncMutationToRemote<T extends Record<string, any>>(
+export async function syncMutationToRemote<T extends Record<string, unknown>>(
   table: SyncableTable,
   operation: 'upsert' | 'delete',
   payload: T

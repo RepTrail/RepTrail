@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import React, { useState } from 'react'
 import { getAdminAffiliates, removeAffiliate } from '@/lib/dal/remote'
@@ -30,7 +30,7 @@ export function AdminAffiliatesList() {
     })
 
     const affiliates = (affiliatesData?.data || [])
-        .filter((a: any) =>
+        .filter((a: Record<string, any>) =>
             !search ||
             a?.full_name?.toLowerCase().includes(search.toLowerCase()) ||
             a.email?.toLowerCase().includes(search.toLowerCase())
@@ -73,7 +73,7 @@ export function AdminAffiliatesList() {
                     description={search ? "Tente ajustar sua busca." : "Utilize o painel de afiliados para adicionar novos parceiros comerciais."}
                 />
             ) : (
-                affiliates.map((affiliate: any) => (
+                affiliates.map((affiliate: Record<string, any>) => (
                     <AffiliateListItem
                         key={affiliate.id}
                         affiliateId={affiliate.id}

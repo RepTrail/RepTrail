@@ -75,8 +75,10 @@ export const actions = new Proxy({} as any, {
     if (typeof prop === 'symbol') {
       return Reflect.get(target, prop);
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return async (...args: any[]) => {
       const module = await import('./actions-client');
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const fn = (module as any)[prop];
       if (typeof fn !== 'function') {
         throw new Error(`Action "${String(prop)}" is not exported or is not a function in actions-client.`);

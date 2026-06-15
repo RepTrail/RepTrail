@@ -618,9 +618,9 @@ export async function uploadProgressPhotos(formData: FormData) {
         if (photoLimit !== null && currentCount >= photoLimit) {
             if (isTrainerBased) {
                 return { success: false, error: `Você atingiu o limite de ${photoLimit} atualizações de fotos deste ciclo de faturamento do seu personal. Aguarde o próximo vencimento!` }
-            } else {
+            } 
                 return { success: false, error: `Você atingiu o limite de ${photoLimit} atualizações de fotos este mês. Aguarde o próximo mês!` }
-            }
+            
         }
         // ---------------------------------
 

@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import React, { useState, useEffect } from 'react'
 import { Modal } from './modal'
@@ -95,7 +95,7 @@ export function WorkoutReviewModal({
                     setLoads(data.loads || [])
                     
                     const init: Record<string, { weight: string; reps: string }> = {}
-                    data.loads.forEach((l: any) => {
+                    data.loads.forEach((l: { id: string, weight_kg?: number, reps_performed?: number }) => {
                         init[l.id] = { weight: String(l.weight_kg || 0), reps: String(l.reps_performed || 0) }
                     })
                     setEdits(init)

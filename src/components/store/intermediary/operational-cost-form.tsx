@@ -55,7 +55,7 @@ export function OperationalCostForm({
                             { label: 'Variável', value: 'variable', description: 'Gastos esporádicos' }
                         ]}
                         value={type}
-                        onChange={(val: any) => setType(val)}
+                        onChange={(val: string) => setType(val as 'fixed' | 'variable')}
                     />
                 </Box>
             </Stack>

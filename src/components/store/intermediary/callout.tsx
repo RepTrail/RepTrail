@@ -21,22 +21,22 @@ export function Callout({
   title
 }: CalloutProps) {
   const config = {
-    danger: { color: STORE_TOKENS.COLORS.ERROR, bg: STORE_TOKENS.COLORS.ERROR, border: 'red-500/20' },
-    warning: { color: STORE_TOKENS.COLORS.WARNING, bg: STORE_TOKENS.COLORS.WARNING, border: 'amber-500/20' },
-    info: { color: STORE_TOKENS.COLORS.INFO, bg: STORE_TOKENS.COLORS.INFO, border: 'blue-500/20' },
-    success: { color: STORE_TOKENS.COLORS.SUCCESS, bg: STORE_TOKENS.COLORS.SUCCESS, border: 'emerald-500/20' }
+    danger: { color: STORE_TOKENS.COLORS.ERROR, bg: STORE_TOKENS.COLORS.ERROR, border: STORE_TOKENS.COLORS.ERROR },
+    warning: { color: STORE_TOKENS.COLORS.WARNING, bg: STORE_TOKENS.COLORS.WARNING, border: STORE_TOKENS.COLORS.WARNING },
+    info: { color: STORE_TOKENS.COLORS.INFO, bg: STORE_TOKENS.COLORS.INFO, border: STORE_TOKENS.COLORS.INFO },
+    success: { color: STORE_TOKENS.COLORS.SUCCESS, bg: STORE_TOKENS.COLORS.SUCCESS, border: STORE_TOKENS.COLORS.SUCCESS }
   }
 
   const { color, bg, border } = config[variant as keyof typeof config]
 
   return (
-    <Box padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM} bg={bg as any} bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} border borderColor={border as any}>
+    <Box padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM} bg={bg} bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} border borderColor={border} borderOpacity={STORE_TOKENS.OPACITY.MEDIUM}>
       <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
         {title && (
           <Font
             {...STORE_TOKENS.TYPOGRAPHY.LABEL}
             {...{
-              color: color as any,
+              color,
             }}>
             {title}
           </Font>

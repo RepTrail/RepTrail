@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useState, useEffect } from 'react'
 import { useQueryClient } from '@/lib/dal'
@@ -22,7 +22,7 @@ export function useWorkoutSession({ userId, workoutId, initialLogId }: UseWorkou
         actionName: 'start-workout-log',
         queryKey: QUERY_KEYS.workouts.session,
         entity: ENTITIES.WORKOUT_LOG,
-        onMutate: (variables: any) => {
+        onMutate: (variables: { id: string, workoutId: string, studentId: string }) => {
             const sessionData = {
                 id: variables.id,
                 workout_id: variables.workoutId,
@@ -51,6 +51,7 @@ export function useWorkoutSession({ userId, workoutId, initialLogId }: UseWorkou
         queryKey: QUERY_KEYS.workouts.session,
         entity: ENTITIES.WORKOUT_LOG,
         additionalQueryKeys: [QUERY_KEYS.workouts.all(userId)],
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onMutate: (variables: any) => {
             queryClient.setQueryData(QUERY_KEYS.workouts.session, null)
             const statusKey = QUERY_KEYS.workouts.status(userId, workoutId)
@@ -60,9 +61,9 @@ export function useWorkoutSession({ userId, workoutId, initialLogId }: UseWorkou
                 _optimistic: true
             })
             const todayKey = QUERY_KEYS.workouts.today(userId)
-            queryClient.setQueryData(todayKey, (old: any) => {
+            queryClient.setQueryData(todayKey, (old: unknown) => {
                 if (!old) return old
-                return { ...old, status: 'completed', _optimistic: true }
+                return { ...(old as object), status: 'completed', _optimistic: true }
             })
         }
     })
@@ -77,7 +78,7 @@ export function useWorkoutSession({ userId, workoutId, initialLogId }: UseWorkou
         startWorkoutMutation.mutate({ id: newLogId, workoutId, studentId: userId })
     }, [workoutId, userId, logId])
 
-    const saveCurrentState = (state: any) => {
+    const saveCurrentState = (state: unknown) => {
         if (!logId) return
         saveStateMutation.mutate({ logId, state })
     }

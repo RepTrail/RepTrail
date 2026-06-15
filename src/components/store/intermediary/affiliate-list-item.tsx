@@ -30,7 +30,6 @@ interface AffiliateListItemProps {
 export function AffiliateListItem({
     name,
     email,
-    affiliateId,
     registrationDate,
     referrals,
     revenue,

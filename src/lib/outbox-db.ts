@@ -36,7 +36,7 @@ export interface OutboxRecord {
   clientMutationId: string; // Deterministic ID for idempotency
   clientId: string;         // Local client ID
   action: string;           // Server action name
-  payload: any;
+  payload: Record<string, unknown>;
   entity: EntityType;
   entityId: string;
   status: OutboxStatus;
@@ -53,7 +53,7 @@ const STORE_NAME = 'mutations';
 const PROCESSED_STORE = 'processed_ids';
 const DB_VERSION = 2;
 
-let dbPromise: Promise<IDBPDatabase<any>> | null = null;
+let dbPromise: Promise<IDBPDatabase<Record<string, unknown>>> | null = null;
 
 function getDB() {
   if (!dbPromise) {
@@ -120,12 +120,14 @@ export const outboxDB = {
       // Keep the latest (last by createdAt), delete the rest
       const winner = group[group.length - 1];
       for (let i = 0; i < group.length - 1; i++) {
+        // eslint-disable-next-line no-await-in-loop
         await store.delete(group[i].id);
         coalesced++;
       }
       // Merge all payloads into winner so no field is lost
       const merged = group.reduce((acc, r) => ({ ...acc, ...r.payload }), {});
       const updated = { ...winner, payload: merged };
+      // eslint-disable-next-line no-await-in-loop
       await store.put(updated);
     }
 
@@ -185,6 +187,7 @@ export const outboxDB = {
     const failed = all.filter((r: OutboxRecord) => r.status === 'failed');
     for (const record of failed) {
       record.status = 'pending';
+      // eslint-disable-next-line no-await-in-loop
       await db.put(STORE_NAME, record);
     }
   },
@@ -242,8 +245,10 @@ export const outboxDB = {
 
     while (cursor) {
       if (now - cursor.value.createdAt > TTL) {
+        // eslint-disable-next-line no-await-in-loop
         await cursor.delete();
       }
+      // eslint-disable-next-line no-await-in-loop
       cursor = await cursor.continue();
     }
     await tx.done;

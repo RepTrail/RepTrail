@@ -28,7 +28,7 @@ interface LandingHeroProps {
 }
 
 export function LandingHero({ role = 'trainer', freeLimit = 5 }: LandingHeroProps) {
-  const { primaryColor } = useRegistry()
+  const { primaryColor: _primaryColor } = useRegistry()
 
   // Track page view event
   React.useEffect(() => {

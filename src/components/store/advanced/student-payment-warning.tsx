@@ -10,7 +10,13 @@ import { CreditCard, AlertTriangle } from 'lucide-react'
 import { Divider } from '@/components/store/base/layout'
 
 interface StudentPaymentWarningProps {
-    relationship: any
+    relationship: {
+        payment_day?: number
+        last_payment_date?: string | null
+        monthly_fee?: number | null
+        trainer?: { full_name: string } | null
+        [key: string]: unknown
+    } | null
 }
 
 /**

@@ -137,9 +137,18 @@ export function ChartTooltip({ title, rows, layout = 'inline' }: ChartTooltipPro
 
 // ── Recharts Adapter ────────────────────────────────────────────────────────────
 
+interface RechartsPayloadEntry {
+    value?: number | string | null
+    color?: string
+    name?: string
+    dataKey?: string
+    unit?: string
+    [key: string]: unknown
+}
+
 interface RechartsChartTooltipProps {
     active?: boolean
-    payload?: any[]
+    payload?: RechartsPayloadEntry[]
     label?: string
     layout?: ChartTooltipProps['layout']
 }
@@ -156,10 +165,10 @@ export function RechartsChartTooltip({ active, payload, label, layout = 'inline'
     if (!active || !payload?.length) return null
 
     const rows: ChartTooltipRow[] = payload
-        .filter((entry: any) => entry.value !== null && entry.value !== undefined)
-        .map((entry: any) => ({
+        .filter((entry) => entry.value !== null && entry.value !== undefined)
+        .map((entry) => ({
             color: entry.color ?? '#ffffff',
-            label: entry.name ?? entry.dataKey,
+            label: entry.name ?? entry.dataKey ?? '',
             value: `${entry.value}${entry.unit ?? ''}`,
             glow: layout === 'spaced',
         }))

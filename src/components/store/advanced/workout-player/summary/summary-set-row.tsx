@@ -9,22 +9,32 @@ import { Input } from '@/components/store/base/input'
 import { Grid } from '@/components/store/base/grid'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
+interface SummarySet {
+    type: 'WARMUP' | 'FEEDER' | 'WORKING' | string
+    setNumber?: number
+    label?: string
+    expectedReps?: string | number
+}
+
+interface LastSessionSet {
+    weight: string | number
+    reps: string | number
+}
+
 interface SummarySetRowProps {
-    set: any
-    lastSessionSet?: any
+    set: SummarySet
+    lastSessionSet?: LastSessionSet
     initialWeight: string
     initialReps: string
     onUpdate: (w: string, r: string) => void
-    primaryColor?: string
 }
 
-export function SummarySetRow({ 
-    set, 
-    lastSessionSet, 
-    initialWeight, 
-    initialReps, 
-    onUpdate,
-    primaryColor = 'orange'
+export function SummarySetRow({
+    set,
+    lastSessionSet,
+    initialWeight,
+    initialReps,
+    onUpdate
 }: SummarySetRowProps) {
     const [weight, setWeight] = useState(initialWeight)
     const [reps, setReps] = useState(initialReps)
@@ -43,36 +53,37 @@ export function SummarySetRow({
         }
     }
 
-    const badgeColor = ({ WARMUP: 'orange', FEEDER: 'blue', WORKING: 'emerald' } as any)[set.type] || 'zinc'
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const badgeColor = (({ WARMUP: 'orange', FEEDER: 'blue', WORKING: 'emerald' } as Record<string, any>)[set.type] || 'zinc') as any
     const labelText = set.type === 'WORKING' ? `Série ${set.setNumber}` : set.label
 
     return (
-        <Surface 
-            variant="tonal-zinc" 
-            padding={STORE_TOKENS.PADDING.ELEMENT} 
-            rounded={STORE_TOKENS.RADIUS.SYSTEM} 
+        <Surface
+            variant="tonal-zinc"
+            padding={STORE_TOKENS.PADDING.ELEMENT}
+            rounded={STORE_TOKENS.RADIUS.SYSTEM}
             border="standard"
         >
-            <Stack 
-                direction={{ base: 'col', md: 'row' }} 
-                align={{ base: 'stretch', md: 'center' }} 
+            <Stack
+                direction={{ base: 'col', md: 'row' }}
+                align={{ base: 'stretch', md: 'center' }}
                 justify="between"
                 gap={STORE_TOKENS.SPACING.CONTAINER}
                 fullWidth
             >
                 {/* Left side: Badge & Label */}
-                <Stack 
-                    direction="row" 
-                    align="center" 
-                    justify="start" 
-                    gap={STORE_TOKENS.SPACING.ELEMENT} 
-                    shrink={0} 
+                <Stack
+                    direction="row"
+                    align="center"
+                    justify="start"
+                    gap={STORE_TOKENS.SPACING.ELEMENT}
+                    shrink={0}
                     width={{ base: 'full', md: 200 }}
                 >
-                    <Box 
-                        width="6px" 
-                        height="6px" 
-                        rounded={STORE_TOKENS.RADIUS.FULL} 
+                    <Box
+                        width="6px"
+                        height="6px"
+                        rounded={STORE_TOKENS.RADIUS.FULL}
                         bg={badgeColor}
                         bgOpacity={STORE_TOKENS.OPACITY.MEDIUM}
                         border
@@ -116,7 +127,7 @@ export function SummarySetRow({
                         <Input
                             label="Reps"
                             type="number"
-                            placeholder={set.expectedReps}
+                            placeholder={String(set.expectedReps ?? 0)}
                             value={reps}
                             onChange={e => handleChange('reps', (e.target as HTMLInputElement).value)}
                             textAlign="center"

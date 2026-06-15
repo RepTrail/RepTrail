@@ -15,7 +15,7 @@ import { AdminOperationalCostsPanel } from '@/components/store/advanced/admin-op
 import { EmptyState } from '@/components/store/intermediary/empty-state'
 import { Stack } from '@/components/store/base/stack'
 
-export function AdminSectionContent({ id }: { id?: string }) {
+export function AdminSectionContent({ id: _id }: { id?: string }) {
     return (
         <Stack gap={{ base: STORE_TOKENS.SPACING.EMPTY_STATE, md: STORE_TOKENS.SPACING.SECTION }}>
             {/* Dashboard Overview */}

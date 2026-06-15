@@ -71,11 +71,11 @@ export function ManagementCardPremium({
     const isAuto = mode === 'auto'
     const isTrainer = mode === 'trainer'
     const showManagementActions = isAuto || isTrainer
-    const resolvedEditLabel = editLabel ?? (
-        registryType === 'diet' ? 'Editar Dieta'
-            : registryType === 'cardio' ? 'Editar Protocolo'
-                : 'Editar Treino'
-    )
+    let defaultEditLabel = 'Editar Treino'
+    if (registryType === 'diet') defaultEditLabel = 'Editar Dieta'
+    else if (registryType === 'cardio') defaultEditLabel = 'Editar Protocolo'
+
+    const resolvedEditLabel = editLabel ?? defaultEditLabel
 
     return (
         <GlassPanel
@@ -157,7 +157,7 @@ export function ManagementCardPremium({
                         )}
 
                         <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} wrap="wrap">
-                            {days.length > 0 ? (
+                            {days.length > 0 && (
                                 days.map((day) => (
                                     <Badge
                                         key={day}
@@ -167,7 +167,8 @@ export function ManagementCardPremium({
                                         size="xs"
                                     />
                                 ))
-                            ) : isTrainer ? (
+                            )}
+                            {days.length === 0 && isTrainer && (
                                 <Badge
                                     label="Não agendado"
                                     icon={Calendar}
@@ -175,7 +176,7 @@ export function ManagementCardPremium({
                                     color={STORE_TOKENS.COLORS.BRAND}
                                     size="xs"
                                 />
-                            ) : null}
+                            )}
                         </Stack>
                     </Stack>
                 </Stack>
@@ -202,7 +203,7 @@ export function ManagementCardPremium({
                     {/* Footer Buttons & Actions */}
                     {(isAuto || isTrainer || onView) && (
                         <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                            {isTrainer && onEdit ? (
+                            {isTrainer && onEdit && (
                                 <>
                                 <Button variant="primary" flex1 onClick={onEdit} shine>
                                     <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
@@ -226,7 +227,8 @@ export function ManagementCardPremium({
                                 </Button>
                             )}
                                 </>
-                            ) : isAuto ? (
+                            )}
+                            {!isTrainer && isAuto && (
                                 <>
                             <Button variant={`outline-${color}`} flex1 onClick={onSchedule}>
                                 <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
@@ -261,7 +263,8 @@ export function ManagementCardPremium({
                                 </Button>
                             )}
                                 </>
-                            ) : (
+                            )}
+                            {!isTrainer && !isAuto && (
                             <Button variant={`outline-${color}`} flex1 onClick={onView}>
                                 <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                     <Icon icon={Eye} size="xs" />

@@ -13,7 +13,8 @@ export async function StudentProgressPageContent({ userId }: { userId: string })
 
     const { profile, trainerLink, progressPhotos } = data
 
-    const trainerData = trainerLink?.trainer as any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const trainerData = (Array.isArray(trainerLink?.trainer) ? trainerLink?.trainer[0] : trainerLink?.trainer) as any
 
     if (!profile) return null
 

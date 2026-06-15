@@ -21,7 +21,7 @@ interface StudentNoPlanSectionProps {
     ranking?: any[]
 }
 
-export function StudentNoPlanSection({ ranking }: StudentNoPlanSectionProps) {
+export function StudentNoPlanSection({ ranking: _ranking }: StudentNoPlanSectionProps) {
     const [isAsaasOpen, setIsAsaasOpen] = useState(false);
 
     return (

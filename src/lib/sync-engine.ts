@@ -183,7 +183,7 @@ class SyncEngine {
         
         // 2. apply cache patch (queryClient.setQueryData)
         if (this.queryClient) {
-          const userId = record.payload.userId || record.payload.studentId || record.payload.student_id || record.payload.trainerId || record.payload.trainer_id;
+          const userId = (record.payload.userId || record.payload.studentId || record.payload.student_id || record.payload.trainerId || record.payload.trainer_id) as string;
           
           if (result.data) {
             const incoming = result.data;
@@ -252,9 +252,9 @@ class SyncEngine {
               this.queryClient.refetchQueries({ queryKey: QUERY_KEYS.cardio.session });
 
               // 🚨 NEW: Invalidate trainer students if a placeholder was created
-              if ((result.results?.placeholderId || result.data?.placeholderId) && record.payload.userId) {
-                  console.log(`[SyncEngine] Placeholder detected (${result.results?.placeholderId || result.data?.placeholderId}). Invalidating trainer students cache for ${record.payload.userId}`);
-                  this.queryClient.invalidateQueries({ queryKey: QUERY_KEYS.trainer.students(record.payload.userId) });
+              if (((result as any).results?.placeholderId || (result as any).data?.placeholderId) && record.payload.userId) {
+                  console.log(`[SyncEngine] Placeholder detected (${(result as any).results?.placeholderId || (result as any).data?.placeholderId}). Invalidating trainer students cache for ${record.payload.userId}`);
+                  this.queryClient.invalidateQueries({ queryKey: QUERY_KEYS.trainer.students(record.payload.userId as string) });
               }
 
               // 🚨 NEW: Handle student status toggle and unassign/delete invalidation
@@ -275,8 +275,8 @@ class SyncEngine {
               if (studentContentActions.includes(record.action)) {
                   // 🚀 LOCAL-FIRST ELITE: Only invalidate if there are no more pending mutations for this relationship/student
                   // This prevents "flickering" when processing multiple unassignments.
-                  const relationshipId = record.payload.relationshipId || record.entityId;
-                  const studentId = record.payload.studentId || record.payload.student_id;
+                  const relationshipId = (record.payload.relationshipId || record.entityId) as string;
+                  const studentId = (record.payload.studentId || record.payload.student_id) as string;
                   
                   const pendingCount = await outboxDB.countPendingForStudent(relationshipId, studentId);
                   
@@ -296,9 +296,9 @@ class SyncEngine {
                               this.queryClient.invalidateQueries({ queryKey: QUERY_KEYS.diets.assignments(studentId) })
                           ]);
                       }
-                      const userId = record.payload.trainerId || record.payload.userId;
-                      if (userId) {
-                          await this.queryClient.invalidateQueries({ queryKey: QUERY_KEYS.trainer.students(userId) });
+                      const userId2 = (record.payload.trainerId || record.payload.userId) as string;
+                      if (userId2) {
+                          await this.queryClient.invalidateQueries({ queryKey: QUERY_KEYS.trainer.students(userId2) });
                       }
                   } else {
                       console.log(`[SyncEngine] Skipping invalidation: ${pendingCount-1} more mutations pending for student.`);
@@ -404,7 +404,7 @@ class SyncEngine {
   }
 
   private getQueryKeyForEntity(entity: string, payload: any, entityId?: string): any[] | null {
-    const userId = payload.userId || payload.studentId || payload.student_id;
+    const userId = (payload.userId || payload.studentId || payload.student_id) as string;
 
     switch (entity) {
       case ENTITIES.WORKOUT: 

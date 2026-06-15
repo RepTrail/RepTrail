@@ -298,9 +298,9 @@ export async function deleteErgogenic(id: string, studentId: string) {
 
                 revalidatePath(`/dashboard/trainer/students/${effectiveStudentId}/ergogenics`)
                 return { success: true }
-            } else {
+            } 
                 return { error: 'You do not have permission to manage this student.' }
-            }
+            
         }
 
         // 2. Use Admin Client to bypass RLS for this specific deletion

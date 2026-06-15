@@ -19,7 +19,7 @@ interface LandingCTAProps {
 }
 
 export function LandingCTA({ role = 'trainer' }: LandingCTAProps) {
-  const { primaryColor } = useRegistry()
+  const { primaryColor: _primaryColor } = useRegistry()
 
   const config = {
     trainer: {

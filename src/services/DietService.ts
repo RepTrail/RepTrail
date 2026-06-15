@@ -25,9 +25,9 @@ export class DietService {
                 }
                 
                 if (data && data.meals) {
-                    data.meals.sort((a: any, b: any) => a.order_index - b.order_index)
-                    data.meals.forEach((m: any) => {
-                        if (m.items) m.items.sort((a: any, b: any) => a.order_index - b.order_index)
+                    (data.meals as Record<string, unknown>[]).sort((a: Record<string, unknown>, b: Record<string, unknown>) => (a.order_index as number) - (b.order_index as number))
+                    ;(data.meals as Record<string, unknown>[]).forEach((m: Record<string, unknown>) => {
+                        if (m.items) (m.items as Record<string, unknown>[]).sort((a: Record<string, unknown>, b: Record<string, unknown>) => (a.order_index as number) - (b.order_index as number))
                     })
                 }
 
@@ -79,17 +79,17 @@ export class DietService {
                 
                 // Grouping logic for trainer view
                 const grouped = (diets || []).map(diet => {
-                    const studentMap: Record<string, any> = {}
+                    const studentMap: Record<string, Record<string, unknown> & { days_of_week: number[] }> = {}
 
                     // 1. Process real assignments
-                    ;(diet.assignments || []).forEach((a: any) => {
+                    ;(diet.assignments || []).forEach((a: Record<string, unknown>) => {
                         if (!a.active) return
                         
-                        if (!studentMap[a.student_id]) {
-                            studentMap[a.student_id] = { 
+                        if (!studentMap[a.student_id as string]) {
+                            studentMap[a.student_id as string] = { 
                                 ...a, 
-                                days_of_week: Array.isArray(a.days_of_week) ? [...a.days_of_week] : 
-                                               (typeof a.days_of_week === 'string' ? JSON.parse(a.days_of_week) : []) 
+                                days_of_week: Array.isArray(a.days_of_week) ? [...a.days_of_week] as number[] : 
+                                               (typeof a.days_of_week === 'string' ? JSON.parse(a.days_of_week) as number[] : []) 
                             }
                         }
                     })

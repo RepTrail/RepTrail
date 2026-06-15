@@ -12,7 +12,7 @@ interface ManagementRegistrySectionProps {
     title: string
     subtitle?: string
     icon: LucideIcon
-    ContentComponent: React.ComponentType<{ mode?: any, isEmpty?: boolean }>
+    ContentComponent: React.ComponentType<{ mode?: 'auto' | 'personal', isEmpty?: boolean }>
     mode?: 'auto' | 'personal'
     fullWidth?: boolean
 }

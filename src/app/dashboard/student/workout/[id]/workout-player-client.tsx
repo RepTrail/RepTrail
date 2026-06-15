@@ -44,8 +44,10 @@ export default function WorkoutPlayerClient({
 
     if (!workoutData) return notFound()
 
-    const workout = workoutData
-    const exercises = workoutData.workout_exercises || workoutData.exercises || []
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const workout = workoutData as any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const exercises = (workoutData as any).workout_exercises || (workoutData as any).exercises || []
 
     if (exercises.length === 0) {
         return (

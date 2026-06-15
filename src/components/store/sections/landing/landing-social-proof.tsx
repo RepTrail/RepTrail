@@ -19,7 +19,7 @@ interface LandingSocialProofProps {
 }
 
 export function LandingSocialProof({ role = 'trainer' }: LandingSocialProofProps) {
-  const { primaryColor } = useRegistry()
+  const { primaryColor: _primaryColor } = useRegistry()
 
   const config = {
     trainer: {

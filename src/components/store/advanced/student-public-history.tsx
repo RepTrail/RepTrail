@@ -12,6 +12,7 @@ import { UnifiedAdherenceChart } from '@/components/store/advanced/unified-adher
 import { Box } from '@/components/store/base/box'
 
 interface StudentPublicHistoryProps {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     history: any[]
 }
 
@@ -21,7 +22,7 @@ export function StudentPublicHistory({ history }: StudentPublicHistoryProps) {
             <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                     <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                        <Icon icon={History} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
+                        <Icon icon={History} color={STORE_TOKENS.COLORS.BRAND as never} size="lg" />
                         <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{"Histórico de Treinos"}</Font>
                     </Inline>
                     <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{"Relação completa de todos os treinos executados e registrados na plataforma."}</Font>

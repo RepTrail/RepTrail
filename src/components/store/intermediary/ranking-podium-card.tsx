@@ -33,6 +33,10 @@ interface RankingPodiumCardProps {
  * Refactored without any classNames outside the Base folder.
  */
 export function RankingPodiumCard({ trainer, rank }: RankingPodiumCardProps) {
+    let avatarVariant: "amber" | "orange" | "zinc" = 'amber'
+    if (rank === 1) avatarVariant = 'orange'
+    else if (rank === 2) avatarVariant = 'zinc'
+
     return (
         <GlassPanel
             padding={STORE_TOKENS.PADDING.CONTAINER}
@@ -61,7 +65,7 @@ export function RankingPodiumCard({ trainer, rank }: RankingPodiumCardProps) {
                         initials={trainer?.full_name.substring(0, 2).toUpperCase()}
                         src={trainer.avatar_url}
                         size="xxl"
-                        variant={rank === 1 ? 'orange' : rank === 2 ? 'zinc' : 'amber'}
+                        variant={avatarVariant}
                     />
                     <Box
                         position="absolute"

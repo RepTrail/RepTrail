@@ -22,7 +22,7 @@ interface LandingBannerPromoProps {
 }
 
 export function LandingBannerPromo({ role = 'trainer', freeLimit = 5 }: LandingBannerPromoProps) {
-  const { primaryColor } = useRegistry()
+  const { primaryColor: _primaryColor } = useRegistry()
 
   const config = {
     trainer: {

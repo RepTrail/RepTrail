@@ -72,9 +72,9 @@ export function CardioManagementList({
                     }))
                     if (mode === 'trainer') {
                         return { ...item, assignments: newAssignments }
-                    } else {
+                    } 
                         return { ...item, assigned_cardios: newAssignments }
-                    }
+                    
                 }
                 return item;
             })
