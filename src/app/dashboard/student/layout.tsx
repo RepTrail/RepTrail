@@ -2,7 +2,8 @@ import { Suspense } from 'react'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { dehydrate, HydrationBoundary } from '@/lib/dal'
-import { getProfile, getStudentLayoutData, actions } from '@/lib/dal/server'
+import { getProfile, getStudentLayoutData } from '@/lib/dal/server'
+import { getStudentTrainer } from '@/actions/student-actions'
 import { getQueryClient } from '@/lib/get-query-client'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { DashboardShell } from '@/components/store/advanced/dashboard-shell'
@@ -41,7 +42,7 @@ async function StudentLayoutLoader({ userId, children }: { userId: string; child
 
     const [layoutData, trainerRel] = await Promise.all([
         getStudentLayoutData(userId),
-        actions.getStudentTrainer(userId),
+        getStudentTrainer(userId),
         queryClient.prefetchQuery({ queryKey: QUERY_KEYS.workouts.session, queryFn: () => import('@/lib/dal/remote').then(m => m.getActiveWorkoutSession()) }),
         queryClient.prefetchQuery({ queryKey: QUERY_KEYS.cardio.session, queryFn: () => import('@/lib/dal/remote').then(m => m.getActiveCardioSession()) }),
         queryClient.prefetchQuery({ queryKey: QUERY_KEYS.student.details(userId), queryFn: () => import('@/lib/dal/remote').then(m => m.getStudentProfile(userId)) }),
@@ -49,7 +50,7 @@ async function StudentLayoutLoader({ userId, children }: { userId: string; child
         queryClient.prefetchQuery({ queryKey: QUERY_KEYS.diets.all(userId), queryFn: () => import('@/lib/dal/remote').then(m => m.getAssignedDiets(userId)) }),
         queryClient.prefetchQuery({ queryKey: QUERY_KEYS.ergogenics.all(userId), queryFn: () => import('@/lib/dal/remote').then(m => m.getAssignedErgogenics(userId)) }),
         queryClient.prefetchQuery({ queryKey: QUERY_KEYS.cardio.all(userId), queryFn: () => import('@/lib/dal/remote').then(m => m.getAssignedCardios(userId)) }),
-        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.profile.trainer(userId), queryFn: () => actions.getStudentTrainer(userId) }),
+        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.profile.trainer(userId), queryFn: () => getStudentTrainer(userId) }),
     ])
 
     const p = layoutData.profile

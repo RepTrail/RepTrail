@@ -1,6 +1,9 @@
 import { STORE_TOKENS } from '@/components/store/constants/tokens';
 import { dehydrate, HydrationBoundary } from '@/lib/dal'
-import { getProfile, actions } from '@/lib/dal/server'
+import { getProfile } from '@/lib/dal/server'
+import { getPublicPlanPricing, getTrainerProfile, getEffectiveTier } from '@/actions/trainer-actions'
+import { getBetaTesterMode } from '@/actions/app-settings-actions'
+import { getTrainerPlanFeatures } from '@/actions/plan-features-actions'
 import { redirect } from 'next/navigation'
 import { headers } from 'next/headers'
 import { getQueryClient } from '@/lib/get-query-client'
@@ -24,14 +27,14 @@ export default async function TrainerLayout({ children }: { children: React.Reac
 
     const queryClient = getQueryClient()
     await Promise.all([
-        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.trainer.profile(userId), queryFn: () => actions.getTrainerProfile(userId) }),
-        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.profile.detail(userId), queryFn: () => actions.getTrainerProfile(userId) }),
-        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.trainer.effectiveTier(userId), queryFn: () => actions.getEffectiveTier(userId) }),
+        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.trainer.profile(userId), queryFn: () => getTrainerProfile(userId) }),
+        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.profile.detail(userId), queryFn: () => getTrainerProfile(userId) }),
+        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.trainer.effectiveTier(userId), queryFn: () => getEffectiveTier(userId) }),
     ])
 
     const dehydratedState = dehydrate(queryClient)
-    const betaTesterMode = await actions.getBetaTesterMode()
-    const features = await actions.getTrainerPlanFeatures(userId)
+    const betaTesterMode = await getBetaTesterMode()
+    const features = await getTrainerPlanFeatures(userId)
 
     const hasWorkouts = features?.has_workouts ?? true
     const hasDiets = features?.has_diets ?? true
@@ -39,7 +42,7 @@ export default async function TrainerLayout({ children }: { children: React.Reac
     const hasErgogenics = features?.has_ergogenics ?? false
     const hasImportPdf = features?.has_import_pdf_ai ?? false
 
-    const publicPlans = await actions.getPublicPlanPricing()
+    const publicPlans = await getPublicPlanPricing()
     const hasPublicPlans = Array.isArray(publicPlans) && publicPlans.length > 0
 
     const links = [

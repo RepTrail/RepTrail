@@ -1,6 +1,6 @@
 import { PREFETCH_REGISTRY } from '@/lib/prefetch-registry'
 import { dehydrate, HydrationBoundary } from '@/lib/dal'
-import { actions } from '@/lib/dal/server'
+import * as actions from '@/lib/dal/remote'
 import { getQueryClient } from '@/lib/get-query-client'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { RegistrySection } from '@/components/store/advanced/registry-section'

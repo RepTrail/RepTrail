@@ -1,7 +1,8 @@
 import React from 'react'
 import { redirect } from 'next/navigation'
 import { headers } from 'next/headers'
-import { getProfile, actions } from '@/lib/dal/server'
+import { getProfile } from '@/lib/dal/server'
+import { getPublicPlanPricing } from '@/actions/trainer-actions'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { OnboardingLogoutButton } from '@/components/store/intermediary/onboarding-logout-button'
 import { TrainerOnboardingPlansShell } from '@/components/store/sections/trainer-plans-section'
@@ -21,7 +22,7 @@ export default async function OnboardingPlansPage() {
         redirect('/dashboard/trainer')
     }
 
-    const publicPlans = await actions.getPublicPlanPricing()
+    const publicPlans = await getPublicPlanPricing()
 
     return (
         <TrainerOnboardingPlansShell>

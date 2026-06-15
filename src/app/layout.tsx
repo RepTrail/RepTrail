@@ -43,6 +43,7 @@ import NextTopLoader from 'nextjs-toploader';
 import FacebookPixel from "@/lib/meta-pixel";
 import { ShineManager } from "@/components/store/providers/shine-manager";
 import Script from 'next/script';
+import { RegistryProvider } from "@/components/store/base/registry-context";
 
 export default function RootLayout({
   children,
@@ -72,15 +73,17 @@ export default function RootLayout({
         suppressHydrationWarning
         data-scroll-behavior="smooth"
       >
-        <ShineManager />
-        <NextTopLoader color="var(--primary-dynamic, #f97316)" showSpinner={false} shadow="0 0 10px var(--primary-dynamic, #f97316), 0 0 5px var(--primary-dynamic, #f97316)" zIndex={1600} />
-        <FacebookPixel />
-        <QueryProvider>
-          <SplashManager>
-            {children}
-          </SplashManager>
-        </QueryProvider>
-        <Toaster />
+        <RegistryProvider defaultColor="zinc">
+          <ShineManager />
+          <NextTopLoader color="var(--primary-dynamic, #f97316)" showSpinner={false} shadow="0 0 10px var(--primary-dynamic, #f97316), 0 0 5px var(--primary-dynamic, #f97316)" zIndex={1600} />
+          <FacebookPixel />
+          <QueryProvider>
+            <SplashManager>
+              {children}
+            </SplashManager>
+          </QueryProvider>
+          <Toaster />
+        </RegistryProvider>
       </body>
     </html>
   );
