@@ -6,6 +6,12 @@ import { getProfile, getStudentLayoutData } from '@/lib/dal/server'
 import { getStudentTrainer } from '@/actions/student-actions'
 import { getQueryClient } from '@/lib/get-query-client'
 import { QUERY_KEYS } from '@/lib/query-keys'
+import { getActiveWorkoutSession } from '@/actions/log-actions'
+import { getActiveCardioSession, getAssignedCardios } from '@/actions/cardio-actions'
+import { getStudentProfile } from '@/actions/student-actions'
+import { getAssignedWorkouts } from '@/actions/workout-actions'
+import { getAssignedDiets } from '@/actions/diet-actions'
+import { getAssignedErgogenics } from '@/actions/ergogenics-actions'
 import { DashboardShell } from '@/components/store/advanced/dashboard-shell'
 import { RegistryProvider } from '@/components/store/base/registry-context'
 import { SettingsModal } from '@/components/store/advanced/student-settings-modal'
@@ -43,13 +49,13 @@ async function StudentLayoutLoader({ userId, children }: { userId: string; child
     const [layoutData, trainerRel] = await Promise.all([
         getStudentLayoutData(userId),
         getStudentTrainer(userId),
-        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.workouts.session, queryFn: () => import('@/lib/dal/remote').then(m => m.getActiveWorkoutSession()) }),
-        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.cardio.session, queryFn: () => import('@/lib/dal/remote').then(m => m.getActiveCardioSession()) }),
-        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.student.details(userId), queryFn: () => import('@/lib/dal/remote').then(m => m.getStudentProfile(userId)) }),
-        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.workouts.all(userId), queryFn: () => import('@/lib/dal/remote').then(m => m.getAssignedWorkouts(userId)) }),
-        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.diets.all(userId), queryFn: () => import('@/lib/dal/remote').then(m => m.getAssignedDiets(userId)) }),
-        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.ergogenics.all(userId), queryFn: () => import('@/lib/dal/remote').then(m => m.getAssignedErgogenics(userId)) }),
-        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.cardio.all(userId), queryFn: () => import('@/lib/dal/remote').then(m => m.getAssignedCardios(userId)) }),
+        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.workouts.session, queryFn: () => getActiveWorkoutSession() }),
+        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.cardio.session, queryFn: () => getActiveCardioSession() }),
+        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.student.details(userId), queryFn: () => getStudentProfile(userId) }),
+        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.workouts.all(userId), queryFn: () => getAssignedWorkouts(userId) }),
+        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.diets.all(userId), queryFn: () => getAssignedDiets(userId) }),
+        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.ergogenics.all(userId), queryFn: () => getAssignedErgogenics(userId) }),
+        queryClient.prefetchQuery({ queryKey: QUERY_KEYS.cardio.all(userId), queryFn: () => getAssignedCardios(userId) }),
         queryClient.prefetchQuery({ queryKey: QUERY_KEYS.profile.trainer(userId), queryFn: () => getStudentTrainer(userId) }),
     ])
 
