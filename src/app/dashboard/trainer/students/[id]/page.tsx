@@ -1,5 +1,5 @@
 import { dehydrate, HydrationBoundary } from '@/lib/dal'
-import { actions } from '@/lib/dal/server'
+import * as actions from '@/lib/dal/remote'
 import { getQueryClient } from '@/lib/get-query-client'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { RegistryMain } from '@/components/store/advanced/registry-main'

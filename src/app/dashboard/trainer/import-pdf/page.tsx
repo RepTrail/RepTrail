@@ -1,5 +1,5 @@
 import { getProfile } from '@/lib/dal/server'
-import { actions } from '@/lib/dal/server'
+import * as actions from '@/lib/dal/remote'
 import { redirect } from 'next/navigation'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { ImportPdfSectionContent } from '@/components/store/sections/import-pdf-section-content'

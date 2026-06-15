@@ -1,4 +1,4 @@
-import { actions } from '@/lib/dal/server'
+import * as actions from '@/lib/dal/remote'
 import { redirect } from 'next/navigation'
 import { AffiliateDashboardClient } from './affiliate-dashboard-client'
 import { AffiliateMetaPixel } from './meta-pixel'
