@@ -1,10 +1,10 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect } from 'react'
 import { impersonateUser } from '@/lib/dal/remote'
 import { Button } from '@/components/store/base/button'
 import { ShieldAlert, ArrowLeftRight, RefreshCw } from 'lucide-react'
-import { useToast } from '@/hooks/use-toast'
+import { useToast } from '@/components/store/hooks/use-toast'
 import { Box } from '@/components/store/base/box'
 import { Inline } from '@/components/store/base/layout'
 import { Font } from '@/components/store/base/font'
@@ -41,7 +41,7 @@ export function ImpersonationBar({ color }: { color?: RegistryColor }) {
 
     const handleReturn = async () => {
         setLoading(true)
-        toast({ title: 'Retornando ao Admin...', description: 'Estamos restaurando sua sessão original.' })
+        toast({ title: 'Retornando ao Admin...', description: 'Estamos restaurando sua sessÃ£o original.' })
 
         const res = await impersonateUser(adminId)
         if (res?.error) {
@@ -63,7 +63,7 @@ export function ImpersonationBar({ color }: { color?: RegistryColor }) {
                 <Inline justify="between" align="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
                     <Inline gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
                         <Badge
-                            label="Modo Inspeção Ativo"
+                            label="Modo InspeÃ§Ã£o Ativo"
                             icon={ShieldAlert}
                             variant="glass"
                             color={primaryColor}
@@ -76,7 +76,7 @@ export function ImpersonationBar({ color }: { color?: RegistryColor }) {
                                 {...{
                                     color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
                                 }}>
-                                Você está visualizando a plataforma como outro usuário. Todas as ações afetarão a conta dele.
+                                VocÃª estÃ¡ visualizando a plataforma como outro usuÃ¡rio. Todas as aÃ§Ãµes afetarÃ£o a conta dele.
                             </Font>
                         </Box>
                     </Inline>

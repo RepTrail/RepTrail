@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { STORE_TOKENS } from '@/components/store/constants/tokens';
 
 import { Button } from '@/components/store/base/button'
@@ -6,8 +6,8 @@ import { Stack } from '@/components/store/base/stack'
 import { Font } from '@/components/store/base/font'
 import { Icon } from '@/components/store/base/icon'
 import { CreditCard } from 'lucide-react'
-import { useToast } from "@/hooks/use-toast"
-import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { useToast } from "@/components/store/hooks/use-toast"
+import { useOptimisticMutation } from '@/lib/dal'
 import { ENTITIES } from '@/lib/outbox-db'
 import { QUERY_KEYS } from '@/lib/query-keys'
 
@@ -54,7 +54,7 @@ export function StudentPaymentButtons() {
                 gap={STORE_TOKENS.SPACING.ELEMENT}
             >
                 <Icon icon={CreditCard} size="md" color={STORE_TOKENS.COLORS.BLACK} />
-                Assinar com Cartão
+                Assinar com CartÃ£o
             </Button>
             <Font
                 variant="tiny"
@@ -65,7 +65,7 @@ export function StudentPaymentButtons() {
                 {...{
                     color: "DIM",
                 }}>
-                Pagamento processado com segurança pelo Asaas
+                Pagamento processado com seguranÃ§a pelo Asaas
             </Font>
         </Stack>
     );

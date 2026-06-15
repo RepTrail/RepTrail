@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { Stack } from '@/components/store/base/stack'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
@@ -6,7 +6,7 @@ import { useQuery } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { getAssignedWorkouts, getTrainerWorkouts } from '@/lib/dal/remote'
 import { getStudentProfile, getStudentTrainer } from '@/lib/dal/remote'
-import { useRealtimeSync } from '@/hooks/use-realtime-sync'
+import { useRealtimeSync } from '@/lib/dal'
 import { WorkoutManagementList } from '@/components/store/advanced/workout-management-list'
 
 interface StudentWorkoutManagementSmartProps {

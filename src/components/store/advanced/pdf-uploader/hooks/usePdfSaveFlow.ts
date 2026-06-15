@@ -1,7 +1,7 @@
-import { useMutation, useQueryClient } from '@/lib/dal';
-import { useToast } from '@/hooks/use-toast';
+﻿import { useMutation, useQueryClient } from '@/lib/dal';
+import { useToast } from '@/components/store/hooks/use-toast';
 import { saveParsedData } from '@/lib/dal/remote';
-import { useTrainerOnboarding } from '@/hooks/use-trainer-onboarding';
+import { useTrainerOnboarding } from '@/components/store/hooks/use-trainer-onboarding';
 import { QUERY_KEYS } from '@/lib/query-keys';
 import { validateImportCompatibility } from '../lib/validators';
 import { normalizeDays } from '@/lib/utils';
@@ -27,9 +27,9 @@ export function usePdfSaveFlow({ type, userId, role, initialStudentId, parsedDat
             };
 
             if (typeof navigator !== 'undefined' && !navigator.onLine) {
-                console.log('[usePdfSaveFlow] 📡 Offline: Enqueueing saveParsedData to Outbox.');
+                console.log('[usePdfSaveFlow] ðŸ“¡ Offline: Enqueueing saveParsedData to Outbox.');
                 const { outboxDB } = await import('@/lib/outbox-db');
-                const { syncEngine } = await import('@/lib/sync-engine');
+                const { syncEngine } = await import('@/services/sync-engine');
 
                 const tempPlaceholderId = variables.createPlaceholder ? crypto.randomUUID() : undefined;
 
@@ -90,25 +90,25 @@ export function usePdfSaveFlow({ type, userId, role, initialStudentId, parsedDat
                 localStorage.setItem(`onboarding_ghost_${userId}`, JSON.stringify(ghostInfo));
             }
 
-            toast({ title: "✅ Plano importado com sucesso", description: `${type === 'workout' ? 'Treino' : 'Dieta'} processado e vinculado.` });
+            toast({ title: "âœ… Plano importado com sucesso", description: `${type === 'workout' ? 'Treino' : 'Dieta'} processado e vinculado.` });
         },
         onSettled: () => setTimeout(() => queryClient.invalidateQueries(), 1000)
     });
 
     const handleSave = () => {
         if (role === 'trainer' && type === 'workout' && parsedData?.parsed_data?.ergogenics?.length > 0 && !bindingHooks.selectedStudentId) {
-            toast({ variant: "destructive", title: "Atenção!", description: "Ergogênicos detectados. Selecione um aluno para salvar o protocolo." });
+            toast({ variant: "destructive", title: "AtenÃ§Ã£o!", description: "ErgogÃªnicos detectados. Selecione um aluno para salvar o protocolo." });
             return;
         }
 
         const compatibilityError = validateImportCompatibility(type, parsedData);
         if (compatibilityError) {
-            toast({ variant: "destructive", title: "Arquivo Incompatível", description: compatibilityError });
+            toast({ variant: "destructive", title: "Arquivo IncompatÃ­vel", description: compatibilityError });
             return;
         }
 
         if (role === 'trainer' && bindingHooks.bindingMode === 'create' && !bindingHooks.placeholderEmail) {
-            toast({ variant: "destructive", title: "Atenção: Email não informado!", description: "Sem o email você não consegue enviar o acesso automaticamente." });
+            toast({ variant: "destructive", title: "AtenÃ§Ã£o: Email nÃ£o informado!", description: "Sem o email vocÃª nÃ£o consegue enviar o acesso automaticamente." });
         }
 
         let dataToSave = { ...parsedData.parsed_data };

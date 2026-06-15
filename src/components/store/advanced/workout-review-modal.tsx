@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import React, { useState, useEffect } from 'react'
 import { Modal } from './modal'
@@ -16,11 +16,11 @@ import {
     Loader2
 } from 'lucide-react'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
-import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { useOptimisticMutation } from '@/lib/dal'
 import { getWorkoutLogForReview } from '@/lib/dal/remote'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { ENTITIES } from '@/lib/outbox-db'
-import { useToast } from '@/hooks/use-toast'
+import { useToast } from '@/components/store/hooks/use-toast'
 
 interface Load {
     id: string
@@ -52,7 +52,7 @@ export function WorkoutReviewModal({
 }: WorkoutReviewModalProps) {
     const { toast } = useToast()
     const [isLoading, setIsLoading] = useState(true)
-    const [workoutName, setWorkoutName] = useState('Revisão de Treino')
+    const [workoutName, setWorkoutName] = useState('RevisÃ£o de Treino')
     const [pse, setPse] = useState<string>('7')
     const [notes, setNotes] = useState('')
     const [loads, setLoads] = useState<Load[]>([])
@@ -106,7 +106,7 @@ export function WorkoutReviewModal({
     }, [isOpen, logId])
 
     const grouped = loads.reduce((acc, load) => {
-        const name = load.exercise?.name || 'Exercício'
+        const name = load.exercise?.name || 'ExercÃ­cio'
         if (!acc[name]) acc[name] = []
         acc[name].push(load)
         return acc
@@ -121,8 +121,8 @@ export function WorkoutReviewModal({
         })
 
         toast({ 
-            title: 'Revisão Concluída', 
-            description: 'Seu feedback e alterações foram salvos com sucesso.' 
+            title: 'RevisÃ£o ConcluÃ­da', 
+            description: 'Seu feedback e alteraÃ§Ãµes foram salvos com sucesso.' 
         })
         onClose()
     }
@@ -132,10 +132,10 @@ export function WorkoutReviewModal({
             isOpen={isOpen}
             onClose={onClose}
             title={workoutName}
-            subtitle="Revisão de performance e ajuste de cargas"
+            subtitle="RevisÃ£o de performance e ajuste de cargas"
             icon={Dumbbell}
             variant="emerald"
-            confirmLabel="Salvar Revisão"
+            confirmLabel="Salvar RevisÃ£o"
             onConfirm={handleSave}
             confirmVariant="outline-emerald"
             isLoading={isLoading}
@@ -159,22 +159,22 @@ export function WorkoutReviewModal({
                     <Box border borderColor={STORE_TOKENS.COLORS.DIVIDER.SUBTLE} padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM} bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.LOW}>
                         <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                             <FormSelect 
-                                label="Percepção de Esforço (PSE)"
+                                label="PercepÃ§Ã£o de EsforÃ§o (PSE)"
                                 placeholder="Selecione de 1 a 10..."
                                 value={pse}
                                 onChange={(val) => setPse(val as string)}
                                 options={[
-                                    { value: '1', label: '1 - Muito Leve', description: 'Nenhum esforço' },
-                                    { value: '3', label: '3 - Moderado', description: 'Ritmo confortável' },
-                                    { value: '5', label: '5 - Pesado', description: 'Esforço considerável' },
-                                    { value: '7', label: '7 - Muito Pesado', description: 'Próximo ao limite' },
-                                    { value: '9', label: '9 - Quase Máximo', description: 'Extremo' },
-                                    { value: '10', label: '10 - Máximo', description: 'Falha total' },
+                                    { value: '1', label: '1 - Muito Leve', description: 'Nenhum esforÃ§o' },
+                                    { value: '3', label: '3 - Moderado', description: 'Ritmo confortÃ¡vel' },
+                                    { value: '5', label: '5 - Pesado', description: 'EsforÃ§o considerÃ¡vel' },
+                                    { value: '7', label: '7 - Muito Pesado', description: 'PrÃ³ximo ao limite' },
+                                    { value: '9', label: '9 - Quase MÃ¡ximo', description: 'Extremo' },
+                                    { value: '10', label: '10 - MÃ¡ximo', description: 'Falha total' },
                                 ]}
                             />
                             <Textarea 
                                 label="Notas sobre o Treino"
-                                placeholder="Como você se sentiu hoje? Sentiu alguma dor ou desconforto?"
+                                placeholder="Como vocÃª se sentiu hoje? Sentiu alguma dor ou desconforto?"
                                 value={notes}
                                 onChange={(e) => setNotes(e.target.value)}
                                 rows={3}
@@ -192,7 +192,7 @@ export function WorkoutReviewModal({
                             {...{
                                 color: "zinc-500",
                             }}>
-                            Revisão de Séries e Cargas
+                            RevisÃ£o de SÃ©ries e Cargas
                         </Font>
                         
                         {Object.entries(grouped).map(([exerciseName, exerciseLoads]) => (
@@ -291,7 +291,7 @@ export function WorkoutReviewModal({
                                                                 variant="tiny"
                                                                 {...{
                                                                     color: "zinc-600",
-                                                                }}>×</Font>
+                                                                }}>Ã—</Font>
                                                         </Box>
 
                                                         {/* Reps Column */}

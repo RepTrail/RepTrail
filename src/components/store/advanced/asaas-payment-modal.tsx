@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import React, { useState, useEffect } from 'react'
 import { Modal } from '@/components/store/advanced/modal'
@@ -19,7 +19,7 @@ import {
 } from 'lucide-react'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { actions } from '@/lib/dal'
-import { useToast } from '@/hooks/use-toast'
+import { useToast } from '@/components/store/hooks/use-toast'
 
 interface AsaasPaymentModalProps {
     isOpen: boolean
@@ -105,7 +105,7 @@ export function AsaasPaymentModal({
         if (e) e.preventDefault()
         
         if (!validateCpfCnpj(cpf)) {
-            toast({ variant: 'destructive', title: 'Documento inválido', description: 'Insira um CPF ou CNPJ válido.' })
+            toast({ variant: 'destructive', title: 'Documento invÃ¡lido', description: 'Insira um CPF ou CNPJ vÃ¡lido.' })
             return
         }
         if (fullName.trim().split(' ').length < 2) {
@@ -113,15 +113,15 @@ export function AsaasPaymentModal({
             return
         }
         if (cardData.number.replace(/\s/g, '').length < 15) {
-            toast({ variant: 'destructive', title: 'Cartão inválido', description: 'Insira um número de cartão válido.' })
+            toast({ variant: 'destructive', title: 'CartÃ£o invÃ¡lido', description: 'Insira um nÃºmero de cartÃ£o vÃ¡lido.' })
             return
         }
         if (cardData.expiry.length < 5) {
-            toast({ variant: 'destructive', title: 'Validade inválida', description: 'Insira uma validade válida.' })
+            toast({ variant: 'destructive', title: 'Validade invÃ¡lida', description: 'Insira uma validade vÃ¡lida.' })
             return
         }
         if (cardData.cvv.length < 3) {
-            toast({ variant: 'destructive', title: 'CVV inválido', description: 'Insira um CVV válido.' })
+            toast({ variant: 'destructive', title: 'CVV invÃ¡lido', description: 'Insira um CVV vÃ¡lido.' })
             return
         }
 
@@ -150,7 +150,7 @@ export function AsaasPaymentModal({
             )
 
             if (res.success) {
-                toast({ title: 'Sucesso!', description: 'Sua assinatura foi processada com êxito.' })
+                toast({ title: 'Sucesso!', description: 'Sua assinatura foi processada com Ãªxito.' })
                 onClose()
                 const target = tier === 'auto_training' ? '/dashboard/student' : '/dashboard/trainer'
                 window.location.href = target
@@ -161,7 +161,7 @@ export function AsaasPaymentModal({
             toast({
                 variant: 'destructive',
                 title: 'Erro no Pagamento',
-                description: err.message || 'Ocorreu um erro ao processar o cartão.'
+                description: err.message || 'Ocorreu um erro ao processar o cartÃ£o.'
             })
         } finally {
             setIsProcessing(false)
@@ -232,7 +232,7 @@ export function AsaasPaymentModal({
                 {/* Card Details */}
                 <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                     <Input
-                        label="NÚMERO DO CARTÃO"
+                        label="NÃšMERO DO CARTÃƒO"
                         icon={<CreditCard size={16} />}
                         value={cardData.number}
                         onChange={(e) => setCardData(d => ({ ...d, number: maskCardNumber(e.target.value) }))}
@@ -240,7 +240,7 @@ export function AsaasPaymentModal({
                     />
 
                     <Input
-                        label="NOME NO CARTÃO"
+                        label="NOME NO CARTÃƒO"
                         icon={<User size={16} />}
                         value={cardData.holder}
                         onChange={(e) => setCardData(d => ({ ...d, holder: e.target.value.toUpperCase() }))}
@@ -276,7 +276,7 @@ export function AsaasPaymentModal({
                             flex1
                         />
                         <Input
-                            label="Nº"
+                            label="NÂº"
                             icon={<Hash size={16} />}
                             value={cardData.addressNumber}
                             onChange={(e) => setCardData(d => ({ ...d, addressNumber: e.target.value }))}

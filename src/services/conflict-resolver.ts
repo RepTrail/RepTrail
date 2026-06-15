@@ -1,6 +1,6 @@
-import { outboxDB } from './outbox-db';
-import { conflictDetector } from './conflict-detector';
-import { conflictStore } from './conflict-store';
+import { outboxDB } from '../lib/outbox-db';
+import { conflictDetector } from '../lib/conflict-detector';
+import { conflictStore } from '../lib/conflict-store';
 import { getQueryClient } from '@/lib/get-query-client';
 
 /**

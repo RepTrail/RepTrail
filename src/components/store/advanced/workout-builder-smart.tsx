@@ -1,9 +1,9 @@
-'use client'
+﻿'use client'
 
 import React, { useState, useEffect } from 'react'
 import { useQuery, useQueryClient } from '@/lib/dal'
-import { useToast } from '@/hooks/use-toast'
-import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { useToast } from '@/components/store/hooks/use-toast'
+import { useOptimisticMutation } from '@/lib/dal'
 import { getWorkoutDetails, searchExercises } from '@/lib/dal/remote'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { ENTITIES } from '@/lib/outbox-db'
@@ -148,7 +148,7 @@ export function WorkoutBuilderSmart({
         onSuccess: () => {
             setSearchQuery('')
             setSearchResults([])
-            toast({ title: "Exercício criado", description: "O exercício será adicionado ao treino após o processamento." })
+            toast({ title: "ExercÃ­cio criado", description: "O exercÃ­cio serÃ¡ adicionado ao treino apÃ³s o processamento." })
         }
     })
 
@@ -201,7 +201,7 @@ export function WorkoutBuilderSmart({
                         variant="description"
                         {...{
                             color: STORE_TOKENS.COLORS.TEXT.MUTED,
-                        }}>Preparando sua biblioteca de exercícios</Font>
+                        }}>Preparando sua biblioteca de exercÃ­cios</Font>
                 </Stack>
             </Box>
         );
@@ -287,10 +287,10 @@ export function WorkoutBuilderSmart({
                         {...{
                             color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
                         }}>
-                        Exercícios no Treino
+                        ExercÃ­cios no Treino
                     </Font>
                     <Badge
-                        label={`Número de exercícios: ${exercises.length}`}
+                        label={`NÃºmero de exercÃ­cios: ${exercises.length}`}
                         variant="glass"
                         color={contextColor as any || STORE_TOKENS.COLORS.BRAND}
                         size="sm"
@@ -316,8 +316,8 @@ export function WorkoutBuilderSmart({
                 ) : (
                     <EmptyState
                         icon={Dumbbell}
-                        title="NENHUM EXERCÍCIO ADICIONADO"
-                        description="Use a busca abaixo para começar."
+                        title="NENHUM EXERCÃCIO ADICIONADO"
+                        description="Use a busca abaixo para comeÃ§ar."
                     />
                 )}
             </Stack>

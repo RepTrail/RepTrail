@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
@@ -18,10 +18,10 @@ import {
 import { actions } from '@/lib/dal'
 import { getTermsStatus } from '@/lib/dal/remote'
 import { getAutoTrainingTrialInfoForCurrentUser, enableAutoTrainingTrialForCurrentUser } from '@/lib/dal/remote'
-import { useToast } from '@/hooks/use-toast'
+import { useToast } from '@/components/store/hooks/use-toast'
 import { useQuery } from '@/lib/dal'
 import { getQueryClient } from '@/lib/get-query-client'
-import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { useOptimisticMutation } from '@/lib/dal'
 import { ENTITIES } from '@/lib/outbox-db'
 
 // Design System Imports
@@ -148,11 +148,11 @@ export function SettingsModal({ hasTrainer = false, isTrainer = false }: Setting
         <Modal
             isOpen={isOpen}
             onClose={() => setIsOpen(false)}
-            title="CONFIGURAÇÕES DO SISTEMA"
-            subtitle="Gerencie suas preferências e recursos premium."
+            title="CONFIGURAÃ‡Ã•ES DO SISTEMA"
+            subtitle="Gerencie suas preferÃªncias e recursos premium."
             icon={Settings2}
             variant="primary"
-            confirmLabel="SALVAR PREFERÊNCIAS"
+            confirmLabel="SALVAR PREFERÃŠNCIAS"
             onConfirm={() => setIsOpen(false)}
         >
             <Box position="relative">
@@ -178,7 +178,7 @@ export function SettingsModal({ hasTrainer = false, isTrainer = false }: Setting
                         <SettingsActionCard
                             icon={Smartphone}
                             title="APP REPTRAIL"
-                            subtitle="INSTALE PARA ACESSO RÁPIDO"
+                            subtitle="INSTALE PARA ACESSO RÃPIDO"
                             actionLabel="INSTALAR"
                             buttonVariant="outline-blue"
                             actionIcon={Download}
@@ -192,7 +192,7 @@ export function SettingsModal({ hasTrainer = false, isTrainer = false }: Setting
 
                     <SettingsActionCard
                         icon={Bell}
-                        title="NOTIFICAÇÕES PUSH"
+                        title="NOTIFICAÃ‡Ã•ES PUSH"
                         subtitle="RECEBA ALERTAS DE TREINOS E DIETAS"
                         actionLabel={notifications === 'on' ? 'CONFIGURAR' : 'ATIVAR'}
                         buttonVariant="outline-orange"
@@ -211,7 +211,7 @@ export function SettingsModal({ hasTrainer = false, isTrainer = false }: Setting
                             <SettingsActionCard
                                 icon={Zap}
                                 surfaceVariant="glass"
-                                title="TESTE GRÁTIS DISPONÍVEL"
+                                title="TESTE GRÃTIS DISPONÃVEL"
                                 subtitle="EXPERIMENTE POR 7 DIAS SEM CUSTOS"
                                 actionLabel="HABILITAR"
                                 buttonVariant="outline-emerald"
@@ -226,7 +226,7 @@ export function SettingsModal({ hasTrainer = false, isTrainer = false }: Setting
                         <SettingsActionCard
                             icon={Crown}
                             title="AUTO-TREINO ATIVO"
-                            subtitle="VOCÊ POSSUI ACESSO TOTAL ÀS FUNCIONALIDADES"
+                            subtitle="VOCÃŠ POSSUI ACESSO TOTAL Ã€S FUNCIONALIDADES"
                             actionLabel="GERENCIAR"
                             actionIcon={CheckCircle2}
                             buttonVariant="outline-emerald"
@@ -243,7 +243,7 @@ export function SettingsModal({ hasTrainer = false, isTrainer = false }: Setting
                         <SettingsActionCard
                             icon={Clock}
                             title="TESTE EM ANDAMENTO"
-                            subtitle={`VOCÊ TEM ${daysRemaining} DIAS RESTANTES`}
+                            subtitle={`VOCÃŠ TEM ${daysRemaining} DIAS RESTANTES`}
                             actionLabel="ATIVO"
                             actionIcon={CheckCircle2}
                             buttonVariant="outline-emerald"
@@ -258,8 +258,8 @@ export function SettingsModal({ hasTrainer = false, isTrainer = false }: Setting
                         <SettingsActionCard
                             icon={Zap}
                             surfaceVariant="glass"
-                            title="TESTE INDISPONÍVEL"
-                            subtitle="VOCÊ JÁ UTILIZOU SEU PERÍODO DE TESTE"
+                            title="TESTE INDISPONÃVEL"
+                            subtitle="VOCÃŠ JÃ UTILIZOU SEU PERÃODO DE TESTE"
                             actionLabel="ASSINAR"
                             buttonVariant="outline-zinc"
                             actionIcon={CreditCard}
@@ -276,8 +276,8 @@ export function SettingsModal({ hasTrainer = false, isTrainer = false }: Setting
 
                     <SettingsActionCard
                         icon={Trash2}
-                        title="ZONA CRÍTICA"
-                        subtitle="AÇÃO IRREVERSÍVEL E PERMANENTE"
+                        title="ZONA CRÃTICA"
+                        subtitle="AÃ‡ÃƒO IRREVERSÃVEL E PERMANENTE"
                         actionLabel="DELETAR"
                         buttonVariant="outline-red"
                         actionIcon={Trash2}
@@ -298,12 +298,12 @@ export function SettingsModal({ hasTrainer = false, isTrainer = false }: Setting
     onClose = {() => setIsPwaModalOpen(false)
 }
 title = "INSTALAR APLICATIVO"
-subtitle = "Tenha o RepTrail sempre com você."
+subtitle = "Tenha o RepTrail sempre com vocÃª."
 icon = { Download }
 variant = "emerald"
 confirmLabel = "INSTALAR AGORA"
 onConfirm = {() => {
-    toast({ title: "Instalando...", description: "O aplicativo está sendo instalado no seu dispositivo." })
+    toast({ title: "Instalando...", description: "O aplicativo estÃ¡ sendo instalado no seu dispositivo." })
     setPwaInstalled(true)
     setIsPwaModalOpen(false)
 }}
@@ -313,7 +313,7 @@ onConfirm = {() => {
         {...{
             color: STORE_TOKENS.COLORS.TEXT.DIM,
         }}>
-        Ao instalar o PWA, você terá acesso rápido ao RepTrail direto da tela inicial do seu celular, com carregamento mais rápido e experiência de aplicativo nativo.
+        Ao instalar o PWA, vocÃª terÃ¡ acesso rÃ¡pido ao RepTrail direto da tela inicial do seu celular, com carregamento mais rÃ¡pido e experiÃªncia de aplicativo nativo.
     </Font>
             </Modal >
             <Modal
@@ -322,14 +322,14 @@ onConfirm = {() => {
                     setNotifications('off')
                     setIsNotificationModalOpen(false)
                 }}
-                title="ATIVAR NOTIFICAÇÕES"
+                title="ATIVAR NOTIFICAÃ‡Ã•ES"
                 subtitle="Fique por dentro das novidades."
                 icon={Bell}
                 variant="blue"
                 confirmLabel="PERMITIR"
                 onConfirm={async () => {
                     if (!('Notification' in window)) {
-                        toast({ variant: 'destructive', title: "Não suportado", description: "Seu navegador não suporta notificações push." })
+                        toast({ variant: 'destructive', title: "NÃ£o suportado", description: "Seu navegador nÃ£o suporta notificaÃ§Ãµes push." })
                         setIsNotificationModalOpen(false)
                         return
                     }
@@ -337,10 +337,10 @@ onConfirm = {() => {
                     const permission = await Notification.requestPermission()
 
                     if (permission === 'granted') {
-                        toast({ title: "Notificações ativadas", description: "Você receberá alertas importantes do seu treinador." })
+                        toast({ title: "NotificaÃ§Ãµes ativadas", description: "VocÃª receberÃ¡ alertas importantes do seu treinador." })
                         setNotifications('on')
                     } else {
-                        toast({ variant: 'destructive', title: "Permissão negada", description: "Você não receberá notificações até permitir nas configurações do navegador." })
+                        toast({ variant: 'destructive', title: "PermissÃ£o negada", description: "VocÃª nÃ£o receberÃ¡ notificaÃ§Ãµes atÃ© permitir nas configuraÃ§Ãµes do navegador." })
                         setNotifications('off')
                     }
                     setIsNotificationModalOpen(false)
@@ -351,7 +351,7 @@ onConfirm = {() => {
                     {...{
                         color: STORE_TOKENS.COLORS.TEXT.DIM,
                     }}>
-                    Permita que o RepTrail envie notificações push para avisar sobre novos treinos, feedbacks de dieta e mensagens importantes do seu personal.
+                    Permita que o RepTrail envie notificaÃ§Ãµes push para avisar sobre novos treinos, feedbacks de dieta e mensagens importantes do seu personal.
                 </Font>
             </Modal>
             <Modal
@@ -361,14 +361,14 @@ onConfirm = {() => {
                     setDeletePassword('')
                 }}
                 title="EXCLUIR CONTA"
-                subtitle="Ação irreversível."
+                subtitle="AÃ§Ã£o irreversÃ­vel."
                 icon={Trash2}
                 variant="red"
                 confirmLabel="Excluir"
                 isLoading={isDeleting}
                 onConfirm={async () => {
                     if (!deletePassword) {
-                        toast({ variant: 'destructive', title: "Senha obrigatória", description: "Digite sua senha para confirmar a exclusão." })
+                        toast({ variant: 'destructive', title: "Senha obrigatÃ³ria", description: "Digite sua senha para confirmar a exclusÃ£o." })
                         return
                     }
                     setIsDeleting(true)
@@ -376,12 +376,12 @@ onConfirm = {() => {
                     const res = await actions.selfDeleteAction(deletePassword)
 
                     if (res?.error) {
-                        toast({ variant: 'destructive', title: "Erro na exclusão", description: res.error })
+                        toast({ variant: 'destructive', title: "Erro na exclusÃ£o", description: res.error })
                         setIsDeleting(false)
                         return
                     }
 
-                    toast({ title: "Conta excluída", description: "Sua conta e todos os dados foram removidos com sucesso." })
+                    toast({ title: "Conta excluÃ­da", description: "Sua conta e todos os dados foram removidos com sucesso." })
                     setIsDeleting(false)
                     setIsDeleteModalOpen(false)
                     router.push('/auth/login')
@@ -401,12 +401,12 @@ onConfirm = {() => {
                             {...{
                                 color: "red",
                             }}>
-                            Atenção: Ao excluir sua conta, todos os seus protocolos, histórico de treinos e métricas serão apagados <Font weight='bold'>para sempre</Font>. Esta ação não pode ser desfeita.
+                            AtenÃ§Ã£o: Ao excluir sua conta, todos os seus protocolos, histÃ³rico de treinos e mÃ©tricas serÃ£o apagados <Font weight='bold'>para sempre</Font>. Esta aÃ§Ã£o nÃ£o pode ser desfeita.
                         </Font>
                     </Surface>
                     <Input
                         type="password"
-                        label="SENHA DE CONFIRMAÇÃO"
+                        label="SENHA DE CONFIRMAÃ‡ÃƒO"
                         placeholder="Digite sua senha"
                         value={deletePassword}
                         onChange={(e) => setDeletePassword(e.target.value)}

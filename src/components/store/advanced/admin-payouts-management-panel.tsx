@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect } from 'react'
 import { Stack } from '@/components/store/base/stack'
@@ -9,8 +9,8 @@ import { BaseAvatar } from '@/components/store/base/avatar'
 import { Modal } from '@/components/store/advanced/modal'
 import { EmptyState } from '../intermediary/empty-state'
 import { CheckCircle2, XCircle } from 'lucide-react'
-import { useToast } from '@/hooks/use-toast'
-import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { useToast } from '@/components/store/hooks/use-toast'
+import { useOptimisticMutation } from '@/lib/dal'
 import { ENTITIES } from '@/lib/outbox-db'
 import { ActionableListCard } from '../intermediary/actionable-list-card'
 import { PayoutActionGroup } from '../intermediary/payout-action-group'
@@ -62,7 +62,7 @@ export function AdminPayoutsManagementPanel({ initialPayouts }: { initialPayouts
             return { previousPayouts }
         },
         onSuccess: () => {
-            toast({ title: 'Status do saque atualizado!', description: 'A alteração está sendo sincronizada.' })
+            toast({ title: 'Status do saque atualizado!', description: 'A alteraÃ§Ã£o estÃ¡ sendo sincronizada.' })
         },
         onError: (err, variables, ctx) => {
             setPayouts(ctx?.previousPayouts || [])
@@ -81,7 +81,7 @@ export function AdminPayoutsManagementPanel({ initialPayouts }: { initialPayouts
     }
 
     const formatPixKey = (details: any) => {
-        if (!details || !details.details) return 'Chave não informada'
+        if (!details || !details.details) return 'Chave nÃ£o informada'
         return details.details
     }
 
@@ -92,7 +92,7 @@ export function AdminPayoutsManagementPanel({ initialPayouts }: { initialPayouts
             <EmptyState
                 icon={CheckCircle2}
                 title="Tudo em dia!"
-                description="Nenhuma solicitação de saque pendente no momento."
+                description="Nenhuma solicitaÃ§Ã£o de saque pendente no momento."
             />
         )
     }
@@ -163,7 +163,7 @@ export function AdminPayoutsManagementPanel({ initialPayouts }: { initialPayouts
                                 {...{
                                     color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
                                 }}>
-                                {payout.profiles?.full_name || 'Usuário Desconhecido'}
+                                {payout.profiles?.full_name || 'UsuÃ¡rio Desconhecido'}
                             </Font>
                             <Box fullWidth minWidth={0} overflow="hidden">
                                 <Font
@@ -183,10 +183,10 @@ export function AdminPayoutsManagementPanel({ initialPayouts }: { initialPayouts
             <Modal
                 isOpen={modalConfig.open}
                 onClose={() => setModalConfig({ ...modalConfig, open: false })}
-                title={modalConfig.status === 'completed' ? "Confirmar Pagamento" : "Rejeitar Solicitação"}
+                title={modalConfig.status === 'completed' ? "Confirmar Pagamento" : "Rejeitar SolicitaÃ§Ã£o"}
                 subtitle={modalConfig.status === 'completed'
-                    ? "Confirme que a transferência via PIX foi realizada com sucesso."
-                    : "Esta ação informará ao afiliado que a solicitação foi negada."
+                    ? "Confirme que a transferÃªncia via PIX foi realizada com sucesso."
+                    : "Esta aÃ§Ã£o informarÃ¡ ao afiliado que a solicitaÃ§Ã£o foi negada."
                 }
                 icon={modalConfig.status === 'completed' ? CheckCircle2 : XCircle}
                 variant={modalConfig.status === 'completed' ? 'emerald' : 'red'}
@@ -200,8 +200,8 @@ export function AdminPayoutsManagementPanel({ initialPayouts }: { initialPayouts
                             color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
                         }}>
                         {modalConfig.status === 'completed'
-                            ? "Ao confirmar, o status do saque será atualizado para 'Pago' e o valor será deduzido permanentemente do saldo do afiliado."
-                            : "Tem certeza que deseja rejeitar esta solicitação? O saldo retornará para a conta do afiliado."
+                            ? "Ao confirmar, o status do saque serÃ¡ atualizado para 'Pago' e o valor serÃ¡ deduzido permanentemente do saldo do afiliado."
+                            : "Tem certeza que deseja rejeitar esta solicitaÃ§Ã£o? O saldo retornarÃ¡ para a conta do afiliado."
                         }
                     </Font>
                 </Stack>

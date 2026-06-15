@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import React, { useState } from 'react'
 import { Stack } from '@/components/store/base/stack'
@@ -28,7 +28,7 @@ import { generateAIProtocol, AIProtocolPreferences } from '@/lib/dal/remote'
 import { saveParsedData } from '@/lib/dal/remote'
 import { useQueryClient, useMutation } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
-import { useToast } from '@/hooks/use-toast'
+import { useToast } from '@/components/store/hooks/use-toast'
 import { DomainStepCard } from '../intermediary/domain-step-card'
 
 interface AIProtocolFormProps {
@@ -78,7 +78,7 @@ export function AIProtocolForm({ userId, onSuccess }: AIProtocolFormProps) {
         },
         onMutate: () => {
             setLoading(true)
-            toast({ title: "✨ Gerando seu protocolo...", description: "Aguarde enquanto a IA processa seu plano (isso pode demorar alguns segundos)." })
+            toast({ title: "âœ¨ Gerando seu protocolo...", description: "Aguarde enquanto a IA processa seu plano (isso pode demorar alguns segundos)." })
         },
         onSuccess: (result) => {
             setLoading(false)
@@ -90,7 +90,7 @@ export function AIProtocolForm({ userId, onSuccess }: AIProtocolFormProps) {
         onError: (err: any) => {
             setLoading(false)
             setError(err.message)
-            toast({ variant: "destructive", title: "Erro na geração", description: err.message })
+            toast({ variant: "destructive", title: "Erro na geraÃ§Ã£o", description: err.message })
         }
     })
 
@@ -128,9 +128,9 @@ export function AIProtocolForm({ userId, onSuccess }: AIProtocolFormProps) {
                             value={goal}
                             onChange={(v) => setGoal(v as any)}
                             options={[
-                                { value: 'bulking', label: 'Bulking', description: 'Ganho de massa e força muscular.' },
-                                { value: 'cutting', label: 'Cutting', description: 'Queima de gordura e definição.' },
-                                { value: 'maintenance', label: 'Manutenção', description: 'Manter físico e melhorar qualidade.' },
+                                { value: 'bulking', label: 'Bulking', description: 'Ganho de massa e forÃ§a muscular.' },
+                                { value: 'cutting', label: 'Cutting', description: 'Queima de gordura e definiÃ§Ã£o.' },
+                                { value: 'maintenance', label: 'ManutenÃ§Ã£o', description: 'Manter fÃ­sico e melhorar qualidade.' },
                             ]}
                         />
 
@@ -138,16 +138,16 @@ export function AIProtocolForm({ userId, onSuccess }: AIProtocolFormProps) {
 
                         <Grid cols={{ base: 2, md: 2 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
                             <FormSelect
-                                label="Divisão"
-                                placeholder="Selecione a divisão..."
+                                label="DivisÃ£o"
+                                placeholder="Selecione a divisÃ£o..."
                                 value={workoutSplit}
                                 onChange={(v) => setWorkoutSplit(v)}
                                 options={[
                                     { value: 'ppl', label: 'PPL', description: 'Push / Pull / Legs' },
                                     { value: 'upper_lower', label: 'Upper/Lower', description: 'Superior / Inferior' },
-                                    { value: 'one_group', label: 'ABCDE', description: '1 Músculo por dia' },
+                                    { value: 'one_group', label: 'ABCDE', description: '1 MÃºsculo por dia' },
                                     { value: 'full_body', label: 'Full Body', description: 'Corpo todo' },
-                                    { value: 'other', label: 'Personalizado', description: 'Descreva sua divisão' },
+                                    { value: 'other', label: 'Personalizado', description: 'Descreva sua divisÃ£o' },
                                 ]}
                             />
                             <FormSwitch
@@ -161,7 +161,7 @@ export function AIProtocolForm({ userId, onSuccess }: AIProtocolFormProps) {
                             />
                             {workoutSplit === 'other' && (
                                 <Box mdColSpan={2}>
-                                    <Input label="Descrição da Divisão" placeholder="Ex: Peito e Costas..." value={customSplit} onChange={(e) => setCustomSplit(e.target.value)} />
+                                    <Input label="DescriÃ§Ã£o da DivisÃ£o" placeholder="Ex: Peito e Costas..." value={customSplit} onChange={(e) => setCustomSplit(e.target.value)} />
                                 </Box>
                             )}
                         </Grid>
@@ -169,8 +169,8 @@ export function AIProtocolForm({ userId, onSuccess }: AIProtocolFormProps) {
                         <Box height="px" bg={STORE_TOKENS.COLORS.WHITE} bgOpacity={STORE_TOKENS.OPACITY.LOW} fullWidth />
 
                         <Grid cols={{ base: 2, md: 2 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
-                            <Textarea label="Pontos Fortes" placeholder="Peitoral, Braços..." value={strongMuscles} onChange={(e) => setStrongMuscles(e.target.value)} />
-                            <Textarea label="Pontos Fracos" placeholder="Dorsais, Quadríceps..." value={weakMuscles} onChange={(e) => setWeakMuscles(e.target.value)} />
+                            <Textarea label="Pontos Fortes" placeholder="Peitoral, BraÃ§os..." value={strongMuscles} onChange={(e) => setStrongMuscles(e.target.value)} />
+                            <Textarea label="Pontos Fracos" placeholder="Dorsais, QuadrÃ­ceps..." value={weakMuscles} onChange={(e) => setWeakMuscles(e.target.value)} />
                         </Grid>
                     </Stack>
                 </DomainStepCard>
@@ -179,8 +179,8 @@ export function AIProtocolForm({ userId, onSuccess }: AIProtocolFormProps) {
             {currentStep === 2 && (
                 <DomainStepCard
                     index={2}
-                    title="Perfil Aeróbico"
-                    description="Modalidades preferidas para queima calórica."
+                    title="Perfil AerÃ³bico"
+                    description="Modalidades preferidas para queima calÃ³rica."
                     icon={Zap}
                 >
                     <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
@@ -193,7 +193,7 @@ export function AIProtocolForm({ userId, onSuccess }: AIProtocolFormProps) {
                                 color: "zinc-500",
                             }}>Modalidades Aceitas</Font>
                         <Grid cols={{ base: 2, md: 4 }} gap={STORE_TOKENS.SPACING.ELEMENT}>
-                            {['Esteira', 'Bike', 'Escada', 'Corrida', 'HIIT', 'Natação', 'Caminhada', 'Corda'].map(c => (
+                            {['Esteira', 'Bike', 'Escada', 'Corrida', 'HIIT', 'NataÃ§Ã£o', 'Caminhada', 'Corda'].map(c => (
                                 <FormCheckbox
                                     key={c}
                                     label={c.toUpperCase()}
@@ -210,19 +210,19 @@ export function AIProtocolForm({ userId, onSuccess }: AIProtocolFormProps) {
                 <DomainStepCard
                     index={3}
                     title="Plano Nutricional"
-                    description="Personalização da base alimentar diária."
+                    description="PersonalizaÃ§Ã£o da base alimentar diÃ¡ria."
                     icon={Utensils}
                 >
                     <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                         <FormSelect
-                            label="Refeições por dia"
+                            label="RefeiÃ§Ãµes por dia"
                             value={String(mealsPerDay)}
                             onChange={(v) => setMealsPerDay(Number(v))}
-                            options={[{ value: '3', label: '3 Refeições' }, { value: '4', label: '4 Refeições' }, { value: '5', label: '5 Refeições' }, { value: '6', label: '6 Refeições' }]}
+                            options={[{ value: '3', label: '3 RefeiÃ§Ãµes' }, { value: '4', label: '4 RefeiÃ§Ãµes' }, { value: '5', label: '5 RefeiÃ§Ãµes' }, { value: '6', label: '6 RefeiÃ§Ãµes' }]}
                         />
                         <Grid cols={{ base: 2, md: 2 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
                             <Textarea label="Gosto de" placeholder="Frango, Arroz, Ovos..." value={foodLikes} onChange={(e) => setFoodLikes(e.target.value)} />
-                            <Textarea label="Não Gosto / Restrições" placeholder="Lactose, Brócolis..." value={foodDislikes} onChange={(e) => setFoodDislikes(e.target.value)} />
+                            <Textarea label="NÃ£o Gosto / RestriÃ§Ãµes" placeholder="Lactose, BrÃ³colis..." value={foodDislikes} onChange={(e) => setFoodDislikes(e.target.value)} />
                         </Grid>
                     </Stack>
                 </DomainStepCard>
@@ -245,7 +245,7 @@ export function AIProtocolForm({ userId, onSuccess }: AIProtocolFormProps) {
                 {currentStep === 1 ? (
                     <Button variant="primary" size="lg" fullWidth onClick={handleNext}>
                         <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                            <Font variant="sub-tiny" weight="black" uppercase italic>Próxima Etapa</Font>
+                            <Font variant="sub-tiny" weight="black" uppercase italic>PrÃ³xima Etapa</Font>
                             <Icon icon={ArrowRight} size="xs" />
                         </Stack>
                     </Button>
@@ -261,7 +261,7 @@ export function AIProtocolForm({ userId, onSuccess }: AIProtocolFormProps) {
                         {currentStep < 3 ? (
                             <Button variant="primary" size="lg" fullWidth onClick={handleNext}>
                                 <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                    <Font variant="sub-tiny" weight="black" uppercase italic>Próxima Etapa</Font>
+                                    <Font variant="sub-tiny" weight="black" uppercase italic>PrÃ³xima Etapa</Font>
                                     <Icon icon={ArrowRight} size="xs" />
                                 </Stack>
                             </Button>

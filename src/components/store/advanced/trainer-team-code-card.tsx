@@ -1,8 +1,8 @@
-'use client'
+﻿'use client'
 
 import React from 'react'
 import { Copy, Check, ShieldCheck } from 'lucide-react'
-import { useToast } from '@/hooks/use-toast'
+import { useToast } from '@/components/store/hooks/use-toast'
 import { GlassPanel } from '@/components/store/base/surface'
 import { Stack } from '@/components/store/base/stack'
 import { Box } from '@/components/store/base/box'
@@ -29,8 +29,8 @@ export function TrainerTeamCodeCard({ trainerCode }: TrainerTeamCodeCardProps) {
         setCopied(true)
 
         toast({
-            title: 'Código copiado!',
-            description: 'Envie este código para seus alunos ou use o link do seu perfil público.',
+            title: 'CÃ³digo copiado!',
+            description: 'Envie este cÃ³digo para seus alunos ou use o link do seu perfil pÃºblico.',
         })
 
         window.setTimeout(() => setCopied(false), 2000)
@@ -49,7 +49,7 @@ export function TrainerTeamCodeCard({ trainerCode }: TrainerTeamCodeCardProps) {
                                 {...{
                                     color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
                                 }}>
-                                Código da Equipe
+                                CÃ³digo da Equipe
                             </Font>
                         </Inline>
 
@@ -58,7 +58,7 @@ export function TrainerTeamCodeCard({ trainerCode }: TrainerTeamCodeCardProps) {
                             {...{
                                 color: STORE_TOKENS.COLORS.TEXT.MUTED,
                             }}>
-                            Seus alunos usarão este código no cadastro para se vincularem a você.
+                            Seus alunos usarÃ£o este cÃ³digo no cadastro para se vincularem a vocÃª.
                         </Font>
                     </Stack>
                 </Box>
@@ -80,7 +80,7 @@ export function TrainerTeamCodeCard({ trainerCode }: TrainerTeamCodeCardProps) {
                             <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                 <Icon icon={copied ? Check : Copy} size="sm" />
                                 <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL}>
-                                    {copied ? 'Copiado!' : 'Copiar Código'}
+                                    {copied ? 'Copiado!' : 'Copiar CÃ³digo'}
                                 </Font>
                             </Stack>
                         </Button>

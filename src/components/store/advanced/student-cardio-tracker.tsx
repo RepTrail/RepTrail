@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import React, { useState } from 'react'
 import { Stack } from '@/components/store/base/stack'
@@ -14,7 +14,7 @@ import { Font } from '@/components/store/base/font'
 import { Surface } from '@/components/store/base/surface'
 
 import { useQueryClient } from '@/lib/dal'
-import { useToast } from '@/hooks/use-toast'
+import { useToast } from '@/components/store/hooks/use-toast'
 import { Modal } from '@/components/store/advanced/modal'
 
 interface StudentCardioTrackerProps {
@@ -112,13 +112,13 @@ export function StudentCardioTracker({ userId }: StudentCardioTrackerProps) {
                     setSeconds(0)
                     setLogId(null)
 
-                    actions.finishCardioSession(logId, 'Concluído automaticamente', undefined, 100).then((res) => {
+                    actions.finishCardioSession(logId, 'ConcluÃ­do automaticamente', undefined, 100).then((res) => {
                         if (res.success) {
                             queryClient.invalidateQueries({ queryKey: QUERY_KEYS.cardio.logs(userId) })
                             queryClient.invalidateQueries({ queryKey: QUERY_KEYS.cardio.session })
                             toast({
                                 title: "Sucesso",
-                                description: "Cardio concluído automaticamente por atingir o tempo!"
+                                description: "Cardio concluÃ­do automaticamente por atingir o tempo!"
                             })
                         }
                     })
@@ -153,7 +153,7 @@ export function StudentCardioTracker({ userId }: StudentCardioTrackerProps) {
             } else {
                 toast({
                     title: "Erro",
-                    description: "Erro ao iniciar sessão",
+                    description: "Erro ao iniciar sessÃ£o",
                     variant: "destructive"
                 })
             }
@@ -199,7 +199,7 @@ export function StudentCardioTracker({ userId }: StudentCardioTrackerProps) {
         } else {
             toast({
                 title: "Erro",
-                description: "Erro ao finalizar sessão",
+                description: "Erro ao finalizar sessÃ£o",
                 variant: "destructive"
             })
         }
@@ -265,7 +265,7 @@ export function StudentCardioTracker({ userId }: StudentCardioTrackerProps) {
                 </Stack>
             )}
             <CardioTimerCard
-                title={currentCardio.cardio?.name?.toUpperCase() || currentCardio.name?.toUpperCase() || 'ATIVIDADE AERÓBICA'}
+                title={currentCardio.cardio?.name?.toUpperCase() || currentCardio.name?.toUpperCase() || 'ATIVIDADE AERÃ“BICA'}
                 duration={`${displayMinutes} MIN`}
                 intensity={currentCardio.suggested_intensity?.toUpperCase() || 'MODERADA'}
                 remainingTime={isCompleted ? "00:00" : formatTime(seconds, targetMinutes)}
@@ -294,7 +294,7 @@ export function StudentCardioTracker({ userId }: StudentCardioTrackerProps) {
                     {...{
                         color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
                     }}>
-                    Você realizou {Math.floor(seconds / 60)} minuto(s) de atividade. Ao encerrar agora, o progresso será salvo proporcionalmente.
+                    VocÃª realizou {Math.floor(seconds / 60)} minuto(s) de atividade. Ao encerrar agora, o progresso serÃ¡ salvo proporcionalmente.
                 </Font>
             </Modal>
         </Stack>

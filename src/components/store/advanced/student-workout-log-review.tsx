@@ -1,7 +1,7 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
-import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { useOptimisticMutation } from '@/lib/dal'
 import { useQueryClient } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { ENTITIES } from '@/lib/outbox-db'
@@ -15,7 +15,7 @@ import { Separator } from '@/components/store/base/separator'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { ChevronLeft, CheckCircle, Save, Dumbbell } from 'lucide-react'
 import Link from 'next/link'
-import { useToast } from '@/hooks/use-toast'
+import { useToast } from '@/components/store/hooks/use-toast'
 import { useRouter } from 'next/navigation'
 
 interface Load {
@@ -72,7 +72,7 @@ export function WorkoutLogReview({ logId, userId, workoutName, completedAt, load
     // Group loads by exercise name
     const grouped = (Array.isArray(loads) ? loads : []).reduce((acc, load) => {
         if (!load) return acc
-        const name = load.exercise?.name || 'Exercício'
+        const name = load.exercise?.name || 'ExercÃ­cio'
         if (!acc[name]) acc[name] = []
         acc[name].push(load)
         return acc
@@ -87,7 +87,7 @@ export function WorkoutLogReview({ logId, userId, workoutName, completedAt, load
             updateMutation({ loadId, weightKg: w, repsPerformed: r })
         })
 
-        toast({ title: 'Salvo!', description: 'Alterações enviadas para sincronização.' })
+        toast({ title: 'Salvo!', description: 'AlteraÃ§Ãµes enviadas para sincronizaÃ§Ã£o.' })
         router.push('/dashboard/student')
     }
 
@@ -131,7 +131,7 @@ export function WorkoutLogReview({ logId, userId, workoutName, completedAt, load
                                     {...{
                                         color: "zinc-400",
                                     }}>
-                                    Revisado em {date} às {time} • {Array.isArray(loads) ? loads.length : 0} séries
+                                    Revisado em {date} Ã s {time} â€¢ {Array.isArray(loads) ? loads.length : 0} sÃ©ries
                                 </Font>
                             </Box>
                         </Stack>
@@ -221,7 +221,7 @@ export function WorkoutLogReview({ logId, userId, workoutName, completedAt, load
                                                     weight="black"
                                                     {...{
                                                         color: "zinc-500",
-                                                    }}>×</Font>
+                                                    }}>Ã—</Font>
 
                                                 {/* Reps input */}
                                                 <Box display="flex" align="center" gap={STORE_TOKENS.SPACING.NONE}>
@@ -252,7 +252,7 @@ export function WorkoutLogReview({ logId, userId, workoutName, completedAt, load
                     ))}
                 </Stack>
 
-                {/* Save button — floating at the bottom */}
+                {/* Save button â€” floating at the bottom */}
                 <Box
                     position="fixed"
                     bottom={24}
@@ -272,7 +272,7 @@ export function WorkoutLogReview({ logId, userId, workoutName, completedAt, load
                             gap={STORE_TOKENS.SPACING.ELEMENT}
                         >
                             <Icon icon={Save} size="sm" />
-                            Salvar Alterações
+                            Salvar AlteraÃ§Ãµes
                         </Button>
                     </Box>
                 </Box>

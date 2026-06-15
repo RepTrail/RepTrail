@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { STORE_TOKENS } from '@/components/store/constants/tokens';
 
 import {
@@ -9,7 +9,7 @@ import {
     ToastTitle,
     ToastViewport,
 } from "@/components/store/base/toast"
-import { useToast } from "@/hooks/use-toast"
+import { useToast } from "@/components/store/hooks/use-toast"
 import { Stack } from "@/components/store/base/stack"
 
 export function Toaster() {

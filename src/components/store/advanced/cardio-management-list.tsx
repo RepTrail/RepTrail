@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import React from 'react'
 import { Grid } from '@/components/store/base/grid'
@@ -8,7 +8,7 @@ import { Activity } from 'lucide-react'
 import { EmptyState } from '@/components/store/intermediary/empty-state'
 import { RegistryActionModal, RegistryActionType } from '@/components/store/advanced/registry-action-modal'
 import { useRouter } from 'next/navigation'
-import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { useOptimisticMutation } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { ENTITIES } from '@/lib/outbox-db'
 import { AssignedStudentInfo } from '@/components/store/intermediary/assigned-student-mini-card'
@@ -177,10 +177,10 @@ export function CardioManagementList({
                 title="SEM CARDIOS"
                 description={
                     mode === 'trainer'
-                        ? 'Crie seu primeiro modelo de cardio para começar a atribuir.'
+                        ? 'Crie seu primeiro modelo de cardio para comeÃ§ar a atribuir.'
                         : mode === 'auto'
-                            ? "Você ainda não possui protocolos de cardio cadastrados."
-                            : "Seu treinador ainda não atribuiu cardios para sua conta."
+                            ? "VocÃª ainda nÃ£o possui protocolos de cardio cadastrados."
+                            : "Seu treinador ainda nÃ£o atribuiu cardios para sua conta."
                 }
             />
         )
@@ -233,11 +233,11 @@ export function CardioManagementList({
                         <ManagementCardPremium
                             key={cardio.id || idx}
                             title={cardio.name.toUpperCase()}
-                            description={cardio?.description || (mode === 'trainer' ? 'Sem descrição disponível.' : 'Protocolo oficial de cardio.')}
+                            description={cardio?.description || (mode === 'trainer' ? 'Sem descriÃ§Ã£o disponÃ­vel.' : 'Protocolo oficial de cardio.')}
                             days={assignedDays}
                             assignedStudents={assignedStudents}
                             mainStat={{ label: 'MINUTOS', value: cardio.duration_minutes || 0 }}
-                            date={cardio.created_at ? new Date(cardio.created_at).toLocaleDateString('pt-BR') : 'Data Indisponível'}
+                            date={cardio.created_at ? new Date(cardio.created_at).toLocaleDateString('pt-BR') : 'Data IndisponÃ­vel'}
                             icon={Activity}
                             mode={mode}
                             registryType="cardio"

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { STORE_TOKENS } from '@/components/store/constants/tokens';
 
 import { useState, useEffect } from 'react'
@@ -6,7 +6,7 @@ import { Modal } from '@/components/store/advanced/modal'
 import { Font } from '@/components/store/base/font'
 import { Stack } from '@/components/store/base/stack'
 import { Sparkles } from 'lucide-react'
-import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { useOptimisticMutation } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { ENTITIES } from '@/lib/outbox-db'
 
@@ -70,10 +70,10 @@ export function StudentDashboardModals({ userId, showModal, hasTrainer }: Studen
             isOpen={isModalOpen && !isImpersonating}
             onClose={handleReject}
             title="Experimente o Auto Treino"
-            subtitle="Inteligência Artificial para sua Performance"
+            subtitle="InteligÃªncia Artificial para sua Performance"
             icon={Sparkles}
-            confirmLabel="Iniciar Teste Grátis"
-            cancelLabel="Agora Não"
+            confirmLabel="Iniciar Teste GrÃ¡tis"
+            cancelLabel="Agora NÃ£o"
             onConfirm={handleAccept}
             variant="orange"
             confirmVariant="primary"
@@ -93,7 +93,7 @@ export function StudentDashboardModals({ userId, showModal, hasTrainer }: Studen
                         {...{
                             color: "zinc-400",
                         }}>
-                        O Auto Treino utiliza nossa IA avançada para construir protocolos personalizados sob medida para o seu corpo e rotina.
+                        O Auto Treino utiliza nossa IA avanÃ§ada para construir protocolos personalizados sob medida para o seu corpo e rotina.
                     </Font>
                 </Stack>
                 <Stack gap={STORE_TOKENS.SPACING.NONE}>
@@ -105,7 +105,7 @@ export function StudentDashboardModals({ userId, showModal, hasTrainer }: Studen
                         {...{
                             color: "primary",
                         }}>
-                        ✓ IMPORTAÇÃO IA DE PDFS (TREINO/DIETA)
+                        âœ“ IMPORTAÃ‡ÃƒO IA DE PDFS (TREINO/DIETA)
                     </Font>
                     <Font
                         variant="sub-tiny"
@@ -115,7 +115,7 @@ export function StudentDashboardModals({ userId, showModal, hasTrainer }: Studen
                         {...{
                             color: "primary",
                         }}>
-                        ✓ PLAYER DE TREINO PROFISSIONAL
+                        âœ“ PLAYER DE TREINO PROFISSIONAL
                     </Font>
                     <Font
                         variant="sub-tiny"
@@ -125,7 +125,7 @@ export function StudentDashboardModals({ userId, showModal, hasTrainer }: Studen
                         {...{
                             color: "primary",
                         }}>
-                        ✓ GESTÃO DE CARDIO E ERGOGÊNICOS
+                        âœ“ GESTÃƒO DE CARDIO E ERGOGÃŠNICOS
                     </Font>
                 </Stack>
             </Stack>

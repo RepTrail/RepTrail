@@ -1,9 +1,9 @@
-'use client'
+﻿'use client'
 
 import React, { useState, useEffect } from 'react'
 import { useQuery, useQueryClient } from '@/lib/dal'
-import { useToast } from '@/hooks/use-toast'
-import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { useToast } from '@/components/store/hooks/use-toast'
+import { useOptimisticMutation } from '@/lib/dal'
 import {
     getDietDetails,
     estimateAllDietMacros
@@ -80,7 +80,7 @@ export function DietBuilderSmart({
         }
     }, [diet?.name, isEditingMeta])
 
-    // ── MUTATIONS ─────────────────────────────────────────────────────────────
+    // â”€â”€ MUTATIONS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     const { mutate: mutateMeta } = useOptimisticMutation({
         actionName: 'update-diet-meta',
@@ -220,7 +220,7 @@ export function DietBuilderSmart({
         }
     })
 
-    // ── HANDLERS ──────────────────────────────────────────────────────────────
+    // â”€â”€ HANDLERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     const handleMealDragStart = (e: React.DragEvent, id: string) => {
         setDraggedMealId(id)
@@ -279,10 +279,10 @@ export function DietBuilderSmart({
     const handleEstimateAll = async () => {
         try {
             setIsEstimatingAll(true)
-            toast({ title: 'Calculando...', description: 'A IA está analisando todos os itens da dieta.' })
+            toast({ title: 'Calculando...', description: 'A IA estÃ¡ analisando todos os itens da dieta.' })
             const res = await estimateAllDietMacros(diet.id)
             if (res.success) {
-                toast({ title: 'Concluído!', description: 'Todos os macros foram calculados com sucesso.' })
+                toast({ title: 'ConcluÃ­do!', description: 'Todos os macros foram calculados com sucesso.' })
                 queryClient.invalidateQueries({ queryKey })
             } else {
                 throw new Error((res as any).error)
@@ -305,7 +305,7 @@ export function DietBuilderSmart({
         return acc
     }, { p: 0, c: 0, f: 0, fib: 0 })
 
-    // ── LOADING STATE ─────────────────────────────────────────────────────────
+    // â”€â”€ LOADING STATE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     if (!diet) {
         return (
             <Box display="flex" direction="col" align="center" justify="center" minHeight="lg" gap={STORE_TOKENS.SPACING.SECTION}>
@@ -331,7 +331,7 @@ export function DietBuilderSmart({
         );
     }
 
-    // ── RENDER ────────────────────────────────────────────────────────────────
+    // â”€â”€ RENDER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     return (
         <Stack gap={STORE_TOKENS.SPACING.SECTION}>
             {/* Header: name, macros bar, assign button */}
@@ -359,7 +359,7 @@ export function DietBuilderSmart({
                     contextColor={contextColor}
                 />
             )}
-            {/* ── Macro totals bar (isolated section) ── */}
+            {/* â”€â”€ Macro totals bar (isolated section) â”€â”€ */}
             {!hideHeader && (
                 <Grid cols={{ base: 6, md: 5 }} gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
                     {/* PROT */}
@@ -510,10 +510,10 @@ export function DietBuilderSmart({
                         {...{
                             color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
                         }}>
-                        Refeições
+                        RefeiÃ§Ãµes
                     </Font>
                     <Badge
-                        label={`${meals.length} ${meals.length !== 1 ? 'refeições' : 'refeição'}`}
+                        label={`${meals.length} ${meals.length !== 1 ? 'refeiÃ§Ãµes' : 'refeiÃ§Ã£o'}`}
                         variant="glass"
                         color={(contextColor as any) || STORE_TOKENS.COLORS.BRAND}
                         size="sm"
@@ -539,7 +539,7 @@ export function DietBuilderSmart({
                                 onItemDragOver={handleItemDragOver}
                                 onItemDragEnd={handleItemDragEnd}
                                 onRemoveMeal={(id) => {
-                                    if (!confirm('Remover esta refeição inteira?')) return
+                                    if (!confirm('Remover esta refeiÃ§Ã£o inteira?')) return
                                     removeMealMutate({ id, dietId: diet.id })
                                 }}
                                 onRemoveItem={(id) => removeItemMutate({ id, dietId: diet.id })}
@@ -550,8 +550,8 @@ export function DietBuilderSmart({
                 ) : (
                     <EmptyState
                         icon={Utensils}
-                        title="NENHUMA REFEIÇÃO ADICIONADA"
-                        description="Use o formulário abaixo para começar."
+                        title="NENHUMA REFEIÃ‡ÃƒO ADICIONADA"
+                        description="Use o formulÃ¡rio abaixo para comeÃ§ar."
                     />
                 )}
             </Stack>

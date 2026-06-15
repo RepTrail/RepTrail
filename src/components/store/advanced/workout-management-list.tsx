@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import React from 'react'
 import { Grid } from '@/components/store/base/grid'
@@ -9,7 +9,7 @@ import { EmptyState } from '@/components/store/intermediary/empty-state'
 import { RegistryActionModal, RegistryActionType } from '@/components/store/advanced/registry-action-modal'
 import { WorkoutExercisesModal } from '@/components/store/advanced/workout-exercises-modal'
 import { useRouter } from 'next/navigation'
-import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { useOptimisticMutation } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { ENTITIES } from '@/lib/outbox-db'
 import { AssignedStudentInfo } from '@/components/store/intermediary/assigned-student-mini-card'
@@ -130,10 +130,10 @@ export function WorkoutManagementList({
                 title="SEM TREINOS"
                 description={
                     mode === 'trainer'
-                        ? (betaTesterMode ? 'Crie um novo treino para começar.' : 'Importe um PDF ou crie um novo treino para começar.')
+                        ? (betaTesterMode ? 'Crie um novo treino para comeÃ§ar.' : 'Importe um PDF ou crie um novo treino para comeÃ§ar.')
                         : mode === 'auto'
-                            ? "Você ainda não possui protocolos de treino cadastrados."
-                            : "Seu treinador ainda não atribuiu treinos para sua conta."
+                            ? "VocÃª ainda nÃ£o possui protocolos de treino cadastrados."
+                            : "Seu treinador ainda nÃ£o atribuiu treinos para sua conta."
                 }
             />
         )
@@ -199,11 +199,11 @@ export function WorkoutManagementList({
                         <ManagementCardPremium
                             key={workout.id || idx}
                             title={workout.name.toUpperCase()}
-                            description={workout?.description || (mode === 'trainer' ? 'Sem descrição disponível.' : 'Ficha oficial de treinamento.')}
+                            description={workout?.description || (mode === 'trainer' ? 'Sem descriÃ§Ã£o disponÃ­vel.' : 'Ficha oficial de treinamento.')}
                             days={assignedDays}
                             assignedStudents={assignedStudents}
-                            mainStat={{ label: 'EXERCÍCIOS', value: exercisesCount }}
-                            date={workout.created_at ? new Date(workout.created_at).toLocaleDateString('pt-BR') : 'Data Indisponível'}
+                            mainStat={{ label: 'EXERCÃCIOS', value: exercisesCount }}
+                            date={workout.created_at ? new Date(workout.created_at).toLocaleDateString('pt-BR') : 'Data IndisponÃ­vel'}
                             icon={Dumbbell}
                             mode={mode}
                             registryType="training"

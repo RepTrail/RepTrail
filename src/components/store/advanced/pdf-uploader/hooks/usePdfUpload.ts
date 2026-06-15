@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useToast } from '@/hooks/use-toast';
+﻿import { useState } from 'react';
+import { useToast } from '@/components/store/hooks/use-toast';
 import { actions, uploadPdf } from '@/lib/dal';
 import { prepareCardios, prepareErgogenics } from '../lib/helpers';
 
@@ -47,7 +47,7 @@ export function usePdfUpload({ type, role, bindingHooks, selectionHooks }: any) 
 
             if (role === 'trainer' && result.data?.detected_student_name) {
                 bindingHooks.setDetectedStudentName(result.data.detected_student_name);
-                // Sistema de auto-vínculo desativado a pedido do usuário
+                // Sistema de auto-vÃ­nculo desativado a pedido do usuÃ¡rio
                 bindingHooks.setStudentMatch(null);
                 bindingHooks.setBindingMode('skip');
             } else {
@@ -56,9 +56,9 @@ export function usePdfUpload({ type, role, bindingHooks, selectionHooks }: any) 
                 bindingHooks.setBindingMode('skip');
             }
 
-            toast({ title: "Processamento concluído!", description: "Revise os dados antes de salvar." });
+            toast({ title: "Processamento concluÃ­do!", description: "Revise os dados antes de salvar." });
         } catch (error: any) {
-            toast({ variant: "destructive", title: "Falha na importação", description: error.message });
+            toast({ variant: "destructive", title: "Falha na importaÃ§Ã£o", description: error.message });
         } finally {
             setUploading(false);
             setParsing(false);

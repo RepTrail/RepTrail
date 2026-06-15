@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect } from 'react'
 import { Plus, Trash2, TrendingDown, Edit3 } from 'lucide-react'
@@ -13,8 +13,8 @@ import { FormSelect } from '@/components/store/base/form-select'
 import { Inline } from '@/components/store/base/layout'
 import { Modal } from '@/components/store/advanced/modal'
 import { addOperationalCost, deleteOperationalCost, updateOperationalCost } from '@/lib/dal/remote'
-import { useToast } from '@/hooks/use-toast'
-import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { useToast } from '@/components/store/hooks/use-toast'
+import { useOptimisticMutation } from '@/lib/dal'
 import { ENTITIES } from '@/lib/outbox-db'
 import { ActionableListCard } from '@/components/store/intermediary/actionable-list-card'
 import { EmptyState } from '@/components/store/intermediary/empty-state'
@@ -153,11 +153,11 @@ export function AdminOperationalCosts({ initialCosts, totalMonthly, totalAllTime
                             <Icon icon={TrendingDown} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
                             <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{"Custos Operacionais"}</Font>
                         </Inline>
-                        <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{"Infraestrutura e operação mensal da plataforma."}</Font>
+                        <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{"Infraestrutura e operaÃ§Ã£o mensal da plataforma."}</Font>
                     </Stack>
                     <Stack direction="row" gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
                         <Badge
-                            label={`R$ ${(costs.reduce((sum, c) => sum + Number(c.amount), 0)).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} / mês`}
+                            label={`R$ ${(costs.reduce((sum, c) => sum + Number(c.amount), 0)).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} / mÃªs`}
                             color={STORE_TOKENS.COLORS.SUCCESS}
                             variant="solid"
                             rounded={STORE_TOKENS.RADIUS.SYSTEM}
@@ -200,7 +200,7 @@ export function AdminOperationalCosts({ initialCosts, totalMonthly, totalAllTime
                                             rounded={STORE_TOKENS.RADIUS.SYSTEM}
                                         />
                                         <Badge
-                                            label={cost.type === 'fixed' ? 'Fixo' : 'Variável'}
+                                            label={cost.type === 'fixed' ? 'Fixo' : 'VariÃ¡vel'}
                                             variant="glass"
                                             color={badgeColor}
                                             size="xs"
@@ -270,7 +270,7 @@ export function AdminOperationalCosts({ initialCosts, totalMonthly, totalAllTime
                     )}
                 </Stack>
             </Stack >
-            {/* Modal de Adição */}
+            {/* Modal de AdiÃ§Ã£o */}
             < Modal
                 isOpen={isAddModalOpen}
                 onClose={() => setIsAddModalOpen(false)
@@ -284,8 +284,8 @@ export function AdminOperationalCosts({ initialCosts, totalMonthly, totalAllTime
             >
                 <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                     <Input
-                        label="Descrição"
-                        placeholder="Ex: Servidor, Domínio, Marketing..."
+                        label="DescriÃ§Ã£o"
+                        placeholder="Ex: Servidor, DomÃ­nio, Marketing..."
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
                     />
@@ -304,7 +304,7 @@ export function AdminOperationalCosts({ initialCosts, totalMonthly, totalAllTime
                                 label="Tipo de Custo"
                                 options={[
                                     { label: 'Fixo', value: 'fixed', description: 'Gastos recorrentes mensais' },
-                                    { label: 'Variável', value: 'variable', description: 'Gastos esporádicos' }
+                                    { label: 'VariÃ¡vel', value: 'variable', description: 'Gastos esporÃ¡dicos' }
                                 ]}
                                 value={type}
                                 onChange={(val: any) => setType(val)}
@@ -313,20 +313,20 @@ export function AdminOperationalCosts({ initialCosts, totalMonthly, totalAllTime
                     </Stack>
                 </Stack>
             </Modal >
-            {/* Modal de Edição */}
+            {/* Modal de EdiÃ§Ã£o */}
             < Modal
                 isOpen={isEditModalOpen}
                 onClose={() => setIsEditModalOpen(false)}
                 title="Editar Custo"
                 subtitle={`Modificando: ${selectedCost?.description}`}
                 icon={Edit3}
-                confirmLabel="Salvar Alterações"
+                confirmLabel="Salvar AlteraÃ§Ãµes"
                 onConfirm={handleEditCost}
                 variant="blue"
             >
                 <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                     <Input
-                        label="Descrição"
+                        label="DescriÃ§Ã£o"
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
                     />
@@ -344,7 +344,7 @@ export function AdminOperationalCosts({ initialCosts, totalMonthly, totalAllTime
                                 label="Tipo de Custo"
                                 options={[
                                     { label: 'Fixo', value: 'fixed', description: 'Gastos recorrentes mensais' },
-                                    { label: 'Variável', value: 'variable', description: 'Gastos esporádicos' }
+                                    { label: 'VariÃ¡vel', value: 'variable', description: 'Gastos esporÃ¡dicos' }
                                 ]}
                                 value={type}
                                 onChange={(val: any) => setType(val)}
@@ -353,11 +353,11 @@ export function AdminOperationalCosts({ initialCosts, totalMonthly, totalAllTime
                     </Stack>
                 </Stack>
             </Modal >
-            {/* Modal de Exclusão */}
+            {/* Modal de ExclusÃ£o */}
             < Modal
                 isOpen={isDeleteModalOpen}
                 onClose={() => setIsDeleteModalOpen(false)}
-                title="Confirmar Exclusão"
+                title="Confirmar ExclusÃ£o"
                 subtitle={`Deseja realmente apagar o custo: ${selectedCost?.description}?`}
                 icon={Trash2}
                 variant="red"
@@ -369,7 +369,7 @@ export function AdminOperationalCosts({ initialCosts, totalMonthly, totalAllTime
                     {...{
                         color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
                     }}>
-                    Esta ação não pode ser desfeita e removerá o registro permanentemente do sistema.
+                    Esta aÃ§Ã£o nÃ£o pode ser desfeita e removerÃ¡ o registro permanentemente do sistema.
                 </Font>
             </Modal >
         </Stack >

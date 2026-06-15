@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { STORE_TOKENS } from '@/components/store/constants/tokens';
 
 import { useState } from 'react'
@@ -8,8 +8,8 @@ import { Icon } from "@/components/store/base/icon"
 import { Modal } from "@/components/store/advanced/modal"
 import { Font } from "@/components/store/base/font"
 import { Stack } from "@/components/store/base/stack"
-import { useToast } from "@/hooks/use-toast"
-import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { useToast } from "@/components/store/hooks/use-toast"
+import { useOptimisticMutation } from '@/lib/dal'
 import { ENTITIES } from '@/lib/outbox-db'
 import { XCircle, AlertTriangle, ShieldAlert, ArrowRight } from 'lucide-react'
 
@@ -68,7 +68,7 @@ export function CancelSubscriptionButton() {
                 isOpen={open}
                 onClose={() => setOpen(false)}
                 title="Confirmar Cancelamento?"
-                subtitle="Sua assinatura será encerrada no Asaas"
+                subtitle="Sua assinatura serÃ¡ encerrada no Asaas"
                 icon={ShieldAlert}
                 variant="red"
                 confirmVariant="outline-red"
@@ -99,7 +99,7 @@ export function CancelSubscriptionButton() {
                                     {...{
                                         color: "zinc-400",
                                     }}>
-                                    Nenhuma nova cobrança será realizada.
+                                    Nenhuma nova cobranÃ§a serÃ¡ realizada.
                                 </Font>
                             </Box>
                             <Box display="flex" align="start" gap={STORE_TOKENS.SPACING.NONE}>
@@ -110,7 +110,7 @@ export function CancelSubscriptionButton() {
                                     {...{
                                         color: "zinc-400",
                                     }}>
-                                    Você poderá assinar novamente a qualquer momento.
+                                    VocÃª poderÃ¡ assinar novamente a qualquer momento.
                                 </Font>
                             </Box>
                         </Stack>

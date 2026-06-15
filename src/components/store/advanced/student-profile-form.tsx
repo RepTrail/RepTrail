@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import React, { useState } from 'react'
 import { Stack } from '@/components/store/base/stack'
@@ -22,11 +22,11 @@ import {
     Save
 } from 'lucide-react'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
-import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { useOptimisticMutation } from '@/lib/dal'
 import { ENTITIES } from '@/lib/outbox-db'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { useQueryClient } from '@/lib/dal'
-import { toast } from '@/hooks/use-toast'
+import { toast } from '@/components/store/hooks/use-toast'
 
 /**
  * StudentProfileForm: Advanced component encapsulating the profile editing interface.
@@ -85,7 +85,7 @@ export function StudentProfileForm({
             return { previousDetails, previousDetail }
         },
         onSuccess: () => {
-            toast({ title: 'Perfil Atualizado', description: 'Suas informações foram salvas e estão sendo sincronizadas.' })
+            toast({ title: 'Perfil Atualizado', description: 'Suas informaÃ§Ãµes foram salvas e estÃ£o sendo sincronizadas.' })
         },
         onError: (err, variables, ctx) => {
             queryClient.setQueryData(QUERY_KEYS.student.details(profile?.id), ctx?.previousDetails)
@@ -134,7 +134,7 @@ export function StudentProfileForm({
                         <Input 
                             label="NOME COMPLETO"
                             icon={<User size={16} />}
-                            placeholder="Ex: João Silva" 
+                            placeholder="Ex: JoÃ£o Silva" 
                             name="full_name"
                             defaultValue={profile?.full_name || profile?.name}
                         />
@@ -170,7 +170,7 @@ export function StudentProfileForm({
                         <Input 
                             label="OBJETIVO PRINCIPAL"
                             icon={<Target size={16} />}
-                            placeholder="Ex: Hipertrofia Máxima" 
+                            placeholder="Ex: Hipertrofia MÃ¡xima" 
                             name="goal"
                             defaultValue={profile?.details?.goal}
                         />
@@ -185,10 +185,10 @@ export function StudentProfileForm({
 
                         <Box mdColSpan={2}>
                             <FormSelect 
-                                label="NÍVEL DE ATIVIDADE"
+                                label="NÃVEL DE ATIVIDADE"
                                 name="activity_level"
                                 options={[
-                                    { value: 'sedentary', label: 'Sedentário' },
+                                    { value: 'sedentary', label: 'SedentÃ¡rio' },
                                     { value: 'light', label: 'Levemente Ativo' },
                                     { value: 'moderate', label: 'Moderado' },
                                     { value: 'active', label: 'Muito Ativo' },
@@ -201,8 +201,8 @@ export function StudentProfileForm({
                         <Box mdColSpan={2}>
                             <Surface variant="glass" padding={STORE_TOKENS.PADDING.CONTAINER} border="none" rounded={STORE_TOKENS.RADIUS.SYSTEM}>
                                 <FormCheckbox 
-                                    label="USO DE ERGOGÊNICOS / HORMÔNIOS"
-                                    description="Esta informação é importante para que seu treinador ajuste seu protocolo corretamente."
+                                    label="USO DE ERGOGÃŠNICOS / HORMÃ”NIOS"
+                                    description="Esta informaÃ§Ã£o Ã© importante para que seu treinador ajuste seu protocolo corretamente."
                                     name="steroid_use"
                                     defaultChecked={profile?.details?.steroid_use}
                                 />
@@ -211,8 +211,8 @@ export function StudentProfileForm({
 
                         <Box mdColSpan={2}>
                             <Textarea 
-                                label="OBSERVAÇÕES MÉDICAS / IMPORTANTES"
-                                placeholder="Ex: Lesão no ombro direito, asma..." 
+                                label="OBSERVAÃ‡Ã•ES MÃ‰DICAS / IMPORTANTES"
+                                placeholder="Ex: LesÃ£o no ombro direito, asma..." 
                                 name="observations"
                                 defaultValue={profile?.details?.observations}
                             />
@@ -232,12 +232,12 @@ export function StudentProfileForm({
                                 {...{
                                     color: STORE_TOKENS.COLORS.TEXT.MUTED,
                                 }}>
-                                Após salvar, algumas informações podem levar alguns segundos para atualizar em todo o sistema.
+                                ApÃ³s salvar, algumas informaÃ§Ãµes podem levar alguns segundos para atualizar em todo o sistema.
                             </Font>
                         </Box>
                         <Button type="submit" variant="outline-emerald" size="lg" fullWidth={{ base: true, md: false }} disabled={isPending}>
                             <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                <Font variant="body-sm" weight="black" uppercase italic>{isPending ? 'SALVANDO...' : 'SALVAR ALTERAÇÕES'}</Font>
+                                <Font variant="body-sm" weight="black" uppercase italic>{isPending ? 'SALVANDO...' : 'SALVAR ALTERAÃ‡Ã•ES'}</Font>
                                 <Icon icon={Save} size="xs" />
                             </Stack>
                         </Button>

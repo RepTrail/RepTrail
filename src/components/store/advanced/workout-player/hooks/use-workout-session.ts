@@ -1,10 +1,10 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect } from 'react'
 import { useQueryClient } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { ENTITIES } from '@/lib/outbox-db'
-import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { useOptimisticMutation } from '@/lib/dal'
 
 interface UseWorkoutSessionProps {
     userId: string
@@ -16,7 +16,7 @@ export function useWorkoutSession({ userId, workoutId, initialLogId }: UseWorkou
     const queryClient = useQueryClient()
     const [logId, setLogId] = useState<string | null>(initialLogId || null)
 
-    // ─── Mutations ──────────────────────────────────────────────────────────
+    // â”€â”€â”€ Mutations â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     const startWorkoutMutation = useOptimisticMutation({
         actionName: 'start-workout-log',
@@ -67,7 +67,7 @@ export function useWorkoutSession({ userId, workoutId, initialLogId }: UseWorkou
         }
     })
 
-    // ─── Lifecycle ───────────────────────────────────────────────────────────
+    // â”€â”€â”€ Lifecycle â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     // Auto-start workout if no logId exists
     useEffect(() => {

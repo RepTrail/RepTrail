@@ -1,8 +1,8 @@
-'use client'
+﻿'use client'
 
 import React, { useState, useRef, useEffect } from 'react'
 import { useQueryClient } from '@/lib/dal'
-import { useToast } from '@/hooks/use-toast'
+import { useToast } from '@/components/store/hooks/use-toast'
 import { Modal } from './modal'
 import { Button } from '@/components/store/base/button'
 import { Input } from '@/components/store/base/input'
@@ -145,7 +145,7 @@ export function UnifiedCreationDialog({
             }
 
             if (res && (res.error || res.success === false)) {
-                setError(res.error || res.message || 'Falha ao executar ação.')
+                setError(res.error || res.message || 'Falha ao executar aÃ§Ã£o.')
             } else {
                 toast({
                     title: 'Sucesso!',

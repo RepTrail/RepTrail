@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import React, { useState } from 'react'
 import { getAdminAffiliates, removeAffiliate } from '@/lib/dal/remote'
@@ -10,7 +10,7 @@ import { AffiliateListItem } from '@/components/store/intermediary/affiliate-lis
 import { EmptyState } from '@/components/store/intermediary/empty-state'
 import { HeartHandshake, Search, XCircle } from 'lucide-react'
 import { useQuery } from '@/lib/dal'
-import { useToast } from '@/hooks/use-toast'
+import { useToast } from '@/components/store/hooks/use-toast'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 /**
@@ -43,10 +43,10 @@ export function AdminAffiliatesList() {
     const confirmRemoveAffiliate = async () => {
         try {
             await removeAffiliate(deleteModal.id)
-            toast({ title: 'Afiliado removido', description: `${deleteModal.name} não é mais um afiliado.` })
+            toast({ title: 'Afiliado removido', description: `${deleteModal.name} nÃ£o Ã© mais um afiliado.` })
             refetch()
         } catch (error) {
-            toast({ variant: 'destructive', title: 'Erro ao remover', description: 'Não foi possível processar a solicitação.' })
+            toast({ variant: 'destructive', title: 'Erro ao remover', description: 'NÃ£o foi possÃ­vel processar a solicitaÃ§Ã£o.' })
         } finally {
             setDeleteModal({ open: false, id: '', name: '' })
         }
@@ -77,7 +77,7 @@ export function AdminAffiliatesList() {
                     <AffiliateListItem
                         key={affiliate.id}
                         affiliateId={affiliate.id}
-                        name={affiliate?.full_name || 'Usuário sem nome'}
+                        name={affiliate?.full_name || 'UsuÃ¡rio sem nome'}
                         email={affiliate.email || ''}
                         registrationDate={new Date(affiliate.created_at).toLocaleDateString('pt-BR')}
                         referrals={{
@@ -106,7 +106,7 @@ export function AdminAffiliatesList() {
                     {...{
                         color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
                     }}>
-                    Esta ação removerá imediatamente o acesso do usuário ao painel de afiliado e interromperá o rastreamento de novas comissões.
+                    Esta aÃ§Ã£o removerÃ¡ imediatamente o acesso do usuÃ¡rio ao painel de afiliado e interromperÃ¡ o rastreamento de novas comissÃµes.
                 </Font>
             </Modal>
         </Stack>

@@ -1,11 +1,11 @@
-'use client'
+﻿'use client'
 
 import React, { useState, useTransition } from 'react'
 import { Camera, Calendar, X, Maximize2, Pencil, Check, ChevronLeft, ChevronRight, Filter } from 'lucide-react'
 import { Input } from '@/components/store/base/input'
 import { useQueryClient } from '@/lib/dal'
-import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
-import { useToast } from '@/hooks/use-toast'
+import { useOptimisticMutation } from '@/lib/dal'
+import { useToast } from '@/components/store/hooks/use-toast'
 import { ENTITIES } from '@/lib/outbox-db'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import Image from 'next/image'
@@ -101,7 +101,7 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
             return { previous }
         },
         onSuccess: () => {
-            toast({ title: "Removido!", description: "O registro de fotos está sendo removido." })
+            toast({ title: "Removido!", description: "O registro de fotos estÃ¡ sendo removido." })
         },
         onError: (err, variables, ctx) => {
             queryClient.setQueryData(QUERY_KEYS.student.photos(studentId || 'me'), ctx?.previous)
@@ -124,7 +124,7 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
             return { previous }
         },
         onSuccess: () => {
-            toast({ title: "Data atualizada!", description: "A data será refletida em todo o sistema em instantes." })
+            toast({ title: "Data atualizada!", description: "A data serÃ¡ refletida em todo o sistema em instantes." })
         },
         onError: (err, variables, ctx) => {
             queryClient.setQueryData(QUERY_KEYS.student.photos(studentId || 'me'), ctx?.previous)
@@ -159,7 +159,7 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
             <EmptyState
                 icon={Camera}
                 title="NENHUMA FOTO ENCONTRADA"
-                description="Nenhum registro de progresso físico foi anexado a este perfil."
+                description="Nenhum registro de progresso fÃ­sico foi anexado a este perfil."
             />
         )
     }
@@ -317,7 +317,7 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                                                 {...{
                                                     color: "white",
                                                 }}>
-                                                Atualização de {new Date(set.created_at).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long' })}
+                                                AtualizaÃ§Ã£o de {new Date(set.created_at).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long' })}
                                             </Font>
                                         </Box>
 
@@ -470,7 +470,7 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
 <Modal
     isOpen={selectedPhotoIndex !== null}
     onClose={() => setSelectedPhotoIndex(null)}
-    title={selectedPhotoIndex !== null ? typeLabels[filteredItems[selectedPhotoIndex].type] : 'Visualização'}
+    title={selectedPhotoIndex !== null ? typeLabels[filteredItems[selectedPhotoIndex].type] : 'VisualizaÃ§Ã£o'}
     subtitle={selectedPhotoIndex !== null ? new Date(filteredItems[selectedPhotoIndex].date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' }) : ''}
     icon={Camera}
     hideCancel={true}
@@ -499,7 +499,7 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
             >
                 <Image
                     src={filteredItems[selectedPhotoIndex].url}
-                    alt="Visualização"
+                    alt="VisualizaÃ§Ã£o"
                     fill
                     sizes="(max-width: 768px) 100vw, 50vw"
                     priority
@@ -602,7 +602,7 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
     isOpen={deleteTargetId !== null}
     onClose={() => setDeleteTargetId(null)}
     title="Excluir Registro"
-    subtitle="Esta ação removerá permanentemente esta atualização de fotos do seu histórico."
+    subtitle="Esta aÃ§Ã£o removerÃ¡ permanentemente esta atualizaÃ§Ã£o de fotos do seu histÃ³rico."
     icon={X}
     variant="red"
     confirmLabel="Remover"
@@ -616,7 +616,7 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
             {...{
                 color: "zinc-400",
             }}>
-            Tem certeza que deseja remover este registro de fotos? Essa ação não poderá ser desfeita.
+            Tem certeza que deseja remover este registro de fotos? Essa aÃ§Ã£o nÃ£o poderÃ¡ ser desfeita.
         </Font>
     </Box>
 </Modal>

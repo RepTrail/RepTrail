@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { ChevronRight } from 'lucide-react'
@@ -9,8 +9,8 @@ import { Font } from '@/components/store/base/font'
 import { FileUpload } from '@/components/store/base/file-upload'
 import { Icon } from '@/components/store/base/icon'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
-import { useToast } from '@/hooks/use-toast'
-import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { useToast } from '@/components/store/hooks/use-toast'
+import { useOptimisticMutation } from '@/lib/dal'
 import { ENTITIES } from '@/lib/outbox-db'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { usePlanLimits } from '@/lib/dal'
@@ -75,7 +75,7 @@ export function ProgressPhotoUpload({ studentId, existingPhotos = [] }: Progress
         onSuccess: () => {
             toast({
                 title: 'Sucesso!',
-                description: 'Suas fotos estão sendo enviadas.',
+                description: 'Suas fotos estÃ£o sendo enviadas.',
             })
             // Reset local state if successful (optimistic)
             setPhotos({ front: null, back: null, side_left: null, side_right: null })
@@ -137,7 +137,7 @@ export function ProgressPhotoUpload({ studentId, existingPhotos = [] }: Progress
                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center" textAlign="center">
                     <Font variant="body" weight="bold">Limite Atingido</Font>
                     <Font variant="tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>
-                        Você já enviou {photosThisCycle} de {maxPhotos} fotos permitidas neste ciclo do plano.
+                        VocÃª jÃ¡ enviou {photosThisCycle} de {maxPhotos} fotos permitidas neste ciclo do plano.
                     </Font>
                 </Stack>
             </Stack>

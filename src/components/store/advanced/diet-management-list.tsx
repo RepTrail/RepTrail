@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import React from 'react'
 import { Grid } from '@/components/store/base/grid'
@@ -9,7 +9,7 @@ import { EmptyState } from '@/components/store/intermediary/empty-state'
 import { RegistryActionModal, RegistryActionType } from '@/components/store/advanced/registry-action-modal'
 import { DietPreviewDialog } from '@/components/store/advanced/diet-preview-dialog'
 import { useRouter } from 'next/navigation'
-import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { useOptimisticMutation } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { ENTITIES } from '@/lib/outbox-db'
 import { AssignedStudentInfo } from '@/components/store/intermediary/assigned-student-mini-card'
@@ -160,10 +160,10 @@ export function DietManagementList({
                 title="SEM DIETAS"
                 description={
                     mode === 'trainer'
-                        ? (betaTesterMode ? 'Crie uma nova dieta para começar.' : 'Importe um PDF ou crie uma nova dieta para começar.')
+                        ? (betaTesterMode ? 'Crie uma nova dieta para comeÃ§ar.' : 'Importe um PDF ou crie uma nova dieta para comeÃ§ar.')
                         : mode === 'auto'
-                            ? "Você ainda não possui protocolos alimentares cadastrados."
-                            : "Seu treinador ainda não atribuiu dietas para sua conta."
+                            ? "VocÃª ainda nÃ£o possui protocolos alimentares cadastrados."
+                            : "Seu treinador ainda nÃ£o atribuiu dietas para sua conta."
                 }
             />
         )
@@ -230,11 +230,11 @@ export function DietManagementList({
                         <ManagementCardPremium
                             key={diet.id || idx}
                             title={diet.name.toUpperCase()}
-                            description={diet?.description || (mode === 'trainer' ? 'Sem descrição disponível.' : 'Plano alimentar oficial.')}
+                            description={diet?.description || (mode === 'trainer' ? 'Sem descriÃ§Ã£o disponÃ­vel.' : 'Plano alimentar oficial.')}
                             days={assignedDays}
                             assignedStudents={assignedStudents}
-                            mainStat={{ label: 'REFEIÇÕES', value: mealsCount }}
-                            date={diet.created_at ? new Date(diet.created_at).toLocaleDateString('pt-BR') : 'Data Indisponível'}
+                            mainStat={{ label: 'REFEIÃ‡Ã•ES', value: mealsCount }}
+                            date={diet.created_at ? new Date(diet.created_at).toLocaleDateString('pt-BR') : 'Data IndisponÃ­vel'}
                             icon={Utensils}
                             mode={mode}
                             registryType="diet"

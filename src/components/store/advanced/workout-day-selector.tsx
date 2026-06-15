@@ -1,14 +1,14 @@
-'use client';
+﻿'use client';
 import { STORE_TOKENS } from '@/components/store/constants/tokens';
 
 import React, { useState } from 'react'
 import { FormSelect } from '@/components/store/base/form-select'
-import { useToast } from '@/hooks/use-toast'
+import { useToast } from '@/components/store/hooks/use-toast'
 import { Loader2 } from 'lucide-react'
 import { Stack } from '@/components/store/base/stack'
 import { Icon } from '@/components/store/base/icon'
 import { Box } from '@/components/store/base/box'
-import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { useOptimisticMutation } from '@/lib/dal'
 import { useQueryClient } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { ENTITIES } from '@/lib/outbox-db'
@@ -31,11 +31,11 @@ export function WorkoutDaySelector({ userId, assignmentId, dayOfWeek }: WorkoutD
     const options = [
         { label: 'Sem Dia Definido', value: 'none' },
         { label: 'Segunda-feira', value: '1' },
-        { label: 'Terça-feira', value: '2' },
+        { label: 'TerÃ§a-feira', value: '2' },
         { label: 'Quarta-feira', value: '3' },
         { label: 'Quinta-feira', value: '4' },
         { label: 'Sexta-feira', value: '5' },
-        { label: 'Sábado', value: '6' },
+        { label: 'SÃ¡bado', value: '6' },
         { label: 'Domingo', value: '0' },
     ]
 

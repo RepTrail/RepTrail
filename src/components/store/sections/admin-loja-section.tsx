@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { useState, useTransition } from 'react'
@@ -15,7 +15,7 @@ import { Icon } from '@/components/store/base/icon'
 import { EmptyState } from '@/components/store/intermediary/empty-state'
 import { ProductCard } from '@/components/store/intermediary/product-card'
 import { AdminProductEditor } from '@/components/store/advanced/admin-product-editor'
-import { useToast } from '@/hooks/use-toast'
+import { useToast } from '@/components/store/hooks/use-toast'
 import { ShoppingBag, Search, Plus, Package, XCircle } from 'lucide-react'
 
 export function AdminLojaSection() {
@@ -133,7 +133,7 @@ export function AdminLojaSection() {
                 confirmLabel="Remover"
             >
                 <Font variant="body" color={STORE_TOKENS.COLORS.TEXT.SECONDARY}>
-                    Esta ação removerá o produto do catálogo e não poderá ser desfeita. Vendas anteriores permanecerão no histórico.
+                    Esta aÃ§Ã£o removerÃ¡ o produto do catÃ¡logo e nÃ£o poderÃ¡ ser desfeita. Vendas anteriores permanecerÃ£o no histÃ³rico.
                 </Font>
             </Modal>
 

@@ -1,8 +1,8 @@
-'use client'
+﻿'use client'
 
 import React from 'react'
 import { Copy, Check } from 'lucide-react'
-import { useToast } from '@/hooks/use-toast'
+import { useToast } from '@/components/store/hooks/use-toast'
 import { Button } from '@/components/store/base/button'
 import { Icon } from '@/components/store/base/icon'
 import { Stack } from '@/components/store/base/stack'
@@ -31,7 +31,7 @@ export function CopyInviteButton({ trainerCode, fullWidth = { base: true, sm: fa
 
         toast({
             title: 'Link copiado!',
-            description: 'Envie este link para seus alunos se vincularem a você.',
+            description: 'Envie este link para seus alunos se vincularem a vocÃª.',
         })
 
         window.setTimeout(() => setCopied(false), 2000)

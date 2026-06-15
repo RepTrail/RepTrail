@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { useState, useTransition } from 'react'
@@ -10,7 +10,7 @@ import { UserListItem } from '@/components/store/intermediary/user-list-item'
 import { EmptyState } from '@/components/store/intermediary/empty-state'
 import { Font } from '@/components/store/base/font'
 import { Input } from '@/components/store/base/input'
-import { useToast } from '@/hooks/use-toast'
+import { useToast } from '@/components/store/hooks/use-toast'
 import { UserCheck, Search, XCircle } from 'lucide-react'
 
 export function AdminPersonaisSection() {
@@ -117,7 +117,7 @@ export function AdminPersonaisSection() {
                 confirmLabel="Deletar"
             >
                 <Font variant="body" color={STORE_TOKENS.COLORS.TEXT.SECONDARY}>
-                    Esta ação é irreversível e removerá todos os dados do profissional, incluindo acesso à plataforma de gestão.
+                    Esta aÃ§Ã£o Ã© irreversÃ­vel e removerÃ¡ todos os dados do profissional, incluindo acesso Ã  plataforma de gestÃ£o.
                 </Font>
             </Modal>
 

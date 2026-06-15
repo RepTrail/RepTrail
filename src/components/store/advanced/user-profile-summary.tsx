@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import React, { useState } from 'react'
 import Link from 'next/link'
@@ -11,7 +11,7 @@ import { FileUpload } from '@/components/store/base/file-upload'
 import { ShieldCheck } from 'lucide-react'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { uploadAvatar, uploadTrainerAvatar } from '@/lib/dal/remote'
-import { useToast } from '@/hooks/use-toast'
+import { useToast } from '@/components/store/hooks/use-toast'
 import { useRouter } from 'next/navigation'
 
 export interface UserProfileSummaryProps {
@@ -46,7 +46,7 @@ export function UserProfileSummary({
         setIsUploading(true)
         toast({
             title: "Salvando foto...",
-            description: "Aguarde enquanto sua imagem de perfil está sendo processada."
+            description: "Aguarde enquanto sua imagem de perfil estÃ¡ sendo processada."
         })
 
         try {
@@ -130,7 +130,7 @@ export function UserProfileSummary({
                         <Button variant="outline-orange" fullWidth size="lg">
                             <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                 <Icon icon={ShieldCheck} size="xs" />
-                                <Font variant="body-sm" weight="black" uppercase italic>VER PERFIL PÚBLICO</Font>
+                                <Font variant="body-sm" weight="black" uppercase italic>VER PERFIL PÃšBLICO</Font>
                             </Stack>
                         </Button>
                     </Link>
@@ -138,7 +138,7 @@ export function UserProfileSummary({
                     <Button variant="outline-orange" fullWidth size="lg" disabled>
                         <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                             <Icon icon={ShieldCheck} size="xs" />
-                            <Font variant="body-sm" weight="black" uppercase italic>VER PERFIL PÚBLICO</Font>
+                            <Font variant="body-sm" weight="black" uppercase italic>VER PERFIL PÃšBLICO</Font>
                         </Stack>
                     </Button>
                 )}

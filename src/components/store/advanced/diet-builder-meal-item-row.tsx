@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import React, { useState, useEffect } from 'react'
 import { Stack } from '@/components/store/base/stack'
@@ -12,7 +12,7 @@ import { Surface } from '@/components/store/base/surface'
 import { Separator } from '@/components/store/base/separator'
 import { Inline } from '@/components/store/base/layout'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
-import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { useOptimisticMutation } from '@/lib/dal'
 import { useQueryClient } from '@/lib/dal'
 import { estimateMacros, suggestSubstitution } from '@/lib/dal/remote'
 import { ENTITIES } from '@/lib/outbox-db'
@@ -67,7 +67,7 @@ export function DietBuilderMealItemRow({
 }: MealItemRowProps) {
     const queryClient = useQueryClient()
 
-    // Local state — zero-lag typing
+    // Local state â€” zero-lag typing
     const [foodName, setFoodName] = useState(item.food_name)
     const [quantity, setQuantity] = useState(item.quantity)
     const [protein, setProtein] = useState(item.protein)
@@ -218,7 +218,7 @@ export function DietBuilderMealItemRow({
                 align={{ base: 'stretch', lg: 'end' }}
                 padding={STORE_TOKENS.SPACING.ELEMENT}
             >
-                {/* Drag handle — desktop only */}
+                {/* Drag handle â€” desktop only */}
                 <Box display={{ base: 'none', lg: 'flex' }} align="center" justify="center" shrink={0}>
                     <Button
                         variant="outline-zinc"
@@ -383,7 +383,7 @@ export function DietBuilderMealItemRow({
                             isIconOnly
                             size="sm"
                             onClick={() => { setHasSubstitute(!hasSubstitute); markUnsaved() }}
-                            title="Adicionar/Remover Substituição"
+                            title="Adicionar/Remover SubstituiÃ§Ã£o"
                         >
                             <Icon icon={Repeat2} size="xs" />
                         </Button>
@@ -402,13 +402,13 @@ export function DietBuilderMealItemRow({
                             size="sm"
                             onClick={handleSave}
                             disabled={isSaved}
-                            title="Salvar alterações"
+                            title="Salvar alteraÃ§Ãµes"
                         >
                             <Icon icon={Save} size="xs" />
                         </Button>
                     </Inline>
 
-                    {/* Drag handle button — mobile only, right-aligned */}
+                    {/* Drag handle button â€” mobile only, right-aligned */}
                     <Box display={{ base: 'flex', lg: 'none' }}>
                         <Button variant="outline-blue" isIconOnly size="sm">
                             <Icon icon={GripVertical} size="xs" />
@@ -437,11 +437,11 @@ export function DietBuilderMealItemRow({
                                     {...{
                                         color: STORE_TOKENS.COLORS.BRAND,
                                     }}>
-                                    ↳ Substituição
+                                    â†³ SubstituiÃ§Ã£o
                                 </Font>
                             </Inline>
 
-                            {/* Substitution fields — same layout as main */}
+                            {/* Substitution fields â€” same layout as main */}
                             <Stack
                                 direction={{ base: 'col', md: 'row' }}
                                 gap={STORE_TOKENS.SPACING.ELEMENT}
@@ -468,7 +468,7 @@ export function DietBuilderMealItemRow({
                                             size="sm"
                                             value={subFoodName}
                                             onChange={(e) => { setSubFoodName(e.target.value); markUnsaved() }}
-                                            placeholder="Nome da substituição..."
+                                            placeholder="Nome da substituiÃ§Ã£o..."
                                         />
                                     </Stack>
                                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT} shrink={0}>
@@ -543,7 +543,7 @@ export function DietBuilderMealItemRow({
                                         size="sm"
                                         disabled={estimating.sub || !subFoodName}
                                         onClick={handleEstimateSub}
-                                        title="Calcular macros da substituição com IA"
+                                        title="Calcular macros da substituiÃ§Ã£o com IA"
                                     >
                                         <Icon icon={estimating.sub ? Loader2 : Sparkles} size="xs" spin={estimating.sub} />
                                     </Button>
@@ -553,7 +553,7 @@ export function DietBuilderMealItemRow({
                                         size="sm"
                                         disabled={estimating.suggest}
                                         onClick={handleSuggestSub}
-                                        title="Sugerir substituição similar com IA"
+                                        title="Sugerir substituiÃ§Ã£o similar com IA"
                                     >
                                         <Icon icon={estimating.suggest ? Loader2 : Utensils} size="xs" spin={estimating.suggest} />
                                     </Button>
@@ -562,7 +562,7 @@ export function DietBuilderMealItemRow({
                                         isIconOnly
                                         size="sm"
                                         onClick={handleClearSub}
-                                        title="Limpar campos da substituição"
+                                        title="Limpar campos da substituiÃ§Ã£o"
                                     >
                                         <Icon icon={Trash2} size="xs" />
                                     </Button>
@@ -572,7 +572,7 @@ export function DietBuilderMealItemRow({
                                         size="sm"
                                         onClick={handleSave}
                                         disabled={isSaved}
-                                        title="Salvar Alterações"
+                                        title="Salvar AlteraÃ§Ãµes"
                                     >
                                         <Icon icon={Check} size="xs" />
                                     </Button>

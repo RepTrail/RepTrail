@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useQuery, useQueryClient, useAuthUser, actions } from '@/lib/dal'
 import { useTransition } from 'react'
@@ -6,7 +6,7 @@ import { QUERY_KEYS } from '@/lib/query-keys'
 import { BarChart3, Activity, Banknote, TrendingUp, TrendingDown } from 'lucide-react'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
-import { useToast } from '@/hooks/use-toast'
+import { useToast } from '@/components/store/hooks/use-toast'
 
 import { AdminIndicatorsSection } from '@/components/store/sections/admin-indicators-section'
 import { AdminPayoutsManagementPanel } from '@/components/store/advanced/admin-payouts-management-panel'
@@ -81,23 +81,23 @@ export default function AdminDashboardPage() {
 
     return (
         <RegistryMain
-            title="Visão Geral"
-            subtitle="Visão geral financeira e operacional da plataforma RepTrail."
+            title="VisÃ£o Geral"
+            subtitle="VisÃ£o geral financeira e operacional da plataforma RepTrail."
             icon={BarChart3}
             contextLabel="Painel Admin"
             showTabs={false}
         >
             <RegistrySection
                 title="Indicadores de Performance"
-                subtitle="Visão consolidada de usuários, loja, finanças e parceiros."
+                subtitle="VisÃ£o consolidada de usuÃ¡rios, loja, finanÃ§as e parceiros."
                 icon={Activity}
             >
                 <AdminIndicatorsSection stats={stats || undefined} />
             </RegistrySection>
 
             <RegistrySection
-                title="Solicitações de Saque"
-                subtitle="Gestão de pagamentos e transferências para afiliados."
+                title="SolicitaÃ§Ãµes de Saque"
+                subtitle="GestÃ£o de pagamentos e transferÃªncias para afiliados."
                 icon={Banknote}
             >
                 <AdminPayoutsManagementPanel
@@ -107,7 +107,7 @@ export default function AdminDashboardPage() {
 
             <RegistrySection
                 title="Custos Operacionais"
-                subtitle="Infraestrutura e operação mensal da plataforma."
+                subtitle="Infraestrutura e operaÃ§Ã£o mensal da plataforma."
                 icon={TrendingDown}
             >
                 <AdminOperationalCostsPanel initialCosts={costs || []} />

@@ -1,8 +1,8 @@
-    'use client'
+﻿    'use client'
 
     import React, { useState, useEffect } from 'react'
     import { useRouter } from 'next/navigation'
-    import { useToast } from "@/hooks/use-toast"
+    import { useToast } from "@/components/store/hooks/use-toast"
 
     // Business Logic & Actions
     import { getWorkoutLastSession } from '@/lib/dal/remote'
@@ -49,7 +49,7 @@
         const router = useRouter()
         const [lastSession, setLastSession] = useState<any>(null)
 
-        // ─── DOMAIN HOOKS (Semantic Orchestration) ───────────────────────────────
+        // â”€â”€â”€ DOMAIN HOOKS (Semantic Orchestration) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         const { logId, mutations } = useWorkoutSession({ 
             userId, 
@@ -99,7 +99,7 @@
         const [isFinished, setIsFinished] = useState(false)
         const [feedback, setFeedback] = useState('')
 
-        // ─── EFFECTS ──────────────────────────────────────────────────────────────
+        // â”€â”€â”€ EFFECTS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         // Persistence Effect (Save current state for resume)
         useEffect(() => {
@@ -124,7 +124,7 @@
             })
         }, [userId, workout.id])
 
-        // ─── HANDLERS ─────────────────────────────────────────────────────────────
+        // â”€â”€â”€ HANDLERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         const handleFinishWorkout = () => {
             mutations.finishWorkout({
@@ -133,11 +133,11 @@
                 perceivedEffort: parseInt(summary.perceivedEffort),
                 adherenceStatus: summary.adherenceStatus
             })
-            toast({ title: "MISSÃO CUMPRIDA!", description: "Treino registrado com sucesso." })
+            toast({ title: "MISSÃƒO CUMPRIDA!", description: "Treino registrado com sucesso." })
             router.push('/dashboard/student')
         }
 
-        // ─── RENDER (Orchestration Layer) ─────────────────────────────────────────
+        // â”€â”€â”€ RENDER (Orchestration Layer) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         if (isFinished) {
             return (

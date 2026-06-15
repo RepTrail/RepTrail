@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { Stack } from '@/components/store/base/stack'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
@@ -7,11 +7,11 @@ import { useQuery } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { getStudentErgogenics, deleteErgogenic, addErgogenic, updateErgogenic } from '@/lib/dal/remote'
 import { getStudentProfile, getStudentTrainer } from '@/lib/dal/remote'
-import { useRealtimeSync } from '@/hooks/use-realtime-sync'
+import { useRealtimeSync } from '@/lib/dal'
 
 import { ErgogenicManagementList } from '@/components/store/advanced/ergogenic-management-list'
 import { RegistryActionModal, RegistryActionType } from '@/components/store/advanced/registry-action-modal'
-import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { useOptimisticMutation } from '@/lib/dal'
 import { ENTITIES } from '@/lib/outbox-db'
 
 interface StudentErgogenicManagementSmartProps {
@@ -92,7 +92,7 @@ export function StudentErgogenicManagementSmart({ userId }: StudentErgogenicMana
             const { id, created_at, updated_at, ...data } = item
             const res = await addErgogenic({
                 ...data,
-                name: `${item.name} (Cópia)`,
+                name: `${item.name} (CÃ³pia)`,
                 student_id: userId
             })
             if (res.error) throw new Error(res.error)

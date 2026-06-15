@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { Stack } from '@/components/store/base/stack'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
@@ -6,7 +6,7 @@ import { useQuery } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { getCardioLibrary } from '@/lib/dal/remote'
 import { getTrainerStudents } from '@/lib/dal/remote'
-import { useRealtimeSync } from '@/hooks/use-realtime-sync'
+import { useRealtimeSync } from '@/lib/dal'
 import { CardioManagementList } from '@/components/store/advanced/cardio-management-list'
 
 interface TrainerCardioLibrarySmartProps {

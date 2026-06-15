@@ -1,9 +1,9 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react'
-import { useToast } from "@/hooks/use-toast"
+import { useToast } from "@/components/store/hooks/use-toast"
 import { Ruler, Weight, User, ArrowRight, Target, Check } from "lucide-react"
-import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { useOptimisticMutation } from '@/lib/dal'
 import { useQueryClient } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { ENTITIES } from '@/lib/outbox-db'
@@ -90,11 +90,11 @@ export function AnamnesisForm({ initialData }: { initialData?: any }) {
             return { previousMetrics }
         },
         onSuccess: () => {
-            toast({ title: "Protocolo Atualizado!", description: "Suas métricas de elite foram calculadas e salvas." })
+            toast({ title: "Protocolo Atualizado!", description: "Suas mÃ©tricas de elite foram calculadas e salvas." })
         },
         onError: (err, variables, ctx) => {
             queryClient.setQueryData(QUERY_KEYS.student.metrics(initialData?.id), ctx?.previousMetrics)
-            toast({ variant: "destructive", title: "Erro inesperado", description: "Falha ao sincronizar métricas." })
+            toast({ variant: "destructive", title: "Erro inesperado", description: "Falha ao sincronizar mÃ©tricas." })
         }
     })
 
@@ -167,9 +167,9 @@ export function AnamnesisForm({ initialData }: { initialData?: any }) {
                                         {...{
                                             color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
                                         }}>
-                                        Medições Antropométricas
+                                        MediÃ§Ãµes AntropomÃ©tricas
                                     </Font>
-                                    <Badge label="Precisão Máxima" color={STORE_TOKENS.COLORS.SUCCESS} variant="glass" size="xs" />
+                                    <Badge label="PrecisÃ£o MÃ¡xima" color={STORE_TOKENS.COLORS.SUCCESS} variant="glass" size="xs" />
                                 </Stack>
                                 <Font
                                     variant="sub-tiny"
@@ -178,13 +178,13 @@ export function AnamnesisForm({ initialData }: { initialData?: any }) {
                                     {...{
                                         color: STORE_TOKENS.COLORS.TEXT.MUTED,
                                     }}>
-                                    Insira suas medidas exatas com fita métrica para o cálculo de elite.
+                                    Insira suas medidas exatas com fita mÃ©trica para o cÃ¡lculo de elite.
                                 </Font>
                             </Stack>
 
                             <Grid mdCols={3} gap={STORE_TOKENS.SPACING.CONTAINER}>
                                 <Input
-                                    label="PESCOÇO (CM)"
+                                    label="PESCOÃ‡O (CM)"
                                     type="number"
                                     placeholder="Ex: 40"
                                     value={formData.neck_cm}
@@ -214,7 +214,7 @@ export function AnamnesisForm({ initialData }: { initialData?: any }) {
                     <Grid mdCols={2} gap={STORE_TOKENS.SPACING.CONTAINER}>
                         <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                             <FormSwitch
-                                label="GÊNERO BIOLÓGICO"
+                                label="GÃŠNERO BIOLÃ“GICO"
                                 options={[
                                     { label: 'MASCULINO', value: 'male' },
                                     { label: 'FEMININO', value: 'female' }
@@ -225,11 +225,11 @@ export function AnamnesisForm({ initialData }: { initialData?: any }) {
                             />
 
                             <FormSelect
-                                label="NÍVEL DE ATIVIDADE"
+                                label="NÃVEL DE ATIVIDADE"
                                 value={formData?.activity_level}
                                 onChange={(v) => setFormData(prev => ({ ...prev, activity_level: v }))}
                                 options={[
-                                    { value: 'sedentary', label: 'Sedentário (Nenhum exercício)' },
+                                    { value: 'sedentary', label: 'SedentÃ¡rio (Nenhum exercÃ­cio)' },
                                     { value: 'light', label: 'Leve (1-3 dias/semana)' },
                                     { value: 'moderate', label: 'Moderado (3-5 dias/semana)' },
                                     { value: 'active', label: 'Intenso (6-7 dias/semana)' },
@@ -305,7 +305,7 @@ export function AnamnesisForm({ initialData }: { initialData?: any }) {
                                                         parseFloat(calculatedBF) < 15 ? 'blue' : 
                                                         parseFloat(calculatedBF) < 20 ? 'amber' : 'red',
                                                     }}>
-                                                    {calculatedBF ? (parseFloat(calculatedBF) < 10 ? 'ELITE' : parseFloat(calculatedBF) < 15 ? 'ATLETA' : parseFloat(calculatedBF) < 20 ? 'FITNESS' : 'INICIANTE') : 'Aguardando Medições'}
+                                                    {calculatedBF ? (parseFloat(calculatedBF) < 10 ? 'ELITE' : parseFloat(calculatedBF) < 15 ? 'ATLETA' : parseFloat(calculatedBF) < 20 ? 'FITNESS' : 'INICIANTE') : 'Aguardando MediÃ§Ãµes'}
                                                 </Font>
                                             </Stack>
                                         </Box>
@@ -321,7 +321,7 @@ export function AnamnesisForm({ initialData }: { initialData?: any }) {
                                 fullWidth 
                                 gap={STORE_TOKENS.SPACING.ELEMENT}
                             >
-                                Salvar Dados Antropométricos
+                                Salvar Dados AntropomÃ©tricos
                                 <Icon icon={ArrowRight} size="sm" />
                             </Button>
                         </Stack>

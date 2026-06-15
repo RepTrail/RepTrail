@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import React from 'react'
 import { Stack } from '@/components/store/base/stack'
@@ -13,7 +13,7 @@ import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { AssignmentBadge } from '@/components/store/intermediary/assignment-badge'
 import { Pencil, Check, X, Calendar, Dumbbell, BarChart3, Users2, HeartHandshake, Zap, Users, ClipboardList, Activity, TrendingUp, Sparkles, Utensils, FlaskConical, FileUp, Flame, CreditCard, UserCheck, LayoutDashboard, LucideIcon } from 'lucide-react'
 import { RegistryActionModal } from '@/components/store/advanced/registry-action-modal'
-import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { useOptimisticMutation } from '@/lib/dal'
 import { assignWorkout } from '@/lib/dal/remote'
 import { ENTITIES } from '@/lib/outbox-db'
 
@@ -111,7 +111,7 @@ export function WorkoutBuilderHeader({
                                     value={editName}
                                     onChange={e => setEditName(e.target.value)}
                                     onKeyDown={e => { if (e.key === 'Enter') onSave(); if (e.key === 'Escape') onCancel() }}
-                                    placeholder="Ex: Hipertrofia A - Peito/Tríceps"
+                                    placeholder="Ex: Hipertrofia A - Peito/TrÃ­ceps"
                                     size="lg"
                                     autoFocus
                                 />
@@ -122,12 +122,12 @@ export function WorkoutBuilderHeader({
                                     uppercase
                                     {...{
                                         color: STORE_TOKENS.COLORS.TEXT.MUTED,
-                                    }}>Descrição (Opcional)</Font>
+                                    }}>DescriÃ§Ã£o (Opcional)</Font>
                                 <Input
                                     value={editDesc}
                                     onChange={e => setEditDesc(e.target.value)}
                                     onKeyDown={e => { if (e.key === 'Escape') onCancel() }}
-                                    placeholder="Ex: Foco na contração e descanso rápido"
+                                    placeholder="Ex: Foco na contraÃ§Ã£o e descanso rÃ¡pido"
                                 />
                             </Stack>
                             <Stack direction={{ base: 'col', md: 'row' }} gap={STORE_TOKENS.SPACING.ELEMENT}>
@@ -195,7 +195,7 @@ export function WorkoutBuilderHeader({
                                 variant="description"
                                 {...{
                                     color: STORE_TOKENS.COLORS.TEXT.MUTED,
-                                }}>{description || 'Sem descrição'}</Font>
+                                }}>{description || 'Sem descriÃ§Ã£o'}</Font>
 
 
                         </Stack>
@@ -216,7 +216,7 @@ export function WorkoutBuilderHeader({
                         <Button variant="outline-orange" size="lg" shine fullWidth={{ base: true, md: false }} onClick={() => setIsAssignModalOpen(true)}>
                             <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                                 <Icon icon={Calendar} size="sm" color={STORE_TOKENS.COLORS.BRAND} />
-                                {assignments?.length ? "Gerenciar Atribuição" : "Atribuir"}
+                                {assignments?.length ? "Gerenciar AtribuiÃ§Ã£o" : "Atribuir"}
                             </Inline>
                         </Button>
                     </Box>

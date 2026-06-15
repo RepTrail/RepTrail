@@ -1,9 +1,9 @@
-'use client'
+﻿'use client'
 
 import { useQuery } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { actions } from '@/lib/dal'
-import { useRealtimeSync } from '@/hooks/use-realtime-sync'
+import { useRealtimeSync } from '@/lib/dal'
 import { CardioManagementList } from '@/components/store/advanced/cardio-management-list'
 import { Stack } from '@/components/store/base/stack'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'

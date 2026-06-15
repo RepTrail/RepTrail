@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect } from 'react'
 import { Zap, RefreshCw, Package, Pencil, Eye, ExternalLink, Search } from 'lucide-react'
@@ -11,7 +11,7 @@ import { Button } from '@/components/store/base/button'
 import { Input } from '@/components/store/base/input'
 import { FormSelect } from '@/components/store/base/form-select'
 import { Modal } from '@/components/store/advanced/modal'
-import { useToast } from '@/hooks/use-toast'
+import { useToast } from '@/components/store/hooks/use-toast'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 interface ProductEditorProps {
@@ -66,7 +66,7 @@ export function AdminProductEditor({ isOpen, onClose, product, onSave, onImport 
             }))
             setImportUrl('')
         } catch (e: any) {
-            toast({ variant: 'destructive', title: 'Erro na importação', description: e.message })
+            toast({ variant: 'destructive', title: 'Erro na importaÃ§Ã£o', description: e.message })
         } finally {
             setImporting(false)
         }
@@ -75,12 +75,12 @@ export function AdminProductEditor({ isOpen, onClose, product, onSave, onImport 
     const categories = [
         { label: 'Suplementos', value: 'supplement' },
         { label: 'Equipamentos', value: 'equipment' },
-        { label: 'Vestuário', value: 'clothing' },
+        { label: 'VestuÃ¡rio', value: 'clothing' },
         { label: 'Outros', value: 'other' }
     ]
 
     const supplementSubs = [
-        { label: 'Pré-treino', value: 'Pré-treino' },
+        { label: 'PrÃ©-treino', value: 'PrÃ©-treino' },
         { label: 'Vitaminas', value: 'Vitaminas' },
         { label: 'Whey', value: 'Whey' },
         { label: 'Outros', value: 'Outros' }
@@ -150,7 +150,7 @@ export function AdminProductEditor({ isOpen, onClose, product, onSave, onImport 
                     />
 
                     <Input
-                        label="Descrição Curta"
+                        label="DescriÃ§Ã£o Curta"
                         icon={<Icon icon={Pencil} size="xs" />}
                         value={form?.description}
                         onChange={e => setForm(prev => ({ ...prev, description: e.target.value }))}
@@ -165,7 +165,7 @@ export function AdminProductEditor({ isOpen, onClose, product, onSave, onImport 
 
                     <Grid cols={1} mdCols={3} gap={STORE_TOKENS.SPACING.CONTAINER}>
                         <Input
-                            label="Preço (R$)"
+                            label="PreÃ§o (R$)"
                             type="number"
                             value={String(form.official_price)}
                             onChange={e => setForm(prev => ({ ...prev, official_price: Number(e.target.value) }))}

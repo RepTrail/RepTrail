@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { Stack } from '@/components/store/base/stack'
@@ -8,7 +8,7 @@ import { Dumbbell, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useQuery } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { getTodayWorkout } from '@/lib/dal/remote'
-import { useRealtimeSync } from '@/hooks/use-realtime-sync'
+import { useRealtimeSync } from '@/lib/dal'
 import { Button } from '@/components/store/base/button'
 import { Icon } from '@/components/store/base/icon'
 import { Box } from '@/components/store/base/box'
@@ -95,7 +95,7 @@ export function StudentTrainingProtocols({ userId }: StudentTrainingProtocolsPro
             )}
             <ProtocolCard
                 title={currentWorkout.name.toUpperCase()}
-                subtitle={`${currentWorkout.workout_exercises?.length || 0} EXERCÍCIOS • ${status === 'completed' ? 'CONCLUÍDO' : 'FOCO DO DIA'}`}
+                subtitle={`${currentWorkout.workout_exercises?.length || 0} EXERCÃCIOS â€¢ ${status === 'completed' ? 'CONCLUÃDO' : 'FOCO DO DIA'}`}
                 icon={Dumbbell}
                 status={status as any}
                 logId={logId}

@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import React from 'react'
 import { Stack } from '@/components/store/base/stack'
@@ -11,7 +11,7 @@ import { GlassPanel } from '@/components/store/base/surface'
 import { Inline } from '@/components/store/base/layout'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { RegistryActionModal } from '@/components/store/advanced/registry-action-modal'
-import { useOptimisticMutation } from '@/hooks/use-optimistic-mutation'
+import { useOptimisticMutation } from '@/lib/dal'
 import { assignDiet } from '@/lib/dal/remote'
 import { ENTITIES } from '@/lib/outbox-db'
 import { Pencil, Check, X, Calendar, Sparkles, Loader2, Utensils } from 'lucide-react'
@@ -85,7 +85,7 @@ export function DietBuilderHeader({
             gap={STORE_TOKENS.SPACING.SECTION}
             fullWidth
         >
-            {/* Diet name — display or edit mode */}
+            {/* Diet name â€” display or edit mode */}
             <Box flex1>
                 {isEditing ? (
                     <GlassPanel padding={STORE_TOKENS.SPACING.CONTAINER}>
@@ -229,7 +229,7 @@ export function DietBuilderHeader({
                             >
                                 <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                                     <Icon icon={Calendar} size="sm" color={STORE_TOKENS.COLORS.BRAND} />
-                                    {assignments?.length ? 'Gerenciar Atribuição' : 'Atribuir Dieta'}
+                                    {assignments?.length ? 'Gerenciar AtribuiÃ§Ã£o' : 'Atribuir Dieta'}
                                 </Inline>
                             </Button>
                         </Box>

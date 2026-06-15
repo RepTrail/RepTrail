@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useQuery } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
@@ -8,7 +8,7 @@ import {
     getAssignedDiets,
     getTrainerDiets
 } from '@/lib/dal/remote'
-import { useRealtimeSync } from '@/hooks/use-realtime-sync'
+import { useRealtimeSync } from '@/lib/dal'
 import { DietManagementList } from '@/components/store/advanced/diet-management-list'
 import { Stack } from '@/components/store/base/stack'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
