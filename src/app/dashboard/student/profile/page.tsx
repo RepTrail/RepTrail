@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import { headers } from 'next/headers'
 import { getQueryClient } from '@/lib/get-query-client'
-import { HydrationBoundary, dehydrate } from '@/lib/dal'
+import { HydrationBoundary, dehydrate } from '@tanstack/react-query'
 import * as actions from '@/lib/dal/remote'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { RegistryMain } from '@/components/store/advanced/registry-main'

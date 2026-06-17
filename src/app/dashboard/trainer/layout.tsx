@@ -1,5 +1,5 @@
 import { STORE_TOKENS } from '@/components/store/constants/tokens';
-import { dehydrate, HydrationBoundary } from '@/lib/dal'
+import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { getProfile } from '@/lib/dal/server'
 import { getPublicPlanPricing, getTrainerProfile, getEffectiveTier } from '@/actions/trainer-actions'
 import { getBetaTesterMode } from '@/actions/app-settings-actions'

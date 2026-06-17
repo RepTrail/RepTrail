@@ -1,4 +1,4 @@
-import { dehydrate, HydrationBoundary } from '@/lib/dal'
+import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import * as actions from '@/lib/dal/remote'
 import { getQueryClient } from '@/lib/get-query-client'
 import { QUERY_KEYS } from '@/lib/query-keys'

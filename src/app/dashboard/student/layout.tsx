@@ -1,7 +1,7 @@
 import { Suspense } from 'react'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { dehydrate, HydrationBoundary } from '@/lib/dal'
+import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { getProfile, getStudentLayoutData } from '@/lib/dal/server'
 import { getStudentTrainer } from '@/actions/student-actions'
 import { getQueryClient } from '@/lib/get-query-client'

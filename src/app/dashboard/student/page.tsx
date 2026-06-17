@@ -1,6 +1,6 @@
 import { headers } from 'next/headers'
 import { Suspense } from 'react'
-import { dehydrate, HydrationBoundary } from '@/lib/dal'
+import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { getStudentTrainer, getStudentProfile, getStudentDetails } from '@/actions/student-actions'
 import { getStudentAutoTrainingStatus } from '@/actions/auto-training-actions'
 import { getTrainerRanking } from '@/actions/trainer-actions'
