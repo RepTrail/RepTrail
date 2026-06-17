@@ -115,7 +115,7 @@ export function AdminPersonaisSection() {
                 confirmLabel="Deletar"
             >
                 <Font variant="body" color={STORE_TOKENS.COLORS.TEXT.SECONDARY}>
-                    Esta aÃ§Ã£o Ã© irreversÃ­vel e removerÃ¡ todos os dados do profissional, incluindo acesso Ã  plataforma de gestÃ£o.
+                    Esta ação é irreversível e removerá todos os dados do profissional, incluindo acesso Ã  plataforma de gestão.
                 </Font>
             </Modal>
 

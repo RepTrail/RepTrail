@@ -35,7 +35,7 @@ export function CardioBuilderSmart({
     cardio: initialCardio,
     students = [],
     backHref = '/dashboard/student/cardio',
-    contextLabel = 'Condicionamento & SaÃºde',
+    contextLabel = 'Condicionamento & Saúde',
     icon = Flame,
     contextColor = 'orange'
 }: CardioBuilderSmartProps) {
@@ -93,7 +93,7 @@ export function CardioBuilderSmart({
         if (!editName.trim()) {
             toast({
                 title: "Erro",
-                description: "O nome do cardio nÃ£o pode ser vazio.",
+                description: "O nome do cardio não pode ser vazio.",
                 variant: "destructive"
             })
             return
@@ -156,7 +156,7 @@ export function CardioBuilderSmart({
                             {...{
                                 color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
                             }}>
-                            ConfiguraÃ§Ã£o do Protocolo
+                            Configuração do Protocolo
                         </Font>
                     </Inline>
 
@@ -164,7 +164,7 @@ export function CardioBuilderSmart({
                         <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                             <Box flex1>
                                 <Input
-                                    label="DURAÃ‡ÃƒO PROGRAMADA (MINUTOS)"
+                                    label="DURAÇÃO PROGRAMADA (MINUTOS)"
                                     icon={<Icon icon={Clock} size="xs" />}
                                     type="number"
                                     value={editDuration}
@@ -179,7 +179,7 @@ export function CardioBuilderSmart({
                                         { label: 'Leve', value: 'Leve' },
                                         { label: 'Moderada', value: 'Moderada' },
                                         { label: 'Alta', value: 'Alta' },
-                                        { label: 'MÃ¡xima', value: 'MÃ¡xima' }
+                                        { label: 'Máxima', value: 'Máxima' }
                                     ]}
                                     value={editIntensity}
                                     onChange={setEditIntensity}

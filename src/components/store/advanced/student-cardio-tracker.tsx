@@ -112,13 +112,13 @@ export function StudentCardioTracker({ userId }: StudentCardioTrackerProps) {
                     setSeconds(0)
                     setLogId(null)
 
-                    actions.finishCardioSession(logId, 'ConcluÃ­do automaticamente', undefined, 100).then((res) => {
+                    actions.finishCardioSession(logId, 'Concluído automaticamente', undefined, 100).then((res) => {
                         if (res.success) {
                             queryClient.invalidateQueries({ queryKey: QUERY_KEYS.cardio.logs(userId) })
                             queryClient.invalidateQueries({ queryKey: QUERY_KEYS.cardio.session })
                             toast({
                                 title: "Sucesso",
-                                description: "Cardio concluÃ­do automaticamente por atingir o tempo!"
+                                description: "Cardio concluído automaticamente por atingir o tempo!"
                             })
                         }
                     })
@@ -153,7 +153,7 @@ export function StudentCardioTracker({ userId }: StudentCardioTrackerProps) {
             } else {
                 toast({
                     title: "Erro",
-                    description: "Erro ao iniciar sessÃ£o",
+                    description: "Erro ao iniciar sessão",
                     variant: "destructive"
                 })
             }
@@ -199,7 +199,7 @@ export function StudentCardioTracker({ userId }: StudentCardioTrackerProps) {
         } else {
             toast({
                 title: "Erro",
-                description: "Erro ao finalizar sessÃ£o",
+                description: "Erro ao finalizar sessão",
                 variant: "destructive"
             })
         }
@@ -265,7 +265,7 @@ export function StudentCardioTracker({ userId }: StudentCardioTrackerProps) {
                 </Stack>
             )}
             <CardioTimerCard
-                title={currentCardio.cardio?.name?.toUpperCase() || currentCardio.name?.toUpperCase() || 'ATIVIDADE AERÃ“BICA'}
+                title={currentCardio.cardio?.name?.toUpperCase() || currentCardio.name?.toUpperCase() || 'ATIVIDADE AERÓBICA'}
                 duration={`${displayMinutes} MIN`}
                 intensity={currentCardio.suggested_intensity?.toUpperCase() || 'MODERADA'}
                 remainingTime={isCompleted ? "00:00" : formatTime(seconds, targetMinutes)}
@@ -294,7 +294,7 @@ export function StudentCardioTracker({ userId }: StudentCardioTrackerProps) {
                     {...{
                         color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
                     }}>
-                    VocÃª realizou {Math.floor(seconds / 60)} minuto(s) de atividade. Ao encerrar agora, o progresso serÃ¡ salvo proporcionalmente.
+                    Você realizou {Math.floor(seconds / 60)} minuto(s) de atividade. Ao encerrar agora, o progresso será salvo proporcionalmente.
                 </Font>
             </Modal>
         </Stack>

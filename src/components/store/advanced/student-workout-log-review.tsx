@@ -72,7 +72,7 @@ export function WorkoutLogReview({ logId, userId, workoutName, completedAt, load
     // Group loads by exercise name
     const grouped = (Array.isArray(loads) ? loads : []).reduce((acc, load) => {
         if (!load) return acc
-        const name = load.exercise?.name || 'ExercÃ­cio'
+        const name = load.exercise?.name || 'Exercício'
         if (!acc[name]) acc[name] = []
         acc[name].push(load)
         return acc
@@ -87,7 +87,7 @@ export function WorkoutLogReview({ logId, userId, workoutName, completedAt, load
             updateMutation({ loadId, weightKg: w, repsPerformed: r })
         })
 
-        toast({ title: 'Salvo!', description: 'AlteraÃ§Ãµes enviadas para sincronizaÃ§Ã£o.' })
+        toast({ title: 'Salvo!', description: 'Alterações enviadas para sincronização.' })
         router.push('/dashboard/student')
     }
 
@@ -131,7 +131,7 @@ export function WorkoutLogReview({ logId, userId, workoutName, completedAt, load
                                     {...{
                                         color: "zinc-400",
                                     }}>
-                                    Revisado em {date} Ã s {time} â€¢ {Array.isArray(loads) ? loads.length : 0} sÃ©ries
+                                    Revisado em {date} Ã s {time} â€¢ {Array.isArray(loads) ? loads.length : 0} séries
                                 </Font>
                             </Box>
                         </Stack>
@@ -272,7 +272,7 @@ export function WorkoutLogReview({ logId, userId, workoutName, completedAt, load
                             gap={STORE_TOKENS.SPACING.ELEMENT}
                         >
                             <Icon icon={Save} size="sm" />
-                            Salvar AlteraÃ§Ãµes
+                            Salvar Alterações
                         </Button>
                     </Box>
                 </Box>

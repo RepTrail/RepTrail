@@ -66,7 +66,7 @@ export function AdminProductEditor({ isOpen, onClose, product, onSave, onImport 
             }))
             setImportUrl('')
         } catch (e: any) {
-            toast({ variant: 'destructive', title: 'Erro na importaÃ§Ã£o', description: e.message })
+            toast({ variant: 'destructive', title: 'Erro na importação', description: e.message })
         } finally {
             setImporting(false)
         }
@@ -75,12 +75,12 @@ export function AdminProductEditor({ isOpen, onClose, product, onSave, onImport 
     const categories = [
         { label: 'Suplementos', value: 'supplement' },
         { label: 'Equipamentos', value: 'equipment' },
-        { label: 'VestuÃ¡rio', value: 'clothing' },
+        { label: 'Vestuário', value: 'clothing' },
         { label: 'Outros', value: 'other' }
     ]
 
     const supplementSubs = [
-        { label: 'PrÃ©-treino', value: 'PrÃ©-treino' },
+        { label: 'Pré-treino', value: 'Pré-treino' },
         { label: 'Vitaminas', value: 'Vitaminas' },
         { label: 'Whey', value: 'Whey' },
         { label: 'Outros', value: 'Outros' }
@@ -150,7 +150,7 @@ export function AdminProductEditor({ isOpen, onClose, product, onSave, onImport 
                     />
 
                     <Input
-                        label="DescriÃ§Ã£o Curta"
+                        label="Descrição Curta"
                         icon={<Icon icon={Pencil} size="xs" />}
                         value={form?.description}
                         onChange={e => setForm(prev => ({ ...prev, description: e.target.value }))}
@@ -165,7 +165,7 @@ export function AdminProductEditor({ isOpen, onClose, product, onSave, onImport 
 
                     <Grid cols={1} mdCols={3} gap={STORE_TOKENS.SPACING.CONTAINER}>
                         <Input
-                            label="PreÃ§o (R$)"
+                            label="Preço (R$)"
                             type="number"
                             value={String(form.official_price)}
                             onChange={e => setForm(prev => ({ ...prev, official_price: Number(e.target.value) }))}

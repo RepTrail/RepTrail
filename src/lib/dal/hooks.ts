@@ -38,7 +38,7 @@ export function useWorkout(id: string) {
 }
 
 /**
- * Retorna um treino completo offline agregando seus respectivos exercÃ­cios a partir do IndexedDB.
+ * Retorna um treino completo offline agregando seus respectivos exercícios a partir do IndexedDB.
  */
 export function useWorkoutWithExercises(id: string) {
   return useQuery({
@@ -138,7 +138,7 @@ export function useCreateWorkout() {
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['workouts'] })
     },
-    onError: (error) => { console.error('[dal] Erro crÃ­tico em useCreateWorkout:', error) }
+    onError: (error) => { console.error('[dal] Erro crítico em useCreateWorkout:', error) }
   })
 }
 

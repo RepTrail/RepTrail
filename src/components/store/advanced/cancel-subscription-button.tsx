@@ -68,7 +68,7 @@ export function CancelSubscriptionButton() {
                 isOpen={open}
                 onClose={() => setOpen(false)}
                 title="Confirmar Cancelamento?"
-                subtitle="Sua assinatura serÃ¡ encerrada no Asaas"
+                subtitle="Sua assinatura será encerrada no Asaas"
                 icon={ShieldAlert}
                 variant="red"
                 confirmVariant="outline-red"
@@ -99,7 +99,7 @@ export function CancelSubscriptionButton() {
                                     {...{
                                         color: "zinc-400",
                                     }}>
-                                    Nenhuma nova cobranÃ§a serÃ¡ realizada.
+                                    Nenhuma nova cobrança será realizada.
                                 </Font>
                             </Box>
                             <Box display="flex" align="start" gap={STORE_TOKENS.SPACING.NONE}>
@@ -110,7 +110,7 @@ export function CancelSubscriptionButton() {
                                     {...{
                                         color: "zinc-400",
                                     }}>
-                                    VocÃª poderÃ¡ assinar novamente a qualquer momento.
+                                    Você poderá assinar novamente a qualquer momento.
                                 </Font>
                             </Box>
                         </Stack>

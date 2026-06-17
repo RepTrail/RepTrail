@@ -279,10 +279,10 @@ export function DietBuilderSmart({
     const handleEstimateAll = async () => {
         try {
             setIsEstimatingAll(true)
-            toast({ title: 'Calculando...', description: 'A IA estÃ¡ analisando todos os itens da dieta.' })
+            toast({ title: 'Calculando...', description: 'A IA está analisando todos os itens da dieta.' })
             const res = await estimateAllDietMacros(diet.id)
             if (res.success) {
-                toast({ title: 'ConcluÃ­do!', description: 'Todos os macros foram calculados com sucesso.' })
+                toast({ title: 'Concluído!', description: 'Todos os macros foram calculados com sucesso.' })
                 queryClient.invalidateQueries({ queryKey })
             } else {
                 throw new Error((res as any).error)
@@ -510,10 +510,10 @@ export function DietBuilderSmart({
                         {...{
                             color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
                         }}>
-                        RefeiÃ§Ãµes
+                        Refeições
                     </Font>
                     <Badge
-                        label={`${meals.length} ${meals.length !== 1 ? 'refeiÃ§Ãµes' : 'refeiÃ§Ã£o'}`}
+                        label={`${meals.length} ${meals.length !== 1 ? 'refeições' : 'refeição'}`}
                         variant="glass"
                         color={(contextColor as any) || STORE_TOKENS.COLORS.BRAND}
                         size="sm"
@@ -539,7 +539,7 @@ export function DietBuilderSmart({
                                 onItemDragOver={handleItemDragOver}
                                 onItemDragEnd={handleItemDragEnd}
                                 onRemoveMeal={(id) => {
-                                    if (!confirm('Remover esta refeiÃ§Ã£o inteira?')) return
+                                    if (!confirm('Remover esta refeição inteira?')) return
                                     removeMealMutate({ id, dietId: diet.id })
                                 }}
                                 onRemoveItem={(id) => removeItemMutate({ id, dietId: diet.id })}
@@ -550,8 +550,8 @@ export function DietBuilderSmart({
                 ) : (
                     <EmptyState
                         icon={Utensils}
-                        title="NENHUMA REFEIÃ‡ÃƒO ADICIONADA"
-                        description="Use o formulÃ¡rio abaixo para comeÃ§ar."
+                        title="NENHUMA REFEIÇÃO ADICIONADA"
+                        description="Use o formulário abaixo para começar."
                     />
                 )}
             </Stack>

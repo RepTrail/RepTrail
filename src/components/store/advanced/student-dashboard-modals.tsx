@@ -72,10 +72,10 @@ export function StudentDashboardModals({ userId, showModal, hasTrainer }: Studen
             isOpen={isModalOpen && !isImpersonating}
             onClose={handleReject}
             title="Experimente o Auto Treino"
-            subtitle="InteligÃªncia Artificial para sua Performance"
+            subtitle="Inteligência Artificial para sua Performance"
             icon={Sparkles}
-            confirmLabel="Iniciar Teste GrÃ¡tis"
-            cancelLabel="Agora NÃ£o"
+            confirmLabel="Iniciar Teste Grátis"
+            cancelLabel="Agora Não"
             onConfirm={handleAccept}
             variant="orange"
             confirmVariant="primary"
@@ -95,7 +95,7 @@ export function StudentDashboardModals({ userId, showModal, hasTrainer }: Studen
                         {...{
                             color: "zinc-400",
                         }}>
-                        O Auto Treino utiliza nossa IA avanÃ§ada para construir protocolos personalizados sob medida para o seu corpo e rotina.
+                        O Auto Treino utiliza nossa IA avançada para construir protocolos personalizados sob medida para o seu corpo e rotina.
                     </Font>
                 </Stack>
                 <Stack gap={STORE_TOKENS.SPACING.NONE}>
@@ -107,7 +107,7 @@ export function StudentDashboardModals({ userId, showModal, hasTrainer }: Studen
                         {...{
                             color: "primary",
                         }}>
-                        âœ“ IMPORTAÃ‡ÃƒO IA DE PDFS (TREINO/DIETA)
+                        âœ“ IMPORTAÇÃO IA DE PDFS (TREINO/DIETA)
                     </Font>
                     <Font
                         variant="sub-tiny"
@@ -127,7 +127,7 @@ export function StudentDashboardModals({ userId, showModal, hasTrainer }: Studen
                         {...{
                             color: "primary",
                         }}>
-                        âœ“ GESTÃƒO DE CARDIO E ERGOGÃŠNICOS
+                        âœ“ GESTÃO DE CARDIO E ERGOGÊNICOS
                     </Font>
                 </Stack>
             </Stack>

@@ -105,7 +105,7 @@ export function AsaasPaymentModal({
         if (e) e.preventDefault()
         
         if (!validateCpfCnpj(cpf)) {
-            toast({ variant: 'destructive', title: 'Documento invÃ¡lido', description: 'Insira um CPF ou CNPJ vÃ¡lido.' })
+            toast({ variant: 'destructive', title: 'Documento inválido', description: 'Insira um CPF ou CNPJ válido.' })
             return
         }
         if (fullName.trim().split(' ').length < 2) {
@@ -113,15 +113,15 @@ export function AsaasPaymentModal({
             return
         }
         if (cardData.number.replace(/\s/g, '').length < 15) {
-            toast({ variant: 'destructive', title: 'CartÃ£o invÃ¡lido', description: 'Insira um nÃºmero de cartÃ£o vÃ¡lido.' })
+            toast({ variant: 'destructive', title: 'Cartão inválido', description: 'Insira um número de cartão válido.' })
             return
         }
         if (cardData.expiry.length < 5) {
-            toast({ variant: 'destructive', title: 'Validade invÃ¡lida', description: 'Insira uma validade vÃ¡lida.' })
+            toast({ variant: 'destructive', title: 'Validade inválida', description: 'Insira uma validade válida.' })
             return
         }
         if (cardData.cvv.length < 3) {
-            toast({ variant: 'destructive', title: 'CVV invÃ¡lido', description: 'Insira um CVV vÃ¡lido.' })
+            toast({ variant: 'destructive', title: 'CVV inválido', description: 'Insira um CVV válido.' })
             return
         }
 
@@ -150,7 +150,7 @@ export function AsaasPaymentModal({
             )
 
             if (res.success) {
-                toast({ title: 'Sucesso!', description: 'Sua assinatura foi processada com Ãªxito.' })
+                toast({ title: 'Sucesso!', description: 'Sua assinatura foi processada com êxito.' })
                 onClose()
                 const target = tier === 'auto_training' ? '/dashboard/student' : '/dashboard/trainer'
                 window.location.href = target
@@ -161,7 +161,7 @@ export function AsaasPaymentModal({
             toast({
                 variant: 'destructive',
                 title: 'Erro no Pagamento',
-                description: err.message || 'Ocorreu um erro ao processar o cartÃ£o.'
+                description: err.message || 'Ocorreu um erro ao processar o cartão.'
             })
         } finally {
             setIsProcessing(false)
@@ -232,7 +232,7 @@ export function AsaasPaymentModal({
                 {/* Card Details */}
                 <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                     <Input
-                        label="NÃšMERO DO CARTÃƒO"
+                        label="NÚMERO DO CARTÃO"
                         icon={<CreditCard size={16} />}
                         value={cardData.number}
                         onChange={(e) => setCardData(d => ({ ...d, number: maskCardNumber(e.target.value) }))}
@@ -240,7 +240,7 @@ export function AsaasPaymentModal({
                     />
 
                     <Input
-                        label="NOME NO CARTÃƒO"
+                        label="NOME NO CARTÃO"
                         icon={<User size={16} />}
                         value={cardData.holder}
                         onChange={(e) => setCardData(d => ({ ...d, holder: e.target.value.toUpperCase() }))}

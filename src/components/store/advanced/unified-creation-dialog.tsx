@@ -147,7 +147,7 @@ export function UnifiedCreationDialog({
             }
 
             if (res && (res.error || res.success === false)) {
-                setError(res.error || res.message || 'Falha ao executar aÃ§Ã£o.')
+                setError(res.error || res.message || 'Falha ao executar ação.')
             } else {
                 toast({
                     title: 'Sucesso!',

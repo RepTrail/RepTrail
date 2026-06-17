@@ -95,7 +95,7 @@ export function StudentTrainingProtocols({ userId }: StudentTrainingProtocolsPro
             )}
             <ProtocolCard
                 title={currentWorkout.name.toUpperCase()}
-                subtitle={`${currentWorkout.workout_exercises?.length || 0} EXERCÃCIOS â€¢ ${status === 'completed' ? 'CONCLUÃDO' : 'FOCO DO DIA'}`}
+                subtitle={`${currentWorkout.workout_exercises?.length || 0} EXERCÍCIOS â€¢ ${status === 'completed' ? 'CONCLUÍDO' : 'FOCO DO DIA'}`}
                 icon={Dumbbell}
                 status={status as any}
                 logId={logId}

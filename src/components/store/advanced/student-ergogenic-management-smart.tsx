@@ -92,7 +92,7 @@ export function StudentErgogenicManagementSmart({ userId }: StudentErgogenicMana
             const { id, created_at, updated_at, ...data } = item
             const res = await addErgogenic({
                 ...data,
-                name: `${item.name} (CÃ³pia)`,
+                name: `${item.name} (Cópia)`,
                 student_id: userId
             })
             if (res.error) throw new Error(res.error)

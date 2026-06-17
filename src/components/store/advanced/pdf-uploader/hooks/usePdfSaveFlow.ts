@@ -97,18 +97,18 @@ export function usePdfSaveFlow({ type, userId, role, initialStudentId, parsedDat
 
     const handleSave = () => {
         if (role === 'trainer' && type === 'workout' && parsedData?.parsed_data?.ergogenics?.length > 0 && !bindingHooks.selectedStudentId) {
-            toast({ variant: "destructive", title: "AtenÃ§Ã£o!", description: "ErgogÃªnicos detectados. Selecione um aluno para salvar o protocolo." });
+            toast({ variant: "destructive", title: "Atenção!", description: "Ergogênicos detectados. Selecione um aluno para salvar o protocolo." });
             return;
         }
 
         const compatibilityError = validateImportCompatibility(type, parsedData);
         if (compatibilityError) {
-            toast({ variant: "destructive", title: "Arquivo IncompatÃ­vel", description: compatibilityError });
+            toast({ variant: "destructive", title: "Arquivo Incompatível", description: compatibilityError });
             return;
         }
 
         if (role === 'trainer' && bindingHooks.bindingMode === 'create' && !bindingHooks.placeholderEmail) {
-            toast({ variant: "destructive", title: "AtenÃ§Ã£o: Email nÃ£o informado!", description: "Sem o email vocÃª nÃ£o consegue enviar o acesso automaticamente." });
+            toast({ variant: "destructive", title: "Atenção: Email não informado!", description: "Sem o email você não consegue enviar o acesso automaticamente." });
         }
 
         let dataToSave = { ...parsedData.parsed_data };

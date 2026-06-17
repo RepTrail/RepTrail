@@ -131,7 +131,7 @@ export function AdminLojaSection() {
                 confirmLabel="Remover"
             >
                 <Font variant="body" color={STORE_TOKENS.COLORS.TEXT.SECONDARY}>
-                    Esta aÃ§Ã£o removerÃ¡ o produto do catÃ¡logo e nÃ£o poderÃ¡ ser desfeita. Vendas anteriores permanecerÃ£o no histÃ³rico.
+                    Esta ação removerá o produto do catálogo e não poderá ser desfeita. Vendas anteriores permanecerão no histórico.
                 </Font>
             </Modal>
 

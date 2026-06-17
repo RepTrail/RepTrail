@@ -46,7 +46,7 @@ export function UserProfileSummary({
         setIsUploading(true)
         toast({
             title: "Salvando foto...",
-            description: "Aguarde enquanto sua imagem de perfil estÃ¡ sendo processada."
+            description: "Aguarde enquanto sua imagem de perfil está sendo processada."
         })
 
         try {
@@ -130,7 +130,7 @@ export function UserProfileSummary({
                         <Button variant="outline-orange" fullWidth size="lg">
                             <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                 <Icon icon={ShieldCheck} size="xs" />
-                                <Font variant="body-sm" weight="black" uppercase italic>VER PERFIL PÃšBLICO</Font>
+                                <Font variant="body-sm" weight="black" uppercase italic>VER PERFIL PÚBLICO</Font>
                             </Stack>
                         </Button>
                     </Link>
@@ -138,7 +138,7 @@ export function UserProfileSummary({
                     <Button variant="outline-orange" fullWidth size="lg" disabled>
                         <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                             <Icon icon={ShieldCheck} size="xs" />
-                            <Font variant="body-sm" weight="black" uppercase italic>VER PERFIL PÃšBLICO</Font>
+                            <Font variant="body-sm" weight="black" uppercase italic>VER PERFIL PÚBLICO</Font>
                         </Stack>
                     </Button>
                 )}

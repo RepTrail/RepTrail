@@ -88,7 +88,7 @@ export function StudentDietDailyClient({ userId }: StudentDietDailyClientProps) 
         return (
             <RegistryMain
                 title="MINHA DIETA"
-                subtitle="Carregando dieta diÃ¡ria..."
+                subtitle="Carregando dieta diária..."
                 icon="Utensils"
                 showTabs={false}
             >
@@ -103,23 +103,23 @@ export function StudentDietDailyClient({ userId }: StudentDietDailyClientProps) 
     const meals = diet?.meals || [
         {
             id: 'm1',
-            name: 'CafÃ© da ManhÃ£',
+            name: 'Café da Manhã',
             time_of_day: '08:00',
             is_checked: false,
             meal_items: [
                 { id: 'i1', food_name: 'Ovos Mexidos', quantity: '3 un', approx_measure: '3 ovos grandes', is_checked: false },
-                { id: 'i2', food_name: 'PÃ£o Integral', quantity: '2 fatias', approx_measure: '50g', is_checked: false }
+                { id: 'i2', food_name: 'Pão Integral', quantity: '2 fatias', approx_measure: '50g', is_checked: false }
             ]
         },
         {
             id: 'm2',
-            name: 'AlmoÃ§o',
+            name: 'Almoço',
             time_of_day: '12:00',
             is_checked: false,
             meal_items: [
-                { id: 'i3', food_name: 'Frango Grelhado', quantity: '150g', approx_measure: '1 filÃ© grande (palma da mÃ£o)', is_checked: false },
+                { id: 'i3', food_name: 'Frango Grelhado', quantity: '150g', approx_measure: '1 filé grande (palma da mão)', is_checked: false },
                 { id: 'i4', food_name: 'Arroz Branco', quantity: '100g', approx_measure: '4 colheres de sopa cheias', is_checked: false },
-                { id: 'i5', food_name: 'FeijÃ£o', quantity: '1 concha', approx_measure: '140g', is_checked: false }
+                { id: 'i5', food_name: 'Feijão', quantity: '1 concha', approx_measure: '140g', is_checked: false }
             ]
         }
     ]
@@ -149,15 +149,15 @@ export function StudentDietDailyClient({ userId }: StudentDietDailyClientProps) 
                         <Stack direction={{ base: 'row', md: 'col' }} align="center" justify="between" gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
                             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                                 <Font variant="heading" weight="black" uppercase italic>
-                                    Progresso DiÃ¡rio
+                                    Progresso Diário
                                 </Font>
                                 <Font variant="description">
-                                    Acompanhe a ingestÃ£o das refeiÃ§Ãµes prescritas pelo seu treinador.
+                                    Acompanhe a ingestão das refeições prescritas pelo seu treinador.
                                 </Font>
                             </Stack>
                             <Stack align="end" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                 <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.SUCCESS} weight="black" uppercase tracking="widest">
-                                    {progress}% ConcluÃ­do
+                                    {progress}% Concluído
                                 </Font>
                                 <Box 
                                     {...{ width: 128, height: 8 }} 
@@ -250,7 +250,7 @@ export function StudentDietDailyClient({ userId }: StudentDietDailyClientProps) 
                                                 <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                                     <Icon icon={CheckCircle} size="xs" />
                                                     <Font variant="sub-tiny" weight="black" uppercase tracking="wider">
-                                                        {meal.is_checked ? "RefeiÃ§Ã£o ConcluÃ­da" : "Marcar RefeiÃ§Ã£o Completa"}
+                                                        {meal.is_checked ? "Refeição Concluída" : "Marcar Refeição Completa"}
                                                     </Font>
                                                 </Stack>
                                             </Button>

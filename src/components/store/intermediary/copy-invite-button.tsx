@@ -31,7 +31,7 @@ export function CopyInviteButton({ trainerCode, fullWidth = { base: true, sm: fa
 
         toast({
             title: 'Link copiado!',
-            description: 'Envie este link para seus alunos se vincularem a vocÃª.',
+            description: 'Envie este link para seus alunos se vincularem a você.',
         })
 
         window.setTimeout(() => setCopied(false), 2000)

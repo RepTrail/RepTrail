@@ -227,11 +227,11 @@ export function CardioManagementSectionContent({
                         <ManagementCardPremium
                             key={cardio.id || idx}
                             title={cardio.name.toUpperCase()}
-                            description={cardio?.description || (mode === 'trainer' ? 'Sem descriÃ§Ã£o disponÃ­vel.' : 'Protocolo oficial de cardio.')}
+                            description={cardio?.description || (mode === 'trainer' ? 'Sem descrição disponível.' : 'Protocolo oficial de cardio.')}
                             days={assignedDays}
                             assignedStudents={assignedStudents}
                             mainStat={{ label: 'MINUTOS', value: cardio.duration_minutes || 0 }}
-                            date={cardio.created_at ? new Date(cardio.created_at).toLocaleDateString('pt-BR') : 'Data IndisponÃ­vel'}
+                            date={cardio.created_at ? new Date(cardio.created_at).toLocaleDateString('pt-BR') : 'Data Indisponível'}
                             icon={Activity}
                             mode={mode}
                             registryType="cardio"

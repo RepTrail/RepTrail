@@ -43,13 +43,13 @@ export function RequestPayoutModal({ isOpen, onClose, availableBalance }: Reques
             return res
         },
         onMutate: () => {
-            toast({ title: 'SolicitaÃ§Ã£o registrada!', description: 'Sua solicitaÃ§Ã£o foi salva e serÃ¡ sincronizada.' })
+            toast({ title: 'Solicitação registrada!', description: 'Sua solicitação foi salva e será sincronizada.' })
             onClose()
             setAmount('')
             setPixKey('')
         },
         onSuccess: () => {
-            toast({ title: 'Saque solicitado!', description: 'Nossa equipe processarÃ¡ o pagamento em breve.' })
+            toast({ title: 'Saque solicitado!', description: 'Nossa equipe processará o pagamento em breve.' })
         }
     })
 
@@ -62,15 +62,15 @@ export function RequestPayoutModal({ isOpen, onClose, availableBalance }: Reques
 
         const val = parseFloat(amount.replace(',', '.'))
         if (isNaN(val) || val < 50) {
-            toast({ variant: 'destructive', title: 'AtenÃ§Ã£o', description: 'O valor mÃ­nimo para saque Ã© de R$ 50,00.' })
+            toast({ variant: 'destructive', title: 'Atenção', description: 'O valor mínimo para saque é de R$ 50,00.' })
             return
         }
         if (val > availableBalance) {
-            toast({ variant: 'destructive', title: 'AtenÃ§Ã£o', description: 'Saldo insuficiente.' })
+            toast({ variant: 'destructive', title: 'Atenção', description: 'Saldo insuficiente.' })
             return
         }
         if (!pixKey.trim()) {
-            toast({ variant: 'destructive', title: 'AtenÃ§Ã£o', description: 'Por favor, informe a chave PIX.' })
+            toast({ variant: 'destructive', title: 'Atenção', description: 'Por favor, informe a chave PIX.' })
             return
         }
 
@@ -82,7 +82,7 @@ export function RequestPayoutModal({ isOpen, onClose, availableBalance }: Reques
             isOpen={isOpen}
             onClose={onClose}
             title="Solicitar Saque"
-            subtitle="Transfira suas comissÃµes confirmadas para sua conta via PIX."
+            subtitle="Transfira suas comissões confirmadas para sua conta via PIX."
             icon={Banknote}
             variant="emerald"
             confirmLabel={isPending ? 'Processando...' : 'Confirmar Saque'}
@@ -100,7 +100,7 @@ export function RequestPayoutModal({ isOpen, onClose, availableBalance }: Reques
                             weight="medium"
                             {...{
                                 color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
-                            }}>Saldo DisponÃ­vel:</Font>
+                            }}>Saldo Disponível:</Font>
                         <Font
                             variant="body"
                             weight="black"
@@ -155,7 +155,7 @@ export function RequestPayoutModal({ isOpen, onClose, availableBalance }: Reques
                                 variant="sub-tiny"
                                 {...{
                                     color: STORE_TOKENS.COLORS.TEXT.MUTED,
-                                }}>MÃ­nimo de R$ 50,00</Font>
+                                }}>Mínimo de R$ 50,00</Font>
                         </Inline>
                     </Stack>
 
@@ -174,7 +174,7 @@ export function RequestPayoutModal({ isOpen, onClose, availableBalance }: Reques
                         <Input
                             value={pixKey}
                             onChange={(e) => setPixKey(e.target.value)}
-                            placeholder="CPF, Celular, E-mail ou AleatÃ³ria"
+                            placeholder="CPF, Celular, E-mail ou Aleatória"
                             disabled={isPending}
                         />
                     </Stack>

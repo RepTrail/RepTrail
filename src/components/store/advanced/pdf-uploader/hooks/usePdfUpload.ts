@@ -47,7 +47,7 @@ export function usePdfUpload({ type, role, bindingHooks, selectionHooks }: any) 
 
             if (role === 'trainer' && result.data?.detected_student_name) {
                 bindingHooks.setDetectedStudentName(result.data.detected_student_name);
-                // Sistema de auto-vÃ­nculo desativado a pedido do usuÃ¡rio
+                // Sistema de auto-vínculo desativado a pedido do usuário
                 bindingHooks.setStudentMatch(null);
                 bindingHooks.setBindingMode('skip');
             } else {
@@ -56,9 +56,9 @@ export function usePdfUpload({ type, role, bindingHooks, selectionHooks }: any) 
                 bindingHooks.setBindingMode('skip');
             }
 
-            toast({ title: "Processamento concluÃ­do!", description: "Revise os dados antes de salvar." });
+            toast({ title: "Processamento concluído!", description: "Revise os dados antes de salvar." });
         } catch (error: any) {
-            toast({ variant: "destructive", title: "Falha na importaÃ§Ã£o", description: error.message });
+            toast({ variant: "destructive", title: "Falha na importação", description: error.message });
         } finally {
             setUploading(false);
             setParsing(false);

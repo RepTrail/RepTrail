@@ -18,6 +18,7 @@ interface SelectOption {
 
 interface FormSelectProps {
     label?: string
+    subtitle?: string
     name?: string
     options: SelectOption[]
     value?: string
@@ -32,6 +33,7 @@ interface FormSelectProps {
 
 export function FormSelect({
     label,
+    subtitle,
     name,
     options,
     value,
@@ -195,10 +197,19 @@ export function FormSelect({
             {name && (
                 <input type="hidden" name={name} value={currentSelected} />
             )}
-            {label && (
-                <Font variant="auxiliary" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="black" uppercase tracking="widest">
-                    {label}
-                </Font>
+            {(label || subtitle) && (
+                <div className="flex flex-col gap-0.5">
+                    {label && (
+                        <Font variant="auxiliary" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="black" uppercase tracking="widest">
+                            {label}
+                        </Font>
+                    )}
+                    {subtitle && (
+                        <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.DIM}>
+                            {subtitle}
+                        </Font>
+                    )}
+                </div>
             )}
             <div className="relative">
                 {/* Trigger */}

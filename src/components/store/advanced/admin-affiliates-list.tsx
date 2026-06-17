@@ -43,10 +43,10 @@ export function AdminAffiliatesList() {
     const confirmRemoveAffiliate = async () => {
         try {
             await removeAffiliate(deleteModal.id)
-            toast({ title: 'Afiliado removido', description: `${deleteModal.name} nÃ£o Ã© mais um afiliado.` })
+            toast({ title: 'Afiliado removido', description: `${deleteModal.name} não é mais um afiliado.` })
             refetch()
         } catch (error) {
-            toast({ variant: 'destructive', title: 'Erro ao remover', description: 'NÃ£o foi possÃ­vel processar a solicitaÃ§Ã£o.' })
+            toast({ variant: 'destructive', title: 'Erro ao remover', description: 'Não foi possível processar a solicitação.' })
         } finally {
             setDeleteModal({ open: false, id: '', name: '' })
         }
@@ -77,7 +77,7 @@ export function AdminAffiliatesList() {
                     <AffiliateListItem
                         key={affiliate.id}
                         affiliateId={affiliate.id}
-                        name={affiliate?.full_name || 'UsuÃ¡rio sem nome'}
+                        name={affiliate?.full_name || 'Usuário sem nome'}
                         email={affiliate.email || ''}
                         registrationDate={new Date(affiliate.created_at).toLocaleDateString('pt-BR')}
                         referrals={{
@@ -106,7 +106,7 @@ export function AdminAffiliatesList() {
                     {...{
                         color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
                     }}>
-                    Esta aÃ§Ã£o removerÃ¡ imediatamente o acesso do usuÃ¡rio ao painel de afiliado e interromperÃ¡ o rastreamento de novas comissÃµes.
+                    Esta ação removerá imediatamente o acesso do usuário ao painel de afiliado e interromperá o rastreamento de novas comissões.
                 </Font>
             </Modal>
         </Stack>

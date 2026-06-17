@@ -10,6 +10,7 @@ import { Stack } from './stack'
 
 interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'width' | 'size'> {
   label?: string
+  subtitle?: string
   error?: string
   icon?: React.ReactNode
   rounded?: 'system' | 'full' | 'none'
@@ -26,6 +27,7 @@ interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, '
 
 export function Input({
   label,
+  subtitle,
   error,
   icon,
   rounded = 'system',
@@ -112,10 +114,19 @@ export function Input({
 
   return (
     <Stack gap={STORE_TOKENS.SPACING.ELEMENT} flex1={flex1} width={width as any} fullWidth={!width}>
-      {label && (
-        <Font variant="auxiliary" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="black" uppercase tracking="widest">
-          {label}
-        </Font>
+      {(label || subtitle) && (
+        <div className="flex flex-col gap-0.5">
+          {label && (
+            <Font variant="auxiliary" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="black" uppercase tracking="widest">
+              {label}
+            </Font>
+          )}
+          {subtitle && (
+            <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.DIM}>
+              {subtitle}
+            </Font>
+          )}
+        </div>
       )}
       <div className={cn("relative group", height === 'full' && 'flex-1 flex flex-col', size === 'sm' && 'h-8')}>
         {/* Left icon */}

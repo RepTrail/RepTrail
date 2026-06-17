@@ -42,11 +42,11 @@ export function createOpenRouterClient(apiKey?: string | null) {
 /**
  * Default model to use for structured JSON extraction tasks.
  * Can be overridden per-call. OpenRouter model IDs:
- *   google/gemini-2.0-flash-001  – fast, smart, cheap
+ *   google/gemini-2.5-flash  – fast, smart, cheap
  *   openai/gpt-4o-mini           – reliable JSON extraction
  *   meta-llama/llama-3.3-70b-instruct – great free option
  */
-export const DEFAULT_AI_MODEL = 'google/gemini-2.0-flash-001'
+export const DEFAULT_AI_MODEL = 'google/gemini-2.5-flash'
 
 /**
  * Calls the AI and returns parsed JSON, with 1 retry on parse failure.

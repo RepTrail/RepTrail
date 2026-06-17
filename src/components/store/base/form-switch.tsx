@@ -15,6 +15,7 @@ export type SwitchOption = {
 
 export type FormSwitchProps = {
     label?: string
+    subtitle?: string
     options: SwitchOption[]
     value?: string
     onChange?: (value: string) => void
@@ -25,6 +26,7 @@ export type FormSwitchProps = {
 
 export function FormSwitch({
     label,
+    subtitle,
     options,
     value,
     onChange,
@@ -58,10 +60,19 @@ export function FormSwitch({
             flex1={flex1}
             width={width as any}
         >
-            {label && (
-                <Font variant="auxiliary" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="black" uppercase tracking="widest">
-                    {label}
-                </Font>
+            {(label || subtitle) && (
+                <div className="flex flex-col gap-0.5">
+                    {label && (
+                        <Font variant="auxiliary" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="black" uppercase tracking="widest">
+                            {label}
+                        </Font>
+                    )}
+                    {subtitle && (
+                        <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.DIM}>
+                            {subtitle}
+                        </Font>
+                    )}
+                </div>
             )}
             <GlassPanel padding={STORE_TOKENS.PADDING.NONE} rounded={STORE_TOKENS.RADIUS.FULL} border="subtle" fullWidth>
                 <Box

@@ -119,7 +119,7 @@ export function AdminAlunosSection() {
                 confirmLabel="Deletar"
             >
                 <Font variant="body" color={STORE_TOKENS.COLORS.TEXT.SECONDARY}>
-                    Esta aÃ§Ã£o Ã© irreversÃ­vel e removerÃ¡ todos os dados do aluno, incluindo histÃ³rico de treinos e assinaturas vinculadas.
+                    Esta ação é irreversível e removerá todos os dados do aluno, incluindo histórico de treinos e assinaturas vinculadas.
                 </Font>
             </Modal>
         </>

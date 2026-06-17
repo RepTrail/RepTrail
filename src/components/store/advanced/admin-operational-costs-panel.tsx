@@ -156,11 +156,11 @@ export function AdminOperationalCostsPanel({ initialCosts }: { initialCosts: Ope
             <Stack direction="row" justify="between" align="center">
                 <Stack gap={STORE_TOKENS.SPACING.NONE}>
                     <Font variant="h3" weight="black" color="primary">Custos Operacionais</Font>
-                    <Font variant="body-sm" color="zinc-400">Infraestrutura e operaÃ§Ã£o mensal da plataforma.</Font>
+                    <Font variant="body-sm" color="zinc-400">Infraestrutura e operação mensal da plataforma.</Font>
                 </Stack>
                 <Stack direction="row" justify="end" align="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
                     <Badge
-                        label={`R$ ${totalMonthly.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} / mÃªs`}
+                        label={`R$ ${totalMonthly.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} / mês`}
                         color={STORE_TOKENS.COLORS.SUCCESS}
                         variant="solid"
                         rounded={STORE_TOKENS.RADIUS.SYSTEM}
@@ -198,7 +198,7 @@ export function AdminOperationalCostsPanel({ initialCosts }: { initialCosts: Ope
                                         rounded={STORE_TOKENS.RADIUS.SYSTEM}
                                     />
                                     <Badge
-                                        label={cost.type === 'fixed' ? 'Fixo' : 'VariÃ¡vel'}
+                                        label={cost.type === 'fixed' ? 'Fixo' : 'Variável'}
                                         variant="glass"
                                         color={badgeColor}
                                         size="xs"
@@ -289,7 +289,7 @@ export function AdminOperationalCostsPanel({ initialCosts }: { initialCosts: Ope
                 title="Editar Custo"
                 subtitle={`Modificando: ${selectedCost?.description}`}
                 icon={Edit3}
-                confirmLabel="Salvar AlteraÃ§Ãµes"
+                confirmLabel="Salvar Alterações"
                 onConfirm={handleEditCost}
                 variant="blue"
             >
@@ -302,7 +302,7 @@ export function AdminOperationalCostsPanel({ initialCosts }: { initialCosts: Ope
             <Modal
                 isOpen={isDeleteModalOpen}
                 onClose={() => setIsDeleteModalOpen(false)}
-                title="Confirmar ExclusÃ£o"
+                title="Confirmar Exclusão"
                 subtitle={`Deseja realmente apagar o custo: ${selectedCost?.description}?`}
                 icon={Trash2}
                 variant="red"
@@ -314,7 +314,7 @@ export function AdminOperationalCostsPanel({ initialCosts }: { initialCosts: Ope
                     {...{
                         color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
                     }}>
-                    Esta aÃ§Ã£o nÃ£o pode ser desfeita e removerÃ¡ o registro permanentemente do sistema.
+                    Esta ação não pode ser desfeita e removerá o registro permanentemente do sistema.
                 </Font>
             </Modal>
         </Stack>

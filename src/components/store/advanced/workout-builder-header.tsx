@@ -111,7 +111,7 @@ export function WorkoutBuilderHeader({
                                     value={editName}
                                     onChange={e => setEditName(e.target.value)}
                                     onKeyDown={e => { if (e.key === 'Enter') onSave(); if (e.key === 'Escape') onCancel() }}
-                                    placeholder="Ex: Hipertrofia A - Peito/TrÃ­ceps"
+                                    placeholder="Ex: Hipertrofia A - Peito/Tríceps"
                                     size="lg"
                                     autoFocus
                                 />
@@ -122,12 +122,12 @@ export function WorkoutBuilderHeader({
                                     uppercase
                                     {...{
                                         color: STORE_TOKENS.COLORS.TEXT.MUTED,
-                                    }}>DescriÃ§Ã£o (Opcional)</Font>
+                                    }}>Descrição (Opcional)</Font>
                                 <Input
                                     value={editDesc}
                                     onChange={e => setEditDesc(e.target.value)}
                                     onKeyDown={e => { if (e.key === 'Escape') onCancel() }}
-                                    placeholder="Ex: Foco na contraÃ§Ã£o e descanso rÃ¡pido"
+                                    placeholder="Ex: Foco na contração e descanso rápido"
                                 />
                             </Stack>
                             <Stack direction={{ base: 'col', md: 'row' }} gap={STORE_TOKENS.SPACING.ELEMENT}>
@@ -195,7 +195,7 @@ export function WorkoutBuilderHeader({
                                 variant="description"
                                 {...{
                                     color: STORE_TOKENS.COLORS.TEXT.MUTED,
-                                }}>{description || 'Sem descriÃ§Ã£o'}</Font>
+                                }}>{description || 'Sem descrição'}</Font>
 
 
                         </Stack>
@@ -216,7 +216,7 @@ export function WorkoutBuilderHeader({
                         <Button variant="outline-orange" size="lg" shine fullWidth={{ base: true, md: false }} onClick={() => setIsAssignModalOpen(true)}>
                             <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                                 <Icon icon={Calendar} size="sm" color={STORE_TOKENS.COLORS.BRAND} />
-                                {assignments?.length ? "Gerenciar AtribuiÃ§Ã£o" : "Atribuir"}
+                                {assignments?.length ? "Gerenciar Atribuição" : "Atribuir"}
                             </Inline>
                         </Button>
                     </Box>

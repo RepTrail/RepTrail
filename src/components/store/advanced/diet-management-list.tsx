@@ -160,10 +160,10 @@ export function DietManagementList({
                 title="SEM DIETAS"
                 description={
                     mode === 'trainer'
-                        ? (betaTesterMode ? 'Crie uma nova dieta para comeÃ§ar.' : 'Importe um PDF ou crie uma nova dieta para comeÃ§ar.')
+                        ? (betaTesterMode ? 'Crie uma nova dieta para começar.' : 'Importe um PDF ou crie uma nova dieta para começar.')
                         : mode === 'auto'
-                            ? "VocÃª ainda nÃ£o possui protocolos alimentares cadastrados."
-                            : "Seu treinador ainda nÃ£o atribuiu dietas para sua conta."
+                            ? "Você ainda não possui protocolos alimentares cadastrados."
+                            : "Seu treinador ainda não atribuiu dietas para sua conta."
                 }
             />
         )
@@ -230,11 +230,11 @@ export function DietManagementList({
                         <ManagementCardPremium
                             key={diet.id || idx}
                             title={diet.name.toUpperCase()}
-                            description={diet?.description || (mode === 'trainer' ? 'Sem descriÃ§Ã£o disponÃ­vel.' : 'Plano alimentar oficial.')}
+                            description={diet?.description || (mode === 'trainer' ? 'Sem descrição disponível.' : 'Plano alimentar oficial.')}
                             days={assignedDays}
                             assignedStudents={assignedStudents}
-                            mainStat={{ label: 'REFEIÃ‡Ã•ES', value: mealsCount }}
-                            date={diet.created_at ? new Date(diet.created_at).toLocaleDateString('pt-BR') : 'Data IndisponÃ­vel'}
+                            mainStat={{ label: 'REFEIÇÕES', value: mealsCount }}
+                            date={diet.created_at ? new Date(diet.created_at).toLocaleDateString('pt-BR') : 'Data Indisponível'}
                             icon={Utensils}
                             mode={mode}
                             registryType="diet"

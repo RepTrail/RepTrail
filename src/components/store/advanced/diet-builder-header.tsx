@@ -229,7 +229,7 @@ export function DietBuilderHeader({
                             >
                                 <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                                     <Icon icon={Calendar} size="sm" color={STORE_TOKENS.COLORS.BRAND} />
-                                    {assignments?.length ? 'Gerenciar AtribuiÃ§Ã£o' : 'Atribuir Dieta'}
+                                    {assignments?.length ? 'Gerenciar Atribuição' : 'Atribuir Dieta'}
                                 </Inline>
                             </Button>
                         </Box>

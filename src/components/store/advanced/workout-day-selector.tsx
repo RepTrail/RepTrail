@@ -31,11 +31,11 @@ export function WorkoutDaySelector({ userId, assignmentId, dayOfWeek }: WorkoutD
     const options = [
         { label: 'Sem Dia Definido', value: 'none' },
         { label: 'Segunda-feira', value: '1' },
-        { label: 'TerÃ§a-feira', value: '2' },
+        { label: 'Terça-feira', value: '2' },
         { label: 'Quarta-feira', value: '3' },
         { label: 'Quinta-feira', value: '4' },
         { label: 'Sexta-feira', value: '5' },
-        { label: 'SÃ¡bado', value: '6' },
+        { label: 'Sábado', value: '6' },
         { label: 'Domingo', value: '0' },
     ]
 

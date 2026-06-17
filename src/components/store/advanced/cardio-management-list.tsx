@@ -177,10 +177,10 @@ export function CardioManagementList({
                 title="SEM CARDIOS"
                 description={
                     mode === 'trainer'
-                        ? 'Crie seu primeiro modelo de cardio para comeÃ§ar a atribuir.'
+                        ? 'Crie seu primeiro modelo de cardio para começar a atribuir.'
                         : mode === 'auto'
-                            ? "VocÃª ainda nÃ£o possui protocolos de cardio cadastrados."
-                            : "Seu treinador ainda nÃ£o atribuiu cardios para sua conta."
+                            ? "Você ainda não possui protocolos de cardio cadastrados."
+                            : "Seu treinador ainda não atribuiu cardios para sua conta."
                 }
             />
         )
@@ -233,11 +233,11 @@ export function CardioManagementList({
                         <ManagementCardPremium
                             key={cardio.id || idx}
                             title={cardio.name.toUpperCase()}
-                            description={cardio?.description || (mode === 'trainer' ? 'Sem descriÃ§Ã£o disponÃ­vel.' : 'Protocolo oficial de cardio.')}
+                            description={cardio?.description || (mode === 'trainer' ? 'Sem descrição disponível.' : 'Protocolo oficial de cardio.')}
                             days={assignedDays}
                             assignedStudents={assignedStudents}
                             mainStat={{ label: 'MINUTOS', value: cardio.duration_minutes || 0 }}
-                            date={cardio.created_at ? new Date(cardio.created_at).toLocaleDateString('pt-BR') : 'Data IndisponÃ­vel'}
+                            date={cardio.created_at ? new Date(cardio.created_at).toLocaleDateString('pt-BR') : 'Data Indisponível'}
                             icon={Activity}
                             mode={mode}
                             registryType="cardio"

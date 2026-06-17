@@ -41,7 +41,7 @@ export function ImpersonationBar({ color }: { color?: RegistryColor }) {
 
     const handleReturn = async () => {
         setLoading(true)
-        toast({ title: 'Retornando ao Admin...', description: 'Estamos restaurando sua sessÃ£o original.' })
+        toast({ title: 'Retornando ao Admin...', description: 'Estamos restaurando sua sessão original.' })
 
         const res = await impersonateUser(adminId)
         if (res?.error) {
@@ -63,7 +63,7 @@ export function ImpersonationBar({ color }: { color?: RegistryColor }) {
                 <Inline justify="between" align="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
                     <Inline gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
                         <Badge
-                            label="Modo InspeÃ§Ã£o Ativo"
+                            label="Modo Inspeção Ativo"
                             icon={ShieldAlert}
                             variant="glass"
                             color={primaryColor}
@@ -76,7 +76,7 @@ export function ImpersonationBar({ color }: { color?: RegistryColor }) {
                                 {...{
                                     color: STORE_TOKENS.COLORS.TEXT.SECONDARY,
                                 }}>
-                                VocÃª estÃ¡ visualizando a plataforma como outro usuÃ¡rio. Todas as aÃ§Ãµes afetarÃ£o a conta dele.
+                                Você está visualizando a plataforma como outro usuário. Todas as ações afetarão a conta dele.
                             </Font>
                         </Box>
                     </Inline>

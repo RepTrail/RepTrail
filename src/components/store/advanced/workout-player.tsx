@@ -133,7 +133,7 @@
                 perceivedEffort: parseInt(summary.perceivedEffort),
                 adherenceStatus: summary.adherenceStatus
             })
-            toast({ title: "MISSÃƒO CUMPRIDA!", description: "Treino registrado com sucesso." })
+            toast({ title: "MISSÃO CUMPRIDA!", description: "Treino registrado com sucesso." })
             router.push('/dashboard/student')
         }
 

@@ -29,8 +29,8 @@ export function TrainerTeamCodeCard({ trainerCode }: TrainerTeamCodeCardProps) {
         setCopied(true)
 
         toast({
-            title: 'CÃ³digo copiado!',
-            description: 'Envie este cÃ³digo para seus alunos ou use o link do seu perfil pÃºblico.',
+            title: 'Código copiado!',
+            description: 'Envie este código para seus alunos ou use o link do seu perfil público.',
         })
 
         window.setTimeout(() => setCopied(false), 2000)
@@ -49,7 +49,7 @@ export function TrainerTeamCodeCard({ trainerCode }: TrainerTeamCodeCardProps) {
                                 {...{
                                     color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
                                 }}>
-                                CÃ³digo da Equipe
+                                Código da Equipe
                             </Font>
                         </Inline>
 
@@ -58,7 +58,7 @@ export function TrainerTeamCodeCard({ trainerCode }: TrainerTeamCodeCardProps) {
                             {...{
                                 color: STORE_TOKENS.COLORS.TEXT.MUTED,
                             }}>
-                            Seus alunos usarÃ£o este cÃ³digo no cadastro para se vincularem a vocÃª.
+                            Seus alunos usarão este código no cadastro para se vincularem a você.
                         </Font>
                     </Stack>
                 </Box>
@@ -80,7 +80,7 @@ export function TrainerTeamCodeCard({ trainerCode }: TrainerTeamCodeCardProps) {
                             <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                 <Icon icon={copied ? Check : Copy} size="sm" />
                                 <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL}>
-                                    {copied ? 'Copiado!' : 'Copiar CÃ³digo'}
+                                    {copied ? 'Copiado!' : 'Copiar Código'}
                                 </Font>
                             </Stack>
                         </Button>

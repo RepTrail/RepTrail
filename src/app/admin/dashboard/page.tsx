@@ -81,23 +81,23 @@ export default function AdminDashboardPage() {
 
     return (
         <RegistryMain
-            title="VisÃ£o Geral"
-            subtitle="VisÃ£o geral financeira e operacional da plataforma RepTrail."
+            title="Visão Geral"
+            subtitle="Visão geral financeira e operacional da plataforma RepTrail."
             icon={BarChart3}
             contextLabel="Painel Admin"
             showTabs={false}
         >
             <RegistrySection
                 title="Indicadores de Performance"
-                subtitle="VisÃ£o consolidada de usuÃ¡rios, loja, finanÃ§as e parceiros."
+                subtitle="Visão consolidada de usuários, loja, finanças e parceiros."
                 icon={Activity}
             >
                 <AdminIndicatorsSection stats={stats || undefined} />
             </RegistrySection>
 
             <RegistrySection
-                title="SolicitaÃ§Ãµes de Saque"
-                subtitle="GestÃ£o de pagamentos e transferÃªncias para afiliados."
+                title="Solicitações de Saque"
+                subtitle="Gestão de pagamentos e transferências para afiliados."
                 icon={Banknote}
             >
                 <AdminPayoutsManagementPanel
@@ -107,7 +107,7 @@ export default function AdminDashboardPage() {
 
             <RegistrySection
                 title="Custos Operacionais"
-                subtitle="Infraestrutura e operaÃ§Ã£o mensal da plataforma."
+                subtitle="Infraestrutura e operação mensal da plataforma."
                 icon={TrendingDown}
             >
                 <AdminOperationalCostsPanel initialCosts={costs || []} />

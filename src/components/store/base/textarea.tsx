@@ -8,6 +8,7 @@ import { STORE_TOKENS } from '@/components/store/constants/tokens'
 
 interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string
+  subtitle?: string
   error?: string
   rounded?: 'system' | 'none'
   flex1?: boolean
@@ -15,6 +16,7 @@ interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement
 
 export function Textarea({
   label,
+  subtitle,
   error,
   rounded = 'system',
   flex1 = false,
@@ -36,10 +38,19 @@ export function Textarea({
 
   return (
     <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth flex1={flex1}>
-      {label && (
-        <Font variant="auxiliary" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="black" uppercase tracking="widest">
-          {label}
-        </Font>
+      {(label || subtitle) && (
+        <div className="flex flex-col gap-0.5">
+          {label && (
+            <Font variant="auxiliary" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="black" uppercase tracking="widest">
+              {label}
+            </Font>
+          )}
+          {subtitle && (
+            <Font variant="sub-tiny" color={STORE_TOKENS.COLORS.TEXT.DIM}>
+              {subtitle}
+            </Font>
+          )}
+        </div>
       )}
       <textarea
         className={cn(

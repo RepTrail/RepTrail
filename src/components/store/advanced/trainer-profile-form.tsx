@@ -54,7 +54,7 @@ export function TrainerProfileForm({ profile, userId }: TrainerProfileFormProps)
             return { previous }
         },
         onSuccess: () => {
-            toast({ title: 'Perfil atualizado!', description: 'Suas informaÃ§Ãµes foram salvas.' })
+            toast({ title: 'Perfil atualizado!', description: 'Suas informações foram salvas.' })
         },
         onError: (_err, _variables, ctx) => {
             queryClient.setQueryData(queryKey, ctx?.previous)
@@ -92,7 +92,7 @@ export function TrainerProfileForm({ profile, userId }: TrainerProfileFormProps)
                         />
                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                             <Input
-                                label="Seu CÃ³digo de Acesso (Fixo)"
+                                label="Seu Código de Acesso (Fixo)"
                                 icon={<Hash size={16} />}
                                 name="trainer_code"
                                 defaultValue={profile?.trainer_code || ''}
@@ -106,7 +106,7 @@ export function TrainerProfileForm({ profile, userId }: TrainerProfileFormProps)
                                 {...{
                                     color: STORE_TOKENS.COLORS.TEXT.DIM,
                                 }}>
-                                O cÃ³digo Ã© Ãºnico e permanente.
+                                O código é único e permanente.
                             </Font>
                         </Stack>
                         <Input
@@ -131,7 +131,7 @@ export function TrainerProfileForm({ profile, userId }: TrainerProfileFormProps)
                                 {...{
                                     color: STORE_TOKENS.COLORS.TEXT.DIM,
                                 }}>
-                                Seu perfil serÃ¡ exibido na sua landing page.
+                                Seu perfil será exibido na sua landing page.
                             </Font>
                         </Stack>
                         <Input
@@ -142,7 +142,7 @@ export function TrainerProfileForm({ profile, userId }: TrainerProfileFormProps)
                             placeholder="Ex: 123456-G/SP"
                         />
                         <Input
-                            label="Local de AtuaÃ§Ã£o"
+                            label="Local de Atuação"
                             icon={<MapPin size={16} />}
                             name="location"
                             defaultValue={profile?.location || ''}
@@ -150,7 +150,7 @@ export function TrainerProfileForm({ profile, userId }: TrainerProfileFormProps)
                         />
                         <Box mdColSpan={2}>
                             <Input
-                                label="Especialidades (separadas por vÃ­rgula)"
+                                label="Especialidades (separadas por vírgula)"
                                 icon={<Tags size={16} />}
                                 name="specialties"
                                 defaultValue={profile?.specialties?.join(', ') || ''}
@@ -159,10 +159,10 @@ export function TrainerProfileForm({ profile, userId }: TrainerProfileFormProps)
                         </Box>
                         <Box mdColSpan={2}>
                             <Textarea
-                                label="Sobre VocÃª (Bio)"
+                                label="Sobre Você (Bio)"
                                 name="bio"
                                 defaultValue={profile?.bio || ''}
-                                placeholder="Conte um pouco sobre sua metodologia e experiÃªncia..."
+                                placeholder="Conte um pouco sobre sua metodologia e experiência..."
                             />
                         </Box>
                     </Grid>
@@ -184,7 +184,7 @@ export function TrainerProfileForm({ profile, userId }: TrainerProfileFormProps)
                                 {...{
                                     color: STORE_TOKENS.COLORS.TEXT.MUTED,
                                 }}>
-                                ApÃ³s salvar, suas informaÃ§Ãµes ficam visÃ­veis para alunos e no convite.
+                                Após salvar, suas informações ficam visíveis para alunos e no convite.
                             </Font>
                         </Box>
                         <Button
@@ -196,7 +196,7 @@ export function TrainerProfileForm({ profile, userId }: TrainerProfileFormProps)
                         >
                             <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                                 <Font variant="body-sm" weight="black" uppercase italic>
-                                    {isPending ? 'Salvando...' : 'Salvar AlteraÃ§Ãµes do Perfil'}
+                                    {isPending ? 'Salvando...' : 'Salvar Alterações do Perfil'}
                                 </Font>
                                 <Icon icon={Save} size="xs" />
                             </Stack>

@@ -55,7 +55,7 @@ export function StudentPaymentButtons() {
                 gap={STORE_TOKENS.SPACING.ELEMENT}
             >
                 <Icon icon={CreditCard} size="md" color={STORE_TOKENS.COLORS.BLACK} />
-                Assinar com CartÃ£o
+                Assinar com Cartão
             </Button>
             <Font
                 variant="tiny"
@@ -66,7 +66,7 @@ export function StudentPaymentButtons() {
                 {...{
                     color: "DIM",
                 }}>
-                Pagamento processado com seguranÃ§a pelo Asaas
+                Pagamento processado com segurança pelo Asaas
             </Font>
         </Stack>
     );

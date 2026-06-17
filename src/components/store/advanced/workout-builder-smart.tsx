@@ -148,7 +148,7 @@ export function WorkoutBuilderSmart({
         onSuccess: () => {
             setSearchQuery('')
             setSearchResults([])
-            toast({ title: "ExercÃ­cio criado", description: "O exercÃ­cio serÃ¡ adicionado ao treino apÃ³s o processamento." })
+            toast({ title: "Exercício criado", description: "O exercício será adicionado ao treino após o processamento." })
         }
     })
 
@@ -201,7 +201,7 @@ export function WorkoutBuilderSmart({
                         variant="description"
                         {...{
                             color: STORE_TOKENS.COLORS.TEXT.MUTED,
-                        }}>Preparando sua biblioteca de exercÃ­cios</Font>
+                        }}>Preparando sua biblioteca de exercícios</Font>
                 </Stack>
             </Box>
         );
@@ -286,10 +286,10 @@ export function WorkoutBuilderSmart({
                         {...{
                             color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
                         }}>
-                        ExercÃ­cios no Treino
+                        Exercícios no Treino
                     </Font>
                     <Badge
-                        label={`NÃºmero de exercÃ­cios: ${exercises.length}`}
+                        label={`Número de exercícios: ${exercises.length}`}
                         variant="glass"
                         color={contextColor as any || STORE_TOKENS.COLORS.BRAND}
                         size="sm"
@@ -315,8 +315,8 @@ export function WorkoutBuilderSmart({
                 ) : (
                     <EmptyState
                         icon={Dumbbell}
-                        title="NENHUM EXERCÃCIO ADICIONADO"
-                        description="Use a busca abaixo para comeÃ§ar."
+                        title="NENHUM EXERCÍCIO ADICIONADO"
+                        description="Use a busca abaixo para começar."
                     />
                 )}
             </Stack>

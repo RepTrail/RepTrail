@@ -383,7 +383,7 @@ export function DietBuilderMealItemRow({
                             isIconOnly
                             size="sm"
                             onClick={() => { setHasSubstitute(!hasSubstitute); markUnsaved() }}
-                            title="Adicionar/Remover SubstituiÃ§Ã£o"
+                            title="Adicionar/Remover Substituição"
                         >
                             <Icon icon={Repeat2} size="xs" />
                         </Button>
@@ -402,7 +402,7 @@ export function DietBuilderMealItemRow({
                             size="sm"
                             onClick={handleSave}
                             disabled={isSaved}
-                            title="Salvar alteraÃ§Ãµes"
+                            title="Salvar alterações"
                         >
                             <Icon icon={Save} size="xs" />
                         </Button>
@@ -437,7 +437,7 @@ export function DietBuilderMealItemRow({
                                     {...{
                                         color: STORE_TOKENS.COLORS.BRAND,
                                     }}>
-                                    â†³ SubstituiÃ§Ã£o
+                                    â†³ Substituição
                                 </Font>
                             </Inline>
 
@@ -468,7 +468,7 @@ export function DietBuilderMealItemRow({
                                             size="sm"
                                             value={subFoodName}
                                             onChange={(e) => { setSubFoodName(e.target.value); markUnsaved() }}
-                                            placeholder="Nome da substituiÃ§Ã£o..."
+                                            placeholder="Nome da substituição..."
                                         />
                                     </Stack>
                                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT} shrink={0}>
@@ -543,7 +543,7 @@ export function DietBuilderMealItemRow({
                                         size="sm"
                                         disabled={estimating.sub || !subFoodName}
                                         onClick={handleEstimateSub}
-                                        title="Calcular macros da substituiÃ§Ã£o com IA"
+                                        title="Calcular macros da substituição com IA"
                                     >
                                         <Icon icon={estimating.sub ? Loader2 : Sparkles} size="xs" spin={estimating.sub} />
                                     </Button>
@@ -553,7 +553,7 @@ export function DietBuilderMealItemRow({
                                         size="sm"
                                         disabled={estimating.suggest}
                                         onClick={handleSuggestSub}
-                                        title="Sugerir substituiÃ§Ã£o similar com IA"
+                                        title="Sugerir substituição similar com IA"
                                     >
                                         <Icon icon={estimating.suggest ? Loader2 : Utensils} size="xs" spin={estimating.suggest} />
                                     </Button>
@@ -562,7 +562,7 @@ export function DietBuilderMealItemRow({
                                         isIconOnly
                                         size="sm"
                                         onClick={handleClearSub}
-                                        title="Limpar campos da substituiÃ§Ã£o"
+                                        title="Limpar campos da substituição"
                                     >
                                         <Icon icon={Trash2} size="xs" />
                                     </Button>
@@ -572,7 +572,7 @@ export function DietBuilderMealItemRow({
                                         size="sm"
                                         onClick={handleSave}
                                         disabled={isSaved}
-                                        title="Salvar AlteraÃ§Ãµes"
+                                        title="Salvar Alterações"
                                     >
                                         <Icon icon={Check} size="xs" />
                                     </Button>
