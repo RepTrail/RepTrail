@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useState, useEffect } from 'react'
 import { Plus, Trash2, TrendingDown, Edit3 } from 'lucide-react'
@@ -10,6 +10,7 @@ import { Button } from '@/components/store/base/button'
 import { Badge } from '@/components/store/base/badge'
 import { Inline } from '@/components/store/base/layout'
 import { Modal } from '@/components/store/advanced/modal'
+import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { actions } from '@/lib/dal'
 import { useToast } from '@/components/store/hooks/use-toast'
 import { useOptimisticMutation } from '@/lib/dal'
@@ -152,12 +153,11 @@ export function AdminOperationalCostsPanel({ initialCosts }: { initialCosts: Ope
     const totalMonthly = costs.reduce((sum, c) => sum + Number(c.amount), 0)
 
     return (
-        <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-            <Stack direction="row" justify="between" align="center">
-                <Stack gap={STORE_TOKENS.SPACING.NONE}>
-                    <Font variant="h3" weight="black" color="primary">Custos Operacionais</Font>
-                    <Font variant="body-sm" color="zinc-400">Infraestrutura e operação mensal da plataforma.</Font>
-                </Stack>
+        <RegistrySection
+            title="Custos Operacionais"
+            subtitle="Infraestrutura e operação mensal da plataforma."
+            icon={TrendingDown}
+            rightElement={
                 <Stack direction="row" justify="end" align="center" gap={STORE_TOKENS.SPACING.CONTAINER}>
                     <Badge
                         label={`R$ ${totalMonthly.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} / mês`}
@@ -182,7 +182,8 @@ export function AdminOperationalCostsPanel({ initialCosts }: { initialCosts: Ope
                         </Stack>
                     </Button>
                 </Stack>
-            </Stack>
+            }
+        >
             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                 {costs.map((cost) => {
                     const badgeColor = cost.type === 'fixed' ? STORE_TOKENS.COLORS.INFO : STORE_TOKENS.COLORS.BRAND;
@@ -317,6 +318,6 @@ export function AdminOperationalCostsPanel({ initialCosts }: { initialCosts: Ope
                     Esta ação não pode ser desfeita e removerá o registro permanentemente do sistema.
                 </Font>
             </Modal>
-        </Stack>
+        </RegistrySection>
     );
 }

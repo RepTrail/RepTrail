@@ -1,6 +1,6 @@
 'use client'
 
-import { Activity, Dumbbell, Pill } from 'lucide-react'
+import { Activity, Dumbbell, Pill, FlaskConical } from 'lucide-react'
 import { Stack } from '@/components/store/base/stack'
 import { Grid } from '@/components/store/base/grid'
 import { Box } from '@/components/store/base/box'
@@ -100,7 +100,7 @@ export function StudentDashboardClient({
                                         {hasCardio && <StudentCardioTracker userId={userId} />}
                                     </PremiumLockOverlay>
                                 </RegistrySection>
-                                <RegistrySection title="BIOATIVOS" subtitle="Gestão de suplementos e ergogênicos." icon={Pill}>
+                                <RegistrySection title="BIOATIVOS DE HOJE" subtitle="Gestão diária de protocolos auxiliares." icon={FlaskConical}>
                                     <PremiumLockOverlay variant="area" locked={!hasErgogenics} title="Módulo de Ergogênicos" description="O plano atual do seu personal trainer não inclui o módulo de ergogênicos.">
                                         {hasErgogenics && <StudentBioactivesManagement userId={userId} />}
                                     </PremiumLockOverlay>

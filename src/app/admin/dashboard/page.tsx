@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useQuery, useQueryClient, useAuthUser, actions } from '@/lib/dal'
 import { useTransition } from 'react'
@@ -105,13 +105,7 @@ export default function AdminDashboardPage() {
                 />
             </RegistrySection>
 
-            <RegistrySection
-                title="Custos Operacionais"
-                subtitle="Infraestrutura e operação mensal da plataforma."
-                icon={TrendingDown}
-            >
-                <AdminOperationalCostsPanel initialCosts={costs || []} />
-            </RegistrySection>
+            <AdminOperationalCostsPanel initialCosts={costs || []} />
 
             <RegistrySection
                 title="Produtos Mais Clicados"

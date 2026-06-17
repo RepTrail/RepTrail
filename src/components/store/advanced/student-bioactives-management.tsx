@@ -56,18 +56,11 @@ export function StudentBioactivesManagement({ userId }: StudentBioactivesManagem
         }
     })
 
-    if (isLoading) return <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
-            <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
-                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                        <Icon icon={FlaskConical} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
-                        <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{"BIOATIVOS DE HOJE"}</Font>
-                    </Inline>
-                    <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{"Gestão diária de protocolos auxiliares."}</Font>
-                </Stack>
-            </Stack>
-            <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth><Box />  </Stack>
+    if (isLoading) return (
+        <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
+            <Box />
         </Stack>
+    )
 
     // Timezone logic for Brazil
     const today = (() => {
@@ -86,35 +79,14 @@ export function StudentBioactivesManagement({ userId }: StudentBioactivesManagem
 
     if (todayItems.length === 0) {
         return (
-            <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
-            <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
-                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                        <Icon icon={FlaskConical} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
-                        <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{"BIOATIVOS DE HOJE"}</Font>
-                    </Inline>
-                    <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{"Gestão diária de protocolos auxiliares."}</Font>
-                </Stack>
-            </Stack>
             <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
                 <ErgogenicsList items={[]} status="empty" />
-              </Stack>
-        </Stack>
+            </Stack>
         )
     }
 
     return (
-        <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} fullWidth>
-            <Stack direction={{ base: 'col', lg: 'row' }} justify="between" align={{ base: 'stretch', lg: 'end' }} gap={STORE_TOKENS.SPACING.CONTAINER}>
-                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                        <Icon icon={FlaskConical} color={STORE_TOKENS.COLORS.BRAND as any} size="lg" />
-                        <Font variant="heading" weight="black" uppercase italic color={STORE_TOKENS.COLORS.TEXT.PRIMARY}>{"BIOATIVOS DE HOJE"}</Font>
-                    </Inline>
-                    <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{"Gestão diária de protocolos auxiliares."}</Font>
-                </Stack>
-            </Stack>
-            <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
+        <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
             <ErgogenicsList
                 items={todayItems.map((item: any) => ({
                     id: item.id,
@@ -129,7 +101,6 @@ export function StudentBioactivesManagement({ userId }: StudentBioactivesManagem
                     status: !currentStatus 
                 })}
             />
-          </Stack>
         </Stack>
     )
 }

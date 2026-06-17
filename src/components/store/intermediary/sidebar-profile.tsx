@@ -93,6 +93,8 @@ export function SidebarProfile({
                     <Font
                         {...STORE_TOKENS.TYPOGRAPHY.HEADING}
                         variant="body-sm"
+                        truncate
+                        display="block"
                         {...{
                             color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
                         }}>

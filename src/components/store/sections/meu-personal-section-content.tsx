@@ -175,6 +175,28 @@ export function MeuPersonalSectionContent({ trainer, trainerRel, existingReview:
 
 
                             </Stack>
+
+                            {/* Contract Info */}
+                            {(trainerRel?.monthly_fee || trainerRel?.payment_day) && (
+                                <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} wrap="wrap" justify={{ base: 'center', md: 'start' }}>
+                                    {trainerRel?.monthly_fee && (
+                                        <Badge
+                                            label={`MENSALIDADE: R$ ${Number(trainerRel.monthly_fee).toFixed(2)}`}
+                                            variant="glass"
+                                            color={STORE_TOKENS.COLORS.SUCCESS}
+                                            size="xs"
+                                        />
+                                    )}
+                                    {trainerRel?.payment_day && (
+                                        <Badge
+                                            label={`VENCIMENTO: DIA ${trainerRel.payment_day}`}
+                                            variant="glass"
+                                            color={STORE_TOKENS.COLORS.WARNING}
+                                            size="xs"
+                                        />
+                                    )}
+                                </Stack>
+                            )}
                         </Stack>
                     </Stack>
                 </GlassPanel>
@@ -271,44 +293,6 @@ export function MeuPersonalSectionContent({ trainer, trainerRel, existingReview:
                         </Link>
                     </Box>
                 </Grid>
-
-                {/* Contract Info */}
-                {(trainerRel?.monthly_fee || trainerRel.payment_day) && (
-                    <Grid gap={STORE_TOKENS.SPACING.CONTAINER} cols={{ base: 1, md: 2 }}>
-                        {trainerRel?.monthly_fee && (
-                            <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM}>
-                                <Stack gap={STORE_TOKENS.SPACING.NONE}>
-                                    <Font
-                                        variant="label-caps"
-                                        {...{
-                                            color: "SECONDARY",
-                                        }}>MENSALIDADE</Font>
-                                    <Font
-                                        variant="h2"
-                                        {...{
-                                            color: "PRIMARY",
-                                        }}>R$ {Number(trainerRel?.monthly_fee).toFixed(2)}</Font>
-                                </Stack>
-                            </GlassPanel>
-                        )}
-                        {trainerRel.payment_day && (
-                            <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM}>
-                                <Stack gap={STORE_TOKENS.SPACING.NONE}>
-                                    <Font
-                                        variant="label-caps"
-                                        {...{
-                                            color: "SECONDARY",
-                                        }}>VENCIMENTO</Font>
-                                    <Font
-                                        variant="h2"
-                                        {...{
-                                            color: "PRIMARY",
-                                        }}>Dia {trainerRel.payment_day}</Font>
-                                </Stack>
-                            </GlassPanel>
-                        )}
-                    </Grid>
-                )}
         </Stack>
     );
 }
