@@ -42,6 +42,7 @@ export default async function StudentDetailPage({
     const hasDiets = features?.has_diets ?? false
     const hasCardio = features?.has_cardio ?? false
     const hasErgogenics = features?.has_ergogenics ?? false
+    const hasPdfImport = features?.has_import_pdf_ai ?? false
 
     // ─── PARALLEL PREFETCHING (0ms Nav) ─────────────────────────────
     const relationship = await actions.getStudentRelationship(id)
@@ -119,7 +120,7 @@ export default async function StudentDetailPage({
                             title="Treinamentos de Força"
                             subtitle="Visualize, organize e prescreva os templates de treinamento de força ativos para o aluno."
                             icon="Dumbbell"
-                            rightElement={hasWorkouts ? <TrainerRegistryHeaderActions userId={userId} variant="workout" betaTesterMode={false} hideImportPdf={true} /> : null}
+                            rightElement={hasWorkouts ? <TrainerRegistryHeaderActions userId={userId} studentId={studentId} variant="workout" betaTesterMode={false} hideImportPdf={!hasPdfImport} /> : null}
                         >
                             <PremiumLockOverlay 
                                 variant="area" 
@@ -135,7 +136,7 @@ export default async function StudentDetailPage({
                             title="Protocolos Alimentares"
                             subtitle="Planeje e gerencie as refeições, calorias e macros da rotina alimentar do aluno."
                             icon="Utensils"
-                            rightElement={hasDiets ? <TrainerRegistryHeaderActions userId={userId} variant="diet" betaTesterMode={false} hideImportPdf={true} /> : null}
+                            rightElement={hasDiets ? <TrainerRegistryHeaderActions userId={userId} studentId={studentId} variant="diet" betaTesterMode={false} hideImportPdf={!hasPdfImport} /> : null}
                         >
                             <PremiumLockOverlay 
                                 variant="area" 
@@ -151,7 +152,7 @@ export default async function StudentDetailPage({
                             title="Atividades Cardiorrespiratórias"
                             subtitle="Defina metas de cardio, frequências semanais e intensidades sugeridas."
                             icon="Activity"
-                            rightElement={hasCardio ? <TrainerRegistryHeaderActions userId={userId} variant="cardio" betaTesterMode={false} hideImportPdf={true} /> : null}
+                            rightElement={hasCardio ? <TrainerRegistryHeaderActions userId={userId} studentId={studentId} variant="cardio" betaTesterMode={false} hideImportPdf={!hasPdfImport} /> : null}
                         >
                             <PremiumLockOverlay 
                                 variant="area" 
@@ -167,6 +168,7 @@ export default async function StudentDetailPage({
                             title="Recursos Ergogênicos"
                             subtitle="Gerenciamento inteligente de ergogênicos e fitoterápicos."
                             icon="Pill"
+                            rightElement={hasErgogenics ? <TrainerRegistryHeaderActions userId={userId} studentId={studentId} variant="ergogenic" betaTesterMode={false} hideImportPdf={!hasPdfImport} /> : null}
                         >
                             <PremiumLockOverlay 
                                 variant="area" 

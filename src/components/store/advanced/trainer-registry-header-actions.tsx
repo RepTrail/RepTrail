@@ -16,6 +16,7 @@ type TrainerLibraryVariant = 'workout' | 'diet' | 'cardio' | 'ergogenic'
 
 interface TrainerRegistryHeaderActionsProps {
     userId: string
+    studentId?: string
     betaTesterMode?: boolean
     variant?: TrainerLibraryVariant
     hideImportPdf?: boolean
@@ -78,15 +79,19 @@ const VARIANT_CONFIG: Record<TrainerLibraryVariant, {
         libraryKey: (userId) => QUERY_KEYS.cardio.library(userId),
     },
     ergogenic: {
-        createTitle: '',
-        createDescription: '',
-        createFields: [],
+        createTitle: 'Novo Recurso Ergogênico/Fitoterápico',
+        createDescription: 'Adicione um novo recurso ao protocolo do aluno.',
+        createFields: [
+            { name: 'name', label: 'Nome do Recurso', placeholder: 'Ex: Whey Protein', required: true },
+            { name: 'dosage', label: 'Dosagem (Opcional)', placeholder: 'Ex: 30g', required: false },
+        ],
         actionType: 'create-student-ergogenic',
-        successMessage: '',
-        footerLabel: '',
-        createLabel: '',
+        successMessage: 'Recurso adicionado!',
+        footerLabel: 'Salvar Recurso',
+        createLabel: 'Criar Manualmente',
         showImportPdf: true,
-        showCreate: false,
+        showCreate: true,
+        libraryKey: (id) => QUERY_KEYS.ergogenics.all(id),
     },
 }
 
@@ -144,6 +149,7 @@ function DirectCreateButton({
  */
 export function TrainerRegistryHeaderActions({
     userId,
+    studentId,
     betaTesterMode = false,
     variant = 'workout',
     hideImportPdf = false,
@@ -177,24 +183,25 @@ export function TrainerRegistryHeaderActions({
                         actionType={config.actionType}
                     />
                 ) : (
-                    <UnifiedCreationDialog
-                        title={config.createTitle}
-                        description={config.createDescription}
-                        trigger={
-                            <Button variant="outline-emerald" shine fullWidth={{ base: true, lg: false }}>
-                                <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                    <Icon icon={Plus} size="xs" color={STORE_TOKENS.COLORS.SUCCESS} />
-                                    {config.createLabel}
-                                </Stack>
-                            </Button>
-                        }
-                        fields={config.createFields}
-                        actionType={config.actionType}
-                        successMessage={config.successMessage}
-                        footerLabel={config.footerLabel}
-                        colorScheme="emerald"
-                        queryKey={config.libraryKey(userId)}
-                    />
+                        <UnifiedCreationDialog
+                            title={config.createTitle}
+                            description={config.createDescription}
+                            trigger={
+                                <Button variant="outline-emerald" shine fullWidth={{ base: true, lg: false }}>
+                                    <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                        <Icon icon={Plus} size="xs" color={STORE_TOKENS.COLORS.SUCCESS} />
+                                        {config.createLabel}
+                                    </Stack>
+                                </Button>
+                            }
+                            fields={config.createFields}
+                            actionType={config.actionType}
+                            successMessage={config.successMessage}
+                            footerLabel={config.footerLabel}
+                            colorScheme="emerald"
+                            queryKey={config.libraryKey ? config.libraryKey(studentId || userId) : undefined}
+                            parentId={studentId}
+                        />
                 )
             )}
         </Stack>

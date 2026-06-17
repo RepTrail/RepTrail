@@ -2,6 +2,7 @@
 
 import { PerformanceAnalysisSection } from '@/components/store/advanced/performance-analysis-section'
 import { UnifiedAdherenceChart } from '@/components/store/advanced/unified-adherence-chart'
+import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { StatsCard } from '@/components/store/intermediary/stats-card'
 import { Target, TrendingUp, Droplet } from 'lucide-react'
 import { Stack } from '@/components/store/base/stack'
@@ -95,11 +96,11 @@ export function StudentPublicMetrics({ fullMetrics, adherenceHistory, steroidUse
                     }} />
             </Grid>
             {/* ── Consistência Section ────────────────────────────────── */}
-            <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
-                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <Font variant="h3" weight="black" color="primary">Consistência (30D)</Font>
-                    <Font variant="body-sm" color="zinc-400">Acompanhamento diário da consistência de treinos, dieta, cardio e ergogênicos nas últimas 4 semanas.</Font>
-                </Stack>
+            <RegistrySection
+                title="Consistência (30D)"
+                subtitle="Acompanhamento diário da consistência de treinos, dieta, cardio e ergogênicos nas últimas 4 semanas."
+                icon="Target"
+            >
                 <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER} minWidth={0}>
                     <Box fullWidth minWidth={0} overflow="hidden">
                         <UnifiedAdherenceChart
@@ -109,13 +110,13 @@ export function StudentPublicMetrics({ fullMetrics, adherenceHistory, steroidUse
                         />
                     </Box>
                 </GlassPanel>
-            </Stack>
+            </RegistrySection>
             {/* ── Evolução Analítica Section ──────────────────────────── */}
-            <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth minWidth={0}>
-                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <Font variant="h3" weight="black" color="primary">Evolução Analítica</Font>
-                    <Font variant="body-sm" color="zinc-400">Histórico estatístico do percentual de gordura corporal, peso e frequência de treinos semanais.</Font>
-                </Stack>
+            <RegistrySection
+                title="Evolução Analítica"
+                subtitle="Histórico estatístico do percentual de gordura corporal, peso e frequência de treinos semanais."
+                icon="TrendingUp"
+            >
                 <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER} overflow="hidden" minWidth={0}>
                     <PerformanceAnalysisSection
                         weights={fullMetrics.weights}
@@ -125,7 +126,7 @@ export function StudentPublicMetrics({ fullMetrics, adherenceHistory, steroidUse
                         isStudentView={true}
                     />
                 </GlassPanel>
-            </Stack>
+            </RegistrySection>
         </Stack>
     );
 }
