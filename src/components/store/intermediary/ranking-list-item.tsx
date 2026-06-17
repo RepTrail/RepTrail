@@ -37,14 +37,15 @@ export function RankingListItem({ trainer, rank }: RankingListItemProps) {
                     <Badge 
                         label={`${Number(trainer.rating || 0).toFixed(1)} Rating`}
                         icon={Star}
-                        variant="glass"
+                        variant="outline"
+                        color="orange"
                         size="xs"
                     />
                     <Badge 
-                        label={`${trainer.studentCount} Alunos`}
+                        label={`${trainer.studentCount || 0} Alunos`}
                         icon={Users}
-                        variant="glass"
-                        color={STORE_TOKENS.COLORS.BRAND}
+                        variant="outline"
+                        color="emerald"
                         size="xs"
                     />
                 </Inline>

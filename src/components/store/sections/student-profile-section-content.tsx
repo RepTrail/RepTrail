@@ -1,7 +1,11 @@
 'use client'
 
 import React, { useState } from 'react'
-import { useQuery } from '@/lib/dal'
+import { useRouter } from 'next/navigation'
+import { useQuery, useMutation, useQueryClient } from '@/lib/dal'
+import { useToast } from '@/components/store/hooks/use-toast'
+import { enableAutoTrainingTrialForCurrentUser } from '@/actions/auto-training-actions'
+import { cancelAsaasSubscription } from '@/actions/asaas-actions'
 import { Grid } from '@/components/store/base/grid'
 import { Box } from '@/components/store/base/box'
 import { Stack } from '@/components/store/base/stack'
@@ -40,6 +44,47 @@ export function StudentProfileSectionContent({
         queryKey: userId ? QUERY_KEYS.student.details(userId) : ['student-profile-no-id'],
         queryFn: () => getStudentProfile(userId!),
         enabled: !!userId
+    })
+
+    const router = useRouter()
+    const queryClient = useQueryClient()
+    const { toast } = useToast()
+
+    const { mutate: startTrial, isPending: isActivatingTrial } = useMutation({
+        mutationFn: async () => enableAutoTrainingTrialForCurrentUser(),
+        onSuccess: (res) => {
+            if (res.success === false) {
+                toast({ variant: 'destructive', title: "Erro", description: res.error || "Erro ao ativar o teste grátis." })
+                return
+            }
+            toast({ title: "Teste Ativado!", description: "Aproveite seus 7 dias de acesso total." })
+            setIsTrialModalOpen(false)
+            if (userId) queryClient.invalidateQueries({ queryKey: QUERY_KEYS.student.details(userId) })
+            router.refresh()
+            setTimeout(() => {
+                window.dispatchEvent(new CustomEvent('open-auto-training-onboarding'))
+            }, 100)
+        },
+        onError: () => {
+            toast({ variant: 'destructive', title: "Erro", description: "Ocorreu um erro ao ativar seu teste." })
+        }
+    })
+
+    const { mutate: cancelSubscription, isPending: isCancelling } = useMutation({
+        mutationFn: async () => cancelAsaasSubscription(),
+        onSuccess: (res) => {
+            if (res.success === false) {
+                toast({ variant: 'destructive', title: "Erro", description: res.error || "Erro ao cancelar assinatura." })
+                return
+            }
+            toast({ title: "Assinatura Cancelada", description: "Sua assinatura foi cancelada." })
+            setIsCancelModalOpen(false)
+            if (userId) queryClient.invalidateQueries({ queryKey: QUERY_KEYS.student.details(userId) })
+            router.refresh()
+        },
+        onError: () => {
+            toast({ variant: 'destructive', title: "Erro", description: "Tente novamente mais tarde." })
+        }
     })
 
     // Derive subscription status from backend data
@@ -116,17 +161,17 @@ export function StudentProfileSectionContent({
         </Grid >
         {/* Confirmation Modals */ }
         < Modal
-    isOpen = { isTrialModalOpen }
-    onClose = {() => setIsTrialModalOpen(false)
-}
-title = "ATIVAR TESTE GRÁTIS"
-subtitle = "Você terá acesso total por 7 dias."
-icon = { Zap }
-variant = "orange"
-confirmLabel = "ATIVAR AGORA"
-confirmIcon = { CheckCircle }
-onConfirm = {() => setIsTrialModalOpen(false)}
-            >
+    isOpen={isTrialModalOpen}
+    onClose={() => setIsTrialModalOpen(false)}
+    title="ATIVAR TESTE GRÁTIS"
+    subtitle="Você terá acesso total por 7 dias."
+    icon={Zap}
+    variant="orange"
+    confirmLabel="ATIVAR AGORA"
+    confirmIcon={CheckCircle}
+    isLoading={isActivatingTrial}
+    onConfirm={() => startTrial()}
+>
     <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
         <Font
             variant="body-sm"
@@ -155,7 +200,8 @@ onConfirm = {() => setIsTrialModalOpen(false)}
                 confirmLabel="CONFIRMAR CANCELAMENTO"
                 confirmIcon={XCircle}
                 confirmVariant="outline-red"
-                onConfirm={() => setIsCancelModalOpen(false)}
+                isLoading={isCancelling}
+                onConfirm={() => cancelSubscription()}
             >
                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                     <Font
