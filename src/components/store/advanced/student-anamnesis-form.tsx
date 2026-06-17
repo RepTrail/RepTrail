@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState, useEffect } from 'react'
 import { useToast } from "@/components/store/hooks/use-toast"
@@ -20,6 +20,7 @@ import { Button } from '@/components/store/base/button'
 import { Surface } from '@/components/store/base/surface'
 import { Icon } from '@/components/store/base/icon'
 import { Badge } from '@/components/store/base/badge'
+import { BackgroundIcon } from '@/components/store/base/background-icon'
 import { STORE_TOKENS } from "@/components/store/constants/tokens"
 
 export function AnamnesisForm({ initialData }: { initialData?: any }) {
@@ -151,9 +152,7 @@ export function AnamnesisForm({ initialData }: { initialData?: any }) {
                         position="relative" 
                         overflow="hidden" 
                     >
-                        <Box position="absolute" pin="right" top={0} padding={STORE_TOKENS.PADDING.CONTAINER} opacity={STORE_TOKENS.OPACITY.SUBTLE}>
-                            <Icon icon={Target} size="xl" color={STORE_TOKENS.COLORS.SUCCESS} />
-                        </Box>
+                        <BackgroundIcon icon={Target} color={STORE_TOKENS.COLORS.SUCCESS as any} />
 
                         <Stack gap={STORE_TOKENS.SPACING.CONTAINER} position="relative" zIndex={STORE_TOKENS.Z_INDEX.CONTENT}>
                             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>

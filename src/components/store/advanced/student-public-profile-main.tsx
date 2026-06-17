@@ -103,7 +103,7 @@ export function StudentPublicProfileMain({
                         {/* Identity Info */}
                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align={{ base: 'center', md: 'start' }}>
                             <Font
-                                variant="h1"
+                                variant="h3"
                                 align={{ base: 'center', md: 'left' }}
                                 weight="black"
                                 italic
@@ -152,15 +152,16 @@ export function StudentPublicProfileMain({
                                             border={true}
                                             borderColor={STORE_TOKENS.COLORS.BRAND}
                                             borderOpacity={STORE_TOKENS.OPACITY.MEDIUM}
+                                            overflow="hidden"
                                         >
-                                            <Inline gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
+                                            <Inline gap={STORE_TOKENS.SPACING.CONTAINER} align="center" flex1 minWidth={0}>
                                                 <BaseAvatar
                                                     initials={trainerData?.full_name?.charAt(0) || '?'}
                                                     src={trainerData.avatar_url || undefined}
                                                     size="lg"
                                                     variant="zinc"
                                                 />
-                                                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                                <Stack gap={STORE_TOKENS.SPACING.ELEMENT} flex1 minWidth={0}>
                                                     <Font
                                                         variant="sub-tiny"
                                                         weight="black"
@@ -176,6 +177,7 @@ export function StudentPublicProfileMain({
                                                         weight="black"
                                                         italic
                                                         uppercase
+                                                        truncate
                                                         {...{
                                                             color: "primary",
                                                         }}>

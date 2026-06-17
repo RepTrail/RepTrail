@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useQuery } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
@@ -34,7 +34,8 @@ export function StudentCardioManagementSmart({ userId }: StudentCardioManagement
     })
 
     const isAutoTrainingActive = profile?.auto_training_status === 'active' || profile?.auto_training_status === 'trial'
-    const isAutoMode = isAutoTrainingActive
+    const hasPersonalTrainer = !!trainerLink?.trainer_id
+    const isAutoMode = isAutoTrainingActive && !hasPersonalTrainer
 
     const { data: libraryCardios = [] } = useQuery({
         queryKey: QUERY_KEYS.cardio.library(userId),

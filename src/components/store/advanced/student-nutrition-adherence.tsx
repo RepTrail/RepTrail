@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 import { Icon } from '@/components/store/base/icon'
 import { Inline } from '@/components/store/base/layout'
 import { Font } from '@/components/store/base/font'
@@ -13,16 +13,18 @@ import { useStudentDailyDiet } from '@/lib/dal'
 import { useOptimisticMutation } from '@/lib/dal'
 import { ENTITIES } from '@/lib/outbox-db'
 import { Box } from '@/components/store/base/box'
+import { PremiumLockOverlay } from '@/components/store/intermediary/premium-lock-overlay'
 
 interface StudentNutritionAdherenceProps {
     userId: string
+    locked?: boolean
 }
 
 /**
  * StudentNutritionAdherence (Smart): Manages diet adherence and macros.
  * fully local-first offline-ready. Granular item tracking and dynamic sychronous progress.
  */
-export function StudentNutritionAdherence({ userId }: StudentNutritionAdherenceProps) {
+export function StudentNutritionAdherence({ userId, locked = false }: StudentNutritionAdherenceProps) {
     const queryClient = useQueryClient()
     const todayQueryKey = QUERY_KEYS.diets.today(userId)
 
@@ -130,7 +132,11 @@ export function StudentNutritionAdherence({ userId }: StudentNutritionAdherenceP
                     <Font variant="description" color={STORE_TOKENS.COLORS.TEXT.MUTED}>{"Acompanhamento nutricional e macros."}</Font>
                 </Stack>
             </Stack>
-            <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth><Box />  </Stack>
+            <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
+                <PremiumLockOverlay variant="area" locked={locked} title="Módulo de Dietas" description="O plano atual do seu personal trainer não inclui o módulo de dietas.">
+                    {!locked && <Box />}
+                </PremiumLockOverlay>
+            </Stack>
         </Stack>
 
     if (!diet || !stats) {
@@ -146,14 +152,18 @@ export function StudentNutritionAdherence({ userId }: StudentNutritionAdherenceP
                 </Stack>
             </Stack>
             <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
-                <DietAdherenceCard
-                    completedItems={0}
-                    totalItems={0}
-                    percentage={0}
-                    macros={{ calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0 }}
-                    meals={[]}
-                    status="empty"
-                />
+                <PremiumLockOverlay variant="area" locked={locked} title="Módulo de Dietas" description="O plano atual do seu personal trainer não inclui o módulo de dietas.">
+                    {!locked && (
+                        <DietAdherenceCard
+                            completedItems={0}
+                            totalItems={0}
+                            percentage={0}
+                            macros={{ calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0 }}
+                            meals={[]}
+                            status="empty"
+                        />
+                    )}
+                </PremiumLockOverlay>
               </Stack>
         </Stack>
         )
@@ -171,16 +181,20 @@ export function StudentNutritionAdherence({ userId }: StudentNutritionAdherenceP
                 </Stack>
             </Stack>
             <Stack gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
-            <DietAdherenceCard
-                completedItems={stats.completedItems}
-                totalItems={stats.totalItems}
-                percentage={stats.percentage}
-                macros={stats.macros}
-                meals={diet.meals}
-                onToggleMeal={(mealId, currentStatus) => mealMutation.mutate({ mealId, currentStatus })}
-                onToggleItem={(itemId, currentStatus) => itemMutation.mutate({ itemId, currentStatus })}
-                status="active"
-            />
+                <PremiumLockOverlay variant="area" locked={locked} title="Módulo de Dietas" description="O plano atual do seu personal trainer não inclui o módulo de dietas.">
+                    {!locked && (
+                        <DietAdherenceCard
+                            completedItems={stats.completedItems}
+                            totalItems={stats.totalItems}
+                            percentage={stats.percentage}
+                            macros={stats.macros}
+                            meals={diet.meals}
+                            onToggleMeal={(mealId, currentStatus) => mealMutation.mutate({ mealId, currentStatus })}
+                            onToggleItem={(itemId, currentStatus) => itemMutation.mutate({ itemId, currentStatus })}
+                            status="active"
+                        />
+                    )}
+                </PremiumLockOverlay>
           </Stack>
         </Stack>
     )

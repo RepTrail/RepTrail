@@ -8,13 +8,14 @@ import { Grid } from '@/components/store/base/grid'
 import { Font } from '@/components/store/base/font'
 import { FileUpload } from '@/components/store/base/file-upload'
 import { Icon } from '@/components/store/base/icon'
+import { PremiumLockOverlay } from '@/components/store/intermediary/premium-lock-overlay'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { useToast } from '@/components/store/hooks/use-toast'
 import { useOptimisticMutation } from '@/lib/dal'
 import { ENTITIES } from '@/lib/outbox-db'
 import { QUERY_KEYS } from '@/lib/query-keys'
 import { usePlanLimits } from '@/lib/dal'
-import { AlertTriangle } from 'lucide-react'
+
 
 interface ProgressPhotoUploadProps {
     studentId: string
@@ -126,24 +127,12 @@ export function ProgressPhotoUpload({ studentId, existingPhotos = [] }: Progress
     }
 
     const currentCycleStart = limitsData?.quotas?.currentCycleStart || new Date(0).toISOString()
-    const maxPhotos = limitsData?.quotas?.maxPhotosPerStudent || 2
+    const maxPhotos = limitsData?.quotas?.maxPhotosPerStudent ?? 2
 
     const photosThisCycle = existingPhotos.filter((p: Record<string, unknown>) => new Date(p.created_at as string) >= new Date(currentCycleStart)).length
     const hasReachedLimit = photosThisCycle >= maxPhotos
 
-    if (hasReachedLimit) {
-        return (
-            <Stack align="center" justify="center" gap={STORE_TOKENS.SPACING.CONTAINER} padding={STORE_TOKENS.PADDING.CONTAINER}>
-                <Icon icon={AlertTriangle} size="xl" color={STORE_TOKENS.COLORS.WARNING} />
-                <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center" textAlign="center">
-                    <Font variant="body" weight="bold">Limite Atingido</Font>
-                    <Font variant="tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED}>
-                        Você já enviou {photosThisCycle} de {maxPhotos} fotos permitidas neste ciclo do plano.
-                    </Font>
-                </Stack>
-            </Stack>
-        )
-    }
+    // Early return logic for hasReachedLimit removed. Limit is now shown on the button.
 
     return (
         <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
@@ -175,33 +164,39 @@ export function ProgressPhotoUpload({ studentId, existingPhotos = [] }: Progress
             </Grid>
             {/* Public sharing checkbox removed per user request */}
             {/* Instructions panel removed per user request */}
-            <Button
-                onClick={handleSubmit}
-                disabled={uploading || !photos.front || !photos.back || !photos.side_left || !photos.side_right}
-                variant="outline-emerald"
-                fullWidth
-                loading={uploading}
-                size="lg"
-                height="auto"
-                paddingY={STORE_TOKENS.PADDING.ELEMENT}
+            <PremiumLockOverlay 
+                variant="button" 
+                locked={hasReachedLimit} 
+                title={`LIMITE MENSAL ATINGIDO (${photosThisCycle}/${maxPhotos})`}
             >
-                <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <Icon icon={ChevronRight} size="sm" />
-                    <Font
-                        variant="sub-tiny"
-                        weight="black"
-                        uppercase
-                        italic
-                        tracking="widest"
-                        align="center"
-                        whitespace="normal"
-                        {...{
-                            color: "inherit",
-                        }}>
-                        Enviar Novas Fotos de Progresso
-                    </Font>
-                </Stack>
-            </Button>
+                <Button
+                    onClick={handleSubmit}
+                    disabled={uploading || !photos.front || !photos.back || !photos.side_left || !photos.side_right}
+                    variant="outline-emerald"
+                    fullWidth
+                    loading={uploading}
+                    size="lg"
+                    height="auto"
+                    paddingY={STORE_TOKENS.PADDING.ELEMENT}
+                >
+                    <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                        <Icon icon={ChevronRight} size="sm" />
+                        <Font
+                            variant="sub-tiny"
+                            weight="black"
+                            uppercase
+                            italic
+                            tracking="widest"
+                            align="center"
+                            whitespace="normal"
+                            {...{
+                                color: "inherit",
+                            }}>
+                            Enviar Novas Fotos de Progresso
+                        </Font>
+                    </Stack>
+                </Button>
+            </PremiumLockOverlay>
         </Stack>
     );
 }

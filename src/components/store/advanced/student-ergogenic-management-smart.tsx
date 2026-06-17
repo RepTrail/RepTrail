@@ -49,7 +49,9 @@ export function StudentErgogenicManagementSmart({ userId }: StudentErgogenicMana
 
     const ergogenics = Array.isArray(ergogenicsData) ? ergogenicsData : []
 
-    const isAutoMode = !trainerLink
+    const isAutoTrainingActive = profile?.auto_training_status === 'active' || profile?.auto_training_status === 'trial'
+    const hasPersonalTrainer = !!trainerLink?.trainer_id
+    const isAutoMode = isAutoTrainingActive && !hasPersonalTrainer
 
     // 2. Realtime Sync
     useRealtimeSync({

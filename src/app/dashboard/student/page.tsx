@@ -134,6 +134,11 @@ async function StudentDashboardContent({ userId }: { userId: string }) {
     // Fire and forget background tracking
     ensureDailyTracking(userId).catch(console.error)
 
+    let trainerFeatures = null
+    if (trainerRel?.trainer_id) {
+        trainerFeatures = await import('@/lib/dal/remote').then(m => m.getTrainerPlanFeatures(trainerRel.trainer_id))
+    }
+
     // ─── CASE LOGIC ──────────────────────────────────────────────────────────
     const hasAutoTraining = autoTrainingStatus?.auto_training_status === 'active' ||
         (autoTrainingStatus?.auto_training_status === 'trial' && autoTrainingStatus?.auto_training_trial_used && new Date() <= new Date(autoTrainingStatus?.auto_training_trial_end || Date.now() + 100000))
@@ -183,6 +188,7 @@ async function StudentDashboardContent({ userId }: { userId: string }) {
                 protocolStatus={protocolStatus}
                 showAutoTrainingModal={showAutoTrainingModal}
                 showAnamnesis={showAnamnesis}
+                trainerFeatures={trainerFeatures}
             />
         </HydrationBoundary>
     )

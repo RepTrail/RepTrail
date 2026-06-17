@@ -29,6 +29,7 @@ interface BackgroundIconProps {
  */
 export function BackgroundIcon({
     icon,
+    color,
     zIndex = 0
 }: BackgroundIconProps) {
     return (
@@ -45,7 +46,7 @@ export function BackgroundIcon({
             justify="center"
             style={{ pointerEvents: 'none' }}
         >
-            <Icon icon={icon} size="100" color={STORE_TOKENS.COLORS.BRAND} />
+            <Icon icon={icon} size="100" color={(color as any) || STORE_TOKENS.COLORS.BRAND} />
         </Box>
     );
 }

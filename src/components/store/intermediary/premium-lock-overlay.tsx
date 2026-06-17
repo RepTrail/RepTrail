@@ -25,18 +25,23 @@ export function PremiumLockOverlay({
 }: PremiumLockOverlayProps) {
     if (!locked) return <>{children}</>
 
+    // Detects if children resolves to anything meaningful (e.g., skips false, null, undefined)
+    const hasChildren = React.Children.toArray(children).some(child => !!child)
+
     return (
-        <Box position="relative" fullWidth fullHeight display="flex" direction="col" overflow="hidden" flex1>
+        <Box position="relative" fullWidth fullHeight={hasChildren ? true : undefined} display="flex" direction="col" overflow="hidden" flex1>
             {/* O conteúdo original garante o layout, mas fica 100% invisível para não vazar */}
-            <Box fullWidth fullHeight pointerEvents="none" opacity={STORE_TOKENS.OPACITY.NONE} flex1>
-                {children}
-            </Box>
+            {hasChildren && (
+                <Box fullWidth fullHeight pointerEvents="none" opacity={STORE_TOKENS.OPACITY.NONE} flex1>
+                    {children}
+                </Box>
+            )}
 
             {/* Overlay */}
             <GlassPanel
                 variant="tonal-red"
-                position="absolute"
-                pin="inset"
+                position={hasChildren ? 'absolute' : 'relative'}
+                pin={hasChildren ? 'inset' : undefined}
                 zIndex={10}
                 display="flex"
                 direction={variant === 'area' ? 'col' : 'row'}

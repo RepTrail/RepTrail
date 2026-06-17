@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useQuery } from '@/lib/dal'
 import { QUERY_KEYS } from '@/lib/query-keys'
@@ -39,7 +39,8 @@ export function StudentDietManagementSmart({ userId }: StudentDietManagementSmar
     })
 
     const isAutoTrainingActive = profile?.auto_training_status === 'active' || profile?.auto_training_status === 'trial'
-    const isAutoMode = isAutoTrainingActive
+    const hasPersonalTrainer = !!trainerLink?.trainer_id
+    const isAutoMode = isAutoTrainingActive && !hasPersonalTrainer
 
     const { data: libraryDiets = [] } = useQuery({
         queryKey: QUERY_KEYS.diets.library(userId),

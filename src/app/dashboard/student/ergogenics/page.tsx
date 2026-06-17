@@ -5,6 +5,8 @@ import { PREFETCH_REGISTRY } from '@/lib/prefetch-registry'
 import { RegistryMain } from '@/components/store/advanced/registry-main'
 import { StudentRegistryHeaderActions } from '@/components/store/advanced/student-registry-header-actions'
 import { StudentErgogenicsSection } from '@/components/store/sections/student-ergogenics-section'
+import { PremiumLockOverlay } from '@/components/store/intermediary/premium-lock-overlay'
+import * as actions from '@/lib/dal/remote'
 
 export default async function ErgogenicsPage() {
     const headerList = await headers()
@@ -24,6 +26,13 @@ export default async function ErgogenicsPage() {
         })
     ))
 
+    const trainerRel = await actions.getStudentTrainer(userId)
+    let hasFeature = true
+    if (trainerRel?.trainer_id) {
+        const features = await actions.getTrainerPlanFeatures(trainerRel.trainer_id)
+        hasFeature = features?.has_ergogenics ?? false
+    }
+
     return (
         <RegistryMain
             title="MEUS ERGOGÊNICOS"
@@ -31,11 +40,20 @@ export default async function ErgogenicsPage() {
             icon="FlaskConical"
             contextLabel="Protocolos & Performance"
             showTabs={false}
-            rightElement={<StudentRegistryHeaderActions userId={userId} type="ergogenic" />}
+            rightElement={hasFeature ? <StudentRegistryHeaderActions userId={userId} type="ergogenic" /> : null}
         >
-            <HydrationBoundary state={dehydrate(queryClient)}>
-                <StudentErgogenicsSection userId={userId} />
-            </HydrationBoundary>
+            <PremiumLockOverlay 
+                variant="area" 
+                locked={!hasFeature} 
+                title="Módulo de Ergogênicos" 
+                description="O plano atual do seu personal trainer não inclui o módulo de ergogênicos."
+            >
+                {hasFeature && (
+                    <HydrationBoundary state={dehydrate(queryClient)}>
+                        <StudentErgogenicsSection userId={userId} />
+                    </HydrationBoundary>
+                )}
+            </PremiumLockOverlay>
         </RegistryMain>
     );
 }
