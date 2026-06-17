@@ -32,7 +32,7 @@ export default async function StudentLandingPage() {
     { label: 'Login', href: '/auth/login', variant: 'outline-zinc' as const },
     { label: 'Começar Agora', href: '/auth/signup', variant: 'outline-primary' as const, desktopOnly: true },
   ] : [
-    { label: 'Acessar Dashboard', href: dashboardUrl, variant: 'primary' as const, desktopOnly: true },
+    { label: 'Dashboard', href: dashboardUrl, variant: 'primary' as const },
   ]
 
   const mobileNavActions = !user ? [

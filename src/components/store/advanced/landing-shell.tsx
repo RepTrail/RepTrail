@@ -11,6 +11,7 @@ import { BackgroundEffects } from '@/components/store/base/background-effects'
 import { GlassPanel } from '@/components/store/base/surface'
 import { useRegistry } from '@/components/store/base/registry-context'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
+import { AutoScalingContainer } from '@/components/store/base/auto-scaling-container'
 
 export interface LandingNavAction {
   label: string
@@ -114,18 +115,19 @@ export function LandingShell({
             display="flex"
             align="center"
             justify="between"
+            gap={STORE_TOKENS.SPACING.CONTAINER}
           >
             {/* Logo */}
-            <Link href="/">
-              <Box as="span" display="flex" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} group cursor="pointer">
-                <Box transition>
+            <Link href="/" className="min-w-0 shrink flex-1">
+              <Box as="span" display="flex" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} group cursor="pointer" shrink={1} minWidth={0} width="full">
+                <AutoScalingContainer>
                   <Logo size="md" color={primaryColor as any} />
-                </Box>
+                </AutoScalingContainer>
               </Box>
             </Link>
 
             {/* Desktop Navigation */}
-            <Box as="nav" display={{ base: 'none', md: 'flex' }} align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+            <Box as="nav" display={{ base: 'none', md: 'flex' }} align="center" gap={STORE_TOKENS.SPACING.ELEMENT} shrink={0}>
               {desktopActions.map((action, i) => (
                 <Button
                   key={i}
@@ -142,7 +144,7 @@ export function LandingShell({
             </Box>
 
             {/* Mobile Navigation */}
-            <Box display={{ base: 'flex', md: 'none' }} align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+            <Box display={{ base: 'flex', md: 'none' }} align="center" gap={STORE_TOKENS.SPACING.ELEMENT} shrink={0}>
               {mobileActions.map((action, i) => (
                 <Button
                   key={i}

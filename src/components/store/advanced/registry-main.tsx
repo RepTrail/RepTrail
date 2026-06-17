@@ -15,45 +15,14 @@ import {
   HeartHandshake,
   Zap,
   Users,
-  ClipboardList,
-  Activity,
-  TrendingUp,
-  Sparkles,
-  Utensils,
-  Dumbbell,
-  FlaskConical,
-  FileUp,
-  Flame,
-  CreditCard,
-  UserCheck,
-  LayoutDashboard,
   LucideIcon
 } from 'lucide-react'
+import { iconMap } from '@/components/store/constants/icon-map'
 import { useRegistry } from '@/components/store/base/registry-context'
 import { SegmentedSwitch } from '@/components/store/intermediary/segmented-switch'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { AdminSectionContent } from '../sections/admin-section-content'
 import { StudentRegistryContent } from '../sections/student-registry-content'
-
-const iconMap: Record<string, LucideIcon> = {
-  BarChart3,
-  Users2,
-  HeartHandshake,
-  Zap,
-  Users,
-  ClipboardList,
-  Activity,
-  TrendingUp,
-  Sparkles,
-  Utensils,
-  Dumbbell,
-  FlaskConical,
-  FileUp,
-  Flame,
-  CreditCard,
-  UserCheck,
-  LayoutDashboard,
-}
 
 interface RegistryMainProps {
   children: React.ReactNode

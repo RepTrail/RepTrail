@@ -8,8 +8,9 @@ import { TrainerStudentEvolutionSection } from '@/components/store/sections/trai
 import { TrainerStudentWorkoutsContent, TrainerStudentDietsContent, TrainerStudentCardioContent } from '@/components/store/sections/trainer-student-protocols-section'
 import { RegistrySection } from '@/components/store/advanced/registry-section'
 import { TrainerRegistryHeaderActions } from '@/components/store/advanced/trainer-registry-header-actions'
+import { PremiumLockOverlay } from '@/components/store/intermediary/premium-lock-overlay'
+import { Box } from '@/components/store/base/box'
 import { TrainerStudentErgogenicsSmart } from '@/components/store/advanced/trainer-student-ergogenics-smart'
-import { Dumbbell, Utensils, Activity, Pill, User } from 'lucide-react'
 import { TrainerStudentPhotosContent, TrainerStudentRecentActivitiesContent } from '@/components/store/sections/trainer-student-photos-activities-section'
 import { TrainerStudentDetailTabSwitcher } from '@/components/store/sections/trainer-student-detail-tab-switcher'
 import { PlaceholderStudentAccessBanner } from '@/components/store/sections/placeholder-student-access-banner'
@@ -34,6 +35,13 @@ export default async function StudentDetailPage({
     if (!userId) redirect('/auth/login')
 
     const queryClient = getQueryClient()
+
+    // Fetch features to apply locks
+    const features = await actions.getTrainerPlanFeatures(userId)
+    const hasWorkouts = features?.has_workouts ?? false
+    const hasDiets = features?.has_diets ?? false
+    const hasCardio = features?.has_cardio ?? false
+    const hasErgogenics = features?.has_ergogenics ?? false
 
     // ─── PARALLEL PREFETCHING (0ms Nav) ─────────────────────────────
     const relationship = await actions.getStudentRelationship(id)
@@ -110,36 +118,64 @@ export default async function StudentDetailPage({
                         <RegistrySection
                             title="Treinamentos de Força"
                             subtitle="Visualize, organize e prescreva os templates de treinamento de força ativos para o aluno."
-                            icon={Dumbbell}
-                            rightElement={<TrainerRegistryHeaderActions userId={userId} variant="workout" betaTesterMode={false} hideImportPdf={true} />}
+                            icon="Dumbbell"
+                            rightElement={hasWorkouts ? <TrainerRegistryHeaderActions userId={userId} variant="workout" betaTesterMode={false} hideImportPdf={true} /> : null}
                         >
-                            <TrainerStudentWorkoutsContent relationshipId={id} studentId={studentId} />
+                            <PremiumLockOverlay 
+                                variant="area" 
+                                locked={!hasWorkouts} 
+                                title="Treinamentos" 
+                                description="Seu plano não inclui o módulo de treinamentos. Faça upgrade para prescrever treinos para seus alunos."
+                            >
+                                {hasWorkouts ? <TrainerStudentWorkoutsContent relationshipId={id} studentId={studentId} /> : <Box minHeight={300} fullWidth />}
+                            </PremiumLockOverlay>
                         </RegistrySection>
                         
                         <RegistrySection
                             title="Protocolos Alimentares"
                             subtitle="Planeje e gerencie as refeições, calorias e macros da rotina alimentar do aluno."
-                            icon={Utensils}
-                            rightElement={<TrainerRegistryHeaderActions userId={userId} variant="diet" betaTesterMode={false} hideImportPdf={true} />}
+                            icon="Utensils"
+                            rightElement={hasDiets ? <TrainerRegistryHeaderActions userId={userId} variant="diet" betaTesterMode={false} hideImportPdf={true} /> : null}
                         >
-                            <TrainerStudentDietsContent relationshipId={id} studentId={studentId} />
+                            <PremiumLockOverlay 
+                                variant="area" 
+                                locked={!hasDiets} 
+                                title="Planos Alimentares" 
+                                description="Seu plano não inclui o módulo de dietas. Faça upgrade para prescrever planos alimentares."
+                            >
+                                {hasDiets ? <TrainerStudentDietsContent relationshipId={id} studentId={studentId} /> : <Box minHeight={300} fullWidth />}
+                            </PremiumLockOverlay>
                         </RegistrySection>
 
                         <RegistrySection
                             title="Atividades Cardiorrespiratórias"
                             subtitle="Defina metas de cardio, frequências semanais e intensidades sugeridas."
-                            icon={Activity}
-                            rightElement={<TrainerRegistryHeaderActions userId={userId} variant="cardio" betaTesterMode={false} hideImportPdf={true} />}
+                            icon="Activity"
+                            rightElement={hasCardio ? <TrainerRegistryHeaderActions userId={userId} variant="cardio" betaTesterMode={false} hideImportPdf={true} /> : null}
                         >
-                            <TrainerStudentCardioContent relationshipId={id} studentId={studentId} />
+                            <PremiumLockOverlay 
+                                variant="area" 
+                                locked={!hasCardio} 
+                                title="Cardio" 
+                                description="Seu plano não inclui o módulo de atividades cardiorrespiratórias. Faça upgrade para liberar."
+                            >
+                                {hasCardio ? <TrainerStudentCardioContent relationshipId={id} studentId={studentId} /> : <Box minHeight={300} fullWidth />}
+                            </PremiumLockOverlay>
                         </RegistrySection>
 
                         <RegistrySection
                             title="Recursos Ergogênicos"
                             subtitle="Gerenciamento inteligente de ergogênicos e fitoterápicos."
-                            icon={Pill}
+                            icon="Pill"
                         >
-                            <TrainerStudentErgogenicsSmart effectiveStudentId={studentId} />
+                            <PremiumLockOverlay 
+                                variant="area" 
+                                locked={!hasErgogenics} 
+                                title="Ergogênicos" 
+                                description="Seu plano não inclui o módulo de recursos ergogênicos e fitoterápicos. Faça upgrade para liberar."
+                            >
+                                {hasErgogenics ? <TrainerStudentErgogenicsSmart effectiveStudentId={studentId} /> : <Box minHeight={300} fullWidth />}
+                            </PremiumLockOverlay>
                         </RegistrySection>
                     </>
                 )}
@@ -150,17 +186,13 @@ export default async function StudentDetailPage({
 
                 {activeTab === 'photos_activities' && (
                     <>
-                        <RegistrySection
-                            title="Fotos de Evolução"
-                            subtitle="Acompanhamento fotográfico do progresso do aluno."
-                            icon={User}
-                        >
+                        <RegistrySection>
                             <TrainerStudentPhotosContent relationshipId={id} studentId={studentId} />
                         </RegistrySection>
                         <RegistrySection
                             title="Atividades Recentes"
                             subtitle="Histórico cronológico detalhado das últimas ações e logs de treinamento registrados pelo aluno."
-                            icon={Activity}
+                            icon="Activity"
                         >
                             <TrainerStudentRecentActivitiesContent studentId={studentId} />
                         </RegistrySection>
@@ -171,7 +203,7 @@ export default async function StudentDetailPage({
                     <RegistrySection
                         title="Perfil & Dados Gerais"
                         subtitle="Consulte e edite as informações cadastrais, contatos e dados gerais de perfil do aluno."
-                        icon={User}
+                        icon="User"
                     >
                         <TrainerStudentProfileSection studentId={studentId} student={student} />
                     </RegistrySection>

@@ -6,9 +6,10 @@ import { Box } from '@/components/store/base/box'
 import { Font } from '@/components/store/base/font'
 import { Icon } from '@/components/store/base/icon'
 import { Inline } from '@/components/store/base/layout'
-import { LucideIcon } from 'lucide-react'
+import { LucideIcon, BarChart3 } from 'lucide-react'
 import { useRegistry } from '@/components/store/base/registry-context'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
+import { iconMap } from '@/components/store/constants/icon-map'
 
 interface BaseRegistrySectionProps {
   children: React.ReactNode
@@ -26,7 +27,7 @@ type RegistrySectionProps = BaseRegistrySectionProps & (
   | {
       title: string
       subtitle: string
-      icon: LucideIcon
+      icon: LucideIcon | string
     }
 )
 
@@ -40,6 +41,8 @@ export function RegistrySection({
   flex1 = false
 }: RegistrySectionProps) {
   const { primaryColor } = useRegistry()
+
+  const IconComp = typeof icon === 'string' ? (iconMap[icon] || BarChart3) : icon
 
   return (
     <Stack gap={STORE_TOKENS.SPACING.TITLE_CONTENT} id={id} fullWidth>
@@ -55,7 +58,7 @@ export function RegistrySection({
             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
               {title && (
                 <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                  {icon && <Icon icon={icon} color={primaryColor as any} size="lg" />}
+                  {IconComp && <Icon icon={IconComp} color={primaryColor as any} size="lg" />}
                   <Font
                     variant="heading"
                     weight="black"

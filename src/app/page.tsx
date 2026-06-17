@@ -31,7 +31,7 @@ export default async function LandingPage() {
   ] : [
     ...(role === 'admin' ? [{ label: 'Admin', href: '/admin', variant: 'ghost' as const, desktopOnly: true }] : []),
     ...(isAffiliate ? [{ label: 'Painel Afiliado', href: '/afiliados/login', variant: 'outline-primary' as const, desktopOnly: true }] : []),
-    { label: 'Acessar Dashboard', href: dashboardUrl, variant: 'primary' as const, desktopOnly: true },
+    { label: 'Dashboard', href: dashboardUrl, variant: 'primary' as const },
   ]
 
   const mobileNavActions = !user ? [
