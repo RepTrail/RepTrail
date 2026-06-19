@@ -160,7 +160,9 @@ export async function createAsaasSubscription(
             customer: customerId,
             billingType: billingType,
             value: value,
-            nextDueDate: new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString().split('T')[0], // Amanhã
+            nextDueDate: billingType === 'PIX' 
+                ? new Date().toISOString().split('T')[0] 
+                : new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString().split('T')[0],
             cycle: 'MONTHLY',
             description: `Assinatura RepTrail - ${tier}`,
             externalReference: planId ? `${user.id}_${tier}_${planId}` : `${user.id}_${tier}`
@@ -208,7 +210,7 @@ export async function createAsaasSubscription(
 
         // Fetch the first payment of this subscription to get the invoice URL
         let firstPayment = null
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < 5; i++) {
             const payments = await fetchAsaas(`/subscriptions/${subscription.id}/payments`)
             if (payments.data && payments.data.length > 0) {
                 firstPayment = payments.data[0]
