@@ -160,8 +160,21 @@ export function AsaasPaymentModal({
                     if (res.pixQrCode) {
                         setPixData(res.pixQrCode)
                         return
-                    } else {
-                        toast({ variant: 'destructive', title: 'Aviso', description: 'Sua assinatura foi processada, mas houve um atraso na geração do QR Code do PIX. Verifique seu e-mail ou aguarde alguns minutos.' })
+                    } else if (res.subscriptionId) {
+                        toast({ title: 'Aguarde...', description: 'O Asaas está processando a cobrança PIX. Isso pode levar alguns segundos.' })
+                        let found = false
+                        for (let i = 0; i < 15; i++) {
+                            await new Promise(r => setTimeout(r, 2000))
+                            const pollRes = await actions.getSubscriptionFirstPaymentPix(res.subscriptionId)
+                            if (pollRes.success && pollRes.pixQrCode) {
+                                setPixData(pollRes.pixQrCode)
+                                found = true
+                                break
+                            }
+                        }
+                        if (found) return
+
+                        toast({ variant: 'destructive', title: 'Aviso', description: 'Houve um atraso longo na geração do QR Code do PIX pelo Asaas. Verifique seu e-mail.' })
                     }
                 } else {
                     toast({ title: 'Sucesso!', description: 'Sua assinatura foi processada com êxito.' })

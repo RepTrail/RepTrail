@@ -245,6 +245,20 @@ export async function createAsaasSubscription(
     }
 }
 
+export async function getSubscriptionFirstPaymentPix(subscriptionId: string) {
+    try {
+        const payments = await fetchAsaas(`/subscriptions/${subscriptionId}/payments`)
+        if (payments.data && payments.data.length > 0) {
+            const firstPayment = payments.data[0]
+            const pixQrCode = await fetchAsaas(`/payments/${firstPayment.id}/pixQrCode`)
+            return { success: true, pixQrCode }
+        }
+        return { success: false, reason: 'PAYMENT_NOT_GENERATED' }
+    } catch (err: any) {
+        return { success: false, reason: err.message }
+    }
+}
+
 export async function cancelAsaasSubscription() {
     const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
     const { data: { user } } = await supabase.auth.getUser()
