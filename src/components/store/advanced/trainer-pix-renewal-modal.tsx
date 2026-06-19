@@ -53,7 +53,7 @@ export function TrainerPixRenewalModal() {
             title="Atenção à sua Assinatura"
             subtitle="Sua fatura PIX vencerá em breve."
             icon={CalendarClock}
-            variant="amber"
+            variant="orange"
             hideCancel
             confirmLabel="Entendido"
             onConfirm={() => setIsVisible(false)}
