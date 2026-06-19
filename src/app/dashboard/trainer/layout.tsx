@@ -13,6 +13,7 @@ import { MobileTrainerTourManager } from '@/components/store/advanced/mobile-tra
 import { DashboardShell } from '@/components/store/advanced/dashboard-shell'
 import { RegistryProvider } from '@/components/store/base/registry-context'
 import { SettingsModal } from '@/components/store/advanced/student-settings-modal'
+import { TrainerPixRenewalModal } from '@/components/store/advanced/trainer-pix-renewal-modal'
 export default async function TrainerLayout({ children }: { children: React.ReactNode }) {
     const headerList = await headers()
     const userId = headerList.get('x-user-id')
@@ -81,6 +82,7 @@ export default async function TrainerLayout({ children }: { children: React.Reac
                     {children}
                 </DashboardShell>
                 <SettingsModal isTrainer={true} hasTrainer={false} />
+                <TrainerPixRenewalModal />
             </HydrationBoundary>
         </RegistryProvider>
     );

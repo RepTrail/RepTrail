@@ -6,7 +6,7 @@ import { Stack } from '@/components/store/base/stack'
 import { Font } from '@/components/store/base/font'
 import { Surface } from '@/components/store/base/surface'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
-import { CreditCard, AlertTriangle } from 'lucide-react'
+import { CreditCard, AlertTriangle, MessageCircle } from 'lucide-react'
 import { Divider } from '@/components/store/base/layout'
 
 interface StudentPaymentWarningProps {
@@ -14,7 +14,7 @@ interface StudentPaymentWarningProps {
         payment_day?: number
         last_payment_date?: string | null
         monthly_fee?: number | null
-        trainer?: { full_name: string } | null
+        trainer?: { full_name: string, whatsapp?: string | null } | null
         [key: string]: unknown
     } | null
 }
@@ -56,6 +56,15 @@ export function StudentPaymentWarning({ relationship }: StudentPaymentWarningPro
         sessionStorage.setItem('payment_warning_dismissed', 'true')
     }
 
+    const handleConfirm = () => {
+        if (relationship?.trainer?.whatsapp) {
+            const phone = relationship.trainer.whatsapp.replace(/\D/g, '')
+            const text = encodeURIComponent(`Olá ${relationship?.trainer?.full_name}, estou enviando o comprovante do meu pagamento do RepTrail!`)
+            window.open(`https://wa.me/55${phone}?text=${text}`, '_blank')
+        }
+        handleClose()
+    }
+
     return (
         <Modal
             isOpen={isVisible}
@@ -64,8 +73,10 @@ export function StudentPaymentWarning({ relationship }: StudentPaymentWarningPro
             subtitle="PAGAMENTO PENDENTE OU EM ATRASO"
             icon={CreditCard}
             variant="orange"
-            confirmLabel="ENTENDIDO, VOU REALIZAR"
-            onConfirm={handleClose}
+            confirmLabel="CHAMAR NO WHATSAPP"
+            confirmIcon={MessageCircle}
+            cancelLabel="FECHAR"
+            onConfirm={handleConfirm}
         >
             <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                 <Font

@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import React, { useState, useEffect } from 'react'
 import { Modal } from '@/components/store/advanced/modal'
@@ -15,8 +15,10 @@ import {
     Calendar,
     MapPin,
     Hash,
-    Loader2
+    Loader2,
+    QrCode
 } from 'lucide-react'
+import { SegmentedSwitch } from '@/components/store/intermediary/segmented-switch'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { actions } from '@/lib/dal'
 import { useToast } from '@/components/store/hooks/use-toast'
@@ -46,6 +48,7 @@ export function AsaasPaymentModal({
     plan_id,
     plan_slug
 }: AsaasPaymentModalProps) {
+    const [billingType, setBillingType] = useState<'CREDIT_CARD' | 'PIX'>('CREDIT_CARD')
     const [cpf, setCpf] = useState(currentCpf || '')
     const [fullName, setFullName] = useState(currentName || '')
     const [isProcessing, setIsProcessing] = useState(false)
@@ -58,6 +61,7 @@ export function AsaasPaymentModal({
         addressNumber: ''
     })
     const [fetchingName, setFetchingName] = useState(false)
+    const [pixData, setPixData] = useState<{ encodedImage: string, payload: string } | null>(null)
     const { toast } = useToast()
 
     // Masking Utilities
@@ -112,17 +116,19 @@ export function AsaasPaymentModal({
             toast({ variant: 'destructive', title: 'Nome incompleto', description: 'Por favor, insira seu nome completo.' })
             return
         }
-        if (cardData.number.replace(/\s/g, '').length < 15) {
-            toast({ variant: 'destructive', title: 'Cartão inválido', description: 'Insira um número de cartão válido.' })
-            return
-        }
-        if (cardData.expiry.length < 5) {
-            toast({ variant: 'destructive', title: 'Validade inválida', description: 'Insira uma validade válida.' })
-            return
-        }
-        if (cardData.cvv.length < 3) {
-            toast({ variant: 'destructive', title: 'CVV inválido', description: 'Insira um CVV válido.' })
-            return
+        if (billingType === 'CREDIT_CARD') {
+            if (cardData.number.replace(/\s/g, '').length < 15) {
+                toast({ variant: 'destructive', title: 'Cartão inválido', description: 'Insira um número de cartão válido.' })
+                return
+            }
+            if (cardData.expiry.length < 5) {
+                toast({ variant: 'destructive', title: 'Validade inválida', description: 'Insira uma validade válida.' })
+                return
+            }
+            if (cardData.cvv.length < 3) {
+                toast({ variant: 'destructive', title: 'CVV inválido', description: 'Insira um CVV válido.' })
+                return
+            }
         }
 
         setIsProcessing(true)
@@ -134,10 +140,10 @@ export function AsaasPaymentModal({
 
             const res = await actions.createAsaasSubscription(
                 tier,
-                'CREDIT_CARD',
+                billingType,
                 cpf.replace(/\D/g, ''),
                 fullName.trim(),
-                {
+                billingType === 'CREDIT_CARD' ? {
                     holderName: cardData.holder,
                     number: cardData.number.replace(/\s/g, ''),
                     expiryMonth: month,
@@ -145,12 +151,22 @@ export function AsaasPaymentModal({
                     ccv: cardData.cvv,
                     postalCode: cardData.postalCode.replace(/\D/g, ''),
                     addressNumber: cardData.addressNumber
-                },
+                } : undefined,
                 plan_id
             )
 
             if (res.success) {
-                toast({ title: 'Sucesso!', description: 'Sua assinatura foi processada com êxito.' })
+                if (billingType === 'PIX') {
+                    if (res.pixQrCode) {
+                        setPixData(res.pixQrCode)
+                        return
+                    } else {
+                        toast({ variant: 'destructive', title: 'Aviso', description: 'Sua assinatura foi processada, mas houve um atraso na geração do QR Code do PIX. Verifique seu e-mail ou aguarde alguns minutos.' })
+                    }
+                } else {
+                    toast({ title: 'Sucesso!', description: 'Sua assinatura foi processada com êxito.' })
+                }
+                
                 onClose()
                 const target = tier === 'auto_training' ? '/dashboard/student' : '/dashboard/trainer'
                 window.location.href = target
@@ -161,11 +177,45 @@ export function AsaasPaymentModal({
             toast({
                 variant: 'destructive',
                 title: 'Erro no Pagamento',
-                description: err.message || 'Ocorreu um erro ao processar o cartão.'
+                description: err.message || 'Ocorreu um erro ao processar a assinatura.'
             })
         } finally {
             setIsProcessing(false)
         }
+    }
+
+    if (pixData) {
+        return (
+            <Modal
+                isOpen={isOpen}
+                onClose={onClose}
+                title="Pague via PIX"
+                subtitle="Escaneie o QR Code abaixo ou copie a chave"
+                icon={QrCode}
+                variant="emerald"
+                hideCancel
+                confirmLabel="Já paguei, ir para o painel"
+                onConfirm={() => {
+                    const target = tier === 'auto_training' ? '/dashboard/student' : '/dashboard/trainer'
+                    window.location.href = target
+                }}
+            >
+                <Stack gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
+                    <img src={`data:image/png;base64,${pixData.encodedImage}`} alt="QR Code PIX" style={{ width: 250, height: 250, borderRadius: 8 }} />
+                    <Input 
+                        label="CHAVE PIX (COPIA E COLA)" 
+                        value={pixData.payload} 
+                        readOnly 
+                        icon={<QrCode size={16} />} 
+                        onClick={(e: any) => {
+                            e.target.select()
+                            navigator.clipboard.writeText(pixData.payload)
+                            toast({ title: 'Copiado!', description: 'Chave PIX copiada para a área de transferência.' })
+                        }}
+                    />
+                </Stack>
+            </Modal>
+        )
     }
 
     return (
@@ -208,6 +258,15 @@ export function AsaasPaymentModal({
                     </Stack>
                 </Box>
 
+                <SegmentedSwitch
+                    options={[
+                        { id: 'CREDIT_CARD', label: 'Cartão de Crédito', icon: CreditCard, activeVariant: 'outline-emerald' },
+                        { id: 'PIX', label: 'PIX', icon: QrCode, activeVariant: 'outline-emerald' }
+                    ]}
+                    activeId={billingType}
+                    onSelect={(id) => setBillingType(id as 'CREDIT_CARD' | 'PIX')}
+                />
+
                 {/* Identification */}
                 <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                     <Input
@@ -229,62 +288,63 @@ export function AsaasPaymentModal({
 
 
 
-                {/* Card Details */}
-                <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
-                    <Input
-                        label="NÚMERO DO CARTÃO"
-                        icon={<CreditCard size={16} />}
-                        value={cardData.number}
-                        onChange={(e) => setCardData(d => ({ ...d, number: maskCardNumber(e.target.value) }))}
-                        placeholder="0000 0000 0000 0000"
-                    />
-
-                    <Input
-                        label="NOME NO CARTÃO"
-                        icon={<User size={16} />}
-                        value={cardData.holder}
-                        onChange={(e) => setCardData(d => ({ ...d, holder: e.target.value.toUpperCase() }))}
-                        placeholder="NOME COMO IMPRESSO"
-                    />
-
-                    <Stack direction="row" gap={STORE_TOKENS.SPACING.CONTAINER}>
+                {billingType === 'CREDIT_CARD' && (
+                    <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                         <Input
-                            label="VALIDADE"
-                            icon={<Calendar size={16} />}
-                            value={cardData.expiry}
-                            onChange={(e) => setCardData(d => ({ ...d, expiry: maskExpiry(e.target.value) }))}
-                            placeholder="MM/AA"
-                            flex1
+                            label="NÚMERO DO CARTÃO"
+                            icon={<CreditCard size={16} />}
+                            value={cardData.number}
+                            onChange={(e) => setCardData(d => ({ ...d, number: maskCardNumber(e.target.value) }))}
+                            placeholder="0000 0000 0000 0000"
                         />
+
                         <Input
-                            label="CVV"
-                            icon={<ShieldCheck size={16} />}
-                            value={cardData.cvv}
-                            onChange={(e) => setCardData(d => ({ ...d, cvv: e.target.value.replace(/\D/g, '').substring(0, 4) }))}
-                            placeholder="000"
-                            flex1
+                            label="NOME NO CARTÃO"
+                            icon={<User size={16} />}
+                            value={cardData.holder}
+                            onChange={(e) => setCardData(d => ({ ...d, holder: e.target.value.toUpperCase() }))}
+                            placeholder="NOME COMO IMPRESSO"
                         />
+
+                        <Stack direction="row" gap={STORE_TOKENS.SPACING.CONTAINER}>
+                            <Input
+                                label="VALIDADE"
+                                icon={<Calendar size={16} />}
+                                value={cardData.expiry}
+                                onChange={(e) => setCardData(d => ({ ...d, expiry: maskExpiry(e.target.value) }))}
+                                placeholder="MM/AA"
+                                flex1
+                            />
+                            <Input
+                                label="CVV"
+                                icon={<ShieldCheck size={16} />}
+                                value={cardData.cvv}
+                                onChange={(e) => setCardData(d => ({ ...d, cvv: e.target.value.replace(/\D/g, '').substring(0, 4) }))}
+                                placeholder="000"
+                                flex1
+                            />
+                        </Stack>
+
+                        <Stack direction="row" gap={STORE_TOKENS.SPACING.CONTAINER}>
+                            <Input
+                                label="CEP"
+                                icon={<MapPin size={16} />}
+                                value={cardData.postalCode}
+                                onChange={(e) => setCardData(d => ({ ...d, postalCode: maskCep(e.target.value) }))}
+                                placeholder="00000-000"
+                                flex1
+                            />
+                            <Input
+                                label="Nº"
+                                icon={<Hash size={16} />}
+                                value={cardData.addressNumber}
+                                onChange={(e) => setCardData(d => ({ ...d, addressNumber: e.target.value }))}
+                                placeholder="Ex: 123"
+                                flex1
+                            />
+                        </Stack>
                     </Stack>
-
-                    <Stack direction="row" gap={STORE_TOKENS.SPACING.CONTAINER}>
-                        <Input
-                            label="CEP"
-                            icon={<MapPin size={16} />}
-                            value={cardData.postalCode}
-                            onChange={(e) => setCardData(d => ({ ...d, postalCode: maskCep(e.target.value) }))}
-                            placeholder="00000-000"
-                            flex1
-                        />
-                        <Input
-                            label="NÂº"
-                            icon={<Hash size={16} />}
-                            value={cardData.addressNumber}
-                            onChange={(e) => setCardData(d => ({ ...d, addressNumber: e.target.value }))}
-                            placeholder="Ex: 123"
-                            flex1
-                        />
-                    </Stack>
-                </Stack>
+                )}
 
                 <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT} padding={STORE_TOKENS.PADDING.ELEMENT}>
                     <Icon icon={CheckCircle2} size="xs" color={STORE_TOKENS.COLORS.SUCCESS} />

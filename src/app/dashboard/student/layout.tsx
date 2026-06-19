@@ -15,6 +15,8 @@ import { getAssignedErgogenics } from '@/actions/ergogenics-actions'
 import { DashboardShell } from '@/components/store/advanced/dashboard-shell'
 import { RegistryProvider } from '@/components/store/base/registry-context'
 import { SettingsModal } from '@/components/store/advanced/student-settings-modal'
+import { StudentPWAModal } from '@/components/store/advanced/student-pwa-modal'
+import { StudentPushModal } from '@/components/store/advanced/student-push-modal'
 
 export default async function StudentLayout({ children }: { children: React.ReactNode }) {
     const headerList = await headers()
@@ -110,6 +112,8 @@ async function StudentLayoutLoader({ userId, children }: { userId: string; child
                     {children}
                 </DashboardShell>
                 <SettingsModal isTrainer={false} hasTrainer={hasTrainer} />
+                <StudentPWAModal />
+                <StudentPushModal />
             </HydrationBoundary>
         </RegistryProvider>
     );

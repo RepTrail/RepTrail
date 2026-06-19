@@ -363,6 +363,35 @@ export async function createStudent(prevState: any, formData: FormData) {
     }
 }
 
+export async function confirmStudentPayment(relationshipId: string) {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) return { success: false, message: 'Unauthorized' }
+
+    try {
+        const { error } = await supabase
+            .from('trainer_students')
+            .update({
+                last_payment_date: new Date().toISOString()
+            })
+            .eq('id', relationshipId)
+            .eq('trainer_id', user.id)
+
+        if (error) throw error
+
+        const { revalidatePath, revalidateTag } = await import('next/cache')
+        revalidatePath('/dashboard/trainer/students')
+        revalidatePath(`/dashboard/trainer/students/${relationshipId}`)
+        revalidateTag(`trainer-students-${user.id}`, 'page' as any)
+
+        return { success: true }
+    } catch (e: any) {
+        console.error('[CONFIRM-PAYMENT] Error:', e)
+        return { success: false, message: 'Erro ao confirmar pagamento: ' + e.message }
+    }
+}
+
 export async function getTrainerStudents(trainerId?: string) {
     const supabase = await createClient()
     let tid = trainerId

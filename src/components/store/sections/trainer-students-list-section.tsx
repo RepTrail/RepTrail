@@ -74,6 +74,7 @@ export function TrainerStudentsListSection({ userId }: TrainerStudentsListSectio
                             if (paymentDay && !isPaidThisMonth) {
                                 if (todayDay === paymentDay) paymentStatus = 'due_today'
                                 else if (todayDay > paymentDay) paymentStatus = 'overdue'
+                                else paymentStatus = 'pending_this_month'
                             }
 
                             const avatarInitials = item.student?.full_name?.substring(0, 2) || 'AL'
@@ -104,6 +105,9 @@ export function TrainerStudentsListSection({ userId }: TrainerStudentsListSectio
                                                 )}
                                                 {paymentStatus === 'due_today' && !item.is_placeholder && (
                                                     <Badge label="Vence Hoje" variant="glass" color={STORE_TOKENS.COLORS.WARNING} size="xs" />
+                                                )}
+                                                {paymentStatus === 'pending_this_month' && !item.is_placeholder && (
+                                                    <Badge label="Pendente no Mês" variant="glass" color={STORE_TOKENS.COLORS.ERROR} size="xs" />
                                                 )}
                                                 <Badge label={formattedValue} variant="glass" color={STORE_TOKENS.COLORS.WARNING} size="xs" />
                                                 {formattedDay && (

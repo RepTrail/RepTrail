@@ -41,17 +41,20 @@ export async function getTrainerPlansSession() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { user: null, planId: null, pricingData: null }
 
-  const [profileRes, { getPublicPlanPricing }] = await Promise.all([
-    supabase.from('profiles').select('plan_id').eq('id', user.id).single(),
+    const [profileRes, { getPublicPlanPricing }] = await Promise.all([
+    supabase.from('profiles').select('plan_id, asaas_customer_id, plan_tier').eq('id', user.id).single(),
     import('@/actions/trainer-actions')
   ])
 
   const pricingData = await getPublicPlanPricing()
 
+  const isRenewal = profileRes.data?.plan_tier === 'none' && !!profileRes.data?.asaas_customer_id
+
   return {
     user,
     planId: profileRes.data?.plan_id,
-    pricingData
+    pricingData,
+    isRenewal
   }
 }
 

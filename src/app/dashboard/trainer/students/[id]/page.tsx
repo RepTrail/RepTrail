@@ -14,6 +14,7 @@ import { TrainerStudentErgogenicsSmart } from '@/components/store/advanced/train
 import { TrainerStudentPhotosContent, TrainerStudentRecentActivitiesContent } from '@/components/store/sections/trainer-student-photos-activities-section'
 import { TrainerStudentDetailTabSwitcher } from '@/components/store/sections/trainer-student-detail-tab-switcher'
 import { PlaceholderStudentAccessBanner } from '@/components/store/sections/placeholder-student-access-banner'
+import { TrainerStudentBillingCard } from '@/components/store/advanced/trainer-student-billing-card'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 
@@ -109,6 +110,7 @@ export default async function StudentDetailPage({
                 icon="User"
                 contextLabel="Gestão de Alunos"
                 showTabs={false}
+                rightElement={<TrainerStudentBillingCard relationship={relationship} />}
             >
                 <PlaceholderStudentAccessBanner relationship={relationship} />
 

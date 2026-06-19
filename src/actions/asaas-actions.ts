@@ -207,8 +207,24 @@ export async function createAsaasSubscription(
             .eq('id', user.id)
 
         // Fetch the first payment of this subscription to get the invoice URL
-        const payments = await fetchAsaas(`/subscriptions/${subscription.id}/payments`)
-        const firstPayment = payments.data?.[0]
+        let firstPayment = null
+        for (let i = 0; i < 3; i++) {
+            const payments = await fetchAsaas(`/subscriptions/${subscription.id}/payments`)
+            if (payments.data && payments.data.length > 0) {
+                firstPayment = payments.data[0]
+                break
+            }
+            await new Promise(r => setTimeout(r, 1000))
+        }
+
+        let pixQrCode = null
+        if (firstPayment && billingType === 'PIX') {
+            try {
+                pixQrCode = await fetchAsaas(`/payments/${firstPayment.id}/pixQrCode`)
+            } catch (err) {
+                console.error('[ASAAS_PIX_QR_CODE_ERROR]', err)
+            }
+        }
 
         revalidatePath('/dashboard/trainer/plans')
         revalidatePath('/dashboard/student/plans')
@@ -218,7 +234,8 @@ export async function createAsaasSubscription(
             subscriptionId: subscription.id,
             status: subscription.status,
             invoiceUrl: firstPayment?.invoiceUrl || firstPayment?.bankSlipUrl,
-            bankSlipUrl: firstPayment?.bankSlipUrl
+            bankSlipUrl: firstPayment?.bankSlipUrl,
+            pixQrCode
         }
     } catch (e: any) {
         console.error('[ASAAS_SUBSCRIPTION_CRITICAL_ERROR]', e)
@@ -330,6 +347,55 @@ export async function assignFreePlan(planId: string, planSlug: string) {
         return { error: 'Erro ao assinar plano gratuito.' }
     }
 }
+
+export async function checkSubscriptionRenewalState() {
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return { success: false }
+
+    try {
+        const { data: profile } = await supabase
+            .from('profiles')
+            .select('asaas_subscription_id, asaas_billing_type')
+            .eq('id', user.id)
+            .single()
+
+        if (!profile?.asaas_subscription_id) return { success: true, noSubscription: true }
+
+        const subscription = await fetchAsaas(`/subscriptions/${profile.asaas_subscription_id}`)
+        
+        if (subscription.status === 'OVERDUE' || subscription.status === 'EXPIRED') {
+            await supabase.from('profiles').update({
+                plan_tier: 'none',
+                asaas_subscription_id: null
+            }).eq('id', user.id)
+
+            revalidatePath('/dashboard')
+            return { success: true, isExpired: true }
+        }
+
+        if (subscription.status === 'ACTIVE' && subscription.billingType === 'PIX' && subscription.nextDueDate) {
+            const due = new Date(subscription.nextDueDate)
+            const today = new Date()
+            
+            due.setHours(0,0,0,0)
+            today.setHours(0,0,0,0)
+            
+            const diffTime = due.getTime() - today.getTime()
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+
+            if (diffDays <= 3 && diffDays >= 0) {
+                return { success: true, shouldWarn: true, daysRemaining: diffDays, billingType: 'PIX' }
+            }
+        }
+
+        return { success: true }
+    } catch (e: any) {
+        console.error('[CHECK_RENEWAL_ERROR]', e)
+        return { success: false }
+    }
+}
+
 
 
 
