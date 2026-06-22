@@ -131,6 +131,7 @@ export function TrainerStudentsListSection({ userId }: TrainerStudentsListSectio
                                                 <Link
                                                     id={index === 0 ? 'tour-open-profile' : undefined}
                                                     href={`/dashboard/trainer/students/${item.id}`}
+                                                    prefetch={true}
                                                     aria-label="Abrir página do aluno"
                                                 >
                                                     <Icon icon={ArrowUpRight} size="xs" />

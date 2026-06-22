@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import React from 'react'
 import { Grid } from '@/components/store/base/grid'
@@ -46,6 +46,16 @@ export function DietManagementList({
     })
 
     const router = useRouter()
+
+    React.useEffect(() => {
+        if (!diets || diets.length === 0) return;
+        diets.forEach(diet => {
+            const editPath = mode === 'trainer'
+                ? `/dashboard/trainer/diets/${diet.id}`
+                : `/dashboard/student/diet/${diet.id}`
+            router.prefetch(editPath)
+        })
+    }, [diets, mode, router])
 
     const { mutate: deleteMutation } = useOptimisticMutation({
         queryKey: activeQueryKey,

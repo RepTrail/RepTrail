@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import React from 'react'
 import { Grid } from '@/components/store/base/grid'
@@ -46,6 +46,17 @@ export function WorkoutManagementList({
     })
 
     const router = useRouter()
+
+    React.useEffect(() => {
+        if (!workouts || workouts.length === 0) return;
+        // Prefetch RSC payloads for all rendered workouts so they are cached by the Service Worker for offline use.
+        workouts.forEach(workout => {
+            const editPath = mode === 'trainer'
+                ? `/dashboard/trainer/workouts/${workout.id}`
+                : `/dashboard/student/workouts/${workout.id}`
+            router.prefetch(editPath)
+        })
+    }, [workouts, mode, router])
 
     const { mutate: deleteMutation } = useOptimisticMutation({
         queryKey: activeQueryKey,
