@@ -8,7 +8,7 @@ const withSerwist = withSerwistInit({
 });
 
 const nextConfig: NextConfig = {
-
+  turbopack: {},
   experimental: {
     serverActions: {
       bodySizeLimit: '20mb',

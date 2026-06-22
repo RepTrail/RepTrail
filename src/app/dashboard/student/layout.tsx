@@ -94,9 +94,10 @@ async function StudentLayoutLoader({ userId, children }: { userId: string; child
     const mobileLinks = [
         { href: '/dashboard/student',              label: 'Home',    icon: 'Home',       exact: true },
         { href: '/dashboard/student/workouts',     label: 'Treinos', icon: 'Dumbbell',   hidden: !hasPlan },
+        { href: '/dashboard/student/diet',         label: 'Dietas',  icon: 'Utensils',   hidden: !hasPlan },
         { href: '/dashboard/student/cardio',       label: 'Cardio',  icon: 'Activity',   hidden: !hasPlan },
-        { href: '/dashboard/student/loja',         label: 'Loja',    icon: 'ShoppingBag' },
-        { href: '/dashboard/student/profile',      label: 'Meu Perfil', icon: 'User' },
+        { href: '/dashboard/student/ergogenics',   label: 'Ergos',   icon: 'Syringe',    hidden: !hasPlan || !steroidUse },
+        { href: '/dashboard/student/loja',         label: 'Loja',    icon: 'ShoppingBag', hidden: !!(hasPlan && steroidUse) },
     ]
 
     return (

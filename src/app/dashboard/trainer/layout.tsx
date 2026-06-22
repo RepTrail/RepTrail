@@ -62,9 +62,11 @@ export default async function TrainerLayout({ children }: { children: React.Reac
 
     const mobileLinks = [
         { href: '/dashboard/trainer',            label: 'Início',  icon: 'Home',        exact: true },
-        { href: '/dashboard/trainer/students',   label: 'Alunos',  icon: 'Users' },
-        { href: '/dashboard/trainer/loja',       label: 'Loja',    icon: 'ShoppingBag' },
-        { href: '/dashboard/trainer/ranking',    label: 'Ranking', icon: 'Trophy' },
+        { href: '/dashboard/trainer/workouts',   label: 'Treinos', icon: 'Dumbbell' },
+        { href: '/dashboard/trainer/diets',      label: 'Dietas',  icon: 'Utensils' },
+        { href: '/dashboard/trainer/cardio',     label: 'Cardio',  icon: 'Activity' },
+        { href: '/dashboard/trainer/ergogenics', label: 'Ergos',   icon: 'FlaskConical', hidden: !hasErgogenics },
+        { href: '/dashboard/trainer/loja',       label: 'Loja',    icon: 'ShoppingBag',  hidden: !!hasErgogenics },
     ]
 
     return (
