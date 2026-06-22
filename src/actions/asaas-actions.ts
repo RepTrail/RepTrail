@@ -433,6 +433,31 @@ export async function checkSubscriptionRenewalState() {
     }
 }
 
+export async function checkPixPaymentStatus(subscriptionId: string, planId?: string, tier?: string) {
+    const supabase = /* ❌ OUTBOX VIOLATION */ await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return { success: false, paid: false }
 
+    try {
+        const payments = await fetchAsaas(`/subscriptions/${subscriptionId}/payments`)
+        if (payments.data && payments.data.length > 0) {
+            const firstPayment = payments.data[0]
+            if (firstPayment.status === 'RECEIVED' || firstPayment.status === 'CONFIRMED') {
+                // Payment received! Optimistically grant access so the user doesn't bounce.
+                const updatePayload: any = {}
+                if (tier) updatePayload.plan_tier = tier
+                if (planId) updatePayload.plan_id = planId
 
-
+                if (Object.keys(updatePayload).length > 0) {
+                    await supabase.from('profiles').update(updatePayload).eq('id', user.id)
+                }
+                revalidatePath('/dashboard')
+                return { success: true, paid: true }
+            }
+        }
+        return { success: true, paid: false }
+    } catch (e: any) {
+        console.error('[CHECK_PIX_PAYMENT_ERROR]', e)
+        return { success: false, error: e.message }
+    }
+}

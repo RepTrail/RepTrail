@@ -62,6 +62,8 @@ export function AsaasPaymentModal({
     })
     const [fetchingName, setFetchingName] = useState(false)
     const [pixData, setPixData] = useState<{ encodedImage: string, payload: string } | null>(null)
+    const [subscriptionId, setSubscriptionId] = useState<string | null>(null)
+    const [isVerifyingPayment, setIsVerifyingPayment] = useState(false)
     const { toast } = useToast()
 
     // Masking Utilities
@@ -157,6 +159,7 @@ export function AsaasPaymentModal({
 
             if (res.success) {
                 if (billingType === 'PIX') {
+                    if (res.subscriptionId) setSubscriptionId(res.subscriptionId)
                     if (res.pixQrCode) {
                         setPixData(res.pixQrCode)
                         return
@@ -207,10 +210,34 @@ export function AsaasPaymentModal({
                 icon={QrCode}
                 variant="emerald"
                 hideCancel
-                confirmLabel="Já paguei, ir para o painel"
-                onConfirm={() => {
-                    const target = tier === 'auto_training' ? '/dashboard/student' : '/dashboard/trainer'
-                    window.location.href = target
+                confirmLabel={isVerifyingPayment ? "Verificando..." : "Já paguei, ir para o painel"}
+                onConfirm={async () => {
+                    if (!subscriptionId) {
+                        const target = tier === 'auto_training' ? '/dashboard/student' : '/dashboard/trainer'
+                        window.location.href = target
+                        return
+                    }
+                    
+                    setIsVerifyingPayment(true)
+                    try {
+                        const checkRes = await actions.checkPixPaymentStatus(subscriptionId, plan_id, tier)
+                        if (checkRes.paid) {
+                            toast({ title: 'Sucesso!', description: 'Recebemos seu pagamento! Redirecionando...' })
+                            onClose()
+                            const target = tier === 'auto_training' ? '/dashboard/student' : '/dashboard/trainer'
+                            window.location.href = target
+                        } else {
+                            toast({ 
+                                variant: 'destructive',
+                                title: 'Pagamento não confirmado', 
+                                description: 'Ainda não recebemos. Tente novamente em alguns segundos, pois pode ser um atraso do servidor.' 
+                            })
+                        }
+                    } catch (err) {
+                        console.error(err)
+                    } finally {
+                        setIsVerifyingPayment(false)
+                    }
                 }}
             >
                 <Stack gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
