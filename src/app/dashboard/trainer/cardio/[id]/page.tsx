@@ -4,7 +4,7 @@ import { RegistryMain } from "@/components/store/advanced/registry-main"
 import { notFound } from 'next/navigation'
 
 interface Props {
-    params: { id: string }
+    params: Promise<{ id: string }>
 }
 
 export default async function CardioDetailPage({ params }: Props) {

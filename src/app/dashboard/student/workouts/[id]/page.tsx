@@ -9,7 +9,7 @@ import { headers } from "next/headers"
 export default async function StudentWorkoutPage({
     params,
 }: {
-    params: { id: string }
+    params: Promise<{ id: string }>
 }) {
     const { id } = await params
     const headerList = await headers()

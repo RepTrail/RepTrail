@@ -2,7 +2,7 @@ import * as actions from '@/lib/dal/remote'
 import { WorkoutLogReview } from '@/components/store/advanced/student-workout-log-review'
 import { notFound } from 'next/navigation'
 
-export default async function WorkoutLogReviewPage({ params }: { params: { logId: string } }) {
+export default async function WorkoutLogReviewPage({ params }: { params: Promise<{ logId: string }> }) {
     const { logId } = await params
 
     const log = await actions.getWorkoutLogForReview(logId)

@@ -3,7 +3,7 @@ import { RegistryMain } from "@/components/store/advanced/registry-main"
 import { notFound } from "next/navigation"
 import { TrainerDietBuilderSection } from "@/components/store/sections/trainer-diet-builder-section"
 
-export default async function DietEditPage({ params }: { params: { id: string } }) {
+export default async function DietEditPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params
     const [diet, students] = await Promise.all([
         actions.getDietDetails(id),
