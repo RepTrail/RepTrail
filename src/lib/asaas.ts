@@ -2,13 +2,15 @@ import { getAsaasApiKey } from '@/actions/app-settings-actions'
 
 export async function fetchAsaas(endpoint: string, options: RequestInit = {}) {
     // Priority: Database App Settings -> process.env.ASAAS_API_KEY
-    const apiKey = await getAsaasApiKey()
-    const apiUrl = process.env.ASAAS_API_URL || 'https://sandbox.asaas.com/v3'
+    const dbApiKey = await getAsaasApiKey()
+    const finalApiKey = dbApiKey || process.env.ASAAS_API_KEY
+    const apiUrl = process.env.ASAAS_API_URL || 'https://sandbox.asaas.com/api/v3'
 
     console.log(`[ASAAS_DEBUG] Using URL: ${apiUrl}`)
-    console.log(`[ASAAS_DEBUG] API Key present: ${!!apiKey} (len: ${apiKey?.length || 0})`)
+    console.log(`[ASAAS_DEBUG] process.env.ASAAS_API_KEY present: ${!!process.env.ASAAS_API_KEY} (len: ${process.env.ASAAS_API_KEY?.length || 0})`)
+    console.log(`[ASAAS_DEBUG] API Key from getAsaasApiKey(): ${!!dbApiKey} (len: ${dbApiKey?.length || 0})`)
 
-    if (!apiKey) {
+    if (!finalApiKey) {
         console.error('[ASAAS_ERROR] ASAAS_API_KEY is not set in DB or ENV!')
         throw new Error('ASAAS_API_KEY is not set. Configure it in Admin -> Settings.')
     }
@@ -23,7 +25,7 @@ export async function fetchAsaas(endpoint: string, options: RequestInit = {}) {
         ...options,
         headers: {
             'Content-Type': 'application/json',
-            'access_token': apiKey,
+            'access_token': finalApiKey as string,
             ...options.headers,
         },
     })
@@ -40,9 +42,9 @@ export async function fetchAsaas(endpoint: string, options: RequestInit = {}) {
         try {
             data = JSON.parse(text)
         } catch (e) {
-            console.error('[ASAAS_PARSE_ERROR]', text)
-            // If it's not JSON but has content, it might be an error or plain text
-            if (!response.ok) throw new Error('Resposta inválida do servidor Asaas')
+            console.error('[ASAAS_PARSE_ERROR]', text.substring(0, 500))
+            // If it's not JSON but has content, it's definitely an error (e.g. HTML login page from wrong API URL)
+            throw new Error(`Resposta inválida do servidor Asaas. Esperava JSON, recebeu: ${text.substring(0, 50)}...`)
         }
     }
 

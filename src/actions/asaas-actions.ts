@@ -86,7 +86,7 @@ export async function getOrCreateAsaasCustomer(cpfCnpj?: string, fullName?: stri
 }
 
 export async function createAsaasSubscription(
-    tier: 'on_demand' | 'auto_training',
+    tier: string,
     billingType: 'BOLETO' | 'CREDIT_CARD' | 'PIX' = 'PIX',
     taxId?: string,
     fullName?: string,
@@ -106,9 +106,13 @@ export async function createAsaasSubscription(
     if (!user) return { error: 'Não autorizado' }
 
     try {
+        console.log(`\n\n[ASAAS_AUDIT_DEBUG] --- START createAsaasSubscription ---`)
+        console.log(`[ASAAS_AUDIT_DEBUG] Params received -> tier: ${tier}, billingType: ${billingType}, planId: ${planId}`)
+
         const { data: profile } = await supabase.from('profiles').select('is_billing_exempt, email, whatsapp, cpf_cnpj').eq('id', user.id).single()
 
         if (profile?.is_billing_exempt) {
+            console.log(`[ASAAS_AUDIT_DEBUG] EARLY RETURN: User is billing_exempt. Returning { success: true } without hitting Asaas.`)
             await supabase.from('profiles').update({ 
                 plan_tier: tier,
                 ...(planId ? { plan_id: planId } : {})
@@ -120,12 +124,12 @@ export async function createAsaasSubscription(
         const customerId = await getOrCreateAsaasCustomer(taxId, fullName)
         console.log(`[ASAAS_DEBUG] Using Customer ID: ${customerId}`)
 
-        let value: number
+        let value: number = 0
 
         if (tier === 'auto_training') {
             // TODO: Auto-training price could also be dynamic, but keeping fallback for now
             value = ON_DEMAND_PRICE_PER_STUDENT
-        } else {
+        } else if (tier === 'on_demand') {
             // Calculate value for on_demand (price per student after the first few free)
             const { count } = await supabase
                 .from('trainer_students')
@@ -141,12 +145,21 @@ export async function createAsaasSubscription(
             const totalStudents = count || 0
             const billable = Math.max(0, totalStudents - freeStudentsLimit)
             value = billable * pricePerStudent
+        } else if (planId) {
+            const adminClient = await import('@/lib/supabase/admin').then(m => m.adminClient)
+            const { data: plan } = await adminClient.from('plans').select('base_price_cents').eq('id', planId).single()
+            if (plan) {
+                value = plan.base_price_cents / 100
+            } else {
+                console.error(`[ASAAS_ERROR] Plan ${planId} not found in database!`)
+            }
         }
 
-        console.log(`[ASAAS_DEBUG] Subscription value: ${value} for tier: ${tier}`)
+        console.log(`[ASAAS_AUDIT_DEBUG] Calculated value: ${value}`)
 
         // If the value is 0 (Case of trainer with < 5 students), just activate the account
         if (value === 0 && tier === 'on_demand') {
+            console.log(`[ASAAS_AUDIT_DEBUG] EARLY RETURN: value is 0 and tier is on_demand. Returning { success: true } without hitting Asaas.`)
             await supabase
                 .from('profiles')
                 .update({ plan_tier: 'on_demand' })
@@ -198,14 +211,22 @@ export async function createAsaasSubscription(
             body: JSON.stringify(subscriptionPayload)
         })
 
+        // For credit card, Asaas attempts the charge synchronously. If successful, we can optimistically grant access.
+        // For PIX/Boleto, the webhook will handle the activation upon payment confirmation.
+        const updatePayload: any = {
+            asaas_subscription_id: subscription.id,
+            asaas_billing_type: billingType,
+        }
+
+        if (billingType === 'CREDIT_CARD') {
+            updatePayload.plan_tier = tier
+            if (planId) updatePayload.plan_id = planId
+        }
+
         // Store subscription ID
         await supabase
             .from('profiles')
-            .update({
-                asaas_subscription_id: subscription.id,
-                asaas_billing_type: billingType,
-                // Removed immediate plan_tier update. Webhook will handle activation upon payment.
-            })
+            .update(updatePayload)
             .eq('id', user.id)
 
         // Fetch the first payment of this subscription to get the invoice URL
