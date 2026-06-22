@@ -193,7 +193,7 @@ export function SettingsModal({ hasTrainer = false, isTrainer = false }: Setting
 
                         <SettingsActionCard
                             icon={Bell}
-                            title="NOTIFICAÇÕES PUSH"
+                            title="NOTIFICAÇÕES"
                             subtitle="RECEBA ALERTAS DE TREINOS E DIETAS"
                             actionLabel={notifications === 'on' ? 'CONFIGURAR' : 'ATIVAR'}
                             buttonVariant="outline-orange"
