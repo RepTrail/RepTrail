@@ -79,7 +79,7 @@ export function AsaasPaymentModal({
 
     const validateCpfCnpj = (val: string) => {
         const clean = val.replace(/\D/g, '')
-        return clean.length === 11 || clean.length === 14 
+        return clean.length === 11 || clean.length === 14
     }
 
     // Auto-fetch name from Asaas
@@ -107,7 +107,7 @@ export function AsaasPaymentModal({
 
     const handleSubscribe = async (e?: React.FormEvent) => {
         if (e) e.preventDefault()
-        
+
         if (!validateCpfCnpj(cpf)) {
             toast({ variant: 'destructive', title: 'Documento inválido', description: 'Insira um CPF ou CNPJ válido.' })
             return
@@ -179,7 +179,7 @@ export function AsaasPaymentModal({
                 } else {
                     toast({ title: 'Sucesso!', description: 'Sua assinatura foi processada com êxito.' })
                 }
-                
+
                 onClose()
                 const target = tier === 'auto_training' ? '/dashboard/student' : '/dashboard/trainer'
                 window.location.href = target
@@ -215,11 +215,11 @@ export function AsaasPaymentModal({
             >
                 <Stack gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
                     <img src={`data:image/png;base64,${pixData.encodedImage}`} alt="QR Code PIX" style={{ width: 250, height: 250, borderRadius: 8 }} />
-                    <Input 
-                        label="CHAVE PIX (COPIA E COLA)" 
-                        value={pixData.payload} 
-                        readOnly 
-                        icon={<QrCode size={16} />} 
+                    <Input
+                        label="CHAVE PIX (COPIA E COLA)"
+                        value={pixData.payload}
+                        readOnly
+                        icon={<QrCode size={16} />}
                         onClick={(e: any) => {
                             e.target.select()
                             navigator.clipboard.writeText(pixData.payload)
@@ -273,7 +273,7 @@ export function AsaasPaymentModal({
 
                 <SegmentedSwitch
                     options={[
-                        { id: 'CREDIT_CARD', label: 'Cartão de Crédito', icon: CreditCard, activeVariant: 'outline-emerald' },
+                        { id: 'CREDIT_CARD', label: 'Cartão', icon: CreditCard, activeVariant: 'outline-emerald' },
                         { id: 'PIX', label: 'PIX', icon: QrCode, activeVariant: 'outline-emerald' }
                     ]}
                     activeId={billingType}
