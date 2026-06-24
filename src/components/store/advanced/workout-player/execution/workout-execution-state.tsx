@@ -11,6 +11,7 @@ import { Button } from '@/components/store/base/button'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
 import { Play } from 'lucide-react'
 import { BackgroundIcon } from '@/components/store/base/background-icon'
+import { LinearProgress } from '@/components/store/base/linear-progress'
 
 interface WorkoutExecutionStateProps {
     currentStep: any
@@ -40,7 +41,7 @@ export function WorkoutExecutionState({
     else expectedReps = currentExercise.reps || '10'
 
     return (
-        <Stack gap={STORE_TOKENS.SPACING.CONTAINER} padding={STORE_TOKENS.PADDING.CONTAINER} flex1>
+        <Stack gap={STORE_TOKENS.SPACING.CONTAINER} padding={STORE_TOKENS.PADDING.CONTAINER} width="full">
             {/* Progress Section */}
             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                 <Stack direction="row" align="end" justify="between" padding={STORE_TOKENS.PADDING.ELEMENT}>
@@ -65,9 +66,7 @@ export function WorkoutExecutionState({
                     </Stack>
                     <Badge label={`${Math.round(progress)}%`} variant="solid" color={STORE_TOKENS.COLORS.SUCCESS} size="sm" />
                 </Stack>
-                <Box bg={STORE_TOKENS.COLORS.BACKGROUND} bgOpacity={STORE_TOKENS.OPACITY.MODAL} rounded={STORE_TOKENS.RADIUS.FULL} overflow="hidden" height="6px">
-                    <Box height="full" bg={STORE_TOKENS.COLORS.SUCCESS} transition width={`${progress}%`} />
-                </Box>
+                <LinearProgress value={progress} color="success" height={6} />
             </Stack>
             {/* Execution State */}
             <Stack flex1 justify={{ base: 'start', md: 'center' }} gap={STORE_TOKENS.SPACING.CONTAINER} position="relative">

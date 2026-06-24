@@ -139,19 +139,19 @@ export default function WorkoutPlayerClient({
                                 </Link>
                             </Box>
 
-                            <Stack direction="row" align="center" justify="between">
-                                <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                    <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                        <Box width={8} height={8} bg={STORE_TOKENS.COLORS.SUCCESS} rounded={STORE_TOKENS.RADIUS.FULL} />
-                                        <Font variant="h3" weight="black" color={STORE_TOKENS.COLORS.WHITE} uppercase italic tracking="tight" truncate>
-                                            {workout.name}
-                                        </Font>
+                            <Stack direction="row" align="center" justify="between" gap={STORE_TOKENS.SPACING.CONTAINER}>
+                                <Stack gap={STORE_TOKENS.SPACING.ELEMENT} flex1 minWidth={0}>
+                                    <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} width="full" minWidth={0}>
+                                        <Box width={8} height={8} shrink={0} bg={STORE_TOKENS.COLORS.SUCCESS} rounded={STORE_TOKENS.RADIUS.FULL} />
+                                        <Box flex1 minWidth={0}>
+                                            <Font variant="h3" weight="black" color={STORE_TOKENS.COLORS.WHITE} uppercase italic tracking="tight" truncate display="block">
+                                                {workout.name}
+                                            </Font>
+                                        </Box>
                                     </Stack>
-                                    <Box>
-                                        <Font variant="tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="black" uppercase tracking="widest">
-                                            Player de Treino • Foco e Intensidade
-                                        </Font>
-                                    </Box>
+                                    <Font variant="tiny" color={STORE_TOKENS.COLORS.TEXT.MUTED} weight="black" uppercase tracking="widest" truncate display="block">
+                                        Player de Treino • Foco e Intensidade
+                                    </Font>
                                 </Stack>
 
                                 {/* Desktop Badge */}
@@ -171,7 +171,7 @@ export default function WorkoutPlayerClient({
             )}
 
             {/* Main Player Content: Vertically Centered */}
-            <Box flex1 display="flex" align={{ base: 'start', md: 'center' }} justify="center" padding={STORE_TOKENS.PADDING.NONE} position="relative" zIndex={10}>
+            <Box flex1 minHeight={0} display="flex" direction="col" align={{ base: 'stretch', md: 'center' }} justify="start" padding={STORE_TOKENS.PADDING.NONE} position="relative" zIndex={10}>
                 <WorkoutPlayer
                     userId={userId}
                     workout={workout}

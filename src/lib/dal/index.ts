@@ -25,13 +25,16 @@ export {
   useImpersonateUser,
   useGrantAutoTraining,
   useDeleteUser,
+  useOptimisticMutation,
+  useRealtimeSync
+} from './hooks'
+
+export {
   dehydrate,
   HydrationBoundary,
   QueryClient,
   QueryClientProvider,
-  useOptimisticMutation,
-  useRealtimeSync
-} from './hooks'
+} from '@tanstack/react-query'
 
 export { usePlanLimits, getPlanLimitsDetails } from './plan-limits'
 
