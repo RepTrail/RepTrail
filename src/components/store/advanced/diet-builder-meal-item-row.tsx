@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import React, { useState, useEffect } from 'react'
 import { Stack } from '@/components/store/base/stack'
@@ -50,6 +50,7 @@ interface MealItemRowProps {
     draggable?: boolean
     onDragStart?: React.DragEventHandler
     onDragOver?: React.DragEventHandler
+    onDrop?: React.DragEventHandler
     onDragEnd?: React.DragEventHandler
     isDragged?: boolean
 }
@@ -62,6 +63,7 @@ export function DietBuilderMealItemRow({
     draggable,
     onDragStart,
     onDragOver,
+    onDrop,
     onDragEnd,
     isDragged = false
 }: MealItemRowProps) {
@@ -209,6 +211,7 @@ export function DietBuilderMealItemRow({
             draggable={draggable}
             onDragStart={onDragStart as any}
             onDragOver={onDragOver as any}
+            onDrop={onDrop as any}
             onDragEnd={onDragEnd as any}
         >
             {/* Main item row */}

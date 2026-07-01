@@ -8,14 +8,16 @@ import {
     TrendingUp,
     Camera,
     Eye,
-    Clock
+    Clock,
+    Plus,
+    Minus
 } from 'lucide-react'
 import { GlassPanel, CardHeader, CardContent } from '@/components/store/base/surface'
 import { Box } from '@/components/store/base/box'
 import { Stack } from '@/components/store/base/stack'
 import { Font } from '@/components/store/base/font'
 import { Inline } from '@/components/store/base/layout'
-import { IconBox } from '@/components/store/base/icon'
+import { IconBox, Icon } from '@/components/store/base/icon'
 import { Badge } from '@/components/store/base/badge'
 import { ActionableListCard } from '@/components/store/intermediary/actionable-list-card'
 import { EmptyState } from '@/components/store/intermediary/empty-state'
@@ -139,13 +141,21 @@ export function StudentRecentActivities({ activities }: StudentRecentActivitiesP
                         </Font>
                     </Inline>
                     {hasMore && (
-                        <Button
-                            variant="outline-zinc"
-                            size="xs"
+                        <Box
+                            padding={STORE_TOKENS.PADDING.ELEMENT}
+                            rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                            bg={STORE_TOKENS.COLORS.WHITE}
+                            bgOpacity={STORE_TOKENS.OPACITY.LOW}
+                            cursor="pointer"
+                            transition
                             onClick={() => setExpanded(v => !v)}
                         >
-                            {expanded ? 'Recolher' : 'Ver mais'}
-                        </Button>
+                            <Icon 
+                                icon={expanded ? Minus : Plus} 
+                                size="xs" 
+                                color={STORE_TOKENS.COLORS.TEXT.SECONDARY as any} 
+                            />
+                        </Box>
                     )}
                 </Inline>
             </CardHeader>

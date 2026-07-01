@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import React, { useState, useEffect } from 'react'
 import { useQuery, useQueryClient } from '@/lib/dal'
@@ -28,6 +28,7 @@ import { EmptyState } from '@/components/store/intermediary/empty-state'
 import { DietBuilderHeader } from './diet-builder-header'
 import { DietBuilderMealCard } from './diet-builder-meal-card'
 import { DietBuilderNewMeal } from './diet-builder-new-meal'
+import { Modal } from '@/components/store/advanced/modal'
 
 interface DietBuilderSmartProps {
     diet: any
@@ -73,6 +74,9 @@ export function DietBuilderSmart({
     // Drag state
     const [draggedMealId, setDraggedMealId] = useState<string | null>(null)
     const [draggedItemId, setDraggedItemId] = useState<{ mealId: string; itemId: string } | null>(null)
+    
+    // Modal state
+    const [mealToRemove, setMealToRemove] = useState<string | null>(null)
 
     useEffect(() => {
         if (!isEditingMeta && diet) {
@@ -229,6 +233,10 @@ export function DietBuilderSmart({
 
     const handleMealDragOver = (e: React.DragEvent, targetId: string) => {
         e.preventDefault()
+    }
+
+    const handleMealDrop = (e: React.DragEvent, targetId: string) => {
+        e.preventDefault()
         if (!draggedMealId || draggedMealId === targetId) return
         const draggedIndex = meals.findIndex(m => m.id === draggedMealId)
         const targetIndex = meals.findIndex(m => m.id === targetId)
@@ -237,12 +245,12 @@ export function DietBuilderSmart({
         const [removed] = newMeals.splice(draggedIndex, 1)
         newMeals.splice(targetIndex, 0, removed)
         queryClient.setQueryData(queryKey, (old: any) => ({ ...old, meals: newMeals }))
+        reorderMealsMutate({ orderedIds: newMeals.map(m => m.id), dietId: diet.id })
+        setDraggedMealId(null)
     }
 
     const handleMealDragEnd = () => {
-        if (!draggedMealId) return
         setDraggedMealId(null)
-        reorderMealsMutate({ orderedIds: meals.map(m => m.id), dietId: diet.id })
     }
 
     const handleItemDragStart = (e: React.DragEvent, mealId: string, itemId: string) => {
@@ -251,6 +259,10 @@ export function DietBuilderSmart({
     }
 
     const handleItemDragOver = (e: React.DragEvent, mealId: string, targetId: string) => {
+        e.preventDefault()
+    }
+
+    const handleItemDrop = (e: React.DragEvent, mealId: string, targetId: string) => {
         e.preventDefault()
         if (!draggedItemId || draggedItemId.mealId !== mealId || draggedItemId.itemId === targetId) return
         const mealIndex = meals.findIndex(m => m.id === mealId)
@@ -265,16 +277,14 @@ export function DietBuilderSmart({
         newItems.splice(targetIndex, 0, removed)
         newMeals[mealIndex] = { ...newMeals[mealIndex], meal_items: newItems }
         queryClient.setQueryData(queryKey, (old: any) => ({ ...old, meals: newMeals }))
+        reorderItemsMutate({ mealId, orderedIds: newItems.map((i: any) => i.id) })
+        setDraggedItemId(null)
     }
 
     const handleItemDragEnd = (mealId: string) => {
-        if (!draggedItemId) return
-        const meal = meals.find(m => m.id === mealId)
         setDraggedItemId(null)
-        if (meal) {
-            reorderItemsMutate({ mealId, orderedIds: (meal.meal_items || []).map((i: any) => i.id) })
-        }
     }
+
 
     const handleEstimateAll = async () => {
         try {
@@ -534,14 +544,13 @@ export function DietBuilderSmart({
                                 draggedItemId={draggedItemId}
                                 onMealDragStart={handleMealDragStart}
                                 onMealDragOver={handleMealDragOver}
+                                onMealDrop={handleMealDrop}
                                 onMealDragEnd={handleMealDragEnd}
                                 onItemDragStart={handleItemDragStart}
                                 onItemDragOver={handleItemDragOver}
+                                onItemDrop={handleItemDrop}
                                 onItemDragEnd={handleItemDragEnd}
-                                onRemoveMeal={(id) => {
-                                    if (!confirm('Remover esta refeição inteira?')) return
-                                    removeMealMutate({ id, dietId: diet.id })
-                                }}
+                                onRemoveMeal={(id) => setMealToRemove(id)}
                                 onRemoveItem={(id) => removeItemMutate({ id, dietId: diet.id })}
                                 onAddItem={(mealId) => addItemMutate({ mealId, dietId: diet.id, foodId: 'default' })}
                             />
@@ -575,6 +584,22 @@ export function DietBuilderSmart({
                     </Link>
                 </Button>
             </Box>
+            
+            <Modal
+                isOpen={!!mealToRemove}
+                onClose={() => setMealToRemove(null)}
+                title="Remover Refeição"
+                subtitle="Tem certeza que deseja remover esta refeição inteira? Esta ação não pode ser desfeita."
+                variant="red"
+                confirmLabel="Remover"
+                cancelLabel="Cancelar"
+                onConfirm={() => {
+                    if (mealToRemove) {
+                        removeMealMutate({ id: mealToRemove, dietId: diet.id })
+                        setMealToRemove(null)
+                    }
+                }}
+            />
         </Stack>
     );
 }

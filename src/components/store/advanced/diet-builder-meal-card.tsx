@@ -49,9 +49,11 @@ interface DietBuilderMealCardProps {
     draggedItemId: { mealId: string; itemId: string } | null
     onMealDragStart: (e: React.DragEvent, id: string) => void
     onMealDragOver: (e: React.DragEvent, id: string) => void
+    onMealDrop: (e: React.DragEvent, id: string) => void
     onMealDragEnd: () => void
     onItemDragStart: (e: React.DragEvent, mealId: string, itemId: string) => void
     onItemDragOver: (e: React.DragEvent, mealId: string, itemId: string) => void
+    onItemDrop: (e: React.DragEvent, mealId: string, itemId: string) => void
     onItemDragEnd: (mealId: string) => void
     onRemoveMeal: (id: string) => void
     onRemoveItem: (id: string) => void
@@ -67,9 +69,11 @@ export function DietBuilderMealCard({
     draggedItemId,
     onMealDragStart,
     onMealDragOver,
+    onMealDrop,
     onMealDragEnd,
     onItemDragStart,
     onItemDragOver,
+    onItemDrop,
     onItemDragEnd,
     onRemoveMeal,
     onRemoveItem,
@@ -90,6 +94,7 @@ export function DietBuilderMealCard({
             draggable
             onDragStart={(e: React.DragEvent) => onMealDragStart(e, meal.id)}
             onDragOver={(e: React.DragEvent) => onMealDragOver(e, meal.id)}
+            onDrop={(e: React.DragEvent) => onMealDrop(e, meal.id)}
             onDragEnd={onMealDragEnd}
             transition
             opacity={isDragged ? STORE_TOKENS.OPACITY.SIDEBAR : STORE_TOKENS.OPACITY.FULL}
@@ -192,6 +197,7 @@ export function DietBuilderMealCard({
                                 draggable
                                 onDragStart={(e) => onItemDragStart(e, meal.id, item.id)}
                                 onDragOver={(e) => onItemDragOver(e, meal.id, item.id)}
+                                onDrop={(e) => onItemDrop(e, meal.id, item.id)}
                                 onDragEnd={() => onItemDragEnd(meal.id)}
                                 isDragged={draggedItemId?.itemId === item.id}
                             />

@@ -57,7 +57,7 @@ export function SegmentedSwitch({
           wrap="nowrap"
           padding={STORE_TOKENS.PADDING.ELEMENT}
           align="stretch"
-          width={{ base: isFewOptions ? 'full' : 'max-content', md: 'full' }}
+          width={isFewOptions ? 'full' : 'max-content'}
         >
           {options.map((option) => {
             const isActive = activeId === option.id
@@ -72,8 +72,8 @@ export function SegmentedSwitch({
                 variant={isActive ? variant : 'ghost'}
                 rounded={STORE_TOKENS.RADIUS.FULL}
                 size="sm"
-                flex1={{ base: isFewOptions, md: true }}
-                shrink={{ base: isFewOptions ? 1 : 0, md: 1 }}
+                flex1={isFewOptions}
+                shrink={isFewOptions ? 1 : 0}
                 transition
               >
                 <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} wrap="nowrap">

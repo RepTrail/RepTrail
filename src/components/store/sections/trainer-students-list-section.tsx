@@ -86,7 +86,7 @@ export function TrainerStudentsListSection({ userId }: TrainerStudentsListSectio
                                     key={item.id}
                                     badges={
                                         <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="end">
-                                            <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                                            <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center" wrap justify="end">
                                                 {item.is_new && (
                                                     <Badge label="Pendente" variant="glass" color={STORE_TOKENS.COLORS.INFO} size="xs" />
                                                 )}

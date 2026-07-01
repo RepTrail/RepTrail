@@ -57,7 +57,7 @@ export function TrainerStudentBillingCard({ relationship }: { relationship: any 
 
     if (isConfirmed) {
         return (
-            <Surface variant="tonal-emerald" padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM} border="none">
+            <Surface variant="tonal-emerald" padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM} border="none" fullWidth>
                 <Inline align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                     <CheckCircle className="w-5 h-5 text-emerald-500" />
                     <Font variant="sub-tiny" weight="bold" {...{ color: "emerald" }}>PAGAMENTO CONFIRMADO</Font>
@@ -67,7 +67,7 @@ export function TrainerStudentBillingCard({ relationship }: { relationship: any 
     }
 
     return (
-        <Surface variant="base" padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM}>
+        <Surface variant="base" padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM} fullWidth>
             <Stack gap={STORE_TOKENS.SPACING.ELEMENT} justify="center">
                 <Inline align="center" justify="between" gap={STORE_TOKENS.SPACING.CONTAINER}>
                     <Inline align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
@@ -85,7 +85,7 @@ export function TrainerStudentBillingCard({ relationship }: { relationship: any 
                 )}
 
                 {showActions && (
-                    <Inline align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                    <Stack direction={{ base: 'col', md: 'row' }} gap={STORE_TOKENS.SPACING.ELEMENT}>
                         <Button variant="outline-emerald" size="sm" rounded={STORE_TOKENS.RADIUS.SYSTEM} onClick={handleWhatsApp} gap={STORE_TOKENS.SPACING.ELEMENT}>
                             <MessageCircle className="w-3 h-3" />
                             Cobrar
@@ -94,7 +94,7 @@ export function TrainerStudentBillingCard({ relationship }: { relationship: any 
                             <CheckCircle className="w-3 h-3" />
                             Confirmar
                         </Button>
-                    </Inline>
+                    </Stack>
                 )}
             </Stack>
         </Surface>
